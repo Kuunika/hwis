@@ -67,7 +67,6 @@ const Table: React.FC<IProp> = ({
   height = "100%",
   width = "100%",
   rowWidth = 50,
-  loading = false,
   style,
 }) => {
   //   if (loading) {

@@ -23,7 +23,6 @@ export const SelectInputField: FC<Prop> = ({
   name,
   id,
   label,
-  width,
   selectItems,
   sx,
   onValueChange,

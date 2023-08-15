@@ -23,13 +23,7 @@ export const FormikInit: FC<Prop> = ({
   onSubmit,
   validationSchema,
   initialValues,
-  width,
   submitButton = true,
-  title,
-  submitStyles,
-  submitButtonText = "submit",
-  loading = false,
-  sx,
 }) => {
   return (
     <Formik

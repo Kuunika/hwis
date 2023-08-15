@@ -1,4 +1,4 @@
-import { Box, SxProps, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { FC } from "react";
 import { stepperStyles } from "./stepper.styles";
 
@@ -8,9 +8,13 @@ type CircleProp = {
 };
 
 export const Circle: FC<CircleProp> = ({ label, active }) => {
-  const activeStyles = active ? stepperStyles.active : ({} as SxProps);
+  const styles = {
+    ...(stepperStyles.circle ? stepperStyles.circle : {}),
+    ...(active ? stepperStyles.active : {}),
+  };
+
   return (
-    <Box sx={{ ...stepperStyles.circle, ...activeStyles }}>
+    <Box sx={styles}>
       <Typography variant="h6">{label}</Typography>
     </Box>
   );

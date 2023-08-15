@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { FC, ReactNode, Children, isValidElement, cloneElement } from "react";
+import { FC, ReactNode, Children } from "react";
 import { Step, Stepper } from ".";
 
 type StepperContainerProp = {
@@ -14,14 +14,6 @@ export const StepperContainer: FC<StepperContainerProp> = ({
   steps,
 }) => {
   const childrenArray = Children.toArray(children);
-
-  //   const stepperChildren = childrenArray.map((child) => {
-  //     if (isValidElement(child)) {
-  //       return cloneElement(child, {
-  //         ...child.props,
-  //       });
-  //     }
-  //   });
   return (
     <Box>
       <Stepper steps={steps} active={active} />
