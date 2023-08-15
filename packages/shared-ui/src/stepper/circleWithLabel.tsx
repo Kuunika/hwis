@@ -1,6 +1,6 @@
 import { Box, SxProps, Typography } from "@mui/material";
 import { FC } from "react";
-import { stepperStyles } from "./stapper.styles";
+import { stepperStyles } from "./stepper.styles";
 
 type CircleProp = {
   label: string | number;

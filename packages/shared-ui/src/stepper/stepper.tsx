@@ -1,18 +1,18 @@
 import { Box } from "@mui/material";
 import { FC } from "react";
 import { CircleWithLabel } from "./circleWithLabel";
-import { stepperStyles } from "./stapper.styles";
+import { stepperStyles } from "./stepper.styles";
 
-type Step = {
+export type Step = {
   id: string | number;
   label: string;
-  active: boolean;
 };
 type StepperProp = {
   steps: Step[];
+  active: number;
 };
 
-export const Stepper: FC<StepperProp> = ({ steps }) => {
+export const Stepper: FC<StepperProp> = ({ steps, active }) => {
   return (
     <Box sx={stepperStyles.stepper}>
       {steps.map((step, key) => (
@@ -20,7 +20,7 @@ export const Stepper: FC<StepperProp> = ({ steps }) => {
           key={step.id}
           label={step.label}
           circleLabel={key + 1}
-          active={step.active}
+          active={key == active}
         />
       ))}
     </Box>

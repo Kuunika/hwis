@@ -1,13 +1,34 @@
 "use client";
-import { MainButton, BaseTable, Stepper } from "shared-ui/src";
+import { useState } from "react";
+import {
+  MainButton,
+  BaseTable,
+  Stepper,
+  StepperContainer,
+} from "shared-ui/src";
 
 export default function Page() {
   const columns = [{ field: "name" }];
+  const [active, setActive] = useState(0);
   const steps = [
-    { id: 1, label: "step one", active: false },
-    { id: 2, label: "step two", active: true },
-    { id: 3, label: "step three", active: false },
+    { id: 1, label: "step one" },
+    { id: 2, label: "step two" },
+    { id: 3, label: "step three" },
   ];
 
-  return <Stepper steps={steps} />;
+  return (
+    <StepperContainer steps={steps} active={active}>
+      <MainButton
+        title="step 1"
+        onClick={() => setActive(1)}
+        variant="primary"
+      />
+      <MainButton
+        title="step 2"
+        onClick={() => setActive(2)}
+        variant="secondary"
+      />
+      <MainButton title="step 3" onClick={() => {}} variant="primary" />
+    </StepperContainer>
+  );
 }
