@@ -1,7 +1,6 @@
 import * as React from "react";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
-import { Theme, styled } from "@mui/material/styles";
-import { DefaultLoading } from "../loading";
+import { styled } from "@mui/material/styles";
 
 type IProp = {
   width?: string;
@@ -71,9 +70,9 @@ const Table: React.FC<IProp> = ({
   loading = false,
   style,
 }) => {
-  if (loading) {
-    return <DefaultLoading />;
-  }
+  //   if (loading) {
+  //     return <DefaultLoading />;
+  //   }
   return (
     <div style={{ height, width, ...style }}>
       <StyledDataGrid

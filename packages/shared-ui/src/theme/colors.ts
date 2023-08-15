@@ -5,7 +5,7 @@ export const defaultTheme = {
   primaryFontColor: "#fff",
   secondary: "#888888",
   secondaryVariant: "#787878",
-  secondaryFontColor: "#000",
+  secondaryFontColor: "#fff",
   background: "#fff",
   surface: "#fff",
   error: "#B00020",
