@@ -34,7 +34,12 @@ export const FormikInit: FC<Prop> = ({
       <Form>
         {children}
         {submitButton && (
-          <MainButton variant="primary" title="submit" onClick={() => {}} />
+          <MainButton
+            variant="primary"
+            type="submit"
+            title="submit"
+            onClick={() => {}}
+          />
         )}
       </Form>
     </Formik>

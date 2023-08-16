@@ -23,6 +23,7 @@ const Styles: { [key: string]: SxProps } = {
   stepper: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     my: "5px",
   },
 };
