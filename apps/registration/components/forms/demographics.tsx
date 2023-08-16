@@ -11,7 +11,7 @@ import {
 const schema = Yup.object().shape({
   firstName: Yup.string().required().label("first name"),
   lastName: Yup.string().required().label("last name"),
-  dob: Yup.string().required().label("date of birth"),
+  dob: Yup.string().label("date of birth"),
   gender: Yup.string().required().label("gender"),
   currentDistrict: Yup.string().required().label("current district"),
   currentTraditionAuthority: Yup.string()
@@ -82,6 +82,7 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit }) => {
             mr: "1ch",
           }}
         >
+          <TextInputField name="id" id="id" label="Identification Number" />
           <TextInputField name="firstName" id="firstName" label="First Name" />
           <TextInputField name="lastName" id="lastName" label="Last Name" />
           <RadioGroupInput
@@ -140,7 +141,6 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit }) => {
             id="nextOfKinPhoneNumber"
             label="Next Of Kin Relationship"
           />
-          <TextInputField name="id" id="id" label="Identification Number" />
           <SelectInputField
             name="homeDistrict"
             id="homeDistrict"
@@ -151,6 +151,12 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit }) => {
             name="homeTraditionalAuthority"
             id="homeTraditionalAuthority"
             label="Home Tradition Authority"
+            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+          />
+          <SelectInputField
+            name="homeVillage"
+            id="homeVillage"
+            label="Home Village"
             selectItems={[{ name: "Blantyre", value: "blantyre" }]}
           />
           <TextInputField
