@@ -17,12 +17,13 @@ export const TextInputField: FC<Prop> = ({
   id,
   name,
   label,
-  width = "25ch",
+  width = "100%",
   sx,
   type,
   placeholder = "",
 }) => {
-  const { value, handleChange, hasError, errorMessage } = useFormikField(name);
+  const { value, handleChange, hasError, errorMessage, handleBlur } =
+    useFormikField(name);
 
   return (
     <TextField
@@ -37,6 +38,7 @@ export const TextInputField: FC<Prop> = ({
       label={label}
       value={value}
       type={type}
+      onBlur={handleBlur}
       onChange={handleChange}
       error={hasError}
       variant="outlined"
