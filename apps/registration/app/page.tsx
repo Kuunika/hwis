@@ -1,6 +1,11 @@
 "use client";
 import { useState } from "react";
-import { DemographicsForm, SocialHistory } from "@/components/forms";
+import {
+  DemographicsForm,
+  MedicalInsuranceForm,
+  ReferralForm,
+  SocialHistory,
+} from "@/components/forms";
 import { MainCard, StepperContainer } from "shared-ui/src";
 
 export default function Home() {
@@ -25,7 +30,9 @@ export default function Home() {
         <h1>New Patient Registration</h1>
         <StepperContainer steps={steps} active={activeStep}>
           <DemographicsForm onSubmit={() => setActiveStep(1)} />
-          <SocialHistory onSubmit={() => setActiveStep(0)} />
+          <SocialHistory onSubmit={() => setActiveStep(2)} />
+          <ReferralForm onSubmit={() => setActiveStep(3)} />
+          <MedicalInsuranceForm onSubmit={() => setActiveStep(0)} />
         </StepperContainer>
       </MainCard>
     </>
