@@ -82,19 +82,6 @@ const BloodCirculation = ({onSubmit}:Prop) => {
             ]}
           />
         </Box>
-        <Box
-          sx={{
-            alignSelf: "flex-start",
-            mt: "auto",
-          }}
-        >
-          <MainButton
-            variant="primary"
-            type="submit"
-            title="submit"
-            onClick={onSubmit}
-          />
-        </Box>
       </Box>
     </FormikInit>
   );

@@ -1,6 +1,8 @@
 "use client"
 import AirwayAndBreathing from "@/components/forms/airwayAndBreathing";
 import BloodCirculation from "@/components/forms/bloodCirculation";
+import Consciousness from "@/components/forms/consciousness";
+import PersistentPain from "@/components/forms/persistentPain";
 import {useState} from "react"
 import { MainCard,StepperContainer } from 'shared-ui/src';
 
@@ -27,6 +29,8 @@ export default function Home() {
         <StepperContainer steps={steps} active={activeStep}>
           <AirwayAndBreathing onSubmit={() => setActiveStep(1)} />
           <BloodCirculation onSubmit={() => setActiveStep(2)} />
+          <Consciousness onSubmit={()=> setActiveStep(3)}/>
+          <PersistentPain onSubmit={()=> setActiveStep(4)}/>
         </StepperContainer>
       </MainCard>
     </>

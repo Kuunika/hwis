@@ -1,2 +1,4 @@
 export * from "./airwayAndBreathing"
 export * from "./bloodCirculation"
+export * from "./consciousness"
+export * from "./persistentPain"

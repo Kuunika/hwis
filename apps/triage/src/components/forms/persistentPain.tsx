@@ -1,31 +1,34 @@
 import { Box } from '@mui/material';
 import React from 'react'
 import { FormikInit, MainButton, RadioGroupInput } from 'shared-ui/src';
-import * as Yup from "yup";
+import * as Yup from "yup"
 
+type Prop ={
+    onSubmit: ()=> void;
+}
 
-type Prop = {
-    onSubmit: () => void;
-};
-
-const Consciousness = ({onSubmit}: Prop) => {
+const PersistentPain = ({onSubmit}: Prop) => {
     const schema = Yup.object().shape({
-      consciousness: Yup.string()
+      concern: Yup.string()
         .required()
-        .label("Does the patient have a reduced Level of consciousness"),
-      glucose: Yup.string().required().label("Blood glucose"),
-      gcs: Yup.string().required().label("Check GCS"),
+        .label(
+          "Does the Patient have active Seizure, Focal Neurologic Findings, Headache, Weakness, Confusion, Severe Pain or Other Cause for Concern"
+        ),
+      moderate: Yup.string()
+        .required()
+        .label(
+          "Does the Patient have Moderate Pain or a Reason to be seen in under 1 hour"
+        ),
     });
 
-    const initialValues = {
-      consciousness: "",
-      glucose: "",
-      gsc: "",
+    const initialsValues = {
+      concern: "",
+      moderate: "",
     };
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={initialValues}
+      initialValues={initialsValues}
       onSubmit={onSubmit}
     >
       <Box
@@ -47,15 +50,14 @@ const Consciousness = ({onSubmit}: Prop) => {
           }}
         >
           <RadioGroupInput
-            name=" consciousness"
-            label="Does the patient have a reduced Level of consciousness ?"
+            name=" concern"
+            label="Does the Patient have active Seizure, Focal Neurologic Findings, Headache, Weakness, Confusion, Severe Pain or Other Cause for Concern"
             options={[
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" },
             ]}
           />
         </Box>
-
         <Box
           sx={{
             marginTop: "5rem",
@@ -68,32 +70,11 @@ const Consciousness = ({onSubmit}: Prop) => {
           }}
         >
           <RadioGroupInput
-            name=" glucose"
-            label="Blood Glucose"
+            name="moderate"
+            label="Does the Patient have Moderate Pain or a Reason to be seen in under 1 hour"
             options={[
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" },
-            ]}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            marginTop: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            // alignItems: "center",
-            width: "100%",
-            mr: "1ch",
-          }}
-        >
-          <RadioGroupInput
-            name="  gcs"
-            label="Check GCS"
-            options={[
-              { label: "< 10", value: "low" },
-              { label: "> 10 < 14", value: "high" },
             ]}
           />
         </Box>
@@ -102,4 +83,4 @@ const Consciousness = ({onSubmit}: Prop) => {
   );
 }
 
-export default Consciousness
+export default PersistentPain

@@ -10,15 +10,11 @@ const schema = Yup.object().shape({
   availability: Yup.string()
     .required()
     .label("Are any of the following present"),
-  concern: Yup.string().required().label("Does the Patient have active Seizure, Focal Neurologic Findings, Headache, Weakness, Confusion, Severe Pain or Other Cause for Concern"),
-  moderate: Yup.string().required().label("Does the Patient have Moderate Pain or a Reason to be seen in under 1 hour")
 });
 const initialValues={
     airway:"",
     breathing:"",
     availability:"",
-    concern:"",
-    moderate:""
 }
 
 type Prop ={
@@ -101,19 +97,6 @@ const AirwayAndBreathing = ({onSubmit}:Prop) => {
                 value: "respiration",
               },
             ]}
-          />
-        </Box>
-        <Box
-          sx={{
-            alignSelf: "flex-start", 
-            mt: "auto", 
-          }}
-        >
-          <MainButton
-            variant="primary"
-            type="submit"
-            title="submit"
-            onClick={onSubmit}
           />
         </Box>
       </Box>
