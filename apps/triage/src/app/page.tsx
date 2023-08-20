@@ -3,6 +3,7 @@ import AirwayAndBreathing from "@/components/forms/airwayAndBreathing";
 import BloodCirculation from "@/components/forms/bloodCirculation";
 import Consciousness from "@/components/forms/consciousness";
 import PersistentPain from "@/components/forms/persistentPain";
+import TriageTable from "@/components/forms/table";
 import Vitals from "@/components/forms/vitals";
 import {useState} from "react"
 import { MainCard,StepperContainer } from 'shared-ui/src';
@@ -30,11 +31,12 @@ export default function Home() {
       >
         <h1>Triage</h1>
         <StepperContainer steps={steps} active={activeStep}>
-          <Vitals onSubmit={()=> setActiveStep(1)}/>
+          <Vitals onSubmit={() => setActiveStep(1)} />
           <AirwayAndBreathing onSubmit={() => setActiveStep(2)} />
           <BloodCirculation onSubmit={() => setActiveStep(3)} />
-          <Consciousness onSubmit={()=> setActiveStep(4)}/>
-          <PersistentPain onSubmit={()=> setActiveStep(5)}/>
+          <Consciousness onSubmit={() => setActiveStep(4)} />
+          <PersistentPain onSubmit={() => setActiveStep(5)} />
+          <TriageTable/>
         </StepperContainer>
       </MainCard>
     </>
