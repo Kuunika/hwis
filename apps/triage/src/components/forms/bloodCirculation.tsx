@@ -64,7 +64,7 @@ const BloodCirculation = ({onSubmit}:Prop) => {
         >
           <RadioGroupInput
             name=" present"
-            label="Are Any of the Following Present? ?"
+            label="Are Any of the Following Present?"
             options={[
               {
                 label: "Weak, Thready, Bounding or Regular/Irregular Pulse",
