@@ -38,7 +38,7 @@ export const FormikInit: FC<Prop> = ({
             variant="primary"
             type="submit"
             title="submit"
-            onClick={onSubmit}
+            onClick={()=>{}}
           />
         )}
       </Form>

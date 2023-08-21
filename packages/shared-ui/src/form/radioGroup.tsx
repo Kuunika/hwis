@@ -1,11 +1,11 @@
-import { FC, useEffect } from "react";
+import { FC} from "react";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { useFormikField } from "./hooks";
-import { SxProps } from "@mui/material";
+
 
 type Prop = {
   label: string;
