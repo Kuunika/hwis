@@ -7,9 +7,12 @@ import {
   SocialHistory,
 } from "@/components/forms";
 import { MainCard, StepperContainer } from "shared-ui/src";
+import { useNav } from "@/hooks";
 
 export const NewRegistration = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const { push } = useNav();
+
   const steps = [
     { id: 1, label: "Demographics" },
     { id: 2, label: "Social History" },
@@ -32,7 +35,9 @@ export const NewRegistration = () => {
           <DemographicsForm onSubmit={() => setActiveStep(1)} />
           <SocialHistory onSubmit={() => setActiveStep(2)} />
           <ReferralForm onSubmit={() => setActiveStep(3)} />
-          <MedicalInsuranceForm onSubmit={() => setActiveStep(0)} />
+          <MedicalInsuranceForm
+            onSubmit={() => push("/registration-complete")}
+          />
         </StepperContainer>
       </MainCard>
     </>

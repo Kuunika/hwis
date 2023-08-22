@@ -20,6 +20,7 @@ export const ReferralForm: FC<Props> = ({ onSubmit }) => {
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={onSubmit}
+      submitButtonText="next"
     >
       <SelectInputField
         label="Referee Medical Facility"

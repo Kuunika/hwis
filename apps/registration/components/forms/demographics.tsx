@@ -66,6 +66,7 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit }) => {
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={onSubmit}
+      submitButtonText="next"
     >
       <Box
         sx={{

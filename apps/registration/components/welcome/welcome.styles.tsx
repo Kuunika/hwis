@@ -9,7 +9,6 @@ export const welcomeStyles: { [key: string]: SxProps } = {
     p: "1ch",
     borderRadius: "1ch",
     cursor: "pointer",
-
     borderColor: defaultTheme.secondary,
     color: defaultTheme.primaryDark,
     "&:hover": {

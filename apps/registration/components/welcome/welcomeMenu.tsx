@@ -1,6 +1,4 @@
 import { Box } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   FaUserPlus,
   FaClipboardList,
@@ -9,14 +7,16 @@ import {
 } from "react-icons/fa";
 import { welcomeStyles } from "./welcome.styles";
 import { WelcomeButton } from ".";
+import { useRouter } from "next/navigation";
 
 export const WelcomeMenu = () => {
+  const router = useRouter();
   return (
     <Box sx={welcomeStyles.menu}>
       <WelcomeButton
         icon={<FaUserPlus />}
         title="New Patient"
-        onClick={() => {}}
+        onClick={() => router.push("/new")}
       />
 
       <WelcomeButton
@@ -25,12 +25,16 @@ export const WelcomeMenu = () => {
         onClick={() => {}}
       />
 
-      <WelcomeButton icon={<FaQrcode />} title="Scan ID" onClick={() => {}} />
+      <WelcomeButton
+        icon={<FaQrcode />}
+        title="Scan ID"
+        onClick={() => router.push("/scan")}
+      />
 
       <WelcomeButton
         icon={<FaSearch />}
         title="Search Name/ID"
-        onClick={() => {}}
+        onClick={() => router.push("/search")}
       />
     </Box>
   );

@@ -1,19 +1,30 @@
-import { Button } from "@mui/material";
+import { Button, SxProps } from "@mui/material";
 import { buttonStyles } from "./button.style";
 import { FC } from "react";
 
 type Props = {
-  variant: "primary" | "secondary";
+  variant?: "primary" | "secondary";
   title: string;
   onClick: () => void;
   type?: "submit" | "button" | "reset";
+  sx?: SxProps;
 };
 
-export const MainButton: FC<Props> = ({ variant, title, onClick, type }) => {
+export const MainButton: FC<Props> = ({
+  variant = "primary",
+  title,
+  onClick,
+  type,
+  sx,
+}) => {
   const variantStyles = buttonStyles[variant];
 
   return (
-    <Button type={type} sx={{ ...variantStyles }} onClick={onClick}>
+    <Button
+      type={type}
+      sx={(theme: any) => ({ ...variantStyles, ...sx })}
+      onClick={onClick}
+    >
       {title}
     </Button>
   );
