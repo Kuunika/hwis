@@ -10,7 +10,7 @@ export const ExistingRegistration: FC<Prop> = ({ title }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const steps = [
     { id: 3, label: "Social History" },
-    { id: 4, label: "Insurance" },
+    { id: 4, label: "Financing" },
   ];
 
   return (
