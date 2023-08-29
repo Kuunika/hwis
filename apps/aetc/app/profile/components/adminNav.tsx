@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, Button, Menu, MenuItem } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import PersonIcon from "@material-ui/icons/Person"; // Placeholder for the avatar if needed
+import { Avatar, Button, Menu, MenuItem, Box, Typography } from "@mui/material";
 
 interface AdminNavProps {
   username: string;
@@ -19,16 +17,19 @@ export const AdminNav: React.FC<AdminNavProps> = ({ username }) => {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <Avatar>
-        <PersonIcon />
-      </Avatar>
-      <span style={{ marginLeft: 8 }}>{username}</span>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: { md: "column", sm: "column", lg: "row" },
+      }}
+    >
+      <Avatar alt="Patient Profile" src="" />
+      <Typography sx={{ marginLeft: 8 }}>{username}/</Typography>
       <Button
         aria-controls="admin-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        endIcon={<ExpandMoreIcon />}
       />
       <Menu
         id="admin-menu"
@@ -42,6 +43,6 @@ export const AdminNav: React.FC<AdminNavProps> = ({ username }) => {
         <MenuItem onClick={handleClose}>Settings</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem>
       </Menu>
-    </div>
+    </Box>
   );
 };

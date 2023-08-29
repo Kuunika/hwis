@@ -5,4 +5,4 @@ export * from "./cards";
 export * from "./stepper";
 export * from "./theme/colors";
 export * from "./header";
-export * from "../src/theme/colors";
+

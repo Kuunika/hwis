@@ -1,4 +1,5 @@
 import React from "react";
+import { Box } from "@mui/material";
 import { MainButton } from "shared-ui/src";
 import { defaultTheme } from "shared-ui/src";
 
@@ -12,18 +13,25 @@ export default function PatientNav() {
   ];
 
   return (
-    <div>
+    <Box>
       {titles.map((title, index) => {
         return (
           <MainButton
             key={index}
-            variant="secondary"
+            variant="primary"
             title={title}
             onClick={() => {}}
-            sx={{ backgroundColor: "red" }}
+            sx={{
+              backgroundColor: defaultTheme.buttonColor,
+              color: defaultTheme.buttonTextColor,
+              "&:hover": {
+                backgroundColor: defaultTheme.buttonHoverColor,
+                color: defaultTheme.white,
+              },
+            }}
           />
         );
       })}
-    </div>
+    </Box>
   );
 }

@@ -8,20 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "@types/material-ui": "^0.21.12",
-    "next": "^13.4.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "shared-ui": "*",
-    "ui": "*"
-  },
-  "devDependencies": {
-    "@types/node": "^17.0.12",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
-    "eslint-config-custom": "*",
-    "tsconfig": "*",
-    "typescript": "^4.5.3"
+    "shared-ui": "*"
   }
+
 }
