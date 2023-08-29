@@ -9,7 +9,10 @@ type Prop = {
 };
 export const MainCard: FC<Prop> = ({ children, elevation = 0, sx }) => {
   return (
-    <Card sx={{ ...cardStyles.main, ...sx }} elevation={elevation}>
+    <Card
+      sx={(theme: any) => ({ ...cardStyles.main, ...sx })}
+      elevation={elevation}
+    >
       {children}
     </Card>
   );

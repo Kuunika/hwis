@@ -10,7 +10,7 @@ import { MainCard, StepperContainer } from "shared-ui/src";
 import { useNav } from "@/hooks";
 
 export const NewRegistration = () => {
-  const [activeStep, setActiveStep] = useState<number>(3);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const { push } = useNav();
 
   const steps = [
