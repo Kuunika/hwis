@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import React from 'react'
 import { FormikInit, MainButton, RadioGroupInput } from 'shared-ui/src';
 import * as Yup from "yup";
+import CustomStyling from './customStyling';
 
 const schema = Yup.object().shape({
   airway: Yup.string().required().label("Is Airway Compromised"),
@@ -38,16 +39,11 @@ const AirwayAndBreathing = ({onSubmit}:Prop) => {
         <Box
           sx={{
             marginTop: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            // alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput
-            name=" breathing"
+            name="breathing"
             label="Is Breathing Normal ?"
             options={[
               { label: "Yes", value: "yes" },
@@ -59,12 +55,7 @@ const AirwayAndBreathing = ({onSubmit}:Prop) => {
         <Box
           sx={{
             marginTop: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput
@@ -79,12 +70,7 @@ const AirwayAndBreathing = ({onSubmit}:Prop) => {
         <Box
           sx={{
             marginTop: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput

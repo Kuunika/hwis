@@ -17,7 +17,6 @@ export default function Home() {
     {id: 3, label: "Blood Circulation"},
     {id: 4, label: "Consciousness"},
     {id: 5, label: "Persistent Pain/Other Concerns"},
-    {id: 6, label: "Table"}
   ];
   return (
     <>
@@ -36,8 +35,8 @@ export default function Home() {
           <BloodCirculation onSubmit={() => setActiveStep(3)} />
           <Consciousness onSubmit={() => setActiveStep(4)} />
           <PersistentPain onSubmit={() => setActiveStep(5)} />
-          <TriageTable/>
         </StepperContainer>
+        {/* <TriageTable /> */}
       </MainCard>
     </>
   );

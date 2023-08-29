@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import React from 'react'
 import { FormikInit, MainButton, RadioGroupInput } from 'shared-ui/src';
 import * as Yup from "yup";
+import CustomStyling from './customStyling';
 
 
 type Prop = {
@@ -18,9 +19,9 @@ const Consciousness = ({onSubmit}: Prop) => {
     });
 
     const initialValues = {
-      consciousness: "",
-      glucose: "",
-      gsc: "",
+      consciousness:"",
+      glucose:"",
+      gcs:"",
     };
   return (
     <FormikInit
@@ -38,16 +39,11 @@ const Consciousness = ({onSubmit}: Prop) => {
         <Box
           sx={{
             marginTop: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            // alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput
-            name=" consciousness"
+            name="consciousness"
             label="Does the patient have a reduced Level of consciousness ?"
             options={[
               { label: "Yes", value: "yes" },
@@ -59,16 +55,11 @@ const Consciousness = ({onSubmit}: Prop) => {
         <Box
           sx={{
             marginTop: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            // alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput
-            name=" glucose"
+            name="glucose"
             label="Blood Glucose"
             options={[
               { label: "Yes", value: "yes" },
@@ -80,20 +71,15 @@ const Consciousness = ({onSubmit}: Prop) => {
         <Box
           sx={{
             marginTop: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            // alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput
-            name="  gcs"
+            name="gcs"
             label="Check GCS"
             options={[
-              { label: "< 10", value: "low" },
-              { label: "> 10 < 14", value: "high" },
+              {label: "less then 10", value: "low" },
+              {label: "greater than 10 and less than 14", value: "high" },
             ]}
           />
         </Box>

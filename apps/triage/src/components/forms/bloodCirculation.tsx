@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import React from 'react'
 import { FormikInit, MainButton, RadioGroupInput } from 'shared-ui/src';
 import * as Yup from "yup";
+import CustomStyling from './customStyling';
  
 const schema = Yup.object().shape({
   circulation: Yup.string().required().label("Is Circulation Abnormal"),
@@ -33,12 +34,7 @@ const BloodCirculation = ({onSubmit}:Prop) => {
         <Box
           sx={{
             marginTop: "-12rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput
@@ -54,16 +50,11 @@ const BloodCirculation = ({onSubmit}:Prop) => {
         <Box
           sx={{
             marginTop: "1rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling
           }}
         >
           <RadioGroupInput
-            name=" present"
+            name="present"
             label="Are Any of the Following Present?"
             options={[
               {

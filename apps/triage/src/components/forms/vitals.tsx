@@ -1,10 +1,11 @@
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import React from 'react'
 import { FormikInit, RadioGroupInput, TextInputField} from "shared-ui/src";
 import MultlineInput from 'shared-ui/src/form/multlineInput';
 import * as Yup from 'yup'
+import CustomStyling from './customStyling';
 
-const schema = Yup.object().shape({
+const schema = Yup.object().shape({ 
   complaint: Yup.string().required().label("Complaint"),
   respiratoryRate: Yup.string().required().label("Respiratory rate"),
   oxygenSaturation: Yup.string().required().label("Oxygen Saturation"),
@@ -18,7 +19,6 @@ const schema = Yup.object().shape({
   avpu: Yup.string().required().label("AVPU"),
   glusoce: Yup.string().required().label("Glusoce"),
 });
-
 const initialValues = {
   complaint: "",
   respiratoryRate: "",
@@ -38,7 +38,9 @@ type Prop={
     onSubmit: ()=>void;
 }
 
+
 const Vitals = ({onSubmit}:Prop) => {
+  const theme = useTheme();
   return (
     <FormikInit
       validationSchema={schema}
@@ -93,16 +95,11 @@ const Vitals = ({onSubmit}:Prop) => {
         <Box
           sx={{
             marginTop: "1rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling,
           }}
         >
           <RadioGroupInput
-            name=" eyeOpeningResponse"
+            name="eyeOpeningResponse"
             label="Eye Opening response"
             options={[
               { label: "Spontenous", value: "spontenous" },
@@ -129,12 +126,7 @@ const Vitals = ({onSubmit}:Prop) => {
         <Box
           sx={{
             marginTop: "1rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            mr: "1ch",
+            ...CustomStyling,
           }}
         >
           <RadioGroupInput
@@ -151,7 +143,7 @@ const Vitals = ({onSubmit}:Prop) => {
           />
           <Box sx={{ marginTop: "1rem" }}>
             <RadioGroupInput
-              name="AVPU"
+              name="avpu"
               label="AVPU"
               options={[
                 { label: "Awake", value: "awake" },
@@ -189,5 +181,4 @@ const Vitals = ({onSubmit}:Prop) => {
     </FormikInit>
   );
 }
-
 export default Vitals
