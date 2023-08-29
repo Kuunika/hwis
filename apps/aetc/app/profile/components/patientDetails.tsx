@@ -1,7 +1,6 @@
 import React from "react";
-import { Header, MainCard } from "shared-ui/src";
-import { Avatar } from "@material-ui/core";
-import PersonIcon from "@material-ui/icons/Person";
+import { Header } from "shared-ui/src";
+import { Avatar, Box } from "@mui/material";
 
 interface PatientDetailsProps {
   name: string;
@@ -14,18 +13,16 @@ const data = [
 ];
 export const PatientDetails: React.FC<PatientDetailsProps> = ({ name }) => {
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <Avatar style={{ width: "60px", height: "60px" }}>
-        <PersonIcon />
-      </Avatar>
-      <div style={{ marginLeft: "10px" }}>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Avatar sx={{ width: "60px", height: "60px" }} alt="Person" src="" />
+      <Box sx={{ display: "flex", alignItems: "left" }}>
         <Header title={name} variant="h1" />
         <ul style={{ listStyleType: "none", padding: 0 }}>
           {data.map((e, index) => {
             return <li key={index}>{e}</li>;
           })}
         </ul>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };

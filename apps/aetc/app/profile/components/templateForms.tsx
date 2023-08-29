@@ -1,5 +1,4 @@
 "use client";
-import { title } from "process";
 import React from "react";
 import { Header, MainButton } from "shared-ui/src";
 import { defaultTheme } from "shared-ui/src";
@@ -27,7 +26,7 @@ export default function TemplateForms() {
                 throw new Error("Function not implemented.");
               }}
               sx={{
-                background: defaultTheme.secondary,
+                backgroundColor: defaultTheme.buttonColor,
                 width: "100%",
                 marginBottom: "0.5ch",
                 color: defaultTheme.buttonTextColor,
