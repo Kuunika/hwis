@@ -1,4 +1,5 @@
 import { Button, SxProps } from "@mui/material";
+import { Button, SxProps } from "@mui/material";
 import { buttonStyles } from "./button.style";
 import { FC } from "react";
 

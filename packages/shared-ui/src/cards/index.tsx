@@ -4,8 +4,11 @@ import { cardStyles } from "./card.styles";
 
 type Prop = {
   children: ReactNode;
-  elevation?: number;
   sx?: SxProps;
+  elevation?: number;
+  border?: string;
+  background?: string;
+
 };
 export const MainCard: FC<Prop> = ({ children, elevation = 0, sx }) => {
   return (
@@ -17,3 +20,6 @@ export const MainCard: FC<Prop> = ({ children, elevation = 0, sx }) => {
     </Card>
   );
 };
+
+
+
