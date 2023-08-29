@@ -1,7 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { MainButton } from "shared-ui/src";
-import { defaultTheme } from "shared-ui/src";
+import { MainButton, defaultTheme } from "shared-ui/src";
 
 export default function PatientNav() {
   let titles = [

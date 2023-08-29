@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
-import { Header, MainButton } from "shared-ui/src";
-import { defaultTheme } from "shared-ui/src";
+import { Header, MainButton, defaultTheme } from "shared-ui/src";
 
 export default function TemplateForms() {
   let titles = [
