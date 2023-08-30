@@ -3,14 +3,12 @@ import React from 'react'
 import { FormikInit, MainButton, RadioGroupInput } from 'shared-ui/src';
 import * as Yup from "yup"
 import CustomStyling from './customStyling';
-import { useRouter } from "next/router";
 
 type Prop ={
     onSubmit: ()=> void;
 }
 
 const PersistentPain = ({onSubmit}: Prop) => {
-   const router = useRouter();
     const schema = Yup.object().shape({
       concern: Yup.string()
         .required()

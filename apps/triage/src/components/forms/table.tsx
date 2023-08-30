@@ -1,6 +1,6 @@
-import { Input } from '@mui/material';
+import { TextField } from '@mui/material';
 import React,{useState} from 'react'
-import { BaseTable } from 'shared-ui/src'
+import { BaseTable, TextInputField } from 'shared-ui/src'
 
 const TriageTable = () => {
   const columns = [
@@ -14,7 +14,7 @@ const TriageTable = () => {
     { field: "waitingTime", headerName: "Waiting Time", width: 200 },
   ];
 
-  const initialRows = [
+  const rows = [
     {
       id: 1,
       firstName: "John",
@@ -28,7 +28,7 @@ const TriageTable = () => {
     {
       id: 2,
       firstName: "Mary",
-      lastName: "Doe",
+      lastName: "Smith",
       age: 20,
       sex: "Female",
       triageCategory: "YELLOW",
@@ -36,9 +36,9 @@ const TriageTable = () => {
       waitingTime: "10:15",
     },
     {
-      id: 3,
+      id: 3, 
       firstName: "John",
-      lastName: "Doe",
+      lastName: "Ryan",
       age: 20,
       sex: "Male",
       triageCategory: "GREEN",
@@ -47,8 +47,23 @@ const TriageTable = () => {
     },
   ];
 
+    const [searchQuery, setSearchQuery] = useState("");
+    const filteredRows = rows.filter((row) => {
+    const values = Object.values(row).join(" ").toLowerCase();
+    return values.includes(searchQuery.toLowerCase());
+  });
+
   return (
-      <BaseTable columns={columns} rows={initialRows} />
+    <>
+      <TextField
+        label="Search Patient"
+        value={searchQuery}
+        onChange={(event:any) => setSearchQuery(event.target.value)}
+        variant="outlined"
+        style={{ marginBottom: "16px",width:"300px" }}
+      />
+      <BaseTable columns={columns} rows={filteredRows} />
+    </>
   );
 }
 
