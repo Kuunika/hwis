@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import React,{useState} from 'react'
 import { BaseTable, TextInputField } from 'shared-ui/src'
 
@@ -54,7 +54,12 @@ const TriageTable = () => {
   });
 
   return (
-    <>
+      <Box
+        sx={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
       <h1>Patients Awaiting Assessment</h1>
       <TextField
         label="Search Patient"
@@ -64,7 +69,7 @@ const TriageTable = () => {
         style={{ marginBottom: "16px", width: "300px" }}
       />
       <BaseTable columns={columns} rows={filteredRows} />
-    </>
+    </Box>
   );
 }
 
