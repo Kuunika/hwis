@@ -11,23 +11,22 @@ export default function Profile() {
   return (
     <Grid container spacing={4}>
       <Grid item xs={2} md={4} lg={3}>
-        <MainCard elevation={3}>
+        <MainCard elevation={3} sx={{ border:1, marginBottom: 2, padding: 2 }}>
           <PreviousVisits />
         </MainCard>
-        <MainCard elevation={3}>
+        <MainCard elevation={3} sx={{ border:1, marginBottom: 2, padding: 2 }}>
           <TemplateForms />
         </MainCard>
       </Grid>
-      <Grid item xs={3} md={7} lg={9}>
-        <MainCard sx={{ justifyContent: "right" }}>
+      <Grid item xs={3} md={8} lg={9}>
+        <MainCard elevation={3} sx={{ display: "flex", alignItems: "flex-end", border: 1, marginBottom: 1}}>
           <AdminNav username="John Doe" />
         </MainCard>
-        <MainCard sx={{ border: "none" }}>
+        <MainCard elevation={3} sx={{ border:"none", marginBottom: 2 }}>
           <PatientDetails name="James Doe" />
         </MainCard>
-
         {<PatientNav />}
-        <MainCard marginTop="5dp">
+        <MainCard elevation={3} sx={{ border:1 }}>
           <Typography>Clinal Notes</Typography>
         </MainCard>
       </Grid>
