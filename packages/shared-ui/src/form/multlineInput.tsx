@@ -1,18 +1,18 @@
 import { SxProps, TextField } from "@mui/material";
 import { useFormikField } from "./hooks";
 
- type Prop = {
-   id: string;
-   name: string;
-   label: string;
-   maxRows: number;
-   sx?: SxProps;
-   width?: string
- };
- 
-const MultlineInput = ({id,name,label,maxRows,sx,width}:Prop) => {
-    const { value, handleChange, hasError, errorMessage, handleBlur } =
-      useFormikField(name);
+type Prop = {
+  id: string;
+  name: string;
+  label: string;
+  maxRows: number;
+  sx?: SxProps;
+  width?: string;
+};
+
+const MultlineInput = ({ id, name, label, maxRows, sx, width }: Prop) => {
+  const { value, handleChange, hasError, errorMessage, handleBlur } =
+    useFormikField(name);
   return (
     <TextField
       sx={{
@@ -24,7 +24,7 @@ const MultlineInput = ({id,name,label,maxRows,sx,width}:Prop) => {
       id={id}
       name={name}
       label={label}
-      multiline 
+      multiline
       variant="outlined"
       maxRows={maxRows}
       onBlur={handleBlur}
@@ -34,6 +34,6 @@ const MultlineInput = ({id,name,label,maxRows,sx,width}:Prop) => {
       helperText={errorMessage}
     />
   );
-}
+};
 
-export default MultlineInput
+export default MultlineInput;

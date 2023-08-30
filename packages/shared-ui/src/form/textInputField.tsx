@@ -7,11 +7,11 @@ type Prop = {
   id: string;
   name: string;
   label: string;
-  width?: string;
+  width?: any;
   sx?: SxProps;
   type?: "password" | "text";
   placeholder?: string;
-  rows?: number
+  rows?: number;
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -22,7 +22,7 @@ export const TextInputField: FC<Prop> = ({
   sx,
   type,
   placeholder = "",
-  rows
+  rows,
 }) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
