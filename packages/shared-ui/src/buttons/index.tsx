@@ -22,7 +22,7 @@ export const MainButton: FC<Props> = ({
   return (
     <Button
       type={type}
-      sx={(theme: any) => ({ ...variantStyles, ...sx })}
+      sx={{ ...variantStyles, ...sx } as SxProps}
       onClick={onClick}
     >
       {title}

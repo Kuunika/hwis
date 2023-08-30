@@ -34,7 +34,12 @@ export const CircleWithLabel: FC<CircleLabelProp> = ({
   return (
     <Box sx={stepperStyles.circleWithLabel}>
       <Circle label={circleLabel} active={active} />
-      <Typography variant="h6" fontWeight={active ? "700" : "200"}>
+
+      <Typography
+        sx={{ display: { sm: active ? "block" : "none", md: "block" } }}
+        variant="h6"
+        fontWeight={active ? "700" : "200"}
+      >
         {label}
       </Typography>
     </Box>
