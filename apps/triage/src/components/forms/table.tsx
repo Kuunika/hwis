@@ -55,12 +55,13 @@ const TriageTable = () => {
 
   return (
     <>
+      <h1>Patients Awaiting Assessment</h1>
       <TextField
         label="Search Patient"
         value={searchQuery}
-        onChange={(event:any) => setSearchQuery(event.target.value)}
+        onChange={(event: any) => setSearchQuery(event.target.value)}
         variant="outlined"
-        style={{ marginBottom: "16px",width:"300px" }}
+        style={{ marginBottom: "16px", width: "300px" }}
       />
       <BaseTable columns={columns} rows={filteredRows} />
     </>
