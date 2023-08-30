@@ -24,6 +24,7 @@ export const FormikInit: FC<Prop> = ({
   validationSchema,
   initialValues,
   submitButton = true,
+  submitButtonText = "submit",
 }) => {
   return (
     <Formik
@@ -34,7 +35,12 @@ export const FormikInit: FC<Prop> = ({
       <Form>
         {children}
         {submitButton && (
-          <MainButton variant="primary" title="submit" onClick={() => {}} />
+          <MainButton
+            variant="primary"
+            type="submit"
+            title={submitButtonText}
+            onClick={() => {}}
+          />
         )}
       </Form>
     </Formik>

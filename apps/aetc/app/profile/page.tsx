@@ -19,10 +19,10 @@ export default function Profile() {
         </MainCard>
       </Grid>
       <Grid item xs={3} md={7} lg={9}>
-        <MainCard alignment="right">
+        <MainCard sx={{ justifyContent: "right" }}>
           <AdminNav username="John Doe" />
         </MainCard>
-        <MainCard border="none">
+        <MainCard sx={{ border: "none" }}>
           <PatientDetails name="James Doe" />
         </MainCard>
 

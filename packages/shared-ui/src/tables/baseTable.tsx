@@ -69,9 +69,6 @@ const Table: React.FC<IProp> = ({
   rowWidth = 50,
   style,
 }) => {
-  //   if (loading) {
-  //     return <DefaultLoading />;
-  //   }
   return (
     <div style={{ height, width, ...style }}>
       <StyledDataGrid

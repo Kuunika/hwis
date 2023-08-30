@@ -3,17 +3,28 @@ import { buttonStyles } from "./button.style";
 import { FC } from "react";
 
 type Props = {
-  variant: "primary" | "secondary";
+  variant?: "primary" | "secondary";
   title: string;
   onClick: () => void;
-  sx: SxProps;
+  type?: "submit" | "button" | "reset";
+  sx?: SxProps;
 };
 
-export const MainButton: FC<Props> = ({ variant, title, onClick, sx }) => {
+export const MainButton: FC<Props> = ({
+  variant = "primary",
+  title,
+  onClick,
+  type,
+  sx,
+}) => {
   const variantStyles = buttonStyles[variant];
 
   return (
-    <Button sx={{ ...variantStyles, ...sx }} onClick={onClick}>
+    <Button
+      type={type}
+      sx={{ ...variantStyles, ...sx } as SxProps}
+      onClick={onClick}
+    >
       {title}
     </Button>
   );
