@@ -2,7 +2,18 @@ import { Box, TextField } from '@mui/material';
 import React,{useState} from 'react'
 import { BaseTable, TextInputField } from 'shared-ui/src'
 
-const TriageTable = () => {
+interface Patients {
+  id: string;
+  firstName: string;
+  lastName: string;
+  age: string;
+  sex: string;
+  triageCategory: string;
+  serviceArea: string;
+  waitingTime: string;
+}
+
+const TriageTable = ({id,firstName,lastName,age,sex,triageCategory,serviceArea,waitingTime}:Patients) => {
   const columns = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "firstName", headerName: "First Name", width: 200 },
