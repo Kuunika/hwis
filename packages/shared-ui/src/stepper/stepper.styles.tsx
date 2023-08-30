@@ -10,11 +10,11 @@ const Styles: { [key: string]: SxProps } = {
     width: "30px",
     borderRadius: "15px",
     backgroundColor: defaultTheme.secondary,
-    color: defaultTheme.secondaryFontColor,
+    color: defaultTheme.white,
     mx: "5px",
   },
   active: {
-    backgroundColor: defaultTheme.primaryDark,
+    backgroundColor: defaultTheme.primary,
   },
   circleWithLabel: {
     display: "flex",

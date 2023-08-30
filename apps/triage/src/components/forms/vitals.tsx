@@ -1,11 +1,11 @@
-import { Box, useTheme } from '@mui/material';
-import React from 'react'
-import { FormikInit, RadioGroupInput, TextInputField} from "shared-ui/src";
-import MultlineInput from 'shared-ui/src/form/multlineInput';
-import * as Yup from 'yup'
-import CustomStyling from './customStyling';
+import { Box, useTheme } from "@mui/material";
+import React from "react";
+import { FormikInit, RadioGroupInput, TextInputField } from "shared-ui/src";
+import MultlineInput from "shared-ui/src/form/multlineInput";
+import * as Yup from "yup";
+import CustomStyling from "./forms.styles";
 
-const schema = Yup.object().shape({ 
+const schema = Yup.object().shape({
   complaint: Yup.string().required().label("Complaint"),
   respiratoryRate: Yup.string().required().label("Respiratory rate"),
   oxygenSaturation: Yup.string().required().label("Oxygen Saturation"),
@@ -27,40 +27,37 @@ const initialValues = {
   heartRate: "",
   bloodPressure: "",
   eyeOpeningResponse: "",
-  verbalResponse:"",
+  verbalResponse: "",
   motorResponse: "",
   calculatedGCS: "",
   avpu: "",
   glusoce: "",
 };
 
-type Prop={
-    onSubmit: ()=>void;
-}
+type Prop = {
+  onSubmit: () => void;
+};
 
-
-const Vitals = ({onSubmit}:Prop) => {
-  const theme = useTheme();
+const Vitals = ({ onSubmit }: Prop) => {
+  const textInputWidth = { md: "100%", sm: "100%" };
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={onSubmit}
+      submitButtonText="next"
     >
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
+          display: "grid",
+          gridTemplateColumns: { md: "1fr 1fr", xs: "1fr", sm: "1fr 1fr" },
+          gridGap: "2ch",
         }}
       >
         <Box
           sx={{
-            marginTop: "1rem",
             display: "flex",
             flexDirection: "column",
-            width: "40%",
-            mr: "1ch",
           }}
         >
           <MultlineInput
@@ -70,32 +67,54 @@ const Vitals = ({onSubmit}:Prop) => {
             maxRows={4}
           />
           <TextInputField
+            width={textInputWidth}
             name="respiratoryRate"
             id="respiratoryRate"
             label="Respiratory rate"
             rows={4}
           />
           <TextInputField
+            width={textInputWidth}
             name="oxygenSaturation"
             id="oxygenSaturation"
             label="Oxygen Saturation"
           />
           <TextInputField
+            width={textInputWidth}
             name="temperature"
             id="temperature"
             label="Temperature"
           />
-          <TextInputField name="heartRate" id="heartRate" label="Heart Rate" />
           <TextInputField
+            width={textInputWidth}
+            name="heartRate"
+            id="heartRate"
+            label="Heart Rate"
+          />
+          <TextInputField
+            width={textInputWidth}
             name="bloodPressure"
             id="bloodPressure"
             label="Blood Pressure"
           />
+          <MultlineInput
+            name="calculatedGCS"
+            id="calculatedGCS"
+            label="Calculated GCS"
+            maxRows={4}
+          />
+          <TextInputField
+            width={textInputWidth}
+            name="glusoce"
+            id="glusoce"
+            label="Glusoce"
+            rows={4}
+          />
         </Box>
         <Box
           sx={{
-            marginTop: "1rem",
-            ...CustomStyling,
+            display: "grid",
+            gridTemplateColumns: { md: "1fr 1fr", sm: "1fr" },
           }}
         >
           <RadioGroupInput
@@ -108,27 +127,18 @@ const Vitals = ({onSubmit}:Prop) => {
               { label: "No response", value: "noResponse" },
             ]}
           />
-          <Box sx={{ marginTop: "1rem" }}>
-            <RadioGroupInput
-              name="verbalResponse"
-              label="Verbal Response"
-              options={[
-                { label: "Oriented", value: "oriented" },
-                { label: "Confused", value: "confused" },
-                { label: "Words", value: "words" },
-                { label: "Sounds", value: "sounds" },
-                { label: "None", value: "none" },
-              ]}
-            />
-          </Box>
-        </Box>
+          <RadioGroupInput
+            name="verbalResponse"
+            label="Verbal Response"
+            options={[
+              { label: "Oriented", value: "oriented" },
+              { label: "Confused", value: "confused" },
+              { label: "Words", value: "words" },
+              { label: "Sounds", value: "sounds" },
+              { label: "None", value: "none" },
+            ]}
+          />
 
-        <Box
-          sx={{
-            marginTop: "1rem",
-            ...CustomStyling,
-          }}
-        >
           <RadioGroupInput
             name="motorResponse"
             label="Motor Response"
@@ -141,44 +151,19 @@ const Vitals = ({onSubmit}:Prop) => {
               { label: "None", value: "none" },
             ]}
           />
-          <Box sx={{ marginTop: "1rem" }}>
-            <RadioGroupInput
-              name="avpu"
-              label="AVPU"
-              options={[
-                { label: "Awake", value: "awake" },
-                { label: "Verbal", value: "verbal" },
-                { label: "Pain", value: "pain" },
-                { label: "Unresponsive", value: "unresponsive" },
-              ]}
-            />
-          </Box>
-        </Box>
-
-        <Box
-          sx={{
-            marginTop: "1rem",
-            display: "flex",
-            flexDirection: "column",
-            width: "40%",
-            mr: "1ch",
-          }}
-        >
-          <MultlineInput
-            name="calculatedGCS"
-            id="calculatedGCS"
-            label="Calculated GCS"
-            maxRows={4}
-          />
-          <TextInputField
-            name="glusoce"
-            id="glusoce"
-            label="Glusoce"
-            rows={4}
+          <RadioGroupInput
+            name="avpu"
+            label="AVPU"
+            options={[
+              { label: "Awake", value: "awake" },
+              { label: "Verbal", value: "verbal" },
+              { label: "Pain", value: "pain" },
+              { label: "Unresponsive", value: "unresponsive" },
+            ]}
           />
         </Box>
       </Box>
     </FormikInit>
   );
-}
-export default Vitals
+};
+export default Vitals;
