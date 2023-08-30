@@ -12,7 +12,7 @@ export default function PatientNav() {
   ];
 
   return (
-    <Box sx={{ marginBottom: 2 }}>
+    <Box sx={{ marginBottom: 2}}>
       {titles.map((title, index) => {
         return (
           <MainButton

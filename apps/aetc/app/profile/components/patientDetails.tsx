@@ -17,6 +17,7 @@ export const PatientDetails: React.FC<PatientDetailsProps> = ({ name }) => {
       sx={{
         display: "flex",
         alignItems: "column",
+        padding: 2
       }}
     >
       <Avatar sx={{ width: "80px", height: "80px" }} alt="Person" src="" />

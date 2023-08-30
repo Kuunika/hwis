@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Avatar, Button, Menu, MenuItem, Box, Typography } from "@mui/material";
+import { FaAngleDown } from "react-icons/fa6";
+
+
 
 interface AdminNavProps {
   username: string;
@@ -21,15 +24,15 @@ export const AdminNav: React.FC<AdminNavProps> = ({ username }) => {
       sx={{
         display: "flex",
         alignItems: "center",
-        flexDirection: { md: "column", sm: "column", lg: "row" },
       }}
     >
       <Avatar alt="Patient Profile" />
-      <Typography sx={{ marginLeft: 2 }}>{username}/</Typography>
+      <Typography sx={{ marginLeft: 2 }}>{username}</Typography>
       <Button
         aria-controls="admin-menu"
         aria-haspopup="true"
         onClick={handleClick}
+        endIcon={<FaAngleDown/>}
       />
       <Menu
         id="admin-menu"
