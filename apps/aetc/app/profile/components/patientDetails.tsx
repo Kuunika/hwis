@@ -1,5 +1,5 @@
 import React from "react";
-import { Header } from "shared-ui/src";
+import { Header, defaultTheme } from "shared-ui/src";
 import { Avatar, Box } from "@mui/material";
 
 interface PatientDetailsProps {
@@ -13,9 +13,14 @@ const data = [
 ];
 export const PatientDetails: React.FC<PatientDetailsProps> = ({ name }) => {
   return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Avatar sx={{ width: "60px", height: "60px" }} alt="Person" src="" />
-      <Box sx={{ display: "flex", alignItems: "left" }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "column",
+      }}
+    >
+      <Avatar sx={{ width: "80px", height: "80px" }} alt="Person" src="" />
+      <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 5 }}>
         <Header title={name} variant="h1" />
         <ul style={{ listStyleType: "none", padding: 0 }}>
           {data.map((e, index) => {

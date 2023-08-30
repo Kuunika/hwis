@@ -1,7 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { MainButton } from "shared-ui/src";
-import { defaultTheme } from "shared-ui/src";
+import { MainButton, defaultTheme } from "shared-ui/src";
 
 export default function PatientNav() {
   let titles = [
@@ -13,7 +12,7 @@ export default function PatientNav() {
   ];
 
   return (
-    <Box>
+    <Box sx={{ marginBottom: 2 }}>
       {titles.map((title, index) => {
         return (
           <MainButton
@@ -23,6 +22,7 @@ export default function PatientNav() {
             onClick={() => {}}
             sx={{
               backgroundColor: defaultTheme.buttonColor,
+              marginLeft: 0.5,
               color: defaultTheme.buttonTextColor,
               "&:hover": {
                 backgroundColor: defaultTheme.buttonHoverColor,

@@ -24,8 +24,8 @@ export const AdminNav: React.FC<AdminNavProps> = ({ username }) => {
         flexDirection: { md: "column", sm: "column", lg: "row" },
       }}
     >
-      <Avatar alt="Patient Profile" src="" />
-      <Typography sx={{ marginLeft: 8 }}>{username}/</Typography>
+      <Avatar alt="Patient Profile" />
+      <Typography sx={{ marginLeft: 2 }}>{username}/</Typography>
       <Button
         aria-controls="admin-menu"
         aria-haspopup="true"
