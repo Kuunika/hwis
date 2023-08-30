@@ -8,18 +8,11 @@ type Prop = {
   elevation?: number;
   border?: string;
   background?: string;
-
 };
 export const MainCard: FC<Prop> = ({ children, elevation = 0, sx }) => {
   return (
-    <Card
-      sx={(theme: any) => ({ ...cardStyles.main, ...sx })}
-      elevation={elevation}
-    >
+    <Card sx={{ ...cardStyles.main, ...sx } as SxProps} elevation={elevation}>
       {children}
     </Card>
   );
 };
-
-
-

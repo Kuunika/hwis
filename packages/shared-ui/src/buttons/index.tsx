@@ -1,5 +1,4 @@
 import { Button, SxProps } from "@mui/material";
-import { Button, SxProps } from "@mui/material";
 import { buttonStyles } from "./button.style";
 import { FC } from "react";
 
@@ -23,7 +22,7 @@ export const MainButton: FC<Props> = ({
   return (
     <Button
       type={type}
-      sx={(theme: any) => ({ ...variantStyles, ...sx })}
+      sx={{ ...variantStyles, ...sx } as SxProps}
       onClick={onClick}
     >
       {title}

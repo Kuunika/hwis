@@ -8,7 +8,7 @@ export default function Page() {
   const [data, setData] = useState("");
 
   const handleScan = (result: any, error: any) => {
-    console.log(result);
+    setData(result);
   };
 
   return (
