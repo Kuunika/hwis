@@ -11,10 +11,21 @@ type Prop = {
   name: string;
   options: Array<{ label: string; value: string | number }>;
   stylings?: boolean;
+  getValue?: (value: any) => void;
 };
 
-export const RadioGroupInput: FC<Prop> = ({ label, name, options }) => {
+export const RadioGroupInput: FC<Prop> = ({
+  label,
+  name,
+  options,
+  getValue,
+}) => {
   const { value, handleChange, hasError } = useFormikField(name);
+
+  useEffect(() => {
+    if (getValue) getValue(value);
+  }, [value]);
+
   return (
     <FormControl error={hasError}>
       <FormLabel id={name}>{label}</FormLabel>

@@ -37,6 +37,7 @@ export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
       onSubmit={onSubmit}
       initialValues={initialValues}
       validationSchema={schema}
+      submitButtonText="next"
     >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <FormFieldContainer direction="row">

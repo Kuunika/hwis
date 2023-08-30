@@ -11,6 +11,7 @@ type Prop = {
   sx?: SxProps;
   type?: "password" | "text";
   placeholder?: string;
+  rows?: number
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -21,6 +22,7 @@ export const TextInputField: FC<Prop> = ({
   sx,
   type,
   placeholder = "",
+  rows
 }) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
@@ -44,6 +46,7 @@ export const TextInputField: FC<Prop> = ({
       variant="outlined"
       helperText={errorMessage}
       placeholder={placeholder}
+      rows={rows}
     />
   );
 };

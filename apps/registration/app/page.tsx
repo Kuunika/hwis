@@ -1,33 +1,15 @@
 "use client";
-import { useState } from "react";
-import { DemographicsForm, SocialHistory } from "@/components/forms";
-import { MainCard, StepperContainer } from "shared-ui/src";
+import { WelcomeMenu } from "@/components/welcome";
+import { Box } from "@mui/material";
 
 export default function Home() {
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const steps = [
-    { id: 1, label: "Demographics" },
-    { id: 2, label: "Social History" },
-    { id: 3, label: "Referral" },
-    { id: 4, label: "Insurance" },
-  ];
-
   return (
     <>
-      <MainCard
-        elevation={2}
-        sx={{
-          mx: "2ch",
-          my: "2ch",
-          alignItems: "center",
-        }}
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >
-        <h1>New Patient Registration</h1>
-        <StepperContainer steps={steps} active={activeStep}>
-          <DemographicsForm onSubmit={() => setActiveStep(1)} />
-          <SocialHistory onSubmit={() => setActiveStep(0)} />
-        </StepperContainer>
-      </MainCard>
+        <WelcomeMenu />
+      </Box>
     </>
   );
 }
