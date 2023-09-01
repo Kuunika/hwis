@@ -17,7 +17,7 @@ type Prop = {
   width?: string;
   selectItems: Array<ISelectItem>;
   sx?: SxProps<Theme>;
-  onValueChange?: (value: any) => void;
+  getValue?: (value: any) => void;
 };
 export const SelectInputField: FC<Prop> = ({
   name,
@@ -25,12 +25,12 @@ export const SelectInputField: FC<Prop> = ({
   label,
   selectItems,
   sx,
-  onValueChange,
+  getValue,
 }) => {
   const { value, handleChange, hasError } = useFormikField(name);
 
   useEffect(() => {
-    onValueChange && onValueChange(value);
+    getValue && getValue(value);
   }, [value]);
 
   return (
