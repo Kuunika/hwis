@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Header, MainButton, defaultTheme } from "shared-ui/src";
+import { Header, MainCard, MainButton, defaultTheme } from "shared-ui/src";
 
 export default function TemplateForms() {
   let titles = [
@@ -13,8 +13,8 @@ export default function TemplateForms() {
     "Referal",
   ];
   return (
-    <>
-      <Header variant="h1" title="Templates/Forms" />
+    <MainCard elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
+      <Header variant="h2" title="Templates/Forms" sx={{mb: 1}}/>
       {titles.map((title) => {
         return (
           <>
@@ -25,6 +25,7 @@ export default function TemplateForms() {
                 throw new Error("Function not implemented.");
               }}
               sx={{
+            
                 backgroundColor: defaultTheme.buttonColor,
                 width: "100%",
                 marginBottom: "0.5ch",
@@ -38,6 +39,6 @@ export default function TemplateForms() {
           </>
         );
       })}
-    </>
+    </MainCard>
   );
 }
