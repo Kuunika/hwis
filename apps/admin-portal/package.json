@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "shared-ui": "*"
+    "shared-ui": "*",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.3"
   }
 }
