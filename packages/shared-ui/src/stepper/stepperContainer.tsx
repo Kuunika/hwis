@@ -21,7 +21,6 @@ export const StepperContainer: FC<StepperContainerProp> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        backgroundColor: "red",
       }}
     >
       <Stepper steps={steps} active={active} />

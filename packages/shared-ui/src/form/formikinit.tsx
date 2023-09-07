@@ -16,6 +16,7 @@ type Prop = {
   submitButtonText?: string;
   sx?: SxProps;
   loading?: boolean;
+  submitVariant?: "primary" | "secondary" | "text";
 };
 
 export const FormikInit: FC<Prop> = ({
@@ -25,6 +26,7 @@ export const FormikInit: FC<Prop> = ({
   initialValues,
   submitButton = true,
   submitButtonText = "submit",
+  submitVariant = "primary",
 }) => {
   return (
     <Formik
@@ -36,7 +38,8 @@ export const FormikInit: FC<Prop> = ({
         {children}
         {submitButton && (
           <MainButton
-            variant="primary"
+            sx={{ mt: 3 }}
+            variant={submitVariant}
             type="submit"
             title={submitButtonText}
             onClick={() => {}}

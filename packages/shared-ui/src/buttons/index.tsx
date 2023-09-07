@@ -3,7 +3,7 @@ import { buttonStyles } from "./button.style";
 import { FC } from "react";
 
 type Props = {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "text";
   title: string;
   onClick: () => void;
   type?: "submit" | "button" | "reset";

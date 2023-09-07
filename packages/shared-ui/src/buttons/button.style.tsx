@@ -16,4 +16,9 @@ export const buttonStyles: { [key: string]: SxProps } = {
       backgroundColor: defaultTheme.secondary,
     },
   },
+
+  text: {
+    backgroundColor: "transparent",
+    color: defaultTheme.primaryDark,
+  },
 };

@@ -1,8 +1,12 @@
 import { FC } from "react";
-import TextField from "@mui/material/TextField";
+import { TextField, Checkbox } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
+import { FaRegSquare, FaSquareCheck } from "react-icons/fa6";
+
+const icon = <FaRegSquare />;
+const checkedIcon = <FaSquareCheck />;
 
 type Props = {
   name: string;
@@ -23,21 +27,34 @@ export const SearchComboBox: FC<Props> = ({
   getValue,
   disabled = false,
 }) => {
-  const { hasError, errorMessage, setFieldValue, initialValues } =
+  const { hasError, errorMessage, setFieldValue, initialValues, value } =
     useFormikField(name);
 
   return (
     <Autocomplete
+      multiple
       disablePortal
       id={name}
       disabled={disabled}
+      disableCloseOnSelect
       //@ts-ignore
       defaultValue={options.find((opt) => opt.id === initialValues[name])}
       options={options}
       sx={{ width, ...sx }}
+      key={"id"}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       onChange={(event: any, newValue: any) => {
-        console.log(event);
-        setFieldValue(name, newValue.id);
+        setFieldValue(name, newValue);
         if (getValue) {
           getValue(newValue.id);
         }

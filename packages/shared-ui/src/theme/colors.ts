@@ -6,7 +6,7 @@ export const defaultTheme = {
   primaryFontColor: "#fff",
   secondary: "#888888",
   secondaryVariant: "#787878",
-  secondaryFontColor: "#787878",
+  secondaryFontColor: "#fff",
   buttonColor: "#EDF0F7",
   buttonTextColor: "#2D3648",
   buttonHoverColor: "#2D3648",
