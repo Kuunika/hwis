@@ -15,7 +15,15 @@ export const StepperContainer: FC<StepperContainerProp> = ({
 }) => {
   const childrenArray = Children.toArray(children);
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundColor: "red",
+      }}
+    >
       <Stepper steps={steps} active={active} />
       <Box sx={{ mx: "1ch", mt: "2ch" }}>{childrenArray[active]}</Box>
     </Box>
