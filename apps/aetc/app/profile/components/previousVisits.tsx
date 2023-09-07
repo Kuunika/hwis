@@ -1,23 +1,25 @@
 "use client";
 import React from "react";
-import { Header } from "shared-ui/src";
+import { Header, MainCard, MainList } from "shared-ui/src";
 
 export default function PreviousVisits({}: PreviousVisitsProps) {
+
   const visits = [
-    "1st January 2023",
-    "5th January 2023",
-    "20th January 2023",
-    "1st February 2023",
+    {id:"1",label:"1st January 2023"},
+    {id:"2",label:"5th January 2023"},
+    {id:"3",label:"20th January 2023"},
+
   ];
 
+  const handleClick = (id:number)=>{
+    console.log({id})
+  }
+
   return (
-    <>
-      <Header variant="h1" title="Previous Visits" />
-      <ul style={{ listStyleType: "circle" }}>
-        {visits.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-    </>
+    <MainCard elevation={1} sx={{ marginBottom: 2, padding: 2}}>
+    <Header variant="h2" title="Previous Visits"/>
+      <MainList onClick={handleClick} listItems={visits} sx={{"&:hover": { fontWeight: "600" }, my: "1ch"}} />
+    </MainCard>
+   
   );
 }
