@@ -1,6 +1,6 @@
 import React from "react";
-import { Box } from "@mui/material";
-import { MainButton, defaultTheme } from "shared-ui/src";
+import { Box, Typography} from "@mui/material";
+import { MainCard, MainButton, defaultTheme } from "shared-ui/src";
 
 export default function PatientNav() {
   let titles = [
@@ -12,7 +12,8 @@ export default function PatientNav() {
   ];
 
   return (
-    <Box sx={{ marginBottom: 2}}>
+    <MainCard elevation={1}>
+       <Box sx={{ marginBottom: 2}}>
       {titles.map((title, index) => {
         return (
           <MainButton
@@ -32,6 +33,8 @@ export default function PatientNav() {
           />
         );
       })}
+    <Typography sx={{marginLeft: 1}}>Clinal Notes</Typography>
     </Box>
+  </MainCard>
   );
 }
