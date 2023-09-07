@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Avatar, Button, Menu, MenuItem, Box, Typography } from "@mui/material";
+import {  Avatar, Button, Menu, MenuItem, Box, Typography } from "@mui/material";
 import { FaAngleDown } from "react-icons/fa6";
+import { Header, MainCard } from "shared-ui/src";
+
 
 
 
@@ -20,12 +22,16 @@ export const AdminNav: React.FC<AdminNavProps> = ({ username }) => {
   };
 
   return (
-    <Box
+    <MainCard elevation={1} sx={{ display: "flex", marginBottom: 1}}>
+       <Box
       sx={{
         display: "flex",
         alignItems: "center",
+        justifyContent: "space-between"
       }}
     >
+      <Header variant="h2" title={"Adult Emergency Truama Center"}/>
+      <Box display={"flex"} alignItems={"center"}>
       <Avatar alt="Patient Profile" />
       <Typography sx={{ marginLeft: 2 }}>{username}</Typography>
       <Button
@@ -41,11 +47,13 @@ export const AdminNav: React.FC<AdminNavProps> = ({ username }) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {/* Sample Menu Items, you can modify them as needed */}
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>Settings</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem>
       </Menu>
+      </Box>
     </Box>
+  </MainCard>
+   
   );
 };
