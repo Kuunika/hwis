@@ -12,6 +12,7 @@ type Prop = {
   type?: "password" | "text";
   placeholder?: string;
   rows?: number;
+  size?: "small" | "medium";
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -22,6 +23,7 @@ export const TextInputField: FC<Prop> = ({
   sx,
   type,
   placeholder = "",
+  size = "medium",
   rows,
 }) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
@@ -32,6 +34,7 @@ export const TextInputField: FC<Prop> = ({
       sx={{
         width,
         my: "1ch",
+        mr: "1ch",
         "& fieldset": { borderRadius: "10px" },
         ...sx,
       }}
@@ -44,6 +47,7 @@ export const TextInputField: FC<Prop> = ({
       onChange={handleChange}
       error={hasError}
       variant="outlined"
+      size={size}
       helperText={errorMessage}
       placeholder={placeholder}
       rows={rows}

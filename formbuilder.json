@@ -1,0 +1,53 @@
+{
+  "id": "",
+  "name": "",
+  "departmentId": "",
+  "fragments": [
+    {
+      "id": "",
+      "formId": "",
+      "fragmentName": "",
+      "order": "",
+      "formDataElements": [
+        {
+          "id": "",
+          "formFragmentId": "",
+          "dataElementId": "",
+          "type": "",
+          "validations": "{ isRequired:'true'}",
+          "order": "0",
+          "rules": [
+            {
+              "id": "",
+              "formDataElementId": "",
+              "operator": "=| > | <",
+              "value": "",
+              "routeTo": ""
+            },
+            {
+              "id": "",
+              "formDataElementId": "",
+              "operator": "=| > | <",
+              "value": "",
+              "routeTo": ""
+            }
+          ]
+        },
+        {
+          "id": "",
+          "formFragmentId": "",
+          "dataElementId": "",
+          "type": "",
+          "validations": "{ isRequired:'true'}",
+          "order": "0"
+        }
+      ]
+    },
+    {
+      "id": "",
+      "formId": "",
+      "fragmentName": "",
+      "order": ""
+    }
+  ]
+}

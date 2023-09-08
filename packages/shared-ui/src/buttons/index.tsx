@@ -5,7 +5,7 @@ import { FC } from "react";
 type Props = {
   variant?: "primary" | "secondary" | "text";
   title: string;
-  onClick: () => void;
+  onClick: (params?: any) => void;
   type?: "submit" | "button" | "reset";
   sx?: SxProps;
 };

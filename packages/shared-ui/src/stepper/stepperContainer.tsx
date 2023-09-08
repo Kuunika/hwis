@@ -24,7 +24,17 @@ export const StepperContainer: FC<StepperContainerProp> = ({
       }}
     >
       <Stepper steps={steps} active={active} />
-      <Box sx={{ mx: "1ch", mt: "2ch" }}>{childrenArray[active]}</Box>
+      <Box
+        sx={{
+          mx: "1ch",
+          mt: "2ch",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        {childrenArray[active]}
+      </Box>
     </Box>
   );
 };

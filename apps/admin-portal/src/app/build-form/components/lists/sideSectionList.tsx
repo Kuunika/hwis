@@ -1,17 +1,17 @@
-import { FC } from "react";
+import { SectionContext, SectionContextType } from "@/app/contexts";
+import { FC, useContext } from "react";
 import { MainTypography, WrapperBox, defaultTheme } from "shared-ui/src";
-import { Section } from ".";
 
-type Prop = {
-  sections: Section[];
-  onClick: (id: string) => void;
-};
-export const SideSectionList: FC<Prop> = ({ sections, onClick }) => {
+export const SideSectionList: FC = () => {
+  const { sections, setActiveSection } = useContext(
+    SectionContext
+  ) as SectionContextType;
   return (
     <WrapperBox sx={{ mt: 1 }}>
       {sections.map((section) => {
         return (
           <WrapperBox
+            onClick={() => setActiveSection(section.id)}
             sx={{
               mt: "6px",
               display: "flex",
@@ -19,7 +19,7 @@ export const SideSectionList: FC<Prop> = ({ sections, onClick }) => {
               justifyContent: "space-between",
               py: 1,
               px: 1,
-              //   backgroundColor: "#F4F4F4",
+              backgroundColor: section.active ? "#F4F4F4" : "",
               borderRadius: "5px",
               cursor: "pointer",
               "&:hover": {
@@ -29,8 +29,14 @@ export const SideSectionList: FC<Prop> = ({ sections, onClick }) => {
             key={section.id}
           >
             <WrapperBox>
-              <MainTypography>{section.fragmentName}</MainTypography>
-              <MainTypography variant="subtitle2" fontStyle={"italic"}>
+              <MainTypography fontWeight={section.active ? "800" : ""}>
+                {section.fragmentName}
+              </MainTypography>
+              <MainTypography
+                fontWeight={section.active ? "600" : ""}
+                variant="subtitle2"
+                fontStyle={"italic"}
+              >
                 {section.dataElements.length} Data Element(s)
               </MainTypography>
             </WrapperBox>

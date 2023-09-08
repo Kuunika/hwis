@@ -18,6 +18,7 @@ type Prop = {
   selectItems: Array<ISelectItem>;
   sx?: SxProps<Theme>;
   getValue?: (value: any) => void;
+  size?: "small" | "medium";
 };
 export const SelectInputField: FC<Prop> = ({
   name,
@@ -26,6 +27,7 @@ export const SelectInputField: FC<Prop> = ({
   selectItems,
   sx,
   getValue,
+  size = "medium",
 }) => {
   const { value, handleChange, hasError } = useFormikField(name);
 
@@ -34,10 +36,11 @@ export const SelectInputField: FC<Prop> = ({
   }, [value]);
 
   return (
-    <Box sx={{ minWidth: 120, my: "1ch", ...sx }}>
+    <Box sx={{ minWidth: 120, my: "1ch", mr: "1ch", ...sx }}>
       <FormControl fullWidth>
         <InputLabel id={id}>{label}</InputLabel>
         <Select
+          size={size}
           name={name}
           labelId={id}
           id={id}

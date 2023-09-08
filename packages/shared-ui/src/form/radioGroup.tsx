@@ -27,6 +27,32 @@ export const RadioGroupInput: FC<Prop> = ({
   }, [value]);
 
   return (
+    <BaseRadioInput
+      label={label}
+      handleChange={handleChange}
+      options={options}
+      hasError={hasError}
+      value={value}
+      name={name}
+    />
+  );
+};
+
+type BaseProp = {
+  value: string | boolean;
+  handleChange: (values: any) => void;
+  hasError: boolean;
+};
+
+export const BaseRadioInput: FC<BaseProp & Prop> = ({
+  handleChange,
+  hasError,
+  label,
+  name,
+  options,
+  value,
+}) => {
+  return (
     <FormControl error={hasError}>
       <FormLabel id={name}>{label}</FormLabel>
       <RadioGroup value={value} onChange={handleChange} name={name}>

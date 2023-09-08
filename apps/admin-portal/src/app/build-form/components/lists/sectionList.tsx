@@ -1,11 +1,7 @@
+import { Section } from "@/app/contexts/sections";
 import { FC } from "react";
 import { FaCircleXmark } from "react-icons/fa6";
 import { MainTypography, WrapperBox, defaultTheme } from "shared-ui/src";
-export type Section = {
-  id: string;
-  fragmentName: string;
-  dataElements: Array<{ id: string; label: string }>;
-};
 
 type Prop = {
   sections: Section[];

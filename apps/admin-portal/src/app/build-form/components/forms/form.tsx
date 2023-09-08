@@ -20,6 +20,7 @@ export const Form: FC<Prop> = ({ onSubmit, initialValues = initValues }) => {
         onSubmit={onSubmit}
         initialValues={initialValues}
         validationSchema={schema}
+        submitButtonText="next"
       >
         <TextInputField name="name" id="name" label="Form Name" />
       </FormikInit>
