@@ -59,7 +59,7 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
 
   return (
     <>
-      <MainButton onClick={handleClick} title="Add Rule" variant="secondary" />
+      <MainButton onClick={handleClick} title="Add Rule" variant="text" />
       <Popover
         id={id}
         open={open}

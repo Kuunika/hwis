@@ -87,58 +87,64 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
   const { addRule } = useContext(SectionContext) as SectionContextType;
 
   return (
-    <MainPaper elevation={3} sx={{ my: "1ch", p: "2ch" }}>
-      <MainTypography variant="h6">{formDataElement.label}</MainTypography>
-      <br />
+    <MainPaper
+      elevation={3}
+      sx={{
+        display: "flex",
+        my: "1ch",
+        p: "2ch",
+        justifyContent: "space-between",
+      }}
+    >
       <WrapperBox>
-        <MainTypography fontStyle={"italic"}>
-          Form Input: {formDataElement.type}
-        </MainTypography>
-        <MainTypography fontStyle={"italic"}>
-          Data Type: {formDataElement.dataType}
-        </MainTypography>
+        <MainTypography variant="h6">{formDataElement.label}</MainTypography>
+        <br />
+        <WrapperBox>
+          <MainTypography fontStyle={"italic"}>
+            Form Input: {formDataElement.type}
+          </MainTypography>
+          <MainTypography fontStyle={"italic"}>
+            Data Type: {formDataElement.dataType}
+          </MainTypography>
+        </WrapperBox>
       </WrapperBox>
-      <br />
-      <WrapperBox display="flex" justifyContent={"space-between"}>
-        <WrapperBox display={"flex"} flexDirection={"column"}>
-          <BaseRadioInput
-            label="Is this field Required?"
-            value={isRequired}
-            name="required"
-            hasError={false}
-            handleChange={(value: any) => setIsRequired(value.target.value)}
-            options={[
-              { label: "Yes", value: "1" },
-              { label: "No", value: "0" },
-            ]}
-          />
-          <BaseRadioInput
-            label="Is visible on load?"
-            value={isVisibleOnload}
-            name="visibleOnload"
-            hasError={false}
-            handleChange={(value: any) =>
-              setIsVisibleOnload(value.target.value)
-            }
-            options={[
-              { label: "Yes", value: "1" },
-              { label: "No", value: "0" },
-            ]}
-          />
-        </WrapperBox>
-        <WrapperBox
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"flex-end"}
-        >
-          <AddRuleForm
-            onSubmit={(values: any, { resetForm }) => {
-              addRule(formDataElement.id, values);
-              resetForm();
-            }}
-          />
-          <RuleList rules={formDataElement.rules} />
-        </WrapperBox>
+
+      <WrapperBox display={"flex"} flexDirection={"column"}>
+        <BaseRadioInput
+          label="Is this field Required?"
+          value={isRequired}
+          name="required"
+          hasError={false}
+          handleChange={(value: any) => setIsRequired(value.target.value)}
+          options={[
+            { label: "Yes", value: "1" },
+            { label: "No", value: "0" },
+          ]}
+        />
+        <BaseRadioInput
+          label="Is visible on load?"
+          value={isVisibleOnload}
+          name="visibleOnload"
+          hasError={false}
+          handleChange={(value: any) => setIsVisibleOnload(value.target.value)}
+          options={[
+            { label: "Yes", value: "1" },
+            { label: "No", value: "0" },
+          ]}
+        />
+      </WrapperBox>
+      <WrapperBox
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"flex-end"}
+      >
+        <AddRuleForm
+          onSubmit={(values: any, { resetForm }) => {
+            addRule(formDataElement.id, values);
+            resetForm();
+          }}
+        />
+        <RuleList rules={formDataElement.rules} />
       </WrapperBox>
     </MainPaper>
   );
