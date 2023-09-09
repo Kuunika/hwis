@@ -91,10 +91,10 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
             <TextInputField name="value" id="value" label="Value" />
 
             <SelectInputField
-              id="dataType"
-              label="DataType"
+              id="dataElement"
+              label="Data Element"
               selectItems={dataTypes}
-              name="dataType"
+              name="routeTo"
               sx={{ m: 0 }}
             />
             <MainButton

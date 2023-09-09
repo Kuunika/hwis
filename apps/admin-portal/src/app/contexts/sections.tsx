@@ -26,7 +26,7 @@ export type Section = {
   fragmentName: string;
   dataElements: Array<{ id: string; label: string }>;
   active?: boolean;
-  formDataElements?: FormDataElement[];
+  formDataElements: FormDataElement[];
 };
 
 export type SectionContextType = {
@@ -36,6 +36,7 @@ export type SectionContextType = {
   setActiveSection: (id: string) => void;
   section: Section;
   addElement: (value: FormDataElement) => void;
+  addRule: (formElementId: string, rule: Rule) => void;
 };
 
 export const SectionContext = createContext<SectionContextType | null>(null);
@@ -75,11 +76,29 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const addElement = (dataElement: FormDataElement) => {
     const copiedSections = [...sections];
     const index = copiedSections.findIndex((s) => s.id === section.id);
-    copiedSections[index].formDataElements?.push(dataElement);
+    copiedSections[index].formDataElements?.push({
+      ...dataElement,
+      rules: [],
+      id: uuidv4(),
+    });
     setSections(copiedSections);
     setSection(copiedSections[index]);
+  };
 
-    console.log({ sections });
+  const addRule = (formElementId: string, rule: Rule) => {
+    const copiedSections = [...sections];
+    const index = copiedSections.findIndex((s) => s.id === section.id);
+    const formDataIndex = copiedSections[index].formDataElements?.findIndex(
+      (fd) => fd.id == formElementId
+    );
+    copiedSections[index].formDataElements[formDataIndex].rules.push({
+      ...rule,
+      id: uuidv4(),
+    });
+
+    setSections(copiedSections);
+
+    setSection(copiedSections[index]);
   };
 
   return (
@@ -91,6 +110,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setActiveSection,
         section,
         addElement,
+        addRule,
       }}
     >
       {children}

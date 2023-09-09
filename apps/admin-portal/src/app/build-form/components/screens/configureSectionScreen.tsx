@@ -1,5 +1,5 @@
 import { FC, useContext, useState } from "react";
-import { AddFormDataElement, AddRuleForm, SideSectionList } from "..";
+import { AddFormDataElement, AddRuleForm, RuleList, SideSectionList } from "..";
 import {
   BaseRadioInput,
   MainGrid,
@@ -12,6 +12,23 @@ import {
   SectionContext,
   SectionContextType,
 } from "@/app/contexts";
+
+const rules = [
+  {
+    id: "1",
+    formElementId: "1",
+    operator: "=",
+    value: "80",
+    routeTo: "Last Name",
+  },
+  {
+    id: "2",
+    formElementId: "1",
+    operator: "=",
+    value: "80",
+    routeTo: "Gender",
+  },
+];
 
 export const ConfigureSectionScreen: FC = () => {
   return (
@@ -67,6 +84,7 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
 }) => {
   const [isRequired, setIsRequired] = useState("1");
   const [isVisibleOnload, setIsVisibleOnload] = useState("1");
+  const { addRule } = useContext(SectionContext) as SectionContextType;
 
   return (
     <MainPaper elevation={3} sx={{ my: "1ch", p: "2ch" }}>
@@ -108,8 +126,18 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
             ]}
           />
         </WrapperBox>
-        <WrapperBox>
-          <AddRuleForm onSubmit={() => {}} />
+        <WrapperBox
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"flex-end"}
+        >
+          <AddRuleForm
+            onSubmit={(values: any, { resetForm }) => {
+              addRule(formDataElement.id, values);
+              resetForm();
+            }}
+          />
+          <RuleList rules={formDataElement.rules} />
         </WrapperBox>
       </WrapperBox>
     </MainPaper>
