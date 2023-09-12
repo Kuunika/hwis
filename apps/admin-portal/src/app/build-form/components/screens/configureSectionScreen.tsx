@@ -50,6 +50,7 @@ const MainSection = () => {
   const { section, addElement } = useContext(
     SectionContext
   ) as SectionContextType;
+
   return (
     <WrapperBox
       sx={{
@@ -82,9 +83,15 @@ const FormDataElements = () => {
 const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
   formDataElement,
 }) => {
-  const [isRequired, setIsRequired] = useState("1");
-  const [isVisibleOnload, setIsVisibleOnload] = useState("1");
-  const { addRule } = useContext(SectionContext) as SectionContextType;
+  const {
+    addRule,
+    updateValidation,
+    getValidations,
+    updateIsVisible,
+    section,
+  } = useContext(SectionContext) as SectionContextType;
+
+  console.log({ section });
 
   return (
     <MainPaper
@@ -112,10 +119,15 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
       <WrapperBox display={"flex"} flexDirection={"column"}>
         <BaseRadioInput
           label="Is this field Required?"
-          value={isRequired}
+          value={getValidations(formDataElement.id, "isRequired")}
           name="required"
           hasError={false}
-          handleChange={(value: any) => setIsRequired(value.target.value)}
+          handleChange={(value: any) =>
+            updateValidation(formDataElement.id, {
+              rule: "isRequired",
+              value: value.target.value,
+            })
+          }
           options={[
             { label: "Yes", value: "1" },
             { label: "No", value: "0" },
@@ -123,10 +135,12 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
         />
         <BaseRadioInput
           label="Is visible on load?"
-          value={isVisibleOnload}
+          value={formDataElement.isVisible}
           name="visibleOnload"
           hasError={false}
-          handleChange={(value: any) => setIsVisibleOnload(value.target.value)}
+          handleChange={(value: any) =>
+            updateIsVisible(formDataElement.id, value.target.value)
+          }
           options={[
             { label: "Yes", value: "1" },
             { label: "No", value: "0" },

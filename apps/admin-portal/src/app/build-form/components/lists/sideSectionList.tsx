@@ -1,11 +1,16 @@
 import { SectionContext, SectionContextType } from "@/app/contexts";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect } from "react";
 import { MainTypography, WrapperBox, defaultTheme } from "shared-ui/src";
 
 export const SideSectionList: FC = () => {
   const { sections, setActiveSection } = useContext(
     SectionContext
   ) as SectionContextType;
+
+  useEffect(() => {
+    setActiveSection(sections[0].id);
+  }, []);
+
   return (
     <WrapperBox sx={{ mt: 1 }}>
       {sections.map((section) => {

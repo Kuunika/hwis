@@ -10,15 +10,17 @@ export type Rule = {
   routeTo: string;
 };
 
+export type ValidationRule = { rule: string; value: string | boolean };
 export type FormDataElement = {
   id: string;
   formFragmentId: string;
   type: string;
-  validations: any;
+  validations: Array<ValidationRule>;
+  isVisible: string;
   dataType: string;
   order: string;
   label: string;
-  rules: [];
+  rules: Array<Rule>;
 };
 
 export type Section = {
@@ -37,6 +39,15 @@ export type SectionContextType = {
   section: Section;
   addElement: (value: FormDataElement) => void;
   addRule: (formElementId: string, rule: Rule) => void;
+  updateValidation: (
+    formElementId: string,
+    validationRule: ValidationRule
+  ) => void;
+  getValidations: (
+    formDataElementId: string,
+    validation: string
+  ) => string | boolean | number;
+  updateIsVisible: (formDataElementId: string, value: string) => void;
 };
 
 export const SectionContext = createContext<SectionContextType | null>(null);
@@ -80,6 +91,13 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
       ...dataElement,
       rules: [],
       id: uuidv4(),
+      validations: [
+        {
+          rule: "isRequired",
+          value: "1",
+        },
+      ],
+      isVisible: "1",
     });
     setSections(copiedSections);
     setSection(copiedSections[index]);
@@ -101,6 +119,59 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setSection(copiedSections[index]);
   };
 
+  const updateValidation = (
+    formElementId: string,
+    validationRule: ValidationRule
+  ) => {
+    const copiedSections = [...sections];
+
+    const index = copiedSections.findIndex((s) => s.id === section.id);
+    const sect = copiedSections[index];
+    const formDataIndex = sect.formDataElements?.findIndex(
+      (fd) => fd.id == formElementId
+    );
+
+    const formDataElement = sect.formDataElements[formDataIndex];
+
+    const validations = formDataElement.validations;
+
+    const vIndex = validations.findIndex((v) => v.rule === validationRule.rule);
+
+    validations[vIndex] = validationRule;
+    formDataElement.validations = validations;
+    sect.formDataElements[formDataIndex] = formDataElement;
+    copiedSections[index] = sect;
+    setSections(copiedSections);
+  };
+
+  const getValidations = (formDataElementId: string, validation: string) => {
+    const formIndex = section.formDataElements.findIndex(
+      (fd) => fd.id == formDataElementId
+    );
+
+    const validationRule = section.formDataElements[formIndex].validations.find(
+      (v) => v.rule == validation
+    );
+
+    if (!validationRule) return "";
+    return validationRule?.value;
+  };
+
+  const updateIsVisible = (formDataElementId: string, value: string) => {
+    const copiedSections = [...sections];
+
+    const index = copiedSections.findIndex((s) => s.id === section.id);
+    const sect = copiedSections[index];
+    const formDataIndex = sect.formDataElements?.findIndex(
+      (fd) => fd.id == formDataElementId
+    );
+
+    sect.formDataElements[formDataIndex].isVisible = value;
+
+    copiedSections[index] = sect;
+    setSections(copiedSections);
+  };
+
   return (
     <SectionContext.Provider
       value={{
@@ -111,6 +182,9 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         section,
         addElement,
         addRule,
+        updateValidation,
+        getValidations,
+        updateIsVisible,
       }}
     >
       {children}
