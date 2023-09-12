@@ -1,5 +1,11 @@
 import { FC, useContext, useState } from "react";
-import { AddFormDataElement, AddRuleForm, RuleList, SideSectionList } from "..";
+import {
+  AddFormDataElement,
+  AddOptionSet,
+  AddRuleForm,
+  RuleList,
+  SideSectionList,
+} from "..";
 import {
   BaseRadioInput,
   MainGrid,
@@ -91,8 +97,6 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
     section,
   } = useContext(SectionContext) as SectionContextType;
 
-  console.log({ section });
-
   return (
     <MainPaper
       elevation={3}
@@ -158,6 +162,7 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
             resetForm();
           }}
         />
+        <AddOptionSet onSubmit={() => {}} />
         <RuleList rules={formDataElement.rules} />
       </WrapperBox>
     </MainPaper>

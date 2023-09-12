@@ -176,15 +176,15 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <SectionContext.Provider
       value={{
         sections,
-        addSection,
-        deleteSection,
-        setActiveSection,
         section,
+        getValidations,
+        setActiveSection,
+        addSection,
         addElement,
         addRule,
         updateValidation,
-        getValidations,
         updateIsVisible,
+        deleteSection,
       }}
     >
       {children}

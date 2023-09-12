@@ -29,8 +29,8 @@ const initialValues = {
 const types = [
   { name: "Text Field Input", value: "text" },
   { name: "Radio Input", value: "radio" },
-  { name: "Select Input", value: "radio" },
-  { name: "Checkbox Input", value: "radio" },
+  { name: "Select Input", value: "select" },
+  { name: "Checkbox Input", value: "checkbox" },
 ];
 
 const dataTypes = [

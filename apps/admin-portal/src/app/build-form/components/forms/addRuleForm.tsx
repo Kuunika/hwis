@@ -10,8 +10,7 @@ import {
 import * as Yup from "yup";
 
 import * as React from "react";
-import Popover from "@mui/material/Popover";
-import Button from "@mui/material/Button";
+import { BasePopover } from "../common/popover";
 
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
@@ -50,30 +49,10 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
-
   return (
     <>
       <MainButton onClick={handleClick} title="Add Rule" variant="text" />
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-      >
+      <BasePopover anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
         <FormikInit
           onSubmit={onSubmit}
           initialValues={initialValues}
@@ -106,7 +85,7 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
             />
           </WrapperBox>
         </FormikInit>
-      </Popover>
+      </BasePopover>
     </>
   );
 };
