@@ -3,7 +3,7 @@ import {
   FormikInit,
   MainButton,
   SearchComboBox,
-  TextInputField,
+  SelectInputField,
   WrapperBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
@@ -14,11 +14,11 @@ type Prop = {
 };
 
 const schema = Yup.object().shape({
-  option: Yup.string().required().label("Form Name"),
+  optionSet: Yup.string().required().label("Form Name"),
 });
 
 const initValues = {
-  name: "",
+  optionSet: "",
 };
 export const AddOptionSet: FC<Prop> = ({
   onSubmit,
@@ -35,20 +35,30 @@ export const AddOptionSet: FC<Prop> = ({
     <>
       <MainButton onClick={handleClick} title="Add Options" variant="text" />
       <BasePopover anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
-        <WrapperBox width={"50ch"}>
+        <WrapperBox p="1ch">
           <FormikInit
             onSubmit={onSubmit}
             initialValues={initialValues}
             validationSchema={schema}
-            submitButtonText="next"
+            submitButton={false}
           >
-            <SearchComboBox
-              name="dataElements"
-              options={[
-                { label: "districts", id: "districts" },
-                { label: "gender", id: "gender" },
+            <SelectInputField
+              name="optionSet"
+              id="optionSet"
+              width="100%"
+              sx={{ m: 0 }}
+              selectItems={[
+                { name: "districts", value: "districts" },
+                { name: "gender", value: "gender" },
               ]}
-              label="Data Elements"
+              label="Option Set"
+            />
+            <MainButton
+              sx={{ width: "30ch", py: "2ch", my: "2ch" }}
+              type="submit"
+              variant="primary"
+              onClick={() => {}}
+              title="Add"
             />
           </FormikInit>
         </WrapperBox>

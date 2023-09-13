@@ -21,6 +21,7 @@ export type FormDataElement = {
   order: string;
   label: string;
   rules: Array<Rule>;
+  optionSetId?: string;
 };
 
 export type Section = {
@@ -47,7 +48,11 @@ export type SectionContextType = {
     formDataElementId: string,
     validation: string
   ) => string | boolean | number;
-  updateIsVisible: (formDataElementId: string, value: string) => void;
+  updateProp: (
+    formDataElementId: string,
+    value: string,
+    prop: "isVisible" | "optionSetId"
+  ) => void;
 };
 
 export const SectionContext = createContext<SectionContextType | null>(null);
@@ -98,6 +103,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         },
       ],
       isVisible: "1",
+      optionSetId: "",
     });
     setSections(copiedSections);
     setSection(copiedSections[index]);
@@ -157,7 +163,11 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return validationRule?.value;
   };
 
-  const updateIsVisible = (formDataElementId: string, value: string) => {
+  const updateProp = (
+    formDataElementId: string,
+    value: string,
+    prop: "isVisible" | "optionSetId"
+  ) => {
     const copiedSections = [...sections];
 
     const index = copiedSections.findIndex((s) => s.id === section.id);
@@ -166,7 +176,9 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
       (fd) => fd.id == formDataElementId
     );
 
-    sect.formDataElements[formDataIndex].isVisible = value;
+    sect.formDataElements[formDataIndex][prop] = value;
+
+    console.log(sect.formDataElements[formDataIndex]);
 
     copiedSections[index] = sect;
     setSections(copiedSections);
@@ -183,7 +195,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         addElement,
         addRule,
         updateValidation,
-        updateIsVisible,
+        updateProp,
         deleteSection,
       }}
     >

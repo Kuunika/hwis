@@ -18,6 +18,7 @@ import {
   SectionContext,
   SectionContextType,
 } from "@/app/contexts";
+import { TextPill } from "../common";
 
 const rules = [
   {
@@ -89,13 +90,8 @@ const FormDataElements = () => {
 const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
   formDataElement,
 }) => {
-  const {
-    addRule,
-    updateValidation,
-    getValidations,
-    updateIsVisible,
-    section,
-  } = useContext(SectionContext) as SectionContextType;
+  const { addRule, updateValidation, getValidations, updateProp, section } =
+    useContext(SectionContext) as SectionContextType;
 
   return (
     <MainPaper
@@ -143,7 +139,7 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
           name="visibleOnload"
           hasError={false}
           handleChange={(value: any) =>
-            updateIsVisible(formDataElement.id, value.target.value)
+            updateProp(formDataElement.id, value.target.value, "isVisible")
           }
           options={[
             { label: "Yes", value: "1" },
@@ -154,15 +150,46 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
       <WrapperBox
         display={"flex"}
         flexDirection={"column"}
-        alignItems={"flex-end"}
+        // alignItems={"flex-start"}
+        // justifyContent={"flex-end"}
       >
-        <AddRuleForm
-          onSubmit={(values: any, { resetForm }) => {
-            addRule(formDataElement.id, values);
-            resetForm();
-          }}
-        />
-        <AddOptionSet onSubmit={() => {}} />
+        <WrapperBox
+          display={"flex"}
+          alignItems={"flex-start"}
+          justifyContent={"flex-end"}
+        >
+          <AddRuleForm
+            onSubmit={(values: any, { resetForm }) => {
+              addRule(formDataElement.id, values);
+              resetForm();
+            }}
+          />
+
+          {formDataElement.type != "text" && (
+            <AddOptionSet
+              onSubmit={(value: any) =>
+                updateProp(formDataElement.id, value.optionSet, "optionSetId")
+              }
+            />
+          )}
+        </WrapperBox>
+        {formDataElement.optionSetId && (
+          <>
+            <MainTypography fontWeight={"800"} fontStyle={"italic"}>
+              Option Set
+            </MainTypography>
+            <TextPill>
+              <MainTypography>{formDataElement.optionSetId}</MainTypography>
+            </TextPill>
+            <br />
+          </>
+        )}
+
+        {formDataElement.rules.length > 0 && (
+          <MainTypography fontWeight={"800"} fontStyle={"italic"}>
+            Rules
+          </MainTypography>
+        )}
         <RuleList rules={formDataElement.rules} />
       </WrapperBox>
     </MainPaper>
