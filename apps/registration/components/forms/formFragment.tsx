@@ -1,49 +1,32 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import {
   FormikInit,
   TextInputField,
   SelectInputField,
   RadioGroupInput,
 } from "shared-ui/src";
-import FORM_DATA from "../../test";
 import { buildYup } from "schema-to-yup";
-
-type Validation = {
-  rule: string;
-  value: string;
-};
-
-type FormDataElement = {
-  label: string;
-  type: string;
-  dataElement: string;
-  rules: Array<Validation>;
-  id: string;
-  validations: Array<any>;
-  isVisible: string;
-  optionSetId?: string;
-};
-
-type Frag = {
-  fragmentName: string;
-  formDataElements: FormDataElement[];
-};
+import { FormBuilderContext, FormBuilderContextType, Frag } from "@/context";
 
 type Prop = {
   frag: Frag;
   onSubmit: (values: any) => void;
 };
 export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
+  const { fragment, applyRules } = useContext(
+    FormBuilderContext
+  ) as FormBuilderContextType;
+
   const formDataElements = frag.formDataElements;
 
   // generate initial values
-  const initialValues = formDataElements.reduce((obj: any, fd) => {
+  const initialValues = formDataElements?.reduce((obj: any, fd) => {
     obj[fd.dataElement] = "";
     return obj;
   }, {});
 
   // generate yup schema
-  const properties = formDataElements.reduce((result: any, dl) => {
+  const properties = formDataElements?.reduce((result: any, dl) => {
     result[dl.dataElement] = {
       description: "description",
       type: "string",
@@ -53,7 +36,7 @@ export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
   }, {});
 
   // get required fields
-  const required = formDataElements.map((fd) => {
+  const required = formDataElements?.map((fd) => {
     const isRequired = fd.validations.find(
       (rule) => rule.rule == "isRequired" && rule.value == "1"
     );
@@ -79,7 +62,7 @@ export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
       validationSchema={validationSchema}
     >
       {formDataElements.map((fd) => {
-        if (fd.type === "text") {
+        if (fd.type === "text" && fd.isVisible == "1") {
           return (
             <TextInputField
               key={fd.id}
@@ -89,28 +72,30 @@ export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
             />
           );
         }
-        if (fd.type === "select") {
+        if (fd.type === "select" && fd.isVisible == "1") {
           return (
             <SelectInputField
               key={fd.id}
               name={fd.dataElement}
               id={fd.dataElement}
-              selectItems={[{ name: "test", value: "test" }]}
+              getValue={(value: any) => {
+                applyRules(fd.id, value);
+              }}
+              selectItems={
+                fd.options?.map((o) => ({ name: o.label, value: o.value })) ||
+                []
+              }
               label={fd.label}
             />
           );
         }
-
-        if (fd.type === "radio") {
+        if (fd.type === "radio" && fd.isVisible == "1") {
           return (
             <RadioGroupInput
               key={fd.id}
               name={fd.dataElement}
               label={fd.label}
-              options={[
-                { label: "Test", value: "test" },
-                { label: "Test2", value: "test2" },
-              ]}
+              options={fd.options || []}
             />
           );
         }

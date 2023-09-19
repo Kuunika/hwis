@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "immer": "^10.0.2",
     "shared-ui": "*"
   }
 }

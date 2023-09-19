@@ -1,10 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import Form_DATA from "../../test";
 import { MainCard, MainTypography, StepperContainer } from "shared-ui/src";
 import { FormFragment } from ".";
+import { FormBuilderContext, FormBuilderContextType } from "@/context";
 
 export const FormStepper = () => {
+  const { setFragment, fragment } = useContext(
+    FormBuilderContext
+  ) as FormBuilderContextType;
+
+  useEffect(() => {
+    setFragment(Form_DATA[0].fragments[3]);
+  }, []);
+
   const [activeStep, setActiveStep] = useState<number>(0);
   const fragments = Form_DATA[0].fragments;
   const steps = Form_DATA[0].fragments.map((fd, index) => ({
@@ -14,6 +23,9 @@ export const FormStepper = () => {
 
   const handleSubmit = (values: any) => {};
 
+  if (Object.keys(fragment).length == 0) {
+    return <></>;
+  }
   return (
     <>
       <MainCard
@@ -29,9 +41,10 @@ export const FormStepper = () => {
           {fragments.map((fg, index) => (
             <FormFragment
               key={fg.id}
-              frag={fg}
+              frag={fragment}
               onSubmit={(values: any) => {
                 handleSubmit(values);
+                setFragment(Form_DATA[0].fragments[index + 1]);
                 setActiveStep(index + 1);
               }}
             />

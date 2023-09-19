@@ -86,6 +86,20 @@ export default [
             ],
             isVisible: "1",
             optionSetId: "districts",
+            options: [
+              {
+                label: "Blantyre",
+                value: "blantyre",
+              },
+              {
+                label: "Lilongwe",
+                value: "lilongwe",
+              },
+              {
+                label: "Mzimba",
+                value: "mzimba",
+              },
+            ],
           },
           {
             label: "Current Traditional Authority",
@@ -182,6 +196,20 @@ export default [
             ],
             isVisible: "1",
             optionSetId: "districts",
+            options: [
+              {
+                label: "Blantyre",
+                value: "blantyre",
+              },
+              {
+                label: "Lilongwe",
+                value: "lilongwe",
+              },
+              {
+                label: "Mzimba",
+                value: "mzimba",
+              },
+            ],
           },
         ],
       },
@@ -227,6 +255,11 @@ export default [
             ],
             isVisible: "1",
             optionSetId: "maritalStatus",
+            options: [
+              { label: "Married", value: "married" },
+              { label: "Single", value: "single" },
+              { label: "Divorced", value: "divorced" },
+            ],
           },
           {
             label: "Occupation Status",
@@ -243,6 +276,11 @@ export default [
             ],
             isVisible: "1",
             optionSetId: "occupationStatus",
+            options: [
+              { label: "Employed", value: "employed" },
+              { label: "Self Employment", value: "selfemployment" },
+              { label: "Student", value: "student" },
+            ],
           },
           {
             label: "Method Of Transportation",
@@ -275,6 +313,10 @@ export default [
             ],
             isVisible: "1",
             optionSetId: "",
+            options: [
+              { label: "Christianity", value: "christianity" },
+              { label: "Islam", value: "islam" },
+            ],
           },
         ],
       },
@@ -304,29 +346,15 @@ export default [
             ],
             isVisible: "1",
             optionSetId: "healthFacilities",
+            options: [
+              { label: "Bwaila hospital", value: "1" },
+              { label: "KCH", value: "2" },
+            ],
           },
         ],
       },
       {
         fragmentName: "Financing",
-        dataElements: [
-          {
-            id: "insuranceProvider",
-            label: "Insurance Provider",
-          },
-          {
-            id: "patientInsuranceId",
-            label: "Patient Insurance Id",
-          },
-          {
-            id: "modeOfPayment",
-            label: "Mode Of Payment",
-          },
-          {
-            id: "insuranceSchema",
-            label: "Insurance Schema ",
-          },
-        ],
         id: "356757ac-87ec-46c5-a324-dae3d8c58fb4",
         active: true,
         formDataElements: [
@@ -335,7 +363,26 @@ export default [
             type: "select",
             dataElement: "modeOfPayment",
             dataType: "text",
-            rules: [],
+            rules: [
+              {
+                id: "1",
+                routeTo: "insuranceProvider",
+                value: "insurance",
+                operator: "=",
+              },
+              {
+                id: "2",
+                routeTo: "insuranceSchema",
+                value: "insurance",
+                operator: "=",
+              },
+              {
+                id: "3",
+                routeTo: "patientInsuranceId",
+                value: "insurance",
+                operator: "=",
+              },
+            ],
             id: "0294bccb-f56d-4a64-8132-c65c463e7f00",
             validations: [
               {
@@ -345,6 +392,10 @@ export default [
             ],
             isVisible: "1",
             optionSetId: "modeOfPayment",
+            options: [
+              { label: "Cash", value: "cash" },
+              { label: "Insurance", value: "insurance" },
+            ],
           },
           {
             label: "Insurance Provider",
@@ -359,8 +410,12 @@ export default [
                 value: "1",
               },
             ],
-            isVisible: "1",
+            isVisible: "0",
             optionSetId: "",
+            options: [
+              { label: "MASM", value: "masm" },
+              { label: "UNIMED", value: "unimed" },
+            ],
           },
           {
             label: "Insurance Schema",
@@ -375,8 +430,9 @@ export default [
                 value: "1",
               },
             ],
-            isVisible: "1",
+            isVisible: "0",
             optionSetId: "insuranceSchema",
+            options: [{ label: "EXE", value: "exe" }],
           },
           {
             label: "Patient Id",
@@ -391,7 +447,7 @@ export default [
                 value: "1",
               },
             ],
-            isVisible: "1",
+            isVisible: "0",
             optionSetId: "",
           },
         ],
