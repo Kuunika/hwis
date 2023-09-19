@@ -33,6 +33,7 @@ export type Section = {
 };
 
 export type SectionContextType = {
+  formName: string;
   sections: Section[];
   addSection: (section: Section) => void;
   deleteSection: (id: string) => void;
@@ -53,11 +54,13 @@ export type SectionContextType = {
     value: string,
     prop: "isVisible" | "optionSetId"
   ) => void;
+  addFormName: (formName: string) => void;
 };
 
 export const SectionContext = createContext<SectionContextType | null>(null);
 
 export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [formName, setFormName] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
   const [section, setSection] = useState<Section>({} as Section);
 
@@ -73,6 +76,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ]);
   };
 
+  const addFormName = (formName: string) => setFormName(formName);
   const deleteSection = (id: string) => {
     setSections((sects) => sects.filter((s) => s.id !== id));
   };
@@ -197,6 +201,8 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         updateValidation,
         updateProp,
         deleteSection,
+        formName,
+        addFormName,
       }}
     >
       {children}

@@ -3,14 +3,14 @@ import { useState, useContext } from "react";
 import { StepperContainer, WrapperBox } from "shared-ui/src";
 import { Form, SectionForm, SectionList } from "./components";
 import { ConfigureSectionScreen } from "./components/screens";
-import { Section, SectionContext, SectionContextType } from "../contexts";
+import { SectionContext, SectionContextType } from "../contexts";
 
 export default function Page() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { sections, addSection, deleteSection } = useContext(
+  const { sections, addSection, deleteSection, addFormName } = useContext(
     SectionContext
   ) as SectionContextType;
-  // const [sections, setSections] = useState<Section[]>([]);
+
   const steps = [
     { id: 1, label: "Create Form" },
     { id: 2, label: "Create Sections" },
@@ -18,6 +18,7 @@ export default function Page() {
   ];
 
   const handleFormCreate = (values: any) => {
+    addFormName(values.name);
     setActiveStep(1);
   };
   const handleSectionSubmit = (values: any, { resetForm }: any) => {

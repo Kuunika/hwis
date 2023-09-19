@@ -2,7 +2,6 @@ import React, { FC } from "react";
 import {
   FormikInit,
   MainButton,
-  SearchComboBox,
   SelectInputField,
   WrapperBox,
 } from "shared-ui/src";
@@ -20,6 +19,20 @@ const schema = Yup.object().shape({
 const initValues = {
   optionSet: "",
 };
+
+const options = [
+  { name: "Districts", value: "districts" },
+  { name: "Gender", value: "gender" },
+  { name: "Insurance Provider", value: "insuranceProvider" },
+  { name: "Insurance Schema", value: "insuranceSchema" },
+  { name: "Marital Status", value: "maritalStatus" },
+  { name: "Occupation Status", value: "occupationStatus" },
+  { name: "Method Of Transportation", value: "methodOfTransportation" },
+  { name: "Religion", value: "religion" },
+  { name: "Highest Education", value: "highestEducation" },
+  { name: "Health Facilities", value: "healthFacilities" },
+  { name: "Mode Of Payment", value: "modeOfPayment" },
+];
 export const AddOptionSet: FC<Prop> = ({
   onSubmit,
   initialValues = initValues,
@@ -47,10 +60,7 @@ export const AddOptionSet: FC<Prop> = ({
               id="optionSet"
               width="100%"
               sx={{ m: 0 }}
-              selectItems={[
-                { name: "districts", value: "districts" },
-                { name: "gender", value: "gender" },
-              ]}
+              selectItems={options}
               label="Option Set"
             />
             <MainButton

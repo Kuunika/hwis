@@ -8,6 +8,7 @@ import {
   MainButton,
 } from "shared-ui/src";
 import * as Yup from "yup";
+import { dataElements } from ".";
 type Prop = {
   onSubmit: (values: any, actions?: any) => void;
   initialValues?: any;
@@ -23,21 +24,6 @@ const initValues = {
   fragmentName: "",
   dataElements: "",
 };
-
-const dataElements = [
-  {
-    id: "1",
-    label: "First Name",
-  },
-  {
-    id: "2",
-    label: "Last Name",
-  },
-  {
-    id: "3",
-    label: "Gender",
-  },
-];
 
 export const SectionForm: FC<Prop> = ({
   onSubmit,
@@ -60,7 +46,7 @@ export const SectionForm: FC<Prop> = ({
         />
         <SearchComboBox
           name="dataElements"
-          options={dataElements}
+          options={dataElements.map((d) => ({ id: d.value, label: d.name }))}
           label="Data Elements"
         />
       </FormikInit>

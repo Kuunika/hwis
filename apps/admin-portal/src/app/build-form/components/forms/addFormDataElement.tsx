@@ -1,4 +1,5 @@
-import { FC } from "react";
+import { SectionContext, SectionContextType } from "@/app/contexts";
+import { FC, useContext } from "react";
 import {
   FormikInit,
   MainButton,
@@ -27,10 +28,10 @@ const initialValues = {
 };
 
 const types = [
-  { name: "Text Field Input", value: "text" },
-  { name: "Radio Input", value: "radio" },
-  { name: "Select Input", value: "select" },
-  { name: "Checkbox Input", value: "checkbox" },
+  { name: "Text Field", value: "text" },
+  { name: "Radio", value: "radio" },
+  { name: "Select", value: "select" },
+  { name: "Checkbox", value: "checkbox" },
 ];
 
 const dataTypes = [
@@ -39,7 +40,36 @@ const dataTypes = [
   { name: "Boolean", value: "bool" },
 ];
 
+export const dataElements = [
+  { name: "First Name", value: "firstName" },
+  { name: "Last Name", value: "lastName" },
+  { name: "Middle Name", value: "middleName" },
+  { name: "Identification Number", value: "patientIdentificationNumber" },
+  { name: "Gender", value: "gender" },
+  { name: "Current Districts", value: "currentDiStrict" },
+  { name: "Current Village", value: "currentDiStrict" },
+  { name: "Closest Land mark", value: "closestLandMark" },
+  { name: "Next Of Kin Name", value: "nextOfKinName" },
+  { name: "Next Of Kin Relationship", value: "nextOfKinName" },
+  { name: "Home District", value: "homeDistrict" },
+  { name: "Home Village", value: "homeVillage" },
+  { name: "Guardian Number", value: "guardianNumber" },
+  { name: "Guardian Phone Number", value: "guardianPhoneNumber" },
+  { name: "Current Traditional Authority", value: "currentTA" },
+  { name: "Marital Status", value: "maritalStatus" },
+  { name: "OccupationStatus", value: "occupationStatus" },
+  { name: "Method Of Transportation", value: "methodOfTransportation" },
+  { name: "Religion", value: "religion" },
+  { name: "Highest Education", value: "highestEducation" },
+  { name: "Health Facility", value: "healthFacility" },
+  { name: "Mode Of Payment", value: "modeOfPayment" },
+  { name: "Insurance Provider", value: "insuranceProvider" },
+  { name: "Patient Insurance Id", value: "patientInsuranceId" },
+  { name: "Insurance Schema ", value: "insuranceSchema" },
+];
+
 export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
+  const { section } = useContext(SectionContext) as SectionContextType;
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -55,14 +85,21 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
         <TextInputField name="label" id="label" label="Label" width={"50%"} />
         <SelectInputField
           id="type"
-          label="Type"
+          label="Form Field Input"
           selectItems={types}
           name="type"
         />
         <SelectInputField
           id="dataElement"
-          label="DataElement"
-          selectItems={dataTypes}
+          label="Data Element"
+          selectItems={
+            section.dataElements
+              ? section.dataElements.map((d) => ({
+                  name: d.label,
+                  value: d.id,
+                }))
+              : []
+          }
           name="dataElement"
         />
         <SelectInputField
@@ -75,6 +112,7 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
           sx={{ width: "30ch", py: "2ch" }}
           type="submit"
           onClick={() => {}}
+          variant="secondary"
           title="Add Element"
         />
       </WrapperBox>

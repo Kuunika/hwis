@@ -12,6 +12,7 @@ import {
   MainTypography,
   WrapperBox,
   MainPaper,
+  MainButton,
 } from "shared-ui/src";
 import {
   FormDataElement,
@@ -19,23 +20,6 @@ import {
   SectionContextType,
 } from "@/app/contexts";
 import { TextPill } from "../common";
-
-const rules = [
-  {
-    id: "1",
-    formElementId: "1",
-    operator: "=",
-    value: "80",
-    routeTo: "Last Name",
-  },
-  {
-    id: "2",
-    formElementId: "1",
-    operator: "=",
-    value: "80",
-    routeTo: "Gender",
-  },
-];
 
 export const ConfigureSectionScreen: FC = () => {
   return (
@@ -47,7 +31,9 @@ export const ConfigureSectionScreen: FC = () => {
         <MainGrid item lg={7}>
           <MainSection />
         </MainGrid>
-        <MainGrid item lg={3}></MainGrid>
+        <MainGrid item lg={3}>
+          <ListFormDataElements />
+        </MainGrid>
       </MainGrid>
     </WrapperBox>
   );
@@ -193,5 +179,36 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
         <RuleList rules={formDataElement.rules} />
       </WrapperBox>
     </MainPaper>
+  );
+};
+
+const ListFormDataElements = () => {
+  const { section, sections, formName } = useContext(
+    SectionContext
+  ) as SectionContextType;
+
+  const saveData = async (data: any) => {
+    fetch("http://localhost:3000/forms", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((d) => {
+      console.log({ d });
+    });
+  };
+  return (
+    <WrapperBox>
+      <MainButton
+        onClick={() => saveData({ name: formName, fragments: sections })}
+        title="SYNC CONFIGURATION"
+      />
+      {section.formDataElements?.map((d) => (
+        <TextPill key={d.id}>
+          <MainTypography>{d.label}</MainTypography>
+        </TextPill>
+      ))}
+    </WrapperBox>
   );
 };

@@ -18,8 +18,6 @@ const properties = testform.formFragments[0].dataElements.reduce(
   {}
 );
 
-console.log({ properties });
-
 const schema = {
   type: "object",
   properties,
