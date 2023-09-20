@@ -4,7 +4,7 @@ import { produce } from "immer";
 
 export type Rule = {
   id: string;
-  formElementId: string;
+  formElementId?: string;
   operator: string;
   value: string;
   routeTo: string;
@@ -66,10 +66,6 @@ export const FormBuilderProvider: FC<{ children: ReactNode }> = ({
       }
     });
   };
-
-  useEffect(() => {
-    console.log({ fragment });
-  }, [fragment]);
 
   const setFormDataElementVisible = (dataElement: string, value: "0" | "1") => {
     setFragment(

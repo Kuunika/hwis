@@ -4,12 +4,13 @@ import { StepperContainer, WrapperBox } from "shared-ui/src";
 import { Form, SectionForm, SectionList } from "./components";
 import { ConfigureSectionScreen } from "./components/screens";
 import { SectionContext, SectionContextType } from "../contexts";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 export default function Page() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { sections, addSection, deleteSection, addFormName } = useContext(
-    SectionContext
-  ) as SectionContextType;
+  const { sections, addSection, deleteSection, addFormName, updateSection } =
+    useContext(SectionContext) as SectionContextType;
 
   const steps = [
     { id: 1, label: "Create Form" },
@@ -32,18 +33,26 @@ export default function Page() {
   };
 
   return (
-    <WrapperBox mt={10}>
-      <StepperContainer active={activeStep} steps={steps}>
-        <Form onSubmit={handleFormCreate} />
-        <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
-          <SectionForm
-            onSubmit={handleSectionSubmit}
-            onNextSection={handleNextSection}
-          />
-          <SectionList sections={sections} onDelete={deleteSection} />
-        </WrapperBox>
-        <ConfigureSectionScreen />
-      </StepperContainer>
-    </WrapperBox>
+    <DndProvider backend={HTML5Backend}>
+      <WrapperBox mt={10}>
+        <StepperContainer active={activeStep} steps={steps}>
+          <Form onSubmit={handleFormCreate} />
+          <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+            <SectionForm
+              onSubmit={handleSectionSubmit}
+              onNextSection={handleNextSection}
+            />
+            <SectionList
+              sections={sections}
+              onDelete={deleteSection}
+              onMove={(id: string, value: number) =>
+                updateSection(id, "order", value)
+              }
+            />
+          </WrapperBox>
+          <ConfigureSectionScreen />
+        </StepperContainer>
+      </WrapperBox>
+    </DndProvider>
   );
 }

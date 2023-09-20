@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "immutability-helper": "^3.1.1",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "shared-ui": "*",
     "uuid": "^9.0.0"
   },

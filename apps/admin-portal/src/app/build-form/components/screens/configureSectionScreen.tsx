@@ -20,6 +20,7 @@ import {
   SectionContextType,
 } from "@/app/contexts";
 import { TextPill } from "../common";
+import { Container } from "../drag/container";
 
 export const ConfigureSectionScreen: FC = () => {
   return (
@@ -183,7 +184,7 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
 };
 
 const ListFormDataElements = () => {
-  const { section, sections, formName } = useContext(
+  const { section, sections, formName, orderFormDataElements } = useContext(
     SectionContext
   ) as SectionContextType;
 
@@ -195,20 +196,35 @@ const ListFormDataElements = () => {
       },
       body: JSON.stringify(data),
     }).then((d) => {
-      console.log({ d });
+      // console.log({ d });
     });
   };
+
+  const formDataElements = section.formDataElements?.map((d) => ({
+    id: d.id,
+    component: (
+      <TextPill key={d.id}>
+        <MainTypography>{d.label}</MainTypography>
+      </TextPill>
+    ),
+  }));
+
+  console.log({ section });
+
   return (
     <WrapperBox>
       <MainButton
         onClick={() => saveData({ name: formName, fragments: sections })}
         title="SYNC CONFIGURATION"
       />
-      {section.formDataElements?.map((d) => (
-        <TextPill key={d.id}>
-          <MainTypography>{d.label}</MainTypography>
-        </TextPill>
-      ))}
+      {section.id ? (
+        <Container
+          items={formDataElements}
+          onMove={(formDataElementId: string, index: number) =>
+            orderFormDataElements(section.id, formDataElementId, index)
+          }
+        />
+      ) : null}
     </WrapperBox>
   );
 };

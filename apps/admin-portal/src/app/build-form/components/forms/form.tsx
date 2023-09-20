@@ -1,6 +1,8 @@
+// "use client";
 import { FC } from "react";
 import { FormikInit, TextInputField, WrapperBox } from "shared-ui/src";
 import * as Yup from "yup";
+import { Container } from "../drag/container";
 type Prop = {
   onSubmit: (values: any) => void;
   initialValues?: any;

@@ -11,7 +11,7 @@ export const FormStepper = () => {
   ) as FormBuilderContextType;
 
   useEffect(() => {
-    setFragment(Form_DATA[0].fragments[3]);
+    setFragment(Form_DATA[0].fragments[0]);
   }, []);
 
   const [activeStep, setActiveStep] = useState<number>(0);

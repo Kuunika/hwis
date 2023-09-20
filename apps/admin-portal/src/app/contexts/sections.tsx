@@ -1,6 +1,7 @@
 "use client";
-import { createContext, FC, ReactNode, useState } from "react";
+import { createContext, FC, ReactNode, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { produce } from "immer";
 
 export type Rule = {
   id: string;
@@ -30,6 +31,7 @@ export type Section = {
   dataElements: Array<{ id: string; label: string }>;
   active?: boolean;
   formDataElements: FormDataElement[];
+  order: number | string;
 };
 
 export type SectionContextType = {
@@ -54,7 +56,18 @@ export type SectionContextType = {
     value: string,
     prop: "isVisible" | "optionSetId"
   ) => void;
+
+  updateSection: (
+    sectionId: string,
+    prop: "order",
+    value: number | string
+  ) => void;
   addFormName: (formName: string) => void;
+  orderFormDataElements: (
+    sectionId: string,
+    formDataElementId: string,
+    index: number
+  ) => void;
 };
 
 export const SectionContext = createContext<SectionContextType | null>(null);
@@ -72,8 +85,49 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         id: uuidv4(),
         active: false,
         formDataElements: [],
+        order: sections.length,
       },
     ]);
+  };
+
+  const updateSection = (
+    sectionId: string,
+    prop: "order",
+    value: number | string
+  ) => {
+    setSections(
+      produce((draft) => {
+        const index = draft.findIndex((sect) => sect.id == sectionId);
+        const newValue = draft[index];
+        const currentValue = draft[Number(value)];
+        draft[index] = currentValue;
+        draft[Number(value)] = newValue;
+      })
+    );
+  };
+
+  const orderFormDataElements = (
+    sectionId: string,
+    formDataElementId: string,
+    index: number
+  ) => {
+    setSections(
+      produce((draft) => {
+        const activeSectionIndex = draft.findIndex(
+          (sect) => sect.id == sectionId
+        );
+
+        const fdIndex = draft[activeSectionIndex].formDataElements.findIndex(
+          (fd) => fd.id == formDataElementId
+        );
+
+        const newValue = draft[activeSectionIndex].formDataElements[fdIndex];
+        const currentValue = draft[activeSectionIndex].formDataElements[index];
+
+        draft[activeSectionIndex].formDataElements[index] = newValue;
+        draft[activeSectionIndex].formDataElements[fdIndex] = currentValue;
+      })
+    );
   };
 
   const addFormName = (formName: string) => setFormName(formName);
@@ -181,9 +235,6 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     );
 
     sect.formDataElements[formDataIndex][prop] = value;
-
-    console.log(sect.formDataElements[formDataIndex]);
-
     copiedSections[index] = sect;
     setSections(copiedSections);
   };
@@ -203,6 +254,8 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         deleteSection,
         formName,
         addFormName,
+        updateSection,
+        orderFormDataElements,
       }}
     >
       {children}
