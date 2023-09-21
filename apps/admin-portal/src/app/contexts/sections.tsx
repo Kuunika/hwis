@@ -40,7 +40,6 @@ export type SectionContextType = {
   addSection: (section: Section) => void;
   deleteSection: (id: string) => void;
   setActiveSection: (id: string) => void;
-  section: Section;
   addElement: (value: FormDataElement) => void;
   addRule: (formElementId: string, rule: Rule) => void;
   updateValidation: (
@@ -60,14 +59,18 @@ export type SectionContextType = {
   updateSection: (
     sectionId: string,
     prop: "order",
-    value: number | string
+    index: number,
+    index2: number
   ) => void;
   addFormName: (formName: string) => void;
   orderFormDataElements: (
     sectionId: string,
     formDataElementId: string,
-    index: number
+    index: number,
+    index2: number
   ) => void;
+
+  getActiveSection: () => Section | undefined;
 };
 
 export const SectionContext = createContext<SectionContextType | null>(null);
@@ -75,10 +78,9 @@ export const SectionContext = createContext<SectionContextType | null>(null);
 export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [formName, setFormName] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
-  const [section, setSection] = useState<Section>({} as Section);
 
   const addSection = (values: Section) => {
-    setSections((sects: any) => [
+    setSections((sects) => [
       ...sects,
       {
         ...values,
@@ -93,129 +95,141 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const updateSection = (
     sectionId: string,
     prop: "order",
-    value: number | string
+    index: number,
+    index2: number
   ) => {
-    setSections(
-      produce((draft) => {
-        const index = draft.findIndex((sect) => sect.id == sectionId);
-        const newValue = draft[index];
-        const currentValue = draft[Number(value)];
-        draft[index] = currentValue;
-        draft[Number(value)] = newValue;
-      })
-    );
+    setSections((sects) => {
+      const draft = [...sects];
+      const sectOne = draft[index];
+      const sectTwo = draft[index2];
+      draft[index] = sectTwo;
+      draft[index2] = sectOne;
+      return draft;
+    });
   };
 
   const orderFormDataElements = (
     sectionId: string,
     formDataElementId: string,
-    index: number
+    index: number,
+    index2: number
   ) => {
-    setSections(
-      produce((draft) => {
-        const activeSectionIndex = draft.findIndex(
-          (sect) => sect.id == sectionId
-        );
+    setSections((draft) => {
+      const sects = [...draft];
 
-        const fdIndex = draft[activeSectionIndex].formDataElements.findIndex(
-          (fd) => fd.id == formDataElementId
-        );
+      const activeSection = getActiveSection();
 
-        const newValue = draft[activeSectionIndex].formDataElements[fdIndex];
-        const currentValue = draft[activeSectionIndex].formDataElements[index];
+      const activeSectionIndex = sects.findIndex(
+        (sect) => sect.id == activeSection?.id
+      );
+      const fdOne = sects[activeSectionIndex].formDataElements[index];
+      const fdTwo = sects[activeSectionIndex].formDataElements[index2];
 
-        draft[activeSectionIndex].formDataElements[index] = newValue;
-        draft[activeSectionIndex].formDataElements[fdIndex] = currentValue;
-      })
-    );
+      sects[activeSectionIndex].formDataElements[index] = fdTwo;
+      sects[activeSectionIndex].formDataElements[index2] = fdOne;
+
+      return sects;
+    });
   };
 
   const addFormName = (formName: string) => setFormName(formName);
+
   const deleteSection = (id: string) => {
     setSections((sects) => sects.filter((s) => s.id !== id));
   };
 
   const setActiveSection = (id: string) => {
-    const sects = [...sections];
-    let index = sects.findIndex((s) => s.active == true);
-    if (index >= 0) {
-      sects[index].active = false;
-    }
-    index = sects.findIndex((s) => s.id === id);
-    sects[index].active = true;
-    setSection(sects[index]);
-    setSections(sects);
+    setSections((draft) => {
+      const sects = [...draft];
+      let index = sects.findIndex((s) => s.active == true);
+      if (index >= 0) {
+        sects[index].active = false;
+      }
+      index = sects.findIndex((s) => s.id === id);
+      sects[index].active = true;
+      return sects;
+    });
   };
 
   const addElement = (dataElement: FormDataElement) => {
-    const copiedSections = [...sections];
-    const index = copiedSections.findIndex((s) => s.id === section.id);
-    copiedSections[index].formDataElements?.push({
-      ...dataElement,
-      rules: [],
-      id: uuidv4(),
-      validations: [
-        {
-          rule: "isRequired",
-          value: "1",
-        },
-      ],
-      isVisible: "1",
-      optionSetId: "",
+    setSections((draft) => {
+      const copiedSections = [...draft];
+      const section = getActiveSection();
+      const index = copiedSections.findIndex((s) => s.id === section?.id);
+      copiedSections[index].formDataElements?.push({
+        ...dataElement,
+        rules: [],
+        id: uuidv4(),
+        validations: [
+          {
+            rule: "isRequired",
+            value: "1",
+          },
+        ],
+        isVisible: "1",
+        optionSetId: "",
+      });
+      return copiedSections;
     });
-    setSections(copiedSections);
-    setSection(copiedSections[index]);
   };
 
   const addRule = (formElementId: string, rule: Rule) => {
-    const copiedSections = [...sections];
-    const index = copiedSections.findIndex((s) => s.id === section.id);
-    const formDataIndex = copiedSections[index].formDataElements?.findIndex(
-      (fd) => fd.id == formElementId
-    );
-    copiedSections[index].formDataElements[formDataIndex].rules.push({
-      ...rule,
-      id: uuidv4(),
+    setSections((draft) => {
+      const copiedSections = [...draft];
+      const section = getActiveSection();
+      const index = copiedSections.findIndex((s) => s.id === section?.id);
+      const formDataIndex = copiedSections[index].formDataElements?.findIndex(
+        (fd) => fd.id == formElementId
+      );
+      copiedSections[index].formDataElements[formDataIndex].rules.push({
+        ...rule,
+        id: uuidv4(),
+      });
+      return copiedSections;
     });
-
-    setSections(copiedSections);
-
-    setSection(copiedSections[index]);
   };
 
   const updateValidation = (
     formElementId: string,
     validationRule: ValidationRule
   ) => {
-    const copiedSections = [...sections];
+    setSections((draft) => {
+      const copiedSections = [...draft];
+      const section = getActiveSection();
+      const index = copiedSections.findIndex((s) => s.id === section?.id);
+      const sect = copiedSections[index];
+      const formDataIndex = sect.formDataElements?.findIndex(
+        (fd) => fd.id == formElementId
+      );
 
-    const index = copiedSections.findIndex((s) => s.id === section.id);
-    const sect = copiedSections[index];
-    const formDataIndex = sect.formDataElements?.findIndex(
-      (fd) => fd.id == formElementId
-    );
+      const formDataElement = sect.formDataElements[formDataIndex];
 
-    const formDataElement = sect.formDataElements[formDataIndex];
+      const validations = formDataElement.validations;
 
-    const validations = formDataElement.validations;
+      const vIndex = validations.findIndex(
+        (v) => v.rule === validationRule.rule
+      );
+      validations[vIndex] = validationRule;
+      formDataElement.validations = validations;
+      sect.formDataElements[formDataIndex] = formDataElement;
+      copiedSections[index] = sect;
 
-    const vIndex = validations.findIndex((v) => v.rule === validationRule.rule);
-
-    validations[vIndex] = validationRule;
-    formDataElement.validations = validations;
-    sect.formDataElements[formDataIndex] = formDataElement;
-    copiedSections[index] = sect;
-    setSections(copiedSections);
+      return copiedSections;
+    });
   };
 
   const getValidations = (formDataElementId: string, validation: string) => {
+    const section = getActiveSection();
+
+    if (!section) return "";
+
     const formIndex = section.formDataElements.findIndex(
       (fd) => fd.id == formDataElementId
     );
 
-    const validationRule = section.formDataElements[formIndex].validations.find(
-      (v) => v.rule == validation
-    );
+    const validationRule = section.formDataElements[
+      formIndex
+    ]?.validations?.find((v) => v.rule == validation);
 
     if (!validationRule) return "";
     return validationRule?.value;
@@ -226,24 +240,29 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     value: string,
     prop: "isVisible" | "optionSetId"
   ) => {
-    const copiedSections = [...sections];
+    setSections((draft) => {
+      const copiedSections = [...draft];
+      const section = getActiveSection();
+      const index = copiedSections.findIndex((s) => s.id == section?.id);
+      const sect = copiedSections[index];
+      const formDataIndex = sect.formDataElements?.findIndex(
+        (fd) => fd.id == formDataElementId
+      );
 
-    const index = copiedSections.findIndex((s) => s.id === section.id);
-    const sect = copiedSections[index];
-    const formDataIndex = sect.formDataElements?.findIndex(
-      (fd) => fd.id == formDataElementId
-    );
+      sect.formDataElements[formDataIndex][prop] = value;
+      copiedSections[index] = sect;
+      setSections(copiedSections);
 
-    sect.formDataElements[formDataIndex][prop] = value;
-    copiedSections[index] = sect;
-    setSections(copiedSections);
+      return copiedSections;
+    });
   };
+
+  const getActiveSection = () => sections.find((s) => s.active);
 
   return (
     <SectionContext.Provider
       value={{
         sections,
-        section,
         getValidations,
         setActiveSection,
         addSection,
@@ -256,6 +275,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         addFormName,
         updateSection,
         orderFormDataElements,
+        getActiveSection,
       }}
     >
       {children}

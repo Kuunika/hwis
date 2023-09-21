@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useState, useEffect } from "react";
 import {
   AddFormDataElement,
   AddOptionSet,
@@ -16,6 +16,7 @@ import {
 } from "shared-ui/src";
 import {
   FormDataElement,
+  Section,
   SectionContext,
   SectionContextType,
 } from "@/app/contexts";
@@ -41,9 +42,11 @@ export const ConfigureSectionScreen: FC = () => {
 };
 
 const MainSection = () => {
-  const { section, addElement } = useContext(
+  const { sections, addElement } = useContext(
     SectionContext
   ) as SectionContextType;
+
+  const section = sections.find((s) => s.active);
 
   return (
     <WrapperBox
@@ -54,7 +57,7 @@ const MainSection = () => {
       }}
     >
       <MainTypography variant="h4" alignSelf={"center"} mb={"2ch"}>
-        {section.fragmentName} Section
+        {section?.fragmentName} Section
       </MainTypography>
       <AddFormDataElement onSubmit={(values: any) => addElement(values)} />
       <FormDataElements />
@@ -63,11 +66,22 @@ const MainSection = () => {
 };
 
 const FormDataElements = () => {
-  const { section } = useContext(SectionContext) as SectionContextType;
+  const [section, setSection] = useState<Section>();
+  const { getActiveSection, sections } = useContext(
+    SectionContext
+  ) as SectionContextType;
+
+  useEffect(() => {
+    const sect = getActiveSection();
+
+    if (!sect) return;
+
+    setSection(sect);
+  }, [sections]);
 
   return (
     <WrapperBox sx={{ width: "100%" }}>
-      {section.formDataElements?.map((dataElement) => (
+      {section?.formDataElements?.map((dataElement) => (
         <FormDataElement key={dataElement.id} formDataElement={dataElement} />
       ))}
     </WrapperBox>
@@ -184,7 +198,7 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
 };
 
 const ListFormDataElements = () => {
-  const { section, sections, formName, orderFormDataElements } = useContext(
+  const { sections, formName, orderFormDataElements } = useContext(
     SectionContext
   ) as SectionContextType;
 
@@ -200,6 +214,10 @@ const ListFormDataElements = () => {
     });
   };
 
+  const section = sections.find((s) => s.active);
+
+  if (!section) return;
+
   const formDataElements = section.formDataElements?.map((d) => ({
     id: d.id,
     component: (
@@ -208,8 +226,6 @@ const ListFormDataElements = () => {
       </TextPill>
     ),
   }));
-
-  console.log({ section });
 
   return (
     <WrapperBox>
@@ -220,8 +236,8 @@ const ListFormDataElements = () => {
       {section.id ? (
         <Container
           items={formDataElements}
-          onMove={(formDataElementId: string, index: number) =>
-            orderFormDataElements(section.id, formDataElementId, index)
+          onMove={(formDataElementId: string, index: number, index2: number) =>
+            orderFormDataElements(section.id, formDataElementId, index, index2)
           }
         />
       ) : null}

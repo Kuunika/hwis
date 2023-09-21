@@ -14,7 +14,7 @@ export interface ContainerState {
 }
 
 interface Prop {
-  onMove: (elementId: string, value: number) => void;
+  onMove: (elementId: string, value: number, index2: number) => void;
   items: Item[];
 }
 
@@ -28,7 +28,7 @@ export const Container: FC<Prop> = ({ items, onMove }) => {
 
     const moveCard = useCallback(
       (dragIndex: number, hoverIndex: number, elementId: string) => {
-        onMove(elementId, hoverIndex);
+        onMove(elementId, hoverIndex, dragIndex);
         setCards((prevCards: Item[]) =>
           update(prevCards, {
             $splice: [

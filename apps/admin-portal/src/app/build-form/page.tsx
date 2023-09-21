@@ -45,8 +45,8 @@ export default function Page() {
             <SectionList
               sections={sections}
               onDelete={deleteSection}
-              onMove={(id: string, value: number) =>
-                updateSection(id, "order", value)
+              onMove={(id: string, value: number, index2: number) =>
+                updateSection(id, "order", value, index2)
               }
             />
           </WrapperBox>

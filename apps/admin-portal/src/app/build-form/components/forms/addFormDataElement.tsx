@@ -69,7 +69,9 @@ export const dataElements = [
 ];
 
 export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
-  const { section } = useContext(SectionContext) as SectionContextType;
+  const { getActiveSection } = useContext(SectionContext) as SectionContextType;
+
+  const section = getActiveSection();
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -93,7 +95,7 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
           id="dataElement"
           label="Data Element"
           selectItems={
-            section.dataElements
+            section?.dataElements
               ? section.dataElements.map((d) => ({
                   name: d.label,
                   value: d.id,

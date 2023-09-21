@@ -1,5 +1,5 @@
 import { Section } from "@/app/contexts/sections";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { FaCircleXmark } from "react-icons/fa6";
 import { MainTypography, WrapperBox, defaultTheme } from "shared-ui/src";
 import { Container } from "../drag/container";
@@ -7,10 +7,16 @@ import { Container } from "../drag/container";
 type Prop = {
   sections: Section[];
   onDelete: (id: string) => void;
-  onMove: (id: string, value: number) => void;
+  onMove: (id: string, value: number, index2: number) => void;
 };
 export const SectionList: FC<Prop> = ({ sections, onDelete, onMove }) => {
-  const sectionDragItems = sections.map((section) => ({
+  const [sectionList, setSectionList] = useState(sections);
+
+  useEffect(() => {
+    setSectionList(sections);
+  }, [sections]);
+
+  const sectionDragItems = sectionList.map((section) => ({
     id: section.id,
     component: <ListItem section={section} onDelete={onDelete} />,
   }));
