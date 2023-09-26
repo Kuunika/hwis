@@ -17,7 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true} className={inter.className}>
+      <body
+        suppressHydrationWarning={true}
+        style={{ backgroundColor: "#ecf4f8" }}
+        className={inter.className}
+      >
         <SectionProvider>{children}</SectionProvider>
       </body>
     </html>

@@ -84,16 +84,24 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <TextInputField name="label" id="label" label="Label" width={"50%"} />
+        <TextInputField
+          name="label"
+          id="label"
+          label="Label"
+          width={"50%"}
+          sx={{ my: 0 }}
+        />
         <SelectInputField
           id="type"
           label="Form Field Input"
           selectItems={types}
           name="type"
+          sx={{ my: 0 }}
         />
         <SelectInputField
           id="dataElement"
           label="Data Element"
+          sx={{ my: 0 }}
           selectItems={
             section?.dataElements
               ? section.dataElements.map((d) => ({
@@ -109,6 +117,7 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
           label="DataType"
           selectItems={dataTypes}
           name="dataType"
+          sx={{ my: 0 }}
         />
         <MainButton
           sx={{ width: "30ch", py: "2ch" }}

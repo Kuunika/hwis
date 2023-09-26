@@ -4,10 +4,11 @@ import { FC } from "react";
 
 type Props = {
   variant?: "primary" | "secondary" | "text";
-  title: string;
+  title?: string;
   onClick: (params?: any) => void;
   type?: "submit" | "button" | "reset";
   sx?: SxProps;
+  icon?: any;
 };
 
 export const MainButton: FC<Props> = ({
@@ -16,15 +17,17 @@ export const MainButton: FC<Props> = ({
   onClick,
   type,
   sx,
+  icon,
 }) => {
   const variantStyles = buttonStyles[variant];
 
   return (
     <Button
       type={type}
-      sx={{ ...variantStyles, ...sx } as SxProps}
+      sx={{ ...variantStyles, textTransform: "capitalize", ...sx } as SxProps}
       onClick={onClick}
     >
+      {icon}
       {title}
     </Button>
   );

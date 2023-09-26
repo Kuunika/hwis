@@ -24,16 +24,22 @@ import { TextPill } from "../common";
 import { Container } from "../drag/container";
 
 export const ConfigureSectionScreen: FC = () => {
+  const { sections } = useContext(SectionContext) as SectionContextType;
+
+  const section = sections.find((s) => s.active);
   return (
-    <WrapperBox sx={{ display: "flex", width: "90%" }}>
+    <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+      <MainTypography variant="h4" alignSelf={"center"} mb={"2ch"}>
+        {section?.fragmentName} Section
+      </MainTypography>
       <MainGrid container spacing={1}>
         <MainGrid item lg={2}>
           <SideSectionList />
         </MainGrid>
-        <MainGrid item lg={7}>
+        <MainGrid item lg={8}>
           <MainSection />
         </MainGrid>
-        <MainGrid item lg={3}>
+        <MainGrid item lg={2}>
           <ListFormDataElements />
         </MainGrid>
       </MainGrid>
@@ -42,11 +48,7 @@ export const ConfigureSectionScreen: FC = () => {
 };
 
 const MainSection = () => {
-  const { sections, addElement } = useContext(
-    SectionContext
-  ) as SectionContextType;
-
-  const section = sections.find((s) => s.active);
+  const { addElement } = useContext(SectionContext) as SectionContextType;
 
   return (
     <WrapperBox
@@ -56,9 +58,6 @@ const MainSection = () => {
         px: "1ch",
       }}
     >
-      <MainTypography variant="h4" alignSelf={"center"} mb={"2ch"}>
-        {section?.fragmentName} Section
-      </MainTypography>
       <AddFormDataElement onSubmit={(values: any) => addElement(values)} />
       <FormDataElements />
     </WrapperBox>
@@ -81,6 +80,9 @@ const FormDataElements = () => {
 
   return (
     <WrapperBox sx={{ width: "100%" }}>
+      <br />
+      <MainTypography variant="h5">Form Data Elements</MainTypography>
+      <br />
       {section?.formDataElements?.map((dataElement) => (
         <FormDataElement key={dataElement.id} formDataElement={dataElement} />
       ))}
@@ -91,8 +93,9 @@ const FormDataElements = () => {
 const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
   formDataElement,
 }) => {
-  const { addRule, updateValidation, getValidations, updateProp, section } =
-    useContext(SectionContext) as SectionContextType;
+  const { addRule, updateValidation, getValidations, updateProp } = useContext(
+    SectionContext
+  ) as SectionContextType;
 
   return (
     <MainPaper
@@ -117,7 +120,11 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
         </WrapperBox>
       </WrapperBox>
 
-      <WrapperBox display={"flex"} flexDirection={"column"}>
+      <WrapperBox
+        display={"flex"}
+        flexDirection={"column"}
+        sx={{ width: "17ch" }}
+      >
         <BaseRadioInput
           label="Is this field Required?"
           value={getValidations(formDataElement.id, "isRequired")}
@@ -151,8 +158,7 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
       <WrapperBox
         display={"flex"}
         flexDirection={"column"}
-        // alignItems={"flex-start"}
-        // justifyContent={"flex-end"}
+        sx={{ width: "35ch" }}
       >
         <WrapperBox
           display={"flex"}

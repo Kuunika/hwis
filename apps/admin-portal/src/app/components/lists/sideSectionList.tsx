@@ -12,13 +12,12 @@ export const SideSectionList: FC = () => {
   }, []);
 
   return (
-    <WrapperBox sx={{ mt: 1 }}>
+    <WrapperBox>
       {sections.map((section) => {
         return (
           <WrapperBox
             onClick={() => setActiveSection(section.id)}
             sx={{
-              mt: "6px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",

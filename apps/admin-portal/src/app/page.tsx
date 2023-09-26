@@ -1,6 +1,5 @@
 "use client";
 
-import { FaPager } from "react-icons/fa6";
 import { FcTemplate, FcTodoList, FcList } from "react-icons/fc";
 import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import Link from "next/link";
@@ -12,9 +11,13 @@ export default function Home() {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      <MenuCard icon={<FcTemplate />} title="Form Builder" />
-      <MenuCard icon={<FcTodoList />} title="Data Element" />
-      <MenuCard icon={<FcList />} title="Option Sets" />
+      <MenuCard icon={<FcTemplate />} link="/build-form" title="Form Builder" />
+      <MenuCard
+        icon={<FcTodoList />}
+        link="/data-elements"
+        title="Data Element"
+      />
+      <MenuCard icon={<FcList />} link="/option-sets" title="Option Sets" />
     </WrapperBox>
   );
 }
@@ -22,11 +25,12 @@ export default function Home() {
 type Prop = {
   icon: any;
   title: string;
+  link: string;
 };
 
-const MenuCard = ({ icon, title }: Prop) => {
+const MenuCard = ({ icon, title, link }: Prop) => {
   return (
-    <Link href="/build-form" style={{ textDecoration: "none" }}>
+    <Link href={link} style={{ textDecoration: "none" }}>
       <MainPaper
         sx={{
           display: "flex",

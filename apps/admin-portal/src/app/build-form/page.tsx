@@ -1,8 +1,8 @@
 "use client";
 import { useState, useContext } from "react";
-import { StepperContainer, WrapperBox } from "shared-ui/src";
-import { Form, SectionForm, SectionList } from "./components";
-import { ConfigureSectionScreen } from "./components/screens";
+import { MainPaper, StepperContainer, WrapperBox } from "shared-ui/src";
+import { Form, SectionForm, SectionList } from "../components";
+import { ConfigureSectionScreen } from "../components/screens";
 import { SectionContext, SectionContextType } from "../contexts";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -34,24 +34,26 @@ export default function Page() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <WrapperBox mt={10}>
-        <StepperContainer active={activeStep} steps={steps}>
-          <Form onSubmit={handleFormCreate} />
-          <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
-            <SectionForm
-              onSubmit={handleSectionSubmit}
-              onNextSection={handleNextSection}
-            />
-            <SectionList
-              sections={sections}
-              onDelete={deleteSection}
-              onMove={(id: string, value: number, index2: number) =>
-                updateSection(id, "order", value, index2)
-              }
-            />
-          </WrapperBox>
-          <ConfigureSectionScreen />
-        </StepperContainer>
+      <WrapperBox mt={10} sx={{ display: "flex", justifyContent: "center" }}>
+        <MainPaper sx={{ py: 2, px: 3 }}>
+          <StepperContainer active={activeStep} steps={steps}>
+            <Form onSubmit={handleFormCreate} />
+            <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+              <SectionForm
+                onSubmit={handleSectionSubmit}
+                onNextSection={handleNextSection}
+              />
+              <SectionList
+                sections={sections}
+                onDelete={deleteSection}
+                onMove={(id: string, value: number, index2: number) =>
+                  updateSection(id, "order", value, index2)
+                }
+              />
+            </WrapperBox>
+            <ConfigureSectionScreen />
+          </StepperContainer>
+        </MainPaper>
       </WrapperBox>
     </DndProvider>
   );

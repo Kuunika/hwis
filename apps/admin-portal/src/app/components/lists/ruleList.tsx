@@ -26,7 +26,6 @@ const Rule: FC<{ rule: Rule }> = ({ rule }) => {
         cursor: "pointer",
       }}
     >
-      <MainTypography fontStyle={"italic"}>when data element is</MainTypography>
       <MainTypography variant="h5" fontWeight="800">
         &nbsp;{rule.operator}&nbsp;
       </MainTypography>
