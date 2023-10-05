@@ -27,13 +27,20 @@ export default function Page() {
   const columns = [
     {
       field: "label",
-      headerName: "Data Element",
+      headerName: "Option Set",
       flex: 1,
     },
     {
       field: "description",
       headerName: "Description",
       flex: 1,
+    },
+    {
+      field: "options",
+      headerName: "Options",
+      renderCell: (cell: any) => {
+        return 9;
+      },
     },
     {
       field: "actions",
@@ -45,7 +52,6 @@ export default function Page() {
             onDelete={() => {}}
             onView={() => {}}
             onEdit={() => {}}
-            onResetPassword={() => {}}
           />
         );
       },
@@ -55,11 +61,11 @@ export default function Page() {
   return (
     <WrapperBox sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
       <MainCard sx={{ py: 2, px: 2, width: "50%", alignItems: "flex-start" }}>
-        <TitleWithBack title="Data Elements" />
+        <TitleWithBack title="Option Sets" />
         <MainButton
           sx={{ mb: 2, fontSize: "0.7rem" }}
-          onClick={() => router.push("/data-elements/create")}
-          title="Create Data Element"
+          onClick={() => router.push("/option-sets/create")}
+          title="Create Option Set"
         />
         <BaseTable columns={columns} rows={rows} />
       </MainCard>
@@ -70,11 +76,11 @@ export default function Page() {
 export const TableOptions: FC<{
   onView: () => void;
   onEdit: () => void;
-  onResetPassword: () => void;
+
   onDelete: () => void;
   buttonText?: string;
   sx?: any;
-}> = ({ onDelete, onResetPassword, onEdit, onView, buttonText, sx }) => {
+}> = ({ onDelete, onEdit, onView, buttonText, sx }) => {
   return (
     <TableOptionDrop buttonText={buttonText} sx={sx}>
       <TableOptionMenuItem

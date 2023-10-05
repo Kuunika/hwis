@@ -5,7 +5,6 @@ export default [
       {
         fragmentName: "Demographics",
         id: "4795c7ef-0c58-49f8-adec-d6f01dfba9fe",
-        active: false,
         formDataElements: [
           {
             label: "First Name",
@@ -238,7 +237,6 @@ export default [
           },
         ],
         id: "e666fab0-1683-4177-850d-b3922c2b9156",
-        active: false,
         formDataElements: [
           {
             label: "Marital Status",
@@ -329,7 +327,6 @@ export default [
           },
         ],
         id: "f9149507-d015-4dee-b419-21db876d1c16",
-        active: false,
         formDataElements: [
           {
             label: "Referral Hospital",

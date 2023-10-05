@@ -18,7 +18,14 @@ export const SectionList: FC<Prop> = ({ sections, onDelete, onMove }) => {
 
   const sectionDragItems = sectionList.map((section) => ({
     id: section.id,
-    component: <ListItem section={section} onDelete={onDelete} />,
+    component: (
+      <ListItem
+        id={section.id}
+        title={section.fragmentName}
+        subTitle={`${section.dataElements.length} Data Element(s)`}
+        onDelete={onDelete}
+      />
+    ),
   }));
   return (
     <WrapperBox sx={{ mt: 1 }}>
@@ -27,11 +34,15 @@ export const SectionList: FC<Prop> = ({ sections, onDelete, onMove }) => {
   );
 };
 
-const ListItem = ({
-  section,
+export const ListItem = ({
+  id,
+  title,
   onDelete,
+  subTitle,
 }: {
-  section: Section;
+  id: string;
+  title: string;
+  subTitle: string | number;
   onDelete: (id: string) => void;
 }) => {
   return (
@@ -46,20 +57,13 @@ const ListItem = ({
         backgroundColor: "#F4F4F4",
         borderRadius: "5px",
       }}
-      key={section.id}
+      key={id}
     >
       <WrapperBox>
-        <MainTypography fontWeight={"800"}>
-          {section.fragmentName}
-        </MainTypography>
-        <MainTypography variant="subtitle1">
-          {section.dataElements.length} Data Element(s)
-        </MainTypography>
+        <MainTypography fontWeight={"800"}>{title}</MainTypography>
+        <MainTypography variant="subtitle1">{subTitle}</MainTypography>
       </WrapperBox>
-      <MainTypography
-        onClick={() => onDelete(section.id)}
-        sx={{ cursor: "pointer" }}
-      >
+      <MainTypography onClick={() => onDelete(id)} sx={{ cursor: "pointer" }}>
         <FaCircleXmark />
       </MainTypography>
     </WrapperBox>
