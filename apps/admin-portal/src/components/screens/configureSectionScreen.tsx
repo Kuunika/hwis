@@ -19,7 +19,7 @@ import {
   Section,
   SectionContext,
   SectionContextType,
-} from "@/app/contexts";
+} from "@/contexts";
 import { TextPill } from "../common";
 import { Container } from "../drag/container";
 

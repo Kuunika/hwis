@@ -9,9 +9,9 @@ import {
 } from "shared-ui/src";
 
 import * as UUID from "uuid";
-import { TitleWithBack } from "@/app/components/common";
+import { TitleWithBack } from "@/components/common";
 import { OptionForm, OptionSetForm } from "./components";
-import { ListItem } from "@/app/components";
+import { ListItem } from "@/components";
 
 export default function () {
   const [activeStep, setActiveStep] = useState<number>(0);

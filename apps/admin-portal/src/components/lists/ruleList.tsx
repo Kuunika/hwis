@@ -1,4 +1,4 @@
-import { Rule } from "@/app/contexts";
+import { Rule } from "@/contexts";
 import { FC } from "react";
 import { MainTypography, WrapperBox } from "shared-ui/src";
 

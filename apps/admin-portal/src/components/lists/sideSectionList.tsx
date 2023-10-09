@@ -1,4 +1,4 @@
-import { SectionContext, SectionContextType } from "@/app/contexts";
+import { SectionContext, SectionContextType } from "@/contexts";
 import { FC, useContext, useEffect } from "react";
 import { MainTypography, WrapperBox, defaultTheme } from "shared-ui/src";
 

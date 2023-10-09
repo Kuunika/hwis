@@ -1,4 +1,4 @@
-import { SectionContext, SectionContextType } from "@/app/contexts";
+import { SectionContext, SectionContextType } from "@/contexts";
 import { FC, useContext } from "react";
 import {
   FormikInit,

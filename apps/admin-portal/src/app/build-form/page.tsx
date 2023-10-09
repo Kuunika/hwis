@@ -1,9 +1,9 @@
 "use client";
 import { useState, useContext } from "react";
 import { MainPaper, StepperContainer, WrapperBox } from "shared-ui/src";
-import { Form, SectionForm, SectionList } from "../components";
-import { ConfigureSectionScreen } from "../components/screens";
-import { SectionContext, SectionContextType } from "../contexts";
+import { Form, SectionForm, SectionList } from "../../components";
+import { ConfigureSectionScreen } from "../../components/screens";
+import { SectionContext, SectionContextType } from "../../contexts";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 

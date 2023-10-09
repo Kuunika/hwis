@@ -1,4 +1,4 @@
-import { Section } from "@/app/contexts/sections";
+import { Section } from "@/contexts/sections";
 import { FC, useState, useEffect } from "react";
 import { FaCircleXmark } from "react-icons/fa6";
 import { MainTypography, WrapperBox, defaultTheme } from "shared-ui/src";

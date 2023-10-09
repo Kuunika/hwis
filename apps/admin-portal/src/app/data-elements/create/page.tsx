@@ -8,7 +8,7 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import * as UUID from "uuid";
-import { TitleWithBack } from "@/app/components/common";
+import { TitleWithBack } from "@/components/common";
 
 const validationSchema = Yup.object().shape({
   label: Yup.string().required().label("Data Element"),

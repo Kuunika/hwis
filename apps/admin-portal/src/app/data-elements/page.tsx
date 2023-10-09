@@ -7,7 +7,7 @@ import {
   TableOptionDrop,
   TableOptionMenuItem,
   TitleWithBack,
-} from "../components/common";
+} from "../../components/common";
 
 export default function Page() {
   const [rows, setRows] = useState([]);
