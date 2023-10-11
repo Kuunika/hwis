@@ -9,6 +9,7 @@ import {
 import * as Yup from "yup";
 import * as UUID from "uuid";
 import { TitleWithBack } from "@/components/common";
+import { useRouter } from "next/navigation";
 
 const validationSchema = Yup.object().shape({
   label: Yup.string().required().label("Data Element"),
@@ -16,6 +17,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function () {
+  const router = useRouter();
   const handleSubmit = (values: any) => {
     fetch("http://localhost:3000/data-elements", {
       method: "POST",
@@ -24,6 +26,7 @@ export default function () {
       },
       body: JSON.stringify({ ...values, id: UUID.v4() }),
     }).then((response) => {
+      router.back();
       console.log(response.json());
     });
   };

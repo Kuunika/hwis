@@ -13,29 +13,33 @@ import { TitleWithBack } from "@/components/common";
 import { OptionForm, OptionSetForm } from "./components";
 import { ListItem } from "@/components";
 
+import { useRouter } from "next/navigation";
+
 export default function () {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [optionSet, setOptionSet] = useState({ label: "", description: "" });
   const [options, setOptions] = useState<Array<any>>([]);
+  const router = useRouter();
 
   const steps = [
-    { id: 1, label: "Create Option Set" },
-    { id: 2, label: "Options" },
+    { id: 1, label: "create optionset" },
+    { id: 2, label: "options" },
   ];
 
-  const handleSubmit = (values: any) => {
-    fetch("http://localhost:3000/data-elements", {
+  const handleSubmit = () => {
+    fetch("http://localhost:3000/option-sets", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...values, id: UUID.v4() }),
+      body: JSON.stringify({ options, ...optionSet, id: UUID.v4() }),
     }).then((response) => {
       console.log(response.json());
+      router.push("/option-sets");
     });
   };
 
   const handleDelete = (id: string) => {
-    console.log({ id });
     setOptions((opts) => opts.filter((opt) => opt.id != id));
   };
   return (
@@ -54,7 +58,12 @@ export default function () {
               Create Option Set
             </MainTypography>
             <br /> */}
-            <OptionSetForm onSubmit={() => setActiveStep(1)} />
+            <OptionSetForm
+              onSubmit={(value: any) => {
+                setOptionSet(value);
+                setActiveStep(1);
+              }}
+            />
           </WrapperBox>
           <WrapperBox>
             <OptionForm
@@ -62,7 +71,7 @@ export default function () {
                 setOptions((opt) => [...opt, { id: UUID.v4(), ...values }])
               }
             />
-            <MainButton title="submit" onClick={() => {}} />
+            <MainButton title="submit" onClick={() => handleSubmit()} />
             <br />
             <>
               {options.map((option) => (

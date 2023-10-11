@@ -15,7 +15,7 @@ export default function Page() {
 
   useEffect(() => {
     const getDataElements = async () => {
-      const response = await fetch("http://localhost:3000/data-elements");
+      const response = await fetch("http://localhost:3000/option-sets");
 
       if (response.ok) {
         setRows(await response.json());
@@ -39,7 +39,7 @@ export default function Page() {
       field: "options",
       headerName: "Options",
       renderCell: (cell: any) => {
-        return 9;
+        return cell.row.options.length;
       },
     },
     {
