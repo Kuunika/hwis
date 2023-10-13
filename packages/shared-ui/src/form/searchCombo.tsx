@@ -41,9 +41,8 @@ export const SearchComboBox: FC<Props> = ({
       defaultValue={options.find((opt) => opt.id === initialValues[name])}
       options={options}
       sx={{ width, ...sx }}
-      key={"id"}
       renderOption={(props, option, { selected }) => (
-        <li {...props}>
+        <li {...props} key={option.id}>
           <Checkbox
             icon={icon}
             checkedIcon={checkedIcon}

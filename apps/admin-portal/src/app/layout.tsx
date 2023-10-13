@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { SectionProvider } from "../contexts";
+import { FormBuilderProvider, SectionProvider } from "../contexts";
 import { ReactQueryProvider } from "@/providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,9 +23,11 @@ export default function RootLayout({
         style={{ backgroundColor: "#ecf4f8" }}
         className={inter.className}
       >
-        <SectionProvider>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
-        </SectionProvider>
+        <ReactQueryProvider>
+          <FormBuilderProvider>
+            <SectionProvider>{children}</SectionProvider>
+          </FormBuilderProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

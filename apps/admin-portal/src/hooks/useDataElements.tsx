@@ -1,10 +1,10 @@
-import { createOptionSetService } from "@/services";
+import { DataElement, createDataElementService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
-const getDataElementsSets = (queryString?: string, enabled = true) => {
+const getDataElements = (queryString?: string, enabled = true) => {
   const fetchEvents = () =>
-    createOptionSetService()
-      .getAll()
+    createDataElementService()
+      .getAll<DataElement>()
       .then((res) => res.data);
 
   return useQuery({
@@ -14,4 +14,4 @@ const getDataElementsSets = (queryString?: string, enabled = true) => {
   });
 };
 
-export const useDataElements = { getDataElementsSets };
+export const useDataElements = () => ({ getDataElements });

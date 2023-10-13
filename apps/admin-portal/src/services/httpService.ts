@@ -11,13 +11,13 @@ export class HttpService {
   }
 
   getAll<T>(query?: string) {
-    return this.apiClient.get<{ data: Array<{ id: number; attributes: T }> }>(
-      `${this.endPoint}${"?" + query}`
+    return this.apiClient.get<T[]>(
+      `${this.endPoint}${query ? "?" + query : ""}`
     );
   }
   getOne<T>(id: number, query?: string) {
-    return this.apiClient.get<{ data: T }>(
-      `${this.endPoint}/${id}${"?" + query}`
+    return this.apiClient.get<T>(
+      `${this.endPoint}/${id}${query ? "?" + query : ""}`
     );
   }
 

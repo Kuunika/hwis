@@ -1,7 +1,8 @@
 "use client";
+import { useOptionSet } from "@/hooks";
+import { OptionSet } from "@/services";
 import { createContext, FC, ReactNode, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { produce } from "immer";
 
 export type Rule = {
   id: string;
@@ -16,6 +17,7 @@ export type FormDataElement = {
   id: string;
   formFragmentId: string;
   type: string;
+  dataElement: string;
   validations: Array<ValidationRule>;
   isVisible: string;
   dataType: string;
@@ -23,6 +25,7 @@ export type FormDataElement = {
   label: string;
   rules: Array<Rule>;
   optionSetId?: string;
+  optionSet: OptionSet;
 };
 
 export type Section = {
@@ -78,6 +81,7 @@ export const SectionContext = createContext<SectionContextType | null>(null);
 export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [formName, setFormName] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
+  const { data: options } = useOptionSet().getOptionSets();
 
   const addSection = (values: Section) => {
     setSections((sects) => [
@@ -250,6 +254,12 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
       );
 
       sect.formDataElements[formDataIndex][prop] = value;
+
+      if (prop === "optionSetId") {
+        const optSet = options?.find((opt) => opt.id === value);
+
+        if (optSet) sect.formDataElements[formDataIndex]["optionSet"] = optSet;
+      }
       copiedSections[index] = sect;
       setSections(copiedSections);
 

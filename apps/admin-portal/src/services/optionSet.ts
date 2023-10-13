@@ -16,7 +16,7 @@ export interface OptionSet {
 
 class OptionSetService extends HttpService {
   constructor() {
-    super("/option-set");
+    super("/option-sets");
   }
 }
 

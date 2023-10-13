@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import {
   FormikInit,
   MainButton,
@@ -11,6 +11,7 @@ import * as Yup from "yup";
 
 import * as React from "react";
 import { BasePopover } from "../common/popover";
+import { SectionContext, SectionContextType } from "@/contexts";
 
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
@@ -41,6 +42,9 @@ const dataTypes = [
 ];
 
 export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
+  const { sections } = useContext(SectionContext) as SectionContextType;
+
+  const section = sections.find((s) => s.active);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -72,12 +76,19 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
             <SelectInputField
               id="dataElement"
               label="Data Element"
-              selectItems={dataTypes}
+              selectItems={
+                section
+                  ? section?.dataElements.map((d) => ({
+                      value: d.id,
+                      name: d.label,
+                    }))
+                  : []
+              }
               name="routeTo"
               sx={{ m: 0 }}
             />
             <MainButton
-              sx={{ width: "30ch", py: "2ch", my: "2ch" }}
+              sx={{ width: "30ch", py: "1ch", my: "2ch" }}
               type="submit"
               variant="primary"
               onClick={() => {}}

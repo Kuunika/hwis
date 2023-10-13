@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import { useFormikField } from "./hooks/";
 import { SxProps } from "@mui/material";
@@ -12,6 +12,7 @@ type Prop = {
   type?: "password" | "text";
   placeholder?: string;
   rows?: number;
+  getValue?: (value: any) => void;
   size?: "small" | "medium";
 };
 
@@ -25,9 +26,14 @@ export const TextInputField: FC<Prop> = ({
   placeholder = "",
   size = "medium",
   rows,
+  getValue,
 }) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
+
+  useEffect(() => {
+    getValue && getValue(value);
+  }, [value]);
 
   return (
     <TextField

@@ -22,6 +22,8 @@ import {
 } from "@/contexts";
 import { TextPill } from "../common";
 import { Container } from "../drag/container";
+import { useOptionSet } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 export const ConfigureSectionScreen: FC = () => {
   const { sections } = useContext(SectionContext) as SectionContextType;
@@ -93,9 +95,14 @@ const FormDataElements = () => {
 const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
   formDataElement,
 }) => {
+  const { data: optionSets } = useOptionSet().getOptionSets();
   const { addRule, updateValidation, getValidations, updateProp } = useContext(
     SectionContext
   ) as SectionContextType;
+
+  const getOptionSet = (id: string) => {
+    return optionSets ? optionSets?.find((op) => op.id == id)?.label : "";
+  };
 
   return (
     <MainPaper
@@ -186,7 +193,9 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
               Option Set
             </MainTypography>
             <TextPill>
-              <MainTypography>{formDataElement.optionSetId}</MainTypography>
+              <MainTypography>
+                {getOptionSet(formDataElement.optionSetId)}
+              </MainTypography>
             </TextPill>
             <br />
           </>
@@ -204,6 +213,7 @@ const FormDataElement: FC<{ formDataElement: FormDataElement }> = ({
 };
 
 const ListFormDataElements = () => {
+  const router = useRouter();
   const { sections, formName, orderFormDataElements } = useContext(
     SectionContext
   ) as SectionContextType;
@@ -236,8 +246,9 @@ const ListFormDataElements = () => {
   return (
     <WrapperBox>
       <MainButton
-        onClick={() => saveData({ name: formName, fragments: sections })}
-        title="SYNC CONFIGURATION"
+        onClick={() => router.push("/build-form/view")}
+        // onClick={() => saveData({ name: formName, fragments: sections })}
+        title="Preview Form"
       />
       {section.id ? (
         <Container

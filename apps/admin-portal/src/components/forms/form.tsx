@@ -12,10 +12,7 @@ const schema = Yup.object().shape({
   name: Yup.string().required().label("Form Name"),
 });
 
-const initValues = {
-  name: "",
-};
-export const Form: FC<Prop> = ({ onSubmit, initialValues = initValues }) => {
+export const Form: FC<Prop> = ({ onSubmit, initialValues }) => {
   return (
     <WrapperBox width={"50ch"}>
       <FormikInit

@@ -1,3 +1,4 @@
+"use client";
 import { FC } from "react";
 import {
   FormikInit,
@@ -8,7 +9,8 @@ import {
   MainButton,
 } from "shared-ui/src";
 import * as Yup from "yup";
-import { dataElements } from ".";
+
+import { useDataElements } from "@/hooks";
 type Prop = {
   onSubmit: (values: any, actions?: any) => void;
   initialValues?: any;
@@ -30,6 +32,8 @@ export const SectionForm: FC<Prop> = ({
   initialValues = initValues,
   onNextSection,
 }) => {
+  const { data: dataElements, isLoading } = useDataElements().getDataElements();
+
   return (
     <WrapperBox width={"50ch"}>
       <FormikInit
@@ -46,7 +50,11 @@ export const SectionForm: FC<Prop> = ({
         />
         <SearchComboBox
           name="dataElements"
-          options={dataElements.map((d) => ({ id: d.value, label: d.name }))}
+          options={
+            dataElements
+              ? dataElements.map((d) => ({ id: d.id, label: d.label }))
+              : []
+          }
           label="Data Elements"
         />
       </FormikInit>

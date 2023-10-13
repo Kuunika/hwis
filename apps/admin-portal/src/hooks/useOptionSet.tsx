@@ -1,10 +1,10 @@
-import { createOptionSetService } from "@/services";
+import { OptionSet, createOptionSetService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
 const getOptionSets = (queryString?: string, enabled = true) => {
   const fetchEvents = () =>
     createOptionSetService()
-      .getAll()
+      .getAll<OptionSet>()
       .then((res) => res.data);
 
   return useQuery({
@@ -14,4 +14,4 @@ const getOptionSets = (queryString?: string, enabled = true) => {
   });
 };
 
-export const useOptionSet = { getOptionSets };
+export const useOptionSet = () => ({ getOptionSets });

@@ -7,6 +7,7 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { BasePopover } from "../common/popover";
+import { useOptionSet } from "@/hooks";
 type Prop = {
   onSubmit: (values: any) => void;
   initialValues?: any;
@@ -37,6 +38,7 @@ export const AddOptionSet: FC<Prop> = ({
   onSubmit,
   initialValues = initValues,
 }) => {
+  const { data: options } = useOptionSet().getOptionSets();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -60,7 +62,11 @@ export const AddOptionSet: FC<Prop> = ({
               id="optionSet"
               width="100%"
               sx={{ m: 0 }}
-              selectItems={options}
+              selectItems={
+                options
+                  ? options.map((op) => ({ name: op.label, value: op.id }))
+                  : []
+              }
               label="Option Set"
             />
             <MainButton

@@ -1,4 +1,5 @@
 import { Rule } from "@/contexts";
+import { useDataElements, useOptionSet } from "@/hooks";
 import { FC } from "react";
 import { MainTypography, WrapperBox } from "shared-ui/src";
 
@@ -13,6 +14,11 @@ export const RuleList: FC<{ rules: Rule[] }> = ({ rules }) => {
 };
 
 const Rule: FC<{ rule: Rule }> = ({ rule }) => {
+  const { data: dataElements } = useDataElements().getDataElements();
+
+  const dataElement = dataElements
+    ? dataElements.find((d) => d.id == rule.routeTo)?.label
+    : "";
   return (
     <WrapperBox
       display={"flex"}
@@ -31,7 +37,7 @@ const Rule: FC<{ rule: Rule }> = ({ rule }) => {
       </MainTypography>
       <MainTypography fontWeight={"800"}>{rule.value} &nbsp;</MainTypography>
       <MainTypography>show&nbsp;</MainTypography>
-      <MainTypography fontWeight={"800"}>{rule.routeTo}</MainTypography>
+      <MainTypography fontWeight={"800"}>{dataElement}</MainTypography>
     </WrapperBox>
   );
 };

@@ -8,6 +8,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 export default function Page() {
+  const { formName } = useContext(SectionContext) as SectionContextType;
   const [activeStep, setActiveStep] = useState<number>(0);
   const { sections, addSection, deleteSection, addFormName, updateSection } =
     useContext(SectionContext) as SectionContextType;
@@ -37,7 +38,10 @@ export default function Page() {
       <WrapperBox mt={10} sx={{ display: "flex", justifyContent: "center" }}>
         <MainPaper sx={{ py: 2, px: 3 }}>
           <StepperContainer active={activeStep} steps={steps}>
-            <Form onSubmit={handleFormCreate} />
+            <Form
+              initialValues={{ name: formName ? formName : "" }}
+              onSubmit={handleFormCreate}
+            />
             <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
               <SectionForm
                 onSubmit={handleSectionSubmit}
