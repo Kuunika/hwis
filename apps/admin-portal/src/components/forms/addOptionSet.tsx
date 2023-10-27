@@ -50,7 +50,7 @@ export const AddOptionSet: FC<Prop> = ({
     <>
       <MainButton onClick={handleClick} title="Add Options" variant="text" />
       <BasePopover anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
-        <WrapperBox p="1ch">
+        <WrapperBox p="1ch" width={"25ch"}>
           <FormikInit
             onSubmit={onSubmit}
             initialValues={initialValues}
@@ -70,7 +70,7 @@ export const AddOptionSet: FC<Prop> = ({
               label="Option Set"
             />
             <MainButton
-              sx={{ width: "30ch", py: "2ch", my: "2ch" }}
+              sx={{ py: "1ch", my: "2ch" }}
               type="submit"
               variant="primary"
               onClick={() => {}}

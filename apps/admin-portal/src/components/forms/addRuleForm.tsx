@@ -20,13 +20,13 @@ type Prop = {
 const schema = Yup.object().shape({
   operator: Yup.string().required().label("Operator"),
   value: Yup.string().required().label("value"),
-  routeTo: Yup.string().required().label("Data Element"),
+  dataElementId: Yup.string().required().label("Data Element"),
 });
 
 const initialValues = {
   operator: "",
   value: "",
-  routeTo: "",
+  dataElementId: "",
 };
 
 const operators = [
@@ -65,15 +65,6 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
         >
           <WrapperBox p="1ch">
             <SelectInputField
-              id="operator"
-              label="Operator"
-              selectItems={operators}
-              name="operator"
-              sx={{ m: 0 }}
-            />
-            <TextInputField name="value" id="value" label="Value" />
-
-            <SelectInputField
               id="dataElement"
               label="Data Element"
               selectItems={
@@ -84,15 +75,25 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
                     }))
                   : []
               }
-              name="routeTo"
-              sx={{ m: 0 }}
+              name="dataElementId"
+              sx={{ mx: 0 }}
             />
+            <SelectInputField
+              id="operator"
+              label="Operator"
+              selectItems={operators}
+              name="operator"
+              sx={{ mx: 0 }}
+            />
+
+            <TextInputField name="value" id="value" label="Value" />
+
             <MainButton
-              sx={{ width: "30ch", py: "1ch", my: "2ch" }}
+              sx={{ py: "1ch", my: "2ch" }}
               type="submit"
               variant="primary"
               onClick={() => {}}
-              title="Create"
+              title="create"
             />
           </WrapperBox>
         </FormikInit>

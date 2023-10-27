@@ -1,4 +1,5 @@
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect } from "react";
+import { useFormikContext } from "formik";
 import {
   FormikInit,
   TextInputField,
@@ -14,13 +15,9 @@ type Prop = {
   onSubmit: (values: any) => void;
 };
 export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
-  const { fragment, applyRules } = useContext(
-    FormBuilderContext
-  ) as FormBuilderContextType;
+  const { fragment } = useContext(FormBuilderContext) as FormBuilderContextType;
 
   const formDataElements = frag.formDataElements;
-
-  console.log({ formDataElements });
 
   // generate initial values
   const initialValues = formDataElements?.reduce((obj: any, fd) => {
@@ -74,9 +71,6 @@ export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
                 id={fd.dataElement}
                 label={fd.label}
                 width={"25ch"}
-                getValue={(value: any) => {
-                  applyRules(fd.id, value);
-                }}
               />
             );
           }
@@ -86,10 +80,6 @@ export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
                 key={fd.id}
                 name={fd.dataElement}
                 id={fd.dataElement}
-                getValue={(value: any) => {
-                  console.log({ value });
-                  applyRules(fd.id, value);
-                }}
                 selectItems={
                   fd.optionSet.options?.map((o) => ({
                     name: o.label,
@@ -106,15 +96,26 @@ export const FormFragment: FC<Prop> = ({ frag, onSubmit }) => {
                 key={fd.id}
                 name={fd.dataElement}
                 label={fd.label}
-                getValue={(value: any) => {
-                  applyRules(fd.id, value);
-                }}
                 options={fd.optionSet.options || []}
               />
             );
           }
         })}
+        <ListenFormValueChanges />
       </WrapperBox>
     </FormikInit>
   );
+};
+
+const ListenFormValueChanges = () => {
+  const { setFormValues } = useContext(
+    FormBuilderContext
+  ) as FormBuilderContextType;
+  const { values } = useFormikContext();
+
+  useEffect(() => {
+    setFormValues(values);
+  }, [values]);
+
+  return <></>;
 };

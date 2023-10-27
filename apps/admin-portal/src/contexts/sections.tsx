@@ -9,7 +9,7 @@ export type Rule = {
   formElementId: string;
   operator: string;
   value: string;
-  routeTo: string;
+  dateElementId: string;
 };
 
 export type ValidationRule = { rule: string; value: string | boolean };

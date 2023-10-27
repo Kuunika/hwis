@@ -16,7 +16,9 @@ export type Frag = {
 export type FormBuilderContextType = {
   fragment: Frag;
   setFragment: (frag: Frag) => void;
-  applyRules: (id: string, value: any) => void;
+
+  formValues: any;
+  setFormValues: (values: any) => void;
 };
 
 export const FormBuilderContext = createContext<FormBuilderContextType | null>(
@@ -27,42 +29,31 @@ export const FormBuilderProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [fragment, setFragment] = useState<Frag>({} as Frag);
+  const [formValues, setFormValues] = useState<any>();
 
-  const applyRules = (id: string, value: string) => {
-    console.log(id, value);
-    const formDataElement = fragment.formDataElements.find(
-      (fd) => fd.id === id
-    );
-
-    if (!formDataElement) return;
-
-    if (formDataElement.rules.length == 0) return;
-
-    formDataElement.rules.forEach((rule) => {
-      if (rule?.operator == "=") {
-        if (rule.value == value) {
-          return setFormDataElementVisible(rule.routeTo, "1");
-        } else {
-          return setFormDataElementVisible(rule.routeTo, "0");
-        }
-      }
-
-      if (rule?.operator == ">") {
-        if (Number(value) > Number(rule.value)) {
-          return setFormDataElementVisible(rule.routeTo, "1");
-        } else {
-          return setFormDataElementVisible(rule.routeTo, "0");
-        }
-      }
-
-      if (rule?.operator == "<") {
-        if (Number(value) < Number(rule.value)) {
-          return setFormDataElementVisible(rule.routeTo, "1");
-        } else {
-          return setFormDataElementVisible(rule.routeTo, "0");
-        }
-      }
+  useEffect(() => {
+    fragment.formDataElements?.forEach((fd) => {
+      let show = true;
+      fd.rules.forEach((rule) => {
+        show = show && Boolean(checkRule(rule));
+      });
+      const visible = show ? "1" : "0";
+      setFormDataElementVisible(fd.dataElement, visible);
     });
+  }, [formValues]);
+
+  const checkRule = (rule: Rule) => {
+    const value = formValues[rule.dateElementId];
+    if (rule.operator == "=") {
+      return rule.value == value ? true : false;
+    }
+    if (rule.operator == ">") {
+      return Number(value) > Number(rule.value) ? true : false;
+    }
+    if (rule.operator == "<") {
+      return Number(value) < Number(rule.value) ? true : false;
+    }
+    return;
   };
 
   const setFormDataElementVisible = (dataElement: string, value: "0" | "1") => {
@@ -86,7 +77,8 @@ export const FormBuilderProvider: FC<{ children: ReactNode }> = ({
       value={{
         fragment,
         setFragment: initFragment,
-        applyRules,
+        formValues,
+        setFormValues,
       }}
     >
       {children}

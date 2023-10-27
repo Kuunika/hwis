@@ -1,5 +1,5 @@
 import { DataElement, createDataElementService } from "@/services";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const getDataElements = (queryString?: string, enabled = true) => {
   const fetchEvents = () =>
@@ -14,4 +14,20 @@ const getDataElements = (queryString?: string, enabled = true) => {
   });
 };
 
-export const useDataElements = () => ({ getDataElements });
+export const useAddDataElement = () => {
+  const queryClient = useQueryClient();
+  const addData = (event: DataElement) =>
+    createDataElementService()
+      .create(event)
+      .then((response) => response.data);
+  return useMutation({
+    mutationFn: addData,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["dataElements"],
+      });
+    },
+  });
+};
+
+export const useDataElements = () => ({ getDataElements, useAddDataElement });

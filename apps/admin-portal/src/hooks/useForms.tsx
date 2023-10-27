@@ -1,33 +1,33 @@
-import { OptionSet, createOptionSetService } from "@/services";
+import { createFormService, Form } from "@/services";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
-const getOptionSets = (queryString?: string, enabled = true) => {
+const getForms = (queryString?: string, enabled = true) => {
   const fetchEvents = () =>
-    createOptionSetService()
-      .getAll<OptionSet>()
+    createFormService()
+      .getAll<Form>()
       .then((res) => res.data);
 
   return useQuery({
-    queryKey: ["optionSets"],
+    queryKey: ["forms"],
     queryFn: fetchEvents,
     enabled,
   });
 };
 
-export const useAddOptionSet = () => {
+export const useAddForm = () => {
   const queryClient = useQueryClient();
-  const addData = (event: OptionSet) =>
-    createOptionSetService()
+  const addData = (event: Form) =>
+    createFormService()
       .create(event)
       .then((response) => response.data);
   return useMutation({
     mutationFn: addData,
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["optionSets"],
+        queryKey: ["forms"],
       });
     },
   });
 };
 
-export const useOptionSet = () => ({ getOptionSets, useAddOptionSet });
+export const useForm = () => ({ getForms, useAddForm });
