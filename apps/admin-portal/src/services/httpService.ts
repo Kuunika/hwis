@@ -22,12 +22,10 @@ export class HttpService {
   }
 
   create<T>(data: Partial<T>) {
-    return this.apiClient.post<T>(this.endPoint, { data });
+    return this.apiClient.post<T>(this.endPoint, data);
   }
 
   edit<T>(id: string | number, data: Partial<T>) {
-    return this.apiClient.put(`${this.endPoint}/${id}`, {
-      data,
-    });
+    return this.apiClient.put(`${this.endPoint}/${id}`, data);
   }
 }

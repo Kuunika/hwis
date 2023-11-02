@@ -16,7 +16,7 @@ const getDataElements = (queryString?: string, enabled = true) => {
 
 export const useAddDataElement = () => {
   const queryClient = useQueryClient();
-  const addData = (event: DataElement) =>
+  const addData: any = (event: any) =>
     createDataElementService()
       .create(event)
       .then((response) => response.data);

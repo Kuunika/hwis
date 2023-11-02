@@ -5,16 +5,16 @@ import { createContext, FC, ReactNode, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export type Rule = {
-  id: string;
+  id?: string;
   formElementId: string;
   operator: string;
   value: string;
-  dateElementId: string;
+  dataElementId: string;
 };
 
 export type ValidationRule = { rule: string; value: string | boolean };
 export type FormDataElement = {
-  id: string;
+  id?: string;
   formFragmentId: string;
   type: string;
   dataElement: string;
@@ -29,9 +29,9 @@ export type FormDataElement = {
 };
 
 export type Section = {
-  id: string;
+  id?: string;
   fragmentName: string;
-  dataElements: Array<{ id: string; label: string }>;
+  dataElements?: Array<{ id: string; label: string }>;
   active?: boolean;
   formDataElements: FormDataElement[];
   order: number | string;

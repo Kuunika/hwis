@@ -8,22 +8,12 @@ import {
   TableOptionMenuItem,
   TitleWithBack,
 } from "../../components/common";
+import { useOptionSet } from "@/hooks";
 
 export default function Page() {
-  const [rows, setRows] = useState([]);
+  const { data: rows } = useOptionSet().getOptionSets();
   const router = useRouter();
 
-  useEffect(() => {
-    const getDataElements = async () => {
-      const response = await fetch("http://localhost:3000/option-sets");
-
-      if (response.ok) {
-        setRows(await response.json());
-      }
-    };
-
-    getDataElements();
-  }, []);
   const columns = [
     {
       field: "label",
@@ -67,7 +57,7 @@ export default function Page() {
           onClick={() => router.push("/option-sets/create")}
           title="Create Option Set"
         />
-        <BaseTable columns={columns} rows={rows} />
+        <BaseTable columns={columns} rows={rows ? rows : []} />
       </MainCard>
     </WrapperBox>
   );

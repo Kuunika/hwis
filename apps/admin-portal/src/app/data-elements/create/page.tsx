@@ -6,10 +6,13 @@ import {
   TextInputField,
   WrapperBox,
 } from "shared-ui/src";
+
+import { useEffect } from "react";
 import * as Yup from "yup";
-import * as UUID from "uuid";
+
 import { TitleWithBack } from "@/components/common";
 import { useRouter } from "next/navigation";
+import { useDataElements } from "@/hooks";
 
 const validationSchema = Yup.object().shape({
   label: Yup.string().required().label("Data Element"),
@@ -17,19 +20,20 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function () {
+  const { mutate, isLoading, isSuccess } =
+    useDataElements().useAddDataElement();
   const router = useRouter();
-  const handleSubmit = (values: any) => {
-    fetch("http://localhost:3000/data-elements", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...values, id: UUID.v4() }),
-    }).then((response) => {
-      router.back();
-      console.log(response.json());
-    });
+
+  const handleSubmit = async (values: any) => {
+    const data = await mutate(values);
+    // router.back();
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      router.back();
+    }
+  }, [isSuccess]);
 
   return (
     <WrapperBox
@@ -42,6 +46,7 @@ export default function () {
           initialValues={{ label: "", description: "" }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          loading={isLoading}
         >
           <TextInputField name="label" id="label" label="Data Element" />
           <TextInputField

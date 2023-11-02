@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MainButton,
   MainPaper,
@@ -14,29 +14,31 @@ import { OptionForm, OptionSetForm } from "./components";
 import { ListItem } from "@/components";
 
 import { useRouter } from "next/navigation";
+import { useOptionSet } from "@/hooks";
 
 export default function () {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [optionSet, setOptionSet] = useState({ label: "", description: "" });
   const [options, setOptions] = useState<Array<any>>([]);
   const router = useRouter();
+  const { mutate, isSuccess } = useOptionSet().useAddOptionSet();
 
   const steps = [
     { id: 1, label: "create optionset" },
     { id: 2, label: "options" },
   ];
 
-  const handleSubmit = () => {
-    fetch("http://localhost:3000/option-sets", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ options, ...optionSet, id: UUID.v4() }),
-    }).then((response) => {
-      console.log(response.json());
-      router.push("/option-sets");
-    });
+  useEffect(() => {
+    if (isSuccess) return router.push("/option-sets");
+  }, [isSuccess]);
+
+  const handleSubmit = async () => {
+    const mappedOptions = options.map((option) => ({
+      label: option.label,
+      value: option.value,
+      hasWeight: option.hasWeight == "no" ? false : true,
+    }));
+    await mutate({ options: mappedOptions, ...optionSet });
   };
 
   const handleDelete = (id: string) => {

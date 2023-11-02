@@ -1,6 +1,6 @@
 "use client";
 
-import { FcTemplate, FcTodoList, FcList } from "react-icons/fc";
+import { FcTemplate, FcTodoList, FcList, FcOrganization } from "react-icons/fc";
 import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import Link from "next/link";
 
@@ -18,6 +18,7 @@ export default function Home() {
         title="Data Element"
       />
       <MenuCard icon={<FcList />} link="/option-sets" title="Option Sets" />
+      <MenuCard icon={<FcOrganization />} link="/forms" title="Forms" />
     </WrapperBox>
   );
 }

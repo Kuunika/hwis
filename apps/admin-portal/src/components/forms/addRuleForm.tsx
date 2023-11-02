@@ -69,7 +69,7 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
               label="Data Element"
               selectItems={
                 section
-                  ? section?.dataElements.map((d) => ({
+                  ? section?.dataElements?.map((d) => ({
                       value: d.id,
                       name: d.label,
                     }))

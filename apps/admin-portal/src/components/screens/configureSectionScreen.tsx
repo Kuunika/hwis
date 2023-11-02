@@ -27,7 +27,6 @@ import { useRouter } from "next/navigation";
 
 export const ConfigureSectionScreen: FC = () => {
   const { sections } = useContext(SectionContext) as SectionContextType;
-
   const section = sections.find((s) => s.active);
   return (
     <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>

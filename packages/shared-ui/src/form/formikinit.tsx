@@ -27,6 +27,7 @@ export const FormikInit: FC<Prop> = ({
   submitButton = true,
   submitButtonText = "submit",
   submitVariant = "primary",
+  loading,
 }) => {
   return (
     <Formik
@@ -40,8 +41,14 @@ export const FormikInit: FC<Prop> = ({
           <MainButton
             sx={{ mt: 3 }}
             variant={submitVariant}
-            type="submit"
-            title={submitButtonText}
+            type={"submit"}
+            title={
+              loading ? (
+                <i style={{ textTransform: "lowercase" }}>loading...</i>
+              ) : (
+                submitButtonText
+              )
+            }
             onClick={() => {}}
           />
         )}

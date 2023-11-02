@@ -8,7 +8,7 @@ export interface DataElement {
 
 class DataElementService extends HttpService {
   constructor() {
-    super("/data-elements");
+    super("/data-element");
   }
 }
 

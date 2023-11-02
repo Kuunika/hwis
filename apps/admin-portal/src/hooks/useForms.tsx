@@ -16,7 +16,7 @@ const getForms = (queryString?: string, enabled = true) => {
 
 export const useAddForm = () => {
   const queryClient = useQueryClient();
-  const addData = (event: Form) =>
+  const addData = (event: any) =>
     createFormService()
       .create(event)
       .then((response) => response.data);

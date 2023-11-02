@@ -17,7 +17,7 @@ const Rule: FC<{ rule: Rule }> = ({ rule }) => {
   const { data: dataElements } = useDataElements().getDataElements();
 
   const dataElement = dataElements
-    ? dataElements.find((d) => d.id == rule.dateElementId)?.label
+    ? dataElements.find((d) => d.id == rule.dataElementId)?.label
     : "";
   return (
     <WrapperBox

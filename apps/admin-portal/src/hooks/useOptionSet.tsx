@@ -16,9 +16,9 @@ const getOptionSets = (queryString?: string, enabled = true) => {
 
 export const useAddOptionSet = () => {
   const queryClient = useQueryClient();
-  const addData = (event: OptionSet) =>
+  const addData = (optionSet: any) =>
     createOptionSetService()
-      .create(event)
+      .create(optionSet)
       .then((response) => response.data);
   return useMutation({
     mutationFn: addData,

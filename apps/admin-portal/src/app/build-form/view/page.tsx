@@ -6,6 +6,7 @@ import {
   MainCard,
   MainTypography,
   StepperContainer,
+  WrapperBox,
 } from "shared-ui/src";
 import { FormFragment } from "./formFragment";
 import {
@@ -16,13 +17,11 @@ import {
   SectionContextType,
 } from "@/contexts";
 import { useRouter } from "next/navigation";
+import { useForm } from "@/hooks";
+import { ViewForm } from "@/components";
 
 export default function FormStepper() {
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const { setFragment, fragment } = useContext(
-    FormBuilderContext
-  ) as FormBuilderContextType;
-
+  const { mutate } = useForm().useAddForm();
   const { sections, formName } = useContext(
     SectionContext
   ) as SectionContextType;
@@ -30,27 +29,43 @@ export default function FormStepper() {
 
   const draftSections = JSON.parse(JSON.stringify(sections)) as Section[];
 
-  useEffect(() => {
-    setFragment(draftSections[0]);
-  }, []);
+  const handleSubmit = async (values: any) => {
+    const mappedSections = JSON.parse(JSON.stringify(sections)) as Section[];
 
-  const steps = draftSections.map((fd, index) => ({
-    id: index + 1,
-    label: fd.fragmentName,
-  }));
+    mappedSections.map((s) => {
+      delete s.dataElements;
+      delete s.id;
+      return {
+        ...s,
+        formDataElements: s.formDataElements.map((fd) => {
+          delete fd.id;
+          const rules = fd.rules.map((r) => {
+            delete r.id;
+            return r;
+          });
 
-  const handleSubmit = (values: any) => {};
+          fd.rules = rules;
+          return fd;
+        }),
+      };
+    });
+    await mutate({
+      departmentId: 1,
+      name: formName,
+      fragments: mappedSections,
+    });
+  };
 
-  if (Object.keys(fragment).length == 0) {
-    return <></>;
-  }
   return (
     <>
-      <MainButton
-        title="Return to Editing"
-        variant="secondary"
-        onClick={() => router.back()}
-      />
+      <WrapperBox>
+        <MainButton
+          title="Return to Editing"
+          variant="secondary"
+          onClick={() => router.back()}
+        />
+        <MainButton title="Save" variant="primary" onClick={handleSubmit} />
+      </WrapperBox>
       <br />
       <MainCard
         elevation={2}
@@ -60,20 +75,7 @@ export default function FormStepper() {
           alignItems: "center",
         }}
       >
-        <MainTypography variant="h4">{formName}</MainTypography>
-        <StepperContainer steps={steps} active={activeStep}>
-          {draftSections.map((fg, index) => (
-            <FormFragment
-              key={fg.id}
-              frag={fragment}
-              onSubmit={(values: any) => {
-                handleSubmit(values);
-                setFragment(draftSections[index + 1]);
-                setActiveStep(index + 1);
-              }}
-            />
-          ))}
-        </StepperContainer>
+        <ViewForm form={{ id: "", fragments: draftSections, name: formName }} />
       </MainCard>
     </>
   );

@@ -8,22 +8,12 @@ import {
   TableOptionMenuItem,
   TitleWithBack,
 } from "../../components/common";
+import { useDataElements } from "@/hooks";
 
 export default function Page() {
-  const [rows, setRows] = useState([]);
+  const { data: rows } = useDataElements().getDataElements();
   const router = useRouter();
 
-  useEffect(() => {
-    const getDataElements = async () => {
-      const response = await fetch("http://localhost:3000/data-elements");
-
-      if (response.ok) {
-        setRows(await response.json());
-      }
-    };
-
-    getDataElements();
-  }, []);
   const columns = [
     {
       field: "label",
@@ -61,7 +51,7 @@ export default function Page() {
           onClick={() => router.push("/data-elements/create")}
           title="Create Data Element"
         />
-        <BaseTable columns={columns} rows={rows} />
+        <BaseTable columns={columns} rows={rows ? rows : []} />
       </MainCard>
     </WrapperBox>
   );
