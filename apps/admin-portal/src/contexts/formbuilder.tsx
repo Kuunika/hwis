@@ -45,9 +45,6 @@ export const FormBuilderProvider: FC<{ children: ReactNode }> = ({
   const checkRule = (rule: Rule) => {
     const value = formValues[rule.dataElementId];
 
-    // console.log({ ruleValue: rule.value });
-    // console.log({ actualValue: value });
-
     if (rule.operator == "=") {
       return rule.value == value ? true : false;
     }
