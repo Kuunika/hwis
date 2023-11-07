@@ -6,12 +6,14 @@ import {
   SelectInputField,
   TextInputField,
   WrapperBox,
+  SearchComboBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
 
 import * as React from "react";
 import { BasePopover } from "../common/popover";
 import { SectionContext, SectionContextType } from "@/contexts";
+import { useDataElements } from "@/hooks";
 
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
@@ -35,16 +37,9 @@ const operators = [
   { name: "Less (<)", value: "<" },
 ];
 
-const dataTypes = [
-  { name: "Number", value: "number" },
-  { name: "Text", value: "text" },
-  { name: "Boolean", value: "bool" },
-];
-
 export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
-  const { sections } = useContext(SectionContext) as SectionContextType;
+  const { data: dataElements } = useDataElements().getDataElements();
 
-  const section = sections.find((s) => s.active);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -64,19 +59,16 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
           submitButton={false}
         >
           <WrapperBox p="1ch">
-            <SelectInputField
-              id="dataElement"
-              label="Data Element"
-              selectItems={
-                section
-                  ? section?.dataElements?.map((d) => ({
-                      value: d.id,
-                      name: d.label,
-                    }))
+            <SearchComboBox
+              name="dataElementId"
+              multiple={false}
+              sx={{ mr: "1ch" }}
+              options={
+                dataElements
+                  ? dataElements.map((d) => ({ id: d.id, label: d.label }))
                   : []
               }
-              name="dataElementId"
-              sx={{ mx: 0 }}
+              label="Data Element"
             />
             <SelectInputField
               id="operator"

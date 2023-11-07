@@ -7,15 +7,11 @@ import { useRouter } from "next/navigation";
 
 export const ListFormDataElements = () => {
   const router = useRouter();
-  const { sections, orderFormDataElements } = useContext(
+  const { formDataElements, orderFormDataElements } = useContext(
     SectionContext
   ) as SectionContextType;
 
-  const section = sections.find((s) => s.active);
-
-  if (!section) return;
-
-  const formDataElements = section.formDataElements?.map((d) => ({
+  const dataElements = formDataElements.map((d) => ({
     id: d.id,
     component: (
       <TextPill key={d.id}>
@@ -27,14 +23,15 @@ export const ListFormDataElements = () => {
   return (
     <WrapperBox>
       <MainButton
-        onClick={() => router.push("/build-form/view")}
+        onClick={() => router.push("/forms/view")}
         title="Preview Form"
       />
-      {section.id ? (
+
+      {dataElements.length > 0 ? (
         <Container
-          items={formDataElements}
+          items={dataElements}
           onMove={(formDataElementId: string, index: number, index2: number) =>
-            orderFormDataElements(section.id, formDataElementId, index, index2)
+            orderFormDataElements(formDataElementId, index, index2)
           }
         />
       ) : null}

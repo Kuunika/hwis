@@ -14,6 +14,7 @@ type Prop = {
   rows?: number;
   getValue?: (value: any) => void;
   size?: "small" | "medium";
+  showHelperText?: boolean;
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -27,6 +28,7 @@ export const TextInputField: FC<Prop> = ({
   size = "medium",
   rows,
   getValue,
+  showHelperText = true,
 }) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
@@ -54,7 +56,7 @@ export const TextInputField: FC<Prop> = ({
       error={hasError}
       variant="outlined"
       size={size}
-      helperText={errorMessage}
+      helperText={showHelperText && errorMessage}
       placeholder={placeholder}
       rows={rows}
     />

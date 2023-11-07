@@ -14,7 +14,7 @@ export type Rule = {
 
 export type ValidationRule = { rule: string; value: string | boolean };
 export type FormDataElement = {
-  id?: string;
+  id: string;
   formFragmentId: string;
   type: string;
   dataElement: string;
@@ -67,13 +67,14 @@ export type SectionContextType = {
   ) => void;
   addFormName: (formName: string) => void;
   orderFormDataElements: (
-    sectionId: string,
     formDataElementId: string,
     index: number,
     index2: number
   ) => void;
 
   getActiveSection: () => Section | undefined;
+  formDataElements: FormDataElement[];
+  resetContext: () => void;
 };
 
 export const SectionContext = createContext<SectionContextType | null>(null);
@@ -82,6 +83,9 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [formName, setFormName] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
   const { data: options } = useOptionSet().getOptionSets();
+  const [formDataElements, setFormDataElements] = useState<FormDataElement[]>(
+    []
+  );
 
   const addSection = (values: Section) => {
     setSections((sects) => [
@@ -113,26 +117,20 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const orderFormDataElements = (
-    sectionId: string,
     formDataElementId: string,
     index: number,
     index2: number
   ) => {
-    setSections((draft) => {
-      const sects = [...draft];
+    setFormDataElements((draft) => {
+      const copiedFormDataElements = [...draft];
 
-      const activeSection = getActiveSection();
+      const fdOne = copiedFormDataElements[index];
+      const fdTwo = copiedFormDataElements[index2];
 
-      const activeSectionIndex = sects.findIndex(
-        (sect) => sect.id == activeSection?.id
-      );
-      const fdOne = sects[activeSectionIndex].formDataElements[index];
-      const fdTwo = sects[activeSectionIndex].formDataElements[index2];
+      copiedFormDataElements[index] = fdTwo;
+      copiedFormDataElements[index2] = fdOne;
 
-      sects[activeSectionIndex].formDataElements[index] = fdTwo;
-      sects[activeSectionIndex].formDataElements[index2] = fdOne;
-
-      return sects;
+      return copiedFormDataElements;
     });
   };
 
@@ -156,11 +154,9 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const addElement = (dataElement: FormDataElement) => {
-    setSections((draft) => {
-      const copiedSections = [...draft];
-      const section = getActiveSection();
-      const index = copiedSections.findIndex((s) => s.id === section?.id);
-      copiedSections[index].formDataElements?.push({
+    setFormDataElements((draft) => {
+      const copiedFormDataElements = [...draft];
+      copiedFormDataElements.push({
         ...dataElement,
         rules: [],
         id: uuidv4(),
@@ -173,23 +169,21 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isVisible: "1",
         optionSetId: "",
       });
-      return copiedSections;
+      return copiedFormDataElements;
     });
   };
 
   const addRule = (formElementId: string, rule: Rule) => {
-    setSections((draft) => {
-      const copiedSections = [...draft];
-      const section = getActiveSection();
-      const index = copiedSections.findIndex((s) => s.id === section?.id);
-      const formDataIndex = copiedSections[index].formDataElements?.findIndex(
+    setFormDataElements((draft) => {
+      const copiedFormDataElements = [...draft];
+      const formDataIndex = copiedFormDataElements.findIndex(
         (fd) => fd.id == formElementId
       );
-      copiedSections[index].formDataElements[formDataIndex].rules.push({
+      copiedFormDataElements[formDataIndex].rules.push({
         ...rule,
         id: uuidv4(),
       });
-      return copiedSections;
+      return copiedFormDataElements;
     });
   };
 
@@ -197,16 +191,14 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     formElementId: string,
     validationRule: ValidationRule
   ) => {
-    setSections((draft) => {
-      const copiedSections = [...draft];
-      const section = getActiveSection();
-      const index = copiedSections.findIndex((s) => s.id === section?.id);
-      const sect = copiedSections[index];
-      const formDataIndex = sect.formDataElements?.findIndex(
+    setFormDataElements((draft) => {
+      const copiedFormDataElements = [...draft];
+
+      const formDataIndex = copiedFormDataElements.findIndex(
         (fd) => fd.id == formElementId
       );
 
-      const formDataElement = sect.formDataElements[formDataIndex];
+      const formDataElement = copiedFormDataElements[formDataIndex];
 
       const validations = formDataElement.validations;
 
@@ -215,25 +207,20 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
       );
       validations[vIndex] = validationRule;
       formDataElement.validations = validations;
-      sect.formDataElements[formDataIndex] = formDataElement;
-      copiedSections[index] = sect;
+      copiedFormDataElements[formDataIndex] = formDataElement;
 
-      return copiedSections;
+      return copiedFormDataElements;
     });
   };
 
   const getValidations = (formDataElementId: string, validation: string) => {
-    const section = getActiveSection();
-
-    if (!section) return "";
-
-    const formIndex = section.formDataElements.findIndex(
+    const formIndex = formDataElements.findIndex(
       (fd) => fd.id == formDataElementId
     );
 
-    const validationRule = section.formDataElements[
-      formIndex
-    ]?.validations?.find((v) => v.rule == validation);
+    const validationRule = formDataElements[formIndex]?.validations?.find(
+      (v) => v.rule == validation
+    );
 
     if (!validationRule) return "";
     return validationRule?.value;
@@ -244,30 +231,30 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     value: string,
     prop: "isVisible" | "optionSetId"
   ) => {
-    setSections((draft) => {
-      const copiedSections = [...draft];
-      const section = getActiveSection();
-      const index = copiedSections.findIndex((s) => s.id == section?.id);
-      const sect = copiedSections[index];
-      const formDataIndex = sect.formDataElements?.findIndex(
+    setFormDataElements((draft) => {
+      const copiedFormDataElements = [...draft];
+
+      const formDataIndex = copiedFormDataElements?.findIndex(
         (fd) => fd.id == formDataElementId
       );
 
-      sect.formDataElements[formDataIndex][prop] = value;
+      copiedFormDataElements[formDataIndex][prop] = value;
 
       if (prop === "optionSetId") {
         const optSet = options?.find((opt) => opt.id === value);
 
-        if (optSet) sect.formDataElements[formDataIndex]["optionSet"] = optSet;
+        if (optSet) copiedFormDataElements[formDataIndex]["optionSet"] = optSet;
       }
-      copiedSections[index] = sect;
-      setSections(copiedSections);
 
-      return copiedSections;
+      return copiedFormDataElements;
     });
   };
 
   const getActiveSection = () => sections.find((s) => s.active);
+
+  const resetContext = () => {
+    setFormDataElements([]);
+  };
 
   return (
     <SectionContext.Provider
@@ -286,6 +273,8 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
         updateSection,
         orderFormDataElements,
         getActiveSection,
+        formDataElements,
+        resetContext,
       }}
     >
       {children}

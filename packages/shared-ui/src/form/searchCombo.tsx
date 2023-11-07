@@ -16,6 +16,7 @@ type Props = {
   sx?: SxProps;
   getValue?: (value: string) => void;
   disabled?: boolean;
+  multiple?: boolean;
 };
 
 export const SearchComboBox: FC<Props> = ({
@@ -26,13 +27,14 @@ export const SearchComboBox: FC<Props> = ({
   sx,
   getValue,
   disabled = false,
+  multiple = true,
 }) => {
   const { hasError, errorMessage, setFieldValue, initialValues, value } =
     useFormikField(name);
 
   return (
     <Autocomplete
-      multiple
+      multiple={multiple}
       disablePortal
       id={name}
       disabled={disabled}
@@ -53,7 +55,7 @@ export const SearchComboBox: FC<Props> = ({
         </li>
       )}
       onChange={(event: any, newValue: any) => {
-        setFieldValue(name, newValue);
+        setFieldValue(name, newValue.id);
         if (getValue) {
           getValue(newValue.id);
         }

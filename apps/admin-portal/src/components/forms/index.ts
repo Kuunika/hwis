@@ -5,3 +5,4 @@ export * from "./addRuleForm";
 export * from "./addOptionSet";
 export * from "./viewFormFragment";
 export * from "./viewForm";
+export * from "./AddFormName";

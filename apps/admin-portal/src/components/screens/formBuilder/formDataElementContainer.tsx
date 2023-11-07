@@ -28,12 +28,14 @@ export const FormDataElementContainer: FC<{
 
   return (
     <MainPaper
-      elevation={3}
+      elevation={0}
       sx={{
         display: "flex",
         my: "1ch",
         p: "2ch",
         justifyContent: "space-between",
+        backgroundColor: "#F4F4F4",
+        borderRadius: "2ch",
       }}
     >
       <WrapperBox>
