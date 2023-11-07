@@ -1,5 +1,6 @@
 import { Frag } from "@/contexts";
 import { HttpService } from "./httpService";
+import { formBuilderApiClient } from "./apiClients";
 
 export interface Form {
   id: string;
@@ -9,7 +10,7 @@ export interface Form {
 
 class FormService extends HttpService {
   constructor() {
-    super("/form");
+    super(formBuilderApiClient, "/form");
   }
 }
 

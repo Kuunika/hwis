@@ -1,3 +1,4 @@
+import { formBuilderApiClient } from "./apiClients";
 import { HttpService } from "./httpService";
 
 export interface Option {
@@ -16,7 +17,7 @@ export interface OptionSet {
 
 class OptionSetService extends HttpService {
   constructor() {
-    super("/option-sets");
+    super(formBuilderApiClient, "/option-sets");
   }
 }
 

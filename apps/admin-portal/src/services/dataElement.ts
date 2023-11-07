@@ -1,3 +1,4 @@
+import { formBuilderApiClient } from "./apiClients";
 import { HttpService } from "./httpService";
 
 export interface DataElement {
@@ -8,7 +9,7 @@ export interface DataElement {
 
 class DataElementService extends HttpService {
   constructor() {
-    super("/data-element");
+    super(formBuilderApiClient, "/data-element");
   }
 }
 
