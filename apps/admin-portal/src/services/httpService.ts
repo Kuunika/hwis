@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
+import { IApiService } from "./IApiService";
 
-export class HttpService {
+export class HttpService implements IApiService {
   protected endPoint: string;
   protected apiClient: AxiosInstance;
 

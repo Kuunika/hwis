@@ -9,7 +9,7 @@ export interface DataElement {
 
 class DataElementService extends HttpService {
   constructor() {
-    super(formBuilderApiClient, "/data-element");
+    super(formBuilderApiClient, "/data-elements");
   }
 }
 
