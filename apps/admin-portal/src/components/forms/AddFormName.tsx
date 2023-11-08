@@ -21,6 +21,7 @@ export const AddFormName: FC<Prop> = ({ onSubmit, initialValues }) => {
       validationSchema={schema}
       submitButtonText="next"
       submitButton={false}
+      enableReinitialize={true}
     >
       <TextInputField
         getValue={(value) => addFormName(value)}

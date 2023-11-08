@@ -1,7 +1,5 @@
-import { FC, useContext } from "react";
-import { SideSectionList } from "../..";
-import { MainGrid, MainTypography, WrapperBox } from "shared-ui/src";
-import { SectionContext, SectionContextType } from "@/contexts";
+import { FC } from "react";
+import { MainGrid, WrapperBox } from "shared-ui/src";
 import { ListFormDataElements, MainSection } from ".";
 
 export const ConfigureSectionScreen: FC = () => {

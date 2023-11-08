@@ -55,9 +55,10 @@ export const SearchComboBox: FC<Props> = ({
         </li>
       )}
       onChange={(event: any, newValue: any) => {
-        setFieldValue(name, newValue.id);
+        const inputValue = multiple ? newValue : newValue.id;
+        setFieldValue(name, inputValue);
         if (getValue) {
-          getValue(newValue.id);
+          getValue(inputValue);
         }
       }}
       renderInput={(params) => (

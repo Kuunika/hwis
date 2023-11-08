@@ -1,5 +1,6 @@
 import { FC, useContext, useEffect } from "react";
 import { useFormikContext } from "formik";
+import { SxProps } from "@mui/material";
 import {
   FormikInit,
   TextInputField,
@@ -14,8 +15,9 @@ import { Frag, FormBuilderContext, FormBuilderContextType } from "@/contexts";
 type Prop = {
   frag: Frag;
   onSubmit: (values: any) => void;
+  sx?: SxProps;
 };
-export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit }) => {
+export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit, sx }) => {
   const formDataElements = frag.formDataElements;
 
   // generate initial values
@@ -55,7 +57,7 @@ export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit }) => {
   const validationSchema = buildYup(schema, {});
 
   return (
-    <>
+    <WrapperBox sx={sx}>
       <MainTypography variant="h4" textTransform={"capitalize"}>
         {frag.fragmentName} Form
       </MainTypography>
@@ -108,7 +110,7 @@ export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit }) => {
           <ListenFormValueChanges />
         </WrapperBox>
       </FormikInit>
-    </>
+    </WrapperBox>
   );
 };
 

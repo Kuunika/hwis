@@ -1,37 +1,51 @@
 "use client";
 import { useContext } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
 import { ViewFormFragment } from "@/components";
 import { SectionContext, SectionContextType } from "@/contexts";
 import { MainButton, MainPaper } from "shared-ui/src";
 import { ActionComplete, BackButton } from "@/components/common";
-import { useForm } from "@/hooks";
-import { useRouter } from "next/navigation";
+import { addForm, updateForm, useForm } from "@/hooks";
 
-export default function Page() {
-  const router = useRouter();
+import { useNavigation, useParameters } from "@/helpers";
 
-  const { mutate, isLoading, isSuccess } = useForm().useAddForm();
+export default function ViewForm() {
+  const { navigateTo } = useNavigation();
+  const { params } = useParameters();
+  const { mutate: create, isLoading: creating, isSuccess: created } = addForm();
+  const {
+    mutate: update,
+    isLoading: updating,
+    isSuccess: updated,
+  } = updateForm();
+
+  const formId = params.id;
+
+  // const { addForm, updateForm } = useForm();
   const { formDataElements, formName, resetContext } = useContext(
     SectionContext
   ) as SectionContextType;
 
   const form = { fragmentName: formName, formDataElements };
 
-  if (isSuccess) {
+  if (created || updated) {
     return (
       <ActionComplete
-        message="Form created successfully"
-        previousActionMessage="Add more forms"
-        onPreviousClick={() => router.back()}
+        message={`Form ${formId ? "updated" : "created"} successfully`}
+        previousActionMessage={formId ? "Form listings" : "Add more forms"}
+        onPreviousClick={() => navigateTo(formId ? "/forms" : "/forms/create")}
         nextActionMessage="Go to home"
-        onNextClick={() => router.push("/")}
+        onNextClick={() => navigateTo("/")}
       />
     );
   }
 
   const handleSubmit = () => {
-    mutate(form);
+    if (formId) {
+      // update
+      update({ ...form, id: formId });
+      return;
+    }
+    create(form);
     resetContext();
   };
   return (
@@ -41,12 +55,19 @@ export default function Page() {
       <br />
 
       <MainButton
-        title={isLoading ? "saving form..." : "save form"}
+        title={
+          creating || updating
+            ? "saving form..."
+            : `${params.id ? "update" : "save"} form`
+        }
         onClick={handleSubmit}
       />
       <br />
       <br />
-      <ViewFormFragment onSubmit={() => {}} frag={form} />
+      <ViewFormFragment
+        onSubmit={(values) => console.log({ values })}
+        frag={form}
+      />
     </MainPaper>
   );
 }

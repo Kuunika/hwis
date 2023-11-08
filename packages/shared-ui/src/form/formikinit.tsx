@@ -17,6 +17,7 @@ type Prop = {
   sx?: SxProps;
   loading?: boolean;
   submitVariant?: "primary" | "secondary" | "text";
+  enableReinitialize?: boolean;
 };
 
 export const FormikInit: FC<Prop> = ({
@@ -28,12 +29,14 @@ export const FormikInit: FC<Prop> = ({
   submitButtonText = "submit",
   submitVariant = "primary",
   loading,
+  enableReinitialize = false,
 }) => {
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      enableReinitialize={enableReinitialize}
     >
       <Form>
         {children}

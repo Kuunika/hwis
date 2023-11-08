@@ -1,29 +1,27 @@
 import { useState, useContext, useEffect } from "react";
-import { Form } from "@/services";
+import { WorkFlow } from "@/services";
 import { MainTypography, StepperContainer } from "shared-ui/src";
 import { FormFragment } from "@/app/build-form/view/formFragment";
 import { FormBuilderContext, FormBuilderContextType } from "@/contexts";
 
 type IProps = {
-  form: Form;
+  workflow: WorkFlow;
 };
 
-export const ViewForm = ({ form }: IProps) => {
+export const ViewForm = ({ workflow }: IProps) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { setFragment, fragment } = useContext(
     FormBuilderContext
   ) as FormBuilderContextType;
 
-  const steps = form.fragments.map((fd, index) => ({
+  const steps = workflow.forms.map((fd, index) => ({
     id: index + 1,
     label: fd.fragmentName,
   }));
 
   useEffect(() => {
-    setFragment(form.fragments[0]);
-  }, [form]);
-
-  console.log("fragment", fragment);
+    setFragment(workflow.forms[0]);
+  }, [workflow]);
 
   const handleSubmit = (values: any) => {
     console.log({ values });
@@ -35,15 +33,22 @@ export const ViewForm = ({ form }: IProps) => {
 
   return (
     <>
-      <MainTypography variant="h4">{form.name}</MainTypography>
-      <StepperContainer steps={steps} active={activeStep}>
-        {form.fragments.map((fg, index) => (
+      <MainTypography variant="h4">{workflow.name}</MainTypography>
+      <br />
+      <br />
+      <StepperContainer
+        sx={{ alignItems: "flex-start" }}
+        steps={steps}
+        active={activeStep}
+        containerSx={{ justifyContent: "flex-start" }}
+      >
+        {workflow.forms.map((fg, index) => (
           <FormFragment
             key={fg.fragmentName}
             frag={fragment}
             onSubmit={(values: any) => {
               handleSubmit(values);
-              setFragment(form.fragments[index + 1]);
+              setFragment(workflow.forms[index + 1]);
               setActiveStep(index + 1);
             }}
           />

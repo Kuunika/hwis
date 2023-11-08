@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { FormBuilderProvider, SectionProvider } from "../contexts";
 import { ReactQueryProvider } from "@/providers";
+import { WorkFlowProvider } from "@/contexts/workflow";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({
       >
         <ReactQueryProvider>
           <FormBuilderProvider>
-            <SectionProvider>{children}</SectionProvider>
+            <WorkFlowProvider>
+              <SectionProvider>{children}</SectionProvider>
+            </WorkFlowProvider>
           </FormBuilderProvider>
         </ReactQueryProvider>
       </body>

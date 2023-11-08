@@ -3,9 +3,11 @@ import { AddFormDataElement, AddFormName } from "@/components";
 import { SectionContext, SectionContextType } from "@/contexts";
 import { MainTypography, WrapperBox } from "shared-ui/src";
 import { FormDataElements } from ".";
+import { useParameters } from "@/helpers";
 
 export const MainSection = () => {
-  const { addElement, formDataElements } = useContext(
+  const { params } = useParameters();
+  const { addElement, formDataElements, formName } = useContext(
     SectionContext
   ) as SectionContextType;
 
@@ -23,10 +25,10 @@ export const MainSection = () => {
       }}
     >
       <MainTypography variant="h3" fontWeight={"400"}>
-        Create Form
+        {params.id ? "Update" : "Create"} Form
       </MainTypography>
       <br />
-      <AddFormName onSubmit={() => {}} initialValues={{ name: "" }} />
+      <AddFormName onSubmit={() => {}} initialValues={{ name: formName }} />
       <br />
       <br />
       <MainTypography variant="h5">Create Form inputs</MainTypography>

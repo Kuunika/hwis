@@ -1,5 +1,6 @@
 "use client";
-import { useOptionSet } from "@/hooks";
+import { useParameters } from "@/helpers";
+import { useForm, useOptionSet } from "@/hooks";
 import { OptionSet } from "@/services";
 import { createContext, FC, ReactNode, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -80,12 +81,25 @@ export type SectionContextType = {
 export const SectionContext = createContext<SectionContextType | null>(null);
 
 export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { params } = useParameters();
+  const { data: forms } = useForm().getForms();
+
   const [formName, setFormName] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
   const { data: options } = useOptionSet().getOptionSets();
   const [formDataElements, setFormDataElements] = useState<FormDataElement[]>(
     []
   );
+
+  useEffect(() => {
+    // when its an edit route
+    if (params.id) {
+      const form = forms?.find((f) => f.id == params.id);
+      const fDataElements = form?.formDataElements;
+      setFormDataElements(fDataElements || []);
+      setFormName(form?.fragmentName || "");
+    }
+  }, [forms, params]);
 
   const addSection = (values: Section) => {
     setSections((sects) => [

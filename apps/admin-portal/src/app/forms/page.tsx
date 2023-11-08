@@ -1,22 +1,18 @@
 "use client";
 import { useForm } from "@/hooks";
-import { BaseTable } from "shared-ui/src";
+import { BaseTable, MainPaper, MainTypography } from "shared-ui/src";
 import { FC } from "react";
-import {
-  TableOptionDrop,
-  TableOptionMenuItem,
-  TitleWithBack,
-} from "@/components/common";
+import { TableOptionDrop, TableOptionMenuItem } from "@/components/common";
 import { HiPencilAlt, HiEye, HiTrash } from "react-icons/hi";
-import { useRouter } from "next/navigation";
+import { useNavigation } from "@/helpers";
 
 export default function () {
   const { data: forms } = useForm().getForms();
-  const router = useRouter();
+  const { navigateTo } = useNavigation();
 
   const columns = [
     {
-      field: "name",
+      field: "fragmentName",
       headerName: " Form Name",
       flex: 1,
     },
@@ -27,21 +23,28 @@ export default function () {
         return (
           <TableOptions
             onDelete={() => {}}
-            onView={() => router.push(`forms/${cell.id}`)}
-            onEdit={() => {}}
+            onView={() => navigateTo(`forms/${cell.id}/preview`)}
+            onEdit={() => navigateTo(`forms/${cell.id}/edit`)}
           />
         );
       },
     },
   ];
 
-  return <BaseTable columns={columns} rows={forms ? forms : []} />;
+  return (
+    <MainPaper elevation={0} sx={{ p: "2ch", m: "2ch" }}>
+      <br />
+      <MainTypography variant="h4">Forms</MainTypography>
+      <br />
+      <br />
+      <BaseTable columns={columns} rows={forms ? forms : []} />
+    </MainPaper>
+  );
 }
 
 export const TableOptions: FC<{
   onView: () => void;
   onEdit: () => void;
-
   onDelete: () => void;
   buttonText?: string;
   sx?: any;

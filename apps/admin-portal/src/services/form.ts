@@ -1,11 +1,11 @@
-import { Frag } from "@/contexts";
+import { FormDataElement, Frag } from "@/contexts";
 import { HttpService } from "./httpService";
 import { formBuilderApiClient } from "./apiClients";
 
 export interface Form {
   id: string;
-  name: string;
-  fragments: Frag[];
+  fragmentName: string;
+  formDataElements: FormDataElement[];
 }
 
 class FormService extends HttpService {

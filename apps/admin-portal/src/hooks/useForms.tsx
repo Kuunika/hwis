@@ -14,7 +14,7 @@ const getForms = (queryString?: string, enabled = true) => {
   });
 };
 
-export const useAddForm = () => {
+export const addForm = () => {
   const queryClient = useQueryClient();
   const addData = (event: any) =>
     createFormService()
@@ -30,4 +30,21 @@ export const useAddForm = () => {
   });
 };
 
-export const useForm = () => ({ getForms, useAddForm });
+export const updateForm = () => {
+  const queryClient = useQueryClient();
+  const updateData = (data: any) =>
+    createFormService()
+      .edit(data.id, data)
+      .then((response) => response.data);
+
+  return useMutation({
+    mutationFn: updateData,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["forms"],
+      });
+    },
+  });
+};
+
+export const useForm = () => ({ getForms, addForm, updateForm });

@@ -3,10 +3,12 @@ import { TextPill } from "@/components/common";
 import { Container } from "@/components/drag/container";
 import { SectionContext, SectionContextType } from "@/contexts";
 import { MainTypography, WrapperBox, MainButton } from "shared-ui/src";
-import { useRouter } from "next/navigation";
+
+import { useNavigation, useParameters } from "@/helpers";
 
 export const ListFormDataElements = () => {
-  const router = useRouter();
+  const { navigateTo } = useNavigation();
+  const { params } = useParameters();
   const { formDataElements, orderFormDataElements } = useContext(
     SectionContext
   ) as SectionContextType;
@@ -23,7 +25,7 @@ export const ListFormDataElements = () => {
   return (
     <WrapperBox>
       <MainButton
-        onClick={() => router.push("/forms/view")}
+        onClick={() => navigateTo(params.id ? "view" : "/forms/view")}
         title="Preview Form"
       />
 

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import { FC, ReactNode, Children } from "react";
 import { Step, Stepper } from ".";
 
@@ -6,12 +6,16 @@ type StepperContainerProp = {
   children: ReactNode[];
   active: number;
   steps: Step[];
+  sx?: SxProps;
+  containerSx?: SxProps;
 };
 
 export const StepperContainer: FC<StepperContainerProp> = ({
   children,
   active,
   steps,
+  sx,
+  containerSx,
 }) => {
   const childrenArray = Children.toArray(children);
   return (
@@ -21,6 +25,7 @@ export const StepperContainer: FC<StepperContainerProp> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        ...sx,
       }}
     >
       <Stepper steps={steps} active={active} />
@@ -31,6 +36,7 @@ export const StepperContainer: FC<StepperContainerProp> = ({
           width: "100%",
           display: "flex",
           justifyContent: "center",
+          ...containerSx,
         }}
       >
         {childrenArray[active]}
