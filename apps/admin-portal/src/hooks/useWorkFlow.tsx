@@ -1,7 +1,7 @@
 import { createWorkFlowService, WorkFlow } from "@/services";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
-const getWorkflows = (queryString?: string, enabled = true) => {
+export const getWorkflows = (queryString?: string, enabled = true) => {
   const fetchWorkFlows = () =>
     createWorkFlowService()
       .getAll<WorkFlow>()

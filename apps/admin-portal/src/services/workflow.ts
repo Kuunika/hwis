@@ -10,7 +10,7 @@ export interface WorkFlow {
 
 class WorkFlowService extends HttpService {
   constructor() {
-    super(formBuilderApiClient, "/option-sets");
+    super(formBuilderApiClient, "/workflows");
   }
 }
 
