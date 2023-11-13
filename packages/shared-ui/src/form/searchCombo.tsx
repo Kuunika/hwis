@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { TextField, Checkbox } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useFormikField } from "./hooks";
@@ -40,7 +40,7 @@ export const SearchComboBox: FC<Props> = ({
       disabled={disabled}
       disableCloseOnSelect
       //@ts-ignore
-      defaultValue={options.find((opt) => opt.id === initialValues[name])}
+      defaultValue={initialValues[name] ? initialValues[name] : undefined}
       options={options}
       sx={{ width, ...sx }}
       renderOption={(props, option, { selected }) => (

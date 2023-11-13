@@ -1,8 +1,17 @@
 "use client";
 import { useForm } from "@/hooks";
-import { BaseTable, MainPaper, MainTypography } from "shared-ui/src";
+import {
+  BaseTable,
+  MainButton,
+  MainPaper,
+  MainTypography,
+} from "shared-ui/src";
 import { FC } from "react";
-import { TableOptionDrop, TableOptionMenuItem } from "@/components/common";
+import {
+  BackButton,
+  TableOptionDrop,
+  TableOptionMenuItem,
+} from "@/components/common";
 import { HiPencilAlt, HiEye, HiTrash } from "react-icons/hi";
 import { useNavigation } from "@/helpers";
 
@@ -33,8 +42,15 @@ export default function () {
 
   return (
     <MainPaper elevation={0} sx={{ p: "2ch", m: "2ch" }}>
+      <BackButton />
       <br />
       <MainTypography variant="h4">Forms</MainTypography>
+      <br />
+      <br />
+      <MainButton
+        title={"Create Form"}
+        onClick={() => navigateTo("forms/create")}
+      />
       <br />
       <br />
       <BaseTable columns={columns} rows={forms ? forms : []} />

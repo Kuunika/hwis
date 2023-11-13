@@ -3,21 +3,37 @@ import { useContext } from "react";
 import { ViewForm } from "@/components";
 import { WorkFlowContext, WorkFlowContextType } from "@/contexts/";
 import { MainButton, MainPaper } from "shared-ui/src";
-import { useAddWorkflow, useWorkflow } from "@/hooks";
+import { updateWorkflow, useAddWorkflow, useWorkflow } from "@/hooks";
 import { ActionComplete, BackButton } from "@/components/common";
-import { useNavigation } from "@/helpers";
+import { useNavigation, useParameters } from "@/helpers";
 
-export default function Page() {
+export default function ViewWorkFlow() {
   const { navigateTo } = useNavigation();
-  const { mutate, isLoading, isSuccess } = useAddWorkflow();
+  const {
+    mutate: create,
+    isLoading: creating,
+    isSuccess: created,
+  } = useAddWorkflow();
+
+  const {
+    mutate: update,
+    isLoading: updating,
+    isSuccess: updated,
+  } = updateWorkflow();
   const { workflow } = useContext(WorkFlowContext) as WorkFlowContextType;
 
-  if (isSuccess) {
+  const { params } = useParameters();
+
+  if (created || updated) {
     return (
       <ActionComplete
-        message="Form created successfully"
-        previousActionMessage="Add more forms"
-        onPreviousClick={() => navigateTo("workflows/create")}
+        message={`workflow ${params.id ? "updated" : "created"} successfully`}
+        previousActionMessage={`${
+          params.id ? "workflow listing" : "Add more forms"
+        } `}
+        onPreviousClick={() =>
+          navigateTo(`${params.id ? "/workflows" : "workflows/create"}`)
+        }
         nextActionMessage="Go to home"
         onNextClick={() => navigateTo("/")}
       />
@@ -25,7 +41,11 @@ export default function Page() {
   }
 
   const handleSubmit = () => {
-    mutate(workflow);
+    if (params.id) {
+      update({ ...workflow, id: params.id });
+      return;
+    }
+    create(workflow);
   };
 
   return (
@@ -34,7 +54,11 @@ export default function Page() {
       <br />
       <br />
       <MainButton
-        title={isLoading ? "saving form..." : "save workflow"}
+        title={
+          creating
+            ? "saving workflow..."
+            : `${params.id ? "update" : "save"} workflow`
+        }
         onClick={handleSubmit}
       />
       <br />

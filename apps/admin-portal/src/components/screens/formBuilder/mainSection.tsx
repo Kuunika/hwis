@@ -21,7 +21,6 @@ export const MainSection = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        px: "1ch",
       }}
     >
       <MainTypography variant="h3" fontWeight={"400"}>

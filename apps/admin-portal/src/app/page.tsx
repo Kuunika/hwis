@@ -11,13 +11,13 @@ export default function Home() {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      <MenuCard icon={<FcTemplate />} link="/build-form" title="Form Builder" />
-      <MenuCard
+      <MenuCard icon={<FcTemplate />} link="/workflows" title="Workflows" />
+      {/* <MenuCard
         icon={<FcTodoList />}
         link="/data-elements"
         title="Data Element"
       />
-      <MenuCard icon={<FcList />} link="/option-sets" title="Option Sets" />
+      <MenuCard icon={<FcList />} link="/option-sets" title="Option Sets" /> */}
       <MenuCard icon={<FcOrganization />} link="/forms" title="Forms" />
     </WrapperBox>
   );

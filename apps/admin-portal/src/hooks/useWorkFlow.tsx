@@ -30,4 +30,21 @@ export const useAddWorkflow = () => {
   });
 };
 
+export const updateWorkflow = () => {
+  const queryClient = useQueryClient();
+  const updateData = (data: any) =>
+    createWorkFlowService()
+      .edit(data.id, data)
+      .then((response) => response.data);
+
+  return useMutation({
+    mutationFn: updateData,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["workflows"],
+      });
+    },
+  });
+};
+
 export const useWorkflow = () => ({ getWorkflows, useAddWorkflow });
