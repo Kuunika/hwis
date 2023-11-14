@@ -1,8 +1,7 @@
-import { FC, useContext } from "react";
+import { FC } from "react";
 import {
   FormikInit,
   MainButton,
-  MainTypography,
   SelectInputField,
   TextInputField,
   WrapperBox,
@@ -12,8 +11,8 @@ import * as Yup from "yup";
 
 import * as React from "react";
 import { BasePopover } from "../common/popover";
-import { SectionContext, SectionContextType } from "@/contexts";
-import { useDataElements } from "@/hooks";
+
+import { useConcepts } from "@/hooks/useConcepts";
 
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
@@ -38,7 +37,7 @@ const operators = [
 ];
 
 export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
-  const { data: dataElements } = useDataElements().getDataElements();
+  const { data: concepts } = useConcepts().getConcepts();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -64,8 +63,11 @@ export const AddRuleForm: FC<Prop> = ({ onSubmit }) => {
               multiple={false}
               sx={{ mr: "1ch" }}
               options={
-                dataElements
-                  ? dataElements.map((d) => ({ id: d.id, label: d.label }))
+                concepts
+                  ? concepts.map((c) => ({
+                      id: c.uuid,
+                      label: c.names[0].name,
+                    }))
                   : []
               }
               label="Data Element"

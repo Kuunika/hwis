@@ -1,7 +1,5 @@
-import { SectionContext, SectionContextType } from "@/contexts";
-import { useDataElements } from "@/hooks";
 import { useConcepts } from "@/hooks/useConcepts";
-import { FC, useContext } from "react";
+import { FC } from "react";
 import {
   FormikInit,
   MainButton,
@@ -20,7 +18,6 @@ const schema = Yup.object().shape({
   label: Yup.string().required().label("Label"),
   type: Yup.string().required().label("Type"),
   dataElement: Yup.string().required().label("Data Element"),
-  dataType: Yup.string().required().label("Data Type"),
 });
 
 const initialValues = {
@@ -47,8 +44,6 @@ const dataTypes = [
 
 export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
   const { data: concepts } = useConcepts().getConcepts();
-  const { data: dataElements } = useDataElements().getDataElements();
-  const { getActiveSection } = useContext(SectionContext) as SectionContextType;
 
   const conceptsList = concepts?.map((c) => {
     return {
@@ -91,13 +86,6 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
           sx={{ mr: "1ch" }}
           options={conceptsList ? conceptsList : []}
           label="Data Element"
-        />
-        <SelectInputField
-          id="dataType"
-          label="DataType"
-          selectItems={dataTypes}
-          name="dataType"
-          sx={{ my: 0 }}
         />
         <MainButton
           sx={{ width: "30ch", py: "2ch" }}

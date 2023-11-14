@@ -1,6 +1,6 @@
 import { FC, useContext } from "react";
-import { AddRuleForm, AddOptionSet, RuleList } from "@/components";
-import { TextPill } from "@/components/common";
+import { AddRuleForm, RuleList } from "@/components";
+
 import {
   SectionContext,
   SectionContextType,
@@ -13,18 +13,15 @@ import {
   MainTypography,
   BaseRadioInput,
 } from "shared-ui/src";
+import { useConcepts } from "@/hooks/useConcepts";
 
 export const FormDataElementContainer: FC<{
   formDataElement: FormDataElement;
 }> = ({ formDataElement }) => {
-  const { data: optionSets } = useOptionSet().getOptionSets();
+  const { data: concepts } = useConcepts().getConcepts();
   const { addRule, updateValidation, getValidations, updateProp } = useContext(
     SectionContext
   ) as SectionContextType;
-
-  const getOptionSet = (id: string) => {
-    return optionSets ? optionSets?.find((op) => op.id == id)?.label : "";
-  };
 
   return (
     <MainPaper
@@ -46,7 +43,11 @@ export const FormDataElementContainer: FC<{
             Form Input: {formDataElement.type}
           </MainTypography>
           <MainTypography fontStyle={"italic"}>
-            Data Type: {formDataElement.dataType}
+            Concept:{" "}
+            {
+              concepts?.find((c) => c.uuid == formDataElement.dataElement)
+                ?.names[0].name
+            }
           </MainTypography>
         </WrapperBox>
       </WrapperBox>
@@ -102,28 +103,7 @@ export const FormDataElementContainer: FC<{
               resetForm();
             }}
           />
-
-          {/* {formDataElement.type != "text" && (
-            <AddOptionSet
-              onSubmit={(value: any) =>
-                updateProp(formDataElement.id, value.optionSet, "optionSetId")
-              }
-            />
-          )} */}
         </WrapperBox>
-        {formDataElement.optionSetId && (
-          <>
-            <MainTypography fontWeight={"800"} fontStyle={"italic"}>
-              Option Set
-            </MainTypography>
-            <TextPill>
-              <MainTypography>
-                {getOptionSet(formDataElement.optionSetId)}
-              </MainTypography>
-            </TextPill>
-            <br />
-          </>
-        )}
 
         {formDataElement.rules.length > 0 && (
           <MainTypography fontWeight={"800"} fontStyle={"italic"}>
