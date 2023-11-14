@@ -103,13 +103,13 @@ export const FormDataElementContainer: FC<{
             }}
           />
 
-          {formDataElement.type != "text" && (
+          {/* {formDataElement.type != "text" && (
             <AddOptionSet
               onSubmit={(value: any) =>
                 updateProp(formDataElement.id, value.optionSet, "optionSetId")
               }
             />
-          )}
+          )} */}
         </WrapperBox>
         {formDataElement.optionSetId && (
           <>

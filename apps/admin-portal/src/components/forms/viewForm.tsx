@@ -16,7 +16,7 @@ export const ViewForm = ({ workflow }: IProps) => {
 
   const steps = workflow.forms.map((fd, index) => ({
     id: index + 1,
-    label: fd.fragmentName,
+    label: fd.formName,
   }));
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export const ViewForm = ({ workflow }: IProps) => {
       >
         {workflow.forms.map((fg, index) => (
           <FormFragment
-            key={fg.fragmentName}
+            key={fg.formName}
             frag={fragment}
             onSubmit={(values: any) => {
               handleSubmit(values);

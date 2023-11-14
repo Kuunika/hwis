@@ -15,7 +15,7 @@ export class HttpService implements IApiService {
       `${this.endPoint}${query ? "?" + query : ""}`
     );
   }
-  getOne<T>(id: number, query?: string) {
+  getOne<T>(id: number | string, query?: string) {
     return this.apiClient.get<T>(
       `${this.endPoint}/${id}${query ? "?" + query : ""}`
     );

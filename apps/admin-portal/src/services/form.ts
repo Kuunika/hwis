@@ -3,9 +3,9 @@ import { HttpService } from "./httpService";
 import { formBuilderApiClient } from "./apiClients";
 
 export interface Form {
-  id: string;
-  fragmentName: string;
-  formDataElements: FormDataElement[];
+  id: string | number;
+  formName: string;
+  formInputs: FormDataElement[];
 }
 
 class FormService extends HttpService {

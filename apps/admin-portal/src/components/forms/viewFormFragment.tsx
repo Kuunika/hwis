@@ -8,17 +8,24 @@ import {
   RadioGroupInput,
   WrapperBox,
   MainTypography,
+  SearchComboBox,
 } from "shared-ui/src";
 import { buildYup } from "schema-to-yup";
-import { Frag, FormBuilderContext, FormBuilderContextType } from "@/contexts";
+import {
+  Frag,
+  FormBuilderContext,
+  FormBuilderContextType,
+  FormDataElement,
+} from "@/contexts";
+import { DataElement, Form } from "@/services";
 
 type Prop = {
-  frag: Frag;
+  frag: Form;
   onSubmit: (values: any) => void;
   sx?: SxProps;
 };
 export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit, sx }) => {
-  const formDataElements = frag.formDataElements;
+  const formDataElements = frag.formInputs;
 
   // generate initial values
   const initialValues = formDataElements?.reduce((obj: any, fd) => {
@@ -56,10 +63,17 @@ export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit, sx }) => {
 
   const validationSchema = buildYup(schema, {});
 
+  const getConceptSets = (dataElement: FormDataElement) => {
+    return dataElement.setMembers?.map((dE) => ({
+      label: dE.names[0].name,
+      value: dE.uuid,
+    }));
+  };
+
   return (
     <WrapperBox sx={sx}>
       <MainTypography variant="h4" textTransform={"capitalize"}>
-        {frag.fragmentName} Form
+        {frag.formName} Form
       </MainTypography>
       <br />
       <FormikInit
@@ -87,9 +101,26 @@ export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit, sx }) => {
                   name={fd.dataElement}
                   id={fd.dataElement}
                   selectItems={
-                    fd.optionSet.options?.map((o) => ({
-                      name: o.label,
-                      value: o.value,
+                    getConceptSets(fd)?.map((c) => ({
+                      name: c.label,
+                      value: c.value,
+                    })) || []
+                  }
+                  label={fd.label}
+                />
+              );
+            }
+
+            if (fd.type === "searchSelect" && fd.isVisible == "1") {
+              return (
+                <SearchComboBox
+                  key={fd.id}
+                  multiple={false}
+                  name={fd.dataElement}
+                  options={
+                    getConceptSets(fd)?.map((c) => ({
+                      label: c.label,
+                      id: c.value,
                     })) || []
                   }
                   label={fd.label}
@@ -102,7 +133,7 @@ export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit, sx }) => {
                   key={fd.id}
                   name={fd.dataElement}
                   label={fd.label}
-                  options={fd?.optionSet?.options || []}
+                  options={getConceptSets(fd) || []}
                 />
               );
             }

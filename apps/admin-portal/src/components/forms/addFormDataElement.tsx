@@ -1,5 +1,6 @@
 import { SectionContext, SectionContextType } from "@/contexts";
 import { useDataElements } from "@/hooks";
+import { useConcepts } from "@/hooks/useConcepts";
 import { FC, useContext } from "react";
 import {
   FormikInit,
@@ -33,6 +34,8 @@ const types = [
   { name: "Text Field", value: "text" },
   { name: "Radio", value: "radio" },
   { name: "Select", value: "select" },
+  { name: "Search Select", value: "searchSelect" },
+  { name: "Search Select Multiple", value: "searchSelectMultiple" },
   { name: "Checkbox", value: "checkbox" },
 ];
 
@@ -43,10 +46,17 @@ const dataTypes = [
 ];
 
 export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
+  const { data: concepts } = useConcepts().getConcepts();
   const { data: dataElements } = useDataElements().getDataElements();
   const { getActiveSection } = useContext(SectionContext) as SectionContextType;
 
-  const section = getActiveSection();
+  const conceptsList = concepts?.map((c) => {
+    return {
+      id: c.uuid,
+      label: c.names[0].name,
+    };
+  });
+
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -79,11 +89,7 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
           name="dataElement"
           multiple={false}
           sx={{ mr: "1ch" }}
-          options={
-            dataElements
-              ? dataElements.map((d) => ({ id: d.id, label: d.label }))
-              : []
-          }
+          options={conceptsList ? conceptsList : []}
           label="Data Element"
         />
         <SelectInputField

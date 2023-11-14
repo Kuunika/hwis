@@ -4,7 +4,7 @@ import { ViewFormFragment } from "@/components";
 import { SectionContext, SectionContextType } from "@/contexts";
 import { MainButton, MainPaper } from "shared-ui/src";
 import { ActionComplete, BackButton } from "@/components/common";
-import { addForm, updateForm, useForm } from "@/hooks";
+import { addForm, updateForm } from "@/hooks";
 
 import { useNavigation, useParameters } from "@/helpers";
 
@@ -25,7 +25,7 @@ export default function ViewForm() {
     SectionContext
   ) as SectionContextType;
 
-  const form = { fragmentName: formName, formDataElements };
+  const form = { id: "", formName, formInputs: formDataElements };
 
   if (created || updated) {
     return (
@@ -40,6 +40,10 @@ export default function ViewForm() {
   }
 
   const handleSubmit = () => {
+    console.log({ form });
+
+    return;
+
     if (formId) {
       // update
       update({ ...form, id: formId });

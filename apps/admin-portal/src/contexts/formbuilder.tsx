@@ -9,8 +9,9 @@ export type Validation = {
 };
 
 export type Frag = {
-  fragmentName: string;
-  formDataElements: FormDataElement[];
+  id: string | number;
+  formName: string;
+  formInputs: FormDataElement[];
 };
 
 export type FormBuilderContextType = {
@@ -32,7 +33,7 @@ export const FormBuilderProvider: FC<{ children: ReactNode }> = ({
   const [formValues, setFormValues] = useState<any>();
 
   useEffect(() => {
-    fragment.formDataElements?.forEach((fd) => {
+    fragment.formInputs?.forEach((fd) => {
       let show = true;
       fd.rules.forEach((rule) => {
         show = show && Boolean(checkRule(rule));
@@ -60,11 +61,11 @@ export const FormBuilderProvider: FC<{ children: ReactNode }> = ({
   const setFormDataElementVisible = (dataElement: string, value: "0" | "1") => {
     setFragment(
       produce((draft) => {
-        const index = draft.formDataElements.findIndex(
+        const index = draft.formInputs.findIndex(
           (fd) => fd.dataElement == dataElement
         );
 
-        draft.formDataElements[index].isVisible = value;
+        draft.formInputs[index].isVisible = value;
       })
     );
   };

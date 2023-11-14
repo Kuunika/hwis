@@ -9,8 +9,8 @@ export interface Option {
 }
 
 export interface OptionSet {
-  id: string;
-  label: string;
+  id: string | number;
+  label: string | number;
   description: string;
   options: Option[];
 }

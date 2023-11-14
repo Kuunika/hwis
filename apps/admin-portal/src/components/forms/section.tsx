@@ -42,7 +42,7 @@ export const SectionForm: FC<Prop> = ({
         <SearchComboBox
           name="forms"
           options={
-            forms ? forms.map((f) => ({ id: f.id, label: f.fragmentName })) : []
+            forms ? forms.map((f) => ({ id: f.id, label: f.formName })) : []
           }
           label="Forms"
         />

@@ -1,7 +1,9 @@
 "use client";
 import { useParameters } from "@/helpers";
 import { useForm, useOptionSet } from "@/hooks";
+import { useConcepts } from "@/hooks/useConcepts";
 import { OptionSet } from "@/services";
+import { Set } from "@/services/concept";
 import { createContext, FC, ReactNode, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -15,7 +17,7 @@ export type Rule = {
 
 export type ValidationRule = { rule: string; value: string | boolean };
 export type FormDataElement = {
-  id: string;
+  id: string | number;
   formFragmentId: string;
   type: string;
   dataElement: string;
@@ -27,6 +29,7 @@ export type FormDataElement = {
   rules: Array<Rule>;
   optionSetId?: string;
   optionSet: OptionSet;
+  setMembers?: Set[];
 };
 
 export type Section = {
@@ -45,17 +48,17 @@ export type SectionContextType = {
   deleteSection: (id: string) => void;
   setActiveSection: (id: string) => void;
   addElement: (value: FormDataElement) => void;
-  addRule: (formElementId: string, rule: Rule) => void;
+  addRule: (formElementId: string | number, rule: Rule) => void;
   updateValidation: (
-    formElementId: string,
+    formElementId: string | number,
     validationRule: ValidationRule
   ) => void;
   getValidations: (
-    formDataElementId: string,
+    formDataElementId: string | number,
     validation: string
   ) => string | boolean | number;
   updateProp: (
-    formDataElementId: string,
+    formDataElementId: string | number,
     value: string,
     prop: "isVisible" | "optionSetId"
   ) => void;
@@ -87,6 +90,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [formName, setFormName] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
   const { data: options } = useOptionSet().getOptionSets();
+  const { data: concepts } = useConcepts().getConcepts();
   const [formDataElements, setFormDataElements] = useState<FormDataElement[]>(
     []
   );
@@ -95,9 +99,9 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // when its an edit route
     if (params.id) {
       const form = forms?.find((f) => f.id == params.id);
-      const fDataElements = form?.formDataElements;
-      setFormDataElements(fDataElements || []);
-      setFormName(form?.fragmentName || "");
+      const formInputs = form?.formInputs;
+      setFormDataElements(formInputs || []);
+      setFormName(form?.formName || "");
     }
   }, [forms, params]);
 
@@ -170,6 +174,16 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const addElement = (dataElement: FormDataElement) => {
     setFormDataElements((draft) => {
       const copiedFormDataElements = [...draft];
+
+      const concept = concepts?.find((c) => c.uuid == dataElement.dataElement);
+
+      let optionSet;
+      let setMembers;
+      if (concept?.is_set) {
+        optionSet = concept.set_members[0].concept_set.toString();
+        setMembers = concept.set_members;
+      }
+
       copiedFormDataElements.push({
         ...dataElement,
         rules: [],
@@ -181,13 +195,14 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
           },
         ],
         isVisible: "1",
-        optionSetId: "",
+        optionSetId: optionSet,
+        setMembers,
       });
       return copiedFormDataElements;
     });
   };
 
-  const addRule = (formElementId: string, rule: Rule) => {
+  const addRule = (formElementId: string | number, rule: Rule) => {
     setFormDataElements((draft) => {
       const copiedFormDataElements = [...draft];
       const formDataIndex = copiedFormDataElements.findIndex(
@@ -202,7 +217,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const updateValidation = (
-    formElementId: string,
+    formElementId: string | number,
     validationRule: ValidationRule
   ) => {
     setFormDataElements((draft) => {
@@ -227,7 +242,10 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
     });
   };
 
-  const getValidations = (formDataElementId: string, validation: string) => {
+  const getValidations = (
+    formDataElementId: string | number,
+    validation: string
+  ) => {
     const formIndex = formDataElements.findIndex(
       (fd) => fd.id == formDataElementId
     );
@@ -241,7 +259,7 @@ export const SectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const updateProp = (
-    formDataElementId: string,
+    formDataElementId: string | number,
     value: string,
     prop: "isVisible" | "optionSetId"
   ) => {
