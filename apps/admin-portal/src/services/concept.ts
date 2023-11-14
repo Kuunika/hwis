@@ -8,10 +8,8 @@ export interface Set {
   uuid: string;
   names: Name[];
 }
-
 export interface Name {
   concept_id: number;
-
   name: string;
 }
 

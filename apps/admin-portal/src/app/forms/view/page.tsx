@@ -40,9 +40,9 @@ export default function ViewForm() {
   }
 
   const handleSubmit = () => {
-    console.log({ form });
+    // console.log({ form });
 
-    return;
+    // return;
 
     if (formId) {
       // update
