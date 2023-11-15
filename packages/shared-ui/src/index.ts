@@ -1,0 +1,12 @@
+import { Box, Typography, Grid, Paper } from "@mui/material";
+export * from "./buttons";
+export * from "./tables";
+export * from "./form";
+export * from "./cards";
+export * from "./stepper";
+export * from "./theme/colors";
+export * from "./header";
+export const WrapperBox = Box;
+export const MainTypography = Typography;
+export const MainGrid = Grid;
+export const MainPaper = Paper;

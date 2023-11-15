@@ -1,0 +1,17 @@
+export const defaultTheme = {
+  primaryLight: "#63a7c8",
+  // primary: "#00796B",
+  primary: "#017092",
+  primaryDark: "#004966",
+  primaryFontColor: "#fff",
+  secondary: "#888888",
+  secondaryVariant: "#787878",
+  secondaryFontColor: "#fff",
+  buttonColor: "#EDF0F7",
+  buttonTextColor: "#2D3648",
+  buttonHoverColor: "#2D3648",
+  background: "#fff",
+  surface: "#fff",
+  error: "#B00020",
+  white: "#fff",
+};
