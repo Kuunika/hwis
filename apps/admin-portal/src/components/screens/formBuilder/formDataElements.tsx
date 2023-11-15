@@ -8,7 +8,9 @@ export const FormDataElements = () => {
   const { formDataElements } = useContext(SectionContext) as SectionContextType;
 
   return (
-    <WrapperBox sx={{ width: "100%" }}>
+    <WrapperBox
+      sx={{ width: "100%", height: "100ch", overflow: "scroll", px: "2ch" }}
+    >
       <br />
       <MainTypography variant="h6">Form inputs</MainTypography>
 
