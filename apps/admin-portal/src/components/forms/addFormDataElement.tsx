@@ -78,14 +78,14 @@ export const AddFormDataElement: FC<Prop> = ({ onSubmit }) => {
           selectItems={types}
           name="type"
           width="100%"
-          sx={{ my: 0 }}
+          sx={{ mr: "1ch" }}
         />
         <SearchComboBox
           name="dataElement"
           multiple={false}
           sx={{ mr: "1ch" }}
           options={conceptsList ? conceptsList : []}
-          label="Data Element"
+          label="Concept"
         />
         <MainButton
           sx={{ width: "30ch", py: "2ch" }}

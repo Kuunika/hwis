@@ -36,7 +36,7 @@ export const SelectInputField: FC<Prop> = ({
   }, [value]);
 
   return (
-    <Box sx={{ minWidth: 120, my: "1ch", mr: "1ch", ...sx }}>
+    <Box sx={{ minWidth: 120, my: "1ch", ...sx }}>
       <FormControl fullWidth>
         <InputLabel id={id}>{label}</InputLabel>
         <Select

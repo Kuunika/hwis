@@ -117,6 +117,7 @@ export const ViewFormFragment: FC<Prop> = ({ frag, onSubmit, sx }) => {
                   key={fd.id}
                   multiple={false}
                   name={fd.dataElement}
+                  sx={{ my: "1ch" }}
                   options={
                     getConceptSets(fd)?.map((c) => ({
                       label: c.label,
