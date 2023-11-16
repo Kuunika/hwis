@@ -7,6 +7,7 @@ export * from "./stepper";
 export * from "./theme/colors";
 export * from "./header";
 export * from "./newStepper"
+export * from "./newStepper/MainStepper"
 export const WrapperBox = Box;
 export const MainTypography = Typography;
 export const MainGrid = Grid;

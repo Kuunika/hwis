@@ -1,12 +1,9 @@
 "use client";
-import Link from "next/link";
-import { MainCard, StepperContainer } from "shared-ui/src";
-import NewStepper from '../../../packages/shared-ui/src/newStepper/NewStepper';
-
+import MainStepper from '../../../packages/shared-ui/src/newStepper/MainStepper';
 export default function Page() {
   return (
     <>
-     <NewStepper/>
+    <MainStepper/>
       {/* <ul>
         <li>
           <Link href={"http://localhost:8000"} legacyBehavior>
