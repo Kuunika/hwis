@@ -1,10 +1,6 @@
-import { ReactNode } from "react";
 import { Panel } from ".";
 
-type Props = {
-  children: ReactNode;
-};
-export const Investigations = ({ children }: Props) => {
+export const Investigations = () => {
   return (
     <Panel title="Investigations">
       <>Investigations</>
