@@ -19,7 +19,7 @@ export default function PatientProfile() {
           <br />
           <TemplateFormsCard />
         </MainGrid>
-        <MainGrid item lg={6}>
+        <MainGrid item lg={7}>
           <VisitsBar />
         </MainGrid>
         <MainGrid item lg={2}></MainGrid>

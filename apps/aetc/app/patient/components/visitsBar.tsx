@@ -23,21 +23,22 @@ export const VisitsBar = () => {
     { visitDate: "9th July, 2023", visitId: "11" },
   ];
   return (
-    <MainPaper
-      elevation={0}
-      sx={{
-        display: "flex",
-        justifyContent: "space-evenly",
-        py: "2ch",
-        width: "100%",
-        overflowX: "scroll",
-        overflowY: "hidden",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {visits.map((visit) => (
-        <Pill {...visit} />
-      ))}
+    <MainPaper elevation={1} sx={{ width: "100%", px: "2ch" }}>
+      <WrapperBox
+        sx={{
+          display: "flex",
+          justifyContent: "space-evenly",
+          py: "2ch",
+          width: "100%",
+          overflowX: "scroll",
+          overflowY: "hidden",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {visits.map((visit) => (
+          <Pill {...visit} />
+        ))}
+      </WrapperBox>
     </MainPaper>
   );
 };
