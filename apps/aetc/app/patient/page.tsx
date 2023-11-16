@@ -1,6 +1,10 @@
 "use client";
 import { MainGrid, NavigationBar, WrapperBox } from "shared-ui/src";
-import { AllergiesCard, PersonalDetailsCard } from "./components";
+import {
+  AllergiesCard,
+  PersonalDetailsCard,
+  TemplateFormsCard,
+} from "./components";
 
 export default function PatientProfile() {
   return (
@@ -11,6 +15,8 @@ export default function PatientProfile() {
           <PersonalDetailsCard />
           <br />
           <AllergiesCard />
+          <br />
+          <TemplateFormsCard />
         </MainGrid>
         <MainGrid item lg={6}></MainGrid>
         <MainGrid item lg={2}></MainGrid>
