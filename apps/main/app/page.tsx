@@ -1,10 +1,13 @@
 "use client";
 import Link from "next/link";
+import { MainCard, StepperContainer } from "shared-ui/src";
+import NewStepper from '../../../packages/shared-ui/src/newStepper/NewStepper';
 
 export default function Page() {
   return (
     <>
-      <ul>
+     <NewStepper/>
+      {/* <ul>
         <li>
           <Link href={"http://localhost:8000"} legacyBehavior>
             <a target="_blank" rel="noopener noreferrer">
@@ -26,7 +29,7 @@ export default function Page() {
             </a>
           </Link>
         </li>
-      </ul>
+      </ul> */}
     </>
   );
 }
