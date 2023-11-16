@@ -1,5 +1,4 @@
-import { FC, ReactNode } from "react";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { ReactNode } from "react";
 import { Panel } from ".";
 
 type Props = {
