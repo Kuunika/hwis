@@ -66,7 +66,7 @@ export default function MenuTree() {
   ];
 
   return (
-    <Box sx={{ minHeight: 180, flexGrow: 1, maxWidth: 300 }}>
+    <Box sx={{ minHeight: 180, flexGrow: 1 }}>
       <TreeView
         aria-label="template/forms"
         defaultCollapseIcon={<FaAngleDown />}

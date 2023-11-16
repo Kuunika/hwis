@@ -4,7 +4,8 @@ import {
   AllergiesCard,
   PersonalDetailsCard,
   TemplateFormsCard,
-} from "./components";
+} from "./components/cards";
+import { VisitsBar } from "./components";
 
 export default function PatientProfile() {
   return (
@@ -18,7 +19,9 @@ export default function PatientProfile() {
           <br />
           <TemplateFormsCard />
         </MainGrid>
-        <MainGrid item lg={6}></MainGrid>
+        <MainGrid item lg={6}>
+          <VisitsBar />
+        </MainGrid>
         <MainGrid item lg={2}></MainGrid>
       </MainGrid>
     </>

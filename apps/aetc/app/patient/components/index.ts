@@ -1,3 +1,2 @@
-export * from "./personalDetailsCard";
-export * from "./allergiesCard";
-export * from "./templateFormsCard";
+export * from "./cards";
+export * from "./visitsBar";
