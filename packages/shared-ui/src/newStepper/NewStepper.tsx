@@ -1,20 +1,13 @@
+// NewStepper.js
 import * as React from "react";
-import Box from "@mui/material/Box";
+import Box from "@mui/system/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import { useState } from "react";
+import { steps } from "./steps";
 
-const steps = [
-  "Vitals and other measures",
-  "Provisional diagnosis",
-  "Investigations",
-  "Comfirm diagnosis",
-  "Complications",
-  "Treatment",
-  "Desposition",
-];
 
 const NewStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -39,15 +32,14 @@ const NewStepper = () => {
       <React.Fragment>
         <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
           <Button
-            color="inherit"
             disabled={activeStep === 0}
             onClick={handleBack}
-            sx={{ mr: 1 }}
+            sx={{ mr: 1, color: "#006401" }}
           >
             Back
           </Button>
           <Box sx={{ flex: "1 1 auto" }} />
-          <Button onClick={handleNext}>
+          <Button onClick={handleNext} sx={{ color: "#006401" }}>
             {activeStep === steps.length - 1 ? "Finish" : "Next"}
           </Button>
         </Box>
@@ -57,5 +49,3 @@ const NewStepper = () => {
 };
 
 export default NewStepper;
-
-

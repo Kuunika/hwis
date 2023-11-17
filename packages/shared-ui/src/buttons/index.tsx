@@ -8,7 +8,7 @@ type Props = {
   onClick: (params?: any) => void;
   type?: "submit" | "button" | "reset";
   sx?: SxProps;
-  startIcon:ReactNode;
+  startIcon?: ReactNode;
 };
 
 export const MainButton: FC<Props> = ({

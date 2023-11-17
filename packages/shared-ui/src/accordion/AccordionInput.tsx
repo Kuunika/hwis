@@ -4,13 +4,11 @@
  import Typography from "@mui/material/Typography";
  import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SxProps } from "@mui/material";
-import { useState } from "react";
 
  interface Props{
     name: string
-    sx?:SxProps
  }
-const AccordionInput = ({name,sx}:Props) => {
+const AccordionInput = ({name}:Props) => {
   return (
     <Accordion>
       <AccordionSummary

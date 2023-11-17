@@ -3,6 +3,7 @@ import NewCard from './newCard/NewCard';
 import AccordionInput from '../accordion/accordionInput';
 import { MainButton } from '..';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { steps } from './steps';
 const MainStepper = () => {
   return (
     <Box display="flex" justifyContent="space-between">
@@ -23,21 +24,22 @@ const MainStepper = () => {
             title="Back to All Consultations"
             onClick={() => {}}
             startIcon={<ArrowBackIcon />}
+            sx={{ backgroundColor: "#006401" }}
           />
         </Box>
         <br />
 
-        <AccordionInput name="Vitals and Other Measures" />
-        <AccordionInput name="Provisional diagnosis" />
-        <AccordionInput name="Investigations" />
-        <AccordionInput name="Comfirm diagnosis" />
-        <AccordionInput name="Complications" />
-        <AccordionInput name="Treatment" />
-        <AccordionInput name="Desposition" />
+        {steps.map((label)=>(
+            <AccordionInput key={label} name={label}/>
+        ))}
 
         <Box display="flex" justifyContent="space-between" width="100%" mt={10}>
           <Box flex="1" />
-          <MainButton title="Finish and Save" onClick={() => {}} />
+          <MainButton
+            title="Finish and Save"
+            onClick={() => {}}
+            sx={{ backgroundColor: "#006401"}}
+          />
         </Box>
       </Box>
     </Box>
