@@ -1,6 +1,6 @@
 import { Button, SxProps } from "@mui/material";
 import { buttonStyles } from "./button.style";
-import { FC } from "react";
+import { FC,ReactNode } from "react";
 
 type Props = {
   variant?: "primary" | "secondary" | "text";
@@ -8,6 +8,7 @@ type Props = {
   onClick: (params?: any) => void;
   type?: "submit" | "button" | "reset";
   sx?: SxProps;
+  startIcon:ReactNode;
 };
 
 export const MainButton: FC<Props> = ({
@@ -16,6 +17,7 @@ export const MainButton: FC<Props> = ({
   onClick,
   type,
   sx,
+  startIcon,
 }) => {
   const variantStyles = buttonStyles[variant];
 
@@ -24,6 +26,7 @@ export const MainButton: FC<Props> = ({
       type={type}
       sx={{ ...variantStyles, ...sx } as SxProps}
       onClick={onClick}
+      startIcon={startIcon}
     >
       {title}
     </Button>

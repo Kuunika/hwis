@@ -2,6 +2,7 @@ import { Box} from '@mui/material'
 import NewCard from './newCard/NewCard';
 import AccordionInput from '../accordion/accordionInput';
 import { MainButton } from '..';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const MainStepper = () => {
   return (
     <Box display="flex" justifyContent="space-between">
@@ -17,10 +18,14 @@ const MainStepper = () => {
           marginTop: "45px",
         }}
       >
-        <Box display="flex" flexDirection="column" justifyContent="flex-left">
-          <MainButton title="Back to All Consultations" onClick={() => {}} />
-          <Box mt={2} />
+        <Box display="flex" justifyContent="space-between" width="100%" mt={2}>
+          <MainButton
+            title="Back to All Consultations"
+            onClick={() => {}}
+            startIcon={<ArrowBackIcon />}
+          />
         </Box>
+        <br />
 
         <AccordionInput name="Vitals and Other Measures" />
         <AccordionInput name="Provisional diagnosis" />
