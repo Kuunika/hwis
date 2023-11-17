@@ -42,14 +42,13 @@ export default function ViewForm() {
   const handleSubmit = () => {
     console.log({ form });
 
-    return;
-
     if (formId) {
       // update
       update({ ...form, id: formId });
       return;
     }
-    create(form);
+
+    create({ formInputs: form.formInputs, formName: form.formName });
     resetContext();
   };
   return (

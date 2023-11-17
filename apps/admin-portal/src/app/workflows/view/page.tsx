@@ -45,7 +45,10 @@ export default function ViewWorkFlow() {
       update({ ...workflow, id: params.id });
       return;
     }
-    create(workflow);
+
+    const forms = workflow.forms;
+    const name = workflow.name;
+    create({ forms, name });
   };
 
   return (
