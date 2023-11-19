@@ -10,7 +10,14 @@ type Prop = {
   width?: string;
 };
 
-const MultlineInput = ({ id, name, label, maxRows, sx, width }: Prop) => {
+export const MultlineInput = ({
+  id,
+  name,
+  label,
+  maxRows,
+  sx,
+  width,
+}: Prop) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
   return (

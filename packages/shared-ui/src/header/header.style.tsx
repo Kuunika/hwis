@@ -1,5 +1,3 @@
-// header.style.ts
-
 import { SxProps } from "@mui/material";
 import { defaultTheme } from "../theme/colors"; // Path might change based on your directory structure
 
