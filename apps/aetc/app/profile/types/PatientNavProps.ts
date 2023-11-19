@@ -1,3 +1,0 @@
-type PatientNavProps = {
-  children?: string[];
-};

@@ -1,13 +1,26 @@
 {
   "name": "aetc",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8002",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
+    "@mui/x-tree-view": "^6.17.0",
+    "next": "14.0.2",
+    "react": "^18",
+    "react-dom": "^18",
     "shared-ui": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.2",
+    "typescript": "^5"
   }
 }

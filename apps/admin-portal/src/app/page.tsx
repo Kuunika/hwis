@@ -1,6 +1,6 @@
 "use client";
 
-import { FcTemplate, FcTodoList, FcList, FcOrganization } from "react-icons/fc";
+import { FcTemplate, FcOrganization } from "react-icons/fc";
 import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import Link from "next/link";
 
