@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   BasePopover,
+  FieldsContainer,
   FormikInit,
   MainButton,
   RadioGroupInput,
@@ -165,7 +166,7 @@ export function InvestigationsForm({ initialValues, onSubmit }: props) {
         <InformationRow />
       </BasePopover>
 
-      <WrapperBox display={"flex"}>
+      <FieldsContainer>
         <SearchComboBox
           name={form.sample.name}
           label={form.sample.label}
@@ -179,9 +180,9 @@ export function InvestigationsForm({ initialValues, onSubmit }: props) {
           options={sampleTypes}
           multiple={false}
         />
-      </WrapperBox>
+      </FieldsContainer>
       <br />
-      <WrapperBox display={"flex"} alignItems={"center"}>
+      <FieldsContainer>
         <SearchComboBox
           name={form.specimenSite.name}
           label={form.specimenSite.label}
@@ -194,7 +195,7 @@ export function InvestigationsForm({ initialValues, onSubmit }: props) {
           label={form.other.label}
           id={form.other.name}
         />
-      </WrapperBox>
+      </FieldsContainer>
     </FormikInit>
   );
 }

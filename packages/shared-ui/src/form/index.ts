@@ -5,3 +5,4 @@ export * from "./radioGroup";
 export * from "./formFieldContainer";
 export * from "./multlineInput";
 export * from "./searchCombo";
+export * from "./fieldsContainer";
