@@ -145,6 +145,8 @@ export function InvestigationsForm({ initialValues, onSubmit }: props) {
         row={true}
       />
       <br />
+      <br />
+
       <SearchComboBox
         name={form.testDescription.name}
         label={form.testDescription.label}
@@ -179,7 +181,7 @@ export function InvestigationsForm({ initialValues, onSubmit }: props) {
         />
       </WrapperBox>
       <br />
-      <WrapperBox display={"flex"}>
+      <WrapperBox display={"flex"} alignItems={"center"}>
         <SearchComboBox
           name={form.specimenSite.name}
           label={form.specimenSite.label}
