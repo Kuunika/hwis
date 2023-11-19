@@ -1,5 +1,5 @@
 import Popover from "@mui/material/Popover";
-import { ReactNode, FC, useState } from "react";
+import { ReactNode, FC } from "react";
 
 type Prop = {
   children: ReactNode;
@@ -9,7 +9,6 @@ type Prop = {
 export const BasePopover: FC<Prop> = ({ children, anchorEl, onClose }) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
   return (
     <Popover
       id={id}

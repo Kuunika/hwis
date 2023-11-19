@@ -12,6 +12,7 @@ type Prop = {
   options: Array<{ label: string; value: string | number }>;
   stylings?: boolean;
   getValue?: (value: any) => void;
+  row?: boolean;
 };
 
 export const RadioGroupInput: FC<Prop> = ({
@@ -19,6 +20,7 @@ export const RadioGroupInput: FC<Prop> = ({
   name,
   options,
   getValue,
+  row,
 }) => {
   const { value, handleChange, hasError } = useFormikField(name);
 
@@ -34,6 +36,7 @@ export const RadioGroupInput: FC<Prop> = ({
       hasError={hasError}
       value={value}
       name={name}
+      row={row}
     />
   );
 };
@@ -42,6 +45,7 @@ type BaseProp = {
   value: string | boolean | number;
   handleChange: (values: any) => void;
   hasError: boolean;
+  row?: boolean;
 };
 
 export const BaseRadioInput: FC<BaseProp & Prop> = ({
@@ -51,11 +55,12 @@ export const BaseRadioInput: FC<BaseProp & Prop> = ({
   name,
   options,
   value,
+  row = false,
 }) => {
   return (
     <FormControl error={hasError}>
       <FormLabel id={name}>{label}</FormLabel>
-      <RadioGroup value={value} onChange={handleChange} name={name}>
+      <RadioGroup row={row} value={value} onChange={handleChange} name={name}>
         {options.map(({ label, value }) => (
           <FormControlLabel
             key={label}
