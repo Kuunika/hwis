@@ -10,7 +10,7 @@ export interface Form {
 
 class FormService extends HttpService {
   constructor() {
-    super(formBuilderApiClient, "/forms");
+    super(formBuilderApiClient, "/form");
   }
 }
 
