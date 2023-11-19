@@ -67,11 +67,14 @@ export const InformationBox = ({ info }: Prop) => {
         {info.infoList.map((i) => (
           <WrapperBox
             key={i.id}
-            sx={{ cursor: "pointer", my: "1ch", py: "1ch" }}
+            sx={{
+              cursor: "pointer",
+              my: "1ch",
+              p: "1ch",
+              "&:hover": { backgroundColor: "#F6F6F6" },
+            }}
           >
-            <MainTypography sx={{ "&:hover": { fontWeight: "600" } }}>
-              {i.body}
-            </MainTypography>
+            <MainTypography>{i.body}</MainTypography>
           </WrapperBox>
         ))}
       </WrapperBox>

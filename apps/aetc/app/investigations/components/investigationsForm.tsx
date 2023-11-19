@@ -5,6 +5,8 @@ import {
   MainButton,
   RadioGroupInput,
   SearchComboBox,
+  TextInputField,
+  WrapperBox,
 } from "shared-ui/src";
 import * as yup from "yup";
 import { InformationRow } from "./infoSelectionBox";
@@ -77,6 +79,53 @@ const tests = [
   { id: "CancerMarkers", label: "Cancer Markers" },
 ];
 
+const labSamples = [
+  { id: "Blood", label: "Blood Sample" },
+  { id: "Urine", label: "Urine Sample" },
+  { id: "Stool", label: "Stool Sample" },
+  { id: "Saliva", label: "Saliva Sample" },
+  { id: "TissueBiopsy", label: "Tissue Biopsy" },
+  { id: "CSF", label: "Cerebrospinal Fluid (CSF)" },
+  { id: "SynovialFluid", label: "Synovial Fluid" },
+  { id: "Sputum", label: "Sputum Sample" },
+  { id: "Hair", label: "Hair Sample" },
+  { id: "Swab", label: "Swab Sample" },
+  { id: "BoneMarrow", label: "Bone Marrow Aspiration" },
+  { id: "SkinBiopsy", label: "Skin Biopsy" },
+];
+
+const sampleTypes = [
+  { id: "Blood", label: "Blood" },
+  { id: "Urine", label: "Urine" },
+  { id: "Stool", label: "Stool" },
+  { id: "Saliva", label: "Saliva" },
+  { id: "Tissue", label: "Tissue" },
+  { id: "CerebrospinalFluid", label: "Cerebrospinal Fluid (CSF)" },
+  { id: "SynovialFluid", label: "Synovial Fluid" },
+  { id: "Sputum", label: "Sputum" },
+  { id: "Hair", label: "Hair" },
+  { id: "Swab", label: "Swab" },
+  { id: "BoneMarrow", label: "Bone Marrow" },
+  { id: "SkinBiopsy", label: "Skin Biopsy" },
+];
+
+const specimenSites = [
+  { id: "Venipuncture", label: "Venipuncture (Vein)" },
+  { id: "Fingerstick", label: "Fingerstick" },
+  { id: "Clean-Catch Urine", label: "Clean-Catch Urine" },
+  { id: "Midstream Urine", label: "Midstream Urine" },
+  { id: "Stool", label: "Stool" },
+  { id: "Saliva", label: "Saliva" },
+  { id: "Tissue Biopsy", label: "Tissue Biopsy" },
+  { id: "Lumbar Puncture", label: "Lumbar Puncture" },
+  { id: "Joint Aspiration", label: "Joint Aspiration" },
+  { id: "Sputum", label: "Sputum" },
+  { id: "Hair Follicle", label: "Hair Follicle" },
+  { id: "Nasopharyngeal Swab", label: "Nasopharyngeal Swab" },
+  { id: "Bone Marrow Aspiration", label: "Bone Marrow Aspiration" },
+  { id: "Skin Lesion", label: "Skin Lesion" },
+];
+
 export function InvestigationsForm({ initialValues, onSubmit }: props) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -102,14 +151,48 @@ export function InvestigationsForm({ initialValues, onSubmit }: props) {
         options={tests}
         multiple={false}
       />
+      <br />
       <MainButton
         variant="secondary"
         title={"add notes"}
         onClick={handleClick}
       />
+      <br />
+      <br />
       <BasePopover onClose={() => setAnchorEl(null)} anchorEl={anchorEl}>
         <InformationRow />
       </BasePopover>
+
+      <WrapperBox display={"flex"}>
+        <SearchComboBox
+          name={form.sample.name}
+          label={form.sample.label}
+          options={labSamples}
+          multiple={false}
+          sx={{ mr: "1ch" }}
+        />
+        <SearchComboBox
+          name={form.sampleType.name}
+          label={form.sampleType.label}
+          options={sampleTypes}
+          multiple={false}
+        />
+      </WrapperBox>
+      <br />
+      <WrapperBox display={"flex"}>
+        <SearchComboBox
+          name={form.specimenSite.name}
+          label={form.specimenSite.label}
+          options={specimenSites}
+          multiple={false}
+          sx={{ mr: "1ch" }}
+        />
+        <TextInputField
+          name={form.other.name}
+          label={form.other.label}
+          id={form.other.name}
+        />
+      </WrapperBox>
     </FormikInit>
   );
 }
