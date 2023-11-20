@@ -13,14 +13,14 @@ export const VisitsBar = () => {
     { visitDate: "9th July, 2023", visitId: "9" },
     { visitDate: "9th July, 2023", visitId: "10" },
     { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
-    { visitDate: "9th July, 2023", visitId: "11" },
+    { visitDate: "9th July, 2023", visitId: "12" },
+    { visitDate: "9th July, 2023", visitId: "13" },
+    { visitDate: "9th July, 2023", visitId: "14" },
+    { visitDate: "9th July, 2023", visitId: "15" },
+    { visitDate: "9th July, 2023", visitId: "16" },
+    { visitDate: "9th July, 2023", visitId: "17" },
+    { visitDate: "9th July, 2023", visitId: "18" },
+    { visitDate: "9th July, 2023", visitId: "19" },
   ];
   return (
     <MainPaper elevation={1} sx={{ width: "100%", px: "2ch" }}>
@@ -36,7 +36,7 @@ export const VisitsBar = () => {
         }}
       >
         {visits.map((visit) => (
-          <Pill {...visit} />
+          <Pill key={visit.visitId} {...visit} />
         ))}
       </WrapperBox>
     </MainPaper>

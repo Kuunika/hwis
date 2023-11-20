@@ -1,11 +1,12 @@
 import { ReactNode } from "react";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 
 type Props = {
   title: string;
   children: ReactNode;
+  icon?: any;
 };
-export const Panel = ({ children, title }: Props) => {
+export const Panel = ({ children, title, icon }: Props) => {
   return (
     <WrapperBox
       sx={{
@@ -19,7 +20,10 @@ export const Panel = ({ children, title }: Props) => {
         height: "30ch",
       }}
     >
-      <MainTypography variant="h5">{title}</MainTypography>
+      <WrapperBox display={"flex"} justifyContent={"space-between"}>
+        <MainTypography variant="h5">{title}</MainTypography>
+        {icon}
+      </WrapperBox>
       <WrapperBox>{children}</WrapperBox>
     </WrapperBox>
   );

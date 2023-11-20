@@ -6,6 +6,7 @@ export * from "./cards";
 export * from "./stepper";
 export * from "./theme/colors";
 export * from "./header";
+export * from "./popover";
 export * from "./navigationBar";
 export const WrapperBox = Box;
 export const MainTypography = Typography;
