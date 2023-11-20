@@ -1,16 +1,18 @@
- import Accordion from "@mui/material/Accordion";
- import AccordionSummary from "@mui/material/AccordionSummary";
- import AccordionDetails from "@mui/material/AccordionDetails";
- import Typography from "@mui/material/Typography";
- import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { SxProps } from "@mui/material";
 
- interface Props{
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+
+interface Props{
     name: string
- }
-const AccordionInput = ({name}:Props) => {
+}
+
+const AccordionInput = ({ name }: Props) => {
+
   return (
-    <Accordion>
+    <Accordion
+      sx={{ border: "none" }}
+    >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
@@ -26,6 +28,6 @@ const AccordionInput = ({name}:Props) => {
       </AccordionDetails>
     </Accordion>
   );
-}
+};
 
 export default AccordionInput;
