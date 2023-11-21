@@ -1,7 +1,7 @@
 "use client";
 import { Box } from "@mui/material";
 import React from "react";
-import { FormikInit, RadioGroupInput } from "shared-ui/src";
+import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
 
 const schema = Yup.object().shape({
@@ -29,24 +29,27 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <RadioGroupInput
-        name="breathing"
-        label="Is Breathing Normal ?"
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
-      />
+      <FieldsContainer sx={{ width: "100%" }}>
+        <RadioGroupInput
+          name="breathing"
+          label="Is Breathing Normal ?"
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
 
-      <RadioGroupInput
-        name="airway"
-        label="Is Airway Compromised ?"
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
-      />
+        <RadioGroupInput
+          name="airway"
+          label="Is Airway Compromised ?"
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
+      </FieldsContainer>
 
+      <br />
       <RadioGroupInput
         name="availability"
         label="Are any of the following present"

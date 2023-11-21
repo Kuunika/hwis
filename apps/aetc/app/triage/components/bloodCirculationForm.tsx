@@ -32,6 +32,8 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
           { label: "No", value: "no" },
         ]}
       />
+      <br />
+      <br />
 
       <RadioGroupInput
         name="present"

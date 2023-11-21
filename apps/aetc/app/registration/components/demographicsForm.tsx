@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Box } from "@mui/material";
 import * as Yup from "yup";
 import {
@@ -133,6 +133,10 @@ type Prop = {
 };
 
 export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
+  const [gender, setGender] = useState();
+
+  console.log({ gender });
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -161,11 +165,12 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
       </FieldsContainer>
 
       <RadioGroupInput
+        getValue={(value) => setGender(value)}
         name={form.gender.name}
         label={form.gender.label}
         options={[
-          { label: "Male", value: "male" },
-          { label: "Female", value: "female" },
+          { label: "Male", value: "yes" },
+          { label: "Female", value: "no" },
         ]}
       />
 

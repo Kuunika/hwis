@@ -8,7 +8,7 @@ import {
 } from ".";
 
 export const RegistrationFlow = () => {
-  const [activeStep, setActiveStep] = useState<number>(1);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const {} = useState([]);
 
   const steps = [

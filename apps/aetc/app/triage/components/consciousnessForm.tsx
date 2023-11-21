@@ -36,7 +36,8 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
           { label: "No", value: "no" },
         ]}
       />
-
+      <br />
+      <br />
       <RadioGroupInput
         name="glucose"
         label="Blood Glucose"
@@ -45,7 +46,8 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
           { label: "No", value: "no" },
         ]}
       />
-
+      <br />
+      <br />
       <RadioGroupInput
         name="gcs"
         label="Check GCS"

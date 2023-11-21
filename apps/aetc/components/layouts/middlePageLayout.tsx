@@ -5,13 +5,22 @@ import { BackButton } from "../buttons";
 type Prop = {
   children: ReactNode;
   title: string;
+  leftGridSize?: number;
+  middleGridSize?: number;
+  rightGridSize?: number;
 };
 
-export function MiddlePageLayout({ children, title }: Prop) {
+export function MiddlePageLayout({
+  children,
+  title,
+  leftGridSize = 2,
+  middleGridSize = 7,
+  rightGridSize = 3,
+}: Prop) {
   return (
     <MainGrid container spacing={1}>
-      <MainGrid item lg={2}></MainGrid>
-      <MainGrid item lg={7}>
+      <MainGrid item lg={leftGridSize}></MainGrid>
+      <MainGrid item lg={middleGridSize}>
         <MainPaper elevation={0} sx={{ padding: "2ch", mt: "2ch" }}>
           <BackButton />
           <br />

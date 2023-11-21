@@ -11,18 +11,22 @@ import {
 export default function TriageWorkFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
   const steps = [
-    { id: 1, label: "Vitals" },
-    { id: 2, label: "Airway/Breathing" },
-    { id: 3, label: "Blood Circulation" },
-    { id: 4, label: "Consciousness" },
-    { id: 5, label: "Persistent Pain/Other Concerns" },
+    { id: 1, label: "Airway/Breathing" },
+    { id: 2, label: "Blood Circulation" },
+    { id: 3, label: "Consciousness" },
+    { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
   return (
-    <StepperContainer steps={steps} active={activeStep}>
-      <AirwayAndBreathingForm onSubmit={() => setActiveStep(2)} />
-      <BloodCirculationForm onSubmit={() => setActiveStep(3)} />
-      <ConsciousnessForm onSubmit={() => setActiveStep(4)} />
-      <PersistentPainForm onSubmit={() => setActiveStep(5)} />
+    <StepperContainer
+      steps={steps}
+      active={activeStep}
+      containerSx={{ display: "block" }}
+      sx={{ alignItems: "flex-start" }}
+    >
+      <AirwayAndBreathingForm onSubmit={() => setActiveStep(1)} />
+      <BloodCirculationForm onSubmit={() => setActiveStep(2)} />
+      <ConsciousnessForm onSubmit={() => setActiveStep(3)} />
+      <PersistentPainForm onSubmit={() => setActiveStep(4)} />
     </StepperContainer>
   );
 }
