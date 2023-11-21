@@ -9,14 +9,41 @@ import {
   FormFieldContainer,
 } from "shared-ui/src";
 
+const form = {
+  maritalStatus: {
+    name: "maritalStatus",
+    label: "Marital Status",
+  },
+  occupation: {
+    name: "occupation",
+    label: "Occupation",
+  },
+  religion: {
+    name: "religion",
+    label: "Religion",
+  },
+  highestEducation: {
+    name: "highestEducation",
+    label: "Highest Education",
+  },
+  methodOfTransportation: {
+    name: "methodOfTransportation",
+    label: "Method Of Transportation",
+  },
+};
+
 const schema = Yup.object().shape({
-  maritalStatus: Yup.string().required().label("marital Status"),
-  occupation: Yup.string().required().label("occupation"),
-  religion: Yup.string().required().label("religion"),
-  highestEducation: Yup.string().required().label("religion"),
-  methodOfTransportation: Yup.string()
+  [form.maritalStatus.name]: Yup.string()
     .required()
-    .label("method of transportation"),
+    .label(form.maritalStatus.name),
+  [form.occupation.name]: Yup.string().required().label(form.occupation.label),
+  [form.religion.name]: Yup.string().required().label(form.religion.label),
+  [form.highestEducation.name]: Yup.string()
+    .required()
+    .label(form.highestEducation.label),
+  [form.methodOfTransportation.name]: Yup.string()
+    .required()
+    .label(form.methodOfTransportation.label),
 });
 
 const initialValues = {
@@ -42,8 +69,8 @@ export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <FormFieldContainer direction="row">
           <RadioGroupInput
-            name="maritalStatus"
-            label="MaritalStatus"
+            name={form.maritalStatus.name}
+            label={form.maritalStatus.name}
             options={[
               { label: "Single", value: "single" },
               { label: "Married", value: "married" },
@@ -52,8 +79,8 @@ export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
             ]}
           />
           <RadioGroupInput
-            name="occupation"
-            label="Occupation Status"
+            name={form.occupation.name}
+            label={form.occupation.label}
             options={[
               { label: "Employed", value: "employed" },
               { label: "Unemployed", value: "unemployed" },
@@ -61,28 +88,28 @@ export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
           />
         </FormFieldContainer>
         <SelectInputField
-          name="methodOfTransportation"
+          name={form.methodOfTransportation.name}
           selectItems={[{ name: "Bus", value: "bus" }]}
-          label="Method Of Transportation"
-          id="methodOfTransportation"
+          label={form.methodOfTransportation.label}
+          id={form.methodOfTransportation.name}
         />
         <SelectInputField
-          name="religion"
+          name={form.religion.name}
           selectItems={[
             { name: "Christian", value: "christian" },
             { name: "Islam", value: "islam" },
           ]}
-          label="Religion"
-          id="religion"
+          label={form.religion.label}
+          id={form.religion.name}
         />
         <SelectInputField
-          name="highestEducation"
+          name={form.highestEducation.name}
           selectItems={[
             { name: "Degree", value: "degree" },
             { name: "Master's Degree", value: "master" },
           ]}
-          label="HighestEducation"
-          id="highestEducation"
+          label={form.highestEducation.label}
+          id={form.highestEducation.name}
         />
       </Box>
     </FormikInit>
