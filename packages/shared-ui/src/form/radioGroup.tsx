@@ -64,7 +64,7 @@ export const BaseRadioInput: FC<BaseProp & Prop> = ({
 }) => {
   return (
     <FormControl sx={sx} error={hasError}>
-      <FormLabel id={name}>{label}</FormLabel>
+      <FormLabel id={name}>{label} "dddd"</FormLabel>
       <RadioGroup row={row} value={value} onChange={handleChange} name={name}>
         {options.map(({ label, value }) => (
           <FormControlLabel
