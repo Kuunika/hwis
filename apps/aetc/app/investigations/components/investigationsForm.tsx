@@ -174,6 +174,7 @@ export function InvestigationsForm({ initialValues, onSubmit }: props) {
           multiple={false}
           sx={{ mr: "1ch" }}
         />
+
         <SearchComboBox
           name={form.sampleType.name}
           label={form.sampleType.label}
