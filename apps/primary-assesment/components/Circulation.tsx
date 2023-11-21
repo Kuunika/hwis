@@ -3,10 +3,9 @@ import React from 'react'
 import { FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
 import { Box } from "@mui/material";
-import { formStyles } from '../triage/src/components/forms/forms.styles';
+import { formStyles } from '../../triage/src/components/forms/forms.styles';
 
 type Props = {
-    initialValues: any;
     onSubmit: (values:any) => void;
 }
 const form = {
@@ -134,7 +133,9 @@ const Circulation = ({onSubmit}:Props) => {
           ]}
         />
         <TextInputField
-          name={}
+          name={form.pulseInfo.name}
+          label={form.pulseInfo.label}
+          id={form.pelvisInfo.name}
         />
       </Box>
     </FormikInit>
