@@ -28,6 +28,7 @@ export const SelectInputField: FC<Prop> = ({
   sx,
   getValue,
   size = "medium",
+  width = "100%",
 }) => {
   const { value, handleChange, hasError } = useFormikField(name);
 
@@ -36,10 +37,11 @@ export const SelectInputField: FC<Prop> = ({
   }, [value]);
 
   return (
-    <Box sx={{ minWidth: 120, my: "1ch", ...sx }}>
+    <Box sx={{ my: "1ch", width, mr: "1ch", ...sx }}>
       <FormControl fullWidth>
         <InputLabel id={id}>{label}</InputLabel>
         <Select
+          sx={{ borderRadius: "1ch" }}
           size={size}
           name={name}
           labelId={id}

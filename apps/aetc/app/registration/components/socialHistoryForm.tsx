@@ -7,6 +7,7 @@ import {
   RadioGroupInput,
   SelectInputField,
   FormFieldContainer,
+  FieldsContainer,
 } from "shared-ui/src";
 
 const form = {
@@ -46,19 +47,12 @@ const schema = Yup.object().shape({
     .label(form.methodOfTransportation.label),
 });
 
-const initialValues = {
-  maritalStatus: "",
-  occupation: "",
-  religion: "",
-  highestEducation: "",
-  methodOfTransportation: "",
-};
-
 type Prop = {
+  initialValues: any;
   onSubmit: () => void;
 };
 
-export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
+export const SocialHistoryForm: FC<Prop> = ({ onSubmit, initialValues }) => {
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -66,11 +60,13 @@ export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
       validationSchema={schema}
       submitButtonText="next"
     >
+      <br />
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <FormFieldContainer direction="row">
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
           <RadioGroupInput
+            sx={{ mr: "10ch" }}
             name={form.maritalStatus.name}
-            label={form.maritalStatus.name}
+            label={form.maritalStatus.label}
             options={[
               { label: "Single", value: "single" },
               { label: "Married", value: "married" },
@@ -86,7 +82,8 @@ export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
               { label: "Unemployed", value: "unemployed" },
             ]}
           />
-        </FormFieldContainer>
+        </FieldsContainer>
+        <br />
         <SelectInputField
           name={form.methodOfTransportation.name}
           selectItems={[{ name: "Bus", value: "bus" }]}

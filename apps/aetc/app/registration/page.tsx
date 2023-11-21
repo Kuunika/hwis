@@ -1,3 +1,11 @@
+"use client";
+import { MiddlePageLayout } from "@/components/layouts";
+import { RegistrationFlow } from "./components";
+
 export default function Registration() {
-  return <></>;
+  return (
+    <MiddlePageLayout title="Registration">
+      <RegistrationFlow />
+    </MiddlePageLayout>
+  );
 }

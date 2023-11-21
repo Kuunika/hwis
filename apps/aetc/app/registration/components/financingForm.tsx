@@ -36,16 +36,11 @@ const schema = Yup.object().shape({
   [form.insuranceSchema.name]: Yup.string().label(form.insuranceSchema.label),
 });
 
-const initialValues = {
-  insuranceProvider: "",
-  insuranceIdNo: "",
-  insuranceSchema: "",
-};
-
 type Props = {
   onSubmit: () => void;
+  initialValues: any;
 };
-export const MedicalInsuranceForm: FC<Props> = ({ onSubmit }) => {
+export const FinancingForm: FC<Props> = ({ onSubmit, initialValues }) => {
   const [payment, setPayment] = useState("");
   return (
     <FormikInit

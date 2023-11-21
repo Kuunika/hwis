@@ -8,13 +8,11 @@ const schema = Yup.object().shape({
     .label("Referee Medical Facility"),
 });
 
-const initialValues = {
-  refereeMedicalFacility: "",
-};
 type Props = {
+  initialValues: any;
   onSubmit: () => void;
 };
-export const ReferralForm: FC<Props> = ({ onSubmit }) => {
+export const ReferralForm: FC<Props> = ({ onSubmit, initialValues }) => {
   return (
     <FormikInit
       validationSchema={schema}

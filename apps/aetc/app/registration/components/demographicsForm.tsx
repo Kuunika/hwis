@@ -6,6 +6,7 @@ import {
   TextInputField,
   RadioGroupInput,
   SelectInputField,
+  FieldsContainer,
 } from "shared-ui/src";
 
 const form = {
@@ -126,26 +127,6 @@ const schema = Yup.object().shape({
     .label(form.guardianPhoneNumber.label),
 });
 
-const initialValues = {
-  firstName: "",
-  lastName: "",
-  dob: "",
-  gender: "",
-  currentDistrict: "",
-  currentTraditionAuthority: "",
-  currentVillage: "",
-  closeLandMark: "",
-  nextOfKinName: "",
-  nextOfKinRelationship: "",
-  nextOfKinPhoneNumber: "",
-  id: "",
-  homeDistrict: "",
-  homeTraditionalAuthority: "",
-  homeVillage: "",
-  guardianName: "",
-  guardianPhoneNumber: "",
-};
-
 type Prop = {
   initialValues: any;
   onSubmit: () => void;
@@ -159,122 +140,101 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            mr: "1ch",
-          }}
-        >
-          <TextInputField
-            name={form.identificationNumber.name}
-            id={form.identificationNumber.name}
-            label={form.identificationNumber.label}
-          />
-          <TextInputField
-            name={form.firstName.name}
-            id={form.firstName.name}
-            label={form.firstName.label}
-          />
-          <TextInputField
-            name={form.lastName.name}
-            id={form.lastName.name}
-            label={form.lastName.label}
-          />
-          <RadioGroupInput
-            name={form.gender.name}
-            label={form.gender.label}
-            options={[
-              { label: "Male", value: "male" },
-              { label: "Female", value: "female" },
-            ]}
-          />
-          <SelectInputField
-            name={form.currentDistrict.name}
-            id={form.currentDistrict.name}
-            label={form.currentDistrict.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
-          />
+      <FieldsContainer>
+        <TextInputField
+          name={form.identificationNumber.name}
+          id={form.identificationNumber.name}
+          label={form.identificationNumber.label}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
+        <TextInputField
+          name={form.firstName.name}
+          id={form.firstName.name}
+          label={form.firstName.label}
+        />
+        <TextInputField
+          name={form.lastName.name}
+          id={form.lastName.name}
+          label={form.lastName.label}
+        />
+      </FieldsContainer>
 
-          <SelectInputField
-            name={form.currentTraditionalAuthority.name}
-            id={form.currentTraditionalAuthority.name}
-            label={form.currentTraditionalAuthority.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
-          />
-          <SelectInputField
-            name={form.currentVillage.name}
-            id={form.currentVillage.name}
-            label={form.currentVillage.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
-          />
-          <TextInputField
-            name={form.closeLandMark.name}
-            id={form.closeLandMark.name}
-            label={form.closeLandMark.label}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            mx: "1ch",
-          }}
-        >
-          <TextInputField
-            name={form.nextOfKinName.name}
-            id={form.nextOfKinName.name}
-            label={form.nextOfKinName.label}
-          />
-          <TextInputField
-            name={form.nextOfKinRelationship.name}
-            id={form.nextOfKinRelationship.name}
-            label={form.nextOfKinRelationship.label}
-          />
-          <TextInputField
-            name={form.nextOfKinPhoneNumber.name}
-            id={form.nextOfKinPhoneNumber.name}
-            label={form.nextOfKinPhoneNumber.label}
-          />
-          <SelectInputField
-            name={form.homeDistrict.name}
-            id={form.homeDistrict.name}
-            label={form.homeDistrict.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
-          />
-          <SelectInputField
-            name={form.homeTraditionalAuthority.name}
-            id={form.homeTraditionalAuthority.name}
-            label={form.homeTraditionalAuthority.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
-          />
-          <SelectInputField
-            name={form.homeVillage.name}
-            id={form.homeVillage.name}
-            label={form.homeVillage.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
-          />
-          <TextInputField
-            name={form.guardianName.name}
-            id={form.guardianName.name}
-            label={form.guardianName.name}
-          />
-          <TextInputField
-            name={form.guardianPhoneNumber.name}
-            id={form.guardianPhoneNumber.name}
-            label={form.guardianPhoneNumber.label}
-          />
-        </Box>
-      </Box>
+      <RadioGroupInput
+        name={form.gender.name}
+        label={form.gender.label}
+        options={[
+          { label: "Male", value: "male" },
+          { label: "Female", value: "female" },
+        ]}
+      />
+
+      <FieldsContainer sx={{ justifyContent: "space-between" }}>
+        <SelectInputField
+          name={form.currentDistrict.name}
+          id={form.currentDistrict.name}
+          label={form.currentDistrict.label}
+          selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+        />
+
+        <SelectInputField
+          name={form.currentTraditionalAuthority.name}
+          id={form.currentTraditionalAuthority.name}
+          label={form.currentTraditionalAuthority.label}
+          selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
+        <SelectInputField
+          name={form.currentVillage.name}
+          id={form.currentVillage.name}
+          label={form.currentVillage.label}
+          selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+        />
+        <TextInputField
+          name={form.closeLandMark.name}
+          id={form.closeLandMark.name}
+          label={form.closeLandMark.label}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
+        <TextInputField
+          name={form.nextOfKinName.name}
+          id={form.nextOfKinName.name}
+          label={form.nextOfKinName.label}
+        />
+        <TextInputField
+          name={form.nextOfKinRelationship.name}
+          id={form.nextOfKinRelationship.name}
+          label={form.nextOfKinRelationship.label}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
+        <SelectInputField
+          name={form.homeTraditionalAuthority.name}
+          id={form.homeTraditionalAuthority.name}
+          label={form.homeTraditionalAuthority.label}
+          selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+        />
+        <SelectInputField
+          name={form.homeVillage.name}
+          id={form.homeVillage.name}
+          label={form.homeVillage.label}
+          selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
+        <TextInputField
+          name={form.guardianName.name}
+          id={form.guardianName.name}
+          label={form.guardianName.name}
+        />
+        <TextInputField
+          name={form.guardianPhoneNumber.name}
+          id={form.guardianPhoneNumber.name}
+          label={form.guardianPhoneNumber.label}
+        />
+      </FieldsContainer>
     </FormikInit>
   );
 };
