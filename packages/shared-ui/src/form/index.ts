@@ -6,3 +6,4 @@ export * from "./formFieldContainer";
 export * from "./multlineInput";
 export * from "./searchCombo";
 export * from "./fieldsContainer";
+export * from "./formContainer";

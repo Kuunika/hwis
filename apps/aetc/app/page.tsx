@@ -1,12 +1,7 @@
 "use client";
-import { MiddlePageLayout } from "@/components/layouts";
+
 import { useState } from "react";
-import {
-  NewStepper,
-  CustomizedAccordions,
-  MainButton,
-  MainGrid,
-} from "shared-ui/src";
+import { MainButton, MainGrid, NewStepperContainer } from "shared-ui/src";
 
 export default function Home() {
   const [active, setActive] = useState(0);
@@ -22,15 +17,17 @@ export default function Home() {
         <MainGrid item lg={9}>
           <br />
           <br />
-          <CustomizedAccordions title="Test" steps={steps} active={active}>
+          <NewStepperContainer title="Test" steps={steps} active={active}>
             <>
               <MainButton title={"next"} onClick={() => setActive(1)} />
             </>
             <>
               <MainButton title={"next"} onClick={() => setActive(2)} />
             </>
-            <></>
-          </CustomizedAccordions>
+            <>
+              <MainButton title={"complete"} onClick={() => setActive(2)} />
+            </>
+          </NewStepperContainer>
         </MainGrid>
         <MainGrid item lg={2}></MainGrid>
       </MainGrid>

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { StepperContainer } from "shared-ui/src";
+import { NewStepperContainer, StepperContainer } from "shared-ui/src";
 import {
   AirwayAndBreathingForm,
   BloodCirculationForm,
@@ -17,16 +17,11 @@ export default function TriageWorkFlow() {
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
   return (
-    <StepperContainer
-      steps={steps}
-      active={activeStep}
-      containerSx={{ display: "block" }}
-      sx={{ alignItems: "flex-start" }}
-    >
+    <NewStepperContainer title="Triage" steps={steps} active={activeStep}>
       <AirwayAndBreathingForm onSubmit={() => setActiveStep(1)} />
       <BloodCirculationForm onSubmit={() => setActiveStep(2)} />
       <ConsciousnessForm onSubmit={() => setActiveStep(3)} />
       <PersistentPainForm onSubmit={() => setActiveStep(4)} />
-    </StepperContainer>
+    </NewStepperContainer>
   );
 }

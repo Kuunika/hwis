@@ -57,7 +57,7 @@ interface IProps {
   title: string;
 }
 
-export function CustomizedAccordions({
+export function NewStepperContainer({
   children,
   active,
   steps,

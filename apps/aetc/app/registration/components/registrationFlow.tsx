@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StepperContainer } from "shared-ui/src";
+import { NewStepperContainer, StepperContainer } from "shared-ui/src";
 import {
   DemographicsForm,
   FinancingForm,
@@ -30,12 +30,7 @@ export const RegistrationFlow = () => {
   const handleSubmitFinancing = () => {};
 
   return (
-    <StepperContainer
-      steps={steps}
-      active={activeStep}
-      containerSx={{ display: "block" }}
-      sx={{ alignItems: "flex-start" }}
-    >
+    <NewStepperContainer title="Registration" steps={steps} active={activeStep}>
       <DemographicsForm
         initialValues={demographicsInitialValues}
         onSubmit={handleSubmitDemographics}
@@ -53,7 +48,7 @@ export const RegistrationFlow = () => {
         initialValues={financingInitialValues}
         onSubmit={handleSubmitFinancing}
       />
-    </StepperContainer>
+    </NewStepperContainer>
   );
 };
 

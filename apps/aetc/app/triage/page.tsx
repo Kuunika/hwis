@@ -1,11 +1,12 @@
 "use client";
 import { MiddlePageLayout } from "@/components/layouts";
 import TriageWorkFlow from "./components/triageWorkFlow";
+import { FormContainer } from "shared-ui/src";
 
 export default function Triage() {
   return (
-    <MiddlePageLayout title="Triage" middleGridSize={8}>
+    <FormContainer>
       <TriageWorkFlow />
-    </MiddlePageLayout>
+    </FormContainer>
   );
 }
