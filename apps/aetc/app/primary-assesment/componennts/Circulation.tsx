@@ -5,12 +5,12 @@ import * as yup from "yup";
 import { Box } from "@mui/material";
 import { formStyles } from "../../../../triage/src/components/forms/forms.styles";
 
-type Props = {
+type Prop = {
   onSubmit: (values: any) => void;
 };
 const form = {
   bleedingInfo: {
-    name: "bleeding",
+    name: "bleedingInfo",
     label: "Is the patient actively bleeding",
   },
   pressureInfo: {
@@ -18,7 +18,7 @@ const form = {
     label: "Presure",
   },
   pulseInfo: {
-    name: "pulse",
+    name: "pulseInfo",
     label: "Is the patient have a pulse",
   },
   pulseRate: {
@@ -34,31 +34,31 @@ const form = {
     label: "Does the patient need  intravenous access",
   },
   traumatizedInfo: {
-    name: "traumatized",
+    name: "traumatizedInfo",
     label: "Is the patient traumatized?",
   },
   distentionInfo: {
-    name: "distention",
+    name: "distentionInfo",
     label: "Is there abdominal distention?",
   },
   abnormalitiesInfo: {
-    name: "abnormalities",
+    name: "abnormalitiesInfo",
     label: "Is there any other abnormalities?",
   },
   capillaryInfo: {
-    name: "Capillary",
+    name: "capillaryInfo",
     label: "Capillary refill time",
   },
   diastolicInfo: {
-    name: "diastolic",
+    name: "diastolicInfo",
     label: "Diastolic value",
   },
   interavenousInfo: {
-    name: "interavenous",
+    name: "interavenousInfo",
     label: "Size of interavenous catheter",
   },
   pelvisInfo: {
-    name: "pelvis",
+    name: "pelvisInfo",
     label: "Is the pelvis stable?",
   },
   abdnomenDistention: {
@@ -66,90 +66,48 @@ const form = {
     label: "Is there abdominal distention?",
   },
   abdnomenInfo: {
-    name: "abdnomen",
+    name: "abdnomenInfo",
     label: "Are there other abnomalities on the abdnomen?",
   },
   mucousMembranesInfo: {
-    name: "MucousMembranes",
+    name: "mucousMembranesInfo",
     label: "Mucous membranes",
   },
   meanArterialPressureInfo: {
-    name: "SizeOfInteravenousCatheter",
+    name: "meanArterialPressureInfo",
     label: "Mean arterial pressure",
   },
-  catheterInfo:{
-    name:"catherInfo",
-    label:"Catheter"
+  catheterInfo: {
+    name: "catheterInfo",
+    label: "Catheter",
   },
   femurAndTibiaNormalInfo: {
-    name: "pelvis",
+    name: "femurAndTibiaNormalInfo",
     label: "is the femur and tibia normal?",
   },
 };
 
 const schema = yup.object({
-  [form.bleedingInfo.name]: yup
-    .string()
-    .required()
-    .label(form.bleedingInfo.label),
+  [form.bleedingInfo.name]: yup.string().required().label(form.bleedingInfo.label),
   [form.pulseInfo.name]: yup.string().required().label(form.pulseInfo.label),
   [form.pressureInfo.name]: yup.string().required().label(form.pressureInfo.label),
   [form.pulseRate.name]: yup.string().required().label(form.pulseRate.label),
-  [form.bloodPresure.name]: yup
-    .string()
-    .required()
-    .label(form.bloodPresure.label),
-  [form.intravenousAccess.name]: yup
-    .string()
-    .required()
-    .label(form.intravenousAccess.label),
-  [form.traumatizedInfo.name]: yup
-    .string()
-    .required()
-    .label(form.traumatizedInfo.label),
-  [form.distentionInfo.name]: yup
-    .string()
-    .required()
-    .label(form.bleedingInfo.label),
-  [form.abnormalitiesInfo.name]: yup
-    .string()
-    .required()
-    .label(form.abnormalitiesInfo.label),
-  [form.capillaryInfo.name]: yup
-    .string()
-    .required()
-    .label(form.capillaryInfo.label),
-    [form.abdnomenDistention.name]:yup.string().required().label(form.abdnomenDistention.label),
-  [form.diastolicInfo.name]: yup
-    .string()
-    .required()
-    .label(form.diastolicInfo.label),
-  [form.abdnomenInfo.name]: yup
-    .string()
-    .required()
-    .label(form.abdnomenInfo.label),
-  [form.interavenousInfo.name]: yup
-    .string()
-    .required()
-    .label(form.interavenousInfo.label),
+  [form.bloodPresure.name]: yup.string().required().label(form.bloodPresure.label),
+  [form.intravenousAccess.name]: yup.string().required().label(form.intravenousAccess.label),
+  [form.traumatizedInfo.name]: yup.string().required().label(form.traumatizedInfo.label),
+  [form.distentionInfo.name]: yup.string().required().label(form.bleedingInfo.label),
+  [form.abnormalitiesInfo.name]: yup.string().required().label(form.abnormalitiesInfo.label),
+  [form.capillaryInfo.name]: yup.string().required().label(form.capillaryInfo.label),
+  [form.abdnomenDistention.name]:yup.string().required().label(form.abdnomenDistention.label),
+  [form.diastolicInfo.name]: yup.string().required().label(form.diastolicInfo.label),
+  [form.abdnomenInfo.name]: yup.string().required().label(form.abdnomenInfo.label),
+  [form.interavenousInfo.name]: yup.string().required().label(form.interavenousInfo.label),
   [form.pelvisInfo.name]: yup.string().required().label(form.pelvisInfo.label),
-  [form.abdnomenInfo.name]: yup
-    .string()
-    .required()
-    .label(form.abdnomenInfo.label),
-  [form.mucousMembranesInfo.name]: yup
-    .string()
-    .required()
-    .label(form.mucousMembranesInfo.label),
-  [form.meanArterialPressureInfo.name]: yup
-    .string()
-    .required()
-    .label(form.meanArterialPressureInfo.label),
-    [form.catheterInfo.name]:yup.string().required().label(form.catheterInfo.label),
-  [form.femurAndTibiaNormalInfo.name]: yup
-    .string()
-    .required()
-    .label(form.femurAndTibiaNormalInfo.label),
+  [form.abdnomenInfo.name]: yup.string().required().label(form.abdnomenInfo.label),
+  [form.mucousMembranesInfo.name]: yup.string().required().label(form.mucousMembranesInfo.label),
+  [form.meanArterialPressureInfo.name]: yup.string().required().label(form.meanArterialPressureInfo.label),
+  [form.catheterInfo.name]:yup.string().required().label(form.catheterInfo.label),
+  [form.femurAndTibiaNormalInfo.name]: yup.string().required().label(form.femurAndTibiaNormalInfo.label),
 });
 
 const initialValues = {
@@ -174,7 +132,7 @@ const initialValues = {
   femurAndTibiaNormalInfo: "",
 };
 
-const Circulation = ({ onSubmit }: Props) => {
+const Circulation = ({ onSubmit}:Prop) => {
 
   const sizeOfCatheter = [
     { label: "14G", value: "14G" },
@@ -186,7 +144,7 @@ const Circulation = ({ onSubmit }: Props) => {
   const sizeOfCapillary = [
     { label: "Less than 3 seconds", value: "Less than 3 seconds" },
     { label: "3 Seconds", value: "3 Seconds" },
-    { label: "3 Seconds", value: "3 Seconds" },
+
   ];
   const sizeOfMucous = [
     { label: "Normal", value: "Normal" },
@@ -273,11 +231,6 @@ const Circulation = ({ onSubmit }: Props) => {
           name={form.diastolicInfo.name}
           label={form.diastolicInfo.label}
           id={form.diastolicInfo.name}
-        />
-        <RadioGroupInput
-          name={form.capillaryInfo.name}
-          label={form.capillaryInfo.label}
-          options={sizeOfCapillary}
         />
         <RadioGroupInput
           name={form.catheterInfo.name}

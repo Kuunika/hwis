@@ -10,9 +10,9 @@ import Exposure from "./componennts/Exposure";
 const page = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const steps = [
-    // { id: 1, label: "Circulation Assessment" },
-    { id: 1, label: "Disability Assessment" },
-    { id: 2, label: "Exposure Assessment" },
+    { id: 1, label: "Circulation Assessment" },
+    { id: 2, label: "Disability Assessment" },
+    { id: 3, label: "Exposure Assessment" },
    
   ];
   return (
@@ -26,10 +26,10 @@ const page = () => {
         }}
       >
         <h1>Primary Assesment</h1>
-        <StepperContainer steps={steps} active={activeStep}>
-          {/* <Circulation onSubmit={() => setActiveStep(1)} /> */}
-          <Disability onSubmit={()=> setActiveStep(1)}/>
-          <Exposure onSubmit={()=>setActiveStep(2)}/>
+        <StepperContainer steps={steps} active={1}>
+          <Circulation onSubmit={() => setActiveStep(1)} />
+          <Disability onSubmit={()=> setActiveStep(2)}/>
+          <Exposure onSubmit={()=>setActiveStep(3)}/>
         </StepperContainer>
       </MainCard>
     </>

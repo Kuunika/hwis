@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { FormikInit, RadioGroupInput,TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
+import { Box } from "@mui/material";
 type Props = {
   onSubmit: (values: any) => void;
 };
@@ -111,10 +112,15 @@ const sizeOfMotorResponse = [
 // ];
 
 const Disability = ({onSubmit}:Props) => {
+  const [eyeOpeningValue, setEyeOpeningValue] = useState();
+  const [verbalResponseValue, setVerbalResponseValue] = useState();
+  const [motorResponseValue, setMotorResponseValue] = useState();
 
-const [val, setVal] = useState()
+  const totalSum =
+    Number(eyeOpeningValue || 0) +
+    Number(verbalResponseValue || 0) +
+    Number(motorResponseValue || 0);
 
-console.log({val})
   return (
     <FormikInit
       validationSchema={schema}
@@ -126,17 +132,19 @@ console.log({val})
         name={form.eyeOpening.name}
         label={form.eyeOpening.label}
         options={sizeOfEyeOpeningResponse}
+        getValue={(value) => setEyeOpeningValue(value)}
       />
       <RadioGroupInput
         name={form.verbalResponse.name}
         label={form.verbalResponse.label}
         options={sizeOfVerbalResponse}
+        getValue={(value) => setVerbalResponseValue(value)}
       />
       <RadioGroupInput
         name={form.motorResponse.name}
         label={form.motorResponse.label}
         options={sizeOfMotorResponse}
-        getValue={(value) => setVal(value)}
+        getValue={(value) => setMotorResponseValue(value)}
       />
       <RadioGroupInput
         name={form.seizureInfo.name}
@@ -146,6 +154,12 @@ console.log({val})
           { label: "No", value: "no" },
         ]}
       />
+      <Box>
+        <p>{form.eyeOpening.label}: {eyeOpeningValue}</p>
+        <p>{form.verbalResponse.label}: {verbalResponseValue}</p>
+        <p>{form.motorResponse.label}: {motorResponseValue}</p><br/>
+        <p>Total Score: {totalSum}</p>
+      </Box>
       <TextInputField
         name={form.reactionToLight.name}
         label={form.reactionToLight.label}
