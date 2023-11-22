@@ -1,18 +1,15 @@
-import { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   BasePopover,
-  FieldsContainer,
   FormikInit,
   MainButton,
   RadioGroupInput,
   SearchComboBox,
-  TextInputField,
-  WrapperBox,
 } from "shared-ui/src";
 import * as yup from "yup";
 import { InformationRow } from "./infoSelectionBox";
 import { SxProps } from "@mui/material";
-import { Console } from "console";
+
 
 
 type props = {
