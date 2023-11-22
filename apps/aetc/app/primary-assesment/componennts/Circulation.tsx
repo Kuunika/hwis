@@ -79,7 +79,7 @@ const form = {
   },
   catheterInfo: {
     name: "catheterInfo",
-    label: "Catheter",
+    label: "Size of interaveneous catheter",
   },
   femurAndTibiaNormalInfo: {
     name: "femurAndTibiaNormalInfo",
@@ -103,7 +103,6 @@ const schema = yup.object({
   [form.abdnomenInfo.name]: yup.string().required().label(form.abdnomenInfo.label),
   [form.interavenousInfo.name]: yup.string().required().label(form.interavenousInfo.label),
   [form.pelvisInfo.name]: yup.string().required().label(form.pelvisInfo.label),
-  [form.abdnomenInfo.name]: yup.string().required().label(form.abdnomenInfo.label),
   [form.mucousMembranesInfo.name]: yup.string().required().label(form.mucousMembranesInfo.label),
   [form.meanArterialPressureInfo.name]: yup.string().required().label(form.meanArterialPressureInfo.label),
   [form.catheterInfo.name]:yup.string().required().label(form.catheterInfo.label),
@@ -199,6 +198,14 @@ const Circulation = ({ onSubmit}:Prop) => {
           ]}
         />
         <RadioGroupInput
+          name={form.intravenousAccess.name}
+          label={form.intravenousAccess.label}
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
+        <RadioGroupInput
           name={form.traumatizedInfo.name}
           label={form.traumatizedInfo.label}
           options={[
@@ -240,14 +247,6 @@ const Circulation = ({ onSubmit}:Prop) => {
         <RadioGroupInput
           name={form.pelvisInfo.name}
           label={form.pelvisInfo.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
-        />
-        <RadioGroupInput
-          name={form.abnormalitiesInfo.name}
-          label={form.abnormalitiesInfo.label}
           options={[
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },

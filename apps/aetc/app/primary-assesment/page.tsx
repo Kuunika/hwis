@@ -26,7 +26,7 @@ const page = () => {
         }}
       >
         <h1>Primary Assesment</h1>
-        <StepperContainer steps={steps} active={1}>
+        <StepperContainer steps={steps} active={activeStep}>
           <Circulation onSubmit={() => setActiveStep(1)} />
           <Disability onSubmit={()=> setActiveStep(2)}/>
           <Exposure onSubmit={()=>setActiveStep(3)}/>
