@@ -64,9 +64,9 @@ export function CustomizedAccordions({
   title,
 }: IProps) {
   return (
-    <MainGrid container spacing={10}>
-      <MainGrid item lg={3}>
-        <MainPaper sx={{ width: "100%", p: "1ch" }}>
+    <MainGrid container spacing={5}>
+      <MainGrid item lg={4}>
+        <MainPaper elevation={0} sx={{ width: "100%", p: "1ch" }}>
           <MainTypography variant="h4">{title}</MainTypography>
           <NewStepper steps={steps} active={active} />
         </MainPaper>
