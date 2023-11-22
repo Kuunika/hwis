@@ -1,7 +1,8 @@
 export const defaultTheme = {
   primaryLight: "#63a7c8",
   // primary: "#00796B",
-  primary: "#017092",
+  // primary: "#017092",
+  primary: "#006401",
   primaryDark: "#004966",
   primaryFontColor: "#fff",
   secondary: "#888888",
