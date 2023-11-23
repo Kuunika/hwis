@@ -1,0 +1,100 @@
+import React, { useState } from 'react'
+import { DatePickerInput, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
+import * as yup from "yup";
+import { Box } from "@mui/material";
+
+
+    type Prop = {
+      onSubmit: (values: any) => void;
+    };
+
+const form ={
+    pregnancyTest: {
+        name: "pregnancyTest",
+        label: "Pregnancy test done?",
+      },
+    lmpInfo: {
+        name: "lmpInfo",
+        label: "Last Menstrual Period (LMP) known?",
+      },
+    lmpDate: {
+        name: "lmpDate",
+        label: "Enter LMP date",
+      },
+    gestationalAge:{
+       name:"gestationalAge",
+       label:"Gestational age by abdominal palpation"
+    },
+    eddInfo:{
+      name:"eddInfo",
+      label:"Expected date of delivery (EDD) - Date"
+    }
+}
+
+const schema = yup.object({
+    [form.pregnancyTest.name]: yup.string().required().label(form.pregnancyTest.label),
+    [form.lmpInfo.name]: yup.string().required().label(form.lmpInfo.label),
+    [form.eddInfo.name]: yup.string().required().label(form.eddInfo.label),
+});
+
+const initialValues = {
+  pregnancyTest: "",
+  lmpInfo: "",
+  eddInfo: "",
+};
+const CurrentObsteric = ({onSubmit}:Prop) => {
+  const [isLmp, setLmp] = useState(false);
+  const [showAdditionalRadio, setShowAdditionalRadio] = useState(false);
+  
+    const handleRadioChange = (fieldName: string, value: string) => {
+    if (fieldName === form.lmpInfo.name && value === "yes") {
+      setLmp(true);
+      setShowAdditionalRadio(true);
+    } else {
+      setLmp(false);
+      setShowAdditionalRadio(false);
+    }
+  };
+  return (
+    <FormikInit
+      validationSchema={schema}
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      submitButtonText="next"
+    >
+      <Box>
+        <RadioGroupInput
+          name={form.pregnancyTest.name}
+          label={form.pregnancyTest.label}
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
+        <RadioGroupInput
+          name={form.lmpInfo.name}
+          label={form.lmpInfo.label}
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+          getValue={(value) => handleRadioChange(form.lmpInfo.name, value)}
+        />
+        {showAdditionalRadio && (
+          <TextInputField
+            name={form.lmpDate.name}
+            label={form.lmpDate.label}
+            id={form.lmpDate.name}
+          />
+        )}
+          <TextInputField
+            name={form.gestationalAge.name}
+            label={form.gestationalAge.label}
+            id={form.gestationalAge.name}
+          />
+      </Box>
+    </FormikInit>
+  );
+}
+
+export default CurrentObsteric
