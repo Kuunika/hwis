@@ -23,7 +23,7 @@ const form = {
     label: "Last Name",
   },
   dob: {
-    name: "dob",
+    name: "birthDate",
     label: "Date of Birth",
   },
   gender: {

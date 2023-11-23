@@ -10,42 +10,43 @@ import {
 } from "shared-ui/src";
 import * as yup from "yup";
 import { Grid } from "@mui/material";
+import { concepts } from "@/constants";
 
 const form = {
   complaints: {
-    name: "complaints",
+    name: concepts.COMPLAINTS,
     label: " Complaints",
   },
   temperature: {
-    name: "temperature",
+    name: concepts.TEMPERATURE,
     label: "Temperature",
   },
   respiratoryRate: {
-    name: "respiratoryRate",
+    name: concepts.RESPIRATORY_RATE,
     label: "Respiratory rate",
   },
   saturationRate: {
-    name: "saturationRate",
+    name: concepts.SATURATION_RATE,
     label: "Saturation rate",
   },
   heartRate: {
-    name: "heartRate",
+    name: concepts.HEART_RATE,
     label: "Heart rate",
   },
   bloodPressure: {
-    name: "bloodPressure",
+    name: concepts.BLOOD_PRESSURE,
     label: "Blood pressure",
   },
   motorResponse: {
-    name: "motorResponse",
+    name: concepts.MOTOR_RESPONSE,
     label: "Motor Response",
   },
   eyeOpeningResponse: {
-    name: "eyeOpeningResponse",
+    name: concepts.EYE_OPENING_RESPONSE,
     label: "Eye Opening Response",
   },
   verbalResponse: {
-    name: "verbalResponse",
+    name: concepts.VERBAL_RESPONSE,
     label: "Verbal Response",
   },
 
@@ -53,16 +54,13 @@ const form = {
     name: "calculatedGCS",
     label: "Calculated GCS",
   },
-  AVPU: {
-    name: "AVPU",
-    label: "AVPU",
-  },
+
   glucose: {
-    name: "glucose",
+    name: "b9cc75b2-8d80-11d8-abbb-0024217bb78e",
     label: "Glucose",
   },
   avpu: {
-    name: "avpu",
+    name: "b9da6d98-8d80-11d8-abbb-0024217bb78e",
     label: "AVPU",
   },
 };
@@ -101,12 +99,12 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.verbalResponse.label),
-  [form.calculatedGCS.name]: yup
-    .string()
-    .required()
-    .label(form.calculatedGCS.label),
+  // [form.calculatedGCS.name]: yup
+  //   .string()
+  //   .required()
+  //   .label(form.calculatedGCS.label),
   [form.glucose.name]: yup.string().required().label(form.glucose.label),
-  [form.avpu.name]: yup.array().required().label(form.avpu.label),
+  [form.avpu.name]: yup.string().required().label(form.avpu.label),
 });
 
 const eyeOpeningResponses = [
@@ -219,16 +217,16 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           />
         </Grid>
       </Grid>
-      <TextInputField
+      {/* <TextInputField
         id={form.calculatedGCS.name}
         name={form.calculatedGCS.name}
         label={form.calculatedGCS.label}
-      />
+      /> */}
       <SearchComboBox
         name={form.avpu.name}
         options={avpuLists}
         label={form.avpu.label}
-        multiple={true}
+        multiple={false}
       />
       <br />
       <TextInputField

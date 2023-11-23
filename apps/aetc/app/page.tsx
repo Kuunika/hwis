@@ -1,11 +1,11 @@
 "use client";
-
 import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
 import { FcSurvey } from "react-icons/fc";
-import { useNavigation } from "@/hooks";
+import { emrLogin, useNavigation } from "@/hooks";
 
 export default function Home() {
   const { navigateTo } = useNavigation();
+  emrLogin();
   return (
     <>
       <MainGrid container>
@@ -19,7 +19,7 @@ export default function Home() {
             elevation={1}
             sx={{
               p: "1ch",
-              py: "2ch",
+              py: "4ch",
               width: "30%",
               display: "flex",
               flexDirection: "column",

@@ -4,17 +4,24 @@ import React from "react";
 import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
 
+const form = {
+  airway: {
+    name: "airway",
+    label: "is Airway Compromised",
+  },
+  breathing: {
+    name: "breathing",
+    label: "is Breathing Normal",
+  },
+};
+
 const schema = Yup.object().shape({
-  airway: Yup.string().required().label("Is Airway Compromised"),
-  breathing: Yup.string().required().label("Is Breathing Normal"),
-  availability: Yup.string()
-    .required()
-    .label("Are any of the following present"),
+  [form.airway.name]: Yup.string().required().label(form.airway.label),
+  [form.breathing.name]: Yup.string().required().label(form.breathing.label),
 });
 const initialValues = {
   airway: "",
   breathing: "",
-  availability: "",
 };
 
 type Prop = {
@@ -31,8 +38,8 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
     >
       <FieldsContainer sx={{ width: "100%" }}>
         <RadioGroupInput
-          name="breathing"
-          label="Is Breathing Normal ?"
+          name={form.airway.name}
+          label={form.airway.label}
           options={[
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
@@ -40,27 +47,15 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
         />
 
         <RadioGroupInput
-          name="airway"
-          label="Is Airway Compromised ?"
+          name={form.breathing.name}
+          label={form.breathing.label}
           options={[
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
           ]}
         />
       </FieldsContainer>
-
       <br />
-      <RadioGroupInput
-        name="availability"
-        label="Are any of the following present"
-        options={[
-          { label: "Oxygen Sats", value: "oxygen" },
-          {
-            label: "Respiration Rate < 9 or 21 - 30",
-            value: "respiration",
-          },
-        ]}
-      />
     </FormikInit>
   );
 };

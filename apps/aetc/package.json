@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mui/x-tree-view": "^6.17.0",
+    "mahis-api-client": "^0.20.8",
     "next": "14.0.2",
     "react": "^18",
     "react-dom": "^18",

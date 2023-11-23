@@ -6,12 +6,12 @@ import {
   ReferralForm,
   SocialHistoryForm,
 } from ".";
-import { useNavigation } from "@/hooks";
+import { addPatient, useNavigation } from "@/hooks";
 
 export const RegistrationFlow = () => {
   const { navigateTo } = useNavigation();
   const [activeStep, setActiveStep] = useState<number>(0);
-  const {} = useState([]);
+  const { mutate } = addPatient();
 
   const steps = [
     { id: 1, label: "Demographics" },
@@ -20,8 +20,8 @@ export const RegistrationFlow = () => {
     { id: 4, label: "Financing" },
   ];
 
-  const handleSubmitDemographics = () => {
-    console.log("first");
+  const handleSubmitDemographics = (data: any) => {
+    mutate(data);
     setActiveStep(1);
   };
   const handleSubmitSocialHistory = () => {

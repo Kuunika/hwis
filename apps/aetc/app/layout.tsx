@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
+import { ReactQueryProvider } from "@/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
-        <ProviderTheme>
-          <NavBar />
-          {children}
-        </ProviderTheme>
+        <ReactQueryProvider>
+          <ProviderTheme>
+            <NavBar />
+            {children}
+          </ProviderTheme>
+        </ReactQueryProvider>
       </body>
     </html>
   );
