@@ -2,7 +2,7 @@ export const encounters = {
   VITALS: "ba05bfc0-8d80-11d8-abbb-0024217bb78e",
 };
 
-export const AETC_VISIT_TYPE = "89440c91-ec43-4aa6-ad7d-959a4c2c7aa8";
+export const AETC_VISIT_TYPE = "4b6e9e68-2eb5-499b-b2e2-e086560cf03a";
 
 export const concepts = {
   COMPLAINTS: "b9d9f494-8d80-11d8-abbb-0024217bb78e",
@@ -13,7 +13,7 @@ export const concepts = {
   BLOOD_PRESSURE: "b9afec6c-8d80-11d8-abbb-0024217bb78e",
   MOTOR_RESPONSE: "a1137874-afa8-42a2-b0e4-7b54f58e7a88",
   EYE_OPENING_RESPONSE: "fe9266a8-76b3-4497-b60a-15ac129250e7",
-  VERBAL_RESPONSE: "258a98e7-4ac8-4dc0-83af-87d3bdec7f7f",
+  VERBAL_RESPONSE: "5470aa1f-9207-4169-ae7a-5166222d67b7",
   GLUCOSE: "b9cc75b2-8d80-11d8-abbb-0024217bb78e",
   AVPU: "b9da6d98-8d80-11d8-abbb-0024217bb78e",
 };

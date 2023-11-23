@@ -33,7 +33,15 @@ export default function TriageWorkFlow() {
   };
 
   return (
-    <NewStepperContainer title="Triage" steps={steps} active={activeStep}>
+    <NewStepperContainer
+      setActive={(value) => {
+        console.log({ value });
+        setActiveStep(value);
+      }}
+      title="Triage"
+      steps={steps}
+      active={activeStep}
+    >
       <VitalsForm initialValues={{}} onSubmit={handleVitalsSubmit} />
       <AirwayAndBreathingForm onSubmit={() => setActiveStep(2)} />
       <BloodCirculationForm onSubmit={() => setActiveStep(3)} />
