@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { DatePickerInput, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
+import { DatePickerInput, FieldsContainer, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
 import { Box } from "@mui/material";
 
 
 type Props = {
-  onSubmit: (values: any) => void;
-  initialValues: any
+  onSubmit: () => void;
+  initialValues: any;
 };
 
 const form ={
@@ -35,6 +35,8 @@ const form ={
 const schema = yup.object({
     [form.pregnancyTest.name]: yup.string().required().label(form.pregnancyTest.label),
     [form.lmpInfo.name]: yup.string().required().label(form.lmpInfo.label),
+    [form.lmpDate.name]: yup.string().required().label(form.lmpDate.label),
+    [form.gestationalAge.name]:yup.string().required().label(form.gestationalAge.label),
     [form.eddInfo.name]: yup.string().required().label(form.eddInfo.label),
 });
 const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
@@ -57,6 +59,7 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
+      <FieldsContainer>
         <RadioGroupInput
           name={form.pregnancyTest.name}
           label={form.pregnancyTest.label}
@@ -65,6 +68,8 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.lmpInfo.name}
           label={form.lmpInfo.label}
@@ -81,11 +86,21 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
             id={form.lmpDate.name}
           />
         )}
+      </FieldsContainer>
+      <FieldsContainer>
         <TextInputField
           name={form.gestationalAge.name}
           label={form.gestationalAge.label}
           id={form.gestationalAge.name}
         />
+      </FieldsContainer>
+      <FieldsContainer>
+        <TextInputField
+          name={form.eddInfo.name}
+          label={form.eddInfo.label}
+          id={form.eddInfo.name}
+        />
+      </FieldsContainer>
     </FormikInit>
   );
 };

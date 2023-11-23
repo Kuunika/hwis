@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
+import { FieldsContainer, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
 import { Box } from "@mui/material";
 
@@ -62,12 +62,14 @@ const Gestation = ({ onSubmit,initialValues }: Props) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <Box>
+      <FieldsContainer>
         <TextInputField
           name={form.weekOfVisit.name}
           label={form.weekOfVisit.label}
           id={form.weekOfVisit.name}
         />
+        </FieldsContainer>
+        <FieldsContainer>
         <RadioGroupInput
           name={form.pregnancyTest.name}
           label={form.pregnancyTest.label}
@@ -76,26 +78,36 @@ const Gestation = ({ onSubmit,initialValues }: Props) => {
             { label: "No", value: "no" },
           ]}
         />
+        </FieldsContainer>
+        <FieldsContainer>
         <TextInputField
           name={form.weightInfo.name}
           label={form.weightInfo.label}
           id={form.weightInfo.name}
         />
+        </FieldsContainer>
+         <FieldsContainer>
         <TextInputField
           name={form.heightInfo.name}
           label={form.heightInfo.label}
           id={form.heightInfo.name}
         />
+        </FieldsContainer>
+        <FieldsContainer>
         <TextInputField
           name={form.pulseRate.name}
           label={form.pulseRate.label}
           id={form.pulseRate.name}
         />
+        </FieldsContainer>
+        <FieldsContainer>
         <TextInputField
           name={form.bloodPressure.name}
           label={form.bloodPressure.label}
           id={form.bloodPressure.name}
         />
+        </FieldsContainer>
+        <FieldsContainer>
         <RadioGroupInput
           name={form.preEclampsia.name}
           label={form.preEclampsia.label}
@@ -104,12 +116,14 @@ const Gestation = ({ onSubmit,initialValues }: Props) => {
             { label: "No", value: "no" },
           ]}
         />
+        </FieldsContainer>
+        <FieldsContainer>
         <TextInputField
           name={form.generalCondition.name}
           label={form.generalCondition.label}
           id={form.generalCondition.name}
         />
-      </Box>
+        </FieldsContainer>
     </FormikInit>
   );
 };

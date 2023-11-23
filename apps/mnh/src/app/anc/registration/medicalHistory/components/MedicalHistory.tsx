@@ -1,7 +1,7 @@
 
 import React, {useState} from 'react'
 import * as yup from "yup";
-import { FormikInit, RadioGroupInput,TextInputField } from 'shared-ui/src';
+import { FieldsContainer, FormikInit, RadioGroupInput,TextInputField } from 'shared-ui/src';
 import { Box } from "@mui/material";
 
     type Props = {
@@ -114,7 +114,7 @@ import { Box } from "@mui/material";
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <Box>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.asthmaInfo.name}
           label={form.asthmaInfo.label}
@@ -123,6 +123,8 @@ import { Box } from "@mui/material";
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.hypertensionInfo.name}
           label={form.hypertensionInfo.label}
@@ -131,6 +133,8 @@ import { Box } from "@mui/material";
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.diabetesInfo.name}
           label={form.diabetesInfo.label}
@@ -139,6 +143,8 @@ import { Box } from "@mui/material";
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.renalDisease.name}
           label={form.renalDisease.label}
@@ -147,6 +153,8 @@ import { Box } from "@mui/material";
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.fistulaRepair.name}
           label={form.fistulaRepair.label}
@@ -155,6 +163,8 @@ import { Box } from "@mui/material";
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.LegSpineDeformity.name}
           label={form.LegSpineDeformity.label}
@@ -163,6 +173,8 @@ import { Box } from "@mui/material";
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.hivStatus.name}
           label={form.hivStatus.label}
@@ -197,12 +209,14 @@ import { Box } from "@mui/material";
             ]}
           />
         )}
+      </FieldsContainer>
+      <FieldsContainer>
         <TextInputField
           name={form.artRegistration.name}
           label={form.artRegistration.label}
           id={form.artRegistration.name}
         />
-      </Box>
+      </FieldsContainer>
     </FormikInit>
   );
 };
