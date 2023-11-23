@@ -1,4 +1,5 @@
-import React from 'react'
+
+import React, {useState} from 'react'
 import * as yup from "yup";
 import { FormikInit, RadioGroupInput } from 'shared-ui/src';
 import { Box } from "@mui/material";
@@ -31,6 +32,10 @@ import { Box } from "@mui/material";
         name: "LegSpineDeformity",
         label: "Leg/Spine deformity",
       },
+      hivStatus:{
+        name:"hivStatus",
+        label:"HIV status of woman"
+      },
     };
 
     const schema = yup.object({
@@ -58,6 +63,7 @@ import { Box } from "@mui/material";
         .string()
         .required()
         .label(form.LegSpineDeformity.label),
+        [form.hivStatus.name]:yup.string().required().label(form.hivStatus.label)
     });
     const initialValues = {
       asthmaInfo: "",
@@ -66,6 +72,7 @@ import { Box } from "@mui/material";
       renalDisease: "",
       fistulaRepair: "",
       LegSpineDeformity: "",
+      hivStatus:""
     };
 
 const MedicalHistory = ({onSubmit}:Prop) => {
@@ -123,6 +130,14 @@ const MedicalHistory = ({onSubmit}:Prop) => {
           options={[
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
+          ]}
+        />
+        <RadioGroupInput
+          name={form.hivStatus.name}
+          label={form.hivStatus.label}
+          options={[
+            { label: "Unknown", value: "Unknown" },
+            { label: "Positive", value: "Positive" },
           ]}
         />
         {/* <TextInputField
