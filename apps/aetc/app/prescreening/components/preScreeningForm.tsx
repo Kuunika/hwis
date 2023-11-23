@@ -23,6 +23,7 @@ type props = {
   loading?: boolean;
   submitVariant?: "primary" | "secondary" | "text";
   enableReinitialize?: boolean;
+  onProceed: (values: any) => void;
 };
 
 const form = {
@@ -67,6 +68,7 @@ export function PrescreeningForm({
   submitVariant = "primary",
   submitButtonText = "Proceed",
   loading,
+  onProceed,
 }: props) {
   const [referredCheckboxValue, setReferredCheckboxValue] = useState<
     string | null
@@ -136,7 +138,6 @@ export function PrescreeningForm({
         ]}
         row={true}
         getValue={(value) => {
-          console.log(value);
           setUrgentCheckboxValue(value);
         }}
       />
@@ -154,7 +155,6 @@ export function PrescreeningForm({
         <MainButton
           sx={{ mt: 2 }}
           variant={submitVariant}
-          type={"button"}
           title={
             loading ? (
               <i style={{ textTransform: "lowercase" }}>loading...</i>
@@ -162,7 +162,7 @@ export function PrescreeningForm({
               submitButtonText
             )
           }
-          onClick={() => {}}
+          onClick={onProceed}
         />
       )}
       <br />
