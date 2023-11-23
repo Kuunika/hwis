@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { FormikInit, RadioGroupInput, TextInputField } from "shared-ui/src";
+import {
+  FieldsContainer,
+  FormFieldContainer,
+  FormikInit,
+  MainTypography,
+  RadioGroupInput,
+  TextInputField,
+  WrapperBox,
+} from "shared-ui/src";
 import * as yup from "yup";
 import { Box } from "@mui/material";
 type Props = {
@@ -141,24 +149,49 @@ export const Disability = ({ onSubmit }: Props) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <RadioGroupInput
-        name={form.eyeOpening.name}
-        label={form.eyeOpening.label}
-        options={sizeOfEyeOpeningResponse}
-        getValue={(value) => setEyeOpeningValue(value)}
-      />
-      <RadioGroupInput
-        name={form.verbalResponse.name}
-        label={form.verbalResponse.label}
-        options={sizeOfVerbalResponse}
-        getValue={(value) => setVerbalResponseValue(value)}
-      />
-      <RadioGroupInput
-        name={form.motorResponse.name}
-        label={form.motorResponse.label}
-        options={sizeOfMotorResponse}
-        getValue={(value) => setMotorResponseValue(value)}
-      />
+      <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
+          name={form.eyeOpening.name}
+          label={form.eyeOpening.label}
+          options={sizeOfEyeOpeningResponse}
+          getValue={(value) => setEyeOpeningValue(value)}
+        />
+        <p>
+          {form.eyeOpening.label}: {eyeOpeningValue}
+        </p>
+      </FieldsContainer>
+      <br />
+      <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
+          name={form.verbalResponse.name}
+          label={form.verbalResponse.label}
+          options={sizeOfVerbalResponse}
+          getValue={(value) => setVerbalResponseValue(value)}
+        />
+        <p>
+          {form.verbalResponse.label}: {verbalResponseValue}
+        </p>
+      </FieldsContainer>
+      <br />
+      <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
+          name={form.motorResponse.name}
+          label={form.motorResponse.label}
+          options={sizeOfMotorResponse}
+          getValue={(value) => setMotorResponseValue(value)}
+        />
+        <p>
+          {form.motorResponse.label}: {motorResponseValue}
+        </p>
+      </FieldsContainer>
+
+      <br />
+      <br />
+      <Box>
+        <MainTypography>Total Score: {totalSum}</MainTypography>
+      </Box>
+
+      <br />
       <RadioGroupInput
         name={form.seizureInfo.name}
         label={form.seizureInfo.label}
@@ -167,19 +200,7 @@ export const Disability = ({ onSubmit }: Props) => {
           { label: "No", value: "no" },
         ]}
       />
-      <Box>
-        <p>
-          {form.eyeOpening.label}: {eyeOpeningValue}
-        </p>
-        <p>
-          {form.verbalResponse.label}: {verbalResponseValue}
-        </p>
-        <p>
-          {form.motorResponse.label}: {motorResponseValue}
-        </p>
-        <br />
-        <p>Total Score: {totalSum}</p>
-      </Box>
+
       <TextInputField
         name={form.reactionToLight.name}
         label={form.reactionToLight.label}

@@ -4,14 +4,16 @@ import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import { TreeView } from "@mui/x-tree-view/TreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { MainPaper, MainTypography } from "shared-ui/src";
+import { useNavigation } from "@/hooks";
 
 export default function MenuTree() {
+  const { navigateTo } = useNavigation();
   const menuItems = [
     {
       id: "1",
       label: "AETC Form",
       children: [
-        { id: "2", label: "Primary Assessment" },
+        { id: "2", label: "Primary Assessment", link: "/primary-assessment" },
         { id: " 3", label: "Secondary Assessment" },
       ],
     },
@@ -82,6 +84,7 @@ export default function MenuTree() {
             >
               {item.children.map((child) => (
                 <TreeItem
+                  onClick={() => child.link && navigateTo(child.link)}
                   key={child.id}
                   nodeId={child.id}
                   label={child.label}
