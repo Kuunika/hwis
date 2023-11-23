@@ -106,10 +106,10 @@ const schema = Yup.object().shape({
   [form.nextOfKinRelationship.name]: Yup.string()
     .required()
     .label(form.nextOfKinRelationship.label),
-  [form.nextOfKinPhoneNumber.name]: Yup.string()
-    .required()
-    .label(form.nextOfKinRelationship.label),
-  id: Yup.string().required().label("name of kin identification number"),
+  [form.nextOfKinPhoneNumber.name]: Yup.string().label(
+    form.nextOfKinRelationship.label
+  ),
+
   [form.homeDistrict.name]: Yup.string()
     .required()
     .label(form.homeDistrict.label),
@@ -164,15 +164,23 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
         />
       </FieldsContainer>
 
-      <RadioGroupInput
-        getValue={(value) => setGender(value)}
-        name={form.gender.name}
-        label={form.gender.label}
-        options={[
-          { label: "Male", value: "yes" },
-          { label: "Female", value: "no" },
-        ]}
-      />
+      <FieldsContainer>
+        <RadioGroupInput
+          getValue={(value) => setGender(value)}
+          name={form.gender.name}
+          label={form.gender.label}
+          options={[
+            { label: "Male", value: "yes" },
+            { label: "Female", value: "no" },
+          ]}
+        />
+        <SelectInputField
+          name={form.homeDistrict.name}
+          id={form.homeDistrict.name}
+          label={form.homeDistrict.label}
+          selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+        />
+      </FieldsContainer>
 
       <FieldsContainer sx={{ justifyContent: "space-between" }}>
         <SelectInputField

@@ -6,8 +6,10 @@ import {
   ReferralForm,
   SocialHistoryForm,
 } from ".";
+import { useNavigation } from "@/hooks";
 
 export const RegistrationFlow = () => {
+  const { navigateTo } = useNavigation();
   const [activeStep, setActiveStep] = useState<number>(0);
   const {} = useState([]);
 
@@ -19,6 +21,7 @@ export const RegistrationFlow = () => {
   ];
 
   const handleSubmitDemographics = () => {
+    console.log("first");
     setActiveStep(1);
   };
   const handleSubmitSocialHistory = () => {
@@ -27,7 +30,9 @@ export const RegistrationFlow = () => {
   const handleSubmitReferral = () => {
     setActiveStep(3);
   };
-  const handleSubmitFinancing = () => {};
+  const handleSubmitFinancing = () => {
+    navigateTo("/triage");
+  };
 
   return (
     <NewStepperContainer title="Registration" steps={steps} active={activeStep}>
@@ -65,6 +70,7 @@ const demographicsInitialValues = {
   nextOfKinRelationship: "",
   nextOfKinPhoneNumber: "",
   id: "",
+  identificationNumber: "",
   homeDistrict: "",
   homeTraditionalAuthority: "",
   homeVillage: "",

@@ -10,12 +10,9 @@ import * as yup from "yup";
 import { InformationRow } from "./infoSelectionBox";
 import { SxProps } from "@mui/material";
 
-
-
 type props = {
   initialValues: any;
   onSubmit: (values: any) => void;
-  children: ReactNode;
   validationSchema: any;
   width?: string;
   submitButton?: boolean;
@@ -26,6 +23,7 @@ type props = {
   loading?: boolean;
   submitVariant?: "primary" | "secondary" | "text";
   enableReinitialize?: boolean;
+  onProceed: (values: any) => void;
 };
 
 const form = {
@@ -44,8 +42,14 @@ const form = {
 };
 
 const schema = yup.object({
-  [form.referredCheckbox.name]: yup.string().required().label(form.referredCheckbox.label),
-  [form.urgentCheckbox.name]: yup.string().required().label(form.urgentCheckbox.label),
+  [form.referredCheckbox.name]: yup
+    .string()
+    .required()
+    .label(form.referredCheckbox.label),
+  [form.urgentCheckbox.name]: yup
+    .string()
+    .required()
+    .label(form.urgentCheckbox.label),
   [form.Referred.name]: yup.string().label(form.Referred.label),
 });
 
@@ -58,18 +62,28 @@ const referrences = [
   { id: "OPD2", label: "OPD2" },
 ];
 
-
-
-export function PrescreeningForm ({ initialValues, onSubmit,submitVariant= "primary", submitButtonText= "Proceed",loading}: props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [referredCheckboxValue, setReferredCheckboxValue] = useState<string | null>(null);
-  const [urgentCheckboxValue, setUrgentCheckboxValue] = useState<string | null>(null);
+export function PrescreeningForm({
+  initialValues,
+  onSubmit,
+  submitVariant = "primary",
+  submitButtonText = "Proceed",
+  loading,
+  onProceed,
+}: props) {
+  const [referredCheckboxValue, setReferredCheckboxValue] = useState<
+    string | null
+  >(null);
+  const [urgentCheckboxValue, setUrgentCheckboxValue] = useState<string | null>(
+    null
+  );
   const [showSecondButton, setShowSecondButton] = useState<boolean>(false);
   const [showSubmitButton, setShowSubmitButton] = useState<boolean>(false);
   const [showSearchComboBox, setShowSearchComboBox] = useState<boolean>(false);
 
   useEffect(() => {
-    setShowSecondButton(!(urgentCheckboxValue === "not urgent" || referredCheckboxValue === null));
+    setShowSecondButton(
+      !(urgentCheckboxValue === "not urgent" || referredCheckboxValue === null)
+    );
   }, [urgentCheckboxValue, referredCheckboxValue]);
 
   useEffect(() => {
@@ -83,31 +97,34 @@ export function PrescreeningForm ({ initialValues, onSubmit,submitVariant= "prim
       setShowSearchComboBox(urgentCheckboxValue === "not urgent");
     }
   }, [urgentCheckboxValue, referredCheckboxValue]);
-  
+
   useEffect(() => {
     setShowSearchComboBox(false);
   }, []);
-  
+
   useEffect(() => {
     setShowSubmitButton(false);
   }, []);
 
-
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={{referredCheckbox:"",urgentCheckbox:"",referred:""}}
+      initialValues={{ referredCheckbox: "", urgentCheckbox: "", referred: "" }}
       onSubmit={onSubmit}
-      submitButton= {showSubmitButton}
+      submitButton={showSubmitButton}
     >
       <RadioGroupInput
         name={form.referredCheckbox.name}
         label={form.referredCheckbox.label}
-        options= {[{ label: "Yes", value: "referred" },
-        { label: "No", value: "not referred" },]}
+        options={[
+          { label: "Yes", value: "referred" },
+          { label: "No", value: "not referred" },
+        ]}
         row={true}
-        getValue={(value)=> { console.log(value)
-         setReferredCheckboxValue(value);}}
+        getValue={(value) => {
+          console.log(value);
+          setReferredCheckboxValue(value);
+        }}
       />
       <br />
       <br />
@@ -115,38 +132,39 @@ export function PrescreeningForm ({ initialValues, onSubmit,submitVariant= "prim
       <RadioGroupInput
         name={form.urgentCheckbox.name}
         label={form.urgentCheckbox.label}
-        options={[{ label: "Yes", value: "urgent" },
-        { label: "No", value: "not urgent" },]}
+        options={[
+          { label: "Yes", value: "urgent" },
+          { label: "No", value: "not urgent" },
+        ]}
         row={true}
-        getValue={(value)=> { console.log(value);
-          setUrgentCheckboxValue(value)}}
+        getValue={(value) => {
+          setUrgentCheckboxValue(value);
+        }}
       />
-      <br />
-      <br />
-      <BasePopover onClose={() => setAnchorEl(null)} anchorEl={anchorEl}>
-        <InformationRow />
-      </BasePopover>
- 
-       {showSearchComboBox && (<SearchComboBox
+
+      {showSearchComboBox && (
+        <SearchComboBox
           name={form.Referred.name}
           label={form.Referred.label}
           options={referrences}
           multiple={false}
           sx={{ mr: "1ch" }}
-        />)}
-        {showSecondButton && (<MainButton
-            sx={{ mt: 2 }}
-            variant={submitVariant}
-            type={"button"}
-            title={
-              loading ? (
-                <i style={{ textTransform: "lowercase" }}>loading...</i>
-              ) : (
-                submitButtonText
-              )
-            }
-            onClick={() => {}}
-          />)}
+        />
+      )}
+      {showSecondButton && (
+        <MainButton
+          sx={{ mt: 2 }}
+          variant={submitVariant}
+          title={
+            loading ? (
+              <i style={{ textTransform: "lowercase" }}>loading...</i>
+            ) : (
+              submitButtonText
+            )
+          }
+          onClick={onProceed}
+        />
+      )}
       <br />
     </FormikInit>
   );

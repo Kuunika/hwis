@@ -1,5 +1,13 @@
-import React, { useState } from 'react'
-import { FormikInit, RadioGroupInput,TextInputField } from 'shared-ui/src';
+import React, { useState } from "react";
+import {
+  FieldsContainer,
+  FormFieldContainer,
+  FormikInit,
+  MainTypography,
+  RadioGroupInput,
+  TextInputField,
+  WrapperBox,
+} from "shared-ui/src";
 import * as yup from "yup";
 import { Box } from "@mui/material";
 type Props = {
@@ -18,10 +26,7 @@ const form = {
     name: "motorResponse",
     label: "Best Motor Response",
   },
-  totalScore: {
-    name: "totalScore",
-    label: "Total Score",
-  },
+
   reactionToLight: {
     name: "reactionToLight",
     label: "Pupil Size and Reaction To Light",
@@ -46,14 +51,35 @@ const form = {
 
 const schema = yup.object({
   [form.eyeOpening.name]: yup.string().required().label(form.eyeOpening.label),
-  [form.verbalResponse.name]: yup.string().required().label(form.verbalResponse.label),
-  [form.motorResponse.name]: yup.string().required().label(form.motorResponse.label),
-  [form.totalScore.name]: yup.string().required().label(form.totalScore.label),
-  [form.reactionToLight.name]: yup.string().required().label(form.reactionToLight.label),
-  [form.focalNeurology.name]: yup.string().required().label(form.focalNeurology.label),
-  [form.postureInfo.name]: yup.string().required().label(form.postureInfo.label),
-  [form.bloodGlocose.name]: yup.string().required().label(form.bloodGlocose.label),
-  [form.seizureInfo.name]: yup.string().required().label(form.seizureInfo.label),
+  [form.verbalResponse.name]: yup
+    .string()
+    .required()
+    .label(form.verbalResponse.label),
+  [form.motorResponse.name]: yup
+    .string()
+    .required()
+    .label(form.motorResponse.label),
+
+  [form.reactionToLight.name]: yup
+    .string()
+    .required()
+    .label(form.reactionToLight.label),
+  [form.focalNeurology.name]: yup
+    .string()
+    .required()
+    .label(form.focalNeurology.label),
+  [form.postureInfo.name]: yup
+    .string()
+    .required()
+    .label(form.postureInfo.label),
+  [form.bloodGlocose.name]: yup
+    .string()
+    .required()
+    .label(form.bloodGlocose.label),
+  [form.seizureInfo.name]: yup
+    .string()
+    .required()
+    .label(form.seizureInfo.label),
 });
 
 const initialValues = {
@@ -71,7 +97,7 @@ const sizeOfEyeOpeningResponse = [
   { label: "Spontaneously", value: "1" },
   { label: "To Speech", value: "2" },
   { label: "To Pain", value: "3" },
-  { label: "No Response", value: "4"},
+  { label: "No Response", value: "4" },
 ];
 
 const sizeOfVerbalResponse = [
@@ -103,15 +129,10 @@ const sizeOfMotorResponse = [
   {
     label: "No Response",
     value: "15",
-  }
+  },
 ];
-// const sizeOfScore = [
-//   { label: "Best Response", value: "16" },
-//   { label: "Comatose Client", value: "17" },
-//   { label: "Totally Unresponsive", value: "18" },
-// ];
 
-const Disability = ({onSubmit}:Props) => {
+export const Disability = ({ onSubmit }: Props) => {
   const [eyeOpeningValue, setEyeOpeningValue] = useState();
   const [verbalResponseValue, setVerbalResponseValue] = useState();
   const [motorResponseValue, setMotorResponseValue] = useState();
@@ -128,24 +149,49 @@ const Disability = ({onSubmit}:Props) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <RadioGroupInput
-        name={form.eyeOpening.name}
-        label={form.eyeOpening.label}
-        options={sizeOfEyeOpeningResponse}
-        getValue={(value) => setEyeOpeningValue(value)}
-      />
-      <RadioGroupInput
-        name={form.verbalResponse.name}
-        label={form.verbalResponse.label}
-        options={sizeOfVerbalResponse}
-        getValue={(value) => setVerbalResponseValue(value)}
-      />
-      <RadioGroupInput
-        name={form.motorResponse.name}
-        label={form.motorResponse.label}
-        options={sizeOfMotorResponse}
-        getValue={(value) => setMotorResponseValue(value)}
-      />
+      <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
+          name={form.eyeOpening.name}
+          label={form.eyeOpening.label}
+          options={sizeOfEyeOpeningResponse}
+          getValue={(value) => setEyeOpeningValue(value)}
+        />
+        <p>
+          {form.eyeOpening.label}: {eyeOpeningValue}
+        </p>
+      </FieldsContainer>
+      <br />
+      <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
+          name={form.verbalResponse.name}
+          label={form.verbalResponse.label}
+          options={sizeOfVerbalResponse}
+          getValue={(value) => setVerbalResponseValue(value)}
+        />
+        <p>
+          {form.verbalResponse.label}: {verbalResponseValue}
+        </p>
+      </FieldsContainer>
+      <br />
+      <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
+          name={form.motorResponse.name}
+          label={form.motorResponse.label}
+          options={sizeOfMotorResponse}
+          getValue={(value) => setMotorResponseValue(value)}
+        />
+        <p>
+          {form.motorResponse.label}: {motorResponseValue}
+        </p>
+      </FieldsContainer>
+
+      <br />
+      <br />
+      <Box>
+        <MainTypography>Total Score: {totalSum}</MainTypography>
+      </Box>
+
+      <br />
       <RadioGroupInput
         name={form.seizureInfo.name}
         label={form.seizureInfo.label}
@@ -154,12 +200,7 @@ const Disability = ({onSubmit}:Props) => {
           { label: "No", value: "no" },
         ]}
       />
-      <Box>
-        <p>{form.eyeOpening.label}: {eyeOpeningValue}</p>
-        <p>{form.verbalResponse.label}: {verbalResponseValue}</p>
-        <p>{form.motorResponse.label}: {motorResponseValue}</p><br/>
-        <p>Total Score: {totalSum}</p>
-      </Box>
+
       <TextInputField
         name={form.reactionToLight.name}
         label={form.reactionToLight.label}
@@ -182,6 +223,4 @@ const Disability = ({onSubmit}:Props) => {
       />
     </FormikInit>
   );
-}
-
-export default Disability
+};
