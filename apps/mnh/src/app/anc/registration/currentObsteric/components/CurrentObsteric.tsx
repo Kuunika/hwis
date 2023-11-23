@@ -4,9 +4,10 @@ import * as yup from "yup";
 import { Box } from "@mui/material";
 
 
-    type Prop = {
-      onSubmit: (values: any) => void;
-    };
+type Props = {
+  onSubmit: (values: any) => void;
+  initialValues: any
+};
 
 const form ={
     pregnancyTest: {
@@ -36,17 +37,11 @@ const schema = yup.object({
     [form.lmpInfo.name]: yup.string().required().label(form.lmpInfo.label),
     [form.eddInfo.name]: yup.string().required().label(form.eddInfo.label),
 });
-
-const initialValues = {
-  pregnancyTest: "",
-  lmpInfo: "",
-  eddInfo: "",
-};
-const CurrentObsteric = ({onSubmit}:Prop) => {
+const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
   const [isLmp, setLmp] = useState(false);
   const [showAdditionalRadio, setShowAdditionalRadio] = useState(false);
-  
-    const handleRadioChange = (fieldName: string, value: string) => {
+
+  const handleRadioChange = (fieldName: string, value: string) => {
     if (fieldName === form.lmpInfo.name && value === "yes") {
       setLmp(true);
       setShowAdditionalRadio(true);
@@ -62,7 +57,6 @@ const CurrentObsteric = ({onSubmit}:Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <Box>
         <RadioGroupInput
           name={form.pregnancyTest.name}
           label={form.pregnancyTest.label}
@@ -87,14 +81,13 @@ const CurrentObsteric = ({onSubmit}:Prop) => {
             id={form.lmpDate.name}
           />
         )}
-          <TextInputField
-            name={form.gestationalAge.name}
-            label={form.gestationalAge.label}
-            id={form.gestationalAge.name}
-          />
-      </Box>
+        <TextInputField
+          name={form.gestationalAge.name}
+          label={form.gestationalAge.label}
+          id={form.gestationalAge.name}
+        />
     </FormikInit>
   );
-}
+};
 
 export default CurrentObsteric

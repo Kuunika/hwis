@@ -20,10 +20,18 @@ const form = {
 };
 
 const schema = yup.object({
-  [form.temperatureInfo.name]: yup.string().required().label(form.temperatureInfo.label),
-  [form.skinRashInfo.name]: yup.string().required().label(form.skinRashInfo.label),
-  [form.rashDescription.name]: yup.string().required().label(form.rashDescription.label),
-
+  [form.temperatureInfo.name]: yup
+    .string()
+    .required()
+    .label(form.temperatureInfo.label),
+  [form.skinRashInfo.name]: yup
+    .string()
+    .required()
+    .label(form.skinRashInfo.label),
+  [form.rashDescription.name]: yup
+    .string()
+    .required()
+    .label(form.rashDescription.label),
 });
 
 const initialValues = {
@@ -31,7 +39,7 @@ const initialValues = {
   skinRashInfo: "",
   rashDescription: "",
 };
-const Exposure = ({ onSubmit }: Props) => {
+export const Exposure = ({ onSubmit }: Props) => {
   return (
     <FormikInit
       validationSchema={schema}
@@ -63,5 +71,3 @@ const Exposure = ({ onSubmit }: Props) => {
     </FormikInit>
   );
 };
-
-export default Exposure;

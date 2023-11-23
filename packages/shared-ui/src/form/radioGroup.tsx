@@ -5,12 +5,14 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { useFormikField } from "./hooks";
+import { SxProps } from "@mui/material";
 
 type Prop = {
   label: string;
   name: string;
   options: Array<{ label: string; value: string | number }>;
   stylings?: boolean;
+  sx?: SxProps;
   getValue?: (value: any) => void;
   row?: boolean;
 };
@@ -21,6 +23,7 @@ export const RadioGroupInput: FC<Prop> = ({
   options,
   getValue,
   row,
+  sx,
 }) => {
   const { value, handleChange, hasError } = useFormikField(name);
 
@@ -30,6 +33,7 @@ export const RadioGroupInput: FC<Prop> = ({
 
   return (
     <BaseRadioInput
+      sx={sx}
       label={label}
       handleChange={handleChange}
       options={options}
@@ -56,9 +60,10 @@ export const BaseRadioInput: FC<BaseProp & Prop> = ({
   options,
   value,
   row = false,
+  sx,
 }) => {
   return (
-    <FormControl error={hasError}>
+    <FormControl fullWidth sx={sx} error={hasError}>
       <FormLabel id={name}>{label}</FormLabel>
       <RadioGroup row={row} value={value} onChange={handleChange} name={name}>
         {options.map(({ label, value }) => (

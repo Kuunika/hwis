@@ -4,8 +4,9 @@ import * as yup from "yup";
 import { FormikInit, RadioGroupInput,TextInputField } from 'shared-ui/src';
 import { Box } from "@mui/material";
 
-    type Prop = {
+    type Props = {
       onSubmit: (values: any) => void;
+      initialValues: any
     };
     const form = {
       asthmaInfo: {
@@ -80,25 +81,13 @@ import { Box } from "@mui/material";
         [form.startArt.name]:yup.string().required().label(form.artInfo.label),
         [form.artRegistration.name]:yup.string().required().label(form.artRegistration.label)
     });
-    const initialValues = {
-      asthmaInfo: "",
-      hypertensionInfo: "",
-      diabetesInfo: "",
-      renalDisease: "",
-      fistulaRepair: "",
-      LegSpineDeformity: "",
-      hivStatus: "",
-      artInfo: "",
-      startArt: "",
-      artRegistration:"",
-    };
 
-const MedicalHistory = ({onSubmit}:Prop) => {
+  const MedicalHistory = ({ onSubmit,initialValues }: Props) => {
   const [isPositive, setIsPositive] = useState(false);
   const [isArt, setArt] = useState(false);
 
   const [showAdditionalRadio, setShowAdditionalRadio] = useState(false);
-  const [showAdditionalRadio1,setAdditionalRadio1] = useState(false)
+  const [showAdditionalRadio1, setAdditionalRadio1] = useState(false);
 
   const handleRadioChange = (fieldName: string, value: string) => {
     if (fieldName === form.hivStatus.name && value === "Positive") {
@@ -216,6 +205,6 @@ const MedicalHistory = ({onSubmit}:Prop) => {
       </Box>
     </FormikInit>
   );
-}
+};
 
 export default MedicalHistory

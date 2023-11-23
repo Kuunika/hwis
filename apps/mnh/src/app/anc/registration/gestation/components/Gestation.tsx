@@ -1,11 +1,12 @@
 import React from 'react'
-import { FormikInit } from 'shared-ui/src';
+import { FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
 import { Box } from "@mui/material";
 
 
-    type Prop = {
+    type Props = {
       onSubmit: (values: any) => void;
+      initialValues: any
     };
 
     const form = {
@@ -53,18 +54,7 @@ import { Box } from "@mui/material";
         [form.generalCondition.name]:yup.string().required().label(form.generalCondition.label) 
     })
 
-    const initialValues = {
-      weekOfVisit: "",
-      pregnancyTest: "",
-      weightInfo: "",
-      heightInfo: "",
-      pulseRate: "",
-      bloodPressure: "",
-      preEclampsia: "",
-      generalCondition:"",
-    };
-
-const Gestation = ({onSubmit}:Prop) => {
+const Gestation = ({ onSubmit,initialValues }: Props) => {
   return (
     <FormikInit
       validationSchema={schema}
@@ -72,9 +62,56 @@ const Gestation = ({onSubmit}:Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-        <Box></Box>
+      <Box>
+        <TextInputField
+          name={form.weekOfVisit.name}
+          label={form.weekOfVisit.label}
+          id={form.weekOfVisit.name}
+        />
+        <RadioGroupInput
+          name={form.pregnancyTest.name}
+          label={form.pregnancyTest.label}
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
+        <TextInputField
+          name={form.weightInfo.name}
+          label={form.weightInfo.label}
+          id={form.weightInfo.name}
+        />
+        <TextInputField
+          name={form.heightInfo.name}
+          label={form.heightInfo.label}
+          id={form.heightInfo.name}
+        />
+        <TextInputField
+          name={form.pulseRate.name}
+          label={form.pulseRate.label}
+          id={form.pulseRate.name}
+        />
+        <TextInputField
+          name={form.bloodPressure.name}
+          label={form.bloodPressure.label}
+          id={form.bloodPressure.name}
+        />
+        <RadioGroupInput
+          name={form.preEclampsia.name}
+          label={form.preEclampsia.label}
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
+        <TextInputField
+          name={form.generalCondition.name}
+          label={form.generalCondition.label}
+          id={form.generalCondition.name}
+        />
+      </Box>
     </FormikInit>
   );
-}
+};
 
 export default Gestation

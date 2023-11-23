@@ -13,3 +13,4 @@ export const WrapperBox = Box;
 export const MainTypography = Typography;
 export const MainGrid = Grid;
 export const MainPaper = Paper;
+export * from "./newStepper";
