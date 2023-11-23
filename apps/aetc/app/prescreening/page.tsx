@@ -3,18 +3,20 @@ import { MiddlePageLayout } from "@/components/layouts";
 import { PrescreeningForm } from "./components/preScreeningForm";
 
 export default function Prescreening() {
-    const initialValues  = {}
+  const initialValues = {};
 
-    const handleSubmit = () => {}
-    return (
-        <>
-        <MiddlePageLayout title="Prescreening">
-            <PrescreeningForm
-                    initialValues={initialValues}
-                    onSubmit={handleSubmit} children={undefined} validationSchema={undefined} />
-        </MiddlePageLayout>
-        
-        </>
-    )
-
+  const handleSubmit = (values: any) => {
+    console.log({ values });
+  };
+  return (
+    <>
+      <MiddlePageLayout title="Prescreening">
+        <PrescreeningForm
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={undefined}
+        />
+      </MiddlePageLayout>
+    </>
+  );
 }
