@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 
 
     type Props = {
-      onSubmit: (values: any) => void;
+      onSubmit: () => void;
       initialValues: any
     };
 
@@ -31,8 +31,8 @@ import { Box } from "@mui/material";
         label: "Pulse rate ",
       },
       bloodPressure: {
-        name: "pregnancyTest",
-        label: "Pregnancy test in 1st Semester ",
+        name: "bloodPressure",
+        label: "Blood pressure",
       },
       preEclampsia: {
         name: "preEclampsia",
@@ -41,7 +41,7 @@ import { Box } from "@mui/material";
       generalCondition: {
         name: "generalCondition",
         label: "General condition",
-      }
+      },
     };
     const schema=yup.object({
         [form.weekOfVisit.name]:yup.string().required().label(form.weekOfVisit.label),

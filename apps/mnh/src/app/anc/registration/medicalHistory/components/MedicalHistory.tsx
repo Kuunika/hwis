@@ -5,7 +5,7 @@ import { FieldsContainer, FormikInit, RadioGroupInput,TextInputField } from 'sha
 import { Box } from "@mui/material";
 
     type Props = {
-      onSubmit: (values: any) => void;
+      onSubmit: () => void;
       initialValues: any
     };
     const form = {
@@ -20,6 +20,10 @@ import { Box } from "@mui/material";
       diabetesInfo: {
         name: "diabetesInfo",
         label: "Diabetes?",
+      },
+      epilepsyInfo:{
+        name:"epilepsyInfo",
+        label:"Epilepsy?"
       },
       renalDisease: {
         name: "renalDisease",
@@ -64,6 +68,7 @@ import { Box } from "@mui/material";
         .string()
         .required()
         .label(form.diabetesInfo.label),
+        [form.epilepsyInfo.name]: yup.string().required().label(form.epilepsyInfo.label),
       [form.renalDisease.name]: yup
         .string()
         .required()
@@ -138,6 +143,16 @@ import { Box } from "@mui/material";
         <RadioGroupInput
           name={form.diabetesInfo.name}
           label={form.diabetesInfo.label}
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
+        <RadioGroupInput
+          name={form.epilepsyInfo.name}
+          label={form.epilepsyInfo.label}
           options={[
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
