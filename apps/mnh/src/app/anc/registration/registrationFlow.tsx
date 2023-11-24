@@ -4,27 +4,36 @@ import { NewStepperContainer } from 'shared-ui/src';
 import CurrentObsteric from './currentObsteric/components/CurrentObsteric';
 import Gestation from './gestation/components/Gestation';
 import MedicalHistory from './medicalHistory/components/MedicalHistory';
+import { VitalsForm } from './vitals/components/VitalsForm';
 
 export const RegistrationFlow = () => {
       const [activeStep,setActiveStep] = useState<number>(0)
 
   const steps = [
-    { id: 1, label: "Current Obstetric Information" },
-    { id: 2, label: "Gestation" },
-    { id: 3, label: "Medical History" },
+    { id: 1, label: "Vitals"},
+    { id: 2, label: "Current Obstetric Information" },
+    { id: 3, label: "Gestation" },
+    { id: 4, label: "Medical History" },
   ];
   
-  const handleSubmitCurrentObsteric =()=>{
+  const handleSubmitVitalsForm=()=>{
     setActiveStep(1)
   }
-  const handleSubmitGestation =()=>{
+  const handleSubmitCurrentObsteric =()=>{
     setActiveStep(2)
   }
-  const handleSubmitMedicalHistory =()=>{
+  const handleSubmitGestation =()=>{
     setActiveStep(3)
+  }
+  const handleSubmitMedicalHistory =()=>{
+    setActiveStep(4)
   }
   return (
     <NewStepperContainer title="Registration" steps={steps} active={activeStep}>
+      <VitalsForm
+        initialValues={vitalsInitialValues}
+        onSubmit={handleSubmitVitalsForm}
+      />
       <CurrentObsteric
         initialValues={currentObstericInitialValues}
         onSubmit={handleSubmitCurrentObsteric}
@@ -67,4 +76,12 @@ const medicalHistoryInitialValues = {
   artInfo: "",
   startArt: "",
   artRegistration: "",
+};
+
+const vitalsInitialValues = {
+  bloodPressure: "",
+  weight: "",
+  height: "",
+  temperature: "",
+  gait: "",
 };
