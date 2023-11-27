@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { DatePickerInput, FieldsContainer, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
+import {BasicDatePicker, FieldsContainer, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
 import { Box } from "@mui/material";
 
@@ -14,6 +14,10 @@ const form ={
         name: "pregnancyTest",
         label: "Pregnancy test done?",
       },
+    testResults:{
+      name:"testResults",
+      label:"What are the results of the pregancy test?",
+    }, 
     lmpInfo: {
         name: "lmpInfo",
         label: "Last Menstrual Period (LMP) known?",
@@ -41,7 +45,10 @@ const schema = yup.object({
 });
 const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
   const [isLmp, setLmp] = useState(false);
+  const [isPositive, setPositive] = useState(false);
+
   const [showAdditionalRadio, setShowAdditionalRadio] = useState(false);
+  const [showResults, setShowResults] = useState(false)
 
   const handleRadioChange = (fieldName: string, value: string) => {
     if (fieldName === form.lmpInfo.name && value === "yes") {
@@ -52,6 +59,17 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
       setShowAdditionalRadio(false);
     }
   };
+
+  const handleRadioResults = (fieldName: string, value: string)=>{
+    if (fieldName === form.testResults.name && value ===  "yes"){
+      setPositive(true);
+      setShowResults(true)
+    }
+    else {
+      setPositive(false);
+      setShowResults(false)
+    }
+  }
   return (
     <FormikInit
       validationSchema={schema}
@@ -67,7 +85,18 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
           ]}
+          getValue={(value)=> handleRadioResults(form.testResults.name,value)}
         />
+        {showResults && (
+          <RadioGroupInput
+            name={form.testResults.name}
+            label={form.testResults.label}
+            options={[
+              { label: "Positive", value: "positive" },
+              { label: "Negative", value: "negative" },
+            ]}
+          />
+        )}
       </FieldsContainer>
       <FieldsContainer>
         <RadioGroupInput
@@ -80,7 +109,7 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
           getValue={(value) => handleRadioChange(form.lmpInfo.name, value)}
         />
         {showAdditionalRadio && (
-          <TextInputField
+          <BasicDatePicker
             name={form.lmpDate.name}
             label={form.lmpDate.label}
             id={form.lmpDate.name}

@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FieldsContainer, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 
     type Props = {
@@ -10,6 +10,10 @@ import { Box } from "@mui/material";
     };
 
     const form = {
+      gestationInfo:{
+        name:"gestationInfo",
+        label:"Gestation Weeks"
+      },
       weekOfVisit: {
         name: "weekOfVisit",
         label: "Week of first visit (0 - 12, 13+)",
@@ -44,6 +48,7 @@ import { Box } from "@mui/material";
       },
     };
     const schema=yup.object({
+        [form.gestationInfo.name]:yup.string().required().label(form.gestationInfo.label),
         [form.weekOfVisit.name]:yup.string().required().label(form.weekOfVisit.label),
         [form.pregnancyTest.name]:yup.string().required().label(form.pregnancyTest.label),
         [form.weightInfo.name]:yup.string().required().label(form.weightInfo.label),
@@ -55,6 +60,17 @@ import { Box } from "@mui/material";
     })
 
 const Gestation = ({ onSubmit,initialValues }: Props) => {
+  const [gestation, setGestation] = useState('');
+
+  const calculateGestation = (lmpDateString:any) => {
+    const lmpDate: Date = new Date(lmpDateString); //'YYYY-MM-DD'
+    const currentDate: Date = new Date();
+    const gestationDays: number = Math.floor(
+      (currentDate.getTime() - lmpDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    const gestationWeeks: number = Math.floor(gestationDays / 7);
+    setGestation(gestationWeeks.toString());
+  };
   return (
     <FormikInit
       validationSchema={schema}
@@ -64,12 +80,27 @@ const Gestation = ({ onSubmit,initialValues }: Props) => {
     >
       <FieldsContainer>
         <TextInputField
+          name={form.gestationInfo.name}
+          label={form.gestationInfo.label}
+          id={form.gestationInfo.name}
+          getValue={(e) => calculateGestation(e?.target?.value)}
+        />
+        <Box mt={1}>
+        {gestation && (
+          <Typography variant="body1">
+            Calculated Gestation: {gestation} weeks
+          </Typography>
+        )}
+      </Box>
+      </FieldsContainer>
+      <FieldsContainer>
+        <TextInputField
           name={form.weekOfVisit.name}
           label={form.weekOfVisit.label}
           id={form.weekOfVisit.name}
         />
-        </FieldsContainer>
-        <FieldsContainer>
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.pregnancyTest.name}
           label={form.pregnancyTest.label}
@@ -78,36 +109,36 @@ const Gestation = ({ onSubmit,initialValues }: Props) => {
             { label: "No", value: "no" },
           ]}
         />
-        </FieldsContainer>
-        <FieldsContainer>
+      </FieldsContainer>
+      <FieldsContainer>
         <TextInputField
           name={form.weightInfo.name}
           label={form.weightInfo.label}
           id={form.weightInfo.name}
         />
-        </FieldsContainer>
-         <FieldsContainer>
+      </FieldsContainer>
+      <FieldsContainer>
         <TextInputField
           name={form.heightInfo.name}
           label={form.heightInfo.label}
           id={form.heightInfo.name}
         />
-        </FieldsContainer>
-        <FieldsContainer>
+      </FieldsContainer>
+      <FieldsContainer>
         <TextInputField
           name={form.pulseRate.name}
           label={form.pulseRate.label}
           id={form.pulseRate.name}
         />
-        </FieldsContainer>
-        <FieldsContainer>
+      </FieldsContainer>
+      <FieldsContainer>
         <TextInputField
           name={form.bloodPressure.name}
           label={form.bloodPressure.label}
           id={form.bloodPressure.name}
         />
-        </FieldsContainer>
-        <FieldsContainer>
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.preEclampsia.name}
           label={form.preEclampsia.label}
@@ -116,16 +147,17 @@ const Gestation = ({ onSubmit,initialValues }: Props) => {
             { label: "No", value: "no" },
           ]}
         />
-        </FieldsContainer>
-        <FieldsContainer>
+      </FieldsContainer>
+      <FieldsContainer>
         <TextInputField
           name={form.generalCondition.name}
           label={form.generalCondition.label}
           id={form.generalCondition.name}
         />
-        </FieldsContainer>
+      </FieldsContainer>
     </FormikInit>
   );
 };
 
 export default Gestation
+
