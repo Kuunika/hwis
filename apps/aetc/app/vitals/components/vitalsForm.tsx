@@ -230,6 +230,8 @@ const rules = {
 
 export function VitalsForm({ initialValues, onSubmit }: props) {
   const [triageResult, setTriageResult] = useState<TriageResult>("");
+  const [systolic, setSystolic] = useState(0);
+  const [diastolic, setDiastolic] = useState(0);
 
   const checkTriage = (name: string, formValue: string) => {
     rules[name]?.forEach((rule) => {
@@ -264,6 +266,28 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
       }
     });
   };
+
+  // check rules for BP
+  useEffect(() => {
+    if (systolic > 130) {
+      if (diastolic < 180 || diastolic > 220) {
+        setTriageResult("red");
+        return;
+      }
+    }
+    if (systolic > 110) {
+      if (diastolic < 90 || diastolic > 190) {
+        setTriageResult("yellow");
+      }
+    }
+
+    if (systolic < 100) {
+      if (diastolic >= 90 && diastolic <= 179) {
+        setTriageResult("green");
+      }
+    }
+  }, [diastolic, systolic]);
+
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -311,6 +335,9 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           id={form.bloodPressure.name}
           name={form.bloodPressure.name}
           label={form.bloodPressure.label}
+          getValue={(value) => {
+            setSystolic(value);
+          }}
         />
       </FieldsContainer>
       <FieldsContainer>
@@ -326,8 +353,8 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           id={form.bloodPressureDiastolic.name}
           name={form.bloodPressureDiastolic.name}
           label={form.bloodPressureDiastolic.label}
-          getValue={(value: string) => {
-            checkTriage(form.temperature.name, value);
+          getValue={(value) => {
+            setDiastolic(value);
           }}
         />
       </FieldsContainer>
