@@ -1,6 +1,6 @@
 "use client";
 import { Box } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from "./triageResultContainers";
@@ -62,19 +62,48 @@ type Prop = {
   onSubmit: (values: any) => void;
 };
 
+const radioOptions = [
+  { label: "Yes", value: "true" },
+  { label: "No", value: "false" },
+];
+
 export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
-  const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("no");
+  const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
   const [triageResult, setTriageResult] = useState<"" | "yellow" | "red">("");
   const [triageMessage, setTriageMessage] = useState("");
+  const [breathingAbnormalConditions, setBreathingAbnormalConditions] =
+    useState<any>({});
+
+  const updateAbnormalConditions = (prop: string, formValue: string) => {
+    setBreathingAbnormalConditions((values) => {
+      return { ...values, [prop]: formValue == "true" };
+    });
+  };
+
+  useEffect(() => {
+    const conditions = Object.keys(breathingAbnormalConditions);
+
+    const breathingNormalFalseCOndition = conditions.reduce(
+      (acc, currentValue) => {
+        return acc || breathingAbnormalConditions[currentValue];
+      },
+      false
+    );
+    if (breathingNormalFalseCOndition) {
+      setTriageResult("red");
+      setTriageMessage("Interventions as necessary");
+    }
+  }, [breathingAbnormalConditions]);
 
   const handleIsAirWayCompromised = (value: string) => {
-    if (value == "yes") {
+    if (value == "true") {
       setTriageResult("red");
-      setTriageMessage("Airway Interventions as necessary");
+      setTriageMessage("Interventions as necessary");
       return;
     }
     setTriageResult("");
   };
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -93,43 +122,39 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
           name={form.airway.name}
           label={form.airway.label}
           getValue={handleIsAirWayCompromised}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
 
         <RadioGroupInput
           name={form.breathing.name}
           label={form.breathing.label}
           getValue={(value) => setIsBreathingAbnormal(value)}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
       </FieldsContainer>
 
       {/* breathing abnormal yes */}
 
-      {isBreathingAbnormal == "yes" && (
+      {isBreathingAbnormal == "false" && (
         <>
           <FieldsContainer>
             <RadioGroupInput
               name={form.oxygenStats.name}
               label={form.oxygenStats.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              getValue={(value) => {
+                handleIsAirWayCompromised(value);
+                updateAbnormalConditions(form.oxygenStats.name, value);
+              }}
+              options={radioOptions}
             />
             <RadioGroupInput
               name={form.respiratoryRate.name}
               label={form.respiratoryRate.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              getValue={(value) => {
+                handleIsAirWayCompromised(value);
+                updateAbnormalConditions(form.respiratoryRate.name, value);
+              }}
+              options={radioOptions}
             />
           </FieldsContainer>
 
@@ -137,36 +162,46 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               name={form.respiratoryDysfunction.name}
               label={form.respiratoryDysfunction.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              getValue={(value) => {
+                handleIsAirWayCompromised(value);
+                updateAbnormalConditions(
+                  form.respiratoryDysfunction.name,
+                  value
+                );
+              }}
+              options={radioOptions}
             />
             <RadioGroupInput
               name={form.inabilityToSpeak.name}
               label={form.inabilityToSpeak.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              options={radioOptions}
+              getValue={(value) => {
+                handleIsAirWayCompromised(value);
+                updateAbnormalConditions(form.inabilityToSpeak.name, value);
+              }}
             />
           </FieldsContainer>
           <FieldsContainer>
             <RadioGroupInput
               name={form.stridor.name}
               label={form.stridor.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              options={radioOptions}
+              getValue={(value) => {
+                handleIsAirWayCompromised(value);
+                updateAbnormalConditions(form.stridor.name, value);
+              }}
             />
             <RadioGroupInput
               name={form.reducedLevelOfConsciousness.name}
               label={form.reducedLevelOfConsciousness.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              getValue={(value) => {
+                handleIsAirWayCompromised(value);
+                updateAbnormalConditions(
+                  form.reducedLevelOfConsciousness.name,
+                  value
+                );
+              }}
+              options={radioOptions}
             />
           </FieldsContainer>
         </>
