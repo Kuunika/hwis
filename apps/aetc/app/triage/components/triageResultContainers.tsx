@@ -1,3 +1,4 @@
+import { TriageResult } from "@/interfaces";
 import { MainPaper, MainTypography } from "shared-ui/src";
 
 export const TriageContainer = ({
@@ -5,12 +6,15 @@ export const TriageContainer = ({
   result,
 }: {
   message?: string;
-  result: "red" | "yellow";
+  result: TriageResult;
 }) => {
   const styles = {
     red: { backgroundColor: "#FECDCA", color: "#B42318" },
     yellow: { backgroundColor: "#FEDF89", color: "#B54708" },
+    green: { backgroundColor: "#DDEEDD", color: "#016302" },
+    "": {},
   };
+
   return (
     <MainPaper elevation={0} sx={{ ...styles[result], p: "1ch" }}>
       <MainTypography variant="h4" textTransform={"capitalize"}>

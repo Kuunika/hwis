@@ -26,3 +26,5 @@ export interface IApiService {
 
   edit<T>(id: string | number, data: Partial<T>): Promise<any>;
 }
+
+export type TriageResult = "" | "yellow" | "red" | "green";

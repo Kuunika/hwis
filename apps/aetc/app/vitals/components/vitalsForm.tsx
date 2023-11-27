@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   FieldsContainer,
+  FormFieldContainer,
   FormikInit,
   MultlineInput,
   RadioGroupInput,
@@ -9,8 +10,9 @@ import {
   TextInputField,
 } from "shared-ui/src";
 import * as yup from "yup";
-import { Grid } from "@mui/material";
-import { concepts } from "@/constants";
+import { concepts, triageResult } from "@/constants";
+import { TriageContainer } from "@/app/triage/components/";
+import { TriageResult } from "@/interfaces";
 
 const form = {
   complaints: {
@@ -20,6 +22,10 @@ const form = {
   temperature: {
     name: concepts.TEMPERATURE,
     label: "Temperature",
+  },
+  pulseRate: {
+    name: "pulseRate",
+    label: "Pulse Rate",
   },
   respiratoryRate: {
     name: concepts.RESPIRATORY_RATE,
@@ -34,8 +40,12 @@ const form = {
     label: "Heart rate",
   },
   bloodPressure: {
-    name: concepts.BLOOD_PRESSURE,
-    label: "Blood pressure",
+    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
+    label: "Blood pressure Systolic",
+  },
+  bloodPressureDiastolic: {
+    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
+    label: "Blood pressure Diastolic",
   },
   motorResponse: {
     name: concepts.MOTOR_RESPONSE,
@@ -78,10 +88,15 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.saturationRate.label),
+  [form.pulseRate.name]: yup.string().required().label(form.pulseRate.label),
   [form.bloodPressure.name]: yup
     .string()
     .required()
     .label(form.bloodPressure.label),
+  [form.bloodPressureDiastolic.name]: yup
+    .string()
+    .required()
+    .label(form.bloodPressureDiastolic.label),
   [form.heartRate.name]: yup.string().required().label(form.heartRate.label),
   [form.temperature.name]: yup
     .string()
@@ -99,10 +114,6 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.verbalResponse.label),
-  // [form.calculatedGCS.name]: yup
-  //   .string()
-  //   .required()
-  //   .label(form.calculatedGCS.label),
   [form.glucose.name]: yup.string().required().label(form.glucose.label),
   [form.avpu.name]: yup.string().required().label(form.avpu.label),
 });
@@ -133,11 +144,80 @@ const avpuLists = [
   { id: "Unresponsive", label: "Unresponsive" },
 ];
 
-export function VitalsForm({ initialValues, onSubmit }: props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+const rules = {
+  [form.temperature.name]: [
+    { operator: "<", value: 34, result: triageResult.RED, bound: 0 },
+    {
+      operator: "<",
+      value: 35.5,
+      result: triageResult.YELLOW,
+      bound: 34,
+    },
+    { operator: ">", value: 40, result: triageResult.RED, bound: 100 },
+    { operator: ">", value: 38, result: triageResult.YELLOW, bound: 40 },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 35.5,
+      operator2: "<=",
+      value2: 37.4,
+      result: triageResult.GREEN,
+      bound: 0,
+    },
+  ],
+  [form.pulseRate.name]: [
+    {
+      operator: ">",
+      value: 110,
+      result: triageResult.YELLOW,
+      value2: 0,
+      bound: 130,
+    },
+    { operator: "<", value: 50, result: triageResult.YELLOW, bound: 40 },
+    { operator: "<", value: 40, result: triageResult.RED, bound: 0 },
+    { operator: ">", value: 130, result: triageResult.RED, bound: 1000 },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 60,
+      operator2: "<=",
+      value2: 100,
+      result: triageResult.GREEN,
+      bound: 0,
+    },
+  ],
+};
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+export function VitalsForm({ initialValues, onSubmit }: props) {
+  const [triageResult, setTriageResult] = useState<TriageResult>("");
+
+  const checkTriage = (name: string, formValue: string) => {
+    rules[name]?.forEach((rule) => {
+      const formValueNumber = Number(formValue);
+      switch (rule.operator) {
+        case "<":
+          if (formValueNumber < rule.value && formValueNumber >= rule.bound) {
+            setTriageResult(rule.result as TriageResult);
+          }
+          return;
+        case ">":
+          if (formValueNumber > rule.value && formValueNumber <= rule.bound) {
+            setTriageResult(rule.result as TriageResult);
+          }
+          return;
+        case "combined":
+          if (
+            rule?.value2 &&
+            formValueNumber >= rule.value &&
+            formValueNumber <= rule.value2
+          ) {
+            setTriageResult(rule.result as TriageResult);
+          }
+          return;
+        default:
+          return null;
+      }
+    });
   };
   return (
     <FormikInit
@@ -146,6 +226,13 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
       initialValues={initialValues}
       submitButtonText="next"
     >
+      <h1>{triageResult}</h1>
+      {triageResult && (
+        <>
+          <TriageContainer result={triageResult} message={"Interventions"} />
+          <br />
+        </>
+      )}
       <MultlineInput
         id={form.complaints.name}
         name={form.complaints.name}
@@ -158,6 +245,9 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           id={form.respiratoryRate.name}
           name={form.respiratoryRate.name}
           label={form.respiratoryRate.label}
+          getValue={(value: string) => {
+            checkTriage(form.respiratoryRate.name, value);
+          }}
         />
         <TextInputField
           id={form.heartRate.name}
@@ -183,40 +273,55 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           id={form.temperature.name}
           name={form.temperature.name}
           label={form.temperature.label}
-          sx={{ width: "48.2%" }}
+          getValue={(value: string) => {
+            checkTriage(form.temperature.name, value);
+          }}
+        />
+        <TextInputField
+          id={form.bloodPressureDiastolic.name}
+          name={form.bloodPressureDiastolic.name}
+          label={form.bloodPressureDiastolic.label}
+          getValue={(value: string) => {
+            checkTriage(form.temperature.name, value);
+          }}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
+        <TextInputField
+          id={form.pulseRate.name}
+          name={form.pulseRate.name}
+          label={form.pulseRate.label}
+          getValue={(value: string) => {
+            checkTriage(form.pulseRate.name, value);
+          }}
         />
       </FieldsContainer>
       <br />
       <br />
 
-      <Grid container spacing={6}>
-        <Grid item>
-          <RadioGroupInput
-            name={form.eyeOpeningResponse.name}
-            label={form.eyeOpeningResponse.label}
-            options={eyeOpeningResponses}
-            row={false}
-          />
-        </Grid>
+      <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
+          name={form.eyeOpeningResponse.name}
+          label={form.eyeOpeningResponse.label}
+          options={eyeOpeningResponses}
+          row={false}
+        />
 
-        <Grid item>
-          <RadioGroupInput
-            name={form.motorResponse.name}
-            label={form.motorResponse.label}
-            options={motorResponses}
-            row={false}
-          />
-        </Grid>
+        <RadioGroupInput
+          name={form.motorResponse.name}
+          label={form.motorResponse.label}
+          options={motorResponses}
+          row={false}
+        />
 
-        <Grid item>
-          <RadioGroupInput
-            name={form.verbalResponse.name}
-            label={form.verbalResponse.label}
-            options={verbalResponses}
-            row={false}
-          />
-        </Grid>
-      </Grid>
+        <RadioGroupInput
+          name={form.verbalResponse.name}
+          label={form.verbalResponse.label}
+          options={verbalResponses}
+          row={false}
+        />
+      </FieldsContainer>
+
       {/* <TextInputField
         id={form.calculatedGCS.name}
         name={form.calculatedGCS.name}
