@@ -67,11 +67,15 @@ const form = {
 
   glucose: {
     name: "b9cc75b2-8d80-11d8-abbb-0024217bb78e",
-    label: "Glucose",
+    label: "Glucose (mg/dL)",
   },
   avpu: {
     name: "b9da6d98-8d80-11d8-abbb-0024217bb78e",
     label: "AVPU",
+  },
+  pulseOximetry: {
+    name: "pulseOximetry",
+    label: "Pulse Oximetry",
   },
 };
 type props = {
@@ -80,6 +84,10 @@ type props = {
 };
 const schema = yup.object({
   [form.complaints.name]: yup.string().required().label(form.complaints.label),
+  [form.pulseOximetry.name]: yup
+    .string()
+    .required()
+    .label(form.pulseOximetry.label),
   [form.respiratoryRate.name]: yup
     .string()
     .required()
@@ -186,6 +194,38 @@ const rules = {
       bound: 0,
     },
   ],
+  [form.respiratoryRate.name]: [
+    { operator: ">", value: 30, result: triageResult.RED, bound: 100 },
+    { operator: "<", value: 8, result: triageResult.RED, bound: 0 },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 12,
+      operator2: "<=",
+      value2: 20,
+      result: triageResult.GREEN,
+      bound: 0,
+    },
+  ],
+
+  [form.pulseOximetry.name]: [
+    { operator: "<", value: 90, result: triageResult.RED, bound: 0 },
+    { operator: "<", value: 93, result: triageResult.YELLOW, bound: 90 },
+    { operator: "=", value: 93, result: triageResult.GREEN, bound: 0 },
+  ],
+  [form.glucose.name]: [
+    { operator: "<", value: 40, result: triageResult.RED, bound: 0 },
+    { operator: "<", value: 60, result: triageResult.YELLOW, bound: 40 },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 70,
+      operator2: "<=",
+      value2: 140,
+      result: triageResult.GREEN,
+      bound: 0,
+    },
+  ],
 };
 
 export function VitalsForm({ initialValues, onSubmit }: props) {
@@ -196,12 +236,17 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
       const formValueNumber = Number(formValue);
       switch (rule.operator) {
         case "<":
-          if (formValueNumber < rule.value && formValueNumber >= rule.bound) {
+          if (formValueNumber < rule.value && formValueNumber >= rule?.bound) {
             setTriageResult(rule.result as TriageResult);
           }
           return;
         case ">":
           if (formValueNumber > rule.value && formValueNumber <= rule.bound) {
+            setTriageResult(rule.result as TriageResult);
+          }
+          return;
+        case "=":
+          if (formValueNumber == rule.value) {
             setTriageResult(rule.result as TriageResult);
           }
           return;
@@ -295,6 +340,14 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
             checkTriage(form.pulseRate.name, value);
           }}
         />
+        <TextInputField
+          id={form.pulseOximetry.name}
+          name={form.pulseOximetry.name}
+          label={form.pulseOximetry.label}
+          getValue={(value: string) => {
+            checkTriage(form.pulseOximetry.name, value);
+          }}
+        />
       </FieldsContainer>
       <br />
       <br />
@@ -338,6 +391,9 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
         id={form.glucose.name}
         name={form.glucose.name}
         label={form.glucose.label}
+        getValue={(value: string) => {
+          checkTriage(form.glucose.name, value);
+        }}
       />
     </FormikInit>
   );
