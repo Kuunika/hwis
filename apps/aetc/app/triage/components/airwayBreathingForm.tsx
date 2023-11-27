@@ -75,7 +75,10 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
     useState<any>({});
 
   const updateAbnormalConditions = (prop: string, formValue: string) => {
-    setBreathingAbnormalConditions((values) => {
+    if (formValue == undefined) {
+      return;
+    }
+    setBreathingAbnormalConditions((values: any) => {
       return { ...values, [prop]: formValue == "true" };
     });
   };
@@ -83,15 +86,24 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   useEffect(() => {
     const conditions = Object.keys(breathingAbnormalConditions);
 
-    const breathingNormalFalseCOndition = conditions.reduce(
+    const breathingNormalFalseCondition = conditions.reduce(
       (acc, currentValue) => {
         return acc || breathingAbnormalConditions[currentValue];
       },
       false
     );
-    if (breathingNormalFalseCOndition) {
+    if (breathingNormalFalseCondition) {
       setTriageResult("red");
       setTriageMessage("Interventions as necessary");
+    } else {
+      setTriageResult("");
+    }
+
+    console.log(breathingAbnormalConditions);
+
+    console.log(!breathingAbnormalConditions, conditions.length);
+    if (!breathingNormalFalseCondition && conditions.length == 6) {
+      setTriageResult("yellow");
     }
   }, [breathingAbnormalConditions]);
 
@@ -135,14 +147,13 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
 
       {/* breathing abnormal yes */}
 
-      {isBreathingAbnormal == "false" && (
+      {isBreathingAbnormal == "true" && (
         <>
           <FieldsContainer>
             <RadioGroupInput
               name={form.oxygenStats.name}
               label={form.oxygenStats.label}
               getValue={(value) => {
-                handleIsAirWayCompromised(value);
                 updateAbnormalConditions(form.oxygenStats.name, value);
               }}
               options={radioOptions}
@@ -151,7 +162,6 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               name={form.respiratoryRate.name}
               label={form.respiratoryRate.label}
               getValue={(value) => {
-                handleIsAirWayCompromised(value);
                 updateAbnormalConditions(form.respiratoryRate.name, value);
               }}
               options={radioOptions}
@@ -163,7 +173,6 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               name={form.respiratoryDysfunction.name}
               label={form.respiratoryDysfunction.label}
               getValue={(value) => {
-                handleIsAirWayCompromised(value);
                 updateAbnormalConditions(
                   form.respiratoryDysfunction.name,
                   value
@@ -176,7 +185,6 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               label={form.inabilityToSpeak.label}
               options={radioOptions}
               getValue={(value) => {
-                handleIsAirWayCompromised(value);
                 updateAbnormalConditions(form.inabilityToSpeak.name, value);
               }}
             />
@@ -187,7 +195,6 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               label={form.stridor.label}
               options={radioOptions}
               getValue={(value) => {
-                handleIsAirWayCompromised(value);
                 updateAbnormalConditions(form.stridor.name, value);
               }}
             />
@@ -195,7 +202,6 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               name={form.reducedLevelOfConsciousness.name}
               label={form.reducedLevelOfConsciousness.label}
               getValue={(value) => {
-                handleIsAirWayCompromised(value);
                 updateAbnormalConditions(
                   form.reducedLevelOfConsciousness.name,
                   value
