@@ -1,8 +1,9 @@
 "use client";
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
+import { TriageContainer } from "./triageResultContainers";
 
 const form = {
   airway: {
@@ -13,11 +14,44 @@ const form = {
     name: "breathing",
     label: "is Breathing Normal",
   },
+  oxygenStats: {
+    name: "oxygenStats",
+    label: "Oxygen Stats < 89",
+  },
+  respiratoryRate: {
+    name: "respiratoryRate",
+    label: "Respiratory Rate <8 or > 31",
+  },
+  respiratoryDysfunction: {
+    name: "respiratoryDysfunction",
+    label: "Severe Respiratory dysfunction or exhaustion ",
+  },
+  inabilityToSpeak: {
+    name: "inabilityToSpeak",
+    label: "Inability to speak in complete sentences ",
+  },
+  stridor: {
+    name: "stridor",
+    label: "Stridor ",
+  },
+  reducedLevelOfConsciousness: {
+    name: "reducedLevelOfConsciousness",
+    label: "Reduced Level of Consciousness due to low oxygen ",
+  },
 };
 
 const schema = Yup.object().shape({
   [form.airway.name]: Yup.string().required().label(form.airway.label),
   [form.breathing.name]: Yup.string().required().label(form.breathing.label),
+  [form.oxygenStats.name]: Yup.string().label(form.oxygenStats.label),
+  [form.respiratoryRate.name]: Yup.string().label(form.respiratoryRate.label),
+  [form.respiratoryDysfunction.name]: Yup.string().label(
+    form.respiratoryDysfunction.label
+  ),
+  [form.stridor.name]: Yup.string().label(form.stridor.label),
+  [form.reducedLevelOfConsciousness.name]: Yup.string().label(
+    form.reducedLevelOfConsciousness.label
+  ),
 });
 const initialValues = {
   airway: "",
@@ -25,10 +59,22 @@ const initialValues = {
 };
 
 type Prop = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
 };
 
 export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
+  const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("no");
+  const [triageResult, setTriageResult] = useState<"" | "yellow" | "red">("");
+  const [triageMessage, setTriageMessage] = useState("");
+
+  const handleIsAirWayCompromised = (value: string) => {
+    if (value == "yes") {
+      setTriageResult("red");
+      setTriageMessage("Airway Interventions as necessary");
+      return;
+    }
+    setTriageResult("");
+  };
   return (
     <FormikInit
       validationSchema={schema}
@@ -36,10 +82,17 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
+      {triageResult && (
+        <>
+          <TriageContainer result={triageResult} message={triageMessage} />
+          <br />
+        </>
+      )}
       <FieldsContainer sx={{ width: "100%" }}>
         <RadioGroupInput
           name={form.airway.name}
           label={form.airway.label}
+          getValue={handleIsAirWayCompromised}
           options={[
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
@@ -49,12 +102,76 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
         <RadioGroupInput
           name={form.breathing.name}
           label={form.breathing.label}
+          getValue={(value) => setIsBreathingAbnormal(value)}
           options={[
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
           ]}
         />
       </FieldsContainer>
+
+      {/* breathing abnormal yes */}
+
+      {isBreathingAbnormal == "yes" && (
+        <>
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.oxygenStats.name}
+              label={form.oxygenStats.label}
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+            />
+            <RadioGroupInput
+              name={form.respiratoryRate.name}
+              label={form.respiratoryRate.label}
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+            />
+          </FieldsContainer>
+
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.respiratoryDysfunction.name}
+              label={form.respiratoryDysfunction.label}
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+            />
+            <RadioGroupInput
+              name={form.inabilityToSpeak.name}
+              label={form.inabilityToSpeak.label}
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+            />
+          </FieldsContainer>
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.stridor.name}
+              label={form.stridor.label}
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+            />
+            <RadioGroupInput
+              name={form.reducedLevelOfConsciousness.name}
+              label={form.reducedLevelOfConsciousness.label}
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+            />
+          </FieldsContainer>
+        </>
+      )}
+
       <br />
     </FormikInit>
   );

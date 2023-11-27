@@ -3,32 +3,31 @@ import { Box } from "@mui/material";
 import * as Yup from "yup";
 import {
   FormikInit,
-  TextInputField,
   RadioGroupInput,
   SelectInputField,
-  FormFieldContainer,
   FieldsContainer,
 } from "shared-ui/src";
+import { concepts } from "@/constants";
 
 const form = {
   maritalStatus: {
-    name: "maritalStatus",
+    name: concepts.MARITAL_STATUS,
     label: "Marital Status",
   },
   occupation: {
-    name: "occupation",
+    name: concepts.OCCUPATION,
     label: "Occupation",
   },
   religion: {
-    name: "religion",
+    name: concepts.RELIGION,
     label: "Religion",
   },
   highestEducation: {
-    name: "highestEducation",
+    name: concepts.HIGHEST_EDUCATION,
     label: "Highest Education",
   },
   methodOfTransportation: {
-    name: "methodOfTransportation",
+    name: concepts.METHOD_OF_TRANSPORTATION,
     label: "Method Of Transportation",
   },
 };

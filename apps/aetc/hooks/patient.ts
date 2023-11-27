@@ -1,8 +1,23 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { PatientService, IdentificationTypeName } from "mahis-api-client";
+import { PatientService } from "mahis-api-client";
+import { ToastContainer, toast } from "react-toastify";
+
 export const addPatient = () => {
   const queryClient = useQueryClient();
   const addData = (patientData: any) => {
+    const notify = () =>
+      toast.success("Patient demographics Saved successful", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
+    notify();
     return PatientService.create(mapPatient(patientData));
   };
 
@@ -22,8 +37,7 @@ const mapPatient = (patient: any) => {
     identifiers: [
       {
         identifier: patient.identificationNumber,
-        identifierType:
-          "ba2f69d8-8d80-11d8-abbb-0024217bb78e" as IdentificationTypeName,
+        identifierType: "ba2f69d8-8d80-11d8-abbb-0024217bb78e",
         preferred: true,
       },
     ],

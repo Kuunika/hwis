@@ -1,10 +1,12 @@
 "use client";
 import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
 import { FcSurvey } from "react-icons/fc";
+import { ToastContainer, toast } from "react-toastify";
 import { emrLogin, useNavigation } from "@/hooks";
 
 export default function Home() {
   const { navigateTo } = useNavigation();
+
   emrLogin();
   return (
     <>

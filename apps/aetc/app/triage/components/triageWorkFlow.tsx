@@ -10,6 +10,7 @@ import {
 import { VitalsForm } from "@/app/vitals/components/vitalsForm";
 import { useNavigation } from "@/hooks";
 import { addObservation } from "@/hooks/observation";
+import { encounters } from "@/constants";
 
 export default function TriageWorkFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -28,10 +29,13 @@ export default function TriageWorkFlow() {
   };
 
   const handleVitalsSubmit = (values: any) => {
-    mutate(values);
+    mutate({ encounter: encounters.VITALS, obs: values });
     setActiveStep(1);
   };
 
+  const handleAirwaySubmit = (values: any) => {
+    setActiveStep(2);
+  };
   return (
     <NewStepperContainer
       setActive={(value) => {
@@ -43,7 +47,7 @@ export default function TriageWorkFlow() {
       active={activeStep}
     >
       <VitalsForm initialValues={{}} onSubmit={handleVitalsSubmit} />
-      <AirwayAndBreathingForm onSubmit={() => setActiveStep(2)} />
+      <AirwayAndBreathingForm onSubmit={handleAirwaySubmit} />
       <BloodCirculationForm onSubmit={() => setActiveStep(3)} />
       <ConsciousnessForm onSubmit={() => setActiveStep(4)} />
       <PersistentPainForm onSubmit={handlePersistentPain} />

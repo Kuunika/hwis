@@ -129,7 +129,7 @@ const schema = Yup.object().shape({
 
 type Prop = {
   initialValues: any;
-  onSubmit: () => void;
+  onSubmit: (value: any) => void;
 };
 
 export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {

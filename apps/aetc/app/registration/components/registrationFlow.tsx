@@ -35,7 +35,14 @@ export const RegistrationFlow = () => {
   };
 
   return (
-    <NewStepperContainer title="Registration" steps={steps} active={activeStep}>
+    <NewStepperContainer
+      title="Registration"
+      steps={steps}
+      active={activeStep}
+      setActive={(value) => {
+        setActiveStep(value);
+      }}
+    >
       <DemographicsForm
         initialValues={demographicsInitialValues}
         onSubmit={handleSubmitDemographics}
