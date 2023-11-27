@@ -38,6 +38,14 @@ const form = {
     name: "reducedLevelOfConsciousness",
     label: "Reduced Level of Consciousness due to low oxygen ",
   },
+  oxygenSats9092: {
+    name: "oxygenSats9092",
+    label: "Oxygen Sats 90-92%",
+  },
+  respiratoryRate92130: {
+    name: "respiratoryRate92130",
+    label: "Respiratory Rate > 9 or 21-30",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -73,6 +81,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [triageMessage, setTriageMessage] = useState("");
   const [breathingAbnormalConditions, setBreathingAbnormalConditions] =
     useState<any>({});
+  const [finalCondition, setFinalCondition] = useState(false);
 
   const updateAbnormalConditions = (prop: string, formValue: string) => {
     if (formValue == undefined) {
@@ -99,10 +108,10 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
       setTriageResult("");
     }
 
-    console.log(breathingAbnormalConditions);
+    const cond = !breathingNormalFalseCondition && conditions.length == 6;
+    setFinalCondition(cond);
 
-    console.log(!breathingAbnormalConditions, conditions.length);
-    if (!breathingNormalFalseCondition && conditions.length == 6) {
+    if (cond) {
       setTriageResult("yellow");
     }
   }, [breathingAbnormalConditions]);
@@ -211,6 +220,21 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             />
           </FieldsContainer>
         </>
+      )}
+
+      {finalCondition && (
+        <FieldsContainer>
+          <RadioGroupInput
+            name={form.oxygenSats9092.name}
+            label={form.oxygenSats9092.label}
+            options={radioOptions}
+          />
+          <RadioGroupInput
+            name={form.respiratoryRate92130.name}
+            label={form.respiratoryRate92130.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
       )}
 
       <br />
