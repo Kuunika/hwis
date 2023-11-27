@@ -6,16 +6,18 @@ import Gestation from './gestation/components/Gestation';
 import MedicalHistory from './medicalHistory/components/MedicalHistory';
 import { VitalsForm } from './vitals/components/VitalsForm';
 import { DemographicsForm } from './demographics/components/DemographicsForm';
+import AncMatrix from '../physical-examination/anc-matrix/components/AncMatrix';
 
 export const RegistrationFlow = () => {
       const [activeStep,setActiveStep] = useState<number>(0)
 
   const steps = [
     // { id: 1, label: "Vitals"},
-    // { id: 2, label: "Demographics"},
-    { id: 1, label: "Current Obstetric Information" },
-    { id: 2, label: "Gestation" },
-    { id: 3, label: "Medical History" },
+    // { id: 1, label: "Current Obstetric Information" },
+    { id: 1, label: "Matrix"},
+    { id: 2, label: "Demographics" },
+    { id: 3, label: "Gestation" },
+    { id: 4, label: "Medical History" },
   ];
   
 
@@ -25,14 +27,17 @@ export const RegistrationFlow = () => {
   // const handleDemographics=()=>{
   //   setActiveStep(2)
   // }
-  const handleSubmitCurrentObsteric =()=>{
+  const handleSubmitAncMatrix =()=>{
     setActiveStep(1)
   }
-  const handleSubmitGestation =()=>{
+  const handleSubmitCurrentObsteric =()=>{
     setActiveStep(2)
   }
-  const handleSubmitMedicalHistory =()=>{
+  const handleSubmitGestation =()=>{
     setActiveStep(3)
+  }
+  const handleSubmitMedicalHistory =()=>{
+    setActiveStep(4)
   }
   return (
     <NewStepperContainer title="Registration" steps={steps} active={activeStep}>
@@ -44,6 +49,10 @@ export const RegistrationFlow = () => {
        initialValues={demographicsInitialValues}
        onSubmit={handleDemographics}
       /> */}
+      <AncMatrix
+        initialValues={ancMatrixInitialValues}
+        onSubmit={handleSubmitAncMatrix}
+      />
       <CurrentObsteric
         initialValues={currentObstericInitialValues}
         onSubmit={handleSubmitCurrentObsteric}
@@ -107,4 +116,15 @@ const demographicsInitialValues = {
   nextOfKinFirstName: "",
   nextOfKinLastname: "",
   landmark: "",
+};
+
+const ancMatrixInitialValues = {
+  pallorInfo: "",
+  oedemaPresent: "",
+  severityInfo: "",
+  coughInfo: "",
+  coughDuration: "",
+  weightInfo: "",
+  feverInfo: "",
+  nightSweatsInfo: "",
 };
