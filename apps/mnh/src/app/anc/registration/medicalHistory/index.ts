@@ -1,1 +1,1 @@
-export * from "./components/MedicalHistory"
+export * from "./components/medicalHistory"

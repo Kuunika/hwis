@@ -1,12 +1,13 @@
 import React from 'react'
 import { useState } from "react";
 import { NewStepperContainer } from 'shared-ui/src';
-import CurrentObsteric from './currentObsteric/components/CurrentObsteric';
-import Gestation from './gestation/components/Gestation';
-import MedicalHistory from './medicalHistory/components/MedicalHistory';
-import { VitalsForm } from './vitals/components/VitalsForm';
-import { DemographicsForm } from './demographics/components/DemographicsForm';
+import CurrentObsteric from './currentObsteric/components/currentObsteric';
+import Gestation from './gestation/components/gestation';
+import MedicalHistory from './medicalHistory/components/medicalHistory';
+import { VitalsForm } from './vitals/components/vitalsForm';
+import { DemographicsForm } from './demographics/components/demographicsForm';
 import AncMatrix from '../physical-examination/anc-matrix/components/AncMatrix';
+import BreastExam from '../physical-examination/anc-matrix/components/BreastExam';
 
 export const RegistrationFlow = () => {
       const [activeStep,setActiveStep] = useState<number>(0)
@@ -14,7 +15,8 @@ export const RegistrationFlow = () => {
   const steps = [
     // { id: 1, label: "Vitals"},
     // { id: 1, label: "Current Obstetric Information" },
-    { id: 1, label: "Matrix"},
+
+    { id: 1, label: "Breast Exam"},
     { id: 2, label: "Demographics" },
     { id: 3, label: "Gestation" },
     { id: 4, label: "Medical History" },
@@ -27,7 +29,7 @@ export const RegistrationFlow = () => {
   // const handleDemographics=()=>{
   //   setActiveStep(2)
   // }
-  const handleSubmitAncMatrix =()=>{
+  const handleSubmitBreastExam =()=>{
     setActiveStep(1)
   }
   const handleSubmitCurrentObsteric =()=>{
@@ -49,9 +51,13 @@ export const RegistrationFlow = () => {
        initialValues={demographicsInitialValues}
        onSubmit={handleDemographics}
       /> */}
-      <AncMatrix
+      {/* <AncMatrix
         initialValues={ancMatrixInitialValues}
         onSubmit={handleSubmitAncMatrix}
+      /> */}
+      <BreastExam
+       initialValues={breastIniialValues}
+       onSubmit={handleSubmitBreastExam}
       />
       <CurrentObsteric
         initialValues={currentObstericInitialValues}
@@ -127,4 +133,9 @@ const ancMatrixInitialValues = {
   weightInfo: "",
   feverInfo: "",
   nightSweatsInfo: "",
+};
+const breastIniialValues = {
+  breastExam: "",
+  abnornalityInfo: "",
+  otherInfo: "",
 };

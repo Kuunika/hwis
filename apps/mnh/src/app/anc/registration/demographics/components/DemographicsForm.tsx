@@ -40,10 +40,6 @@ const form = {
     name: "currentVillage",
     label: "Current Village",
   },
-  currentVillage: {
-    name: "currentVillage",
-    label: "Current Village",
-  },
   landmark: {
     name: "landmark",
     label: "Landmark",
