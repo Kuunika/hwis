@@ -123,6 +123,13 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
           getValue={(value) => updateConditions(form.severePain.name, value)}
         />
       </FieldsContainer>
+      <FieldsContainer>
+        <RadioGroupInput
+          name={form.moderatePain.name}
+          label={form.moderatePain.label}
+          options={options}
+        />
+      </FieldsContainer>
     </FormikInit>
   );
 };
