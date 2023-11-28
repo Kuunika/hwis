@@ -6,8 +6,8 @@ import Gestation from './gestation/components/gestation';
 import MedicalHistory from './medicalHistory/components/medicalHistory';
 import { VitalsForm } from './vitals/components/vitalsForm';
 import { DemographicsForm } from './demographics/components/demographicsForm';
-import AncMatrix from '../physical-examination/anc-matrix/components/AncMatrix';
-import BreastExam from '../physical-examination/anc-matrix/components/BreastExam';
+import AncMatrix from '../physical-examination/components/ancMatrix';
+import BreastExam from '../physical-examination/components/breastExam';
 
 export const RegistrationFlow = () => {
       const [activeStep,setActiveStep] = useState<number>(0)
