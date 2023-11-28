@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from "./triageResultContainers";
+import { useConditions } from "@/hooks";
 
 const form = {
   airway: {
@@ -79,25 +80,16 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
   const [triageResult, setTriageResult] = useState<"" | "yellow" | "red">("");
   const [triageMessage, setTriageMessage] = useState("");
-  const [breathingAbnormalConditions, setBreathingAbnormalConditions] =
-    useState<any>({});
+  const { conditions, updateConditions } = useConditions();
+
   const [finalCondition, setFinalCondition] = useState(false);
 
-  const updateAbnormalConditions = (prop: string, formValue: string) => {
-    if (formValue == undefined) {
-      return;
-    }
-    setBreathingAbnormalConditions((values: any) => {
-      return { ...values, [prop]: formValue == "true" };
-    });
-  };
-
   useEffect(() => {
-    const conditions = Object.keys(breathingAbnormalConditions);
+    const formConditions = Object.keys(conditions);
 
-    const breathingNormalFalseCondition = conditions.reduce(
+    const breathingNormalFalseCondition = formConditions.reduce(
       (acc, currentValue) => {
-        return acc || breathingAbnormalConditions[currentValue];
+        return acc || conditions[currentValue];
       },
       false
     );
@@ -114,7 +106,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
     if (cond) {
       setTriageResult("yellow");
     }
-  }, [breathingAbnormalConditions]);
+  }, [conditions]);
 
   const handleIsAirWayCompromised = (value: string) => {
     if (value == "true") {
@@ -163,7 +155,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               name={form.oxygenStats.name}
               label={form.oxygenStats.label}
               getValue={(value) => {
-                updateAbnormalConditions(form.oxygenStats.name, value);
+                updateConditions(form.oxygenStats.name, value);
               }}
               options={radioOptions}
             />
@@ -171,7 +163,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               name={form.respiratoryRate.name}
               label={form.respiratoryRate.label}
               getValue={(value) => {
-                updateAbnormalConditions(form.respiratoryRate.name, value);
+                updateConditions(form.respiratoryRate.name, value);
               }}
               options={radioOptions}
             />
@@ -182,10 +174,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               name={form.respiratoryDysfunction.name}
               label={form.respiratoryDysfunction.label}
               getValue={(value) => {
-                updateAbnormalConditions(
-                  form.respiratoryDysfunction.name,
-                  value
-                );
+                updateConditions(form.respiratoryDysfunction.name, value);
               }}
               options={radioOptions}
             />
@@ -194,7 +183,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               label={form.inabilityToSpeak.label}
               options={radioOptions}
               getValue={(value) => {
-                updateAbnormalConditions(form.inabilityToSpeak.name, value);
+                updateConditions(form.inabilityToSpeak.name, value);
               }}
             />
           </FieldsContainer>
@@ -204,17 +193,14 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
               label={form.stridor.label}
               options={radioOptions}
               getValue={(value) => {
-                updateAbnormalConditions(form.stridor.name, value);
+                updateConditions(form.stridor.name, value);
               }}
             />
             <RadioGroupInput
               name={form.reducedLevelOfConsciousness.name}
               label={form.reducedLevelOfConsciousness.label}
               getValue={(value) => {
-                updateAbnormalConditions(
-                  form.reducedLevelOfConsciousness.name,
-                  value
-                );
+                updateConditions(form.reducedLevelOfConsciousness.name, value);
               }}
               options={radioOptions}
             />

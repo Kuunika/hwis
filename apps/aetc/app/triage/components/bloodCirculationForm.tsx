@@ -1,22 +1,84 @@
 import { Box } from "@mui/material";
-import React from "react";
-import { FormikInit, RadioGroupInput } from "shared-ui/src";
+import React, { useState } from "react";
+import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
 
+const form = {
+  isCirculationAbnormal: {
+    name: "isCirculationAbnormal",
+    label: "Is Circulation Abnormal",
+  },
+  heartRate: {
+    name: "heartRate",
+    label: "Heart Rate <50 >120 or Systolic Blood Pressure <70 >180",
+  },
+  weakIrregularPulse: {
+    name: "weakIrregularPulse",
+    label: "Weak, Thready, Bounding or regular/irregular pulse",
+  },
+  reducedUrinaryOutput: {
+    name: "reducedUrinaryOutput",
+    label: "Reduced urinary output < 30ml/hr",
+  },
+  clammyPeripherals: {
+    name: "clammyPeripherals",
+    label: "Cool clammy peripherals or cap refill > 4 seconds",
+  },
+  temperature: {
+    name: "temperature",
+    label: "Temperature",
+  },
+  hemorrhage: {
+    name: "hemorrhage",
+    label: "Hemorrhage",
+  },
+  dehydration: {
+    name: "dehydrationSkin",
+    label: "Dehydration skin turgor, sunken eyes",
+  },
+};
+
 const schema = Yup.object().shape({
-  circulation: Yup.string().required().label("Is Circulation Abnormal"),
-  present: Yup.string().required().label("Are Any of the Following Present?"),
+  [form.isCirculationAbnormal.name]: Yup.string()
+    .required()
+    .label(form.isCirculationAbnormal.label),
+  [form.heartRate.name]: Yup.string().label(form.heartRate.label),
+  [form.weakIrregularPulse.name]: Yup.string().label(
+    form.weakIrregularPulse.label
+  ),
+  [form.reducedUrinaryOutput.name]: Yup.string().label(
+    form.reducedUrinaryOutput.label
+  ),
+  [form.clammyPeripherals.name]: Yup.string().label(
+    form.clammyPeripherals.label
+  ),
+  [form.temperature.name]: Yup.string().label(form.temperature.label),
+  [form.hemorrhage.name]: Yup.string().label(form.hemorrhage.label),
+  [form.dehydration.name]: Yup.string().label(form.dehydration.label),
 });
 
 const initialValues = {
-  circulation: "",
-  present: "",
+  [form.clammyPeripherals.name]: "",
+  [form.dehydration.name]: "",
+  [form.heartRate.name]: "",
+  [form.isCirculationAbnormal.name]: "",
+  [form.temperature.name]: "",
+  [form.weakIrregularPulse.name]: "",
+  [form.hemorrhage.name]: "",
 };
 type Prop = {
   onSubmit: () => void;
 };
 
+const options = [
+  { label: "Yes", value: "true" },
+  { label: "No", value: "false" },
+];
+
 export const BloodCirculationForm = ({ onSubmit }: Prop) => {
+  const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("no");
+  const [circulationConditions, setCirculationConditions] = useState<any>({});
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -25,35 +87,59 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
       submitButtonText="next"
     >
       <RadioGroupInput
-        name="circulation"
-        label="Is Circulation Abnormal ?"
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
+        name={form.isCirculationAbnormal.name}
+        label={form.isCirculationAbnormal.label}
+        options={options}
+        getValue={(value) => setIsCirculationAbnormal(value)}
       />
       <br />
-      <br />
-
-      <RadioGroupInput
-        name="present"
-        label="Are Any of the Following Present?"
-        options={[
-          {
-            label: "Weak, Thready, Bounding or Regular/Irregular Pulse",
-            value: "weak",
-          },
-          { label: "Reduced Urinary Output < 30ml/hr", value: "reduced" },
-          {
-            label: "Cool Clammy Peripherals or Cap Refill > 4 Seconds",
-            value: "cool",
-          },
-          { label: "Haemorrhage/Significant Blood Loss", value: "loss" },
-          { label: "Dehydrated Skin Turgor, Sunken Eyes", value: "skin" },
-          { label: "Heart Rate < 50, > 60 or 100 - 110", value: "heart" },
-          { label: "Temperature 37 - 38 C", value: "temperature" },
-        ]}
-      />
+      {isCirculationAbnormal == "true" && (
+        <>
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.heartRate.name}
+              label={form.heartRate.label}
+              options={options}
+            />
+            <RadioGroupInput
+              name={form.weakIrregularPulse.name}
+              label={form.weakIrregularPulse.label}
+              options={options}
+            />
+          </FieldsContainer>
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.reducedUrinaryOutput.name}
+              label={form.reducedUrinaryOutput.label}
+              options={options}
+            />
+            <RadioGroupInput
+              name={form.clammyPeripherals.name}
+              label={form.clammyPeripherals.label}
+              options={options}
+            />
+          </FieldsContainer>
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.temperature.name}
+              label={form.temperature.label}
+              options={options}
+            />
+            <RadioGroupInput
+              name={form.hemorrhage.name}
+              label={form.hemorrhage.label}
+              options={options}
+            />
+          </FieldsContainer>
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.dehydration.name}
+              label={form.dehydration.label}
+              options={options}
+            />
+          </FieldsContainer>
+        </>
+      )}
     </FormikInit>
   );
 };
