@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import React, { useState } from "react";
 import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
+import { TriageContainer } from ".";
 
 const form = {
   isCirculationAbnormal: {
@@ -37,6 +38,14 @@ const form = {
     name: "dehydrationSkin",
     label: "Dehydration skin turgor, sunken eyes",
   },
+  heartRate5060: {
+    name: "heartRate5060",
+    label: "Heart Rate <50, >60 or  100-110",
+  },
+  temperature3738: {
+    name: "temperature3738",
+    label: "Temperature 37-38C",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -56,6 +65,8 @@ const schema = Yup.object().shape({
   [form.temperature.name]: Yup.string().label(form.temperature.label),
   [form.hemorrhage.name]: Yup.string().label(form.hemorrhage.label),
   [form.dehydration.name]: Yup.string().label(form.dehydration.label),
+  [form.temperature3738.name]: Yup.string().label(form.temperature3738.label),
+  [form.heartRate5060.name]: Yup.string().label(form.heartRate5060.label),
 });
 
 const initialValues = {
@@ -78,7 +89,8 @@ const options = [
 
 export const BloodCirculationForm = ({ onSubmit }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("no");
-  const { conditions, updateConditions } = useConditions();
+  const { updateConditions, triageResult, aggregateOrCondition, conditions } =
+    useConditions();
 
   return (
     <FormikInit
@@ -87,6 +99,12 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
+      {triageResult && (
+        <>
+          <TriageContainer result={triageResult} message={""} />
+          <br />
+        </>
+      )}
       <RadioGroupInput
         name={form.isCirculationAbnormal.name}
         label={form.isCirculationAbnormal.label}
@@ -158,6 +176,22 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
               options={options}
             />
           </FieldsContainer>
+          {!aggregateOrCondition && Object.keys(conditions).length == 7 && (
+            <>
+              <FieldsContainer>
+                <RadioGroupInput
+                  name={form.heartRate5060.name}
+                  label={form.heartRate5060.label}
+                  options={options}
+                />
+                <RadioGroupInput
+                  name={form.temperature3738.name}
+                  label={form.temperature3738.label}
+                  options={options}
+                />
+              </FieldsContainer>
+            </>
+          )}
         </>
       )}
     </FormikInit>

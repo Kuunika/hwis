@@ -91,7 +91,8 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [finalCondition, setFinalCondition] = useState(false);
 
   useEffect(() => {
-    const cond = !aggregateOrCondition && conditions.length == 6;
+    console.log(conditions);
+    const cond = !aggregateOrCondition && Object.keys(conditions).length == 6;
     setFinalCondition(cond);
 
     if (cond) {
