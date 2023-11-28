@@ -17,8 +17,8 @@ type Props ={
      name: "fundalHeight",
      label: "Fundal Height",
    },
-   Foetallie: {
-     name: "Foetallie",
+   foetalLie: {
+     name: "FoetalLie",
      label: "Foetal lie",
    },
    foetalPresentation: {
@@ -42,12 +42,13 @@ type Props ={
  const schema = yup.object({
     [form.scarInfo.name]:yup.string().required().label(form.scarInfo.label),
     [form.fundalHeight.name]:yup.string().required().label(form.fundalHeight.label),
-    [form.Foetallie.name]:yup.string().required().label(form.Foetallie.label),
+    [form.foetalLie.name]:yup.string().required().label(form.foetalLie.label),
     [form.foetalPresentation.name]:yup.string().required().label(form.foetalPresentation.label),
     [form.pregnancyTest.name]: yup.string().required().label(form.pregnancyTest.label),
     [form.pregancyResult.name]: yup.string().required().label(form.pregancyResult.label),
     [form.fatalHeart.name]: yup.string().required().label(form.fatalHeart.label)
  })
+
 
 const AbnominalExamination = ({onSubmit,initialValues}:Props) => {
     const [isScar,setScar] = useState(false);
@@ -70,7 +71,7 @@ const AbnominalExamination = ({onSubmit,initialValues}:Props) => {
 
     const handleNilPalpableChange =(fieldName: string, value: string){
 
-        if(fieldName === form.Foetallie.name || form.foetalPresentation && value === "Nil palpable" ){
+        if(fieldName === form.foetalLie.name || form.foetalPresentation && value === "Nil palpable" ){
             setNilPalpable(true)
             setShowNilPalpable(true)
         }else{
@@ -119,8 +120,8 @@ const AbnominalExamination = ({onSubmit,initialValues}:Props) => {
         <FieldsContainer>
         <SelectInputField
             id={form.fatalHeart.name}
-            name={form.Foetallie.name}
-            label={form.Foetallie.label}
+            name={form.foetalLie.name}
+            label={form.foetalLie.label}
             selectItems={[
               { name: "Oblique", value: "oblique" },
               { name: "Transverse", value: "transverse" },

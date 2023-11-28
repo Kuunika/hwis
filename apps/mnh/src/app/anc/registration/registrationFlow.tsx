@@ -8,6 +8,8 @@ import { VitalsForm } from './vitals/components/vitalsForm';
 import { DemographicsForm } from './demographics/components/demographicsForm';
 import AncMatrix from '../physical-examination/components/ancMatrix';
 import BreastExam from '../physical-examination/components/breastExam';
+import AbnominalExamination from '../physical-examination/components/abnominalExamination';
+import VulvaInspection from '../physical-examination/components/vulvaInspection';
 
 export const RegistrationFlow = () => {
       const [activeStep,setActiveStep] = useState<number>(0)
@@ -16,10 +18,10 @@ export const RegistrationFlow = () => {
     // { id: 1, label: "Vitals"},
     // { id: 1, label: "Current Obstetric Information" },
 
-    { id: 1, label: "Breast Exam"},
-    { id: 2, label: "Demographics" },
-    { id: 3, label: "Gestation" },
-    { id: 4, label: "Medical History" },
+    { id: 1, label: "abnominal"},
+    { id: 2, label: "vilva" },
+    // { id: 3, label: "Gestation" },
+    // { id: 4, label: "Medical History" },
   ];
   
 
@@ -29,18 +31,24 @@ export const RegistrationFlow = () => {
   // const handleDemographics=()=>{
   //   setActiveStep(2)
   // }
-  const handleSubmitBreastExam =()=>{
-    setActiveStep(1)
+  const handleSubmitAbnominal=()=>{
+    setActiveStep(1);
   }
-  const handleSubmitCurrentObsteric =()=>{
-    setActiveStep(2)
+  const handleSubmitVulvaInspection=()=>{
+    setActiveStep(1);
   }
-  const handleSubmitGestation =()=>{
-    setActiveStep(3)
-  }
-  const handleSubmitMedicalHistory =()=>{
-    setActiveStep(4)
-  }
+  // const handleSubmitBreastExam =()=>{
+  //   setActiveStep(1)
+  // }
+  // const handleSubmitCurrentObsteric =()=>{
+  //   setActiveStep(2)
+  // }
+  // const handleSubmitGestation =()=>{
+  //   setActiveStep(3)
+  // }
+  // const handleSubmitMedicalHistory =()=>{
+  //   setActiveStep(4)
+  // }
   return (
     <NewStepperContainer title="Registration" steps={steps} active={activeStep}>
       {/* <VitalsForm
@@ -55,7 +63,15 @@ export const RegistrationFlow = () => {
         initialValues={ancMatrixInitialValues}
         onSubmit={handleSubmitAncMatrix}
       /> */}
-      <BreastExam
+      <AbnominalExamination
+       initialValues={abnominalInitialValues}
+       onSubmit={handleSubmitAbnominal}
+      />
+      <VulvaInspection
+       initialValues={vulvalInitialValues}
+       onSubmit={handleSubmitVulvaInspection}
+      />
+      {/* <BreastExam
        initialValues={breastIniialValues}
        onSubmit={handleSubmitBreastExam}
       />
@@ -70,7 +86,7 @@ export const RegistrationFlow = () => {
       <MedicalHistory
         initialValues={medicalHistoryInitialValues}
         onSubmit={handleSubmitMedicalHistory}
-      />
+      /> */}
     </NewStepperContainer>
   );
 }
@@ -139,3 +155,16 @@ const breastIniialValues = {
   abnornalityInfo: "",
   otherInfo: "",
 };
+ const abnominalInitialValues = {
+   scarInfo: "",
+   fundalHeight: "",
+   Foetallie: "",
+   foetalPresentation: "",
+   pregnancyTest: "",
+   pregancyResult: "",
+   fatalHeart: "",
+ };
+  const vulvalInitialValues = {
+    vulvaInfo: "",
+    otherInfo: "",
+  };
