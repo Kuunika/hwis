@@ -5,6 +5,7 @@ import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from "./triageResultContainers";
 import { useConditions } from "@/hooks";
+import { TriageResult } from "@/interfaces";
 
 const form = {
   airway: {
@@ -78,29 +79,19 @@ const radioOptions = [
 
 export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
-  const [triageResult, setTriageResult] = useState<"" | "yellow" | "red">("");
   const [triageMessage, setTriageMessage] = useState("");
-  const { conditions, updateConditions } = useConditions();
+  const {
+    conditions,
+    updateConditions,
+    aggregateOrCondition,
+    setTriageResult,
+    triageResult,
+  } = useConditions();
 
   const [finalCondition, setFinalCondition] = useState(false);
 
   useEffect(() => {
-    const formConditions = Object.keys(conditions);
-
-    const breathingNormalFalseCondition = formConditions.reduce(
-      (acc, currentValue) => {
-        return acc || conditions[currentValue];
-      },
-      false
-    );
-    if (breathingNormalFalseCondition) {
-      setTriageResult("red");
-      setTriageMessage("Interventions as necessary");
-    } else {
-      setTriageResult("");
-    }
-
-    const cond = !breathingNormalFalseCondition && conditions.length == 6;
+    const cond = !aggregateOrCondition && conditions.length == 6;
     setFinalCondition(cond);
 
     if (cond) {

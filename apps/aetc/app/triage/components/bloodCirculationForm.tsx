@@ -1,3 +1,4 @@
+import { useConditions } from "@/hooks";
 import { Box } from "@mui/material";
 import React, { useState } from "react";
 import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
@@ -77,7 +78,7 @@ const options = [
 
 export const BloodCirculationForm = ({ onSubmit }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("no");
-  const [circulationConditions, setCirculationConditions] = useState<any>({});
+  const { conditions, updateConditions } = useConditions();
 
   return (
     <FormikInit
@@ -100,11 +101,15 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
               name={form.heartRate.name}
               label={form.heartRate.label}
               options={options}
+              getValue={(value) => updateConditions(form.heartRate.name, value)}
             />
             <RadioGroupInput
               name={form.weakIrregularPulse.name}
               label={form.weakIrregularPulse.label}
               options={options}
+              getValue={(value) =>
+                updateConditions(form.weakIrregularPulse.name, value)
+              }
             />
           </FieldsContainer>
           <FieldsContainer>
@@ -112,11 +117,17 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
               name={form.reducedUrinaryOutput.name}
               label={form.reducedUrinaryOutput.label}
               options={options}
+              getValue={(value) =>
+                updateConditions(form.reducedUrinaryOutput.name, value)
+              }
             />
             <RadioGroupInput
               name={form.clammyPeripherals.name}
               label={form.clammyPeripherals.label}
               options={options}
+              getValue={(value) =>
+                updateConditions(form.clammyPeripherals.name, value)
+              }
             />
           </FieldsContainer>
           <FieldsContainer>
@@ -124,17 +135,26 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
               name={form.temperature.name}
               label={form.temperature.label}
               options={options}
+              getValue={(value) =>
+                updateConditions(form.temperature.name, value)
+              }
             />
             <RadioGroupInput
               name={form.hemorrhage.name}
               label={form.hemorrhage.label}
               options={options}
+              getValue={(value) =>
+                updateConditions(form.hemorrhage.name, value)
+              }
             />
           </FieldsContainer>
           <FieldsContainer>
             <RadioGroupInput
               name={form.dehydration.name}
               label={form.dehydration.label}
+              getValue={(value) =>
+                updateConditions(form.dehydration.name, value)
+              }
               options={options}
             />
           </FieldsContainer>
