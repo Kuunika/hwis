@@ -1,25 +1,72 @@
 import { Box } from "@mui/material";
-import React from "react";
-import { FormikInit, MainButton, RadioGroupInput } from "shared-ui/src";
+import React, { useState } from "react";
+import {
+  FieldsContainer,
+  FormikInit,
+  MainButton,
+  RadioGroupInput,
+  TextInputField,
+} from "shared-ui/src";
 import * as Yup from "yup";
+import { TriageContainer } from ".";
+import { useConditions } from "@/hooks";
 
 type Prop = {
   onSubmit: () => void;
 };
+const form = {
+  consciousness: {
+    name: "consciousness",
+    label: "Does the patient have a reduced Level of consciousness",
+  },
 
+  bloodGlucose: {
+    name: "bloodGlucose",
+    label: "Blood Glucose",
+  },
+  gcs: {
+    name: "gcs",
+    label: "GCS",
+  },
+};
+
+const schema = Yup.object().shape({
+  [form.consciousness.name]: Yup.string()
+    .required()
+    .label(form.consciousness.label),
+  [form.bloodGlucose.name]: Yup.string().label(form.bloodGlucose.label),
+  [form.gcs.name]: Yup.string().label(form.gcs.label),
+});
+
+const options = [
+  { label: "Yes", value: "true" },
+  { label: "No", value: "false" },
+];
+
+const initialValues = {
+  consciousness: "",
+  glucose: "",
+  gcs: "",
+};
 export const ConsciousnessForm = ({ onSubmit }: Prop) => {
-  const schema = Yup.object().shape({
-    consciousness: Yup.string()
-      .required()
-      .label("Does the patient have a reduced Level of consciousness"),
-    glucose: Yup.string().required().label("Blood glucose"),
-    gcs: Yup.string().required().label("Check GCS"),
-  });
+  const [consciousness, setConsciousness] = useState();
+  const { triageResult, setTriageResult } = useConditions();
 
-  const initialValues = {
-    consciousness: "",
-    glucose: "",
-    gcs: "",
+  const checkGlucose = (value: string) => {};
+
+  const checkGcs = (value: number) => {
+    if (!value) {
+      setTriageResult("");
+      return;
+    }
+
+    if (value < 10) {
+      setTriageResult("red");
+    }
+
+    if (value >= 10 && value <= 14) {
+      setTriageResult("yellow");
+    }
   };
   return (
     <FormikInit
@@ -28,34 +75,37 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
+      {triageResult && (
+        <>
+          <TriageContainer result={triageResult} message={""} />
+          <br />
+        </>
+      )}
       <RadioGroupInput
-        name="consciousness"
-        label="Does the patient have a reduced Level of consciousness ?"
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
+        name={form.consciousness.name}
+        label={form.consciousness.label}
+        options={options}
+        getValue={(value) => setConsciousness(value)}
       />
       <br />
-      <br />
-      <RadioGroupInput
-        name="glucose"
-        label="Blood Glucose"
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
-      />
-      <br />
-      <br />
-      <RadioGroupInput
-        name="gcs"
-        label="Check GCS"
-        options={[
-          { label: "less then 10", value: "low" },
-          { label: "greater than 10 and less than 14", value: "high" },
-        ]}
-      />
+
+      {consciousness == "true" && (
+        <>
+          <FieldsContainer>
+            <TextInputField
+              name={form.bloodGlucose.name}
+              label={form.bloodGlucose.label}
+              id={form.bloodGlucose.name}
+            />
+            <TextInputField
+              name={form.gcs.name}
+              label={form.gcs.label}
+              id={form.gcs.name}
+              getValue={checkGcs}
+            />
+          </FieldsContainer>
+        </>
+      )}
     </FormikInit>
   );
 };
