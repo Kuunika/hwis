@@ -15,4 +15,5 @@ export const defaultTheme = {
   surface: "#fff",
   error: "#B00020",
   white: "#fff",
+  formInputLabel: "#00000096",
 };
