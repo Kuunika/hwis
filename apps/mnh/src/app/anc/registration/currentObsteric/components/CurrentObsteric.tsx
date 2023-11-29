@@ -24,7 +24,7 @@ const form ={
       },
     lmpDate: {
         name: "lmpDate",
-        label: "Enter LMP date",
+        label: "",
       },
     gestationalAge:{
        name:"gestationalAge",
@@ -39,7 +39,7 @@ const form ={
 const schema = yup.object({
     [form.pregnancyTest.name]: yup.string().required().label(form.pregnancyTest.label),
     [form.lmpInfo.name]: yup.string().required().label(form.lmpInfo.label),
-    [form.lmpDate.name]: yup.string().required().label(form.lmpDate.label),
+    [form.lmpDate.name]: yup.date().required().label(form.lmpDate.label),
     [form.gestationalAge.name]:yup.string().required().label(form.gestationalAge.label),
     [form.eddInfo.name]: yup.string().required().label(form.eddInfo.label),
 });
@@ -51,7 +51,7 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
   const [showResults, setShowResults] = useState(false)
 
   const handleRadioChange = (fieldName: string, value: string) => {
-    if (fieldName === form.lmpInfo.name && value === "yes") {
+    if (fieldName === form.lmpInfo.name && value === "yes" ) {
       setLmp(true);
       setShowAdditionalRadio(true);
     } else {
@@ -64,6 +64,9 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
     if (fieldName === form.testResults.name && value ===  "yes"){
       setPositive(true);
       setShowResults(true)
+    }else if(fieldName === form.testResults.name && value ===  "no"){
+      setPositive(true);
+      setShowResults(true);
     }
     else {
       setPositive(false);
@@ -85,7 +88,7 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
           ]}
-          getValue={(value)=> handleRadioResults(form.testResults.name,value)}
+          getValue={(value) => handleRadioResults(form.testResults.name, value)}
         />
         {showResults && (
           <RadioGroupInput
@@ -109,20 +112,30 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
           getValue={(value) => handleRadioChange(form.lmpInfo.name, value)}
         />
         {showAdditionalRadio && (
-          <TextInputField
-            name={form.lmpDate.name}
-            label={form.lmpDate.label}
-            id={form.lmpDate.name}
-          />
+          <>
+            <TextInputField
+              type="date"
+              name={form.lmpDate.name}
+              label={form.lmpDate.label}
+              id={form.lmpDate.name}
+            />
+            {/* {isLmp && (
+              <TextInputField
+                name={form.gestationalAge.name}
+                label={form.gestationalAge.label}
+                id={form.gestationalAge.name}
+              />
+            )} */}
+          </>
         )}
       </FieldsContainer>
-      <FieldsContainer>
+      {/* <FieldsContainer>
         <TextInputField
           name={form.gestationalAge.name}
           label={form.gestationalAge.label}
           id={form.gestationalAge.name}
         />
-      </FieldsContainer>
+      </FieldsContainer> */}
       <FieldsContainer>
         <TextInputField
           name={form.eddInfo.name}
