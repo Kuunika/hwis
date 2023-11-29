@@ -109,7 +109,7 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
           getValue={(value) => handleRadioChange(form.lmpInfo.name, value)}
         />
         {showAdditionalRadio && (
-          <BasicDatePicker
+          <TextInputField
             name={form.lmpDate.name}
             label={form.lmpDate.label}
             id={form.lmpDate.name}
