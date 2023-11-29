@@ -39,7 +39,6 @@ export default function TriageWorkFlow() {
   return (
     <NewStepperContainer
       setActive={(value) => {
-        console.log({ value });
         setActiveStep(value);
       }}
       title="Triage"
