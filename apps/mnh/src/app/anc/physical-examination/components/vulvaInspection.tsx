@@ -17,8 +17,8 @@ const form = {
   }
 };
  const schema = yup.object({
-   [form.vulvaInfo.name]: yup.string().required().label(form.vulvaInfo.label),
-   [form.otherInfo.name]: yup.string().required().label(form.otherInfo.label)
+   [form.vulvaInfo.name]: yup.array().required().label(form.vulvaInfo.label),
+   [form.otherInfo.name]: yup.string().label(form.otherInfo.label)
  });
 const VulvaInspection = ({onSubmit,initialValues}:Props) => {
   return (

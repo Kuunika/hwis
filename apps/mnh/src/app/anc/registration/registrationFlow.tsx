@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from "react";
-import { NewStepperContainer } from 'shared-ui/src';
+import { MainButton, NewStepperContainer, WrapperBox} from 'shared-ui/src';
 import CurrentObsteric from './currentObsteric/components/currentObsteric';
 import Gestation from './gestation/components/gestation';
 import MedicalHistory from './medicalHistory/components/medicalHistory';
@@ -63,6 +63,8 @@ export const RegistrationFlow = () => {
         initialValues={ancMatrixInitialValues}
         onSubmit={handleSubmitAncMatrix}
       /> */}
+
+     
       <AbnominalExamination
        initialValues={abnominalInitialValues}
        onSubmit={handleSubmitAbnominal}
