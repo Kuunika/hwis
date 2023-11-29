@@ -2,12 +2,19 @@
 import React from "react";
 import { useState } from "react";
 import { NewStepperContainer } from "shared-ui/src";
-import { AirwayForm, Circulation, Disability, Exposure } from ".";
+import {
+  AirwayForm,
+  BreathingForm,
+  Circulation,
+  Disability,
+  Exposure,
+} from ".";
 
 export const PrimaryAssessmentFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const steps = [
     { id: 1, label: "Airway Assessment" },
+    { id: 11, label: "Breathing Assessment" },
     { id: 2, label: "Circulation Assessment" },
     { id: 3, label: "Disability Assessment" },
     { id: 4, label: "Exposure Assessment" },
@@ -22,9 +29,10 @@ export const PrimaryAssessmentFlow = () => {
         active={activeStep}
       >
         <AirwayForm onSubmit={() => setActiveStep(1)} />
-        <Circulation onSubmit={() => setActiveStep(2)} />
-        <Disability onSubmit={() => setActiveStep(3)} />
-        <Exposure onSubmit={() => setActiveStep(4)} />
+        <BreathingForm onSubmit={() => setActiveStep(2)} />
+        <Circulation onSubmit={() => setActiveStep(3)} />
+        <Disability onSubmit={() => setActiveStep(4)} />
+        <Exposure onSubmit={() => setActiveStep(5)} />
       </NewStepperContainer>
     </>
   );
