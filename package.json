@@ -18,5 +18,11 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@mui/x-date-pickers": "^6.18.1",
+    "dayjs": "^1.11.10",
+    "install": "^0.13.0",
+    "npm": "^10.2.4"
+  }
 }

@@ -1,10 +1,12 @@
-import React from 'react'
+
+import React, {useState} from 'react'
 import * as yup from "yup";
-import { FormikInit, RadioGroupInput } from 'shared-ui/src';
+import { FieldsContainer, FormikInit, RadioGroupInput,TextInputField } from 'shared-ui/src';
 import { Box } from "@mui/material";
 
-    type Prop = {
-      onSubmit: (values: any) => void;
+    type Props = {
+      onSubmit: () => void;
+      initialValues: any
     };
     const form = {
       asthmaInfo: {
@@ -19,6 +21,10 @@ import { Box } from "@mui/material";
         name: "diabetesInfo",
         label: "Diabetes?",
       },
+      epilepsyInfo:{
+        name:"epilepsyInfo",
+        label:"Epilepsy?"
+      },
       renalDisease: {
         name: "renalDisease",
         label: "Renal Disease?",
@@ -30,6 +36,22 @@ import { Box } from "@mui/material";
       LegSpineDeformity: {
         name: "LegSpineDeformity",
         label: "Leg/Spine deformity",
+      },
+      hivStatus:{
+        name:"hivStatus",
+        label:"HIV status of woman"
+      },
+      artInfo:{
+        name:"artInfo",
+        label:"Is the woman on ART?"
+      },
+      startArt:{
+        name:"startArt",
+        label:"When did she start ART?"
+      },
+      artRegistration:{
+        name:"artRegistration",
+        label:"ART registration"
       },
     };
 
@@ -46,6 +68,7 @@ import { Box } from "@mui/material";
         .string()
         .required()
         .label(form.diabetesInfo.label),
+        [form.epilepsyInfo.name]: yup.string().required().label(form.epilepsyInfo.label),
       [form.renalDisease.name]: yup
         .string()
         .required()
@@ -58,17 +81,37 @@ import { Box } from "@mui/material";
         .string()
         .required()
         .label(form.LegSpineDeformity.label),
+        [form.hivStatus.name]:yup.string().required().label(form.hivStatus.label),
+        [form.artInfo.name]:yup.string().required().label(form.artInfo.label),
+        [form.startArt.name]:yup.string().required().label(form.artInfo.label),
+        [form.artRegistration.name]:yup.string().required().label(form.artRegistration.label)
     });
-    const initialValues = {
-      asthmaInfo: "",
-      hypertensionInfo: "",
-      diabetesInfo: "",
-      renalDisease: "",
-      fistulaRepair: "",
-      LegSpineDeformity: "",
-    };
 
-const MedicalHistory = ({onSubmit}:Prop) => {
+  const MedicalHistory = ({ onSubmit,initialValues }: Props) => {
+  const [isPositive, setIsPositive] = useState(false);
+  const [isArt, setArt] = useState(false);
+
+  const [showAdditionalRadio, setShowAdditionalRadio] = useState(false);
+  const [showAdditionalRadio1, setAdditionalRadio1] = useState(false);
+
+  const handleRadioChange = (fieldName: string, value: string) => {
+    if (fieldName === form.hivStatus.name && value === "Positive") {
+      setIsPositive(true);
+      setShowAdditionalRadio(true);
+    } else {
+      setIsPositive(false);
+      setShowAdditionalRadio(false);
+    }
+  };
+  const handleArtChange = (fieldName: string, value: string) => {
+    if (fieldName === form.artInfo.name && value === "yes") {
+      setArt(true);
+      setAdditionalRadio1(true);
+    } else {
+      setArt(false);
+      setAdditionalRadio1(false);
+    }
+  };
   return (
     <FormikInit
       validationSchema={schema}
@@ -76,7 +119,7 @@ const MedicalHistory = ({onSubmit}:Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <Box>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.asthmaInfo.name}
           label={form.asthmaInfo.label}
@@ -85,6 +128,8 @@ const MedicalHistory = ({onSubmit}:Prop) => {
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.hypertensionInfo.name}
           label={form.hypertensionInfo.label}
@@ -93,6 +138,8 @@ const MedicalHistory = ({onSubmit}:Prop) => {
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.diabetesInfo.name}
           label={form.diabetesInfo.label}
@@ -101,6 +148,18 @@ const MedicalHistory = ({onSubmit}:Prop) => {
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
+        <RadioGroupInput
+          name={form.epilepsyInfo.name}
+          label={form.epilepsyInfo.label}
+          options={[
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ]}
+        />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.renalDisease.name}
           label={form.renalDisease.label}
@@ -109,6 +168,8 @@ const MedicalHistory = ({onSubmit}:Prop) => {
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.fistulaRepair.name}
           label={form.fistulaRepair.label}
@@ -117,6 +178,8 @@ const MedicalHistory = ({onSubmit}:Prop) => {
             { label: "No", value: "no" },
           ]}
         />
+      </FieldsContainer>
+      <FieldsContainer>
         <RadioGroupInput
           name={form.LegSpineDeformity.name}
           label={form.LegSpineDeformity.label}
@@ -125,14 +188,52 @@ const MedicalHistory = ({onSubmit}:Prop) => {
             { label: "No", value: "no" },
           ]}
         />
-        {/* <TextInputField
-          name={form.pressureInfo.name}
-          label={form.pressureInfo.label}
-          id={form.pressureInfo.name}
-        /> */}
-      </Box>
+      </FieldsContainer>
+      <FieldsContainer>
+        <RadioGroupInput
+          name={form.hivStatus.name}
+          label={form.hivStatus.label}
+          options={[
+            { label: "Unknown", value: "Unknown" },
+            { label: "Positive", value: "Positive" },
+          ]}
+          getValue={(value) => handleRadioChange(form.hivStatus.name, value)}
+        />
+        {showAdditionalRadio && (
+          <RadioGroupInput
+            name={form.artInfo.name}
+            label={form.artInfo.label}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "NO", value: "no" },
+            ]}
+            getValue={(value) => handleArtChange(form.artInfo.name, value)}
+          />
+        )}
+        {showAdditionalRadio1 && (
+          <RadioGroupInput
+            name={form.startArt.name}
+            label={form.startArt.label}
+            options={[
+              { label: "Before pregnancy", value: "Beofore pregnancy" },
+              {
+                label: "1st or 2nd trimester (0-27 weeks)",
+                value: "1st or 2nd trimester (0-27 weeks)",
+              },
+              { label: "3rd trimester", value: "3rd trimester" },
+            ]}
+          />
+        )}
+      </FieldsContainer>
+      <FieldsContainer>
+        <TextInputField
+          name={form.artRegistration.name}
+          label={form.artRegistration.label}
+          id={form.artRegistration.name}
+        />
+      </FieldsContainer>
     </FormikInit>
   );
-}
+};
 
 export default MedicalHistory
