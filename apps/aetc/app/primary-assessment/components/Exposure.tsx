@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { FormikInit, RadioGroupInput, TextInputField } from "shared-ui/src";
+import {
+  FormValuesListener,
+  FormikInit,
+  MainTypography,
+  RadioGroupInput,
+  TextInputField,
+} from "shared-ui/src";
 import * as yup from "yup";
 type Props = {
   onSubmit: (values: any) => void;
@@ -17,12 +23,18 @@ const form = {
     name: "rashDescription",
     label: "Describe the skin rash",
   },
+  additionalNotes: {
+    name: "additionalNotes",
+    label: "Additional Notes",
+  },
 };
 
 const schema = yup.object({
   [form.temperatureInfo.name]: yup
-    .string()
+    .number()
     .required()
+    .min(25)
+    .max(45)
     .label(form.temperatureInfo.label),
   [form.skinRashInfo.name]: yup
     .string()
@@ -32,6 +44,7 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.rashDescription.label),
+  [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
 });
 
 const initialValues = {
@@ -40,6 +53,8 @@ const initialValues = {
   rashDescription: "",
 };
 export const Exposure = ({ onSubmit }: Props) => {
+  const [formValues, setFormValues] = useState<any>({});
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -47,6 +62,7 @@ export const Exposure = ({ onSubmit }: Props) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
+      <FormValuesListener getValues={setFormValues} />
       <TextInputField
         name={form.temperatureInfo.name}
         label={form.temperatureInfo.label}
@@ -60,13 +76,26 @@ export const Exposure = ({ onSubmit }: Props) => {
           { label: "No", value: "no" },
         ]}
       />
-      <RadioGroupInput
-        name={form.rashDescription.name}
-        label={form.rashDescription.label}
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
+      {formValues[form.skinRashInfo.name] == "yes" && (
+        <>
+          <br />
+          <MainTypography>
+            location (Body part and exact site) pop up image to appear where the
+            user selects the location
+          </MainTypography>
+          <br />
+
+          <TextInputField
+            name={form.rashDescription.name}
+            label={form.rashDescription.label}
+            id={form.rashDescription.name}
+          />
+        </>
+      )}
+      <TextInputField
+        name={form.additionalNotes.name}
+        label={form.additionalNotes.label}
+        id={form.additionalNotes.name}
       />
     </FormikInit>
   );

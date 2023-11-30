@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
+import { ReactQueryProvider } from "@/providers";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
-        <ProviderTheme>
-          <NavBar />
-          {children}
-        </ProviderTheme>
+        <ReactQueryProvider>
+          <ProviderTheme>
+            <NavBar />
+            {children}
+            <ToastContainer />
+          </ProviderTheme>
+        </ReactQueryProvider>
       </body>
     </html>
   );

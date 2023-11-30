@@ -78,7 +78,7 @@ export function NavigationBar() {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
-            HWIS AETC
+            MAHIS AETC
           </Typography>
           <Search>
             <SearchIconWrapper>

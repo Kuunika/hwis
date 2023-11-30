@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@mui/x-tree-view": "^6.17.0",
+    "mahis-api-client": "^0.20.10",
     "next": "14.0.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-toastify": "^9.1.3",
     "shared-ui": "*"
   },
   "devDependencies": {

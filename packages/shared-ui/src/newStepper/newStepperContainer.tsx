@@ -55,6 +55,7 @@ interface IProps {
   active: number;
   steps: Step[];
   title: string;
+  setActive?: (value: any) => void;
 }
 
 export function NewStepperContainer({
@@ -62,6 +63,7 @@ export function NewStepperContainer({
   active,
   steps,
   title,
+  setActive,
 }: IProps) {
   return (
     <MainGrid container spacing={5}>
@@ -75,7 +77,16 @@ export function NewStepperContainer({
         <WrapperBox width={"100%"}>
           {children.map((child, key) => {
             return (
-              <Accordion expanded={key == active}>
+              <Accordion
+                onChange={() => {
+                  console.log({ setActive });
+                  if (setActive) {
+                    console.log("first");
+                    setActive(key);
+                  }
+                }}
+                expanded={key == active}
+              >
                 <AccordionSummary
                   aria-controls="panel1d-content"
                   id="panel1d-header"
