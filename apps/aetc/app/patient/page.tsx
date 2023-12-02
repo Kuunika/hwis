@@ -7,6 +7,7 @@ import {
 } from "./components/cards";
 import { VisitsBar } from "./components";
 import {
+  BasicAccordion,
   ClinicalNotes,
   Dispositions,
   Investigations,
@@ -21,14 +22,12 @@ export default function PatientProfile() {
         <MainGrid item lg={2}>
           <PersonalDetailsCard />
           <br />
-          <AllergiesCard />
-          <br />
-          <TemplateFormsCard />
+          <BasicAccordion />
         </MainGrid>
-        <MainGrid item lg={7}>
-          <VisitsBar />
-          <MainPaper elevation={0} sx={{ padding: "2ch", mt: "1ch" }}>
-            <WrapperBox>
+        <MainGrid item lg={8}>
+          <MainPaper elevation={0} sx={{ pb: "5ch" }}>
+            <VisitsBar />
+            <WrapperBox mx={"2ch"}>
               <WrapperBox sx={{ display: "flex" }}>
                 <ClinicalNotes />
                 <Investigations />
@@ -36,8 +35,10 @@ export default function PatientProfile() {
               <WrapperBox sx={{ display: "flex" }}>
                 <Medications />
                 <Results />
-                <Dispositions />
+                {/* <Dispositions /> */}
               </WrapperBox>
+              {/* <WrapperBox>
+              </WrapperBox> */}
             </WrapperBox>
           </MainPaper>
         </MainGrid>

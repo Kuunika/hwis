@@ -11,11 +11,9 @@ export const Panel = ({ children, title, icon }: Props) => {
     <WrapperBox
       sx={{
         width: "100%",
-        margin: "0.5ch",
         borderStyle: "solid",
-        borderWidth: "0.3ch",
-        borderRadius: "0.5ch",
-        borderColor: "#B3B3B3",
+        borderWidth: "0.1ch",
+        borderColor: "#E6E6E6",
         p: "1ch",
         height: "30ch",
       }}

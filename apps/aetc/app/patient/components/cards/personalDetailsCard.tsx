@@ -1,4 +1,5 @@
 import { MainCard, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
+import { Chip } from "@mui/material";
 
 export const PersonalDetailsCard = () => {
   return (
@@ -30,17 +31,63 @@ export const PersonalDetailsCard = () => {
       <LabelValue label="ID" value="100777-1111-00000-999" />
       <LabelValue label="Gender" value="Female" />
       <LabelValue label="DOB" value="08 January, 1995" />
+      <WrapperBox
+        sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          mb: "0.5ch",
+          justifyContent: "space-between",
+        }}
+      >
+        <WrapperBox sx={{ width: "10ch" }}>
+          <MainTypography sx={{ fontSize: "0.8rem" }}>Allergies</MainTypography>
+        </WrapperBox>
+        <Allergies />
+      </WrapperBox>
     </MainPaper>
   );
 };
 
-const LabelValue = ({ label, value }: { label: string; value: string }) => {
+const LabelValue = ({ label, value }: { label: string; value: any }) => {
   return (
-    <WrapperBox sx={{ display: "flex", alignItems: "center", mb: "1ch" }}>
-      <MainTypography width={"10ch"} variant="subtitle2">
+    <WrapperBox sx={{ display: "flex", alignItems: "flex-start", mb: "0.5ch" }}>
+      <MainTypography width={"10ch"} sx={{ fontSize: "0.8rem" }}>
         {label}
       </MainTypography>
-      <MainTypography variant="subtitle2">{value}</MainTypography>
+      <MainTypography sx={{ fontSize: "0.8rem" }}>{value}</MainTypography>
+    </WrapperBox>
+  );
+};
+
+export const Allergies = () => {
+  const allergies = [
+    { id: "1", allergy: "Penicillin" },
+    { id: "3", allergy: "Aspirin" },
+    { id: "2", allergy: "Anticonvulsants" },
+    { id: "4", allergy: "Sulfa drugs" },
+    { id: "5", allergy: "Ibuprofen" },
+  ];
+  return (
+    <WrapperBox sx={{ display: "flex", flexWrap: "wrap", width: "20ch" }}>
+      {allergies.map(({ allergy, id }) => (
+        // <WrapperBox sx={{ backgroundColor: "gray", m: "1px" }}>
+        //   <MainTypography>{allergy}</MainTypography>
+        // </WrapperBox>
+        <Chip
+          variant="outlined"
+          size="small"
+          color="error"
+          key={id}
+          sx={{
+            m: "2px",
+            backgroundColor: "#FECDCA",
+            color: "#B42318",
+            fontSize: "0.7rem",
+            borderRadius: "1ch",
+          }}
+          label={allergy}
+        />
+      ))}
     </WrapperBox>
   );
 };

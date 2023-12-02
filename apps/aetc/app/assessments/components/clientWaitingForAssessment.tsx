@@ -10,6 +10,9 @@ export const ClientWaitingForAssessment = () => {
       lastName: "Doe",
       gender: "Male",
       dob: "08 January 1995",
+      triageCategory: "red",
+      patientWaitingTime: "10 min",
+      aggreWaitingTime: "30 min",
     },
     {
       id: "2",
@@ -17,14 +20,24 @@ export const ClientWaitingForAssessment = () => {
       lastName: "Doe",
       gender: "Female",
       dob: "08 January 1995",
+      triageCategory: "red",
+      patientWaitingTime: "5 min",
+      aggreWaitingTime: "30 min",
     },
   ];
 
   const columns = [
     { field: "firstName", headerName: "First Name", flex: 1 },
     { field: "lastName", headerName: "Last Name", flex: 1 },
-    { field: "gender", headerName: "Gender", flex: 1 },
     { field: "dob", headerName: "Date Of Birth", flex: 1 },
+    { field: "gender", headerName: "Gender", flex: 1 },
+    { field: "triageCategory", headerName: "Triage Category", flex: 1 },
+    { field: "patientWaitingTime", headerName: "Waiting Time", flex: 1 },
+    {
+      field: "aggreWaitingTime",
+      headerName: "Aggre Waiting Time since arrival",
+      flex: 1,
+    },
     {
       field: "action",
       headerName: "Action",
