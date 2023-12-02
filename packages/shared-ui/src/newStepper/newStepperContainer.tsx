@@ -1,4 +1,3 @@
-import * as React from "react";
 import { styled } from "@mui/material/styles";
 import { FaAngleDown } from "react-icons/fa";
 import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";

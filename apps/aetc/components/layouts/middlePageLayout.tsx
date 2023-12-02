@@ -24,7 +24,7 @@ export function MiddlePageLayout({
         <MainPaper elevation={0} sx={{ padding: "2ch", mt: "2ch" }}>
           <BackButton />
           <br />
-          <MainTypography variant="h3" color={"gray"}>
+          <MainTypography variant="h4" color={"gray"}>
             {title}
           </MainTypography>
           <br />

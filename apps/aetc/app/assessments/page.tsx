@@ -4,7 +4,11 @@ import { ClientWaitingForAssessment } from "./components";
 
 export default function AssessmentPage() {
   return (
-    <MiddlePageLayout title="Patients Waiting For Assessments">
+    <MiddlePageLayout
+      leftGridSize={1}
+      middleGridSize={9}
+      title="Patients Waiting For Assessments"
+    >
       <ClientWaitingForAssessment />
     </MiddlePageLayout>
   );
