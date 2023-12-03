@@ -14,39 +14,39 @@ export const RegistrationFlow = () => {
   const { navigateTo } = useNavigation();
 
   const steps = [
-    { id: 1, label: "Vitals" },
-    { id: 2, label: "Demographics" },
-    { id: 3, label: "Current Obstetric Information" },
-    { id: 4, label: "Gestation" },
-    { id: 5, label: "Medical History" },
+    // { id: 1, label: "Vitals" },
+    // { id: 2, label: "Demographics" },
+    { id: 1, label: "Current Obstetric Information" },
+    { id: 2, label: "Gestation" },
+    { id: 3, label: "Medical History" },
   ];
   
 
-  const handleSubmitVitalsForm=()=>{
+  // const handleSubmitVitalsForm=()=>{
+  //   setActiveStep(1)
+  // }
+  // const handleDemographics=()=>{
+  //   setActiveStep(2)
+  // }
+  const handleSubmitCurrentObsteric =()=>{
     setActiveStep(1)
   }
-  const handleDemographics=()=>{
-    setActiveStep(2)
-  }
-  const handleSubmitCurrentObsteric =()=>{
-    setActiveStep(3)
-  }
   const handleSubmitGestation =()=>{
-    setActiveStep(4)
+    setActiveStep(2)
   }
   const handleSubmitMedicalHistory =()=>{
     navigateTo("/anc/physical-examination");
   }
   return (
     <NewStepperContainer title="Registration" steps={steps} active={activeStep}>
-      <VitalsForm
+      {/* <VitalsForm
         initialValues={vitalsInitialValues}
         onSubmit={handleSubmitVitalsForm}
       />
       <DemographicsForm
        initialValues={demographicsInitialValues}
        onSubmit={handleDemographics}
-      />
+      /> */}
       <CurrentObsteric
         initialValues={currentObstericInitialValues}
         onSubmit={handleSubmitCurrentObsteric}

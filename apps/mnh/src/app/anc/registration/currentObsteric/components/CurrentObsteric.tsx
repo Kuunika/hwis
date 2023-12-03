@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {BasicDatePicker, FieldsContainer, FormikInit, RadioGroupInput, TextInputField } from 'shared-ui/src';
+import {BasicDatePicker, FieldsContainer, FormikInit, RadioGroupInput, SearchComboBox, SelectInputField, TextInputField } from 'shared-ui/src';
 import * as yup from "yup";
 import { Box } from "@mui/material";
 
@@ -9,32 +9,32 @@ type Props = {
   initialValues: any;
 };
 
-const form ={
-    pregnancyTest: {
-        name: "pregnancyTest",
-        label: "Pregnancy test done?",
-      },
-    testResults:{
-      name:"testResults",
-      label:"What are the results of the pregancy test?",
-    }, 
-    lmpInfo: {
-        name: "lmpInfo",
-        label: "Last Menstrual Period (LMP) known?",
-      },
-    lmpDate: {
-        name: "lmpDate",
-        label: "",
-      },
-    gestationalAge:{
-       name:"gestationalAge",
-       label:"Gestational age by abdominal palpation"
-    },
-    eddInfo:{
-      name:"eddInfo",
-      label:"Expected date of delivery (EDD) - Date"
-    }
-}
+const form = {
+  pregnancyTest: {
+    name: "pregnancyTest",
+    label: "Pregnancy test done?",
+  },
+  testResults: {
+    name: "testResults",
+    label: "What are the results of the pregancy test?",
+  },
+  lmpInfo: {
+    name: "lmpInfo",
+    label: "Last Menstrual Period (LMP) known?",
+  },
+  lmpDate: {
+    name: "lmpDate",
+    label: "",
+  },
+  gestationalAge: {
+    name: "gestationalAge",
+    label: "Gestational age by abdominal palpation(CM)",
+  },
+  eddInfo: {
+    name: "eddInfo",
+    label: "Expected date of delivery (EDD) - Date",
+  },
+};
 
 const schema = yup.object({
     [form.pregnancyTest.name]: yup.string().required().label(form.pregnancyTest.label),
@@ -48,7 +48,7 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
   const [isPositive, setPositive] = useState(false);
 
   const [showAdditionalRadio, setShowAdditionalRadio] = useState(false);
-  const [showResults, setShowResults] = useState(false)
+  const [showResults, setShowResults] = useState(false);
 
   const handleRadioChange = (fieldName: string, value: string) => {
     if (fieldName === form.lmpInfo.name && value === "yes" ) {
@@ -64,9 +64,6 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
     if (fieldName === form.testResults.name && value ===  "yes"){
       setPositive(true);
       setShowResults(true)
-    }else if(fieldName === form.testResults.name && value ===  "no"){
-      setPositive(true);
-      setShowResults(true);
     }
     else {
       setPositive(false);
@@ -129,6 +126,33 @@ const CurrentObsteric = ({ onSubmit, initialValues }: Props) => {
           </>
         )}
       </FieldsContainer>
+      {isLmp && (
+        <FieldsContainer>
+          <SelectInputField 
+          id={form.gestationalAge.name} 
+          name={form.gestationalAge.name} 
+          label={form.gestationalAge.label} 
+          selectItems={[
+            { name: "14", value: "16" }, // name is  cm
+            { name: "16", value: "18" },
+            { name: "18", value: "21" },
+            { name: "20", value: "23" },
+            { name: "22", value: "25" },
+            { name: "24", value: "27" },
+            { name: "26", value: "30" },
+            { name: "28", value: "32" },
+            { name: "30", value: "34" },
+            { name: "31", value: "35" },
+            { name: "31.5",value: "36" },
+            { name: "32", value: "37" },
+            { name: "33", value: "38" },
+            { name: "34", value: "39" },
+            { name: "35", value: "40" },
+            { name: "36", value: "42" },
+            ]} 
+          />
+        </FieldsContainer>
+      )}
       {/* <FieldsContainer>
         <TextInputField
           name={form.gestationalAge.name}
