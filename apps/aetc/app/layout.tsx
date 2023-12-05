@@ -4,7 +4,7 @@ import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
 import { ReactQueryProvider } from "@/providers";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });

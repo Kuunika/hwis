@@ -1,3 +1,4 @@
+import { confirmationDialog } from "@/helpers";
 import { TriageResult } from "@/interfaces";
 import { MainButton, MainPaper, MainTypography } from "shared-ui/src";
 
@@ -17,6 +18,18 @@ export const TriageContainer = ({
     "": {},
   };
 
+  const handleClickCompleteTriage = () => {
+    confirmationDialog({
+      title: "Complete Triage?",
+      text: "Once you confirm you will not be able to proceed with the current triage for this patient",
+      icon: "warning",
+      confirmButtonText: "Yes, Complete",
+      onConfirm: () => {
+        onCompleteTriage();
+      },
+    });
+  };
+
   return (
     <MainPaper elevation={0} sx={{ ...styles[result], p: "1ch" }}>
       <MainTypography variant="h4" textTransform={"capitalize"}>
@@ -34,8 +47,8 @@ export const TriageContainer = ({
               backgroundColor: "#B42318",
               "&:hover": { backgroundColor: "#B42318" },
             }}
-            title={"Complete Triage"}
-            onClick={onCompleteTriage}
+            title={"Complete Triage?"}
+            onClick={handleClickCompleteTriage}
           />
         </>
       )}

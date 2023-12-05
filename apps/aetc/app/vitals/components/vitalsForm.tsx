@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import {
   FieldsContainer,
-  FormFieldContainer,
   FormValuesListener,
   FormikInit,
   MultlineInput,
@@ -16,6 +15,7 @@ import { TriageContainer } from "@/app/triage/components/";
 import { TriageResult } from "@/interfaces";
 import { notify } from "@/helpers";
 import { useNavigation } from "@/hooks";
+import Swal from "sweetalert2";
 
 const form = {
   complaints: {
