@@ -295,7 +295,6 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
       initialValues={initialValues}
       submitButtonText="next"
     >
-      <h1>{triageResult}</h1>
       {triageResult && (
         <>
           <TriageContainer result={triageResult} message={"Interventions"} />
