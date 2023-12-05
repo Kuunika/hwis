@@ -10,7 +10,8 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
-import { useConditions } from "@/hooks";
+import { useConditions, useNavigation } from "@/hooks";
+import { notify } from "@/helpers";
 
 type Prop = {
   onSubmit: () => void;
@@ -53,6 +54,7 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
   const [consciousness, setConsciousness] = useState();
   const [formValues, setFormValues] = useState<any>({});
   const { triageResult, setTriageResult } = useConditions();
+  const { navigateTo } = useNavigation();
 
   const checkGcs = (value: number) => {
     if (!value) {
@@ -73,6 +75,11 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
   };
 
+  const handleTriageComplete = () => {
+    notify("info", "Patient added to waiting assessments queue");
+    navigateTo("/triage");
+  };
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -82,7 +89,11 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
     >
       {triageResult && (
         <>
-          <TriageContainer result={triageResult} message={""} />
+          <TriageContainer
+            onCompleteTriage={handleTriageComplete}
+            result={triageResult}
+            message={""}
+          />
           <br />
         </>
       )}

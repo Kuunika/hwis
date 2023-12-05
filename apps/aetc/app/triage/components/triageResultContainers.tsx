@@ -4,9 +4,11 @@ import { MainButton, MainPaper, MainTypography } from "shared-ui/src";
 export const TriageContainer = ({
   message,
   result,
+  onCompleteTriage,
 }: {
   message?: string;
   result: TriageResult;
+  onCompleteTriage: () => void;
 }) => {
   const styles = {
     red: { backgroundColor: "#FECDCA", color: "#B42318" },
@@ -33,7 +35,7 @@ export const TriageContainer = ({
               "&:hover": { backgroundColor: "#B42318" },
             }}
             title={"Complete Triage"}
-            onClick={() => {}}
+            onClick={onCompleteTriage}
           />
         </>
       )}

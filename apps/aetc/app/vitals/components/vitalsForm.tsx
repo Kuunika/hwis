@@ -14,6 +14,8 @@ import * as yup from "yup";
 import { concepts, triageResult } from "@/constants";
 import { TriageContainer } from "@/app/triage/components/";
 import { TriageResult } from "@/interfaces";
+import { notify } from "@/helpers";
+import { useNavigation } from "@/hooks";
 
 const form = {
   complaints: {
@@ -234,6 +236,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
   const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
+  const { navigateTo } = useNavigation();
 
   const checkTriage = (name: string, formValue: string) => {
     if (formValue == "") {
@@ -300,6 +303,11 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
     return triageResult === "red" && !Boolean(formValues[formField]);
   };
 
+  const handleTriageComplete = () => {
+    notify("info", "Patient added to waiting assessments queue");
+    navigateTo("/triage");
+  };
+
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -309,7 +317,11 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
     >
       {triageResult && (
         <>
-          <TriageContainer result={triageResult} message={"Interventions"} />
+          <TriageContainer
+            onCompleteTriage={handleTriageComplete}
+            result={triageResult}
+            message={"Interventions"}
+          />
           <br />
         </>
       )}

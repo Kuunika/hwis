@@ -1,4 +1,4 @@
-import { useConditions } from "@/hooks";
+import { useConditions, useNavigation } from "@/hooks";
 
 import React, { useState } from "react";
 import {
@@ -9,6 +9,7 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
+import { notify } from "@/helpers";
 
 const form = {
   isCirculationAbnormal: {
@@ -97,9 +98,15 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, triageResult, aggregateOrCondition, conditions } =
     useConditions();
+  const { navigateTo } = useNavigation();
 
   const disableField = (formField: string) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
+  const handleTriageComplete = () => {
+    notify("info", "Patient added to waiting assessments queue");
+    navigateTo("/triage");
   };
 
   return (
@@ -111,7 +118,11 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
     >
       {triageResult && (
         <>
-          <TriageContainer result={triageResult} message={""} />
+          <TriageContainer
+            onCompleteTriage={handleTriageComplete}
+            result={triageResult}
+            message={""}
+          />
           <br />
         </>
       )}

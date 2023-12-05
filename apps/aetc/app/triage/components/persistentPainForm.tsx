@@ -1,4 +1,4 @@
-import { useConditions } from "@/hooks";
+import { useConditions, useNavigation } from "@/hooks";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -8,6 +8,7 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
+import { notify } from "@/helpers";
 
 const form = {
   activeSeizures: {
@@ -72,9 +73,15 @@ const options = [
 export const PersistentPainForm = ({ onSubmit }: Prop) => {
   const { updateConditions, triageResult } = useConditions();
   const [formValues, setFormValues] = useState<any>({});
+  const { navigateTo } = useNavigation();
 
   const disableField = (formField: string) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
+  const handleTriageComplete = () => {
+    notify("info", "Patient added to waiting assessments queue");
+    navigateTo("/triage");
   };
 
   return (
@@ -85,7 +92,11 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
     >
       {triageResult && (
         <>
-          <TriageContainer result={triageResult} message={""} />
+          <TriageContainer
+            onCompleteTriage={handleTriageComplete}
+            result={triageResult}
+            message={""}
+          />
           <br />
         </>
       )}

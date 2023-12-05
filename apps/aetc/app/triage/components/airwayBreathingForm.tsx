@@ -9,7 +9,8 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from "./triageResultContainers";
-import { useConditions } from "@/hooks";
+import { useConditions, useNavigation } from "@/hooks";
+import { notify } from "@/helpers";
 
 const form = {
   airway: {
@@ -85,6 +86,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
   const [triageMessage, setTriageMessage] = useState("");
   const [formValues, setFormValues] = useState<any>({});
+  const { navigateTo } = useNavigation();
   const {
     conditions,
     updateConditions,
@@ -116,6 +118,10 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const disableField = (formField: string) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
   };
+  const handleTriageComplete = () => {
+    notify("info", "Patient added to waiting assessments queue");
+    navigateTo("/triage");
+  };
 
   return (
     <FormikInit
@@ -126,7 +132,11 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
     >
       {triageResult && (
         <>
-          <TriageContainer result={triageResult} message={triageMessage} />
+          <TriageContainer
+            onCompleteTriage={handleTriageComplete}
+            result={triageResult}
+            message={triageMessage}
+          />
           <br />
         </>
       )}
