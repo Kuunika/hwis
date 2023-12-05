@@ -37,7 +37,11 @@ export const TriageContainer = ({
       </MainTypography>
 
       <MainTypography fontStyle={"italic"} variant="subtitle1">
-        {result == "yellow" ? "Continue Assessment" : message}
+        {result == "yellow"
+          ? "Continue Triage"
+          : result == "red"
+          ? "Proceed to interventions"
+          : ""}
       </MainTypography>
 
       {result == "red" && (
@@ -47,7 +51,7 @@ export const TriageContainer = ({
               backgroundColor: "#B42318",
               "&:hover": { backgroundColor: "#B42318" },
             }}
-            title={"Complete Triage?"}
+            title={"Complete Triage"}
             onClick={handleClickCompleteTriage}
           />
         </>

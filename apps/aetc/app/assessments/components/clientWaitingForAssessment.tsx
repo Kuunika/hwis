@@ -1,5 +1,5 @@
 import { useNavigation } from "@/hooks";
-import { BaseTable, MainButton } from "shared-ui/src";
+import { BaseTable, MainButton, WrapperBox } from "shared-ui/src";
 
 export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
@@ -20,7 +20,7 @@ export const ClientWaitingForAssessment = () => {
       lastName: "Doe",
       gender: "Female",
       dob: "08 January 1995",
-      triageCategory: "red",
+      triageCategory: "green",
       patientWaitingTime: "5 min",
       aggreWaitingTime: "30 min",
     },
@@ -31,7 +31,29 @@ export const ClientWaitingForAssessment = () => {
     { field: "lastName", headerName: "Last Name", flex: 1 },
     { field: "dob", headerName: "Date Of Birth", flex: 1 },
     { field: "gender", headerName: "Gender", flex: 1 },
-    { field: "triageCategory", headerName: "Triage Category", flex: 1 },
+    {
+      field: "triageCategory",
+      headerName: "Triage Category",
+      renderCell: (cell: any) => {
+        console.log({ cell });
+        return (
+          <WrapperBox
+            sx={{
+              borderRadius: "2px",
+              width: "100%",
+              height: "80%",
+              backgroundColor:
+                cell.value == "red"
+                  ? "#B42318"
+                  : cell.value == "green"
+                  ? "#016302"
+                  : "#B54708",
+              marginY: 1,
+            }}
+          ></WrapperBox>
+        );
+      },
+    },
     { field: "patientWaitingTime", headerName: "Waiting Time", flex: 1 },
     {
       field: "aggreWaitingTime",

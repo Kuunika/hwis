@@ -8,11 +8,13 @@ type Prop = {
   leftGridSize?: number;
   middleGridSize?: number;
   rightGridSize?: number;
+  rightChildComponent?: ReactNode;
 };
 
 export function MiddlePageLayout({
   children,
   title,
+  rightChildComponent,
   leftGridSize = 2,
   middleGridSize = 7,
   rightGridSize = 3,
@@ -30,6 +32,9 @@ export function MiddlePageLayout({
           <br />
           {children}
         </MainPaper>
+      </MainGrid>
+      <MainGrid item lg={rightGridSize}>
+        {rightChildComponent}
       </MainGrid>
     </MainGrid>
   );
