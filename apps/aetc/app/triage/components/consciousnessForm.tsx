@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import React, { useState } from "react";
 import {
   FieldsContainer,
+  FormValuesListener,
   FormikInit,
   MainButton,
   RadioGroupInput,
@@ -50,9 +51,8 @@ const initialValues = {
 };
 export const ConsciousnessForm = ({ onSubmit }: Prop) => {
   const [consciousness, setConsciousness] = useState();
+  const [formValues, setFormValues] = useState<any>({});
   const { triageResult, setTriageResult } = useConditions();
-
-  const checkGlucose = (value: string) => {};
 
   const checkGcs = (value: number) => {
     if (!value) {
@@ -68,6 +68,11 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
       setTriageResult("yellow");
     }
   };
+
+  const disableField = (formField: string) => {
+    return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -81,11 +86,13 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
           <br />
         </>
       )}
+      <FormValuesListener getValues={setFormValues} />
       <RadioGroupInput
         name={form.consciousness.name}
         label={form.consciousness.label}
         options={options}
         getValue={(value) => setConsciousness(value)}
+        disabled={disableField(form.consciousness.name)}
       />
       <br />
 
@@ -96,12 +103,14 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
               name={form.bloodGlucose.name}
               label={form.bloodGlucose.label}
               id={form.bloodGlucose.name}
+              disabled={disableField(form.bloodGlucose.name)}
             />
             <TextInputField
               name={form.gcs.name}
               label={form.gcs.label}
               id={form.gcs.name}
               getValue={checkGcs}
+              disabled={disableField(form.gcs.name)}
             />
           </FieldsContainer>
         </>

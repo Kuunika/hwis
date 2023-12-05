@@ -1,8 +1,9 @@
 import { useConditions } from "@/hooks";
-import React from "react";
+import React, { useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainer,
+  FormValuesListener,
   FormikInit,
   RadioGroupInput,
 } from "shared-ui/src";
@@ -71,6 +72,12 @@ const options = [
 ];
 export const PersistentPainForm = ({ onSubmit }: Prop) => {
   const { updateConditions, triageResult } = useConditions();
+  const [formValues, setFormValues] = useState<any>({});
+
+  const disableField = (formField: string) => {
+    return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -83,11 +90,13 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
           <br />
         </>
       )}
+      <FormValuesListener getValues={setFormValues} />
       <FieldsContainer>
         <RadioGroupInput
           name={form.activeSeizures.name}
           label={form.activeSeizures.label}
           options={options}
+          disabled={disableField(form.activeSeizures.name)}
           getValue={(value) =>
             updateConditions(form.activeSeizures.name, value)
           }
@@ -96,6 +105,7 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
           name={form.focalNeurological.name}
           label={form.focalNeurological.label}
           options={options}
+          disabled={disableField(form.focalNeurological.name)}
           getValue={(value) =>
             updateConditions(form.focalNeurological.name, value)
           }
@@ -104,12 +114,14 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
       <FieldsContainer>
         <RadioGroupInput
           name={form.headache.name}
+          disabled={disableField(form.headache.name)}
           label={form.headache.label}
           options={options}
           getValue={(value) => updateConditions(form.headache.name, value)}
         />
         <RadioGroupInput
           name={form.weakness.name}
+          disabled={disableField(form.weakness.name)}
           label={form.weakness.label}
           options={options}
           getValue={(value) => updateConditions(form.weakness.name, value)}
@@ -118,6 +130,7 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
       <FieldsContainer>
         <RadioGroupInput
           name={form.severePain.name}
+          disabled={disableField(form.severePain.name)}
           label={form.severePain.label}
           options={options}
           getValue={(value) => updateConditions(form.severePain.name, value)}
@@ -125,6 +138,7 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
       </FieldsContainer>
       <FieldsContainer>
         <RadioGroupInput
+          disabled={disableField(form.moderatePain.name)}
           name={form.moderatePain.name}
           label={form.moderatePain.label}
           options={options}

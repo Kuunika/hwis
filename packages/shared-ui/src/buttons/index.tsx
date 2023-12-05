@@ -24,7 +24,14 @@ export const MainButton: FC<Props> = ({
   return (
     <Button
       type={type}
-      sx={{ ...variantStyles, textTransform: "capitalize", ...sx } as SxProps}
+      sx={
+        {
+          ...variantStyles,
+          textTransform: "capitalize",
+          color: "#fff",
+          ...sx,
+        } as SxProps
+      }
       onClick={onClick}
     >
       {icon}

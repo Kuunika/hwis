@@ -1,11 +1,15 @@
 "use client";
-import { Box } from "@mui/material";
+
 import React, { useEffect, useState } from "react";
-import { FieldsContainer, FormikInit, RadioGroupInput } from "shared-ui/src";
+import {
+  FieldsContainer,
+  FormValuesListener,
+  FormikInit,
+  RadioGroupInput,
+} from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from "./triageResultContainers";
 import { useConditions } from "@/hooks";
-import { TriageResult } from "@/interfaces";
 
 const form = {
   airway: {
@@ -80,6 +84,7 @@ const radioOptions = [
 export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
   const [triageMessage, setTriageMessage] = useState("");
+  const [formValues, setFormValues] = useState<any>({});
   const {
     conditions,
     updateConditions,
@@ -91,7 +96,6 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [finalCondition, setFinalCondition] = useState(false);
 
   useEffect(() => {
-    console.log(conditions);
     const cond = !aggregateOrCondition && Object.keys(conditions).length == 6;
     setFinalCondition(cond);
 
@@ -109,6 +113,10 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
     setTriageResult("");
   };
 
+  const disableField = (formField: string) => {
+    return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -122,12 +130,14 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
           <br />
         </>
       )}
+      <FormValuesListener getValues={setFormValues} />
       <FieldsContainer sx={{ width: "100%" }}>
         <RadioGroupInput
           name={form.airway.name}
           label={form.airway.label}
           getValue={handleIsAirWayCompromised}
           options={radioOptions}
+          disabled={disableField(form.airway.name)}
         />
 
         <RadioGroupInput
@@ -135,6 +145,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
           label={form.breathing.label}
           getValue={(value) => setIsBreathingAbnormal(value)}
           options={radioOptions}
+          disabled={disableField(form.breathing.name)}
         />
       </FieldsContainer>
 
@@ -146,6 +157,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               name={form.oxygenStats.name}
               label={form.oxygenStats.label}
+              disabled={disableField(form.oxygenStats.name)}
               getValue={(value) => {
                 updateConditions(form.oxygenStats.name, value);
               }}
@@ -154,6 +166,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               name={form.respiratoryRate.name}
               label={form.respiratoryRate.label}
+              disabled={disableField(form.respiratoryRate.name)}
               getValue={(value) => {
                 updateConditions(form.respiratoryRate.name, value);
               }}
@@ -164,6 +177,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
           <FieldsContainer>
             <RadioGroupInput
               name={form.respiratoryDysfunction.name}
+              disabled={disableField(form.respiratoryDysfunction.name)}
               label={form.respiratoryDysfunction.label}
               getValue={(value) => {
                 updateConditions(form.respiratoryDysfunction.name, value);
@@ -173,6 +187,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               name={form.inabilityToSpeak.name}
               label={form.inabilityToSpeak.label}
+              disabled={disableField(form.inabilityToSpeak.name)}
               options={radioOptions}
               getValue={(value) => {
                 updateConditions(form.inabilityToSpeak.name, value);
@@ -183,6 +198,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               name={form.stridor.name}
               label={form.stridor.label}
+              disabled={disableField(form.stridor.name)}
               options={radioOptions}
               getValue={(value) => {
                 updateConditions(form.stridor.name, value);
@@ -191,6 +207,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               name={form.reducedLevelOfConsciousness.name}
               label={form.reducedLevelOfConsciousness.label}
+              disabled={disableField(form.reducedLevelOfConsciousness.name)}
               getValue={(value) => {
                 updateConditions(form.reducedLevelOfConsciousness.name, value);
               }}
@@ -205,11 +222,13 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
           <RadioGroupInput
             name={form.oxygenSats9092.name}
             label={form.oxygenSats9092.label}
+            disabled={disableField(form.oxygenSats9092.name)}
             options={radioOptions}
           />
           <RadioGroupInput
             name={form.respiratoryRate92130.name}
             label={form.respiratoryRate92130.label}
+            disabled={disableField(form.respiratoryRate92130.name)}
             options={radioOptions}
           />
         </FieldsContainer>

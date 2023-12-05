@@ -1,5 +1,5 @@
 import { TriageResult } from "@/interfaces";
-import { MainPaper, MainTypography } from "shared-ui/src";
+import { MainButton, MainPaper, MainTypography } from "shared-ui/src";
 
 export const TriageContainer = ({
   message,
@@ -21,9 +21,22 @@ export const TriageContainer = ({
         Triage {result}
       </MainTypography>
 
-      <MainTypography variant="subtitle1">
+      <MainTypography fontStyle={"italic"} variant="subtitle1">
         {result == "yellow" ? "Continue Assessment" : message}
       </MainTypography>
+
+      {result == "red" && (
+        <>
+          <MainButton
+            sx={{
+              backgroundColor: "#B42318",
+              "&:hover": { backgroundColor: "#B42318" },
+            }}
+            title={"Complete Triage"}
+            onClick={() => {}}
+          />
+        </>
+      )}
     </MainPaper>
   );
 };

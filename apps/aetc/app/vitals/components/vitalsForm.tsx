@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainer,
+  FormValuesListener,
   FormikInit,
   MultlineInput,
   RadioGroupInput,
@@ -230,17 +231,24 @@ const rules = {
 
 export function VitalsForm({ initialValues, onSubmit }: props) {
   const [triageResult, setTriageResult] = useState<TriageResult>("");
+  const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
 
   const checkTriage = (name: string, formValue: string) => {
+    if (formValue == "") {
+      setTriageResult("");
+      return;
+    }
     rules[name]?.forEach((rule) => {
       const formValueNumber = Number(formValue);
+
       switch (rule.operator) {
         case "<":
           if (formValueNumber < rule.value && formValueNumber >= rule?.bound) {
             setTriageResult(rule.result as TriageResult);
           }
+
           return;
         case ">":
           if (formValueNumber > rule.value && formValueNumber <= rule.bound) {
@@ -288,6 +296,10 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
     }
   }, [diastolic, systolic]);
 
+  const disableField = (formField: string) => {
+    return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -301,11 +313,13 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           <br />
         </>
       )}
+      <FormValuesListener getValues={setFormValues} />
       <MultlineInput
         id={form.complaints.name}
         name={form.complaints.name}
         label={form.complaints.label}
         maxRows={20}
+        disabled={disableField(form.complaints.name)}
         sx={{ width: "98.8%" }}
       />
       <FieldsContainer>
@@ -316,11 +330,13 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           getValue={(value: string) => {
             checkTriage(form.respiratoryRate.name, value);
           }}
+          disabled={disableField(form.respiratoryRate.name)}
         />
         <TextInputField
           id={form.heartRate.name}
           name={form.heartRate.name}
           label={form.heartRate.label}
+          disabled={disableField(form.heartRate.name)}
         />
         <br />
       </FieldsContainer>
@@ -329,11 +345,13 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           id={form.saturationRate.name}
           name={form.saturationRate.name}
           label={form.saturationRate.label}
+          disabled={disableField(form.saturationRate.name)}
         />
         <TextInputField
           id={form.bloodPressure.name}
           name={form.bloodPressure.name}
           label={form.bloodPressure.label}
+          disabled={disableField(form.bloodPressure.name)}
           getValue={(value) => {
             setSystolic(value);
           }}
@@ -344,6 +362,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           id={form.temperature.name}
           name={form.temperature.name}
           label={form.temperature.label}
+          disabled={disableField(form.temperature.name)}
           getValue={(value: string) => {
             checkTriage(form.temperature.name, value);
           }}
@@ -352,6 +371,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           id={form.bloodPressureDiastolic.name}
           name={form.bloodPressureDiastolic.name}
           label={form.bloodPressureDiastolic.label}
+          disabled={disableField(form.bloodPressureDiastolic.name)}
           getValue={(value) => {
             setDiastolic(value);
           }}
@@ -359,6 +379,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
       </FieldsContainer>
       <FieldsContainer>
         <TextInputField
+          disabled={disableField(form.pulseRate.name)}
           id={form.pulseRate.name}
           name={form.pulseRate.name}
           label={form.pulseRate.label}
@@ -367,6 +388,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           }}
         />
         <TextInputField
+          disabled={disableField(form.pulseOximetry.name)}
           id={form.pulseOximetry.name}
           name={form.pulseOximetry.name}
           label={form.pulseOximetry.label}
@@ -383,6 +405,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           name={form.eyeOpeningResponse.name}
           label={form.eyeOpeningResponse.label}
           options={eyeOpeningResponses}
+          disabled={disableField(form.eyeOpeningResponse.name)}
           row={false}
         />
 
@@ -390,6 +413,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           name={form.motorResponse.name}
           label={form.motorResponse.label}
           options={motorResponses}
+          disabled={disableField(form.motorResponse.name)}
           row={false}
         />
 
@@ -397,6 +421,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
           name={form.verbalResponse.name}
           label={form.verbalResponse.label}
           options={verbalResponses}
+          disabled={disableField(form.verbalResponse.name)}
           row={false}
         />
       </FieldsContainer>
@@ -411,12 +436,14 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
         options={avpuLists}
         label={form.avpu.label}
         multiple={false}
+        disabled={disableField(form.avpu.name)}
       />
       <br />
       <TextInputField
         id={form.glucose.name}
         name={form.glucose.name}
         label={form.glucose.label}
+        disabled={disableField(form.heartRate.name)}
         getValue={(value: string) => {
           checkTriage(form.glucose.name, value);
         }}
