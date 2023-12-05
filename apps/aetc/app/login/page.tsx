@@ -10,7 +10,8 @@ import {
 import * as yup from "yup";
 import Image from "next/image";
 import { ApiCore } from "mahis-api-client";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { notify } from "@/helpers";
 
 const schema = yup.object({
   username: yup.string().label("Username"),
@@ -27,34 +28,10 @@ export default function LoginPage() {
     );
 
     if (authentication.ok) {
-      const notify = () =>
-        toast.success(`login successfully`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-
-      notify();
+      notify("success", "loggedIn successfully");
       navigateTo("/");
     } else {
-      const notify = () =>
-        toast.error(`${authentication.errorState}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-
-      notify();
+      notify("error", ` ${authentication.errorState}`);
     }
   };
   return (
