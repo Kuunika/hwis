@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
-import { ReactQueryProvider } from "@/providers";
+import { ContextProviders, ReactQueryProvider } from "@/providers";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -23,11 +23,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
         <ReactQueryProvider>
-          <ProviderTheme>
-            <NavBar />
-            {children}
-            <ToastContainer />
-          </ProviderTheme>
+          <ContextProviders>
+            <ProviderTheme>
+              <NavBar />
+              {children}
+              <ToastContainer />
+            </ProviderTheme>
+          </ContextProviders>
         </ReactQueryProvider>
       </body>
     </html>

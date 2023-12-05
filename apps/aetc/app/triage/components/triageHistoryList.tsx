@@ -1,8 +1,11 @@
-import { useNavigation } from "@/hooks";
+import { TriageContext, TriageContextType } from "@/contexts";
+
 import Button from "@mui/material/Button";
+import { useContext } from "react";
 import { BaseTable, MainButton, WrapperBox } from "shared-ui/src";
 
 export const TriageHistoryList = () => {
+  const { setShow } = useContext(TriageContext) as TriageContextType;
   const rows = [
     {
       id: "1",
@@ -52,7 +55,7 @@ export const TriageHistoryList = () => {
       headerName: "Action",
       renderCell: (cell: any) => {
         return (
-          <Button onClick={() => {}} variant="text">
+          <Button onClick={() => setShow(true)} variant="text">
             View
           </Button>
         );

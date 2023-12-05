@@ -3,6 +3,8 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { FaAngleDown } from "react-icons/fa";
+import { useContext } from "react";
+import { TriageContext, TriageContextType } from "@/contexts";
 
 const vitals = [
   { name: "Respiratory Rate", value: "12 breaths per minute" },
@@ -71,6 +73,11 @@ const triageResults = [
   { name: "Circulation", values: circulation },
 ];
 export const ViewTriageResults = () => {
+  const { show } = useContext(TriageContext) as TriageContextType;
+
+  if (!show) {
+    return <></>;
+  }
   return (
     <MainPaper elevation={0} sx={{ padding: "2ch", mt: "2ch" }}>
       {triageResults.map((result) => {
