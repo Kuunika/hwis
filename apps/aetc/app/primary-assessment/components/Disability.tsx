@@ -94,10 +94,10 @@ const initialValues = {
   seizureInfo: "",
 };
 const sizeOfEyeOpeningResponse = [
-  { label: "Spontaneously", value: "1" },
-  { label: "To Speech", value: "2" },
-  { label: "To Pain", value: "3" },
-  { label: "No Response", value: "4" },
+  { label: "Spontaneously", value: "4" },
+  { label: "To Speech", value: "3" },
+  { label: "To Pain", value: "2" },
+  { label: "No Response", value: "1" },
 ];
 
 const sizeOfVerbalResponse = [
@@ -105,30 +105,30 @@ const sizeOfVerbalResponse = [
     label: "Oriented To Time, Place and Person  ",
     value: "5",
   },
-  { label: "Confused", value: "6" },
-  { label: "Inappropriate Words", value: "7" },
-  { label: "Incomprehensible Words", value: "8" },
-  { label: "No Response", value: "9" },
+  { label: "Confused", value: "4" },
+  { label: "Inappropriate Words", value: "3" },
+  { label: "Incomprehensible Words", value: "2" },
+  { label: "No Response", value: "1" },
 ];
 
 const sizeOfMotorResponse = [
-  { label: "Obey Commands", value: "10" },
-  { label: "Moves to Localized Pain ", value: "11" },
+  { label: "Obey Commands", value: "6" },
+  { label: "Moves to Localized Pain ", value: "5" },
   {
     label: "Flexion Withdrawal from Pain",
-    value: "12",
+    value: "4",
   },
   {
     label: "Abnormal  Flexion (Decorticate)",
-    value: "13",
+    value: "3",
   },
   {
     label: "Abnormal  Extension (Decerbrate)",
-    value: "14",
+    value: "2",
   },
   {
     label: "No Response",
-    value: "15",
+    value: "1",
   },
 ];
 
@@ -192,14 +192,6 @@ export const Disability = ({ onSubmit }: Props) => {
       </Box>
 
       <br />
-      <RadioGroupInput
-        name={form.seizureInfo.name}
-        label={form.seizureInfo.label}
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
-      />
 
       <TextInputField
         name={form.reactionToLight.name}
@@ -220,6 +212,14 @@ export const Disability = ({ onSubmit }: Props) => {
         name={form.focalNeurology.name}
         label={form.focalNeurology.label}
         id={form.bloodGlocose.name}
+      />
+      <RadioGroupInput
+        name={form.seizureInfo.name}
+        label={form.seizureInfo.label}
+        options={[
+          { label: "Yes", value: "yes" },
+          { label: "No", value: "no" },
+        ]}
       />
     </FormikInit>
   );

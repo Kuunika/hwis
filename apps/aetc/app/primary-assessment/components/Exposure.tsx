@@ -1,3 +1,4 @@
+import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
   FormValuesListener,
@@ -60,7 +61,7 @@ export const Exposure = ({ onSubmit }: Props) => {
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={onSubmit}
-      submitButtonText="next"
+      submitButtonText="submit"
     >
       <FormValuesListener getValues={setFormValues} />
       <TextInputField
@@ -78,12 +79,10 @@ export const Exposure = ({ onSubmit }: Props) => {
       />
       {formValues[form.skinRashInfo.name] == "yes" && (
         <>
-          <br />
-          <MainTypography>
-            location (Body part and exact site) pop up image to appear where the
-            user selects the location
-          </MainTypography>
-          <br />
+          <NotificationContainer
+            message="(Diagram) location (Body part and exact site) pop up image to appear where the
+            user selects the location"
+          />
 
           <TextInputField
             name={form.rashDescription.name}
