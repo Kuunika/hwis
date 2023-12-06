@@ -210,6 +210,8 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       </FieldsContainer>
       {formValues[form.isPatientBreathing.name] == "no" && (
         <>
+          <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
+
           <FieldsContainer>
             <TextInputField
               name={form.startTimeIntervention.name}
@@ -349,7 +351,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               label={form.percussion.label}
               options={[
                 { label: "Normal", value: "normal" },
-                { label: "Reduced", value: "reduced" },
+                { label: "Abnormal", value: "abnormal" },
               ]}
             />
           </FieldsContainer>

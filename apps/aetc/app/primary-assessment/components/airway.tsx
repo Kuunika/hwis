@@ -161,18 +161,19 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
             <br />
           </>
         )}
-
       {formValues[form.isAirwayPatent.name] === "threatened" && (
-        <>
-          <FieldsContainer>
-            <SearchComboBox
-              name={form.airWayThreatenedReason.name}
-              label={form.airWayThreatenedReason.label}
-              options={airwayThreatenedReasons}
-              multiple={false}
-            />
-          </FieldsContainer>
+        <FieldsContainer>
+          <SearchComboBox
+            name={form.airWayThreatenedReason.name}
+            label={form.airWayThreatenedReason.label}
+            options={airwayThreatenedReasons}
+            multiple={false}
+          />
+        </FieldsContainer>
+      )}
 
+      {formValues[form.isAirwayPatent.name] === "no" && (
+        <>
           {formValues[form.airWayThreatenedReason.name] == "other" && (
             <>
               <br />

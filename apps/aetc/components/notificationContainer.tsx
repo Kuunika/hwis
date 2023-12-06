@@ -14,6 +14,7 @@ export const NotificationContainer = ({ message }: Props) => {
         py: "2ch",
         px: "1ch",
         borderRadius: "1ch",
+        my: "1ch",
       }}
     >
       <MainTypography>{message}</MainTypography>
