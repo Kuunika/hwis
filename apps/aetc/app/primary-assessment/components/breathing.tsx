@@ -1,3 +1,4 @@
+import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -312,7 +313,8 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
           {formValues[form.chestWallAbnormality.name] == "yes" && (
             <>
               <br />
-              <MainTypography>Diagram to select area</MainTypography>
+              <NotificationContainer message="Diagram to select area" />
+
               <br />
               <FieldsContainer>
                 <SearchComboBox

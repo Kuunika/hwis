@@ -15,7 +15,6 @@ import { TriageContainer } from "@/app/triage/components/";
 import { TriageResult } from "@/interfaces";
 import { notify } from "@/helpers";
 import { useNavigation } from "@/hooks";
-import Swal from "sweetalert2";
 
 const form = {
   complaints: {
@@ -24,7 +23,7 @@ const form = {
   },
   temperature: {
     name: concepts.TEMPERATURE,
-    label: "Temperature",
+    label: "Blood Circulation Temperature",
   },
   pulseRate: {
     name: "pulseRate",

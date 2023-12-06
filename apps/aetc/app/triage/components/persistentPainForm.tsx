@@ -145,6 +145,13 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
           options={options}
           getValue={(value) => updateConditions(form.severePain.name, value)}
         />
+        <RadioGroupInput
+          name={form.confusion.name}
+          disabled={disableField(form.confusion.name)}
+          label={form.confusion.label}
+          options={options}
+          getValue={(value) => updateConditions(form.confusion.name, value)}
+        />
       </FieldsContainer>
       <FieldsContainer>
         <RadioGroupInput

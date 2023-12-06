@@ -1,3 +1,4 @@
+import { NotificationContainer } from "@/components";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -136,7 +137,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       {formValues[form.isPatientInjured.name] == "yes" &&
         formValues[form.isAirwayPatent.name] == "yes" && (
           <>
-            <MainTypography>Please stabilize the C-Spine</MainTypography>
+            <NotificationContainer message="Please stabilize the C-Spine" />
             <br />
             <FieldsContainer sx={{ alignItems: "flex-start" }}>
               <RadioGroupInput

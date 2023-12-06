@@ -95,10 +95,16 @@ export const ViewTriageResults = () => {
                 {result.values.map((value) => {
                   return (
                     <WrapperBox sx={{ display: "flex", my: "2ch" }}>
-                      <MainTypography width={"20ch"} fontWeight={"600"}>
+                      <MainTypography
+                        fontSize={"0.8rem"}
+                        width={"20ch"}
+                        fontWeight={"600"}
+                      >
                         {value.name}{" "}
                       </MainTypography>
-                      <MainTypography>{value.value}</MainTypography>
+                      <MainTypography fontSize={"0.8rem"}>
+                        {value.value}
+                      </MainTypography>
                     </WrapperBox>
                   );
                 })}

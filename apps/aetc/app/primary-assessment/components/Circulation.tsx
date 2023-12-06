@@ -1,4 +1,5 @@
 "use client";
+import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -250,7 +251,8 @@ export const Circulation = ({ onSubmit }: Prop) => {
       {formValues[form.bleedingInfo.name] == "yes" && (
         <>
           <br />
-          <MainTypography>apply pressure</MainTypography>
+          <NotificationContainer message="Apply pressure" />
+
           <br />
           <TextInputField
             name={form.bleedingActionDone.name}
@@ -275,9 +277,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
 
       {formValues[form.pulseInfo.name] == "no" && (
         <>
-          <br />
-          <MainTypography>start cardiopulmonary resuscitation</MainTypography>
-          <br />
+          <NotificationContainer message="Start cardiopulmonary resuscitation" />
         </>
       )}
 
@@ -387,14 +387,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
 
       {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == "yes" && (
         <>
-          <br />
-          <MainTypography>
-            picture of abdomen to select areas of abnormalites with the options
+          <NotificationContainer
+            message="Picture of abdomen to select areas of abnormalites with the options
             below:1. Right Hyphochondriac 4. Right Lumbar 7. Right iliac 2.
             Epigrastric 5. Umbilical 3. Left Hypochondriac6.Left Lumbar 9. Left
-            Iliac 8. Suprapubic/Hypogastric
-          </MainTypography>
-          <br />
+            Iliac 8. Suprapubic/Hypogastric"
+          />
         </>
       )}
 
@@ -412,11 +410,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
       {formValues[form.abnormalitiesInfo.name] == "yes" && (
         <>
           <br />
-          <MainTypography>
-            (Picture Comes Up and indicate the following) Tenderness (Multiple
+
+          <NotificationContainer
+            message=" (Picture Comes Up and indicate the following) Tenderness (Multiple
             Selection) Wound (Multiple Selection) Laceration Stab/Puncture
-            Bruise Burns Wound
-          </MainTypography>
+            Bruise Burns Wound"
+          />
           <br />
         </>
       )}
