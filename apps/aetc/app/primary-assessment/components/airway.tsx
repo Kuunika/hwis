@@ -2,6 +2,7 @@ import { NotificationContainer } from "@/components";
 import { useState } from "react";
 import {
   FieldsContainer,
+  FormDatePicker,
   FormValuesListener,
   FormikInit,
   MainTypography,
@@ -72,6 +73,7 @@ const schema = Yup.object().shape({
   [form.nasopharyngealSize.name]: Yup.string()
     .required()
     .label(form.nasopharyngealSize.label),
+  date: Yup.date().label("date"),
   [form.oropharyngealSize.name]: Yup.string()
     .required()
     .label(form.oropharyngealSize.label),
@@ -100,10 +102,13 @@ const airwayInterventionsList = [
 const initialsValues = {
   concern: "",
   moderate: "",
+  date: "",
 };
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
+
+  console.log(formValues);
 
   return (
     <FormikInit
@@ -112,6 +117,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
     >
       <FormValuesListener getValues={setFormValues} />
+
       <FieldsContainer sx={{ alignItems: "flex-start" }}>
         <RadioGroupInput
           name={form.isAirwayPatent.name}

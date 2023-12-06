@@ -9,13 +9,14 @@ type Prop = {
   label: string;
   width?: any;
   sx?: SxProps;
-  type?: "password" | "text";
+  type?: "password" | "text" | "date";
   placeholder?: string;
   rows?: number;
   getValue?: (value: any) => void;
   size?: "small" | "medium";
   showHelperText?: boolean;
   disabled?: boolean;
+  multiline?: boolean;
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -31,6 +32,7 @@ export const TextInputField: FC<Prop> = ({
   getValue,
   showHelperText = true,
   disabled = false,
+  multiline = false,
 }) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
@@ -62,6 +64,7 @@ export const TextInputField: FC<Prop> = ({
       placeholder={placeholder}
       rows={rows}
       disabled={disabled}
+      multiline={multiline}
     />
   );
 };
