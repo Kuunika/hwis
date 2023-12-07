@@ -33,8 +33,8 @@ export const WaitingRegistrationList = () => {
         return (
           <MainButton
             sx={{ fontSize: "12px" }}
-            title={"prescreening"}
-            onClick={() => navigateTo(`/prescreening/${cell.id}`)}
+            title={"start"}
+            onClick={() => navigateTo(`/registration/search/${cell.id}`)}
           />
         );
       },
