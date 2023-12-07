@@ -184,7 +184,9 @@ const initialValues = {};
 
 export const BroughtDeadForm = () => {
   const [formValues, setFormValues] = useState<any>({});
-  const onSubmit = () => {};
+  const onSubmit = (values: any) => {
+    console.log(values);
+  };
 
   return (
     <FormikInit

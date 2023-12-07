@@ -1,24 +1,26 @@
 "use client";
 import { MiddlePageLayout } from "@/components/layouts";
 import { PrescreeningForm } from "../components/preScreeningForm";
+import { successDialog } from "@/helpers";
 import { useNavigation } from "@/hooks";
 
 export default function Prescreening() {
   const { navigateTo } = useNavigation();
-  const initialValues = {};
-
   const handleSubmit = (values: any) => {
-    console.log({ values });
+    successDialog({
+      title: "Prescreening Completed",
+      text: "",
+      icon: "success",
+      onConfirm: () => navigateTo("/initial-registration/list"),
+      confirmButtonText: "Prescreen More Patients",
+      cancelButtonText: "Home",
+      onDismiss: () => navigateTo("/"),
+    });
   };
   return (
     <>
       <MiddlePageLayout title="Prescreening">
-        <PrescreeningForm
-          onProceed={() => navigateTo("/registration")}
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          validationSchema={undefined}
-        />
+        <PrescreeningForm onSubmit={handleSubmit} />
       </MiddlePageLayout>
     </>
   );

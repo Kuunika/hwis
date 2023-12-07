@@ -4,7 +4,7 @@ import { InitialRegistrationList } from "../components";
 
 export default function InitialList() {
   return (
-    <MiddlePageLayout middleGridSize={8} title="Initial Registration">
+    <MiddlePageLayout middleGridSize={8} title="Patients waiting prescreening">
       <InitialRegistrationList />
     </MiddlePageLayout>
   );
