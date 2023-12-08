@@ -28,14 +28,7 @@ export const FormDatePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const {
-    value,
-    handleChange,
-    hasError,
-    errorMessage,
-    handleBlur,
-    setFieldValue,
-  } = useFormikField(name);
+  const { value, setFieldValue } = useFormikField(name);
 
   useEffect(() => {
     getValue && getValue(value);
@@ -52,7 +45,7 @@ export const FormDatePicker: FC<Prop> = ({
           ...sx,
         }}
         label={label}
-        value={value}
+        // value={value}
         onChange={(dateValue) =>
           setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
         }

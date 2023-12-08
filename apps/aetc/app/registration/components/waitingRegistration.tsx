@@ -34,7 +34,9 @@ export const WaitingRegistrationList = () => {
           <MainButton
             sx={{ fontSize: "12px" }}
             title={"start"}
-            onClick={() => navigateTo(`/registration/search/${cell.id}`)}
+            onClick={() =>
+              navigateTo(`/registration/search?s=${cell.row.firstName}`)
+            }
           />
         );
       },

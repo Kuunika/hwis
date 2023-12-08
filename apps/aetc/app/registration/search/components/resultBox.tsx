@@ -14,6 +14,7 @@ export function ResultBox({ searchResults }: Prop) {
     <MainPaper
       elevation={0}
       sx={{
+        zIndex: 1,
         borderRadius: "1ch",
         color,
         py: "1ch",

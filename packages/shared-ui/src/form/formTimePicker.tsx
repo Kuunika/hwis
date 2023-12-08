@@ -45,7 +45,7 @@ export const FormTimePicker: FC<Prop> = ({
           ...sx,
         }}
         label={label}
-        value={value}
+        // value={value}
         onChange={(dateValue) => {
           //   console.log(dayjs(dateValue).format("HH:mm:ss"));
           setFieldValue(name, dayjs(dateValue).format("HH:mm:ss"));

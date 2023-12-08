@@ -1,3 +1,5 @@
+import { getInitialValues, successDialog } from "@/helpers";
+import { useNavigation } from "@/hooks";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -180,12 +182,23 @@ const schema = Yup.object().shape({
   ),
 });
 
-const initialValues = {};
-
+const initialValues = getInitialValues(form);
 export const BroughtDeadForm = () => {
   const [formValues, setFormValues] = useState<any>({});
-  const onSubmit = (values: any) => {
-    console.log(values);
+  const { navigateTo } = useNavigation();
+
+  const onSubmit = (values: any, options: any) => {
+    console.log({ values });
+    options.resetForm();
+    successDialog({
+      title: "Registration Completed",
+      text: "",
+      icon: "success",
+      onConfirm: () => {},
+      confirmButtonText: "Register More Patients",
+      cancelButtonText: "Home",
+      onDismiss: () => navigateTo("/"),
+    });
   };
 
   return (

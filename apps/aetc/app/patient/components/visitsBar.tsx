@@ -6,8 +6,10 @@ import {
 } from "shared-ui/src";
 import { Button, SxProps } from "@mui/material";
 import { FaRegCalendarPlus } from "react-icons/fa";
+import { useNavigation } from "@/hooks";
 
 export const VisitsBar = () => {
+  const { navigateTo } = useNavigation();
   return (
     <WrapperBox
       sx={{
@@ -24,6 +26,14 @@ export const VisitsBar = () => {
     >
       <Button variant="outlined" size="small" endIcon={<FaRegCalendarPlus />}>
         Add Today
+      </Button>
+      <Button
+        onClick={() => navigateTo("/triage/12/history")}
+        sx={{ ml: "1ch" }}
+        variant="contained"
+        size="small"
+      >
+        Triage
       </Button>
     </WrapperBox>
   );

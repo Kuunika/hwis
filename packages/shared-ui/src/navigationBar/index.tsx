@@ -52,7 +52,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export function NavigationBar() {
+export function NavigationBar({ search }: { search: any }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -80,17 +80,7 @@ export function NavigationBar() {
           >
             MAHIS AETC
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <IconContext.Provider value={{ color: "green" }}>
-                <FaSearch />
-              </IconContext.Provider>
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search patient"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
+          {search}
         </Toolbar>
       </AppBar>
     </Box>

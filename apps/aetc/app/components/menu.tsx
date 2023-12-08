@@ -10,6 +10,7 @@ import Link from "next/link";
 export function LandingPageCollapsible() {
   const aetcClecking = [
     { label: "Initial Registration", link: "initial-registration" },
+    { label: "Brought In Dead", link: "/registration/death" },
   ];
 
   const templateForme = [

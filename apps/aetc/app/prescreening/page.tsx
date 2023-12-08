@@ -13,12 +13,7 @@ export default function Prescreening() {
   return (
     <>
       <MiddlePageLayout title="Prescreening">
-        <PrescreeningForm
-          onProceed={() => navigateTo("/registration")}
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          validationSchema={undefined}
-        />
+        <PrescreeningForm onSubmit={handleSubmit} />
       </MiddlePageLayout>
     </>
   );

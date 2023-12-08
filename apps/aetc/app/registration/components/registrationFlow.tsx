@@ -7,6 +7,7 @@ import {
   SocialHistoryForm,
 } from ".";
 import { addPatient, useNavigation } from "@/hooks";
+import { successDialog } from "@/helpers";
 
 export const RegistrationFlow = () => {
   const { navigateTo } = useNavigation();
@@ -31,7 +32,15 @@ export const RegistrationFlow = () => {
     setActiveStep(3);
   };
   const handleSubmitFinancing = () => {
-    navigateTo("/triage");
+    successDialog({
+      title: "Registration Completed",
+      text: "",
+      icon: "success",
+      onConfirm: () => navigateTo("/registration/list"),
+      confirmButtonText: "Register More Patients",
+      cancelButtonText: "Home",
+      onDismiss: () => navigateTo("/"),
+    });
   };
 
   return (

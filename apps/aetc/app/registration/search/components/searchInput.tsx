@@ -5,21 +5,32 @@ import { FaSearch } from "react-icons/fa";
 type Prop = {
   onChange: (values: any) => void;
   initialValue: string;
+  label?: string;
+  placeHolder?: string;
 };
-export const SearchInput = ({ onChange, initialValue }: Prop) => {
+export const SearchInput = ({
+  onChange,
+  initialValue,
+  label = "Search Patient",
+  placeHolder = "",
+}: Prop) => {
   return (
     <TextField
       id="search"
-      label="Search Patient"
+      label={label}
       name="search"
       defaultValue={initialValue}
       fullWidth
+      placeholder={placeHolder}
       onChange={(values) => {
         onChange(values.target.value);
       }}
       InputProps={{
         startAdornment: (
-          <InputAdornment position="start">
+          <InputAdornment
+            sx={{ color: (theme) => theme.palette.primary.main }}
+            position="start"
+          >
             <FaSearch />
           </InputAdornment>
         ),
