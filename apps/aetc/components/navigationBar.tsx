@@ -33,7 +33,7 @@ export const NavBar = () => {
 
   return (
     <>
-      <NavigationBar search={search} />;
+      <NavigationBar search={search} />
     </>
   );
 };

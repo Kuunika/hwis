@@ -16,7 +16,7 @@ export default function TriageHistory() {
       <>
         <MainButton
           title={"Start Triage"}
-          onClick={() => navigateTo("/triage/start")}
+          onClick={() => navigateTo("/triage/1/start")}
         />
         <TriageHistoryList />
       </>

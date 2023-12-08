@@ -8,7 +8,7 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
-import { notify } from "@/helpers";
+import { notify, successDialog } from "@/helpers";
 
 const form = {
   activeSeizures: {

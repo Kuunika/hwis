@@ -66,13 +66,13 @@ const Table: React.FC<IProp> = ({
   hidePagination = false,
   height = "100%",
   width = "100%",
-  rowWidth = 50,
+
   style,
 }) => {
   return (
     <div style={{ height, width, ...style }}>
-      <StyledDataGrid
-        rowHeight={rowWidth}
+      <DataGrid
+        sx={{ my: "1ch", borderStyle: "none" }}
         rows={rows}
         columns={columns}
         hideFooterPagination={hidePagination}

@@ -11,6 +11,7 @@ import { VitalsForm } from "@/app/vitals/components/vitalsForm";
 import { useNavigation } from "@/hooks";
 import { addObservation } from "@/hooks/observation";
 import { encounters } from "@/constants";
+import { successDialog } from "@/helpers";
 
 export default function TriageWorkFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -25,7 +26,16 @@ export default function TriageWorkFlow() {
   ];
 
   const handlePersistentPain = () => {
-    navigateTo("/assessments");
+    successDialog({
+      title: "Triage Completed",
+      text: "",
+      icon: "success",
+      onConfirm: () => navigateTo("/triage"),
+      confirmButtonText: "Triage More Patients",
+      cancelButtonText: "Home",
+      onDismiss: () => navigateTo("/"),
+    });
+    // navigateTo("/assessments");
   };
 
   const handleVitalsSubmit = (values: any) => {
