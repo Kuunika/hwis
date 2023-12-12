@@ -18,7 +18,7 @@ export const RegistrationFlow = () => {
     { id: 1, label: "Demographics" },
     { id: 2, label: "Social History" },
     { id: 3, label: "Referral" },
-    { id: 4, label: "Financing" },
+    // { id: 4, label: "Financing" },
   ];
 
   const handleSubmitDemographics = (data: any) => {
@@ -29,7 +29,16 @@ export const RegistrationFlow = () => {
     setActiveStep(2);
   };
   const handleSubmitReferral = () => {
-    setActiveStep(3);
+    successDialog({
+      title: "Registration Completed",
+      text: "",
+      icon: "success",
+      onConfirm: () => navigateTo("/registration/list"),
+      confirmButtonText: "Register More Patients",
+      cancelButtonText: "Home",
+      onDismiss: () => navigateTo("/"),
+    });
+    // setActiveStep(3);
   };
   const handleSubmitFinancing = () => {
     successDialog({
@@ -65,10 +74,10 @@ export const RegistrationFlow = () => {
         initialValues={referralInitialValues}
         onSubmit={handleSubmitReferral}
       />
-      <FinancingForm
+      {/* <FinancingForm
         initialValues={financingInitialValues}
         onSubmit={handleSubmitFinancing}
-      />
+      /> */}
     </NewStepperContainer>
   );
 };

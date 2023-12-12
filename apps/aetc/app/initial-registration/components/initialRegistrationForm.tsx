@@ -8,7 +8,7 @@ import * as yup from "yup";
 
 type props = {
   initialValues: any;
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, options: any) => void;
 };
 
 const form = {

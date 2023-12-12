@@ -79,7 +79,7 @@ export const ViewTriageResults = () => {
     return <></>;
   }
   return (
-    <MainPaper elevation={0} sx={{ padding: "2ch", mt: "2ch" }}>
+    <MainPaper elevation={0} sx={{ padding: "2ch" }}>
       {triageResults.map((result) => {
         return (
           <>

@@ -26,7 +26,7 @@ const form = {
     label: "Blood Circulation Temperature",
   },
   pulseRate: {
-    name: "pulseRate",
+    name: concepts.PULSE_RATE,
     label: "Pulse Rate",
   },
   respiratoryRate: {
@@ -68,15 +68,15 @@ const form = {
   },
 
   glucose: {
-    name: "b9cc75b2-8d80-11d8-abbb-0024217bb78e",
+    name: concepts.GLUCOSE,
     label: "Glucose (mg/dL)",
   },
   avpu: {
-    name: "b9da6d98-8d80-11d8-abbb-0024217bb78e",
+    name: concepts.AVPU,
     label: "AVPU",
   },
   pulseOximetry: {
-    name: "pulseOximetry",
+    name: concepts.PULSE_OXIMETRY,
     label: "Pulse Oximetry",
   },
 };

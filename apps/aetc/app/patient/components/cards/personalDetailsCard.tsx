@@ -1,9 +1,9 @@
 import { MainCard, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { Chip } from "@mui/material";
 
-export const PersonalDetailsCard = () => {
+export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   return (
-    <MainPaper elevation={0} sx={{ backgroundColor: "#fff", p: 1 }}>
+    <MainPaper elevation={0} sx={{ backgroundColor: "#fff", p: 1, ...sx }}>
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
         <WrapperBox
           sx={{

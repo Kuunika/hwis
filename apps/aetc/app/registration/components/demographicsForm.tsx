@@ -170,8 +170,8 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
           name={form.gender.name}
           label={form.gender.label}
           options={[
-            { label: "Male", value: "yes" },
-            { label: "Female", value: "no" },
+            { label: "Male", value: "Male" },
+            { label: "Female", value: "Female" },
           ]}
         />
         <SelectInputField

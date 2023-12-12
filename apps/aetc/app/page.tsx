@@ -5,39 +5,77 @@ import { FcSurvey } from "react-icons/fc";
 import { emrLogin, useNavigation } from "@/hooks";
 import { LandingPageCollapsible } from "./components";
 
+import { FcRules, FcSearch, FcTodoList, FcPlus } from "react-icons/fc";
+
 export default function Home() {
   emrLogin();
   return (
     <>
       <MainGrid container>
-        <MainGrid item lg={2}></MainGrid>
+        <MainGrid item lg={3}></MainGrid>
         <MainGrid
           item
-          lg={6}
-          display={"flex"}
-          justifyContent={"flex-start"}
+          lg={8}
+          sx={{ display: "flex", flexWrap: "wrap" }}
           pt="5ch"
         >
-          <WrapperBox display={"flex"}>
+          {/* <WrapperBox display={"flex"}>
             <WrapperBox>
               <LandingPageCollapsible />
             </WrapperBox>
             <WrapperBox>Dashboard</WrapperBox>
-          </WrapperBox>
-          {/* <Card link="/initial-registration" title="Initial Registration" />
-          <Card link="/prescreening" title="Patient Waiting Prescreening" />
-          <Card link="/prescreening" title="Prescreening" />
-          <Card link="/prescreening" title="Prescreening" />
-          <Card link="/prescreening" title="Prescreening" />
-          <Card link="/prescreening" title="Prescreening" />
-          <Card link="/prescreening" title="Prescreening" /> */}
+          </WrapperBox> */}
+          <Card
+            link="/registration/search"
+            title="Find Patient"
+            icon={<FcSearch />}
+          />
+          <Card
+            link="/initial-registration"
+            title="Initial Registration"
+            icon={<FcPlus />}
+          />
+          <Card
+            icon={<FcRules />}
+            link="/registration/death/list"
+            title="Brought In Dead"
+          />
+          <Card
+            icon={<FcTodoList />}
+            link="/initial-registration/list"
+            title="Patients Waiting for Prescreening"
+          />
+          <Card
+            icon={<FcTodoList />}
+            link="/registration/list"
+            title="Patients Waiting for Registration"
+          />
+          <Card
+            icon={<FcTodoList />}
+            link="/triage"
+            title="Patients Waiting for Triage"
+          />
+          <Card
+            icon={<FcTodoList />}
+            link="/assessments"
+            title="Patients Waiting for Assessment "
+          />
+          {/* <Card link="/prescreening" title="Prescreening" /> */}
         </MainGrid>
       </MainGrid>
     </>
   );
 }
 
-const Card = ({ link, title }: { link: string; title: string }) => {
+const Card = ({
+  link,
+  title,
+  icon,
+}: {
+  link: string;
+  title: string;
+  icon: any;
+}) => {
   const { navigateTo } = useNavigation();
   return (
     <MainPaper
@@ -46,7 +84,7 @@ const Card = ({ link, title }: { link: string; title: string }) => {
       sx={{
         p: "1ch",
         m: "1ch",
-        width: "30%",
+        width: "25%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -54,10 +92,8 @@ const Card = ({ link, title }: { link: string; title: string }) => {
         cursor: "pointer",
       }}
     >
-      <MainTypography variant="h6">
-        <FcSurvey />
-      </MainTypography>
-      <MainTypography>{title}</MainTypography>
+      <MainTypography variant="h2">{icon}</MainTypography>
+      <MainTypography textAlign={"center"}>{title}</MainTypography>
     </MainPaper>
   );
 };

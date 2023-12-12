@@ -8,9 +8,14 @@ export const addObservation = () => {
   const addData = async (obsData: any) => {
     const visit = new PatientVisitService(new Date().toISOString());
 
-    await visit.loadPatient("c0c9e5c2-cab2-43ee-89fe-4433c3997981");
+    await visit.loadPatient("eefb332a-5efd-48b1-a08d-f256171d020b");
 
-    await visit.startVisit(AETC_VISIT_TYPE, new Date().toISOString());
+    const result = await visit.startVisit(
+      AETC_VISIT_TYPE,
+      new Date().toISOString()
+    );
+
+    console.log({ result });
 
     await visit.createEncounter(obsData.encounter, mappedData(obsData.obs));
 

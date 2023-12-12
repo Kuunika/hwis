@@ -8,7 +8,9 @@ export default function InitialRegistration() {
   const { navigateTo } = useNavigation();
   const initialValues = { firstName: "", lastName: "" };
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: any, options: any) => {
+    options.resetForm();
+
     successDialog({
       title: "Patient Added successfully",
       text: "Patient Added to prescreening list",

@@ -8,6 +8,7 @@ type Prop = {
   leftGridSize?: number;
   middleGridSize?: number;
   rightGridSize?: number;
+  leftChildComponent?: ReactNode;
   rightChildComponent?: ReactNode;
 };
 
@@ -15,14 +16,17 @@ export function MiddlePageLayout({
   children,
   title,
   rightChildComponent,
+  leftChildComponent,
   leftGridSize = 2,
   middleGridSize = 7,
   rightGridSize = 3,
 }: Prop) {
   return (
     <MainGrid container spacing={1}>
-      <MainGrid item lg={leftGridSize}></MainGrid>
-      <MainGrid item lg={middleGridSize}>
+      <MainGrid item lg={leftGridSize} md={1}>
+        {leftChildComponent}
+      </MainGrid>
+      <MainGrid item lg={middleGridSize} md={10}>
         <MainPaper elevation={0} sx={{ padding: "2ch", mt: "2ch" }}>
           <BackButton />
           <br />
@@ -33,7 +37,7 @@ export function MiddlePageLayout({
           {children}
         </MainPaper>
       </MainGrid>
-      <MainGrid item lg={rightGridSize}>
+      <MainGrid item lg={rightGridSize} md={1}>
         {rightChildComponent}
       </MainGrid>
     </MainGrid>
