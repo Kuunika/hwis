@@ -26,8 +26,23 @@ export function MiddlePageLayout({
       <MainGrid item lg={leftGridSize} md={1}>
         {leftChildComponent}
       </MainGrid>
-      <MainGrid item lg={middleGridSize} md={10}>
-        <MainPaper elevation={0} sx={{ padding: "2ch", mt: "2ch" }}>
+      <MainGrid
+        item
+        lg={middleGridSize}
+        md={10}
+        sx={{
+          padding: "2ch",
+          mt: "2ch",
+          width: "100%",
+        }}
+      >
+        <MainPaper
+          elevation={0}
+          sx={{
+            padding: "2ch",
+            mt: "2ch",
+          }}
+        >
           <BackButton />
           <br />
           <MainTypography variant="h4" color={"gray"}>

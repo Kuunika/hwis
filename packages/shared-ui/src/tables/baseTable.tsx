@@ -69,6 +69,22 @@ const Table: React.FC<IProp> = ({
 
   style,
 }) => {
+  console.log({ columns });
+  let columnVisibilityModel: any = {};
+
+  // if (columns.length > 0) {
+  //   // if (columns[i]) columnVisibilityModel[columns[i].field] = false;
+  //   columns.reduce((cumulative, current) => {
+  //     cumulative[`${current.field}`] = false;
+  //     return;
+  //   }, {});
+  // }
+
+  // if (columns.length > 4) {
+  //   for (let i = 4; i < columns.length - 1, i++; ) {
+  //     // if (columns[i]) columnVisibilityModel[columns[i].field] = false;
+  //   }
+  // }
   return (
     <div style={{ height, width, ...style }}>
       <DataGrid
@@ -76,6 +92,11 @@ const Table: React.FC<IProp> = ({
         rows={rows}
         columns={columns}
         hideFooterPagination={hidePagination}
+        initialState={{
+          columns: {
+            columnVisibilityModel,
+          },
+        }}
       />
     </div>
   );

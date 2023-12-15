@@ -1,11 +1,10 @@
 export const encounters = {
-  VITALS: "ba05bfc0-8d80-11d8-abbb-0024217bb78e",
-
+  VITALS: "ed57160e-fb3e-42bc-8431-e604fdaf4a24",
   SOCIAL_HISTORY: "ba063f0e-8d80-11d8-abbb-0024217bb78e",
   REFERRAL: "ba068946-8d80-11d8-abbb-0024217bb78e",
 };
 
-export const AETC_VISIT_TYPE = "71bce1de-a427-41b9-812d-e1cfdec08cb5";
+export const AETC_VISIT_TYPE = "ed57160e-fb3e-42bc-8431-e604fdaf4a24";
 
 export const concepts = {
   COMPLAINTS: "b9d9f494-8d80-11d8-abbb-0024217bb78e",

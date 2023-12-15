@@ -18,7 +18,7 @@ export const Panel = ({ children, title, icon }: Props) => {
         height: "30ch",
       }}
     >
-      <WrapperBox display={"flex"} justifyContent={"space-between"}>
+      <WrapperBox display={"flex"} alignItems={"center"}>
         <MainTypography variant="h5">{title}</MainTypography>
         {icon}
       </WrapperBox>

@@ -34,8 +34,8 @@ export const ClientWaitingForAssessment = () => {
     {
       field: "triageCategory",
       headerName: "Triage Category",
+      flex: 1,
       renderCell: (cell: any) => {
-        console.log({ cell });
         return (
           <WrapperBox
             sx={{
@@ -63,6 +63,7 @@ export const ClientWaitingForAssessment = () => {
     {
       field: "action",
       headerName: "Action",
+      flex: 1,
       renderCell: (cell: any) => {
         return (
           <MainButton
