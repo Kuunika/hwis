@@ -44,7 +44,16 @@ export default function TriageWorkFlow() {
   };
 
   const handleAirwaySubmit = (values: any) => {
+    mutate({ encounter: encounters.AIRWAY_BREATHING, obs: values });
     setActiveStep(2);
+  };
+  const handleBloodCirculationSubmit = (values: any) => {
+    mutate({ encounter: encounters.BLOOD_CIRCULATION, obs: values });
+    setActiveStep(3);
+  };
+  const handleConsciousnessSubmit = (values: any) => {
+    mutate({ encounter: encounters.CONSCIOUSNESS, obs: values });
+    setActiveStep(4);
   };
   return (
     <NewStepperContainer
@@ -57,8 +66,8 @@ export default function TriageWorkFlow() {
     >
       <VitalsForm initialValues={{}} onSubmit={handleVitalsSubmit} />
       <AirwayAndBreathingForm onSubmit={handleAirwaySubmit} />
-      <BloodCirculationForm onSubmit={() => setActiveStep(3)} />
-      <ConsciousnessForm onSubmit={() => setActiveStep(4)} />
+      <BloodCirculationForm onSubmit={handleBloodCirculationSubmit} />
+      <ConsciousnessForm onSubmit={handleConsciousnessSubmit} />
       <PersistentPainForm onSubmit={handlePersistentPain} />
     </NewStepperContainer>
   );

@@ -21,7 +21,7 @@ export default function LoginPage() {
   const { navigateTo } = useNavigation();
 
   const handleSubmit = async (values: any) => {
-    ApiCore.setHost("http://192.168.33.43:3000");
+    ApiCore.setHost("http://192.168.27.43:3000");
     const authentication = await ApiCore.login(
       values.username,
       values.password

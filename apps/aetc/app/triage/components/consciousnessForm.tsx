@@ -11,23 +11,24 @@ import {
 import * as Yup from "yup";
 import { TriageContainer } from ".";
 import { useConditions, useNavigation } from "@/hooks";
-import { notify } from "@/helpers";
+import { getInitialValues, notify } from "@/helpers";
+import { NO, YES, concepts } from "@/constants";
 
 type Prop = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
 };
 const form = {
   consciousness: {
-    name: "consciousness",
+    name: concepts.DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS,
     label: "Does the patient have a reduced Level of consciousness",
   },
 
   bloodGlucose: {
-    name: "bloodGlucose",
+    name: concepts.BLOOD_GLUCOSE,
     label: "Blood Glucose",
   },
   gcs: {
-    name: "gcs",
+    name: concepts.GCS,
     label: "GCS",
   },
 };
@@ -41,15 +42,12 @@ const schema = Yup.object().shape({
 });
 
 const options = [
-  { label: "Yes", value: "true" },
-  { label: "No", value: "false" },
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
 ];
 
-const initialValues = {
-  consciousness: "",
-  glucose: "",
-  gcs: "",
-};
+const initialValues = getInitialValues(form);
+
 export const ConsciousnessForm = ({ onSubmit }: Prop) => {
   const [consciousness, setConsciousness] = useState();
   const [formValues, setFormValues] = useState<any>({});
@@ -107,7 +105,7 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
       />
       <br />
 
-      {consciousness == "true" && (
+      {consciousness == YES && (
         <>
           <FieldsContainer>
             <TextInputField

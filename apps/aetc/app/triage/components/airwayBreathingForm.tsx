@@ -10,47 +10,48 @@ import {
 import * as Yup from "yup";
 import { TriageContainer } from "./triageResultContainers";
 import { useConditions, useNavigation } from "@/hooks";
-import { notify } from "@/helpers";
+import { getInitialValues, notify } from "@/helpers";
+import { NO, YES, concepts } from "@/constants";
 
 const form = {
   airway: {
-    name: "airway",
+    name: concepts.IS_AIRWAY_COMPROMISED,
     label: "is Airway Compromised",
   },
   breathing: {
-    name: "breathing",
-    label: "is Breathing Normal",
+    name: concepts.IS_BREATHING_ABNORMAL,
+    label: "is Breathing Abnormal",
   },
   oxygenStats: {
-    name: "oxygenStats",
+    name: concepts.OXYGEN_STATS_89,
     label: "Oxygen Stats < 89",
   },
   respiratoryRate: {
-    name: "respiratoryRate",
+    name: concepts.RESPIRATORY_RATE_8_31,
     label: "Respiratory Rate <8 or > 31",
   },
   respiratoryDysfunction: {
-    name: "respiratoryDysfunction",
+    name: concepts.SEVERE_RESPIRATORY,
     label: "Severe Respiratory dysfunction or exhaustion ",
   },
   inabilityToSpeak: {
-    name: "inabilityToSpeak",
+    name: concepts.INABILITY_TO_SPEAK,
     label: "Inability to speak in complete sentences ",
   },
   stridor: {
-    name: "stridor",
-    label: "Stridor ",
+    name: concepts.STRIDOR,
+    label: "Stridor",
   },
   reducedLevelOfConsciousness: {
-    name: "reducedLevelOfConsciousness",
+    name: concepts.REDUCED_LEVEL_CONSCIOUSNESS,
     label: "Reduced Level of Consciousness due to low oxygen ",
   },
   oxygenSats9092: {
-    name: "oxygenSats9092",
+    name: concepts.OXYGEN_STATS_90_92,
     label: "Oxygen Sats 90-92%",
   },
   respiratoryRate92130: {
-    name: "respiratoryRate92130",
+    name: concepts.RESPIRATORY_RATE_9_21_30,
     label: "Respiratory Rate > 9 or 21-30",
   },
 };
@@ -68,18 +69,15 @@ const schema = Yup.object().shape({
     form.reducedLevelOfConsciousness.label
   ),
 });
-const initialValues = {
-  airway: "",
-  breathing: "",
-};
+const initialValues = getInitialValues(form);
 
 type Prop = {
   onSubmit: (values: any) => void;
 };
 
 const radioOptions = [
-  { label: "Yes", value: "true" },
-  { label: "No", value: "false" },
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
 ];
 
 export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
@@ -98,16 +96,18 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [finalCondition, setFinalCondition] = useState(false);
 
   useEffect(() => {
+    console.log(Object.keys(conditions).length);
     const cond = !aggregateOrCondition && Object.keys(conditions).length == 6;
+
     setFinalCondition(cond);
 
-    if (cond) {
-      setTriageResult("yellow");
-    }
+    // if (cond) {
+    //   setTriageResult("yellow");
+    // }
   }, [conditions]);
 
   const handleIsAirWayCompromised = (value: string) => {
-    if (value == "true") {
+    if (value == YES) {
       setTriageResult("red");
       setTriageMessage("Interventions as necessary");
       return;
@@ -161,7 +161,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
 
       {/* breathing abnormal yes */}
 
-      {isBreathingAbnormal == "true" && (
+      {isBreathingAbnormal == YES && (
         <>
           <FieldsContainer>
             <RadioGroupInput

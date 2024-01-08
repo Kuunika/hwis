@@ -8,30 +8,28 @@ export const addObservation = () => {
   const addData = async (obsData: any) => {
     const visit = new PatientVisitService(new Date().toISOString());
 
-    await visit.loadPatient("ba2f7018-8d80-11d8-abbb-0024217bb78e");
+    await visit.loadPatient("19951df0-a7e9-45ec-8d1e-dc1b5a7a4769");
 
     const result = await visit.startVisit(
       AETC_VISIT_TYPE,
       new Date().toISOString()
     );
 
-    console.log({ result });
-
     await visit.createEncounter(obsData.encounter, mappedData(obsData.obs));
 
-    const notify = () =>
-      toast.success("Patient vitals saved successfully", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+    // const notify = () =>
+    //   toast.success("Patient vitals saved successfully", {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "colored",
+    //   });
 
-    notify();
+    // notify();
 
     // await visit.stopVisit("");
     return new Promise((resolve, reject) => {});

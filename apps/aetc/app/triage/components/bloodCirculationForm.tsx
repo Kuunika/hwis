@@ -9,47 +9,48 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
-import { notify } from "@/helpers";
+import { getInitialValues, notify } from "@/helpers";
+import { NO, YES, concepts } from "@/constants";
 
 const form = {
   isCirculationAbnormal: {
-    name: "isCirculationAbnormal",
+    name: concepts.IS_CIRCULATION_ABNORMAL,
     label: "Is Circulation Abnormal",
   },
   heartRate: {
-    name: "heartRate",
+    name: concepts.HEART_RATE_50_120,
     label: "Heart Rate <50 >120 or Systolic Blood Pressure <70 >180",
   },
   weakIrregularPulse: {
-    name: "weakIrregularPulse",
+    name: concepts.WEAK_THREADY,
     label: "Weak, Thready, Bounding or regular/irregular pulse",
   },
   reducedUrinaryOutput: {
-    name: "reducedUrinaryOutput",
+    name: concepts.REDUCED_URINARY_OUTPUT,
     label: "Reduced urinary output < 30ml/hr",
   },
   clammyPeripherals: {
-    name: "clammyPeripherals",
+    name: concepts.CAPILLARY_REFILL,
     label: "Cool clammy peripherals or cap refill > 4 seconds",
   },
-  temperature: {
-    name: "temperature",
-    label: "Temperature",
-  },
+  // temperature: {
+  //   name: "temp",
+  //   label: "Temperature",
+  // },
   hemorrhage: {
-    name: "hemorrhage",
+    name: concepts.HEMORRHAGE,
     label: "Hemorrhage",
   },
   dehydration: {
-    name: "dehydrationSkin",
+    name: concepts.DEHYDRATION_SKIN,
     label: "Dehydration skin turgor, sunken eyes",
   },
   heartRate5060: {
-    name: "heartRate5060",
+    name: concepts.HEART_RATE_50,
     label: "Heart Rate <50, >60 or  100-110",
   },
   temperature3738: {
-    name: "temperature3738",
+    name: concepts.TEMPERATURE,
     label: "Temperature 37-38C",
   },
 };
@@ -68,33 +69,25 @@ const schema = Yup.object().shape({
   [form.clammyPeripherals.name]: Yup.string().label(
     form.clammyPeripherals.label
   ),
-  [form.temperature.name]: Yup.string().label(form.temperature.label),
+  // [form.temperature.name]: Yup.string().label(form.temperature.label),
   [form.hemorrhage.name]: Yup.string().label(form.hemorrhage.label),
   [form.dehydration.name]: Yup.string().label(form.dehydration.label),
   [form.temperature3738.name]: Yup.string().label(form.temperature3738.label),
   [form.heartRate5060.name]: Yup.string().label(form.heartRate5060.label),
 });
 
-const initialValues = {
-  [form.clammyPeripherals.name]: "",
-  [form.dehydration.name]: "",
-  [form.heartRate.name]: "",
-  [form.isCirculationAbnormal.name]: "",
-  [form.temperature.name]: "",
-  [form.weakIrregularPulse.name]: "",
-  [form.hemorrhage.name]: "",
-};
+const initialValues = getInitialValues(form);
 type Prop = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
 };
 
 const options = [
-  { label: "Yes", value: "true" },
-  { label: "No", value: "false" },
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
 ];
 
 export const BloodCirculationForm = ({ onSubmit }: Prop) => {
-  const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("no");
+  const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("");
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, triageResult, aggregateOrCondition, conditions } =
     useConditions();
@@ -135,7 +128,7 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
         disabled={disableField(form.isCirculationAbnormal.name)}
       />
       <br />
-      {isCirculationAbnormal == "true" && (
+      {isCirculationAbnormal == YES && (
         <>
           <FieldsContainer>
             <RadioGroupInput
@@ -176,7 +169,7 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
             />
           </FieldsContainer>
           <FieldsContainer>
-            <RadioGroupInput
+            {/* <RadioGroupInput
               disabled={disableField(form.temperature.name)}
               name={form.temperature.name}
               label={form.temperature.label}
@@ -184,7 +177,7 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
               getValue={(value) =>
                 updateConditions(form.temperature.name, value)
               }
-            />
+            /> */}
             <RadioGroupInput
               disabled={disableField(form.hemorrhage.name)}
               name={form.hemorrhage.name}
