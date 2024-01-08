@@ -25,7 +25,8 @@ export default function TriageWorkFlow() {
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
 
-  const handlePersistentPain = () => {
+  const handlePersistentPain = (values: any) => {
+    mutate({ encounter: encounters.VITALS, obs: values });
     successDialog({
       title: "Triage Completed",
       text: "",

@@ -1,5 +1,6 @@
 "use client";
 import { SearchContainer } from "@/app/registration/search/components";
+import { useNavigation } from "@/hooks";
 import { NavigationBar, WrapperBox } from "shared-ui/src";
 
 const results = [
@@ -18,6 +19,7 @@ const results = [
 ];
 
 export const NavBar = () => {
+  const { navigateTo } = useNavigation();
   const search = (
     <WrapperBox
       sx={{
@@ -33,7 +35,7 @@ export const NavBar = () => {
 
   return (
     <>
-      <NavigationBar search={search} />
+      <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />
     </>
   );
 };

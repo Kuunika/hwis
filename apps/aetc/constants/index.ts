@@ -4,10 +4,11 @@ export const encounters = {
   SOCIAL_HISTORY: "ba063f0e-8d80-11d8-abbb-0024217bb78e",
   REFERRAL: "ba068946-8d80-11d8-abbb-0024217bb78e",
   BLOOD_CIRCULATION: "514ffff2-019e-4b3e-a85b-0df3dbd43228",
-  CONSCIOUSNESS: "bbf097b8-dbfe-40e1-bf3d-8e6b6f3c5e50",
+  CONSCIOUSNESS: "42bfe0d5-d05d-49d4-81d1-7e760d2ac003",
+  PERSISTENT_PAIN: "5af651a4-de23-4a6e-84c4-60d7f98be243",
 };
 
-export const AETC_VISIT_TYPE = "201f18d5-58e8-40ce-bbcc-ca71a3b3bb0b";
+export const AETC_VISIT_TYPE = "05217c3a-ec65-45b1-b113-ad8189e2acbc";
 export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
 
@@ -38,7 +39,7 @@ export const concepts = {
   STRIDOR: "dd4aeabb-3c54-4aac-b55b-af84bc00c013",
   REDUCED_LEVEL_CONSCIOUSNESS: "ac645562-9ccd-468c-9565-d73af2e68c2b",
   OXYGEN_STATS_90_92: "e01064d7-01db-4780-af4d-ca25a7606e7b",
-  RESPIRATORY_RATE_9_21_30: "596ed0cf-55e6-4eb7-b6ec-b751d36cba1a=",
+  RESPIRATORY_RATE_9_21_30: "596ed0cf-55e6-4eb7-b6ec-b751d36cba1a",
 
   YES: "b9a0bbfc-8d80-11d8-abbb-0024217bb78e",
   NO: "b9a0bd28-8d80-11d8-abbb-0024217bb78e",
@@ -66,6 +67,16 @@ export const concepts = {
   RELIGION: "b9d864ee-8d80-11d8-abbb-0024217bb78e",
   HIGHEST_EDUCATION: "b9da5fa6-8d80-11d8-abbb-0024217bb78e",
   METHOD_OF_TRANSPORTATION: "b9c3ae32-8d80-11d8-abbb-0024217bb78e",
+
+  // persistent pain
+
+  ACTIVE_SEIZURES: "5fab08da-9427-46fc-adab-997ab0a50b9e",
+  FOCAL_NEUROLOGICAL: "b9a10ae4-8d80-11d8-abbb-0024217bb78e",
+  HEADACHE: "b9d81020-8d80-11d8-abbb-0024217bb78e",
+  WEAKNESS: "b9b122f8-8d80-11d8-abbb-0024217bb78e",
+  SEVERE_PAIN: "b9db0d3e-8d80-11d8-abbb-0024217bb78e",
+  CONFUSION: "b9b4e10e-8d80-11d8-abbb-0024217bb78e",
+  MODERATE_PAIN: "3d912c36-3a41-419b-862e-d4693a9a8cbf",
 };
 
 export const triageResult = {

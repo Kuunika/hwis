@@ -8,41 +8,42 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
-import { notify, successDialog } from "@/helpers";
+import { getInitialValues, notify, successDialog } from "@/helpers";
+import { NO, YES, concepts } from "@/constants";
 
 const form = {
   activeSeizures: {
-    name: "activeSeizures",
+    name: concepts.ACTIVE_SEIZURES,
     label: "Active Seizures",
   },
   focalNeurological: {
-    name: "focalNeurological",
+    name: concepts.FOCAL_NEUROLOGICAL,
     label: "focal neurologic findings",
   },
   headache: {
-    name: "headache",
+    name: concepts.HEADACHE,
     label: "Headache",
   },
   weakness: {
-    name: "weakness",
+    name: concepts.WEAKNESS,
     label: "Weakness",
   },
   confusion: {
-    name: "confusion",
+    name: concepts.CONFUSION,
     label: "Confusion",
   },
   severePain: {
-    name: "severePain",
+    name: concepts.SEVERE_PAIN,
     label: "Severe Pain",
   },
   moderatePain: {
-    name: "moderatePain",
+    name: concepts.MODERATE_PAIN,
     label: "moderate pain or a reason to be seen in under four hours",
   },
 };
 
 type Prop = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
 };
 
 const schema = Yup.object().shape({
@@ -61,14 +62,11 @@ const schema = Yup.object().shape({
     .label(form.focalNeurological.label),
 });
 
-const initialsValues = {
-  concern: "",
-  moderate: "",
-};
+const initialsValues = getInitialValues(form);
 
 const options = [
-  { label: "Yes", value: "true" },
-  { label: "No", value: "false" },
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
 ];
 export const PersistentPainForm = ({ onSubmit }: Prop) => {
   const { updateConditions, triageResult } = useConditions();

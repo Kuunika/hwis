@@ -8,7 +8,7 @@ export const addObservation = () => {
   const addData = async (obsData: any) => {
     const visit = new PatientVisitService(new Date().toISOString());
 
-    await visit.loadPatient("19951df0-a7e9-45ec-8d1e-dc1b5a7a4769");
+    await visit.loadPatient("099d4e20-7f36-4721-9e47-3be22e6c121e");
 
     const result = await visit.startVisit(
       AETC_VISIT_TYPE,
