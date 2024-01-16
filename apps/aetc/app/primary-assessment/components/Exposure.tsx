@@ -1,6 +1,9 @@
 import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
+  FieldsContainer,
+  FormFieldContainer,
+  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   MainTypography,
@@ -64,38 +67,44 @@ export const Exposure = ({ onSubmit }: Props) => {
       submitButtonText="submit"
     >
       <FormValuesListener getValues={setFormValues} />
-      <TextInputField
-        name={form.temperatureInfo.name}
-        label={form.temperatureInfo.label}
-        id={form.temperatureInfo.name}
-      />
-      <RadioGroupInput
-        name={form.skinRashInfo.name}
-        label={form.skinRashInfo.label}
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
-      />
-      {formValues[form.skinRashInfo.name] == "yes" && (
-        <>
-          <NotificationContainer
-            message="(Diagram) location (Body part and exact site) pop up image to appear where the
-            user selects the location"
-          />
 
+      <FormFieldContainerLayout last={true} title="Temperature and Rash">
+        <FieldsContainer>
           <TextInputField
-            name={form.rashDescription.name}
-            label={form.rashDescription.label}
-            id={form.rashDescription.name}
+            sx={{ width: "100%" }}
+            name={form.temperatureInfo.name}
+            label={form.temperatureInfo.label}
+            id={form.temperatureInfo.name}
           />
-        </>
-      )}
-      <TextInputField
-        name={form.additionalNotes.name}
-        label={form.additionalNotes.label}
-        id={form.additionalNotes.name}
-      />
+          <RadioGroupInput
+            name={form.skinRashInfo.name}
+            label={form.skinRashInfo.label}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
+          />
+        </FieldsContainer>
+        {formValues[form.skinRashInfo.name] == "yes" && (
+          <>
+            <NotificationContainer
+              message="(Diagram) location (Body part and exact site) pop up image to appear where the
+            user selects the location"
+            />
+
+            <TextInputField
+              name={form.rashDescription.name}
+              label={form.rashDescription.label}
+              id={form.rashDescription.name}
+            />
+          </>
+        )}
+        <TextInputField
+          name={form.additionalNotes.name}
+          label={form.additionalNotes.label}
+          id={form.additionalNotes.name}
+        />
+      </FormFieldContainerLayout>
     </FormikInit>
   );
 };
