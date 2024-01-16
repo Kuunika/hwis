@@ -3,6 +3,7 @@ import { NO, YES, concepts } from "@/constants";
 import React, { useState } from "react";
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   RadioGroupInput,
@@ -194,13 +195,16 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
     >
       <FormValuesListener getValues={setFormValues} />
-      <FieldsContainer>
-        <RadioGroupInput
-          name={form.isPatientBreathing.name}
-          label={form.isPatientBreathing.label}
-          options={radioOptions}
-        />
-      </FieldsContainer>
+
+      <FormFieldContainerLayout title="Breathing">
+        <FieldsContainer>
+          <RadioGroupInput
+            name={form.isPatientBreathing.name}
+            label={form.isPatientBreathing.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+      </FormFieldContainerLayout>
       {formValues[form.isPatientBreathing.name] == NO && (
         <>
           <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
@@ -234,119 +238,130 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       )}
       {formValues[form.isPatientBreathing.name] == YES && (
         <>
-          <FieldsContainer>
-            <TextInputField
-              name={form.respiratoryRate.name}
-              label={form.respiratoryRate.label}
-              id={form.respiratoryRate.name}
-            />
-            <TextInputField
-              name={form.oxygenSaturation.name}
-              label={form.oxygenSaturation.label}
-              id={form.oxygenSaturation.name}
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.oxygenNeeded.name}
-              label={form.oxygenNeeded.label}
-              options={radioOptions}
-            />
+          <FormFieldContainerLayout title="Respiratory and Oxygen">
+            <FieldsContainer>
+              <TextInputField
+                sx={{ m: 0 }}
+                name={form.respiratoryRate.name}
+                label={form.respiratoryRate.label}
+                id={form.respiratoryRate.name}
+              />
+              <TextInputField
+                name={form.oxygenSaturation.name}
+                label={form.oxygenSaturation.label}
+                id={form.oxygenSaturation.name}
+              />
+            </FieldsContainer>
+            <br />
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.oxygenNeeded.name}
+                label={form.oxygenNeeded.label}
+                options={radioOptions}
+              />
+              <RadioGroupInput
+                name={form.oxygenSource.name}
+                label={form.oxygenSource.label}
+                options={sourceOxygen}
+              />
+            </FieldsContainer>
             <TextInputField
               name={form.oxygenGiven.name}
               label={form.oxygenGiven.label}
               id={form.oxygenGiven.name}
+              sx={{ width: "100%", m: 0 }}
             />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.oxygenSource.name}
-              label={form.oxygenSource.label}
-              options={sourceOxygen}
-            />
+            <br />
+            <br />
             <SearchComboBox
               name={form.deviceUsed.name}
               label={form.deviceUsed.label}
               options={deviceUsed}
               multiple={false}
             />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.isTracheaCentral.name}
-              label={form.isTracheaCentral.label}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.chestWallAbnormality.name}
-              label={form.chestWallAbnormality.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-          {formValues[form.isTracheaCentral.name] == NO && (
+            <br />
+          </FormFieldContainerLayout>
+
+          <FormFieldContainerLayout last={true} title="Trachea and Chest">
             <FieldsContainer>
-              <>
-                <RadioGroupInput
-                  name={form.deviationSide.name}
-                  label={form.deviationSide.label}
-                  options={[
-                    { label: "Left", value: "left" },
-                    { label: "Right", value: "right" },
-                  ]}
-                />
-              </>
+              <RadioGroupInput
+                name={form.isTracheaCentral.name}
+                label={form.isTracheaCentral.label}
+                options={radioOptions}
+              />
+              <RadioGroupInput
+                name={form.chestWallAbnormality.name}
+                label={form.chestWallAbnormality.label}
+                options={radioOptions}
+              />
             </FieldsContainer>
-          )}
-          {formValues[form.chestWallAbnormality.name] == YES && (
-            <>
-              <br />
-              <NotificationContainer message="Diagram to select area" />
-
-              <br />
+            {formValues[form.isTracheaCentral.name] == NO && (
               <FieldsContainer>
-                <SearchComboBox
-                  name={form.descriptionAbnormality.name}
-                  label={form.descriptionAbnormality.label}
-                  options={descriptionOfAbnormality}
-                />
-                {formValues[form.descriptionAbnormality.name] == "other" && (
-                  <FieldsContainer>
-                    <TextInputField
-                      name={form.descriptionAbnormality.name}
-                      label={form.descriptionAbnormality.label}
-                      id={form.descriptionAbnormality.name}
-                    />
-                  </FieldsContainer>
-                )}
+                <>
+                  <RadioGroupInput
+                    name={form.deviationSide.name}
+                    label={form.deviationSide.label}
+                    options={[
+                      { label: "Left", value: "left" },
+                      { label: "Right", value: "right" },
+                    ]}
+                  />
+                </>
               </FieldsContainer>
-            </>
-          )}
+            )}
+            {formValues[form.chestWallAbnormality.name] == YES && (
+              <>
+                <br />
+                <NotificationContainer message="Diagram to select area" />
 
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.chestExpansion.name}
-              label={form.chestExpansion.label}
-              options={[
-                { label: "Normal", value: "normal" },
-                { label: "Reduced", value: "reduced" },
-              ]}
-            />
-            <RadioGroupInput
-              name={form.percussion.name}
-              label={form.percussion.label}
-              options={[
-                { label: "Normal", value: "normal" },
-                { label: "Abnormal", value: "abnormal" },
-              ]}
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <TextInputField
-              name={form.additionalNotes.name}
-              label={form.additionalNotes.label}
-              id={form.additionalNotes.name}
-            />
-          </FieldsContainer>
+                <br />
+                <FieldsContainer>
+                  <SearchComboBox
+                    name={form.descriptionAbnormality.name}
+                    label={form.descriptionAbnormality.label}
+                    options={descriptionOfAbnormality}
+                  />
+                  {formValues[form.descriptionAbnormality.name] == "other" && (
+                    <FieldsContainer>
+                      <TextInputField
+                        name={form.descriptionAbnormality.name}
+                        label={form.descriptionAbnormality.label}
+                        id={form.descriptionAbnormality.name}
+                      />
+                    </FieldsContainer>
+                  )}
+                </FieldsContainer>
+              </>
+            )}
+            <br />
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.chestExpansion.name}
+                label={form.chestExpansion.label}
+                options={[
+                  { label: "Normal", value: "normal" },
+                  { label: "Reduced", value: "reduced" },
+                ]}
+              />
+              <RadioGroupInput
+                name={form.percussion.name}
+                label={form.percussion.label}
+                options={[
+                  { label: "Normal", value: "normal" },
+                  { label: "Abnormal", value: "abnormal" },
+                ]}
+              />
+            </FieldsContainer>
+            <br />
+            <FieldsContainer>
+              <TextInputField
+                sx={{ m: 0, width: "100%" }}
+                name={form.additionalNotes.name}
+                label={form.additionalNotes.label}
+                id={form.additionalNotes.name}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
         </>
       )}
     </FormikInit>
