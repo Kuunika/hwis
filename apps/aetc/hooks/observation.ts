@@ -46,11 +46,13 @@ export const addObservation = () => {
 };
 
 const mappedData = (vitals: any) => {
-  return Object.keys(vitals).map((vital) => {
-    return {
-      concept: vital,
-      value: vitals[vital],
-      obsDatetime: "2023-11-20",
-    };
-  });
+  return Object.keys(vitals)
+    .map((vital) => {
+      return {
+        concept: vital,
+        value: vitals[vital],
+        obsDatetime: "2023-11-20",
+      };
+    })
+    .filter((d) => d.value);
 };

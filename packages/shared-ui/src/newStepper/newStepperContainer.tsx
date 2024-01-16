@@ -1,6 +1,7 @@
 import { styled } from "@mui/material/styles";
 import { FaAngleDown } from "react-icons/fa";
 import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
+import { FaAngleLeft } from "react-icons/fa";
 import MuiAccordionSummary, {
   AccordionSummaryProps,
 } from "@mui/material/AccordionSummary";
@@ -66,21 +67,75 @@ export function NewStepperContainer({
 }: IProps) {
   return (
     <MainGrid container spacing={5}>
-      <MainGrid item lg={4}>
-        <MainPaper elevation={0} sx={{ width: "100%", p: "1ch" }}>
-          <MainTypography variant="h4">{title}</MainTypography>
+      <MainGrid item lg={3}>
+        <MainPaper elevation={0} sx={{ p: "1ch", width: "288px" }}>
+          <MainTypography
+            sx={{
+              fontFamily: "Inter",
+              fontSize: "20px",
+              fontWeight: 600,
+              lineHeight: "24px",
+              letterSpacing: "0em",
+              textAlign: "left",
+              ml: "2ch",
+              my: "2ch",
+            }}
+          >
+            {title}
+          </MainTypography>
           <NewStepper steps={steps} active={active} />
         </MainPaper>
       </MainGrid>
       <MainGrid item lg={8}>
         <WrapperBox width={"100%"}>
+          <WrapperBox display={"flex"}>
+            <MainTypography
+              sx={{
+                width: "24px",
+                height: "24px",
+                fontSize: "20px",
+                fontWeight: 400,
+              }}
+            >
+              <FaAngleLeft />
+            </MainTypography>
+            <MainTypography
+              sx={{
+                fontFamily: "Inter",
+                fontSize: "14px",
+                fontWeight: 400,
+                lineHeight: "21px",
+                letterSpacing: "0em",
+                textAlign: "left",
+              }}
+            >
+              Back to profile
+            </MainTypography>
+          </WrapperBox>
           {children.map((child, key) => {
             return (
               <Accordion
+                sx={{
+                  my: "2ch",
+                  backgroundColor: "whitesmoke",
+                  borderStyle: "none",
+                  "& .MuiAccordionSummary-root": {
+                    backgroundColor: "whitesmoke",
+                    display: "flex",
+                    flexDirection: "row",
+                    borderBottom: "solid 0.2ch #B3B3B3",
+                  },
+                  "& .css-1betqn-MuiAccordionSummary-content p": {
+                    fontFamily: "Inter",
+                    fontSize: "24px",
+                    fontWeight: 700,
+                    lineHeight: "29px",
+                    letterSpacing: "0em",
+                    textAlign: "left",
+                  },
+                }}
                 onChange={() => {
-                  console.log({ setActive });
                   if (setActive) {
-                    console.log("first");
                     setActive(key);
                   }
                 }}

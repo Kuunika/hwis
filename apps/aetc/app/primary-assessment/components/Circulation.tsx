@@ -1,5 +1,7 @@
 "use client";
 import { NotificationContainer } from "@/components";
+import { NO, YES, concepts } from "@/constants";
+import { getInitialValues } from "@/helpers";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -16,102 +18,102 @@ type Prop = {
 };
 const form = {
   bleedingInfo: {
-    name: "bleedingInfo",
+    name: concepts.IS_PATIENT_ACTIVELY_BLEEDING,
     label: "Is the patient actively bleeding",
   },
   pulseInfo: {
-    name: "pulseInfo",
+    name: concepts.IS_THE_PATIENT_HAVE_PULSE,
     label: "Is the patient have a pulse",
   },
   pulseRate: {
-    name: "pulseRate",
+    name: concepts.PULSE_RATE_WEAK,
     label: "Purse Rate",
   },
   bloodPressureSystolic: {
-    name: "bloodPressureSystolic",
+    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
     label: "Blood Pressure Systolic",
   },
   bloodPressureDiastolic: {
-    name: "bloodPressureDiastolic",
+    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
     label: "Blood Pressure Diastolic",
   },
   intravenousAccess: {
-    name: "intravenousAccess",
+    name: concepts.PATIENT_INTRAVENOUS,
     label: "Does the patient need  intravenous access",
   },
   traumatizedInfo: {
-    name: "traumatizedInfo",
+    name: concepts.IS_PATIENT_TRAUMATIZED,
     label: "Is the patient traumatized?",
   },
 
   abnormalitiesInfo: {
-    name: "abnormalitiesInfo",
+    name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is there any other abnormalities?",
   },
   capillaryInfo: {
-    name: "capillaryInfo",
+    name: concepts.CAPILLARY_REFILL_TIME,
     label: "Capillary refill time",
   },
-  diastolicInfo: {
-    name: "diastolicInfo",
-    label: "Diastolic value",
-  },
-  interavenousInfo: {
-    name: "interavenousInfo",
-    label: "Size of interavenous catheter",
-  },
+  // diastolicInfo: {
+  //   name: "diastolicInfo",
+  //   label: "Diastolic value",
+  // },
+  // interavenousInfo: {
+  //   name: "interavenousInfo",
+  //   label: "Size of interavenous catheter",
+  // },
   pelvisInfo: {
-    name: "pelvisInfo",
+    name: concepts.IS_PELVIS_STABLE,
     label: "Is the pelvis stable?",
   },
   abdnomenDistention: {
-    name: "abdnomenDistention",
+    name: concepts.IS_ABDONORMINAL_DISTENTION,
     label: "Is there abdominal distention?",
   },
 
   mucousMembranesInfo: {
-    name: "mucousMembranesInfo",
+    name: concepts.MUCOUS_MEMBRANES,
     label: "Mucous membranes",
   },
 
   catheterInfo: {
-    name: "catheterInfo",
+    name: concepts.SIZE_OF_CATHETER,
     label: "Size of interaveneous catheter",
   },
   femurAndTibiaNormalInfo: {
-    name: "femurAndTibiaNormalInfo",
+    name: concepts.IS_FEMUR_TIBIA_NORMAL,
     label: "is the femur and tibia normal?",
   },
   bleedingActionDone: {
-    name: "bleedingActionDone",
+    name: concepts.ACTION_DONE,
     label: "Action done",
   },
-  sizeOfIntravenousCatheter: {
-    name: "sizeOfIntravenousCatheter",
-    label: "Size of intravenous catheter",
-  },
+  // sizeOfIntravenousCatheter: {
+  //   name: "sizeOfIntravenousCatheter",
+  //   label: "Size of intravenous catheter",
+  // },
   anyOtherAbnormalities: {
-    name: "anyOtherAbnormalities",
+    name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is There Any Other Abnormalites",
   },
   anyOtherAbnormalitiesOnAbdomen: {
-    name: "anyOtherAbnormalitiesOnAbdomen",
+    name: concepts.IS_THERE_OTHER_OBDONORMALITIES,
     label: "Is There Any Other Abnormalities on the Abdomen",
   },
   additionalNotes: {
-    name: "additionalNotes",
+    name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
   assessPeripheries: {
-    name: "assessPeripheries",
+    name: concepts.ASSESS_PERIPHERIES,
     label: "Assess Peripheries",
   },
   bloodPressureMeasured: {
-    name: "bloodPressureMeasured",
+    name: concepts.BLOOD_PRESSURE_MEASURED,
     label: "Blood Pressure Measured",
   },
   reasonNotRecorded: {
-    name: "reasonNotRecorded",
+    name: concepts.REASON_NOT_RECORDED,
     label: "Reason BP Is unrecordable",
   },
 };
@@ -119,9 +121,9 @@ const form = {
 const schema = yup.object({
   [form.bleedingInfo.name]: yup
     .string()
-    .required()
+
     .label(form.bleedingInfo.label),
-  [form.pulseInfo.name]: yup.string().required().label(form.pulseInfo.label),
+  [form.pulseInfo.name]: yup.string().label(form.pulseInfo.label),
 
   [form.pulseRate.name]: yup.string().label(form.pulseRate.label),
   [form.bleedingActionDone.name]: yup
@@ -136,50 +138,50 @@ const schema = yup.object({
     .label(form.bloodPressureDiastolic.label),
   [form.intravenousAccess.name]: yup
     .string()
-    .required()
+
     .label(form.intravenousAccess.label),
   [form.traumatizedInfo.name]: yup
     .string()
-    .required()
+
     .label(form.traumatizedInfo.label),
 
   [form.abnormalitiesInfo.name]: yup
     .string()
-    .required()
+
     .label(form.abnormalitiesInfo.label),
   [form.capillaryInfo.name]: yup
     .string()
-    .required()
+
     .label(form.capillaryInfo.label),
   [form.abdnomenDistention.name]: yup
     .string()
-    .required()
-    .label(form.abdnomenDistention.label),
-  [form.diastolicInfo.name]: yup
-    .string()
-    .required()
-    .label(form.diastolicInfo.label),
 
-  [form.interavenousInfo.name]: yup
-    .string()
-    .required()
-    .label(form.interavenousInfo.label),
-  [form.pelvisInfo.name]: yup.string().required().label(form.pelvisInfo.label),
+    .label(form.abdnomenDistention.label),
+  // [form.diastolicInfo.name]: yup
+  //   .string()
+  //   .required()
+  //   .label(form.diastolicInfo.label),
+
+  // [form.interavenousInfo.name]: yup
+  //   .string()
+  //   .required()
+  //   .label(form.interavenousInfo.label),
+  [form.pelvisInfo.name]: yup.string().label(form.pelvisInfo.label),
   [form.mucousMembranesInfo.name]: yup
     .string()
-    .required()
+
     .label(form.mucousMembranesInfo.label),
   [form.catheterInfo.name]: yup
     .string()
-    .required()
+
     .label(form.catheterInfo.label),
   [form.femurAndTibiaNormalInfo.name]: yup
     .string()
-    .required()
+
     .label(form.femurAndTibiaNormalInfo.label),
-  [form.sizeOfIntravenousCatheter.name]: yup
-    .string()
-    .label(form.sizeOfIntravenousCatheter.label),
+  // [form.sizeOfIntravenousCatheter.name]: yup
+  //   .string()
+  //   .label(form.sizeOfIntravenousCatheter.label),
   [form.anyOtherAbnormalities.name]: yup
     .string()
     .label(form.anyOtherAbnormalities.label),
@@ -192,28 +194,7 @@ const schema = yup.object({
     .label(form.assessPeripheries.label),
 });
 
-const initialValues = {
-  bleedingInfo: "",
-  pulseInfo: "",
-  pressureInfo: "",
-  pulseRate: "",
-  bloodPresure: "",
-  intravenousAcces: "",
-  traumatizedInfo: "",
-  abdnomenDistention: "",
-  distentionInfo: "",
-  abnormalitiesInfo: "",
-  capillaryInfo: "",
-  diastolicInfo: "",
-  abdnomenInfo: "",
-  interavenousInfo: "",
-  pelvisInfo: "",
-  mucousMembranesInfo: "",
-  catheterInfo: "",
-  meanArterialPressureInfo: "",
-  femurAndTibiaNormalInfo: "",
-  assessPeripheries: "",
-};
+const initialValues = getInitialValues(form);
 
 const sizeOfCatheter = [
   { label: "14G", value: "14G" },
@@ -243,6 +224,12 @@ const capillaryRefillTimes = [
   { label: "3 seconds", value: "3 seconds" },
   { label: "More than 3 seconds", value: "More than 3 seconds" },
 ];
+
+const radioOptions = [
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
+];
+
 export const Circulation = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   return (
@@ -257,21 +244,15 @@ export const Circulation = ({ onSubmit }: Prop) => {
         <RadioGroupInput
           name={form.bleedingInfo.name}
           label={form.bleedingInfo.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
         <RadioGroupInput
           name={form.pulseInfo.name}
           label={form.pulseInfo.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
       </FieldsContainer>
-      {formValues[form.bleedingInfo.name] == "yes" && (
+      {formValues[form.bleedingInfo.name] == YES && (
         <>
           <br />
           <NotificationContainer message="Apply pressure" />
@@ -285,7 +266,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
         </>
       )}
 
-      {formValues[form.pulseInfo.name] == "yes" && (
+      {formValues[form.pulseInfo.name] == YES && (
         <>
           <br />
           <FieldsContainer>
@@ -303,7 +284,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
         </>
       )}
 
-      {formValues[form.pulseInfo.name] == "no" && (
+      {formValues[form.pulseInfo.name] == NO && (
         <>
           <NotificationContainer message="Start cardiopulmonary resuscitation" />
         </>
@@ -372,21 +353,15 @@ export const Circulation = ({ onSubmit }: Prop) => {
         <RadioGroupInput
           name={form.intravenousAccess.name}
           label={form.intravenousAccess.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
         <RadioGroupInput
           name={form.traumatizedInfo.name}
           label={form.traumatizedInfo.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
       </FieldsContainer>
-      {formValues[form.intravenousAccess.name] == "yes" && (
+      {formValues[form.intravenousAccess.name] == YES && (
         <>
           <br />
           <FieldsContainer>
@@ -400,33 +375,27 @@ export const Circulation = ({ onSubmit }: Prop) => {
           <br />
         </>
       )}
-      {formValues[form.traumatizedInfo.name] == "yes" && (
+      {formValues[form.traumatizedInfo.name] == YES && (
         <>
           <FieldsContainer>
             <RadioGroupInput
               name={form.pelvisInfo.name}
               label={form.pelvisInfo.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              options={radioOptions}
             />
             <RadioGroupInput
               name={form.femurAndTibiaNormalInfo.name}
               label={form.femurAndTibiaNormalInfo.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              options={radioOptions}
             />
           </FieldsContainer>
 
-          {formValues[form.pelvisInfo.name] == "yes" && (
+          {formValues[form.pelvisInfo.name] == YES && (
             <>
               <NotificationContainer message="apply pelvic binder" />
             </>
           )}
-          {formValues[form.femurAndTibiaNormalInfo.name] == "no" && (
+          {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
             <>
               <br />
               <NotificationContainer
@@ -443,22 +412,16 @@ export const Circulation = ({ onSubmit }: Prop) => {
         <RadioGroupInput
           name={form.abdnomenDistention.name}
           label={form.abdnomenDistention.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
         <RadioGroupInput
           name={form.anyOtherAbnormalitiesOnAbdomen.name}
           label={form.anyOtherAbnormalitiesOnAbdomen.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
       </FieldsContainer>
 
-      {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == "yes" && (
+      {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
         <>
           <NotificationContainer
             message="Picture of abdomen to select areas of abnormalites with the options
@@ -473,14 +436,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
         <RadioGroupInput
           name={form.abnormalitiesInfo.name}
           label={form.abnormalitiesInfo.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
       </FieldsContainer>
 
-      {formValues[form.abnormalitiesInfo.name] == "yes" && (
+      {formValues[form.abnormalitiesInfo.name] == YES && (
         <>
           <br />
 

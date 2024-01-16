@@ -1,96 +1,87 @@
 import { NotificationContainer } from "@/components";
+import { NO, YES, concepts } from "@/constants";
 import React, { useState } from "react";
 import {
   FieldsContainer,
   FormValuesListener,
   FormikInit,
-  MainTypography,
   RadioGroupInput,
   SearchComboBox,
-  SelectInputField,
   TextInputField,
 } from "shared-ui/src";
 import * as Yup from "yup";
 
 const form = {
   isPatientBreathing: {
-    name: "isPatientBreathing",
+    name: concepts.IS_BREATHING_ABNORMAL,
     label: "Is Patient Breathing",
   },
   startTimeIntervention: {
-    name: "startTimeIntervention",
+    name: concepts.START_TIME,
     label: "Start Time",
   },
   finishTimeIntervention: {
-    name: "finishTimeIntervention",
+    name: concepts.END_TIME,
     label: "End Time",
   },
   deviceForIntervention: {
-    name: "deviceForIntervention",
+    name: concepts.DEVICE_USED,
     label: "Device used for intervention",
   },
   respiratoryRate: {
-    name: "respiratoryRate",
+    name: concepts.RESPIRATORY_RATE,
     label: "Respiratory Rate",
   },
   oxygenSaturation: {
-    name: "oxygenSaturation",
+    name: concepts.OXYGEN_SATURATION,
     label: "Oxygen Saturation",
   },
   oxygenNeeded: {
-    name: "oxygenNeeded",
+    name: concepts.PATIENT_NEED_OXYGEN,
     label: "Patient Need Oxygen",
   },
   oxygenGiven: {
-    name: "oxygenGiven",
+    name: concepts.OXYGEN_GIVEN,
     label: "Oxygen Given",
   },
   oxygenSource: {
-    name: "oxygenSource",
+    name: concepts.OXYGEN_SOURCE,
     label: "Oxygen Source",
   },
   deviceUsed: {
-    name: "deviceUsed",
+    name: concepts.DEVICE_USED,
     label: "Device Used",
   },
   isTracheaCentral: {
-    name: "isTracheaCentral",
+    name: concepts.IS_TRACHEA_CENTRAL,
     label: "Is Trachea Central",
   },
   deviationSide: {
-    name: "deviationSide",
+    name: concepts.SIDE_DEVIATED,
     label: "Which side is it deviated to",
   },
   chestWallAbnormality: {
-    name: "chestWallAbnormality",
+    name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
   },
   chestExpansion: {
-    name: "chestExpansion",
+    name: concepts.CHEST_EXPANSION,
     label: "Chest Expansion",
   },
-  surgicalEmphysemaLocation: {
-    name: "surgicalEmphysemaLocation",
-    label: "Surgical Emphysema Location",
-  },
-  breathSounds: {
-    name: "breathSounds",
-    label: "Additional Notes",
-  },
   additionalNotes: {
-    name: "additionalNotes",
+    name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
   descriptionAbnormality: {
-    name: "descriptionAbnormality",
+    name: concepts.DESCRIPTION,
     label: "Description of Abnormality",
   },
-  otherAbnormality: {
-    name: "otherAbnormality",
-    label: "Other Abnormality",
-  },
+  // otherAbnormality: {
+  //   name: "otherAbnormality",
+  //   label: "Other Abnormality",
+  // },
   percussion: {
-    name: "percussion",
+    name: concepts.PERCUSSION,
     label: "Percussion",
   },
 };
@@ -116,7 +107,7 @@ const schema = Yup.object().shape({
   [form.deviceUsed.name]: Yup.string().label(form.deviceUsed.label),
   [form.isTracheaCentral.name]: Yup.string().label(form.isTracheaCentral.label),
   [form.deviationSide.name]: Yup.string().label(form.deviationSide.label),
-  [form.otherAbnormality.name]: Yup.string().label(form.otherAbnormality.label),
+  // [form.otherAbnormality.name]: Yup.string().label(form.otherAbnormality.label),
   [form.percussion.name]: Yup.string().label(form.percussion.label),
   [form.descriptionAbnormality.name]: Yup.string().label(
     form.descriptionAbnormality.label
@@ -128,7 +119,7 @@ const schema = Yup.object().shape({
 
 const initialsValues = {};
 type Prop = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
 };
 
 const sourceOxygen = [
@@ -188,6 +179,11 @@ const descriptionOfAbnormality = [
   { id: "Surgical Emphayema", label: "Surgical Emphayema" },
   { id: "Rib Deformity", label: "Rib Deformity" },
 ];
+
+const radioOptions = [
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
+];
 export const BreathingForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
 
@@ -202,13 +198,10 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         <RadioGroupInput
           name={form.isPatientBreathing.name}
           label={form.isPatientBreathing.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          options={radioOptions}
         />
       </FieldsContainer>
-      {formValues[form.isPatientBreathing.name] == "no" && (
+      {formValues[form.isPatientBreathing.name] == NO && (
         <>
           <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
 
@@ -239,7 +232,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
           </FieldsContainer>
         </>
       )}
-      {formValues[form.isPatientBreathing.name] == "yes" && (
+      {formValues[form.isPatientBreathing.name] == YES && (
         <>
           <FieldsContainer>
             <TextInputField
@@ -257,10 +250,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               name={form.oxygenNeeded.name}
               label={form.oxygenNeeded.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              options={radioOptions}
             />
             <TextInputField
               name={form.oxygenGiven.name}
@@ -278,27 +268,22 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               name={form.deviceUsed.name}
               label={form.deviceUsed.label}
               options={deviceUsed}
+              multiple={false}
             />
           </FieldsContainer>
           <FieldsContainer>
             <RadioGroupInput
               name={form.isTracheaCentral.name}
               label={form.isTracheaCentral.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              options={radioOptions}
             />
             <RadioGroupInput
               name={form.chestWallAbnormality.name}
               label={form.chestWallAbnormality.label}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
+              options={radioOptions}
             />
           </FieldsContainer>
-          {formValues[form.isTracheaCentral.name] == "no" && (
+          {formValues[form.isTracheaCentral.name] == NO && (
             <FieldsContainer>
               <>
                 <RadioGroupInput
@@ -312,7 +297,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               </>
             </FieldsContainer>
           )}
-          {formValues[form.chestWallAbnormality.name] == "yes" && (
+          {formValues[form.chestWallAbnormality.name] == YES && (
             <>
               <br />
               <NotificationContainer message="Diagram to select area" />

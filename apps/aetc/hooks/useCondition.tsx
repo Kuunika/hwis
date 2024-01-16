@@ -9,11 +9,10 @@ export const useConditions = () => {
     useState<boolean>(false);
 
   const updateConditions = (prop: string, formValue: string) => {
-    console.log({ formValue });
     if (formValue == "") {
       return;
     }
-    console.log(conditions);
+
     useConditions((values: any) => {
       return { ...values, [prop]: formValue == YES };
     });

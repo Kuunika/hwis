@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import React, { useState } from "react";
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   MainButton,
@@ -96,32 +97,39 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
         </>
       )}
       <FormValuesListener getValues={setFormValues} />
-      <RadioGroupInput
-        name={form.consciousness.name}
-        label={form.consciousness.label}
-        options={options}
-        getValue={(value) => setConsciousness(value)}
-        disabled={disableField(form.consciousness.name)}
-      />
-      <br />
+
+      <FormFieldContainerLayout
+        last={consciousness != YES}
+        title="Consciousness"
+      >
+        <RadioGroupInput
+          name={form.consciousness.name}
+          label={form.consciousness.label}
+          options={options}
+          getValue={(value) => setConsciousness(value)}
+          disabled={disableField(form.consciousness.name)}
+        />
+      </FormFieldContainerLayout>
 
       {consciousness == YES && (
         <>
-          <FieldsContainer>
-            <TextInputField
-              name={form.bloodGlucose.name}
-              label={form.bloodGlucose.label}
-              id={form.bloodGlucose.name}
-              disabled={disableField(form.bloodGlucose.name)}
-            />
-            <TextInputField
-              name={form.gcs.name}
-              label={form.gcs.label}
-              id={form.gcs.name}
-              getValue={checkGcs}
-              disabled={disableField(form.gcs.name)}
-            />
-          </FieldsContainer>
+          <FormFieldContainerLayout last={true} title="Blood Glucose and GCS">
+            <FieldsContainer>
+              <TextInputField
+                name={form.bloodGlucose.name}
+                label={form.bloodGlucose.label}
+                id={form.bloodGlucose.name}
+                disabled={disableField(form.bloodGlucose.name)}
+              />
+              <TextInputField
+                name={form.gcs.name}
+                label={form.gcs.label}
+                id={form.gcs.name}
+                getValue={checkGcs}
+                disabled={disableField(form.gcs.name)}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
         </>
       )}
     </FormikInit>

@@ -6,45 +6,46 @@ import {
   MainTypography,
   RadioGroupInput,
   TextInputField,
-  WrapperBox,
 } from "shared-ui/src";
 import * as yup from "yup";
 import { Box } from "@mui/material";
+import { NO, YES, concepts } from "@/constants";
+import { getInitialValues } from "@/helpers";
 type Props = {
   onSubmit: (values: any) => void;
 };
 const form = {
   eyeOpening: {
-    name: "eyeOpening",
+    name: concepts.EYE_OPENING_RESPONSE,
     label: "Eye Opening Response",
   },
   verbalResponse: {
-    name: "verbalResponse",
+    name: concepts.VERBAL_RESPONSE,
     label: "Best Verbal Response",
   },
   motorResponse: {
-    name: "motorResponse",
+    name: concepts.MOTOR_RESPONSE,
     label: "Best Motor Response",
   },
 
   reactionToLight: {
-    name: "reactionToLight",
+    name: concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT,
     label: "Pupil Size and Reaction To Light",
   },
   focalNeurology: {
-    name: "focalNeurology",
+    name: concepts.FOCAL_NEUROLOGY,
     label: "Focal Neurology",
   },
   postureInfo: {
-    name: "postureInfo",
+    name: concepts.POSTURE,
     label: "Posture",
   },
   bloodGlocose: {
-    name: "bloodGlocose",
+    name: concepts.BLOOD_GLUCOSE,
     label: "Patient’s Random Blood Glucose",
   },
   seizureInfo: {
-    name: "seizureInfo",
+    name: concepts.ACTIVE_SEIZURES,
     label: "Is the patient having Seizures",
   },
 };
@@ -82,17 +83,7 @@ const schema = yup.object({
     .label(form.seizureInfo.label),
 });
 
-const initialValues = {
-  eyeOpening: "",
-  verbalResponse: "",
-  motorResponse: "",
-  totalScore: "",
-  reactionToLight: "",
-  focalNeurology: "",
-  postureInfo: "",
-  bloodGlocose: "",
-  seizureInfo: "",
-};
+const initialValues = getInitialValues(form);
 const sizeOfEyeOpeningResponse = [
   { label: "Spontaneously", value: "4" },
   { label: "To Speech", value: "3" },
@@ -131,7 +122,10 @@ const sizeOfMotorResponse = [
     value: "1",
   },
 ];
-
+const radioOptions = [
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
+];
 export const Disability = ({ onSubmit }: Props) => {
   const [eyeOpeningValue, setEyeOpeningValue] = useState();
   const [verbalResponseValue, setVerbalResponseValue] = useState();
@@ -216,10 +210,7 @@ export const Disability = ({ onSubmit }: Props) => {
       <RadioGroupInput
         name={form.seizureInfo.name}
         label={form.seizureInfo.label}
-        options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ]}
+        options={radioOptions}
       />
     </FormikInit>
   );

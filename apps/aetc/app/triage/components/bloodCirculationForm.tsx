@@ -3,6 +3,7 @@ import { useConditions, useNavigation } from "@/hooks";
 import React, { useState } from "react";
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   RadioGroupInput,
@@ -93,6 +94,8 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
     useConditions();
   const { navigateTo } = useNavigation();
 
+  console.log({ aggregateOrCondition });
+
   const disableField = (formField: string) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
   };
@@ -120,56 +123,69 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
         </>
       )}
       <FormValuesListener getValues={setFormValues} />
-      <RadioGroupInput
-        name={form.isCirculationAbnormal.name}
-        label={form.isCirculationAbnormal.label}
-        options={options}
-        getValue={(value) => setIsCirculationAbnormal(value)}
-        disabled={disableField(form.isCirculationAbnormal.name)}
-      />
+
+      <FormFieldContainerLayout
+        last={isCirculationAbnormal != YES}
+        title="Circulation"
+      >
+        <RadioGroupInput
+          name={form.isCirculationAbnormal.name}
+          label={form.isCirculationAbnormal.label}
+          options={options}
+          getValue={(value) => setIsCirculationAbnormal(value)}
+          disabled={disableField(form.isCirculationAbnormal.name)}
+        />
+      </FormFieldContainerLayout>
       <br />
       {isCirculationAbnormal == YES && (
         <>
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.heartRate.name}
-              label={form.heartRate.label}
-              options={options}
-              disabled={disableField(form.heartRate.name)}
-              getValue={(value) => updateConditions(form.heartRate.name, value)}
-            />
-            <RadioGroupInput
-              name={form.weakIrregularPulse.name}
-              label={form.weakIrregularPulse.label}
-              options={options}
-              disabled={disableField(form.weakIrregularPulse.name)}
-              getValue={(value) =>
-                updateConditions(form.weakIrregularPulse.name, value)
-              }
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              disabled={disableField(form.reducedUrinaryOutput.name)}
-              name={form.reducedUrinaryOutput.name}
-              label={form.reducedUrinaryOutput.label}
-              options={options}
-              getValue={(value) =>
-                updateConditions(form.reducedUrinaryOutput.name, value)
-              }
-            />
-            <RadioGroupInput
-              disabled={disableField(form.clammyPeripherals.name)}
-              name={form.clammyPeripherals.name}
-              label={form.clammyPeripherals.label}
-              options={options}
-              getValue={(value) =>
-                updateConditions(form.clammyPeripherals.name, value)
-              }
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            {/* <RadioGroupInput
+          <FormFieldContainerLayout title="Heart Rate and Pulse">
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.heartRate.name}
+                label={form.heartRate.label}
+                options={options}
+                disabled={disableField(form.heartRate.name)}
+                getValue={(value) =>
+                  updateConditions(form.heartRate.name, value)
+                }
+              />
+              <RadioGroupInput
+                name={form.weakIrregularPulse.name}
+                label={form.weakIrregularPulse.label}
+                options={options}
+                disabled={disableField(form.weakIrregularPulse.name)}
+                getValue={(value) =>
+                  updateConditions(form.weakIrregularPulse.name, value)
+                }
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Reduced Urinary and Clammy Peripherals">
+            <FieldsContainer>
+              <RadioGroupInput
+                disabled={disableField(form.reducedUrinaryOutput.name)}
+                name={form.reducedUrinaryOutput.name}
+                label={form.reducedUrinaryOutput.label}
+                options={options}
+                getValue={(value) =>
+                  updateConditions(form.reducedUrinaryOutput.name, value)
+                }
+              />
+              <RadioGroupInput
+                disabled={disableField(form.clammyPeripherals.name)}
+                name={form.clammyPeripherals.name}
+                label={form.clammyPeripherals.label}
+                options={options}
+                getValue={(value) =>
+                  updateConditions(form.clammyPeripherals.name, value)
+                }
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Hemorrhage and Skin Turgor">
+            <FieldsContainer>
+              {/* <RadioGroupInput
               disabled={disableField(form.temperature.name)}
               name={form.temperature.name}
               label={form.temperature.label}
@@ -178,43 +194,47 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
                 updateConditions(form.temperature.name, value)
               }
             /> */}
-            <RadioGroupInput
-              disabled={disableField(form.hemorrhage.name)}
-              name={form.hemorrhage.name}
-              label={form.hemorrhage.label}
-              options={options}
-              getValue={(value) =>
-                updateConditions(form.hemorrhage.name, value)
-              }
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              disabled={disableField(form.dehydration.name)}
-              name={form.dehydration.name}
-              label={form.dehydration.label}
-              getValue={(value) =>
-                updateConditions(form.dehydration.name, value)
-              }
-              options={options}
-            />
-          </FieldsContainer>
-          {!aggregateOrCondition && Object.keys(conditions).length == 7 && (
+              <RadioGroupInput
+                disabled={disableField(form.hemorrhage.name)}
+                name={form.hemorrhage.name}
+                label={form.hemorrhage.label}
+                options={options}
+                getValue={(value) =>
+                  updateConditions(form.hemorrhage.name, value)
+                }
+              />
+              <RadioGroupInput
+                disabled={disableField(form.dehydration.name)}
+                name={form.dehydration.name}
+                label={form.dehydration.label}
+                getValue={(value) =>
+                  updateConditions(form.dehydration.name, value)
+                }
+                options={options}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
+          {!aggregateOrCondition && Object.keys(conditions).length == 6 && (
             <>
-              <FieldsContainer>
-                <RadioGroupInput
-                  disabled={disableField(form.heartRate5060.name)}
-                  name={form.heartRate5060.name}
-                  label={form.heartRate5060.label}
-                  options={options}
-                />
-                <RadioGroupInput
-                  disabled={disableField(form.temperature3738.name)}
-                  name={form.temperature3738.name}
-                  label={form.temperature3738.label}
-                  options={options}
-                />
-              </FieldsContainer>
+              <FormFieldContainerLayout
+                last={true}
+                title="Heart Rate and Temperature"
+              >
+                <FieldsContainer>
+                  <RadioGroupInput
+                    disabled={disableField(form.heartRate5060.name)}
+                    name={form.heartRate5060.name}
+                    label={form.heartRate5060.label}
+                    options={options}
+                  />
+                  <RadioGroupInput
+                    disabled={disableField(form.temperature3738.name)}
+                    name={form.temperature3738.name}
+                    label={form.temperature3738.label}
+                    options={options}
+                  />
+                </FieldsContainer>
+              </FormFieldContainerLayout>
             </>
           )}
         </>

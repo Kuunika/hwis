@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   RadioGroupInput,
@@ -141,107 +142,128 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
         </>
       )}
       <FormValuesListener getValues={setFormValues} />
-      <FieldsContainer sx={{ width: "100%" }}>
-        <RadioGroupInput
-          name={form.airway.name}
-          label={form.airway.label}
-          getValue={handleIsAirWayCompromised}
-          options={radioOptions}
-          disabled={disableField(form.airway.name)}
-        />
 
-        <RadioGroupInput
-          name={form.breathing.name}
-          label={form.breathing.label}
-          getValue={(value) => setIsBreathingAbnormal(value)}
-          options={radioOptions}
-          disabled={disableField(form.breathing.name)}
-        />
-      </FieldsContainer>
+      <FormFieldContainerLayout
+        last={isBreathingAbnormal != YES}
+        title="Airway and Breathing"
+      >
+        <FieldsContainer sx={{ width: "100%" }}>
+          <RadioGroupInput
+            name={form.airway.name}
+            label={form.airway.label}
+            getValue={handleIsAirWayCompromised}
+            options={radioOptions}
+            disabled={disableField(form.airway.name)}
+          />
+
+          <RadioGroupInput
+            name={form.breathing.name}
+            label={form.breathing.label}
+            getValue={(value) => setIsBreathingAbnormal(value)}
+            options={radioOptions}
+            disabled={disableField(form.breathing.name)}
+          />
+        </FieldsContainer>
+      </FormFieldContainerLayout>
 
       {/* breathing abnormal yes */}
 
       {isBreathingAbnormal == YES && (
         <>
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.oxygenStats.name}
-              label={form.oxygenStats.label}
-              disabled={disableField(form.oxygenStats.name)}
-              getValue={(value) => {
-                updateConditions(form.oxygenStats.name, value);
-              }}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.respiratoryRate.name}
-              label={form.respiratoryRate.label}
-              disabled={disableField(form.respiratoryRate.name)}
-              getValue={(value) => {
-                updateConditions(form.respiratoryRate.name, value);
-              }}
-              options={radioOptions}
-            />
-          </FieldsContainer>
+          <FormFieldContainerLayout title="Oxygen and Respiratory">
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.oxygenStats.name}
+                label={form.oxygenStats.label}
+                disabled={disableField(form.oxygenStats.name)}
+                getValue={(value) => {
+                  updateConditions(form.oxygenStats.name, value);
+                }}
+                options={radioOptions}
+              />
+              <RadioGroupInput
+                name={form.respiratoryRate.name}
+                label={form.respiratoryRate.label}
+                disabled={disableField(form.respiratoryRate.name)}
+                getValue={(value) => {
+                  updateConditions(form.respiratoryRate.name, value);
+                }}
+                options={radioOptions}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
 
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.respiratoryDysfunction.name}
-              disabled={disableField(form.respiratoryDysfunction.name)}
-              label={form.respiratoryDysfunction.label}
-              getValue={(value) => {
-                updateConditions(form.respiratoryDysfunction.name, value);
-              }}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.inabilityToSpeak.name}
-              label={form.inabilityToSpeak.label}
-              disabled={disableField(form.inabilityToSpeak.name)}
-              options={radioOptions}
-              getValue={(value) => {
-                updateConditions(form.inabilityToSpeak.name, value);
-              }}
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.stridor.name}
-              label={form.stridor.label}
-              disabled={disableField(form.stridor.name)}
-              options={radioOptions}
-              getValue={(value) => {
-                updateConditions(form.stridor.name, value);
-              }}
-            />
-            <RadioGroupInput
-              name={form.reducedLevelOfConsciousness.name}
-              label={form.reducedLevelOfConsciousness.label}
-              disabled={disableField(form.reducedLevelOfConsciousness.name)}
-              getValue={(value) => {
-                updateConditions(form.reducedLevelOfConsciousness.name, value);
-              }}
-              options={radioOptions}
-            />
-          </FieldsContainer>
+          <FormFieldContainerLayout title="Exhaustion and Inability to Speak">
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.respiratoryDysfunction.name}
+                disabled={disableField(form.respiratoryDysfunction.name)}
+                label={form.respiratoryDysfunction.label}
+                getValue={(value) => {
+                  updateConditions(form.respiratoryDysfunction.name, value);
+                }}
+                options={radioOptions}
+              />
+              <RadioGroupInput
+                name={form.inabilityToSpeak.name}
+                label={form.inabilityToSpeak.label}
+                disabled={disableField(form.inabilityToSpeak.name)}
+                options={radioOptions}
+                getValue={(value) => {
+                  updateConditions(form.inabilityToSpeak.name, value);
+                }}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
+
+          <FormFieldContainerLayout title="Stridor and Reduced Consciousness">
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.stridor.name}
+                label={form.stridor.label}
+                disabled={disableField(form.stridor.name)}
+                options={radioOptions}
+                getValue={(value) => {
+                  updateConditions(form.stridor.name, value);
+                }}
+              />
+              <RadioGroupInput
+                name={form.reducedLevelOfConsciousness.name}
+                label={form.reducedLevelOfConsciousness.label}
+                disabled={disableField(form.reducedLevelOfConsciousness.name)}
+                getValue={(value) => {
+                  updateConditions(
+                    form.reducedLevelOfConsciousness.name,
+                    value
+                  );
+                }}
+                options={radioOptions}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
         </>
       )}
 
       {finalCondition && (
-        <FieldsContainer>
-          <RadioGroupInput
-            name={form.oxygenSats9092.name}
-            label={form.oxygenSats9092.label}
-            disabled={disableField(form.oxygenSats9092.name)}
-            options={radioOptions}
-          />
-          <RadioGroupInput
-            name={form.respiratoryRate92130.name}
-            label={form.respiratoryRate92130.label}
-            disabled={disableField(form.respiratoryRate92130.name)}
-            options={radioOptions}
-          />
-        </FieldsContainer>
+        <FormFieldContainerLayout
+          last={true}
+          title="Oxygen Stats & Respiratory"
+        >
+          <FieldsContainer>
+            <RadioGroupInput
+              name={form.oxygenSats9092.name}
+              label={form.oxygenSats9092.label}
+              disabled={disableField(form.oxygenSats9092.name)}
+              options={radioOptions}
+            />
+            <RadioGroupInput
+              name={form.respiratoryRate92130.name}
+              label={form.respiratoryRate92130.label}
+              disabled={disableField(form.respiratoryRate92130.name)}
+              options={radioOptions}
+            />
+          </FieldsContainer>
+        </FormFieldContainerLayout>
       )}
 
       <br />

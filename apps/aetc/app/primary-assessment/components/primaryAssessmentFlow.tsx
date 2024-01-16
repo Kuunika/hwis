@@ -9,9 +9,13 @@ import {
   Disability,
   Exposure,
 } from ".";
+import { addObservation } from "@/hooks/observation";
+import { encounters } from "@/constants";
 
 export const PrimaryAssessmentFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const { mutate } = addObservation();
+
   const steps = [
     { id: 1, label: "Airway Assessment" },
     { id: 11, label: "Breathing Assessment" },
@@ -19,6 +23,24 @@ export const PrimaryAssessmentFlow = () => {
     { id: 3, label: "Disability Assessment" },
     { id: 4, label: "Exposure Assessment" },
   ];
+
+  const handleAirwaySubmit = (values: any) => {
+    mutate({ encounter: encounters.AIRWAY_ASSESSMENT, obs: values });
+    setActiveStep(1);
+  };
+  const handleBreathingSubmit = (values: any) => {
+    mutate({ encounter: encounters.BREATHING_ASSESSMENT, obs: values });
+    setActiveStep(2);
+  };
+
+  const handleCirculationSubmit = (values: any) => {
+    mutate({ encounter: encounters.CIRCULATION_ASSESSMENT, obs: values });
+    setActiveStep(3);
+  };
+  const handleDisabilitySubmit = (values: any) => {
+    mutate({ encounter: encounters.DISABILITY_ASSESSMENT, obs: values });
+    setActiveStep(4);
+  };
 
   return (
     <>
@@ -28,10 +50,10 @@ export const PrimaryAssessmentFlow = () => {
         steps={steps}
         active={activeStep}
       >
-        <AirwayForm onSubmit={() => setActiveStep(1)} />
-        <BreathingForm onSubmit={() => setActiveStep(2)} />
-        <Circulation onSubmit={() => setActiveStep(3)} />
-        <Disability onSubmit={() => setActiveStep(4)} />
+        <AirwayForm onSubmit={handleAirwaySubmit} />
+        <BreathingForm onSubmit={handleBreathingSubmit} />
+        <Circulation onSubmit={handleCirculationSubmit} />
+        <Disability onSubmit={handleDisabilitySubmit} />
         <Exposure onSubmit={() => setActiveStep(5)} />
       </NewStepperContainer>
     </>

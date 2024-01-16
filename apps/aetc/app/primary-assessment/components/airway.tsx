@@ -1,11 +1,11 @@
 import { NotificationContainer } from "@/components";
+import { NO, YES, concepts } from "@/constants";
+import { getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
-  FormDatePicker,
   FormValuesListener,
   FormikInit,
-  MainTypography,
   RadioGroupInput,
   SearchComboBox,
   TextInputField,
@@ -14,27 +14,27 @@ import * as Yup from "yup";
 
 const form = {
   isAirwayPatent: {
-    name: "isAirwayPatent",
+    name: concepts.AIRWAY_PATENT,
     label: "Is Airway Patent",
   },
   isPatientInjured: {
-    name: "isPatientInjured",
+    name: concepts.PATIENT_INJURED,
     label: "Is Patient Injured",
   },
   neckCollar: {
-    name: "neckCollar",
+    name: concepts.NECK_COLLAR_APPLIED,
     label: "Neck Collar Applied",
   },
   weakness: {
-    name: "weakness",
+    name: concepts.WEAKNESS,
     label: "Weakness",
   },
   headBlocks: {
-    name: "headBlocks",
+    name: concepts.HEAD_BLOCKS_APPLIED,
     label: "Head Blocks Applied",
   },
   airWayThreatenedReason: {
-    name: "airWayThreatenedReason",
+    name: concepts.AIRWAY_REASON,
     label: "Reason",
   },
   otherReason: {
@@ -42,21 +42,21 @@ const form = {
     label: "specify",
   },
   intervention: {
-    name: "intervention",
+    name: concepts.AIRWAY_OPENING_INTERVENTION,
     label: "Airway Opening Intervention",
   },
   nasopharyngealSize: {
-    name: "nasopharyngeal",
+    name: concepts.NASOPHARYNGEAL_AIRWAY,
     label: "Nasopharyngeal Airway Size",
   },
   oropharyngealSize: {
-    name: "oropharyngeal",
+    name: concepts.OROPHARYNGEAL_AIRWAY,
     label: "oropharyngeal Airway Size",
   },
 };
 
 type Prop = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
 };
 
 const schema = Yup.object().shape({
@@ -69,14 +69,13 @@ const schema = Yup.object().shape({
     form.airWayThreatenedReason.label
   ),
   [form.intervention.name]: Yup.string().label(form.intervention.label),
-  [form.weakness.name]: Yup.string().required().label(form.weakness.label),
-  [form.nasopharyngealSize.name]: Yup.string()
-    .required()
-    .label(form.nasopharyngealSize.label),
-  date: Yup.date().label("date"),
-  [form.oropharyngealSize.name]: Yup.string()
-    .required()
-    .label(form.oropharyngealSize.label),
+  [form.weakness.name]: Yup.string().label(form.weakness.label),
+  [form.nasopharyngealSize.name]: Yup.string().label(
+    form.nasopharyngealSize.label
+  ),
+  [form.oropharyngealSize.name]: Yup.string().label(
+    form.oropharyngealSize.label
+  ),
 });
 
 const airwayThreatenedReasons = [
@@ -99,16 +98,15 @@ const airwayInterventionsList = [
   },
 ];
 
-const initialsValues = {
-  concern: "",
-  moderate: "",
-  date: "",
-};
+const initialsValues = getInitialValues(form);
+
+const radioOptions = [
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
+];
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-
-  console.log(formValues);
 
   return (
     <FormikInit
@@ -123,25 +121,21 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
           name={form.isAirwayPatent.name}
           label={form.isAirwayPatent.label}
           options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
+            ...radioOptions,
             { label: "Threatened", value: "threatened" },
           ]}
         />
-        {formValues[form.isAirwayPatent.name] == "yes" && (
+        {formValues[form.isAirwayPatent.name] == YES && (
           <RadioGroupInput
             name={form.isPatientInjured.name}
             label={form.isPatientInjured.label}
-            options={[
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" },
-            ]}
+            options={radioOptions}
           />
         )}
       </FieldsContainer>
       <br />
-      {formValues[form.isPatientInjured.name] == "yes" &&
-        formValues[form.isAirwayPatent.name] == "yes" && (
+      {formValues[form.isPatientInjured.name] == YES &&
+        formValues[form.isAirwayPatent.name] == YES && (
           <>
             <NotificationContainer message="Please stabilize the C-Spine" />
             <br />
@@ -150,18 +144,14 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
                 name={form.neckCollar.name}
                 label={form.neckCollar.label}
                 options={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
+                  ...radioOptions,
                   { label: "No Indicated", value: "notIndicated" },
                 ]}
               />
               <RadioGroupInput
                 name={form.headBlocks.name}
                 label={form.headBlocks.label}
-                options={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
-                ]}
+                options={radioOptions}
               />
             </FieldsContainer>
             <br />
@@ -178,7 +168,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         </FieldsContainer>
       )}
 
-      {formValues[form.isAirwayPatent.name] === "no" && (
+      {formValues[form.isAirwayPatent.name] === NO && (
         <>
           {formValues[form.airWayThreatenedReason.name] == "other" && (
             <>
