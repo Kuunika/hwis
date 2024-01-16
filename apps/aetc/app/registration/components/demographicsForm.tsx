@@ -205,6 +205,7 @@ export const DemographicsForm: FC<Prop> = ({
         initialValues={initialValues}
         onSubmit={onSubmit}
         submitButtonText="next"
+        submitButton={false}
       >
         <MainPaper elevation={0} sx={styleSx}>
           <PaperTitle>Personal Information</PaperTitle>

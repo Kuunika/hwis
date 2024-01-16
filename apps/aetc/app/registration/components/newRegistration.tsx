@@ -13,7 +13,6 @@ import {
   SocialHistoryForm,
 } from "../components";
 import { addPatient, useNavigation } from "@/hooks";
-import { successDialog } from "@/helpers";
 
 export const NewRegistrationFlow = () => {
   const { navigateTo } = useNavigation();

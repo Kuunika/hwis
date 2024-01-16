@@ -9,6 +9,7 @@ type Props = {
   type?: "submit" | "button" | "reset";
   sx?: SxProps;
   icon?: any;
+  iconRight?: any;
 };
 
 export const MainButton: FC<Props> = ({
@@ -18,6 +19,7 @@ export const MainButton: FC<Props> = ({
   type,
   sx,
   icon,
+  iconRight,
 }) => {
   const variantStyles = buttonStyles[variant];
 
@@ -36,6 +38,7 @@ export const MainButton: FC<Props> = ({
     >
       {icon}
       {title}
+      {iconRight}
     </Button>
   );
 };
