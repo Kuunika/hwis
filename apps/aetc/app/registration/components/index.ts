@@ -6,3 +6,4 @@ export * from "./registrationFlow";
 export * from "./broughtDeadForm";
 export * from "./waitingRegistration";
 export * from "./broughtInDeadList";
+export * from "./newRegistration";

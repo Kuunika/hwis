@@ -42,7 +42,7 @@ export const TextInputField: FC<Prop> = ({
   }, [value]);
 
   return (
-    <FormControl variant="standard" sx={{ mb: "1ch", mx: "1ch", ...sx }}>
+    <FormControl variant="standard" sx={{ mb: "1ch", ...sx }}>
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>

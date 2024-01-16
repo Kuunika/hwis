@@ -74,10 +74,6 @@ export const RegistrationFlow = () => {
         initialValues={referralInitialValues}
         onSubmit={handleSubmitReferral}
       />
-      {/* <FinancingForm
-        initialValues={financingInitialValues}
-        onSubmit={handleSubmitFinancing}
-      /> */}
     </NewStepperContainer>
   );
 };
