@@ -33,7 +33,7 @@ export const FormFieldContainerLayout = ({
         display: "flex",
         justifyContent: "space-between",
         my: "1ch",
-        py: "1ch",
+        py: "2ch",
         borderBottom: last ? "" : "2px dashed #B3B3B3",
       }}
     >
