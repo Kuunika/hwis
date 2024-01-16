@@ -4,6 +4,7 @@ import { getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   RadioGroupInput,
@@ -39,7 +40,7 @@ const form = {
   },
   otherReason: {
     name: "otherReason",
-    label: "specify",
+    label: "Specify",
   },
   intervention: {
     name: concepts.AIRWAY_OPENING_INTERVENTION,
@@ -116,110 +117,120 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     >
       <FormValuesListener getValues={setFormValues} />
 
-      <FieldsContainer sx={{ alignItems: "flex-start" }}>
-        <RadioGroupInput
-          name={form.isAirwayPatent.name}
-          label={form.isAirwayPatent.label}
-          options={[
-            ...radioOptions,
-            { label: "Threatened", value: "threatened" },
-          ]}
-        />
-        {formValues[form.isAirwayPatent.name] == YES && (
+      <FormFieldContainerLayout title="Airway Patent">
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
           <RadioGroupInput
-            name={form.isPatientInjured.name}
-            label={form.isPatientInjured.label}
-            options={radioOptions}
+            name={form.isAirwayPatent.name}
+            label={form.isAirwayPatent.label}
+            options={[
+              ...radioOptions,
+              { label: "Threatened", value: "threatened" },
+            ]}
           />
+          {formValues[form.isAirwayPatent.name] == YES && (
+            <RadioGroupInput
+              name={form.isPatientInjured.name}
+              label={form.isPatientInjured.label}
+              options={radioOptions}
+            />
+          )}
+        </FieldsContainer>
+        {formValues[form.isAirwayPatent.name] === "threatened" && (
+          <FieldsContainer sx={{ my: "1ch" }}>
+            <SearchComboBox
+              name={form.airWayThreatenedReason.name}
+              label={form.airWayThreatenedReason.label}
+              options={airwayThreatenedReasons}
+              multiple={false}
+            />
+          </FieldsContainer>
         )}
-      </FieldsContainer>
+
+        {formValues[form.airWayThreatenedReason.name] == "other" && (
+          <>
+            <br />
+            <FieldsContainer>
+              <TextInputField
+                sx={{ m: 0, width: "100%" }}
+                name={form.otherReason.name}
+                label={form.otherReason.label}
+                id={form.otherReason.name}
+              />
+            </FieldsContainer>
+          </>
+        )}
+      </FormFieldContainerLayout>
+
       <br />
       {formValues[form.isPatientInjured.name] == YES &&
         formValues[form.isAirwayPatent.name] == YES && (
           <>
             <NotificationContainer message="Please stabilize the C-Spine" />
             <br />
-            <FieldsContainer sx={{ alignItems: "flex-start" }}>
-              <RadioGroupInput
-                name={form.neckCollar.name}
-                label={form.neckCollar.label}
-                options={[
-                  ...radioOptions,
-                  { label: "No Indicated", value: "notIndicated" },
-                ]}
-              />
-              <RadioGroupInput
-                name={form.headBlocks.name}
-                label={form.headBlocks.label}
-                options={radioOptions}
-              />
-            </FieldsContainer>
+
+            <FormFieldContainerLayout
+              last={true}
+              title="Neck Collar and Head Blocks"
+            >
+              <FieldsContainer sx={{ alignItems: "flex-start" }}>
+                <RadioGroupInput
+                  name={form.neckCollar.name}
+                  label={form.neckCollar.label}
+                  options={[
+                    ...radioOptions,
+                    { label: "No Indicated", value: "notIndicated" },
+                  ]}
+                />
+                <RadioGroupInput
+                  name={form.headBlocks.name}
+                  label={form.headBlocks.label}
+                  options={radioOptions}
+                />
+              </FieldsContainer>
+            </FormFieldContainerLayout>
             <br />
           </>
         )}
-      {formValues[form.isAirwayPatent.name] === "threatened" && (
-        <FieldsContainer>
-          <SearchComboBox
-            name={form.airWayThreatenedReason.name}
-            label={form.airWayThreatenedReason.label}
-            options={airwayThreatenedReasons}
-            multiple={false}
-          />
-        </FieldsContainer>
-      )}
 
       {formValues[form.isAirwayPatent.name] === NO && (
         <>
-          {formValues[form.airWayThreatenedReason.name] == "other" && (
-            <>
-              <br />
-              <FieldsContainer>
-                <TextInputField
-                  sx={{ m: 0 }}
-                  name={form.otherReason.name}
-                  label={form.otherReason.label}
-                  id={form.otherReason.name}
-                />
-              </FieldsContainer>
-            </>
-          )}
-
-          <br />
-          <FieldsContainer>
-            <SearchComboBox
-              name={form.intervention.name}
-              label={form.intervention.label}
-              options={airwayInterventionsList}
-              multiple={false}
-            />
-          </FieldsContainer>
-          <br />
-          {formValues[form.intervention.name] == "oropharyngeal" && (
-            <>
-              <FieldsContainer sx={{ alignItems: "flex-start" }}>
-                <RadioGroupInput
-                  name={form.nasopharyngealSize.name}
-                  label={form.nasopharyngealSize.label}
-                  options={[
-                    { value: "5", label: "5" },
-                    { value: "6", label: "6" },
-                    { value: "7", label: "7" },
-                  ]}
-                />
-                <RadioGroupInput
-                  name={form.oropharyngealSize.name}
-                  label={form.oropharyngealSize.label + " (MM)"}
-                  options={[
-                    { value: "80", label: "80" },
-                    { value: "90", label: "90" },
-                    { value: "100", label: "100" },
-                    { value: "110", label: "110" },
-                    { value: "120", label: "120" },
-                  ]}
-                />
-              </FieldsContainer>
-            </>
-          )}
+          <FormFieldContainerLayout last={true} title="Interventions">
+            <FieldsContainer>
+              <SearchComboBox
+                name={form.intervention.name}
+                label={form.intervention.label}
+                options={airwayInterventionsList}
+                multiple={false}
+              />
+            </FieldsContainer>
+            <br />
+            {formValues[form.intervention.name] == "oropharyngeal" && (
+              <>
+                <FieldsContainer sx={{ alignItems: "flex-start" }}>
+                  <RadioGroupInput
+                    name={form.nasopharyngealSize.name}
+                    label={form.nasopharyngealSize.label}
+                    options={[
+                      { value: "5", label: "5" },
+                      { value: "6", label: "6" },
+                      { value: "7", label: "7" },
+                    ]}
+                  />
+                  <RadioGroupInput
+                    name={form.oropharyngealSize.name}
+                    label={form.oropharyngealSize.label + " (MM)"}
+                    options={[
+                      { value: "80", label: "80" },
+                      { value: "90", label: "90" },
+                      { value: "100", label: "100" },
+                      { value: "110", label: "110" },
+                      { value: "120", label: "120" },
+                    ]}
+                  />
+                </FieldsContainer>
+              </>
+            )}
+          </FormFieldContainerLayout>
         </>
       )}
     </FormikInit>
