@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainer,
+  FormFieldContainerLayout,
   FormikInit,
   MainTypography,
   RadioGroupInput,
@@ -143,75 +144,79 @@ export const Disability = ({ onSubmit }: Props) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      <FieldsContainer sx={{ alignItems: "start" }}>
-        <RadioGroupInput
-          name={form.eyeOpening.name}
-          label={form.eyeOpening.label}
-          options={sizeOfEyeOpeningResponse}
-          getValue={(value) => setEyeOpeningValue(value)}
-        />
-        <p>
-          {form.eyeOpening.label}: {eyeOpeningValue}
-        </p>
-      </FieldsContainer>
-      <br />
-      <FieldsContainer sx={{ alignItems: "start" }}>
-        <RadioGroupInput
-          name={form.verbalResponse.name}
-          label={form.verbalResponse.label}
-          options={sizeOfVerbalResponse}
-          getValue={(value) => setVerbalResponseValue(value)}
-        />
-        <p>
-          {form.verbalResponse.label}: {verbalResponseValue}
-        </p>
-      </FieldsContainer>
-      <br />
-      <FieldsContainer sx={{ alignItems: "start" }}>
-        <RadioGroupInput
-          name={form.motorResponse.name}
-          label={form.motorResponse.label}
-          options={sizeOfMotorResponse}
-          getValue={(value) => setMotorResponseValue(value)}
-        />
-        <p>
-          {form.motorResponse.label}: {motorResponseValue}
-        </p>
-      </FieldsContainer>
+      <FormFieldContainerLayout title="AVPU">
+        <FieldsContainer sx={{ alignItems: "start" }}>
+          <RadioGroupInput
+            name={form.eyeOpening.name}
+            label={form.eyeOpening.label}
+            options={sizeOfEyeOpeningResponse}
+            getValue={(value) => setEyeOpeningValue(value)}
+          />
+          <p>
+            {form.eyeOpening.label}: {eyeOpeningValue}
+          </p>
+        </FieldsContainer>
+        <br />
+        <FieldsContainer sx={{ alignItems: "start" }}>
+          <RadioGroupInput
+            name={form.verbalResponse.name}
+            label={form.verbalResponse.label}
+            options={sizeOfVerbalResponse}
+            getValue={(value) => setVerbalResponseValue(value)}
+          />
+          <p>
+            {form.verbalResponse.label}: {verbalResponseValue}
+          </p>
+        </FieldsContainer>
+        <br />
+        <FieldsContainer sx={{ alignItems: "start" }}>
+          <RadioGroupInput
+            name={form.motorResponse.name}
+            label={form.motorResponse.label}
+            options={sizeOfMotorResponse}
+            getValue={(value) => setMotorResponseValue(value)}
+          />
+          <p>
+            {form.motorResponse.label}: {motorResponseValue}
+          </p>
+        </FieldsContainer>
+        <br />
+        <Box>
+          <MainTypography>Total Score: {totalSum}</MainTypography>
+        </Box>
+      </FormFieldContainerLayout>
 
-      <br />
-      <br />
-      <Box>
-        <MainTypography>Total Score: {totalSum}</MainTypography>
-      </Box>
-
-      <br />
-
-      <TextInputField
-        name={form.reactionToLight.name}
-        label={form.reactionToLight.label}
-        id={form.reactionToLight.name}
-      />
-      <TextInputField
-        name={form.postureInfo.name}
-        label={form.postureInfo.label}
-        id={form.postureInfo.name}
-      />
-      <TextInputField
-        name={form.bloodGlocose.name}
-        label={form.bloodGlocose.label}
-        id={form.bloodGlocose.name}
-      />
-      <TextInputField
-        name={form.focalNeurology.name}
-        label={form.focalNeurology.label}
-        id={form.bloodGlocose.name}
-      />
-      <RadioGroupInput
-        name={form.seizureInfo.name}
-        label={form.seizureInfo.label}
-        options={radioOptions}
-      />
+      <FormFieldContainerLayout title="Light">
+        <TextInputField
+          sx={{ m: 0 }}
+          name={form.reactionToLight.name}
+          label={form.reactionToLight.label}
+          id={form.reactionToLight.name}
+        />
+        <TextInputField
+          name={form.focalNeurology.name}
+          label={form.focalNeurology.label}
+          id={form.bloodGlocose.name}
+        />
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout last={true} title="Posture and Glucose">
+        <TextInputField
+          sx={{ m: 0 }}
+          name={form.postureInfo.name}
+          label={form.postureInfo.label}
+          id={form.postureInfo.name}
+        />
+        <TextInputField
+          name={form.bloodGlocose.name}
+          label={form.bloodGlocose.label}
+          id={form.bloodGlocose.name}
+        />
+        <RadioGroupInput
+          name={form.seizureInfo.name}
+          label={form.seizureInfo.label}
+          options={radioOptions}
+        />
+      </FormFieldContainerLayout>
     </FormikInit>
   );
 };
