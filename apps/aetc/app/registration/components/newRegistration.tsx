@@ -133,8 +133,10 @@ const NavBox = ({
     <WrapperBox
       onClick={onClick}
       sx={{
-        px: "1ch",
-        pb: "1ch",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: "1ch",
         borderBottom: active ? "solid 1px #00190E" : "",
         mx: "2ch",
         color: !active ? "#636363" : "",
@@ -146,9 +148,7 @@ const NavBox = ({
           fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 400,
-          lineHeight: "21px",
           letterSpacing: "0em",
-          textAlign: "center",
         }}
       >
         {children}
