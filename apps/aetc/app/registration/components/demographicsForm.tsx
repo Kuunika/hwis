@@ -10,6 +10,12 @@ import {
   MainPaper,
   MainTypography,
 } from "shared-ui/src";
+import {
+  RegistrationCard,
+  RegistrationCardTitle,
+  RegistrationDescriptionText,
+  RegistrationMainHeader,
+} from "./common";
 
 const form = {
   identificationNumber: {
@@ -161,45 +167,13 @@ export const DemographicsForm: FC<Prop> = ({
 }) => {
   const [gender, setGender] = useState();
 
-  const styleSx = {
-    display: "flex",
-    flexDirection: "column",
-    px: "10ch",
-    py: "5ch",
-    mb: "2ch",
-  };
-
   return (
     <>
-      <MainTypography
-        sx={{
-          fontFamily: "Inter",
-          fontSize: 24,
-          fontWeight: 700,
-          lineHeight: "29px",
-          letterSpacing: 0,
-          textAlign: "center",
-        }}
-      >
-        Demographics
-      </MainTypography>
-      <MainTypography
-        alignSelf={"center"}
-        sx={{
-          fontFamily: "Inter",
-          fontSize: 14,
-          fontWeight: 400,
-          lineHeight: "21px",
-          letterSpacing: 0,
-          color: "#636363",
-          width: "50ch",
-          textAlign: "center",
-          my: "2ch",
-        }}
-      >
+      <RegistrationMainHeader>Demographics</RegistrationMainHeader>
+      <RegistrationDescriptionText>
         The demographics form has been thoughtfully crafted to collect patient
         information, including personal details, contact information
-      </MainTypography>
+      </RegistrationDescriptionText>
       <FormikInit
         validationSchema={schema}
         initialValues={initialValues}
@@ -207,8 +181,8 @@ export const DemographicsForm: FC<Prop> = ({
         submitButtonText="next"
         submitButton={false}
       >
-        <MainPaper elevation={0} sx={styleSx}>
-          <PaperTitle>Personal Information</PaperTitle>
+        <RegistrationCard>
+          <RegistrationCardTitle>Personal Information</RegistrationCardTitle>
           <TextInputField
             name={form.identificationNumber.name}
             id={form.identificationNumber.name}
@@ -233,10 +207,10 @@ export const DemographicsForm: FC<Prop> = ({
               { label: "Female", value: "Female" },
             ]}
           />
-        </MainPaper>
+        </RegistrationCard>
 
-        <MainPaper elevation={0} sx={styleSx}>
-          <PaperTitle>Home Location</PaperTitle>
+        <RegistrationCard>
+          <RegistrationCardTitle>Home Location</RegistrationCardTitle>
           <SelectInputField
             name={form.homeDistrict.name}
             id={form.homeDistrict.name}
@@ -255,10 +229,10 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.homeVillage.label}
             selectItems={[{ name: "Blantyre", value: "blantyre" }]}
           />
-        </MainPaper>
+        </RegistrationCard>
 
-        <MainPaper elevation={0} sx={styleSx}>
-          <PaperTitle>Current Location</PaperTitle>
+        <RegistrationCard>
+          <RegistrationCardTitle>Current Location</RegistrationCardTitle>
           <SelectInputField
             name={form.currentDistrict.name}
             id={form.currentDistrict.name}
@@ -283,10 +257,10 @@ export const DemographicsForm: FC<Prop> = ({
             id={form.closeLandMark.name}
             label={form.closeLandMark.label}
           />
-        </MainPaper>
+        </RegistrationCard>
 
-        <MainPaper elevation={0} sx={styleSx}>
-          <PaperTitle>Guardian Information</PaperTitle>
+        <RegistrationCard>
+          <RegistrationCardTitle>Guardian Information</RegistrationCardTitle>
           <TextInputField
             name={form.nextOfKinName.name}
             id={form.nextOfKinName.name}
@@ -307,26 +281,8 @@ export const DemographicsForm: FC<Prop> = ({
             id={form.guardianPhoneNumber.name}
             label={form.guardianPhoneNumber.label}
           />
-        </MainPaper>
+        </RegistrationCard>
       </FormikInit>
     </>
-  );
-};
-
-const PaperTitle = ({ children }: { children: ReactNode }) => {
-  return (
-    <MainTypography
-      sx={{
-        fontFamily: "Inter",
-        fontSize: "16px",
-        fontWeight: 600,
-        lineHeight: "24px",
-        letterSpacing: "0em",
-        textAlign: "center",
-        my: "2ch",
-      }}
-    >
-      {children}
-    </MainTypography>
   );
 };
