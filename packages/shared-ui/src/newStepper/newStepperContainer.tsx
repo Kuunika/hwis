@@ -56,6 +56,7 @@ interface IProps {
   steps: Step[];
   title: string;
   setActive?: (value: any) => void;
+  onBack?: () => void;
 }
 
 export function NewStepperContainer({
@@ -64,6 +65,7 @@ export function NewStepperContainer({
   steps,
   title,
   setActive,
+  onBack,
 }: IProps) {
   return (
     <MainGrid container spacing={5}>
@@ -88,7 +90,10 @@ export function NewStepperContainer({
       </MainGrid>
       <MainGrid item lg={8}>
         <WrapperBox width={"100%"}>
-          <WrapperBox display={"flex"}>
+          <WrapperBox
+            onClick={() => onBack && onBack()}
+            sx={{ display: "flex", cursor: "pointer" }}
+          >
             <MainTypography
               sx={{
                 width: "24px",

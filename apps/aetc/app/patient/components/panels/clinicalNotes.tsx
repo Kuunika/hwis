@@ -5,8 +5,8 @@ import { FaRegSquare } from "react-icons/fa6";
 
 export const ClinicalNotes = () => {
   const clinicalNotes = [
-    "The patient presents today with concerns related to diabetes management and seeks guidance on optimizing their health",
-    "The patient appears well-nourished and in no acute distress",
+    "The patient presents today with concerns related to diabetes The patient presents today with concerns related to diabetes",
+    "The patient appears well-nourished and in no acute distress The patient presents today with concerns related to diabetes",
     "The patient appears well-nourished and in no acute distress",
   ];
 
@@ -44,20 +44,39 @@ export const ClinicalNotes = () => {
           text="110/70"
         />
       </WrapperBox>
-      <WrapperBox sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch" }}>
-        <MainTypography color={"#636363"}>Notes</MainTypography>
-        <WrapperBox pl={"1ch"}>
+      <MainTypography color={"#636363"}>Notes</MainTypography>
+      <WrapperBox sx={{ mt: "1ch", overflow: "scroll", maxHeight: "10ch" }}>
+        <WrapperBox ml={"2ch"}>
           {clinicalNotes.map((notes) => (
-            <WrapperBox key={notes} display={"flex"} alignItems={"flex-start"}>
-              {/* <WrapperBox
+            <WrapperBox
+              key={notes}
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+              }}
+            >
+              <WrapperBox
                 sx={{
                   backgroundColor: "black",
-                  borderRadius: "3px",
-                  height: "6px",
-                  width: "6px",
+                  borderRadius: "4px",
+                  height: "8px",
+                  width: "8px",
+                  mr: "1ch",
+                  mt: "5px",
                 }}
-              ></WrapperBox> */}
-              <MainTypography my={"0.5ch"} variant="subtitle1">
+              ></WrapperBox>
+              <MainTypography
+                sx={{
+                  fontFamily: "Inter",
+                  fontSize: "14px",
+                  fontWeight: 400,
+                  lineHeight: "21px",
+                  letterSpacing: "0em",
+                  textAlign: "left",
+                }}
+                width={"80%"}
+                variant="body1"
+              >
                 {notes}
               </MainTypography>
             </WrapperBox>

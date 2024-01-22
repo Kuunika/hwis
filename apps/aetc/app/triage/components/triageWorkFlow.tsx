@@ -64,6 +64,7 @@ export default function TriageWorkFlow() {
       title="Triage"
       steps={steps}
       active={activeStep}
+      onBack={() => navigateTo("/patient")}
     >
       <VitalsForm initialValues={{}} onSubmit={handleVitalsSubmit} />
       <AirwayAndBreathingForm onSubmit={handleAirwaySubmit} />

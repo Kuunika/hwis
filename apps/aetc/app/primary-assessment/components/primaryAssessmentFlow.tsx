@@ -11,10 +11,12 @@ import {
 } from ".";
 import { addObservation } from "@/hooks/observation";
 import { encounters } from "@/constants";
+import { useNavigation } from "@/hooks";
 
 export const PrimaryAssessmentFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addObservation();
+  const { navigateTo } = useNavigation();
 
   const steps = [
     { id: 1, label: "Airway Assessment" },
@@ -49,6 +51,7 @@ export const PrimaryAssessmentFlow = () => {
         title="Primary Assessment"
         steps={steps}
         active={activeStep}
+        onBack={() => navigateTo("/patient")}
       >
         <AirwayForm onSubmit={handleAirwaySubmit} />
         <BreathingForm onSubmit={handleBreathingSubmit} />

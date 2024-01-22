@@ -20,7 +20,6 @@ export function NavigationBar({
       <AppBar
         position="static"
         sx={{
-          py: "1ch",
           backgroundColor: "#006401",
           px: "8ch",
         }}
@@ -47,7 +46,6 @@ export function NavigationBar({
             MAHIS AETC
           </Typography>
           {search}
-
           <MainTypography sx={{ mx: "1ch" }} variant="h5">
             <FaRegBell />
           </MainTypography>

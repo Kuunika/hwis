@@ -23,10 +23,11 @@ export const NavBar = () => {
   const search = (
     <WrapperBox
       sx={{
-        width: "40%",
+        width: "496px",
         position: "relative",
         backgroundColor: "#fff",
         borderRadius: "8px",
+        height: "48px",
       }}
     >
       <SearchContainer label="" placeHolder="Search Patient" initialValue="" />

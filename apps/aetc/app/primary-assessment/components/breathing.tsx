@@ -241,13 +241,11 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
           <FormFieldContainerLayout title="Respiratory and Oxygen">
             <FieldsContainer>
               <TextInputField
-                sx={{ m: 0 }}
                 name={form.respiratoryRate.name}
                 label={form.respiratoryRate.label}
                 id={form.respiratoryRate.name}
               />
               <TextInputField
-                sx={{ m: 0 }}
                 name={form.oxygenSaturation.name}
                 label={form.oxygenSaturation.label}
                 id={form.oxygenSaturation.name}
