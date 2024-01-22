@@ -187,35 +187,41 @@ export const Disability = ({ onSubmit }: Props) => {
       </FormFieldContainerLayout>
 
       <FormFieldContainerLayout title="Light">
-        <TextInputField
-          sx={{ m: 0 }}
-          name={form.reactionToLight.name}
-          label={form.reactionToLight.label}
-          id={form.reactionToLight.name}
-        />
-        <TextInputField
-          name={form.focalNeurology.name}
-          label={form.focalNeurology.label}
-          id={form.bloodGlocose.name}
-        />
+        <FieldsContainer>
+          <TextInputField
+            sx={{ m: 0 }}
+            name={form.reactionToLight.name}
+            label={form.reactionToLight.label}
+            id={form.reactionToLight.name}
+          />
+          <TextInputField
+            name={form.focalNeurology.name}
+            label={form.focalNeurology.label}
+            id={form.bloodGlocose.name}
+          />
+        </FieldsContainer>
       </FormFieldContainerLayout>
       <FormFieldContainerLayout last={true} title="Posture and Glucose">
-        <TextInputField
-          sx={{ m: 0 }}
-          name={form.postureInfo.name}
-          label={form.postureInfo.label}
-          id={form.postureInfo.name}
-        />
-        <TextInputField
-          name={form.bloodGlocose.name}
-          label={form.bloodGlocose.label}
-          id={form.bloodGlocose.name}
-        />
-        <RadioGroupInput
-          name={form.seizureInfo.name}
-          label={form.seizureInfo.label}
-          options={radioOptions}
-        />
+        <FieldsContainer>
+          <TextInputField
+            sx={{ m: 0 }}
+            name={form.postureInfo.name}
+            label={form.postureInfo.label}
+            id={form.postureInfo.name}
+          />
+          <TextInputField
+            name={form.bloodGlocose.name}
+            label={form.bloodGlocose.label}
+            id={form.bloodGlocose.name}
+          />
+        </FieldsContainer>
+        <FieldsContainer>
+          <RadioGroupInput
+            name={form.seizureInfo.name}
+            label={form.seizureInfo.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
       </FormFieldContainerLayout>
     </FormikInit>
   );

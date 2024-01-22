@@ -247,6 +247,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 id={form.respiratoryRate.name}
               />
               <TextInputField
+                sx={{ m: 0 }}
                 name={form.oxygenSaturation.name}
                 label={form.oxygenSaturation.label}
                 id={form.oxygenSaturation.name}

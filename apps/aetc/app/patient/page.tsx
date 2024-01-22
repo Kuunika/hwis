@@ -2,6 +2,7 @@
 import { MainGrid, MainPaper, NavigationBar, WrapperBox } from "shared-ui/src";
 import {
   AllergiesCard,
+  ConsultationCard,
   PersonalDetailsCard,
   TemplateFormsCard,
 } from "./components/cards";
@@ -21,7 +22,16 @@ export default function PatientProfile() {
       <MainGrid container spacing={1} mt={"2ch"} ml={"9ch"}>
         <MainGrid item lg={2}>
           <PersonalDetailsCard />
-          <br />
+          <WrapperBox sx={{ my: "1ch" }}>
+            <ConsultationCard
+              link="/primary-assessment"
+              title="Start Primary Assessment"
+            />
+            <ConsultationCard
+              link="/primary-assessment"
+              title="Start Secondary Assessment"
+            />
+          </WrapperBox>
           <BasicAccordion />
         </MainGrid>
         <MainGrid item lg={8}>

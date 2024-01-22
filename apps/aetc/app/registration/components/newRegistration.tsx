@@ -24,7 +24,7 @@ export const NewRegistrationFlow = () => {
   const { navigateTo } = useNavigation();
   return (
     <>
-      <MainGrid container>
+      <MainGrid sx={{}} container>
         <MainGrid item lg={4}></MainGrid>
         <MainGrid
           item

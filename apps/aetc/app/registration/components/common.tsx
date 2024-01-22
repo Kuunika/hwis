@@ -54,6 +54,7 @@ export const RegistrationCard = ({ children }: { children: ReactNode }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
+        justifyContent: "center",
         px: "10ch",
         py: "5ch",
         mb: "2ch",

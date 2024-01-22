@@ -6,6 +6,13 @@ import Typography from "@mui/material/Typography";
 import { FaAngleDown } from "react-icons/fa";
 import { MainTypography, WrapperBox } from "shared-ui/src";
 import Link from "next/link";
+import Image from "next/image";
+import AETCFormIcon from "../../../../icons/aetc.svg";
+import gynacology from "../../../../icons/gynacology.svg";
+import medicalInpatient from "../../../../icons/medicalInpatient.svg";
+import monitoring from "../../../../icons/monitoring.svg";
+import surgical from "../../../../icons/surgicalnotes.svg";
+import referral from "../../../../icons/referral.svg";
 
 export function BasicAccordion() {
   const aetcClecking = [
@@ -15,39 +22,70 @@ export function BasicAccordion() {
   ];
 
   const templateForme = [
-    { label: "Medical Inpatient", link: "medicalInpatient" },
-    { label: "Surgical Notes", link: "surgicalNotes" },
-    { label: "Gynacological ", link: "ynacological" },
-    { label: "SOAP ", link: "soap" },
-    { label: "Monitoring Chat ", link: "monitoring" },
+    {
+      label: "Medical Inpatient",
+      link: "medicalInpatient",
+      icon: medicalInpatient,
+    },
+    { label: "Surgical Notes", link: "surgicalNotes", icon: surgical },
+    { label: "Gynacological ", link: "gynacological", icon: gynacology },
+    { label: "SOAP ", link: "soap", icon: surgical },
+    { label: "Monitoring Chat ", link: "monitoring", icon: monitoring },
+    { label: "Referral ", link: "referral", icon: referral },
   ];
-  return (
-    <>
-      <Accordion elevation={0}>
-        <AccordionSummary
-          expandIcon={<FaAngleDown />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Typography>AETC Clerking sheet</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <LinkList list={aetcClecking} />
-        </AccordionDetails>
-      </Accordion>
-      <br />
-      <Accordion elevation={0}>
+
+  const AccordionWrapper = ({
+    children,
+    title,
+  }: {
+    children: React.ReactNode;
+    title: string;
+  }) => {
+    return (
+      <Accordion
+        sx={{
+          mb: "1ch",
+          "& .MuiAccordionSummary-root": {
+            display: "flex",
+            flexDirection: "row-reverse",
+          },
+          "& .MuiAccordionSummary-content": {
+            "& .MuiTypography-root": {
+              fontFamily: "Inter",
+              fontSize: "14px",
+              fontWeight: 600,
+              lineHeight: "17px",
+              letterSpacing: "0em",
+              textAlign: "left",
+            },
+          },
+          "& .MuiCollapse-root": {
+            ml: "2.8ch",
+          },
+        }}
+        elevation={0}
+      >
         <AccordionSummary
           expandIcon={<FaAngleDown />}
           aria-controls="panel2a-content"
           id="panel2a-header"
         >
-          <Typography>Template Forms</Typography>
+          <Typography>{title}</Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <LinkList list={templateForme} />
-        </AccordionDetails>
+        <AccordionDetails>{children}</AccordionDetails>
       </Accordion>
+    );
+  };
+
+  return (
+    <>
+      <AccordionWrapper title="Template Forms">
+        <LinkList list={templateForme} />
+      </AccordionWrapper>
+
+      <AccordionWrapper title="AETC Clerking sheet">
+        <LinkList list={aetcClecking} />
+      </AccordionWrapper>
     </>
   );
 }
@@ -63,20 +101,33 @@ const LinkList = ({ list }: { list: ListItemProp[] }) => {
     </WrapperBox>
   );
 };
-const ListItem = ({ label, link }: { label: string; link: string }) => {
+const ListItem = ({
+  label,
+  link,
+  icon,
+}: {
+  label: string;
+  link: string;
+  icon?: any;
+}) => {
   return (
     <Link href={link}>
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
-        <WrapperBox
+        {icon && <Image src={icon} alt="AETC Form icon" />}
+        <MainTypography
           sx={{
-            width: 12,
-            height: 12,
-            borderRadius: 6,
-            border: "1px solid #B3B3B3",
-            mr: "1ch",
+            fontFamily: "Inter",
+            fontSize: "14px",
+            fontWeight: 500,
+            lineHeight: "17px",
+            letterSpacing: "0em",
+            textAlign: "left",
+            my: "0.5ch",
+            ml: "5px",
           }}
-        ></WrapperBox>
-        <MainTypography variant="subtitle2">{label}</MainTypography>
+        >
+          {label}
+        </MainTypography>
       </WrapperBox>
     </Link>
   );

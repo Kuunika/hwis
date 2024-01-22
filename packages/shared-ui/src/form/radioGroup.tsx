@@ -68,7 +68,12 @@ export const BaseRadioInput: FC<BaseProp & Prop> = ({
   disabled = false,
 }) => {
   return (
-    <FormControl disabled={disabled} fullWidth sx={sx} error={hasError}>
+    <FormControl
+      disabled={disabled}
+      fullWidth
+      sx={{ mx: "0.5ch", ...sx }}
+      error={hasError}
+    >
       <FormLabel id={name}>{label}</FormLabel>
       <RadioGroup row={row} value={value} onChange={handleChange} name={name}>
         {options.map(({ label, value }) => (
