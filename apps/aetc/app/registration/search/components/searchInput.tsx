@@ -21,6 +21,7 @@ export const SearchInput = ({
       name="search"
       defaultValue={initialValue}
       fullWidth
+      sx={{}}
       placeholder={placeHolder}
       onChange={(values) => {
         onChange(values.target.value);

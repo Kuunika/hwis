@@ -26,16 +26,12 @@ export const NavBar = () => {
         width: "40%",
         position: "relative",
         backgroundColor: "#fff",
-        borderRadius: "5px",
+        borderRadius: "8px",
       }}
     >
       <SearchContainer label="" placeHolder="Search Patient" initialValue="" />
     </WrapperBox>
   );
 
-  return (
-    <>
-      <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />
-    </>
-  );
+  return <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />;
 };

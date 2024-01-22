@@ -3,8 +3,10 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import { FaRegBell, FaCircleUser } from "react-icons/fa6";
 
 import { FaAlignJustify } from "react-icons/fa";
+import { MainTypography } from "..";
 
 export function NavigationBar({
   search,
@@ -45,6 +47,13 @@ export function NavigationBar({
             MAHIS AETC
           </Typography>
           {search}
+
+          <MainTypography sx={{ mx: "1ch" }} variant="h5">
+            <FaRegBell />
+          </MainTypography>
+          <MainTypography variant="h5">
+            <FaCircleUser />
+          </MainTypography>
         </Toolbar>
       </AppBar>
     </Box>
