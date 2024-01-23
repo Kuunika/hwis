@@ -26,7 +26,7 @@ const DialogNationalIdContent = () => {
   return (
     <WrapperBox sx={{ display: "flex", mb: "5ch" }}>
       <WrapperBox sx={boxStyles}>
-        <Link href="/registration">
+        <Link href="/registration/scanner">
           <WrapperBox
             sx={{
               position: "absolute",
