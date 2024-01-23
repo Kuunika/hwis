@@ -7,6 +7,7 @@ type Prop = {
   label?: string;
   initialSearch?: string;
   getResult?: (results: any) => void;
+  getSearch?: (search: string) => void;
 };
 const results = [
   { id: "1234", fullName: "James Doe", number: "1234" },
@@ -29,6 +30,7 @@ export const SearchContainer = ({
   label,
   initialSearch,
   getResult,
+  getSearch,
 }: Prop) => {
   const [searchResults, setSearchResults] = useState<any>([]);
 
@@ -47,7 +49,7 @@ export const SearchContainer = ({
       setSearchResults([]);
       return;
     }
-
+    getSearch && getSearch(search);
     findPatient(search);
   };
 
