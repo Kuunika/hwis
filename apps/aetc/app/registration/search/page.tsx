@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useNavigation } from "@/hooks";
 import plus from "../../../icons/plus.svg";
 import Image from "next/image";
+import { PatientNationalIdCheck } from "../components";
 
 export default function RegistrationSearch() {
   const searchParams = useSearchParams();
@@ -98,7 +99,10 @@ export default function RegistrationSearch() {
                 No {`${searchName}`} patient in the system
               </MainTypography>
             </WrapperBox>
-            <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
+            <WrapperBox
+              onClick={() => PatientNationalIdCheck()}
+              sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
+            >
               <Image src={plus} alt="plus" />
               <MainTypography
                 sx={{

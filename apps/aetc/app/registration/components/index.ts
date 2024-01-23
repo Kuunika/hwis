@@ -7,3 +7,4 @@ export * from "./broughtDeadForm";
 export * from "./waitingRegistration";
 export * from "./broughtInDeadList";
 export * from "./newRegistration";
+export * from "./dialogs";
