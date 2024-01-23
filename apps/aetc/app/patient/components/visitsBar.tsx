@@ -7,6 +7,7 @@ import {
 import { Button, SxProps } from "@mui/material";
 import { FaRegCalendarPlus } from "react-icons/fa";
 import { useNavigation } from "@/hooks";
+import { VisitDates } from "./visitDates";
 
 export const VisitsBar = () => {
   const { navigateTo } = useNavigation();
@@ -15,6 +16,7 @@ export const VisitsBar = () => {
       sx={{
         display: "flex",
         justifyContent: "flex-end",
+        alignItems: "center",
         width: "100%",
         px: "2ch",
         py: "2ch",
@@ -24,9 +26,7 @@ export const VisitsBar = () => {
         mb: "5ch",
       }}
     >
-      <Button variant="outlined" size="small" endIcon={<FaRegCalendarPlus />}>
-        Add Today
-      </Button>
+      <VisitDates />
       <Button
         onClick={() => navigateTo("/triage/12/history")}
         sx={{ ml: "1ch" }}

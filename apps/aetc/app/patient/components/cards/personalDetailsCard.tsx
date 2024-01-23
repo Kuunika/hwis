@@ -7,13 +7,14 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
         <WrapperBox
           sx={{
-            background: "#EBFFEB",
+            background: "#E6E6E6",
             height: "5ch",
             width: "5ch",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             mr: "2ch",
+            color: "#636363",
           }}
         >
           <MainTypography variant="h6" fontWeight={"700"}>
