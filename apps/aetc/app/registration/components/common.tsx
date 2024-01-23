@@ -47,7 +47,13 @@ export const RegistrationDescriptionText = ({
   );
 };
 
-export const RegistrationCard = ({ children }: { children: ReactNode }) => {
+export const RegistrationCard = ({
+  children,
+  sx,
+}: {
+  children: ReactNode;
+  sx?: any;
+}) => {
   return (
     <MainPaper
       elevation={0}
@@ -58,6 +64,7 @@ export const RegistrationCard = ({ children }: { children: ReactNode }) => {
         px: "10ch",
         py: "5ch",
         mb: "2ch",
+        ...sx,
       }}
     >
       {children}

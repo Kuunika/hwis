@@ -7,7 +7,10 @@ import { QrScanner } from "@yudiel/react-qr-scanner";
 export default function Scanner() {
   return (
     <>
-      <Navigation />
+      <Navigation
+        title="New Patient Registration"
+        link="/registration/search"
+      />
       <WrapperBox
         sx={{
           display: "flex",
@@ -44,7 +47,13 @@ export default function Scanner() {
   );
 }
 
-const Navigation = () => {
+export const Navigation = ({
+  title,
+  link,
+}: {
+  title: string;
+  link: string;
+}) => {
   const { navigateTo } = useNavigation();
   const fontStyles = {
     fontFamily: "Inter",
@@ -65,7 +74,7 @@ const Navigation = () => {
       }}
     >
       <WrapperBox
-        onClick={() => navigateTo("/registration/search")}
+        onClick={() => navigateTo(link)}
         sx={{ display: "flex", cursor: "pointer" }}
       >
         <MainTypography>
@@ -73,7 +82,7 @@ const Navigation = () => {
         </MainTypography>
         <MainTypography sx={fontStyles}>Go back</MainTypography>
       </WrapperBox>
-      <MainTypography sx={fontStyles}>New patient registration</MainTypography>
+      <MainTypography sx={fontStyles}>{title}</MainTypography>
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
         <FaRegCircleQuestion />
         <MainTypography sx={fontStyles}>Need any help?</MainTypography>
