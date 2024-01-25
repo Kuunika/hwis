@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainer,
+  FormFieldContainerLayout,
+  FormValuesListener,
   FormikInit,
   MultlineInput,
   RadioGroupInput,
@@ -13,6 +15,8 @@ import * as yup from "yup";
 import { concepts, triageResult } from "@/constants";
 import { TriageContainer } from "@/app/triage/components/";
 import { TriageResult } from "@/interfaces";
+import { notify } from "@/helpers";
+import { useNavigation } from "@/hooks";
 
 const form = {
   complaints: {
@@ -21,10 +25,10 @@ const form = {
   },
   temperature: {
     name: concepts.TEMPERATURE,
-    label: "Temperature",
+    label: "Blood Circulation Temperature",
   },
   pulseRate: {
-    name: "pulseRate",
+    name: concepts.PULSE_RATE,
     label: "Pulse Rate",
   },
   respiratoryRate: {
@@ -66,15 +70,15 @@ const form = {
   },
 
   glucose: {
-    name: "b9cc75b2-8d80-11d8-abbb-0024217bb78e",
+    name: concepts.GLUCOSE,
     label: "Glucose (mg/dL)",
   },
   avpu: {
-    name: "b9da6d98-8d80-11d8-abbb-0024217bb78e",
+    name: concepts.AVPU,
     label: "AVPU",
   },
   pulseOximetry: {
-    name: "pulseOximetry",
+    name: concepts.PULSE_OXIMETRY,
     label: "Pulse Oximetry",
   },
 };
@@ -230,17 +234,25 @@ const rules = {
 
 export function VitalsForm({ initialValues, onSubmit }: props) {
   const [triageResult, setTriageResult] = useState<TriageResult>("");
+  const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
+  const { navigateTo } = useNavigation();
 
   const checkTriage = (name: string, formValue: string) => {
+    if (formValue == "") {
+      setTriageResult("");
+      return;
+    }
     rules[name]?.forEach((rule) => {
       const formValueNumber = Number(formValue);
+
       switch (rule.operator) {
         case "<":
           if (formValueNumber < rule.value && formValueNumber >= rule?.bound) {
             setTriageResult(rule.result as TriageResult);
           }
+
           return;
         case ">":
           if (formValueNumber > rule.value && formValueNumber <= rule.bound) {
@@ -288,6 +300,15 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
     }
   }, [diastolic, systolic]);
 
+  const disableField = (formField: string) => {
+    return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
+  const handleTriageComplete = () => {
+    notify("info", "Patient added to waiting assessments queue");
+    navigateTo("/triage");
+  };
+
   return (
     <FormikInit
       onSubmit={onSubmit}
@@ -295,133 +316,167 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
       initialValues={initialValues}
       submitButtonText="next"
     >
-      <h1>{triageResult}</h1>
       {triageResult && (
         <>
-          <TriageContainer result={triageResult} message={"Interventions"} />
+          <TriageContainer
+            onCompleteTriage={handleTriageComplete}
+            result={triageResult}
+            message={"Interventions"}
+          />
           <br />
         </>
       )}
-      <MultlineInput
-        id={form.complaints.name}
-        name={form.complaints.name}
-        label={form.complaints.label}
-        maxRows={20}
-        sx={{ width: "98.8%" }}
-      />
-      <FieldsContainer>
-        <TextInputField
-          id={form.respiratoryRate.name}
-          name={form.respiratoryRate.name}
-          label={form.respiratoryRate.label}
-          getValue={(value: string) => {
-            checkTriage(form.respiratoryRate.name, value);
-          }}
+      <FormValuesListener getValues={setFormValues} />
+      <FormFieldContainerLayout title="Complaints">
+        <MultlineInput
+          id={form.complaints.name}
+          name={form.complaints.name}
+          label={form.complaints.label}
+          maxRows={20}
+          disabled={disableField(form.complaints.name)}
+          width="53ch"
+          sx={{ mb: "2ch" }}
         />
-        <TextInputField
-          id={form.heartRate.name}
-          name={form.heartRate.name}
-          label={form.heartRate.label}
-        />
-        <br />
-      </FieldsContainer>
-      <FieldsContainer>
-        <TextInputField
-          id={form.saturationRate.name}
-          name={form.saturationRate.name}
-          label={form.saturationRate.label}
-        />
-        <TextInputField
-          id={form.bloodPressure.name}
-          name={form.bloodPressure.name}
-          label={form.bloodPressure.label}
-          getValue={(value) => {
-            setSystolic(value);
-          }}
-        />
-      </FieldsContainer>
-      <FieldsContainer>
-        <TextInputField
-          id={form.temperature.name}
-          name={form.temperature.name}
-          label={form.temperature.label}
-          getValue={(value: string) => {
-            checkTriage(form.temperature.name, value);
-          }}
-        />
-        <TextInputField
-          id={form.bloodPressureDiastolic.name}
-          name={form.bloodPressureDiastolic.name}
-          label={form.bloodPressureDiastolic.label}
-          getValue={(value) => {
-            setDiastolic(value);
-          }}
-        />
-      </FieldsContainer>
-      <FieldsContainer>
-        <TextInputField
-          id={form.pulseRate.name}
-          name={form.pulseRate.name}
-          label={form.pulseRate.label}
-          getValue={(value: string) => {
-            checkTriage(form.pulseRate.name, value);
-          }}
-        />
-        <TextInputField
-          id={form.pulseOximetry.name}
-          name={form.pulseOximetry.name}
-          label={form.pulseOximetry.label}
-          getValue={(value: string) => {
-            checkTriage(form.pulseOximetry.name, value);
-          }}
-        />
-      </FieldsContainer>
-      <br />
-      <br />
+      </FormFieldContainerLayout>
 
-      <FieldsContainer sx={{ alignItems: "start" }}>
-        <RadioGroupInput
-          name={form.eyeOpeningResponse.name}
-          label={form.eyeOpeningResponse.label}
-          options={eyeOpeningResponses}
-          row={false}
-        />
+      <FormFieldContainerLayout title="Respiratory and Heart Rate">
+        <FieldsContainer>
+          <TextInputField
+            id={form.respiratoryRate.name}
+            name={form.respiratoryRate.name}
+            label={form.respiratoryRate.label}
+            getValue={(value: string) => {
+              checkTriage(form.respiratoryRate.name, value);
+            }}
+            disabled={disableField(form.respiratoryRate.name)}
+          />
+          <TextInputField
+            id={form.heartRate.name}
+            name={form.heartRate.name}
+            label={form.heartRate.label}
+            disabled={disableField(form.heartRate.name)}
+          />
+        </FieldsContainer>
+      </FormFieldContainerLayout>
 
-        <RadioGroupInput
-          name={form.motorResponse.name}
-          label={form.motorResponse.label}
-          options={motorResponses}
-          row={false}
-        />
+      <FormFieldContainerLayout title="Blood Pressure">
+        <FieldsContainer>
+          <TextInputField
+            id={form.bloodPressure.name}
+            name={form.bloodPressure.name}
+            label={form.bloodPressure.label}
+            disabled={disableField(form.bloodPressure.name)}
+            getValue={(value) => {
+              setSystolic(value);
+            }}
+          />
+          <TextInputField
+            id={form.bloodPressureDiastolic.name}
+            name={form.bloodPressureDiastolic.name}
+            label={form.bloodPressureDiastolic.label}
+            disabled={disableField(form.bloodPressureDiastolic.name)}
+            getValue={(value) => {
+              setDiastolic(value);
+            }}
+          />
+        </FieldsContainer>
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Pulse">
+        <FieldsContainer>
+          <TextInputField
+            disabled={disableField(form.pulseRate.name)}
+            id={form.pulseRate.name}
+            name={form.pulseRate.name}
+            label={form.pulseRate.label}
+            getValue={(value: string) => {
+              checkTriage(form.pulseRate.name, value);
+            }}
+          />
+          <TextInputField
+            disabled={disableField(form.pulseOximetry.name)}
+            id={form.pulseOximetry.name}
+            name={form.pulseOximetry.name}
+            label={form.pulseOximetry.label}
+            getValue={(value: string) => {
+              checkTriage(form.pulseOximetry.name, value);
+            }}
+          />
+        </FieldsContainer>
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Saturation and Temperature">
+        <>
+          <FieldsContainer>
+            <TextInputField
+              id={form.saturationRate.name}
+              name={form.saturationRate.name}
+              label={form.saturationRate.label}
+              disabled={disableField(form.saturationRate.name)}
+            />
+            <TextInputField
+              id={form.temperature.name}
+              name={form.temperature.name}
+              label={form.temperature.label}
+              disabled={disableField(form.temperature.name)}
+              getValue={(value: string) => {
+                checkTriage(form.temperature.name, value);
+              }}
+            />
+          </FieldsContainer>
+        </>
+      </FormFieldContainerLayout>
 
-        <RadioGroupInput
-          name={form.verbalResponse.name}
-          label={form.verbalResponse.label}
-          options={verbalResponses}
-          row={false}
+      <FormFieldContainerLayout last={true} title="AVPU">
+        <FieldsContainer sx={{ alignItems: "start" }}>
+          <RadioGroupInput
+            name={form.eyeOpeningResponse.name}
+            label={form.eyeOpeningResponse.label}
+            options={eyeOpeningResponses}
+            disabled={disableField(form.eyeOpeningResponse.name)}
+            row={false}
+          />
+
+          <RadioGroupInput
+            name={form.motorResponse.name}
+            label={form.motorResponse.label}
+            options={motorResponses}
+            disabled={disableField(form.motorResponse.name)}
+            row={false}
+          />
+          <RadioGroupInput
+            name={form.verbalResponse.name}
+            label={form.verbalResponse.label}
+            options={verbalResponses}
+            disabled={disableField(form.verbalResponse.name)}
+            row={false}
+          />
+        </FieldsContainer>
+        <SearchComboBox
+          name={form.avpu.name}
+          options={avpuLists}
+          label={form.avpu.label}
+          sx={{ my: "1ch" }}
+          multiple={false}
+          disabled={disableField(form.avpu.name)}
         />
-      </FieldsContainer>
+        <TextInputField
+          id={form.glucose.name}
+          name={form.glucose.name}
+          label={form.glucose.label}
+          disabled={disableField(form.heartRate.name)}
+          sx={{ m: 0, my: "1ch" }}
+          getValue={(value: string) => {
+            checkTriage(form.glucose.name, value);
+          }}
+        />
+      </FormFieldContainerLayout>
 
       {/* <TextInputField
         id={form.calculatedGCS.name}
         name={form.calculatedGCS.name}
         label={form.calculatedGCS.label}
       /> */}
-      <SearchComboBox
-        name={form.avpu.name}
-        options={avpuLists}
-        label={form.avpu.label}
-        multiple={false}
-      />
+
       <br />
-      <TextInputField
-        id={form.glucose.name}
-        name={form.glucose.name}
-        label={form.glucose.label}
-        getValue={(value: string) => {
-          checkTriage(form.glucose.name, value);
-        }}
-      />
     </FormikInit>
   );
 }

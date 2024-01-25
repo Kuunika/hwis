@@ -9,12 +9,13 @@ const Styles: { [key: string]: SxProps } = {
     height: "20px",
     width: "20px",
     borderRadius: "10px",
-    backgroundColor: defaultTheme.secondary,
-    color: defaultTheme.white,
+    border: "solid 1px #636363",
+    color: "#636363",
     mx: "5px",
   },
   active: {
     backgroundColor: defaultTheme.primary,
+    color: defaultTheme.white,
   },
   circleWithLabel: {
     display: "flex",

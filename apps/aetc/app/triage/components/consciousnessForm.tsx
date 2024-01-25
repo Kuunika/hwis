@@ -2,6 +2,8 @@ import { Box } from "@mui/material";
 import React, { useState } from "react";
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
+  FormValuesListener,
   FormikInit,
   MainButton,
   RadioGroupInput,
@@ -9,23 +11,25 @@ import {
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
-import { useConditions } from "@/hooks";
+import { useConditions, useNavigation } from "@/hooks";
+import { getInitialValues, notify } from "@/helpers";
+import { NO, YES, concepts } from "@/constants";
 
 type Prop = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
 };
 const form = {
   consciousness: {
-    name: "consciousness",
+    name: concepts.DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS,
     label: "Does the patient have a reduced Level of consciousness",
   },
 
   bloodGlucose: {
-    name: "bloodGlucose",
+    name: concepts.BLOOD_GLUCOSE,
     label: "Blood Glucose",
   },
   gcs: {
-    name: "gcs",
+    name: concepts.GCS,
     label: "GCS",
   },
 };
@@ -39,20 +43,17 @@ const schema = Yup.object().shape({
 });
 
 const options = [
-  { label: "Yes", value: "true" },
-  { label: "No", value: "false" },
+  { label: "Yes", value: YES },
+  { label: "No", value: NO },
 ];
 
-const initialValues = {
-  consciousness: "",
-  glucose: "",
-  gcs: "",
-};
+const initialValues = getInitialValues(form);
+
 export const ConsciousnessForm = ({ onSubmit }: Prop) => {
   const [consciousness, setConsciousness] = useState();
+  const [formValues, setFormValues] = useState<any>({});
   const { triageResult, setTriageResult } = useConditions();
-
-  const checkGlucose = (value: string) => {};
+  const { navigateTo } = useNavigation();
 
   const checkGcs = (value: number) => {
     if (!value) {
@@ -68,6 +69,16 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
       setTriageResult("yellow");
     }
   };
+
+  const disableField = (formField: string) => {
+    return triageResult === "red" && !Boolean(formValues[formField]);
+  };
+
+  const handleTriageComplete = () => {
+    notify("info", "Patient added to waiting assessments queue");
+    navigateTo("/triage");
+  };
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -77,33 +88,48 @@ export const ConsciousnessForm = ({ onSubmit }: Prop) => {
     >
       {triageResult && (
         <>
-          <TriageContainer result={triageResult} message={""} />
+          <TriageContainer
+            onCompleteTriage={handleTriageComplete}
+            result={triageResult}
+            message={""}
+          />
           <br />
         </>
       )}
-      <RadioGroupInput
-        name={form.consciousness.name}
-        label={form.consciousness.label}
-        options={options}
-        getValue={(value) => setConsciousness(value)}
-      />
-      <br />
+      <FormValuesListener getValues={setFormValues} />
 
-      {consciousness == "true" && (
+      <FormFieldContainerLayout
+        last={consciousness != YES}
+        title="Consciousness"
+      >
+        <RadioGroupInput
+          name={form.consciousness.name}
+          label={form.consciousness.label}
+          options={options}
+          getValue={(value) => setConsciousness(value)}
+          disabled={disableField(form.consciousness.name)}
+        />
+      </FormFieldContainerLayout>
+
+      {consciousness == YES && (
         <>
-          <FieldsContainer>
-            <TextInputField
-              name={form.bloodGlucose.name}
-              label={form.bloodGlucose.label}
-              id={form.bloodGlucose.name}
-            />
-            <TextInputField
-              name={form.gcs.name}
-              label={form.gcs.label}
-              id={form.gcs.name}
-              getValue={checkGcs}
-            />
-          </FieldsContainer>
+          <FormFieldContainerLayout last={true} title="Blood Glucose and GCS">
+            <FieldsContainer>
+              <TextInputField
+                name={form.bloodGlucose.name}
+                label={form.bloodGlucose.label}
+                id={form.bloodGlucose.name}
+                disabled={disableField(form.bloodGlucose.name)}
+              />
+              <TextInputField
+                name={form.gcs.name}
+                label={form.gcs.label}
+                id={form.gcs.name}
+                getValue={checkGcs}
+                disabled={disableField(form.gcs.name)}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
         </>
       )}
     </FormikInit>

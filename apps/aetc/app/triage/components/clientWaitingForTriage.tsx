@@ -33,7 +33,7 @@ export const ClientWaitingForTriage = () => {
           <MainButton
             sx={{ fontSize: "12px" }}
             title={"start Triage"}
-            onClick={() => navigateTo("/triage/start")}
+            onClick={() => navigateTo(`/triage/${cell.id}/start`)}
           />
         );
       },

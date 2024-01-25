@@ -1,3 +1,4 @@
+import { YES } from "@/constants";
 import { TriageResult } from "@/interfaces";
 import { useEffect, useState } from "react";
 
@@ -8,19 +9,22 @@ export const useConditions = () => {
     useState<boolean>(false);
 
   const updateConditions = (prop: string, formValue: string) => {
-    if (formValue == undefined) {
+    if (formValue == "") {
       return;
     }
+
     useConditions((values: any) => {
-      return { ...values, [prop]: formValue == "true" };
+      return { ...values, [prop]: formValue == YES };
     });
   };
 
   useEffect(() => {
     const formConditions = Object.keys(conditions);
+
     const aggregOrCondition = formConditions.reduce((acc, currentValue) => {
       return acc || conditions[currentValue];
     }, false);
+
     if (aggregOrCondition) {
       setTriageResult("red");
     } else {

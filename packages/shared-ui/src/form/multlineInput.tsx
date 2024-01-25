@@ -8,6 +8,7 @@ type Prop = {
   maxRows: number;
   sx?: SxProps;
   width?: string;
+  disabled?: boolean;
 };
 
 export const MultlineInput = ({
@@ -17,6 +18,7 @@ export const MultlineInput = ({
   maxRows,
   sx,
   width,
+  disabled = false,
 }: Prop) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
@@ -32,6 +34,7 @@ export const MultlineInput = ({
       name={name}
       label={label}
       multiline
+      disabled={disabled}
       variant="outlined"
       maxRows={maxRows}
       onBlur={handleBlur}

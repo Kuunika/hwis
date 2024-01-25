@@ -1,64 +1,25 @@
-import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import InputBase from "@mui/material/InputBase";
+import { FaRegBell, FaCircleUser } from "react-icons/fa6";
 
-import { FaAlignJustify, FaSearch } from "react-icons/fa";
-import { IconContext } from "react-icons";
+import { FaAlignJustify } from "react-icons/fa";
+import { MainTypography } from "..";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    backgroundColor: "white",
-    width: "100%",
-
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
-
-export function NavigationBar() {
+export function NavigationBar({
+  search,
+  onTitleClick,
+}: {
+  search?: any;
+  onTitleClick: () => void;
+}) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position="static"
         sx={{
-          py: "1ch",
           backgroundColor: "#006401",
           px: "8ch",
         }}
@@ -76,21 +37,21 @@ export function NavigationBar() {
             variant="h6"
             noWrap
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            onClick={() => onTitleClick()}
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", sm: "block", cursor: "pointer" },
+            }}
           >
             MAHIS AETC
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <IconContext.Provider value={{ color: "green" }}>
-                <FaSearch />
-              </IconContext.Provider>
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search patient"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
+          {search}
+          <MainTypography sx={{ mx: "1ch" }} variant="h5">
+            <FaRegBell />
+          </MainTypography>
+          <MainTypography variant="h5">
+            <FaCircleUser />
+          </MainTypography>
         </Toolbar>
       </AppBar>
     </Box>

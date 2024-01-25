@@ -7,6 +7,7 @@ import {
   SocialHistoryForm,
 } from ".";
 import { addPatient, useNavigation } from "@/hooks";
+import { successDialog } from "@/helpers";
 
 export const RegistrationFlow = () => {
   const { navigateTo } = useNavigation();
@@ -17,7 +18,7 @@ export const RegistrationFlow = () => {
     { id: 1, label: "Demographics" },
     { id: 2, label: "Social History" },
     { id: 3, label: "Referral" },
-    { id: 4, label: "Financing" },
+    // { id: 4, label: "Financing" },
   ];
 
   const handleSubmitDemographics = (data: any) => {
@@ -28,10 +29,27 @@ export const RegistrationFlow = () => {
     setActiveStep(2);
   };
   const handleSubmitReferral = () => {
-    setActiveStep(3);
+    successDialog({
+      title: "Registration Completed",
+      text: "",
+      icon: "success",
+      onConfirm: () => navigateTo("/registration/list"),
+      confirmButtonText: "Register More Patients",
+      cancelButtonText: "Home",
+      onDismiss: () => navigateTo("/"),
+    });
+    // setActiveStep(3);
   };
   const handleSubmitFinancing = () => {
-    navigateTo("/triage");
+    successDialog({
+      title: "Registration Completed",
+      text: "",
+      icon: "success",
+      onConfirm: () => navigateTo("/registration/list"),
+      confirmButtonText: "Register More Patients",
+      cancelButtonText: "Home",
+      onDismiss: () => navigateTo("/"),
+    });
   };
 
   return (
@@ -55,10 +73,6 @@ export const RegistrationFlow = () => {
       <ReferralForm
         initialValues={referralInitialValues}
         onSubmit={handleSubmitReferral}
-      />
-      <FinancingForm
-        initialValues={financingInitialValues}
-        onSubmit={handleSubmitFinancing}
       />
     </NewStepperContainer>
   );

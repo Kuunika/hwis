@@ -8,6 +8,12 @@ import {
   FieldsContainer,
 } from "shared-ui/src";
 import { concepts } from "@/constants";
+import {
+  RegistrationCard,
+  RegistrationCardTitle,
+  RegistrationDescriptionText,
+  RegistrationMainHeader,
+} from "./common";
 
 const form = {
   maritalStatus: {
@@ -53,61 +59,82 @@ type Prop = {
 
 export const SocialHistoryForm: FC<Prop> = ({ onSubmit, initialValues }) => {
   return (
-    <FormikInit
-      onSubmit={onSubmit}
-      initialValues={initialValues}
-      validationSchema={schema}
-      submitButtonText="next"
-    >
-      <br />
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+    <>
+      <RegistrationMainHeader>Social History</RegistrationMainHeader>
+      <RegistrationDescriptionText>
+        The social history form covers a range of topics, including social
+        relationships, occupational history, and any other factors that may
+        contribute to your overall well-being.
+      </RegistrationDescriptionText>
+      <FormikInit
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+        validationSchema={schema}
+        submitButtonText="next"
+        submitButton={false}
+      >
+        <RegistrationCard>
+          <RegistrationCardTitle>Marital Status</RegistrationCardTitle>
           <RadioGroupInput
-            sx={{ mr: "10ch" }}
+            row={true}
             name={form.maritalStatus.name}
-            label={form.maritalStatus.label}
+            label={""}
             options={[
               { label: "Single", value: "single" },
               { label: "Married", value: "married" },
-              { label: "Widow/Widower", value: "widow/widower" },
+              { label: "Widow", value: "widow/widower" },
               { label: "Divorced", value: "divorced" },
             ]}
           />
+        </RegistrationCard>
+        <RegistrationCard>
+          <RegistrationCardTitle>Religion</RegistrationCardTitle>
+          <SelectInputField
+            name={form.religion.name}
+            selectItems={[
+              { name: "Christian", value: "christian" },
+              { name: "Islam", value: "islam" },
+            ]}
+            label={form.religion.label}
+            id={form.religion.name}
+          />
+        </RegistrationCard>
+
+        <RegistrationCard>
+          <RegistrationCardTitle>Occupation</RegistrationCardTitle>
           <RadioGroupInput
+            row={true}
             name={form.occupation.name}
-            label={form.occupation.label}
+            label={""}
             options={[
               { label: "Employed", value: "employed" },
               { label: "Unemployed", value: "unemployed" },
             ]}
           />
-        </FieldsContainer>
-        <br />
-        <SelectInputField
-          name={form.methodOfTransportation.name}
-          selectItems={[{ name: "Bus", value: "bus" }]}
-          label={form.methodOfTransportation.label}
-          id={form.methodOfTransportation.name}
-        />
-        <SelectInputField
-          name={form.religion.name}
-          selectItems={[
-            { name: "Christian", value: "christian" },
-            { name: "Islam", value: "islam" },
-          ]}
-          label={form.religion.label}
-          id={form.religion.name}
-        />
-        <SelectInputField
-          name={form.highestEducation.name}
-          selectItems={[
-            { name: "Degree", value: "degree" },
-            { name: "Master's Degree", value: "master" },
-          ]}
-          label={form.highestEducation.label}
-          id={form.highestEducation.name}
-        />
-      </Box>
-    </FormikInit>
+        </RegistrationCard>
+        <RegistrationCard>
+          <RegistrationCardTitle>Occupation</RegistrationCardTitle>
+          <SelectInputField
+            name={form.methodOfTransportation.name}
+            selectItems={[{ name: "Bus", value: "bus" }]}
+            label={form.methodOfTransportation.label}
+            id={form.methodOfTransportation.name}
+          />
+        </RegistrationCard>
+
+        <RegistrationCard>
+          <RegistrationCardTitle>Highest Education</RegistrationCardTitle>
+          <SelectInputField
+            name={form.highestEducation.name}
+            selectItems={[
+              { name: "Degree", value: "degree" },
+              { name: "Master's Degree", value: "master" },
+            ]}
+            label={form.highestEducation.label}
+            id={form.highestEducation.name}
+          />
+        </RegistrationCard>
+      </FormikInit>
+    </>
   );
 };

@@ -5,7 +5,7 @@ import {
 } from "mahis-api-client";
 
 export const emrLogin = async () => {
-  ApiCore.setHost("http://192.168.1.113:3000");
+  ApiCore.setHost("http://192.168.43.36:3000");
   ApiCore.logout();
   // Condition runs a health check with provided host
   // Check if loggin session is present before accessing API resources

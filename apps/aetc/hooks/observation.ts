@@ -8,25 +8,28 @@ export const addObservation = () => {
   const addData = async (obsData: any) => {
     const visit = new PatientVisitService(new Date().toISOString());
 
-    await visit.loadPatient("c0c9e5c2-cab2-43ee-89fe-4433c3997981");
+    await visit.loadPatient("099d4e20-7f36-4721-9e47-3be22e6c121e");
 
-    await visit.startVisit(AETC_VISIT_TYPE, new Date().toISOString());
+    const result = await visit.startVisit(
+      AETC_VISIT_TYPE,
+      new Date().toISOString()
+    );
 
     await visit.createEncounter(obsData.encounter, mappedData(obsData.obs));
 
-    const notify = () =>
-      toast.success("Patient vitals saved successfully", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+    // const notify = () =>
+    //   toast.success("Patient vitals saved successfully", {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "colored",
+    //   });
 
-    notify();
+    // notify();
 
     // await visit.stopVisit("");
     return new Promise((resolve, reject) => {});
@@ -43,11 +46,13 @@ export const addObservation = () => {
 };
 
 const mappedData = (vitals: any) => {
-  return Object.keys(vitals).map((vital) => {
-    return {
-      concept: vital,
-      value: vitals[vital],
-      obsDatetime: "2023-11-20",
-    };
-  });
+  return Object.keys(vitals)
+    .map((vital) => {
+      return {
+        concept: vital,
+        value: vitals[vital],
+        obsDatetime: "2023-11-20",
+      };
+    })
+    .filter((d) => d.value);
 };

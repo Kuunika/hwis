@@ -5,14 +5,23 @@ import {
   WrapperBox,
 } from "shared-ui/src";
 import { Button, SxProps } from "@mui/material";
-import { FaRegCalendarPlus } from "react-icons/fa";
+import {
+  FaRegCalendarPlus,
+  FaChevronLeft,
+  FaChevronRight,
+  FaCircle,
+} from "react-icons/fa";
+import { useNavigation } from "@/hooks";
+import { VisitDates } from "./visitDates";
 
 export const VisitsBar = () => {
+  const { navigateTo } = useNavigation();
   return (
     <WrapperBox
       sx={{
         display: "flex",
         justifyContent: "flex-end",
+        alignItems: "center",
         width: "100%",
         px: "2ch",
         py: "2ch",
@@ -22,8 +31,25 @@ export const VisitsBar = () => {
         mb: "5ch",
       }}
     >
-      <Button variant="outlined" size="small" endIcon={<FaRegCalendarPlus />}>
-        Add Today
+      <VisitDates />
+      <WrapperBox sx={{ display: "flex", alignItems: "center", mx: "1ch" }}>
+        <MainTypography sx={{ cursor: "pointer" }}>
+          <FaChevronLeft />
+        </MainTypography>
+        <MainTypography sx={{ fontSize: "10px", mx: "1ch" }}>
+          <FaCircle />
+        </MainTypography>
+        <MainTypography sx={{ cursor: "pointer" }}>
+          <FaChevronRight />
+        </MainTypography>
+      </WrapperBox>
+      <Button
+        onClick={() => navigateTo("/triage/12/history")}
+        sx={{ ml: "1ch" }}
+        variant="contained"
+        size="small"
+      >
+        Triage
       </Button>
     </WrapperBox>
   );
