@@ -2,6 +2,7 @@ import { SxProps } from "@mui/material";
 import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaCheck } from "react-icons/fa";
 import { useNavigation } from "@/hooks";
+import { AddPatientButton } from "../page";
 
 const color = "#B3B3B3";
 
@@ -40,6 +41,9 @@ export function ResultBox({ searchResults }: Prop) {
         {searchResults.map((result: any) => (
           <Row {...result} />
         ))}
+      </WrapperBox>
+      <WrapperBox sx={{ m: "1ch" }}>
+        <AddPatientButton />
       </WrapperBox>
     </MainPaper>
   );

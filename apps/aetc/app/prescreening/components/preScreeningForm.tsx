@@ -42,8 +42,20 @@ const schema = yup.object({
 });
 
 const referrences = [
-  { id: "Lab", label: "Lab" },
   { id: "OPD2", label: "OPD2" },
+  { id: "ENT", label: "ENT" },
+  { id: "OPHTHALMOLOGY", label: "OPHTHALMOLOGY" },
+  { id: "ORTHOPEDICS", label: "ORTHOPEDICS" },
+  { id: "CLINICS", label: "CLINICS" },
+  { id: "PAEDS", label: "PAEDS" },
+  { id: "RADIOLOGY", label: "RADIOLOGY" },
+  { id: "DENTAL", label: "DENTAL" },
+  { id: "DERMATOLOGY", label: "DERMATOLOGY" },
+  { id: "STI", label: "STI" },
+  { id: "PSYCHIATRY", label: "PSYCHIATRY" },
+  { id: "LOCAL CLINIC", label: "LOCAL CLINIC" },
+  { id: "4C", label: "4C" },
+  { id: "ONCOLOGY", label: "ONCOLOGY" },
 ];
 
 export function PrescreeningForm({ onSubmit }: props) {

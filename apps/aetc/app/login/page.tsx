@@ -2,10 +2,12 @@
 import { useNavigation } from "@/hooks";
 import {
   FormikInit,
+  MainButton,
   MainGrid,
   MainPaper,
   MainTypography,
   TextInputField,
+  WrapperBox,
 } from "shared-ui/src";
 import * as yup from "yup";
 import Image from "next/image";
@@ -40,11 +42,9 @@ export default function LoginPage() {
       <MainGrid item lg={4}>
         <br />
         <br />
-        <br />
-        <br />
-        <MainPaper
+        <WrapperBox
           sx={{
-            p: "5ch",
+            p: "2ch",
             display: "flex",
             justifyContent: "center",
             flexDirection: "column",
@@ -61,16 +61,28 @@ export default function LoginPage() {
             validationSchema={schema}
             onSubmit={handleSubmit}
             submitButtonText="Login"
+            submitButton={false}
           >
-            <TextInputField id="username" name="username" label="Username" />
-            <TextInputField
-              id="password"
-              name="password"
-              label="Password"
-              type="password"
-            />
+            <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+              <TextInputField
+                width={"100%"}
+                sx={{ mx: 0 }}
+                id="username"
+                name="username"
+                label="Username"
+              />
+              <TextInputField
+                width={"100%"}
+                sx={{ mx: 0 }}
+                id="password"
+                name="password"
+                label="Password"
+                type="password"
+              />
+              <MainButton title={"Login"} onClick={() => navigateTo("/")} />
+            </WrapperBox>
           </FormikInit>
-        </MainPaper>
+        </WrapperBox>
       </MainGrid>
       <MainGrid item lg={4}></MainGrid>
     </MainGrid>

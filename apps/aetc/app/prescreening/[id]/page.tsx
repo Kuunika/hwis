@@ -39,7 +39,7 @@ export default function Prescreening() {
         >
           <br />
           <br />
-          <RegistrationMainHeader>Prescreening</RegistrationMainHeader>
+          <RegistrationMainHeader>Screening</RegistrationMainHeader>
           <RegistrationDescriptionText>
             This is a list of all patients that went through initial
             registration successfully and waiting for prescreening.

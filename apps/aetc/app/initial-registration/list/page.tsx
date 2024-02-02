@@ -26,7 +26,7 @@ export default function InitialList() {
           <br />
           <br />
           <RegistrationMainHeader>
-            Patients waiting for prescreening
+            Patients waiting for Screening
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
             This is a list of all patients that went through initial

@@ -43,7 +43,7 @@ export default function Home() {
           <Card
             icon={<FcTodoList />}
             link="/initial-registration/list"
-            title="Patients Waiting for Prescreening"
+            title="Patients Waiting for Screening"
           />
           <Card
             icon={<FcTodoList />}

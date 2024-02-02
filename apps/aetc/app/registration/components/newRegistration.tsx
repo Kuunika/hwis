@@ -18,10 +18,45 @@ import {
 import { addPatient, useNavigation } from "@/hooks";
 
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
+import { successDialog } from "@/helpers";
 
 export const NewRegistrationFlow = () => {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(2);
   const { navigateTo } = useNavigation();
+  const [registrationData, setRegistrationData] = useState();
+  const [demographicsContext, setDemographicsContext] = useState<any>();
+  const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
+  const [referralContext, setReferralContext] = useState<any>();
+
+  const changeActive = async (step: number) => {
+    if (active == 1) {
+      const { submitForm, errors, isValid, touched, dirty } =
+        demographicsContext;
+      submitForm();
+
+      if (isValid && dirty) {
+        setActive(active + 1);
+      }
+    }
+    if (active == 2) {
+      const { submitForm, errors, isValid, touched, dirty } =
+        socialHistoryContext;
+      submitForm();
+
+      if (isValid && dirty) {
+        setActive(active + 1);
+      }
+    }
+    if (active == 3) {
+      const { submitForm, errors, isValid, touched, dirty } = referralContext;
+      submitForm();
+
+      if (isValid && dirty) {
+        setActive(active + 1);
+      }
+    }
+  };
+
   return (
     <>
       <MainGrid sx={{}} container>
@@ -36,19 +71,28 @@ export const NewRegistrationFlow = () => {
         >
           <br />
           <br />
-          {active == 1 && <DemographicsForm onSubmit={() => {}} />}
+          {active == 1 && (
+            <DemographicsForm
+              setContext={setDemographicsContext}
+              onSubmit={() => {}}
+            />
+          )}
           {active == 2 && (
-            <SocialHistoryForm initialValues={{}} onSubmit={() => {}} />
+            <SocialHistoryForm
+              setContext={setSocialHistoryContext}
+              onSubmit={() => {}}
+            />
           )}
           {active == 3 && (
-            <ReferralForm initialValues={{}} onSubmit={() => {}} />
+            <ReferralForm
+              setContext={setReferralContext}
+              initialValues={{}}
+              onSubmit={() => {}}
+            />
           )}
         </MainGrid>
         <MainGrid item lg={4}></MainGrid>
-        <RegistrationNavigation
-          active={active}
-          setActive={(step: number) => setActive(step)}
-        />
+        <RegistrationNavigation active={active} setActive={changeActive} />
       </MainGrid>
     </>
   );
@@ -61,6 +105,7 @@ const RegistrationNavigation = ({
   active: number;
   setActive: (step: number) => void;
 }) => {
+  const { navigateTo } = useNavigation();
   const buttonStyles = {
     width: "126px",
     height: "44px",
@@ -112,7 +157,19 @@ const RegistrationNavigation = ({
         sx={buttonStyles}
         title={"next"}
         onClick={() => {
-          if (active == 3) return;
+          if (active == 3) {
+            successDialog({
+              title: "Registration Completed",
+              text: "",
+              icon: "success",
+              onConfirm: () => navigateTo("/registration/list"),
+              confirmButtonText: "Register More Patients",
+              cancelButtonText: "Home",
+              onDismiss: () => navigateTo("/"),
+            });
+
+            return;
+          }
           setActive(active + 1);
         }}
       />

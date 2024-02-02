@@ -1,6 +1,8 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import * as Yup from "yup";
+import { useFormikContext } from "formik";
+
 import {
   FormikInit,
   TextInputField,
@@ -9,6 +11,9 @@ import {
   FieldsContainer,
   MainPaper,
   MainTypography,
+  DatePickerInput,
+  FormDatePicker,
+  SearchComboBox,
 } from "shared-ui/src";
 import {
   RegistrationCard,
@@ -16,15 +21,21 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "./common";
+import { districts } from "@/constants";
+import { countries } from "@/constants/contries";
 
 const form = {
   identificationNumber: {
     name: "identificationNumber",
-    label: "Identification Number",
+    label: "National Identification Number",
   },
   firstName: {
     name: "firstName",
     label: "First Name",
+  },
+  phoneNumber: {
+    name: "phoneNumber",
+    label: "Phone Number",
   },
   lastName: {
     name: "lastName",
@@ -70,6 +81,10 @@ const form = {
     name: "homeDistrict",
     label: "Home District",
   },
+  nationality: {
+    name: "nationality",
+    label: "Nationality",
+  },
   homeTraditionalAuthority: {
     name: "homeTraditionalAuthority",
     label: "Home Traditional Authority",
@@ -93,6 +108,9 @@ const schema = Yup.object().shape({
     .required()
     .label(form.identificationNumber.label),
   [form.firstName.name]: Yup.string().required().label(form.firstName.label),
+  [form.phoneNumber.name]: Yup.string()
+    .required()
+    .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.string().label(form.dob.label),
   [form.gender.name]: Yup.string().required().label(form.gender.label),
@@ -138,6 +156,7 @@ const schema = Yup.object().shape({
 const init = {
   firstName: "",
   lastName: "",
+  phoneNumber: "",
   dob: "",
   gender: "",
   currentDistrict: "",
@@ -159,11 +178,13 @@ const init = {
 type Prop = {
   initialValues?: any;
   onSubmit: (value: any) => void;
+  setContext: (context: any) => void;
 };
 
 export const DemographicsForm: FC<Prop> = ({
   onSubmit,
   initialValues = init,
+  setContext,
 }) => {
   const [gender, setGender] = useState();
 
@@ -181,6 +202,7 @@ export const DemographicsForm: FC<Prop> = ({
         submitButtonText="next"
         submitButton={false}
       >
+        <TrackFormikContext setFormContext={setContext} />
         <RegistrationCard>
           <RegistrationCardTitle>Personal Information</RegistrationCardTitle>
           <TextInputField
@@ -207,15 +229,33 @@ export const DemographicsForm: FC<Prop> = ({
               { label: "Female", value: "Female" },
             ]}
           />
+          <FormDatePicker label={form.dob.label} name={form.dob.name} />
+          <TextInputField
+            name={form.phoneNumber.name}
+            id={form.phoneNumber.name}
+            label={form.phoneNumber.label}
+          />
         </RegistrationCard>
 
         <RegistrationCard>
           <RegistrationCardTitle>Home Location</RegistrationCardTitle>
-          <SelectInputField
+          <SearchComboBox
+            name={form.nationality.name}
+            label={form.nationality.label}
+            multiple={false}
+            options={countries.map((c) => ({
+              id: c.nationality,
+              label: c.nationality,
+            }))}
+          />
+          <SearchComboBox
             name={form.homeDistrict.name}
-            id={form.homeDistrict.name}
             label={form.homeDistrict.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+            multiple={false}
+            options={districts.map((d) => ({
+              id: d.district_name,
+              label: d.district_name,
+            }))}
           />
           <SelectInputField
             name={form.homeTraditionalAuthority.name}
@@ -285,4 +325,18 @@ export const DemographicsForm: FC<Prop> = ({
       </FormikInit>
     </>
   );
+};
+
+export const TrackFormikContext = ({
+  setFormContext,
+}: {
+  setFormContext: (context: any) => void;
+}) => {
+  const context = useFormikContext();
+
+  useEffect(() => {
+    setFormContext(() => context);
+  }, [context.dirty, context.isValid, context.values]);
+
+  return null;
 };

@@ -14,6 +14,8 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "./common";
+import { TrackFormikContext } from "./demographicsForm";
+import { getInitialValues } from "@/helpers";
 
 const form = {
   maritalStatus: {
@@ -41,7 +43,7 @@ const form = {
 const schema = Yup.object().shape({
   [form.maritalStatus.name]: Yup.string()
     .required()
-    .label(form.maritalStatus.name),
+    .label(form.maritalStatus.label),
   [form.occupation.name]: Yup.string().required().label(form.occupation.label),
   [form.religion.name]: Yup.string().required().label(form.religion.label),
   [form.highestEducation.name]: Yup.string()
@@ -53,11 +55,16 @@ const schema = Yup.object().shape({
 });
 
 type Prop = {
-  initialValues: any;
+  initialValues?: any;
   onSubmit: () => void;
+  setContext: (context: any) => void;
 };
 
-export const SocialHistoryForm: FC<Prop> = ({ onSubmit, initialValues }) => {
+export const SocialHistoryForm: FC<Prop> = ({
+  onSubmit,
+  initialValues = getInitialValues(form),
+  setContext,
+}) => {
   return (
     <>
       <RegistrationMainHeader>Social History</RegistrationMainHeader>
@@ -73,12 +80,13 @@ export const SocialHistoryForm: FC<Prop> = ({ onSubmit, initialValues }) => {
         submitButtonText="next"
         submitButton={false}
       >
+        <TrackFormikContext setFormContext={setContext} />
         <RegistrationCard>
           <RegistrationCardTitle>Marital Status</RegistrationCardTitle>
           <RadioGroupInput
             row={true}
             name={form.maritalStatus.name}
-            label={""}
+            label={form.maritalStatus.label}
             options={[
               { label: "Single", value: "single" },
               { label: "Married", value: "married" },
@@ -92,8 +100,13 @@ export const SocialHistoryForm: FC<Prop> = ({ onSubmit, initialValues }) => {
           <SelectInputField
             name={form.religion.name}
             selectItems={[
-              { name: "Christian", value: "christian" },
-              { name: "Islam", value: "islam" },
+              { name: "Christianity", value: "Christianity" },
+              { name: "Muslim", value: "Muslim" },
+              { name: "Buddhism", value: "Buddhism" },
+              { name: "Rastafarian", value: "Rastafarian" },
+              { name: "Atheist", value: "Atheist" },
+              { name: "Traditional", value: "Traditional" },
+              { name: "Other", value: "Other" },
             ]}
             label={form.religion.label}
             id={form.religion.name}
@@ -107,8 +120,11 @@ export const SocialHistoryForm: FC<Prop> = ({ onSubmit, initialValues }) => {
             name={form.occupation.name}
             label={""}
             options={[
-              { label: "Employed", value: "employed" },
+              { label: "Working", value: "working" },
+              { label: "Business", value: "business" },
               { label: "Unemployed", value: "unemployed" },
+              { label: "Self Employed", value: "selfemployed" },
+              { label: "Student", value: "student" },
             ]}
           />
         </RegistrationCard>
@@ -116,7 +132,20 @@ export const SocialHistoryForm: FC<Prop> = ({ onSubmit, initialValues }) => {
           <RegistrationCardTitle>Occupation</RegistrationCardTitle>
           <SelectInputField
             name={form.methodOfTransportation.name}
-            selectItems={[{ name: "Bus", value: "bus" }]}
+            selectItems={[
+              { name: "Walking", value: "walking" },
+              { name: "Ambulance", value: "ambulance" },
+              { name: "Public transport", value: "public_transport" },
+              { name: "Private transport", value: "private_transport" },
+              { name: "Police vehicle", value: "police_vehicle" },
+              {
+                name: "Other public or company vehicle",
+                value: "other_public_company_vehicle",
+              },
+              { name: "Motorcycle", value: "motorcycle" },
+              { name: "Taxi (car/motorcycle)", value: "taxi" },
+              { name: "Bicycle", value: "bicycle" },
+            ]}
             label={form.methodOfTransportation.label}
             id={form.methodOfTransportation.name}
           />

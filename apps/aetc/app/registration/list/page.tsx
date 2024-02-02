@@ -31,8 +31,8 @@ export default function List() {
             Patients waiting for Registration
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
-            This is a list of all patients that went through initial
-            registration successfully and waiting for prescreening.
+            This is a list of all patients that went through prescreening
+            successfully and waiting for registration.
           </RegistrationDescriptionText>
           <RegistrationCard sx={{ p: 0 }}>
             <WaitingRegistrationList />

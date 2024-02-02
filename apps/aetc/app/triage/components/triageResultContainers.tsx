@@ -29,7 +29,8 @@ export const TriageContainer = ({
       },
     });
   };
-
+  if (result == "green") return null;
+  
   return (
     <MainPaper elevation={0} sx={{ ...styles[result], p: "1ch" }}>
       <MainTypography variant="h4" textTransform={"capitalize"}>

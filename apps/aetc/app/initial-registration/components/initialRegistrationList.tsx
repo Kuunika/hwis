@@ -33,7 +33,7 @@ export const InitialRegistrationList = () => {
         return (
           <MainButton
             sx={{ fontSize: "12px" }}
-            title={"prescreening"}
+            title={"screen"}
             onClick={() => navigateTo(`/prescreening/${cell.id}`)}
           />
         );

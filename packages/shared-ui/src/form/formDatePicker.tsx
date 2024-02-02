@@ -23,7 +23,7 @@ type Prop = {
 export const FormDatePicker: FC<Prop> = ({
   name,
   label,
-  width = "100%",
+  width = "25ch",
   sx,
   getValue,
   disabled = false,
@@ -40,8 +40,8 @@ export const FormDatePicker: FC<Prop> = ({
         sx={{
           width,
           my: "1ch",
-          mr: "1ch",
-          "& fieldset": { borderRadius: "10px" },
+          mx: "0.5ch",
+          "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}
         label={label}
