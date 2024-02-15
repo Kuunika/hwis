@@ -2,13 +2,12 @@
 import { MainGrid, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { FcSurvey } from "react-icons/fc";
 
-import { emrLogin, useNavigation } from "@/hooks";
+import { useNavigation } from "@/hooks";
 import { LandingPageCollapsible } from "./components";
 
 import { FcRules, FcSearch, FcTodoList, FcPlus } from "react-icons/fc";
 
 export default function Home() {
-  emrLogin();
   return (
     <>
       <MainGrid container>

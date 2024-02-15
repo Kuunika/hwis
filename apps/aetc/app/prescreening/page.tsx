@@ -1,11 +1,14 @@
 "use client";
 import { MiddlePageLayout } from "@/components/layouts";
 import { PrescreeningForm } from "./components/preScreeningForm";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 
 export default function Prescreening() {
   const { navigateTo } = useNavigation();
+  const { params } = useParameters();
   const initialValues = {};
+
+  console.log({ params });
 
   const handleSubmit = (values: any) => {
     console.log({ values });

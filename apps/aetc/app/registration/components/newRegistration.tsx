@@ -21,12 +21,13 @@ import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 import { successDialog } from "@/helpers";
 
 export const NewRegistrationFlow = () => {
-  const [active, setActive] = useState(2);
+  const [active, setActive] = useState(4);
   const { navigateTo } = useNavigation();
   const [registrationData, setRegistrationData] = useState();
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
   const [referralContext, setReferralContext] = useState<any>();
+  const [financingFormContext, setFinancingFormContext] = useState<any>();
 
   const changeActive = async (step: number) => {
     if (active == 1) {
@@ -86,6 +87,13 @@ export const NewRegistrationFlow = () => {
           {active == 3 && (
             <ReferralForm
               setContext={setReferralContext}
+              initialValues={{}}
+              onSubmit={() => {}}
+            />
+          )}
+          {active == 4 && (
+            <FinancingForm
+              setContext={setFinancingFormContext}
               initialValues={{}}
               onSubmit={() => {}}
             />
@@ -150,6 +158,10 @@ const RegistrationNavigation = ({
         <FaArrowRightLong />
         <NavBox onClick={() => setActive(3)} active={active == 3}>
           Referral
+        </NavBox>
+        <FaArrowRightLong />
+        <NavBox onClick={() => setActive(4)} active={active == 4}>
+          Financing
         </NavBox>
       </WrapperBox>
       <MainButton

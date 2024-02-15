@@ -1,0 +1,33 @@
+{
+  "stockStatusAsOfDate": "09/19/2023",
+  "facilities": [
+    {
+      "facilityIdentifier": "MWI",
+      "products": [
+        {
+          "productCode": "58883",
+          "unitOfMeasure": "pack",
+          "numberOfProductAvailableAtTheTimeOfReporting": 12,
+          "consumptionOfProduct": 12
+        },
+        {
+          "productCode": "58883",
+          "unitOfMeasure": "pack",
+          "numberOfProductAvailableAtTheTimeOfReporting": 12,
+          "consumptionOfProduct": 12
+        }
+      ]
+    },
+    {
+      "facilityIdentifier": "MWI",
+      "products": [
+        {
+          "productCode": "58883",
+          "unitOfMeasure": "pack",
+          "numberOfProductAvailableAtTheTimeOfReporting": 12,
+          "consumptionOfProduct": 12
+        }
+      ]
+    }
+  ]
+}

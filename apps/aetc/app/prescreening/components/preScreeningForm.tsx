@@ -9,35 +9,31 @@ import {
 import * as yup from "yup";
 
 import { NotificationContainer } from "@/components";
+import { getInitialValues } from "@/helpers";
+import { NO, YES, concepts } from "@/constants";
 
 type props = {
   onSubmit: (values: any) => void;
 };
 
 const form = {
-  referredCheckbox: {
-    name: "referredCheckbox",
-    label: " Is the patient referred?",
+  referred: {
+    name: concepts.IS_PATIENT_REFERRED,
+    label: "Is the patient referred?",
   },
-  urgentCheckbox: {
-    name: "urgentCheckbox",
+  urgent: {
+    name: concepts.IS_SITUATION_URGENT,
     label: " Is the situation urgent?",
   },
   Referred: {
-    name: "referred",
+    name: concepts.PATIENT_REFERRED_TO,
     label: "Patient Referred to",
   },
 };
 
 const schema = yup.object({
-  [form.referredCheckbox.name]: yup
-    .string()
-    .required()
-    .label(form.referredCheckbox.label),
-  [form.urgentCheckbox.name]: yup
-    .string()
-    .required()
-    .label(form.urgentCheckbox.label),
+  [form.referred.name]: yup.string().required().label(form.referred.label),
+  [form.urgent.name]: yup.string().required().label(form.urgent.label),
   [form.Referred.name]: yup.string().label(form.Referred.label),
 });
 
@@ -61,35 +57,34 @@ const referrences = [
 export function PrescreeningForm({ onSubmit }: props) {
   const [formValues, setFormValues] = useState<any>({});
 
+  const yesno = [
+    { label: "Yes", value: YES },
+    { label: "No", value: NO },
+  ];
+
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={{ referredCheckbox: "", urgentCheckbox: "", referred: "" }}
+      initialValues={getInitialValues(form)}
       onSubmit={onSubmit}
     >
       <FormValuesListener getValues={setFormValues} />
 
       <FieldsContainer>
         <RadioGroupInput
-          name={form.referredCheckbox.name}
-          label={form.referredCheckbox.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          name={form.referred.name}
+          label={form.referred.label}
+          options={yesno}
         />
 
         <RadioGroupInput
-          name={form.urgentCheckbox.name}
-          label={form.urgentCheckbox.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
+          name={form.urgent.name}
+          label={form.urgent.label}
+          options={yesno}
         />
       </FieldsContainer>
 
-      {formValues[form.urgentCheckbox.name] == "no" && (
+      {formValues[form.urgent.name] == NO && (
         <>
           <br />
           <SearchComboBox
@@ -101,7 +96,7 @@ export function PrescreeningForm({ onSubmit }: props) {
           />
         </>
       )}
-      {formValues[form.urgentCheckbox.name] == "yes" && (
+      {formValues[form.urgent.name] == YES && (
         <NotificationContainer message="Proceed with registration" />
       )}
     </FormikInit>

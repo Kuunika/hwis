@@ -1,31 +1,60 @@
 import { IApiService } from "@/interfaces";
 import { AxiosInstance } from "axios";
+import { setCookie, getCookie } from "cookies-next";
+import { emrApiClient } from "./apiClients";
 
-export class HttpService implements IApiService {
-  protected endPoint: string;
-  protected apiClient: AxiosInstance;
+export async function getAll<T>(
+  endPoint: string,
+  query?: string,
+  apiClient: AxiosInstance = emrApiClient()
+) {
+  return apiClient.get<T[]>(`${endPoint}${query ? "?" + query : ""}`);
+}
+export async function getOne<T>(
+  id: number | string,
+  endPoint: string,
+  query?: string,
+  apiClient: AxiosInstance = emrApiClient()
+) {
+  return apiClient.get<T>(`${endPoint}/${id}${query ? "?" + query : ""}`);
+}
 
-  constructor(apiClient: AxiosInstance, endPoint: string) {
-    this.endPoint = endPoint;
-    this.apiClient = apiClient;
-  }
+export async function create<T>(
+  data: Partial<T>,
+  endPoint: string,
+  apiClient: AxiosInstance = emrApiClient()
+) {
+  return apiClient.post<T>(endPoint, data);
+}
 
-  getAll<T>(query?: string) {
-    return this.apiClient.get<T[]>(
-      `${this.endPoint}${query ? "?" + query : ""}`
-    );
-  }
-  getOne<T>(id: number | string, query?: string) {
-    return this.apiClient.get<T>(
-      `${this.endPoint}/${id}${query ? "?" + query : ""}`
-    );
-  }
+export async function edit<T>(
+  id: string | number,
+  data: Partial<T>,
+  endPoint: string,
+  apiClient: AxiosInstance = emrApiClient()
+) {
+  return apiClient.put(`${endPoint}/${id}`, data);
+}
+export async function login(
+  credentials: any,
+  apiClient: AxiosInstance = emrApiClient()
+) {
+  let response;
 
-  create<T>(data: Partial<T>) {
-    return this.apiClient.post<T>(this.endPoint, data);
-  }
+  try {
+    response = await apiClient.post("/auth/login", credentials);
+    setCookie("accessToken", response.data.jwt);
 
-  edit<T>(id: string | number, data: Partial<T>) {
-    return this.apiClient.put(`${this.endPoint}/${id}`, data);
+    console.log(getCookie("accessToken"));
+    localStorage.setItem("accessToken", response.data.jwt);
+    // console.log(response.data.jwt);
+    return {
+      status: response.status,
+      data: response.data,
+      message: response.statusText,
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.response.message);
   }
 }

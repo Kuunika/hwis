@@ -2,7 +2,7 @@
 import { MiddlePageLayout } from "@/components/layouts";
 import { PrescreeningForm } from "../components/preScreeningForm";
 import { successDialog } from "@/helpers";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
@@ -10,10 +10,50 @@ import {
 } from "@/app/registration/components/common";
 import { Navigation } from "@/app/registration/scanner/page";
 import { MainGrid } from "shared-ui/src";
+import { addEncounter } from "@/hooks/encounter";
+import { concepts, encounters } from "@/constants";
+import { getInitialRegisteredPatients } from "@/hooks/patientReg";
+import { getDateTime } from "@/helpers/dateTime";
+import { closeCurrentVisit } from "@/hooks/visit";
 
 export default function Prescreening() {
   const { navigateTo } = useNavigation();
+  const { params } = useParameters();
+  const { data } = getInitialRegisteredPatients();
+  const { mutate: createEncounter, isPending, isSuccess } = addEncounter();
+  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+
   const handleSubmit = (values: any) => {
+    const patient = data?.find((d) => d.id == params.id);
+    createEncounter({
+      encounterType: encounters.SCREENING_ENCOUNTER,
+      visit: patient?.visit_uuid,
+      patient: params.id,
+      encounterDatetime: getDateTime(),
+      obs: [
+        {
+          concept: concepts.IS_PATIENT_REFERRED,
+          value: values[concepts.IS_PATIENT_REFERRED],
+          obsDatetime: getDateTime(),
+        },
+        {
+          concept: concepts.IS_SITUATION_URGENT,
+          value: values[concepts.IS_SITUATION_URGENT],
+          obsDatetime: getDateTime(),
+        },
+        {
+          concept: concepts.PATIENT_REFERRED_TO,
+          value: values[concepts.PATIENT_REFERRED_TO],
+          obsDatetime: getDateTime(),
+        },
+      ],
+    });
+
+    console.log(Boolean(values[concepts.PATIENT_REFERRED_TO]));
+    if (Boolean(values[concepts.PATIENT_REFERRED_TO])) {
+      closeVisit(patient?.visit_uuid);
+    }
+    // console.log({ values });
     successDialog({
       title: "Prescreening Completed",
       text: "",

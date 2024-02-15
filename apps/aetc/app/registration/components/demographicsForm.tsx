@@ -2,6 +2,8 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import * as Yup from "yup";
 import { useFormikContext } from "formik";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {
   FormikInit,
@@ -14,6 +16,8 @@ import {
   DatePickerInput,
   FormDatePicker,
   SearchComboBox,
+  WrapperBox,
+  FormValuesListener,
 } from "shared-ui/src";
 import {
   RegistrationCard,
@@ -21,8 +25,9 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "./common";
-import { districts } from "@/constants";
+import { districts, malawiVillages, traditionalAuthorities } from "@/constants";
 import { countries } from "@/constants/contries";
+import { getInitialValues } from "@/helpers";
 
 const form = {
   identificationNumber: {
@@ -55,15 +60,15 @@ const form = {
   },
   currentTraditionalAuthority: {
     name: "currentTraditionalAuthority",
-    label: "Current Traditional Authority",
+    label: "Current TA / Ward",
   },
   currentVillage: {
     name: "currentVillage",
-    label: "Current Village",
+    label: "Current Village / Location",
   },
   closeLandMark: {
     name: "closeLandMark",
-    label: "Current Village",
+    label: "Close Landmark",
   },
   nextOfKinName: {
     name: "nextOfKinName",
@@ -153,27 +158,7 @@ const schema = Yup.object().shape({
     .label(form.guardianPhoneNumber.label),
 });
 
-const init = {
-  firstName: "",
-  lastName: "",
-  phoneNumber: "",
-  dob: "",
-  gender: "",
-  currentDistrict: "",
-  currentTraditionAuthority: "",
-  currentVillage: "",
-  closeLandMark: "",
-  nextOfKinName: "",
-  nextOfKinRelationship: "",
-  nextOfKinPhoneNumber: "",
-  id: "",
-  identificationNumber: "",
-  homeDistrict: "",
-  homeTraditionalAuthority: "",
-  homeVillage: "",
-  guardianName: "",
-  guardianPhoneNumber: "",
-};
+const init = getInitialValues(form);
 
 type Prop = {
   initialValues?: any;
@@ -187,6 +172,31 @@ export const DemographicsForm: FC<Prop> = ({
   setContext,
 }) => {
   const [gender, setGender] = useState();
+  const [checked, setChecked] = useState(false);
+  const [formValues, setFormValues] = useState<any>({});
+  const [fieldFunction, setFieldFunction] = useState<any>();
+
+  const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
+
+  useEffect(() => {
+    if (fieldFunction && checked) {
+      const { setFieldValue } = fieldFunction;
+      setFieldValue(
+        form.currentDistrict.name,
+        formValues[form.homeDistrict.name]
+      );
+      setFieldValue(
+        form.currentVillage.name,
+        formValues[form.homeVillage.name]
+      );
+      setFieldValue(
+        form.currentTraditionalAuthority.name,
+        formValues[form.homeTraditionalAuthority.name]
+      );
+    }
+  }, [checked]);
 
   return (
     <>
@@ -202,7 +212,11 @@ export const DemographicsForm: FC<Prop> = ({
         submitButtonText="next"
         submitButton={false}
       >
-        <TrackFormikContext setFormContext={setContext} />
+        <FormValuesListener getValues={setFormValues} />
+        <TrackFormikContext
+          getSetFieldFunction={(func: any) => setFieldFunction(func)}
+          setFormContext={setContext}
+        />
         <RegistrationCard>
           <RegistrationCardTitle>Personal Information</RegistrationCardTitle>
           <TextInputField
@@ -257,40 +271,52 @@ export const DemographicsForm: FC<Prop> = ({
               label: d.district_name,
             }))}
           />
-          <SelectInputField
+          <SearchComboBox
             name={form.homeTraditionalAuthority.name}
-            id={form.homeTraditionalAuthority.name}
             label={form.homeTraditionalAuthority.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+            multiple={false}
+            options={traditionalAuthorities}
           />
-          <SelectInputField
+          <SearchComboBox
             name={form.homeVillage.name}
-            id={form.homeVillage.name}
             label={form.homeVillage.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+            multiple={false}
+            options={malawiVillages}
           />
         </RegistrationCard>
 
         <RegistrationCard>
           <RegistrationCardTitle>Current Location</RegistrationCardTitle>
-          <SelectInputField
+          <WrapperBox>
+            <FormControlLabel
+              control={<Checkbox checked={checked} onChange={handleChecked} />}
+              label="same as home location"
+            />
+          </WrapperBox>
+          <SearchComboBox
             name={form.currentDistrict.name}
-            id={form.currentDistrict.name}
             label={form.currentDistrict.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+            disabled={checked}
+            multiple={false}
+            options={districts.map((d) => ({
+              id: d.district_name,
+              label: d.district_name,
+            }))}
           />
-          <SelectInputField
+          <SearchComboBox
             name={form.currentTraditionalAuthority.name}
-            id={form.currentTraditionalAuthority.name}
             label={form.currentTraditionalAuthority.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+            disabled={checked}
+            multiple={false}
+            options={traditionalAuthorities}
           />
 
-          <SelectInputField
+          <SearchComboBox
             name={form.currentVillage.name}
-            id={form.currentVillage.name}
             label={form.currentVillage.label}
-            selectItems={[{ name: "Blantyre", value: "blantyre" }]}
+            disabled={checked}
+            multiple={false}
+            options={malawiVillages}
           />
           <TextInputField
             name={form.closeLandMark.name}
@@ -314,7 +340,7 @@ export const DemographicsForm: FC<Prop> = ({
           <TextInputField
             name={form.guardianName.name}
             id={form.guardianName.name}
-            label={form.guardianName.name}
+            label={form.guardianName.label}
           />
           <TextInputField
             name={form.guardianPhoneNumber.name}
@@ -329,14 +355,20 @@ export const DemographicsForm: FC<Prop> = ({
 
 export const TrackFormikContext = ({
   setFormContext,
+  getSetFieldFunction,
 }: {
   setFormContext: (context: any) => void;
+  getSetFieldFunction?: (func: any) => void;
 }) => {
   const context = useFormikContext();
 
   useEffect(() => {
     setFormContext(() => context);
   }, [context.dirty, context.isValid, context.values]);
+
+  useEffect(() => {
+    if (getSetFieldFunction) getSetFieldFunction(context);
+  }, []);
 
   return null;
 };

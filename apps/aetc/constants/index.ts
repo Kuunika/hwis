@@ -10,9 +10,11 @@ export const encounters = {
   BREATHING_ASSESSMENT: "08d4b4e5-dfa7-436b-9062-aee1b076c3ea",
   CIRCULATION_ASSESSMENT: "bb16ef97-6ef7-414f-880c-dfc67e1601df",
   DISABILITY_ASSESSMENT: "0ef8f652-7852-49a5-a9dd-c1ca74fe098c",
+  INITIAL_REGISTRATION: "4186b2dd-0254-4226-965a-e77fcaa70bcf",
+  SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
 };
 
-export const AETC_VISIT_TYPE = "05217c3a-ec65-45b1-b113-ad8189e2acbc";
+export const AETC_VISIT_TYPE = "41f61c9a-5535-4826-8260-249951666abb";
 export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
 
@@ -136,6 +138,12 @@ export const concepts = {
   POSTURE: "57b913f6-ffde-4831-b3e1-ddb57317ebf2",
   FOCAL_NEUROLOGY: "b9a04b04-8d80-11d8-abbb-0024217bb78e",
   SEIZURES: "b9b4e1d6-8d80-11d8-abbb-0024217bb78e",
+  VISIT_NUMBER: "b948b111-ec31-47ea-826c-3f53bf2a1714",
+
+  //screening
+  IS_PATIENT_REFERRED: "05016707-c82f-43d9-b9b6-451e5e155cc8",
+  IS_SITUATION_URGENT: "77963352-aa31-484a-92fe-80afae720d34",
+  PATIENT_REFERRED_TO: "b9a64022-8d80-11d8-abbb-0024217bb78e",
 };
 
 export const triageResult = {
@@ -291,7 +299,7 @@ export const districts = [
   },
   {
     district_name: "Blantyre Rural",
-    district_code: "BT",
+    district_code: "BTR",
     zone_id: 5,
     id: 247,
   },
@@ -337,4 +345,77 @@ export const districts = [
     zone_id: 5,
     id: 31,
   },
+];
+
+export const traditionalAuthorities = [
+  { id: "Bvumbwe", label: "Bvumbwe" },
+  { id: "Chamba", label: "Chamba" },
+  { id: "Changata", label: "Changata" },
+  { id: "Chikowi", label: "Chikowi" },
+  { id: "Chindi", label: "Chindi" },
+  { id: "Chiseka", label: "Chiseka" },
+  { id: "Chitukula", label: "Chitukula" },
+  { id: "Chowe", label: "Chowe" },
+  { id: "Dzoole", label: "Dzoole" },
+  { id: "Fukamapiri", label: "Fukamapiri" },
+  { id: "Ganya", label: "Ganya" },
+  { id: "Gomani", label: "Gomani" },
+  { id: "Jalasi", label: "Jalasi" },
+  { id: "Kabudula", label: "Kabudula" },
+  { id: "Kadewere", label: "Kadewere" },
+  { id: "Kalolo", label: "Kalolo" },
+  { id: "Kayembe", label: "Kayembe" },
+  { id: "Kuntaja", label: "Kuntaja" },
+  { id: "Kyungu", label: "Kyungu" },
+  { id: "Liwonde", label: "Liwonde" },
+  { id: "Lundu", label: "Lundu" },
+  { id: "Mabulabo", label: "Mabulabo" },
+  { id: "Malengachanzi", label: "Malengachanzi" },
+  { id: "Maseya", label: "Maseya" },
+  { id: "Masula", label: "Masula" },
+  { id: "Mavwere", label: "Mavwere" },
+  { id: "Mbalachanda", label: "Mbalachanda" },
+  { id: "Mbelwa", label: "Mbelwa" },
+  { id: "Mbenjere", label: "Mbenjere" },
+  { id: "Mchilamwera", label: "Mchilamwera" },
+  { id: "Mduwa", label: "Mduwa" },
+  { id: "Mlonyeni", label: "Mlonyeni" },
+  { id: "Mponda", label: "Mponda" },
+  { id: "Mtema", label: "Mtema" },
+  { id: "Mthiramanja", label: "Mthiramanja" },
+  { id: "Mwakhwawa", label: "Mwakhwawa" },
+  { id: "Mwahenga", label: "Mwahenga" },
+  { id: "Mwamulowe", label: "Mwamulowe" },
+  { id: "Mwase", label: "Mwase" },
+  { id: "Mwaulambya", label: "Mwaulambya" },
+  { id: "Nankumba", label: "Nankumba" },
+  { id: "Njema", label: "Njema" },
+  { id: "Nkalo", label: "Nkalo" },
+  { id: "Nkhulambe", label: "Nkhulambe" },
+  { id: "Nkukula", label: "Nkukula" },
+  { id: "Nsomba", label: "Nsomba" },
+  { id: "Nyachikadza", label: "Nyachikadza" },
+  { id: "Nyambi", label: "Nyambi" },
+  { id: "Nyaza", label: "Nyaza" },
+  { id: "Phambala", label: "Phambala" },
+  { id: "Phambala1", label: "Phambala 1" },
+  { id: "Phambala2", label: "Phambala 2" },
+  { id: "Pemba", label: "Pemba" },
+  { id: "Simphasi", label: "Simphasi" },
+  { id: "Siyeni", label: "Siyeni" },
+  { id: "Sukumaland", label: "Sukumaland" },
+  { id: "Tambala", label: "Tambala" },
+  { id: "Tengani", label: "Tengani" },
+  { id: "Tengani1", label: "Tengani 1" },
+  { id: "Wimbe", label: "Wimbe" },
+];
+
+export const malawiVillages = [
+  { id: "Chigumula", label: "Chigumula" },
+  { id: "Chilinde", label: "Chilinde" },
+  { id: "Chinsapo", label: "Chinsapo" },
+  { id: "Area 23", label: "Area 23" },
+  { id: "Namiyango", label: "Namiyango" },
+  { id: "Chirimba", label: "Chirimba" },
+  { id: "Chigoli", label: "Chigoli" },
 ];

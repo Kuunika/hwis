@@ -1,24 +1,24 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { PatientService } from "mahis-api-client";
-import { ToastContainer, toast } from "react-toastify";
 
 export const addPatient = () => {
   const queryClient = useQueryClient();
   const addData = (patientData: any) => {
-    const notify = () =>
-      toast.success("Patient demographics Saved successful", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+    // const notify = () =>
+    //   toast.success("Patient demographics Saved successful", {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "colored",
+    //   });
 
-    notify();
-    return PatientService.create(mapPatient(patientData));
+    // notify();
+    return PatientService.create(patientData);
+    // return PatientService.create(mapPatient(patientData));
   };
 
   return useMutation({
@@ -32,7 +32,6 @@ export const addPatient = () => {
 };
 
 const mapPatient = (patient: any) => {
-  console.log({ patient });
   return {
     identifiers: [
       {

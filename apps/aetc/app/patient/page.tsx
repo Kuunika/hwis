@@ -25,11 +25,11 @@ export default function PatientProfile() {
           <WrapperBox sx={{ my: "1ch" }}>
             <ConsultationCard
               link="/primary-assessment"
-              title="Start Primary Assessment"
+              title="Start Primary Survey"
             />
             <ConsultationCard
               link="/primary-assessment"
-              title="Start Secondary Assessment"
+              title="Start Secondary Survey"
             />
           </WrapperBox>
           <BasicAccordion />
