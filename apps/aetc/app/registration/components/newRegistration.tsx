@@ -144,9 +144,12 @@ export const NewRegistrationFlow = () => {
   return (
     <>
       <MainGrid sx={{}} container>
-        <MainGrid item lg={4}></MainGrid>
+        <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <MainGrid
           item
+          xs={10}
+          md={6}
+          sm={8}
           lg={4}
           sx={{
             display: "flex",
@@ -182,7 +185,7 @@ export const NewRegistrationFlow = () => {
             />
           )}
         </MainGrid>
-        <MainGrid item lg={4}></MainGrid>
+        <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <RegistrationNavigation active={active} setActive={changeActive} />
       </MainGrid>
     </>
@@ -209,9 +212,11 @@ const RegistrationNavigation = ({
       sx={{
         width: "100%",
         display: "flex",
+        alignItems: "center",
         justifyContent: "space-evenly",
         borderTop: "1px #E6E6E6 solid",
-        py: "1ch",
+        py: { md: "1ch" },
+        px: { sm: "1ch" },
         mb: "2ch",
       }}
     >

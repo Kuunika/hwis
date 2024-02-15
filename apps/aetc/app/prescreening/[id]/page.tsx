@@ -68,8 +68,9 @@ export default function Prescreening() {
     <>
       <Navigation title="Prescreening" link="/initial-registration/list" />
       <MainGrid container>
-        <MainGrid lg={3} item></MainGrid>
+        <MainGrid xs={1} lg={3} item></MainGrid>
         <MainGrid
+          xs={10}
           lg={6}
           sx={{
             display: "flex",
@@ -88,7 +89,7 @@ export default function Prescreening() {
             <PrescreeningForm onSubmit={handleSubmit} />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid lg={3} item></MainGrid>
+        <MainGrid xs={1} lg={3} item></MainGrid>
       </MainGrid>
     </>
   );
