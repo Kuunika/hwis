@@ -38,6 +38,8 @@ export const SearchComboBox: FC<Props> = ({
       disablePortal
       id={name}
       disabled={disabled}
+      getOptionLabel={(option) => option.label}
+      isOptionEqualToValue={(option, value) => option.id == value.id}
       disableCloseOnSelect
       //@ts-ignore
       defaultValue={initialValues[name] ? initialValues[name] : undefined}

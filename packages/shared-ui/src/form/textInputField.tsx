@@ -2,6 +2,7 @@ import { FC, useEffect } from "react";
 import { TextField, InputLabel, FormControl } from "@mui/material/";
 import { useFormikField } from "./hooks/";
 import { SxProps } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 
 type Prop = {
   id: string;
@@ -17,6 +18,9 @@ type Prop = {
   showHelperText?: boolean;
   disabled?: boolean;
   multiline?: boolean;
+  unitOfMeasure?: string;
+  inputIcon?: any;
+  helperTextWidth?: string;
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -33,6 +37,9 @@ export const TextInputField: FC<Prop> = ({
   showHelperText = true,
   disabled = false,
   multiline = false,
+  inputIcon,
+  unitOfMeasure,
+  helperTextWidth = "25ch",
 }) => {
   const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
@@ -55,10 +62,11 @@ export const TextInputField: FC<Prop> = ({
             width: "25ch",
           },
           "& .MuiFormHelperText-root": {
-            width: "25ch",
+            width: helperTextWidth,
           },
 
           "& fieldset": { borderRadius: "5px" },
+          ...sx,
         }}
         id={id}
         name={name}
@@ -73,6 +81,14 @@ export const TextInputField: FC<Prop> = ({
         rows={rows}
         disabled={disabled}
         multiline={multiline}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="start">{unitOfMeasure}</InputAdornment>
+          ),
+          startAdornment: (
+            <InputAdornment position="start">{inputIcon}</InputAdornment>
+          ),
+        }}
       />
     </FormControl>
   );
