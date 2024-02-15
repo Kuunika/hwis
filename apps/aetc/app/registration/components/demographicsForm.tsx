@@ -25,9 +25,16 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "./common";
-import { districts, malawiVillages, traditionalAuthorities } from "@/constants";
+import {
+  concepts,
+  districts,
+  malawiVillages,
+  traditionalAuthorities,
+} from "@/constants";
 import { countries } from "@/constants/contries";
 import { getInitialValues } from "@/helpers";
+import { getInitialRegisteredPatients } from "@/hooks/patientReg";
+import { useParameters } from "@/hooks";
 
 const form = {
   identificationNumber: {
@@ -70,9 +77,13 @@ const form = {
     name: "closeLandMark",
     label: "Close Landmark",
   },
-  nextOfKinName: {
-    name: "nextOfKinName",
-    label: "Next Of Kin Name",
+  nextOfKinFirstName: {
+    name: "nextOfKinFirstName",
+    label: "Next of kin First Name",
+  },
+  nextOfKinLastName: {
+    name: "nextOfKinLastName",
+    label: "Next Of Kin Last Name",
   },
   nextOfKinRelationship: {
     name: "nextOfKinRelationship",
@@ -98,10 +109,7 @@ const form = {
     name: "homeVillage",
     label: "Home Village",
   },
-  guardianName: {
-    name: "guardianName",
-    label: "Guardian Name",
-  },
+
   guardianPhoneNumber: {
     name: "guardianPhoneNumber",
     label: "Guardian Phone Number",
@@ -131,9 +139,12 @@ const schema = Yup.object().shape({
   [form.closeLandMark.name]: Yup.string()
     .required()
     .label(form.closeLandMark.label),
-  [form.nextOfKinName.name]: Yup.string()
+  [form.nextOfKinFirstName.name]: Yup.string()
     .required()
-    .label(form.nextOfKinName.label),
+    .label(form.nextOfKinFirstName.label),
+  [form.nextOfKinLastName.name]: Yup.string()
+    .required()
+    .label(form.nextOfKinLastName.label),
   [form.nextOfKinRelationship.name]: Yup.string()
     .required()
     .label(form.nextOfKinRelationship.label),
@@ -150,9 +161,7 @@ const schema = Yup.object().shape({
   [form.homeVillage.name]: Yup.string()
     .required()
     .label(form.homeVillage.label),
-  [form.guardianName.name]: Yup.string()
-    .required()
-    .label(form.guardianName.name),
+
   [form.guardianPhoneNumber.name]: Yup.string()
     .required()
     .label(form.guardianPhoneNumber.label),
@@ -166,6 +175,21 @@ type Prop = {
   setContext: (context: any) => void;
 };
 
+const relationships = [
+  {
+    name: "Parent",
+    value: concepts.PARENT,
+  },
+  {
+    name: "Guardian",
+    value: concepts.GUARDIAN,
+  },
+  {
+    name: "Uncle/Auntie",
+    value: concepts.UNCLE_AUNTIE,
+  },
+];
+
 export const DemographicsForm: FC<Prop> = ({
   onSubmit,
   initialValues = init,
@@ -175,10 +199,22 @@ export const DemographicsForm: FC<Prop> = ({
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
+  const { data: patients } = getInitialRegisteredPatients();
+  const { params } = useParameters();
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+
+  useEffect(() => {
+    const found = patients?.find((p) => p.id == params.id);
+
+    if (found) {
+      const { setFieldValue } = fieldFunction;
+      setFieldValue(form.firstName.name, found.given_name);
+      setFieldValue(form.lastName.name, found.family_name);
+    }
+  }, [patients]);
 
   useEffect(() => {
     if (fieldFunction && checked) {
@@ -328,20 +364,26 @@ export const DemographicsForm: FC<Prop> = ({
         <RegistrationCard>
           <RegistrationCardTitle>Guardian Information</RegistrationCardTitle>
           <TextInputField
-            name={form.nextOfKinName.name}
-            id={form.nextOfKinName.name}
-            label={form.nextOfKinName.label}
+            name={form.nextOfKinFirstName.name}
+            id={form.nextOfKinFirstName.name}
+            label={form.nextOfKinFirstName.label}
           />
           <TextInputField
+            name={form.nextOfKinLastName.name}
+            id={form.nextOfKinLastName.name}
+            label={form.nextOfKinLastName.label}
+          />
+          <SelectInputField
             name={form.nextOfKinRelationship.name}
             id={form.nextOfKinRelationship.name}
             label={form.nextOfKinRelationship.label}
+            selectItems={relationships}
           />
-          <TextInputField
+          {/* <TextInputField
             name={form.guardianName.name}
             id={form.guardianName.name}
             label={form.guardianName.label}
-          />
+          /> */}
           <TextInputField
             name={form.guardianPhoneNumber.name}
             id={form.guardianPhoneNumber.name}

@@ -48,7 +48,7 @@ const schema = Yup.object().shape({
 });
 
 type Props = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
   initialValues: any;
   setContext: (context: any) => void;
 };

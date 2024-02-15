@@ -15,8 +15,9 @@ export default function InitialList() {
     <>
       <Navigation title="Patients waiting prescreening" link="/" />
       <MainGrid container>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid xs={0} lg={2} item></MainGrid>
         <MainGrid
+          xs={12}
           lg={8}
           sx={{
             display: "flex",
@@ -33,11 +34,11 @@ export default function InitialList() {
             This is a list of all patients that went through initial
             registration successfully and waiting for prescreening.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ p: 0 }}>
+          <RegistrationCard sx={{ p: 0, mx: "1ch" }}>
             <InitialRegistrationList />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid xs={0} lg={2} item></MainGrid>
       </MainGrid>
     </>
   );

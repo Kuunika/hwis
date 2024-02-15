@@ -1,5 +1,5 @@
 "use client";
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import {
   MainButton,
   MainGrid,
@@ -15,19 +15,88 @@ import {
   ReferralForm,
   SocialHistoryForm,
 } from "../components";
-import { addPatient, useNavigation } from "@/hooks";
+import { addPatient, useNavigation, useParameters } from "@/hooks";
 
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
-import { successDialog } from "@/helpers";
+import { getObservations, successDialog } from "@/helpers";
+import {
+  getInitialRegisteredPatients,
+  registerPatient,
+} from "@/hooks/patientReg";
+import { addPerson, addRelationship } from "@/hooks/people";
+import { addEncounter } from "@/hooks/encounter";
+import { encounters } from "@/constants";
+import { getDateTime } from "@/helpers/dateTime";
 
 export const NewRegistrationFlow = () => {
-  const [active, setActive] = useState(4);
+  const [active, setActive] = useState(1);
   const { navigateTo } = useNavigation();
-  const [registrationData, setRegistrationData] = useState();
+
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
   const [referralContext, setReferralContext] = useState<any>();
   const [financingFormContext, setFinancingFormContext] = useState<any>();
+  const [formData, setFormData] = useState<any>({});
+  const { data: initialRegistrationList } = getInitialRegisteredPatients();
+  const { params } = useParameters();
+  const {
+    mutate: createPatient,
+    isPending: creatingPatient,
+    isSuccess: patientCreated,
+    data: patient,
+  } = registerPatient();
+
+  const {
+    mutate: createNextOfKin,
+    isPending: creatingNextOfKin,
+    isSuccess: nextOfKinCreated,
+    data: nextOfKin,
+  } = addPerson();
+
+  const {
+    mutate: createSocialHistory,
+    isSuccess: socialHistoryCreated,
+    isPending: creatingSocialHistory,
+  } = addEncounter();
+
+  const {
+    mutate: createRelationship,
+    isPending: creatingRelationship,
+    isSuccess: relationshipCreated,
+    data: relationship,
+  } = addRelationship();
+
+  // patient created
+  useEffect(() => {
+    if (patientCreated) {
+      createNextOfKin(formData.demographics);
+    }
+  }, [patientCreated]);
+
+  useEffect(() => {
+    if (nextOfKinCreated && nextOfKin && patient) {
+      createRelationship({
+        patient: patient?.uuid,
+        person: nextOfKin?.uuid,
+        nextOfKinRelationship: formData.demographics.nextOfKinRelationship,
+      });
+    }
+  }, [nextOfKinCreated]);
+
+  //create socialHistory
+  useEffect(() => {
+    if (relationshipCreated) {
+      const patient = initialRegistrationList?.find((d) => d.id == params.id);
+      const dateTime = getDateTime();
+      createSocialHistory({
+        encounterType: encounters.SCREENING_ENCOUNTER,
+        visit: patient?.visit_uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: getObservations(formData.socialHistory, dateTime),
+      });
+    }
+  }, [relationshipCreated]);
 
   const changeActive = async (step: number) => {
     if (active == 1) {
@@ -56,6 +125,20 @@ export const NewRegistrationFlow = () => {
         setActive(active + 1);
       }
     }
+    if (active == 4) {
+      const { submitForm, errors, isValid, touched, dirty } =
+        financingFormContext;
+      submitForm();
+
+      if (isValid && dirty) {
+        // setActive(active + 1);
+      }
+    }
+  };
+
+  const handleSubmitFinancing = (values: any) => {
+    formData["financing"] = values;
+    createPatient({ ...formData.demographics, id: params.id });
   };
 
   return (
@@ -75,27 +158,27 @@ export const NewRegistrationFlow = () => {
           {active == 1 && (
             <DemographicsForm
               setContext={setDemographicsContext}
-              onSubmit={() => {}}
+              onSubmit={(values: any) => (formData["demographics"] = values)}
             />
           )}
           {active == 2 && (
             <SocialHistoryForm
               setContext={setSocialHistoryContext}
-              onSubmit={() => {}}
+              onSubmit={(values: any) => (formData["socialHistory"] = values)}
             />
           )}
           {active == 3 && (
             <ReferralForm
               setContext={setReferralContext}
               initialValues={{}}
-              onSubmit={() => {}}
+              onSubmit={(values: any) => (formData["referral"] = values)}
             />
           )}
           {active == 4 && (
             <FinancingForm
               setContext={setFinancingFormContext}
               initialValues={{}}
-              onSubmit={() => {}}
+              onSubmit={handleSubmitFinancing}
             />
           )}
         </MainGrid>
@@ -169,19 +252,19 @@ const RegistrationNavigation = ({
         sx={buttonStyles}
         title={"next"}
         onClick={() => {
-          if (active == 3) {
-            successDialog({
-              title: "Registration Completed",
-              text: "",
-              icon: "success",
-              onConfirm: () => navigateTo("/registration/list"),
-              confirmButtonText: "Register More Patients",
-              cancelButtonText: "Home",
-              onDismiss: () => navigateTo("/"),
-            });
+          // if (active == 3) {
+          //   successDialog({
+          //     title: "Registration Completed",
+          //     text: "",
+          //     icon: "success",
+          //     onConfirm: () => navigateTo("/registration/list"),
+          //     confirmButtonText: "Register More Patients",
+          //     cancelButtonText: "Home",
+          //     onDismiss: () => navigateTo("/"),
+          //   });
 
-            return;
-          }
+          //   return;
+          // }
           setActive(active + 1);
         }}
       />

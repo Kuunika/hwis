@@ -5,10 +5,11 @@ import rectangleScan from "../../../icons/rectanglescan.svg";
 import documentDemographics from "../../../icons/documentdemographics.svg";
 import Image from "next/image";
 import Link from "next/link";
+import { useParameters } from "@/hooks";
 
 const MySwal = withReactContent(Swal);
 
-const DialogNationalIdContent = () => {
+const DialogNationalIdContent = ({ patientId }: { patientId: string }) => {
   const boxStyles = {
     p: "2ch",
     border: "1px solid #E6E6E6",
@@ -42,7 +43,7 @@ const DialogNationalIdContent = () => {
       </WrapperBox>
 
       <WrapperBox sx={boxStyles}>
-        <Link href="/registration">
+        <Link href={`/registration/${patientId}/new`}>
           <WrapperBox
             sx={{ position: "absolute", top: 60, left: 0, width: "100%" }}
           >
@@ -57,7 +58,7 @@ const DialogNationalIdContent = () => {
   );
 };
 
-export const PatientNationalIdCheck = () => {
+export const PatientNationalIdCheck = (patientId: any) => {
   return MySwal.fire({
     title: (
       <WrapperBox
@@ -85,7 +86,7 @@ export const PatientNationalIdCheck = () => {
         </MainTypography>
       </WrapperBox>
     ),
-    html: <DialogNationalIdContent />,
+    html: <DialogNationalIdContent patientId={patientId} />,
     showCloseButton: true,
     showCancelButton: false,
     focusConfirm: false,

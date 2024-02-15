@@ -18,7 +18,7 @@ const schema = Yup.object().shape({
 
 type Props = {
   initialValues: any;
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
   setContext: (context: any) => void;
 };
 export const ReferralForm: FC<Props> = ({

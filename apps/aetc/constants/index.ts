@@ -144,6 +144,11 @@ export const concepts = {
   IS_PATIENT_REFERRED: "05016707-c82f-43d9-b9b6-451e5e155cc8",
   IS_SITUATION_URGENT: "77963352-aa31-484a-92fe-80afae720d34",
   PATIENT_REFERRED_TO: "b9a64022-8d80-11d8-abbb-0024217bb78e",
+
+  NATIONAL_ID_IDENTIFIER_TYPE: "ba2f69d8-8d80-11d8-abbb-0024217bb78e",
+  PARENT: "ba453f92-8d80-11d8-abbb-0024217bb78e",
+  UNCLE_AUNTIE: "8d91a3dc-c2cc-11de-8d13-0010c6dffd0f",
+  GUARDIAN: "ba453344-8d80-11d8-abbb-0024217bb78e",
 };
 
 export const triageResult = {

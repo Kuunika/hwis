@@ -11,11 +11,18 @@ export default function Home() {
   return (
     <>
       <MainGrid container>
-        <MainGrid item lg={3}></MainGrid>
+        <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
         <MainGrid
           item
+          xs={10}
+          md={10}
           lg={8}
-          sx={{ display: "flex", flexWrap: "wrap" }}
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+
+            flexDirection: { xs: "column", sm: "row" },
+          }}
           pt="5ch"
         >
           {/* <WrapperBox display={"flex"}>
@@ -61,6 +68,7 @@ export default function Home() {
           />
           {/* <Card link="/prescreening" title="Prescreening" /> */}
         </MainGrid>
+        <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
       </MainGrid>
     </>
   );
@@ -83,7 +91,7 @@ const Card = ({
       sx={{
         p: "1ch",
         m: "1ch",
-        width: "25%",
+        width: { xs: "100%", sm: "25%" },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

@@ -127,8 +127,9 @@ export default function InitialRegistration() {
     <>
       <Navigation title="Initial Registration" link="/" />
       <MainGrid container>
-        <MainGrid lg={4} item></MainGrid>
+        <MainGrid xs={2} md={3} lg={4} item></MainGrid>
         <MainGrid
+          md={6}
           lg={4}
           sx={{
             display: "flex",
@@ -150,7 +151,7 @@ export default function InitialRegistration() {
             />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid lg={4} item></MainGrid>
+        <MainGrid xs={2} md={3} lg={4} item></MainGrid>
       </MainGrid>
     </>
   );
