@@ -16,8 +16,9 @@ export default function Triage() {
     <>
       <Navigation title="Patients waiting for Triage" link="/" />
       <MainGrid container>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid xs={1} lg={2} item></MainGrid>
         <MainGrid
+          xs={10}
           lg={8}
           sx={{
             display: "flex",

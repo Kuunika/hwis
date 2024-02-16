@@ -15,45 +15,13 @@ import {
   Medications,
   Results,
 } from "./components/panels";
+import { DesktopView, TabletView } from "./components/profile";
 
 export default function PatientProfile() {
   return (
     <>
-      <MainGrid container spacing={1} mt={"2ch"} ml={"9ch"}>
-        <MainGrid item lg={2}>
-          <PersonalDetailsCard />
-          <WrapperBox sx={{ my: "1ch" }}>
-            <ConsultationCard
-              link="/primary-assessment"
-              title="Start Primary Survey"
-            />
-            <ConsultationCard
-              link="/primary-assessment"
-              title="Start Secondary Survey"
-            />
-          </WrapperBox>
-          <BasicAccordion />
-        </MainGrid>
-        <MainGrid item lg={8}>
-          <MainPaper elevation={0} sx={{ pb: "5ch" }}>
-            <VisitsBar />
-            <WrapperBox mx={"2ch"}>
-              <WrapperBox sx={{ display: "flex" }}>
-                <ClinicalNotes />
-                <Investigations />
-              </WrapperBox>
-              <WrapperBox sx={{ display: "flex" }}>
-                <Medications />
-                <Results />
-                {/* <Dispositions /> */}
-              </WrapperBox>
-              {/* <WrapperBox>
-              </WrapperBox> */}
-            </WrapperBox>
-          </MainPaper>
-        </MainGrid>
-        <MainGrid item lg={2}></MainGrid>
-      </MainGrid>
+      <DesktopView />
+      <TabletView />
     </>
   );
 }

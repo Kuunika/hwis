@@ -13,9 +13,11 @@ export const Panel = ({ children, title, icon }: Props) => {
         width: "100%",
         borderStyle: "solid",
         borderWidth: "0.1ch",
-        borderColor: "#E6E6E6",
+        borderColor: { xs: "#B3B3B3", lg: "#E6E6E6" },
         p: "1ch",
         height: "30ch",
+        backgroundColor: "#fff",
+        m: "0.5ch",
       }}
     >
       <WrapperBox display={"flex"} alignItems={"center"}>

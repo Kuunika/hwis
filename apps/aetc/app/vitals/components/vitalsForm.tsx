@@ -335,7 +335,6 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
         </>
       )}
       <FormValuesListener getValues={setFormValues} />
-
       <FormFieldContainerLayout title="Oxygen Saturation and Heart Rate">
         <FieldsContainer>
           <TextInputField
@@ -355,7 +354,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
         </FieldsContainer>
       </FormFieldContainerLayout>
 
-      <FormFieldContainerLayout title="Blood Pressure">
+      <FormFieldContainerLayout title="Blood Pressure (mmHg))">
         <FieldsContainer>
           <TextInputField
             id={form.bloodPressure.name}

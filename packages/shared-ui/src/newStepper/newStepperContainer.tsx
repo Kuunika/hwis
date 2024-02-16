@@ -14,6 +14,7 @@ import {
   MainTypography,
   NewStepper,
   Step,
+  StepperTablet,
   WrapperBox,
 } from "..";
 
@@ -69,7 +70,7 @@ export function NewStepperContainer({
 }: IProps) {
   return (
     <MainGrid container spacing={5}>
-      <MainGrid item lg={3}>
+      <MainGrid sx={{ display: { xs: "none", lg: "block" } }} item lg={3}>
         <MainPaper elevation={0} sx={{ p: "1ch", width: "288px" }}>
           <MainTypography
             sx={{
@@ -88,11 +89,18 @@ export function NewStepperContainer({
           <NewStepper steps={steps} active={active} />
         </MainPaper>
       </MainGrid>
-      <MainGrid item lg={8}>
+
+      <MainGrid item sx={{ display: { xs: "block", lg: "none" } }} xs={12}>
+        <StepperTablet steps={steps} active={active} />
+      </MainGrid>
+
+      <MainGrid item xs={1} lg={0}></MainGrid>
+
+      <MainGrid item xs={10} lg={8}>
         <WrapperBox width={"100%"}>
           <WrapperBox
             onClick={() => onBack && onBack()}
-            sx={{ display: "flex", cursor: "pointer" }}
+            sx={{ display: { lg: "flex", xs: "none" }, cursor: "pointer" }}
           >
             <MainTypography
               sx={{

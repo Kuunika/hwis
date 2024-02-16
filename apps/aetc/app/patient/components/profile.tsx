@@ -1,0 +1,163 @@
+import {
+  MainButton,
+  MainGrid,
+  MainPaper,
+  MainTypography,
+  WrapperBox,
+} from "shared-ui/src";
+import { ConsultationCard, PersonalDetailsCard, VisitsBar } from ".";
+import {
+  BasicAccordion,
+  ClinicalNotes,
+  Investigations,
+  Medications,
+  Results,
+  aetcClecking,
+  templateForms,
+} from "./panels";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import React, { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
+import { VitalsPanel } from "./panels/vitalsDetails";
+
+export const DesktopView = () => {
+  return (
+    <MainGrid
+      display={{ xs: "none", lg: "flex" }}
+      container
+      spacing={1}
+      mt={"2ch"}
+      ml={"9ch"}
+    >
+      <MainGrid item lg={2}>
+        <PersonalDetailsCard />
+        <WrapperBox sx={{ my: "1ch" }}>
+          <ConsultationCard
+            link="/primary-assessment"
+            title="Start Primary Survey"
+          />
+          <ConsultationCard
+            link="/primary-assessment"
+            title="Start Secondary Survey"
+          />
+        </WrapperBox>
+        <BasicAccordion />
+      </MainGrid>
+      <MainGrid item lg={8}>
+        <MainPaper
+          elevation={0}
+          sx={{ pb: "5ch", display: { xs: "none", lg: "block" } }}
+        >
+          <VisitsBar />
+          <WrapperBox mx={"2ch"}>
+            <WrapperBox sx={{ display: "flex" }}>
+              <ClinicalNotes />
+              <Investigations />
+            </WrapperBox>
+            <WrapperBox sx={{ display: "flex" }}>
+              <Medications />
+              <Results />
+              {/* <Dispositions /> */}
+            </WrapperBox>
+            {/* <WrapperBox>
+      </WrapperBox> */}
+          </WrapperBox>
+        </MainPaper>
+      </MainGrid>
+    </MainGrid>
+  );
+};
+
+export const TabletView = () => {
+  return (
+    <MainGrid display={{ xs: "block", lg: "none" }} container>
+      <MainGrid item xs={12} sx={{ ml: "0.5ch", mt: "2ch", p: "1ch" }}>
+        <ActionMenu />
+      </MainGrid>
+      <MainGrid item xs={12} sx={{ p: "1ch" }}>
+        <WrapperBox sx={{ display: "flex" }}>
+          <PersonalDetailsTabletView />
+          <VitalsPanel />
+        </WrapperBox>
+        <WrapperBox sx={{ display: "flex" }}>
+          <ClinicalNotes />
+          <Investigations />
+        </WrapperBox>
+        <WrapperBox sx={{ display: "flex" }}>
+          <Medications />
+          <Results />
+        </WrapperBox>
+      </MainGrid>
+    </MainGrid>
+  );
+};
+
+const ActionMenu = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const forms = [...aetcClecking, ...templateForms];
+
+  return (
+    <>
+      <MainButton
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+        title={"start"}
+      />
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        {forms.map(({ link, icon, label }) => {
+          return (
+            <MenuItem onClick={handleClose}>
+              <Link href={link}>
+                <WrapperBox
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    py: "1ch",
+                    px: "2ch",
+                  }}
+                >
+                  {icon && <Image src={icon} alt="AETC Form icon" />}
+                  <MainTypography
+                    sx={{
+                      fontFamily: "Inter",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      lineHeight: "17px",
+                      letterSpacing: "0em",
+                      textAlign: "left",
+                      my: "0.5ch",
+                      ml: "5px",
+                    }}
+                  >
+                    {label}
+                  </MainTypography>
+                </WrapperBox>
+              </Link>
+            </MenuItem>
+          );
+        })}
+      </Menu>
+    </>
+  );
+};

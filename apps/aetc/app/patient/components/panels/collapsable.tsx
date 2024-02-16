@@ -14,26 +14,29 @@ import monitoring from "../../../../icons/monitoring.svg";
 import surgical from "../../../../icons/surgicalnotes.svg";
 import referral from "../../../../icons/referral.svg";
 
+export const templateForms = [
+  {
+    label: "Medical Inpatient",
+    link: "medicalInpatient",
+    icon: medicalInpatient,
+  },
+  { label: "Surgical Notes", link: "surgicalNotes", icon: surgical },
+  { label: "Gynacological ", link: "gynacological", icon: gynacology },
+  { label: "SOAP ", link: "soap", icon: surgical },
+  { label: "Monitoring Chat ", link: "monitoring", icon: monitoring },
+  { label: "Referral ", link: "referral", icon: referral },
+];
+
+export const aetcClecking = [
+  { label: "Primary Assessment", link: "primary-assessment", icon: surgical },
+  {
+    label: "Secondary Assessment",
+    link: "secondary-assessment",
+    icon: surgical,
+  },
+  { label: "Sample History", link: "sample-history", icon: surgical },
+];
 export function BasicAccordion() {
-  const aetcClecking = [
-    { label: "Primary Assessment", link: "primary-assessment" },
-    { label: "Secondary Assessment", link: "secondary-assessment" },
-    { label: "Sample History", link: "sample-history" },
-  ];
-
-  const templateForme = [
-    {
-      label: "Medical Inpatient",
-      link: "medicalInpatient",
-      icon: medicalInpatient,
-    },
-    { label: "Surgical Notes", link: "surgicalNotes", icon: surgical },
-    { label: "Gynacological ", link: "gynacological", icon: gynacology },
-    { label: "SOAP ", link: "soap", icon: surgical },
-    { label: "Monitoring Chat ", link: "monitoring", icon: monitoring },
-    { label: "Referral ", link: "referral", icon: referral },
-  ];
-
   const AccordionWrapper = ({
     children,
     title,
@@ -80,7 +83,7 @@ export function BasicAccordion() {
   return (
     <>
       <AccordionWrapper title="Template Forms">
-        <LinkList list={templateForme} />
+        <LinkList list={templateForms} />
       </AccordionWrapper>
 
       <AccordionWrapper title="AETC Clerking sheet">
