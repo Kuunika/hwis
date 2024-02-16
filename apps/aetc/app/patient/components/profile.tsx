@@ -22,6 +22,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
 import { VitalsPanel } from "./panels/vitalsDetails";
+import { BasicSelect } from "./basicSelect";
 
 export const DesktopView = () => {
   return (
@@ -72,10 +73,20 @@ export const DesktopView = () => {
 };
 
 export const TabletView = () => {
+  const visits = [
+    { value: "1", label: "Current" },
+    { value: "2", label: "12 January 2024" },
+    { value: "3", label: "15 December 2023" },
+  ];
   return (
     <MainGrid display={{ xs: "block", lg: "none" }} container>
       <MainGrid item xs={12} sx={{ ml: "0.5ch", mt: "2ch", p: "1ch" }}>
-        <ActionMenu />
+        <WrapperBox display="flex">
+          <ActionMenu />{" "}
+          <WrapperBox sx={{ width: "15ch", mx: "1ch" }}>
+            <BasicSelect label="Visits" options={visits} />
+          </WrapperBox>
+        </WrapperBox>
       </MainGrid>
       <MainGrid item xs={12} sx={{ p: "1ch" }}>
         <WrapperBox sx={{ display: "flex" }}>

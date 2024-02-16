@@ -1,12 +1,8 @@
-import {
-  MainButton,
-  MainCard,
-  MainTypography,
-  WrapperBox,
-} from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaPlus } from "react-icons/fa";
 import { Panel } from ".";
 import { useNavigation } from "@/hooks";
+import { BasicSelect } from "../basicSelect";
 
 export const VitalsPanel = () => {
   const { navigateTo } = useNavigation();
@@ -42,6 +38,12 @@ export const VitalsPanel = () => {
       value: "Alert",
     },
   ];
+
+  const options = [
+    { label: "1", value: "1" },
+    { label: "2 ", value: "2" },
+    { label: "3", value: "3" },
+  ];
   return (
     <Panel
       title="Vitals"
@@ -53,6 +55,13 @@ export const VitalsPanel = () => {
         />
       }
     >
+      <br />
+      <WrapperBox>
+        <WrapperBox width={"20%"}>
+          <BasicSelect label="" options={options} />
+        </WrapperBox>
+      </WrapperBox>
+      <br />
       <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
         {vitals.map(({ name, value }) => (
           <Cell title={name} value={value} />
@@ -69,7 +78,7 @@ const Cell = ({ title, value }: { title: string; value: string }) => {
         width: "15ch",
         display: "flex",
         flexDirection: "column",
-        my: "1ch",
+        my: "0.5ch",
         alignItems: "center",
       }}
     >

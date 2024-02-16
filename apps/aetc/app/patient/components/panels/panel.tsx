@@ -1,5 +1,10 @@
 import { ReactNode } from "react";
-import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
+import {
+  MainButton,
+  MainPaper,
+  MainTypography,
+  WrapperBox,
+} from "shared-ui/src";
 
 type Props = {
   title: string;
@@ -8,14 +13,13 @@ type Props = {
 };
 export const Panel = ({ children, title, icon }: Props) => {
   return (
-    <WrapperBox
+    <MainPaper
       sx={{
         width: "100%",
         borderStyle: "solid",
         borderWidth: "0.1ch",
         borderColor: { xs: "#B3B3B3", lg: "#E6E6E6" },
-        p: "1ch",
-        height: "30ch",
+        p: "2ch",
         backgroundColor: "#fff",
         m: "0.5ch",
       }}
@@ -36,6 +40,6 @@ export const Panel = ({ children, title, icon }: Props) => {
         {icon}
       </WrapperBox>
       <WrapperBox>{children}</WrapperBox>
-    </WrapperBox>
+    </MainPaper>
   );
 };
