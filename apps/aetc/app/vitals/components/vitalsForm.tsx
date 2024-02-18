@@ -158,7 +158,7 @@ const verbalResponses = [
   { label: "None", value: "None" },
 ];
 const avpuLists = [
-  { id: "Awake", label: "Awake" },
+  { id: "Alert", label: "Alert" },
   { id: "Verbal", label: "Verbal" },
   { id: "Pain", label: "Pain" },
   { id: "Unresponsive", label: "Unresponsive" },
@@ -185,27 +185,27 @@ const rules = {
       bound: 0,
     },
   ],
-  // [form.pulseRate.name]: [
-  //   {
-  //     operator: ">",
-  //     value: 110,
-  //     result: triageResult.YELLOW,
-  //     value2: 0,
-  //     bound: 130,
-  //   },
-  //   { operator: "<", value: 50, result: triageResult.YELLOW, bound: 40 },
-  //   { operator: "<", value: 40, result: triageResult.RED, bound: 0 },
-  //   { operator: ">", value: 130, result: triageResult.RED, bound: 1000 },
-  //   {
-  //     operator: "combined",
-  //     operator1: ">=",
-  //     value: 60,
-  //     operator2: "<=",
-  //     value2: 100,
-  //     result: triageResult.GREEN,
-  //     bound: 0,
-  //   },
-  // ],
+  [form.heartRate.name]: [
+    {
+      operator: ">",
+      value: 110,
+      result: triageResult.YELLOW,
+      value2: 0,
+      bound: 130,
+    },
+    { operator: "<", value: 50, result: triageResult.YELLOW, bound: 40 },
+    { operator: "<", value: 40, result: triageResult.RED, bound: 0 },
+    { operator: ">", value: 130, result: triageResult.RED, bound: 1000 },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 60,
+      operator2: "<=",
+      value2: 100,
+      result: triageResult.GREEN,
+      bound: 0,
+    },
+  ],
   [form.respiratoryRate.name]: [
     { operator: ">", value: 30, result: triageResult.RED, bound: 100 },
     { operator: "<", value: 8, result: triageResult.RED, bound: 0 },
@@ -220,7 +220,7 @@ const rules = {
     },
   ],
 
-  [form.pulseOximetry.name]: [
+  [form.saturationRate.name]: [
     { operator: "<", value: 90, result: triageResult.RED, bound: 0 },
     { operator: "<", value: 93, result: triageResult.YELLOW, bound: 90 },
     { operator: "=", value: 93, result: triageResult.GREEN, bound: 0 },
@@ -254,21 +254,26 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
     }
     rules[name]?.forEach((rule) => {
       const formValueNumber = Number(formValue);
+      console.log({ formValue });
+
+      console.log(formValueNumber);
 
       switch (rule.operator) {
         case "<":
           if (formValueNumber < rule.value && formValueNumber >= rule?.bound) {
+            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
-
           return;
         case ">":
           if (formValueNumber > rule.value && formValueNumber <= rule.bound) {
+            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
           return;
         case "=":
           if (formValueNumber == rule.value) {
+            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
           return;
@@ -278,6 +283,7 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
             formValueNumber >= rule.value &&
             formValueNumber <= rule.value2
           ) {
+            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
           return;
@@ -342,6 +348,9 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
             name={form.saturationRate.name}
             label={form.saturationRate.label}
             disabled={disableField(form.saturationRate.name)}
+            getValue={(value: string) => {
+              checkTriage(form.saturationRate.name, value);
+            }}
             unitOfMeasure="%"
           />
           <TextInputField
@@ -350,6 +359,9 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
             label={form.heartRate.label}
             disabled={disableField(form.heartRate.name)}
             unitOfMeasure="bpm"
+            getValue={(value: string) => {
+              checkTriage(form.heartRate.name, value);
+            }}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>

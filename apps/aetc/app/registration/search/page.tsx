@@ -15,6 +15,8 @@ import plus from "../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../components";
 import { Navigation } from "../scanner/page";
+import { SearchForm } from "./components/searchForm";
+import { SearchResults } from "./components/searchResults";
 
 export default function RegistrationSearch() {
   const searchParams = useSearchParams();
@@ -31,7 +33,8 @@ export default function RegistrationSearch() {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          justifyContent: "center",
+          mt: "10ch",
+          // justifyContent: "center",
           alignItems: "center",
         }}
       >
@@ -72,7 +75,8 @@ export default function RegistrationSearch() {
             position: "relative",
           }}
         >
-          <SearchContainer
+          <SearchForm onSubmit={() => {}} />
+          {/* <SearchContainer
             getResult={(results) => setSetResults(results)}
             initialSearch={search ? search : ""}
             initialValue={search ? search : ""}
@@ -104,33 +108,35 @@ export default function RegistrationSearch() {
               </WrapperBox>
               <AddPatientButton />
             </MainPaper>
-          )}
+          )} */}
         </WrapperBox>
+        <br />
+        <SearchResults />
       </WrapperBox>
     </>
   );
 }
 
-export const AddPatientButton = () => (
-  <WrapperBox
-    onClick={() => PatientNationalIdCheck()}
-    sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
-  >
-    <Image src={plus} alt="plus" />
-    <MainTypography
-      sx={{
-        fontFamily: "Inter",
-        fontSize: "14px",
-        fontWeight: 500,
-        lineHeight: "17px",
-        letterSpacing: "0em",
-        textAlign: "left",
-        color: defaultTheme.primary,
-        borderBottom: `1px solid ${defaultTheme.primary}`,
-        ml: "1ch",
-      }}
-    >
-      Add new patient
-    </MainTypography>
-  </WrapperBox>
-);
+// export const AddPatientButton = () => (
+//   <WrapperBox
+//     onClick={() => PatientNationalIdCheck()}
+//     sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
+//   >
+//     <Image src={plus} alt="plus" />
+//     <MainTypography
+//       sx={{
+//         fontFamily: "Inter",
+//         fontSize: "14px",
+//         fontWeight: 500,
+//         lineHeight: "17px",
+//         letterSpacing: "0em",
+//         textAlign: "left",
+//         color: defaultTheme.primary,
+//         borderBottom: `1px solid ${defaultTheme.primary}`,
+//         ml: "1ch",
+//       }}
+//     >
+//       Add new patient
+//     </MainTypography>
+//   </WrapperBox>
+// );

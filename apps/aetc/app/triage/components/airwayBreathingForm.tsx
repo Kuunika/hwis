@@ -97,8 +97,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const [finalCondition, setFinalCondition] = useState(false);
 
   useEffect(() => {
-    console.log(Object.keys(conditions).length);
-    const cond = !aggregateOrCondition && Object.keys(conditions).length == 6;
+    const cond = !aggregateOrCondition && Object.keys(conditions).length == 4;
 
     setFinalCondition(cond);
 
@@ -170,7 +169,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
 
       {isBreathingAbnormal == YES && (
         <>
-          <FormFieldContainerLayout title="Oxygen and Respiratory">
+          {/* <FormFieldContainerLayout title="Oxygen and Respiratory">
             <FieldsContainer>
               <RadioGroupInput
                 name={form.oxygenStats.name}
@@ -191,7 +190,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
                 options={radioOptions}
               />
             </FieldsContainer>
-          </FormFieldContainerLayout>
+          </FormFieldContainerLayout> */}
 
           <FormFieldContainerLayout title="Exhaustion and Inability to Speak">
             <FieldsContainer>
@@ -244,7 +243,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
         </>
       )}
 
-      {finalCondition && (
+      {/* {finalCondition && (
         <FormFieldContainerLayout
           last={true}
           title="Oxygen Stats & Respiratory"
@@ -264,7 +263,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             />
           </FieldsContainer>
         </FormFieldContainerLayout>
-      )}
+      )} */}
 
       <br />
     </FormikInit>

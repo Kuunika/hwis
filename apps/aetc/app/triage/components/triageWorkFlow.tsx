@@ -23,7 +23,7 @@ export default function TriageWorkFlow() {
     { id: 5, label: "Vitals Signs" },
     { id: 1, label: "Airway/Breathing" },
     { id: 2, label: "Blood Circulation" },
-    { id: 3, label: "Consciousness" },
+    { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
 

@@ -34,5 +34,6 @@ export const NavBar = () => {
     </WrapperBox>
   );
 
-  return <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />;
+  // return <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />;
+  return <NavigationBar onTitleClick={() => navigateTo("/")} />;
 };

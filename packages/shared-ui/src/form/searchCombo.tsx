@@ -17,6 +17,7 @@ type Props = {
   getValue?: (value: string) => void;
   disabled?: boolean;
   multiple?: boolean;
+  size?: "small" | "medium";
 };
 
 export const SearchComboBox: FC<Props> = ({
@@ -28,6 +29,7 @@ export const SearchComboBox: FC<Props> = ({
   getValue,
   disabled = false,
   multiple = true,
+  size = "medium",
 }) => {
   const { hasError, errorMessage, setFieldValue, initialValues, value } =
     useFormikField(name);
@@ -41,6 +43,7 @@ export const SearchComboBox: FC<Props> = ({
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, value) => option.id == value.id}
       disableCloseOnSelect
+      size={size}
       //@ts-ignore
       defaultValue={initialValues[name] ? initialValues[name] : undefined}
       options={options}
