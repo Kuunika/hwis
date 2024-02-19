@@ -36,8 +36,8 @@ export const LoginForm = () => {
 
   return (
     <MainGrid container>
-      <MainGrid item lg={4}></MainGrid>
-      <MainGrid item lg={4}>
+      <MainGrid item xs={4} lg={4}></MainGrid>
+      <MainGrid item xs={4} lg={4}>
         <br />
         <br />
         <WrapperBox

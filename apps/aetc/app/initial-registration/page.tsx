@@ -11,15 +11,19 @@ import {
 } from "../registration/components/common";
 import { Navigation } from "../registration/scanner/page";
 import { addVisit } from "@/hooks/visit";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
 import { addEncounter } from "@/hooks/encounter";
 import { useNavigation } from "@/hooks";
 import { getVisitNum } from "@/hooks/visitNumber";
+import CircularDeterminate, {
+  CustomizedProgressBars,
+} from "@/components/loader";
+import { OperationSuccess } from "@/components/operationSuccess";
 // import { createPatient } from "@/services/patient";
 
 export default function InitialRegistration() {
-  const { navigateTo } = useNavigation();
+  const { refresh } = useNavigation();
   const initialValues = { firstName: "", lastName: "" };
   const {
     mutate: createPatient,
@@ -46,14 +50,18 @@ export default function InitialRegistration() {
     isSuccess: visitNumberGenerated,
     isPending: generatingVisitNumber,
     refetch: generateVisitNumber,
+    isFetching: fetchingVisitNumber,
   } = getVisitNum();
 
-  console.log({ generatingVisitNumber, visitNumberGenerated });
+  const [completed, setCompleted] = useState(0);
+  const [message, setMessage] = useState("");
+  const [showForm, setShowForm] = useState(true);
 
   // after patient registration create a visit
   useEffect(() => {
     if (isSuccess) {
-      console.log({ createdUser });
+      setCompleted(1);
+      setMessage("creating visit");
       const uuid = createdUser?.uuid;
       createVisit({
         patient: uuid,
@@ -61,17 +69,21 @@ export default function InitialRegistration() {
         startDatetime: new Date().toISOString(),
       });
     }
-  }, [isSuccess]);
+  }, [isPending]);
 
   useEffect(() => {
     if (!visitCreated) return;
+    setCompleted(2);
+    setMessage("generating visit number...");
     generateVisitNumber();
   }, [creatingVisit]);
 
   // after creating a visit create an encounter
-
   useEffect(() => {
     if (!visitNumberGenerated) return;
+
+    setCompleted(3);
+    setMessage("creating an encounter...");
 
     const dateTime = new Date().toISOString();
     createEncounter({
@@ -88,10 +100,20 @@ export default function InitialRegistration() {
       ],
       includeAll: true,
     });
-  }, [generatingVisitNumber]);
+  }, [fetchingVisitNumber]);
+
+  useEffect(() => {
+    if (encounterCreated) {
+      setCompleted(4);
+      setMessage("done");
+    }
+  }, [encounterCreated]);
 
   const handleSubmit = async (values: any, options: any) => {
     // options.resetForm();
+
+    setMessage("creating patient");
+    setShowForm(false);
     const patient = await createPatient({
       identifiers: [
         {
@@ -113,16 +135,23 @@ export default function InitialRegistration() {
       },
     });
 
-    successDialog({
-      title: "Patient Added successfully",
-      text: "Patient Added to prescreening list",
-      icon: "success",
-      onConfirm: () => {},
-      confirmButtonText: "Register More Patients",
-      cancelButtonText: "Home",
-      onDismiss: () => navigateTo("/"),
-    });
+    // successDialog({
+    //   title: "Patient Added successfully",
+    //   text: "Patient Added to prescreening list",
+    //   icon: "success",
+    //   onConfirm: () => {},
+    //   confirmButtonText: "Register More Patients",
+    //   cancelButtonText: "Home",
+    //   onDismiss: () => navigateTo("/"),
+    // });
   };
+
+  const processing =
+    isPending || creatingEncounter || creatingVisit || fetchingVisitNumber;
+
+  const successful =
+    encounterCreated && isSuccess && visitCreated && visitNumberGenerated;
+
   return (
     <>
       <Navigation title="Initial Registration" link="/" />
@@ -144,12 +173,37 @@ export default function InitialRegistration() {
             The demographics form has been thoughtfully crafted to collect
             patient information, including personal details, contact information
           </RegistrationDescriptionText>
-          <RegistrationCard>
-            <InitialRegistrationForm
-              initialValues={initialValues}
-              onSubmit={handleSubmit}
+          {successful && !showForm && (
+            <OperationSuccess
+              title="Patient Created Successful"
+              primaryActionText="Register More Patient"
+              secondaryActionText="Go Home"
+              onPrimaryAction={() => {
+                setShowForm(true);
+                setCompleted(0);
+                refresh();
+              }}
+              onSecondaryAction={() => {}}
             />
-          </RegistrationCard>
+          )}
+          {showForm && (
+            <RegistrationCard>
+              <InitialRegistrationForm
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+              />
+            </RegistrationCard>
+          )}
+          {processing && (
+            <>
+              <br />
+              <br />
+              <CustomizedProgressBars
+                message={message}
+                progress={(completed / 4) * 100}
+              />
+            </>
+          )}
         </MainGrid>
         <MainGrid xs={2} md={3} lg={4} item></MainGrid>
       </MainGrid>
