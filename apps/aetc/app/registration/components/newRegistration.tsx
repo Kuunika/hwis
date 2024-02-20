@@ -122,7 +122,7 @@ export const NewRegistrationFlow = () => {
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
       const dateTime = getDateTime();
       createSocialHistory({
-        encounterType: encounters.SCREENING_ENCOUNTER,
+        encounterType: encounters.SOCIAL_HISTORY,
         visit: patient?.visit_uuid,
         patient: params.id,
         encounterDatetime: dateTime,
