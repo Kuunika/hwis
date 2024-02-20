@@ -3,6 +3,7 @@ import {
   createPatient,
   getDailyVisits,
   getPatients,
+  initialRegistration,
   updatePatient,
 } from "@/services/patient";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
@@ -10,6 +11,17 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 export const addPatient = () => {
   const addData = (patientData: any) => {
     return createPatient(patientData).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: addData,
+  });
+};
+export const initialPatientRegistration = () => {
+  const addData = (patientData: any) => {
+    return initialRegistration(patientData).then((response) => {
       return response.data;
     });
   };
@@ -56,12 +68,12 @@ export const registerPatient = () => {
         ],
       },
     };
-    // return updatePatient(patientData.id, mappedPatient).then((response) => {
-    //   return response.data;
-    // });
-    return createPatient(mappedPatient).then((response) => {
+    return updatePatient(patientData.id, mappedPatient).then((response) => {
       return response.data;
     });
+    // return createPatient(mappedPatient).then((response) => {
+    //   return response.data;
+    // });
   };
 
   return useMutation({
@@ -69,21 +81,23 @@ export const registerPatient = () => {
   });
 };
 
-export const getInitialRegisteredPatients = () => {
+export const getPatientsWaitingForPrescreening = () => {
   const getall = () =>
-    getDailyVisits().then((response) =>
-      response.data.map((p) => ({
-        id: p?.patient_uuid,
-        given_name: p?.patient_first_name,
-        family_name: p?.patient_last_name,
-        arrivalTime: p?.encounter_datetime,
-        visitNumber: p?.visit_number,
-        visit_uuid: p?.visit_uuid,
-      }))
-    );
+    getDailyVisits("screening").then((response) => response.data);
 
   return useQuery({
-    queryKey: ["visits"],
+    queryKey: ["screening"],
+    queryFn: getall,
+    enabled: true,
+  });
+};
+
+export const getPatientsWaitingForRegistrations = () => {
+  const getall = () =>
+    getDailyVisits("registration").then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["registration"],
     queryFn: getall,
     enabled: true,
   });

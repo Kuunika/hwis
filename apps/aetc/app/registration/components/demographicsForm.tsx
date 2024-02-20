@@ -33,7 +33,7 @@ import {
 } from "@/constants";
 import { countries } from "@/constants/contries";
 import { getInitialValues } from "@/helpers";
-import { getInitialRegisteredPatients } from "@/hooks/patientReg";
+import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
 
 const form = {
@@ -199,7 +199,7 @@ export const DemographicsForm: FC<Prop> = ({
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
-  const { data: patients } = getInitialRegisteredPatients();
+  const { data: patients } = getPatientsWaitingForRegistrations();
   const { params } = useParameters();
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,7 +207,7 @@ export const DemographicsForm: FC<Prop> = ({
   };
 
   useEffect(() => {
-    const found = patients?.find((p) => p.id == params.id);
+    const found = patients?.find((p) => p.uuid == params.id);
 
     if (found) {
       const { setFieldValue } = fieldFunction;

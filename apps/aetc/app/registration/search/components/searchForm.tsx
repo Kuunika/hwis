@@ -15,6 +15,7 @@ import { NO, YES, concepts, traditionalAuthorities } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  init?: any;
 };
 const form = {
   identificationNumber: {
@@ -151,7 +152,7 @@ const init = getInitialValues(form);
 
 const initialValues = getInitialValues(form);
 
-export const SearchForm = ({ onSubmit }: Prop) => {
+export const SearchForm = ({ onSubmit, init }: Prop) => {
   const spacing = {
     display: "flex",
     "& > :first-child": {
@@ -161,7 +162,7 @@ export const SearchForm = ({ onSubmit }: Prop) => {
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={initialValues}
+      initialValues={{ ...initialValues, ...init }}
       onSubmit={onSubmit}
       submitButton={false}
     >

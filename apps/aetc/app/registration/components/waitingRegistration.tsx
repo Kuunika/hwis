@@ -1,10 +1,14 @@
 import { useNavigation } from "@/hooks";
-import { getInitialRegisteredPatients } from "@/hooks/patientReg";
+import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { BaseTable, MainButton } from "shared-ui/src";
 
 export const WaitingRegistrationList = () => {
   const { navigateTo } = useNavigation();
-  const { data: patients, isLoading, refetch } = getInitialRegisteredPatients();
+  const {
+    data: patients,
+    isLoading,
+    refetch,
+  } = getPatientsWaitingForRegistrations();
   const rows = patients?.map((p) => ({ id: p?.uuid, ...p }));
 
   const columns = [

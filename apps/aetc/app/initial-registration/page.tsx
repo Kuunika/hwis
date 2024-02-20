@@ -1,7 +1,7 @@
 "use client";
 
 import { InitialRegistrationForm } from "./components";
-import { addPatient } from "@/hooks/patientReg";
+import { addPatient, initialPatientRegistration } from "@/hooks/patientReg";
 import { successDialog } from "@/helpers";
 import { MainGrid } from "shared-ui/src";
 import {
@@ -20,7 +20,6 @@ import CircularDeterminate, {
   CustomizedProgressBars,
 } from "@/components/loader";
 import { OperationSuccess } from "@/components/operationSuccess";
-// import { createPatient } from "@/services/patient";
 
 export default function InitialRegistration() {
   const { refresh } = useNavigation();
@@ -30,7 +29,7 @@ export default function InitialRegistration() {
     isPending,
     data: createdUser,
     isSuccess,
-  } = addPatient();
+  } = initialPatientRegistration();
 
   const {
     mutate: createVisit,
@@ -134,16 +133,6 @@ export default function InitialRegistration() {
         addresses: [],
       },
     });
-
-    // successDialog({
-    //   title: "Patient Added successfully",
-    //   text: "Patient Added to prescreening list",
-    //   icon: "success",
-    //   onConfirm: () => {},
-    //   confirmButtonText: "Register More Patients",
-    //   cancelButtonText: "Home",
-    //   onDismiss: () => navigateTo("/"),
-    // });
   };
 
   const processing =

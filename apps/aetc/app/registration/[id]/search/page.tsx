@@ -8,30 +8,23 @@ import {
   defaultTheme,
 } from "shared-ui/src";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigation, useParameters } from "@/hooks";
-import plus from "../../../../icons/plus.svg";
+import plus from "../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
 import { Navigation } from "../../scanner/page";
-import { getInitialRegisteredPatients } from "@/hooks/patientReg";
-import { SearchContainer } from "../../search/components";
+import { SearchForm } from "../../search/components/searchForm";
+import { SearchResults } from "../../search/components/searchResults";
+import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 
 export default function RegistrationSearch() {
-  const [searchResults, setSetResults] = useState<Array<any>>([]);
-  const { navigateTo } = useNavigation();
   const { params } = useParameters();
-  const [searchName, setSearchName] = useState("");
-  const { data: patients } = getInitialRegisteredPatients();
-  const [search, setSearch] = useState("");
+  const { data } = getPatientsWaitingForRegistrations();
 
-  useEffect(() => {
-    const found = patients?.find((p) => p.id == params.id);
+  const patient = data?.find((p) => p.uuid == params.id);
 
-    if (found) {
-      setSearch(`${found.given_name} ${found.family_name}`);
-    }
-  }, []);
+  console.log({ patient });
 
   return (
     <>
@@ -41,7 +34,8 @@ export default function RegistrationSearch() {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          justifyContent: "center",
+          mt: "10ch",
+          // justifyContent: "center",
           alignItems: "center",
         }}
       >
@@ -82,69 +76,17 @@ export default function RegistrationSearch() {
             position: "relative",
           }}
         >
-          <SearchContainer
-            getResult={(results) => setSetResults(results)}
-            initialSearch={search ? search : ""}
-            initialValue={search ? search : ""}
-            getSearch={(result) => setSearchName(result)}
+          <SearchForm
+            init={{
+              firstName: patient?.given_name,
+              lastName: patient?.family_name,
+            }}
+            onSubmit={() => {}}
           />
-          {searchResults.length == 0 && (
-            <MainPaper sx={{ p: "1ch", mt: "1ch", width: "100%" }}>
-              <WrapperBox
-                sx={{
-                  border: "1px dashed #B3B3B3",
-                  py: "1ch",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <MainTypography
-                  sx={{
-                    fontFamily: "Inter",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                    letterSpacing: "0em",
-                    textAlign: "left",
-                    color: "#636363",
-                  }}
-                >
-                  No {`${searchName}`} patient in the system
-                </MainTypography>
-              </WrapperBox>
-              <AddPatientButton />
-            </MainPaper>
-          )}
         </WrapperBox>
+        <br />
+        <SearchResults />
       </WrapperBox>
     </>
   );
 }
-
-export const AddPatientButton = () => {
-  const { params } = useParameters();
-
-  return (
-    <WrapperBox
-      onClick={() => PatientNationalIdCheck(params.id)}
-      sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
-    >
-      <Image src={plus} alt="plus" />
-      <MainTypography
-        sx={{
-          fontFamily: "Inter",
-          fontSize: "14px",
-          fontWeight: 500,
-          lineHeight: "17px",
-          letterSpacing: "0em",
-          textAlign: "left",
-          color: defaultTheme.primary,
-          borderBottom: `1px solid ${defaultTheme.primary}`,
-          ml: "1ch",
-        }}
-      >
-        Add new patient
-      </MainTypography>
-    </WrapperBox>
-  );
-};

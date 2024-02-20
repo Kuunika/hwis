@@ -14,7 +14,7 @@ export const encounters = {
   SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
 };
 
-export const AETC_VISIT_TYPE = "fd650312-d501-4bcf-9ab0-6fcc8f8fd640";
+export const AETC_VISIT_TYPE = "fab5de93-9e21-4b15-8f5a-5665869a4736";
 export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
 
@@ -68,7 +68,7 @@ export const concepts = {
   GCS: "8c66ee46-439e-41f9-a5d9-de297fc23c7c",
 
   // social history
-  MARITAL_STATUS: "6616827b-f8fb-49ef-8214-66a4c139e1cd",
+  MARITAL_STATUS: "7cab5ece-fbc4-4e30-892e-867f92021c36",
   OCCUPATION: "b9c41c46-8d80-11d8-abbb-0024217bb78e",
   RELIGION: "b9d864ee-8d80-11d8-abbb-0024217bb78e",
   HIGHEST_EDUCATION: "b9da5fa6-8d80-11d8-abbb-0024217bb78e",

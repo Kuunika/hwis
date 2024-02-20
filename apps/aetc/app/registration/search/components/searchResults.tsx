@@ -9,6 +9,7 @@ import {
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
+import { useParameters } from "@/hooks";
 
 export const SearchResults = () => {
   const [patient, setPatient] = useState<any>();
@@ -108,26 +109,29 @@ export const SearchResults = () => {
   );
 };
 
-export const AddPatientButton = () => (
-  <WrapperBox
-    onClick={() => PatientNationalIdCheck()}
-    sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
-  >
-    <Image src={plus} alt="plus" />
-    <MainTypography
-      sx={{
-        fontFamily: "Inter",
-        fontSize: "14px",
-        fontWeight: 500,
-        lineHeight: "17px",
-        letterSpacing: "0em",
-        textAlign: "left",
-        color: defaultTheme.primary,
-        borderBottom: `1px solid ${defaultTheme.primary}`,
-        ml: "1ch",
-      }}
+export const AddPatientButton = () => {
+  const { params } = useParameters();
+  return (
+    <WrapperBox
+      onClick={() => PatientNationalIdCheck(params.id)}
+      sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
     >
-      Add new patient
-    </MainTypography>
-  </WrapperBox>
-);
+      <Image src={plus} alt="plus" />
+      <MainTypography
+        sx={{
+          fontFamily: "Inter",
+          fontSize: "14px",
+          fontWeight: 500,
+          lineHeight: "17px",
+          letterSpacing: "0em",
+          textAlign: "left",
+          color: defaultTheme.primary,
+          borderBottom: `1px solid ${defaultTheme.primary}`,
+          ml: "1ch",
+        }}
+      >
+        Add new patient
+      </MainTypography>
+    </WrapperBox>
+  );
+};

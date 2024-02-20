@@ -12,19 +12,21 @@ import { Navigation } from "@/app/registration/scanner/page";
 import { MainGrid } from "shared-ui/src";
 import { addEncounter } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { getInitialRegisteredPatients } from "@/hooks/patientReg";
+import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import { closeCurrentVisit } from "@/hooks/visit";
 
 export default function Prescreening() {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
-  const { data } = getInitialRegisteredPatients();
+  const { data } = getPatientsWaitingForPrescreening();
   const { mutate: createEncounter, isPending, isSuccess } = addEncounter();
   const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
 
   const handleSubmit = (values: any) => {
-    const patient = data?.find((d) => d.id == params.id);
+    const patient = data?.find((d) => d.uuid == params.id);
+
+    console.log({ patient });
     createEncounter({
       encounterType: encounters.SCREENING_ENCOUNTER,
       visit: patient?.visit_uuid,
