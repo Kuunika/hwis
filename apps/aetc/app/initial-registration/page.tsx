@@ -20,15 +20,31 @@ import CircularDeterminate, {
   CustomizedProgressBars,
 } from "@/components/loader";
 import { OperationSuccess } from "@/components/operationSuccess";
+import { useFormLoading } from "@/hooks/formLoading";
+import { FormError } from "@/components/formError";
 
 export default function InitialRegistration() {
   const { refresh } = useNavigation();
   const initialValues = { firstName: "", lastName: "" };
   const {
+    loading,
+    setLoading,
+    completed,
+    setCompleted,
+    message,
+    setMessage,
+    showForm,
+    setShowForm,
+    error,
+    setError,
+  } = useFormLoading();
+
+  const {
     mutate: createPatient,
     isPending,
     data: createdUser,
     isSuccess,
+    isError: patientError,
   } = initialPatientRegistration();
 
   const {
@@ -36,12 +52,14 @@ export default function InitialRegistration() {
     isPending: creatingVisit,
     isSuccess: visitCreated,
     data: visit,
+    isError: visitError,
   } = addVisit();
 
   const {
     mutate: createEncounter,
     isPending: creatingEncounter,
     isSuccess: encounterCreated,
+    isError: encounterError,
   } = addEncounter();
 
   const {
@@ -50,11 +68,8 @@ export default function InitialRegistration() {
     isPending: generatingVisitNumber,
     refetch: generateVisitNumber,
     isFetching: fetchingVisitNumber,
+    isError: visitNumberError,
   } = getVisitNum();
-
-  const [completed, setCompleted] = useState(0);
-  const [message, setMessage] = useState("");
-  const [showForm, setShowForm] = useState(true);
 
   // after patient registration create a visit
   useEffect(() => {
@@ -108,11 +123,19 @@ export default function InitialRegistration() {
     }
   }, [encounterCreated]);
 
+  useEffect(() => {
+    const error =
+      patientError || visitError || visitNumberError || encounterError;
+
+    setError(error);
+  }, [patientError, visitError, visitNumberError, encounterError]);
+
   const handleSubmit = async (values: any, options: any) => {
     // options.resetForm();
-
     setMessage("creating patient");
     setShowForm(false);
+    setLoading(true);
+
     const patient = await createPatient({
       identifiers: [
         {
@@ -135,12 +158,6 @@ export default function InitialRegistration() {
     });
   };
 
-  const processing =
-    isPending || creatingEncounter || creatingVisit || fetchingVisitNumber;
-
-  const successful =
-    encounterCreated && isSuccess && visitCreated && visitNumberGenerated;
-
   return (
     <>
       <Navigation title="Initial Registration" link="/" />
@@ -162,7 +179,7 @@ export default function InitialRegistration() {
             The demographics form has been thoughtfully crafted to collect
             patient information, including personal details, contact information
           </RegistrationDescriptionText>
-          {successful && !showForm && (
+          {completed == 4 && (
             <OperationSuccess
               title="Patient Created Successful"
               primaryActionText="Register More Patient"
@@ -183,7 +200,25 @@ export default function InitialRegistration() {
               />
             </RegistrationCard>
           )}
-          {processing && (
+          {error && (
+            <FormError
+              error={message}
+              onPrimaryAction={() => {
+                setError(false);
+                setCompleted(0);
+                setLoading(false);
+                setShowForm(true);
+              }}
+              onSecondaryAction={() => {
+                setCompleted(0);
+                setShowForm(true);
+                setLoading(false);
+                setError(false);
+              }}
+            />
+          )}
+
+          {loading && !error && (
             <>
               <br />
               <br />

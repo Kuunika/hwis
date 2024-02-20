@@ -155,8 +155,8 @@ export const NewRegistrationFlow = () => {
       setMessage("adding financing data...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
       const dateTime = getDateTime();
-      createReferral({
-        encounterType: encounters.REFERRAL,
+      createFinancing({
+        encounterType: encounters.FINANCING,
         visit: patient?.visit_uuid,
         patient: params.id,
         encounterDatetime: dateTime,
@@ -294,16 +294,21 @@ export const NewRegistrationFlow = () => {
           )}
 
           {completed == 6 && (
-            <OperationSuccess
-              title="Patient Created Successful"
-              primaryActionText="Register More Patient"
-              secondaryActionText="Go Home"
-              onPrimaryAction={() => {
-                navigateTo("/registration/list");
-                setCompleted(0);
-              }}
-              onSecondaryAction={() => {}}
-            />
+            <>
+              <br />
+              <br />
+              <br />
+              <OperationSuccess
+                title="Patient Created Successful"
+                primaryActionText="Register More Patient"
+                secondaryActionText="Go Home"
+                onPrimaryAction={() => {
+                  navigateTo("/registration/list");
+                  setCompleted(0);
+                }}
+                onSecondaryAction={() => {}}
+              />
+            </>
           )}
 
           {error && (

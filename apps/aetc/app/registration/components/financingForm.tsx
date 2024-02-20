@@ -14,26 +14,27 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "./common";
+import { concepts } from "@/constants";
 
 const form = {
   paymentOption: {
-    name: "paymentOption",
+    name: concepts.PAYMENT_OPTIONS,
     label: "Payment Option",
   },
   insuranceProvider: {
-    name: "insuranceProvider",
+    name: concepts.INSURANCE_PROVIDER,
     label: "Insurance Provider",
   },
   insuranceIdNo: {
-    name: "insuranceIdNo",
+    name: concepts.INSURANCE_NUMBER,
     label: "Insurance Id Number",
   },
   insuranceSchema: {
-    name: "insuranceSchema",
+    name: concepts.INSURANCE_SCHEME,
     label: "Insurance Scheme",
   },
   status: {
-    name: "insuranceStatus",
+    name: concepts.INSURANCE_STATUS,
     label: "Insurance Status",
   },
 };
@@ -119,8 +120,8 @@ export const FinancingForm: FC<Props> = ({
                 name={form.status.name}
                 label={form.status.label}
                 options={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
+                  { label: "Active", value: "active" },
+                  { label: "Inactive", value: "inactive" },
                 ]}
               />
             </>

@@ -40,7 +40,6 @@ export const FormDatePicker: FC<Prop> = ({
         sx={{
           width,
           my: "1ch",
-          mx: "0.5ch",
           "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}

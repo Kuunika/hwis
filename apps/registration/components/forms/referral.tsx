@@ -5,8 +5,7 @@ import {} from "../../hooks";
 
 const schema = Yup.object().shape({
   refereeMedicalFacility: Yup.string()
-    .required()
-    .label("Referee Medical Facility"),
+  .label("Referral Medical Facility"),
 });
 
 const initialValues = {

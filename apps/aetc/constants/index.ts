@@ -12,6 +12,7 @@ export const encounters = {
   DISABILITY_ASSESSMENT: "0ef8f652-7852-49a5-a9dd-c1ca74fe098c",
   INITIAL_REGISTRATION: "4186b2dd-0254-4226-965a-e77fcaa70bcf",
   SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
+  FINANCING: "ceec1aca-1bbb-427a-bc6d-ef8ae11f31b2",
 };
 
 export const AETC_VISIT_TYPE = "fab5de93-9e21-4b15-8f5a-5665869a4736";
@@ -149,6 +150,17 @@ export const concepts = {
   PARENT: "ba453f92-8d80-11d8-abbb-0024217bb78e",
   UNCLE_AUNTIE: "8d91a3dc-c2cc-11de-8d13-0010c6dffd0f",
   GUARDIAN: "ba453344-8d80-11d8-abbb-0024217bb78e",
+
+  //patient referred from
+  REFERRED_FROM: "b9d29b4a-8d80-11d8-abbb-0024217bb78e",
+
+  // Financing
+
+  INSURANCE_PROVIDER: "5c6d1327-45a1-42bc-95cf-864c0a8f9f07",
+  INSURANCE_NUMBER: "8affc5bd-b399-4a3a-9c87-17a0dc9bf2c0",
+  INSURANCE_SCHEME: "20d51764-77b7-45fc-91b4-8f357bfc7262",
+  INSURANCE_STATUS: "c3350c35-76fe-4f32-9f59-799cddce66f7",
+  PAYMENT_OPTIONS: "a4a38479-db24-44ec-9325-28e646162185",
 };
 
 export const triageResult = {

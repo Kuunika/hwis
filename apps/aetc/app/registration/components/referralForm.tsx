@@ -9,11 +9,11 @@ import {
 } from "./common";
 import { getFacilities } from "@/hooks";
 import { TrackFormikContext } from ".";
+import { concepts } from "@/constants";
 
 const schema = Yup.object().shape({
-  refereeMedicalFacility: Yup.string()
-    .required()
-    .label("Referee Medical Facility"),
+  [concepts.REFERRED_FROM]: Yup.string()
+  .label("Referee Medical Facility"),
 });
 
 type Props = {
@@ -50,7 +50,7 @@ export const ReferralForm: FC<Props> = ({
           ) : (
             <SearchComboBox
               label="Referral Medical Facility"
-              name="refereeMedicalFacility"
+              name={concepts.REFERRED_FROM}
               multiple={false}
               options={
                 data

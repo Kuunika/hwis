@@ -279,7 +279,11 @@ export const DemographicsForm: FC<Prop> = ({
               { label: "Female", value: "Female" },
             ]}
           />
-          <FormDatePicker label={form.dob.label} name={form.dob.name} />
+          <FormDatePicker
+            width={"100%"}
+            label={form.dob.label}
+            name={form.dob.name}
+          />
           <TextInputField
             name={form.phoneNumber.name}
             id={form.phoneNumber.name}

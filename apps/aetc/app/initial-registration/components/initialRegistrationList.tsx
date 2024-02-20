@@ -19,7 +19,7 @@ export const InitialRegistrationList = () => {
     { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "arrivalTime", headerName: "Arrival Time", flex: 1 },
+    { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
 
     {
       field: "action",

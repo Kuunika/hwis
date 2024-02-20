@@ -129,7 +129,7 @@ export const SocialHistoryForm: FC<Prop> = ({
           />
         </RegistrationCard>
         <RegistrationCard>
-          <RegistrationCardTitle>Occupation</RegistrationCardTitle>
+          <RegistrationCardTitle>Transportation</RegistrationCardTitle>
           <SelectInputField
             name={form.methodOfTransportation.name}
             selectItems={[
