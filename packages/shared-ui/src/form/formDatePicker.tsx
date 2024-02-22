@@ -25,6 +25,7 @@ export const FormDatePicker: FC<Prop> = ({
   label,
   width = "25ch",
   sx,
+  size = "medium",
   getValue,
   disabled = false,
 }) => {
@@ -37,6 +38,7 @@ export const FormDatePicker: FC<Prop> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
+        slotProps={{ textField: { size } }}
         sx={{
           width,
           my: "1ch",

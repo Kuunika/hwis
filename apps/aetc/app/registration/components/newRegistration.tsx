@@ -3,10 +3,7 @@ import { useState, ReactNode, useEffect } from "react";
 import {
   MainButton,
   MainGrid,
-  MainPaper,
   MainTypography,
-  NewStepperContainer,
-  StepperContainer,
   WrapperBox,
 } from "shared-ui/src";
 import {
@@ -215,10 +212,13 @@ export const NewRegistrationFlow = () => {
     triggerSubmission();
   };
 
+  console.log(params.id);
   const triggerSubmission = () => {
     setMessage("adding demographics...");
     setLoading(true);
     setShowForm(false);
+
+    console.log(params.id);
     createPatient({ ...formData.demographics, id: params.id });
   };
 

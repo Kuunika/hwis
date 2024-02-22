@@ -1,7 +1,15 @@
 import { MainCard, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { Chip } from "@mui/material";
+import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import { useParameters } from "@/hooks";
+import { calculateAge } from "@/helpers/dateTime";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
+  const { data: patients } = getPatientsWaitingForTriage();
+  const { params } = useParameters();
+
+  const patient = patients?.find((p) => p.uuid == params.id);
+
   return (
     <MainPaper elevation={0} sx={{ backgroundColor: "#fff", p: 1, ...sx }}>
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
@@ -23,15 +31,21 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
         </WrapperBox>
         <WrapperBox>
           <MainTypography variant="h5" fontWeight={"700"}>
-            John Doe
+            {patient?.given_name + " " + patient?.family_name}
           </MainTypography>
         </WrapperBox>
       </WrapperBox>
       <br />
 
       <LabelValue label="ID" value="100777-1111-00000-999" />
-      <LabelValue label="Gender" value="Female" />
-      <LabelValue label="DOB" value="08 January, 1995" />
+      <LabelValue label="Gender" value={patient?.gender} />
+      <LabelValue
+        label="DOB"
+        value={
+          patient?.birthdate +
+          `  (Age ${patient?.birthdate && calculateAge(patient?.birthdate)})`
+        }
+      />
       <WrapperBox
         sx={{
           display: "flex",

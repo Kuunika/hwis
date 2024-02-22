@@ -24,11 +24,10 @@ export const VisitsBar = () => {
         alignItems: "center",
         width: "100%",
         px: "2ch",
-        py: "2ch",
-        borderWidth: "1px",
-        borderBottomStyle: "solid",
-        borderColor: "#E6E6E6",
-        mb: "5ch",
+        py: "1ch",
+        // borderWidth: "1px",
+        // borderBottomStyle: "solid",
+        // borderColor: "#E6E6E6",
       }}
     >
       <VisitDates />

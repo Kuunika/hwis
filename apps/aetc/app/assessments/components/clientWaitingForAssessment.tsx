@@ -1,34 +1,44 @@
 import { useNavigation } from "@/hooks";
+import {
+  getPatientsWaitingForAssessment,
+  getPatientsWaitingForTriage,
+} from "@/hooks/patientReg";
 import { BaseTable, MainButton, WrapperBox } from "shared-ui/src";
 
 export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
-  const rows = [
-    {
-      id: "1",
-      firstName: "John",
-      lastName: "Doe",
-      gender: "Male",
-      dob: "08 January 1995",
-      triageCategory: "red",
-      patientWaitingTime: "10 min",
-      aggreWaitingTime: "30 min",
-    },
-    {
-      id: "2",
-      firstName: "Jane",
-      lastName: "Doe",
-      gender: "Female",
-      dob: "08 January 1995",
-      triageCategory: "green",
-      patientWaitingTime: "5 min",
-      aggreWaitingTime: "30 min",
-    },
-  ];
+  const { data: patients, isLoading } = getPatientsWaitingForAssessment();
+
+  const rows = patients?.map((p) => ({ id: p?.uuid, ...p }));
+
+  // const rows = [
+  //   {
+  //     id: "1",
+  //     firstName: "John",
+  //     lastName: "Doe",
+  //     gender: "Male",
+  //     dob: "08 January 1995",
+  //     triageCategory: "red",
+  //     patientWaitingTime: "10 min",
+  //     aggreWaitingTime: "30 min",
+  //   },
+  //   {
+  //     id: "2",
+  //     firstName: "Jane",
+  //     lastName: "Doe",
+  //     gender: "Female",
+  //     dob: "08 January 1995",
+  //     triageCategory: "green",
+  //     patientWaitingTime: "5 min",
+  //     aggreWaitingTime: "30 min",
+  //   },
+  // ];
 
   const columns = [
-    { field: "firstName", headerName: "First Name", flex: 1 },
-    { field: "lastName", headerName: "Last Name", flex: 1 },
+    { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
+    { field: "given_name", headerName: "First Name", flex: 1 },
+    { field: "family_name", headerName: "Last Name", flex: 1 },
+    { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
     { field: "dob", headerName: "Date Of Birth", flex: 1 },
     { field: "gender", headerName: "Gender", flex: 1 },
     {
@@ -69,12 +79,14 @@ export const ClientWaitingForAssessment = () => {
           <MainButton
             sx={{ fontSize: "12px" }}
             title={"start"}
-            onClick={() => navigateTo("/patient")}
+            onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
           />
         );
       },
     },
   ];
 
-  return <BaseTable columns={columns} rows={rows} />;
+  return (
+    <BaseTable loading={isLoading} columns={columns} rows={rows ? rows : []} />
+  );
 };

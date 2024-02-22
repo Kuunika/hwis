@@ -8,6 +8,7 @@ export interface Set {
 export interface Name {
   concept_id: number;
   name: string;
+  uuid: string;
 }
 
 export interface Concept {
@@ -16,6 +17,71 @@ export interface Concept {
   uuid: string;
   set_members: Set[];
   names: Name[];
+}
+
+export interface Address {
+  address1?: string;
+  cityVillage?: string;
+  country?: string;
+  postalCode?: string;
+}
+
+export interface Identifier {
+  identifier: string;
+  identifierType: string;
+  preferred: boolean;
+}
+
+export interface Person {
+  identifiers: Identifier[];
+  given_name: string;
+  family_name: string;
+  aetc_visit_number: string;
+  gender: string;
+  birthdate: Date;
+  addresses: Address[];
+  uuid: string;
+  visit_uuid: string;
+}
+
+interface EncounterType {
+  name: string;
+  description: string;
+  uuid: string;
+}
+
+interface Obs {
+  obs_id: number;
+  person_id: number;
+  concept_id: number;
+  encounter_id: number;
+  order_id: number | null;
+  obs_datetime: string;
+  obs_group_id: number | null;
+  accession_number: any;
+  value_datetime: string | null;
+  value_numeric: number | null;
+  value_text: string | null;
+  value_complex: any;
+  comments: any;
+  uuid: string;
+  previous_version: any;
+  form_namespace_and_path: any;
+  status: string;
+  interpretation: any;
+  value: any;
+  value_coded_uuid: any;
+}
+
+export interface Encounter {
+  encounter_id: number;
+  encounter_type: EncounterType;
+  patient_id: number;
+  form_id: number | null;
+  encounter_datetime: string;
+  visit_id: number;
+  uuid: string;
+  obs: Obs[];
 }
 export interface IApiService {
   getAll<T>(query?: string): Promise<any>;

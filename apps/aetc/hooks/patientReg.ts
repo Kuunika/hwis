@@ -4,6 +4,7 @@ import {
   getDailyVisits,
   getPatients,
   initialRegistration,
+  potentialDuplicates,
   updatePatient,
 } from "@/services/patient";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
@@ -41,32 +42,30 @@ export const registerPatient = () => {
           preferred: true,
         },
       ],
-      person: {
-        names: [
-          {
-            givenName: patientData.firstName,
-            familyName: patientData.lastName,
-          },
-        ],
-        gender: patientData.gender,
-        birthdate: patientData.birthDate,
-        addresses: [
-          {
-            address1: patientData.homeVillage,
-            countryDistrict: patientData.homeDistrict,
-            cityVillage: patientData.homeTraditionalAuthority,
-            country: patientData.nationality,
-            preferred: true,
-          },
-          {
-            address1: patientData.currentVillage,
-            address2: patientData.closeLandMark,
-            countryDistrict: patientData.currentDistrict,
-            cityVillage: patientData.currentTraditionalAuthority,
-            preferred: false,
-          },
-        ],
-      },
+      names: [
+        {
+          givenName: patientData.firstName,
+          familyName: patientData.lastName,
+        },
+      ],
+      gender: patientData.gender,
+      birthdate: patientData.birthDate,
+      addresses: [
+        {
+          address1: patientData.homeVillage,
+          countryDistrict: patientData.homeDistrict,
+          cityVillage: patientData.homeTraditionalAuthority,
+          country: patientData.nationality,
+          preferred: true,
+        },
+        {
+          address1: patientData.currentVillage,
+          address2: patientData.closeLandMark,
+          countryDistrict: patientData.currentDistrict,
+          cityVillage: patientData.currentTraditionalAuthority,
+          preferred: false,
+        },
+      ],
     };
     return updatePatient(patientData.id, mappedPatient).then((response) => {
       return response.data;
@@ -100,5 +99,37 @@ export const getPatientsWaitingForRegistrations = () => {
     queryKey: ["registration"],
     queryFn: getall,
     enabled: true,
+  });
+};
+
+export const getPatientsWaitingForTriage = () => {
+  const getall = () =>
+    getDailyVisits("triage").then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["triage"],
+    queryFn: getall,
+    enabled: true,
+  });
+};
+export const getPatientsWaitingForAssessment = () => {
+  const getall = () =>
+    getDailyVisits("assessment").then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["assessments"],
+    queryFn: getall,
+    enabled: true,
+  });
+};
+
+export const searchPotentialDuplicates = () => {
+  const addData = (patientData: any) => {
+    return potentialDuplicates(patientData).then((response) => {
+      return response.data;
+    });
+  };
+  return useMutation({
+    mutationFn: addData,
   });
 };

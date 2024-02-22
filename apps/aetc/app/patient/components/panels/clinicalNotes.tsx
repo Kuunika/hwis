@@ -27,22 +27,8 @@ export const ClinicalNotes = () => {
     <Panel title="Clinical Notes" icon={expandIcon}>
       <br />
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
-        <MainTypography color={"#636363"}>Vitals</MainTypography>
+        <MainTypography color={"#636363"}></MainTypography>
         <FaRegChartBar />
-      </WrapperBox>
-      <WrapperBox display={"flex"} justifyContent={"space-between"}>
-        <VitalsPill
-          textColor="#016302"
-          backgroundColor="#DDEEDD"
-          iconBackgroundColor="#BBDDBC"
-          text="25.6 obese"
-        />
-        <VitalsPill
-          textColor="#00190E"
-          backgroundColor="#E6E6E6"
-          iconBackgroundColor="#B3B3B3"
-          text="110/70"
-        />
       </WrapperBox>
       <MainTypography color={"#636363"}>Notes</MainTypography>
       <WrapperBox sx={{ mt: "1ch", overflow: "scroll", maxHeight: "10ch" }}>

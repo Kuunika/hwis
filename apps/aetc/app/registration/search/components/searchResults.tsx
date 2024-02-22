@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   BaseTable,
+  MainButton,
   MainPaper,
   MainTypography,
   WrapperBox,
@@ -9,16 +10,34 @@ import {
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
-import { useParameters } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
+import { DemographicsSearchSkeleton } from "@/components/loadingSkeletons";
+import {
+  SearchRegistrationContext,
+  SearchRegistrationContextType,
+} from "@/contexts";
 
-export const SearchResults = () => {
+export const SearchResults = ({
+  loading,
+  searchedPatient,
+  searchResults,
+}: {
+  loading: boolean;
+  searchedPatient: any;
+  searchResults: any;
+}) => {
+  const { navigateTo } = useNavigation();
+  const { params } = useParameters();
   const [patient, setPatient] = useState<any>();
+  const { setPatient: setRegisterPatient } = useContext(
+    SearchRegistrationContext
+  ) as SearchRegistrationContextType;
 
-  const searchObject = {
-    firstName: "John",
-    lastName: "Doel",
-    gender: "Male",
+  const handleNewRecord = () => {
+    setRegisterPatient(searchedPatient);
+    navigateTo(`/registration/${params.id}/new`);
   };
+
   const patientsResults = [
     {
       id: "HHH-TTTT1",
@@ -32,8 +51,8 @@ export const SearchResults = () => {
 
   const columns = [
     { field: "attribute", headerName: "Attribute", flex: 1 },
-    { field: "searchResult", headerName: "Search Result", flex: 1 },
-    { field: "searched", headerName: "Searched", flex: 1 },
+    { field: "searchResult", headerName: "Existing Person", flex: 1 },
+    { field: "searched", headerName: "New Person", flex: 1 },
   ];
 
   const rows = [
@@ -41,21 +60,26 @@ export const SearchResults = () => {
       id: "FirstName",
       attribute: "First Name",
       searchResult: patient?.firstName,
-      searched: searchObject.firstName,
+      searched: searchedPatient.firstName,
     },
     {
       id: "LastName",
       attribute: "Last Name",
       searchResult: patient?.lastName,
-      searched: searchObject.lastName,
+      searched: searchedPatient.lastName,
     },
     {
       id: "Gender",
       attribute: "Gender",
       searchResult: patient?.gender,
-      searched: searchObject.gender,
+      searched: searchedPatient.gender,
     },
   ];
+
+  if (loading) {
+    return <DemographicsSearchSkeleton />;
+  }
+
   return (
     <WrapperBox
       sx={{
@@ -68,7 +92,7 @@ export const SearchResults = () => {
       <MainTypography variant="h5">Search Results</MainTypography>
       <br />
       <WrapperBox display={"flex"}>
-        <WrapperBox>
+        <WrapperBox sx={{ mr: "1ch" }}>
           {patientsResults.map((p) => {
             return (
               <WrapperBox
@@ -94,16 +118,36 @@ export const SearchResults = () => {
             );
           })}
         </WrapperBox>
-        <MainPaper elevation={0} sx={{ width: "50ch", px: "2ch", py: "2ch" }}>
-          <AddPatientButton />
-          <WrapperBox>
-            {patient ? (
-              <BaseTable hidePagination={true} columns={columns} rows={rows} />
-            ) : (
-              "select a record"
-            )}
+        <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+          <WrapperBox sx={{ display: "flex", mb: "1ch" }}>
+            <MainButton
+              sx={{ mr: "0.2ch", borderRadius: "1px" }}
+              variant="secondary"
+              title="add new record"
+              onClick={handleNewRecord}
+            />
+            <MainButton
+              sx={{ mr: "0.2ch", borderRadius: "1px" }}
+              variant="secondary"
+              title="Add selected existing"
+              onClick={() => {}}
+            />
           </WrapperBox>
-        </MainPaper>
+          <MainPaper elevation={0} sx={{ width: "50ch", px: "2ch", py: "2ch" }}>
+            {/* <AddPatientButton /> */}
+            <WrapperBox>
+              {patient ? (
+                <BaseTable
+                  hidePagination={true}
+                  columns={columns}
+                  rows={rows}
+                />
+              ) : (
+                "select a record"
+              )}
+            </WrapperBox>
+          </MainPaper>
+        </WrapperBox>
       </WrapperBox>
     </WrapperBox>
   );

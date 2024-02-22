@@ -81,6 +81,8 @@ const form = {
 type props = {
   initialValues: any;
   onSubmit: (values: any) => void;
+  triageResult: string;
+  setTriageResult: (rre) => void;
 };
 const schema = yup.object({
   // [form.pulseOximetry.name]: yup
@@ -240,8 +242,12 @@ const rules = {
   ],
 };
 
-export function VitalsForm({ initialValues, onSubmit }: props) {
-  const [triageResult, setTriageResult] = useState<TriageResult>("");
+export function VitalsForm({
+  initialValues,
+  onSubmit,
+  triageResult,
+  setTriageResult,
+}: props) {
   const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
@@ -254,26 +260,20 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
     }
     rules[name]?.forEach((rule) => {
       const formValueNumber = Number(formValue);
-      console.log({ formValue });
-
-      console.log(formValueNumber);
 
       switch (rule.operator) {
         case "<":
           if (formValueNumber < rule.value && formValueNumber >= rule?.bound) {
-            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
           return;
         case ">":
           if (formValueNumber > rule.value && formValueNumber <= rule.bound) {
-            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
           return;
         case "=":
           if (formValueNumber == rule.value) {
-            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
           return;
@@ -283,7 +283,6 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
             formValueNumber >= rule.value &&
             formValueNumber <= rule.value2
           ) {
-            console.log({ formValueNumber });
             setTriageResult(rule.result as TriageResult);
           }
           return;
@@ -330,16 +329,6 @@ export function VitalsForm({ initialValues, onSubmit }: props) {
       initialValues={initialValues}
       submitButtonText="next"
     >
-      {triageResult && (
-        <>
-          <TriageContainer
-            onCompleteTriage={handleTriageComplete}
-            result={triageResult}
-            message={"Interventions"}
-          />
-          <br />
-        </>
-      )}
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Oxygen Saturation and Heart Rate">
         <FieldsContainer>

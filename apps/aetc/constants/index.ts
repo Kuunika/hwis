@@ -13,6 +13,7 @@ export const encounters = {
   INITIAL_REGISTRATION: "4186b2dd-0254-4226-965a-e77fcaa70bcf",
   SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
   FINANCING: "ceec1aca-1bbb-427a-bc6d-ef8ae11f31b2",
+  PRESENTING_COMPLAINTS: "ba069102-8d80-11d8-abbb-0024217bb78e",
 };
 
 export const AETC_VISIT_TYPE = "fab5de93-9e21-4b15-8f5a-5665869a4736";

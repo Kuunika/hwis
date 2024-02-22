@@ -16,7 +16,12 @@ import { PatientNationalIdCheck } from "../../components";
 import { Navigation } from "../../scanner/page";
 import { SearchForm } from "../../search/components/searchForm";
 import { SearchResults } from "../../search/components/searchResults";
-import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
+import {
+  getPatientsWaitingForRegistrations,
+  searchPotentialDuplicates,
+} from "@/hooks/patientReg";
+import { SearchTab } from "../../components/searchTabs";
+import { SearchNPIDForm } from "../../search/components/searchNpid";
 
 export default function RegistrationSearch() {
   const { params } = useParameters();
@@ -70,23 +75,62 @@ export default function RegistrationSearch() {
         </MainTypography>
         <br />
         <br />
+
         <WrapperBox
           sx={{
             width: "40%",
             position: "relative",
           }}
         >
-          <SearchForm
-            init={{
-              firstName: patient?.given_name,
-              lastName: patient?.family_name,
-            }}
-            onSubmit={() => {}}
+          <SearchTab
+            demographics={<DemographicsSearch patient={patient} />}
+            npid={<NPIDSearch />}
           />
         </WrapperBox>
-        <br />
-        <SearchResults />
       </WrapperBox>
     </>
   );
 }
+
+const DemographicsSearch = ({ patient }: { patient: any }) => {
+  const { mutate, isPending, isSuccess } = searchPotentialDuplicates();
+  const [searchedPatient, setSearchedPatient] = useState({});
+
+  const handleSubmit = (values: any) => {
+    setSearchedPatient(values);
+    // mutate({
+    //   given_name: values.firstName,
+    //   family_name: values.lastName,
+    //   gender: values.gender,
+    //   birthdate: values.birthdate,
+    //   attributes: {
+    //     home_village: values.homeVillage,
+    //     home_traditional_authority: values.homeTraditionalAuthority,
+    //     home_district: values.homeDistrict,
+    //   },
+    // });
+  };
+  return (
+    <>
+      <SearchForm
+        init={{
+          firstName: patient?.given_name,
+          lastName: patient?.family_name,
+        }}
+        onSubmit={handleSubmit}
+      />
+      <br />
+      {(isPending || true) && (
+        <SearchResults
+          loading={isPending}
+          searchResults={{}}
+          searchedPatient={searchedPatient}
+        />
+      )}
+    </>
+  );
+};
+
+const NPIDSearch = () => {
+  return <SearchNPIDForm onSubmit={() => {}} />;
+};

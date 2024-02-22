@@ -18,7 +18,7 @@ export function BasicSelect({ label, options }: BasicSelectProp) {
   };
 
   return (
-    <FormControl fullWidth>
+    <FormControl size="small" fullWidth>
       <InputLabel id="demo-select-small-label">{label}</InputLabel>
       <Select
         labelId="demo-simple-select-label"

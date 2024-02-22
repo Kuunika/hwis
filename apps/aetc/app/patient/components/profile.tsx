@@ -47,7 +47,7 @@ export const DesktopView = () => {
         </WrapperBox>
         <BasicAccordion />
       </MainGrid>
-      <MainGrid item lg={8}>
+      <MainGrid item lg={9}>
         <MainPaper
           elevation={0}
           sx={{ pb: "5ch", display: { xs: "none", lg: "block" } }}
@@ -55,16 +55,16 @@ export const DesktopView = () => {
           <VisitsBar />
           <WrapperBox mx={"2ch"}>
             <WrapperBox sx={{ display: "flex" }}>
-              <ClinicalNotes />
+              <VitalsPanel />
               <Investigations />
             </WrapperBox>
             <WrapperBox sx={{ display: "flex" }}>
-              <Medications />
+              <ClinicalNotes />
               <Results />
-              {/* <Dispositions /> */}
             </WrapperBox>
-            {/* <WrapperBox>
-      </WrapperBox> */}
+            <WrapperBox>
+              <Medications />
+            </WrapperBox>
           </WrapperBox>
         </MainPaper>
       </MainGrid>

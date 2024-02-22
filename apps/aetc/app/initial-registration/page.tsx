@@ -119,6 +119,7 @@ export default function InitialRegistration() {
   useEffect(() => {
     if (encounterCreated) {
       setCompleted(4);
+      setLoading(false);
       setMessage("done");
     }
   }, [encounterCreated]);

@@ -15,6 +15,11 @@ import { concepts, encounters } from "@/constants";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import { closeCurrentVisit } from "@/hooks/visit";
+import { useFormLoading } from "@/hooks/formLoading";
+import { OperationSuccess } from "@/components/operationSuccess";
+import { FormError } from "@/components/formError";
+import { CustomizedProgressBars } from "@/components/loader";
+import { useEffect } from "react";
 
 export default function Prescreening() {
   const { navigateTo } = useNavigation();
@@ -22,11 +27,32 @@ export default function Prescreening() {
   const { data } = getPatientsWaitingForPrescreening();
   const { mutate: createEncounter, isPending, isSuccess } = addEncounter();
   const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+  const {
+    loading,
+    setLoading,
+    completed,
+    setCompleted,
+    message,
+    setMessage,
+    showForm,
+    setShowForm,
+    error,
+    setError,
+  } = useFormLoading();
+
+  useEffect(() => {
+    if (isSuccess) {
+      setCompleted(1);
+      setLoading(false);
+    }
+  }, [isSuccess]);
 
   const handleSubmit = (values: any) => {
+    setShowForm(false);
     const patient = data?.find((d) => d.uuid == params.id);
+    setLoading(true);
+    setMessage("add Screening data... ");
 
-    console.log({ patient });
     createEncounter({
       encounterType: encounters.SCREENING_ENCOUNTER,
       visit: patient?.visit_uuid,
@@ -51,20 +77,19 @@ export default function Prescreening() {
       ],
     });
 
-    console.log(Boolean(values[concepts.PATIENT_REFERRED_TO]));
     if (Boolean(values[concepts.PATIENT_REFERRED_TO])) {
-      closeVisit(patient?.visit_uuid);
+      patient && closeVisit(patient?.visit_uuid);
     }
-    // console.log({ values });
-    successDialog({
-      title: "Prescreening Completed",
-      text: "",
-      icon: "success",
-      onConfirm: () => navigateTo("/initial-registration/list"),
-      confirmButtonText: "Prescreen More Patients",
-      cancelButtonText: "Home",
-      onDismiss: () => navigateTo("/"),
-    });
+
+    // successDialog({
+    //   title: "Prescreening Completed",
+    //   text: "",
+    //   icon: "success",
+    //   onConfirm: () => navigateTo("/initial-registration/list"),
+    //   confirmButtonText: "Prescreen More Patients",
+    //   cancelButtonText: "Home",
+    //   onDismiss: () => navigateTo("/"),
+    // });
   };
   return (
     <>
@@ -87,9 +112,52 @@ export default function Prescreening() {
             This is a list of all patients that went through initial
             registration successfully and waiting for prescreening.
           </RegistrationDescriptionText>
-          <RegistrationCard>
-            <PrescreeningForm onSubmit={handleSubmit} />
-          </RegistrationCard>
+          {showForm && (
+            <RegistrationCard>
+              <PrescreeningForm onSubmit={handleSubmit} />
+            </RegistrationCard>
+          )}
+          {completed == 1 && (
+            <OperationSuccess
+              title="Patient Screened Successfully"
+              primaryActionText="screen more"
+              secondaryActionText="Go Home"
+              onPrimaryAction={() => {
+                navigateTo("/initial-registration/list");
+                setShowForm(true);
+                setCompleted(0);
+              }}
+              onSecondaryAction={() => {}}
+            />
+          )}
+          {error && (
+            <FormError
+              error={message}
+              onPrimaryAction={() => {
+                setError(false);
+                setCompleted(0);
+                setLoading(false);
+                setShowForm(true);
+              }}
+              onSecondaryAction={() => {
+                setCompleted(0);
+                setShowForm(true);
+                setLoading(false);
+                setError(false);
+              }}
+            />
+          )}
+
+          {loading && !error && (
+            <>
+              <br />
+              <br />
+              <CustomizedProgressBars
+                message={message}
+                progress={(completed / 1) * 100}
+              />
+            </>
+          )}
         </MainGrid>
         <MainGrid xs={1} lg={3} item></MainGrid>
       </MainGrid>

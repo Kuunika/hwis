@@ -45,9 +45,8 @@ export async function login(
     response = await apiClient.post("/auth/login", credentials);
     setCookie("accessToken", response.data.jwt);
 
-    console.log(getCookie("accessToken"));
     localStorage.setItem("accessToken", response.data.jwt);
-    // console.log(response.data.jwt);
+
     return {
       status: response.status,
       data: response.data,

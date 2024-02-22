@@ -7,21 +7,19 @@ import {
   TextInputField,
   RadioGroupInput,
   MainButton,
+  DatePickerInput,
+  FormDatePicker,
 } from "shared-ui/src";
 import * as Yup from "yup";
 
 import { getInitialValues, notify } from "@/helpers";
-import { NO, YES, concepts, traditionalAuthorities } from "@/constants";
+import { districts, traditionalAuthorities } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
   init?: any;
 };
 const form = {
-  identificationNumber: {
-    name: "identificationNumber",
-    label: "National Identification Number",
-  },
   firstName: {
     name: "firstName",
     label: "First Name",
@@ -42,38 +40,7 @@ const form = {
     name: "gender",
     label: "Gender",
   },
-  currentDistrict: {
-    name: "currentDistrict",
-    label: "Current District",
-  },
-  currentTraditionalAuthority: {
-    name: "currentTraditionalAuthority",
-    label: "Current TA / Ward",
-  },
-  currentVillage: {
-    name: "currentVillage",
-    label: "Current Village / Location",
-  },
-  closeLandMark: {
-    name: "closeLandMark",
-    label: "Close Landmark",
-  },
-  nextOfKinFirstName: {
-    name: "nextOfKinFirstName",
-    label: "Next of kin First Name",
-  },
-  nextOfKinLastName: {
-    name: "nextOfKinLastName",
-    label: "Next Of Kin Last Name",
-  },
-  nextOfKinRelationship: {
-    name: "nextOfKinRelationship",
-    label: "Next Of Kin Relationship",
-  },
-  nextOfKinPhoneNumber: {
-    name: "nextOfKinPhoneNumber",
-    label: "Next Of Kin Phone Number",
-  },
+
   homeDistrict: {
     name: "homeDistrict",
     label: "Home District",
@@ -90,65 +57,19 @@ const form = {
     name: "homeVillage",
     label: "Home Village",
   },
-
-  guardianPhoneNumber: {
-    name: "guardianPhoneNumber",
-    label: "Guardian Phone Number",
-  },
 };
 
 const schema = Yup.object().shape({
-  [form.identificationNumber.name]: Yup.string()
-    .required()
-    .label(form.identificationNumber.label),
   [form.firstName.name]: Yup.string().required().label(form.firstName.label),
-  [form.phoneNumber.name]: Yup.string()
-    .required()
-    .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.string().label(form.dob.label),
-  [form.gender.name]: Yup.string().required().label(form.gender.label),
-  [form.currentDistrict.name]: Yup.string()
-    .required()
-    .label(form.currentDistrict.label),
-  [form.currentTraditionalAuthority.name]: Yup.string()
-    .required()
-    .label(form.currentTraditionalAuthority.label),
-  [form.currentVillage.name]: Yup.string()
-    .required()
-    .label(form.currentDistrict.label),
-  [form.closeLandMark.name]: Yup.string()
-    .required()
-    .label(form.closeLandMark.label),
-  [form.nextOfKinFirstName.name]: Yup.string()
-    .required()
-    .label(form.nextOfKinFirstName.label),
-  [form.nextOfKinLastName.name]: Yup.string()
-    .required()
-    .label(form.nextOfKinLastName.label),
-  [form.nextOfKinRelationship.name]: Yup.string()
-    .required()
-    .label(form.nextOfKinRelationship.label),
-  [form.nextOfKinPhoneNumber.name]: Yup.string().label(
-    form.nextOfKinRelationship.label
+  [form.gender.name]: Yup.string().label(form.gender.label),
+  [form.homeDistrict.name]: Yup.string().label(form.homeDistrict.label),
+  [form.homeTraditionalAuthority.name]: Yup.string().label(
+    form.homeTraditionalAuthority.label
   ),
-
-  [form.homeDistrict.name]: Yup.string()
-    .required()
-    .label(form.homeDistrict.label),
-  [form.homeTraditionalAuthority.name]: Yup.string()
-    .required()
-    .label(form.homeTraditionalAuthority.label),
-  [form.homeVillage.name]: Yup.string()
-    .required()
-    .label(form.homeVillage.label),
-
-  [form.guardianPhoneNumber.name]: Yup.string()
-    .required()
-    .label(form.guardianPhoneNumber.label),
+  [form.homeVillage.name]: Yup.string().label(form.homeVillage.label),
 });
-
-const init = getInitialValues(form);
 
 const initialValues = getInitialValues(form);
 
@@ -185,7 +106,7 @@ export const SearchForm = ({ onSubmit, init }: Prop) => {
         </WrapperBox>
         <WrapperBox sx={spacing}>
           <SearchComboBox
-            width="44%"
+            width="30%"
             name={form.gender.name}
             label={form.gender.label}
             multiple={false}
@@ -195,6 +116,27 @@ export const SearchForm = ({ onSubmit, init }: Prop) => {
               { label: "Female", id: "Female" },
             ]}
           />
+          <FormDatePicker
+            width={"100%"}
+            name={form.dob.name}
+            label={form.dob.label}
+            size="small"
+          />
+        </WrapperBox>
+        <WrapperBox display={"flex"}>
+          <SearchComboBox
+            sx={{ mr: "0.5ch" }}
+            width="45%"
+            size="small"
+            name={form.homeDistrict.name}
+            label={form.homeDistrict.label}
+            multiple={false}
+            options={districts.map((d) => ({
+              id: d.district_name,
+              label: d.district_name,
+            }))}
+          />
+
           <SearchComboBox
             width="100%"
             size="small"
