@@ -34,13 +34,7 @@ export function LabRequestModal(props: SimpleDialogProps) {
   };
 
   return (
-    <Dialog
-      fullScreen={false}
-      maxWidth="lg"
-      fullWidth={true}
-      onClose={handleClose}
-      open={open}
-    >
+    <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
       <DialogTitle>Lab Order</DialogTitle>
       <DialogContent>
         <WrapperBox display={"flex"}>
@@ -84,6 +78,12 @@ export function LabRequestModal(props: SimpleDialogProps) {
                 sx={{ borderRadius: "1px" }}
                 title={"Send Order"}
                 onClick={() => {}}
+              />
+              <MainButton
+                variant="secondary"
+                sx={{ borderRadius: "1px", mx: "0.5ch" }}
+                title={"Cancel Order"}
+                onClick={handleListItemClick}
               />
             </WrapperBox>
             <WrapperBox display={"flex"}>
