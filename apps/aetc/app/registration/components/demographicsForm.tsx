@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useContext, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import * as Yup from "yup";
 import { useFormikContext } from "formik";
@@ -35,6 +35,10 @@ import { countries } from "@/constants/contries";
 import { getInitialValues } from "@/helpers";
 import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
+import {
+  SearchRegistrationContext,
+  SearchRegistrationContextType,
+} from "@/contexts";
 
 const form = {
   identificationNumber: {
@@ -195,6 +199,10 @@ export const DemographicsForm: FC<Prop> = ({
   initialValues = init,
   setContext,
 }) => {
+  const { patient } = useContext(
+    SearchRegistrationContext
+  ) as SearchRegistrationContextType;
+
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
@@ -209,7 +217,7 @@ export const DemographicsForm: FC<Prop> = ({
   useEffect(() => {
     const found = patients?.find((p) => p.uuid == params.id);
 
-    if (found) {
+    if (found && fieldFunction) {
       const { setFieldValue } = fieldFunction;
       setFieldValue(form.firstName.name, found.given_name);
       setFieldValue(form.lastName.name, found.family_name);
@@ -243,7 +251,7 @@ export const DemographicsForm: FC<Prop> = ({
       </RegistrationDescriptionText>
       <FormikInit
         validationSchema={schema}
-        initialValues={initialValues}
+        initialValues={{ ...initialValues, ...patient }}
         onSubmit={onSubmit}
         submitButtonText="next"
         submitButton={false}

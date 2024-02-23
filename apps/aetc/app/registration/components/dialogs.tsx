@@ -93,3 +93,41 @@ export const PatientNationalIdCheck = (patientId: any) => {
     showConfirmButton: false,
   });
 };
+
+export const LabRequest = (patientId: any) => {
+  return MySwal.fire({
+    title: (
+      <WrapperBox
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: "3ch",
+        }}
+      >
+        <MainTypography
+          variant="h1"
+          sx={{
+            fontFamily: "Inter",
+            fontSize: "24px",
+            fontWeight: 700,
+            lineHeight: "29px",
+            letterSpacing: "0em",
+            textAlign: "center",
+
+            width: "275px",
+            alignSelf: "center",
+          }}
+        >
+          Does the patient have a National ID card
+        </MainTypography>
+      </WrapperBox>
+    ),
+    html: <DialogNationalIdContent patientId={patientId} />,
+    showCloseButton: true,
+    showCancelButton: false,
+    focusConfirm: false,
+    showConfirmButton: false,
+    width: "100%",
+    heightAuto: false,
+  });
+};

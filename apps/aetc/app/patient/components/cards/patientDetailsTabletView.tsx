@@ -1,8 +1,20 @@
 import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { Chip } from "@mui/material";
 import { Panel } from "../panels";
+import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+import { useParameters } from "@/hooks";
+import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import { calculateAge } from "@/helpers/dateTime";
 
 export const PersonalDetailsTabletView = ({ sx }: { sx?: any }) => {
+  const { data: patients, isLoading } = getPatientsWaitingForTriage();
+  const { params } = useParameters();
+
+  const patient = patients?.find((p) => p.uuid == params.id);
+
+  if (isLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
   return (
     <Panel title="">
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
@@ -24,15 +36,21 @@ export const PersonalDetailsTabletView = ({ sx }: { sx?: any }) => {
         </WrapperBox>
         <WrapperBox>
           <MainTypography variant="h5" fontWeight={"700"}>
-            John Doe
+            {patient?.given_name + " " + patient?.family_name}
           </MainTypography>
         </WrapperBox>
       </WrapperBox>
       <br />
 
       <LabelValue label="ID" value="100777-1111-00000-999" />
-      <LabelValue label="Gender" value="Female" />
-      <LabelValue label="DOB" value="08 January, 1995" />
+      <LabelValue label="Gender" value={patient?.gender} />
+      <LabelValue
+        label="DOB"
+        value={
+          patient?.birthdate +
+          `  (Age ${patient?.birthdate && calculateAge(patient?.birthdate)})`
+        }
+      />
       <LabelValue label="Chronic Conditions" value="Diabetes, BP" />
       <LabelValue
         label="Medications"

@@ -7,6 +7,9 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { useEffect, useState } from "react";
+import Stack from "@mui/material/Stack";
+import Skeleton from "@mui/material/Skeleton";
+import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 
 export const VitalsPanel = () => {
   const { navigateTo } = useNavigation();
@@ -64,6 +67,10 @@ export const VitalsPanel = () => {
     { label: "2 ", value: "2" },
     { label: "3", value: "3" },
   ];
+
+  if (isLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
   return (
     <Panel
       title="Vitals"

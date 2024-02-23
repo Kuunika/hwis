@@ -2,9 +2,23 @@ import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import { Panel } from ".";
 import { useNavigation } from "@/hooks";
 import { FaPlus } from "react-icons/fa";
+import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+import { useState, useEffect } from "react";
 
 export const Medications = () => {
   const { navigateTo } = useNavigation();
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  });
+
+  if (isLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
   return (
     <Panel
       title="Medications"

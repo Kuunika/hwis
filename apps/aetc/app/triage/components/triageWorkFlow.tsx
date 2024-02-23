@@ -108,6 +108,8 @@ export default function TriageWorkFlow() {
     }
   }, [presentingCreated]);
 
+  1002030183;
+
   useEffect(() => {
     if (vitalsCreated) {
       setCompleted(2);
@@ -141,7 +143,7 @@ export default function TriageWorkFlow() {
   useEffect(() => {
     if (bloodCreated) {
       setCompleted(4);
-      setMessage("adding breathing...");
+      setMessage("adding disability...");
 
       createDisability({
         encounterType: encounters.DISABILITY_ASSESSMENT,

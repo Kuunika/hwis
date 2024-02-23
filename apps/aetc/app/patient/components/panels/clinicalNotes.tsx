@@ -2,8 +2,21 @@ import { MainTypography, WrapperBox } from "shared-ui/src";
 import { Panel } from ".";
 import { FaExpandAlt, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
+import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+import { useState, useEffect } from "react";
 
 export const ClinicalNotes = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  });
+
+  if (isLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
   const clinicalNotes = [
     "The patient presents today with concerns related to diabetes The patient presents today with concerns related to diabetes",
     "The patient appears well-nourished and in no acute distress The patient presents today with concerns related to diabetes",

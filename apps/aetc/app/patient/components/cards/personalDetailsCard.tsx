@@ -3,12 +3,17 @@ import { Chip } from "@mui/material";
 import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";
+import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
-  const { data: patients } = getPatientsWaitingForTriage();
+  const { data: patients, isLoading } = getPatientsWaitingForTriage();
   const { params } = useParameters();
 
   const patient = patients?.find((p) => p.uuid == params.id);
+
+  if (isLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
 
   return (
     <MainPaper elevation={0} sx={{ backgroundColor: "#fff", p: 1, ...sx }}>

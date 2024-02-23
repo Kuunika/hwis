@@ -20,3 +20,21 @@ export const DemographicsSearchSkeleton = () => {
     </WrapperBox>
   );
 };
+
+export const DesktopSkeletonLoader = () => {
+  return <></>;
+};
+
+export const ProfilePanelSkeletonLoader = () => {
+  return (
+    <Stack width={"100%"} m={1}>
+      <Skeleton
+        variant="rectangular"
+        sx={{ mb: "1ch" }}
+        width={"100%"}
+        height={20}
+      />
+      <Skeleton variant="rectangular" width={"100%"} height={255} />
+    </Stack>
+  );
+};
