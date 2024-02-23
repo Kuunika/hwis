@@ -96,6 +96,7 @@ export const SearchResults = ({
           {patientsResults.map((p) => {
             return (
               <WrapperBox
+                key={p.id}
                 onClick={() => setPatient(p)}
                 sx={{
                   width: "20ch",

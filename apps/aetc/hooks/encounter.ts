@@ -6,7 +6,7 @@ export const addEncounter = () => {
   const addData = (encounter: any) => {
     const filteredEncounter = {
       ...encounter,
-      obs: encounter.obs.filter((ob) => Boolean(ob.value)),
+      obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
     };
     return createEncounter(filteredEncounter).then((response) => response.data);
   };

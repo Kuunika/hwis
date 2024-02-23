@@ -1,15 +1,14 @@
 "use client";
-import { MiddlePageLayout } from "@/components/layouts";
 
 import { ClientWaitingForTriage } from "./components";
 import { MainGrid } from "shared-ui/src";
-import { InitialRegistrationList } from "../initial-registration/components";
+
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
   RegistrationCard,
 } from "../registration/components/common";
-import { Navigation } from "../registration/scanner/page";
+import { Navigation } from "../components/navigation";
 
 export default function Triage() {
   return (

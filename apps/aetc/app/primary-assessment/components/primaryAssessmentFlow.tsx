@@ -9,13 +9,14 @@ import {
   Disability,
   Exposure,
 } from ".";
-import { addObservation } from "@/hooks/observation";
+
 import { encounters } from "@/constants";
 import { useNavigation } from "@/hooks";
+import { addEncounter } from "@/hooks/encounter";
 
 export const PrimaryAssessmentFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { mutate } = addObservation();
+  const { mutate } = addEncounter();
   const { navigateTo } = useNavigation();
 
   const steps = [

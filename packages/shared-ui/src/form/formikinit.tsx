@@ -38,7 +38,7 @@ export const FormikInit: FC<Prop> = ({
       validationSchema={validationSchema}
       enableReinitialize={enableReinitialize}
     >
-      {({ validateForm }) => (
+      {() => (
         <Form>
           {children}
           {submitButton && (

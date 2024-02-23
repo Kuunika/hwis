@@ -82,7 +82,7 @@ type props = {
   initialValues: any;
   onSubmit: (values: any) => void;
   triageResult: string;
-  setTriageResult: (rre) => void;
+  setTriageResult: (rre: any) => void;
 };
 const schema = yup.object({
   // [form.pulseOximetry.name]: yup

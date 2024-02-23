@@ -31,7 +31,7 @@ export const SearchComboBox: FC<Props> = ({
   multiple = true,
   size = "medium",
 }) => {
-  const { hasError, errorMessage, setFieldValue, initialValues, value } =
+  const { hasError, errorMessage, setFieldValue, initialValues } =
     useFormikField(name);
   return (
     <Autocomplete
@@ -59,6 +59,7 @@ export const SearchComboBox: FC<Props> = ({
         </li>
       )}
       onChange={(event: any, newValue: any) => {
+        console.log(event);
         const inputValue = multiple ? newValue : newValue.id;
         setFieldValue(name, inputValue);
         if (getValue) {

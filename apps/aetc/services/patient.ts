@@ -7,7 +7,7 @@ export const createPatient = (patientData: any) =>
   create(patientData, endPoint);
 
 export const initialRegistration = (patientData: any) =>
-  create(patientData, "/patients");
+  create<Person>(patientData, "/patients");
 
 export const getPatients = () => getAll<Array<any>>(endPoint);
 

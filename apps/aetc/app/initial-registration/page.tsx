@@ -1,27 +1,25 @@
 "use client";
 
 import { InitialRegistrationForm } from "./components";
-import { addPatient, initialPatientRegistration } from "@/hooks/patientReg";
-import { successDialog } from "@/helpers";
+import { initialPatientRegistration } from "@/hooks/patientReg";
+
 import { MainGrid } from "shared-ui/src";
 import {
   RegistrationCard,
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "../registration/components/common";
-import { Navigation } from "../registration/scanner/page";
 import { addVisit } from "@/hooks/visit";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
 import { addEncounter } from "@/hooks/encounter";
 import { useNavigation } from "@/hooks";
 import { getVisitNum } from "@/hooks/visitNumber";
-import CircularDeterminate, {
-  CustomizedProgressBars,
-} from "@/components/loader";
+import { CustomizedProgressBars } from "@/components/loader";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { useFormLoading } from "@/hooks/formLoading";
 import { FormError } from "@/components/formError";
+import { Navigation } from "../components/navigation";
 
 export default function InitialRegistration() {
   const { refresh } = useNavigation();

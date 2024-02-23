@@ -13,7 +13,6 @@ import { useNavigation, useParameters } from "@/hooks";
 import plus from "../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
-import { Navigation } from "../../scanner/page";
 import { SearchForm } from "../../search/components/searchForm";
 import { SearchResults } from "../../search/components/searchResults";
 import {
@@ -22,14 +21,13 @@ import {
 } from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
 import { SearchNPIDForm } from "../../search/components/searchNpid";
+import { Navigation } from "@/app/components/navigation";
 
 export default function RegistrationSearch() {
   const { params } = useParameters();
   const { data } = getPatientsWaitingForRegistrations();
 
   const patient = data?.find((p) => p.uuid == params.id);
-
-  console.log({ patient });
 
   return (
     <>
@@ -40,7 +38,7 @@ export default function RegistrationSearch() {
           flexDirection: "column",
           height: "100vh",
           mt: "10ch",
-          // justifyContent: "center",
+
           alignItems: "center",
         }}
       >

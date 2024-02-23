@@ -13,7 +13,7 @@ export const ReactQueryProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   return (
-    <QueryClientProvider client={getQueryClient()}>
+    <QueryClientProvider client={queryClient}>
       {children}
     </QueryClientProvider>
   );

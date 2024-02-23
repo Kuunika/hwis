@@ -27,7 +27,7 @@ export const TextInputField: FC<Prop> = ({
   id,
   name,
   label,
-  width = "100%",
+
   sx,
   type,
   placeholder = "",

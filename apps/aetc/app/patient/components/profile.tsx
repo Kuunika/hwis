@@ -140,7 +140,7 @@ const ActionMenu = () => {
       >
         {forms.map(({ link, icon, label }) => {
           return (
-            <MenuItem onClick={handleClose}>
+            <MenuItem key={label} onClick={handleClose}>
               <Link href={link}>
                 <WrapperBox
                   sx={{

@@ -1,15 +1,14 @@
 "use client";
 
-import { MiddlePageLayout } from "@/components/layouts";
 import { WaitingRegistrationList } from "../components";
 import { MainGrid } from "shared-ui/src";
-import { InitialRegistrationList } from "@/app/initial-registration/components";
+
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
   RegistrationCard,
 } from "../components/common";
-import { Navigation } from "../scanner/page";
+import { Navigation } from "@/app/components/navigation";
 
 export default function List() {
   return (

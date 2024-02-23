@@ -6,7 +6,7 @@ type Prop = {
   setField?: (func: any) => void;
 };
 
-export const FormValuesListener = ({ getValues, setField }: Prop) => {
+export const FormValuesListener = ({ getValues }: Prop) => {
   const { values } = useFormikField("");
 
   useEffect(() => {

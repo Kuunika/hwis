@@ -7,8 +7,7 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "@/app/registration/components/common";
-import { Navigation } from "@/app/registration/scanner/page";
-import { getInitialRegisteredPatients } from "@/hooks/patientReg";
+import { Navigation } from "@/app/components/navigation";
 
 export default function InitialList() {
   return (

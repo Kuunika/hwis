@@ -1,14 +1,12 @@
 "use client";
-import { MiddlePageLayout } from "@/components/layouts";
 import { PrescreeningForm } from "../components/preScreeningForm";
-import { successDialog } from "@/helpers";
 import { useNavigation, useParameters } from "@/hooks";
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
   RegistrationCard,
 } from "@/app/registration/components/common";
-import { Navigation } from "@/app/registration/scanner/page";
+
 import { MainGrid } from "shared-ui/src";
 import { addEncounter } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
@@ -20,6 +18,7 @@ import { OperationSuccess } from "@/components/operationSuccess";
 import { FormError } from "@/components/formError";
 import { CustomizedProgressBars } from "@/components/loader";
 import { useEffect } from "react";
+import { Navigation } from "@/app/components/navigation";
 
 export default function Prescreening() {
   const { navigateTo } = useNavigation();
@@ -80,16 +79,6 @@ export default function Prescreening() {
     if (Boolean(values[concepts.PATIENT_REFERRED_TO])) {
       patient && closeVisit(patient?.visit_uuid);
     }
-
-    // successDialog({
-    //   title: "Prescreening Completed",
-    //   text: "",
-    //   icon: "success",
-    //   onConfirm: () => navigateTo("/initial-registration/list"),
-    //   confirmButtonText: "Prescreen More Patients",
-    //   cancelButtonText: "Home",
-    //   onDismiss: () => navigateTo("/"),
-    // });
   };
   return (
     <>

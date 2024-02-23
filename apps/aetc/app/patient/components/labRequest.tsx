@@ -240,6 +240,7 @@ export const ListSelect = ({
         .filter((test) => test.toLowerCase().includes(search.toLowerCase()))
         .map((lab) => (
           <WrapperBox
+            key={lab}
             onClick={() => setSelected(lab)}
             sx={{
               display: "flex",

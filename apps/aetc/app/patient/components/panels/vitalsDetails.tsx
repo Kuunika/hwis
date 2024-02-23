@@ -85,7 +85,7 @@ export const VitalsPanel = () => {
       <br />
       <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
         {vitals.map(({ name, value }: any) => (
-          <Cell title={name} value={value} />
+          <Cell key={value} title={name} value={value} />
         ))}
       </WrapperBox>
     </Panel>

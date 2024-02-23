@@ -2,31 +2,28 @@
 
 import { SearchContainer } from "../components";
 import {
-  MainButton,
   MainPaper,
   MainTypography,
   WrapperBox,
   defaultTheme,
 } from "shared-ui/src";
-import { useSearchParams } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import { useNavigation, useParameters } from "@/hooks";
-import plus from "../../../icons/plus.svg";
-import Image from "next/image";
-import { PatientNationalIdCheck } from "../../components";
-import { Navigation } from "../../scanner/page";
-import { getInitialRegisteredPatients } from "@/hooks/patientReg";
+
+import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
+import { Navigation } from "@/app/components/navigation";
 
 export default function RegistrationSearch() {
   const [searchResults, setSetResults] = useState<Array<any>>([]);
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [searchName, setSearchName] = useState("");
-  const { data: patients } = getInitialRegisteredPatients();
+  const { data: patients } = getPatientsWaitingForRegistrations();
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const found = patients?.find((p) => p.id == params.id);
+    const found = patients?.find((p) => p.uuid == params.id);
 
     if (found) {
       setSearch(`${found.given_name} ${found.family_name}`);
@@ -112,7 +109,7 @@ export default function RegistrationSearch() {
                   No {`${searchName}`} patient in the system
                 </MainTypography>
               </WrapperBox>
-              <AddPatientButton />
+              {/* <AddPatientButton /> */}
             </MainPaper>
           )}
         </WrapperBox>
@@ -121,26 +118,26 @@ export default function RegistrationSearch() {
   );
 }
 
-export const AddPatientButton = () => (
-  <WrapperBox
-    onClick={() => PatientNationalIdCheck()}
-    sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
-  >
-    <Image src={plus} alt="plus" />
-    <MainTypography
-      sx={{
-        fontFamily: "Inter",
-        fontSize: "14px",
-        fontWeight: 500,
-        lineHeight: "17px",
-        letterSpacing: "0em",
-        textAlign: "left",
-        color: defaultTheme.primary,
-        borderBottom: `1px solid ${defaultTheme.primary}`,
-        ml: "1ch",
-      }}
-    >
-      Add new patient
-    </MainTypography>
-  </WrapperBox>
-);
+// export const AddPatientButton = () => (
+//   <WrapperBox
+//     onClick={() => {}}
+//     sx={{ display: "flex", mt: "1ch", cursor: "pointer" }}
+//   >
+//     <Image src={plus} alt="plus" />
+//     <MainTypography
+//       sx={{
+//         fontFamily: "Inter",
+//         fontSize: "14px",
+//         fontWeight: 500,
+//         lineHeight: "17px",
+//         letterSpacing: "0em",
+//         textAlign: "left",
+//         color: defaultTheme.primary,
+//         borderBottom: `1px solid ${defaultTheme.primary}`,
+//         ml: "1ch",
+//       }}
+//     >
+//       Add new patient
+//     </MainTypography>
+//   </WrapperBox>
+// );

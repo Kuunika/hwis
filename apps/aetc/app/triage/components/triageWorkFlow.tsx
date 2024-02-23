@@ -11,9 +11,9 @@ import {
 } from ".";
 import { VitalsForm } from "@/app/vitals/components/vitalsForm";
 import { useNavigation, useParameters } from "@/hooks";
-import { addObservation } from "@/hooks/observation";
+
 import { concepts, encounters } from "@/constants";
-import { getObservations, successDialog } from "@/helpers";
+import { getObservations,  } from "@/helpers";
 import { addEncounter } from "@/hooks/encounter";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
@@ -107,8 +107,6 @@ export default function TriageWorkFlow() {
       });
     }
   }, [presentingCreated]);
-
-  1002030183;
 
   useEffect(() => {
     if (vitalsCreated) {

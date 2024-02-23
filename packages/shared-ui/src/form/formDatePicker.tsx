@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -47,7 +47,7 @@ export const FormDatePicker: FC<Prop> = ({
         }}
         label={label}
         // value={value}
-        onChange={(dateValue) =>
+        onChange={(dateValue: any) =>
           setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
         }
         disabled={disabled}

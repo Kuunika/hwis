@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -28,7 +28,7 @@ export function BasicSelect({ label, options }: BasicSelectProp) {
         onChange={handleChange}
       >
         {options.map((o) => (
-          <MenuItem value={o.value}>{o.label}</MenuItem>
+          <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>
         ))}
       </Select>
     </FormControl>

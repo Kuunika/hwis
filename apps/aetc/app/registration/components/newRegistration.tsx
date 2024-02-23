@@ -12,7 +12,7 @@ import {
   ReferralForm,
   SocialHistoryForm,
 } from "../components";
-import { addPatient, useNavigation, useParameters } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 import { getObservations, successDialog } from "@/helpers";
@@ -212,13 +212,11 @@ export const NewRegistrationFlow = () => {
     triggerSubmission();
   };
 
-  console.log(params.id);
   const triggerSubmission = () => {
     setMessage("adding demographics...");
     setLoading(true);
     setShowForm(false);
 
-    console.log(params.id);
     createPatient({ ...formData.demographics, id: params.id });
   };
 

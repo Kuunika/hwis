@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SearchInput, ResultBox } from ".";
-import { AddPatientButton } from "../page";
+// import { AddPatientButton } from "../page";
 
 type Prop = {
   initialValue: string;

@@ -18,6 +18,13 @@ export async function getOne<T>(
 ) {
   return apiClient.get<T>(`${endPoint}/${id}${query ? "?" + query : ""}`);
 }
+export async function get<T>(
+  endPoint: string,
+
+  apiClient: AxiosInstance = emrApiClient()
+) {
+  return apiClient.get<T>(endPoint);
+}
 
 export async function create<T>(
   data: Partial<T>,
@@ -45,7 +52,7 @@ export async function login(
     response = await apiClient.post("/auth/login", credentials);
     setCookie("accessToken", response.data.jwt);
 
-    localStorage.setItem("accessToken", response.data.jwt);
+    localStorage.setItem("accessToken", response.data.jwt); 
 
     return {
       status: response.status,

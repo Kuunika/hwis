@@ -83,6 +83,13 @@ export interface Encounter {
   uuid: string;
   obs: Obs[];
 }
+
+export interface Visit {
+  uuid: string;
+  patient: string;
+  visitType: string;
+  startDatetime: string;
+}
 export interface IApiService {
   getAll<T>(query?: string): Promise<any>;
 

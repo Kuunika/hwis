@@ -2,6 +2,6 @@
 
 import { NewRegistrationFlow } from "../components";
 
-export default function () {
+export default function Page() {
   return <NewRegistrationFlow />;
 }

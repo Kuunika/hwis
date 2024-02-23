@@ -13,15 +13,15 @@ import { useState } from "react";
 import { useNavigation } from "@/hooks";
 import plus from "../../../icons/plus.svg";
 import Image from "next/image";
-import { PatientNationalIdCheck } from "../components";
-import { Navigation } from "../scanner/page";
+
 import { SearchForm } from "./components/searchForm";
 import { SearchResults } from "./components/searchResults";
+import { Navigation } from "@/app/components/navigation";
 
 export default function RegistrationSearch() {
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const [searchResults, setSetResults] = useState<Array<any>>([]);
-  const search = searchParams.get("s");
+  // const search = searchParams.get("s");
   const { navigateTo } = useNavigation();
   const [searchName, setSearchName] = useState("");
 
@@ -111,7 +111,7 @@ export default function RegistrationSearch() {
           )} */}
         </WrapperBox>
         <br />
-        <SearchResults />
+        {/* <SearchResults /> */}
       </WrapperBox>
     </>
   );

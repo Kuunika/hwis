@@ -82,8 +82,8 @@ export const ViewTriageResults = () => {
     <MainPaper elevation={0} sx={{ padding: "2ch" }}>
       {triageResults.map((result) => {
         return (
-          <>
-            <Accordion elevation={0}>
+       
+            <Accordion key={result.name} elevation={0}>
               <AccordionSummary
                 expandIcon={<FaAngleDown />}
                 aria-controls="panel1a-content"
@@ -94,7 +94,7 @@ export const ViewTriageResults = () => {
               <AccordionDetails>
                 {result.values.map((value) => {
                   return (
-                    <WrapperBox sx={{ display: "flex", my: "2ch" }}>
+                    <WrapperBox key={value.name} sx={{ display: "flex", my: "2ch" }}>
                       <MainTypography
                         fontSize={"0.8rem"}
                         width={"20ch"}
@@ -110,7 +110,7 @@ export const ViewTriageResults = () => {
                 })}
               </AccordionDetails>
             </Accordion>
-          </>
+     
         );
       })}
     </MainPaper>

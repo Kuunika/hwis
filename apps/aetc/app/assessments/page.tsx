@@ -7,7 +7,7 @@ import {
   RegistrationDescriptionText,
   RegistrationCard,
 } from "../registration/components/common";
-import { Navigation } from "../registration/scanner/page";
+import { Navigation } from "../components/navigation";
 
 export default function AssessmentPage() {
   return (
