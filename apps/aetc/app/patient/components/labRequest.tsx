@@ -2,7 +2,7 @@ import * as React from "react";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -19,6 +19,10 @@ export interface SimpleDialogProps {
 }
 
 export function LabRequestModal(props: SimpleDialogProps) {
+  const [searchSample, setSearchSample] = React.useState<string>("");
+  const [searchSampleTypes, setSearchSampleTypes] = React.useState<string>("");
+  const [searchSpecimenSites, setSearchSpecimenSites] =
+    React.useState<string>("");
   const { onClose, open } = props;
 
   const handleClose = () => {
@@ -67,12 +71,59 @@ export function LabRequestModal(props: SimpleDialogProps) {
             </FormControl>
             <TestList />
           </WrapperBox>
-          <WrapperBox sx={{ width: "70%" }}></WrapperBox>
+          <WrapperBox
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "70%",
+              px: "1ch",
+            }}
+          >
+            <WrapperBox sx={{ mb: "2ch" }}>
+              <MainButton
+                sx={{ borderRadius: "1px" }}
+                title={"Send Order"}
+                onClick={() => {}}
+              />
+            </WrapperBox>
+            <WrapperBox display={"flex"}>
+              <WrapperBox sx={{ flex: 1 }}>
+                <MainTypography variant="h5">Sample</MainTypography>
+                <SearchInput setSearch={setSearchSample} />
+                <ListSelect
+                  height="25ch"
+                  list={samples}
+                  search={searchSample}
+                />
+              </WrapperBox>
+              <WrapperBox sx={{ flex: 1, mx: 1 }}>
+                <MainTypography variant="h5">Sample Types</MainTypography>
+                <SearchInput setSearch={setSearchSampleTypes} />
+                <ListSelect
+                  height="25ch"
+                  list={sampleTypes}
+                  search={searchSampleTypes}
+                />
+              </WrapperBox>
+              <WrapperBox sx={{ flex: 1 }}>
+                <MainTypography variant="h5">Specimen Site</MainTypography>
+                <SearchInput setSearch={setSearchSpecimenSites} />
+                <ListSelect
+                  height="25ch"
+                  list={specimenSites}
+                  search={searchSpecimenSites}
+                />
+              </WrapperBox>
+            </WrapperBox>
+          </WrapperBox>
         </WrapperBox>
       </DialogContent>
     </Dialog>
   );
 }
+
+// registration workflow, patient lists(screening, assessments, triage), dde search workflow,
+// lab request form
 
 export const TestList = () => {
   const commonLabTests = [
@@ -123,7 +174,6 @@ export const TestList = () => {
     "Low-Density Lipoprotein (LDL) Test",
     "Triglycerides Test",
   ];
-  const [selected, setSelected] = React.useState<string>("");
   const [search, setSearch] = React.useState<string>("");
 
   return (
@@ -132,51 +182,130 @@ export const TestList = () => {
       <MainTypography variant="h5" sx={{ my: "1ch" }}>
         Tests
       </MainTypography>
-      <FormControl sx={{ width: "100%", mb: "2ch" }} variant="outlined">
-        <OutlinedInput
-          id="outlined-adornment-weight"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setSearch(event.target.value);
-          }}
-          endAdornment={
-            <InputAdornment position="end">
-              <FaSearch />
-            </InputAdornment>
-          }
-          placeholder="search test"
-          aria-describedby="outlined-weight-helper-text"
-          inputProps={{
-            "aria-label": "weight",
-          }}
-        />
-      </FormControl>
+      <SearchInput setSearch={setSearch} placeHolder="search test" />
       <br />
-
-      <WrapperBox
-        sx={{
-          overflowY: "scroll",
-          height: "50ch",
-        }}
-      >
-        {commonLabTests
-          .filter((test) => test.toLowerCase().includes(search.toLowerCase()))
-          .map((lab) => (
-            <WrapperBox
-              onClick={() => setSelected(lab)}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                py: "1ch",
-                px: "0.5ch",
-                cursor: "pointer",
-                backgroundColor: lab == selected ? "#e0e0e0" : "",
-              }}
-            >
-              {lab == selected ? <FaRegCheckSquare /> : <FaRegSquare />}
-              <MainTypography sx={{ ml: "1ch" }}>{lab}</MainTypography>
-            </WrapperBox>
-          ))}
-      </WrapperBox>
+      <ListSelect list={commonLabTests} search={search} />
     </WrapperBox>
   );
 };
+
+export const SearchInput = ({
+  setSearch,
+  placeHolder = "search",
+}: {
+  setSearch: (search: string) => void;
+  placeHolder?: string;
+}) => {
+  return (
+    <FormControl sx={{ width: "100%", mb: "2ch" }} variant="outlined">
+      <OutlinedInput
+        id="outlined-adornment-weight"
+        size="small"
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          setSearch(event.target.value);
+        }}
+        endAdornment={
+          <InputAdornment position="end">
+            <FaSearch />
+          </InputAdornment>
+        }
+        placeholder={placeHolder}
+        aria-describedby="outlined-weight-helper-text"
+        inputProps={{
+          "aria-label": "weight",
+        }}
+      />
+    </FormControl>
+  );
+};
+
+export const ListSelect = ({
+  list,
+  search = "",
+  height = "50ch",
+}: {
+  list: Array<string>;
+  search?: string;
+  height?: string;
+}) => {
+  const [selected, setSelected] = React.useState<string>("");
+  return (
+    <WrapperBox
+      sx={{
+        overflowY: "scroll",
+        height,
+      }}
+    >
+      {list
+        .filter((test) => test.toLowerCase().includes(search.toLowerCase()))
+        .map((lab) => (
+          <WrapperBox
+            onClick={() => setSelected(lab)}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              py: "1ch",
+              px: "0.5ch",
+              cursor: "pointer",
+              backgroundColor: lab == selected ? "#e0e0e0" : "",
+            }}
+          >
+            {lab == selected ? <FaRegCheckSquare /> : <FaRegSquare />}
+            <MainTypography sx={{ ml: "1ch" }}>{lab}</MainTypography>
+          </WrapperBox>
+        ))}
+    </WrapperBox>
+  );
+};
+
+const sampleTypes = [
+  "Blood",
+  "Urine",
+  "Stool",
+  "Saliva",
+  "Sputum",
+  "Tissue",
+  "Cerebrospinal Fluid (CSF)",
+  "Swabs",
+  "Synovial Fluid",
+  "Other Body Fluids (e.g., pleural fluid, peritoneal fluid, amniotic fluid)",
+];
+
+// Samples
+const samples = [
+  "Whole Blood",
+  "Serum",
+  "Plasma",
+  "Red Blood Cells (RBCs)",
+  "White Blood Cells (WBCs)",
+  "Platelets",
+  "Midstream urine",
+  "First morning urine",
+  "Random urine",
+  "Fecal matter",
+  "Saliva",
+  "Induced Sputum",
+  "Spontaneous Sputum",
+  "Tissue biopsy",
+  "Cerebrospinal Fluid",
+  "Throat swab",
+  "Nasal swab",
+  "Skin swab",
+  "Wound swab",
+  "Joint Fluid",
+];
+
+// Specimen Sites
+const specimenSites = [
+  "Vein",
+  "Artery",
+  "Bladder",
+  "Rectum",
+  "Mouth",
+  "Lung",
+  "Brain",
+  "Nasopharynx",
+  "Skin",
+  "Wound",
+  "Joint",
+];

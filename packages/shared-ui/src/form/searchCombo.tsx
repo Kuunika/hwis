@@ -33,9 +33,6 @@ export const SearchComboBox: FC<Props> = ({
 }) => {
   const { hasError, errorMessage, setFieldValue, initialValues, value } =
     useFormikField(name);
-
-  console.log({ value });
-
   return (
     <Autocomplete
       multiple={multiple}
