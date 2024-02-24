@@ -76,6 +76,7 @@ type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult:(triage:any)=>void
   triageResult:string
+  continueTriage:boolean
 };
 
 const radioOptions = [
@@ -83,7 +84,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 
-export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult }: Prop) => {
+export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult, continueTriage }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
  
   const [formValues, setFormValues] = useState<any>({});
@@ -116,8 +117,9 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
   };
 
   const disableField = (formField: string) => {
-    return triageResult === "red" && !Boolean(formValues[formField]);
+    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
+
   // const handleTriageComplete = () => {
   //   notify("info", "Patient added to waiting assessments queue");
   //   navigateTo("/triage");

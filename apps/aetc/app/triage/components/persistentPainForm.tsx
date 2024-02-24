@@ -46,7 +46,8 @@ const form = {
 type Prop = {
   onSubmit: (values: any) => void;
 
-  triageResult:string
+  triageResult:string,
+  continueTriage:boolean
 };
 
 const schema = Yup.object().shape({
@@ -70,12 +71,12 @@ const options = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
 ];
-export const PersistentPainForm = ({ onSubmit, triageResult }: Prop) => {
+export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage }: Prop) => {
   const { updateConditions } = useConditions();
   const [formValues, setFormValues] = useState<any>({});
 
   const disableField = (formField: string) => {
-    return triageResult === "red" && !Boolean(formValues[formField]);
+    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
 
   return (

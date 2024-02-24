@@ -269,10 +269,10 @@ export default function TriageWorkFlow() {
               onSubmit={handleVitalsSubmit}
               continueTriage={continueTriage}
             />
-            <AirwayAndBreathingForm triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleAirwaySubmit} />
-            <BloodCirculationForm triageResult={triageResult} onSubmit={handleBloodCirculationSubmit} />
-            <ConsciousnessForm triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleDisabilitySubmit} />
-            <PersistentPainForm triageResult={triageResult} onSubmit={handlePersistentPain} />
+            <AirwayAndBreathingForm continueTriage={continueTriage} triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleAirwaySubmit} />
+            <BloodCirculationForm continueTriage={continueTriage} triageResult={triageResult} onSubmit={handleBloodCirculationSubmit} />
+            <ConsciousnessForm continueTriage={continueTriage} triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleDisabilitySubmit} />
+            <PersistentPainForm continueTriage={continueTriage} triageResult={triageResult} onSubmit={handlePersistentPain} />
           </NewStepperContainer>
         </>
       )}

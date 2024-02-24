@@ -84,6 +84,7 @@ type props = {
   triageResult: string;
   setTriageResult: (rre: any) => void;
   continueTriage:boolean
+
 };
 const schema = yup.object({
   // [form.pulseOximetry.name]: yup
@@ -319,7 +320,6 @@ export function VitalsForm({
     return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
 
- 
 
   return (
     <FormikInit

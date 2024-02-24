@@ -82,6 +82,7 @@ type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult?:(triage:any)=>void
   triageResult:string
+  continueTriage:boolean
 };
 
 const options = [
@@ -89,7 +90,7 @@ const options = [
   { label: "No", value: NO },
 ];
 
-export const BloodCirculationForm = ({ onSubmit, triageResult }: Prop) => {
+export const BloodCirculationForm = ({ onSubmit, triageResult,continueTriage }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("");
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, aggregateOrCondition, conditions } =
@@ -97,7 +98,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult }: Prop) => {
   const { navigateTo } = useNavigation();
 
   const disableField = (formField: string) => {
-    return triageResult === "red" && !Boolean(formValues[formField]);
+    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
 
 
