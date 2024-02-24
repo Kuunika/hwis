@@ -22,7 +22,7 @@ import { FormError } from "@/components/formError";
 import { Navigation } from "../components/navigation";
 
 export default function InitialRegistration() {
-  const { refresh } = useNavigation();
+  const { refresh, navigateTo } = useNavigation();
   const initialValues = { firstName: "", lastName: "" };
   const {
     loading,
@@ -188,7 +188,9 @@ export default function InitialRegistration() {
                 setCompleted(0);
                 refresh();
               }}
-              onSecondaryAction={() => {}}
+              onSecondaryAction={() => {
+              navigateTo("/")
+              }}
             />
           )}
           {showForm && (

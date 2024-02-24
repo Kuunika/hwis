@@ -74,6 +74,8 @@ const initialValues = getInitialValues(form);
 
 type Prop = {
   onSubmit: (values: any) => void;
+  setTriageResult:(triage:any)=>void
+  triageResult:string
 };
 
 const radioOptions = [
@@ -81,17 +83,15 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 
-export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
+export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
-  const [triageMessage, setTriageMessage] = useState("");
+ 
   const [formValues, setFormValues] = useState<any>({});
-  const { navigateTo } = useNavigation();
+
   const {
     conditions,
     updateConditions,
     aggregateOrCondition,
-    setTriageResult,
-    triageResult,
   } = useConditions();
 
   const [finalCondition, setFinalCondition] = useState(false);
@@ -109,7 +109,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const handleIsAirWayCompromised = (value: string) => {
     if (value == YES) {
       setTriageResult("red");
-      setTriageMessage("Interventions as necessary");
+    
       return;
     }
     setTriageResult("");
@@ -118,10 +118,10 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
   const disableField = (formField: string) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
   };
-  const handleTriageComplete = () => {
-    notify("info", "Patient added to waiting assessments queue");
-    navigateTo("/triage");
-  };
+  // const handleTriageComplete = () => {
+  //   notify("info", "Patient added to waiting assessments queue");
+  //   navigateTo("/triage");
+  // };
 
   return (
     <FormikInit
@@ -130,7 +130,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      {triageResult && (
+      {/* {triageResult && (
         <>
           <TriageContainer
             onCompleteTriage={handleTriageComplete}
@@ -139,7 +139,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
           />
           <br />
         </>
-      )}
+      )} */}
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout

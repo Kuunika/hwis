@@ -22,13 +22,13 @@ import {
 import { SearchTab } from "../../components/searchTabs";
 import { SearchNPIDForm } from "../../search/components/searchNpid";
 import { Navigation } from "@/app/components/navigation";
+import { OverlayLoader } from "@/components/backdrop";
 
 export default function RegistrationSearch() {
   const { params } = useParameters();
   const { data } = getPatientsWaitingForRegistrations();
 
   const patient = data?.find((p) => p.uuid == params.id);
-
   return (
     <>
       <Navigation title="Search Patient" link="/" />
@@ -96,17 +96,17 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
-    // mutate({
-    //   given_name: values.firstName,
-    //   family_name: values.lastName,
-    //   gender: values.gender,
-    //   birthdate: values.birthdate,
-    //   attributes: {
-    //     home_village: values.homeVillage,
-    //     home_traditional_authority: values.homeTraditionalAuthority,
-    //     home_district: values.homeDistrict,
-    //   },
-    // });
+    mutate({
+      given_name: values.firstName,
+      family_name: values.lastName,
+      gender: values.gender,
+      birthdate: values.birthdate,
+      attributes: {
+        home_village: values.homeVillage,
+        home_traditional_authority: values.homeTraditionalAuthority,
+        home_district: values.homeDistrict,
+      },
+    });
   };
   return (
     <>
@@ -118,6 +118,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
         onSubmit={handleSubmit}
       />
       <br />
+      <OverlayLoader open={isPending} />
       {(isPending || true) && (
         <SearchResults
           loading={isPending}

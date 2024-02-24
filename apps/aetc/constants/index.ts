@@ -16,7 +16,7 @@ export const encounters = {
   PRESENTING_COMPLAINTS: "ba069102-8d80-11d8-abbb-0024217bb78e",
 };
 
-export const AETC_VISIT_TYPE = "fab5de93-9e21-4b15-8f5a-5665869a4736";
+export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
 export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
 

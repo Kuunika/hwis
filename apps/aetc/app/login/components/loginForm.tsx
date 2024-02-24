@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Login } from "@/hooks/login";
 import { useNavigation } from "@/hooks";
 import { useEffect } from "react";
+import { OverlayLoader } from "@/components/backdrop";
 
 const schema = yup.object({
   username: yup.string().label("Username"),
@@ -29,7 +30,6 @@ export const LoginForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log({ data });
       navigateTo("/");
     }
   }, [isSuccess]);
@@ -54,6 +54,7 @@ export const LoginForm = () => {
           <br />
           <MainTypography variant="h3">Mahis</MainTypography>
           <br />
+          <OverlayLoader open={isPending} />
           <FormikInit
             initialValues={{ username: "", password: "" }}
             validationSchema={schema}

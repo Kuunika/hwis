@@ -17,6 +17,8 @@ import { NO, YES, concepts } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  setTriageResult:(triage:any)=>void
+  triageResult:string
 };
 const form = {
   consciousness: {
@@ -49,12 +51,10 @@ const options = [
 
 const initialValues = getInitialValues(form);
 
-export const ConsciousnessForm = ({ onSubmit }: Prop) => {
+export const ConsciousnessForm = ({ onSubmit , triageResult, setTriageResult}: Prop) => {
   const [consciousness, setConsciousness] = useState();
   const [formValues, setFormValues] = useState<any>({});
-  const { triageResult, setTriageResult } = useConditions();
   const { navigateTo } = useNavigation();
-
   const checkGcs = (value: number) => {
     if (!value) {
       setTriageResult("");

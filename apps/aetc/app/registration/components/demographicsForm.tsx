@@ -119,14 +119,14 @@ const form = {
     label: "Guardian Phone Number",
   },
 };
-
+const phoneRegex = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const schema = Yup.object().shape({
   [form.identificationNumber.name]: Yup.string()
     .required()
     .label(form.identificationNumber.label),
   [form.firstName.name]: Yup.string().required().label(form.firstName.label),
   [form.phoneNumber.name]: Yup.string()
-    .required()
+    .required().matches(phoneRegex,"phone number not valid").min(10)
     .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.string().label(form.dob.label),
@@ -168,6 +168,7 @@ const schema = Yup.object().shape({
 
   [form.guardianPhoneNumber.name]: Yup.string()
     .required()
+    .matches(phoneRegex,"Phone Number valid").min(10)
     .label(form.guardianPhoneNumber.label),
 });
 

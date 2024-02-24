@@ -83,6 +83,7 @@ type props = {
   onSubmit: (values: any) => void;
   triageResult: string;
   setTriageResult: (rre: any) => void;
+  continueTriage:boolean
 };
 const schema = yup.object({
   // [form.pulseOximetry.name]: yup
@@ -247,6 +248,7 @@ export function VitalsForm({
   onSubmit,
   triageResult,
   setTriageResult,
+  continueTriage
 }: props) {
   const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
@@ -314,13 +316,10 @@ export function VitalsForm({
   }, [diastolic, systolic]);
 
   const disableField = (formField: string) => {
-    return triageResult === "red" && !Boolean(formValues[formField]);
+    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
 
-  const handleTriageComplete = () => {
-    notify("info", "Patient added to waiting assessments queue");
-    navigateTo("/triage");
-  };
+ 
 
   return (
     <FormikInit

@@ -7,7 +7,7 @@ import {
   potentialDuplicates,
   updatePatient,
 } from "@/services/patient";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import {  useMutation, useQuery } from "@tanstack/react-query";
 
 export const addPatient = () => {
   const addData = (patientData: any) => {
@@ -52,8 +52,11 @@ export const registerPatient = () => {
       birthdate: patientData.birthDate,
       addresses: [
         {
-          address1: patientData.homeVillage,
-          countryDistrict: patientData.homeDistrict,
+          address1: patientData.homeDistrict,
+          address2: patientData.homeVillage,
+          address3: patientData.currentDistrict,
+          stateProvince:patientData.currentTraditionalAuthority,
+          countryDistrict: patientData.homeTraditionalAuthority,
           cityVillage: patientData.homeTraditionalAuthority,
           country: patientData.nationality,
           preferred: true,

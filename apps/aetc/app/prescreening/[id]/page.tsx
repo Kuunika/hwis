@@ -116,7 +116,9 @@ export default function Prescreening() {
                 setShowForm(true);
                 setCompleted(0);
               }}
-              onSecondaryAction={() => {}}
+              onSecondaryAction={() => {
+                navigateTo("/");
+              }}
             />
           )}
           {error && (

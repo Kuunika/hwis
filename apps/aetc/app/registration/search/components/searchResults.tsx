@@ -16,6 +16,7 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
+import Skeleton from "@mui/material/Skeleton";
 
 export const SearchResults = ({
   loading,
@@ -95,7 +96,7 @@ export const SearchResults = ({
         <WrapperBox sx={{ mr: "1ch" }}>
           {patientsResults.map((p) => {
             return (
-              <WrapperBox
+          <WrapperBox
                 key={p.id}
                 onClick={() => setPatient(p)}
                 sx={{

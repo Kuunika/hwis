@@ -45,6 +45,8 @@ const form = {
 
 type Prop = {
   onSubmit: (values: any) => void;
+
+  triageResult:string
 };
 
 const schema = Yup.object().shape({
@@ -64,23 +66,16 @@ const schema = Yup.object().shape({
 });
 
 const initialsValues = getInitialValues(form);
-
 const options = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
 ];
-export const PersistentPainForm = ({ onSubmit }: Prop) => {
-  const { updateConditions, triageResult } = useConditions();
+export const PersistentPainForm = ({ onSubmit, triageResult }: Prop) => {
+  const { updateConditions } = useConditions();
   const [formValues, setFormValues] = useState<any>({});
-  const { navigateTo } = useNavigation();
 
   const disableField = (formField: string) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
-  };
-
-  const handleTriageComplete = () => {
-    notify("info", "Patient added to waiting assessments queue");
-    navigateTo("/triage");
   };
 
   return (
@@ -89,16 +84,7 @@ export const PersistentPainForm = ({ onSubmit }: Prop) => {
       initialValues={initialsValues}
       onSubmit={onSubmit}
     >
-      {triageResult && (
-        <>
-          <TriageContainer
-            onCompleteTriage={handleTriageComplete}
-            result={triageResult}
-            message={""}
-          />
-          <br />
-        </>
-      )}
+     
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout title="Seizures and Focal Neurologic">

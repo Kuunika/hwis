@@ -28,6 +28,7 @@ export default function TriageWorkFlow() {
   const [formData, setFormData] = useState<any>({});
   const { params } = useParameters();
   const [triageResult, setTriageResult] = useState<TriageResult>("");
+  const [continueTriage,setContinueTriage]=useState(false)
   const { data: triageList } = getPatientsWaitingForTriage();
   const {
     loading,
@@ -246,6 +247,7 @@ export default function TriageWorkFlow() {
                 onCompleteTriage={() => {}}
                 result={triageResult}
                 message={"Interventions"}
+                setContinueTriage={setContinueTriage}
               />
               <br />
             </>
@@ -265,11 +267,12 @@ export default function TriageWorkFlow() {
               setTriageResult={setTriageResult}
               initialValues={{}}
               onSubmit={handleVitalsSubmit}
+              continueTriage={continueTriage}
             />
-            <AirwayAndBreathingForm onSubmit={handleAirwaySubmit} />
-            <BloodCirculationForm onSubmit={handleBloodCirculationSubmit} />
-            <ConsciousnessForm onSubmit={handleDisabilitySubmit} />
-            <PersistentPainForm onSubmit={handlePersistentPain} />
+            <AirwayAndBreathingForm triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleAirwaySubmit} />
+            <BloodCirculationForm triageResult={triageResult} onSubmit={handleBloodCirculationSubmit} />
+            <ConsciousnessForm triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleDisabilitySubmit} />
+            <PersistentPainForm triageResult={triageResult} onSubmit={handlePersistentPain} />
           </NewStepperContainer>
         </>
       )}

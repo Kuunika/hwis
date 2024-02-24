@@ -302,9 +302,11 @@ export const NewRegistrationFlow = () => {
                 secondaryActionText="Go Home"
                 onPrimaryAction={() => {
                   navigateTo("/registration/list");
-                  setCompleted(0);
+                  // setCompleted(0);
                 }}
-                onSecondaryAction={() => {}}
+                onSecondaryAction={() => {
+                  navigateTo("/");
+                }}
               />
             </>
           )}

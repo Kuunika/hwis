@@ -80,6 +80,8 @@ const schema = Yup.object().shape({
 const initialValues = getInitialValues(form);
 type Prop = {
   onSubmit: (values: any) => void;
+  setTriageResult?:(triage:any)=>void
+  triageResult:string
 };
 
 const options = [
@@ -87,23 +89,17 @@ const options = [
   { label: "No", value: NO },
 ];
 
-export const BloodCirculationForm = ({ onSubmit }: Prop) => {
+export const BloodCirculationForm = ({ onSubmit, triageResult }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("");
   const [formValues, setFormValues] = useState<any>({});
-  const { updateConditions, triageResult, aggregateOrCondition, conditions } =
+  const { updateConditions, aggregateOrCondition, conditions } =
     useConditions();
   const { navigateTo } = useNavigation();
-
-  console.log({ aggregateOrCondition });
 
   const disableField = (formField: string) => {
     return triageResult === "red" && !Boolean(formValues[formField]);
   };
 
-  const handleTriageComplete = () => {
-    notify("info", "Patient added to waiting assessments queue");
-    navigateTo("/triage");
-  };
 
   return (
     <FormikInit
@@ -112,16 +108,7 @@ export const BloodCirculationForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      {triageResult && (
-        <>
-          <TriageContainer
-            onCompleteTriage={handleTriageComplete}
-            result={triageResult}
-            message={""}
-          />
-          <br />
-        </>
-      )}
+   
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout
