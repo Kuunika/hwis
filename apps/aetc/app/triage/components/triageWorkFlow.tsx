@@ -13,7 +13,7 @@ import { VitalsForm } from "@/app/vitals/components/vitalsForm";
 import { useNavigation, useParameters } from "@/hooks";
 
 import { concepts, encounters } from "@/constants";
-import { getObservations,  } from "@/helpers";
+import { getObservations, } from "@/helpers";
 import { addEncounter } from "@/hooks/encounter";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
@@ -28,8 +28,11 @@ export default function TriageWorkFlow() {
   const [formData, setFormData] = useState<any>({});
   const { params } = useParameters();
   const [triageResult, setTriageResult] = useState<TriageResult>("");
-  const [continueTriage,setContinueTriage]=useState(false)
+  const [continueTriage, setContinueTriage] = useState(false)
   const { data: triageList } = getPatientsWaitingForTriage();
+  const [conceptTriageResult, setConceptTriageResult]= useState<any>({})
+
+
   const {
     loading,
     setLoading,
@@ -78,6 +81,13 @@ export default function TriageWorkFlow() {
     isSuccess: painCreated,
     isPending: creatingPain,
     isError: painError,
+  } = addEncounter();
+
+  const {
+    mutate: createTriageResult,
+    isSuccess: triageResultCreated,
+    isPending: creatingTriageResult,
+    isError: triageResultError,
   } = addEncounter();
 
   const { navigateTo } = useNavigation();
@@ -169,12 +179,32 @@ export default function TriageWorkFlow() {
     }
   }, [disabilityCreated]);
 
+
   useEffect(() => {
     if (painCreated) {
-      setLoading(false);
       setCompleted(6);
+      setMessage("adding pain and persistent...");
+
+      createPain({
+        encounterType: encounters.TRIAGE_RESULT,
+        visit: patient?.visit_uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: [{
+          concept: concepts.TRIAGE_RESULT,
+          value: triageResult,
+          obsDatetime: dateTime
+        }] 
+      });
     }
   }, [painCreated]);
+
+  useEffect(() => {
+    if (triageResultCreated) {
+      setCompleted(7);
+      setLoading(false);
+    }
+  }, [triageResultCreated]);
 
   useEffect(() => {
     const error =
@@ -237,6 +267,38 @@ export default function TriageWorkFlow() {
     );
     setActiveStep(1);
   };
+
+
+  useEffect(()=>{
+    let tResult = '';
+    const keys =Object.keys(conceptTriageResult);
+
+    for (let i=0; i<keys.length;i++){
+
+    
+      if (conceptTriageResult[keys[i]] == 'red') {
+        tResult='red';
+        break;
+      }
+      if (conceptTriageResult[keys[i]]  == 'yellow') {
+        tResult='yellow';
+      }
+
+      if(tResult!='yellow'){
+        tResult="green"
+      }
+    }
+   
+    setTriageResult(tResult as TriageResult)
+  },[conceptTriageResult])
+
+  const checkTriageResult = (triage: TriageResult,name:string) => {
+    setConceptTriageResult((concept:any)=> {
+      
+     return {...concept, [name]:triage }
+    })
+  
+  }
   return (
     <>
       {showForm && (
@@ -244,7 +306,7 @@ export default function TriageWorkFlow() {
           {triageResult && (
             <>
               <TriageContainer
-                onCompleteTriage={() => {}}
+                onCompleteTriage={() => { }}
                 result={triageResult}
                 message={"Interventions"}
                 setContinueTriage={setContinueTriage}
@@ -264,15 +326,28 @@ export default function TriageWorkFlow() {
             <PresentingComplaintsForm onSubmit={handlePresentComplaints} />
             <VitalsForm
               triageResult={triageResult}
-              setTriageResult={setTriageResult}
+              setTriageResult={checkTriageResult}
               initialValues={{}}
               onSubmit={handleVitalsSubmit}
               continueTriage={continueTriage}
             />
-            <AirwayAndBreathingForm continueTriage={continueTriage} triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleAirwaySubmit} />
-            <BloodCirculationForm continueTriage={continueTriage} triageResult={triageResult} onSubmit={handleBloodCirculationSubmit} />
-            <ConsciousnessForm continueTriage={continueTriage} triageResult={triageResult} setTriageResult={setTriageResult} onSubmit={handleDisabilitySubmit} />
-            <PersistentPainForm continueTriage={continueTriage} triageResult={triageResult} onSubmit={handlePersistentPain} />
+            <AirwayAndBreathingForm
+              continueTriage={continueTriage}
+              triageResult={triageResult}
+              setTriageResult={checkTriageResult} onSubmit={handleAirwaySubmit} />
+            <BloodCirculationForm
+              continueTriage={continueTriage}
+              triageResult={triageResult}
+              onSubmit={handleBloodCirculationSubmit} />
+            <ConsciousnessForm
+              continueTriage={continueTriage}
+              triageResult={triageResult}
+              setTriageResult={checkTriageResult}
+              onSubmit={handleDisabilitySubmit} />
+            <PersistentPainForm
+              continueTriage={continueTriage}
+              triageResult={triageResult}
+              onSubmit={handlePersistentPain} />
           </NewStepperContainer>
         </>
       )}
@@ -286,7 +361,7 @@ export default function TriageWorkFlow() {
             setCompleted(0);
             navigateTo("/triage");
           }}
-          onSecondaryAction={() => {}}
+          onSecondaryAction={() => { }}
         />
       )}
 

@@ -9,9 +9,9 @@ import {
   RadioGroupInput,
 } from "shared-ui/src";
 import * as Yup from "yup";
-import { TriageContainer } from "./triageResultContainers";
-import { useConditions, useNavigation } from "@/hooks";
-import { getInitialValues, notify } from "@/helpers";
+
+import { useConditions } from "@/hooks";
+import { getInitialValues } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 
 const form = {
@@ -74,7 +74,7 @@ const initialValues = getInitialValues(form);
 
 type Prop = {
   onSubmit: (values: any) => void;
-  setTriageResult:(triage:any)=>void
+  setTriageResult:(triage:any,name:string)=>void
   triageResult:string
   continueTriage:boolean
 };
@@ -102,28 +102,23 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
 
     setFinalCondition(cond);
 
-    // if (cond) {
-    //   setTriageResult("yellow");
-    // }
+  
   }, [conditions]);
 
   const handleIsAirWayCompromised = (value: string) => {
     if (value == YES) {
-      setTriageResult("red");
+      setTriageResult("red",form.airway.name);
     
       return;
     }
-    setTriageResult("");
+    setTriageResult("",form.airway.name);
   };
 
   const disableField = (formField: string) => {
     return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
 
-  // const handleTriageComplete = () => {
-  //   notify("info", "Patient added to waiting assessments queue");
-  //   navigateTo("/triage");
-  // };
+
 
   return (
     <FormikInit
@@ -132,16 +127,7 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      {/* {triageResult && (
-        <>
-          <TriageContainer
-            onCompleteTriage={handleTriageComplete}
-            result={triageResult}
-            message={triageMessage}
-          />
-          <br />
-        </>
-      )} */}
+ 
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout

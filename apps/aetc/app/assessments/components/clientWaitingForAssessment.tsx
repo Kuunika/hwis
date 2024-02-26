@@ -7,7 +7,7 @@ import { BaseTable, MainButton, WrapperBox } from "shared-ui/src";
 
 export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
-  const { data: patients, isLoading } = getPatientsWaitingForTriage();
+  const { data: patients, isLoading } = getPatientsWaitingForAssessment();
 
   const rows = patients?.map((p) => ({ id: p?.uuid, ...p }));
 

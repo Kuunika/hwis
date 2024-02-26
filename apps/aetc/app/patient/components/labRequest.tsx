@@ -12,18 +12,21 @@ import FormLabel from "@mui/material/FormLabel";
 import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
+import { LabRequest } from "@/interfaces";
 
 export interface SimpleDialogProps {
   open: boolean;
   onClose: (value: string) => void;
+  addRequest:(value:LabRequest)=>void
 }
 
-export function LabRequestModal(props: SimpleDialogProps) {
+export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps) {
   const [searchSample, setSearchSample] = React.useState<string>("");
   const [searchSampleTypes, setSearchSampleTypes] = React.useState<string>("");
   const [searchSpecimenSites, setSearchSpecimenSites] =
     React.useState<string>("");
-  const { onClose, open } = props;
+  const [request, setRequest]=React.useState<any>({})
+ 
 
   const handleClose = () => {
     console.log("closed");
@@ -63,7 +66,7 @@ export function LabRequestModal(props: SimpleDialogProps) {
                 />
               </RadioGroup>
             </FormControl>
-            <TestList />
+            <TestList onSelectTest={(test:string |number)=>setRequest((req:any)=>({...req,test }))} />
           </WrapperBox>
           <WrapperBox
             sx={{
@@ -77,7 +80,7 @@ export function LabRequestModal(props: SimpleDialogProps) {
               <MainButton
                 sx={{ borderRadius: "1px" }}
                 title={"Send Order"}
-                onClick={() => {}}
+                onClick={() => addRequest({...request, id:Math.random(), status:"pending..."})}
               />
               <MainButton
                 variant="secondary"
@@ -91,6 +94,7 @@ export function LabRequestModal(props: SimpleDialogProps) {
                 <MainTypography variant="h5">Sample</MainTypography>
                 <SearchInput setSearch={setSearchSample} />
                 <ListSelect
+                  onSelectItem={(sample:string |number)=>setRequest((req:any)=>({...req,sample }))}
                   height="25ch"
                   list={samples}
                   search={searchSample}
@@ -100,6 +104,7 @@ export function LabRequestModal(props: SimpleDialogProps) {
                 <MainTypography variant="h5">Sample Types</MainTypography>
                 <SearchInput setSearch={setSearchSampleTypes} />
                 <ListSelect
+                     onSelectItem={(sampleType:string |number)=>{setRequest((req:any)=>({...req,sampleType }))}}
                   height="25ch"
                   list={sampleTypes}
                   search={searchSampleTypes}
@@ -109,6 +114,7 @@ export function LabRequestModal(props: SimpleDialogProps) {
                 <MainTypography variant="h5">Specimen Site</MainTypography>
                 <SearchInput setSearch={setSearchSpecimenSites} />
                 <ListSelect
+                  onSelectItem={(specimen:string |number)=>{setRequest((req:any)=>({...req,specimen }))}}
                   height="25ch"
                   list={specimenSites}
                   search={searchSpecimenSites}
@@ -125,7 +131,7 @@ export function LabRequestModal(props: SimpleDialogProps) {
 // registration workflow, patient lists(screening, assessments, triage), dde search workflow,
 // lab request form
 
-export const TestList = () => {
+export const TestList = ({onSelectTest}:{onSelectTest:(test:string|number)=>void}) => {
   const commonLabTests = [
     "Complete Blood Count (CBC)",
     "Basic Metabolic Panel (BMP)",
@@ -184,7 +190,7 @@ export const TestList = () => {
       </MainTypography>
       <SearchInput setSearch={setSearch} placeHolder="search test" />
       <br />
-      <ListSelect list={commonLabTests} search={search} />
+      <ListSelect onSelectItem={onSelectTest} list={commonLabTests} search={search} />
     </WrapperBox>
   );
 };
@@ -223,10 +229,12 @@ export const ListSelect = ({
   list,
   search = "",
   height = "50ch",
+  onSelectItem
 }: {
   list: Array<string>;
   search?: string;
   height?: string;
+  onSelectItem:(item:string|number)=> void
 }) => {
   const [selected, setSelected] = React.useState<string>("");
   return (
@@ -241,7 +249,7 @@ export const ListSelect = ({
         .map((lab) => (
           <WrapperBox
             key={lab}
-            onClick={() => setSelected(lab)}
+            onClick={() => {setSelected(lab); onSelectItem(lab)}}
             sx={{
               display: "flex",
               alignItems: "center",

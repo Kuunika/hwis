@@ -90,6 +90,17 @@ export interface Visit {
   visitType: string;
   startDatetime: string;
 }
+
+export interface LabRequest {
+  id?:any;
+  uuid:string,
+  test:string;
+  sample:string;
+  sampleType:string;
+  specimenSite:string
+  testType?:string
+}
+
 export interface IApiService {
   getAll<T>(query?: string): Promise<any>;
 

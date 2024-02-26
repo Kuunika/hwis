@@ -1,15 +1,21 @@
-import { MainButton, WrapperBox } from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaPlus } from "react-icons/fa";
 import { Panel } from ".";
 import { useNavigation } from "@/hooks";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { useState, useEffect } from "react";
-import { LabRequest } from "@/app/registration/components";
+
 import { LabRequestModal } from "../labRequest";
+import { LabOrderTable } from "./labOrderTable";
+import { LabRequest } from "@/interfaces";
+
+
+
 
 export const Investigations = () => {
   const { navigateTo } = useNavigation();
   const [open, setOpen] = useState(false);
+  const [labRequests, setLabRequests]=useState<LabRequest[]>([])
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,6 +28,12 @@ export const Investigations = () => {
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;
   }
+
+
+const addRequest = (lab:LabRequest)=>{
+setLabRequests(requests=> ([...requests, lab]))
+setOpen(false)
+}
   return (
     <Panel
       title="Investigations"
@@ -34,8 +46,8 @@ export const Investigations = () => {
           onClick={() => setOpen(true)}
         />
       </WrapperBox>
-      <>Investigations</>
-      <LabRequestModal open={open} onClose={() => setOpen(false)} />
+     { labRequests.length == 0 ? <MainTypography my={2}>No requests added</MainTypography> :<LabOrderTable rows={labRequests} />}
+      <LabRequestModal open={open} addRequest={addRequest} onClose={() => setOpen(false)} />
     </Panel>
   );
 };

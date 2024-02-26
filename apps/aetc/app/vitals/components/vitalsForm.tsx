@@ -82,7 +82,7 @@ type props = {
   initialValues: any;
   onSubmit: (values: any) => void;
   triageResult: string;
-  setTriageResult: (rre: any) => void;
+  setTriageResult: (rre: any, name:string) => void;
   continueTriage:boolean
 
 };
@@ -254,11 +254,11 @@ export function VitalsForm({
   const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
-  const { navigateTo } = useNavigation();
+
 
   const checkTriage = (name: string, formValue: string) => {
     if (formValue == "") {
-      setTriageResult("");
+      setTriageResult("",name);
       return;
     }
     rules[name]?.forEach((rule) => {
@@ -267,17 +267,17 @@ export function VitalsForm({
       switch (rule.operator) {
         case "<":
           if (formValueNumber < rule.value && formValueNumber >= rule?.bound) {
-            setTriageResult(rule.result as TriageResult);
+            setTriageResult(rule.result as TriageResult, name);
           }
           return;
         case ">":
           if (formValueNumber > rule.value && formValueNumber <= rule.bound) {
-            setTriageResult(rule.result as TriageResult);
+            setTriageResult(rule.result as TriageResult, name);
           }
           return;
         case "=":
           if (formValueNumber == rule.value) {
-            setTriageResult(rule.result as TriageResult);
+            setTriageResult(rule.result as TriageResult, name);
           }
           return;
         case "combined":
@@ -286,7 +286,7 @@ export function VitalsForm({
             formValueNumber >= rule.value &&
             formValueNumber <= rule.value2
           ) {
-            setTriageResult(rule.result as TriageResult);
+            setTriageResult(rule.result as TriageResult, name);
           }
           return;
         default:

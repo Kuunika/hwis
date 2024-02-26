@@ -23,10 +23,10 @@ import Image from "next/image";
 import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
 import { VitalsPanel } from "./panels/vitalsDetails";
 import { BasicSelect } from "./basicSelect";
-import { DesktopSkeletonLoader } from "@/components/loadingSkeletons";
+
 
 export const DesktopView = () => {
-  // return <DesktopSkeletonLoader />;
+
   return (
     <MainGrid
       display={{ xs: "none", lg: "flex" }}

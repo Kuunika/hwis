@@ -10,14 +10,13 @@ import {
   TextInputField,
 } from "shared-ui/src";
 import * as Yup from "yup";
-import { TriageContainer } from ".";
-import { useConditions, useNavigation } from "@/hooks";
-import { getInitialValues, notify } from "@/helpers";
+
+import { getInitialValues } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
-  setTriageResult:(triage:any)=>void
+  setTriageResult:(triage:any, name:string)=>void
   triageResult:string,
   continueTriage:boolean
 };
@@ -57,16 +56,16 @@ export const ConsciousnessForm = ({ onSubmit , triageResult, setTriageResult, co
   const [formValues, setFormValues] = useState<any>({});
   const checkGcs = (value: number) => {
     if (!value) {
-      setTriageResult("");
+      setTriageResult("", form.gcs.name);
       return;
     }
 
     if (value < 10) {
-      setTriageResult("red");
+      setTriageResult("red",form.gcs.name);
     }
 
     if (value >= 10 && value <= 14) {
-      setTriageResult("yellow");
+      setTriageResult("yellow",form.gcs.name);
     }
   };
 

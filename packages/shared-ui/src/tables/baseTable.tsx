@@ -11,6 +11,7 @@ type IProp = {
   hidePagination?: boolean;
   rowWidth?: number;
   style?: any;
+  rowHeight?:number;
   loading?: boolean;
 };
 
@@ -22,6 +23,7 @@ const Table: React.FC<IProp> = ({
   width = "100%",
   loading,
   style,
+  rowHeight
 }) => {
   let columnVisibilityModel: any = {};
 
@@ -66,6 +68,7 @@ const Table: React.FC<IProp> = ({
   return (
     <div style={{ height, width, ...style }}>
       <DataGrid
+        rowHeight={rowHeight}
         sx={{ my: "1ch", borderStyle: "none" }}
         rows={rows}
         columns={columns}
