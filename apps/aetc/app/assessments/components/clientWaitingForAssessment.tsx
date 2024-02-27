@@ -66,12 +66,12 @@ export const ClientWaitingForAssessment = () => {
         );
       },
     },
-    { field: "patientWaitingTime", headerName: "Waiting Time", flex: 1 },
-    {
-      field: "aggreWaitingTime",
-      headerName: "Aggre Waiting Time since arrival",
-      flex: 1,
-    },
+    // { field: "patientWaitingTime", headerName: "Waiting Time", flex: 1 },
+    // {
+    //   field: "aggreWaitingTime",
+    //   headerName: "Aggre Waiting Time since arrival",
+    //   flex: 1,
+    // },
     {
       field: "action",
       headerName: "Action",

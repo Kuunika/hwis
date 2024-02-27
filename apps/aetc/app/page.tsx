@@ -1,9 +1,9 @@
 "use client";
-import { MainGrid, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
-import { FcSurvey } from "react-icons/fc";
+import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
+
 
 import { useNavigation } from "@/hooks";
-import { LandingPageCollapsible } from "./components";
+
 
 import { FcRules, FcSearch, FcTodoList, FcPlus } from "react-icons/fc";
 
@@ -20,17 +20,14 @@ export default function Home() {
           sx={{
             display: "flex",
             flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: { xs: "center", lg: "start" },
 
             flexDirection: { xs: "column", sm: "row" },
           }}
           pt="5ch"
         >
-          {/* <WrapperBox display={"flex"}>
-            <WrapperBox>
-              <LandingPageCollapsible />
-            </WrapperBox>
-            <WrapperBox>Dashboard</WrapperBox>
-          </WrapperBox> */}
+
           <Card
             link="/registration/search"
             title="Find Patient"
