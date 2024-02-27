@@ -17,7 +17,7 @@ import { LabRequest } from "@/interfaces";
 export interface SimpleDialogProps {
   open: boolean;
   onClose: (value: string) => void;
-  addRequest:(value:LabRequest)=>void
+  addRequest: (value: LabRequest) => void
 }
 
 export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps) {
@@ -25,8 +25,8 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
   const [searchSampleTypes, setSearchSampleTypes] = React.useState<string>("");
   const [searchSpecimenSites, setSearchSpecimenSites] =
     React.useState<string>("");
-  const [request, setRequest]=React.useState<any>({})
- 
+  const [request, setRequest] = React.useState<any>({})
+
 
   const handleClose = () => {
     console.log("closed");
@@ -42,7 +42,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
       <DialogContent>
         <WrapperBox display={"flex"}>
           <WrapperBox
-            sx={{ width: "30%", borderRight: "solid #e0e0e0 1px", px: "1ch" }}
+            sx={{ width: { xs: "40%", lg: "30%" }, borderRight: "solid #e0e0e0 1px", px: "1ch" }}
           >
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
@@ -66,13 +66,13 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
                 />
               </RadioGroup>
             </FormControl>
-            <TestList onSelectTest={(test:string |number)=>setRequest((req:any)=>({...req,test }))} />
+            <TestList onSelectTest={(test: string | number) => setRequest((req: any) => ({ ...req, test }))} />
           </WrapperBox>
           <WrapperBox
             sx={{
               display: "flex",
               flexDirection: "column",
-              width: "70%",
+              width: { xs: "60%", lg: "70%" },
               px: "1ch",
             }}
           >
@@ -80,7 +80,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
               <MainButton
                 sx={{ borderRadius: "1px" }}
                 title={"Send Order"}
-                onClick={() => addRequest({...request, id:Math.random(), status:"pending..."})}
+                onClick={() => addRequest({ ...request, id: Math.random(), status: "pending..." })}
               />
               <MainButton
                 variant="secondary"
@@ -89,32 +89,32 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
                 onClick={handleListItemClick}
               />
             </WrapperBox>
-            <WrapperBox display={"flex"}>
-              <WrapperBox sx={{ flex: 1 }}>
+            <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
+              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mb: { xs: "3ch" } }}>
                 <MainTypography variant="h5">Sample</MainTypography>
                 <SearchInput setSearch={setSearchSample} />
                 <ListSelect
-                  onSelectItem={(sample:string |number)=>setRequest((req:any)=>({...req,sample }))}
+                  onSelectItem={(sample: string | number) => setRequest((req: any) => ({ ...req, sample }))}
                   height="25ch"
                   list={samples}
                   search={searchSample}
                 />
               </WrapperBox>
-              <WrapperBox sx={{ flex: 1, mx: 1 }}>
+              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mx: 1 }}>
                 <MainTypography variant="h5">Sample Types</MainTypography>
                 <SearchInput setSearch={setSearchSampleTypes} />
                 <ListSelect
-                     onSelectItem={(sampleType:string |number)=>{setRequest((req:any)=>({...req,sampleType }))}}
+                  onSelectItem={(sampleType: string | number) => { setRequest((req: any) => ({ ...req, sampleType })) }}
                   height="25ch"
                   list={sampleTypes}
                   search={searchSampleTypes}
                 />
               </WrapperBox>
-              <WrapperBox sx={{ flex: 1 }}>
+              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 } }}>
                 <MainTypography variant="h5">Specimen Site</MainTypography>
                 <SearchInput setSearch={setSearchSpecimenSites} />
                 <ListSelect
-                  onSelectItem={(specimen:string |number)=>{setRequest((req:any)=>({...req,specimen }))}}
+                  onSelectItem={(specimen: string | number) => { setRequest((req: any) => ({ ...req, specimen })) }}
                   height="25ch"
                   list={specimenSites}
                   search={searchSpecimenSites}
@@ -131,7 +131,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 // registration workflow, patient lists(screening, assessments, triage), dde search workflow,
 // lab request form
 
-export const TestList = ({onSelectTest}:{onSelectTest:(test:string|number)=>void}) => {
+export const TestList = ({ onSelectTest }: { onSelectTest: (test: string | number) => void }) => {
   const commonLabTests = [
     "Complete Blood Count (CBC)",
     "Basic Metabolic Panel (BMP)",
@@ -234,7 +234,7 @@ export const ListSelect = ({
   list: Array<string>;
   search?: string;
   height?: string;
-  onSelectItem:(item:string|number)=> void
+  onSelectItem: (item: string | number) => void
 }) => {
   const [selected, setSelected] = React.useState<string>("");
   return (
@@ -249,14 +249,15 @@ export const ListSelect = ({
         .map((lab) => (
           <WrapperBox
             key={lab}
-            onClick={() => {setSelected(lab); onSelectItem(lab)}}
+            onClick={() => { setSelected(lab); onSelectItem(lab) }}
             sx={{
               display: "flex",
               alignItems: "center",
               py: "1ch",
               px: "0.5ch",
               cursor: "pointer",
-              backgroundColor: lab == selected ? "#e0e0e0" : "",
+              backgroundColor: lab == selected ? "#DDEEDD" : "",
+              color: lab == selected ? "#006401" : "",
             }}
           >
             {lab == selected ? <FaRegCheckSquare /> : <FaRegSquare />}

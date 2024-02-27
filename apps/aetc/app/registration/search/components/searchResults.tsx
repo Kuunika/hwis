@@ -11,19 +11,19 @@ import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
 import { useNavigation, useParameters } from "@/hooks";
-import { DemographicsSearchSkeleton } from "@/components/loadingSkeletons";
+
 import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import Skeleton from "@mui/material/Skeleton";
+
 
 export const SearchResults = ({
-  loading,
+
   searchedPatient,
   searchResults,
 }: {
-  loading: boolean;
+
   searchedPatient: any;
   searchResults: any;
 }) => {
@@ -77,9 +77,9 @@ export const SearchResults = ({
     },
   ];
 
-  if (loading) {
-    return <DemographicsSearchSkeleton />;
-  }
+  // if (loading) {
+  //   return null;
+  // }
 
   return (
     <WrapperBox
@@ -96,7 +96,7 @@ export const SearchResults = ({
         <WrapperBox sx={{ mr: "1ch" }}>
           {patientsResults.map((p) => {
             return (
-          <WrapperBox
+              <WrapperBox
                 key={p.id}
                 onClick={() => setPatient(p)}
                 sx={{
@@ -132,7 +132,7 @@ export const SearchResults = ({
               sx={{ mr: "0.2ch", borderRadius: "1px" }}
               variant="secondary"
               title="Add selected existing"
-              onClick={() => {}}
+              onClick={() => { }}
             />
           </WrapperBox>
           <MainPaper elevation={0} sx={{ width: "50ch", px: "2ch", py: "2ch" }}>

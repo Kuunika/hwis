@@ -1,23 +1,20 @@
 "use client";
 
 import {
-  MainButton,
-  MainPaper,
+
   MainTypography,
   WrapperBox,
-  defaultTheme,
+
 } from "shared-ui/src";
-import { useSearchParams } from "next/navigation";
+
 import { useState } from "react";
-import { useNavigation, useParameters } from "@/hooks";
-import plus from "../../../icons/plus.svg";
-import Image from "next/image";
-import { PatientNationalIdCheck } from "../../components";
+import { useParameters } from "@/hooks";
+
 import { SearchForm } from "../../search/components/searchForm";
 import { SearchResults } from "../../search/components/searchResults";
 import {
   getPatientsWaitingForRegistrations,
-  searchPotentialDuplicates,
+
 } from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
 import { SearchNPIDForm } from "../../search/components/searchNpid";
@@ -76,7 +73,7 @@ export default function RegistrationSearch() {
 
         <WrapperBox
           sx={{
-            width: "40%",
+            width: { sm: "70%", lg: "40%" },
             position: "relative",
           }}
         >
@@ -129,8 +126,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
       />
       <br />
       <OverlayLoader open={isPending} />
-      {(isSuccess || isPending) && <SearchResults
-        loading={isPending}
+      {isSuccess && <SearchResults
         searchResults={{}}
         searchedPatient={searchedPatient}
       />
