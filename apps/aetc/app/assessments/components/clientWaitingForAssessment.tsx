@@ -1,3 +1,4 @@
+import { getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import {
   getPatientsWaitingForAssessment,
@@ -9,7 +10,7 @@ export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
   const { data: patients, isLoading } = getPatientsWaitingForAssessment();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p }));
+  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
 
   // const rows = [
   //   {
