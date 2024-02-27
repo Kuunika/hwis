@@ -256,7 +256,8 @@ export const ListSelect = ({
               py: "1ch",
               px: "0.5ch",
               cursor: "pointer",
-              backgroundColor: lab == selected ? "#e0e0e0" : "",
+              backgroundColor: lab == selected ? "#DDEEDD" : "",
+              color: lab == selected ? "#006401" : "",
             }}
           >
             {lab == selected ? <FaRegCheckSquare /> : <FaRegSquare />}
