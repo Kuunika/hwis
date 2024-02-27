@@ -1,30 +1,19 @@
 import { useNavigation } from "@/hooks";
+import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { BaseTable, MainButton } from "shared-ui/src";
 
 export const ClientWaitingForTriage = () => {
+  const { data: patients, isLoading } = getPatientsWaitingForTriage();
   const { navigateTo } = useNavigation();
-  const rows = [
-    {
-      id: "1",
-      firstName: "John",
-      lastName: "Doe",
-      gender: "Male",
-      dob: "08 January 1995",
-    },
-    {
-      id: "2",
-      firstName: "Jane",
-      lastName: "Doe",
-      gender: "Female",
-      dob: "08 January 1995",
-    },
-  ];
+
+  const rows = patients?.map((p) => ({ id: p?.uuid, ...p }));
 
   const columns = [
-    { field: "firstName", headerName: "First Name", flex: 1 },
-    { field: "lastName", headerName: "Last Name", flex: 1 },
-    { field: "gender", headerName: "Gender", flex: 1 },
-    { field: "dob", headerName: "Date Of Birth", flex: 1 },
+    { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
+    { field: "given_name", headerName: "First Name", flex: 1 },
+    { field: "family_name", headerName: "Last Name", flex: 1 },
+    { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
+
     {
       field: "action",
       headerName: "Action",
@@ -32,7 +21,7 @@ export const ClientWaitingForTriage = () => {
         return (
           <MainButton
             sx={{ fontSize: "12px" }}
-            title={"start Triage"}
+            title={"start"}
             onClick={() => navigateTo(`/triage/${cell.id}/start`)}
           />
         );
@@ -40,5 +29,7 @@ export const ClientWaitingForTriage = () => {
     },
   ];
 
-  return <BaseTable columns={columns} rows={rows} />;
+  return (
+    <BaseTable loading={isLoading} columns={columns} rows={rows ? rows : []} />
+  );
 };

@@ -9,9 +9,9 @@ import {
   RadioGroupInput,
 } from "shared-ui/src";
 import * as Yup from "yup";
-import { TriageContainer } from "./triageResultContainers";
-import { useConditions, useNavigation } from "@/hooks";
-import { getInitialValues, notify } from "@/helpers";
+
+import { useConditions } from "@/hooks";
+import { getInitialValues } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 
 const form = {
@@ -74,6 +74,9 @@ const initialValues = getInitialValues(form);
 
 type Prop = {
   onSubmit: (values: any) => void;
+  setTriageResult:(triage:any,name:string)=>void
+  triageResult:string
+  continueTriage:boolean
 };
 
 const radioOptions = [
@@ -81,48 +84,41 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 
-export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
+export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult, continueTriage }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
-  const [triageMessage, setTriageMessage] = useState("");
+ 
   const [formValues, setFormValues] = useState<any>({});
-  const { navigateTo } = useNavigation();
+
   const {
     conditions,
     updateConditions,
     aggregateOrCondition,
-    setTriageResult,
-    triageResult,
   } = useConditions();
 
   const [finalCondition, setFinalCondition] = useState(false);
 
   useEffect(() => {
-    console.log(Object.keys(conditions).length);
-    const cond = !aggregateOrCondition && Object.keys(conditions).length == 6;
+    const cond = !aggregateOrCondition && Object.keys(conditions).length == 4;
 
     setFinalCondition(cond);
 
-    // if (cond) {
-    //   setTriageResult("yellow");
-    // }
+  
   }, [conditions]);
 
   const handleIsAirWayCompromised = (value: string) => {
     if (value == YES) {
-      setTriageResult("red");
-      setTriageMessage("Interventions as necessary");
+      setTriageResult("red",form.airway.name);
+    
       return;
     }
-    setTriageResult("");
+    setTriageResult("",form.airway.name);
   };
 
   const disableField = (formField: string) => {
-    return triageResult === "red" && !Boolean(formValues[formField]);
+    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
-  const handleTriageComplete = () => {
-    notify("info", "Patient added to waiting assessments queue");
-    navigateTo("/triage");
-  };
+
+
 
   return (
     <FormikInit
@@ -131,16 +127,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-      {triageResult && (
-        <>
-          <TriageContainer
-            onCompleteTriage={handleTriageComplete}
-            result={triageResult}
-            message={triageMessage}
-          />
-          <br />
-        </>
-      )}
+ 
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout
@@ -170,7 +157,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
 
       {isBreathingAbnormal == YES && (
         <>
-          <FormFieldContainerLayout title="Oxygen and Respiratory">
+          {/* <FormFieldContainerLayout title="Oxygen and Respiratory">
             <FieldsContainer>
               <RadioGroupInput
                 name={form.oxygenStats.name}
@@ -191,7 +178,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
                 options={radioOptions}
               />
             </FieldsContainer>
-          </FormFieldContainerLayout>
+          </FormFieldContainerLayout> */}
 
           <FormFieldContainerLayout title="Exhaustion and Inability to Speak">
             <FieldsContainer>
@@ -244,7 +231,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
         </>
       )}
 
-      {finalCondition && (
+      {/* {finalCondition && (
         <FormFieldContainerLayout
           last={true}
           title="Oxygen Stats & Respiratory"
@@ -264,7 +251,7 @@ export const AirwayAndBreathingForm = ({ onSubmit }: Prop) => {
             />
           </FieldsContainer>
         </FormFieldContainerLayout>
-      )}
+      )} */}
 
       <br />
     </FormikInit>

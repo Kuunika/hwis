@@ -38,24 +38,26 @@ export const FormikInit: FC<Prop> = ({
       validationSchema={validationSchema}
       enableReinitialize={enableReinitialize}
     >
-      <Form>
-        {children}
-        {submitButton && (
-          <MainButton
-            sx={{ mt: 3 }}
-            variant={submitVariant}
-            type={"submit"}
-            title={
-              loading ? (
-                <i style={{ textTransform: "lowercase" }}>loading...</i>
-              ) : (
-                submitButtonText
-              )
-            }
-            onClick={() => {}}
-          />
-        )}
-      </Form>
+      {() => (
+        <Form>
+          {children}
+          {submitButton && (
+            <MainButton
+              sx={{ mt: 3 }}
+              variant={submitVariant}
+              type={"submit"}
+              title={
+                loading ? (
+                  <i style={{ textTransform: "lowercase" }}>loading...</i>
+                ) : (
+                  submitButtonText
+                )
+              }
+              onClick={() => {}}
+            />
+          )}
+        </Form>
+      )}
     </Formik>
   );
 };

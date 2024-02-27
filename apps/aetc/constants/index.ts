@@ -10,9 +10,16 @@ export const encounters = {
   BREATHING_ASSESSMENT: "08d4b4e5-dfa7-436b-9062-aee1b076c3ea",
   CIRCULATION_ASSESSMENT: "bb16ef97-6ef7-414f-880c-dfc67e1601df",
   DISABILITY_ASSESSMENT: "0ef8f652-7852-49a5-a9dd-c1ca74fe098c",
+  INITIAL_REGISTRATION: "4186b2dd-0254-4226-965a-e77fcaa70bcf",
+  SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
+  FINANCING: "ceec1aca-1bbb-427a-bc6d-ef8ae11f31b2",
+  PRESENTING_COMPLAINTS: "ba069102-8d80-11d8-abbb-0024217bb78e",
+
+  // temporary
+  TRIAGE_RESULT:"ba069102-8d80-11d8-abbb-0024217bb78e"
 };
 
-export const AETC_VISIT_TYPE = "05217c3a-ec65-45b1-b113-ad8189e2acbc";
+export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
 export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
 
@@ -66,7 +73,7 @@ export const concepts = {
   GCS: "8c66ee46-439e-41f9-a5d9-de297fc23c7c",
 
   // social history
-  MARITAL_STATUS: "6616827b-f8fb-49ef-8214-66a4c139e1cd",
+  MARITAL_STATUS: "7cab5ece-fbc4-4e30-892e-867f92021c36",
   OCCUPATION: "b9c41c46-8d80-11d8-abbb-0024217bb78e",
   RELIGION: "b9d864ee-8d80-11d8-abbb-0024217bb78e",
   HIGHEST_EDUCATION: "b9da5fa6-8d80-11d8-abbb-0024217bb78e",
@@ -136,6 +143,30 @@ export const concepts = {
   POSTURE: "57b913f6-ffde-4831-b3e1-ddb57317ebf2",
   FOCAL_NEUROLOGY: "b9a04b04-8d80-11d8-abbb-0024217bb78e",
   SEIZURES: "b9b4e1d6-8d80-11d8-abbb-0024217bb78e",
+  VISIT_NUMBER: "b948b111-ec31-47ea-826c-3f53bf2a1714",
+
+  //screening
+  IS_PATIENT_REFERRED: "05016707-c82f-43d9-b9b6-451e5e155cc8",
+  IS_SITUATION_URGENT: "77963352-aa31-484a-92fe-80afae720d34",
+  PATIENT_REFERRED_TO: "b9a64022-8d80-11d8-abbb-0024217bb78e",
+
+  NATIONAL_ID_IDENTIFIER_TYPE: "ba2f69d8-8d80-11d8-abbb-0024217bb78e",
+  PARENT: "ba453f92-8d80-11d8-abbb-0024217bb78e",
+  UNCLE_AUNTIE: "8d91a3dc-c2cc-11de-8d13-0010c6dffd0f",
+  GUARDIAN: "ba453344-8d80-11d8-abbb-0024217bb78e",
+
+  //patient referred from
+  REFERRED_FROM: "b9d29b4a-8d80-11d8-abbb-0024217bb78e",
+
+  // Financing
+
+  INSURANCE_PROVIDER: "5c6d1327-45a1-42bc-95cf-864c0a8f9f07",
+  INSURANCE_NUMBER: "8affc5bd-b399-4a3a-9c87-17a0dc9bf2c0",
+  INSURANCE_SCHEME: "20d51764-77b7-45fc-91b4-8f357bfc7262",
+  INSURANCE_STATUS: "c3350c35-76fe-4f32-9f59-799cddce66f7",
+  PAYMENT_OPTIONS: "a4a38479-db24-44ec-9325-28e646162185",
+
+  TRIAGE_RESULT:"3a08ccd3-092a-444c-9ccf-343414529005"
 };
 
 export const triageResult = {
@@ -143,3 +174,271 @@ export const triageResult = {
   GREEN: "green",
   YELLOW: "yellow",
 };
+
+export const districts = [
+  {
+    district_name: "Mchinji",
+    district_code: "MC",
+    zone_id: 2,
+    id: 1,
+  },
+  {
+    district_name: "Dowa",
+    district_code: "DA",
+    zone_id: 1,
+    id: 2,
+  },
+  {
+    district_name: "Dedza",
+    district_code: "DE",
+    zone_id: 2,
+    id: 3,
+  },
+  {
+    district_name: "Lilongwe",
+    district_code: "LL",
+    zone_id: 2,
+    id: 4,
+  },
+  {
+    district_name: "Nkhata Bay",
+    district_code: "KB",
+    zone_id: 3,
+    id: 5,
+  },
+  {
+    district_name: "Chitipa",
+    district_code: "CP",
+    zone_id: 3,
+    id: 6,
+  },
+  {
+    district_name: "Kasungu",
+    district_code: "KU",
+    zone_id: 1,
+    id: 7,
+  },
+  {
+    district_name: "Ntchisi",
+    district_code: "NT",
+    zone_id: 1,
+    id: 8,
+  },
+  {
+    district_name: "Salima",
+    district_code: "SA",
+    zone_id: 1,
+    id: 9,
+  },
+  {
+    district_name: "Nkhotakota",
+    district_code: "NK",
+    zone_id: 1,
+    id: 10,
+  },
+  {
+    district_name: "Kamuzu Central",
+    district_code: "KC",
+    zone_id: 2,
+    id: 11,
+  },
+  {
+    district_name: "Ntcheu",
+    district_code: "NT",
+    zone_id: 2,
+    id: 12,
+  },
+  {
+    district_name: "Mzuzu Central",
+    district_code: "MU",
+    zone_id: 3,
+    id: 13,
+  },
+  {
+    district_name: "Rumphi",
+    district_code: "RU",
+    zone_id: 3,
+    id: 14,
+  },
+  {
+    district_name: "Karonga",
+    district_code: "KA",
+    zone_id: 3,
+    id: 15,
+  },
+  {
+    district_name: "Mzimba",
+    district_code: "MZ",
+    zone_id: 3,
+    id: 16,
+  },
+  {
+    district_name: "Balaka",
+    district_code: "BK",
+    zone_id: 4,
+    id: 17,
+  },
+  {
+    district_name: "Likoma",
+    district_code: "LK",
+    zone_id: 3,
+    id: 18,
+  },
+  {
+    district_name: "Machinga",
+    district_code: "MC",
+    zone_id: 4,
+    id: 19,
+  },
+  {
+    district_name: "Mangochi",
+    district_code: "MG",
+    zone_id: 4,
+    id: 20,
+  },
+  {
+    district_name: "Mulanje",
+    district_code: "MU",
+    zone_id: 4,
+    id: 21,
+  },
+  {
+    district_name: "Phalombe",
+    district_code: "PH",
+    zone_id: 4,
+    id: 22,
+  },
+  {
+    district_name: "Zomba",
+    district_code: "ZA",
+    zone_id: 4,
+    id: 23,
+  },
+  {
+    district_name: "Blantyre Urban",
+    district_code: "BT",
+    zone_id: 5,
+    id: 24,
+  },
+  {
+    district_name: "Blantyre Rural",
+    district_code: "BTR",
+    zone_id: 5,
+    id: 247,
+  },
+  {
+    district_name: "Queens Elizabeth",
+    district_code: "QE",
+    zone_id: 5,
+    id: 25,
+  },
+  {
+    district_name: "Chiradzulu",
+    district_code: "CR",
+    zone_id: 5,
+    id: 26,
+  },
+  {
+    district_name: "Chikwawa",
+    district_code: "CK",
+    zone_id: 5,
+    id: 27,
+  },
+  {
+    district_name: "Mwanza",
+    district_code: "MW",
+    zone_id: 5,
+    id: 28,
+  },
+  {
+    district_name: "Neno",
+    district_code: "NE",
+    zone_id: 5,
+    id: 29,
+  },
+  {
+    district_name: "Nsanje",
+    district_code: "NS",
+    zone_id: 5,
+    id: 30,
+  },
+  {
+    district_name: "Thyolo",
+    district_code: "TH",
+    zone_id: 5,
+    id: 31,
+  },
+];
+
+export const traditionalAuthorities = [
+  { id: "Bvumbwe", label: "Bvumbwe" },
+  { id: "Chamba", label: "Chamba" },
+  { id: "Changata", label: "Changata" },
+  { id: "Chikowi", label: "Chikowi" },
+  { id: "Chindi", label: "Chindi" },
+  { id: "Chiseka", label: "Chiseka" },
+  { id: "Chitukula", label: "Chitukula" },
+  { id: "Chowe", label: "Chowe" },
+  { id: "Dzoole", label: "Dzoole" },
+  { id: "Fukamapiri", label: "Fukamapiri" },
+  { id: "Ganya", label: "Ganya" },
+  { id: "Gomani", label: "Gomani" },
+  { id: "Jalasi", label: "Jalasi" },
+  { id: "Kabudula", label: "Kabudula" },
+  { id: "Kadewere", label: "Kadewere" },
+  { id: "Kalolo", label: "Kalolo" },
+  { id: "Kayembe", label: "Kayembe" },
+  { id: "Kuntaja", label: "Kuntaja" },
+  { id: "Kyungu", label: "Kyungu" },
+  { id: "Liwonde", label: "Liwonde" },
+  { id: "Lundu", label: "Lundu" },
+  { id: "Mabulabo", label: "Mabulabo" },
+  { id: "Malengachanzi", label: "Malengachanzi" },
+  { id: "Maseya", label: "Maseya" },
+  { id: "Masula", label: "Masula" },
+  { id: "Mavwere", label: "Mavwere" },
+  { id: "Mbalachanda", label: "Mbalachanda" },
+  { id: "Mbelwa", label: "Mbelwa" },
+  { id: "Mbenjere", label: "Mbenjere" },
+  { id: "Mchilamwera", label: "Mchilamwera" },
+  { id: "Mduwa", label: "Mduwa" },
+  { id: "Mlonyeni", label: "Mlonyeni" },
+  { id: "Mponda", label: "Mponda" },
+  { id: "Mtema", label: "Mtema" },
+  { id: "Mthiramanja", label: "Mthiramanja" },
+  { id: "Mwakhwawa", label: "Mwakhwawa" },
+  { id: "Mwahenga", label: "Mwahenga" },
+  { id: "Mwamulowe", label: "Mwamulowe" },
+  { id: "Mwase", label: "Mwase" },
+  { id: "Mwaulambya", label: "Mwaulambya" },
+  { id: "Nankumba", label: "Nankumba" },
+  { id: "Njema", label: "Njema" },
+  { id: "Nkalo", label: "Nkalo" },
+  { id: "Nkhulambe", label: "Nkhulambe" },
+  { id: "Nkukula", label: "Nkukula" },
+  { id: "Nsomba", label: "Nsomba" },
+  { id: "Nyachikadza", label: "Nyachikadza" },
+  { id: "Nyambi", label: "Nyambi" },
+  { id: "Nyaza", label: "Nyaza" },
+  { id: "Phambala", label: "Phambala" },
+  { id: "Phambala1", label: "Phambala 1" },
+  { id: "Phambala2", label: "Phambala 2" },
+  { id: "Pemba", label: "Pemba" },
+  { id: "Simphasi", label: "Simphasi" },
+  { id: "Siyeni", label: "Siyeni" },
+  { id: "Sukumaland", label: "Sukumaland" },
+  { id: "Tambala", label: "Tambala" },
+  { id: "Tengani", label: "Tengani" },
+  { id: "Tengani1", label: "Tengani 1" },
+  { id: "Wimbe", label: "Wimbe" },
+];
+
+export const malawiVillages = [
+  { id: "Chigumula", label: "Chigumula" },
+  { id: "Chilinde", label: "Chilinde" },
+  { id: "Chinsapo", label: "Chinsapo" },
+  { id: "Area 23", label: "Area 23" },
+  { id: "Namiyango", label: "Namiyango" },
+  { id: "Chirimba", label: "Chirimba" },
+  { id: "Chigoli", label: "Chigoli" },
+];

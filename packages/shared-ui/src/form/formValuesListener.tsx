@@ -3,6 +3,7 @@ import { useFormikField } from "./hooks";
 
 type Prop = {
   getValues: (values: any) => void;
+  setField?: (func: any) => void;
 };
 
 export const FormValuesListener = ({ getValues }: Prop) => {

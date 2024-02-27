@@ -7,15 +7,16 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "@/app/registration/components/common";
-import { Navigation } from "@/app/registration/scanner/page";
+import { Navigation } from "@/app/components/navigation";
 
 export default function InitialList() {
   return (
     <>
       <Navigation title="Patients waiting prescreening" link="/" />
       <MainGrid container>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid xs={0} lg={2} item></MainGrid>
         <MainGrid
+          xs={12}
           lg={8}
           sx={{
             display: "flex",
@@ -26,17 +27,17 @@ export default function InitialList() {
           <br />
           <br />
           <RegistrationMainHeader>
-            Patients waiting for prescreening
+            Patients waiting for Screening
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
             This is a list of all patients that went through initial
             registration successfully and waiting for prescreening.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ p: 0 }}>
+          <RegistrationCard sx={{ p: 0, mx: "1ch" }}>
             <InitialRegistrationList />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid xs={0} lg={2} item></MainGrid>
       </MainGrid>
     </>
   );

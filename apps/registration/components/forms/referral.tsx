@@ -1,11 +1,11 @@
 import { FC } from "react";
 import * as Yup from "yup";
 import { FormikInit, SelectInputField } from "shared-ui/src";
+import {} from "../../hooks";
 
 const schema = Yup.object().shape({
   refereeMedicalFacility: Yup.string()
-    .required()
-    .label("Referee Medical Facility"),
+  .label("Referral Medical Facility"),
 });
 
 const initialValues = {

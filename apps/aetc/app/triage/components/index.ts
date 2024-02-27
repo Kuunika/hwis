@@ -7,3 +7,4 @@ export * from "./clientWaitingForTriage";
 export * from "./triageResultContainers";
 export * from "./triageHistoryList";
 export * from "./triageDetails";
+export * from "./presentingComplaintsForm";

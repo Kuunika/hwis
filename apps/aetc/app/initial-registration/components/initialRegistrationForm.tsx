@@ -1,8 +1,10 @@
 import {
   FieldsContainer,
   FormikInit,
+  MainButton,
   SearchComboBox,
   TextInputField,
+  WrapperBox,
 } from "shared-ui/src";
 import * as yup from "yup";
 
@@ -33,17 +35,21 @@ export const InitialRegistrationForm = ({ initialValues, onSubmit }: props) => {
       initialValues={initialValues}
       validationSchema={schema}
       onSubmit={onSubmit}
+      submitButton={false}
     >
-      <TextInputField
-        name={form.firstName.name}
-        label={form.firstName.label}
-        id={form.firstName.name}
-      />
-      <TextInputField
-        name={form.lastName.name}
-        label={form.lastName.label}
-        id={form.lastName.name}
-      />
+      <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+        <TextInputField
+          name={form.firstName.name}
+          label={form.firstName.label}
+          id={form.firstName.name}
+        />
+        <TextInputField
+          name={form.lastName.name}
+          label={form.lastName.label}
+          id={form.lastName.name}
+        />
+      </WrapperBox>
+      <MainButton type="submit" title={"Submit"} onClick={() => {}} />
     </FormikInit>
   );
 };

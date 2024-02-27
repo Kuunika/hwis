@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -23,8 +23,9 @@ type Prop = {
 export const FormDatePicker: FC<Prop> = ({
   name,
   label,
-  width = "100%",
+  width = "25ch",
   sx,
+  size = "medium",
   getValue,
   disabled = false,
 }) => {
@@ -37,16 +38,16 @@ export const FormDatePicker: FC<Prop> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
+        slotProps={{ textField: { size } }}
         sx={{
           width,
           my: "1ch",
-          mr: "1ch",
-          "& fieldset": { borderRadius: "10px" },
+          "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}
         label={label}
         // value={value}
-        onChange={(dateValue) =>
+        onChange={(dateValue: any) =>
           setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
         }
         disabled={disabled}

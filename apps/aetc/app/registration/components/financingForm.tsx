@@ -7,23 +7,35 @@ import {
   TextInputField,
   RadioGroupInput,
 } from "shared-ui/src";
+import { TrackFormikContext } from "./demographicsForm";
+import {
+  RegistrationCard,
+  RegistrationCardTitle,
+  RegistrationDescriptionText,
+  RegistrationMainHeader,
+} from "./common";
+import { concepts } from "@/constants";
 
 const form = {
   paymentOption: {
-    name: "paymentOption",
+    name: concepts.PAYMENT_OPTIONS,
     label: "Payment Option",
   },
   insuranceProvider: {
-    name: "insuranceProvider",
+    name: concepts.INSURANCE_PROVIDER,
     label: "Insurance Provider",
   },
   insuranceIdNo: {
-    name: "insuranceIdNo",
+    name: concepts.INSURANCE_NUMBER,
     label: "Insurance Id Number",
   },
   insuranceSchema: {
-    name: "insuranceSchema",
+    name: concepts.INSURANCE_SCHEME,
     label: "Insurance Scheme",
+  },
+  status: {
+    name: concepts.INSURANCE_STATUS,
+    label: "Insurance Status",
   },
 };
 
@@ -37,50 +49,85 @@ const schema = Yup.object().shape({
 });
 
 type Props = {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
   initialValues: any;
+  setContext: (context: any) => void;
 };
-export const FinancingForm: FC<Props> = ({ onSubmit, initialValues }) => {
+export const FinancingForm: FC<Props> = ({
+  onSubmit,
+  initialValues,
+  setContext,
+}) => {
   const [payment, setPayment] = useState("");
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-    >
-      <Box>
-        <RadioGroupInput
-          name={form.paymentOption.name}
-          getValue={(value: any) => setPayment(value)}
-          label={form.paymentOption.label}
-          options={[
-            { label: "Cash", value: "cash" },
-            { label: "Insurance", value: "insurance" },
-          ]}
-        />
+    <>
+      <RegistrationMainHeader>Financing</RegistrationMainHeader>
+      <RegistrationDescriptionText>
+        Capture details the patient is using for financing
+      </RegistrationDescriptionText>
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        submitButton={false}
+      >
+        <TrackFormikContext setFormContext={setContext} />
+        <RegistrationCard>
+          <RegistrationCardTitle>financing</RegistrationCardTitle>
+          <RadioGroupInput
+            name={form.paymentOption.name}
+            getValue={(value: any) => setPayment(value)}
+            label={form.paymentOption.label}
+            options={[
+              { label: "Non-paying", value: "non-paying" },
+              { label: "Staff", value: "staff" },
+              { label: "Cash", value: "cash" },
+              { label: "Insurance", value: "insurance" },
+            ]}
+          />
 
-        {payment === "insurance" && (
-          <>
-            <SelectInputField
-              label={form.insuranceProvider.label}
-              id={form.insuranceProvider.name}
-              name={form.insuranceProvider.name}
-              selectItems={[{ name: "Masm", value: "masm" }]}
-            />
-            <TextInputField
-              name={form.insuranceIdNo.name}
-              id={form.insuranceIdNo.name}
-              label={form.insuranceIdNo.label}
-            />
-            <SelectInputField
-              label={form.insuranceSchema.label}
-              id={form.insuranceSchema.name}
-              name={form.insuranceSchema.name}
-              selectItems={[{ name: "Masm", value: "masm" }]}
-            />
-          </>
-        )}
-      </Box>
-    </FormikInit>
+          {payment === "insurance" && (
+            <>
+              <SelectInputField
+                label={form.insuranceProvider.label}
+                id={form.insuranceProvider.name}
+                name={form.insuranceProvider.name}
+                selectItems={[
+                  { name: "Masm", value: "masm" },
+                  { name: "Escom", value: "Escom" },
+                  { name: "Reserve Bank", value: "Reserve Bank" },
+                  { name: "Liberty", value: "Liberty" },
+                  { name: "Unimed", value: "Unimed" },
+                ]}
+              />
+              <TextInputField
+                name={form.insuranceIdNo.name}
+                id={form.insuranceIdNo.name}
+                label={form.insuranceIdNo.label}
+              />
+              <SelectInputField
+                label={form.insuranceSchema.label}
+                id={form.insuranceSchema.name}
+                name={form.insuranceSchema.name}
+                selectItems={[
+                  { name: "VVIP", value: "VVIP" },
+                  { name: "VIP", value: "VIP" },
+                  { name: "EXEC", value: "EXEC" },
+                  { name: "ECO", value: "ECO" },
+                ]}
+              />
+              <RadioGroupInput
+                name={form.status.name}
+                label={form.status.label}
+                options={[
+                  { label: "Active", value: "active" },
+                  { label: "Inactive", value: "inactive" },
+                ]}
+              />
+            </>
+          )}
+        </RegistrationCard>
+      </FormikInit>
+    </>
   );
 };

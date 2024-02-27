@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SearchInput, ResultBox } from ".";
+// import { AddPatientButton } from "../page";
 
 type Prop = {
   initialValue: string;
@@ -68,7 +69,11 @@ export const SearchContainer = ({
         initialValue={initialValue ? initialValue : ""}
         onChange={handleSearch}
       />
-      {searchResults.length > 0 && <ResultBox searchResults={searchResults} />}
+      {searchResults.length > 0 && (
+        <>
+          <ResultBox searchResults={searchResults} />
+        </>
+      )}
     </>
   );
 };

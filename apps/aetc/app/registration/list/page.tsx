@@ -1,23 +1,23 @@
 "use client";
 
-import { MiddlePageLayout } from "@/components/layouts";
 import { WaitingRegistrationList } from "../components";
 import { MainGrid } from "shared-ui/src";
-import { InitialRegistrationList } from "@/app/initial-registration/components";
+
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
   RegistrationCard,
 } from "../components/common";
-import { Navigation } from "../scanner/page";
+import { Navigation } from "@/app/components/navigation";
 
 export default function List() {
   return (
     <>
       <Navigation title="Patients waiting registration" link="/" />
       <MainGrid container>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid xs={1} lg={2} item></MainGrid>
         <MainGrid
+          xs={10}
           lg={8}
           sx={{
             display: "flex",
@@ -31,14 +31,14 @@ export default function List() {
             Patients waiting for Registration
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
-            This is a list of all patients that went through initial
-            registration successfully and waiting for prescreening.
+            This is a list of all patients that went through prescreening
+            successfully and waiting for registration.
           </RegistrationDescriptionText>
           <RegistrationCard sx={{ p: 0 }}>
             <WaitingRegistrationList />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid xs={1} lg={2} item></MainGrid>
       </MainGrid>
     </>
   );

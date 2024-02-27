@@ -38,9 +38,10 @@ export function ResultBox({ searchResults }: Prop) {
       ></WrapperBox>
       <WrapperBox sx={{ maxHeight: "20ch", overflow: "scroll" }}>
         {searchResults.map((result: any) => (
-          <Row {...result} />
+          <Row key={result.id} {...result} />
         ))}
       </WrapperBox>
+      <WrapperBox sx={{ m: "1ch" }}>{"<AddPatientButton />"}</WrapperBox>
     </MainPaper>
   );
 }

@@ -11,7 +11,8 @@ export default function Vitals() {
 
   return (
     <MiddlePageLayout title="Vitals">
-      <VitalsForm initialValues={initialValues} onSubmit={handleSubmit} />
+      <></>
+      {/* <VitalsForm initialValues={initialValues} onSubmit={handleSubmit} /> */}
     </MiddlePageLayout>
   );
 }

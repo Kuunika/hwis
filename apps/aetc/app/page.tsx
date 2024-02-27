@@ -2,21 +2,27 @@
 import { MainGrid, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { FcSurvey } from "react-icons/fc";
 
-import { emrLogin, useNavigation } from "@/hooks";
+import { useNavigation } from "@/hooks";
 import { LandingPageCollapsible } from "./components";
 
 import { FcRules, FcSearch, FcTodoList, FcPlus } from "react-icons/fc";
 
 export default function Home() {
-  emrLogin();
   return (
     <>
       <MainGrid container>
-        <MainGrid item lg={3}></MainGrid>
+        <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
         <MainGrid
           item
+          xs={10}
+          md={10}
           lg={8}
-          sx={{ display: "flex", flexWrap: "wrap" }}
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+
+            flexDirection: { xs: "column", sm: "row" },
+          }}
           pt="5ch"
         >
           {/* <WrapperBox display={"flex"}>
@@ -43,7 +49,7 @@ export default function Home() {
           <Card
             icon={<FcTodoList />}
             link="/initial-registration/list"
-            title="Patients Waiting for Prescreening"
+            title="Patients Waiting for Screening"
           />
           <Card
             icon={<FcTodoList />}
@@ -62,6 +68,7 @@ export default function Home() {
           />
           {/* <Card link="/prescreening" title="Prescreening" /> */}
         </MainGrid>
+        <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
       </MainGrid>
     </>
   );
@@ -84,7 +91,7 @@ const Card = ({
       sx={{
         p: "1ch",
         m: "1ch",
-        width: "25%",
+        width: { xs: "100%", sm: "25%" },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

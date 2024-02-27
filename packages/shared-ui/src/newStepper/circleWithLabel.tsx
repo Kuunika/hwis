@@ -59,7 +59,6 @@ export const NewCircleWithLabel: FC<CircleLabelProp> = ({
           font: "intel",
           fontSize: "16px",
           lineHeight: "24px",
-          display: { sm: active ? "block" : "none", md: "block" },
           color: active ? defaultTheme.primary : "",
         }}
         variant="subtitle2"

@@ -8,7 +8,16 @@ type Prop = {
 };
 export const FieldsContainer = ({ children, sx }: Prop) => {
   return (
-    <WrapperBox display={"flex"} justifyContent={"flex-start"} sx={sx}>
+    <WrapperBox
+      display={"flex"}
+      justifyContent={"flex-start"}
+      sx={{
+        ...sx,
+        "& > :first-child": {
+          mr: "5px",
+        },
+      }}
+    >
       {children}
     </WrapperBox>
   );
@@ -27,7 +36,8 @@ export const FormFieldContainerLayout = ({
     <WrapperBox
       sx={{
         display: "flex",
-        justifyContent: "space-between",
+
+        flexDirection: { xs: "column", lg: "row" },
         my: "1ch",
         py: "2ch",
         width: "100%",
@@ -42,12 +52,15 @@ export const FormFieldContainerLayout = ({
           lineHeight: "24px",
           letterSpacing: "0em",
           textAlign: "left",
-          width: "30ch",
+          width: { lg: "40%" },
+          mb: { xs: "2ch" },
         }}
       >
         {title}
       </MainTypography>
-      <WrapperBox sx={{ width: "100%" }}>{children}</WrapperBox>
+      <WrapperBox sx={{ width: { xs: "100%", lg: "60%" } }}>
+        {children}
+      </WrapperBox>
     </WrapperBox>
   );
 };

@@ -1,6 +1,6 @@
 import { Box, SxProps } from "@mui/material";
 import { FC, ReactNode, Children } from "react";
-import { Step, Stepper } from ".";
+import { Step, Stepper } from "./stepper";
 
 type StepperContainerProp = {
   children: ReactNode[];

@@ -6,10 +6,12 @@ export const TriageContainer = ({
   message,
   result,
   onCompleteTriage,
+  setContinueTriage
 }: {
   message?: string;
   result: TriageResult;
   onCompleteTriage: () => void;
+  setContinueTriage: (continueTriage:boolean)=>void
 }) => {
   const styles = {
     red: { backgroundColor: "#FECDCA", color: "#B42318" },
@@ -29,7 +31,8 @@ export const TriageContainer = ({
       },
     });
   };
-
+  if (result == "green") return null;
+  
   return (
     <MainPaper elevation={0} sx={{ ...styles[result], p: "1ch" }}>
       <MainTypography variant="h4" textTransform={"capitalize"}>
@@ -50,9 +53,15 @@ export const TriageContainer = ({
             sx={{
               backgroundColor: "#B42318",
               "&:hover": { backgroundColor: "#B42318" },
+              mr:"0.5ch"
             }}
             title={"Complete Triage"}
             onClick={handleClickCompleteTriage}
+          />
+          <MainButton
+            variant="secondary"
+            title={"Continue Triage"}
+            onClick={()=> setContinueTriage(true)}
           />
         </>
       )}

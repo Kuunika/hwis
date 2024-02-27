@@ -61,7 +61,7 @@ export const RegistrationCard = ({
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        px: "10ch",
+        px: "5ch",
         py: "5ch",
         mb: "2ch",
         ...sx,
