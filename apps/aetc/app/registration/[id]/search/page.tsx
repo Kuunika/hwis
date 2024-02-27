@@ -91,22 +91,32 @@ export default function RegistrationSearch() {
 }
 
 const DemographicsSearch = ({ patient }: { patient: any }) => {
-  const { mutate, isPending, isSuccess } = searchPotentialDuplicates();
+  // const { mutate, isPending, isSuccess } = searchPotentialDuplicates();
+
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isPending, setIsPending] = useState(false)
   const [searchedPatient, setSearchedPatient] = useState({});
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
-    mutate({
-      given_name: values.firstName,
-      family_name: values.lastName,
-      gender: values.gender,
-      birthdate: values.birthdate,
-      attributes: {
-        home_village: values.homeVillage,
-        home_traditional_authority: values.homeTraditionalAuthority,
-        home_district: values.homeDistrict,
-      },
-    });
+    setIsPending(true);
+
+    setTimeout(() => {
+      setIsPending(false)
+      setIsSuccess(true)
+    }, 2000)
+
+    // mutate({
+    //   given_name: values.firstName,
+    //   family_name: values.lastName,
+    //   gender: values.gender,
+    //   birthdate: values.birthdate,
+    //   attributes: {
+    //     home_village: values.homeVillage,
+    //     home_traditional_authority: values.homeTraditionalAuthority,
+    //     home_district: values.homeDistrict,
+    //   },
+    // });
   };
   return (
     <>
@@ -119,17 +129,23 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
       />
       <br />
       <OverlayLoader open={isPending} />
-      {(isPending || true) && (
+      {(isSuccess || isPending) && <SearchResults
+        loading={isPending}
+        searchResults={{}}
+        searchedPatient={searchedPatient}
+      />
+      }
+      {/* {(isPending || true) && (
         <SearchResults
           loading={isPending}
           searchResults={{}}
           searchedPatient={searchedPatient}
         />
-      )}
+      )} */}
     </>
   );
 };
 
 const NPIDSearch = () => {
-  return <SearchNPIDForm onSubmit={() => {}} />;
+  return <SearchNPIDForm onSubmit={() => { }} />;
 };

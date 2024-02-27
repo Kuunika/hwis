@@ -126,7 +126,7 @@ const schema = Yup.object().shape({
     .label(form.identificationNumber.label),
   [form.firstName.name]: Yup.string().required().label(form.firstName.label),
   [form.phoneNumber.name]: Yup.string()
-    .required().matches(phoneRegex,"phone number not valid").min(10)
+    .required().matches(phoneRegex, "phone number not valid").min(10)
     .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.string().label(form.dob.label),
@@ -168,7 +168,7 @@ const schema = Yup.object().shape({
 
   [form.guardianPhoneNumber.name]: Yup.string()
     .required()
-    .matches(phoneRegex,"Phone Number valid").min(10)
+    .matches(phoneRegex, "Phone Number valid").min(10)
     .label(form.guardianPhoneNumber.label),
 });
 

@@ -1,6 +1,7 @@
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { Panel } from ".";
 import { useEffect, useState } from "react";
+import { LabResultsTable } from "./labResults";
 
 export const Results = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +17,7 @@ export const Results = () => {
   }
   return (
     <Panel title="Results">
-      <>Result</>
+      <LabResultsTable rows={[]} />
     </Panel>
   );
 };

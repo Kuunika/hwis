@@ -6,6 +6,7 @@ import { ProviderTheme } from "@/components/providers";
 import { ContextProviders, ReactQueryProvider } from "@/providers";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigation } from "@/hooks";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>

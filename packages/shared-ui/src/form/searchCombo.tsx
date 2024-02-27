@@ -59,7 +59,8 @@ export const SearchComboBox: FC<Props> = ({
         </li>
       )}
       onChange={(event: any, newValue: any) => {
-        console.log(event);
+
+        console.log(event)
         const inputValue = multiple ? newValue : newValue.id;
         setFieldValue(name, inputValue);
         if (getValue) {

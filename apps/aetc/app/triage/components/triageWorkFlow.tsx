@@ -30,7 +30,7 @@ export default function TriageWorkFlow() {
   const [triageResult, setTriageResult] = useState<TriageResult>("");
   const [continueTriage, setContinueTriage] = useState(false)
   const { data: triageList } = getPatientsWaitingForTriage();
-  const [conceptTriageResult, setConceptTriageResult]= useState<any>({})
+  const [conceptTriageResult, setConceptTriageResult] = useState<any>({})
 
 
   const {
@@ -180,31 +180,38 @@ export default function TriageWorkFlow() {
   }, [disabilityCreated]);
 
 
+  // useEffect(() => {
+  //   if (painCreated) {
+  //     setCompleted(6);
+  //     setMessage("finalizing...");
+
+  //     createPain({
+  //       encounterType: encounters.TRIAGE_RESULT,
+  //       visit: patient?.visit_uuid,
+  //       patient: params.id,
+  //       encounterDatetime: dateTime,
+  //       obs: [{
+  //         concept: concepts.TRIAGE_RESULT,
+  //         value: triageResult,
+  //         obsDatetime: dateTime
+  //       }]
+  //     });
+  //   }
+  // }, [painCreated]);
+
+  // useEffect(() => {
+  //   if (triageResultCreated) {
+  //     setCompleted(7);
+  //     setLoading(false);
+  //   }
+  // }, [triageResultCreated]);
+
   useEffect(() => {
     if (painCreated) {
       setCompleted(6);
-      setMessage("adding pain and persistent...");
-
-      createPain({
-        encounterType: encounters.TRIAGE_RESULT,
-        visit: patient?.visit_uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: [{
-          concept: concepts.TRIAGE_RESULT,
-          value: triageResult,
-          obsDatetime: dateTime
-        }] 
-      });
-    }
-  }, [painCreated]);
-
-  useEffect(() => {
-    if (triageResultCreated) {
-      setCompleted(7);
       setLoading(false);
     }
-  }, [triageResultCreated]);
+  }, [painCreated]);
 
   useEffect(() => {
     const error =
@@ -213,7 +220,9 @@ export default function TriageWorkFlow() {
       airwayError ||
       bloodError ||
       disabilityError ||
+      triageResultError ||
       painError;
+
 
     setError(error);
   }, [
@@ -223,6 +232,7 @@ export default function TriageWorkFlow() {
     bloodError,
     disabilityError,
     painError,
+    triageResultError
   ]);
 
   const handlePersistentPain = (values: any) => {
@@ -269,35 +279,35 @@ export default function TriageWorkFlow() {
   };
 
 
-  useEffect(()=>{
+  useEffect(() => {
     let tResult = '';
-    const keys =Object.keys(conceptTriageResult);
+    const keys = Object.keys(conceptTriageResult);
 
-    for (let i=0; i<keys.length;i++){
+    for (let i = 0; i < keys.length; i++) {
 
-    
+
       if (conceptTriageResult[keys[i]] == 'red') {
-        tResult='red';
+        tResult = 'red';
         break;
       }
-      if (conceptTriageResult[keys[i]]  == 'yellow') {
-        tResult='yellow';
+      if (conceptTriageResult[keys[i]] == 'yellow') {
+        tResult = 'yellow';
       }
 
-      if(tResult!='yellow'){
-        tResult="green"
+      if (tResult != 'yellow') {
+        tResult = "green"
       }
     }
-   
-    setTriageResult(tResult as TriageResult)
-  },[conceptTriageResult])
 
-  const checkTriageResult = (triage: TriageResult,name:string) => {
-    setConceptTriageResult((concept:any)=> {
-      
-     return {...concept, [name]:triage }
+    setTriageResult(tResult as TriageResult)
+  }, [conceptTriageResult])
+
+  const checkTriageResult = (triage: TriageResult, name: string) => {
+    setConceptTriageResult((concept: any) => {
+
+      return { ...concept, [name]: triage }
     })
-  
+
   }
   return (
     <>

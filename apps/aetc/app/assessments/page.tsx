@@ -14,10 +14,10 @@ export default function AssessmentPage() {
     <>
       <Navigation title="Patients Waiting For Assessments" link="/" />
       <MainGrid container>
-        <MainGrid xs={1} lg={2} item></MainGrid>
+        <MainGrid xs={1} lg={1} item></MainGrid>
         <MainGrid
           xs={10}
-          lg={8}
+          lg={10}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -37,7 +37,7 @@ export default function AssessmentPage() {
             <ClientWaitingForAssessment />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid xs={1} lg={2} item></MainGrid>
+        <MainGrid xs={1} lg={1} item></MainGrid>
       </MainGrid>
     </>
   );

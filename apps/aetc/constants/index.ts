@@ -14,7 +14,9 @@ export const encounters = {
   SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
   FINANCING: "ceec1aca-1bbb-427a-bc6d-ef8ae11f31b2",
   PRESENTING_COMPLAINTS: "ba069102-8d80-11d8-abbb-0024217bb78e",
-TRIAGE_RESULT:""
+
+  // temporary
+  TRIAGE_RESULT:"ba069102-8d80-11d8-abbb-0024217bb78e"
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";

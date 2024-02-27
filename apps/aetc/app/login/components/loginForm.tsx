@@ -12,8 +12,9 @@ import * as yup from "yup";
 import Image from "next/image";
 import { Login } from "@/hooks/login";
 import { useNavigation } from "@/hooks";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { OverlayLoader } from "@/components/backdrop";
+import { AuthContext, AuthContextType } from "@/contexts";
 
 const schema = yup.object({
   username: yup.string().label("Username"),
@@ -27,9 +28,11 @@ type props = {
 export const LoginForm = () => {
   const { mutate, isPending, isError, isSuccess, data } = Login();
   const { navigateTo } = useNavigation();
+  const { setLoggedIn } = useContext(AuthContext) as AuthContextType;
 
   useEffect(() => {
     if (isSuccess) {
+      setLoggedIn(true);
       navigateTo("/");
     }
   }, [isSuccess]);
@@ -78,7 +81,7 @@ export const LoginForm = () => {
                 label="Password"
                 type="password"
               />
-              <MainButton type="submit" title={"Login"} onClick={() => {}} />
+              <MainButton type="submit" title={"Login"} onClick={() => { }} />
             </WrapperBox>
           </FormikInit>
         </WrapperBox>

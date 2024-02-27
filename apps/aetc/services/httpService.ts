@@ -60,7 +60,7 @@ export async function login(
       message: response.statusText,
     };
   } catch (error: any) {
-    console.log(error);
+
     throw new Error(error.response.message);
   }
 }

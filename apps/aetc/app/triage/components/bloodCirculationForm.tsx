@@ -80,9 +80,9 @@ const schema = Yup.object().shape({
 const initialValues = getInitialValues(form);
 type Prop = {
   onSubmit: (values: any) => void;
-  setTriageResult?:(triage:any)=>void
-  triageResult:string
-  continueTriage:boolean
+  setTriageResult?: (triage: any) => void
+  triageResult: string
+  continueTriage: boolean
 };
 
 const options = [
@@ -90,7 +90,7 @@ const options = [
   { label: "No", value: NO },
 ];
 
-export const BloodCirculationForm = ({ onSubmit, triageResult,continueTriage }: Prop) => {
+export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("");
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, aggregateOrCondition, conditions } =
@@ -109,7 +109,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult,continueTriage }: 
       onSubmit={onSubmit}
       submitButtonText="next"
     >
-   
+
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout
@@ -129,7 +129,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult,continueTriage }: 
         <>
           <FormFieldContainerLayout title="Heart Rate and Pulse">
             <FieldsContainer>
-              <RadioGroupInput
+              {/* <RadioGroupInput
                 name={form.heartRate.name}
                 label={form.heartRate.label}
                 options={options}
@@ -137,7 +137,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult,continueTriage }: 
                 getValue={(value) =>
                   updateConditions(form.heartRate.name, value)
                 }
-              />
+              /> */}
               <RadioGroupInput
                 name={form.weakIrregularPulse.name}
                 label={form.weakIrregularPulse.label}
@@ -204,7 +204,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult,continueTriage }: 
           </FormFieldContainerLayout>
           {!aggregateOrCondition && Object.keys(conditions).length == 6 && (
             <>
-              <FormFieldContainerLayout
+              {/* <FormFieldContainerLayout
                 last={true}
                 title="Heart Rate and Temperature"
               >
@@ -222,7 +222,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult,continueTriage }: 
                     options={options}
                   />
                 </FieldsContainer>
-              </FormFieldContainerLayout>
+              </FormFieldContainerLayout> */}
             </>
           )}
         </>

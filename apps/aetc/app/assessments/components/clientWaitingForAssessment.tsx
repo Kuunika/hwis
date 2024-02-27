@@ -56,8 +56,9 @@ export const ClientWaitingForAssessment = () => {
                 cell.value == "red"
                   ? "#B42318"
                   : cell.value == "green"
-                  ? "#016302"
-                  : "#B54708",
+                    ? "#016302"
+                    // : "#B54708",
+                    : "#016302",
               marginY: 1,
             }}
           ></WrapperBox>
