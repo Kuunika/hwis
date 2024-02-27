@@ -1,3 +1,4 @@
+
 export const getDateTime = () => new Date().toISOString();
 
 export const calculateAge = (birthdate: string | Date) => {
@@ -10,3 +11,15 @@ export const calculateAge = (birthdate: string | Date) => {
   }
   return age;
 };
+
+
+export const getTime = (dateString: string) => {
+  const date = new Date(dateString);
+
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  const seconds = date.getUTCSeconds();
+
+
+  return `${hours}:${minutes}:${seconds}`
+}

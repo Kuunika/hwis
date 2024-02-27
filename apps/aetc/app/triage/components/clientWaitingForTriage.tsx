@@ -1,3 +1,4 @@
+import { getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { BaseTable, MainButton } from "shared-ui/src";
@@ -6,7 +7,7 @@ export const ClientWaitingForTriage = () => {
   const { data: patients, isLoading } = getPatientsWaitingForTriage();
   const { navigateTo } = useNavigation();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p }));
+  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },

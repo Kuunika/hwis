@@ -42,6 +42,7 @@ export interface Person {
   addresses: Address[];
   uuid: string;
   visit_uuid: string;
+  arrival_time: string
 }
 
 interface EncounterType {
@@ -92,13 +93,13 @@ export interface Visit {
 }
 
 export interface LabRequest {
-  id?:any;
-  uuid:string,
-  test:string;
-  sample:string;
-  sampleType:string;
-  specimenSite:string
-  testType?:string
+  id?: any;
+  uuid: string,
+  test: string;
+  sample: string;
+  sampleType: string;
+  specimenSite: string
+  testType?: string
 }
 
 export interface IApiService {

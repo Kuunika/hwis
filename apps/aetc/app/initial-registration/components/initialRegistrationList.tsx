@@ -1,3 +1,4 @@
+import { getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getVisitNum } from "@/hooks/visitNumber";
@@ -10,10 +11,10 @@ export const InitialRegistrationList = () => {
   const {
     data: patients,
     isLoading,
-    refetch,
+
   } = getPatientsWaitingForPrescreening();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p }));
+  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
