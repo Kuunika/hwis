@@ -23,6 +23,7 @@ import Image from "next/image";
 import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
 import { VitalsPanel } from "./panels/vitalsDetails";
 import { BasicSelect } from "./basicSelect";
+import { FaFileAlt } from "react-icons/fa";
 
 
 export const DesktopView = () => {
@@ -123,11 +124,14 @@ const ActionMenu = () => {
   return (
     <>
       <MainButton
+        icon={<FaFileAlt />}
         aria-controls={open ? "basic-menu" : undefined}
+        sx={{ borderRadius: "1px" }}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
+        variant="secondary"
         onClick={handleClick}
-        title={"start"}
+        title={"forms"}
       />
       <Menu
         id="basic-menu"
