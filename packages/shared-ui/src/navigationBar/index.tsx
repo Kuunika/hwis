@@ -46,7 +46,7 @@ export function NavigationBar({
         position="static"
         sx={{
           backgroundColor: "#006401",
-          px: "8ch",
+          px: { lg: "8ch", xs: "1ch" },
         }}
       >
         <Toolbar>
