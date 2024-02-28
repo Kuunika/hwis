@@ -19,6 +19,7 @@ export const NavBar = () => {
 
 
   const handleLogout = () => {
+    localStorage.clear()
     setLoggedIn(false)
     navigateTo("/login")
   }
