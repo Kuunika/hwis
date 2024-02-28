@@ -56,7 +56,8 @@ export function NavigationBar({
             color="inherit"
             aria-label="open drawer"
           >
-            <FaAlignJustify />
+            <img height={25} width={30} src="/Flag_of_Malawi.svg" alt="malawiflag" />
+            {/* <FaAlignJustify /> */}
           </IconButton>
           <Typography
             variant="h6"
