@@ -1,5 +1,4 @@
 import { create, getAll } from "./httpService";
-import { emrApiClient } from "./apiClients";
 import { Encounter } from "@/interfaces";
 
 const endpoint = "/encounters";
