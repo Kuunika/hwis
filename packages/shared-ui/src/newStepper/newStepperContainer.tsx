@@ -17,7 +17,6 @@ import {
   StepperTablet,
   WrapperBox,
 } from "..";
-
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
@@ -90,14 +89,13 @@ export function NewStepperContainer({
         </MainPaper>
       </MainGrid>
 
-      <MainGrid item sx={{ display: { xs: "block", lg: "none" } }} xs={12}>
-        <StepperTablet steps={steps} active={active} />
-      </MainGrid>
-
       <MainGrid item xs={1} lg={0}></MainGrid>
 
       <MainGrid item xs={10} lg={8}>
         <WrapperBox width={"100%"}>
+          <MainGrid item sx={{ display: { xs: "block", lg: "none" } }} xs={12}>
+            <StepperTablet steps={steps} active={active} />
+          </MainGrid>
           <WrapperBox
             onClick={() => onBack && onBack()}
             sx={{ display: { lg: "flex", xs: "none" }, cursor: "pointer" }}
