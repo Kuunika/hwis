@@ -8,8 +8,6 @@ import Typography from "@mui/material/Typography";
 import { FaRegBell, FaCircleUser } from "react-icons/fa6";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
-import { FaAlignJustify } from "react-icons/fa";
 import { MainTypography } from "..";
 
 export function NavigationBar({
