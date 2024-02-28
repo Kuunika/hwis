@@ -7,7 +7,7 @@ export const PatientInfoTab = () => {
       sx={{
         display: "flex",
         justifyContent: "space-evenly",
-        padding: "24px 108px", // padding: 24px, 108px, 24px, 108px
+        padding: { lg: "24px 108px", xs: "24px 20px" },// padding: 24px, 108px, 24px, 108px
         backgroundColor: "#fff",
         borderBottom: "1px solid #B3B3B3",
         boxShadow: "0px 8px 24px 0px #084A231A",
@@ -22,9 +22,9 @@ export const PatientInfoTab = () => {
   );
 };
 
-const LabelValue = ({ label, value }: { label: string; value: string }) => {
+const LabelValue = ({ label, value, sx }: { label: string; value: string, sx?: any }) => {
   return (
-    <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
+    <WrapperBox sx={{ display: "flex", alignItems: "center", ...sx }}>
       <MainTypography
         sx={{
           fontFamily: "Inter",
