@@ -94,6 +94,8 @@ const schema = yup.object({
   [form.respiratoryRate.name]: yup
     .string()
     .required()
+    .min(0)
+    .max(90)
     .label(form.respiratoryRate.label),
   [form.saturationRate.name]: yup
     .number()

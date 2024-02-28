@@ -81,7 +81,9 @@ export const LoginForm = () => {
                 label="Password"
                 type="password"
               />
+              {isError && <MainTypography variant="body2" color={"#FF0000"}>Invalid Credentials</MainTypography>}
               <MainButton type="submit" title={"Login"} onClick={() => { }} />
+
             </WrapperBox>
           </FormikInit>
         </WrapperBox>

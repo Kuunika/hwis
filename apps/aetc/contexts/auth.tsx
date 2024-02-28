@@ -11,7 +11,10 @@ export type AuthContextType = {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    const [loggedIn, setLoggedIn] = useState<boolean>(Boolean(localStorage.getItem("accessToken")));
+
+
+
 
     return (
         <AuthContext.Provider value={{ loggedIn, setLoggedIn }}>
