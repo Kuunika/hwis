@@ -14,6 +14,6 @@ export const getFacilities = () => {
     queryKey: ["facilities"],
     queryFn: getMHFRFacilities,
     enabled: true,
-    initialData: () => facilities
+    initialData: facilities
   });
 };

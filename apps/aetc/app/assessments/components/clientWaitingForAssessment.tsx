@@ -40,7 +40,7 @@ export const ClientWaitingForAssessment = () => {
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
-    { field: "dob", headerName: "Date Of Birth", flex: 1 },
+    { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
     { field: "gender", headerName: "Gender", flex: 1 },
     {
       field: "triageCategory",
