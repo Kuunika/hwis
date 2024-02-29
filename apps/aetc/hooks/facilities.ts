@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import facilities from "../constants/facilities-latest.json"
 import axios from "axios";
 export const getFacilities = () => {
   const getMHFRFacilities = async () => {
@@ -13,5 +14,6 @@ export const getFacilities = () => {
     queryKey: ["facilities"],
     queryFn: getMHFRFacilities,
     enabled: true,
+    initialData: () => facilities
   });
 };
