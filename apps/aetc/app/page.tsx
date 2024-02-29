@@ -5,7 +5,7 @@ import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
 import { useNavigation } from "@/hooks";
 
 
-import { FcRules, FcSearch, FcTodoList, FcPlus } from "react-icons/fc";
+import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings } from "react-icons/fc";
 
 export default function Home() {
   return (
@@ -63,6 +63,11 @@ export default function Home() {
             link="/assessments"
             title="Patients Waiting for Assessment "
           />
+          <Card
+            icon={<FcSettings />}
+            link="/config"
+            title="Config"
+          />
           {/* <Card link="/prescreening" title="Prescreening" /> */}
         </MainGrid>
         <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
@@ -89,6 +94,7 @@ const Card = ({
         p: "1ch",
         m: "1ch",
         width: { xs: "100%", sm: "25%" },
+        height: "15ch",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
