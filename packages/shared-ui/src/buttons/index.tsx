@@ -31,6 +31,7 @@ export const MainButton: FC<Props> = ({
           ...variantStyles,
           textTransform: "capitalize",
           color: "#fff",
+          borderRadius: "1px",
           ...sx,
         } as SxProps
       }
