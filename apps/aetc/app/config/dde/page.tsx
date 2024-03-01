@@ -34,7 +34,7 @@ export default function Page() {
             <OverlayLoader open={searching} />
             {result && <>
                 <MainTypography variant="h5">Search Results</MainTypography>
-                <MergeDuplicates />
+                <MergeDuplicates onCancel={() => setResult(false)} />
             </>}
         </WrapperBox>
     </>

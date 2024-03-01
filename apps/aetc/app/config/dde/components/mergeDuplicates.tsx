@@ -37,7 +37,7 @@ const results = [
         selected: false
     }
 ]
-export const MergeDuplicates = () => {
+export const MergeDuplicates = ({ onCancel }: { onCancel: () => void }) => {
     const [patientResult, setPatientResult] = useState<Array<any>>(results);
 
     const handleSelect = (id: string) => {
@@ -51,7 +51,7 @@ export const MergeDuplicates = () => {
     return <WrapperBox>
         {patientResult.filter(p => p.selected).length > 1 && <>
             <MainButton sx={{ mr: "0.3ch" }} title={"merge"} onClick={() => { }} />
-            <MainButton title={"cancel"} variant="secondary" onClick={() => { }} />
+            <MainButton title={"cancel"} variant="secondary" onClick={onCancel} />
         </>}
         {patientResult.map((r) => <ResultRow onClick={handleSelect} person={r} key={r.id} />)}
     </WrapperBox>
