@@ -12,7 +12,7 @@ const results = [
         village: "vingula",
         gender: "M",
         dateofbirth: "08-01-1994",
-        selected: true
+        selected: false
     },
     {
         id: "2",
@@ -46,13 +46,20 @@ export const MergeDuplicates = ({ onCancel }: { onCancel: () => void }) => {
         patients[index].selected = !patients[index].selected;
         setPatientResult(patients)
     }
+    const enableMerge = patientResult.filter(p => p.selected).length > 1;
 
+    let disabled
+
+    if (!enableMerge) {
+
+        disabled = { backgroundColor: "transparent" }
+    }
 
     return <WrapperBox>
-        {patientResult.filter(p => p.selected).length > 1 && <>
-            <MainButton sx={{ mr: "0.3ch" }} title={"merge"} onClick={() => { }} />
+        <>
+            <MainButton disabled={!enableMerge} sx={{ mr: "0.3ch", color: "#fff", ...disabled }} title={"merge"} onClick={() => { }} />
             <MainButton title={"cancel"} variant="secondary" onClick={onCancel} />
-        </>}
+        </>
         {patientResult.map((r) => <ResultRow onClick={handleSelect} person={r} key={r.id} />)}
     </WrapperBox>
 }

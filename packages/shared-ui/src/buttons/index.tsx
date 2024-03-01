@@ -10,6 +10,7 @@ type Props = {
   sx?: SxProps;
   icon?: any;
   iconRight?: any;
+  disabled?: boolean;
 };
 
 export const MainButton: FC<Props> = ({
@@ -20,12 +21,14 @@ export const MainButton: FC<Props> = ({
   sx,
   icon,
   iconRight,
+  disabled = false
 }) => {
   const variantStyles = buttonStyles[variant];
 
   return (
     <Button
       type={type}
+      disabled={disabled}
       sx={
         {
           ...variantStyles,

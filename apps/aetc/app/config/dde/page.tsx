@@ -29,11 +29,11 @@ export default function Page() {
     return <>
         <WrapperBox sx={{ width: "70%" }}>
 
-            {!result && <><MainTypography variant="h5">Search Patient</MainTypography>
+            {!result && <><MainTypography textAlign={"center"} variant="h5">Search Patient</MainTypography>
                 <br /> <SearchTab npid={<SearchNPIDForm onSubmit={() => setSearching(true)} />} demographics={<SearchForm onSubmit={() => setSearching(true)} />} /></>}
             <OverlayLoader open={searching} />
             {result && <>
-                <MainTypography variant="h5">Search Results</MainTypography>
+                <MainTypography textAlign={"center"} variant="h5">Search Results</MainTypography>
                 <MergeDuplicates onCancel={() => setResult(false)} />
             </>}
         </WrapperBox>
