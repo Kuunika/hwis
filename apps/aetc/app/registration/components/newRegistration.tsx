@@ -305,7 +305,7 @@ export const NewRegistrationFlow = () => {
                   // setCompleted(0);
                 }}
                 onSecondaryAction={() => {
-                  navigateTo("/");
+                  navigateTo("/dashboard");
                 }}
               />
             </>

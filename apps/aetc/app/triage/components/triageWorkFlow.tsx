@@ -370,7 +370,7 @@ export default function TriageWorkFlow() {
             setCompleted(0);
             navigateTo("/triage");
           }}
-          onSecondaryAction={() => navigateTo("/")}
+          onSecondaryAction={() => navigateTo("/dashboard")}
         />
       )}
 

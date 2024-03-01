@@ -189,7 +189,7 @@ export default function InitialRegistration() {
                 refresh();
               }}
               onSecondaryAction={() => {
-              navigateTo("/")
+                navigateTo("/dashboard")
               }}
             />
           )}

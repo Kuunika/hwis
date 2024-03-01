@@ -33,7 +33,7 @@ export const LoginForm = () => {
   useEffect(() => {
     if (isSuccess) {
       setLoggedIn(true);
-      navigateTo("/");
+      navigateTo("/dashboard");
     }
   }, [isSuccess]);
 

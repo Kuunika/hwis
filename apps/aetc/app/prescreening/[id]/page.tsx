@@ -117,7 +117,7 @@ export default function Prescreening() {
                 setCompleted(0);
               }}
               onSecondaryAction={() => {
-                navigateTo("/");
+                navigateTo("/dashboard");
               }}
             />
           )}
