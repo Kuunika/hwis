@@ -13,7 +13,7 @@ export const NavBar = () => {
 
   useEffect(() => {
     if (!loggedIn) {
-      navigateTo("/login")
+      navigateTo("/")
     }
   }, [])
 
@@ -21,7 +21,7 @@ export const NavBar = () => {
   const handleLogout = () => {
     localStorage.clear()
     setLoggedIn(false)
-    navigateTo("/login")
+    navigateTo("/")
   }
 
   const search = (
