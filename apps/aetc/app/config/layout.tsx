@@ -15,8 +15,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
     return <>
         <MainGrid sx={{ mt: "10ch" }} container>
-            <MainGrid item lg={2}></MainGrid>
-            <MainGrid item lg={8}>
+            <MainGrid item xs={0} lg={2}></MainGrid>
+            <MainGrid item xs={12} lg={8}>
                 <WrapperBox display={"flex"}>
                     <WrapperBox sx={{ width: "20%" }}>
                         {
@@ -37,10 +37,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                             })
                         }
                     </WrapperBox>
-                    <WrapperBox sx={{ width: "80%", ml:"1ch" }}>{children}</WrapperBox>
+                    <WrapperBox sx={{ width: "80%", ml: "1ch" }}>{children}</WrapperBox>
                 </WrapperBox>
             </MainGrid>
-            <MainGrid item lg={2}></MainGrid>
+            <MainGrid item xs={0} lg={2}></MainGrid>
 
         </MainGrid>
 

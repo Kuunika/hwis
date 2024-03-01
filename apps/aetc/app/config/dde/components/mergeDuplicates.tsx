@@ -45,7 +45,7 @@ export const MergeDuplicates = () => {
 
 const ResultRow = ({ person }: { person: any }) => {
     return <WrapperBox sx={{ display: "flex", p: "1ch", borderRadius: "2px", my: "1ch", cursor: "pointer", justifyContent: "space-between", "&:hover": { backgroundColor: "#DDE0E5" } }}>
-        <WrapperBox><MainTypography variant="h4"><FaRegSquare /></MainTypography></WrapperBox>
+        <WrapperBox><MainTypography variant="h6"><FaRegSquare /></MainTypography></WrapperBox>
         <WrapperBox sx={{ ml: "1ch", width: "70%" }}>
             <LabelValue label="Name" value={`${person.firstName} ${person.lastName}(${person.gender}) ${person.dateofbirth} `} />
             <LabelValue label="Home District" value={person.district} />
