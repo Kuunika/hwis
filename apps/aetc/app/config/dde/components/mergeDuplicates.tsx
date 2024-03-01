@@ -49,6 +49,10 @@ export const MergeDuplicates = () => {
 
 
     return <WrapperBox>
+        {patientResult.filter(p => p.selected).length > 1 && <>
+            <MainButton sx={{ mr: "0.3ch" }} title={"merge"} onClick={() => { }} />
+            <MainButton title={"cancel"} variant="secondary" onClick={() => { }} />
+        </>}
         {patientResult.map((r) => <ResultRow onClick={handleSelect} person={r} key={r.id} />)}
     </WrapperBox>
 }
