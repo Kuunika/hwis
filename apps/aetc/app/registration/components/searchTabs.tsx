@@ -3,6 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { WrapperBox } from "shared-ui/src";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -62,7 +63,10 @@ export function SearchTab({
       <br />
       <br />
       <CustomTabPanel value={value} index={0}>
+
+
         {demographics}
+
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         {npid}

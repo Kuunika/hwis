@@ -8,7 +8,7 @@ export const checkLoggedIn = () => {
     useEffect(() => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
-            navigateTo("/login")
+            navigateTo("/")
         }
     }, [])
 

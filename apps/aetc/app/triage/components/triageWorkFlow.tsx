@@ -180,38 +180,38 @@ export default function TriageWorkFlow() {
   }, [disabilityCreated]);
 
 
-  // useEffect(() => {
-  //   if (painCreated) {
-  //     setCompleted(6);
-  //     setMessage("finalizing...");
-
-  //     createPain({
-  //       encounterType: encounters.TRIAGE_RESULT,
-  //       visit: patient?.visit_uuid,
-  //       patient: params.id,
-  //       encounterDatetime: dateTime,
-  //       obs: [{
-  //         concept: concepts.TRIAGE_RESULT,
-  //         value: triageResult,
-  //         obsDatetime: dateTime
-  //       }]
-  //     });
-  //   }
-  // }, [painCreated]);
-
-  // useEffect(() => {
-  //   if (triageResultCreated) {
-  //     setCompleted(7);
-  //     setLoading(false);
-  //   }
-  // }, [triageResultCreated]);
-
   useEffect(() => {
     if (painCreated) {
       setCompleted(6);
-      setLoading(false);
+      setMessage("finalizing...");
+
+      createTriageResult({
+        encounterType: encounters.TRIAGE_RESULT,
+        visit: patient?.visit_uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: [{
+          concept: concepts.TRIAGE_RESULT,
+          value: triageResult,
+          obsDatetime: dateTime
+        }]
+      });
     }
   }, [painCreated]);
+
+  useEffect(() => {
+    if (triageResultCreated) {
+      setCompleted(7);
+      setLoading(false);
+    }
+  }, [triageResultCreated]);
+
+  // useEffect(() => {
+  //   if (painCreated) {
+  //     setCompleted(6);
+  //     setLoading(false);
+  //   }
+  // }, [painCreated]);
 
   useEffect(() => {
     const error =
@@ -221,7 +221,7 @@ export default function TriageWorkFlow() {
       bloodError ||
       disabilityError ||
       triageResultError ||
-      painError;
+      painError
 
 
     setError(error);
@@ -284,7 +284,6 @@ export default function TriageWorkFlow() {
     const keys = Object.keys(conceptTriageResult);
 
     for (let i = 0; i < keys.length; i++) {
-
 
       if (conceptTriageResult[keys[i]] == 'red') {
         tResult = 'red';
@@ -361,7 +360,7 @@ export default function TriageWorkFlow() {
           </NewStepperContainer>
         </>
       )}
-      {completed == 6 && (
+      {completed == 7 && (
         <OperationSuccess
           title="Patient Triaged Successful"
           primaryActionText="Triage more patients"
@@ -371,7 +370,7 @@ export default function TriageWorkFlow() {
             setCompleted(0);
             navigateTo("/triage");
           }}
-          onSecondaryAction={() => navigateTo("/")}
+          onSecondaryAction={() => navigateTo("/dashboard")}
         />
       )}
 
@@ -399,7 +398,7 @@ export default function TriageWorkFlow() {
           <br />
           <CustomizedProgressBars
             message={message}
-            progress={(completed / 6) * 100}
+            progress={(completed / 7) * 100}
           />
         </>
       )}

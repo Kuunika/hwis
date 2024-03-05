@@ -1,11 +1,11 @@
 import { FC } from "react";
-import { Box } from "@mui/material";
+
 import * as Yup from "yup";
 import {
   FormikInit,
   RadioGroupInput,
   SelectInputField,
-  FieldsContainer,
+
 } from "shared-ui/src";
 import { concepts } from "@/constants";
 import {
@@ -156,8 +156,12 @@ export const SocialHistoryForm: FC<Prop> = ({
           <SelectInputField
             name={form.highestEducation.name}
             selectItems={[
-              { name: "Degree", value: "degree" },
-              { name: "Master's Degree", value: "master" },
+              { name: "Primary", value: "primary" },
+              { name: "Secondary", value: "secondary" },
+              { name: "Tertiary", value: "tertiary" },
+              { name: "None", value: "none" },
+              { name: "Other", value: "other" },
+
             ]}
             label={form.highestEducation.label}
             id={form.highestEducation.name}

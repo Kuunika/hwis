@@ -13,7 +13,7 @@ export const NavBar = () => {
 
   useEffect(() => {
     if (!loggedIn) {
-      navigateTo("/login")
+      navigateTo("/")
     }
   }, [])
 
@@ -21,7 +21,7 @@ export const NavBar = () => {
   const handleLogout = () => {
     localStorage.clear()
     setLoggedIn(false)
-    navigateTo("/login")
+    navigateTo("/")
   }
 
   const search = (
@@ -40,6 +40,6 @@ export const NavBar = () => {
 
   // return <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />;
   return <>
-    <NavigationBar loggedIn={loggedIn} handleLogout={handleLogout} onTitleClick={() => navigateTo("/")} />
+    <NavigationBar loggedIn={loggedIn} handleLogout={handleLogout} onTitleClick={() => navigateTo("/dashboard")} />
   </>
 };

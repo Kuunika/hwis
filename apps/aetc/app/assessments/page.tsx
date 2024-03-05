@@ -12,7 +12,7 @@ import { Navigation } from "../components/navigation";
 export default function AssessmentPage() {
   return (
     <>
-      <Navigation title="Patients Waiting For Assessments" link="/" />
+      <Navigation title="Patients Waiting For Assessments" link="/dashboard" />
       <MainGrid container>
         <MainGrid xs={1} lg={1} item></MainGrid>
         <MainGrid

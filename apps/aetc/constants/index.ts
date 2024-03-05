@@ -14,9 +14,7 @@ export const encounters = {
   SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
   FINANCING: "ceec1aca-1bbb-427a-bc6d-ef8ae11f31b2",
   PRESENTING_COMPLAINTS: "ba069102-8d80-11d8-abbb-0024217bb78e",
-
-  // temporary
-  TRIAGE_RESULT:"ba069102-8d80-11d8-abbb-0024217bb78e"
+  TRIAGE_RESULT: "27e4890f-1677-4098-aa85-c65cfe32359c"
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -166,7 +164,7 @@ export const concepts = {
   INSURANCE_STATUS: "c3350c35-76fe-4f32-9f59-799cddce66f7",
   PAYMENT_OPTIONS: "a4a38479-db24-44ec-9325-28e646162185",
 
-  TRIAGE_RESULT:"3a08ccd3-092a-444c-9ccf-343414529005"
+  TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096"
 };
 
 export const triageResult = {

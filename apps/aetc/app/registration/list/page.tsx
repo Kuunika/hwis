@@ -13,7 +13,7 @@ import { Navigation } from "@/app/components/navigation";
 export default function List() {
   return (
     <>
-      <Navigation title="Patients waiting registration" link="/" />
+      <Navigation title="Patients waiting registration" link="/dashboard" />
       <MainGrid container>
         <MainGrid xs={1} lg={2} item></MainGrid>
         <MainGrid
