@@ -12,7 +12,7 @@ import { Navigation } from "@/app/components/navigation";
 export default function InitialList() {
   return (
     <>
-      <Navigation title="Patients waiting prescreening" link="/" />
+      <Navigation title="Patients waiting prescreening" link="/dashboard" />
       <MainGrid container>
         <MainGrid xs={0} lg={2} item></MainGrid>
         <MainGrid

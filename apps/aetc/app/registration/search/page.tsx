@@ -27,7 +27,7 @@ export default function RegistrationSearch() {
 
   return (
     <>
-      <Navigation title="Search Patient" link="/" />
+      <Navigation title="Search Patient" link="/dashboard" />
       <WrapperBox
         sx={{
           display: "flex",
@@ -75,7 +75,7 @@ export default function RegistrationSearch() {
             position: "relative",
           }}
         >
-          <SearchForm onSubmit={() => {}} />
+          <SearchForm onSubmit={() => { }} />
           {/* <SearchContainer
             getResult={(results) => setSetResults(results)}
             initialSearch={search ? search : ""}
