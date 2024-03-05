@@ -13,7 +13,7 @@ import { Navigation } from "../components/navigation";
 export default function Triage() {
   return (
     <>
-      <Navigation title="Patients waiting for Triage" link="/" />
+      <Navigation title="Patients waiting for Triage" link="/dashboard" />
       <MainGrid container>
         <MainGrid xs={1} lg={2} item></MainGrid>
         <MainGrid

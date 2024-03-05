@@ -40,6 +40,6 @@ export const NavBar = () => {
 
   // return <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />;
   return <>
-    <NavigationBar loggedIn={loggedIn} handleLogout={handleLogout} onTitleClick={() => navigateTo("/")} />
+    <NavigationBar loggedIn={loggedIn} handleLogout={handleLogout} onTitleClick={() => navigateTo("/dashboard")} />
   </>
 };

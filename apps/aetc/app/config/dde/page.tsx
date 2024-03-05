@@ -27,7 +27,7 @@ export default function Page() {
 
 
     return <>
-        <WrapperBox sx={{ width: "70%" }}>
+        <WrapperBox sx={{ width: "100%" }}>
 
             {!result && <><MainTypography textAlign={"center"} variant="h5">Search Patient</MainTypography>
                 <br /> <SearchTab npid={<SearchNPIDForm onSubmit={() => setSearching(true)} />} demographics={<SearchForm onSubmit={() => setSearching(true)} />} /></>}
