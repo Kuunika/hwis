@@ -1,3 +1,4 @@
+import { getRoles } from "@/hooks/role";
 import {
     FieldsContainer,
     FormikInit,
@@ -34,6 +35,10 @@ const form = {
         name: "passwordConfirmation",
         label: "Password Confirmation",
     },
+    role: {
+        name: "role",
+        label: "Roles"
+    }
 };
 
 const schema = yup.object({
@@ -41,10 +46,12 @@ const schema = yup.object({
     [form.firstName.name]: yup.string().required().label(form.firstName.label),
     [form.lastName.name]: yup.string().required().label(form.lastName.label),
     [form.password.name]: yup.string().required().label(form.password.label),
-    [form.passwordConfirmation.name]: yup.string().oneOf([yup.ref(form.password.name), null], 'Passwords must match').label(form.passwordConfirmation.label),
+    [form.role.name]: yup.array().required().label(form.role.label),
+    [form.passwordConfirmation.name]: yup.string().required().oneOf([yup.ref(form.password.name), null], 'Passwords must match').label(form.passwordConfirmation.label),
 });
 
 export const UserForm = ({ initialValues, onSubmit }: props) => {
+    const { isLoading, data } = getRoles();
     return (
         <FormikInit
             initialValues={initialValues}
@@ -90,6 +97,11 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
                     sx={{ width: "100%" }}
                 />
             </WrapperBox>
+
+            <SearchComboBox label="Roles" name={form.role.name} options={data ? data.map(d => {
+                return { id: d.role, label: d.role }
+            }) : []} />
+
             <MainButton type="submit" title={"Submit"} onClick={() => { }} />
         </FormikInit>
     );
