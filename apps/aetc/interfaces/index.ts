@@ -102,6 +102,26 @@ export interface LabRequest {
   testType?: string
 }
 
+
+
+export interface Role {
+  role: string;
+  description: string;
+  uuid: string
+}
+
+export interface UserRole {
+  user_id: number;
+  role: Role
+
+}
+export interface User {
+  uuid: string;
+  username: string;
+  user_roles: UserRole[],
+  person: Person
+}
+
 export interface IApiService {
   getAll<T>(query?: string): Promise<any>;
 
