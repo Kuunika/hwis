@@ -87,7 +87,7 @@ export default function RegistrationSearch() {
             position: "relative",
           }}
         >
-          <SearchForm onSubmit={searchPatient} />
+          <SearchForm fullForm={false} onSubmit={searchPatient} />
           <br />
           {isSuccess && <ResultBox searchResults={data ? data : []} />}
         </WrapperBox>

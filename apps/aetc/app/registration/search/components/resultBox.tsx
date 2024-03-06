@@ -91,10 +91,10 @@ const Row = ({
         ...sx,
       }}
     >
-      <MainTypography flex={0.2}>{person_id}</MainTypography>
+      <MainTypography flex={0.1}>{person_id}</MainTypography>
       <MainTypography flex={0.4}>{`${given_name} ${family_name}`}</MainTypography>
       <MainTypography flex={0.2}>{gender}</MainTypography>
-      <MainTypography flex={0.2}>{`${birthdate} (${birthdate == "Birth date" ? "Age" : calculateAge(birthdate)})`}</MainTypography>
+      <MainTypography flex={0.3}>{`${birthdate} (${birthdate == "Birth date" ? "Age" : calculateAge(birthdate)})`}</MainTypography>
       <WrapperBox flex={0.1}>
         <MainTypography
           className="checkItem"
