@@ -6,5 +6,5 @@ const endPoint = "/users";
 export const createUser = (patientData: any) =>
     create(patientData, endPoint);
 
-export const getUsers = () => getAll<Array<User>>(endPoint);
+export const getUsers = () => getAll<User>(endPoint);
 

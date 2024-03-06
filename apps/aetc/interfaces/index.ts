@@ -42,7 +42,11 @@ export interface Person {
   addresses: Address[];
   uuid: string;
   visit_uuid: string;
-  arrival_time: string
+  arrival_time: string;
+  names: Array<{
+    given_name: string;
+    family_name: string
+  }>
 }
 
 interface EncounterType {
