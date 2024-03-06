@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchContainer } from "./components";
+import { ResultBox, SearchContainer } from "./components";
 import {
   MainButton,
   MainPaper,
@@ -9,7 +9,7 @@ import {
   defaultTheme,
 } from "shared-ui/src";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
 import plus from "../../../icons/plus.svg";
 import Image from "next/image";
@@ -17,13 +17,27 @@ import Image from "next/image";
 import { SearchForm } from "./components/searchForm";
 import { SearchResults } from "./components/searchResults";
 import { Navigation } from "@/app/components/navigation";
+import { searchPatients } from "@/hooks/people";
 
 export default function RegistrationSearch() {
-  // const searchParams = useSearchParams();
-  const [searchResults, setSetResults] = useState<Array<any>>([]);
-  // const search = searchParams.get("s");
-  const { navigateTo } = useNavigation();
-  const [searchName, setSearchName] = useState("");
+  const [patientData, setPatientData] = useState()
+  const { refetch } = searchPatients(patientData)
+  // search.
+
+
+  useEffect(() => {
+
+
+    if (!patientData) return;
+
+    refetch();
+
+  }, [patientData])
+
+
+  const searchPatient = (searchData: any) => {
+    setPatientData(searchData)
+  }
 
   return (
     <>
@@ -75,43 +89,10 @@ export default function RegistrationSearch() {
             position: "relative",
           }}
         >
-          <SearchForm onSubmit={() => { }} />
-          {/* <SearchContainer
-            getResult={(results) => setSetResults(results)}
-            initialSearch={search ? search : ""}
-            initialValue={search ? search : ""}
-            getSearch={(result) => setSearchName(result)}
-          />
-          {searchResults.length == 0 && (
-            <MainPaper sx={{ p: "1ch", mt: "1ch", width: "100%" }}>
-              <WrapperBox
-                sx={{
-                  border: "1px dashed #B3B3B3",
-                  py: "1ch",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <MainTypography
-                  sx={{
-                    fontFamily: "Inter",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                    letterSpacing: "0em",
-                    textAlign: "left",
-                    color: "#636363",
-                  }}
-                >
-                  No {`${searchName}`} patient in the system
-                </MainTypography>
-              </WrapperBox>
-              <AddPatientButton />
-            </MainPaper>
-          )} */}
+          <SearchForm onSubmit={searchPatient} />
+          <br />
+          <ResultBox searchResults={[]} />
         </WrapperBox>
-        <br />
-        {/* <SearchResults /> */}
       </WrapperBox>
     </>
   );

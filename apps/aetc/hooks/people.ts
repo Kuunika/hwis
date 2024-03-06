@@ -1,6 +1,6 @@
 import { getDateTime } from "@/helpers/dateTime";
-import { createRelationship, createPerson } from "@/services/people";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { createRelationship, createPerson, searchPerson } from "@/services/people";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 export const addPerson = () => {
   const queryClient = useQueryClient();
@@ -37,5 +37,22 @@ export const addRelationship = () => {
 
   return useMutation({
     mutationFn: addData,
+  });
+};
+
+
+export const searchPatients = (patient: any) => {
+  const getall = (patient: any) => {
+    const givenName = patient.firstName;
+    const familyName = patient.lastName
+
+    return searchPerson(`given_name=${givenName}&family_name=${familyName}&gender=&middle_name`).then((response) => response.data);
+  }
+
+
+  return useQuery({
+    queryKey: ["search"],
+    queryFn: () => getall(patient),
+    enabled: false,
   });
 };
