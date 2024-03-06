@@ -1,4 +1,4 @@
-import { createUser, getUsers } from "@/services/users";
+import { createUser, getUsers, searchUser } from "@/services/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 
@@ -44,5 +44,15 @@ export const getAllUsers = () => {
         queryKey: ["users"],
         queryFn: () => getall(),
         enabled: true,
+    });
+};
+export const checkUsername = (username: string) => {
+    const getall = () =>
+        searchUser(username).then((response) => response.data);
+
+    return useQuery({
+        queryKey: ["search", username],
+        queryFn: () => getall(),
+        enabled: false,
     });
 };

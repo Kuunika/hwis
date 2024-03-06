@@ -1,8 +1,11 @@
 import { getRoles } from "@/hooks/role";
+import { checkUsername } from "@/hooks/users";
+import { useEffect, useState } from "react";
 import {
     FieldsContainer,
     FormikInit,
     MainButton,
+    MainTypography,
     SearchComboBox,
     TextInputField,
     WrapperBox,
@@ -52,6 +55,18 @@ const schema = yup.object({
 
 export const UserForm = ({ initialValues, onSubmit }: props) => {
     const { isLoading, data } = getRoles();
+    const [username, setUsername] = useState("")
+    const { refetch, data: usernameResponse, isFetching } = checkUsername(username);
+
+    useEffect(() => {
+        if (Boolean(username)) {
+            refetch()
+        }
+    }, [username])
+
+
+    const usernameResponseMessage = usernameResponse?.length == 0 ? 'username is available' : 'username not available'
+
     return (
         <FormikInit
             initialValues={initialValues}
@@ -64,7 +79,9 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
                 label={form.userName.label}
                 id={form.userName.name}
                 sx={{ width: "100%" }}
+                getValue={value => setUsername(value)}
             />
+            <MainTypography variant="caption" my={"1ch"}>{usernameResponseMessage}</MainTypography>
             <WrapperBox sx={{ display: "flex" }}>
                 <TextInputField
                     name={form.password.name}
