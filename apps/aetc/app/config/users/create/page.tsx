@@ -4,6 +4,8 @@ import { UserForm } from "../../components";
 import { OverlayLoader } from "@/components/backdrop";
 import { useEffect } from "react";
 import { useNavigation } from "@/hooks";
+import { MainTypography } from "shared-ui/src";
+import { BackButton } from "@/components/buttons";
 
 export default function Page() {
     const { mutate, isPending, isSuccess } = addUser();
@@ -17,10 +19,12 @@ export default function Page() {
     }, [isSuccess])
 
     const handleSubmit = (values: any) => {
-        // console.log({ values })
         mutate(values)
     }
     return <>
+        <BackButton />
+        <MainTypography variant="h5">Create User</MainTypography>
+        <br />
         <UserForm initialValues={{}} onSubmit={handleSubmit} />
         <OverlayLoader open={isPending} />
     </>

@@ -5,10 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 export const addUser = () => {
     const addData = (data: any) => {
 
-
         const roles = data.role.map((r: any) => ({ name: r.id }))
-
-
         const mappedData = {
             username: data.userName,
             password: data.password,
@@ -30,7 +27,7 @@ export const addUser = () => {
             roles
         };
 
-        console.log({ mappedData })
+
         return createUser(mappedData).then((response) => response.data);
     };
 
