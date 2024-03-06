@@ -45,8 +45,17 @@ export const searchPatients = (patient: any) => {
   const getall = (patient: any) => {
     const givenName = patient.firstName;
     const familyName = patient.lastName
+    return searchPerson(`given_name=${givenName}&family_name=${familyName}&gender=&middle_name`).then((response) => response.data.map((person: any) => {
 
-    return searchPerson(`given_name=${givenName}&family_name=${familyName}&gender=&middle_name`).then((response) => response.data);
+      return {
+        person_id: person.person_id,
+        uuid: person.uuid,
+        given_name: person.names[0].given_name,
+        family_name: person.names[0].family_name,
+        gender: person.gender,
+        birthdate: person.birthdate
+      }
+    }));
   }
 
 

@@ -18,18 +18,16 @@ import { SearchForm } from "./components/searchForm";
 import { SearchResults } from "./components/searchResults";
 import { Navigation } from "@/app/components/navigation";
 import { searchPatients } from "@/hooks/people";
+import { OverlayLoader } from "@/components/backdrop";
 
 export default function RegistrationSearch() {
   const [patientData, setPatientData] = useState()
-  const { refetch } = searchPatients(patientData)
+  const { refetch, isFetching, isSuccess, data } = searchPatients(patientData)
   // search.
 
 
   useEffect(() => {
-
-
     if (!patientData) return;
-
     refetch();
 
   }, [patientData])
@@ -91,8 +89,9 @@ export default function RegistrationSearch() {
         >
           <SearchForm onSubmit={searchPatient} />
           <br />
-          <ResultBox searchResults={[]} />
+          {isSuccess && <ResultBox searchResults={data ? data : []} />}
         </WrapperBox>
+        <OverlayLoader open={isFetching} />
       </WrapperBox>
     </>
   );
