@@ -141,12 +141,12 @@ export const searchPotentialDuplicates = () => {
 
 
 export const getOnePatient = (patientId: string) => {
-  const getall = () =>
+  const getOne = () =>
     getPatient(patientId).then((response) => response.data);
 
   return useQuery({
     queryKey: ["patients", patientId],
-    queryFn: getall,
+    queryFn: getOne,
     enabled: true,
   });
 };
