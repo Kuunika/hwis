@@ -3,7 +3,7 @@ import { useNavigation } from "@/hooks";
 import { getAllUsers } from "@/hooks/users";
 
 
-import { BaseTable, MainButton } from "shared-ui/src";
+import { BaseTable, MainButton, MainPaper } from "shared-ui/src";
 
 export const UsersList = () => {
     const { navigateTo } = useNavigation();
@@ -35,6 +35,7 @@ export const UsersList = () => {
             renderCell: (cell: any) => {
                 return (
                     <MainButton
+                        variant="secondary"
                         sx={{ fontSize: "12px" }}
                         title={"view"}
                         onClick={() => { }}
@@ -46,5 +47,6 @@ export const UsersList = () => {
 
     return (
         <BaseTable loading={isLoading} columns={columns} rows={rows ? rows : []} />
+
     );
 };
