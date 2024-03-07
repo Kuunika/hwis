@@ -5,8 +5,6 @@ import { NavigationBar, WrapperBox } from "shared-ui/src";
 import { useContext, useEffect } from "react";
 import { AuthContext, AuthContextType } from "@/contexts";
 
-
-
 export const NavBar = () => {
   const { navigateTo } = useNavigation();
   const { loggedIn, setLoggedIn } = useContext(AuthContext) as AuthContextType
