@@ -1,13 +1,12 @@
 "use client";
 import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
-
-
 import { useNavigation } from "@/hooks";
 
 
 import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings } from "react-icons/fc";
+import AuthGuard from "@/helpers/authguard";
 
-export default function Home() {
+function Home() {
     return (
         <>
             <MainGrid container>
@@ -107,3 +106,6 @@ const Card = ({
         </MainPaper>
     );
 };
+
+
+export default AuthGuard(Home)

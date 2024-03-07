@@ -15,7 +15,7 @@ export const NavBar = () => {
 
     if (localStorage) {
       if (!Boolean(localStorage.getItem("accessToken"))) {
-        navigateTo("/")
+        // navigateTo("/")
       }
     }
   }, [])
