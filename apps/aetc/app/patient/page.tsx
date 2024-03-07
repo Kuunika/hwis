@@ -1,23 +1,11 @@
 "use client";
-import { MainGrid, MainPaper, NavigationBar, WrapperBox } from "shared-ui/src";
-import {
-  AllergiesCard,
-  ConsultationCard,
-  PersonalDetailsCard,
-  TemplateFormsCard,
-} from "./components/cards";
-import { VisitsBar } from "./components";
-import {
-  BasicAccordion,
-  ClinicalNotes,
-  Dispositions,
-  Investigations,
-  Medications,
-  Results,
-} from "./components/panels";
+
+
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
 import { DesktopView, TabletView } from "./components/profile";
 
-export default function PatientProfile() {
+function PatientProfile() {
   return (
     <>
       <DesktopView />
@@ -25,3 +13,5 @@ export default function PatientProfile() {
     </>
   );
 }
+
+export default AuthGuard(PatientProfile, [roles.CLINICIAN, roles.NURSE])
