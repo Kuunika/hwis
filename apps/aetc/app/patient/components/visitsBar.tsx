@@ -43,14 +43,14 @@ export const VisitsBar = () => {
           <FaChevronRight />
         </MainTypography>
       </WrapperBox>
-      <Button
+      <MainButton
         onClick={() => navigateTo(`/triage/${params?.id}/history`)}
         sx={{ ml: "1ch" }}
-        variant="contained"
-        size="small"
-      >
-        Triage
-      </Button>
+        variant="secondary"
+        title={"Triage"}
+      // size="small"
+      />
+
     </WrapperBox>
   );
 };
