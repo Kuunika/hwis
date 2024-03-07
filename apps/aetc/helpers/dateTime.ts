@@ -1,7 +1,9 @@
 
 export const getDateTime = () => new Date().toISOString();
 
-export const calculateAge = (birthdate: string | Date) => {
+export const calculateAge = (birthdate: string | Date | undefined) => {
+
+  if (!birthdate) return null
   var today = new Date();
   var birthDate = new Date(birthdate);
   var age = today.getFullYear() - birthDate.getFullYear();

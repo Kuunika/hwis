@@ -11,11 +11,12 @@ import {
   FaChevronRight,
   FaCircle,
 } from "react-icons/fa";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { VisitDates } from "./visitDates";
 
 export const VisitsBar = () => {
   const { navigateTo } = useNavigation();
+  const { params } = useParameters()
   return (
     <WrapperBox
       sx={{
@@ -43,7 +44,7 @@ export const VisitsBar = () => {
         </MainTypography>
       </WrapperBox>
       <Button
-        onClick={() => navigateTo("/triage/12/history")}
+        onClick={() => navigateTo(`/triage/${params?.id}/history`)}
         sx={{ ml: "1ch" }}
         variant="contained"
         size="small"

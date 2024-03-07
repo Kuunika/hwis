@@ -1,7 +1,13 @@
 "use client";
+import { calculateAge } from "@/helpers/dateTime";
+import { useParameters } from "@/hooks";
+import { getOnePatient } from "@/hooks/patientReg";
+
 import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 
 export const PatientInfoTab = () => {
+  const { params } = useParameters()
+  const { data: patient, isLoading } = getOnePatient(params?.id as string)
   return (
     <MainPaper
       sx={{
@@ -13,11 +19,11 @@ export const PatientInfoTab = () => {
         boxShadow: "0px 8px 24px 0px #084A231A",
       }}
     >
-      <LabelValue label="Full name" value="John Doe" />
+      <LabelValue label="Full name" value={`${patient?.given_name} ${patient?.family_name}`} />
       <LabelValue label="ID" value="123J-01923-NOJSX" />
-      <LabelValue label="Age" value="21yr (08 June 1996)" />
+      <LabelValue label="Age" value={`${calculateAge(patient?.birthdate)}yr (${patient?.birthdate})`} />
       <LabelValue label="Category" value="Referral" />
-      <LabelValue label="Gender" value="Male" />
+      <LabelValue label="Gender" value={patient ? patient?.gender : ""} />
     </MainPaper>
   );
 };
