@@ -108,4 +108,4 @@ const Card = ({
 };
 
 
-export default AuthGuard(Home)
+export default AuthGuard(Home, ["System Develope"])

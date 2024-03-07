@@ -1,7 +1,9 @@
 "use client";
 
+import AuthGuard from "@/helpers/authguard";
 import { NewRegistrationFlow } from "../../components/newRegistration";
 
-export default function Page() {
+function Page() {
   return <NewRegistrationFlow />;
 }
+export default AuthGuard(Page)
