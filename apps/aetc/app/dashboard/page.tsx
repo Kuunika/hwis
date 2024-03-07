@@ -68,7 +68,7 @@ function Home() {
                         link="/config"
                         title="Config"
                     />
-                    {/* <Card link="/prescreening" title="Prescreening" /> */}
+
                 </MainGrid>
                 <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
             </MainGrid>
