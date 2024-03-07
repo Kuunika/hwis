@@ -5,9 +5,11 @@ import { MainButton, MainGrid, MainPaper } from "shared-ui/src";
 import { useNavigation, useParameters } from "@/hooks";
 import { PersonalDetailsCard } from "@/app/patient/components";
 import { BackButton } from "@/components/buttons";
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
 
 
-export default function TriageHistory() {
+function TriageHistory() {
   const { navigateTo } = useNavigation();
   const { params } = useParameters()
 
@@ -36,3 +38,4 @@ export default function TriageHistory() {
     </>
   );
 }
+export default AuthGuard(TriageHistory, [roles.CLINICIAN, roles.NURSE])
