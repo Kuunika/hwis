@@ -16,4 +16,4 @@ function PatientProfile() {
     </>
   );
 }
-export default AuthGuard(PatientProfile, [roles.CLINICIAN, roles.NURSE, roles.ADMIN])
+export default AuthGuard(PatientProfile, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);

@@ -20,8 +20,10 @@ import { SearchTab } from "../../components/searchTabs";
 import { SearchNPIDForm } from "../../search/components/searchNpid";
 import { Navigation } from "@/app/components/navigation";
 import { OverlayLoader } from "@/components/backdrop";
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
 
-export default function RegistrationSearch() {
+function RegistrationSearch() {
   const { params } = useParameters();
   const { data } = getPatientsWaitingForRegistrations();
 
@@ -145,3 +147,5 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
 const NPIDSearch = () => {
   return <SearchNPIDForm onSubmit={() => { }} />;
 };
+
+export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])

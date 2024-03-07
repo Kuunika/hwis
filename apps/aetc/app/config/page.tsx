@@ -3,11 +3,14 @@
 import { MainButton } from "shared-ui/src"
 import { UsersList } from "./components"
 import { useNavigation } from "@/hooks"
+import { roles } from "@/constants"
+import AuthGuard from "@/helpers/authguard"
 
-export default function Page() {
+function Page() {
     const { navigateTo } = useNavigation()
     return <>
         <MainButton title={"create user"} onClick={() => navigateTo("/config/users/create")} />
         <UsersList />
     </>
 }
+export default AuthGuard(Page, [roles.ADMIN,])

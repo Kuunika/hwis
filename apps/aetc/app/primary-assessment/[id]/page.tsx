@@ -2,8 +2,10 @@
 import { FormContainer } from "shared-ui/src";
 import { PrimaryAssessmentFlow } from "../components";
 import { PatientInfoTab } from "@/components";
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
 
-export default function PrimaryAssessment() {
+function PrimaryAssessment() {
   return (
     <>
       <PatientInfoTab />
@@ -13,3 +15,6 @@ export default function PrimaryAssessment() {
     </>
   );
 }
+
+
+export default AuthGuard(PrimaryAssessment, [roles.CLINICIAN, roles.NURSE]);

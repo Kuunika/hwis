@@ -6,8 +6,10 @@ import { useEffect } from "react";
 import { useNavigation } from "@/hooks";
 import { MainTypography } from "shared-ui/src";
 import { BackButton } from "@/components/buttons";
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
 
-export default function Page() {
+function Page() {
     const { mutate, isPending, isSuccess } = addUser();
     const { navigateTo } = useNavigation()
 
@@ -29,3 +31,7 @@ export default function Page() {
         <OverlayLoader open={isPending} />
     </>
 }
+
+
+
+export default AuthGuard(Page, [roles.ADMIN])
