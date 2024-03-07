@@ -17,6 +17,7 @@ import { districts, traditionalAuthorities } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  fullForm?: boolean,
   init?: any;
 };
 const form = {
@@ -73,7 +74,7 @@ const schema = Yup.object().shape({
 
 const initialValues = getInitialValues(form);
 
-export const SearchForm = ({ onSubmit, init }: Prop) => {
+export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
   const spacing = {
     display: "flex",
     "& > :first-child": {
@@ -104,7 +105,7 @@ export const SearchForm = ({ onSubmit, init }: Prop) => {
             label={form.lastName.label}
           />
         </WrapperBox>
-        <WrapperBox sx={spacing}>
+        {fullForm && <><WrapperBox sx={spacing}>
           <SearchComboBox
             width="30%"
             name={form.gender.name}
@@ -123,33 +124,33 @@ export const SearchForm = ({ onSubmit, init }: Prop) => {
             size="small"
           />
         </WrapperBox>
-        <WrapperBox display={"flex"}>
-          <SearchComboBox
-            sx={{ mr: "0.5ch" }}
-            width="45%"
-            size="small"
-            name={form.homeDistrict.name}
-            label={form.homeDistrict.label}
-            multiple={false}
-            options={districts.map((d) => ({
-              id: d.district_name,
-              label: d.district_name,
-            }))}
-          />
+          <WrapperBox display={"flex"}>
+            <SearchComboBox
+              sx={{ mr: "0.5ch" }}
+              width="45%"
+              size="small"
+              name={form.homeDistrict.name}
+              label={form.homeDistrict.label}
+              multiple={false}
+              options={districts.map((d) => ({
+                id: d.district_name,
+                label: d.district_name,
+              }))}
+            />
 
-          <SearchComboBox
-            width="100%"
-            size="small"
-            name={form.homeTraditionalAuthority.name}
-            label={form.homeTraditionalAuthority.label}
-            multiple={false}
-            options={traditionalAuthorities}
-          />
-        </WrapperBox>
+            <SearchComboBox
+              width="100%"
+              size="small"
+              name={form.homeTraditionalAuthority.name}
+              label={form.homeTraditionalAuthority.label}
+              multiple={false}
+              options={traditionalAuthorities}
+            />
+          </WrapperBox></>}
         <MainButton
-          sx={{ width: "100%", height: "5ch", borderRadius: "10px" }}
+          sx={{ width: "100%", height: "5ch", borderRadius: "10px", mt: "1ch" }}
           type="submit"
-          onClick={() => {}}
+          onClick={() => { }}
           title={"search"}
         />
       </WrapperBox>

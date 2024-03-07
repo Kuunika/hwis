@@ -2,6 +2,7 @@ import { SxProps } from "@mui/material";
 import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaCheck } from "react-icons/fa";
 import { useNavigation } from "@/hooks";
+import { calculateAge } from "@/helpers/dateTime";
 
 const color = "#B3B3B3";
 
@@ -23,9 +24,13 @@ export function ResultBox({ searchResults }: Prop) {
       }}
     >
       <Row
-        id="Id"
-        fullName="Full Name"
+        person_id="ID"
+        uuid="Id"
+        given_name="Full Name"
+        family_name=""
+        gender="Gender"
         number="Number"
+        birthdate="Birth date"
         sx={{ "&:hover": {} }}
       />
       <WrapperBox
@@ -41,26 +46,35 @@ export function ResultBox({ searchResults }: Prop) {
           <Row key={result.id} {...result} />
         ))}
       </WrapperBox>
-      <WrapperBox sx={{ m: "1ch" }}>{"<AddPatientButton />"}</WrapperBox>
+      {/* <WrapperBox sx={{ m: "1ch" }}>{"<AddPatientButton />"}</WrapperBox> */}
     </MainPaper>
   );
 }
 
 const Row = ({
-  id,
-  fullName,
+  uuid,
+  given_name,
+  family_name,
   number,
+  gender,
+  birthdate,
+  person_id,
   sx,
 }: {
-  id: string;
-  fullName: string;
+  uuid: string;
+  given_name: string;
+  family_name: string;
   number: string;
+  gender: string;
+  birthdate: string;
+  person_id: string;
+
   sx?: SxProps;
 }) => {
   const { navigateTo } = useNavigation();
   return (
     <WrapperBox
-      onClick={() => navigateTo("/patient")}
+      onClick={() => navigateTo(`/patient/${uuid}/profile`)}
       sx={{
         display: "flex",
         py: "1ch",
@@ -77,9 +91,10 @@ const Row = ({
         ...sx,
       }}
     >
-      <MainTypography flex={0.2}>{id}</MainTypography>
-      <MainTypography flex={0.6}>{fullName}</MainTypography>
-      <MainTypography flex={0.2}>{number}</MainTypography>
+      <MainTypography flex={0.1}>{person_id}</MainTypography>
+      <MainTypography flex={0.4}>{`${given_name} ${family_name}`}</MainTypography>
+      <MainTypography flex={0.2}>{gender}</MainTypography>
+      <MainTypography flex={0.3}>{`${birthdate} (${birthdate == "Birth date" ? "Age" : calculateAge(birthdate)})`}</MainTypography>
       <WrapperBox flex={0.1}>
         <MainTypography
           className="checkItem"

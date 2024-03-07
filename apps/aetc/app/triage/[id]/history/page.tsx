@@ -2,12 +2,14 @@
 import { MiddlePageLayout } from "@/components/layouts";
 import { TriageHistoryList, ViewTriageResults } from "../../components";
 import { MainButton, MainGrid, MainPaper } from "shared-ui/src";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { PersonalDetailsCard } from "@/app/patient/components";
 import { BackButton } from "@/components/buttons";
 
+
 export default function TriageHistory() {
   const { navigateTo } = useNavigation();
+  const { params } = useParameters()
 
   return (
     <>
@@ -21,7 +23,7 @@ export default function TriageHistory() {
             <>
               <MainButton
                 title={"Start Triage"}
-                onClick={() => navigateTo("/triage/1/start")}
+                onClick={() => navigateTo(`/triage/${params.id}/start`)}
               />
               <TriageHistoryList />
             </>

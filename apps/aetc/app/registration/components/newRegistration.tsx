@@ -1,5 +1,5 @@
 "use client";
-import { useState, ReactNode, useEffect } from "react";
+import { useState, ReactNode, useEffect, useRef } from "react";
 import {
   MainButton,
   MainGrid,
@@ -239,9 +239,11 @@ export const NewRegistrationFlow = () => {
     nextOfKinError,
   ]);
 
+
+
   return (
     <>
-      <MainGrid sx={{}} container>
+      <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <MainGrid
           item
@@ -252,6 +254,9 @@ export const NewRegistrationFlow = () => {
           sx={{
             display: "flex",
             flexDirection: "column",
+            height: "90vh",
+            overflowY: "auto"
+
           }}
         >
           {showForm && (
@@ -368,6 +373,13 @@ const RegistrationNavigation = ({
     borderRadius: "8px",
     gap: "8px",
   };
+
+  const scrollToComponent = (id: number) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
   return (
     <WrapperBox
       sx={{
@@ -375,6 +387,10 @@ const RegistrationNavigation = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-evenly",
+        position: "absolute",
+        zIndex: "100000",
+        bottom: 0,
+        backgroundColor: "#fff",
         borderTop: "1px #E6E6E6 solid",
         py: { md: "1ch" },
         px: { sm: "1ch" },
@@ -392,6 +408,7 @@ const RegistrationNavigation = ({
         onClick={() => {
           if (active == 1) return;
           setActive(active - 1);
+          scrollToComponent(active - 1)
         }}
       />
       <WrapperBox
@@ -432,6 +449,7 @@ const RegistrationNavigation = ({
           //   return;
           // }
           setActive(active + 1);
+          scrollToComponent(active + 1)
         }}
       />
     </WrapperBox>

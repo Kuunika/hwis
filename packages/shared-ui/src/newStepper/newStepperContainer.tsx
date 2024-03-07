@@ -120,7 +120,7 @@ export function NewStepperContainer({
                 textAlign: "left",
               }}
             >
-              Back to profile
+              Back
             </MainTypography>
           </WrapperBox>
           {children.map((child, key) => {

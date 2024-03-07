@@ -43,7 +43,7 @@ export const ClientWaitingForAssessment = () => {
     { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
     { field: "gender", headerName: "Gender", flex: 1 },
     {
-      field: "triageCategory",
+      field: "triage_result",
       headerName: "Triage Category",
       flex: 1,
       renderCell: (cell: any) => {
@@ -56,8 +56,8 @@ export const ClientWaitingForAssessment = () => {
               backgroundColor:
                 cell.value == "red"
                   ? "#B42318"
-                  : cell.value == "green"
-                    ? "#016302"
+                  : cell.value == "yellow"
+                    ? "#ede207"
                     // : "#B54708",
                     : "#016302",
               marginY: 1,

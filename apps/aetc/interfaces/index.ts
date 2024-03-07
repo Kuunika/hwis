@@ -42,7 +42,11 @@ export interface Person {
   addresses: Address[];
   uuid: string;
   visit_uuid: string;
-  arrival_time: string
+  arrival_time: string;
+  names: Array<{
+    given_name: string;
+    family_name: string
+  }>
 }
 
 interface EncounterType {
@@ -100,6 +104,26 @@ export interface LabRequest {
   sampleType: string;
   specimenSite: string
   testType?: string
+}
+
+
+
+export interface Role {
+  role: string;
+  description: string;
+  uuid: string
+}
+
+export interface UserRole {
+  user_id: number;
+  role: Role
+
+}
+export interface User {
+  uuid: string;
+  username: string;
+  user_roles: UserRole[],
+  person: Person
 }
 
 export interface IApiService {

@@ -67,7 +67,7 @@ export const SocialHistoryForm: FC<Prop> = ({
 }) => {
   return (
     <>
-      <RegistrationMainHeader>Social History</RegistrationMainHeader>
+      <RegistrationMainHeader id="2">Social History</RegistrationMainHeader>
       <RegistrationDescriptionText>
         The social history form covers a range of topics, including social
         relationships, occupational history, and any other factors that may

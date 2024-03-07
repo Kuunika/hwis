@@ -1,5 +1,5 @@
 import { Person } from "@/interfaces";
-import { create, edit, getAll } from "./httpService";
+import { create, edit, getAll, getOne } from "./httpService";
 
 const endPoint = "/people";
 
@@ -19,3 +19,6 @@ export const updatePatient = (patientId: string, patientData: any) =>
 
 export const potentialDuplicates = (patientData: any) =>
   create(patientData, "/search/people");
+
+
+export const getPatient = (uuid: string) => getOne<Person>(uuid, '/patients')

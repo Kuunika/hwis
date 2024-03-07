@@ -159,7 +159,7 @@ export default function InitialRegistration() {
 
   return (
     <>
-      <Navigation title="Initial Registration" link="/" />
+      <Navigation title="Initial Registration" link="/dashboard" />
       <MainGrid container>
         <MainGrid xs={2} md={3} lg={4} item></MainGrid>
         <MainGrid

@@ -8,7 +8,7 @@ export function BackButton() {
     <MainTypography
       onClick={() => router.back()}
       sx={{ cursor: "pointer", color: "grey" }}
-      variant="h5"
+
     >
       <FaArrowCircleLeft />
     </MainTypography>

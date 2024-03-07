@@ -90,7 +90,7 @@ export default function TriageWorkFlow() {
     isError: triageResultError,
   } = addEncounter();
 
-  const { navigateTo } = useNavigation();
+  const { navigateTo, navigateBack } = useNavigation();
 
   const steps = [
     { id: 6, label: "Presenting Complaints" },
@@ -330,7 +330,7 @@ export default function TriageWorkFlow() {
             title="Triage"
             steps={steps}
             active={activeStep}
-            onBack={() => navigateTo("/patient")}
+            onBack={() => navigateBack()}
           >
             <PresentingComplaintsForm onSubmit={handlePresentComplaints} />
             <VitalsForm

@@ -2,12 +2,13 @@ import { concepts } from "@/constants";
 import {
   createPatient,
   getDailyVisits,
+  getPatient,
   getPatients,
   initialRegistration,
   potentialDuplicates,
   updatePatient,
 } from "@/services/patient";
-import {  useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const addPatient = () => {
   const addData = (patientData: any) => {
@@ -55,7 +56,7 @@ export const registerPatient = () => {
           address1: patientData.homeDistrict,
           address2: patientData.homeVillage,
           address3: patientData.currentDistrict,
-          stateProvince:patientData.currentTraditionalAuthority,
+          stateProvince: patientData.currentTraditionalAuthority,
           countryDistrict: patientData.homeTraditionalAuthority,
           cityVillage: patientData.homeTraditionalAuthority,
           country: patientData.nationality,
@@ -134,5 +135,18 @@ export const searchPotentialDuplicates = () => {
   };
   return useMutation({
     mutationFn: addData,
+  });
+};
+
+
+
+export const getOnePatient = (patientId: string) => {
+  const getOne = () =>
+    getPatient(patientId).then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["patients", patientId],
+    queryFn: getOne,
+    enabled: true,
   });
 };

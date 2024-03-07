@@ -1,15 +1,15 @@
 import { MainCard, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { Chip } from "@mui/material";
-import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { getOnePatient, getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
-  const { data: patients, isLoading } = getPatientsWaitingForAssessment();
   const { params } = useParameters();
+  const { data: patient, isLoading } = getOnePatient(params.id as string);
 
-  const patient = patients?.find((p) => p.uuid == params.id);
+  // const patient = patients?.find((p) => p.uuid == params.id);
 
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;

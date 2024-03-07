@@ -7,6 +7,7 @@ export const useNavigation = () => {
   return {
     navigateTo: (link: string) => router.push(link),
     refresh: () => router.refresh(),
+    navigateBack: () => router.back()
   };
 };
 
