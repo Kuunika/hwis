@@ -446,7 +446,7 @@ export const malawiVillages = [
 
 export const roles = {
   ADMIN: 'System Developer',
-  REGISTRATION_CLEARK: "Data Assistant",
+  REGISTRATION_CLERK: "Data Assistant",
   CLINICIAN: "Clinician",
   NURSE: "Adults"
 }
