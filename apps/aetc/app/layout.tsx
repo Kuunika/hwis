@@ -7,6 +7,8 @@ import { ContextProviders, ReactQueryProvider } from "@/providers";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigation } from "@/hooks";
+import { OverlayLoader } from "@/components/backdrop";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +24,8 @@ export default function RootLayout({
 }) {
 
 
+
+
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
@@ -30,6 +34,7 @@ export default function RootLayout({
             <ProviderTheme>
               <NavBar />
               {children}
+              <OverlayLoader open={false} />
               <ToastContainer />
             </ProviderTheme>
           </ContextProviders>

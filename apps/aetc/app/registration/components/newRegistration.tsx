@@ -375,7 +375,7 @@ const RegistrationNavigation = ({
   };
 
   const scrollToComponent = (id: number) => {
-    const element = document.getElementById(id);
+    const element = document.getElementById(id.toString());
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }

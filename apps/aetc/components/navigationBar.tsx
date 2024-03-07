@@ -11,11 +11,26 @@ export const NavBar = () => {
   const { navigateTo } = useNavigation();
   const { loggedIn, setLoggedIn } = useContext(AuthContext) as AuthContextType
 
+
+
   useEffect(() => {
-    if (!loggedIn) {
-      // navigateTo("/")
+
+    if (localStorage) {
+      if (!Boolean(localStorage.getItem("accessToken"))) {
+        navigateTo("/")
+      }
     }
   }, [])
+
+  // useEffect(() => {
+  //   if (localStorage) {
+  //     if (!loggedIn) {
+  //       navigateTo("/")
+  //     }
+  //   }
+
+  // }, [])
+
 
 
   const handleLogout = () => {
