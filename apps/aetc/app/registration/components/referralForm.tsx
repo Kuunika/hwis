@@ -13,7 +13,7 @@ import { concepts } from "@/constants";
 
 const schema = Yup.object().shape({
   [concepts.REFERRED_FROM]: Yup.string()
-  .label("Referee Medical Facility"),
+    .label("Referee Medical Facility"),
 });
 
 type Props = {
@@ -30,7 +30,7 @@ export const ReferralForm: FC<Props> = ({
 
   return (
     <>
-      <RegistrationMainHeader>Referral</RegistrationMainHeader>
+      <RegistrationMainHeader id="3">Referral</RegistrationMainHeader>
       <RegistrationDescriptionText>
         The Referral section is mainly responsible for capturing the health
         facility from which the patient was referred from.
@@ -55,9 +55,9 @@ export const ReferralForm: FC<Props> = ({
               options={
                 data
                   ? data.map((d: any) => ({
-                      id: d.facility_name,
-                      label: d.facility_name,
-                    }))
+                    id: d.facility_name,
+                    label: d.facility_name,
+                  }))
                   : []
               }
             />

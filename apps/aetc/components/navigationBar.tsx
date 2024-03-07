@@ -13,7 +13,7 @@ export const NavBar = () => {
 
   useEffect(() => {
     if (!loggedIn) {
-      navigateTo("/")
+      // navigateTo("/")
     }
   }, [])
 

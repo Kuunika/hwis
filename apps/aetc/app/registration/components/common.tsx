@@ -3,11 +3,14 @@ import { MainPaper, MainTypography } from "shared-ui/src";
 
 export const RegistrationMainHeader = ({
   children,
+  id
 }: {
   children: ReactNode;
+  id?: string
 }) => {
   return (
     <MainTypography
+      id={id}
       sx={{
         fontFamily: "Inter",
         fontSize: 24,

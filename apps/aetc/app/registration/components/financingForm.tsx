@@ -61,7 +61,7 @@ export const FinancingForm: FC<Props> = ({
   const [payment, setPayment] = useState("");
   return (
     <>
-      <RegistrationMainHeader>Financing</RegistrationMainHeader>
+      <RegistrationMainHeader id="4">Financing</RegistrationMainHeader>
       <RegistrationDescriptionText>
         Capture details the patient is using for financing
       </RegistrationDescriptionText>

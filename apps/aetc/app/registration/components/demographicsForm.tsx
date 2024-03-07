@@ -245,7 +245,7 @@ export const DemographicsForm: FC<Prop> = ({
 
   return (
     <>
-      <RegistrationMainHeader>Demographics</RegistrationMainHeader>
+      <RegistrationMainHeader id="1">Demographics</RegistrationMainHeader>
       <RegistrationDescriptionText>
         The demographics form has been thoughtfully crafted to collect patient
         information, including personal details, contact information
