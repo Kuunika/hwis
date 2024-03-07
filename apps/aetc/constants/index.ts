@@ -442,3 +442,11 @@ export const malawiVillages = [
   { id: "Chirimba", label: "Chirimba" },
   { id: "Chigoli", label: "Chigoli" },
 ];
+
+
+export const roles = {
+  ADMIN: 'System Developer',
+  REGISTRATION_CLEARK: "Data Assistant",
+  CLINICIAN: "Clinician",
+  NURSE: "Adults"
+}

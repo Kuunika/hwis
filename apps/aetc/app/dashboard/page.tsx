@@ -5,6 +5,7 @@ import { useNavigation } from "@/hooks";
 
 import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings } from "react-icons/fc";
 import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
 
 function Home() {
     return (
@@ -108,4 +109,4 @@ const Card = ({
 };
 
 
-export default AuthGuard(Home, ["System Develope"])
+export default AuthGuard(Home, [roles.ADMIN])
