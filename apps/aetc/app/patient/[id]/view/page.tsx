@@ -13,12 +13,11 @@ const Page = () => {
     const { data: patient, isLoading: patientLoading } = getOnePatient(params.id as string);
     const { data: loadedEncounters } = getPatientsEncounters(params.id as string)
 
-    console.log(loadedEncounters);
+    // console.log(loadedEncounters);
 
     const socialHistory = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.SOCIAL_HISTORY);
     const financing = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.FINANCING);
 
-    console.log({ financing })
 
     return <>
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
