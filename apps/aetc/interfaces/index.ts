@@ -21,9 +21,14 @@ export interface Concept {
 
 export interface Address {
   address1?: string;
+  address2?: string;
+  address3?: string;
+  stateProvince?: string;
+  countryDistrict?: string;
   cityVillage?: string;
   country?: string;
   postalCode?: string;
+  preferred?: boolean
 }
 
 export interface Identifier {
