@@ -38,4 +38,4 @@ function TriageHistory() {
     </>
   );
 }
-export default AuthGuard(TriageHistory, [roles.CLINICIAN, roles.NURSE])
+export default AuthGuard(TriageHistory, [roles.CLINICIAN, roles.NURSE, roles.ADMIN])

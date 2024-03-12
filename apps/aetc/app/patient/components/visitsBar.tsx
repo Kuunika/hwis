@@ -13,10 +13,21 @@ import {
 } from "react-icons/fa";
 import { useNavigation, useParameters } from "@/hooks";
 import { VisitDates } from "./visitDates";
+import { getPatientsEncounters } from "@/hooks/encounter";
 
 export const VisitsBar = () => {
   const { navigateTo } = useNavigation();
-  const { params } = useParameters()
+  const { params } = useParameters();
+
+  const { data, isLoading } = getPatientsEncounters(params?.id as string);
+
+
+  const uniqueArray: any = {};
+  data?.forEach(item => {
+    uniqueArray[item.visit_id] = false
+  });
+
+
   return (
     <WrapperBox
       sx={{
@@ -31,7 +42,7 @@ export const VisitsBar = () => {
         // borderColor: "#E6E6E6",
       }}
     >
-      <VisitDates />
+      <VisitDates visits={Object.keys(uniqueArray)} />
       <WrapperBox sx={{ display: "flex", alignItems: "center", mx: "1ch" }}>
         <MainTypography sx={{ cursor: "pointer" }}>
           <FaChevronLeft />

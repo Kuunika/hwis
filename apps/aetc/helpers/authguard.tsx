@@ -1,4 +1,3 @@
-'use client'
 
 import { OverlayLoader } from "@/components/backdrop";
 import { useNavigation } from "@/hooks";
@@ -6,6 +5,7 @@ import { useLayoutEffect, useState } from "react"
 import { checkRole } from "./checkrole";
 import { MainTypography, WrapperBox } from "shared-ui/src";
 import Image from "next/image"
+import { getRoles } from "./localstorage";
 
 export default function AuthGuard(Component: any, roles: Array<string>) {
     return function authGuard(props: any) {
@@ -22,8 +22,10 @@ export default function AuthGuard(Component: any, roles: Array<string>) {
                 }
             }
         }, [])
+        const isAuthorized = checkRole(roles, getRoles());
 
-        const isAuthorized = checkRole(roles, localStorage.getItem("roles")?.split(','));
+
+
 
         if (show) {
 

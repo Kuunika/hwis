@@ -1,4 +1,9 @@
 export const getObservationValue = (obs: any, uuid: string) => {
+
+
+  if (!obs) {
+    return null;
+  }
   const ob = obs.find((ob: any) => {
     return ob.names.find((n: any) => n.uuid == uuid);
   });

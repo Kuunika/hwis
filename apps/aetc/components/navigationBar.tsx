@@ -20,14 +20,7 @@ export const NavBar = () => {
     }
   }, [])
 
-  // useEffect(() => {
-  //   if (localStorage) {
-  //     if (!loggedIn) {
-  //       navigateTo("/")
-  //     }
-  //   }
 
-  // }, [])
 
 
 
