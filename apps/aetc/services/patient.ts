@@ -1,4 +1,4 @@
-import { DDESearch, Person } from "@/interfaces";
+import { DDEScore, DDESearch, Person } from "@/interfaces";
 import { create, edit, getAll, getOne } from "./httpService";
 
 const endPoint = "/people";
@@ -34,5 +34,5 @@ export const findByDemographics =
     birthdate: string,
     homeVillage: string,
     homeTA: string,
-    homeDistrict: string) => getAll<DDESearch>(`/dde/patients/match_by_demographics?home_village=${homeDistrict}&home_traditional_authority=${homeTA}home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
+    homeDistrict: string) => getAll<DDEScore[]>(`/dde/patients/match_by_demographics?home_district=${homeDistrict}&home_traditional_authority=${homeTA}&home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
 

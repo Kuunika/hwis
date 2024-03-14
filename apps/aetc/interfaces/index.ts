@@ -153,3 +153,8 @@ export type DDESearch = {
   locals: Person[];
   remotes: Person[];
 }
+
+export type DDEScore = {
+  person: Person;
+  score: number
+}

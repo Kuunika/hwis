@@ -19,6 +19,7 @@ import { getObservations, successDialog } from "@/helpers";
 import {
   getPatientsWaitingForRegistrations,
   registerPatient,
+  searchByDemographics,
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
 import { addEncounter } from "@/hooks/encounter";
@@ -28,22 +29,34 @@ import { OperationSuccess } from "@/components/operationSuccess";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { SearchPotentialDuplicates } from "./searchPontentialDuplicates";
+import { OverlayLoader } from "@/components/backdrop";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
   const { navigateTo } = useNavigation();
   const [loading, setLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [completed, setCompleted] = useState(0);
   const [showForm, setShowForm] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const [patientValues, setPatientValues] = useState({})
+
+
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
   const [referralContext, setReferralContext] = useState<any>();
   const [financingFormContext, setFinancingFormContext] = useState<any>();
   const [formData, setFormData] = useState<any>({});
+  const [patientValues, setPatientValues] = useState({
+    firstName: '', lastName: '', gender: '', birthdate: '',
+    homeVillage: '',
+    homeTA: '',
+    homeDistrict: ''
+  })
+
+  const { refetch, isFetching, isSuccess, data: ddePatients } = searchByDemographics(patientValues.firstName, patientValues.lastName, patientValues.gender, patientValues.birthdate, patientValues.homeVillage, patientValues.homeTA, patientValues.homeDistrict)
+
   const { data: initialRegistrationList } =
     getPatientsWaitingForRegistrations();
   const { params } = useParameters();
@@ -91,6 +104,15 @@ export const NewRegistrationFlow = () => {
     data: relationship,
     isError: relationshipError,
   } = addRelationship();
+
+
+  useEffect(() => {
+
+    if (!Boolean(patientValues.firstName)) return
+
+    refetch()
+
+  }, [patientValues])
 
   // patient created
   useEffect(() => {
@@ -245,7 +267,8 @@ export const NewRegistrationFlow = () => {
 
   return (
     <>
-      <SearchPotentialDuplicates open={true} patientDemo={patientValues} />
+      <OverlayLoader open={isFetching} />
+      <SearchPotentialDuplicates open={isSuccess && dialogOpen} ddePatients={ddePatients ? ddePatients : []} />
       <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <MainGrid
@@ -271,7 +294,14 @@ export const NewRegistrationFlow = () => {
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
                     formData["demographics"] = values;
-                    setPatientValues(values)
+                    setPatientValues({
+                      ...values,
+                      homeDistrict: values.homeDistrict,
+                      homeTA: values.homeTraditionalAuthority,
+                      homeVillage: values.homeVillage,
+                      birthdate: values.birthDate
+                    })
+                    setDialogOpen(true)
 
                   }
                   }
