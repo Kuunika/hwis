@@ -158,6 +158,6 @@ export const searchDDEPatient = (firstName: string, lastName: string, gender: st
   return useQuery({
     queryKey: ["find_by_name", firstName, lastName, gender],
     queryFn: findAll,
-    enabled: true,
+    enabled: false,
   });
 };

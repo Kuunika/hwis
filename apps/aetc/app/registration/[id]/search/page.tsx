@@ -141,7 +141,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
       />
       <br />
       <OverlayLoader open={isFetching} />
-      {isSuccess && <SearchResults
+      {<SearchResults
         searchResults={{}}
         searchedPatient={searchedPatient}
       />

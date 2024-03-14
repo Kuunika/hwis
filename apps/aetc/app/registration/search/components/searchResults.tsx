@@ -11,6 +11,7 @@ import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
 import { useNavigation, useParameters } from "@/hooks";
+import { FaUser } from "react-icons/fa6"
 
 import {
   SearchRegistrationContext,
@@ -92,7 +93,9 @@ export const SearchResults = ({
       <br />
       <MainTypography variant="h5">Search Results</MainTypography>
       <br />
-      <WrapperBox display={"flex"}>
+
+      <ResultBox />
+      {/* <WrapperBox display={"flex"}>
         <WrapperBox sx={{ mr: "1ch" }}>
           {patientsResults.map((p) => {
             return (
@@ -137,7 +140,7 @@ export const SearchResults = ({
           </WrapperBox>
           <MainPaper elevation={0} sx={{ width: "50ch", px: "2ch", py: "2ch" }}>
             {/* <AddPatientButton /> */}
-            <WrapperBox>
+      {/* <WrapperBox>
               {patient ? (
                 <BaseTable
                   hidePagination={true}
@@ -150,10 +153,47 @@ export const SearchResults = ({
             </WrapperBox>
           </MainPaper>
         </WrapperBox>
-      </WrapperBox>
+      // </WrapperBox> */}
     </WrapperBox>
   );
 };
+
+
+export const ResultBox = () => {
+  return <MainPaper sx={{ display: "flex", padding: 2, width: "100%" }}>
+    <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
+      <MainTypography color={defaultTheme.primary} variant="h1"><FaUser /></MainTypography>
+    </WrapperBox>
+    <WrapperBox>
+      <WrapperBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <MainTypography variant="h5">John Doe</MainTypography>
+        <MainTypography>Remote</MainTypography>
+      </WrapperBox>
+      <WrapperBox sx={{ display: "flex" }}>
+        <MainTypography color={"GrayText"} sx={{ mr: 1 }}>NPID:</MainTypography><MainTypography color={"GrayText"} >XHIYLSP1</MainTypography>
+      </WrapperBox>
+      <br />
+      <WrapperBox sx={{ display: "flex", mb: 1 }}>
+        <Label label="Date of birth" value="12-jan-2000" />
+        <Label label="Gender" value="Male" />
+      </WrapperBox>
+      <WrapperBox sx={{ display: "flex" }}>
+        <Label label="Home district" value="Lilongwe" />
+        <Label label="Home traditional authority" value="Chikulamayembe" />
+        <Label label="Home village" value="vingula" />
+      </WrapperBox>
+    </WrapperBox>
+  </MainPaper>
+}
+
+
+const Label = ({ label, value }: { label: string, value: string }) => {
+  return <WrapperBox sx={{ display: "flex", flexDirection: "column", mr: 1 }}>
+    <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value}</MainTypography>
+  </WrapperBox>
+}
+
+
 
 export const AddPatientButton = () => {
   const { params } = useParameters();
