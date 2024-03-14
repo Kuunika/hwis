@@ -34,7 +34,10 @@ export interface Address {
 
 export interface Identifier {
   identifier: string;
-  identifierType: string;
+  identifier_type: {
+    name: string;
+    uuid: string
+  }
   preferred: boolean;
 }
 

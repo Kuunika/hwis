@@ -93,8 +93,8 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
   const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
   const { refetch, isFetching, isSuccess: searchComplete, data } = searchDDEPatient(search.firstName, search.lastName, search.gender)
 
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isPending, setIsPending] = useState(false)
+  // const [isSuccess, setIsSuccess] = useState(false);
+  // const [isPending, setIsPending] = useState(false)
   const [searchedPatient, setSearchedPatient] = useState({});
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
-    setIsPending(true);
+    // setIsPending(true);
 
     setSearch({
       firstName: values.firstName,
@@ -116,10 +116,10 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
 
     // console.log({ values })
 
-    setTimeout(() => {
-      setIsPending(false)
-      setIsSuccess(true)
-    }, 2000)
+    // setTimeout(() => {
+    //   setIsPending(false)
+    //   setIsSuccess(true)
+    // }, 2000)
 
     // mutate({
     //   given_name: values.firstName,
@@ -145,8 +145,8 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
       />
       <br />
       <OverlayLoader open={isFetching} />
-      {<SearchResults
-        searchResults={data ? data?.locals : []}
+      {searchComplete && <SearchResults
+        searchResults={data ? data : { remotes: [], locals: [] }}
         searchedPatient={searchedPatient}
       />
       }
