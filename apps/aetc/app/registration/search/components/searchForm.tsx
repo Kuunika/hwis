@@ -89,7 +89,7 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
       submitButton={false}
     >
       <WrapperBox>
-        <WrapperBox sx={spacing}>
+        <WrapperBox sx={{ ...spacing, alignItems: "end", py: "1ch" }}>
           <TextInputField
             sx={{ width: "100%", my: 0 }}
             name={form.firstName.name}
@@ -98,7 +98,7 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
             label={form.firstName.label}
           />
           <TextInputField
-            sx={{ width: "100%", my: 0 }}
+            sx={{ width: "100%", my: 0, mr: "5px" }}
             name={form.lastName.name}
             id={form.lastName.name}
             size="small"
@@ -106,6 +106,7 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
           />
           <SearchComboBox
             width="100%"
+            inputSx={{ m: 0 }}
             name={form.gender.name}
             label={form.gender.label}
             multiple={false}
