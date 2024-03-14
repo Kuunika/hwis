@@ -1,6 +1,7 @@
 import { concepts } from "@/constants";
 import {
   createPatient,
+  findByDemographics,
   findByNameAndGender,
   getDailyVisits,
   getPatient,
@@ -151,12 +152,15 @@ export const getOnePatient = (patientId: string) => {
     enabled: true,
   });
 };
-export const searchDDEPatient = (firstName: string, lastName: string, gender: string) => {
+export const searchByDemographics = (firstName: string, lastName: string, gender: string, birthdate: string,
+  homeVillage: string,
+  homeTA: string,
+  homeDistrict: string) => {
   const findAll = () =>
-    findByNameAndGender(firstName, lastName, gender).then((response) => response.data);
+    findByDemographics(firstName, lastName, gender, birthdate, homeVillage, homeTA, homeDistrict).then((response) => response.data);
 
   return useQuery({
-    queryKey: ["find_by_name", firstName, lastName, gender],
+    queryKey: ["find_by_demographics", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
   });

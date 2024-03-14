@@ -25,3 +25,12 @@ export const getPatient = (uuid: string) => getOne<Person>(uuid, '/patients');
 
 export const findByNameAndGender = (firstName: string, lastName: string, gender: string) => getAll<Person>(`/dde/patients/find_by_name_and_gender?given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
 
+export const findByDemographics =
+  (firstName: string,
+    lastName: string,
+    gender: string,
+    birthdate: string,
+    homeVillage: string,
+    homeTA: string,
+    homeDistrict: string) => getAll<Person>(`/dde/patients/match_by_demographics?home_village=${homeDistrict}&home_traditional_authority=${homeTA}home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
+
