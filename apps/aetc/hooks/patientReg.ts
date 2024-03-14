@@ -1,6 +1,7 @@
 import { concepts } from "@/constants";
 import {
   createPatient,
+  findByNameAndGender,
   getDailyVisits,
   getPatient,
   getPatients,
@@ -147,6 +148,16 @@ export const getOnePatient = (patientId: string) => {
   return useQuery({
     queryKey: ["patients", patientId],
     queryFn: getOne,
+    enabled: true,
+  });
+};
+export const searchDDEPatient = (firstName: string, lastName: string, gender: string) => {
+  const findAll = () =>
+    findByNameAndGender(firstName, lastName, gender).then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["find_by_name", firstName, lastName, gender],
+    queryFn: findAll,
     enabled: true,
   });
 };

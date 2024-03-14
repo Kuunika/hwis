@@ -7,13 +7,13 @@ import {
 
 } from "shared-ui/src";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParameters } from "@/hooks";
 
 import { SearchForm } from "../../search/components/searchForm";
 import { SearchResults } from "../../search/components/searchResults";
 import {
-  getPatientsWaitingForRegistrations,
+  getPatientsWaitingForRegistrations, searchDDEPatient, searchPotentialDuplicates,
 
 } from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
@@ -90,11 +90,21 @@ function RegistrationSearch() {
 }
 
 const DemographicsSearch = ({ patient }: { patient: any }) => {
-  // const { mutate, isPending, isSuccess } = searchPotentialDuplicates();
+  // const { mutate, isPending:searching, isSuccess: searched } = searchPotentialDuplicates();
+
+  const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
+  const { refetch, isFetching, isSuccess: searchComplete, data } = searchDDEPatient(search.firstName, search.lastName, search.gender)
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [isPending, setIsPending] = useState(false)
   const [searchedPatient, setSearchedPatient] = useState({});
+
+  useEffect(() => {
+    if (!Boolean(search.firstName)) return;
+    refetch();
+
+  }, [search])
+
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
@@ -130,7 +140,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
         fullForm={false}
       />
       <br />
-      <OverlayLoader open={isPending} />
+      <OverlayLoader open={isFetching} />
       {isSuccess && <SearchResults
         searchResults={{}}
         searchedPatient={searchedPatient}
