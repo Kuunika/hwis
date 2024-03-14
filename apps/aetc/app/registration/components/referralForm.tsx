@@ -7,9 +7,11 @@ import {
   RegistrationCard,
   RegistrationCardTitle,
 } from "./common";
-import { getFacilities } from "@/hooks";
+import { getFacilities, useParameters } from "@/hooks";
 import { TrackFormikContext } from ".";
-import { concepts } from "@/constants";
+import { concepts, encounters } from "@/constants";
+import { getPatientEncounters } from "@/services/encounter";
+import { getPatientsEncounters } from "@/hooks/encounter";
 
 const schema = Yup.object().shape({
   [concepts.REFERRED_FROM]: Yup.string()
@@ -27,6 +29,12 @@ export const ReferralForm: FC<Props> = ({
   setContext,
 }) => {
   const { data, isLoading } = getFacilities();
+  const { params } = useParameters();
+  const { data: encounterList, isLoading: loadingEncounters } = getPatientsEncounters(params?.id as string);
+
+  console.log({ encounterList });
+
+  const referralEncounter = encounterList?.find(encounter => encounter.uuid == encounters.REFERRAL);
 
   return (
     <>

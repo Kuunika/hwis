@@ -100,6 +100,8 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
     setSearchedPatient(values);
     setIsPending(true);
 
+    console.log({ values })
+
     setTimeout(() => {
       setIsPending(false)
       setIsSuccess(true)
@@ -125,6 +127,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
           lastName: patient?.family_name,
         }}
         onSubmit={handleSubmit}
+        fullForm={false}
       />
       <br />
       <OverlayLoader open={isPending} />

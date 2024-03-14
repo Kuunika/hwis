@@ -57,7 +57,7 @@ export const registerPatient = () => {
           address2: patientData.homeVillage,
           address3: patientData.currentDistrict,
           stateProvince: patientData.currentTraditionalAuthority,
-          countryDistrict: patientData.homeTraditionalAuthority,
+          countyDistrict: patientData.homeTraditionalAuthority,
           cityVillage: patientData.homeTraditionalAuthority,
           country: patientData.nationality,
           preferred: true,

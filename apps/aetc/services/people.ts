@@ -13,3 +13,7 @@ export const createRelationship = (relationship: any) =>
 export const searchPerson = (queryParams: string) => {
   return getAll(endPoint + '/search', queryParams);
 }
+
+export const searchDDEPatient = (patientData: any) =>
+  create<Person>(patientData, endPoint);
+

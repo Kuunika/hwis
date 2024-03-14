@@ -192,7 +192,7 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } = referralContext;
       submitForm();
 
-      if (isValid && dirty) {
+      if (isValid) {
         setActive(active + 1);
       }
     }

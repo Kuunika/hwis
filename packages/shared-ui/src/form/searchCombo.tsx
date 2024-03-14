@@ -14,6 +14,7 @@ type Props = {
   label: string;
   width?: string;
   sx?: SxProps;
+  inputSx?: SxProps;
   getValue?: (value: string) => void;
   disabled?: boolean;
   multiple?: boolean;
@@ -26,6 +27,7 @@ export const SearchComboBox: FC<Props> = ({
   label,
   width = "100%",
   sx,
+  inputSx,
   getValue,
   disabled = false,
   multiple = true,
@@ -73,7 +75,7 @@ export const SearchComboBox: FC<Props> = ({
           label={label}
           error={hasError}
           variant="outlined"
-          sx={{ my: "1ch" }}
+          sx={{ my: "1ch", ...inputSx }}
           helperText={errorMessage}
         />
       )}
