@@ -112,8 +112,8 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
             multiple={false}
             size="small"
             options={[
-              { label: "Male", id: "Male" },
-              { label: "Female", id: "Female" },
+              { label: "Male", id: "M" },
+              { label: "Female", id: "F" },
             ]}
           />
         </WrapperBox>

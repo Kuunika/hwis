@@ -24,7 +24,8 @@ export interface Address {
   address2?: string;
   address3?: string;
   stateProvince?: string;
-  countryDistrict?: string;
+  countyDistrict?: string;
+  county_district?: string;
   cityVillage?: string;
   country?: string;
   postalCode?: string;
@@ -38,6 +39,7 @@ export interface Identifier {
 }
 
 export interface Person {
+  patient_id: number;
   identifiers: Identifier[];
   given_name: string;
   family_name: string;
@@ -142,3 +144,9 @@ export interface IApiService {
 }
 
 export type TriageResult = "" | "yellow" | "red" | "green";
+
+
+export type DDESearch = {
+  locals: Person[];
+  remotes: Person[];
+}

@@ -37,6 +37,7 @@ export const NewRegistrationFlow = () => {
   const [showForm, setShowForm] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const [patientValues, setPatientValues] = useState({})
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
@@ -244,7 +245,7 @@ export const NewRegistrationFlow = () => {
 
   return (
     <>
-      <SearchPotentialDuplicates open={true} />
+      <SearchPotentialDuplicates open={true} patientDemo={patientValues} />
       <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <MainGrid
@@ -270,6 +271,7 @@ export const NewRegistrationFlow = () => {
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
                     formData["demographics"] = values;
+                    setPatientValues(values)
 
                   }
                   }

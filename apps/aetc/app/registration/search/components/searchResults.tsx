@@ -17,6 +17,7 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
+import { Person } from "@/interfaces";
 
 
 export const SearchResults = ({
@@ -26,7 +27,7 @@ export const SearchResults = ({
 }: {
 
   searchedPatient: any;
-  searchResults: any;
+  searchResults: Person[];
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
@@ -40,16 +41,16 @@ export const SearchResults = ({
     navigateTo(`/registration/${params.id}/new`);
   };
 
-  const patientsResults = [
-    {
-      id: "HHH-TTTT1",
-      firstName: "Jon",
-      lastName: "Doe",
-      gender: "Male",
-    },
-    { id: "HHH-TTTT2", firstName: "Jane", lastName: "Doe", gender: "Male" },
-    { id: "HHH-TTTT3", firstName: "Andrew", lastName: "Doe", gender: "Male" },
-  ];
+  // const patientsResults = [
+  //   {
+  //     id: "HHH-TTTT1",
+  //     firstName: "Jon",
+  //     lastName: "Doe",
+  //     gender: "Male",
+  //   },
+  //   { id: "HHH-TTTT2", firstName: "Jane", lastName: "Doe", gender: "Male" },
+  //   { id: "HHH-TTTT3", firstName: "Andrew", lastName: "Doe", gender: "Male" },
+  // ];
 
   const columns = [
     { field: "attribute", headerName: "Attribute", flex: 1 },
@@ -105,8 +106,8 @@ export const SearchResults = ({
       <br />
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
-          patientsResults.map(pa => {
-            return <ResultBox />
+          searchResults.map(patient => {
+            return <ResultBox person={patient} />
           })
         }
       </WrapperBox>
@@ -175,14 +176,14 @@ export const SearchResults = ({
 };
 
 
-export const ResultBox = () => {
+export const ResultBox = ({ person }: { person: Person }) => {
   return <MainPaper sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
     <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
       <MainTypography color={defaultTheme.primary} variant="h1"><FaUser /></MainTypography>
     </WrapperBox>
     <WrapperBox>
       <WrapperBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <MainTypography variant="h5">John Doe</MainTypography>
+        <MainTypography variant="h5">{person.given_name} {person.family_name}</MainTypography>
         <MainTypography>Remote</MainTypography>
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
@@ -190,20 +191,20 @@ export const ResultBox = () => {
       </WrapperBox>
       <br />
       <WrapperBox sx={{ display: "flex", mb: 1 }}>
-        <Label label="Date of birth" value="12-jan-2000" />
+        <Label label="Date of birth" value={person.birthdate} />
         <Label label="Gender" value="Male" />
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
-        <Label label="Home district" value="Lilongwe" />
-        <Label label="Home traditional authority" value="Chikulamayembe" />
-        <Label label="Home village" value="vingula" />
+        <Label label="Home district" value={person.addresses[0].address1} />
+        <Label label="Home traditional authority" value={person.addresses[0].cityVillage} />
+        <Label label="Home village" value={person.addresses[0].address2} />
       </WrapperBox>
     </WrapperBox>
   </MainPaper>
 }
 
 
-const Label = ({ label, value }: { label: string, value: string }) => {
+const Label = ({ label, value }: { label: string, value: string | undefined | Date }) => {
   return <WrapperBox sx={{ display: "flex", flexDirection: "column", mr: 1 }}>
     <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value}</MainTypography>
   </WrapperBox>

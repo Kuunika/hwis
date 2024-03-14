@@ -36,8 +36,6 @@ function RegistrationSearch() {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          mt: "10ch",
-
           alignItems: "center",
         }}
       >
@@ -110,7 +108,13 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
     setSearchedPatient(values);
     setIsPending(true);
 
-    console.log({ values })
+    setSearch({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      gender: values.gender
+    })
+
+    // console.log({ values })
 
     setTimeout(() => {
       setIsPending(false)
@@ -142,7 +146,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
       <br />
       <OverlayLoader open={isFetching} />
       {<SearchResults
-        searchResults={{}}
+        searchResults={data ? data?.locals : []}
         searchedPatient={searchedPatient}
       />
       }

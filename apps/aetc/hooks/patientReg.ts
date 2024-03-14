@@ -152,6 +152,18 @@ export const getOnePatient = (patientId: string) => {
     enabled: true,
   });
 };
+export const searchDDEPatient = (firstName: string, lastName: string, gender: string) => {
+  const findAll = () =>
+    findByNameAndGender(firstName, lastName, gender).then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["find_by_gender", firstName, lastName, gender],
+    queryFn: findAll,
+    enabled: false,
+  });
+};
+
+
 export const searchByDemographics = (firstName: string, lastName: string, gender: string, birthdate: string,
   homeVillage: string,
   homeTA: string,
