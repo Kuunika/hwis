@@ -93,8 +93,24 @@ export const SearchResults = ({
       <br />
       <MainTypography variant="h5">Search Results</MainTypography>
       <br />
+      <WrapperBox sx={{ width: "100%" }}>
+        <MainButton
+          sx={{ mr: "0.2ch", borderRadius: "1px" }}
+          variant="secondary"
+          title="add new record"
+          onClick={handleNewRecord}
+        />
+      </WrapperBox>
+      <br />
+      <br />
+      <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
+        {
+          patientsResults.map(pa => {
+            return <ResultBox />
+          })
+        }
+      </WrapperBox>
 
-      <ResultBox />
       {/* <WrapperBox display={"flex"}>
         <WrapperBox sx={{ mr: "1ch" }}>
           {patientsResults.map((p) => {
@@ -160,7 +176,7 @@ export const SearchResults = ({
 
 
 export const ResultBox = () => {
-  return <MainPaper sx={{ display: "flex", padding: 2, width: "100%" }}>
+  return <MainPaper sx={{ display: "flex", padding: 2, width: "100%", my: 1 }}>
     <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
       <MainTypography color={defaultTheme.primary} variant="h1"><FaUser /></MainTypography>
     </WrapperBox>
