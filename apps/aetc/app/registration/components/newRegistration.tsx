@@ -27,6 +27,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
+import { SearchPotentialDuplicates } from "./searchPontentialDuplicates";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -243,6 +244,7 @@ export const NewRegistrationFlow = () => {
 
   return (
     <>
+      <SearchPotentialDuplicates open={true} />
       <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <MainGrid
@@ -266,8 +268,10 @@ export const NewRegistrationFlow = () => {
               {active == 1 && (
                 <DemographicsForm
                   setContext={setDemographicsContext}
-                  onSubmit={(values: any) =>
-                    (formData["demographics"] = values)
+                  onSubmit={(values: any) => {
+                    formData["demographics"] = values;
+
+                  }
                   }
                 />
               )}
@@ -388,7 +392,7 @@ const RegistrationNavigation = ({
         alignItems: "center",
         justifyContent: "space-evenly",
         position: "absolute",
-        zIndex: "100000",
+        zIndex: "10",
         bottom: 0,
         backgroundColor: "#fff",
         borderTop: "1px #E6E6E6 solid",
