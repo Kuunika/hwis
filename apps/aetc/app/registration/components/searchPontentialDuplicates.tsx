@@ -2,14 +2,15 @@ import { GenericDialog } from "@/components";
 import { useNavigation } from "@/hooks";
 import { searchByDemographics } from "@/hooks/patientReg";
 import { DDEScore } from "@/interfaces";
-import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
+import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 
 type Prop = {
     open: boolean
-    ddePatients: DDEScore[]
+    ddePatients: DDEScore[],
+    close: () => void
 }
 
-export const SearchPotentialDuplicates = ({ open, ddePatients }: Prop) => {
+export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) => {
     const { navigateTo } = useNavigation()
     const columns = [
         { field: "given_name", headerName: "First Name", flex: 1 },
@@ -38,7 +39,13 @@ export const SearchPotentialDuplicates = ({ open, ddePatients }: Prop) => {
     const rows = ddePatients.map(d => ({ ...d.person, score: d.score }))
 
     return <GenericDialog title="Check Potential Duplicates" open={open} onClose={() => { }}>
-        <BaseTable columns={columns} rows={rows} />
+        <MainButton title={"cancel"} variant="secondary" onClick={close} />
+        {rows.length > 0 ? <BaseTable columns={columns} rows={rows} /> : <>
+            <WrapperBox>
+                <MainTypography variant="subtitle1">There are no patients matching the search criteria</MainTypography>
+            </WrapperBox>
+        </>}
+
     </GenericDialog>
 }
 

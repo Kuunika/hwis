@@ -268,7 +268,7 @@ export const NewRegistrationFlow = () => {
   return (
     <>
       <OverlayLoader open={isFetching} />
-      <SearchPotentialDuplicates open={isSuccess && dialogOpen} ddePatients={ddePatients ? ddePatients : []} />
+      <SearchPotentialDuplicates close={() => setDialogOpen(false)} open={isSuccess && dialogOpen} ddePatients={ddePatients ? ddePatients : []} />
       <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <MainGrid
