@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { createContext, FC, ReactNode } from "react";
 
@@ -11,11 +11,14 @@ export type AuthContextType = {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    // const [loggedIn, setLoggedIn] = useState<boolean>(Boolean(localStorage.getItem("accessToken")));
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    // const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
-
-
+    useEffect(() => {
+        if (localStorage) {
+            setLoggedIn(Boolean(localStorage.getItem("accessToken")));
+        }
+    }, [])
 
     return (
         <AuthContext.Provider value={{ loggedIn, setLoggedIn }}>

@@ -50,7 +50,7 @@ const schema = yup.object({
     [form.lastName.name]: yup.string().required().label(form.lastName.label),
     [form.password.name]: yup.string().required().label(form.password.label),
     [form.role.name]: yup.array().required().label(form.role.label),
-    [form.passwordConfirmation.name]: yup.string().required().oneOf([yup.ref(form.password.name), null], 'Passwords must match').label(form.passwordConfirmation.label),
+    [form.passwordConfirmation.name]: yup.string().required().oneOf([yup.ref(form.password.name)], 'Passwords must match').label(form.passwordConfirmation.label),
 });
 
 export const UserForm = ({ initialValues, onSubmit }: props) => {

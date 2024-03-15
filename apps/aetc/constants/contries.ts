@@ -4,6 +4,13 @@ export const countries =
 
   [
     {
+      num_code: "454",
+      alpha_2_code: "MW",
+      alpha_3_code: "MWI",
+      en_short_name: "Malawi",
+      nationality: "Malawian",
+    },
+    {
       num_code: "4",
       alpha_2_code: "AF",
       alpha_3_code: "AFG",
@@ -912,13 +919,6 @@ export const countries =
       alpha_3_code: "MDG",
       en_short_name: "Madagascar",
       nationality: "Malagasy",
-    },
-    {
-      num_code: "454",
-      alpha_2_code: "MW",
-      alpha_3_code: "MWI",
-      en_short_name: "Malawi",
-      nationality: "Malawian",
     },
     {
       num_code: "458",

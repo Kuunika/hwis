@@ -8,8 +8,9 @@ import {
   RegistrationMainHeader,
 } from "@/app/registration/components/common";
 import { Navigation } from "@/app/components/navigation";
-
-export default function InitialList() {
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
+function InitialList() {
   return (
     <>
       <Navigation title="Patients waiting prescreening" link="/dashboard" />
@@ -42,3 +43,5 @@ export default function InitialList() {
     </>
   );
 }
+
+export default AuthGuard(InitialList, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])

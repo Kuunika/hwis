@@ -6,8 +6,10 @@ import { SearchNPIDForm } from "@/app/registration/search/components/searchNpid"
 import { SearchTab } from "@/app/registration/components/searchTabs";
 import { useEffect, useState } from "react";
 import { OverlayLoader } from "@/components/backdrop";
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
 
-export default function Page() {
+function Page() {
     const [searching, setSearching] = useState(false);
     const [result, setResult] = useState(false);
 
@@ -39,3 +41,5 @@ export default function Page() {
         </WrapperBox>
     </>
 }
+
+export default AuthGuard(Page, [roles.ADMIN,])

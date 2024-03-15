@@ -13,7 +13,7 @@ import {
 import * as Yup from "yup";
 
 import { getInitialValues, notify } from "@/helpers";
-import { districts, traditionalAuthorities } from "@/constants";
+import { districts, malawiVillages, traditionalAuthorities } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -35,7 +35,7 @@ const form = {
   },
   dob: {
     name: "birthDate",
-    label: "Date of Birth",
+    label: "Estimated Age",
   },
   gender: {
     name: "gender",
@@ -89,7 +89,7 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
       submitButton={false}
     >
       <WrapperBox>
-        <WrapperBox sx={spacing}>
+        <WrapperBox sx={{ ...spacing, alignItems: "end", py: "1ch" }}>
           <TextInputField
             sx={{ width: "100%", my: 0 }}
             name={form.firstName.name}
@@ -98,14 +98,27 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
             label={form.firstName.label}
           />
           <TextInputField
-            sx={{ width: "100%", my: 0 }}
+            sx={{ width: "100%", my: 0, mr: "5px" }}
             name={form.lastName.name}
             id={form.lastName.name}
             size="small"
             label={form.lastName.label}
           />
+          <SearchComboBox
+            width="100%"
+            inputSx={{ m: 0 }}
+            name={form.gender.name}
+            label={form.gender.label}
+            multiple={false}
+            size="small"
+            options={[
+              { label: "Male", id: "M" },
+              { label: "Female", id: "F" },
+            ]}
+          />
         </WrapperBox>
-        {fullForm && <><WrapperBox sx={spacing}>
+
+        {fullForm && <><WrapperBox sx={{ ...spacing }}>
           <SearchComboBox
             width="30%"
             name={form.gender.name}
@@ -117,12 +130,20 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
               { label: "Female", id: "Female" },
             ]}
           />
-          <FormDatePicker
+
+          <TextInputField
+            sx={{ width: "100%", my: 0 }}
+            name={form.dob.name}
+            id={form.dob.name}
+            size="small"
+            label={form.dob.label}
+          />
+          {/* <FormDatePicker
             width={"100%"}
             name={form.dob.name}
             label={form.dob.label}
             size="small"
-          />
+          /> */}
         </WrapperBox>
           <WrapperBox display={"flex"}>
             <SearchComboBox
@@ -146,7 +167,20 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
               multiple={false}
               options={traditionalAuthorities}
             />
-          </WrapperBox></>}
+          </WrapperBox>
+          <WrapperBox>
+            <SearchComboBox
+              width="100%"
+              size="small"
+              name={form.homeVillage.name}
+              label={form.homeVillage.label}
+              multiple={false}
+              options={malawiVillages}
+            />
+          </WrapperBox>
+
+        </>}
+
         <MainButton
           sx={{ width: "100%", height: "5ch", borderRadius: "10px", mt: "1ch" }}
           type="submit"

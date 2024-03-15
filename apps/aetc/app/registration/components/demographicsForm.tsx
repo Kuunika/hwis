@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import villages from "../../../constants/villages.json"
 
 import {
   FormikInit,
@@ -331,6 +332,10 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.homeVillage.label}
             multiple={false}
             options={malawiVillages}
+          // options={villages.map((v: any) => ({
+          //   id: v.name,
+          //   label: v.name
+          // }))}
           />
         </RegistrationCard>
 

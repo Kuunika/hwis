@@ -1,12 +1,13 @@
 import { MainCard, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { Chip } from "@mui/material";
 import { getOnePatient, getPatientsWaitingForAssessment } from "@/hooks/patientReg";
-import { useParameters } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   const { params } = useParameters();
+  const { navigateTo } = useNavigation()
   const { data: patient, isLoading } = getOnePatient(params.id as string);
 
   // const patient = patients?.find((p) => p.uuid == params.id);
@@ -51,6 +52,7 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
           `  (Age ${patient?.birthdate && calculateAge(patient?.birthdate)})`
         }
       />
+      <LabelValue label="" value={<MainTypography onClick={() => navigateTo(`/patient/${params.id}/view`)} sx={{ color: "blue", cursor: "pointer" }} variant="inherit">see more</MainTypography>} />
       <WrapperBox
         sx={{
           display: "flex",

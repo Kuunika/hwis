@@ -3,7 +3,9 @@
 import { PatientInfoTab } from "@/components";
 import TriageWorkFlow from "../../components/triageWorkFlow";
 import { FormContainer } from "shared-ui/src";
-export default function Triage() {
+import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
+function Triage() {
   return (
     <>
       <PatientInfoTab />
@@ -13,3 +15,5 @@ export default function Triage() {
     </>
   );
 }
+
+export default AuthGuard(Triage, [roles.CLINICIAN, roles.NURSE, roles.ADMIN])

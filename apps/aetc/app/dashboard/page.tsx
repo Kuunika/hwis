@@ -1,13 +1,14 @@
 "use client";
 import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
-
-
 import { useNavigation } from "@/hooks";
 
 
 import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings } from "react-icons/fc";
+import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
+import { AuthGuardComp } from "@/helpers/authguardcomponent";
 
-export default function Home() {
+function Home() {
     return (
         <>
             <MainGrid container>
@@ -27,48 +28,65 @@ export default function Home() {
                     }}
                     pt="5ch"
                 >
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                        <Card
+                            link="/registration/search"
+                            title="Find Patient"
+                            icon={<FcSearch />}
+                        />
+                    </AuthGuardComp>
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                        <Card
+                            link="/initial-registration"
+                            title="Initial Registration"
+                            icon={<FcPlus />}
+                        />
+                    </AuthGuardComp>
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
 
-                    <Card
-                        link="/registration/search"
-                        title="Find Patient"
-                        icon={<FcSearch />}
-                    />
-                    <Card
-                        link="/initial-registration"
-                        title="Initial Registration"
-                        icon={<FcPlus />}
-                    />
-                    <Card
-                        icon={<FcRules />}
-                        link="/registration/death/list"
-                        title="Brought In Dead"
-                    />
-                    <Card
-                        icon={<FcTodoList />}
-                        link="/initial-registration/list"
-                        title="Patients Waiting for Screening"
-                    />
-                    <Card
-                        icon={<FcTodoList />}
-                        link="/registration/list"
-                        title="Patients Waiting for Registration"
-                    />
-                    <Card
-                        icon={<FcTodoList />}
-                        link="/triage"
-                        title="Patients Waiting for Triage"
-                    />
-                    <Card
-                        icon={<FcTodoList />}
-                        link="/assessments"
-                        title="Patients Waiting for Assessment "
-                    />
-                    <Card
-                        icon={<FcSettings />}
-                        link="/config"
-                        title="Config"
-                    />
-                    {/* <Card link="/prescreening" title="Prescreening" /> */}
+                        <Card
+                            icon={<FcRules />}
+                            link="/registration/death/list"
+                            title="Brought In Dead"
+                        />
+                    </AuthGuardComp>
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                        <Card
+                            icon={<FcTodoList />}
+                            link="/initial-registration/list"
+                            title="Patients Waiting for Screening"
+                        />
+                    </AuthGuardComp>
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                        <Card
+                            icon={<FcTodoList />}
+                            link="/registration/list"
+                            title="Patients Waiting for Registration"
+                        />
+                    </AuthGuardComp>
+
+                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                        <Card
+                            icon={<FcTodoList />}
+                            link="/triage"
+                            title="Patients Waiting for Triage"
+                        />
+                    </AuthGuardComp>
+                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN]}>
+                        <Card
+                            icon={<FcTodoList />}
+                            link="/assessments"
+                            title="Patients Waiting for Assessment "
+                        />
+                    </AuthGuardComp>
+                    <AuthGuardComp roles={[roles.ADMIN]}>
+                        <Card
+                            icon={<FcSettings />}
+                            link="/config"
+                            title="Config"
+                        />
+                    </AuthGuardComp>
+
                 </MainGrid>
                 <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
             </MainGrid>
@@ -107,3 +125,6 @@ const Card = ({
         </MainPaper>
     );
 };
+
+
+export default AuthGuard(Home, [roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE])

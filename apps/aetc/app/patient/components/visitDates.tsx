@@ -10,6 +10,12 @@ import MenuList from "@mui/material/MenuList";
 import Stack from "@mui/material/Stack";
 import { FaCalendarDays, FaCheck } from "react-icons/fa6";
 import { MainTypography } from "shared-ui/src";
+import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
+
+
+type Prop = {
+  visits: string[]
+}
 
 const dates = [
   "Today",
@@ -18,7 +24,8 @@ const dates = [
   "6th September, 2014",
 ];
 
-export function VisitDates() {
+export function VisitDates({ visits }: Prop) {
+  const { setActiveVisit } = React.useContext(PatientProfileContext) as PatientProfileContextType;
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
 
@@ -109,11 +116,13 @@ export function VisitDates() {
                   <MenuList
                     autoFocusItem={open}
                     id="composition-menu"
+
                     aria-labelledby="composition-button"
                     onKeyDown={handleListKeyDown}
                   >
-                    {dates.map((d) => (
+                    {visits.map((d) => (
                       <MenuItem
+
                         sx={{
                           py: "2ch",
                           mx: "1ch",
@@ -131,7 +140,10 @@ export function VisitDates() {
                           },
                         }}
                         key={d}
-                        onClick={handleClose}
+                        onClick={(event: any) => {
+                          setActiveVisit(d)
+                          handleClose(event)
+                        }}
                       >
                         <MainTypography
                           sx={{

@@ -11,7 +11,7 @@ import {
 } from "../registration/components/common";
 import { addVisit } from "@/hooks/visit";
 import { useEffect } from "react";
-import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
+import { AETC_VISIT_TYPE, concepts, encounters, roles } from "@/constants";
 import { addEncounter } from "@/hooks/encounter";
 import { useNavigation } from "@/hooks";
 import { getVisitNum } from "@/hooks/visitNumber";
@@ -20,8 +20,9 @@ import { OperationSuccess } from "@/components/operationSuccess";
 import { useFormLoading } from "@/hooks/formLoading";
 import { FormError } from "@/components/formError";
 import { Navigation } from "../components/navigation";
+import AuthGuard from "@/helpers/authguard";
 
-export default function InitialRegistration() {
+function InitialRegistration() {
   const { refresh, navigateTo } = useNavigation();
   const initialValues = { firstName: "", lastName: "" };
   const {
@@ -235,3 +236,5 @@ export default function InitialRegistration() {
     </>
   );
 }
+
+export default AuthGuard(InitialRegistration, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])

@@ -19,6 +19,7 @@ import { getObservations, successDialog } from "@/helpers";
 import {
   getPatientsWaitingForRegistrations,
   registerPatient,
+  searchByDemographics,
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
 import { addEncounter } from "@/hooks/encounter";
@@ -27,21 +28,35 @@ import { getDateTime } from "@/helpers/dateTime";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
+import { SearchPotentialDuplicates } from "./searchPontentialDuplicates";
+import { OverlayLoader } from "@/components/backdrop";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
   const { navigateTo } = useNavigation();
   const [loading, setLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [completed, setCompleted] = useState(0);
   const [showForm, setShowForm] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+
+
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
   const [referralContext, setReferralContext] = useState<any>();
   const [financingFormContext, setFinancingFormContext] = useState<any>();
   const [formData, setFormData] = useState<any>({});
+  const [patientValues, setPatientValues] = useState({
+    firstName: '', lastName: '', gender: '', birthdate: '',
+    homeVillage: '',
+    homeTA: '',
+    homeDistrict: ''
+  })
+
+  const { refetch, isFetching, isSuccess, data: ddePatients } = searchByDemographics(patientValues.firstName, patientValues.lastName, patientValues.gender, patientValues.birthdate, patientValues.homeVillage, patientValues.homeTA, patientValues.homeDistrict)
+
   const { data: initialRegistrationList } =
     getPatientsWaitingForRegistrations();
   const { params } = useParameters();
@@ -89,6 +104,15 @@ export const NewRegistrationFlow = () => {
     data: relationship,
     isError: relationshipError,
   } = addRelationship();
+
+
+  useEffect(() => {
+
+    if (!Boolean(patientValues.firstName)) return
+
+    refetch()
+
+  }, [patientValues])
 
   // patient created
   useEffect(() => {
@@ -192,7 +216,7 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } = referralContext;
       submitForm();
 
-      if (isValid && dirty) {
+      if (isValid) {
         setActive(active + 1);
       }
     }
@@ -243,6 +267,8 @@ export const NewRegistrationFlow = () => {
 
   return (
     <>
+      <OverlayLoader open={isFetching} />
+      <SearchPotentialDuplicates close={() => setDialogOpen(false)} open={isSuccess && dialogOpen} ddePatients={ddePatients ? ddePatients : []} />
       <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <MainGrid
@@ -266,8 +292,18 @@ export const NewRegistrationFlow = () => {
               {active == 1 && (
                 <DemographicsForm
                   setContext={setDemographicsContext}
-                  onSubmit={(values: any) =>
-                    (formData["demographics"] = values)
+                  onSubmit={(values: any) => {
+                    formData["demographics"] = values;
+                    setPatientValues({
+                      ...values,
+                      homeDistrict: values.homeDistrict,
+                      homeTA: values.homeTraditionalAuthority,
+                      homeVillage: values.homeVillage,
+                      birthdate: values.birthDate
+                    })
+                    setDialogOpen(true)
+
+                  }
                   }
                 />
               )}
@@ -375,7 +411,7 @@ const RegistrationNavigation = ({
   };
 
   const scrollToComponent = (id: number) => {
-    const element = document.getElementById(id);
+    const element = document.getElementById(id.toString());
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -388,7 +424,7 @@ const RegistrationNavigation = ({
         alignItems: "center",
         justifyContent: "space-evenly",
         position: "absolute",
-        zIndex: "100000",
+        zIndex: "10",
         bottom: 0,
         backgroundColor: "#fff",
         borderTop: "1px #E6E6E6 solid",

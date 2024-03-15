@@ -9,8 +9,10 @@ import {
   RegistrationCard,
 } from "../registration/components/common";
 import { Navigation } from "../components/navigation";
+import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
 
-export default function Triage() {
+function Triage() {
   return (
     <>
       <Navigation title="Patients waiting for Triage" link="/dashboard" />
@@ -43,3 +45,5 @@ export default function Triage() {
     </>
   );
 }
+
+export default AuthGuard(Triage, [roles.CLINICIAN, roles.NURSE, roles.ADMIN])

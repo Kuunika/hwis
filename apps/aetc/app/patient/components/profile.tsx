@@ -24,9 +24,11 @@ import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
 import { VitalsPanel } from "./panels/vitalsDetails";
 import { BasicSelect } from "./basicSelect";
 import { FaFileAlt } from "react-icons/fa";
+import { useParameters } from "@/hooks";
 
 
 export const DesktopView = () => {
+  const { params } = useParameters()
 
   return (
     <MainGrid
@@ -40,7 +42,7 @@ export const DesktopView = () => {
         <PersonalDetailsCard />
         <WrapperBox sx={{ my: "1ch" }}>
           <ConsultationCard
-            link="/primary-assessment"
+            link={"/primary-assessment/" + params.id}
             title="Start Primary Survey"
           />
           <ConsultationCard

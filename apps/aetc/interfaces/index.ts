@@ -21,18 +21,28 @@ export interface Concept {
 
 export interface Address {
   address1?: string;
+  address2?: string;
+  address3?: string;
+  stateProvince?: string;
+  countyDistrict?: string;
+  county_district?: string;
   cityVillage?: string;
   country?: string;
   postalCode?: string;
+  preferred?: boolean
 }
 
 export interface Identifier {
   identifier: string;
-  identifierType: string;
+  identifier_type: {
+    name: string;
+    uuid: string
+  }
   preferred: boolean;
 }
 
 export interface Person {
+  patient_id: number;
   identifiers: Identifier[];
   given_name: string;
   family_name: string;
@@ -137,3 +147,14 @@ export interface IApiService {
 }
 
 export type TriageResult = "" | "yellow" | "red" | "green";
+
+
+export type DDESearch = {
+  locals: Person[];
+  remotes: Person[];
+}
+
+export type DDEScore = {
+  person: Person;
+  score: number
+}

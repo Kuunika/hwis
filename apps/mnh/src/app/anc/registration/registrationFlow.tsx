@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from "react";
-import { MainButton, NewStepperContainer, WrapperBox} from 'shared-ui/src';
+import { MainButton, NewStepperContainer, WrapperBox } from 'shared-ui/src';
 import CurrentObsteric from './currentObsteric/components/currentObsteric';
 import Gestation from './gestation/components/gestation';
 import MedicalHistory from './medicalHistory/components/medicalHistory';
@@ -10,7 +10,7 @@ import { useNavigation } from '../hooks';
 
 
 export const RegistrationFlow = () => {
-  const [activeStep,setActiveStep] = useState<number>(0)
+  const [activeStep, setActiveStep] = useState<number>(0)
   const { navigateTo } = useNavigation();
 
   const steps = [
@@ -20,21 +20,21 @@ export const RegistrationFlow = () => {
     { id: 4, label: "Gestation" },
     { id: 5, label: "Medical History" },
   ];
-  
 
-  const handleSubmitVitalsForm=()=>{
+
+  const handleSubmitVitalsForm = () => {
     setActiveStep(1)
   }
-  const handleDemographics=()=>{
+  const handleDemographics = () => {
     setActiveStep(2)
   }
-  const handleSubmitCurrentObsteric =()=>{
+  const handleSubmitCurrentObsteric = () => {
     setActiveStep(3)
   }
-  const handleSubmitGestation =()=>{
+  const handleSubmitGestation = () => {
     setActiveStep(4)
   }
-  const handleSubmitMedicalHistory =()=>{
+  const handleSubmitMedicalHistory = () => {
     navigateTo("/anc/physical-examination");
   }
   return (
@@ -44,8 +44,8 @@ export const RegistrationFlow = () => {
         onSubmit={handleSubmitVitalsForm}
       />
       <DemographicsForm
-       initialValues={demographicsInitialValues}
-       onSubmit={handleDemographics}
+        initialValues={demographicsInitialValues}
+        onSubmit={handleDemographics}
       />
       <CurrentObsteric
         initialValues={currentObstericInitialValues}

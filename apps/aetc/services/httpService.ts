@@ -52,7 +52,13 @@ export async function login(
     response = await apiClient.post("/auth/login", credentials);
     setCookie("accessToken", response.data.jwt);
 
+
+
     localStorage.setItem("accessToken", response.data.jwt);
+
+    const roles = response.data.user.user_roles.map((r: any) => r.role.role);
+
+    localStorage.setItem("roles", roles);
 
     return {
       status: response.status,

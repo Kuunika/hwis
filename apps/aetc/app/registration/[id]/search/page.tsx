@@ -7,21 +7,23 @@ import {
 
 } from "shared-ui/src";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParameters } from "@/hooks";
 
 import { SearchForm } from "../../search/components/searchForm";
 import { SearchResults } from "../../search/components/searchResults";
 import {
-  getPatientsWaitingForRegistrations,
+  getPatientsWaitingForRegistrations, searchDDEPatient, searchPotentialDuplicates,
 
 } from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
 import { SearchNPIDForm } from "../../search/components/searchNpid";
 import { Navigation } from "@/app/components/navigation";
 import { OverlayLoader } from "@/components/backdrop";
+import { roles } from "@/constants";
+import AuthGuard from "@/helpers/authguard";
 
-export default function RegistrationSearch() {
+function RegistrationSearch() {
   const { params } = useParameters();
   const { data } = getPatientsWaitingForRegistrations();
 
@@ -34,8 +36,6 @@ export default function RegistrationSearch() {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          mt: "10ch",
-
           alignItems: "center",
         }}
       >
@@ -88,20 +88,38 @@ export default function RegistrationSearch() {
 }
 
 const DemographicsSearch = ({ patient }: { patient: any }) => {
-  // const { mutate, isPending, isSuccess } = searchPotentialDuplicates();
+  // const { mutate, isPending:searching, isSuccess: searched } = searchPotentialDuplicates();
 
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isPending, setIsPending] = useState(false)
+  const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
+  const { refetch, isFetching, isSuccess: searchComplete, data } = searchDDEPatient(search.firstName, search.lastName, search.gender)
+
+  // const [isSuccess, setIsSuccess] = useState(false);
+  // const [isPending, setIsPending] = useState(false)
   const [searchedPatient, setSearchedPatient] = useState({});
+
+  useEffect(() => {
+    if (!Boolean(search.firstName)) return;
+    refetch();
+
+  }, [search])
+
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
-    setIsPending(true);
+    // setIsPending(true);
 
-    setTimeout(() => {
-      setIsPending(false)
-      setIsSuccess(true)
-    }, 2000)
+    setSearch({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      gender: values.gender
+    })
+
+    // console.log({ values })
+
+    // setTimeout(() => {
+    //   setIsPending(false)
+    //   setIsSuccess(true)
+    // }, 2000)
 
     // mutate({
     //   given_name: values.firstName,
@@ -123,11 +141,12 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
           lastName: patient?.family_name,
         }}
         onSubmit={handleSubmit}
+        fullForm={false}
       />
       <br />
-      <OverlayLoader open={isPending} />
-      {isSuccess && <SearchResults
-        searchResults={{}}
+      <OverlayLoader open={isFetching} />
+      {searchComplete && <SearchResults
+        searchResults={data ? data : { remotes: [], locals: [] }}
         searchedPatient={searchedPatient}
       />
       }
@@ -145,3 +164,5 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
 const NPIDSearch = () => {
   return <SearchNPIDForm onSubmit={() => { }} />;
 };
+
+export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])
