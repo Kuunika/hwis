@@ -38,9 +38,6 @@ function RegistrationSearch() {
     }
   }, [patient])
 
-
-
-
   return (
     <>
       <Navigation title="Search Patient" link="/dashboard" />

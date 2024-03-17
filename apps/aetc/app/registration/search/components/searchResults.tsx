@@ -20,7 +20,8 @@ import {
 } from "@/contexts";
 import { DDESearch, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { getOnePatient } from "@/hooks/patientReg";
+import { getOnePatient, merge } from "@/hooks/patientReg";
+import { OverlayLoader } from "@/components/backdrop";
 
 
 export const SearchResults = ({
@@ -159,11 +160,43 @@ export const AddPatientButton = () => {
 const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
   const { params } = useParameters();
   const { navigateTo } = useNavigation()
+  const { mutate, isPending, isSuccess, data } = merge();
+  // const { setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
-  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { registrationType, initialRegisteredPatient, patient, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+
+
+
+  const identifier = patient?.identifiers?.find(id => id.identifier_type.name == "DDE person document ID");
+
+
+  useEffect(() => {
+
+    if (isSuccess) {
+
+      setPatient(data);
+      navigateTo(`/registration/${params.id}/new`)
+    }
+
+  }, [isSuccess])
+
+
   return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>
     <MainTypography> {registrationType == "local" ? "Are you sure you want to continue registration with the local record?" : "Are you sure you want to continue registration with the remote record?"}</MainTypography>
-    <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => navigateTo(`/registration/${params.id}/new`)} />
+    <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => {
+
+      if (identifier) {
+        mutate({
+          primary: { patient_id: initialRegisteredPatient.patient_id },
+          secondary: [{
+            "doc_id": identifier?.identifier
+          }]
+        })
+      } else {
+        navigateTo(`/registration/${params.id}/new`)
+      }
+    }} />
     <MainButton variant="secondary" title={"No"} onClick={onClose} />
+    <OverlayLoader open={isPending} />
   </GenericDialog>
 }
