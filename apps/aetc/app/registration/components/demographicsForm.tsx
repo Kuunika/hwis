@@ -205,7 +205,7 @@ export const DemographicsForm: FC<Prop> = ({
   ) as SearchRegistrationContextType;
 
 
-  console.log({ patient })
+
 
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
@@ -261,7 +261,7 @@ export const DemographicsForm: FC<Prop> = ({
   }
 
 
-  console.log({ _init })
+
 
   return (
     <>

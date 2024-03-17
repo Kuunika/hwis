@@ -29,11 +29,19 @@ export const FormDatePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const { value, setFieldValue } = useFormikField(name);
+  const { value, setFieldValue, initialValues } = useFormikField(name);
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
+
+  let initialDate = "2024-03-17";
+
+  if (typeof initialValues == 'object' && initialValues !== null) {
+
+    //@ts-ignore
+    initialDate = initialValues[name] as Date
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -45,6 +53,8 @@ export const FormDatePicker: FC<Prop> = ({
           "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}
+
+        defaultValue={dayjs(initialDate)}
         label={label}
         // value={value}
         onChange={(dateValue: any) =>

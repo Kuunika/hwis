@@ -6,6 +6,7 @@ import { SxProps } from "@mui/material";
 import { FaRegSquare, FaSquareCheck } from "react-icons/fa6";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { MainTypography, WrapperBox, defaultTheme } from "..";
 
 const icon = <FaRegSquare />;
 const checkedIcon = <FaSquareCheck />;
@@ -41,7 +42,6 @@ export const SearchComboBox: FC<Props> = ({
     useFormikField(name);
 
 
-
   const mappedOptions = options.map(op => {
     return {
       value: op.id,
@@ -49,7 +49,45 @@ export const SearchComboBox: FC<Props> = ({
     }
   })
 
-  return <Select isMulti={multiple} components={animatedComponents} options={mappedOptions} />
+  const handleChange = (values: any) => {
+    const inputValue = multiple ? values.map((v: any) => ({
+      id: v.value,
+      label: v.label
+
+    })) : values.value;
+
+    setFieldValue(name, inputValue);
+    if (getValue) {
+      getValue(inputValue);
+    }
+  }
+  return <WrapperBox sx={{ width, my: 1, ...sx, p: 0.5, borderRadius: 0.5 }}>
+    <MainTypography variant="subtitle2">{label}</MainTypography>
+    <Select
+
+      styles={{
+        //@ts-ignore
+        control: (baseStyles, state) => ({
+          ...baseStyles,
+          borderColor: hasError ? "red" : "#B3B3B3"
+        }),
+      }}
+
+      isDisabled={disabled}
+      //@ts-ignore
+      defaultValue={mappedOptions.filter(op => op.value == initialValues[name])}
+      //@ts-ignore
+      theme={theme => ({
+        ...theme,
+
+        colors: {
+          ...theme.colors,
+          primary: defaultTheme.primary,
+          primary25: "#cffccf"
+        }
+      })}
+      onChange={values => handleChange(values)} isMulti={multiple} components={animatedComponents} options={mappedOptions} />
+  </WrapperBox>
 
   // return (
   //   <Autocomplete

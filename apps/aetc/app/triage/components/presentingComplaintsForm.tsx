@@ -12,7 +12,7 @@ type Prop = {
 const form = {
   complaints: {
     name: concepts.COMPLAINTS,
-    label: " Complaints",
+    label: "Complaints",
   },
 };
 
