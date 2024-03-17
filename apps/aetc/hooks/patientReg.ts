@@ -177,3 +177,16 @@ export const searchByDemographics = (firstName: string, lastName: string, gender
     enabled: false,
   });
 };
+
+
+export const merge = () => {
+  const addData = (patientData: any) => {
+    return createPatient(patientData).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: addData,
+  });
+};

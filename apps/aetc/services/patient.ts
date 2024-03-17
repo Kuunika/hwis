@@ -23,8 +23,6 @@ export const potentialDuplicates = (patientData: any) =>
 
 export const getPatient = (uuid: string) => getOne<Person>(uuid, '/patients');
 
-
-
 export const findByNameAndGender = (firstName: string, lastName: string, gender: string) => getAll<DDESearch>(`/dde/patients/find_by_name_and_gender?given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
 
 export const findByDemographics =
@@ -36,3 +34,7 @@ export const findByDemographics =
     homeTA: string,
     homeDistrict: string) => getAll<DDEScore[]>(`/dde/patients/match_by_demographics?home_district=${homeDistrict}&home_traditional_authority=${homeTA}&home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
 
+
+export const mergePatients = (data: any) => {
+  return create("/dde/patients/merge?visit_type_id=1", data)
+}
