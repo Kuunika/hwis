@@ -4,6 +4,7 @@ import { searchByDemographics } from "@/hooks/patientReg";
 import { DDEScore } from "@/interfaces";
 import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaCodeMerge } from "react-icons/fa6";
+import { useState } from "react";
 
 
 type Prop = {
@@ -14,6 +15,7 @@ type Prop = {
 
 export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) => {
     const { navigateTo } = useNavigation()
+    const [selectedRows, setSelectedRows] = useState([])
 
     const columns = [
         { field: "given_name", headerName: "First Name", flex: 1 },
@@ -24,26 +26,14 @@ export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) =>
         { field: "home_traditional_authority", headerName: "Home Traditional Authority", flex: 1 },
         { field: "home_district", headerName: "Home District", flex: 1 },
         { field: "score", headerName: "Score" },
-        {
-            field: "action",
-            headerName: "Action",
-            renderCell: (cell: any) => {
-                return (
-                    <MainButton
-                        sx={{ fontSize: "12px" }}
-                        title={"Merge"}
-                        onClick={() => navigateTo('')}
-                    />
-                );
-            },
-        },
     ];
 
     const getSelectedItems = (patients: any) => {
-        console.log({ patients })
+        setSelectedRows(patients)
     }
     const rows = ddePatients.map(d => ({ ...d.person, score: d.score }))
     return <GenericDialog title="Check Potential Duplicates" open={open} onClose={() => { }}>
+        <MainButton disabled={selectedRows.length == 0} title={"merge patients and continue"} sx={{ mr: 0.5 }} variant="primary" onClick={() => { }} />
         <MainButton title={"cancel"} variant="secondary" onClick={close} />
         {rows.length > 0 ? <BaseTable getSelectedItems={getSelectedItems} checkboxSelection={true} columns={columns} rows={rows} /> : <>
             <WrapperBox>

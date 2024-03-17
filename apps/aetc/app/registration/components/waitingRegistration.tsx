@@ -5,9 +5,6 @@ import { BaseTable, MainButton } from "shared-ui/src";
 
 
 export const WaitingRegistrationList = () => {
-
-
-
   const { navigateTo } = useNavigation();
   const {
     data: patients,
