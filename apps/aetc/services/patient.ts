@@ -36,5 +36,5 @@ export const findByDemographics =
 
 
 export const mergePatients = (data: any) => {
-  return create("/dde/patients/merge?visit_type_id=1", data)
+  return create<Person>(data, "/dde/patients/merge?visit_type_id=1")
 }
