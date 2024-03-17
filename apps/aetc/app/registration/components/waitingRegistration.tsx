@@ -3,7 +3,11 @@ import { useNavigation } from "@/hooks";
 import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { BaseTable, MainButton } from "shared-ui/src";
 
+
 export const WaitingRegistrationList = () => {
+
+
+
   const { navigateTo } = useNavigation();
   const {
     data: patients,

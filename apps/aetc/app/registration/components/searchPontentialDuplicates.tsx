@@ -5,6 +5,7 @@ import { DDEScore } from "@/interfaces";
 import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaCodeMerge } from "react-icons/fa6";
 
+
 type Prop = {
     open: boolean
     ddePatients: DDEScore[],
@@ -13,6 +14,7 @@ type Prop = {
 
 export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) => {
     const { navigateTo } = useNavigation()
+
     const columns = [
         { field: "given_name", headerName: "First Name", flex: 1 },
         { field: "family_name", headerName: "Last Name", flex: 1 },
@@ -36,14 +38,19 @@ export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) =>
             },
         },
     ];
+
+    const getSelectedItems = (patients: any) => {
+        console.log({ patients })
+    }
     const rows = ddePatients.map(d => ({ ...d.person, score: d.score }))
     return <GenericDialog title="Check Potential Duplicates" open={open} onClose={() => { }}>
         <MainButton title={"cancel"} variant="secondary" onClick={close} />
-        {rows.length > 0 ? <BaseTable columns={columns} rows={rows} /> : <>
+        {rows.length > 0 ? <BaseTable getSelectedItems={getSelectedItems} checkboxSelection={true} columns={columns} rows={rows} /> : <>
             <WrapperBox>
                 <MainTypography variant="subtitle1">There are no patients matching the search criteria</MainTypography>
             </WrapperBox>
         </>}
     </GenericDialog>
 }
+
 
