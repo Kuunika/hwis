@@ -7,7 +7,7 @@ import {
 
 } from "shared-ui/src";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParameters } from "@/hooks";
 
 import { SearchForm } from "../../search/components/searchForm";
@@ -22,12 +22,25 @@ import { Navigation } from "@/app/components/navigation";
 import { OverlayLoader } from "@/components/backdrop";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
+import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 
 function RegistrationSearch() {
   const { params } = useParameters();
+  const { setInitialRegisteredPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   const { data } = getPatientsWaitingForRegistrations();
 
   const patient = data?.find((p) => p.uuid == params.id);
+
+
+  useEffect(() => {
+    if (patient) {
+      setInitialRegisteredPatient(patient);
+    }
+  }, [patient])
+
+
+
+
   return (
     <>
       <Navigation title="Search Patient" link="/dashboard" />
@@ -102,7 +115,6 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
     refetch();
 
   }, [search])
-
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);

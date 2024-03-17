@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 import * as Yup from "yup";
 import {
   FormikInit,
@@ -6,6 +6,7 @@ import {
   SelectInputField,
   FieldsContainer,
 } from "shared-ui/src";
+
 
 const form = {
   registrationNumber: {
@@ -97,11 +98,15 @@ type Prop = {
 
 export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  useContext(SearchRegistrationContext)
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -127,14 +132,14 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
           id={form.lastName.name}
           label={form.lastName.label}
         />
-        <br/>
+        <br />
       </FieldsContainer>
       <FieldsContainer>
         <TextInputField
-            name={form.age.name}
-            id={form.age.name}
-            label={form.age.label}
-            sx={{ width: '49%' }}
+          name={form.age.name}
+          id={form.age.name}
+          label={form.age.label}
+          sx={{ width: '49%' }}
         />
 
         {/* <span
@@ -188,14 +193,14 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
       </FieldsContainer>
       <FieldsContainer>
         <TextInputField
-            id={form.phoneNumber.name}
-            name={form.phoneNumber.name}
-            label={form.phoneNumber.label}
+          id={form.phoneNumber.name}
+          name={form.phoneNumber.name}
+          label={form.phoneNumber.label}
         />
         <TextInputField
-            id={form.nextOfKinPhoneNumber.name}
-            name={form.nextOfKinPhoneNumber.name}
-            label={form.nextOfKinPhoneNumber.label}
+          id={form.nextOfKinPhoneNumber.name}
+          name={form.nextOfKinPhoneNumber.name}
+          label={form.nextOfKinPhoneNumber.label}
         />
       </FieldsContainer>
     </FormikInit>

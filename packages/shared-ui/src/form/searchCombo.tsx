@@ -4,6 +4,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
 import { FaRegSquare, FaSquareCheck } from "react-icons/fa6";
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
 
 const icon = <FaRegSquare />;
 const checkedIcon = <FaSquareCheck />;
@@ -21,6 +23,8 @@ type Props = {
   size?: "small" | "medium";
 };
 
+const animatedComponents = makeAnimated();
+
 export const SearchComboBox: FC<Props> = ({
   options,
   name,
@@ -35,49 +39,61 @@ export const SearchComboBox: FC<Props> = ({
 }) => {
   const { hasError, errorMessage, setFieldValue, initialValues } =
     useFormikField(name);
-  return (
-    <Autocomplete
-      multiple={multiple}
-      disablePortal
-      id={name}
-      disabled={disabled}
-      getOptionLabel={(option) => option.label}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
-      disableCloseOnSelect
-      size={size}
-      //@ts-ignore
-      defaultValue={initialValues[name] ? initialValues[name] : undefined}
-      options={options}
-      sx={{ width, ...sx }}
-      renderOption={(props, option, { selected }) => (
-        <li {...props} key={option.id}>
-          <Checkbox
-            icon={icon}
-            checkedIcon={checkedIcon}
-            style={{ marginRight: 8 }}
-            checked={selected}
-          />
-          {option.label}
-        </li>
-      )}
-      onChange={(event: any, newValue: any) => {
 
-        const inputValue = multiple ? newValue : newValue.id;
-        setFieldValue(name, inputValue);
-        if (getValue) {
-          getValue(inputValue);
-        }
-      }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label={label}
-          error={hasError}
-          variant="outlined"
-          sx={{ my: "1ch", ...inputSx }}
-          helperText={errorMessage}
-        />
-      )}
-    />
-  );
+
+
+  const mappedOptions = options.map(op => {
+    return {
+      value: op.id,
+      label: op.label
+    }
+  })
+
+  return <Select isMulti={multiple} components={animatedComponents} options={mappedOptions} />
+
+  // return (
+  //   <Autocomplete
+  //     multiple={multiple}
+  //     disablePortal
+  //     id={name}
+  //     disabled={disabled}
+  //     getOptionLabel={(option) => option.label}
+  //     isOptionEqualToValue={(option, value) => option.id == value.id}
+  //     disableCloseOnSelect
+  //     size={size}
+  //     //@ts-ignore
+  //     defaultValue={initialValues[name] ? initialValues[name] : undefined}
+  //     options={options}
+  //     sx={{ width, ...sx }}
+  //     renderOption={(props, option, { selected }) => (
+  //       <li {...props} key={option.id}>
+  //         <Checkbox
+  //           icon={icon}
+  //           checkedIcon={checkedIcon}
+  //           style={{ marginRight: 8 }}
+  //           checked={selected}
+  //         />
+  //         {option.label}
+  //       </li>
+  //     )}
+  //     onChange={(event: any, newValue: any) => {
+
+  //       const inputValue = multiple ? newValue : newValue.id;
+  //       setFieldValue(name, inputValue);
+  //       if (getValue) {
+  //         getValue(inputValue);
+  //       }
+  //     }}
+  //     renderInput={(params) => (
+  //       <TextField
+  //         {...params}
+  //         label={label}
+  //         error={hasError}
+  //         variant="outlined"
+  //         sx={{ my: "1ch", ...inputSx }}
+  //         helperText={errorMessage}
+  //       />
+  //     )}
+  //   />
+  // );
 };
