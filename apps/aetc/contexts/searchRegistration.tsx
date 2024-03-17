@@ -11,10 +11,12 @@ type Patient = {
   homeDistrict: string;
   homeTraditionalAuthority: string;
 };
-
+type RegistrationType = 'local' | 'remote' | ''
 export type SearchRegistrationContextType = {
   patient: Patient;
   setPatient: (patient: Patient) => void;
+  registrationType: RegistrationType,
+  setRegistrationType: (regi: RegistrationType) => void
 };
 
 export const SearchRegistrationContext =
@@ -24,9 +26,12 @@ export const SearchRegistrationProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [patient, setPatient] = useState<Patient>({} as Patient);
+  const [registrationType, setRegistrationType] = useState<RegistrationType>('');
+
+
 
   return (
-    <SearchRegistrationContext.Provider value={{ patient, setPatient }}>
+    <SearchRegistrationContext.Provider value={{ patient, setPatient, registrationType, setRegistrationType }}>
       {children}
     </SearchRegistrationContext.Provider>
   );

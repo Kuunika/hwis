@@ -3,6 +3,7 @@ import { useNavigation } from "@/hooks";
 import { searchByDemographics } from "@/hooks/patientReg";
 import { DDEScore } from "@/interfaces";
 import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
+import { FaCodeMerge } from "react-icons/fa6";
 
 type Prop = {
     open: boolean
@@ -28,16 +29,14 @@ export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) =>
                 return (
                     <MainButton
                         sx={{ fontSize: "12px" }}
-                        title={"start"}
-                        onClick={() => navigateTo(`/registration/${cell.id}/search`)}
+                        title={"Merge"}
+                        onClick={() => navigateTo('')}
                     />
                 );
             },
         },
     ];
-
     const rows = ddePatients.map(d => ({ ...d.person, score: d.score }))
-
     return <GenericDialog title="Check Potential Duplicates" open={open} onClose={() => { }}>
         <MainButton title={"cancel"} variant="secondary" onClick={close} />
         {rows.length > 0 ? <BaseTable columns={columns} rows={rows} /> : <>
@@ -45,7 +44,6 @@ export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) =>
                 <MainTypography variant="subtitle1">There are no patients matching the search criteria</MainTypography>
             </WrapperBox>
         </>}
-
     </GenericDialog>
 }
 

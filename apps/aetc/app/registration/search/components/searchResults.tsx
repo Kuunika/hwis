@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+
+import { useContext, useEffect, useState } from "react";
 import {
   BaseTable,
   MainButton,
@@ -18,6 +19,7 @@ import {
   SearchRegistrationContextType,
 } from "@/contexts";
 import { DDESearch, Person } from "@/interfaces";
+import { GenericDialog } from "@/components";
 
 
 export const SearchResults = ({
@@ -31,6 +33,8 @@ export const SearchResults = ({
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
+  const [open, setOpen] = useState(false);
+  const { setRegistrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
   const { setPatient: setRegisterPatient } = useContext(
     SearchRegistrationContext
@@ -63,23 +67,26 @@ export const SearchResults = ({
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
           searchResults.locals.map(patient => {
-            return <ResultBox type="Local" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={() => { setOpen(true); setRegistrationType('local') }} type="Local" key={patient.uuid} person={patient} />
           })
         }
         {
           searchResults.remotes.map(patient => {
-            return <ResultBox type="Remote" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={() => { setOpen(true); setRegistrationType('remote') }} type="Remote" key={patient.uuid} person={patient} />
           })
         }
       </WrapperBox>
+      <ConfirmationDialog open={open} onClose={() => setOpen(false)} />
     </WrapperBox>
   );
 };
 
 
-export const ResultBox = ({ person, type }: { person: Person, type: string }) => {
+export const ResultBox = ({ person, type, setOpen }: { person: Person, type: string, setOpen: () => void }) => {
+
   const identifier = person.identifiers.find(i => i.identifier_type.name == 'National id');
-  return <MainPaper sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
+
+  return <MainPaper onClick={setOpen} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
     <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
       <MainTypography color={defaultTheme.primary} variant="h1"><FaUser /></MainTypography>
     </WrapperBox>
@@ -97,9 +104,9 @@ export const ResultBox = ({ person, type }: { person: Person, type: string }) =>
         <Label label="Gender" value="Male" />
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
-        <Label label="Home district" value={person.addresses[0].address1} />
-        <Label label="Home traditional authority" value={person.addresses[0].cityVillage} />
-        <Label label="Home village" value={person.addresses[0].address2} />
+        <Label label="Home district" value={person.addresses[0]?.address1} />
+        <Label label="Home traditional authority" value={person.addresses[0]?.cityVillage} />
+        <Label label="Home village" value={person.addresses[0]?.address2} />
       </WrapperBox>
     </WrapperBox>
   </MainPaper>
@@ -140,3 +147,17 @@ export const AddPatientButton = () => {
     </WrapperBox>
   );
 };
+
+
+const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
+
+  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+
+
+
+  return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>
+    <MainTypography> {registrationType == "local" ? "Are you sure you want to continue registration with the local record?" : "Are you sure you want to continue registration with the remote record?"}</MainTypography>
+    <MainButton sx={{ mr: 1 }} title={"Yes"} onClick={() => { }} />
+    <MainButton variant="secondary" title={"No"} onClick={onClose} />
+  </GenericDialog>
+}
