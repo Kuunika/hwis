@@ -34,7 +34,7 @@ export const SearchResults = ({
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [open, setOpen] = useState(false);
-  const { setRegistrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { setRegistrationType, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
   const { setPatient: setRegisterPatient } = useContext(
     SearchRegistrationContext
@@ -44,6 +44,12 @@ export const SearchResults = ({
     setRegisterPatient(searchedPatient);
     navigateTo(`/registration/${params.id}/new`);
   };
+
+  const selectPatient = (person: Person, registrationType: 'local' | 'remote') => {
+    setPatient(person);
+    setOpen(true);
+    setRegistrationType(registrationType)
+  }
 
   return (
     <WrapperBox
@@ -67,12 +73,12 @@ export const SearchResults = ({
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
           searchResults.locals.map(patient => {
-            return <ResultBox setOpen={() => { setOpen(true); setRegistrationType('local') }} type="Local" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person, 'local')} type="Local" key={patient.uuid} person={patient} />
           })
         }
         {
           searchResults.remotes.map(patient => {
-            return <ResultBox setOpen={() => { setOpen(true); setRegistrationType('remote') }} type="Remote" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person, 'remote')} type="Remote" key={patient.uuid} person={patient} />
           })
         }
       </WrapperBox>
@@ -82,11 +88,11 @@ export const SearchResults = ({
 };
 
 
-export const ResultBox = ({ person, type, setOpen }: { person: Person, type: string, setOpen: () => void }) => {
+export const ResultBox = ({ person, type, setOpen }: { person: Person, type: string, setOpen: (person: Person) => void }) => {
 
   const identifier = person.identifiers.find(i => i.identifier_type.name == 'National id');
 
-  return <MainPaper onClick={setOpen} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
+  return <MainPaper onClick={() => setOpen(person)} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
     <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
       <MainTypography color={defaultTheme.primary} variant="h1"><FaUser /></MainTypography>
     </WrapperBox>
@@ -151,13 +157,13 @@ export const AddPatientButton = () => {
 
 const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
 
-  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { registrationType, patient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
-
+  console.log({ patient })
 
   return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>
     <MainTypography> {registrationType == "local" ? "Are you sure you want to continue registration with the local record?" : "Are you sure you want to continue registration with the remote record?"}</MainTypography>
-    <MainButton sx={{ mr: 1 }} title={"Yes"} onClick={() => { }} />
+    <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => { }} />
     <MainButton variant="secondary" title={"No"} onClick={onClose} />
   </GenericDialog>
 }

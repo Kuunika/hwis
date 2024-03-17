@@ -8,7 +8,7 @@ export async function getAll<T>(
   query?: string,
   apiClient: AxiosInstance = emrApiClient()
 ) {
-  return apiClient.get<T[]>(`${endPoint}${query ? "?" + query : ""}`);
+  return apiClient.get<T>(`${endPoint}${query ? "?" + query : ""}`);
 }
 export async function getOne<T>(
   id: number | string,

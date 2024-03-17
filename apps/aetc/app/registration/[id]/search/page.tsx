@@ -30,7 +30,7 @@ function RegistrationSearch() {
   const patient = data?.find((p) => p.uuid == params.id);
   return (
     <>
-      <Navigation title="Search Patient" link="/" />
+      <Navigation title="Search Patient" link="/dashboard" />
       <WrapperBox
         sx={{
           display: "flex",

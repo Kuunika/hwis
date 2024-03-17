@@ -1,20 +1,14 @@
 "use client";
+import { Person } from "@/interfaces";
 import { useState } from "react";
 
 import { createContext, FC, ReactNode } from "react";
 
-type Patient = {
-  firstName: string;
-  lastName: string;
-  gender: string;
-  birthDate: Date;
-  homeDistrict: string;
-  homeTraditionalAuthority: string;
-};
+
 type RegistrationType = 'local' | 'remote' | ''
 export type SearchRegistrationContextType = {
-  patient: Patient;
-  setPatient: (patient: Patient) => void;
+  patient: Person;
+  setPatient: (patient: Person) => void;
   registrationType: RegistrationType,
   setRegistrationType: (regi: RegistrationType) => void
 };
@@ -25,7 +19,7 @@ export const SearchRegistrationContext =
 export const SearchRegistrationProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [patient, setPatient] = useState<Patient>({} as Patient);
+  const [patient, setPatient] = useState<Person>({} as Person);
   const [registrationType, setRegistrationType] = useState<RegistrationType>('');
 
 
