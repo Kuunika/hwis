@@ -20,6 +20,7 @@ import {
 } from "@/contexts";
 import { DDESearch, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
+import { getOnePatient } from "@/hooks/patientReg";
 
 
 export const SearchResults = ({
@@ -156,14 +157,13 @@ export const AddPatientButton = () => {
 
 
 const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
+  const { params } = useParameters();
+  const { navigateTo } = useNavigation()
 
-  const { registrationType, patient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
-
-  console.log({ patient })
-
+  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>
     <MainTypography> {registrationType == "local" ? "Are you sure you want to continue registration with the local record?" : "Are you sure you want to continue registration with the remote record?"}</MainTypography>
-    <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => { }} />
+    <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => navigateTo(`/registration/${params.id}/new`)} />
     <MainButton variant="secondary" title={"No"} onClick={onClose} />
   </GenericDialog>
 }
