@@ -200,10 +200,9 @@ export const DemographicsForm: FC<Prop> = ({
   initialValues = init,
   setContext,
 }) => {
-  const { initialRegisteredPatient, patient } = useContext(
+  const { initialRegisteredPatient, patient, registrationType } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
-
 
 
 
@@ -246,18 +245,22 @@ export const DemographicsForm: FC<Prop> = ({
   }, [checked]);
 
 
-  const _init = {
-    [form.firstName.name]: initialRegisteredPatient.given_name,
-    [form.lastName.name]: initialRegisteredPatient.family_name,
-    [form.dob.name]: patient.birthdate,
-    [form.gender.name]: patient.gender,
-    [form.nationality.name]: patient?.addresses[0]?.country,
-    [form.homeDistrict.name]: patient?.addresses[0]?.address1,
-    [form.homeTraditionalAuthority.name]: patient?.addresses[0]?.cityVillage,
-    [form.homeVillage.name]: patient?.addresses[0]?.address2,
-    [form.currentDistrict.name]: patient?.addresses[0]?.address3,
-    [form.currentTraditionalAuthority.name]: patient?.addresses[0]?.countyDistrict,
-    [form.currentVillage.name]: patient?.addresses[1]?.address1,
+  let _init = {}
+
+  if (registrationType == "local" || registrationType == "remote") {
+    _init = {
+      [form.firstName.name]: initialRegisteredPatient.given_name,
+      [form.lastName.name]: initialRegisteredPatient.family_name,
+      [form.dob.name]: patient.birthdate,
+      [form.gender.name]: patient.gender,
+      [form.nationality.name]: patient?.addresses[0]?.country,
+      [form.homeDistrict.name]: patient?.addresses[0]?.address1,
+      [form.homeTraditionalAuthority.name]: patient?.addresses[0]?.cityVillage,
+      [form.homeVillage.name]: patient?.addresses[0]?.address2,
+      [form.currentDistrict.name]: patient?.addresses[0]?.address3,
+      [form.currentTraditionalAuthority.name]: patient?.addresses[0]?.countyDistrict,
+      [form.currentVillage.name]: patient?.addresses[1]?.address1,
+    }
   }
 
 
