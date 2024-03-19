@@ -13,7 +13,7 @@ import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import { LabRequest } from "@/interfaces";
-import { getLabSpecimenTypes, getLabTestTypes } from "@/hooks/labOrder";
+import { getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -28,9 +28,12 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
     React.useState<string>("");
   const [request, setRequest] = React.useState<any>({})
   const { data: specimenTypes, isLoading, isSuccess } = getLabSpecimenTypes()
+  const { data: labReasons, isLoading: loadingReasons, isSuccess: labReasonsLoaded } = getLabTestReason()
 
 
   const handleClose = () => {
+
+    console.log({ request })
     console.log("closed");
   };
 
@@ -103,23 +106,24 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
                 />
               </WrapperBox>
               <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mx: 1 }}>
-                <MainTypography variant="h5">Sample Types</MainTypography>
+                <MainTypography variant="h5"> Specimen Site</MainTypography>
                 <SearchInput setSearch={setSearchSampleTypes} />
-                <ListSelect
-                  onSelectItem={(sampleType: string | number) => { setRequest((req: any) => ({ ...req, sampleType })) }}
-                  height="25ch"
-                  list={sampleTypes.map(sp => ({ id: sp, label: sp }))}
-                  search={searchSampleTypes}
-                />
-              </WrapperBox>
-              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 } }}>
-                <MainTypography variant="h5">Specimen Site</MainTypography>
-                <SearchInput setSearch={setSearchSpecimenSites} />
                 <ListSelect
                   onSelectItem={(specimen: string | number) => { setRequest((req: any) => ({ ...req, specimen })) }}
                   height="25ch"
                   list={specimenSites.map(sp => ({ id: sp, label: sp }))}
                   search={searchSpecimenSites}
+                />
+
+              </WrapperBox>
+              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 } }}>
+                <MainTypography variant="h5">Reason for test</MainTypography>
+                <SearchInput setSearch={setSearchSpecimenSites} />
+                <ListSelect
+                  onSelectItem={(sampleType: string | number) => { setRequest((req: any) => ({ ...req, sampleType })) }}
+                  height="25ch"
+                  list={labReasons ? labReasons.map(sp => ({ id: sp.uuid, label: sp.name })) : []}
+                  search={searchSampleTypes}
                 />
               </WrapperBox>
             </WrapperBox>
@@ -223,42 +227,6 @@ export const ListSelect = ({
   );
 };
 
-const sampleTypes = [
-  "Blood",
-  "Urine",
-  "Stool",
-  "Saliva",
-  "Sputum",
-  "Tissue",
-  "Cerebrospinal Fluid (CSF)",
-  "Swabs",
-  "Synovial Fluid",
-  "Other Body Fluids (e.g., pleural fluid, peritoneal fluid, amniotic fluid)",
-];
-
-// Samples
-const samples = [
-  "Whole Blood",
-  "Serum",
-  "Plasma",
-  "Red Blood Cells (RBCs)",
-  "White Blood Cells (WBCs)",
-  "Platelets",
-  "Midstream urine",
-  "First morning urine",
-  "Random urine",
-  "Fecal matter",
-  "Saliva",
-  "Induced Sputum",
-  "Spontaneous Sputum",
-  "Tissue biopsy",
-  "Cerebrospinal Fluid",
-  "Throat swab",
-  "Nasal swab",
-  "Skin swab",
-  "Wound swab",
-  "Joint Fluid",
-];
 
 // Specimen Sites
 const specimenSites = [

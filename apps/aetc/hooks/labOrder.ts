@@ -1,4 +1,4 @@
-import { getTestTypes, getSpecimenTypes } from "@/services/labService";
+import { getTestTypes, getSpecimenTypes, getLabReason } from "@/services/labService";
 import { useQuery } from "@tanstack/react-query";
 
 
@@ -22,6 +22,18 @@ export const getLabSpecimenTypes = () => {
 
     return useQuery({
         queryKey: ["getSpecimenTypes"],
+        queryFn: findAll,
+        enabled: true,
+
+    });
+};
+
+export const getLabTestReason = () => {
+    const findAll = async () => {
+        return getLabReason().then(response => response.data)
+    };
+    return useQuery({
+        queryKey: ["getLabTestReasons"],
         queryFn: findAll,
         enabled: true,
 
