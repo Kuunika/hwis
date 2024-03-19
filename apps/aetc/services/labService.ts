@@ -1,6 +1,6 @@
-import { create, getAll } from "./httpService";
-import { Encounter } from "@/interfaces";
-const endpoint = "/encounters";
-export const createEncounter = (encounter: any) => create(encounter, endpoint);
-export const getPatientEncounters = (patientId: string) =>
-    getAll<Encounter[]>(endpoint, `patient=${patientId}`);
+import { getAll } from "./httpService";
+import { TestType } from "@/interfaces";
+
+export const getTestTypes = () => getAll<TestType[]>('/lab/test_types');
+export const getSpecimenTypes = () => getAll<TestType[]>('/lab/specimen_types');
+
