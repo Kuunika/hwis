@@ -178,3 +178,19 @@ export type LabReason = {
   concept_id: number;
   uuid: string
 }
+
+
+export type Order = {
+  id: number;
+  concept_id: number;
+  name: string;
+  accession_number: string
+}
+
+export type LabResult = {
+  id: number;
+  concept_id: number;
+  name: string;
+  order: Order
+
+}
