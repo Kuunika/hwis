@@ -194,3 +194,38 @@ export type LabResult = {
   order: Order
   result: any
 }
+
+interface Specimen {
+  concept_id: number;
+  name: string;
+}
+
+interface ReasonForTest {
+  concept_id: number;
+  name: string;
+}
+
+interface Test {
+  id: number;
+  concept_id: number;
+  uuid: string;
+  name: string;
+  result: any;
+}
+
+
+export type PatientLabOrder = {
+  id: number;
+  order_id: number;
+  encounter_id: number;
+  order_date: string;
+  patient_id: number;
+  accession_number: string;
+  specimen: Specimen;
+  requesting_clinician: string;
+  target_lab: string;
+  reason_for_test: ReasonForTest;
+  delivery_mode: any;
+  tests: Test[];
+
+}
