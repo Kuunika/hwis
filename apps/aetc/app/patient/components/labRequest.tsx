@@ -13,7 +13,11 @@ import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import { LabRequest } from "@/interfaces";
-import { getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
+import { createOrder, getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
+import { useParameters } from "@/hooks";
+import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { getDateTime } from "@/helpers/dateTime";
+import { OverlayLoader } from "@/components/backdrop";
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -29,11 +33,13 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
   const [request, setRequest] = React.useState<any>({})
   const { data: specimenTypes, isLoading, isSuccess } = getLabSpecimenTypes()
   const { data: labReasons, isLoading: loadingReasons, isSuccess: labReasonsLoaded } = getLabTestReason();
-  const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded } = getLabTestTypes()
+  const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded } = getLabTestTypes();
+  const { params } = useParameters()
+  const { data: patients } = getPatientsWaitingForAssessment();
+  const { mutate, isPending, isSuccess: orderCreated } = createOrder()
 
 
   const handleClose = () => {
-
     console.log({ request })
     console.log("closed");
   };
@@ -42,8 +48,46 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
     onClose(value);
   };
 
+
+  React.useEffect(() => {
+
+    if (orderCreated) {
+      addRequest({ ...request, id: Math.random(), status: "pending..." })
+    }
+
+  }, [orderCreated])
+
+
+
+  const handleSendLab = () => {
+    const patient = patients?.find(p => p.uuid == params.id,)
+
+    const order = {
+      "orders": [
+        {
+          "patient": params.id,
+          "visit": patient?.visit_uuid,
+          "tests": [
+            {
+              "concept": request.test.names[0].uuid
+            }
+          ],
+          "reason_for_test": request.sampleType,
+          "target_lab": "Blantyre Dream Project Clinic",
+          "date": getDateTime(),
+          "requesting_clinician": "admin",
+          "specimen": {
+            "concept": request.sample
+          }
+        }
+      ]
+    }
+    mutate(order);
+  }
+
   return (
     <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
+      <OverlayLoader open={isPending} />
       <DialogTitle>Lab Order</DialogTitle>
       <DialogContent>
         <WrapperBox display={"flex"}>
@@ -86,7 +130,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
               <MainButton
                 sx={{ borderRadius: "1px" }}
                 title={"Send Order"}
-                onClick={() => addRequest({ ...request, id: Math.random(), status: "pending..." })}
+                onClick={handleSendLab}
               />
               <MainButton
                 variant="secondary"
@@ -102,7 +146,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
                 <ListSelect
                   onSelectItem={(sample: string | number) => setRequest((req: any) => ({ ...req, sample }))}
                   height="25ch"
-                  list={specimenTypes ? specimenTypes.map(sp => ({ id: sp.concept_id, label: sp.name })) : []}
+                  list={specimenTypes ? specimenTypes.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []}
                   search={searchSample}
                 />
               </WrapperBox>

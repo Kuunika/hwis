@@ -1,5 +1,5 @@
-import { getTestTypes, getSpecimenTypes, getLabReason } from "@/services/labService";
-import { useQuery } from "@tanstack/react-query";
+import { getTestTypes, getSpecimenTypes, getLabReason, createLabOrder } from "@/services/labService";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 
 export const getLabTestTypes = () => {
@@ -37,5 +37,17 @@ export const getLabTestReason = () => {
         queryFn: findAll,
         enabled: true,
 
+    });
+};
+
+export const createOrder = () => {
+    const addData = (patientData: any) => {
+        return createLabOrder(patientData).then((response) => {
+            return response.data;
+        });
+    };
+
+    return useMutation({
+        mutationFn: addData,
     });
 };
