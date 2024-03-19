@@ -109,11 +109,12 @@ export interface Visit {
 export interface LabRequest {
   id?: any;
   uuid: string,
-  test: string;
+  // test: string;
   sample: string;
   sampleType: string;
   specimenSite: string
   testType?: string
+  test: TestType,
 }
 
 

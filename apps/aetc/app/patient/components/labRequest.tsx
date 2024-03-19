@@ -28,7 +28,8 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
     React.useState<string>("");
   const [request, setRequest] = React.useState<any>({})
   const { data: specimenTypes, isLoading, isSuccess } = getLabSpecimenTypes()
-  const { data: labReasons, isLoading: loadingReasons, isSuccess: labReasonsLoaded } = getLabTestReason()
+  const { data: labReasons, isLoading: loadingReasons, isSuccess: labReasonsLoaded } = getLabTestReason();
+  const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded } = getLabTestTypes()
 
 
   const handleClose = () => {
@@ -71,7 +72,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
                 />
               </RadioGroup>
             </FormControl>
-            <TestList onSelectTest={(test: string | number) => setRequest((req: any) => ({ ...req, test }))} />
+            <TestList onSelectTest={(test: string | number) => setRequest((req: any) => ({ ...req, test: labTests?.find(lab => lab.concept_id == test) }))} />
           </WrapperBox>
           <WrapperBox
             sx={{
