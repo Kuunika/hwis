@@ -34,7 +34,6 @@ import {
 } from "@/constants";
 import { countries } from "@/constants/contries";
 import { getInitialValues } from "@/helpers";
-import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
 import {
   SearchRegistrationContext,
