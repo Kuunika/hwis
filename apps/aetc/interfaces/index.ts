@@ -171,3 +171,9 @@ export type SpecimenType = {
   concept_id: number;
   names: Name[];
 }
+
+export type LabReason = {
+  name: string;
+  concept_id: number;
+  uuid: string
+}
