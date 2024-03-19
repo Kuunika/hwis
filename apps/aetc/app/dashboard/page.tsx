@@ -50,7 +50,7 @@ function Home() {
                             title="Brought In Dead"
                         />
                     </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
                         <Card
                             icon={<FcTodoList />}
                             link="/initial-registration/list"

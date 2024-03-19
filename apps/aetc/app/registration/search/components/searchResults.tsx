@@ -123,7 +123,7 @@ export const ResultBox = ({ person, type, setOpen }: { person: Person, type: str
 
 const Label = ({ label, value }: { label: string, value: string | undefined | Date }) => {
   return <WrapperBox sx={{ display: "flex", flexDirection: "column", mr: 1 }}>
-    <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value ? value : ''}</MainTypography>
+    <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value ? value.toString() : ''}</MainTypography>
   </WrapperBox>
 }
 

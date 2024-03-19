@@ -112,7 +112,7 @@ export const NewRegistrationFlow = () => {
 
     if (!Boolean(patientValues.firstName)) return
 
-    if (registrationType == 'local') {
+    if (registrationType != 'remote') {
 
       refetch()
     }
@@ -307,7 +307,7 @@ export const NewRegistrationFlow = () => {
                       birthdate: values.birthDate
                     })
 
-                    if (registrationType == 'local') {
+                    if (registrationType != 'remote') {
 
                       setDialogOpen(true)
                     }

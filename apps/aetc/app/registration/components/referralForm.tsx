@@ -12,6 +12,7 @@ import { TrackFormikContext } from ".";
 import { concepts, encounters } from "@/constants";
 import { getPatientEncounters } from "@/services/encounter";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import { getObservationValue } from "@/helpers/emr";
 
 const schema = Yup.object().shape({
   [concepts.REFERRED_FROM]: Yup.string()
@@ -35,6 +36,9 @@ export const ReferralForm: FC<Props> = ({
   console.log({ encounterList });
 
   const referralEncounter = encounterList?.find(encounter => encounter.uuid == encounters.REFERRAL);
+  const referred = getObservationValue(referralEncounter?.obs, concepts.IS_PATIENT_REFERRED);
+
+  console.log({ referred })
 
   return (
     <>
@@ -60,6 +64,7 @@ export const ReferralForm: FC<Props> = ({
               label="Referral Medical Facility"
               name={concepts.REFERRED_FROM}
               multiple={false}
+              // disabled={referralEncounter.}
               options={
                 data
                   ? data.map((d: any) => ({

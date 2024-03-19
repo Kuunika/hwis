@@ -158,3 +158,16 @@ export type DDEScore = {
   person: Person;
   score: number
 }
+
+
+export type TestType = {
+  name: string;
+  concept_id: number;
+  names: Name[];
+}
+
+export type SpecimenType = {
+  name: string;
+  concept_id: number;
+  names: Name[];
+}

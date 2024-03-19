@@ -1,15 +1,13 @@
 import { FC } from "react";
-import { TextField, Checkbox } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
+
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
-import { FaRegSquare, FaSquareCheck } from "react-icons/fa6";
+
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { MainTypography, WrapperBox, defaultTheme } from "..";
 
-const icon = <FaRegSquare />;
-const checkedIcon = <FaSquareCheck />;
+
 
 type Props = {
   name: string;
@@ -40,6 +38,9 @@ export const SearchComboBox: FC<Props> = ({
 }) => {
   const { hasError, errorMessage, setFieldValue, initialValues } =
     useFormikField(name);
+
+
+  console.log({ errorMessage, size, inputSx })
 
 
   const mappedOptions = options.map(op => {

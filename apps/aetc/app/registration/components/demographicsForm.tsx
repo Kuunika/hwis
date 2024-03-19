@@ -393,6 +393,7 @@ export const DemographicsForm: FC<Prop> = ({
             disabled={checked}
             multiple={false}
             options={malawiVillages}
+          // options={Array.isArray(villages) ? villages.map((v: any) => ({ id: v.name, label: v.name })) : []}
           />
           <TextInputField
             name={form.closeLandMark.name}

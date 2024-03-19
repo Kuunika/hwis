@@ -26,10 +26,16 @@ import { SearchRegistrationContext, SearchRegistrationContextType } from "@/cont
 
 function RegistrationSearch() {
   const { params } = useParameters();
-  const { setInitialRegisteredPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { setInitialRegisteredPatient, setRegistrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   const { data } = getPatientsWaitingForRegistrations();
 
   const patient = data?.find((p) => p.uuid == params.id);
+
+
+  useEffect(() => {
+    setRegistrationType('')
+  }, [])
+
 
 
   useEffect(() => {
@@ -106,6 +112,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
   // const [isSuccess, setIsSuccess] = useState(false);
   // const [isPending, setIsPending] = useState(false)
   const [searchedPatient, setSearchedPatient] = useState({});
+
 
   useEffect(() => {
     if (!Boolean(search.firstName)) return;
