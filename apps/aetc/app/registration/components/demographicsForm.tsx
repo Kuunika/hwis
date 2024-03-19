@@ -199,7 +199,7 @@ export const DemographicsForm: FC<Prop> = ({
   initialValues = init,
   setContext,
 }) => {
-  const { initialRegisteredPatient, patient, registrationType } = useContext(
+  const { initialRegisteredPatient, patient, registrationType, searchedPatient } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
 
@@ -220,8 +220,9 @@ export const DemographicsForm: FC<Prop> = ({
     // const found = patients?.find((p) => p.uuid == params.id);
     if (fieldFunction) {
       const { setFieldValue } = fieldFunction;
-      setFieldValue(form.firstName.name, initialRegisteredPatient.given_name);
-      setFieldValue(form.lastName.name, initialRegisteredPatient.family_name);
+      setFieldValue(form.firstName.name, searchedPatient.firstName);
+      setFieldValue(form.lastName.name, searchedPatient.lastName)
+      setFieldValue(form.gender.name, searchedPatient.gender)
     }
   }, [initialRegisteredPatient]);
 
@@ -244,14 +245,13 @@ export const DemographicsForm: FC<Prop> = ({
   }, [checked]);
 
 
-  let _init = {}
+  let _init = {
+
+  }
 
   if (registrationType == "local" || registrationType == "remote") {
     _init = {
-      [form.firstName.name]: initialRegisteredPatient.given_name,
-      [form.lastName.name]: initialRegisteredPatient.family_name,
       [form.dob.name]: patient.birthdate,
-      [form.gender.name]: patient.gender,
       [form.nationality.name]: patient?.addresses[0]?.country,
       [form.homeDistrict.name]: patient?.addresses[0]?.address1,
       [form.homeTraditionalAuthority.name]: patient?.addresses[0]?.cityVillage,
@@ -261,6 +261,9 @@ export const DemographicsForm: FC<Prop> = ({
       [form.currentVillage.name]: patient?.addresses[1]?.address1,
     }
   }
+
+
+  console.log({ searchedPatient })
 
 
 
@@ -274,7 +277,11 @@ export const DemographicsForm: FC<Prop> = ({
       </RegistrationDescriptionText>
       <FormikInit
         validationSchema={schema}
-        initialValues={{ ...initialValues, ..._init }}
+        initialValues={{
+          ...initialValues, ..._init, [form.firstName.name]: searchedPatient.firstName,
+          [form.lastName.name]: searchedPatient.lastName,
+          [form.gender.name]: searchedPatient.gender == 'M' ? 'Male' : "Female",
+        }}
         onSubmit={onSubmit}
         submitButtonText="next"
         submitButton={false}
