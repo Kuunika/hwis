@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+
+import { useContext, useEffect, useState } from "react";
 import {
   BaseTable,
   MainButton,
@@ -18,6 +19,9 @@ import {
   SearchRegistrationContextType,
 } from "@/contexts";
 import { DDESearch, Person } from "@/interfaces";
+import { GenericDialog } from "@/components";
+import { getOnePatient, merge } from "@/hooks/patientReg";
+import { OverlayLoader } from "@/components/backdrop";
 
 
 export const SearchResults = ({
@@ -31,6 +35,8 @@ export const SearchResults = ({
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
+  const [open, setOpen] = useState(false);
+  const { setRegistrationType, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
   const { setPatient: setRegisterPatient } = useContext(
     SearchRegistrationContext
@@ -40,6 +46,12 @@ export const SearchResults = ({
     setRegisterPatient(searchedPatient);
     navigateTo(`/registration/${params.id}/new`);
   };
+
+  const selectPatient = (person: Person, registrationType: 'local' | 'remote') => {
+    setPatient(person);
+    setOpen(true);
+    setRegistrationType(registrationType)
+  }
 
   return (
     <WrapperBox
@@ -63,23 +75,26 @@ export const SearchResults = ({
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
           searchResults.locals.map(patient => {
-            return <ResultBox type="Local" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person, 'local')} type="Local" key={patient.uuid} person={patient} />
           })
         }
         {
           searchResults.remotes.map(patient => {
-            return <ResultBox type="Remote" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person, 'remote')} type="Remote" key={patient.uuid} person={patient} />
           })
         }
       </WrapperBox>
+      <ConfirmationDialog open={open} onClose={() => setOpen(false)} />
     </WrapperBox>
   );
 };
 
 
-export const ResultBox = ({ person, type }: { person: Person, type: string }) => {
+export const ResultBox = ({ person, type, setOpen }: { person: Person, type: string, setOpen: (person: Person) => void }) => {
+
   const identifier = person.identifiers.find(i => i.identifier_type.name == 'National id');
-  return <MainPaper sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
+
+  return <MainPaper onClick={() => setOpen(person)} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
     <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
       <MainTypography color={defaultTheme.primary} variant="h1"><FaUser /></MainTypography>
     </WrapperBox>
@@ -97,9 +112,9 @@ export const ResultBox = ({ person, type }: { person: Person, type: string }) =>
         <Label label="Gender" value="Male" />
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
-        <Label label="Home district" value={person.addresses[0].address1} />
-        <Label label="Home traditional authority" value={person.addresses[0].cityVillage} />
-        <Label label="Home village" value={person.addresses[0].address2} />
+        <Label label="Home district" value={person.addresses[0]?.address1} />
+        <Label label="Home traditional authority" value={person.addresses[0]?.cityVillage} />
+        <Label label="Home village" value={person.addresses[0]?.address2} />
       </WrapperBox>
     </WrapperBox>
   </MainPaper>
@@ -108,7 +123,7 @@ export const ResultBox = ({ person, type }: { person: Person, type: string }) =>
 
 const Label = ({ label, value }: { label: string, value: string | undefined | Date }) => {
   return <WrapperBox sx={{ display: "flex", flexDirection: "column", mr: 1 }}>
-    <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value ? value : ''}</MainTypography>
+    <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value ? value.toString() : ''}</MainTypography>
   </WrapperBox>
 }
 
@@ -140,3 +155,48 @@ export const AddPatientButton = () => {
     </WrapperBox>
   );
 };
+
+
+const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
+  const { params } = useParameters();
+  const { navigateTo } = useNavigation()
+  const { mutate, isPending, isSuccess, data } = merge();
+  // const { setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+
+  const { registrationType, initialRegisteredPatient, patient, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+
+
+
+  const identifier = patient?.identifiers?.find(id => id.identifier_type.name == "DDE person document ID");
+
+
+  useEffect(() => {
+
+    if (isSuccess) {
+
+      setPatient(data);
+      navigateTo(`/registration/${params.id}/new`)
+    }
+
+  }, [isSuccess])
+
+
+  return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>
+    <MainTypography> {registrationType == "local" ? "Are you sure you want to continue registration with the local record?" : "Are you sure you want to continue registration with the remote record?"}</MainTypography>
+    <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => {
+
+      if (identifier) {
+        mutate({
+          primary: { patient_id: initialRegisteredPatient.patient_id },
+          secondary: [{
+            "doc_id": identifier?.identifier
+          }]
+        })
+      } else {
+        navigateTo(`/registration/${params.id}/new`)
+      }
+    }} />
+    <MainButton variant="secondary" title={"No"} onClick={onClose} />
+    <OverlayLoader open={isPending} />
+  </GenericDialog>
+}

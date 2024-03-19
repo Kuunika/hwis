@@ -8,7 +8,7 @@ export async function getAll<T>(
   query?: string,
   apiClient: AxiosInstance = emrApiClient()
 ) {
-  return apiClient.get<T[]>(`${endPoint}${query ? "?" + query : ""}`);
+  return apiClient.get<T>(`${endPoint}${query ? "?" + query : ""}`);
 }
 export async function getOne<T>(
   id: number | string,
@@ -51,9 +51,6 @@ export async function login(
   try {
     response = await apiClient.post("/auth/login", credentials);
     setCookie("accessToken", response.data.jwt);
-
-
-
     localStorage.setItem("accessToken", response.data.jwt);
 
     const roles = response.data.user.user_roles.map((r: any) => r.role.role);

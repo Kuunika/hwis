@@ -123,11 +123,10 @@ const form = {
 const phoneRegex = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const schema = Yup.object().shape({
   [form.identificationNumber.name]: Yup.string()
-    .required()
     .label(form.identificationNumber.label),
   [form.firstName.name]: Yup.string().required().label(form.firstName.label),
   [form.phoneNumber.name]: Yup.string()
-    .required().matches(phoneRegex, "phone number not valid").min(10)
+    .matches(phoneRegex, "phone number not valid").min(10)
     .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.string().label(form.dob.label),
@@ -201,15 +200,17 @@ export const DemographicsForm: FC<Prop> = ({
   initialValues = init,
   setContext,
 }) => {
-  const { patient } = useContext(
+  const { initialRegisteredPatient, patient, registrationType } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
+
+
 
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
-  const { data: patients } = getPatientsWaitingForRegistrations();
+  // const { data: patients } = getPatientsWaitingForRegistrations();
   const { params } = useParameters();
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,14 +218,13 @@ export const DemographicsForm: FC<Prop> = ({
   };
 
   useEffect(() => {
-    const found = patients?.find((p) => p.uuid == params.id);
-
-    if (found && fieldFunction) {
+    // const found = patients?.find((p) => p.uuid == params.id);
+    if (fieldFunction) {
       const { setFieldValue } = fieldFunction;
-      setFieldValue(form.firstName.name, found.given_name);
-      setFieldValue(form.lastName.name, found.family_name);
+      setFieldValue(form.firstName.name, initialRegisteredPatient.given_name);
+      setFieldValue(form.lastName.name, initialRegisteredPatient.family_name);
     }
-  }, [patients]);
+  }, [initialRegisteredPatient]);
 
   useEffect(() => {
     if (fieldFunction && checked) {
@@ -244,6 +244,28 @@ export const DemographicsForm: FC<Prop> = ({
     }
   }, [checked]);
 
+
+  let _init = {}
+
+  if (registrationType == "local" || registrationType == "remote") {
+    _init = {
+      [form.firstName.name]: initialRegisteredPatient.given_name,
+      [form.lastName.name]: initialRegisteredPatient.family_name,
+      [form.dob.name]: patient.birthdate,
+      [form.gender.name]: patient.gender,
+      [form.nationality.name]: patient?.addresses[0]?.country,
+      [form.homeDistrict.name]: patient?.addresses[0]?.address1,
+      [form.homeTraditionalAuthority.name]: patient?.addresses[0]?.cityVillage,
+      [form.homeVillage.name]: patient?.addresses[0]?.address2,
+      [form.currentDistrict.name]: patient?.addresses[0]?.address3,
+      [form.currentTraditionalAuthority.name]: patient?.addresses[0]?.countyDistrict,
+      [form.currentVillage.name]: patient?.addresses[1]?.address1,
+    }
+  }
+
+
+
+
   return (
     <>
       <RegistrationMainHeader id="1">Demographics</RegistrationMainHeader>
@@ -253,7 +275,7 @@ export const DemographicsForm: FC<Prop> = ({
       </RegistrationDescriptionText>
       <FormikInit
         validationSchema={schema}
-        initialValues={{ ...initialValues, ...patient }}
+        initialValues={{ ...initialValues, ..._init }}
         onSubmit={onSubmit}
         submitButtonText="next"
         submitButton={false}
@@ -371,6 +393,7 @@ export const DemographicsForm: FC<Prop> = ({
             disabled={checked}
             multiple={false}
             options={malawiVillages}
+          // options={Array.isArray(villages) ? villages.map((v: any) => ({ id: v.name, label: v.name })) : []}
           />
           <TextInputField
             name={form.closeLandMark.name}

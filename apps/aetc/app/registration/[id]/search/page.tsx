@@ -7,7 +7,7 @@ import {
 
 } from "shared-ui/src";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParameters } from "@/hooks";
 
 import { SearchForm } from "../../search/components/searchForm";
@@ -22,15 +22,31 @@ import { Navigation } from "@/app/components/navigation";
 import { OverlayLoader } from "@/components/backdrop";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
+import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 
 function RegistrationSearch() {
   const { params } = useParameters();
+  const { setInitialRegisteredPatient, setRegistrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   const { data } = getPatientsWaitingForRegistrations();
 
   const patient = data?.find((p) => p.uuid == params.id);
+
+
+  useEffect(() => {
+    setRegistrationType('')
+  }, [])
+
+
+
+  useEffect(() => {
+    if (patient) {
+      setInitialRegisteredPatient(patient);
+    }
+  }, [patient])
+
   return (
     <>
-      <Navigation title="Search Patient" link="/" />
+      <Navigation title="Search Patient" link="/dashboard" />
       <WrapperBox
         sx={{
           display: "flex",
@@ -97,12 +113,12 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
   // const [isPending, setIsPending] = useState(false)
   const [searchedPatient, setSearchedPatient] = useState({});
 
+
   useEffect(() => {
     if (!Boolean(search.firstName)) return;
     refetch();
 
   }, [search])
-
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);

@@ -34,7 +34,7 @@ const Page = () => {
                     <LabelValue label="Country" value={patient?.addresses[0].country} />
                     <LabelValue label="Home District" value={patient?.addresses[0].address1} />
                     <LabelValue label="Home Village" value={patient?.addresses[0].address2} />
-                    <LabelValue label="Home Traditional Authority" value={patient?.addresses[0].countryDistrict} />
+                    <LabelValue label="Home Traditional Authority" value={patient?.addresses[0].county_district} />
                 </ContainerCard>
                 <ContainerCard>
                     <MainTypography variant="h5">Current Location</MainTypography>

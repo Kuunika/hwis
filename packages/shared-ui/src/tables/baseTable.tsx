@@ -11,8 +11,11 @@ type IProp = {
   hidePagination?: boolean;
   rowWidth?: number;
   style?: any;
-  rowHeight?:number;
+  rowHeight?: number;
   loading?: boolean;
+  checkboxSelection?: boolean
+
+  getSelectedItems?: (items: any) => void
 };
 
 const Table: React.FC<IProp> = ({
@@ -23,7 +26,9 @@ const Table: React.FC<IProp> = ({
   width = "100%",
   loading,
   style,
-  rowHeight
+  rowHeight,
+  checkboxSelection = false,
+  getSelectedItems = (items: any) => { console.log(items) }
 }) => {
   let columnVisibilityModel: any = {};
 
@@ -68,6 +73,8 @@ const Table: React.FC<IProp> = ({
   return (
     <div style={{ height, width, ...style }}>
       <DataGrid
+        onRowSelectionModelChange={getSelectedItems}
+        checkboxSelection={checkboxSelection}
         rowHeight={rowHeight}
         sx={{ my: "1ch", borderStyle: "none" }}
         rows={rows}

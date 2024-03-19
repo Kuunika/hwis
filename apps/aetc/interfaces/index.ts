@@ -109,11 +109,12 @@ export interface Visit {
 export interface LabRequest {
   id?: any;
   uuid: string,
-  test: string;
+  // test: string;
   sample: string;
   sampleType: string;
   specimenSite: string
   testType?: string
+  test: TestType,
 }
 
 
@@ -157,4 +158,39 @@ export type DDESearch = {
 export type DDEScore = {
   person: Person;
   score: number
+}
+
+
+export type TestType = {
+  name: string;
+  concept_id: number;
+  names: Name[];
+}
+
+export type SpecimenType = {
+  name: string;
+  concept_id: number;
+  names: Name[];
+}
+
+export type LabReason = {
+  name: string;
+  concept_id: number;
+  uuid: string
+}
+
+
+export type Order = {
+  id: number;
+  concept_id: number;
+  name: string;
+  accession_number: string
+}
+
+export type LabResult = {
+  id: number;
+  concept_id: number;
+  name: string;
+  order: Order
+  result: any
 }

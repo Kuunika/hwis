@@ -1,5 +1,5 @@
 "use client";
-import { useState, ReactNode, useEffect, useRef } from "react";
+import { useState, ReactNode, useEffect, useRef, useContext } from "react";
 import {
   MainButton,
   MainGrid,
@@ -30,6 +30,7 @@ import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { SearchPotentialDuplicates } from "./searchPontentialDuplicates";
 import { OverlayLoader } from "@/components/backdrop";
+import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -40,6 +41,7 @@ export const NewRegistrationFlow = () => {
   const [showForm, setShowForm] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
 
 
@@ -110,7 +112,10 @@ export const NewRegistrationFlow = () => {
 
     if (!Boolean(patientValues.firstName)) return
 
-    refetch()
+    if (registrationType != 'remote') {
+
+      refetch()
+    }
 
   }, [patientValues])
 
@@ -301,7 +306,11 @@ export const NewRegistrationFlow = () => {
                       homeVillage: values.homeVillage,
                       birthdate: values.birthDate
                     })
-                    setDialogOpen(true)
+
+                    if (registrationType != 'remote') {
+
+                      setDialogOpen(true)
+                    }
 
                   }
                   }

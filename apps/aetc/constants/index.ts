@@ -236,24 +236,14 @@ export const districts = [
     zone_id: 1,
     id: 10,
   },
-  {
-    district_name: "Kamuzu Central",
-    district_code: "KC",
-    zone_id: 2,
-    id: 11,
-  },
+
   {
     district_name: "Ntcheu",
     district_code: "NT",
     zone_id: 2,
     id: 12,
   },
-  {
-    district_name: "Mzuzu Central",
-    district_code: "MU",
-    zone_id: 3,
-    id: 13,
-  },
+
   {
     district_name: "Rumphi",
     district_code: "RU",
@@ -450,3 +440,7 @@ export const roles = {
   CLINICIAN: "Clinician",
   NURSE: "Adults"
 }
+
+
+
+// username: registration, clinician, nurse

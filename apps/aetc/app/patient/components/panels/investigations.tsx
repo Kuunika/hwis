@@ -15,7 +15,7 @@ import { LabRequest } from "@/interfaces";
 export const Investigations = () => {
   const { navigateTo } = useNavigation();
   const [open, setOpen] = useState(false);
-  const [labRequests, setLabRequests]=useState<LabRequest[]>([])
+  const [labRequests, setLabRequests] = useState<LabRequest[]>([])
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,14 +30,14 @@ export const Investigations = () => {
   }
 
 
-const addRequest = (lab:LabRequest)=>{
-setLabRequests(requests=> ([...requests, lab]))
-setOpen(false)
-}
+  const addRequest = (lab: LabRequest) => {
+    setLabRequests(requests => ([...requests, lab]))
+    setOpen(false)
+  }
   return (
     <Panel
       title="Investigations"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => {}} />}
+      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
     >
       <WrapperBox>
         <MainButton
@@ -46,7 +46,7 @@ setOpen(false)
           onClick={() => setOpen(true)}
         />
       </WrapperBox>
-     { labRequests.length == 0 ? <MainTypography my={2}>No requests added</MainTypography> :<LabOrderTable rows={labRequests} />}
+      <LabOrderTable />
       <LabRequestModal open={open} addRequest={addRequest} onClose={() => setOpen(false)} />
     </Panel>
   );

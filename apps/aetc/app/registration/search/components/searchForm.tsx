@@ -64,7 +64,7 @@ const schema = Yup.object().shape({
   [form.firstName.name]: Yup.string().required().label(form.firstName.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.string().label(form.dob.label),
-  [form.gender.name]: Yup.string().label(form.gender.label),
+  [form.gender.name]: Yup.string().required().label(form.gender.label),
   [form.homeDistrict.name]: Yup.string().label(form.homeDistrict.label),
   [form.homeTraditionalAuthority.name]: Yup.string().label(
     form.homeTraditionalAuthority.label

@@ -115,9 +115,13 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
                 />
             </WrapperBox>
 
-            <SearchComboBox label="Roles" name={form.role.name} options={data ? data.map(d => {
-                return { id: d.role, label: d.role }
-            }) : []} />
+            <SearchComboBox
+                label="Roles"
+                name={form.role.name}
+
+                options={data ? data.map(d => {
+                    return { id: d.role, label: d.role }
+                }) : []} />
 
             <MainButton type="submit" title={"Submit"} onClick={() => { }} />
         </FormikInit>

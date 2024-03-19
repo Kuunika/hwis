@@ -7,6 +7,7 @@ import {
   getPatient,
   getPatients,
   initialRegistration,
+  mergePatients,
   potentialDuplicates,
   updatePatient,
 } from "@/services/patient";
@@ -175,5 +176,18 @@ export const searchByDemographics = (firstName: string, lastName: string, gender
     queryKey: ["find_by_demographics", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
+  });
+};
+
+
+export const merge = () => {
+  const addData = (patientData: any) => {
+    return mergePatients(patientData).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: addData,
   });
 };
