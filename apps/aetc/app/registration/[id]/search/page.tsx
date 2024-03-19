@@ -104,13 +104,10 @@ function RegistrationSearch() {
 }
 
 const DemographicsSearch = ({ patient }: { patient: any }) => {
-  // const { mutate, isPending:searching, isSuccess: searched } = searchPotentialDuplicates();
+
 
   const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
   const { refetch, isFetching, isSuccess: searchComplete, data } = searchDDEPatient(search.firstName, search.lastName, search.gender)
-
-  // const [isSuccess, setIsSuccess] = useState(false);
-  // const [isPending, setIsPending] = useState(false)
   const [searchedPatient, setSearchedPatient] = useState({});
 
 
@@ -122,32 +119,13 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
-    // setIsPending(true);
-
     setSearch({
       firstName: values.firstName,
       lastName: values.lastName,
       gender: values.gender
     })
 
-    // console.log({ values })
 
-    // setTimeout(() => {
-    //   setIsPending(false)
-    //   setIsSuccess(true)
-    // }, 2000)
-
-    // mutate({
-    //   given_name: values.firstName,
-    //   family_name: values.lastName,
-    //   gender: values.gender,
-    //   birthdate: values.birthdate,
-    //   attributes: {
-    //     home_village: values.homeVillage,
-    //     home_traditional_authority: values.homeTraditionalAuthority,
-    //     home_district: values.homeDistrict,
-    //   },
-    // });
   };
   return (
     <>

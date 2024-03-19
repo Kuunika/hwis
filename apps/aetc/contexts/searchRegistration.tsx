@@ -5,10 +5,14 @@ import { useState } from "react";
 import { createContext, FC, ReactNode } from "react";
 
 
-type RegistrationType = 'local' | 'remote' | ''
+type RegistrationType = 'local' | 'remote' | '';
+type SearchedPatient = { firstName: string, lastName: string, gender: string };
 export type SearchRegistrationContextType = {
   patient: Person; // patient selected for registration
   setPatient: (patient: Person) => void;
+
+  searchedPatient: SearchedPatient,
+  setSearchedPatient: (patient: SearchedPatient) => void
 
   initialRegisteredPatient: Person;
   setInitialRegisteredPatient: (person: Person) => void
@@ -24,13 +28,13 @@ export const SearchRegistrationProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [patient, setPatient] = useState<Person>({} as Person);
+  const [searchedPatient, setSearchedPatient] = useState<SearchedPatient>({} as SearchedPatient);
   const [initialRegisteredPatient, setInitialRegisteredPatient] = useState<Person>({} as Person);
   const [registrationType, setRegistrationType] = useState<RegistrationType>('');
 
 
-
   return (
-    <SearchRegistrationContext.Provider value={{ patient, setPatient, registrationType, setRegistrationType, setInitialRegisteredPatient, initialRegisteredPatient }}>
+    <SearchRegistrationContext.Provider value={{ searchedPatient, setSearchedPatient, patient, setPatient, registrationType, setRegistrationType, setInitialRegisteredPatient, initialRegisteredPatient }}>
       {children}
     </SearchRegistrationContext.Provider>
   );
