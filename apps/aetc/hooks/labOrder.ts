@@ -1,4 +1,4 @@
-import { getTestTypes, getSpecimenTypes, getLabReason, createLabOrder } from "@/services/labService";
+import { getTestTypes, getSpecimenTypes, getLabReason, createLabOrder, getPatientLabTests } from "@/services/labService";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 
@@ -40,13 +40,23 @@ export const getLabTestReason = () => {
     });
 };
 
+export const getPatientLabOrder = (patientId: string) => {
+    const findAll = async () => {
+        return getPatientLabTests(patientId).then(response => response.data)
+    };
+    return useQuery({
+        queryKey: ["patientsOrder", patientId],
+        queryFn: findAll,
+        enabled: true,
+    });
+};
+
 export const createOrder = () => {
     const addData = (patientData: any) => {
         return createLabOrder(patientData).then((response) => {
             return response.data;
         });
     };
-
     return useMutation({
         mutationFn: addData,
     });

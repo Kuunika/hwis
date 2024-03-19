@@ -192,5 +192,5 @@ export type LabResult = {
   concept_id: number;
   name: string;
   order: Order
-
+  result: any
 }
