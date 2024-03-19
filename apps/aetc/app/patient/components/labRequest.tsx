@@ -86,7 +86,6 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
     mutate(order);
   }
 
-  // return <BarcodeComponent display="John Doe" value="12345" />
 
   return (
     <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
