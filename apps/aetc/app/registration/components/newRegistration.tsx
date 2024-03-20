@@ -31,6 +31,8 @@ import { FormError } from "@/components/formError";
 import { SearchPotentialDuplicates } from "./searchPontentialDuplicates";
 import { OverlayLoader } from "@/components/backdrop";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
+import { FaPrint } from "react-icons/fa6";
+import { BarcodeComponent } from "@/components/barcode";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -38,7 +40,7 @@ export const NewRegistrationFlow = () => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completed, setCompleted] = useState(0);
-  const [showForm, setShowForm] = useState(true);
+  const [showForm, setShowForm] = useState(false); //TODO: change to true
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
@@ -106,6 +108,8 @@ export const NewRegistrationFlow = () => {
     data: relationship,
     isError: relationshipError,
   } = addRelationship();
+
+  const trigger = () => <MainButton variant="text" sx={{ color: "#000", ml: 0.5, fontSize: "2em" }} title={<FaPrint />} onClick={() => { }} />
 
 
   useEffect(() => {
@@ -341,7 +345,7 @@ export const NewRegistrationFlow = () => {
             </>
           )}
 
-          {completed == 6 && (
+          {true && ( //TODO: change to completed == 6 
             <>
               <br />
               <br />
@@ -357,6 +361,8 @@ export const NewRegistrationFlow = () => {
                 onSecondaryAction={() => {
                   navigateTo("/dashboard");
                 }}
+
+                printButton={<BarcodeComponent trigger={trigger} value={"test"} display={`${patient?.given_name} ${patient?.family_name}`} />}
               />
             </>
           )}
