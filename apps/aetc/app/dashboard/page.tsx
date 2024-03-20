@@ -16,6 +16,8 @@ function Home() {
     const { data: districts } = getDistricts();
     const { data: traditionalAuthorities } = getTraditionalAuthorities();
 
+
+
     return (
         <>
             <MainGrid container>
