@@ -7,8 +7,15 @@ import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings } from "react-icons/f
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
+import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
+
 
 function Home() {
+
+    const { data: villages } = getVillages();
+    const { data: districts } = getDistricts();
+    const { data: traditionalAuthorities } = getTraditionalAuthorities();
+
     return (
         <>
             <MainGrid container>

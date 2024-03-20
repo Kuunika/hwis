@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import villages from "../../../constants/villages.json"
+
 
 import {
   FormikInit,
@@ -39,6 +39,7 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
+import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
 
 const form = {
   identificationNumber: {
@@ -203,8 +204,6 @@ export const DemographicsForm: FC<Prop> = ({
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
 
-
-
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
@@ -261,11 +260,6 @@ export const DemographicsForm: FC<Prop> = ({
       [form.currentVillage.name]: patient?.addresses[1]?.address1,
     }
   }
-
-
-  console.log({ searchedPatient })
-
-
 
 
   return (
@@ -344,10 +338,10 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.homeDistrict.name}
             label={form.homeDistrict.label}
             multiple={false}
-            options={districts.map((d) => ({
-              id: d.district_name,
-              label: d.district_name,
-            }))}
+            options={districts ? districts.map((d: any) => ({
+              id: d.name,
+              label: d.name,
+            })) : []}
           />
           <SearchComboBox
             name={form.homeTraditionalAuthority.name}
@@ -359,11 +353,11 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.homeVillage.name}
             label={form.homeVillage.label}
             multiple={false}
-            options={malawiVillages}
-          // options={villages.map((v: any) => ({
-          //   id: v.name,
-          //   label: v.name
-          // }))}
+            // options={malawiVillages}
+            options={villages ? villages.map((v: any) => ({
+              id: v.name,
+              label: v.name
+            })) : []}
           />
         </RegistrationCard>
 
@@ -380,10 +374,10 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.currentDistrict.label}
             disabled={checked}
             multiple={false}
-            options={districts.map((d) => ({
-              id: d.district_name,
-              label: d.district_name,
-            }))}
+            options={districts ? districts.map((d: any) => ({
+              id: d.name,
+              label: d.name,
+            })) : []}
           />
           <SearchComboBox
             name={form.currentTraditionalAuthority.name}

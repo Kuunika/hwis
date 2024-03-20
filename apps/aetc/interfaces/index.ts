@@ -229,3 +229,20 @@ export type PatientLabOrder = {
   tests: Test[];
 
 }
+
+export type District = {
+  district_id: number;
+  name: string;
+}
+
+export type TraditionalAuthority = {
+  traditional_authority_id: number;
+  name: string;
+  district_id: number
+}
+
+export type Village = {
+  village_id: number;
+  name: string;
+  traditional_authority_id: number
+}
