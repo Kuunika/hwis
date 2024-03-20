@@ -8,15 +8,12 @@ import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
 import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
+import { useContext, useEffect } from "react";
+import { LocationContext, LocationContextType } from "@/contexts/location";
 
 
 function Home() {
-
-    const { data: villages } = getVillages();
-    const { data: districts } = getDistricts();
-    const { data: traditionalAuthorities } = getTraditionalAuthorities();
-
-
+    useContext(LocationContext) as LocationContextType
 
     return (
         <>

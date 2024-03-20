@@ -40,6 +40,7 @@ import {
   SearchRegistrationContextType,
 } from "@/contexts";
 import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
+import { LocationContext, LocationContextType } from "@/contexts/location";
 
 const form = {
   identificationNumber: {
@@ -204,16 +205,23 @@ export const DemographicsForm: FC<Prop> = ({
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
 
+  const [selectedLocation, setSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
+  const [currentSelectedLocation, setCurrentSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
+
+  const { villages, districts, traditionalAuthorities } = useContext(LocationContext) as LocationContextType
+
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
-  // const { data: patients } = getPatientsWaitingForRegistrations();
+
   const { params } = useParameters();
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+
+
 
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
@@ -338,7 +346,13 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.homeDistrict.name}
             label={form.homeDistrict.label}
             multiple={false}
-            options={districts ? districts.map((d: any) => ({
+            getValue={(value) => {
+              const district = districts.find(d => d.name == value);
+
+              if (district)
+                setSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+            }}
+            options={districts ? districts.map((d) => ({
               id: d.name,
               label: d.name,
             })) : []}
@@ -347,14 +361,24 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.homeTraditionalAuthority.name}
             label={form.homeTraditionalAuthority.label}
             multiple={false}
-            options={traditionalAuthorities}
+            getValue={(value) => {
+              const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
+
+              if (traditionalAuthority)
+                setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.district_id.toString() }))
+            }}
+
+            options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == selectedLocation.district).map(t => ({
+              id: t.name,
+              label: t.name
+            })) : []}
           />
           <SearchComboBox
             name={form.homeVillage.name}
             label={form.homeVillage.label}
             multiple={false}
             // options={malawiVillages}
-            options={villages ? villages.map((v: any) => ({
+            options={villages ? villages.filter(v => v.traditional_authority_id.toString() == selectedLocation.traditionalAuthority).map((v: any) => ({
               id: v.name,
               label: v.name
             })) : []}
