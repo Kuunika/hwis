@@ -43,8 +43,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <MainGrid item xs={0} lg={2}></MainGrid>
 
         </MainGrid>
-
-
     </>
 
 }
