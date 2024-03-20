@@ -15,7 +15,7 @@ export const getDailyVisits = (queryParam?: string) =>
   getAll<Person[]>(`/daily_visits?category=${queryParam}`);
 
 export const updatePatient = (patientId: string, patientData: any) =>
-  edit(patientId, patientData, endPoint);
+  edit<Person>(patientId, patientData, endPoint);
 
 export const potentialDuplicates = (patientData: any) =>
   create(patientData, "/search/people");
