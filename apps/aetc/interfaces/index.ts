@@ -41,6 +41,16 @@ export interface Identifier {
   preferred: boolean;
 }
 
+
+
+export interface Patient {
+  patient_id: number;
+  identifiers: Identifier[];
+  addresses: Address[];
+  uuid: string;
+  gender: string;
+}
+
 export interface Person {
   patient_id: number;
   identifiers: Identifier[];
@@ -58,6 +68,9 @@ export interface Person {
     family_name: string
   }>
 }
+
+export interface PatientUpdateResponse extends Person { patient: Patient };
+
 
 interface EncounterType {
   name: string;
