@@ -317,12 +317,6 @@ export const districts = [
     id: 247,
   },
   {
-    district_name: "Queens Elizabeth",
-    district_code: "QE",
-    zone_id: 5,
-    id: 25,
-  },
-  {
     district_name: "Chiradzulu",
     district_code: "CR",
     zone_id: 5,

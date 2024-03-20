@@ -7,8 +7,14 @@ import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings } from "react-icons/f
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
+import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
+import { useContext, useEffect } from "react";
+import { LocationContext, LocationContextType } from "@/contexts/location";
+
 
 function Home() {
+    useContext(LocationContext) as LocationContextType
+
     return (
         <>
             <MainGrid container>

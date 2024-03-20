@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import villages from "../../../constants/villages.json"
+
 
 import {
   FormikInit,
@@ -34,12 +34,13 @@ import {
 } from "@/constants";
 import { countries } from "@/constants/contries";
 import { getInitialValues } from "@/helpers";
-import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
 import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
+import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
+import { LocationContext, LocationContextType } from "@/contexts/location";
 
 const form = {
   identificationNumber: {
@@ -200,29 +201,35 @@ export const DemographicsForm: FC<Prop> = ({
   initialValues = init,
   setContext,
 }) => {
-  const { initialRegisteredPatient, patient, registrationType } = useContext(
+  const { initialRegisteredPatient, patient, registrationType, searchedPatient } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
 
+  const [selectedLocation, setSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
+  const [currentSelectedLocation, setCurrentSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
 
+  const { villages, districts, traditionalAuthorities } = useContext(LocationContext) as LocationContextType
 
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
-  // const { data: patients } = getPatientsWaitingForRegistrations();
+
   const { params } = useParameters();
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
 
+
+
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
     if (fieldFunction) {
       const { setFieldValue } = fieldFunction;
-      setFieldValue(form.firstName.name, initialRegisteredPatient.given_name);
-      setFieldValue(form.lastName.name, initialRegisteredPatient.family_name);
+      setFieldValue(form.firstName.name, searchedPatient.firstName);
+      setFieldValue(form.lastName.name, searchedPatient.lastName)
+      setFieldValue(form.gender.name, searchedPatient.gender)
     }
   }, [initialRegisteredPatient]);
 
@@ -245,14 +252,13 @@ export const DemographicsForm: FC<Prop> = ({
   }, [checked]);
 
 
-  let _init = {}
+  let _init = {
+
+  }
 
   if (registrationType == "local" || registrationType == "remote") {
     _init = {
-      [form.firstName.name]: initialRegisteredPatient.given_name,
-      [form.lastName.name]: initialRegisteredPatient.family_name,
       [form.dob.name]: patient.birthdate,
-      [form.gender.name]: patient.gender,
       [form.nationality.name]: patient?.addresses[0]?.country,
       [form.homeDistrict.name]: patient?.addresses[0]?.address1,
       [form.homeTraditionalAuthority.name]: patient?.addresses[0]?.cityVillage,
@@ -264,8 +270,6 @@ export const DemographicsForm: FC<Prop> = ({
   }
 
 
-
-
   return (
     <>
       <RegistrationMainHeader id="1">Demographics</RegistrationMainHeader>
@@ -275,7 +279,11 @@ export const DemographicsForm: FC<Prop> = ({
       </RegistrationDescriptionText>
       <FormikInit
         validationSchema={schema}
-        initialValues={{ ...initialValues, ..._init }}
+        initialValues={{
+          ...initialValues, ..._init, [form.firstName.name]: searchedPatient.firstName,
+          [form.lastName.name]: searchedPatient.lastName,
+          [form.gender.name]: searchedPatient.gender == 'M' ? 'Male' : "Female",
+        }}
         onSubmit={onSubmit}
         submitButtonText="next"
         submitButton={false}
@@ -338,26 +346,42 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.homeDistrict.name}
             label={form.homeDistrict.label}
             multiple={false}
-            options={districts.map((d) => ({
-              id: d.district_name,
-              label: d.district_name,
-            }))}
+            getValue={(value) => {
+              const district = districts.find(d => d.name == value);
+
+              if (district)
+                setSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+            }}
+            options={districts ? districts.map((d) => ({
+              id: d.name,
+              label: d.name,
+            })) : []}
           />
           <SearchComboBox
             name={form.homeTraditionalAuthority.name}
             label={form.homeTraditionalAuthority.label}
             multiple={false}
-            options={traditionalAuthorities}
+            getValue={(value) => {
+              const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
+
+              if (traditionalAuthority)
+                setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.district_id.toString() }))
+            }}
+
+            options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == selectedLocation.district).map(t => ({
+              id: t.name,
+              label: t.name
+            })) : []}
           />
           <SearchComboBox
             name={form.homeVillage.name}
             label={form.homeVillage.label}
             multiple={false}
-            options={malawiVillages}
-          // options={villages.map((v: any) => ({
-          //   id: v.name,
-          //   label: v.name
-          // }))}
+            // options={malawiVillages}
+            options={villages ? villages.filter(v => v.traditional_authority_id.toString() == selectedLocation.traditionalAuthority).map((v: any) => ({
+              id: v.name,
+              label: v.name
+            })) : []}
           />
         </RegistrationCard>
 
@@ -374,17 +398,32 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.currentDistrict.label}
             disabled={checked}
             multiple={false}
-            options={districts.map((d) => ({
-              id: d.district_name,
-              label: d.district_name,
-            }))}
+            getValue={(value) => {
+              const district = districts.find(d => d.name == value);
+
+              if (district)
+                setCurrentSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+            }}
+            options={districts ? districts.map((d: any) => ({
+              id: d.name,
+              label: d.name,
+            })) : []}
           />
           <SearchComboBox
             name={form.currentTraditionalAuthority.name}
             label={form.currentTraditionalAuthority.label}
+            getValue={(value) => {
+              const district = traditionalAuthorities.find(d => d.name == value);
+
+              if (district)
+                setCurrentSelectedLocation(selection => ({ ...selection, traditionalAuthority: district.district_id.toString() }))
+            }}
             disabled={checked}
             multiple={false}
-            options={traditionalAuthorities}
+            options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == currentSelectedLocation.district).map(t => ({
+              id: t.name,
+              label: t.name
+            })) : []}
           />
 
           <SearchComboBox
@@ -392,7 +431,10 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.currentVillage.label}
             disabled={checked}
             multiple={false}
-            options={malawiVillages}
+            options={villages ? villages.filter(v => v.traditional_authority_id.toString() == currentSelectedLocation.traditionalAuthority).map((v: any) => ({
+              id: v.name,
+              label: v.name
+            })) : []}
           // options={Array.isArray(villages) ? villages.map((v: any) => ({ id: v.name, label: v.name })) : []}
           />
           <TextInputField

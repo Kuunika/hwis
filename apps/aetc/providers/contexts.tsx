@@ -1,4 +1,5 @@
 import { AuthProvider, PatientProfileProvider, SearchRegistrationProvider, TriageProvider } from "@/contexts";
+import { LocationProvider } from "@/contexts/location";
 import { ReactNode } from "react";
 
 export const ContextProviders = ({ children }: { children: ReactNode }) => {
@@ -6,7 +7,9 @@ export const ContextProviders = ({ children }: { children: ReactNode }) => {
     <AuthProvider>
       <TriageProvider>
         <PatientProfileProvider>
-          <SearchRegistrationProvider>{children}</SearchRegistrationProvider>
+          <LocationProvider>
+            <SearchRegistrationProvider>{children}</SearchRegistrationProvider>
+          </LocationProvider>
         </PatientProfileProvider>
       </TriageProvider>
     </AuthProvider>

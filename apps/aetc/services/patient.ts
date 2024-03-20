@@ -1,4 +1,4 @@
-import { DDEScore, DDESearch, Person } from "@/interfaces";
+import { DDEScore, DDESearch, PatientUpdateResponse, Person } from "@/interfaces";
 import { create, edit, getAll, getOne } from "./httpService";
 
 const endPoint = "/people";
@@ -15,7 +15,7 @@ export const getDailyVisits = (queryParam?: string) =>
   getAll<Person[]>(`/daily_visits?category=${queryParam}`);
 
 export const updatePatient = (patientId: string, patientData: any) =>
-  edit(patientId, patientData, endPoint);
+  edit<PatientUpdateResponse>(patientId, patientData, endPoint);
 
 export const potentialDuplicates = (patientData: any) =>
   create(patientData, "/search/people");

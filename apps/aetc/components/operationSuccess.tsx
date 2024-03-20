@@ -8,12 +8,14 @@ export function OperationSuccess({
   secondaryActionText,
   onPrimaryAction,
   onSecondaryAction,
+  printButton,
 }: {
   title: string;
   primaryActionText: string;
   secondaryActionText: string;
   onPrimaryAction: () => void;
   onSecondaryAction: () => void;
+  printButton?: any
 }) {
   return (
     <Box
@@ -34,7 +36,7 @@ export function OperationSuccess({
         <Typography variant="h5" fontWeight={"500"}>
           {title}
         </Typography>
-        <Box mt={"2ch"}>
+        <Box mt={"2ch"} sx={{ display: "flex" }}>
           <MainButton onClick={onPrimaryAction} title={primaryActionText} />
           <MainButton
             variant="secondary"
@@ -42,6 +44,7 @@ export function OperationSuccess({
             onClick={onSecondaryAction}
             title={secondaryActionText}
           />
+          {printButton}
         </Box>
       </Box>
     </Box>

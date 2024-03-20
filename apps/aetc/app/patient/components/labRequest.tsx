@@ -18,6 +18,7 @@ import { useParameters } from "@/hooks";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import { OverlayLoader } from "@/components/backdrop";
+import { BarcodeComponent } from "@/components/barcode";
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -84,6 +85,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
     }
     mutate(order);
   }
+
 
   return (
     <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>

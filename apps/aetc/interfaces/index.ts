@@ -41,6 +41,16 @@ export interface Identifier {
   preferred: boolean;
 }
 
+
+
+export interface Patient {
+  patient_id: number;
+  identifiers: Identifier[];
+  addresses: Address[];
+  uuid: string;
+  gender: string;
+}
+
 export interface Person {
   patient_id: number;
   identifiers: Identifier[];
@@ -58,6 +68,9 @@ export interface Person {
     family_name: string
   }>
 }
+
+export interface PatientUpdateResponse extends Person { patient: Patient };
+
 
 interface EncounterType {
   name: string;
@@ -193,4 +206,56 @@ export type LabResult = {
   name: string;
   order: Order
   result: any
+}
+
+interface Specimen {
+  concept_id: number;
+  name: string;
+}
+
+interface ReasonForTest {
+  concept_id: number;
+  name: string;
+}
+
+interface Test {
+  id: number;
+  concept_id: number;
+  uuid: string;
+  name: string;
+  result: any;
+}
+
+
+export type PatientLabOrder = {
+  id: number;
+  order_id: number;
+  encounter_id: number;
+  order_date: string;
+  patient_id: number;
+  accession_number: string;
+  specimen: Specimen;
+  requesting_clinician: string;
+  target_lab: string;
+  reason_for_test: ReasonForTest;
+  delivery_mode: any;
+  tests: Test[];
+
+}
+
+export type District = {
+  district_id: number;
+  name: string;
+}
+
+export type TraditionalAuthority = {
+  traditional_authority_id: number;
+  name: string;
+  district_id: number
+}
+
+export type Village = {
+  village_id: number;
+  name: string;
+  traditional_authority_id: number
 }
