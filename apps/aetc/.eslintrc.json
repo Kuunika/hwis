@@ -3,7 +3,7 @@
   "rules": {
     "react-hooks/exhaustive-deps": 0,
       "@next/next/no-document-import-in-page": "off",
-      "react/jsx-key": [1, { checkFragmentShorthand: true }]
+      "react/jsx-key": [1, { "checkFragmentShorthand": true }]
   
     }
 }
