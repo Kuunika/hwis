@@ -398,6 +398,12 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.currentDistrict.label}
             disabled={checked}
             multiple={false}
+            getValue={(value) => {
+              const district = districts.find(d => d.name == value);
+
+              if (district)
+                setCurrentSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+            }}
             options={districts ? districts.map((d: any) => ({
               id: d.name,
               label: d.name,
@@ -406,9 +412,18 @@ export const DemographicsForm: FC<Prop> = ({
           <SearchComboBox
             name={form.currentTraditionalAuthority.name}
             label={form.currentTraditionalAuthority.label}
+            getValue={(value) => {
+              const district = traditionalAuthorities.find(d => d.name == value);
+
+              if (district)
+                setCurrentSelectedLocation(selection => ({ ...selection, traditionalAuthority: district.district_id.toString() }))
+            }}
             disabled={checked}
             multiple={false}
-            options={traditionalAuthorities}
+            options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == currentSelectedLocation.district).map(t => ({
+              id: t.name,
+              label: t.name
+            })) : []}
           />
 
           <SearchComboBox
@@ -416,7 +431,10 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.currentVillage.label}
             disabled={checked}
             multiple={false}
-            options={malawiVillages}
+            options={villages ? villages.filter(v => v.traditional_authority_id.toString() == currentSelectedLocation.traditionalAuthority).map((v: any) => ({
+              id: v.name,
+              label: v.name
+            })) : []}
           // options={Array.isArray(villages) ? villages.map((v: any) => ({ id: v.name, label: v.name })) : []}
           />
           <TextInputField
