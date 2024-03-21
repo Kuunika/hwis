@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import {FormikInit, SearchComboBox, SelectInputField} from 'shared-ui/src';
-import {GenericDialog} from "@/components";
+import { FormikInit, SearchComboBox, SelectInputField } from 'shared-ui/src';
+import { GenericDialog } from "@/components";
 import * as Yup from 'yup';
 import { getFacilities, useParameters } from "@/hooks";
 import { TrackFormikContext } from ".";
@@ -36,51 +36,51 @@ export const ReturningPatientDialog: FC<Props> = ({ onSubmit, initialValues, set
 
     return (
         <GenericDialog
-            open={}
-            onClose={}
-            title={}
+            open={false}
+            onClose={() => { }}
+            title={""}
         >
             <FormikInit
                 initialValues={initialValues}
                 validationSchema={schema}
                 onSubmit={onSubmit}
             >
-                    <SelectInputField
-                        name={form.methodOfTransportation.name}
-                        selectItems={[
-                            { name: 'Walking', value: 'walking' },
-                            { name: 'Ambulance', value: 'ambulance' },
-                            { name: 'Public transport', value: 'public_transport' },
-                            { name: 'Private transport', value: 'private_transport' },
-                            { name: 'Police vehicle', value: 'police_vehicle' },
-                            { name: 'Other public or company vehicle', value: 'other_public_company_vehicle' },
-                            { name: 'Motorcycle', value: 'motorcycle' },
-                            { name: 'Taxi (car/motorcycle)', value: 'taxi' },
-                            { name: 'Bicycle', value: 'bicycle' },
-                        ]}
-                        label={form.methodOfTransportation.label}
-                        id={form.methodOfTransportation.name}
+                <SelectInputField
+                    name={form.methodOfTransportation.name}
+                    selectItems={[
+                        { name: 'Walking', value: 'walking' },
+                        { name: 'Ambulance', value: 'ambulance' },
+                        { name: 'Public transport', value: 'public_transport' },
+                        { name: 'Private transport', value: 'private_transport' },
+                        { name: 'Police vehicle', value: 'police_vehicle' },
+                        { name: 'Other public or company vehicle', value: 'other_public_company_vehicle' },
+                        { name: 'Motorcycle', value: 'motorcycle' },
+                        { name: 'Taxi (car/motorcycle)', value: 'taxi' },
+                        { name: 'Bicycle', value: 'bicycle' },
+                    ]}
+                    label={form.methodOfTransportation.label}
+                    id={form.methodOfTransportation.name}
+                />
+
+                {loadingFacilities ? (
+                    <>Loading facilities...</>
+                ) : (
+                    <SearchComboBox
+                        label="Referral Medical Facility"
+                        name={concepts.REFERRED_FROM}
+                        multiple={false}
+                        options={
+                            facilities
+                                ? facilities.map((facility: any) => ({
+                                    id: facility.facility_name,
+                                    label: facility.facility_name,
+                                }))
+                                : []
+                        }
                     />
+                )}
 
-                    {loadingFacilities ? (
-                        <>Loading facilities...</>
-                    ) : (
-                        <SearchComboBox
-                            label="Referral Medical Facility"
-                            name={concepts.REFERRED_FROM}
-                            multiple={false}
-                            options={
-                                facilities
-                                    ? facilities.map((facility: any) => ({
-                                        id: facility.facility_name,
-                                        label: facility.facility_name,
-                                    }))
-                                    : []
-                            }
-                        />
-                    )}
-
-                    <button type="submit">Submit</button>
+                <button type="submit">Submit</button>
             </FormikInit>
         </GenericDialog>
     );
