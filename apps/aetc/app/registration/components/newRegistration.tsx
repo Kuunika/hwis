@@ -31,6 +31,7 @@ import { FormError } from "@/components/formError";
 import { SearchPotentialDuplicates } from "./searchPontentialDuplicates";
 import { OverlayLoader } from "@/components/backdrop";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
+import {ReturningPatientDialog} from "@/app/registration/components/returningPatientForm";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
