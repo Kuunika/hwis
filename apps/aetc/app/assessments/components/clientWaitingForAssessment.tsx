@@ -10,6 +10,9 @@ export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
   const { data: patients, isLoading } = getPatientsWaitingForAssessment();
 
+
+  // const customOrder = { "red": 0, "yellow": 1, "green": 2 };
+
   const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
 
   // const rows = [

@@ -445,7 +445,7 @@ export const DemographicsForm: FC<Prop> = ({
         </RegistrationCard>
 
         <RegistrationCard>
-          <RegistrationCardTitle>Guardian Information</RegistrationCardTitle>
+          <RegistrationCardTitle>Next of kin Information</RegistrationCardTitle>
           <TextInputField
             name={form.nextOfKinFirstName.name}
             id={form.nextOfKinFirstName.name}
