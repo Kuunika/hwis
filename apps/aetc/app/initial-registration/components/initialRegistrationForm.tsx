@@ -24,9 +24,23 @@ const form = {
   },
 };
 
+
+
+// Define a regular expression pattern to match alphabet letters and the ' symbol
+const nameRegex = /^[a-zA-Z]+(?:['-][a-zA-Z]+)*$/;
+
+// Define the Yup schema
 const schema = yup.object({
-  [form.firstName.name]: yup.string().required().label(form.firstName.label),
-  [form.lastName.name]: yup.string().required().label(form.lastName.label),
+  [form.firstName.name]: yup
+      .string()
+      .matches(nameRegex, { message: 'Only alphabetic letters are allowed' })
+      .required()
+      .label(form.firstName.label),
+  [form.lastName.name]: yup
+      .string()
+      .matches(nameRegex, { message: 'Only alphabetic letters are allowed' })
+      .required()
+      .label(form.lastName.label),
 });
 
 export const InitialRegistrationForm = ({ initialValues, onSubmit }: props) => {
