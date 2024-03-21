@@ -237,4 +237,4 @@ function InitialRegistration() {
   );
 }
 
-export default AuthGuard(InitialRegistration, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])
+export default AuthGuard(InitialRegistration, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK])

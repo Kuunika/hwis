@@ -41,7 +41,7 @@ function Home() {
                             icon={<FcSearch />}
                         />
                     </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK]}>
                         <Card
                             link="/initial-registration"
                             title="Initial Registration"
@@ -95,7 +95,7 @@ function Home() {
 
                 </MainGrid>
                 <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
-            </MainGrid>
+            </MainGrid >
         </>
     );
 }
@@ -133,4 +133,4 @@ const Card = ({
 };
 
 
-export default AuthGuard(Home, [roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE])
+export default AuthGuard(Home, [roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK])
