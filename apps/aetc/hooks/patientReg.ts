@@ -1,5 +1,5 @@
 import { concepts } from "@/constants";
-import { 
+import {
   createPatient,
   findByDemographics,
   findByNameAndGender,
@@ -95,6 +95,7 @@ export const getPatientsWaitingForPrescreening = () => {
     queryKey: ["screening"],
     queryFn: getall,
     enabled: true,
+    refetchInterval: 1000 * 30,
   });
 };
 
@@ -106,6 +107,7 @@ export const getPatientsWaitingForRegistrations = () => {
     queryKey: ["registration"],
     queryFn: getall,
     enabled: true,
+    refetchInterval: 1000 * 30,
   });
 };
 
@@ -117,6 +119,7 @@ export const getPatientsWaitingForTriage = () => {
     queryKey: ["triage"],
     queryFn: getall,
     enabled: true,
+    refetchInterval: 1000 * 30,
   });
 };
 export const getPatientsWaitingForAssessment = () => {
@@ -138,6 +141,7 @@ export const searchPotentialDuplicates = () => {
   };
   return useMutation({
     mutationFn: addData,
+
   });
 };
 

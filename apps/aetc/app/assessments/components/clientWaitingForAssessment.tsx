@@ -11,7 +11,8 @@ import Image from "next/image";
 
 export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
-  const { data: patients, isLoading } = getPatientsWaitingForAssessment();
+  const { data: patients, isLoading, isRefetching } = getPatientsWaitingForAssessment();
+
 
 
   // const customOrder = { "red": 0, "yellow": 1, "green": 2 };
@@ -106,7 +107,7 @@ export const ClientWaitingForAssessment = () => {
   ];
 
   return (
-    <BaseTable loading={isLoading} columns={columns} rows={rows ? rows : []} />
+    <BaseTable loading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
   );
 };
 
