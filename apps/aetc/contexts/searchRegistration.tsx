@@ -6,7 +6,7 @@ import { createContext, FC, ReactNode } from "react";
 
 
 type RegistrationType = 'local' | 'remote' | '';
-type SearchedPatient = { firstName: string, lastName: string, gender: string };
+type SearchedPatient = { firstName: string, lastName: string, gender: string, patient_id?: number };
 export type SearchRegistrationContextType = {
   patient: Person; // patient selected for registration
   setPatient: (patient: Person) => void;

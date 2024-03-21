@@ -10,6 +10,7 @@ export const getVillages = () => {
         queryKey: ["villages"],
         queryFn: getall,
         enabled: true,
+        staleTime: Infinity
     });
 };
 
@@ -19,6 +20,7 @@ export const getTraditionalAuthorities = () => {
         queryKey: ["traditional_authorities"],
         queryFn: getall,
         enabled: true,
+        staleTime: Infinity
     });
 };
 
@@ -28,5 +30,6 @@ export const getDistricts = () => {
         queryKey: ["districts"],
         queryFn: getall,
         enabled: true,
+        staleTime: Infinity
     });
 };

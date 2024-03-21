@@ -3,7 +3,7 @@ import * as React from "react";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { MainButton } from "shared-ui/src";
+import {FormikInit, MainButton} from "shared-ui/src";
 
 export interface SimpleDialogProps {
     open: boolean;
@@ -32,7 +32,5 @@ export function GenericDialog({ onClose, open, children, title, maxWidth = "lg" 
         </Dialog>
     );
 }
-
-
 
 

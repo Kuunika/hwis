@@ -23,6 +23,7 @@ import { OverlayLoader } from "@/components/backdrop";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
+import { Person } from "@/interfaces";
 
 function RegistrationSearch() {
   const { params } = useParameters();
@@ -30,6 +31,7 @@ function RegistrationSearch() {
   const { data } = getPatientsWaitingForRegistrations();
 
   const patient = data?.find((p) => p.uuid == params.id);
+
 
 
   useEffect(() => {
@@ -94,7 +96,7 @@ function RegistrationSearch() {
           }}
         >
           <SearchTab
-            demographics={<DemographicsSearch patient={patient} />}
+            demographics={<DemographicsSearch patient={patient ? patient : {} as Person} />}
             npid={<NPIDSearch />}
           />
         </WrapperBox>
@@ -103,7 +105,7 @@ function RegistrationSearch() {
   );
 }
 
-const DemographicsSearch = ({ patient }: { patient: any }) => {
+const DemographicsSearch = ({ patient }: { patient: Person }) => {
 
   const { setSearchedPatient: setSearchedPatientContext } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
@@ -126,6 +128,7 @@ const DemographicsSearch = ({ patient }: { patient: any }) => {
     })
 
     setSearchedPatientContext({
+      patient_id: patient.patient_id,
       firstName: values.firstName,
       lastName: values.lastName,
       gender: values.gender

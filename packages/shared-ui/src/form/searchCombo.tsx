@@ -62,7 +62,7 @@ export const SearchComboBox: FC<Props> = ({
       getValue(inputValue);
     }
   }
-  return <WrapperBox sx={{ width, my: 1, ...sx, p: 0.5, borderRadius: 0.5 }}>
+  return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5, }}>
     <MainTypography variant="subtitle2">{label}</MainTypography>
     <Select
 
