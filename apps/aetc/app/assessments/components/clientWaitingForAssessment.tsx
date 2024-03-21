@@ -1,10 +1,12 @@
 import { getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
+import { getPatientsEncounters } from "@/hooks/encounter";
 import {
   getPatientsWaitingForAssessment,
   getPatientsWaitingForTriage,
 } from "@/hooks/patientReg";
-import { BaseTable, MainButton, WrapperBox } from "shared-ui/src";
+import { getPatientEncounters } from "@/services/encounter";
+import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 
 export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
@@ -45,10 +47,17 @@ export const ClientWaitingForAssessment = () => {
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
     { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
     { field: "gender", headerName: "Gender", flex: 1 },
+    { field: "waiting", headerName: "WaitingTime", flex:1, renderCell: (cell:any)=>{
+      return <CalculateWaitingTime patientId={cell.row.id}  />
+    } },
+    { field: "aggreg", headerName: "Aggregate", flex:1, renderCell: (cell:any)=>{
+      return <CalculateAggregateTime patientId={cell.row.id}  />
+    } },
     {
       field: "triage_result",
       headerName: "Triage Category",
       flex: 1,
+      sortModel: { field: "triage_result", sort: triageResultSort },
       renderCell: (cell: any) => {
         return (
           <WrapperBox
@@ -95,3 +104,99 @@ export const ClientWaitingForAssessment = () => {
     <BaseTable loading={isLoading} columns={columns} rows={rows ? rows : []} />
   );
 };
+
+
+function CalculateAggregateTime({patientId}:{patientId:string}) {
+  const {data, isLoading}=getPatientsEncounters(patientId);
+
+
+  const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
+
+  if (!encounter) {
+    return "No encounter data available";
+  }
+
+  const encounterDatetime = encounter.encounter_datetime;
+
+ const currentTime = Date.now();
+
+ const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
+
+ let aggTime;
+
+ const seconds = Math.floor(differenceInMilliseconds / 1000);
+ if (seconds < 60) {
+   aggTime = `${seconds} seconds`;
+ } else {
+   const minutes = Math.floor(seconds / 60);
+   if (minutes < 60) {
+     aggTime = `${minutes} minutes`;
+   } else {
+     const hours = Math.floor(minutes / 60);
+     aggTime = `${hours} hours`;
+   }
+  }
+  if(isLoading){
+  return "loading..."
+  }
+  return (
+    <MainTypography>{aggTime}</MainTypography>
+  )
+}
+
+function CalculateWaitingTime({patientId}:{patientId:string}) {
+  const {data, isLoading}=getPatientsEncounters(patientId);
+
+  
+  const encounter = data?.find(encounter => encounter.encounter_type.name === 'Triage Result');
+
+  if (!encounter) {
+    return "No encounter data available";
+  }
+
+  const encounterDatetime = encounter.encounter_datetime;
+
+ const currentTime = Date.now();
+
+ const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
+
+ let waitingTime;
+
+ const seconds = Math.floor(differenceInMilliseconds / 1000);
+ if (seconds < 60) {
+   waitingTime = `${seconds} seconds`;
+ } else {
+   const minutes = Math.floor(seconds / 60);
+   if (minutes < 60) {
+     waitingTime = `${minutes} minutes`;
+   } else {
+     const hours = Math.floor(minutes / 60);
+     waitingTime = `${hours} hours`;
+   }
+  }
+  if(isLoading){
+  return "loading..."
+  }
+  return (
+    <MainTypography>{waitingTime}</MainTypography>
+  )
+}
+
+const triageResultSort = (rowA: any, rowB: any, sortBy: string) => {
+  const triageA = rowA.values.triage_result;
+  const triageB = rowB.values.triage_result;
+
+  if (triageA === "red") {
+    return -1; 
+  } else if (triageB === "red") {
+    return 1; 
+  } else if (triageA === "yellow") {
+    return -1;
+  } else {
+    return 0; 
+  }
+};
+
+
+
+

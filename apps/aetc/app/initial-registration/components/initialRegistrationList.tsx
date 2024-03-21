@@ -1,9 +1,10 @@
 import { getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
+import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getVisitNum } from "@/hooks/visitNumber";
 import { useEffect } from "react";
-import { BaseTable, MainButton } from "shared-ui/src";
+import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 
 export const InitialRegistrationList = () => {
   const { navigateTo } = useNavigation();
@@ -21,6 +22,9 @@ export const InitialRegistrationList = () => {
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
+    { field: "waiting", headerName: "WaitingTime", flex:1, renderCell: (cell:any)=>{
+      return <CalculateWaitingTime patientId={cell.row.id}  />
+    } },
 
     {
       field: "action",
@@ -41,3 +45,42 @@ export const InitialRegistrationList = () => {
     <BaseTable loading={isLoading} columns={columns} rows={rows ? rows : []} />
   );
 };
+
+function CalculateWaitingTime({patientId}:{patientId:string}) {
+  const {data, isLoading}=getPatientsEncounters(patientId);
+  console.log(data)
+
+  
+  const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
+
+  if (!encounter) {
+    return "No encounter data available";
+  }
+
+  const encounterDatetime = encounter.encounter_datetime;
+
+ const currentTime = Date.now();
+
+ const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
+
+ let waitingTime;
+
+ const seconds = Math.floor(differenceInMilliseconds / 1000);
+ if (seconds < 60) {
+   waitingTime = `${seconds} seconds`;
+ } else {
+   const minutes = Math.floor(seconds / 60);
+   if (minutes < 60) {
+     waitingTime = `${minutes} minutes`;
+   } else {
+     const hours = Math.floor(minutes / 60);
+     waitingTime = `${hours} hours`;
+   }
+  }
+  if(isLoading){
+  return "loading..."
+  }
+  return (
+    <MainTypography>{waitingTime}</MainTypography>
+  )
+}
