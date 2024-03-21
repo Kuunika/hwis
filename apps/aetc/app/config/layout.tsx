@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                             })
                         }
                     </WrapperBox>
-                    <WrapperBox sx={{ width: "80%", ml: "1ch" }}>{children}</WrapperBox>
+                    <WrapperBox sx={{ width: "80%", ml: "1ch", minHeight: "100vh" }}>{children}</WrapperBox>
                 </WrapperBox>
             </MainGrid>
             <MainGrid item xs={0} lg={2}></MainGrid>
