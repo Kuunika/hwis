@@ -16,6 +16,7 @@ import {
 } from "./common";
 import { TrackFormikContext } from "./demographicsForm";
 import { getInitialValues } from "@/helpers";
+import { getPatientsEncounters } from "@/hooks/encounter";
 
 const form = {
   maritalStatus: {
@@ -65,6 +66,11 @@ export const SocialHistoryForm: FC<Prop> = ({
   initialValues = getInitialValues(form),
   setContext,
 }) => {
+
+  const { data, isLoading } = getPatientsEncounters("af4bd20a-8b06-4083-9de4-2e7d3ca31524");
+
+
+  console.log({ data })
   return (
     <>
       <RegistrationMainHeader id="2">Social History</RegistrationMainHeader>

@@ -205,8 +205,12 @@ const relationships = [
     value: concepts.GUARDIAN,
   },
   {
-    name: "Uncle/Auntie",
+    name: "Uncle",
     value: concepts.UNCLE_AUNTIE,
+  },
+  {
+    name: "Auntie",
+    value: concepts.AUNTIE,
   },
 ];
 

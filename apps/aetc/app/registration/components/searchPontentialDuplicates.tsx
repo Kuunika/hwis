@@ -1,10 +1,12 @@
 import { GenericDialog } from "@/components";
 import { useNavigation } from "@/hooks";
-import { searchByDemographics } from "@/hooks/patientReg";
+import { merge, searchByDemographics } from "@/hooks/patientReg";
 import { DDEScore } from "@/interfaces";
 import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaCodeMerge } from "react-icons/fa6";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
+import { OverlayLoader } from "@/components/backdrop";
 
 
 type Prop = {
@@ -15,7 +17,9 @@ type Prop = {
 
 export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) => {
     const { navigateTo } = useNavigation()
-    const [selectedRows, setSelectedRows] = useState([])
+    const [selectedRows, setSelectedRows] = useState([]);
+    const { searchedPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+    const { mutate, isPending, isSuccess } = merge();
 
     const columns = [
         { field: "given_name", headerName: "First Name", flex: 1 },
@@ -28,12 +32,28 @@ export const SearchPotentialDuplicates = ({ open, ddePatients, close }: Prop) =>
         { field: "score", headerName: "Score" },
     ];
 
+    useEffect(() => {
+        if (isSuccess) {
+            close()
+        }
+    }, [isSuccess])
+
+
+    const handleMergePatients = () => {
+        mutate({
+            primary: { "patient_id": searchedPatient.patient_id },
+            secondary: selectedRows.map(s => ({ doc_id: s }))
+        })
+    }
     const getSelectedItems = (patients: any) => {
         setSelectedRows(patients)
     }
+
+
     const rows = ddePatients.map(d => ({ ...d.person, score: d.score }))
     return <GenericDialog title="Check Potential Duplicates" open={open} onClose={() => { }}>
-        <MainButton disabled={selectedRows.length == 0} title={"merge patients and continue"} sx={{ mr: 0.5 }} variant="primary" onClick={() => { }} />
+        <OverlayLoader open={isPending} />
+        <MainButton disabled={selectedRows.length == 0} title={"merge patients and continue"} sx={{ mr: 0.5 }} variant="primary" onClick={handleMergePatients} />
         <MainButton title={"cancel"} variant="secondary" onClick={close} />
         {rows.length > 0 ? <BaseTable getSelectedItems={getSelectedItems} checkboxSelection={true} columns={columns} rows={rows} /> : <>
             <WrapperBox>
