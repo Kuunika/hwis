@@ -16,3 +16,5 @@ export const MainPaper = Paper;
 export * from "./newStepper";
 
 
+export class GenericDialog {
+}

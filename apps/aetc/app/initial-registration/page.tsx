@@ -181,7 +181,7 @@ function InitialRegistration() {
           </RegistrationDescriptionText>
           {completed == 4 && (
             <OperationSuccess
-              title="Patient Created Successful"
+                title={`Patient Created and assigned to number  ${visitNumberResponse?.next_visit_number}`}
               primaryActionText="Register More Patient"
               secondaryActionText="Go Home"
               onPrimaryAction={() => {
