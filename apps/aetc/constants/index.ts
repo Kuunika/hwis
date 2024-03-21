@@ -433,7 +433,8 @@ export const roles = {
   ADMIN: 'System Developer',
   REGISTRATION_CLERK: "Data Assistant",
   CLINICIAN: "Clinician",
-  NURSE: "Adults"
+  NURSE: "Adults",
+  INITIAL_REGISTRATION_CLERK: "Data Element Contributor"
 }
 
 
