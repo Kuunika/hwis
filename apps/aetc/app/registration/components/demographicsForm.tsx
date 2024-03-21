@@ -114,6 +114,21 @@ const form = {
     name: "guardianPhoneNumber",
     label: "Guardian Phone Number",
   },
+  guardianFirstName: {
+    name: "guardianFirstName",
+    label: "First Name",
+  },
+  guardianLastName: {
+    name: "guardianLastName",
+    label: "Last Name",
+  },
+  guardianNumber: {
+    name: "guardianNumber",
+    label: "Phone Number",
+  },
+
+
+
 };
 const phoneRegex = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const schema = Yup.object().shape({
@@ -185,6 +200,16 @@ const schema = Yup.object().shape({
     .matches(phoneRegex, "Phone Number valid")
     .min(10)
     .label(form.guardianPhoneNumber.label),
+
+
+  [form.guardianFirstName.name]: Yup.string()
+    .label(form.guardianFirstName.label),
+  [form.guardianLastName.name]: Yup.string()
+    .label(form.guardianLastName.label),
+  [form.guardianNumber.name]: Yup.string()
+    .matches(phoneRegex, "Phone Number valid")
+    .min(10)
+    .label(form.guardianNumber.label),
 });
 
 const init = getInitialValues(form);
@@ -199,10 +224,6 @@ const relationships = [
   {
     name: "Parent",
     value: concepts.PARENT,
-  },
-  {
-    name: "Guardian",
-    value: concepts.GUARDIAN,
   },
   {
     name: "Uncle",
@@ -485,15 +506,29 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.nextOfKinRelationship.label}
             selectItems={relationships}
           />
-          {/* <TextInputField
-            name={form.guardianName.name}
-            id={form.guardianName.name}
-            label={form.guardianName.label}
-          /> */}
           <TextInputField
             name={form.guardianPhoneNumber.name}
             id={form.guardianPhoneNumber.name}
             label={form.guardianPhoneNumber.label}
+          />
+        </RegistrationCard>
+
+        <RegistrationCard>
+          <RegistrationCardTitle>Guardian Information</RegistrationCardTitle>
+          <TextInputField
+            name={form.guardianFirstName.name}
+            id={form.guardianFirstName.name}
+            label={form.guardianFirstName.label}
+          />
+          <TextInputField
+            name={form.guardianLastName.name}
+            id={form.guardianLastName.name}
+            label={form.guardianLastName.label}
+          />
+          <TextInputField
+            name={form.guardianNumber.name}
+            id={form.guardianNumber.name}
+            label={form.guardianNumber.label}
           />
         </RegistrationCard>
       </FormikInit>

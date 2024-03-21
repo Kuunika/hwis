@@ -23,7 +23,7 @@ import {
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
 import { addEncounter } from "@/hooks/encounter";
-import { encounters } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { getDateTime } from "@/helpers/dateTime";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { CustomizedProgressBars } from "@/components/loader";
@@ -74,13 +74,20 @@ export const NewRegistrationFlow = () => {
   } = registerPatient();
 
 
-
   const {
     mutate: createNextOfKin,
     isPending: creatingNextOfKin,
     isSuccess: nextOfKinCreated,
     isError: nextOfKinError,
     data: nextOfKin,
+  } = addPerson();
+
+  const {
+    mutate: createGuardian,
+    isPending: creatingGuardian,
+    isSuccess: guardianCreated,
+    isError: guardianError,
+    data: guardian,
   } = addPerson();
 
   const {
@@ -110,6 +117,15 @@ export const NewRegistrationFlow = () => {
     isSuccess: relationshipCreated,
     data: relationship,
     isError: relationshipError,
+  } = addRelationship();
+
+
+  const {
+    mutate: createGuardianRelationship,
+    isPending: creatingGuardianRelationship,
+    isSuccess: guardianRelationshipCreated,
+    data: guardianRelationship,
+    isError: guardianRelationshipError,
   } = addRelationship();
 
   const trigger = () => <MainButton variant="text" sx={{ color: "#000", ml: 0.5, fontSize: "2em" }} title={<FaPrint />} onClick={() => { }} />
@@ -146,6 +162,7 @@ export const NewRegistrationFlow = () => {
       });
     }
   }, [nextOfKinCreated]);
+
 
   //create socialHistory
   useEffect(() => {
@@ -198,12 +215,42 @@ export const NewRegistrationFlow = () => {
     }
   }, [referralCreated]);
 
+
   useEffect(() => {
     if (financingCreated) {
-      setLoading(false);
       setCompleted(6);
+      setMessage("creating guardian...");
+      createGuardian({
+        nextOfKinFirstName: formData.demographics.guardianFirstName,
+        nextOfKinLastName: formData.demographics.guardianLastName,
+      });
     }
   }, [financingCreated]);
+
+
+  useEffect(() => {
+    if (guardianCreated && guardian && patient) {
+      setCompleted(7);
+      setMessage("adding guardian relationship...");
+      createGuardianRelationship({
+        patient: patient?.uuid,
+        person: guardian?.uuid,
+        nextOfKinRelationship: concepts.GUARDIAN,
+      });
+    }
+  }, [guardianCreated]);
+
+
+  useEffect(() => {
+    if (guardianRelationshipCreated) {
+      setLoading(false);
+      setCompleted(8);
+    }
+  }, [guardianRelationshipCreated]);
+
+
+
+
 
   const changeActive = async (step: number) => {
     if (active == 1) {
@@ -263,7 +310,8 @@ export const NewRegistrationFlow = () => {
       referralError ||
       relationshipError ||
       financingError ||
-      nextOfKinError;
+      nextOfKinError ||
+      guardianRelationshipError
 
     setError(error);
   }, [
@@ -273,6 +321,7 @@ export const NewRegistrationFlow = () => {
     relationshipError,
     financingError,
     nextOfKinError,
+    guardianRelationshipError
   ]);
 
 
@@ -361,7 +410,7 @@ export const NewRegistrationFlow = () => {
             </>
           )}
 
-          {completed == 6 && ( //TODO: change to completed == 6 
+          {completed == 8 && ( //TODO: change to completed == 6 
             <>
               <br />
               <br />
@@ -411,7 +460,7 @@ export const NewRegistrationFlow = () => {
               <br />
               <CustomizedProgressBars
                 message={message}
-                progress={(completed / 6) * 100}
+                progress={(completed / 8) * 100}
               />
             </>
           )}
