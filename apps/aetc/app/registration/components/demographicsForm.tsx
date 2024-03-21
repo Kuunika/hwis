@@ -1,9 +1,10 @@
-import { FC, ReactNode, useContext, useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { FC, useContext, useEffect, useState } from "react";
+;
 import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import { ErrorMessage } from 'formik';
 
 
 import {
@@ -11,10 +12,6 @@ import {
   TextInputField,
   RadioGroupInput,
   SelectInputField,
-  FieldsContainer,
-  MainPaper,
-  MainTypography,
-  DatePickerInput,
   FormDatePicker,
   SearchComboBox,
   WrapperBox,
@@ -27,10 +24,7 @@ import {
   RegistrationMainHeader,
 } from "./common";
 import {
-  concepts,
-  districts,
-  malawiVillages,
-  traditionalAuthorities,
+  concepts
 } from "@/constants";
 import { countries } from "@/constants/contries";
 import { getInitialValues } from "@/helpers";
@@ -123,14 +117,33 @@ const form = {
 };
 const phoneRegex = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const schema = Yup.object().shape({
-  [form.identificationNumber.name]: Yup.string()
-    .label(form.identificationNumber.label),
+  [form.identificationNumber.name]: Yup.string().label(
+    form.identificationNumber.label
+  ),
   [form.firstName.name]: Yup.string().required().label(form.firstName.label),
   [form.phoneNumber.name]: Yup.string()
-    .matches(phoneRegex, "phone number not valid").min(10)
+    .matches(phoneRegex, "phone number not valid")
+    .min(10)
     .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
-  [form.dob.name]: Yup.string().label(form.dob.label),
+
+
+  [form.dob.name]: Yup.date()
+    .required(form.dob.label + ' is required')
+    .test('valid-age', 'Age must be at least 14 years and not in the future', function (value) {
+      if (!value) return true;
+      const selectedDate = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - selectedDate.getFullYear();
+      const monthDiff = today.getMonth() - selectedDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < selectedDate.getDate())) {
+        age--;
+      }
+      return age >= 14 && age >= 0;
+    }),
+
+
+
   [form.gender.name]: Yup.string().required().label(form.gender.label),
   [form.currentDistrict.name]: Yup.string()
     .required()
@@ -169,7 +182,8 @@ const schema = Yup.object().shape({
 
   [form.guardianPhoneNumber.name]: Yup.string()
     .required()
-    .matches(phoneRegex, "Phone Number valid").min(10)
+    .matches(phoneRegex, "Phone Number valid")
+    .min(10)
     .label(form.guardianPhoneNumber.label),
 });
 
@@ -220,8 +234,6 @@ export const DemographicsForm: FC<Prop> = ({
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
-
-
 
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
@@ -319,11 +331,19 @@ export const DemographicsForm: FC<Prop> = ({
               { label: "Female", value: "Female" },
             ]}
           />
+
           <FormDatePicker
             width={"100%"}
             label={form.dob.label}
             name={form.dob.name}
           />
+          {/* <ErrorMessage
+            name={form.dob.name}
+            component="div"
+            className="error-message"
+            style={{ color: "red" }}
+          /> */}
+
           <TextInputField
             name={form.phoneNumber.name}
             id={form.phoneNumber.name}
@@ -377,7 +397,6 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.homeVillage.name}
             label={form.homeVillage.label}
             multiple={false}
-            // options={malawiVillages}
             options={villages ? villages.filter(v => v.traditional_authority_id.toString() == selectedLocation.traditionalAuthority).map((v: any) => ({
               id: v.name,
               label: v.name
@@ -435,7 +454,7 @@ export const DemographicsForm: FC<Prop> = ({
               id: v.name,
               label: v.name
             })) : []}
-          // options={Array.isArray(villages) ? villages.map((v: any) => ({ id: v.name, label: v.name })) : []}
+
           />
           <TextInputField
             name={form.closeLandMark.name}

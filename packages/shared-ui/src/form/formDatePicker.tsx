@@ -29,7 +29,7 @@ export const FormDatePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const { value, setFieldValue, initialValues } = useFormikField(name);
+  const { value, setFieldValue, initialValues, errorMessage } = useFormikField(name);
 
   useEffect(() => {
     getValue && getValue(value);
@@ -46,7 +46,7 @@ export const FormDatePicker: FC<Prop> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
-        slotProps={{ textField: { size } }}
+        slotProps={{ textField: { size, helperText: errorMessage } }}
         sx={{
           width,
           my: "1ch",
@@ -60,6 +60,7 @@ export const FormDatePicker: FC<Prop> = ({
         onChange={(dateValue: any) =>
           setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
         }
+
         disabled={disabled}
       />
     </LocalizationProvider>
