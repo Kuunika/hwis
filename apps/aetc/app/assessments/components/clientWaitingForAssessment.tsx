@@ -12,7 +12,9 @@ export const ClientWaitingForAssessment = () => {
   const { navigateTo } = useNavigation();
   const { data: patients, isLoading } = getPatientsWaitingForAssessment();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
+  const rows = patients?.sort(triageResultSort).map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
+  console.log(rows)
+
 
   // const rows = [
   //   {
@@ -179,20 +181,20 @@ function CalculateWaitingTime({patientId}:{patientId:string}) {
   )
 }
 
-const triageResultSort = (rowA: any, rowB: any, sortBy: string) => {
-  const triageA = rowA.values.triage_result;
-  const triageB = rowB.values.triage_result;
+function triageResultSort(a : any, b : any) {
+  const triageA = a.triage_result;
+  const triageB = b.triage_result;
 
   if (triageA === "red") {
-    return -1; 
+    return -1;
   } else if (triageB === "red") {
-    return 1; 
+    return 1;
   } else if (triageA === "yellow") {
     return -1;
   } else {
-    return 0; 
+    return 0;
   }
-};
+}
 
 
 
