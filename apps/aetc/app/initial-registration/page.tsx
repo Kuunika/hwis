@@ -93,6 +93,7 @@ function InitialRegistration() {
 
   // after creating a visit create an encounter
   useEffect(() => {
+    if (!visit) return
     if (!visitNumberGenerated) return;
 
     setCompleted(3);
