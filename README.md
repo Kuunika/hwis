@@ -11,7 +11,7 @@ Steps to be followed to run the mahis AETC client.
 `Docker`
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your .env file
+To run this project, you will need to add the following environment variables to your .env file in apps/aetc/ folder
 
 `NEXT_PUBLIC_API_URL=http://182.218.225.103:3001/api/v1`
 
