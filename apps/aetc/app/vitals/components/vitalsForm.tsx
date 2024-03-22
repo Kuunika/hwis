@@ -21,7 +21,8 @@ import { useNavigation } from "@/hooks";
 const form = {
   temperature: {
     name: concepts.TEMPERATURE,
-    label: "Blood Circulation Temperature",
+    // label: "Blood Circulation Temperature",
+    label: "Body Temperature",
   },
   pulseRate: {
     name: concepts.PULSE_RATE,
@@ -92,7 +93,7 @@ const schema = yup.object({
   //   .required()
   //   .label(form.pulseOximetry.label),
   [form.respiratoryRate.name]: yup
-    .string()
+    .number()
     .required()
     .min(0)
     .max(90)
