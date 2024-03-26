@@ -49,6 +49,7 @@ export const SocialHistory: FC<Prop> = ({ onSubmit }) => {
               { label: "Married", value: "married" },
               { label: "Widow/Widower", value: "widow/widower" },
               { label: "Divorced", value: "divorced" },
+              { label: "Unknown", value: "unknown" },
             ]}
           />
           <RadioGroupInput
