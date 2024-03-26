@@ -73,7 +73,7 @@ export const FinancingForm: FC<Props> = ({
       >
         <TrackFormikContext setFormContext={setContext} />
         <RegistrationCard>
-          <RegistrationCardTitle>financing</RegistrationCardTitle>
+          <RegistrationCardTitle>Financing</RegistrationCardTitle>
           <RadioGroupInput
             name={form.paymentOption.name}
             getValue={(value: any) => setPayment(value)}

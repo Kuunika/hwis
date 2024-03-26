@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import * as Yup from "yup";
-import { FormikInit, SearchComboBox, SelectInputField } from "shared-ui/src";
+import { FormikInit, RadioGroupInput, SearchComboBox, SelectInputField, TextInputField } from "shared-ui/src";
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
@@ -17,6 +17,7 @@ import { getObservationValue } from "@/helpers/emr";
 const schema = Yup.object().shape({
   [concepts.REFERRED_FROM]: Yup.string()
     .label("Referee Medical Facility"),
+  'specify': Yup.string()
 });
 
 type Props = {
@@ -32,13 +33,14 @@ export const ReferralForm: FC<Props> = ({
   const { data, isLoading } = getFacilities();
   const { params } = useParameters();
   const { data: encounterList, isLoading: loadingEncounters } = getPatientsEncounters(params?.id as string);
+  const [isAvailable, setIsAvailable] = useState('yes')
 
-  console.log({ encounterList });
+
 
   const referralEncounter = encounterList?.find(encounter => encounter.uuid == encounters.REFERRAL);
   const referred = getObservationValue(referralEncounter?.obs, concepts.IS_PATIENT_REFERRED);
 
-  console.log({ referred })
+
 
   return (
     <>
@@ -49,7 +51,7 @@ export const ReferralForm: FC<Props> = ({
       </RegistrationDescriptionText>
       <FormikInit
         validationSchema={schema}
-        initialValues={initialValues}
+        initialValues={{ ...initialValues, specify: "yes" }}
         onSubmit={onSubmit}
         submitButton={false}
         submitButtonText="next"
@@ -64,7 +66,7 @@ export const ReferralForm: FC<Props> = ({
               label="Referral Medical Facility"
               name={concepts.REFERRED_FROM}
               multiple={false}
-              // disabled={referralEncounter.}
+              disabled={isAvailable == 'no'}
               options={
                 data
                   ? data.map((d: any) => ({
@@ -75,6 +77,19 @@ export const ReferralForm: FC<Props> = ({
               }
             />
           )}
+          <RadioGroupInput
+            name={"specify"}
+            getValue={(value: any) => { setIsAvailable(value) }}
+            label={"Is the facility you are looking for available?"}
+
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
+          />
+
+
+          {isAvailable == "no" && <TextInputField name={concepts.REFERRED_FROM} label="Other Facility" id={concepts.REFERRED_FROM} />}
         </RegistrationCard>
       </FormikInit>
     </>
