@@ -38,7 +38,7 @@ const schema = yup.object({
 });
 
 const referrences = [
-  { id: "OPD2", label: "OPD2" },
+
   { id: "ENT", label: "ENT" },
   { id: "OPHTHALMOLOGY", label: "OPHTHALMOLOGY" },
   { id: "ORTHOPEDICS", label: "ORTHOPEDICS" },
@@ -61,6 +61,8 @@ export function PrescreeningForm({ onSubmit }: props) {
     { label: "Yes", value: YES },
     { label: "No", value: NO },
   ];
+
+  let departments = formValues[form.referred.name] == YES ? [...referrences, { id: "OPD2", label: "OPD2" }] : referrences
 
   return (
     <FormikInit
@@ -90,7 +92,7 @@ export function PrescreeningForm({ onSubmit }: props) {
           <SearchComboBox
             name={form.Referred.name}
             label={form.Referred.label}
-            options={referrences}
+            options={departments}
             multiple={false}
             sx={{ mr: "1ch" }}
           />
