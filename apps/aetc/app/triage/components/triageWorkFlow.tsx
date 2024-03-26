@@ -22,6 +22,7 @@ import { OperationSuccess } from "@/components/operationSuccess";
 import { getDateTime } from "@/helpers/dateTime";
 import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { TriageResult } from "@/interfaces";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 
 export default function TriageWorkFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -301,9 +302,41 @@ export default function TriageWorkFlow() {
     setTriageResult(tResult as TriageResult)
   }, [conceptTriageResult])
 
+
+  useEffect(() => {
+
+    if (triageResult == 'red') {
+      toast.error('Triage Red', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+
+    }
+    if (triageResult == "yellow") {
+      toast.warn('Triage Yellow', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+    }
+
+  }, [triageResult])
+
   const checkTriageResult = (triage: TriageResult, name: string) => {
     setConceptTriageResult((concept: any) => {
-
       return { ...concept, [name]: triage }
     })
 

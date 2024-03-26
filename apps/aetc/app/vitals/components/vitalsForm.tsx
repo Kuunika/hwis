@@ -141,28 +141,30 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.verbalResponse.label),
-  [form.glucose.name]: yup.number().min(60).max(400).label(form.glucose.label),
+  [form.glucose.name]: yup.number().min(0).max(1000).label(form.glucose.label),
   [form.avpu.name]: yup.string().required().label(form.avpu.label),
 });
 
 const eyeOpeningResponses = [
-  { label: "To Speech", value: "To Speech" },
-  { label: "To Pain", value: "To Pain" },
-  { label: "No Response", value: "No Response" },
+  { label: "Spontaneous", value: "Spontaneous", weight: 4 },
+  { label: "To Speech", value: "To Speech", weight: 3 },
+  { label: "To Pain", value: "To Pain", weight: 2 },
+  { label: "No Response", value: "No Response", weight: 1 },
 ];
 const motorResponses = [
-  { label: "Obey", value: "Obey" },
-  { label: "Localising", value: "Localising" },
-  { label: "Extention", value: "Extention" },
-  { label: "Normal Flexion", value: "Normal Flexion" },
-  { label: "None", value: "None" },
+  { label: "Obeying Commands", value: "Obeying Commands", weight: 6 },
+  { label: "Localising", value: "Localising", weight: 5 },
+  { label: "Withdraw", value: "Withdraw", weight: 4 },
+  { label: "Normal Flexion", value: "Normal Flexion", weight: 3 },
+  { label: "Extension", value: "Extension", weight: 2 },
+  { label: "None", value: "None", weight: 1 },
 ];
 const verbalResponses = [
-  { label: "Confused", value: "Confused" },
-  { label: "Oriented", value: "Oriented" },
-  { label: "Words", value: "Words" },
-  { label: "Sounds", value: "Sounds" },
-  { label: "None", value: "None" },
+  { label: "Oriented", value: "Oriented", weight: 5 },
+  { label: "Disoriented conversation", value: "Disoriented conversation", weight: 4 },
+  { label: "Inappropriate Words", value: "Inappropriate Words", weight: 3 },
+  { label: "Incomprehensible sounds", value: "Incomprehensible sounds", weight: 2 },
+  { label: "None", value: "None", weight: 1 },
 ];
 const avpuLists = [
   { id: "Alert", label: "Alert" },
@@ -266,6 +268,7 @@ export function VitalsForm({
   const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
+  const [total, setTotal] = useState(0);
 
 
   const checkTriage = (name: string, formValue: string) => {
@@ -332,6 +335,33 @@ export function VitalsForm({
     return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
 
+
+  const getWeight = (value: string, lists: any) => {
+    const found = lists.find((l: any) => l.value == value);
+    return found ? found.weight : 0
+  }
+
+
+  useEffect(() => {
+    let _total: number = 0;
+
+    if (Boolean(formValues[form.eyeOpeningResponse.name]) &&
+      Boolean(formValues[form.motorResponse.name]) &&
+      Boolean(formValues[form.verbalResponse.name])
+    ) {
+
+      _total = getWeight(formValues[form.eyeOpeningResponse.name], eyeOpeningResponses)
+        + getWeight(formValues[form.motorResponse.name], motorResponses)
+        + getWeight(formValues[form.verbalResponse.name], verbalResponses)
+
+      setTotal(_total);
+      if (_total < 15) {
+        setTriageResult("red", "gcs")
+      } else {
+        // setTriageResult("", "gcs")
+      }
+    }
+  }, [formValues])
 
   return (
     <FormikInit
@@ -489,6 +519,8 @@ export function VitalsForm({
           disabled={disableField(form.avpu.name)}
         />
       </FormFieldContainerLayout>
+
+      Total: {total}
 
       {/* <TextInputField
         id={form.calculatedGCS.name}
