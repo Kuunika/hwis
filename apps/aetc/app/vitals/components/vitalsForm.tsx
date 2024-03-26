@@ -234,7 +234,7 @@ const rules = {
   [form.saturationRate.name]: [
     { operator: "<", value: 90, result: triageResult.RED, bound: 0 },
     { operator: "<", value: 93, result: triageResult.YELLOW, bound: 90 },
-    { operator: "=", value: 93, result: triageResult.GREEN, bound: 0 },
+    // { operator: "=", value: 93, result: triageResult.GREEN, bound: 0 },
     {
       operator: "combined",
       operator1: ">=",
