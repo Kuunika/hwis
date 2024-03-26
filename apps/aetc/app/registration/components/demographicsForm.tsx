@@ -112,7 +112,7 @@ const form = {
 
   guardianPhoneNumber: {
     name: "guardianPhoneNumber",
-    label: "Guardian Phone Number",
+    label: "Phone Number",
   },
   guardianFirstName: {
     name: "guardianFirstName",
@@ -196,7 +196,6 @@ const schema = Yup.object().shape({
     .label(form.homeVillage.label),
 
   [form.guardianPhoneNumber.name]: Yup.string()
-    .required()
     .matches(phoneRegex, "Phone Number valid")
     .min(10)
     .label(form.guardianPhoneNumber.label),
@@ -232,6 +231,14 @@ const relationships = [
   {
     name: "Auntie",
     value: concepts.AUNTIE,
+  },
+  {
+    name: "Spouse",
+    value: concepts.SPOUSE,
+  },
+  {
+    name: "Siblings",
+    value: concepts.SIBLING,
   },
 ];
 

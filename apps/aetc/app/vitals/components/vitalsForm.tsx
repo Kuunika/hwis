@@ -34,7 +34,7 @@ const form = {
   },
   saturationRate: {
     name: concepts.SATURATION_RATE,
-    label: "Saturation rate",
+    label: "Oxygen Saturation",
   },
   heartRate: {
     name: concepts.HEART_RATE,
@@ -455,7 +455,7 @@ export function VitalsForm({
         </FieldsContainer>
       </FormFieldContainerLayout> */}
 
-      <FormFieldContainerLayout last={true} title="AVPU">
+      <FormFieldContainerLayout last={true} title="GCS">
         <FieldsContainer sx={{ alignItems: "start" }}>
           <RadioGroupInput
             name={form.eyeOpeningResponse.name}

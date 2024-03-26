@@ -98,6 +98,8 @@ export const SocialHistoryForm: FC<Prop> = ({
               { label: "Married", value: "married" },
               { label: "Widow", value: "widow/widower" },
               { label: "Divorced", value: "divorced" },
+              { label: "Unknown", value: "unknown" },
+              
             ]}
           />
         </RegistrationCard>
@@ -131,6 +133,7 @@ export const SocialHistoryForm: FC<Prop> = ({
               { label: "Unemployed", value: "unemployed" },
               { label: "Self Employed", value: "selfemployed" },
               { label: "Student", value: "student" },
+              { label: "House Wife", value: "housewife" },
             ]}
           />
         </RegistrationCard>

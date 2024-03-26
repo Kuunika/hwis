@@ -44,7 +44,7 @@ function Home() {
                     <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK]}>
                         <Card
                             link="/initial-registration"
-                            title="Initial Registration"
+                            title="Patient Arrival"
                             icon={<FcPlus />}
                         />
                     </AuthGuardComp>
