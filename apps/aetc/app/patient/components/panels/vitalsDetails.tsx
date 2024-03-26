@@ -67,7 +67,7 @@ export const VitalsPanel = () => {
     const initialVitals = [
       {
         name: "Oxygen Saturation (%)",
-        value: getObservationValue(obs, concepts.SATURATION_RATE),
+        value: getObservationValue(obs, concepts.OXYGEN_SATURATION),
       },
 
       {
