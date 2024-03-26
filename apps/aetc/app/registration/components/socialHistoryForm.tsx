@@ -133,6 +133,7 @@ export const SocialHistoryForm: FC<Prop> = ({
               { label: "Unemployed", value: "unemployed" },
               { label: "Self Employed", value: "selfemployed" },
               { label: "Student", value: "student" },
+              { label: "House Wife", value: "housewife" },
             ]}
           />
         </RegistrationCard>

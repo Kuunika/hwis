@@ -154,6 +154,8 @@ export const concepts = {
   UNCLE_AUNTIE: "8d91a3dc-c2cc-11de-8d13-0010c6dffd0f",
   AUNTIE: "ba453f92-8d80-11d8-abbb-0024217bb78e", // temporary
   GUARDIAN: "ba453344-8d80-11d8-abbb-0024217bb78e",
+  SPOUSE: "be55b24e-1691-11df-97a5-7038c432aabf",
+  SIBLING: "be49707e-1691-11df-97a5-7038c432aabf"
 
   //patient referred from
   REFERRED_FROM: "b9d29b4a-8d80-11d8-abbb-0024217bb78e",
