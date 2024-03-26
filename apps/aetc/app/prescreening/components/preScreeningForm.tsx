@@ -39,11 +39,11 @@ const schema = yup.object({
 
 const referrences = [
 
-  { id: "ENT", label: "ENT" },
+  { id: "EAR NOSE AND THROAT (ENT)", label: "EAR NOSE AND THROAT (ENT)" },
   { id: "OPHTHALMOLOGY", label: "OPHTHALMOLOGY" },
-  { id: "ORTHOPEDICS", label: "ORTHOPEDICS" },
+  { id: "ORTHOPAEDIC", label: "ORTHOPAEDIC" },
   { id: "CLINICS", label: "CLINICS" },
-  { id: "PAEDS", label: "PAEDS" },
+  { id: "PAEDIATRIC OPD", label: "PAEDIATRIC OPD" },
   { id: "RADIOLOGY", label: "RADIOLOGY" },
   { id: "DENTAL", label: "DENTAL" },
   { id: "DERMATOLOGY/LEPRA", label: "DERMATOLOGY / LEPRA" },
@@ -52,6 +52,14 @@ const referrences = [
   { id: "LOCAL HEALTH CENTER", label: "LOCAL HEALTH CENTER" },
   { id: "4C", label: "4C" },
   { id: "ONCOLOGY", label: "ONCOLOGY" },
+  { id: "DENTAL", label: "DENTAL" },
+  { id: "DERMATOLOGY", label: "DERMATOLOGY" },
+  { id: "ONCOLOGY", label: "ONCOLOGY" },
+  { id: "STI", label: "STI" },
+  { id: "OPD 1", label: "OPD 1" },
+  { id: "PHYSIOTHERAPY", label: "PHYSIOTHERAPY" },
+  { id: "EYE/ OPHTHALMOLOGY OPD", label: "EYE/ OPHTHALMOLOGY OPD" },
+  { id: "OBSTETRICS AND GYNAECOLOGY OPD", label: "OBSTETRICS AND GYNAECOLOGY OPD" },
 ];
 
 export function PrescreeningForm({ onSubmit }: props) {
