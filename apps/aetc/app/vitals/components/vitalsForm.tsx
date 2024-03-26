@@ -231,6 +231,15 @@ const rules = {
     { operator: "<", value: 90, result: triageResult.RED, bound: 0 },
     { operator: "<", value: 93, result: triageResult.YELLOW, bound: 90 },
     { operator: "=", value: 93, result: triageResult.GREEN, bound: 0 },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 93,
+      operator2: "<=",
+      value2: 100,
+      result: triageResult.GREEN,
+      bound: 0,
+    },
   ],
   [form.glucose.name]: [
     { operator: "<", value: 40, result: triageResult.RED, bound: 0 },
