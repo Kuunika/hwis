@@ -126,7 +126,10 @@ const form = {
     name: "guardianNumber",
     label: "Phone Number",
   },
-
+  guardianPresent: {
+    name: "guardianPresent",
+    label: "Guardian Present",
+  },
 
 
 };
@@ -209,6 +212,8 @@ const schema = Yup.object().shape({
     .matches(phoneRegex, "Phone Number valid")
     .min(10)
     .label(form.guardianNumber.label),
+  [form.guardianPresent.name]: Yup.string().required()
+    .label(form.guardianPresent.label),
 });
 
 const init = getInitialValues(form);
@@ -247,6 +252,7 @@ export const DemographicsForm: FC<Prop> = ({
   initialValues = init,
   setContext,
 }) => {
+  const [guardianAvailable, setGuardianAvailable] = useState('')
   const { initialRegisteredPatient, patient, registrationType, searchedPatient } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
@@ -522,21 +528,34 @@ export const DemographicsForm: FC<Prop> = ({
 
         <RegistrationCard>
           <RegistrationCardTitle>Guardian Information</RegistrationCardTitle>
-          <TextInputField
-            name={form.guardianFirstName.name}
-            id={form.guardianFirstName.name}
-            label={form.guardianFirstName.label}
+
+          <RadioGroupInput
+            name={form.guardianPresent.name}
+            getValue={(value: any) => setGuardianAvailable(value)}
+            label={form.guardianPresent.label}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
           />
-          <TextInputField
-            name={form.guardianLastName.name}
-            id={form.guardianLastName.name}
-            label={form.guardianLastName.label}
-          />
-          <TextInputField
-            name={form.guardianNumber.name}
-            id={form.guardianNumber.name}
-            label={form.guardianNumber.label}
-          />
+
+          {guardianAvailable == "yes" && <>
+            <TextInputField
+              name={form.guardianFirstName.name}
+              id={form.guardianFirstName.name}
+              label={form.guardianFirstName.label}
+            />
+            <TextInputField
+              name={form.guardianLastName.name}
+              id={form.guardianLastName.name}
+              label={form.guardianLastName.label}
+            />
+            <TextInputField
+              name={form.guardianNumber.name}
+              id={form.guardianNumber.name}
+              label={form.guardianNumber.label}
+            />
+          </>}
         </RegistrationCard>
       </FormikInit>
     </>
