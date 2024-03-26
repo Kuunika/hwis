@@ -9,6 +9,7 @@ import {
   MultlineInput,
   RadioGroupInput,
   SearchComboBox,
+  SelectInputField,
   TextInputField,
 } from "shared-ui/src";
 import * as yup from "yup";
@@ -143,6 +144,7 @@ const schema = yup.object({
     .label(form.verbalResponse.label),
   [form.glucose.name]: yup.number().min(0).max(1000).label(form.glucose.label),
   [form.avpu.name]: yup.string().required().label(form.avpu.label),
+  'units': yup.string().required().label('units')
 });
 
 const eyeOpeningResponses = [
@@ -340,8 +342,6 @@ export function VitalsForm({
     const found = lists.find((l: any) => l.value == value);
     return found ? found.weight : 0
   }
-
-
   useEffect(() => {
     let _total: number = 0;
 
@@ -367,7 +367,7 @@ export function VitalsForm({
     <FormikInit
       onSubmit={onSubmit}
       validationSchema={schema}
-      initialValues={initialValues}
+      initialValues={{ ...initialValues, units: "mmol/l" }}
       submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
@@ -448,7 +448,18 @@ export function VitalsForm({
           />
         </FieldsContainer>
 
-        <FieldsContainer>
+        <FieldsContainer sx={{ display: "flex", alignItems: "center" }}>
+          <SelectInputField
+            sx={{ mt: 1 }}
+            width="20%"
+            name={"units"}
+            selectItems={[
+              { name: "mmol/l", value: "mmol/l" },
+              { name: "mg/dl", value: "mg/dl" },
+            ]}
+            label={"units"}
+            id={"units"}
+          />
           <TextInputField
             id={form.glucose.name}
             name={form.glucose.name}
@@ -456,9 +467,26 @@ export function VitalsForm({
             disabled={disableField(form.glucose.name)}
             sx={{ m: 0, my: "1ch" }}
             getValue={(value: string) => {
-              checkTriage(form.glucose.name, value);
+              const glucoseValue = Number(value);
+              if (formValues['units'] == "mmol/l") {
+                if (glucoseValue < 20) {
+                  setTriageResult("red", form.glucose.name)
+                }
+                if (glucoseValue > 19 && glucoseValue < 40) {
+                  setTriageResult("yellow", form.glucose.name)
+                }
+              }
+              if (formValues['units'] == "mg/dl") {
+                if (glucoseValue < 40) {
+                  setTriageResult("red", form.glucose.name)
+                }
+                if (glucoseValue > 39 && glucoseValue < 60) {
+                  setTriageResult("yellow", form.glucose.name)
+                }
+              }
+              // checkTriage(form.glucose.name, value);
             }}
-            unitOfMeasure="mg/dL"
+            unitOfMeasure={formValues['units']}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
