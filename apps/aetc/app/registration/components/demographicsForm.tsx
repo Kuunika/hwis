@@ -409,8 +409,9 @@ export const DemographicsForm: FC<Prop> = ({
             getValue={(value) => {
               const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
 
+              console.log({ traditionalAuthority })
               if (traditionalAuthority)
-                setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.district_id.toString() }))
+                setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.traditional_authority_id.toString() }))
             }}
 
             options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == selectedLocation.district).map(t => ({
@@ -458,9 +459,8 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.currentTraditionalAuthority.label}
             getValue={(value) => {
               const district = traditionalAuthorities.find(d => d.name == value);
-
               if (district)
-                setCurrentSelectedLocation(selection => ({ ...selection, traditionalAuthority: district.district_id.toString() }))
+                setCurrentSelectedLocation(selection => ({ ...selection, traditionalAuthority: district.traditional_authority_id.toString() }))
             }}
             disabled={checked}
             multiple={false}

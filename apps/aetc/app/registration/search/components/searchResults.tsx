@@ -166,9 +166,7 @@ const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => v
   const { registrationType, initialRegisteredPatient, patient, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
 
-
   const identifier = patient?.identifiers?.find(id => id.identifier_type.name == "DDE person document ID");
-
 
   useEffect(() => {
 
@@ -185,6 +183,7 @@ const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => v
     <MainTypography> {registrationType == "local" ? "Are you sure you want to continue registration with the local record?" : "Are you sure you want to continue registration with the remote record?"}</MainTypography>
     <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => {
 
+      // patient available in DDE and merge with Local
       if (identifier) {
         mutate({
           primary: { patient_id: initialRegisteredPatient.patient_id },
@@ -193,7 +192,17 @@ const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => v
           }]
         })
       } else {
-        navigateTo(`/registration/${params.id}/new`)
+        if (registrationType == "local") {
+          mutate({
+            primary: { patient_id: initialRegisteredPatient.patient_id },
+            secondary: [{
+              "patient_id": patient.uuid
+            }]
+          })
+
+        } else {
+          navigateTo(`/registration/${params.id}/new`)
+        }
       }
     }} />
     <MainButton variant="secondary" title={"No"} onClick={onClose} />

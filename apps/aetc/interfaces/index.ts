@@ -39,6 +39,7 @@ export interface Identifier {
     uuid: string
   }
   preferred: boolean;
+  uuid: string
 }
 
 
