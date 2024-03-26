@@ -1,5 +1,11 @@
 
-export const getDateTime = () => new Date().toISOString();
+export const getDateTime = () => {
+  let date = new Date();
+
+  date.setUTCHours(date.getUTCHours() + 2); // Add 2 hours for CAT (UTC+2)
+
+  return date.toISOString();
+}
 
 export const calculateAge = (birthdate: string | Date | undefined) => {
 
