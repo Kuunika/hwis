@@ -1,10 +1,11 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import * as Yup from "yup";
 import {
   FormikInit,
   RadioGroupInput,
   SelectInputField,
+  TextInputField,
 
 } from "shared-ui/src";
 import { concepts } from "@/constants";
@@ -31,6 +32,10 @@ const form = {
     name: concepts.RELIGION,
     label: "Religion",
   },
+  religionSpecify: {
+    name: "specify",
+    label: "Specify",
+  },
   highestEducation: {
     name: concepts.HIGHEST_EDUCATION,
     label: "Highest Education",
@@ -47,6 +52,7 @@ const schema = Yup.object().shape({
     .label(form.maritalStatus.label),
   [form.occupation.name]: Yup.string().required().label(form.occupation.label),
   [form.religion.name]: Yup.string().required().label(form.religion.label),
+  [form.religionSpecify.name]: Yup.string().label(form.religionSpecify.label),
   [form.highestEducation.name]: Yup.string()
     .required()
     .label(form.highestEducation.label),
@@ -66,11 +72,11 @@ export const SocialHistoryForm: FC<Prop> = ({
   initialValues = getInitialValues(form),
   setContext,
 }) => {
-
+  const [religion, setReligion] = useState('')
   const { data, isLoading } = getPatientsEncounters("af4bd20a-8b06-4083-9de4-2e7d3ca31524");
 
 
-  console.log({ data })
+
   return (
     <>
       <RegistrationMainHeader id="2">Social History</RegistrationMainHeader>
@@ -99,13 +105,15 @@ export const SocialHistoryForm: FC<Prop> = ({
               { label: "Widow", value: "widow/widower" },
               { label: "Divorced", value: "divorced" },
               { label: "Unknown", value: "unknown" },
-              
+
             ]}
           />
         </RegistrationCard>
         <RegistrationCard>
           <RegistrationCardTitle>Religion</RegistrationCardTitle>
           <SelectInputField
+
+            getValue={(value: string) => setReligion(value)}
             name={form.religion.name}
             selectItems={[
               { name: "Christianity", value: "Christianity" },
@@ -119,6 +127,8 @@ export const SocialHistoryForm: FC<Prop> = ({
             label={form.religion.label}
             id={form.religion.name}
           />
+          {religion == "Other" && <TextInputField name={form.religionSpecify.name} label={form.religionSpecify.label}
+            id={form.religionSpecify.name} />}
         </RegistrationCard>
 
         <RegistrationCard>
