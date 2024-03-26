@@ -257,6 +257,7 @@ export default [
               { label: "Married", value: "married" },
               { label: "Single", value: "single" },
               { label: "Divorced", value: "divorced" },
+              { label: "Unknown", value: "unknown" },
             ],
           },
           {

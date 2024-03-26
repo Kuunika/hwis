@@ -98,6 +98,8 @@ export const SocialHistoryForm: FC<Prop> = ({
               { label: "Married", value: "married" },
               { label: "Widow", value: "widow/widower" },
               { label: "Divorced", value: "divorced" },
+              { label: "Unknown", value: "unknown" },
+              
             ]}
           />
         </RegistrationCard>
