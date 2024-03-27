@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {
   FieldsContainer,
@@ -19,6 +19,7 @@ import { TriageContainer } from "@/app/triage/components/";
 import { TriageResult } from "@/interfaces";
 import { notify } from "@/helpers";
 import { useNavigation } from "@/hooks";
+import { TriageContext, TriageContextType } from "@/contexts";
 
 const form = {
   temperature: {
@@ -168,7 +169,7 @@ const motorResponses = [
 ];
 const verbalResponses = [
   { label: "Oriented", value: "Oriented", weight: 5 },
-  { label: "Disoriented conversation", value: "Disoriented conversation", weight: 4 },
+  { label: "Confused", value: "Confused", weight: 4 },
   { label: "Inappropriate Words", value: "Inappropriate Words", weight: 3 },
   { label: "Incomprehensible sounds", value: "Incomprehensible sounds", weight: 2 },
   { label: "None", value: "None", weight: 1 },
@@ -306,6 +307,7 @@ export function VitalsForm({
   setTriageResult,
   continueTriage
 }: props) {
+  const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType
   const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
@@ -373,6 +375,9 @@ export function VitalsForm({
       _total = getWeight(formValues[form.eyeOpeningResponse.name], eyeOpeningResponses)
         + getWeight(formValues[form.motorResponse.name], motorResponses)
         + getWeight(formValues[form.verbalResponse.name], verbalResponses)
+
+      addKeyToFlow({ 'gsc': _total });
+
 
       setTotal(_total);
       if (_total < 11) {
@@ -444,16 +449,19 @@ export function VitalsForm({
             getValue={(value) => {
               const systolicValue = Number(value);
               if (systolicValue > 200 || systolicValue < 80) {
+                addKeyToFlow({ systolic: 'red' });
                 setTriageResult('red', form.bloodPressure.name)
                 return
               }
 
               if ((systolicValue >= 81 && systolicValue <= 89) || (systolicValue >= 150 && systolicValue <= 200)) {
                 setTriageResult('yellow', form.bloodPressure.name)
+                addKeyToFlow({ systolic: 'yellow' });
                 return
               }
               if (systolicValue >= 90 || (systolicValue > 89 && systolicValue <= 149)) {
                 setTriageResult('green', form.bloodPressure.name)
+                addKeyToFlow({ systolic: 'green' });
                 return
               }
             }}
@@ -468,12 +476,15 @@ export function VitalsForm({
             getValue={(value) => {
               const diastolicValue = Number(value);
               if (diastolicValue > 119) {
+                addKeyToFlow({ diastolic: 'red' });
                 setTriageResult('red', form.bloodPressureDiastolic.name)
               }
               if (diastolicValue >= 100 && diastolicValue <= 119) {
+                addKeyToFlow({ diastolic: 'yellow' });
                 setTriageResult('yellow', form.bloodPressureDiastolic.name)
               }
               if (diastolicValue < 100) {
+                addKeyToFlow({ diastolic: 'green' });
                 setTriageResult('green', form.bloodPressureDiastolic.name)
               }
             }}
@@ -606,7 +617,7 @@ export function VitalsForm({
           />
         </FieldsContainer>
         <br />
-        <MainTypography>
+        <MainTypography fontWeight={"800"} variant="body2">
           (M{getWeight(formValues[form.motorResponse.name], motorResponses)} V{getWeight(formValues[form.verbalResponse.name], verbalResponses)} E{getWeight(formValues[form.eyeOpeningResponse.name], eyeOpeningResponses)})   {total}/15
         </MainTypography>
         <SearchComboBox

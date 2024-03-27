@@ -1,6 +1,6 @@
 import { useConditions, useNavigation } from "@/hooks";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import { TriageContainer } from ".";
 import { getInitialValues, notify } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
+import { TriageContext, TriageContextType } from "@/contexts";
 
 const form = {
   isCirculationAbnormal: {
@@ -95,6 +96,8 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, aggregateOrCondition, conditions } =
     useConditions();
+
+  const { flow } = useContext(TriageContext) as TriageContextType
   const { navigateTo } = useNavigation();
 
   const disableField = (formField: string) => {
@@ -102,11 +105,16 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
   };
 
 
+
+  const circulationCondition = flow['diastolic'] == 'yellow' || flow['diastolic'] == 'red' || flow['systolic'] == 'yellow' || flow['systolic'] == 'red'
+  console.log({ circulationCondition })
+
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={initialValues}
+      initialValues={{ ...initialValues, [form.isCirculationAbnormal.name]: circulationCondition ? YES : NO }}
       onSubmit={onSubmit}
+      enableReinitialize={true}
       submitButtonText="next"
     >
 
