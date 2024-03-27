@@ -17,4 +17,4 @@ export const BarcodeDialog = ({ open }: { open: boolean }) => {
             /> */}
         </WrapperBox>
     </GenericDialog>
-}
+} 
