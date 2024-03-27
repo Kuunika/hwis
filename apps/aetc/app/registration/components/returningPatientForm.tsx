@@ -53,10 +53,11 @@ export const ReturningPatientDialog: FC<Props> = ({ onSubmit, initialValues, set
                         { name: 'Public transport', value: 'public_transport' },
                         { name: 'Private transport', value: 'private_transport' },
                         { name: 'Police vehicle', value: 'police_vehicle' },
-                        { name: 'Other public or company vehicle', value: 'other_public_company_vehicle' },
+                        { name: 'Company vehicle', value: 'company_vehicle' },
                         { name: 'Motorcycle', value: 'motorcycle' },
                         { name: 'Taxi (car/motorcycle)', value: 'taxi' },
                         { name: 'Bicycle', value: 'bicycle' },
+                        { name: 'Helicopter', value: 'helicopter' },
                     ]}
                     label={form.methodOfTransportation.label}
                     id={form.methodOfTransportation.name}
