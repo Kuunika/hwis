@@ -35,7 +35,7 @@ export default function RootLayout({
               <NavBar />
               {children}
               <OverlayLoader open={false} />
-              <ToastContainer />
+              <ToastContainer limit={1} />
             </ProviderTheme>
           </ContextProviders>
         </ReactQueryProvider>

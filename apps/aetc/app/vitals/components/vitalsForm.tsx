@@ -71,6 +71,10 @@ const form = {
     name: concepts.GLUCOSE,
     label: "Glucose",
   },
+  units: {
+    name: concepts.ADDITIONAL_NOTES, // change concept
+    label: "Units",
+  },
   avpu: {
     name: concepts.AVPU,
     label: "AVPU",
@@ -144,7 +148,7 @@ const schema = yup.object({
     .label(form.verbalResponse.label),
   [form.glucose.name]: yup.number().min(0).max(1000).label(form.glucose.label),
   [form.avpu.name]: yup.string().required().label(form.avpu.label),
-  'units': yup.string().required().label('units')
+  [form.units.name]: yup.string().required().label(form.units.label)
 });
 
 const eyeOpeningResponses = [
@@ -367,7 +371,7 @@ export function VitalsForm({
     <FormikInit
       onSubmit={onSubmit}
       validationSchema={schema}
-      initialValues={{ ...initialValues, units: "mmol/l" }}
+      initialValues={{ ...initialValues, [form.units.name]: "mmol/l" }}
       submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
@@ -452,13 +456,13 @@ export function VitalsForm({
           <SelectInputField
             sx={{ mt: 1 }}
             width="20%"
-            name={"units"}
+            name={form.units.name}
             selectItems={[
               { name: "mmol/l", value: "mmol/l" },
               { name: "mg/dl", value: "mg/dl" },
             ]}
-            label={"units"}
-            id={"units"}
+            label={form.units.label}
+            id={form.units.name}
           />
           <TextInputField
             id={form.glucose.name}
