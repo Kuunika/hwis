@@ -53,6 +53,7 @@ export const SearchResults = ({
     setRegistrationType(registrationType)
   }
 
+  const resultNotFound = searchResults.locals.length == 0 && searchResults.remotes.length == 0;
   return (
     <WrapperBox
       sx={{
@@ -62,15 +63,31 @@ export const SearchResults = ({
       }}
     >
       <MainTypography variant="h5">Search Results</MainTypography>
+
+      {
+        resultNotFound && (
+          <WrapperBox sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <br />
+            <MainTypography variant="body2">No patient with similar demographics found</MainTypography>
+            <br />
+            <MainButton
+              sx={{ mr: "0.2ch", borderRadius: "1px" }}
+              variant="secondary"
+              title="add new record"
+              onClick={handleNewRecord}
+            />
+          </WrapperBox>
+        )
+      }
       <br />
-      <WrapperBox sx={{ width: "100%" }}>
+      {!resultNotFound && <WrapperBox sx={{ width: "100%" }}>
         <MainButton
           sx={{ mr: "0.2ch", borderRadius: "1px" }}
           variant="secondary"
           title="add new record"
           onClick={handleNewRecord}
         />
-      </WrapperBox>
+      </WrapperBox>}
       <br />
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
