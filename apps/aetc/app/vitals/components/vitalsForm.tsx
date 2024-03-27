@@ -530,20 +530,31 @@ export function VitalsForm({
             sx={{ m: 0, my: "1ch" }}
             getValue={(value: string) => {
               const glucoseValue = Number(value);
+
               if (formValues['units'] == "mmol/l") {
-                if (glucoseValue < 20) {
+                if (glucoseValue < 3 || glucoseValue > 30) {
                   setTriageResult("red", form.glucose.name)
                 }
-                if (glucoseValue > 19 && glucoseValue < 40) {
+                if ((glucoseValue >= 3.1 && glucoseValue <= 3.8) || (glucoseValue > 11.1 && glucoseValue <= 29.9)) {
                   setTriageResult("yellow", form.glucose.name)
+                }
+                if (glucoseValue >= 3.9 && glucoseValue <= 11.1) {
+                  setTriageResult("green", form.glucose.name)
                 }
               }
+
+              // Formula for converting mmol’l to mg/dl: (mmol/l × 18.018)
+              const m = 18.018; //multiplicationFactor
+
               if (formValues['units'] == "mg/dl") {
-                if (glucoseValue < 40) {
+                if (glucoseValue < 3 * m || glucoseValue > 30 * m) {
                   setTriageResult("red", form.glucose.name)
                 }
-                if (glucoseValue > 39 && glucoseValue < 60) {
+                if ((glucoseValue >= 3.1 * m && glucoseValue <= 3.8 * m) || (glucoseValue > 11.1 * m && glucoseValue <= 29.9 * m)) {
                   setTriageResult("yellow", form.glucose.name)
+                }
+                if (glucoseValue >= 3.9 * m && glucoseValue <= 11.1 * m) {
+                  setTriageResult("green", form.glucose.name)
                 }
               }
               // checkTriage(form.glucose.name, value);
