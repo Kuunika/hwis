@@ -20,6 +20,16 @@ export const calculateAge = (birthdate: string | Date | undefined) => {
   return age;
 };
 
+export function getCATTime() {
+  const catOffset = 2; // CAT is UTC+2
+  const catOffsetInMilliseconds = catOffset * 60 * 60 * 1000;
+  const currentTimestamp = Date.now();
+  const catTimestamp = currentTimestamp + catOffsetInMilliseconds;
+  const catDate = new Date(catTimestamp);
+
+  return catDate;
+}
+
 
 export const getTime = (dateString: string) => {
   const date = new Date(dateString);

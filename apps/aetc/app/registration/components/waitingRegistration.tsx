@@ -1,4 +1,4 @@
-import { getTime } from "@/helpers/dateTime";
+import { getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
@@ -67,7 +67,7 @@ function CalculateAggregateTime({ patientId }: { patientId: string }) {
 
   const encounterDatetime = encounter.encounter_datetime;
 
-  const currentTime = Date.now();
+  const currentTime: any = getCATTime()
 
   const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
 
@@ -95,7 +95,7 @@ function CalculateAggregateTime({ patientId }: { patientId: string }) {
 
 function CalculateWaitingTime({ patientId }: { patientId: string }) {
   const { data, isLoading } = getPatientsEncounters(patientId);
-  console.log(data)
+
 
 
   const encounter = data?.find(encounter => encounter.encounter_type.name === 'Screening');
@@ -110,7 +110,7 @@ function CalculateWaitingTime({ patientId }: { patientId: string }) {
 
   const encounterDatetime = encounter.encounter_datetime;
 
-  const currentTime = Date.now();
+  const currentTime: any = getCATTime()
 
   const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
 

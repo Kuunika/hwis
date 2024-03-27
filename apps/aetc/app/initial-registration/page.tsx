@@ -24,6 +24,7 @@ import { FormError } from "@/components/formError";
 import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { BarcodeDialog } from "./components/barcodeScanner";
+import { getDateTime } from "@/helpers/dateTime";
 
 
 function InitialRegistration() {
@@ -103,7 +104,7 @@ function InitialRegistration() {
     setCompleted(3);
     setMessage("creating an encounter...");
 
-    const dateTime = new Date().toISOString();
+    const dateTime = getDateTime();
     createEncounter({
       encounterType: encounters.INITIAL_REGISTRATION,
       visit: visit?.uuid,

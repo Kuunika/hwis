@@ -1,4 +1,4 @@
-import { getTime } from "@/helpers/dateTime";
+import { getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
@@ -52,7 +52,7 @@ export const InitialRegistrationList = () => {
 
 function CalculateWaitingTime({ patientId }: { patientId: string }) {
   const { data, isLoading } = getPatientsEncounters(patientId);
-  console.log(data)
+
 
 
   const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
@@ -68,7 +68,9 @@ function CalculateWaitingTime({ patientId }: { patientId: string }) {
 
   const encounterDatetime = encounter.encounter_datetime;
 
-  const currentTime = Date.now();
+  const currentTime: any = getCATTime()
+
+  console.log(Date.now())
 
   const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
 
