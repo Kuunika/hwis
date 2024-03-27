@@ -3,7 +3,9 @@
 import { InitialRegistrationForm } from "./components";
 import { initialPatientRegistration } from "@/hooks/patientReg";
 
-import { MainGrid } from "shared-ui/src";
+
+
+import { MainButton, MainGrid, WrapperBox } from "shared-ui/src";
 import {
   RegistrationCard,
   RegistrationDescriptionText,
@@ -21,6 +23,8 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { FormError } from "@/components/formError";
 import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
+import { BarcodeDialog } from "./components/barcodeScanner";
+
 
 function InitialRegistration() {
   const { refresh, navigateTo } = useNavigation();
@@ -161,7 +165,7 @@ function InitialRegistration() {
 
   return (
     <>
-      <Navigation title="Initial Registration" link="/dashboard" />
+      <Navigation title="Patient Arrival" link="/dashboard" />
       <MainGrid container>
         <MainGrid xs={2} md={3} lg={4} item></MainGrid>
         <MainGrid
@@ -175,7 +179,7 @@ function InitialRegistration() {
         >
           <br />
           <br />
-          <RegistrationMainHeader>Initial Registration</RegistrationMainHeader>
+          <RegistrationMainHeader>Patient Arrival</RegistrationMainHeader>
           <RegistrationDescriptionText>
             The demographics form has been thoughtfully crafted to collect
             patient information, including personal details, contact information
@@ -197,6 +201,9 @@ function InitialRegistration() {
           )}
           {showForm && (
             <RegistrationCard>
+              {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
+              <br />
+              {/* <BarcodeDialog open={true} /> */}
               <InitialRegistrationForm
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
@@ -237,5 +244,7 @@ function InitialRegistration() {
     </>
   );
 }
+
+
 
 export default AuthGuard(InitialRegistration, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK])

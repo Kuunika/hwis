@@ -33,7 +33,7 @@ const form = {
     label: "Religion",
   },
   religionSpecify: {
-    name: "specify",
+    name: concepts.ADDITIONAL_NOTES,
     label: "Specify",
   },
   highestEducation: {

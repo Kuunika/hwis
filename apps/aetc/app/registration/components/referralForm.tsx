@@ -17,7 +17,7 @@ import { getObservationValue } from "@/helpers/emr";
 const schema = Yup.object().shape({
   [concepts.REFERRED_FROM]: Yup.string()
     .label("Referee Medical Facility"),
-  'specify': Yup.string()
+  [concepts.ADDITIONAL_NOTES]: Yup.string()
 });
 
 type Props = {
@@ -51,7 +51,7 @@ export const ReferralForm: FC<Props> = ({
       </RegistrationDescriptionText>
       <FormikInit
         validationSchema={schema}
-        initialValues={{ ...initialValues, specify: "yes" }}
+        initialValues={{ ...initialValues, [concepts.ADDITIONAL_NOTES]: "yes" }}
         onSubmit={onSubmit}
         submitButton={false}
         submitButtonText="next"
@@ -78,10 +78,9 @@ export const ReferralForm: FC<Props> = ({
             />
           )}
           <RadioGroupInput
-            name={"specify"}
+            name={concepts.ADDITIONAL_NOTES}
             getValue={(value: any) => { setIsAvailable(value) }}
             label={"Is the facility you are looking for available?"}
-
             options={[
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" },
