@@ -350,26 +350,7 @@ export function VitalsForm({
     });
   };
 
-  // check rules for BP
-  // useEffect(() => {
-  //   if (systolic > 130) {
-  //     if (diastolic < 180 || diastolic > 220) {
-  //       setTriageResult("red", form.bloodPressure.name);
-  //       return;
-  //     }
-  //   }
-  //   if (systolic > 110) {
-  //     if (diastolic < 90 || diastolic > 190) {
-  //       setTriageResult("yellow", form.bloodPressureDiastolic.name);
-  //     }
-  //   }
 
-  //   if (systolic < 100) {
-  //     if (diastolic >= 90 && diastolic <= 179) {
-  //       setTriageResult("green", form.bloodPressure.name);
-  //     }
-  //   }
-  // }, [diastolic, systolic]);
 
   const disableField = (formField: string) => {
     return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
@@ -393,10 +374,12 @@ export function VitalsForm({
         + getWeight(formValues[form.verbalResponse.name], verbalResponses)
 
       setTotal(_total);
-      if (_total < 15) {
+      if (_total < 11) {
         setTriageResult("red", "gcs")
+      } else if (_total >= 11 && _total <= 14) {
+        setTriageResult("yellow", "gcs")
       } else {
-        // setTriageResult("", "gcs")
+        setTriageResult('green', 'gcs')
       }
     }
   }, [formValues])
