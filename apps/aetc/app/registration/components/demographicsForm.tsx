@@ -237,10 +237,10 @@ const relationships = [
     name: "Auntie",
     value: concepts.AUNTIE,
   },
-  // {
-  //   name: "Spouse",
-  //   value: concepts.SPOUSE,
-  // },
+  {
+    name: "Spouse",
+    value: concepts.SPOUSE,
+  },
   {
     name: "Siblings",
     value: concepts.SIBLING,
