@@ -6,6 +6,7 @@ import {
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
+  MainTypography,
   MultlineInput,
   RadioGroupInput,
   SearchComboBox,
@@ -583,14 +584,6 @@ export function VitalsForm({
       <FormFieldContainerLayout last={true} title="GCS">
         <FieldsContainer sx={{ alignItems: "start" }}>
           <RadioGroupInput
-            name={form.eyeOpeningResponse.name}
-            label={form.eyeOpeningResponse.label}
-            options={eyeOpeningResponses}
-            disabled={disableField(form.eyeOpeningResponse.name)}
-            row={false}
-          />
-
-          <RadioGroupInput
             name={form.motorResponse.name}
             label={form.motorResponse.label}
             options={motorResponses}
@@ -604,7 +597,18 @@ export function VitalsForm({
             disabled={disableField(form.verbalResponse.name)}
             row={false}
           />
+          <RadioGroupInput
+            name={form.eyeOpeningResponse.name}
+            label={form.eyeOpeningResponse.label}
+            options={eyeOpeningResponses}
+            disabled={disableField(form.eyeOpeningResponse.name)}
+            row={false}
+          />
         </FieldsContainer>
+        <br />
+        <MainTypography>
+          (M{getWeight(formValues[form.motorResponse.name], motorResponses)} V{getWeight(formValues[form.verbalResponse.name], verbalResponses)} E{getWeight(formValues[form.eyeOpeningResponse.name], eyeOpeningResponses)})   {total}/15
+        </MainTypography>
         <SearchComboBox
           name={form.avpu.name}
           options={avpuLists}
@@ -615,7 +619,7 @@ export function VitalsForm({
         />
       </FormFieldContainerLayout>
 
-      Total: {total}
+
 
       {/* <TextInputField
         id={form.calculatedGCS.name}
