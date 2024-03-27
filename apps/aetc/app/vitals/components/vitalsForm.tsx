@@ -271,12 +271,12 @@ const rules = {
 
   [form.saturationRate.name]: [
     { operator: "<", value: 90, result: triageResult.RED, bound: 0 },
-    { operator: "<", value: 93, result: triageResult.YELLOW, bound: 90 },
+    { operator: "<=", value: 93, result: triageResult.YELLOW, bound: 90 },
     // { operator: "=", value: 93, result: triageResult.GREEN, bound: 0 },
     {
       operator: "combined",
       operator1: ">=",
-      value: 93,
+      value: 94,
       operator2: "<=",
       value2: 100,
       result: triageResult.GREEN,
@@ -417,7 +417,19 @@ export function VitalsForm({
             label={form.saturationRate.label}
             disabled={disableField(form.saturationRate.name)}
             getValue={(value: string) => {
-              checkTriage(form.saturationRate.name, value);
+              const saturationRateValue = Number(value);
+
+              if (saturationRateValue < 90) {
+                setTriageResult('red', form.saturationRate.name)
+              }
+              if (saturationRateValue >= 94) {
+                setTriageResult('green', form.saturationRate.name)
+              }
+              if (saturationRateValue >= 90 && saturationRateValue < 94) {
+                setTriageResult('yellow', form.saturationRate.name)
+              }
+
+              // checkTriage(form.saturationRate.name, value);
             }}
             unitOfMeasure="%"
           />
@@ -525,7 +537,8 @@ export function VitalsForm({
             name={form.glucose.name}
             label={form.glucose.label}
             disabled={disableField(form.glucose.name)}
-            sx={{ m: 0, my: "1ch" }
+            sx={{ m: 0, my: "1ch" }}
+
             getValue={(value: string) => {
               const glucoseValue = Number(value);
 
