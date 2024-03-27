@@ -447,8 +447,6 @@ export function VitalsForm({
             }}
             getValue={(value) => {
               const systolicValue = Number(value);
-
-
               if (systolicValue > 200 || systolicValue < 80) {
                 setTriageResult('red', form.bloodPressure.name)
                 return
@@ -527,11 +525,11 @@ export function VitalsForm({
             name={form.glucose.name}
             label={form.glucose.label}
             disabled={disableField(form.glucose.name)}
-            sx={{ m: 0, my: "1ch" }}
+            sx={{ m: 0, my: "1ch" }
             getValue={(value: string) => {
               const glucoseValue = Number(value);
 
-              if (formValues['units'] == "mmol/l") {
+              if (formValues[form.units.name] == "mmol/l") {
                 if (glucoseValue < 3 || glucoseValue > 30) {
                   setTriageResult("red", form.glucose.name)
                 }
@@ -546,7 +544,7 @@ export function VitalsForm({
               // Formula for converting mmol’l to mg/dl: (mmol/l × 18.018)
               const m = 18.018; //multiplicationFactor
 
-              if (formValues['units'] == "mg/dl") {
+              if (formValues[form.units.name] == "mg/dl") {
                 if (glucoseValue < 3 * m || glucoseValue > 30 * m) {
                   setTriageResult("red", form.glucose.name)
                 }
@@ -559,7 +557,7 @@ export function VitalsForm({
               }
               // checkTriage(form.glucose.name, value);
             }}
-            unitOfMeasure={formValues['units']}
+            unitOfMeasure={formValues[form.units.name]}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
