@@ -333,25 +333,25 @@ export function VitalsForm({
   };
 
   // check rules for BP
-  useEffect(() => {
-    if (systolic > 130) {
-      if (diastolic < 180 || diastolic > 220) {
-        setTriageResult("red", form.bloodPressure.name);
-        return;
-      }
-    }
-    if (systolic > 110) {
-      if (diastolic < 90 || diastolic > 190) {
-        setTriageResult("yellow", form.bloodPressureDiastolic.name);
-      }
-    }
+  // useEffect(() => {
+  //   if (systolic > 130) {
+  //     if (diastolic < 180 || diastolic > 220) {
+  //       setTriageResult("red", form.bloodPressure.name);
+  //       return;
+  //     }
+  //   }
+  //   if (systolic > 110) {
+  //     if (diastolic < 90 || diastolic > 190) {
+  //       setTriageResult("yellow", form.bloodPressureDiastolic.name);
+  //     }
+  //   }
 
-    if (systolic < 100) {
-      if (diastolic >= 90 && diastolic <= 179) {
-        setTriageResult("green", form.bloodPressure.name);
-      }
-    }
-  }, [diastolic, systolic]);
+  //   if (systolic < 100) {
+  //     if (diastolic >= 90 && diastolic <= 179) {
+  //       setTriageResult("green", form.bloodPressure.name);
+  //     }
+  //   }
+  // }, [diastolic, systolic]);
 
   const disableField = (formField: string) => {
     return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
@@ -428,7 +428,22 @@ export function VitalsForm({
               width: "10ch",
             }}
             getValue={(value) => {
-              setSystolic(value);
+              const systolicValue = Number(value);
+
+              console.log({ systolicValue })
+              if (systolicValue > 200 || systolicValue < 80) {
+                setTriageResult('red', form.bloodPressure.name)
+                return
+              }
+
+              if ((systolicValue >= 81 && systolicValue <= 89) || (systolicValue >= 150 && systolicValue <= 200)) {
+                setTriageResult('yellow', form.bloodPressure.name)
+                return
+              }
+              if (systolicValue >= 90 || (systolicValue > 89 && systolicValue <= 149)) {
+                setTriageResult('green', form.bloodPressure.name)
+                return
+              }
             }}
           />
           <TextInputField
@@ -439,7 +454,16 @@ export function VitalsForm({
             helperTextWidth="10ch"
             disabled={disableField(form.bloodPressureDiastolic.name)}
             getValue={(value) => {
-              setDiastolic(value);
+              const diastolicValue = Number(value);
+              if (diastolicValue > 119) {
+                setTriageResult('red', form.bloodPressureDiastolic.name)
+              }
+              if (diastolicValue >= 100 && diastolicValue <= 119) {
+                setTriageResult('yellow', form.bloodPressureDiastolic.name)
+              }
+              if (diastolicValue < 100) {
+                setTriageResult('green', form.bloodPressureDiastolic.name)
+              }
             }}
           />
         </FieldsContainer>

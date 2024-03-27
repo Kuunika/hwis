@@ -30,17 +30,14 @@ export const SearchComboBox: FC<Props> = ({
   label,
   width = "100%",
   sx,
-  inputSx,
+
   getValue,
   disabled = false,
   multiple = true,
-  size = "medium",
+
 }) => {
-  const { hasError, errorMessage, setFieldValue, initialValues } =
+  const { hasError, setFieldValue, initialValues } =
     useFormikField(name);
-
-
-  console.log({ errorMessage, size, inputSx })
 
 
   const mappedOptions = options.map(op => {
