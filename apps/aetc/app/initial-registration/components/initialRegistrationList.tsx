@@ -17,7 +17,9 @@ export const InitialRegistrationList = () => {
 
   } = getPatientsWaitingForPrescreening();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
+  const rows = patients?.sort((p1, p2) => {
+    return Number(p1.aetc_visit_number) - Number(p2.aetc_visit_number)
+  })?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
