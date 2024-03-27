@@ -49,7 +49,7 @@ const referrences = [
   { id: "DERMATOLOGY/LEPRA", label: "DERMATOLOGY / LEPRA" },
   { id: "STI", label: "STI" },
   { id: "PSYCHIATRY", label: "PSYCHIATRY" },
-  { id: "LOCAL HEALTH CENTER", label: "LOCAL HEALTH CENTER" },
+  { id: "LOCAL HEALTH CENTRE", label: "LOCAL HEALTH CENTRE" },
   { id: "4C", label: "4C" },
   { id: "ONCOLOGY", label: "ONCOLOGY" },
 ];
