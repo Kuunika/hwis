@@ -243,6 +243,24 @@ const rules = {
     {
       operator: "combined",
       operator1: ">=",
+      value: 21,
+      operator2: "<=",
+      value2: 30,
+      result: triageResult.YELLOW,
+      bound: 0,
+    },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 8,
+      operator2: "<=",
+      value2: 11,
+      result: triageResult.YELLOW,
+      bound: 0,
+    },
+    {
+      operator: "combined",
+      operator1: ">=",
       value: 12,
       operator2: "<=",
       value2: 20,
@@ -430,7 +448,7 @@ export function VitalsForm({
             getValue={(value) => {
               const systolicValue = Number(value);
 
-              console.log({ systolicValue })
+
               if (systolicValue > 200 || systolicValue < 80) {
                 setTriageResult('red', form.bloodPressure.name)
                 return
