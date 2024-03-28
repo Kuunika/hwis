@@ -429,7 +429,26 @@ export function VitalsForm({
             disabled={disableField(form.heartRate.name)}
             unitOfMeasure="bpm"
             getValue={(value: string) => {
-              checkTriage(form.heartRate.name, value);
+              const heartRateValue = Number(value)
+
+              if (heartRateValue > 129 || heartRateValue < 40) {
+                console.log({ heartRateValue })
+                addKeyToFlow({ heart: 'red' });
+                setTriageResult('red', form.heartRate.name)
+              }
+              if ((heartRateValue >= 101 && heartRateValue <= 129) || (heartRateValue >= 40 && heartRateValue <= 59)) {
+                addKeyToFlow({ heart: 'yellow' });
+                setTriageResult('yellow', form.heartRate.name)
+              }
+              // if (heartRateValue > 129 || heartRateValue < 40) {
+              //   addKeyToFlow({ heart: 'red' });
+              //   setTriageResult('red', form.heartRate.name)
+              // } 
+              if (heartRateValue >= 60 && heartRateValue <= 100) {
+                addKeyToFlow({ heart: 'green' });
+                setTriageResult('green', form.heartRate.name)
+              }
+              // checkTriage(form.heartRate.name, value);
             }}
           />
         </FieldsContainer>

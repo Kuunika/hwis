@@ -106,8 +106,8 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
 
 
 
-  const circulationCondition = flow['diastolic'] == 'yellow' || flow['diastolic'] == 'red' || flow['systolic'] == 'yellow' || flow['systolic'] == 'red'
-  console.log({ circulationCondition })
+  const circulationCondition = flow['heart'] == 'yellow' || flow['heart'] == 'red' || flow['diastolic'] == 'yellow' || flow['diastolic'] == 'red' || flow['systolic'] == 'yellow' || flow['systolic'] == 'red'
+
 
   return (
     <FormikInit
