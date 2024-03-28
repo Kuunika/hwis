@@ -19,13 +19,22 @@ const form = {
     name: concepts.IS_CIRCULATION_ABNORMAL,
     label: "Is Circulation Abnormal",
   },
-  heartRate: {
-    name: concepts.HEART_RATE_50_120,
-    label: "Heart Rate <50 >120 or Systolic Blood Pressure <70 >180",
-  },
+  // heartRate: {
+  //   name: concepts.HEART_RATE_50_120,
+  //   label: "Heart Rate <50 >120 or Systolic Blood Pressure <70 >180",
+  // },
   weakIrregularPulse: {
     name: concepts.WEAK_THREADY,
     label: "Weak, Thready, Bounding or regular/irregular pulse",
+  },
+
+  heartRate: {
+    name: concepts.HEART_RATE,
+    label: 'Heart Rate'
+  },
+  pulseRate: {
+    name: concepts.PULSE_RATE,
+    label: 'Pulse Rate'
   },
   reducedUrinaryOutput: {
     name: concepts.REDUCED_URINARY_OUTPUT,
@@ -55,6 +64,7 @@ const form = {
     name: concepts.TEMPERATURE,
     label: "Temperature 37-38C",
   },
+
 };
 
 const schema = Yup.object().shape({
@@ -62,6 +72,7 @@ const schema = Yup.object().shape({
     .required()
     .label(form.isCirculationAbnormal.label),
   [form.heartRate.name]: Yup.string().label(form.heartRate.label),
+  [form.pulseRate.name]: Yup.string().label(form.pulseRate.label),
   [form.weakIrregularPulse.name]: Yup.string().label(
     form.weakIrregularPulse.label
   ),
@@ -147,12 +158,27 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
                 }
               /> */}
               <RadioGroupInput
-                name={form.weakIrregularPulse.name}
-                label={form.weakIrregularPulse.label}
-                options={options}
-                disabled={disableField(form.weakIrregularPulse.name)}
+                name={form.heartRate.name}
+                label={form.heartRate.label}
+                options={[
+                  { label: "Weak/Thready", value: "Weak/Thready" },
+                  { label: "Strong", value: "Strong" },
+                ]}
+                disabled={disableField(form.heartRate.name)}
                 getValue={(value) =>
-                  updateConditions(form.weakIrregularPulse.name, value)
+                  updateConditions(form.heartRate.name, value)
+                }
+              />
+              <RadioGroupInput
+                name={form.pulseRate.name}
+                label={form.pulseRate.label}
+                options={[
+                  { label: "Irregular", value: "Irregular" },
+                  { label: "Regular", value: "Regular" },
+                ]}
+                disabled={disableField(form.pulseRate.name)}
+                getValue={(value) =>
+                  updateConditions(form.pulseRate.name, value)
                 }
               />
             </FieldsContainer>
