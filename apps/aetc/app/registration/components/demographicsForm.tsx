@@ -264,6 +264,7 @@ export const DemographicsForm: FC<Prop> = ({
 
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
+  const [guardianChecked, setGuardianChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
 
@@ -272,6 +273,11 @@ export const DemographicsForm: FC<Prop> = ({
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+  const handleGuardianChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGuardianChecked(event.target.checked);
+  };
+
+
 
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
@@ -300,6 +306,25 @@ export const DemographicsForm: FC<Prop> = ({
       );
     }
   }, [checked]);
+
+
+  useEffect(() => {
+    if (fieldFunction && guardianChecked) {
+      const { setFieldValue } = fieldFunction;
+      setFieldValue(
+        form.guardianFirstName.name,
+        formValues[form.nextOfKinFirstName.name]
+      );
+      setFieldValue(
+        form.guardianLastName.name,
+        formValues[form.nextOfKinLastName.name]
+      );
+      setFieldValue(
+        form.guardianNumber.name,
+        formValues[form.guardianPhoneNumber.name]
+      );
+    }
+  }, [guardianChecked]);
 
 
   let _init = {
@@ -422,7 +447,7 @@ export const DemographicsForm: FC<Prop> = ({
             getValue={(value) => {
               const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
 
-              console.log({ traditionalAuthority })
+
               if (traditionalAuthority)
                 setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.traditional_authority_id.toString() }))
             }}
@@ -540,6 +565,12 @@ export const DemographicsForm: FC<Prop> = ({
           />
 
           {guardianAvailable == "yes" && <>
+            <WrapperBox>
+              <FormControlLabel
+                control={<Checkbox checked={guardianChecked} onChange={handleGuardianChecked} />}
+                label="same as next of kin"
+              />
+            </WrapperBox>
             <TextInputField
               name={form.guardianFirstName.name}
               id={form.guardianFirstName.name}
