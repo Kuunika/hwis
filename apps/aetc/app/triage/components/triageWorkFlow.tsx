@@ -395,7 +395,7 @@ export default function TriageWorkFlow() {
       )}
       {completed == 7 && (
         <OperationSuccess
-          title="Patient Triaged Successful"
+          title="Patient Triaged Successfully"
           primaryActionText="Triage more patients"
           secondaryActionText="Go Home"
           onPrimaryAction={() => {
