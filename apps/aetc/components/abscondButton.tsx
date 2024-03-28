@@ -28,7 +28,7 @@ export const AbscondButton = ({ patientId, visitId, onDelete }: { patientId: str
             <MainTypography>Are you sure the patient absconded?</MainTypography>
             <br />
             <MainButton title={"Yes"} onClick={handleAbscond} />
-            <MainButton sx={{ ml: 0.3 }} variant="secondary" title={"No"} onClick={() => { }} />
+            <MainButton sx={{ ml: 0.3 }} variant="secondary" title={"No"} onClick={() => setOpen(false)} />
         </GenericDialog>
     </>
 }

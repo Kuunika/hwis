@@ -268,6 +268,7 @@ export const DemographicsForm: FC<Prop> = ({
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
 
+
   const { params } = useParameters();
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -292,6 +293,8 @@ export const DemographicsForm: FC<Prop> = ({
   useEffect(() => {
     if (fieldFunction && checked) {
       const { setFieldValue } = fieldFunction;
+
+      setCurrentSelectedLocation(selectedLocation);
       setFieldValue(
         form.currentDistrict.name,
         formValues[form.homeDistrict.name]
@@ -305,7 +308,10 @@ export const DemographicsForm: FC<Prop> = ({
         formValues[form.homeTraditionalAuthority.name]
       );
     }
-  }, [checked]);
+  }, [checked, formValues]);
+
+
+
 
 
   useEffect(() => {
@@ -343,6 +349,10 @@ export const DemographicsForm: FC<Prop> = ({
       [form.currentVillage.name]: patient?.addresses[1]?.address1,
     }
   }
+
+  let currentLocation = {};
+
+
 
 
   return (
@@ -431,9 +441,12 @@ export const DemographicsForm: FC<Prop> = ({
             multiple={false}
             getValue={(value) => {
               const district = districts.find(d => d.name == value);
+              if (district) {
 
-              if (district)
                 setSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+
+              }
+
             }}
             options={districts ? districts.map((d) => ({
               id: d.name,
@@ -479,11 +492,10 @@ export const DemographicsForm: FC<Prop> = ({
           <SearchComboBox
             name={form.currentDistrict.name}
             label={form.currentDistrict.label}
-            disabled={checked}
+            // disabled={checked}
             multiple={false}
             getValue={(value) => {
               const district = districts.find(d => d.name == value);
-
               if (district)
                 setCurrentSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
             }}
@@ -500,7 +512,7 @@ export const DemographicsForm: FC<Prop> = ({
               if (district)
                 setCurrentSelectedLocation(selection => ({ ...selection, traditionalAuthority: district.traditional_authority_id.toString() }))
             }}
-            disabled={checked}
+            // disabled={checked}
             multiple={false}
             options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == currentSelectedLocation.district).map(t => ({
               id: t.name,
@@ -511,7 +523,7 @@ export const DemographicsForm: FC<Prop> = ({
           <SearchComboBox
             name={form.currentVillage.name}
             label={form.currentVillage.label}
-            disabled={checked}
+            // disabled={checked}
             multiple={false}
             options={villages ? villages.filter(v => v.traditional_authority_id.toString() == currentSelectedLocation.traditionalAuthority).map((v: any) => ({
               id: v.name,

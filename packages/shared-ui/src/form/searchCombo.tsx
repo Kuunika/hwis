@@ -30,14 +30,14 @@ export const SearchComboBox: FC<Props> = ({
   label,
   width = "100%",
   sx,
-
   getValue,
   disabled = false,
   multiple = true,
 
 }) => {
-  const { hasError, setFieldValue, initialValues } =
+  const { hasError, setFieldValue, initialValues, value } =
     useFormikField(name);
+
 
 
   const mappedOptions = options.map(op => {
@@ -59,10 +59,11 @@ export const SearchComboBox: FC<Props> = ({
       getValue(inputValue);
     }
   }
+
+
   return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5, }}>
     <MainTypography variant="subtitle2">{label}</MainTypography>
     <Select
-
       styles={{
         //@ts-ignore
         control: (baseStyles, state) => ({
@@ -70,21 +71,24 @@ export const SearchComboBox: FC<Props> = ({
           borderColor: hasError ? "red" : "#B3B3B3"
         }),
       }}
-
+      {...(multiple ? null : { value: mappedOptions.filter(op => op.value == value) })}
       isDisabled={disabled}
       //@ts-ignore
       defaultValue={mappedOptions.filter(op => op.value == initialValues[name])}
       //@ts-ignore
       theme={theme => ({
         ...theme,
-
         colors: {
           ...theme.colors,
           primary: defaultTheme.primary,
           primary25: "#cffccf"
         }
       })}
-      onChange={values => handleChange(values)} isMulti={multiple} components={animatedComponents} options={mappedOptions} />
+
+      onChange={values => handleChange(values)}
+      isMulti={multiple}
+      components={animatedComponents}
+      options={mappedOptions} />
   </WrapperBox>
 
   // return (
