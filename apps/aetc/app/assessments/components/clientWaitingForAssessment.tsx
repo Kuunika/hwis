@@ -1,4 +1,5 @@
 import { getCATTime, getTime } from "@/helpers/dateTime";
+import { useState } from "react"
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import {
@@ -8,8 +9,10 @@ import {
 import { getPatientEncounters } from "@/services/encounter";
 import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import Image from "next/image";
+import { AbscondButton } from "@/components/abscondButton";
 
 export const ClientWaitingForAssessment = () => {
+  const [deleted, setDeleted] = useState('')
   const { navigateTo } = useNavigation();
   const { data: patients, isLoading, isRefetching } = getPatientsWaitingForAssessment();
 
@@ -43,7 +46,7 @@ export const ClientWaitingForAssessment = () => {
   // ];
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
+    { field: "aetc_visit_number", headerName: "Visit Number", },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
@@ -96,11 +99,14 @@ export const ClientWaitingForAssessment = () => {
       flex: 1,
       renderCell: (cell: any) => {
         return (
-          <MainButton
-            sx={{ fontSize: "12px" }}
-            title={"start"}
-            onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
-          />
+          <>
+            <MainButton
+              sx={{ fontSize: "12px" }}
+              title={"start"}
+              onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
+            />
+            <AbscondButton onDelete={() => setDeleted(cell.id)} visitId={cell.row.visit_uuid} patientId={cell.id} />
+          </>
         );
       },
     },

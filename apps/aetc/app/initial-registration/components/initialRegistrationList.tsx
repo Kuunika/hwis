@@ -25,7 +25,7 @@ export const InitialRegistrationList = () => {
 
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
+    { field: "aetc_visit_number", headerName: "Visit Number", },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
