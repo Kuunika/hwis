@@ -37,7 +37,7 @@ import { BarcodeComponent } from "@/components/barcode";
 import { PatientUpdateResponse } from "@/interfaces";
 
 export const NewRegistrationFlow = () => {
-  const [active, setActive] = useState(4);
+  const [active, setActive] = useState(1);
   const { navigateTo } = useNavigation();
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
