@@ -17,33 +17,14 @@ export const ClientWaitingForAssessment = () => {
   const { data: patients, isLoading, isRefetching } = getPatientsWaitingForAssessment();
 
 
+  const rows = patients?.sort((p1, p2) => {
+    if (p1.triage_result == 'red' && p2.triage_result == 'yellow') return -1;
+    if (p1.triage_result == 'red' && p2.triage_result == 'green') return -1;
+    if (p1.triage_result == 'yellow' && p2.triage_result == 'green') return -1;
+    return 1
 
-  // const customOrder = { "red": 0, "yellow": 1, "green": 2 };
+  }).map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
-
-  // const rows = [
-  //   {
-  //     id: "1",
-  //     firstName: "John",
-  //     lastName: "Doe",
-  //     gender: "Male",
-  //     dob: "08 January 1995",
-  //     triageCategory: "red",
-  //     patientWaitingTime: "10 min",
-  //     aggreWaitingTime: "30 min",
-  //   },
-  //   {
-  //     id: "2",
-  //     firstName: "Jane",
-  //     lastName: "Doe",
-  //     gender: "Female",
-  //     dob: "08 January 1995",
-  //     triageCategory: "green",
-  //     patientWaitingTime: "5 min",
-  //     aggreWaitingTime: "30 min",
-  //   },
-  // ];
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number", },
@@ -66,7 +47,7 @@ export const ClientWaitingForAssessment = () => {
       field: "triage_result",
       headerName: "Triage Category",
       flex: 1,
-      sortModel: { field: "triage_result", sort: triageResultSort },
+
       renderCell: (cell: any) => {
         return (
           <WrapperBox
@@ -199,20 +180,7 @@ function CalculateWaitingTime({ patientId }: { patientId: string }) {
   )
 }
 
-const triageResultSort = (rowA: any, rowB: any, sortBy: string) => {
-  const triageA = rowA.values.triage_result;
-  const triageB = rowB.values.triage_result;
 
-  if (triageA === "red") {
-    return -1;
-  } else if (triageB === "red") {
-    return 1;
-  } else if (triageA === "yellow") {
-    return -1;
-  } else {
-    return 0;
-  }
-};
 
 
 
