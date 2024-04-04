@@ -87,7 +87,7 @@ export function PrescreeningForm({ onSubmit }: props) {
         <RadioGroupInput
           name={form.urgent.name}
           label={form.urgent.label}
-          options={yesno}
+          options={[...yesno, { label: "Elective", value: concepts.ELECTIVE }]}
         />
       </FieldsContainer>
 

@@ -169,7 +169,10 @@ export const concepts = {
   PAYMENT_OPTIONS: "a4a38479-db24-44ec-9325-28e646162185",
 
   // TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096"
-  TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096"
+  TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096",
+
+
+  ELECTIVE: "2d7d1b0c-1867-4dbd-8b49-4335548a42bf",
 };
 
 export const triageResult = {
