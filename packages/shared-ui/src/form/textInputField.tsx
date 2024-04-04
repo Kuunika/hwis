@@ -41,11 +41,11 @@ export const TextInputField: FC<Prop> = ({
   unitOfMeasure,
   helperTextWidth = "25ch",
 }) => {
-  const { value, handleChange, hasError, errorMessage, handleBlur, touched } =
+  const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
 
   useEffect(() => {
-    //@ts-ignore
+
 
     getValue && getValue(value);
   }, [value]);
