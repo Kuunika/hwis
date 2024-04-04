@@ -47,7 +47,6 @@ export const ClientWaitingForAssessment = () => {
       field: "triage_result",
       headerName: "Triage Category",
       flex: 1,
-
       renderCell: (cell: any) => {
         return (
           <WrapperBox
