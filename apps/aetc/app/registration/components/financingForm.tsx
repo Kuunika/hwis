@@ -41,7 +41,7 @@ const form = {
 };
 
 const schema = Yup.object().shape({
-  [form.paymentOption.name]: Yup.string().label(form.paymentOption.label),
+  [form.paymentOption.name]: Yup.array().label(form.paymentOption.label),
   [form.insuranceProvider.name]: Yup.string().label(
     form.insuranceProvider.label
   ),
@@ -75,7 +75,19 @@ export const FinancingForm: FC<Props> = ({
         <TrackFormikContext setFormContext={setContext} />
         <RegistrationCard>
           <RegistrationCardTitle>Financing</RegistrationCardTitle>
-          <CheckboxesGroup name={form.paymentOption.name} options={[
+          <CheckboxesGroup getValue={
+            (value: Array<any>) => {
+              const v = value?.find(v => v.key == 'insurance' && v.value);
+
+              console.log({ v });
+
+              if (v) {
+                setPayment(v.key)
+              } else {
+                setPayment("")
+              }
+            }
+          } name={form.paymentOption.name} options={[
             { label: "Non-paying", value: "non-paying" },
             { label: "Staff", value: "staff" },
             { label: "Cash", value: "cash" },
@@ -83,7 +95,7 @@ export const FinancingForm: FC<Props> = ({
           ]} />
 
 
-          <RadioGroupInput
+          {/* <RadioGroupInput
             name={form.paymentOption.name}
             getValue={(value: any) => setPayment(value)}
             label={form.paymentOption.label}
@@ -93,7 +105,7 @@ export const FinancingForm: FC<Props> = ({
               { label: "Cash", value: "cash" },
               { label: "Insurance", value: "insurance" },
             ]}
-          />
+          /> */}
 
           {payment === "insurance" && (
             <>

@@ -37,7 +37,7 @@ import { BarcodeComponent } from "@/components/barcode";
 import { PatientUpdateResponse } from "@/interfaces";
 
 export const NewRegistrationFlow = () => {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(4);
   const { navigateTo } = useNavigation();
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -206,12 +206,26 @@ export const NewRegistrationFlow = () => {
       setMessage("adding financing data...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
       const dateTime = getDateTime();
+
+      const payments = formData.financing[concepts.PAYMENT_OPTIONS]
+
+      const paymentObs = payments.filter((pay: any) => pay.value).map((p: any) => {
+        return {
+          concept: concepts.PAYMENT_OPTIONS,
+          value: p.key,
+          obsDatetime: dateTime,
+        }
+      })
+
+
+      delete formData.financing[concepts.PAYMENT_OPTIONS]
+
       createFinancing({
         encounterType: encounters.FINANCING,
         visit: patient?.visit_uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.financing, dateTime),
+        obs: [...getObservations(formData.financing, dateTime), ...paymentObs],
       });
     }
   }, [referralCreated]);
