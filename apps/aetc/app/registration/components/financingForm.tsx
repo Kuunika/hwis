@@ -6,6 +6,7 @@ import {
   SelectInputField,
   TextInputField,
   RadioGroupInput,
+  CheckboxesGroup,
 } from "shared-ui/src";
 import { TrackFormikContext } from "./demographicsForm";
 import {
@@ -74,6 +75,14 @@ export const FinancingForm: FC<Props> = ({
         <TrackFormikContext setFormContext={setContext} />
         <RegistrationCard>
           <RegistrationCardTitle>Financing</RegistrationCardTitle>
+          <CheckboxesGroup name={form.paymentOption.name} options={[
+            { label: "Non-paying", value: "non-paying" },
+            { label: "Staff", value: "staff" },
+            { label: "Cash", value: "cash" },
+            { label: "Insurance", value: "insurance" },
+          ]} />
+
+
           <RadioGroupInput
             name={form.paymentOption.name}
             getValue={(value: any) => setPayment(value)}

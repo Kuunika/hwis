@@ -263,7 +263,7 @@ export const NewRegistrationFlow = () => {
 
     const errorList = <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
       {errorKeys.map(key => {
-        return <MainTypography key={key}>{errors[key]}</MainTypography>
+        return <MainTypography color={"#800000"} variant="subtitle2" key={key}>{errors[key]}</MainTypography>
       })}
     </WrapperBox>
 
