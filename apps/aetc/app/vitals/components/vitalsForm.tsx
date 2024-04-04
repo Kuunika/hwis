@@ -410,8 +410,9 @@ export function VitalsForm({
             label={form.saturationRate.label}
             disabled={disableField(form.saturationRate.name)}
             handleBlurEvent={(value: string) => {
-              const saturationRateValue = Number(value);
+              if (value == '') return;
 
+              const saturationRateValue = Number(value);
               if (saturationRateValue < 90) {
                 setTriageResult('red', form.saturationRate.name)
               }
@@ -433,6 +434,8 @@ export function VitalsForm({
             disabled={disableField(form.heartRate.name)}
             unitOfMeasure="bpm"
             handleBlurEvent={(value: string) => {
+              if (value == '') return;
+
               const heartRateValue = Number(value)
 
               if (heartRateValue > 129 || heartRateValue < 40) {
@@ -470,6 +473,7 @@ export function VitalsForm({
               width: "10ch",
             }}
             handleBlurEvent={(value) => {
+              if (value == '') return;
               const systolicValue = Number(value);
               if (systolicValue > 200 || systolicValue < 80) {
                 addKeyToFlow({ systolic: 'red' });
@@ -497,6 +501,8 @@ export function VitalsForm({
             helperTextWidth="10ch"
             disabled={disableField(form.bloodPressureDiastolic.name)}
             handleBlurEvent={(value) => {
+              if (value == '') return;
+
               const diastolicValue = Number(value);
               if (diastolicValue > 119) {
                 addKeyToFlow({ diastolic: 'red' });
@@ -521,6 +527,7 @@ export function VitalsForm({
             name={form.respiratoryRate.name}
             label={form.respiratoryRate.label}
             handleBlurEvent={(value: string) => {
+              if (value == '') return;
               checkTriage(form.respiratoryRate.name, value);
             }}
             disabled={disableField(form.respiratoryRate.name)}
@@ -532,6 +539,7 @@ export function VitalsForm({
             label={form.temperature.label}
             disabled={disableField(form.temperature.name)}
             handleBlurEvent={(value: string) => {
+              if (value == '') return;
               checkTriage(form.temperature.name, value);
             }}
             unitOfMeasure="°C"
@@ -558,6 +566,7 @@ export function VitalsForm({
             sx={{ m: 0, my: "1ch" }}
 
             handleBlurEvent={(value: string) => {
+              if (value == '') return;
               const glucoseValue = Number(value);
 
               if (formValues[form.units.name] == "mmol/l") {

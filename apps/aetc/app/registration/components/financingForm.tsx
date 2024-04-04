@@ -86,8 +86,8 @@ export const FinancingForm: FC<Props> = ({
             }
           } name={form.paymentOption.name} options={[
             { label: "Non-paying", value: "non-paying" },
-            { label: "Staff", value: "staff" },
             { label: "Cash", value: "cash" },
+            { label: "Staff", value: "staff" },
             { label: "Insurance", value: "insurance" },
           ]} />
 
