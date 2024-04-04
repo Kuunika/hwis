@@ -46,8 +46,6 @@ export function CheckboxesGroup({ options, name, getValue }: Props) {
 
     useEffect(() => {
         const array = Object.keys(checkBoxValue).map(key => ({ key, value: checkBoxValue[key] }));
-
-        // if (array.filter(a => a.value).length == 2) return
         setFieldValue(name, array)
     }, [checkBoxValue])
 
