@@ -41,12 +41,17 @@ export const TextInputField: FC<Prop> = ({
   unitOfMeasure,
   helperTextWidth = "25ch",
 }) => {
-  const { value, handleChange, hasError, errorMessage, handleBlur } =
+  const { value, handleChange, hasError, errorMessage, handleBlur, touched } =
     useFormikField(name);
 
   useEffect(() => {
+    //@ts-ignore
+
     getValue && getValue(value);
   }, [value]);
+
+
+
 
   return (
     <FormControl variant="standard" sx={{ mb: "1ch", ...sx }}>

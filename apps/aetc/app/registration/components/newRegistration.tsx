@@ -415,7 +415,10 @@ export const NewRegistrationFlow = () => {
               </ShowFormErrors>
               <br />
               <br />
-              {active == 1 && (
+
+              <WrapperBox sx={{
+                display: active == 1 ? "block" : "none"
+              }}>
                 <DemographicsForm
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
@@ -435,29 +438,40 @@ export const NewRegistrationFlow = () => {
                   }
                   }
                 />
-              )}
-              {active == 2 && (
+              </WrapperBox>
+
+              <WrapperBox sx={{
+                display: active == 2 ? "block" : "none"
+              }}>
                 <SocialHistoryForm
                   setContext={setSocialHistoryContext}
                   onSubmit={(values: any) =>
                     (formData["socialHistory"] = values)
                   }
                 />
-              )}
-              {active == 3 && (
+              </WrapperBox>
+
+              <WrapperBox sx={{
+                display: active == 3 ? "block" : "none"
+              }}>
                 <ReferralForm
                   setContext={setReferralContext}
                   initialValues={{}}
                   onSubmit={(values: any) => (formData["referral"] = values)}
                 />
-              )}
-              {active == 4 && (
+              </WrapperBox>
+
+
+              <WrapperBox sx={{
+                display: active == 4 ? "block" : "none"
+              }}>
                 <FinancingForm
                   setContext={setFinancingFormContext}
                   initialValues={{}}
                   onSubmit={handleSubmitFinancing}
                 />
-              )}
+              </WrapperBox>
+
             </>
           )}
 
@@ -518,7 +532,7 @@ export const NewRegistrationFlow = () => {
         </Grid>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         {showForm && (
-          <RegistrationNavigation active={active} setActive={changeActive} />
+          <RegistrationNavigation onPrevious={(active: number) => setActive(active)} active={active} setActive={changeActive} />
         )}
       </Grid>
     </>
@@ -528,11 +542,13 @@ export const NewRegistrationFlow = () => {
 const RegistrationNavigation = ({
   active,
   setActive,
+  onPrevious
 }: {
   active: number;
   setActive: (step: number) => void;
+  onPrevious: (active: number) => void
 }) => {
-  const { navigateTo } = useNavigation();
+
   const buttonStyles = {
     width: "126px",
     height: "44px",
@@ -541,12 +557,7 @@ const RegistrationNavigation = ({
     gap: "8px",
   };
 
-  const scrollToComponent = (id: number) => {
-    const element = document.getElementById(id.toString());
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
+
   return (
     <WrapperBox
       sx={{
@@ -573,9 +584,9 @@ const RegistrationNavigation = ({
         }}
         title={"previous"}
         onClick={() => {
+
           if (active == 1) return;
-          setActive(active - 1);
-          scrollToComponent(active - 1)
+          onPrevious(active - 1);
         }}
       />
       <WrapperBox
@@ -616,7 +627,7 @@ const RegistrationNavigation = ({
           //   return;
           // }
           setActive(active + 1);
-          scrollToComponent(active + 1)
+
         }}
       />
     </WrapperBox>
@@ -634,7 +645,7 @@ const NavBox = ({
 }) => {
   return (
     <WrapperBox
-      onClick={onClick}
+      onClick={() => { }}
       sx={{
         display: "flex",
         alignItems: "center",
@@ -643,7 +654,7 @@ const NavBox = ({
         borderBottom: active ? "solid 1px #00190E" : "",
         mx: "2ch",
         color: !active ? "#636363" : "",
-        cursor: "pointer",
+        // cursor: "pointer",
       }}
     >
       <MainTypography
