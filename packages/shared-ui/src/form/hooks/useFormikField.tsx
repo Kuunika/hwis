@@ -9,7 +9,6 @@ export const useFormikField = (name: string) => {
     validateField,
     initialValues,
     handleBlur,
-
   } = useFormikContext();
 
   // console.log({ errors });

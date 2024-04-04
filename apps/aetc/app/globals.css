@@ -93,3 +93,13 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+.triage-red {
+  background-color: #ff696162;
+}
+.triage-yellow {
+  background-color: #fff7bc;
+}
+.triage-green {
+  background-color: #d4edda;
+}

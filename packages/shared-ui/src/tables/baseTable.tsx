@@ -73,6 +73,10 @@ const Table: React.FC<IProp> = ({
   return (
     <div style={{ height, width, ...style }}>
       <DataGrid
+        // getRowClassName={(test: any) => {
+        //   console.log({ test })
+        //   return 'triage-red'
+        // }}
         onRowSelectionModelChange={getSelectedItems}
         checkboxSelection={checkboxSelection}
         rowHeight={rowHeight}
