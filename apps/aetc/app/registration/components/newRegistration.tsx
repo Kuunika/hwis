@@ -1,5 +1,6 @@
 "use client";
 import { useState, ReactNode, useEffect, useRef, useContext } from "react";
+import { Grid } from "@mui/material";
 import {
   MainButton,
   MainGrid,
@@ -47,7 +48,7 @@ export const NewRegistrationFlow = () => {
   const [error, setError] = useState(false);
   const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType;
   const [formError, setFormError] = useState<{ hasError: boolean, errors: any }>({ hasError: false, errors: '' })
-
+  const scrollableRef = useRef<any>({});
 
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
@@ -265,8 +266,6 @@ export const NewRegistrationFlow = () => {
 
 
 
-
-
   const formatErrorsToList = (errors: any) => {
 
     const errorKeys = Object.keys(errors);
@@ -295,12 +294,13 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } =
         demographicsContext;
       submitForm();
-
       formatErrorsToList(errors)
-
 
       if (isValid && dirty) {
         setActive(active + 1);
+        // if (scrollableRef && scrollableRef.current) {
+        scrollableRef.current.scrollTop = 0;
+        // }
       }
     }
     if (active == 2) {
@@ -311,6 +311,7 @@ export const NewRegistrationFlow = () => {
 
       if (isValid && dirty) {
         setActive(active + 1);
+        scrollableRef.current.scrollTop = 0;
       }
     }
     if (active == 3) {
@@ -320,6 +321,7 @@ export const NewRegistrationFlow = () => {
 
       if (isValid) {
         setActive(active + 1);
+        scrollableRef.current.scrollTop = 0;
       }
     }
     if (active == 4) {
@@ -383,13 +385,16 @@ export const NewRegistrationFlow = () => {
 
 
 
+
+
   return (
     <>
       <OverlayLoader open={isFetching} />
       <SearchPotentialDuplicates close={() => setDialogOpen(false)} open={isSuccess && dialogOpen} ddePatients={ddePatients ? ddePatients : []} />
-      <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
+      <Grid sx={{ height: "95vh", position: "relative" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
-        <MainGrid
+        <Grid
+          ref={scrollableRef}
           item
           xs={10}
           md={6}
@@ -400,7 +405,6 @@ export const NewRegistrationFlow = () => {
             flexDirection: "column",
             height: "90vh",
             overflowY: "auto"
-
           }}
         >
           {showForm && (
@@ -511,12 +515,12 @@ export const NewRegistrationFlow = () => {
               />
             </>
           )}
-        </MainGrid>
+        </Grid>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         {showForm && (
           <RegistrationNavigation active={active} setActive={changeActive} />
         )}
-      </MainGrid>
+      </Grid>
     </>
   );
 };
