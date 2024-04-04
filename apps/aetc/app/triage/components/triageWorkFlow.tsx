@@ -23,6 +23,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { TriageResult } from "@/interfaces";
 import { Bounce, ToastContainer, toast } from "react-toastify";
+import { DisplayNone } from "@/components/displayNoneWrapper";
 
 export default function TriageWorkFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -343,61 +344,61 @@ export default function TriageWorkFlow() {
   }
   return (
     <>
-      {showForm && (
-        <>
-          {triageResult && (
-            <>
-              <TriageContainer
-                onCompleteTriage={() => { }}
-                result={triageResult}
-                message={"Interventions"}
-                setContinueTriage={setContinueTriage}
-              />
-              <br />
-            </>
-          )}
-          <NewStepperContainer
-            setActive={(value) => {
-              setActiveStep(value);
-            }}
-            title="Triage"
-            steps={steps}
-            active={activeStep}
-            onBack={() => navigateBack()}
-          >
-            <PresentingComplaintsForm onSubmit={handlePresentComplaints} />
-            <VitalsForm
-              previous={() => setActiveStep(0)}
-              triageResult={triageResult}
-              setTriageResult={checkTriageResult}
-              initialValues={{}}
-              onSubmit={handleVitalsSubmit}
-              continueTriage={continueTriage}
+
+      <DisplayNone hidden={!showForm}>
+        {triageResult && (
+          <>
+            <TriageContainer
+              onCompleteTriage={() => { }}
+              result={triageResult}
+              message={"Interventions"}
+              setContinueTriage={setContinueTriage}
             />
-            <AirwayAndBreathingForm
-              previous={() => setActiveStep(1)}
-              continueTriage={continueTriage}
-              triageResult={triageResult}
-              setTriageResult={checkTriageResult} onSubmit={handleAirwaySubmit} />
-            <BloodCirculationForm
-              previous={() => setActiveStep(2)}
-              continueTriage={continueTriage}
-              triageResult={triageResult}
-              onSubmit={handleBloodCirculationSubmit} />
-            <ConsciousnessForm
-              previous={() => setActiveStep(3)}
-              continueTriage={continueTriage}
-              triageResult={triageResult}
-              setTriageResult={checkTriageResult}
-              onSubmit={handleDisabilitySubmit} />
-            <PersistentPainForm
-              previous={() => setActiveStep(4)}
-              continueTriage={continueTriage}
-              triageResult={triageResult}
-              onSubmit={handlePersistentPain} />
-          </NewStepperContainer>
-        </>
-      )}
+            <br />
+          </>
+        )}
+        <NewStepperContainer
+          setActive={(value) => {
+            setActiveStep(value);
+          }}
+          title="Triage"
+          steps={steps}
+          active={activeStep}
+          onBack={() => navigateBack()}
+        >
+          <PresentingComplaintsForm onSubmit={handlePresentComplaints} />
+          <VitalsForm
+            previous={() => setActiveStep(0)}
+            triageResult={triageResult}
+            setTriageResult={checkTriageResult}
+            initialValues={{}}
+            onSubmit={handleVitalsSubmit}
+            continueTriage={continueTriage}
+          />
+          <AirwayAndBreathingForm
+            previous={() => setActiveStep(1)}
+            continueTriage={continueTriage}
+            triageResult={triageResult}
+            setTriageResult={checkTriageResult} onSubmit={handleAirwaySubmit} />
+          <BloodCirculationForm
+            previous={() => setActiveStep(2)}
+            continueTriage={continueTriage}
+            triageResult={triageResult}
+            onSubmit={handleBloodCirculationSubmit} />
+          <ConsciousnessForm
+            previous={() => setActiveStep(3)}
+            continueTriage={continueTriage}
+            triageResult={triageResult}
+            setTriageResult={checkTriageResult}
+            onSubmit={handleDisabilitySubmit} />
+          <PersistentPainForm
+            previous={() => setActiveStep(4)}
+            continueTriage={continueTriage}
+            triageResult={triageResult}
+            onSubmit={handlePersistentPain} />
+        </NewStepperContainer>
+      </DisplayNone>
+
       {completed == 7 && (
         <OperationSuccess
           title="Patient Triaged Successfully"
