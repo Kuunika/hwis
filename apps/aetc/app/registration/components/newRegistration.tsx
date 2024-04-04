@@ -10,6 +10,7 @@ import {
   DemographicsForm,
   FinancingForm,
   ReferralForm,
+  ShowFormErrors,
   SocialHistoryForm,
 } from "../components";
 import { useNavigation, useParameters } from "@/hooks";
@@ -44,7 +45,8 @@ export const NewRegistrationFlow = () => {
   const [showForm, setShowForm] = useState(true); //TODO: change to true
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType;
+  const [formError, setFormError] = useState<{ hasError: boolean, errors: any }>({ hasError: false, errors: '' })
 
 
 
@@ -61,7 +63,6 @@ export const NewRegistrationFlow = () => {
   })
 
   const { refetch, isFetching, isSuccess, data: ddePatients } = searchByDemographics(patientValues.firstName, patientValues.lastName, patientValues.gender, patientValues.birthdate, patientValues.homeVillage, patientValues.homeTA, patientValues.homeDistrict)
-
   const { data: initialRegistrationList } =
     getPatientsWaitingForRegistrations();
   const { params } = useParameters();
@@ -252,11 +253,37 @@ export const NewRegistrationFlow = () => {
 
 
 
+  const formatErrorsToList = (errors: any) => {
+
+    const errorKeys = Object.keys(errors);
+
+    if (errorKeys.length == 0) {
+      return;
+    }
+
+    const errorList = <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+      {errorKeys.map(key => {
+        return <MainTypography key={key}>{errors[key]}</MainTypography>
+      })}
+    </WrapperBox>
+
+    setFormError({
+      hasError: true,
+      errors: errorList
+    })
+
+
+  }
+
+
   const changeActive = async (step: number) => {
     if (active == 1) {
       const { submitForm, errors, isValid, touched, dirty } =
         demographicsContext;
       submitForm();
+
+      formatErrorsToList(errors)
+
 
       if (isValid && dirty) {
         setActive(active + 1);
@@ -266,6 +293,7 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } =
         socialHistoryContext;
       submitForm();
+      formatErrorsToList(errors)
 
       if (isValid && dirty) {
         setActive(active + 1);
@@ -274,6 +302,7 @@ export const NewRegistrationFlow = () => {
     if (active == 3) {
       const { submitForm, errors, isValid, touched, dirty } = referralContext;
       submitForm();
+      formatErrorsToList(errors)
 
       if (isValid) {
         setActive(active + 1);
@@ -283,6 +312,7 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } =
         financingFormContext;
       submitForm();
+      formatErrorsToList(errors)
 
       if (isValid && dirty) {
         // setActive(active + 1);
@@ -361,6 +391,10 @@ export const NewRegistrationFlow = () => {
         >
           {showForm && (
             <>
+
+              <ShowFormErrors open={formError.hasError} onClose={() => setFormError({ hasError: false, errors: "" })}>
+                {formError.errors}
+              </ShowFormErrors>
               <br />
               <br />
               {active == 1 && (
@@ -377,7 +411,6 @@ export const NewRegistrationFlow = () => {
                     })
 
                     if (registrationType != 'remote') {
-
                       setDialogOpen(true)
                     }
 

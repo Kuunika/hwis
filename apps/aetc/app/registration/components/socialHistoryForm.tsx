@@ -75,8 +75,6 @@ export const SocialHistoryForm: FC<Prop> = ({
   const [religion, setReligion] = useState('')
   const { data, isLoading } = getPatientsEncounters("af4bd20a-8b06-4083-9de4-2e7d3ca31524");
 
-
-
   return (
     <>
       <RegistrationMainHeader id="2">Social History</RegistrationMainHeader>
@@ -102,7 +100,7 @@ export const SocialHistoryForm: FC<Prop> = ({
             options={[
               { label: "Single", value: "single" },
               { label: "Married", value: "married" },
-              { label: "Widow", value: "widow/widower" },
+              { label: "Widowed", value: "widow/widower" },
               { label: "Divorced", value: "divorced" },
               { label: "Unknown", value: "unknown" },
 
