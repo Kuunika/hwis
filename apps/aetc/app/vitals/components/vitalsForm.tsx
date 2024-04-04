@@ -6,12 +6,14 @@ import {
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
+  MainButton,
   MainTypography,
   MultlineInput,
   RadioGroupInput,
   SearchComboBox,
   SelectInputField,
   TextInputField,
+  WrapperBox,
 } from "shared-ui/src";
 import * as yup from "yup";
 import { concepts, triageResult } from "@/constants";
@@ -92,7 +94,7 @@ type props = {
   triageResult: string;
   setTriageResult: (rre: any, name: string) => void;
   continueTriage: boolean
-
+  previous: () => void
 };
 const schema = yup.object({
   // [form.pulseOximetry.name]: yup
@@ -305,7 +307,8 @@ export function VitalsForm({
   onSubmit,
   triageResult,
   setTriageResult,
-  continueTriage
+  continueTriage,
+  previous
 }: props) {
   const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType
   const [formValues, setFormValues] = useState<any>({});
@@ -396,6 +399,7 @@ export function VitalsForm({
       validationSchema={schema}
       initialValues={{ ...initialValues, [form.units.name]: "mmol/l" }}
       submitButtonText="next"
+      submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Oxygen Saturation and Heart Rate">
@@ -588,28 +592,6 @@ export function VitalsForm({
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
-      {/* <FormFieldContainerLayout title="Pulse">
-        <FieldsContainer>
-          <TextInputField
-            disabled={disableField(form.pulseRate.name)}
-            id={form.pulseRate.name}
-            name={form.pulseRate.name}
-            label={form.pulseRate.label}
-            getValue={(value: string) => {
-              checkTriage(form.pulseRate.name, value);
-            }}
-          />
-          <TextInputField
-            disabled={disableField(form.pulseOximetry.name)}
-            id={form.pulseOximetry.name}
-            name={form.pulseOximetry.name}
-            label={form.pulseOximetry.label}
-            getValue={(value: string) => {
-              checkTriage(form.pulseOximetry.name, value);
-            }}
-          />
-        </FieldsContainer>
-      </FormFieldContainerLayout> */}
 
       <FormFieldContainerLayout last={true} title="GCS">
         <FieldsContainer sx={{ alignItems: "start" }}>
@@ -648,16 +630,11 @@ export function VitalsForm({
           disabled={disableField(form.avpu.name)}
         />
       </FormFieldContainerLayout>
-
-
-
-      {/* <TextInputField
-        id={form.calculatedGCS.name}
-        name={form.calculatedGCS.name}
-        label={form.calculatedGCS.label}
-      /> */}
-
       <br />
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
+        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+      </WrapperBox>
     </FormikInit>
   );
 }

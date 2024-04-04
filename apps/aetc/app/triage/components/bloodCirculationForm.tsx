@@ -6,7 +6,9 @@ import {
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
+  MainButton,
   RadioGroupInput,
+  WrapperBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
@@ -95,6 +97,7 @@ type Prop = {
   setTriageResult?: (triage: any) => void
   triageResult: string
   continueTriage: boolean
+  previous: () => void
 };
 
 const options = [
@@ -102,7 +105,7 @@ const options = [
   { label: "No", value: NO },
 ];
 
-export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }: Prop) => {
+export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, previous }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("");
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, aggregateOrCondition, conditions } =
@@ -127,6 +130,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
       onSubmit={onSubmit}
       enableReinitialize={true}
       submitButtonText="next"
+      submitButton={false}
     >
 
       <FormValuesListener getValues={setFormValues} />
@@ -259,8 +263,15 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
               </FormFieldContainerLayout> */}
             </>
           )}
+
+
         </>
+
       )}
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
+        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+      </WrapperBox>
     </FormikInit>
   );
 };

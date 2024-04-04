@@ -367,6 +367,7 @@ export default function TriageWorkFlow() {
           >
             <PresentingComplaintsForm onSubmit={handlePresentComplaints} />
             <VitalsForm
+              previous={() => setActiveStep(0)}
               triageResult={triageResult}
               setTriageResult={checkTriageResult}
               initialValues={{}}
@@ -374,19 +375,23 @@ export default function TriageWorkFlow() {
               continueTriage={continueTriage}
             />
             <AirwayAndBreathingForm
+              previous={() => setActiveStep(1)}
               continueTriage={continueTriage}
               triageResult={triageResult}
               setTriageResult={checkTriageResult} onSubmit={handleAirwaySubmit} />
             <BloodCirculationForm
+              previous={() => setActiveStep(2)}
               continueTriage={continueTriage}
               triageResult={triageResult}
               onSubmit={handleBloodCirculationSubmit} />
             <ConsciousnessForm
+              previous={() => setActiveStep(3)}
               continueTriage={continueTriage}
               triageResult={triageResult}
               setTriageResult={checkTriageResult}
               onSubmit={handleDisabilitySubmit} />
             <PersistentPainForm
+              previous={() => setActiveStep(4)}
               continueTriage={continueTriage}
               triageResult={triageResult}
               onSubmit={handlePersistentPain} />

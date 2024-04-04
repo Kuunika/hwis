@@ -8,6 +8,7 @@ import {
   MainButton,
   RadioGroupInput,
   TextInputField,
+  WrapperBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
 
@@ -19,7 +20,8 @@ type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult: (triage: any, name: string) => void
   triageResult: string,
-  continueTriage: boolean
+  continueTriage: boolean,
+  previous: () => void
 };
 const form = {
   consciousness: {
@@ -52,7 +54,7 @@ const options = [
 
 const initialValues = getInitialValues(form);
 
-export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, continueTriage }: Prop) => {
+export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous }: Prop) => {
   const { flow } = useContext(TriageContext) as TriageContextType
   const [consciousness, setConsciousness] = useState();
   const [formValues, setFormValues] = useState<any>({});
@@ -86,6 +88,7 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
       enableReinitialize={true}
       onSubmit={onSubmit}
       submitButtonText="next"
+      submitButton={false}
     >
 
       <FormValuesListener getValues={setFormValues} />
@@ -126,6 +129,11 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
           </>
         )
       }
+
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
+        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+      </WrapperBox>
     </FormikInit >
   );
 };
