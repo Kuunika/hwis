@@ -78,9 +78,6 @@ export const FinancingForm: FC<Props> = ({
           <CheckboxesGroup getValue={
             (value: Array<any>) => {
               const v = value?.find(v => v.key == 'insurance' && v.value);
-
-              console.log({ v });
-
               if (v) {
                 setPayment(v.key)
               } else {

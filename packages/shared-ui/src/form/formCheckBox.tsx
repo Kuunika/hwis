@@ -63,7 +63,6 @@ export function CheckboxesGroup({ options, name, getValue }: Props) {
 
     return (
         <FormControl error={hasError} name={name} component="fieldset" variant="standard">
-            <FormLabel component="legend">Assign responsibility</FormLabel>
             <FormGroup>
                 {options.map(option => (<FormControlLabel
                     control={
