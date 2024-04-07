@@ -5,14 +5,14 @@ import { initialPatientRegistration } from "@/hooks/patientReg";
 
 
 
-import { MainButton, MainGrid, WrapperBox } from "shared-ui/src";
+import { MainButton, MainGrid, MainTypography, WrapperBox } from "shared-ui/src";
 import {
   RegistrationCard,
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "../registration/components/common";
 import { addVisit } from "@/hooks/visit";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AETC_VISIT_TYPE, concepts, encounters, roles } from "@/constants";
 import { addEncounter } from "@/hooks/encounter";
 import { useNavigation } from "@/hooks";
@@ -25,9 +25,12 @@ import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { BarcodeDialog } from "./components/barcodeScanner";
 import { getDateTime } from "@/helpers/dateTime";
+import { BarcodeScanner } from "@/components/barcodeScanner";
+import { FaBarcode } from "react-icons/fa6";
 
 
 function InitialRegistration() {
+  const [showDialog, setShowDialog] = useState(false)
   const { refresh, navigateTo } = useNavigation();
   const initialValues = { firstName: "", lastName: "" };
   const {
@@ -180,6 +183,7 @@ function InitialRegistration() {
         >
           <br />
           <br />
+
           <RegistrationMainHeader>Patient Arrival</RegistrationMainHeader>
           <RegistrationDescriptionText>
             The demographics form has been thoughtfully crafted to collect
@@ -201,15 +205,22 @@ function InitialRegistration() {
             />
           )}
           {showForm && (
-            <RegistrationCard>
-              {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
-              <br />
-              {/* <BarcodeDialog open={true} /> */}
-              <InitialRegistrationForm
-                initialValues={initialValues}
-                onSubmit={handleSubmit}
-              />
-            </RegistrationCard>
+            <>
+
+              <RegistrationCard >
+                {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
+                <br />
+                <BarcodeDialog open={showDialog} onClose={() => setShowDialog(false)} />
+                <MainTypography onClick={() => setShowDialog(true)} sx={{ cursor: "pointer", width: "10%", }} variant="h4">
+                  <FaBarcode />
+                </MainTypography>
+                <br />
+                <InitialRegistrationForm
+                  initialValues={initialValues}
+                  onSubmit={handleSubmit}
+                />
+              </RegistrationCard>
+            </>
           )}
           {error && (
             <FormError
@@ -245,6 +256,8 @@ function InitialRegistration() {
     </>
   );
 }
+
+
 
 
 

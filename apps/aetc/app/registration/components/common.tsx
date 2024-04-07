@@ -55,7 +55,7 @@ export const RegistrationCard = ({
   sx,
 }: {
   children: ReactNode;
-  sx?: any;
+  sx?: SxProps;
 }) => {
   return (
     <MainPaper
