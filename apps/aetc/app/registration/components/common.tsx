@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { MainPaper, MainTypography } from "shared-ui/src";
+import { Button, SxProps } from "@mui/material";
 
 export const RegistrationMainHeader = ({
   children,
