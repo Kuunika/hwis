@@ -19,8 +19,10 @@ export const LabOrderTable = () => {
         {
             field: "action", headerName: "Action", renderCell: (cell: any) => {
                 const trigger = () => <MainButton variant="text" sx={{ color: "#000" }} title={<FaPrint />} onClick={() => { }} />
-
-                return <BarcodeComponent trigger={trigger} value={cell.row.accession_number} display={`${patient?.given_name} ${patient?.family_name}`} />
+return <></>
+                // return <BarcodeComponent setTriggerFunc={(test)=>{}} value={cell.row.accession_number} display={`${patient?.given_name} ${patient?.family_name}`}>
+                //     <></>
+                //     <BarcodeComponent
             }
         }
 

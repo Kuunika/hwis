@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import Barcode from 'react-barcode';
 import ReactToPrint from 'react-to-print';
 import { MainButton, MainTypography, WrapperBox } from 'shared-ui/src';
@@ -8,23 +8,29 @@ import zplImageConvert from '@replytechnologies/zpl-image-convert';
 interface Props {
     value: string;
     display?: string;
-    children: ReactNode
+    children: ReactNode,
+    setTriggerFunc:(func:any)=>void
 }
 
-export const BarcodeComponent: React.FC<Props> = ({ value, children }) => {
+export const BarcodeComponent: React.FC<Props> = ({ value, children, setTriggerFunc }) => {
+
     const ref = useRef<HTMLDivElement>(null);
 
-    const convertToCanvas = () => {
-        const element = document.getElementById('barcode')
-        if (element) {
-            htmlToImage.toCanvas(element).then((canvas) => {
-                const imageCanvas = document.body.appendChild(canvas);
-                downloadZplData("test", imageCanvas);
 
-            })
+
+    useEffect(()=>{
+        const convertToCanvas = () => {
+            const element = document.getElementById('barcode')
+            if (element) {
+                htmlToImage.toCanvas(element).then((canvas) => {
+                    const imageCanvas = document.body.appendChild(canvas);
+                    downloadZplData("test", imageCanvas);
+                })
+            }
         }
-    }
 
+        setTriggerFunc(()=>convertToCanvas)
+    },[])
 
 
     return (
@@ -36,7 +42,7 @@ export const BarcodeComponent: React.FC<Props> = ({ value, children }) => {
                     <Barcode width={3} height={50} margin={0} displayValue={false} value={value} />
                 </WrapperBox>
             </div>
-            <MainButton sx={{ color: '#000' }} title={"Print Barcode"} variant='text' onClick={convertToCanvas} />
+        
         </WrapperBox>
     );
 };
