@@ -43,7 +43,7 @@ export const NewRegistrationFlow = () => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completed, setCompleted] = useState(0);
-  const [showForm, setShowForm] = useState(true); //TODO: change to true
+  const [showForm, setShowForm] = useState(false); //TODO: change to true
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType;
@@ -475,7 +475,8 @@ export const NewRegistrationFlow = () => {
             </>
           )}
 
-          {completed == 8 && ( //TODO: change to completed == 6 
+          {/* {completed == 8 && ( //TODO: change to completed == 6  */}
+          {true && ( //TODO: change to completed == 6 
             <>
               <br />
               <br />
@@ -492,8 +493,15 @@ export const NewRegistrationFlow = () => {
                   navigateTo("/dashboard");
                 }}
 
-                printButton={<BarcodeComponent trigger={trigger} value={getPatientId(patient)} display={``} />}
               />
+
+              {/* <BarcodeComponent value={getPatientId(patient)}> */}
+              <br />
+              <BarcodeComponent value={"kkkkk"}>
+                {/* <MainTypography fontWeight="600" variant="h6">{`${patient?.names[0].given_name} ${patient?.names[0].family_name}`}</MainTypography> */}
+                <MainTypography fontWeight="600" variant="h6">James Doe</MainTypography>
+                <MainTypography fontStyle={"italic"}>Dedza, kaliati, village</MainTypography>
+              </BarcodeComponent>
             </>
           )}
 

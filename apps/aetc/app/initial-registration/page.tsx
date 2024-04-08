@@ -27,6 +27,7 @@ import { BarcodeDialog } from "./components/barcodeScanner";
 import { getDateTime } from "@/helpers/dateTime";
 import { BarcodeScanner } from "@/components/barcodeScanner";
 import { FaBarcode } from "react-icons/fa6";
+import { BarcodeComponent } from "@/components/barcode";
 
 
 function InitialRegistration() {
@@ -167,6 +168,9 @@ function InitialRegistration() {
     });
   };
 
+
+  const handleBarcodeScan = (values: any) => { }
+
   return (
     <>
       <Navigation title="Patient Arrival" link="/dashboard" />
@@ -210,7 +214,7 @@ function InitialRegistration() {
               <RegistrationCard >
                 {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
                 <br />
-                <BarcodeDialog open={showDialog} onClose={() => setShowDialog(false)} />
+                <BarcodeDialog onBarcodeScan={handleBarcodeScan} open={showDialog} onClose={() => setShowDialog(false)} />
                 <MainTypography onClick={() => setShowDialog(true)} sx={{ cursor: "pointer", width: "10%", }} variant="h4">
                   <FaBarcode />
                 </MainTypography>
