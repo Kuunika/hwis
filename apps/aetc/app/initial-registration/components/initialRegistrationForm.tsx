@@ -48,6 +48,7 @@ export const InitialRegistrationForm = ({ initialValues, onSubmit }: props) => {
       validationSchema={schema}
       onSubmit={onSubmit}
       submitButton={false}
+      enableReinitialize={true}
     >
 
       <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>

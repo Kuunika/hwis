@@ -27,7 +27,7 @@ export const BarcodeScanner = ({ onScan }: { onScan: (data: any) => void }) => {
             Quagga.start();
 
             Quagga.onDetected((data) => {
-                console.log('Barcode detected:', data.codeResult.code);
+
                 onScan(data.codeResult.code)
             });
 

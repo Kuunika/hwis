@@ -1,11 +1,11 @@
 "use client";
 
 import { InitialRegistrationForm } from "./components";
-import { initialPatientRegistration } from "@/hooks/patientReg";
+import { initialPatientRegistration, searchDDEPatientByNpid } from "@/hooks/patientReg";
 
 
 
-import { MainButton, MainGrid, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainGrid, MainTypography, WrapperBox } from "shared-ui/src";
 import {
   RegistrationCard,
   RegistrationDescriptionText,
@@ -25,15 +25,17 @@ import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { BarcodeDialog } from "./components/barcodeScanner";
 import { getDateTime } from "@/helpers/dateTime";
-import { BarcodeScanner } from "@/components/barcodeScanner";
 import { FaBarcode } from "react-icons/fa6";
-import { BarcodeComponent } from "@/components/barcode";
+
 
 
 function InitialRegistration() {
   const [showDialog, setShowDialog] = useState(false)
+  const [npid, setNpid] = useState('')
   const { refresh, navigateTo } = useNavigation();
-  const initialValues = { firstName: "", lastName: "" };
+  const [initialValues, setInitialValues] = useState({ firstName: '', lastName: '' });
+
+
   const {
     loading,
     setLoading,
@@ -78,6 +80,46 @@ function InitialRegistration() {
     isFetching: fetchingVisitNumber,
     isError: visitNumberError,
   } = getVisitNum();
+
+  const { refetch, isRefetching, data: foundPatients } = searchDDEPatientByNpid(npid);
+
+
+  const formatScanSearch = () => {
+
+    const defaultInitial = { firstName: "", lastName: "" };
+
+    if (!foundPatients) return defaultInitial;
+
+    if (foundPatients?.locals.length > 0) {
+      return {
+        firstName: foundPatients.locals[0].given_name,
+        lastName: foundPatients.locals[0].family_name,
+      }
+    }
+
+    if (foundPatients?.remotes.length > 0) {
+      return {
+        firstName: foundPatients.remotes[0].given_name,
+        lastName: foundPatients.remotes[0].family_name,
+      }
+    }
+
+    return defaultInitial
+  }
+
+  useEffect(() => {
+    setInitialValues(formatScanSearch());
+
+  }, [foundPatients])
+
+
+
+  //handle scan data
+  useEffect(() => {
+    if (npid == '') return
+    refetch()
+
+  }, [npid])
 
   // after patient registration create a visit
   useEffect(() => {
@@ -169,7 +211,7 @@ function InitialRegistration() {
   };
 
 
-  const handleBarcodeScan = (values: any) => { }
+
 
   return (
     <>
@@ -214,7 +256,7 @@ function InitialRegistration() {
               <RegistrationCard >
                 {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
                 <br />
-                <BarcodeDialog onBarcodeScan={handleBarcodeScan} open={showDialog} onClose={() => setShowDialog(false)} />
+                <BarcodeDialog isLoading={isRefetching} onBarcodeScan={(value: any) => setNpid(value)} open={showDialog} onClose={() => setShowDialog(false)} />
                 <MainTypography onClick={() => setShowDialog(true)} sx={{ cursor: "pointer", width: "10%", }} variant="h4">
                   <FaBarcode />
                 </MainTypography>
@@ -222,6 +264,7 @@ function InitialRegistration() {
                 <InitialRegistrationForm
                   initialValues={initialValues}
                   onSubmit={handleSubmit}
+
                 />
               </RegistrationCard>
             </>
