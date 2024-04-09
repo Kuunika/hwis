@@ -27,7 +27,7 @@ export const ClientWaitingForAssessment = () => {
 
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit Number", },
+    { field: "aetc_visit_number", headerName: "Visit No", },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
@@ -76,7 +76,7 @@ export const ClientWaitingForAssessment = () => {
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
+      flex: 1.2,
       renderCell: (cell: any) => {
         return (
           <>

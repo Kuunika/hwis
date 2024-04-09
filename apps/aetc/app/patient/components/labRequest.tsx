@@ -154,7 +154,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
               </WrapperBox>
               <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mx: 1 }}>
                 <MainTypography variant="h5"> Specimen Site</MainTypography>
-                <SearchInput setSearch={setSearchSampleTypes} />
+                <SearchInput setSearch={setSearchSpecimenSites} />
                 <ListSelect
                   onSelectItem={(specimen: string | number) => { setRequest((req: any) => ({ ...req, specimen })) }}
                   height="25ch"
@@ -165,7 +165,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
               </WrapperBox>
               <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 } }}>
                 <MainTypography variant="h5">Reason for test</MainTypography>
-                <SearchInput setSearch={setSearchSpecimenSites} />
+                <SearchInput setSearch={setSearchSampleTypes} />
                 <ListSelect
                   onSelectItem={(sampleType: string | number) => { setRequest((req: any) => ({ ...req, sampleType })) }}
                   height="25ch"

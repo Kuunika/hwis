@@ -104,6 +104,8 @@ function InitialRegistration() {
       }
     }
 
+    setShowDialog(false);
+
     return defaultInitial
   }
 

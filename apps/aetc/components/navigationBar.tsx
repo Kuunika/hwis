@@ -27,7 +27,6 @@ export const NavBar = () => {
 
 
   useEffect(() => {
-
     if (localStorage) {
       if (!Boolean(localStorage.getItem("accessToken"))) {
         // navigateTo("/")
