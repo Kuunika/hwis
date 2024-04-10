@@ -147,7 +147,7 @@ export function NewStepperContainer({
                 }}
                 onChange={() => {
                   if (setActive) {
-                    setActive(key);
+                    // setActive(key);
                   }
                 }}
                 expanded={key == active}

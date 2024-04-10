@@ -1,4 +1,4 @@
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import rectangleScan from "../../../icons/rectanglescan.svg";
@@ -6,6 +6,8 @@ import documentDemographics from "../../../icons/documentdemographics.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { useParameters } from "@/hooks";
+import { GenericDialog } from "@/components";
+import { ReactNode } from "react";
 
 const MySwal = withReactContent(Swal);
 
@@ -131,3 +133,11 @@ export const LabRequest = (patientId: any) => {
     heightAuto: false,
   });
 };
+
+
+export const ShowFormErrors = ({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) => {
+  return <GenericDialog maxWidth="sm" title="You have the following errors" open={open} onClose={onClose}>
+    {children}
+    <MainButton title={"ok"} onClick={onClose} />
+  </GenericDialog>
+}

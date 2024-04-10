@@ -1,0 +1,1 @@
+declare module '@replytechnologies/zpl-image-convert';

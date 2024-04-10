@@ -30,15 +30,15 @@ const nameRegex = /^[a-zA-Z]+(?:['-][a-zA-Z]+)*$/;
 // Define the Yup schema
 const schema = yup.object({
   [form.firstName.name]: yup
-      .string()
-      .matches(nameRegex, { message: 'Name not valid' })
-      .required()
-      .label(form.firstName.label),
+    .string()
+    .matches(nameRegex, { message: 'Name not valid' })
+    .required()
+    .label(form.firstName.label),
   [form.lastName.name]: yup
-      .string()
-      .matches(nameRegex, { message: 'Name not valid' })
-      .required()
-      .label(form.lastName.label),
+    .string()
+    .matches(nameRegex, { message: 'Name not valid' })
+    .required()
+    .label(form.lastName.label),
 });
 
 export const InitialRegistrationForm = ({ initialValues, onSubmit }: props) => {
@@ -48,7 +48,9 @@ export const InitialRegistrationForm = ({ initialValues, onSubmit }: props) => {
       validationSchema={schema}
       onSubmit={onSubmit}
       submitButton={false}
+      enableReinitialize={true}
     >
+
       <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
         <TextInputField
           name={form.firstName.name}
@@ -61,7 +63,7 @@ export const InitialRegistrationForm = ({ initialValues, onSubmit }: props) => {
           id={form.lastName.name}
         />
       </WrapperBox>
-      <MainButton type="submit" title={"Submit"} onClick={() => {}} />
+      <MainButton type="submit" title={"Submit"} onClick={() => { }} />
     </FormikInit>
   );
 };

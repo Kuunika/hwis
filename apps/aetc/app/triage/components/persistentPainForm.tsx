@@ -5,7 +5,9 @@ import {
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
+  MainButton,
   RadioGroupInput,
+  WrapperBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
@@ -46,8 +48,9 @@ const form = {
 type Prop = {
   onSubmit: (values: any) => void;
 
-  triageResult:string,
-  continueTriage:boolean
+  triageResult: string,
+  continueTriage: boolean
+  previous: () => void
 };
 
 const schema = Yup.object().shape({
@@ -71,7 +74,7 @@ const options = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
 ];
-export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage }: Prop) => {
+export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, previous }: Prop) => {
   const { updateConditions } = useConditions();
   const [formValues, setFormValues] = useState<any>({});
 
@@ -84,8 +87,9 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage }: P
       validationSchema={schema}
       initialValues={initialsValues}
       onSubmit={onSubmit}
+      submitButton={false}
     >
-     
+
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout title="Seizures and Focal Neurologic">
@@ -155,6 +159,10 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage }: P
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
+        <MainButton sx={{ m: 0.5 }} title={"submit"} type="submit" onClick={() => { }} />
+      </WrapperBox>
     </FormikInit>
   );
 };

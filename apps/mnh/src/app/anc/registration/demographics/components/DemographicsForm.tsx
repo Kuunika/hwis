@@ -152,6 +152,8 @@ export const DemographicsForm: FC<Prop> = ({ onSubmit, initialValues }) => {
       </FieldsContainer>
 
       <FieldsContainer sx={{ justifyContent: "space-between" }}>
+
+
         <SelectInputField
           name={form.currentDistrict.name}
           id={form.currentDistrict.name}

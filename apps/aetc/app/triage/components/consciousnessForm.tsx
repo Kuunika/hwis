@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -8,17 +8,20 @@ import {
   MainButton,
   RadioGroupInput,
   TextInputField,
+  WrapperBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
 
 import { getInitialValues } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
+import { TriageContext, TriageContextType } from "@/contexts";
 
 type Prop = {
   onSubmit: (values: any) => void;
-  setTriageResult:(triage:any, name:string)=>void
-  triageResult:string,
-  continueTriage:boolean
+  setTriageResult: (triage: any, name: string) => void
+  triageResult: string,
+  continueTriage: boolean,
+  previous: () => void
 };
 const form = {
   consciousness: {
@@ -51,9 +54,11 @@ const options = [
 
 const initialValues = getInitialValues(form);
 
-export const ConsciousnessForm = ({ onSubmit , triageResult, setTriageResult, continueTriage}: Prop) => {
+export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous }: Prop) => {
+  const { flow } = useContext(TriageContext) as TriageContextType
   const [consciousness, setConsciousness] = useState();
   const [formValues, setFormValues] = useState<any>({});
+
   const checkGcs = (value: number) => {
     if (!value) {
       setTriageResult("", form.gcs.name);
@@ -61,11 +66,11 @@ export const ConsciousnessForm = ({ onSubmit , triageResult, setTriageResult, co
     }
 
     if (value < 10) {
-      setTriageResult("red",form.gcs.name);
+      setTriageResult("red", form.gcs.name);
     }
 
     if (value >= 10 && value <= 14) {
-      setTriageResult("yellow",form.gcs.name);
+      setTriageResult("yellow", form.gcs.name);
     }
   };
 
@@ -75,14 +80,17 @@ export const ConsciousnessForm = ({ onSubmit , triageResult, setTriageResult, co
 
 
 
+
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={initialValues}
+      initialValues={{ ...initialValues, [form.consciousness.name]: flow['gsc'] < 15 ? YES : NO }}
+      enableReinitialize={true}
       onSubmit={onSubmit}
       submitButtonText="next"
+      submitButton={false}
     >
-    
+
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout
@@ -98,27 +106,34 @@ export const ConsciousnessForm = ({ onSubmit , triageResult, setTriageResult, co
         />
       </FormFieldContainerLayout>
 
-      {consciousness == YES && (
-        <>
-          <FormFieldContainerLayout last={true} title="Blood Glucose and GCS">
-            <FieldsContainer>
-              <TextInputField
-                name={form.bloodGlucose.name}
-                label={form.bloodGlucose.label}
-                id={form.bloodGlucose.name}
-                disabled={disableField(form.bloodGlucose.name)}
-              />
-              <TextInputField
-                name={form.gcs.name}
-                label={form.gcs.label}
-                id={form.gcs.name}
-                getValue={checkGcs}
-                disabled={disableField(form.gcs.name)}
-              />
-            </FieldsContainer>
-          </FormFieldContainerLayout>
-        </>
-      )}
-    </FormikInit>
+      {
+        consciousness == YES && (
+          <>
+            <FormFieldContainerLayout last={true} title="Blood Glucose and GCS">
+              <FieldsContainer>
+                <TextInputField
+                  name={form.bloodGlucose.name}
+                  label={form.bloodGlucose.label}
+                  id={form.bloodGlucose.name}
+                  disabled={disableField(form.bloodGlucose.name)}
+                />
+                <TextInputField
+                  name={form.gcs.name}
+                  label={form.gcs.label}
+                  id={form.gcs.name}
+                  getValue={checkGcs}
+                  disabled={disableField(form.gcs.name)}
+                />
+              </FieldsContainer>
+            </FormFieldContainerLayout>
+          </>
+        )
+      }
+
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
+        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+      </WrapperBox>
+    </FormikInit >
   );
 };

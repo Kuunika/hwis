@@ -154,8 +154,8 @@ export const concepts = {
   UNCLE_AUNTIE: "8d91a3dc-c2cc-11de-8d13-0010c6dffd0f",
   AUNTIE: "ba453f92-8d80-11d8-abbb-0024217bb78e", // temporary
   GUARDIAN: "ba453344-8d80-11d8-abbb-0024217bb78e",
-  SPOUSE: "be55b24e-1691-11df-97a5-7038c432aabf",
-  SIBLING: "be49707e-1691-11df-97a5-7038c432aabf"
+  SPOUSE: "c397168a-f8bd-4ad1-b865-e608c1f3487e",
+  SIBLING: "8d91a01c-c2cc-11de-8d13-0010c6dffd0f",
 
   //patient referred from
   REFERRED_FROM: "b9d29b4a-8d80-11d8-abbb-0024217bb78e",
@@ -169,7 +169,10 @@ export const concepts = {
   PAYMENT_OPTIONS: "a4a38479-db24-44ec-9325-28e646162185",
 
   // TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096"
-  TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096"
+  TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096",
+
+
+  ELECTIVE: "2d7d1b0c-1867-4dbd-8b49-4335548a42bf",
 };
 
 export const triageResult = {

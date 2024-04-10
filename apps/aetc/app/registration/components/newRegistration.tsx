@@ -1,5 +1,6 @@
 "use client";
 import { useState, ReactNode, useEffect, useRef, useContext } from "react";
+import { Grid } from "@mui/material";
 import {
   MainButton,
   MainGrid,
@@ -10,6 +11,7 @@ import {
   DemographicsForm,
   FinancingForm,
   ReferralForm,
+  ShowFormErrors,
   SocialHistoryForm,
 } from "../components";
 import { useNavigation, useParameters } from "@/hooks";
@@ -44,8 +46,10 @@ export const NewRegistrationFlow = () => {
   const [showForm, setShowForm] = useState(true); //TODO: change to true
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
-
+  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType;
+  const [formError, setFormError] = useState<{ hasError: boolean, errors: any }>({ hasError: false, errors: '' })
+  const scrollableRef = useRef<any>({});
+  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { })
 
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
@@ -61,7 +65,6 @@ export const NewRegistrationFlow = () => {
   })
 
   const { refetch, isFetching, isSuccess, data: ddePatients } = searchByDemographics(patientValues.firstName, patientValues.lastName, patientValues.gender, patientValues.birthdate, patientValues.homeVillage, patientValues.homeTA, patientValues.homeDistrict)
-
   const { data: initialRegistrationList } =
     getPatientsWaitingForRegistrations();
   const { params } = useParameters();
@@ -181,6 +184,8 @@ export const NewRegistrationFlow = () => {
     }
   }, [relationshipCreated]);
 
+  console.log('======>', { patient })
+
   // create referral
   useEffect(() => {
     if (socialHistoryCreated) {
@@ -205,12 +210,26 @@ export const NewRegistrationFlow = () => {
       setMessage("adding financing data...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
       const dateTime = getDateTime();
+
+      const payments = formData.financing[concepts.PAYMENT_OPTIONS]
+
+      const paymentObs = payments.filter((pay: any) => pay.value).map((p: any) => {
+        return {
+          concept: concepts.PAYMENT_OPTIONS,
+          value: p.key,
+          obsDatetime: dateTime,
+        }
+      })
+
+
+      delete formData.financing[concepts.PAYMENT_OPTIONS]
+
       createFinancing({
         encounterType: encounters.FINANCING,
         visit: patient?.visit_uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.financing, dateTime),
+        obs: [...getObservations(formData.financing, dateTime), ...paymentObs],
       });
     }
   }, [referralCreated]);
@@ -250,6 +269,27 @@ export const NewRegistrationFlow = () => {
 
 
 
+  const formatErrorsToList = (errors: any) => {
+
+    const errorKeys = Object.keys(errors);
+
+    if (errorKeys.length == 0) {
+      return;
+    }
+
+    const errorList = <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+      {errorKeys.map(key => {
+        return <MainTypography color={"#800000"} variant="subtitle2" key={key}>{errors[key]}</MainTypography>
+      })}
+    </WrapperBox>
+
+    setFormError({
+      hasError: true,
+      errors: errorList
+    })
+
+
+  }
 
 
   const changeActive = async (step: number) => {
@@ -257,32 +297,41 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } =
         demographicsContext;
       submitForm();
+      formatErrorsToList(errors)
 
       if (isValid && dirty) {
         setActive(active + 1);
+        // if (scrollableRef && scrollableRef.current) {
+        scrollableRef.current.scrollTop = 0;
+        // }
       }
     }
     if (active == 2) {
       const { submitForm, errors, isValid, touched, dirty } =
         socialHistoryContext;
       submitForm();
+      formatErrorsToList(errors)
 
       if (isValid && dirty) {
         setActive(active + 1);
+        scrollableRef.current.scrollTop = 0;
       }
     }
     if (active == 3) {
       const { submitForm, errors, isValid, touched, dirty } = referralContext;
       submitForm();
+      formatErrorsToList(errors)
 
       if (isValid) {
         setActive(active + 1);
+        scrollableRef.current.scrollTop = 0;
       }
     }
     if (active == 4) {
       const { submitForm, errors, isValid, touched, dirty } =
         financingFormContext;
       submitForm();
+      formatErrorsToList(errors)
 
       if (isValid && dirty) {
         // setActive(active + 1);
@@ -338,14 +387,14 @@ export const NewRegistrationFlow = () => {
   }
 
 
-
   return (
     <>
       <OverlayLoader open={isFetching} />
       <SearchPotentialDuplicates close={() => setDialogOpen(false)} open={isSuccess && dialogOpen} ddePatients={ddePatients ? ddePatients : []} />
-      <MainGrid sx={{ height: "95vh", position: "relative", overflowY: "auto" }} container>
+      <Grid sx={{ height: "95vh", position: "relative" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
-        <MainGrid
+        <Grid
+          ref={scrollableRef}
           item
           xs={10}
           md={6}
@@ -356,14 +405,20 @@ export const NewRegistrationFlow = () => {
             flexDirection: "column",
             height: "90vh",
             overflowY: "auto"
-
           }}
         >
           {showForm && (
             <>
+
+              <ShowFormErrors open={formError.hasError} onClose={() => setFormError({ hasError: false, errors: "" })}>
+                {formError.errors}
+              </ShowFormErrors>
               <br />
               <br />
-              {active == 1 && (
+
+              <WrapperBox sx={{
+                display: active == 1 ? "block" : "none"
+              }}>
                 <DemographicsForm
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
@@ -377,39 +432,50 @@ export const NewRegistrationFlow = () => {
                     })
 
                     if (registrationType != 'remote') {
-
                       setDialogOpen(true)
                     }
 
                   }
                   }
                 />
-              )}
-              {active == 2 && (
+              </WrapperBox>
+
+              <WrapperBox sx={{
+                display: active == 2 ? "block" : "none"
+              }}>
                 <SocialHistoryForm
                   setContext={setSocialHistoryContext}
                   onSubmit={(values: any) =>
                     (formData["socialHistory"] = values)
                   }
                 />
-              )}
-              {active == 3 && (
+              </WrapperBox>
+
+              <WrapperBox sx={{
+                display: active == 3 ? "block" : "none"
+              }}>
                 <ReferralForm
                   setContext={setReferralContext}
                   initialValues={{}}
                   onSubmit={(values: any) => (formData["referral"] = values)}
                 />
-              )}
-              {active == 4 && (
+              </WrapperBox>
+
+
+              <WrapperBox sx={{
+                display: active == 4 ? "block" : "none"
+              }}>
                 <FinancingForm
                   setContext={setFinancingFormContext}
                   initialValues={{}}
                   onSubmit={handleSubmitFinancing}
                 />
-              )}
+              </WrapperBox>
+
             </>
           )}
 
+          {/* {completed == 8 && ( //TODO: change to completed == 6  */}
           {completed == 8 && ( //TODO: change to completed == 6 
             <>
               <br />
@@ -427,8 +493,24 @@ export const NewRegistrationFlow = () => {
                   navigateTo("/dashboard");
                 }}
 
-                printButton={<BarcodeComponent trigger={trigger} value={getPatientId(patient)} display={``} />}
               />
+
+              {/* <BarcodeComponent value={getPatientId(patient)}> */}
+              <br />
+              <>
+                <BarcodeComponent setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={getPatientId(patient)}>
+                  <></>
+                  {/* <MainTypography fontWeight="600" variant="h6">{`${patient?.names[0].given_name} ${patient?.names[0].family_name}`}</MainTypography> */}
+                  <MainTypography fontWeight="600" variant="h6">{`${patient.names[0].given_name} ${patient.names[0].family_name}`}</MainTypography>
+                  <MainTypography fontStyle={"italic"}>{`${patient?.addresses[0]?.address1}, ${patient?.addresses[0]?.address2}, ${patient?.addresses[0]?.address3}`}</MainTypography>
+                </BarcodeComponent>
+                <MainButton sx={{ color: '#000' }} title={"Print Barcode"} variant='text' onClick={() => {
+                  const func = triggerPrintFunc();
+                  if (typeof func === 'function') {
+                    func()
+                  }
+                }} />
+              </>
             </>
           )}
 
@@ -464,12 +546,12 @@ export const NewRegistrationFlow = () => {
               />
             </>
           )}
-        </MainGrid>
+        </Grid>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         {showForm && (
-          <RegistrationNavigation active={active} setActive={changeActive} />
+          <RegistrationNavigation onPrevious={(active: number) => setActive(active)} active={active} setActive={changeActive} />
         )}
-      </MainGrid>
+      </Grid>
     </>
   );
 };
@@ -477,11 +559,13 @@ export const NewRegistrationFlow = () => {
 const RegistrationNavigation = ({
   active,
   setActive,
+  onPrevious
 }: {
   active: number;
   setActive: (step: number) => void;
+  onPrevious: (active: number) => void
 }) => {
-  const { navigateTo } = useNavigation();
+
   const buttonStyles = {
     width: "126px",
     height: "44px",
@@ -490,12 +574,7 @@ const RegistrationNavigation = ({
     gap: "8px",
   };
 
-  const scrollToComponent = (id: number) => {
-    const element = document.getElementById(id.toString());
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
+
   return (
     <WrapperBox
       sx={{
@@ -522,9 +601,9 @@ const RegistrationNavigation = ({
         }}
         title={"previous"}
         onClick={() => {
+
           if (active == 1) return;
-          setActive(active - 1);
-          scrollToComponent(active - 1)
+          onPrevious(active - 1);
         }}
       />
       <WrapperBox
@@ -565,7 +644,7 @@ const RegistrationNavigation = ({
           //   return;
           // }
           setActive(active + 1);
-          scrollToComponent(active + 1)
+
         }}
       />
     </WrapperBox>
@@ -583,7 +662,7 @@ const NavBox = ({
 }) => {
   return (
     <WrapperBox
-      onClick={onClick}
+      onClick={() => { }}
       sx={{
         display: "flex",
         alignItems: "center",
@@ -592,7 +671,7 @@ const NavBox = ({
         borderBottom: active ? "solid 1px #00190E" : "",
         mx: "2ch",
         color: !active ? "#636363" : "",
-        cursor: "pointer",
+        // cursor: "pointer",
       }}
     >
       <MainTypography

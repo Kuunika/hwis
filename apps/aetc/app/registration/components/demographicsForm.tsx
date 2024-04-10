@@ -126,7 +126,10 @@ const form = {
     name: "guardianNumber",
     label: "Phone Number",
   },
-
+  guardianPresent: {
+    name: "guardianPresent",
+    label: "Guardian Present",
+  },
 
 
 };
@@ -209,6 +212,8 @@ const schema = Yup.object().shape({
     .matches(phoneRegex, "Phone Number valid")
     .min(10)
     .label(form.guardianNumber.label),
+  [form.guardianPresent.name]: Yup.string().required()
+    .label(form.guardianPresent.label),
 });
 
 const init = getInitialValues(form);
@@ -247,6 +252,7 @@ export const DemographicsForm: FC<Prop> = ({
   initialValues = init,
   setContext,
 }) => {
+  const [guardianAvailable, setGuardianAvailable] = useState('')
   const { initialRegisteredPatient, patient, registrationType, searchedPatient } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
@@ -258,14 +264,21 @@ export const DemographicsForm: FC<Prop> = ({
 
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
+  const [guardianChecked, setGuardianChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
+
 
   const { params } = useParameters();
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+  const handleGuardianChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGuardianChecked(event.target.checked);
+  };
+
+
 
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
@@ -280,6 +293,8 @@ export const DemographicsForm: FC<Prop> = ({
   useEffect(() => {
     if (fieldFunction && checked) {
       const { setFieldValue } = fieldFunction;
+
+      setCurrentSelectedLocation(selectedLocation);
       setFieldValue(
         form.currentDistrict.name,
         formValues[form.homeDistrict.name]
@@ -293,7 +308,29 @@ export const DemographicsForm: FC<Prop> = ({
         formValues[form.homeTraditionalAuthority.name]
       );
     }
-  }, [checked]);
+  }, [checked, formValues]);
+
+
+
+
+
+  useEffect(() => {
+    if (fieldFunction && guardianChecked) {
+      const { setFieldValue } = fieldFunction;
+      setFieldValue(
+        form.guardianFirstName.name,
+        formValues[form.nextOfKinFirstName.name]
+      );
+      setFieldValue(
+        form.guardianLastName.name,
+        formValues[form.nextOfKinLastName.name]
+      );
+      setFieldValue(
+        form.guardianNumber.name,
+        formValues[form.guardianPhoneNumber.name]
+      );
+    }
+  }, [guardianChecked]);
 
 
   let _init = {
@@ -312,6 +349,10 @@ export const DemographicsForm: FC<Prop> = ({
       [form.currentVillage.name]: patient?.addresses[1]?.address1,
     }
   }
+
+  let currentLocation = {};
+
+
 
 
   return (
@@ -400,9 +441,12 @@ export const DemographicsForm: FC<Prop> = ({
             multiple={false}
             getValue={(value) => {
               const district = districts.find(d => d.name == value);
+              if (district) {
 
-              if (district)
                 setSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+
+              }
+
             }}
             options={districts ? districts.map((d) => ({
               id: d.name,
@@ -416,7 +460,7 @@ export const DemographicsForm: FC<Prop> = ({
             getValue={(value) => {
               const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
 
-              console.log({ traditionalAuthority })
+
               if (traditionalAuthority)
                 setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.traditional_authority_id.toString() }))
             }}
@@ -448,11 +492,10 @@ export const DemographicsForm: FC<Prop> = ({
           <SearchComboBox
             name={form.currentDistrict.name}
             label={form.currentDistrict.label}
-            disabled={checked}
+            // disabled={checked}
             multiple={false}
             getValue={(value) => {
               const district = districts.find(d => d.name == value);
-
               if (district)
                 setCurrentSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
             }}
@@ -469,7 +512,7 @@ export const DemographicsForm: FC<Prop> = ({
               if (district)
                 setCurrentSelectedLocation(selection => ({ ...selection, traditionalAuthority: district.traditional_authority_id.toString() }))
             }}
-            disabled={checked}
+            // disabled={checked}
             multiple={false}
             options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == currentSelectedLocation.district).map(t => ({
               id: t.name,
@@ -480,7 +523,7 @@ export const DemographicsForm: FC<Prop> = ({
           <SearchComboBox
             name={form.currentVillage.name}
             label={form.currentVillage.label}
-            disabled={checked}
+            // disabled={checked}
             multiple={false}
             options={villages ? villages.filter(v => v.traditional_authority_id.toString() == currentSelectedLocation.traditionalAuthority).map((v: any) => ({
               id: v.name,
@@ -522,21 +565,40 @@ export const DemographicsForm: FC<Prop> = ({
 
         <RegistrationCard>
           <RegistrationCardTitle>Guardian Information</RegistrationCardTitle>
-          <TextInputField
-            name={form.guardianFirstName.name}
-            id={form.guardianFirstName.name}
-            label={form.guardianFirstName.label}
+
+          <RadioGroupInput
+            name={form.guardianPresent.name}
+            getValue={(value: any) => setGuardianAvailable(value)}
+            label={form.guardianPresent.label}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
           />
-          <TextInputField
-            name={form.guardianLastName.name}
-            id={form.guardianLastName.name}
-            label={form.guardianLastName.label}
-          />
-          <TextInputField
-            name={form.guardianNumber.name}
-            id={form.guardianNumber.name}
-            label={form.guardianNumber.label}
-          />
+
+          {guardianAvailable == "yes" && <>
+            <WrapperBox>
+              <FormControlLabel
+                control={<Checkbox checked={guardianChecked} onChange={handleGuardianChecked} />}
+                label="same as next of kin"
+              />
+            </WrapperBox>
+            <TextInputField
+              name={form.guardianFirstName.name}
+              id={form.guardianFirstName.name}
+              label={form.guardianFirstName.label}
+            />
+            <TextInputField
+              name={form.guardianLastName.name}
+              id={form.guardianLastName.name}
+              label={form.guardianLastName.label}
+            />
+            <TextInputField
+              name={form.guardianNumber.name}
+              id={form.guardianNumber.name}
+              label={form.guardianNumber.label}
+            />
+          </>}
         </RegistrationCard>
       </FormikInit>
     </>

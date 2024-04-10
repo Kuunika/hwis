@@ -6,7 +6,9 @@ import {
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
+  MainButton,
   RadioGroupInput,
+  WrapperBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
 
@@ -74,9 +76,10 @@ const initialValues = getInitialValues(form);
 
 type Prop = {
   onSubmit: (values: any) => void;
-  setTriageResult:(triage:any,name:string)=>void
-  triageResult:string
-  continueTriage:boolean
+  setTriageResult: (triage: any, name: string) => void;
+  triageResult: string;
+  continueTriage: boolean;
+  previous: () => void
 };
 
 const radioOptions = [
@@ -84,9 +87,9 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 
-export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult, continueTriage }: Prop) => {
+export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous }: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
- 
+
   const [formValues, setFormValues] = useState<any>({});
 
   const {
@@ -102,16 +105,16 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
 
     setFinalCondition(cond);
 
-  
+
   }, [conditions]);
 
   const handleIsAirWayCompromised = (value: string) => {
     if (value == YES) {
-      setTriageResult("red",form.airway.name);
-    
+      setTriageResult("red", form.airway.name);
+
       return;
     }
-    setTriageResult("",form.airway.name);
+    setTriageResult("", form.airway.name);
   };
 
   const disableField = (formField: string) => {
@@ -126,8 +129,9 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
       initialValues={initialValues}
       onSubmit={onSubmit}
       submitButtonText="next"
+      submitButton={false}
     >
- 
+
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout
@@ -252,8 +256,10 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
           </FieldsContainer>
         </FormFieldContainerLayout>
       )} */}
-
-      <br />
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
+        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+      </WrapperBox>
     </FormikInit>
   );
 };

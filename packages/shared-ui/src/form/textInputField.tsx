@@ -21,13 +21,13 @@ type Prop = {
   unitOfMeasure?: string;
   inputIcon?: any;
   helperTextWidth?: string;
+  handleBlurEvent?: (value: any) => void
 };
 
 export const TextInputField: FC<Prop> = ({
   id,
   name,
   label,
-
   sx,
   type,
   placeholder = "",
@@ -40,13 +40,17 @@ export const TextInputField: FC<Prop> = ({
   inputIcon,
   unitOfMeasure,
   helperTextWidth = "25ch",
+  handleBlurEvent
 }) => {
-  const { value, handleChange, hasError, errorMessage, handleBlur } =
+  const { value, handleChange, hasError, errorMessage, handleBlur, } =
     useFormikField(name);
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
+
+
+
 
   return (
     <FormControl variant="standard" sx={{ mb: "1ch", ...sx }}>
@@ -72,7 +76,12 @@ export const TextInputField: FC<Prop> = ({
         name={name}
         value={value}
         type={type}
-        onBlur={handleBlur}
+        onBlur={(event: any) => {
+          handleBlur(event);
+          if (handleBlurEvent)
+            handleBlurEvent(event.target.value)
+
+        }}
         onChange={handleChange}
         error={hasError}
         size={size}

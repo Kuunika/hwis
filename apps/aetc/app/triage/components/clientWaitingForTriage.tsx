@@ -1,18 +1,21 @@
-import { getTime } from "@/helpers/dateTime";
+import { getCATTime, getTime } from "@/helpers/dateTime";
+import { useState } from "react"
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 import Image from "next/image";
+import { AbscondButton } from "@/components/abscondButton";
 
 export const ClientWaitingForTriage = () => {
+  const [deleted, setDeleted] = useState('')
   const { data: patients, isLoading, isRefetching } = getPatientsWaitingForTriage();
   const { navigateTo } = useNavigation();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
+  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
+    { field: "aetc_visit_number", headerName: "Visit Number" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
@@ -30,13 +33,17 @@ export const ClientWaitingForTriage = () => {
     {
       field: "action",
       headerName: "Action",
+      flex: 1,
       renderCell: (cell: any) => {
         return (
-          <MainButton
-            sx={{ fontSize: "12px" }}
-            title={"start"}
-            onClick={() => navigateTo(`/triage/${cell.id}/start`)}
-          />
+          <>
+            <MainButton
+              sx={{ fontSize: "12px" }}
+              title={"start"}
+              onClick={() => navigateTo(`/triage/${cell.id}/start`)}
+            />
+            <AbscondButton onDelete={() => setDeleted(cell.id)} visitId={cell.row.visit_uuid} patientId={cell.id} />
+          </>
         );
       },
     },
@@ -64,7 +71,7 @@ function CalculateAggregateTime({ patientId }: { patientId: string }) {
 
   const encounterDatetime = encounter.encounter_datetime;
 
-  const currentTime = Date.now();
+  const currentTime: any = getCATTime()
 
   const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
 
@@ -107,7 +114,7 @@ function CalculateWaitingTime({ patientId }: { patientId: string }) {
 
   const encounterDatetime = encounter.encounter_datetime;
 
-  const currentTime = Date.now();
+  const currentTime: any = getCATTime()
 
   const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
 

@@ -1,26 +1,31 @@
-import { getTime } from "@/helpers/dateTime";
+import { getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getVisitNum } from "@/hooks/visitNumber";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 import Image from "next/image";
+import { AbscondButton } from "@/components/abscondButton";
 
 export const InitialRegistrationList = () => {
   const { navigateTo } = useNavigation();
   const { data } = getVisitNum();
+  const [deleted, setDeleted] = useState('')
   const {
     data: patients,
     isLoading,
     isRefetching
-
   } = getPatientsWaitingForPrescreening();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) }));
+  const rows = patients?.sort((p1, p2) => {
+    return Number(p1.aetc_visit_number) - Number(p2.aetc_visit_number)
+  })?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted)
+
+
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit Number", flex: 1 },
+    { field: "aetc_visit_number", headerName: "Visit Number", },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
@@ -32,14 +37,18 @@ export const InitialRegistrationList = () => {
 
     {
       field: "action",
+      flex: 1,
       headerName: "Action",
       renderCell: (cell: any) => {
         return (
-          <MainButton
-            sx={{ fontSize: "12px" }}
-            title={"screen"}
-            onClick={() => navigateTo(`/prescreening/${cell.id}`)}
-          />
+          <>
+            <MainButton
+              sx={{ fontSize: "12px" }}
+              title={"screen"}
+              onClick={() => navigateTo(`/prescreening/${cell.id}`)}
+            />
+            <AbscondButton onDelete={() => setDeleted(cell.id)} visitId={cell.row.visit_uuid} patientId={cell.id} />
+          </>
         );
       },
     },
@@ -52,7 +61,7 @@ export const InitialRegistrationList = () => {
 
 function CalculateWaitingTime({ patientId }: { patientId: string }) {
   const { data, isLoading } = getPatientsEncounters(patientId);
-  console.log(data)
+
 
 
   const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
@@ -68,7 +77,9 @@ function CalculateWaitingTime({ patientId }: { patientId: string }) {
 
   const encounterDatetime = encounter.encounter_datetime;
 
-  const currentTime = Date.now();
+  const currentTime: any = getCATTime()
+
+  console.log(Date.now())
 
   const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
 

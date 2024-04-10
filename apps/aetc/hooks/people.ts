@@ -46,7 +46,6 @@ export const searchPatients = (patient: any) => {
     const givenName = patient.firstName;
     const familyName = patient.lastName
     return searchPerson(`given_name=${givenName}&family_name=${familyName}&gender=&middle_name`).then((response) => response.data.map((person: any) => {
-
       return {
         person_id: person.person_id,
         uuid: person.uuid,
@@ -58,10 +57,10 @@ export const searchPatients = (patient: any) => {
     }));
   }
 
-
   return useQuery({
     queryKey: ["search"],
     queryFn: () => getall(patient),
     enabled: false,
   });
 };
+

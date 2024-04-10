@@ -16,8 +16,27 @@ export default function AuthGuard(Component: any, roles: Array<string>) {
             if (localStorage) {
                 if (!Boolean(localStorage.getItem("accessToken"))) {
                     setShow(false)
+                    localStorage.clear()
                     navigateTo("/")
                 } else {
+                    const loginTime = localStorage.getItem('loginTime');
+
+                    if (loginTime) {
+                        const startTime = parseInt(loginTime);
+                        const currentTime = new Date().getTime();
+                        const difference = currentTime - startTime;
+                        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                        if (minutes > 30) {
+                            setShow(false);
+                            navigateTo("/");
+                            localStorage.clear()
+                            return
+
+                        }
+
+
+                    }
+
                     setShow(true)
                 }
             }

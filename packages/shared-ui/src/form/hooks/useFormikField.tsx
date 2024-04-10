@@ -32,5 +32,6 @@ export const useFormikField = (name: string) => {
     initialValues,
     handleBlur,
     values,
+    touched
   };
 };

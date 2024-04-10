@@ -1,30 +1,42 @@
 import { useConditions, useNavigation } from "@/hooks";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
+  MainButton,
   RadioGroupInput,
+  WrapperBox,
 } from "shared-ui/src";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
 import { getInitialValues, notify } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
+import { TriageContext, TriageContextType } from "@/contexts";
 
 const form = {
   isCirculationAbnormal: {
     name: concepts.IS_CIRCULATION_ABNORMAL,
     label: "Is Circulation Abnormal",
   },
-  heartRate: {
-    name: concepts.HEART_RATE_50_120,
-    label: "Heart Rate <50 >120 or Systolic Blood Pressure <70 >180",
-  },
+  // heartRate: {
+  //   name: concepts.HEART_RATE_50_120,
+  //   label: "Heart Rate <50 >120 or Systolic Blood Pressure <70 >180",
+  // },
   weakIrregularPulse: {
     name: concepts.WEAK_THREADY,
     label: "Weak, Thready, Bounding or regular/irregular pulse",
+  },
+
+  heartRate: {
+    name: concepts.HEART_RATE,
+    label: 'Heart Rate'
+  },
+  pulseRate: {
+    name: concepts.PULSE_RATE,
+    label: 'Pulse Rate'
   },
   reducedUrinaryOutput: {
     name: concepts.REDUCED_URINARY_OUTPUT,
@@ -54,6 +66,7 @@ const form = {
     name: concepts.TEMPERATURE,
     label: "Temperature 37-38C",
   },
+
 };
 
 const schema = Yup.object().shape({
@@ -61,6 +74,7 @@ const schema = Yup.object().shape({
     .required()
     .label(form.isCirculationAbnormal.label),
   [form.heartRate.name]: Yup.string().label(form.heartRate.label),
+  [form.pulseRate.name]: Yup.string().label(form.pulseRate.label),
   [form.weakIrregularPulse.name]: Yup.string().label(
     form.weakIrregularPulse.label
   ),
@@ -83,6 +97,7 @@ type Prop = {
   setTriageResult?: (triage: any) => void
   triageResult: string
   continueTriage: boolean
+  previous: () => void
 };
 
 const options = [
@@ -90,11 +105,13 @@ const options = [
   { label: "No", value: NO },
 ];
 
-export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }: Prop) => {
+export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, previous }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("");
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, aggregateOrCondition, conditions } =
     useConditions();
+
+  const { flow } = useContext(TriageContext) as TriageContextType
   const { navigateTo } = useNavigation();
 
   const disableField = (formField: string) => {
@@ -102,12 +119,18 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
   };
 
 
+
+  const circulationCondition = flow['heart'] == 'yellow' || flow['heart'] == 'red' || flow['diastolic'] == 'yellow' || flow['diastolic'] == 'red' || flow['systolic'] == 'yellow' || flow['systolic'] == 'red'
+
+
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={initialValues}
+      initialValues={{ ...initialValues, [form.isCirculationAbnormal.name]: circulationCondition ? YES : NO }}
       onSubmit={onSubmit}
+      enableReinitialize={true}
       submitButtonText="next"
+      submitButton={false}
     >
 
       <FormValuesListener getValues={setFormValues} />
@@ -139,12 +162,27 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
                 }
               /> */}
               <RadioGroupInput
-                name={form.weakIrregularPulse.name}
-                label={form.weakIrregularPulse.label}
-                options={options}
-                disabled={disableField(form.weakIrregularPulse.name)}
+                name={form.heartRate.name}
+                label={form.heartRate.label}
+                options={[
+                  { label: "Weak/Thready", value: "Weak/Thready" },
+                  { label: "Strong", value: "Strong" },
+                ]}
+                disabled={disableField(form.heartRate.name)}
                 getValue={(value) =>
-                  updateConditions(form.weakIrregularPulse.name, value)
+                  updateConditions(form.heartRate.name, value)
+                }
+              />
+              <RadioGroupInput
+                name={form.pulseRate.name}
+                label={form.pulseRate.label}
+                options={[
+                  { label: "Irregular", value: "Irregular" },
+                  { label: "Regular", value: "Regular" },
+                ]}
+                disabled={disableField(form.pulseRate.name)}
+                getValue={(value) =>
+                  updateConditions(form.pulseRate.name, value)
                 }
               />
             </FieldsContainer>
@@ -225,8 +263,15 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage }:
               </FormFieldContainerLayout> */}
             </>
           )}
+
+
         </>
+
       )}
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
+        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+      </WrapperBox>
     </FormikInit>
   );
 };

@@ -9,10 +9,24 @@ export const NavBar = () => {
   const { navigateTo } = useNavigation();
   const { loggedIn, setLoggedIn } = useContext(AuthContext) as AuthContextType
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: any) => {
+      // Cancel the event as returning a string will prompt the user
+      event.preventDefault();
+      // Chrome requires returnValue to be set
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
 
 
   useEffect(() => {
-
     if (localStorage) {
       if (!Boolean(localStorage.getItem("accessToken"))) {
         // navigateTo("/")

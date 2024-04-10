@@ -1,16 +1,18 @@
 "use client";
 
 import { InitialRegistrationForm } from "./components";
-import { initialPatientRegistration } from "@/hooks/patientReg";
+import { initialPatientRegistration, searchDDEPatientByNpid } from "@/hooks/patientReg";
 
-import { MainGrid } from "shared-ui/src";
+
+
+import { MainGrid, MainTypography, WrapperBox } from "shared-ui/src";
 import {
   RegistrationCard,
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "../registration/components/common";
 import { addVisit } from "@/hooks/visit";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AETC_VISIT_TYPE, concepts, encounters, roles } from "@/constants";
 import { addEncounter } from "@/hooks/encounter";
 import { useNavigation } from "@/hooks";
@@ -21,10 +23,19 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { FormError } from "@/components/formError";
 import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
+import { BarcodeDialog } from "./components/barcodeScanner";
+import { getDateTime } from "@/helpers/dateTime";
+import { FaBarcode } from "react-icons/fa6";
+
+
 
 function InitialRegistration() {
+  const [showDialog, setShowDialog] = useState(false)
+  const [npid, setNpid] = useState('')
   const { refresh, navigateTo } = useNavigation();
-  const initialValues = { firstName: "", lastName: "" };
+  const [initialValues, setInitialValues] = useState({ firstName: '', lastName: '' });
+
+
   const {
     loading,
     setLoading,
@@ -70,6 +81,48 @@ function InitialRegistration() {
     isError: visitNumberError,
   } = getVisitNum();
 
+  const { refetch, isRefetching, data: foundPatients } = searchDDEPatientByNpid(npid);
+
+
+  const formatScanSearch = () => {
+
+    const defaultInitial = { firstName: "", lastName: "" };
+
+    if (!foundPatients) return defaultInitial;
+
+    if (foundPatients?.locals.length > 0) {
+      return {
+        firstName: foundPatients.locals[0].given_name,
+        lastName: foundPatients.locals[0].family_name,
+      }
+    }
+
+    if (foundPatients?.remotes.length > 0) {
+      return {
+        firstName: foundPatients.remotes[0].given_name,
+        lastName: foundPatients.remotes[0].family_name,
+      }
+    }
+
+    setShowDialog(false);
+
+    return defaultInitial
+  }
+
+  useEffect(() => {
+    setInitialValues(formatScanSearch());
+
+  }, [foundPatients])
+
+
+
+  //handle scan data
+  useEffect(() => {
+    if (npid == '') return
+    refetch()
+
+  }, [npid])
+
   // after patient registration create a visit
   useEffect(() => {
     if (isSuccess) {
@@ -99,7 +152,7 @@ function InitialRegistration() {
     setCompleted(3);
     setMessage("creating an encounter...");
 
-    const dateTime = new Date().toISOString();
+    const dateTime = getDateTime();
     createEncounter({
       encounterType: encounters.INITIAL_REGISTRATION,
       visit: visit?.uuid,
@@ -159,9 +212,12 @@ function InitialRegistration() {
     });
   };
 
+
+
+
   return (
     <>
-      <Navigation title="Initial Registration" link="/dashboard" />
+      <Navigation title="Patient Arrival" link="/dashboard" />
       <MainGrid container>
         <MainGrid xs={2} md={3} lg={4} item></MainGrid>
         <MainGrid
@@ -175,7 +231,8 @@ function InitialRegistration() {
         >
           <br />
           <br />
-          <RegistrationMainHeader>Initial Registration</RegistrationMainHeader>
+
+          <RegistrationMainHeader>Patient Arrival</RegistrationMainHeader>
           <RegistrationDescriptionText>
             The demographics form has been thoughtfully crafted to collect
             patient information, including personal details, contact information
@@ -196,12 +253,23 @@ function InitialRegistration() {
             />
           )}
           {showForm && (
-            <RegistrationCard>
-              <InitialRegistrationForm
-                initialValues={initialValues}
-                onSubmit={handleSubmit}
-              />
-            </RegistrationCard>
+            <>
+
+              <RegistrationCard >
+                {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
+                <br />
+                <BarcodeDialog isLoading={isRefetching} onBarcodeScan={(value: any) => setNpid(value)} open={showDialog} onClose={() => setShowDialog(false)} />
+                <MainTypography onClick={() => setShowDialog(true)} sx={{ cursor: "pointer", width: "10%", }} variant="h4">
+                  <FaBarcode />
+                </MainTypography>
+                <br />
+                <InitialRegistrationForm
+                  initialValues={initialValues}
+                  onSubmit={handleSubmit}
+
+                />
+              </RegistrationCard>
+            </>
           )}
           {error && (
             <FormError
@@ -237,5 +305,9 @@ function InitialRegistration() {
     </>
   );
 }
+
+
+
+
 
 export default AuthGuard(InitialRegistration, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK])

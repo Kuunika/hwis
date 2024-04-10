@@ -1,6 +1,5 @@
 "use client";
 import { MainTypography, WrapperBox } from "shared-ui/src";
-import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Navigation } from "@/app/components/navigation";
 
 export default function Scanner() {
@@ -33,13 +32,13 @@ export default function Scanner() {
         </MainTypography>
 
         <WrapperBox sx={{ width: "844px", height: "559px" }}>
-          <QrScanner
+          {/* <QrScanner
             containerStyle={{
               borderRadius: "10px",
             }}
             onDecode={(result) => console.log(result)}
             onError={(error) => console.log(error?.message)}
-          />
+          /> */}
         </WrapperBox>
       </WrapperBox>
     </>

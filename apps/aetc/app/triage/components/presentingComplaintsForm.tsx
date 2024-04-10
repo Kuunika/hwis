@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React, { useState } from "react";
-import { SearchComboBox, FormikInit } from "shared-ui/src";
+import { SearchComboBox, FormikInit, MainButton } from "shared-ui/src";
 import * as Yup from "yup";
 
 import { getInitialValues, notify } from "@/helpers";
@@ -216,6 +216,7 @@ export const PresentingComplaintsForm = ({ onSubmit }: Prop) => {
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={onSubmit}
+      submitButton={false}
       submitButtonText="next"
     >
       <SearchComboBox
@@ -223,6 +224,8 @@ export const PresentingComplaintsForm = ({ onSubmit }: Prop) => {
         label={form.complaints.label}
         options={presentingComplaints}
       />
+
+      <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
     </FormikInit>
   );
 }; 

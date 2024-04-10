@@ -38,20 +38,25 @@ const schema = yup.object({
 });
 
 const referrences = [
-  { id: "OPD2", label: "OPD2" },
-  { id: "ENT", label: "ENT" },
+
+  { id: "EAR NOSE AND THROAT (ENT)", label: "EAR NOSE AND THROAT (ENT)" },
   { id: "OPHTHALMOLOGY", label: "OPHTHALMOLOGY" },
-  { id: "ORTHOPEDICS", label: "ORTHOPEDICS" },
+  { id: "ORTHOPAEDIC", label: "ORTHOPAEDIC" },
   { id: "CLINICS", label: "CLINICS" },
-  { id: "PAEDS", label: "PAEDS" },
+  { id: "PAEDIATRIC OPD", label: "PAEDIATRIC OPD" },
   { id: "RADIOLOGY", label: "RADIOLOGY" },
   { id: "DENTAL", label: "DENTAL" },
   { id: "DERMATOLOGY/LEPRA", label: "DERMATOLOGY / LEPRA" },
-  { id: "STI", label: "STI" },
   { id: "PSYCHIATRY", label: "PSYCHIATRY" },
-  { id: "LOCAL HEALTH CENTER", label: "LOCAL HEALTH CENTER" },
+  { id: "LOCAL HEALTH CENTRE", label: "LOCAL HEALTH CENTRE" },
   { id: "4C", label: "4C" },
   { id: "ONCOLOGY", label: "ONCOLOGY" },
+  { id: "DENTAL", label: "DENTAL" },
+  { id: "STI", label: "STI" },
+  { id: "OPD 1", label: "OPD 1" },
+  { id: "PHYSIOTHERAPY", label: "PHYSIOTHERAPY" },
+  { id: "EYE/ OPHTHALMOLOGY OPD", label: "EYE/ OPHTHALMOLOGY OPD" },
+  { id: "OBSTETRICS AND GYNAECOLOGY OPD", label: "OBSTETRICS AND GYNAECOLOGY OPD" },
 ];
 
 export function PrescreeningForm({ onSubmit }: props) {
@@ -61,6 +66,8 @@ export function PrescreeningForm({ onSubmit }: props) {
     { label: "Yes", value: YES },
     { label: "No", value: NO },
   ];
+
+  let departments = formValues[form.referred.name] == YES ? [...referrences, { id: "OPD2", label: "OPD2" }] : referrences
 
   return (
     <FormikInit
@@ -80,7 +87,7 @@ export function PrescreeningForm({ onSubmit }: props) {
         <RadioGroupInput
           name={form.urgent.name}
           label={form.urgent.label}
-          options={yesno}
+          options={[...yesno, { label: "Elective", value: concepts.ELECTIVE }]}
         />
       </FieldsContainer>
 
@@ -90,7 +97,7 @@ export function PrescreeningForm({ onSubmit }: props) {
           <SearchComboBox
             name={form.Referred.name}
             label={form.Referred.label}
-            options={referrences}
+            options={departments}
             multiple={false}
             sx={{ mr: "1ch" }}
           />
