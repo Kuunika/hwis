@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@capacitor/android": "^5.7.4",
+    "@capacitor/cli": "^5.7.4",
+    "@capacitor/core": "^5.7.4",
     "@ericblade/quagga2": "^1.8.4",
     "@mui/x-tree-view": "^6.17.0",
     "@replytechnologies/zpl-image-convert": "^0.0.2",
