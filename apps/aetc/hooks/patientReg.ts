@@ -166,6 +166,7 @@ export const searchDDEPatient = (firstName: string, lastName: string, gender: st
     queryKey: ["find_by_gender", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
+    retry: false
   });
 };
 

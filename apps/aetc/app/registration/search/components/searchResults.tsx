@@ -28,10 +28,12 @@ export const SearchResults = ({
 
   searchedPatient,
   searchResults,
+
 }: {
 
   searchedPatient: any;
-  searchResults: DDESearch
+  searchResults: DDESearch,
+
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
@@ -53,7 +55,9 @@ export const SearchResults = ({
     setRegistrationType(registrationType)
   }
 
-  const resultNotFound = searchResults.locals.length == 0 && searchResults.remotes.length == 0;
+  const resultNotFound = (searchResults.locals.length == 0 && searchResults.remotes.length == 0)
+
+
   return (
     <WrapperBox
       sx={{

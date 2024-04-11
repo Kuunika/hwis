@@ -115,7 +115,6 @@ function InitialRegistration() {
   }, [foundPatients])
 
 
-
   //handle scan data
   useEffect(() => {
     if (npid == '') return
@@ -211,8 +210,6 @@ function InitialRegistration() {
       },
     });
   };
-
-
 
 
   return (
