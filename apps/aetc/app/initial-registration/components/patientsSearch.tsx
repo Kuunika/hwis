@@ -1,4 +1,5 @@
 
+import { ViewPatient } from "@/app/patient/components/viewPatient";
 import { GenericDialog } from "@/components";
 import { OverlayLoader } from "@/components/backdrop";
 import { useNavigation } from "@/hooks";
@@ -10,7 +11,7 @@ import { BaseTable, MainButton } from "shared-ui/src";
 
 export const PatientSearchResults = ({ open, onClose, isLoading, patientResults }: { open: boolean, isLoading?: boolean, onClose: () => void, patientResults: DDESearch }) => {
     const { navigateTo } = useNavigation();
-    const [selectedPatient, setSelectedPatient] = useState<Person>({} as Person)
+    const [selectedPatient, setSelectedPatient] = useState<Person | undefined>();
 
 
     const rows = [...patientResults.locals, ...patientResults.remotes]
@@ -55,7 +56,11 @@ export const PatientSearchResults = ({ open, onClose, isLoading, patientResults 
 
 
     return <GenericDialog maxWidth="sm" title={"Patient Search Results"} open={open} onClose={onClose}>
-        <BaseTable columns={columns} rows={rows} />
+        {!selectedPatient && <BaseTable columns={columns} rows={rows} />}
+        {selectedPatient && <>
+            <ViewPatient patient={selectedPatient} />
+        </>}
+
         <OverlayLoader open={Boolean(isLoading)} />
     </GenericDialog>
 } 
