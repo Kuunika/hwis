@@ -6,6 +6,7 @@ import { WrapperBox, MainTypography, MainPaper } from "shared-ui/src";
 import { ReactNode } from "react"
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
+import { ViewPatient } from "../../components/viewPatient";
 
 const Page = () => {
     const { params } = useParameters();
@@ -13,37 +14,13 @@ const Page = () => {
     const { data: patient, isLoading: patientLoading } = getOnePatient(params.id as string);
     const { data: loadedEncounters } = getPatientsEncounters(params.id as string)
 
-    // console.log(loadedEncounters);
 
     const socialHistory = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.SOCIAL_HISTORY);
     const financing = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.FINANCING);
 
-
     return <>
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
-            <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
-                <ContainerCard>
-                    <MainTypography variant="h5">Demographics</MainTypography>
-                    <LabelValue label="First Name" value={patient?.given_name} />
-                    <LabelValue label="Last Name" value={patient?.family_name} />
-                    <LabelValue label="Gender" value={patient?.gender} />
-                    <LabelValue label="Date of birth" value={patient?.birthdate} />
-                </ContainerCard>
-                <ContainerCard>
-                    <MainTypography variant="h5">Home Location</MainTypography>
-                    <LabelValue label="Country" value={patient?.addresses[0].country} />
-                    <LabelValue label="Home District" value={patient?.addresses[0].address1} />
-                    <LabelValue label="Home Village" value={patient?.addresses[0].address2} />
-                    <LabelValue label="Home Traditional Authority" value={patient?.addresses[0].county_district} />
-                </ContainerCard>
-                <ContainerCard>
-                    <MainTypography variant="h5">Current Location</MainTypography>
-                    <LabelValue label="Current District" value={patient?.addresses[0].address3} />
-                    <LabelValue label="Current Traditional Authority" value={patient?.addresses[0].stateProvince} />
-                    <LabelValue label="Current Village" value={patient?.addresses[1].address1} />
-                    <LabelValue label="Close Land Mark" value={patient?.addresses[1].address2} />
-                </ContainerCard>
-            </WrapperBox>
+            <ViewPatient patient={patient} />
             <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
                 <ContainerCard>
                     <MainTypography variant="h5">Social History</MainTypography>

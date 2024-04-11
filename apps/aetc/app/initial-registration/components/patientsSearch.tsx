@@ -2,7 +2,7 @@
 import { GenericDialog } from "@/components";
 import { OverlayLoader } from "@/components/backdrop";
 import { useNavigation } from "@/hooks";
-import { DDESearch } from "@/interfaces";
+import { DDESearch, Person } from "@/interfaces";
 import { useEffect, useState } from "react";
 import { BaseTable, MainButton } from "shared-ui/src";
 
@@ -10,6 +10,7 @@ import { BaseTable, MainButton } from "shared-ui/src";
 
 export const PatientSearchResults = ({ open, onClose, isLoading, patientResults }: { open: boolean, isLoading?: boolean, onClose: () => void, patientResults: DDESearch }) => {
     const { navigateTo } = useNavigation();
+    const [selectedPatient, setSelectedPatient] = useState<Person>({} as Person)
 
 
     const rows = [...patientResults.locals, ...patientResults.remotes]
@@ -34,8 +35,6 @@ export const PatientSearchResults = ({ open, onClose, isLoading, patientResults 
                 return cell.row.addresses[0].address2
             }
         },
-
-
         {
             field: "action",
             flex: 1,
@@ -46,9 +45,8 @@ export const PatientSearchResults = ({ open, onClose, isLoading, patientResults 
                         <MainButton
                             sx={{ fontSize: "12px" }}
                             title={"screen"}
-                            onClick={() => navigateTo(`/prescreening/${cell.id}`)}
+                            onClick={() => setSelectedPatient(cell.row)}
                         />
-
                     </>
                 );
             },
