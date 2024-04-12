@@ -83,42 +83,12 @@ function InitialRegistration() {
     isError: visitNumberError,
   } = getVisitNum();
 
-  const { refetch, isRefetching, data: foundPatients, isSuccess: patientSearchSuccess } = searchDDEPatientByNpid('RGN7K0');
+  const { refetch, isRefetching, data: foundPatients, isSuccess: patientSearchSuccess } = searchDDEPatientByNpid(npid);
   const [showSearchResultDialog, setShowSearchResultDialog] = useState(false)
 
-
-
-
-  const formatScanSearch = () => {
-
-    const defaultInitial = { firstName: "", lastName: "" };
-
-    if (!foundPatients) return defaultInitial;
-
-    if (foundPatients?.locals.length > 0) {
-      return {
-        firstName: foundPatients.locals[0].given_name,
-        lastName: foundPatients.locals[0].family_name,
-      }
-    }
-
-    if (foundPatients?.remotes.length > 0) {
-      return {
-        firstName: foundPatients.remotes[0].given_name,
-        lastName: foundPatients.remotes[0].family_name,
-      }
-    }
-
-    setShowDialog(false);
-
-    return defaultInitial
-  }
-
   useEffect(() => {
-    setInitialValues(formatScanSearch());
-
-  }, [foundPatients])
-
+    setNpid('8UN1U3')
+  }, [])
 
   //handle scan data
   useEffect(() => {
@@ -126,12 +96,6 @@ function InitialRegistration() {
     refetch()
   }, [npid])
 
-  //handle scan data
-  useEffect(() => {
-    // if (npid == '') return
-
-    refetch()
-  }, [])
 
   useEffect(() => {
     if (patientSearchSuccess) {

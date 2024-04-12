@@ -29,7 +29,13 @@ export interface Address {
   cityVillage?: string;
   country?: string;
   postalCode?: string;
-  preferred?: boolean
+  preferred?: boolean;
+  current_district?: string;
+  current_village?: string;
+  current_traditional_authority?: string;
+  home_district?: string;
+  home_village?: string;
+  home_traditional_authority?: string
 }
 
 export interface Identifier {

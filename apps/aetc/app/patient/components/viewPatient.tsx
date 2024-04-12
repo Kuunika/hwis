@@ -20,9 +20,9 @@ export const ViewPatient = ({ patient }: { patient: Person }) => {
         </ContainerCard>
         <ContainerCard>
             <MainTypography variant="h5">Current Location</MainTypography>
-            <LabelValue label="Current District" value={patient?.addresses[0]?.address3} />
-            <LabelValue label="Current Traditional Authority" value={patient?.addresses[0]?.stateProvince} />
-            <LabelValue label="Current Village" value={patient?.addresses[1]?.address1} />
+            <LabelValue label="Current District" value={patient?.addresses[0]?.current_district} />
+            <LabelValue label="Current Traditional Authority" value={patient?.addresses[0]?.current_traditional_authority} />
+            <LabelValue label="Current Village" value={patient?.addresses[0]?.current_village} />
             <LabelValue label="Close Land Mark" value={patient?.addresses[1]?.address2} />
         </ContainerCard>
     </WrapperBox>

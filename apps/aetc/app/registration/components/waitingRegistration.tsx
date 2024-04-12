@@ -6,7 +6,9 @@ import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { Identifier } from "@/interfaces";
+import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 
 
 export const WaitingRegistrationList = () => {
@@ -18,6 +20,9 @@ export const WaitingRegistrationList = () => {
     isRefetching
   } = getPatientsWaitingForRegistrations();
   const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
+  const { setPatient, setRegistrationType, setSearchedPatient } = useContext(
+    SearchRegistrationContext
+  ) as SearchRegistrationContextType;
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number" },
@@ -40,13 +45,33 @@ export const WaitingRegistrationList = () => {
       headerName: "Action",
       flex: 1,
       renderCell: (cell: any) => {
+
+        // const id = cell.row?.identifiers?.find((id: Identifier) => id.identifier_type.name == 'National id');
+
+        // console.log({ id })
+
+
+
+        const link = cell.row.gender != 'N/A' ? `/registration/${cell.id}/new` : `/registration/${cell.id}/search`;
+
         return (
           <>
 
             <MainButton
               sx={{ fontSize: "12px" }}
               title={"start"}
-              onClick={() => navigateTo(`/registration/${cell.id}/search`)}
+              onClick={() => {
+                if (cell.row.gender != 'N/A') {
+                  setSearchedPatient({
+                    firstName: cell.row.given_name,
+                    lastName: cell.row.family_name,
+                    gender: cell.row.gender
+                  })
+                  setPatient(cell.row)
+                  setRegistrationType('local');
+                }
+                navigateTo(link)
+              }}
             />
             <AbscondButton onDelete={() => setDeleted(cell.id)} visitId={cell.row.visit_uuid} patientId={cell.id} />
           </>

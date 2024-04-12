@@ -247,6 +247,12 @@ const relationships = [
   },
 ];
 
+type LocationType = {
+  village: number | string | undefined,
+  traditionalAuthority: number | string | undefined,
+  district: number | string | undefined,
+}
+
 export const DemographicsForm: FC<Prop> = ({
   onSubmit,
   initialValues = init,
@@ -257,8 +263,8 @@ export const DemographicsForm: FC<Prop> = ({
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
 
-  const [selectedLocation, setSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
-  const [currentSelectedLocation, setCurrentSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
+  const [selectedLocation, setSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
+  const [currentSelectedLocation, setCurrentSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
 
   const { villages, districts, traditionalAuthorities } = useContext(LocationContext) as LocationContextType
 
@@ -267,6 +273,7 @@ export const DemographicsForm: FC<Prop> = ({
   const [guardianChecked, setGuardianChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
+  const [_init, setInit] = useState({})
 
 
   const { params } = useParameters();
@@ -333,24 +340,54 @@ export const DemographicsForm: FC<Prop> = ({
   }, [guardianChecked]);
 
 
-  let _init = {
+  useEffect(() => {
+    let init = {
 
-  }
-
-  if (registrationType == "local" || registrationType == "remote") {
-    _init = {
-      [form.dob.name]: patient.birthdate,
-      [form.nationality.name]: patient?.addresses[0]?.country,
-      [form.homeDistrict.name]: patient?.addresses[0]?.address1,
-      [form.homeTraditionalAuthority.name]: patient?.addresses[0]?.cityVillage,
-      [form.homeVillage.name]: patient?.addresses[0]?.address2,
-      [form.currentDistrict.name]: patient?.addresses[0]?.address3,
-      [form.currentTraditionalAuthority.name]: patient?.addresses[0]?.countyDistrict,
-      [form.currentVillage.name]: patient?.addresses[1]?.address1,
     }
-  }
 
-  let currentLocation = {};
+    if (registrationType == "local" || registrationType == "remote") {
+
+      const homeDistrict = patient?.addresses[0]?.address1
+      const homeTraditionalAuthority = patient?.addresses[0]?.home_traditional_authority
+      const homeVillage = patient?.addresses[0]?.address2;
+
+      const currentDistrict = patient?.addresses[0]?.current_district;
+      const currentTraditionalAuthority = patient?.addresses[0]?.current_traditional_authority;
+      const currentVillage = patient?.addresses[0]?.current_village
+
+      console.log({ homeDistrict, homeTraditionalAuthority, homeVillage, currentDistrict, currentTraditionalAuthority, currentVillage })
+
+
+      init = {
+        [form.dob.name]: patient.birthdate,
+        [form.nationality.name]: patient?.addresses[0]?.country,
+        [form.homeDistrict.name]: homeDistrict,
+        [form.homeTraditionalAuthority.name]: homeTraditionalAuthority,
+        [form.homeVillage.name]: homeVillage,
+        [form.currentDistrict.name]: currentDistrict,
+        [form.currentTraditionalAuthority.name]: currentTraditionalAuthority,
+        [form.currentVillage.name]: currentVillage
+      }
+
+      setInit(init)
+
+      const homeDistrictId = districts.find(d => d.name == homeDistrict)?.district_id;
+      const homeTraditionalAuthorityId = traditionalAuthorities.find(d => d.name == homeTraditionalAuthority)?.traditional_authority_id;
+      const homeVillageId = villages.find(d => d.name == homeVillage)?.village_id;
+
+      const currentDistrictId = districts.find(d => d.name == currentDistrict)?.district_id;
+      const currentTraditionalAuthorityId = traditionalAuthorities.find(d => d.name == currentTraditionalAuthority)?.traditional_authority_id;
+      const currentVillageId = villages.find(d => d.name == currentVillage)?.village_id;
+
+      setCurrentSelectedLocation({ village: homeVillageId, traditionalAuthority: homeTraditionalAuthorityId, district: homeDistrictId });
+      setSelectedLocation({ village: currentVillageId, traditionalAuthority: currentTraditionalAuthorityId, district: currentDistrictId })
+
+    }
+
+  }, [])
+
+
+
 
 
 
@@ -372,6 +409,7 @@ export const DemographicsForm: FC<Prop> = ({
         onSubmit={onSubmit}
         submitButtonText="next"
         submitButton={false}
+        enableReinitialize={true}
       >
         <FormValuesListener getValues={setFormValues} />
         <TrackFormikContext
@@ -442,9 +480,7 @@ export const DemographicsForm: FC<Prop> = ({
             getValue={(value) => {
               const district = districts.find(d => d.name == value);
               if (district) {
-
                 setSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
-
               }
 
             }}
