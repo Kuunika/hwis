@@ -26,6 +26,8 @@ import AuthGuard from "@/helpers/authguard";
 import { BarcodeDialog } from "./components/barcodeScanner";
 import { getDateTime } from "@/helpers/dateTime";
 import { FaBarcode } from "react-icons/fa6";
+import { PatientSearchResultsDialog } from "./components/patientsSearch";
+import { DDESearch } from "@/interfaces";
 
 
 
@@ -81,7 +83,10 @@ function InitialRegistration() {
     isError: visitNumberError,
   } = getVisitNum();
 
-  const { refetch, isRefetching, data: foundPatients } = searchDDEPatientByNpid(npid);
+  const { refetch, isRefetching, data: foundPatients, isSuccess: patientSearchSuccess } = searchDDEPatientByNpid('RGN7K0');
+  const [showSearchResultDialog, setShowSearchResultDialog] = useState(false)
+
+
 
 
   const formatScanSearch = () => {
@@ -119,8 +124,22 @@ function InitialRegistration() {
   useEffect(() => {
     if (npid == '') return
     refetch()
-
   }, [npid])
+
+  //handle scan data
+  useEffect(() => {
+    // if (npid == '') return
+
+    refetch()
+  }, [])
+
+  useEffect(() => {
+    if (patientSearchSuccess) {
+      setShowSearchResultDialog(true);
+    }
+
+  }, [patientSearchSuccess])
+
 
   // after patient registration create a visit
   useEffect(() => {
@@ -255,6 +274,7 @@ function InitialRegistration() {
               <RegistrationCard >
                 {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
                 <br />
+                <PatientSearchResultsDialog open={showSearchResultDialog} onClose={() => setShowSearchResultDialog(false)} patientResults={foundPatients ? foundPatients : { locals: [], remotes: [] } as DDESearch} />
                 <BarcodeDialog isLoading={isRefetching} onBarcodeScan={(value: any) => setNpid(value)} open={showDialog} onClose={() => setShowDialog(false)} />
                 <MainTypography onClick={() => setShowDialog(true)} sx={{ cursor: "pointer", width: "10%", }} variant="h4">
                   <FaBarcode />

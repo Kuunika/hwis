@@ -1,4 +1,5 @@
 import { Person } from "@/interfaces";
+import { ReactNode } from "react";
 import { WrapperBox, MainTypography, MainPaper } from "shared-ui/src";
 
 export const ViewPatient = ({ patient }: { patient: Person }) => {
@@ -19,10 +20,10 @@ export const ViewPatient = ({ patient }: { patient: Person }) => {
         </ContainerCard>
         <ContainerCard>
             <MainTypography variant="h5">Current Location</MainTypography>
-            <LabelValue label="Current District" value={patient?.addresses[0].address3} />
-            <LabelValue label="Current Traditional Authority" value={patient?.addresses[0].stateProvince} />
-            <LabelValue label="Current Village" value={patient?.addresses[1].address1} />
-            <LabelValue label="Close Land Mark" value={patient?.addresses[1].address2} />
+            <LabelValue label="Current District" value={patient?.addresses[0]?.address3} />
+            <LabelValue label="Current Traditional Authority" value={patient?.addresses[0]?.stateProvince} />
+            <LabelValue label="Current Village" value={patient?.addresses[1]?.address1} />
+            <LabelValue label="Close Land Mark" value={patient?.addresses[1]?.address2} />
         </ContainerCard>
     </WrapperBox>
 

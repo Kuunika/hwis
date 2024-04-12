@@ -7,6 +7,7 @@ import { ReactNode } from "react"
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
+import { Person } from "@/interfaces";
 
 const Page = () => {
     const { params } = useParameters();
@@ -20,7 +21,7 @@ const Page = () => {
 
     return <>
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
-            <ViewPatient patient={patient} />
+            <ViewPatient patient={patient ?? {} as Person} />
             <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
                 <ContainerCard>
                     <MainTypography variant="h5">Social History</MainTypography>
