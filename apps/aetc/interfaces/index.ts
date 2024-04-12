@@ -267,3 +267,12 @@ export type Village = {
   name: string;
   traditional_authority_id: number
 }
+
+
+export type Relationship = {
+  relationship_id: number;
+  person_a: Person;
+  relationship: number;
+  person_b: Person;
+  uuid: string
+}

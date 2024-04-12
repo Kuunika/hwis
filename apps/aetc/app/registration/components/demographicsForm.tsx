@@ -355,8 +355,6 @@ export const DemographicsForm: FC<Prop> = ({
       const currentTraditionalAuthority = patient?.addresses[0]?.current_traditional_authority;
       const currentVillage = patient?.addresses[0]?.current_village
 
-      console.log({ homeDistrict, homeTraditionalAuthority, homeVillage, currentDistrict, currentTraditionalAuthority, currentVillage })
-
 
       init = {
         [form.dob.name]: patient.birthdate,
