@@ -86,9 +86,9 @@ function InitialRegistration() {
   const { refetch, isRefetching, data: foundPatients, isSuccess: patientSearchSuccess } = searchDDEPatientByNpid(npid);
   const [showSearchResultDialog, setShowSearchResultDialog] = useState(false)
 
-  useEffect(() => {
-    setNpid('8UN1U3')
-  }, [])
+  // useEffect(() => {
+  //   setNpid('8UN1U3')
+  // }, [])
 
   //handle scan data
   useEffect(() => {
