@@ -154,7 +154,7 @@ export const PatientSearchResultsDialog = ({ open, onClose, isLoading, patientRe
                     <>
                         <MainButton
                             sx={{ fontSize: "12px" }}
-                            title={"screen"}
+                            title={"view"}
                             onClick={() => setSelectedPatient(cell.row)}
                         />
                     </>

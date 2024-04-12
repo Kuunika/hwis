@@ -99,7 +99,6 @@ function CalculateAggregateTime({ patientId }: { patientId: string }) {
 
 function CalculateWaitingTime({ patientId }: { patientId: string }) {
   const { data, isLoading } = getPatientsEncounters(patientId);
-  console.log(data)
 
 
   const encounter = data?.find(encounter => encounter.encounter_type.name === 'SOCIAL HISTORY');
