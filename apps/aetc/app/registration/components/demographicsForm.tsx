@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { ErrorMessage } from 'formik';
+
 
 
 import {
@@ -35,6 +35,8 @@ import {
 } from "@/contexts";
 import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
 import { LocationContext, LocationContextType } from "@/contexts/location";
+import { getPatientRelationships } from "@/hooks/patientReg";
+import { OverlayLoader } from "@/components/backdrop";
 
 const form = {
   identificationNumber: {
@@ -274,9 +276,10 @@ export const DemographicsForm: FC<Prop> = ({
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
   const [_init, setInit] = useState({})
-
+  const [nextOfKinInitialValues, setNextOfKinInitialValue] = useState({})
 
   const { params } = useParameters();
+  const { refetch, isRefetching, data: patientRelationships, isSuccess } = getPatientRelationships(params.id as string)
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -284,6 +287,22 @@ export const DemographicsForm: FC<Prop> = ({
   const handleGuardianChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGuardianChecked(event.target.checked);
   };
+
+
+
+
+  useEffect(() => {
+
+    if (isSuccess) {
+      const nextOfKin = patientRelationships[0].person_b;
+      setNextOfKinInitialValue({
+        [form.nextOfKinFirstName.name]: nextOfKin.names[0].given_name,
+        [form.nextOfKinLastName.name]: nextOfKin.names[0].family_name,
+
+      })
+
+    }
+  }, [isSuccess])
 
 
 
@@ -347,6 +366,9 @@ export const DemographicsForm: FC<Prop> = ({
 
     if (registrationType == "local" || registrationType == "remote") {
 
+      // search for relations
+      refetch()
+
       const homeDistrict = patient?.addresses[0]?.address1
       const homeTraditionalAuthority = patient?.addresses[0]?.home_traditional_authority
       const homeVillage = patient?.addresses[0]?.address2;
@@ -403,6 +425,7 @@ export const DemographicsForm: FC<Prop> = ({
           ...initialValues, ..._init, [form.firstName.name]: searchedPatient.firstName,
           [form.lastName.name]: searchedPatient.lastName,
           [form.gender.name]: searchedPatient.gender == 'M' ? 'Male' : "Female",
+          ...nextOfKinInitialValues
         }}
         onSubmit={onSubmit}
         submitButtonText="next"
@@ -493,7 +516,6 @@ export const DemographicsForm: FC<Prop> = ({
             multiple={false}
             getValue={(value) => {
               const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
-
 
               if (traditionalAuthority)
                 setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.traditional_authority_id.toString() }))
@@ -633,6 +655,7 @@ export const DemographicsForm: FC<Prop> = ({
               label={form.guardianNumber.label}
             />
           </>}
+          <OverlayLoader open={isRefetching} />
         </RegistrationCard>
       </FormikInit>
     </>

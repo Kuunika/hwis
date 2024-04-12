@@ -7,6 +7,7 @@ import {
   getDailyVisits,
   getPatient,
   getPatients,
+  getRelations,
   initialRegistration,
   mergePatients,
   potentialDuplicates,
@@ -205,5 +206,17 @@ export const merge = () => {
 
   return useMutation({
     mutationFn: addData,
+  });
+};
+
+
+export const getPatientRelationships = (patientId: string) => {
+  const getAll = () =>
+    getRelations(patientId).then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["patient_relations", patientId],
+    queryFn: getAll,
+    enabled: false,
   });
 };
