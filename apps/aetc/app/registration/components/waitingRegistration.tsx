@@ -19,7 +19,7 @@ export const WaitingRegistrationList = () => {
     isLoading,
     isRefetching
   } = getPatientsWaitingForRegistrations();
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
+  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
   const { setPatient, setRegistrationType, setSearchedPatient } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
@@ -28,15 +28,15 @@ export const WaitingRegistrationList = () => {
     { field: "aetc_visit_number", headerName: "Visit Number" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "arrival_time", headerName: "Arrival Time", flex: 1 },
+    { field: "patient_arrival_time", headerName: "Arrival Time", flex: 1 },
     {
       field: "waiting", headerName: "WaitingTime", flex: 1, renderCell: (cell: any) => {
-        return <CalculateWaitingTime patientId={cell.row.id} />
+        return <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} patientId={cell.row.id} />
       }
     },
     {
       field: "aggreg", headerName: "Aggregate", flex: 1, renderCell: (cell: any) => {
-        return <CalculateAggregateTime patientId={cell.row.id} />
+        return <CalculateAggregateTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
       }
     },
 
@@ -45,12 +45,6 @@ export const WaitingRegistrationList = () => {
       headerName: "Action",
       flex: 1,
       renderCell: (cell: any) => {
-
-        // const id = cell.row?.identifiers?.find((id: Identifier) => id.identifier_type.name == 'National id');
-
-        // console.log({ id })
-
-
 
         const link = cell.row.gender != 'N/A' ? `/registration/${cell.id}/new` : `/registration/${cell.id}/search`;
 
@@ -85,24 +79,24 @@ export const WaitingRegistrationList = () => {
   );
 };
 
-function CalculateAggregateTime({ patientId }: { patientId: string }) {
+function CalculateAggregateTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
   const { data, isLoading } = getPatientsEncounters(patientId);
 
 
-  const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
+  // const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
 
-  if (isLoading) {
-    return <Image src={"/loader.svg"} width={20} height={20} alt="loader" />
-  }
-  if (!encounter) {
-    return "No encounter data available";
-  }
+  // if (isLoading) {
+  //   return <Image src={"/loader.svg"} width={20} height={20} alt="loader" />
+  // }
+  // if (!encounter) {
+  //   return "No encounter data available";
+  // }
 
-  const encounterDatetime = encounter.encounter_datetime;
+  // const encounterDatetime = encounter.encounter_datetime;
 
   const currentTime: any = getCATTime()
 
-  const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
+  const differenceInMilliseconds = currentTime - Date.parse(arrival_time);
 
   let aggTime;
 
@@ -126,7 +120,7 @@ function CalculateAggregateTime({ patientId }: { patientId: string }) {
   )
 }
 
-function CalculateWaitingTime({ patientId }: { patientId: string }) {
+function CalculateWaitingTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
   const { data, isLoading } = getPatientsEncounters(patientId);
 
 
@@ -145,7 +139,7 @@ function CalculateWaitingTime({ patientId }: { patientId: string }) {
 
   const currentTime: any = getCATTime()
 
-  const differenceInMilliseconds = currentTime - Date.parse(encounterDatetime);
+  const differenceInMilliseconds = currentTime - Date.parse(arrival_time);
 
   let waitingTime;
 
