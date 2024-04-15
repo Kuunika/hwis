@@ -92,6 +92,8 @@ export const ClientWaitingForAssessment = () => {
     },
   ];
 
+
+
   return (
     <BaseTable loading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
   );
