@@ -236,7 +236,6 @@ function InitialRegistration() {
           )}
           {showForm && (
             <>
-
               <RegistrationCard >
                 {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
                 <br />
