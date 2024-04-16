@@ -38,26 +38,42 @@ const schema = yup.object({
 });
 
 const referrences = [
-
-  { id: "EAR NOSE AND THROAT (ENT)", label: "EAR NOSE AND THROAT (ENT)" },
-  { id: "OPHTHALMOLOGY", label: "OPHTHALMOLOGY" },
-  { id: "ORTHOPAEDIC", label: "ORTHOPAEDIC" },
-  { id: "CLINICS", label: "CLINICS" },
-  { id: "PAEDIATRIC OPD", label: "PAEDIATRIC OPD" },
-  { id: "RADIOLOGY", label: "RADIOLOGY" },
-  { id: "DENTAL", label: "DENTAL" },
-  { id: "DERMATOLOGY/LEPRA", label: "DERMATOLOGY / LEPRA" },
-  { id: "PSYCHIATRY", label: "PSYCHIATRY" },
-  { id: "LOCAL HEALTH CENTRE", label: "LOCAL HEALTH CENTRE" },
-  { id: "4C", label: "4C" },
-  { id: "ONCOLOGY", label: "ONCOLOGY" },
-  { id: "DENTAL", label: "DENTAL" },
-  { id: "STI", label: "STI" },
-  { id: "OPD 1", label: "OPD 1" },
-  { id: "PHYSIOTHERAPY", label: "PHYSIOTHERAPY" },
-  { id: "EYE/ OPHTHALMOLOGY OPD", label: "EYE/ OPHTHALMOLOGY OPD" },
-  { id: "OBSTETRICS AND GYNAECOLOGY OPD", label: "OBSTETRICS AND GYNAECOLOGY OPD" },
-];
+  { "id": "OPD 1", "label": "OPD 1" },
+  { "id": "STI clinic/Room 4", "label": "STI clinic/Room 4" },
+  { "id": "Dermatology/LEPRA", "label": "Dermatology/LEPRA" },
+  { "id": "Paediatric A&E", "label": "Paediatric A&E" },
+  { "id": "Local health centre", "label": "Local health centre" },
+  { "id": "Physiotherapy", "label": "Physiotherapy" },
+  { "id": "Diabetic clinic", "label": "Diabetic clinic" },
+  { "id": "KS clinic", "label": "KS clinic" },
+  { "id": "Neurology clinic", "label": "Neurology clinic" },
+  { "id": "General medical clinic", "label": "General medical clinic" },
+  { "id": "Haematology clinic", "label": "Haematology clinic" },
+  { "id": "Palliative clinic", "label": "Palliative clinic" },
+  { "id": "Chest clinic", "label": "Chest clinic" },
+  { "id": "Hypertensive clinic", "label": "Hypertensive clinic" },
+  { "id": "Epileptic clinic", "label": "Epileptic clinic" },
+  { "id": "Renal clinic", "label": "Renal clinic" },
+  { "id": "Umodzi/ light house", "label": "Umodzi/ light house" },
+  { "id": "Psychiatry (Room 6)", "label": "Psychiatry (Room 6)" },
+  { "id": "Ophthalmology (Eye)", "label": "Ophthalmology (Eye)" },
+  { "id": "male general surgical", "label": "male general surgical" },
+  { "id": "female general surgical", "label": "female general surgical" },
+  { "id": "Plastic surgery", "label": "Plastic surgery" },
+  { "id": "Breast clinic", "label": "Breast clinic" },
+  { "id": "Orthopaedic specialist clinic", "label": "Orthopaedic specialist clinic" },
+  { "id": "Orthopaedic OPD/Room 8", "label": "Orthopaedic OPD/Room 8" },
+  { "id": "Oncology OPD (4B)", "label": "Oncology OPD (4B)" },
+  { "id": "Oncology Ward(2A)", "label": "Oncology Ward(2A)" },
+  { "id": "Gynae Oncology OPD (4C)", "label": "Gynae Oncology OPD (4C)" },
+  { "id": "Ear Nose and Throat (ENT)", "label": "Ear Nose and Throat (ENT)" },
+  { "id": "Dental", "label": "Dental" },
+  { "id": "General gynecology", "label": "General gynecology" },
+  { "id": "Gynecology oncology", "label": "Gynecology oncology" },
+  { "id": "High risk antenatal", "label": "High risk antenatal" },
+  { "id": "Family planning", "label": "Family planning" },
+  { "id": "VIA", "label": "VIA" }
+]
 
 export function PrescreeningForm({ onSubmit }: props) {
   const [formValues, setFormValues] = useState<any>({});
@@ -67,7 +83,7 @@ export function PrescreeningForm({ onSubmit }: props) {
     { label: "No", value: NO },
   ];
 
-  let departments = formValues[form.referred.name] == YES ? [...referrences, { id: "OPD2", label: "OPD2" }] : referrences
+  let departments = formValues[form.referred.name] == YES ? [{ id: "OPD 2", label: "OPD 2" }, ...referrences,] : referrences
 
   return (
     <FormikInit

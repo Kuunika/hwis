@@ -8,7 +8,7 @@ export default function Prescreening() {
   const { params } = useParameters();
   const initialValues = {};
 
-  console.log({ params });
+
 
   const handleSubmit = (values: any) => {
     console.log({ values });
