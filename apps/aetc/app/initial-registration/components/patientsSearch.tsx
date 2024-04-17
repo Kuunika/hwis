@@ -126,23 +126,23 @@ export const PatientSearchResultsDialog = ({ open, onClose, isLoading, patientRe
 
 
     const columns = [
-        { field: "given_name", headerName: "First Name", flex: 1 },
-        { field: "family_name", headerName: "Last Name", flex: 1 },
-        { field: "gender", headerName: "Gender", flex: 1 },
+        { field: "given_name", headerName: "First Name" },
+        { field: "family_name", headerName: "Last Name" },
+        { field: "gender", headerName: "Gender", },
         { field: "birthdate", headerName: "Birthdate", flex: 1 },
         {
-            field: "homeDistrict", headerName: "Home District", renderCell: (cell: any) => {
-                return cell.row.addresses[0].address1
+            field: "currentDistrict", headerName: "Current District", flex: 1, renderCell: (cell: any) => {
+                return cell.row.addresses[0].current_district
             }
         },
         {
-            field: "homeTraditionalAuthority", headerName: "Home TA", renderCell: (cell: any) => {
-                return cell.row.addresses[0].county_district
+            field: "currentTraditionalAuthority", headerName: "Current TA", flex: 1, renderCell: (cell: any) => {
+                return cell.row.addresses[0].current_traditional_authority
             }
         },
         {
-            field: "homeVillage", headerName: "Home Village", renderCell: (cell: any) => {
-                return cell.row.addresses[0].address2
+            field: "currentVillage", headerName: "Current Location", flex: 1, renderCell: (cell: any) => {
+                return cell.row.addresses[0].current_village
             }
         },
         {

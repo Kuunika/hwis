@@ -100,6 +100,7 @@ export const SocialHistoryForm: FC<Prop> = ({
             options={[
               { label: "Single", value: "single" },
               { label: "Married", value: "married" },
+              { label: "Separated", value: "separated" },
               { label: "Widowed", value: "widow/widower" },
               { label: "Divorced", value: "divorced" },
               { label: "Unknown", value: "unknown" },
@@ -152,15 +153,16 @@ export const SocialHistoryForm: FC<Prop> = ({
             selectItems={[
               { name: "Walking", value: "walking" },
               { name: "Ambulance", value: "ambulance" },
-              { name: "Public transport", value: "public_transport" },
+              { name: "Taxi", value: "Taxi" },
+              { name: "Minibus", value: "Minibus" },
+              { name: "Motorcycle", value: "motorcycle" },
               { name: "Private transport", value: "private_transport" },
               { name: "Police vehicle", value: "police_vehicle" },
               {
                 name: "Company vehicle",
                 value: "other_public_company_vehicle",
               },
-              { name: "Motorcycle", value: "motorcycle" },
-              { name: "Taxi (car/motorcycle)", value: "taxi" },
+
               { name: "Bicycle", value: "bicycle" },
               { name: "Helicopter", value: "helicopter" },
             ]}

@@ -55,6 +55,7 @@ export const registerPatient = () => {
         },
       ],
       gender: patientData.gender,
+      birthdateEstimated: patientData.birthdateEstimated,
       birthdate: patientData.birthDate,
       addresses: [
         {

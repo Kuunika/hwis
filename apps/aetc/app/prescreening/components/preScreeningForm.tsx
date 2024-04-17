@@ -119,7 +119,7 @@ export function PrescreeningForm({ onSubmit }: props) {
           />
         </>
       )}
-      {formValues[form.urgent.name] == YES && (
+      {(formValues[form.urgent.name] == YES || formValues[form.urgent.name] == concepts.ELECTIVE) && (
         <NotificationContainer message="Proceed with registration" />
       )}
     </FormikInit>

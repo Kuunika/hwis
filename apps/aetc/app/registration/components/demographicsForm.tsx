@@ -5,8 +5,6 @@ import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-
-
 import {
   FormikInit,
   TextInputField,
@@ -16,6 +14,7 @@ import {
   SearchComboBox,
   WrapperBox,
   FormValuesListener,
+  MainTypography,
 } from "shared-ui/src";
 import {
   RegistrationCard,
@@ -37,6 +36,7 @@ import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/lo
 import { LocationContext, LocationContextType } from "@/contexts/location";
 import { getPatientRelationships } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
+import { estimateBirthdate } from "@/helpers/dateTime";
 
 const form = {
   identificationNumber: {
@@ -62,6 +62,10 @@ const form = {
   gender: {
     name: "gender",
     label: "Gender",
+  },
+  birthDateEstimated: {
+    name: "birthdateEstimated",
+    label: "Birthdate Estimated",
   },
   currentDistrict: {
     name: "currentDistrict",
@@ -132,7 +136,10 @@ const form = {
     name: "guardianPresent",
     label: "Guardian Present",
   },
-
+  age: {
+    name: "age",
+    label: "Estimated Age",
+  },
 
 };
 const phoneRegex = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -146,10 +153,11 @@ const schema = Yup.object().shape({
     .min(10)
     .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
-
-
   [form.dob.name]: Yup.date()
-    .required(form.dob.label + ' is required')
+    .when(form.birthDateEstimated.name, {
+      is: (value: boolean) => false,
+      then: () => Yup.date().required(),
+    })
     .test('valid-age', 'Age must be at least 14 years and not in the future', function (value) {
       if (!value) return true;
       const selectedDate = new Date(value);
@@ -175,7 +183,6 @@ const schema = Yup.object().shape({
     .required()
     .label(form.currentDistrict.label),
   [form.closeLandMark.name]: Yup.string()
-    .required()
     .label(form.closeLandMark.label),
   [form.nextOfKinFirstName.name]: Yup.string()
     .required()
@@ -216,6 +223,13 @@ const schema = Yup.object().shape({
     .label(form.guardianNumber.label),
   [form.guardianPresent.name]: Yup.string().required()
     .label(form.guardianPresent.label),
+  [form.birthDateEstimated.name]: Yup.boolean().required()
+    .label(form.birthDateEstimated.label),
+  [form.age.name]: Yup.number().when(form.birthDateEstimated.name, {
+    is: (value: boolean) => true,
+    then: () => Yup.number().required(),
+  })
+    .label(form.age.label),
 });
 
 const init = getInitialValues(form);
@@ -289,10 +303,7 @@ export const DemographicsForm: FC<Prop> = ({
   };
 
 
-
-
   useEffect(() => {
-
     if (isSuccess) {
       const nextOfKin = patientRelationships[0].person_b;
       setNextOfKinInitialValue({
@@ -305,6 +316,17 @@ export const DemographicsForm: FC<Prop> = ({
   }, [isSuccess])
 
 
+  useEffect(() => {
+
+
+    if (fieldFunction) {
+      const { setFieldValue } = fieldFunction;
+      const date = estimateBirthdate(formValues[form.age.name])?.iso;
+      setFieldValue(form.dob.name, date);
+    }
+
+
+  }, [formValues[form.age.name]])
 
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
@@ -335,8 +357,6 @@ export const DemographicsForm: FC<Prop> = ({
       );
     }
   }, [checked, formValues]);
-
-
 
 
 
@@ -407,11 +427,6 @@ export const DemographicsForm: FC<Prop> = ({
   }, [])
 
 
-
-
-
-
-
   return (
     <>
       <RegistrationMainHeader id="1">Demographics</RegistrationMainHeader>
@@ -425,7 +440,8 @@ export const DemographicsForm: FC<Prop> = ({
           ...initialValues, ..._init, [form.firstName.name]: searchedPatient.firstName,
           [form.lastName.name]: searchedPatient.lastName,
           [form.gender.name]: searchedPatient.gender == 'M' ? 'Male' : "Female",
-          ...nextOfKinInitialValues
+          ...nextOfKinInitialValues,
+          [form.birthDateEstimated.name]: false
         }}
         onSubmit={onSubmit}
         submitButtonText="next"
@@ -433,6 +449,7 @@ export const DemographicsForm: FC<Prop> = ({
         enableReinitialize={true}
       >
         <FormValuesListener getValues={setFormValues} />
+
         <TrackFormikContext
           getSetFieldFunction={(func: any) => setFieldFunction(func)}
           setFormContext={setContext}
@@ -464,11 +481,41 @@ export const DemographicsForm: FC<Prop> = ({
             ]}
           />
 
-          <FormDatePicker
-            width={"100%"}
-            label={form.dob.label}
-            name={form.dob.name}
+          <RadioGroupInput
+            name={form.birthDateEstimated.name}
+            label={form.birthDateEstimated.label}
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
           />
+          {formValues[form.birthDateEstimated.name] == 'true' && <>
+            <TextInputField
+              name={form.age.name}
+              id={form.age.name}
+              label={form.age.label}
+            />
+
+            {formValues[form.age.name] > 0 && <>
+              <br />
+              <MainTypography variant="body1">
+                Estimated birth date  <b>{estimateBirthdate(formValues[form.age.name])?.readable}</b>
+              </MainTypography>
+              <br />
+
+            </>}
+          </>
+          }
+          {formValues[form.birthDateEstimated.name] == 'false' && <>
+            <FormDatePicker
+              width={"100%"}
+              label={form.dob.label}
+              name={form.dob.name}
+            />
+          </>
+          }
+
+
           {/* <ErrorMessage
             name={form.dob.name}
             component="div"

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 
 export const getDateTime = () => {
   let date = new Date();
@@ -40,4 +41,12 @@ export const getTime = (dateString: string) => {
 
 
   return `${hours}:${minutes}:${seconds}`
+}
+
+export const estimateBirthdate = (years: number) => {
+  const estimate = dayjs().subtract(years, 'year')
+  return {
+    iso: estimate.toISOString(),
+    readable: estimate.format('DD MMMM YYYY')
+  }
 }
