@@ -155,7 +155,7 @@ const schema = Yup.object().shape({
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.date()
     .when(form.birthDateEstimated.name, {
-      is: (value: boolean) => false,
+      is: (value: any) => value == 'true',
       then: () => Yup.date().required(),
     })
     .test('valid-age', 'Age must be at least 14 years and not in the future', function (value) {
@@ -226,7 +226,7 @@ const schema = Yup.object().shape({
   [form.birthDateEstimated.name]: Yup.boolean().required()
     .label(form.birthDateEstimated.label),
   [form.age.name]: Yup.number().when(form.birthDateEstimated.name, {
-    is: (value: boolean) => true,
+    is: (value: any) => (value == true) || value == 'true',
     then: () => Yup.number().required(),
   })
     .label(form.age.label),
@@ -335,6 +335,7 @@ export const DemographicsForm: FC<Prop> = ({
       setFieldValue(form.firstName.name, searchedPatient.firstName);
       setFieldValue(form.lastName.name, searchedPatient.lastName)
       setFieldValue(form.gender.name, searchedPatient.gender)
+      setFieldValue(form.birthDateEstimated.name, false)
     }
   }, [initialRegisteredPatient]);
 
@@ -489,14 +490,17 @@ export const DemographicsForm: FC<Prop> = ({
               { label: "No", value: false },
             ]}
           />
-          {formValues[form.birthDateEstimated.name] == 'true' && <>
+          <>
             <TextInputField
+              sx={{
+                display: formValues[form.birthDateEstimated.name] == 'true' ? 'flex' : 'none'
+              }}
               name={form.age.name}
               id={form.age.name}
               label={form.age.label}
             />
 
-            {formValues[form.age.name] > 0 && <>
+            {formValues[form.age.name] > 0 && formValues[form.birthDateEstimated.name] == 'true' && <>
               <br />
               <MainTypography variant="body1">
                 Estimated birth date  <b>{estimateBirthdate(formValues[form.age.name])?.readable}</b>
@@ -505,15 +509,20 @@ export const DemographicsForm: FC<Prop> = ({
 
             </>}
           </>
-          }
-          {formValues[form.birthDateEstimated.name] == 'false' && <>
-            <FormDatePicker
-              width={"100%"}
-              label={form.dob.label}
-              name={form.dob.name}
-            />
-          </>
-          }
+
+
+          <FormDatePicker
+            sx={{
+              display: (formValues[form.birthDateEstimated.name] == false || formValues[form.birthDateEstimated.name] == 'false') ? 'flex' : 'none',
+              width: "100%",
+
+            }}
+            width={"100%"}
+            label={form.dob.label}
+            name={form.dob.name}
+          />
+
+
 
 
           {/* <ErrorMessage

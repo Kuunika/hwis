@@ -20,6 +20,7 @@ type Props = {
   disabled?: boolean;
   multiple?: boolean;
   size?: "small" | "medium";
+  applyPadding?: boolean
 };
 
 const animatedComponents = makeAnimated();
@@ -33,12 +34,11 @@ export const SearchComboBox: FC<Props> = ({
   getValue,
   disabled = false,
   multiple = true,
+  applyPadding = true
 
 }) => {
-  const { hasError, setFieldValue, initialValues, value } =
+  const { hasError, setFieldValue, initialValues, value, errorMessage } =
     useFormikField(name);
-
-
 
   const mappedOptions = options.map(op => {
     return {
@@ -60,15 +60,21 @@ export const SearchComboBox: FC<Props> = ({
     }
   }
 
+  const padding = applyPadding ? {
+    paddingTop: "1ch",
+    paddingBottom: "1ch",
+  } : {}
+
 
   return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5, }}>
-    <MainTypography variant="subtitle2">{label}</MainTypography>
+    <MainTypography color={"#666666"} variant="subtitle2">{label}</MainTypography>
     <Select
       styles={{
         //@ts-ignore
         control: (baseStyles, state) => ({
           ...baseStyles,
-          borderColor: hasError ? "red" : "#B3B3B3"
+          borderColor: hasError ? "red" : "#B3B3B3",
+          ...padding
         }),
       }}
       {...(multiple ? null : { value: mappedOptions.filter(op => op.value == value) })}
@@ -89,6 +95,7 @@ export const SearchComboBox: FC<Props> = ({
       isMulti={multiple}
       components={animatedComponents}
       options={mappedOptions} />
+    <MainTypography color={"red"} variant="subtitle2">{errorMessage}</MainTypography>
   </WrapperBox>
 
   // return (
