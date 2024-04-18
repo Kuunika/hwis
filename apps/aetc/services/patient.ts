@@ -12,12 +12,20 @@ export const initialRegistration = (patientData: any) =>
 
 export const getPatients = () => getAll<Array<any>>(endPoint);
 
+
+
 export const getDailyVisits = (queryParam?: string) =>
+  // getAll<Person[]>(`/visits?date_stopped&category=${queryParam}&paginate=false`);
   getAll<Person[]>(`/daily_visits?category=${queryParam}`);
+// getAll<{
+//   page: number,
+//   total_pages: number,
+//   per_page: number,
+//   data: Person[]
+// }>(`/visits?date_stopped&category=${queryParam}`);
 
 export const updatePatient = (patientId: string, patientData: any) =>
   edit<PatientUpdateResponse>(patientId, patientData, endPoint);
-
 export const potentialDuplicates = (patientData: any) =>
   create(patientData, "/search/people");
 

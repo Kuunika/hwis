@@ -490,25 +490,25 @@ export const DemographicsForm: FC<Prop> = ({
               { label: "No", value: false },
             ]}
           />
-          <>
-            <TextInputField
-              sx={{
-                display: formValues[form.birthDateEstimated.name] == 'true' ? 'flex' : 'none'
-              }}
-              name={form.age.name}
-              id={form.age.name}
-              label={form.age.label}
-            />
 
-            {formValues[form.age.name] > 0 && formValues[form.birthDateEstimated.name] == 'true' && <>
-              <br />
-              <MainTypography variant="body1">
-                Estimated birth date  <b>{estimateBirthdate(formValues[form.age.name])?.readable}</b>
-              </MainTypography>
-              <br />
+          <TextInputField
+            sx={{
+              display: formValues[form.birthDateEstimated.name] == 'true' ? 'flex' : 'none'
+            }}
+            name={form.age.name}
+            id={form.age.name}
+            label={form.age.label}
+          />
 
-            </>}
-          </>
+          {formValues[form.age.name] > 0 && formValues[form.birthDateEstimated.name] == 'true' && <>
+            <br />
+            <MainTypography variant="body1">
+              Estimated birth date  <b>{estimateBirthdate(formValues[form.age.name])?.readable}</b>
+            </MainTypography>
+            <br />
+
+          </>}
+
 
 
           <FormDatePicker

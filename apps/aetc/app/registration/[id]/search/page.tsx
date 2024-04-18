@@ -150,7 +150,7 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
       />
       <br />
       <OverlayLoader open={isFetching} />
-      {searchComplete && <SearchResults
+      {(searchComplete || isError) && <SearchResults
         searchResults={data ? data : { remotes: [], locals: [] }}
         searchedPatient={searchedPatient}
       />

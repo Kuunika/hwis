@@ -64,6 +64,7 @@ export interface Person {
   given_name: string;
   family_name: string;
   aetc_visit_number: string;
+  birthdateEstimated: boolean;
   gender: string;
   birthdate: Date;
   addresses: Address[];

@@ -98,7 +98,7 @@ export const getPatientsWaitingForPrescreening = () => {
     queryKey: ["screening"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 30,
+    refetchInterval: 1000 * 60,
   });
 };
 
