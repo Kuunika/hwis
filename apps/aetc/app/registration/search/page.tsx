@@ -7,7 +7,7 @@ import {
   MainTypography,
   WrapperBox,
   defaultTheme,
-} from "shared-ui/src";
+} from "@/components";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";

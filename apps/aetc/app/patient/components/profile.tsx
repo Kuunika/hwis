@@ -4,7 +4,7 @@ import {
   MainPaper,
   MainTypography,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import { ConsultationCard, PersonalDetailsCard, VisitsBar } from ".";
 import {
   BasicAccordion,

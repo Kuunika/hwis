@@ -1,6 +1,6 @@
 import { estimateBirthdate } from "@/helpers/dateTime";
 import { useState } from "react";
-import { FormDatePicker, FormValuesListener, FormikInit, MainTypography, RadioGroupInput, TextInputField, WrapperBox } from "shared-ui/src";
+import { FormDatePicker, FormValuesListener, FormikInit, MainTypography, RadioGroupInput, TextInputField, WrapperBox } from "@/components";
 import * as Yup from "yup";
 
 const form = {

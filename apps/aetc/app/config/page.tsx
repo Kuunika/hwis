@@ -1,6 +1,6 @@
 'use client'
 
-import { MainButton } from "shared-ui/src"
+import { MainButton } from "@/components"
 import { UsersList } from "./components"
 import { useNavigation } from "@/hooks"
 import { roles } from "@/constants"

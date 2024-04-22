@@ -8,7 +8,7 @@ import {
   MainButton,
   RadioGroupInput,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import * as Yup from "yup";
 import { TriageContainer } from ".";
 import { getInitialValues, notify, successDialog } from "@/helpers";

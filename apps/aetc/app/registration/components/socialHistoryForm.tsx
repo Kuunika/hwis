@@ -7,7 +7,7 @@ import {
   SelectInputField,
   TextInputField,
 
-} from "shared-ui/src";
+} from "@/components";
 import { concepts } from "@/constants";
 import {
   RegistrationCard,

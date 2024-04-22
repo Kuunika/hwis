@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
 import Barcode from 'react-barcode';
 import ReactToPrint from 'react-to-print';
-import { MainButton, MainTypography, WrapperBox } from 'shared-ui/src';
+import { MainButton, MainTypography, WrapperBox } from '@/components';
 import * as htmlToImage from 'html-to-image';
 import zplImageConvert from '@replytechnologies/zpl-image-convert';
 

@@ -1,5 +1,5 @@
 import { LabRequest } from "@/interfaces"
-import { BaseTable } from "shared-ui/src"
+import { BaseTable } from "@/components"
 export const LabResultsTable = ({ rows }: { rows: LabRequest[] }) => {
 
 

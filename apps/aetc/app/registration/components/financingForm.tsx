@@ -7,7 +7,7 @@ import {
   TextInputField,
   RadioGroupInput,
   CheckboxesGroup,
-} from "shared-ui/src";
+} from "@/components";
 import { TrackFormikContext } from "./demographicsForm";
 import {
   RegistrationCard,

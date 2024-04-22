@@ -4,7 +4,7 @@ import { UserForm } from "../../components";
 import { OverlayLoader } from "@/components/backdrop";
 import { useEffect } from "react";
 import { useNavigation } from "@/hooks";
-import { MainTypography } from "shared-ui/src";
+import { MainTypography } from "@/components";
 import { BackButton } from "@/components/buttons";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";

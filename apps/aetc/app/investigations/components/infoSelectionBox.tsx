@@ -1,4 +1,4 @@
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox } from "@/components";
 
 interface Information {
   title: string;

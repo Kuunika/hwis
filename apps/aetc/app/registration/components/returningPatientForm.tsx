@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { FormikInit, SearchComboBox, SelectInputField } from 'shared-ui/src';
+import { FormikInit, SearchComboBox, SelectInputField } from '@/components';
 import { GenericDialog } from "@/components";
 import * as Yup from 'yup';
 import { getFacilities, useParameters } from "@/hooks";

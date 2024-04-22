@@ -3,7 +3,7 @@ import { OverlayLoader } from "@/components/backdrop";
 import { useNavigation } from "@/hooks";
 import { useLayoutEffect, useState } from "react"
 import { checkRole } from "./checkrole";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox } from "@/components";
 import Image from "next/image"
 import { getRoles } from "./localstorage";
 

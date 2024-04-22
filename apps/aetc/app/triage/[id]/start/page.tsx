@@ -2,7 +2,7 @@
 
 import { PatientInfoTab } from "@/components";
 import TriageWorkFlow from "../../components/triageWorkFlow";
-import { FormContainer } from "shared-ui/src";
+import { FormContainer } from "@/components";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 function Triage() {

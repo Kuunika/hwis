@@ -3,7 +3,7 @@ import { calculateAge } from "@/helpers/dateTime";
 import { useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 
-import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainPaper, MainTypography, WrapperBox } from "@/components";
 
 export const PatientInfoTab = () => {
   const { params } = useParameters()

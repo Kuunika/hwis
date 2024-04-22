@@ -3,7 +3,7 @@ import {
   MainPaper,
   MainTypography,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import { Button, SxProps } from "@mui/material";
 import {
   FaRegCalendarPlus,

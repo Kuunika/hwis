@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useState } from "react";
-import { NewStepperContainer } from "shared-ui/src";
+import { NewStepperContainer } from "@/components";
 import {
   AirwayForm,
   BreathingForm,

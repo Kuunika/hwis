@@ -4,7 +4,7 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getVisitNum } from "@/hooks/visitNumber";
 import { useEffect, useState } from "react";
-import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
+import { BaseTable, MainButton, MainTypography } from "@/components";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
 

@@ -9,7 +9,7 @@ import {
     SearchComboBox,
     TextInputField,
     WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import * as yup from "yup";
 
 type props = {

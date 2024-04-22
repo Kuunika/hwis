@@ -7,7 +7,7 @@ import {
   MainTypography,
   WrapperBox,
   defaultTheme,
-} from "shared-ui/src";
+} from "@/components";
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";

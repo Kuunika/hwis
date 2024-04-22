@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { MainButton, MainTypography } from "shared-ui/src"
+import { MainButton, MainTypography } from "@/components"
 import { GenericDialog } from ".";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { OverlayLoader } from "./backdrop";

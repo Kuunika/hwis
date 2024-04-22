@@ -2,12 +2,14 @@
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getOnePatient } from "@/hooks/patientReg";
-import { WrapperBox, MainTypography, MainPaper } from "shared-ui/src";
+import { WrapperBox, MainTypography, MainPaper } from "@/components";
 import { ReactNode } from "react"
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
 import { Person } from "@/interfaces";
+
+
 
 const Page = () => {
     const { params } = useParameters();
@@ -60,3 +62,4 @@ const LabelValue = ({ label, value }: { label: string; value: any }) => {
         </WrapperBox>
     );
 };
+

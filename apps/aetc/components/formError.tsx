@@ -1,4 +1,4 @@
-import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "@/components";
 import Image from "next/image";
 
 export const FormError = ({

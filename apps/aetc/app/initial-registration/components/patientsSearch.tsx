@@ -14,7 +14,7 @@ import { addVisit } from "@/hooks/visit";
 import { getVisitNum } from "@/hooks/visitNumber";
 import { DDESearch, Person } from "@/interfaces";
 import { useEffect, useState } from "react";
-import { BaseTable, MainButton } from "shared-ui/src";
+import { BaseTable, MainButton } from "@/components";
 
 
 

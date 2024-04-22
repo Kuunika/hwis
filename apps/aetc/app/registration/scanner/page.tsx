@@ -1,5 +1,5 @@
 "use client";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox } from "@/components";
 import { Navigation } from "@/app/components/navigation";
 
 export default function Scanner() {

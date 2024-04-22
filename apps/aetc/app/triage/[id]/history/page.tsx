@@ -1,7 +1,7 @@
 "use client";
 import { MiddlePageLayout } from "@/components/layouts";
 import { TriageHistoryList, ViewTriageResults } from "../../components";
-import { MainButton, MainGrid, MainPaper } from "shared-ui/src";
+import { MainButton, MainGrid, MainPaper } from "@/components";
 import { useNavigation, useParameters } from "@/hooks";
 import { PersonalDetailsCard } from "@/app/patient/components";
 import { BackButton } from "@/components/buttons";

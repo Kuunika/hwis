@@ -9,7 +9,7 @@ import {
   RadioGroupInput,
   TextInputField,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import * as Yup from "yup";
 
 import { getInitialValues } from "@/helpers";

@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
-import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
+import { BaseTable, MainButton, MainTypography } from "@/components";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
 

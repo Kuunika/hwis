@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { FaCircleCheck } from "react-icons/fa6";
-import { MainButton } from "shared-ui/src";
+import { MainButton } from "@/components";
 
 export function OperationSuccess({
   title,

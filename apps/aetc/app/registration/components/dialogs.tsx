@@ -1,4 +1,4 @@
-import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "@/components";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import rectangleScan from "../../../icons/rectanglescan.svg";

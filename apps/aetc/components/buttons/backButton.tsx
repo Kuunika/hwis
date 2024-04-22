@@ -1,5 +1,6 @@
+'use client'
 import { FaArrowCircleLeft } from "react-icons/fa";
-import { MainTypography } from "shared-ui/src";
+import { MainTypography } from "@/components";
 import { useRouter } from "next/navigation";
 
 export function BackButton() {

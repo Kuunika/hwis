@@ -5,7 +5,7 @@ import {
   FormikInit,
   RadioGroupInput,
   SearchComboBox,
-} from "shared-ui/src";
+} from "@/components";
 import * as yup from "yup";
 
 import { NotificationContainer } from "@/components";

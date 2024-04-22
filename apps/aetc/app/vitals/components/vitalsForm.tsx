@@ -14,7 +14,7 @@ import {
   SelectInputField,
   TextInputField,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import * as yup from "yup";
 import { concepts, triageResult } from "@/constants";
 import { TriageContainer } from "@/app/triage/components/";

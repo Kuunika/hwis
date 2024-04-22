@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React, { useState } from "react";
-import { SearchComboBox, FormikInit, MainButton } from "shared-ui/src";
+import { SearchComboBox, FormikInit, MainButton } from "@/components";
 import * as Yup from "yup";
 
 import { getInitialValues, notify } from "@/helpers";

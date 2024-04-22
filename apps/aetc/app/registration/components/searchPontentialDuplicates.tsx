@@ -2,7 +2,7 @@ import { GenericDialog } from "@/components";
 import { useNavigation } from "@/hooks";
 import { merge, searchByDemographics } from "@/hooks/patientReg";
 import { DDEScore } from "@/interfaces";
-import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
+import { BaseTable, MainButton, MainTypography, WrapperBox } from "@/components";
 import { FaCodeMerge } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";

@@ -8,7 +8,7 @@ import CircularProgress, {
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
-import { MainTypography } from "shared-ui/src";
+import { MainTypography } from "@/components";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,

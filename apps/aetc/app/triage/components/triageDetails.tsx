@@ -1,4 +1,4 @@
-import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainPaper, MainTypography, WrapperBox } from "@/components";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";

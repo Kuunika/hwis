@@ -3,9 +3,7 @@
 import { InitialRegistrationForm } from "./components";
 import { initialPatientRegistration, searchDDEPatientByNpid } from "@/hooks/patientReg";
 
-
-
-import { MainGrid, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainGrid, MainTypography, WrapperBox } from "@/components";
 import {
   RegistrationCard,
   RegistrationDescriptionText,

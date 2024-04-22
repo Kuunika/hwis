@@ -1,7 +1,7 @@
 "use client";
 import { MiddlePageLayout } from "@/components/layouts";
 import { InitialRegistrationList } from "../components";
-import { MainGrid } from "shared-ui/src";
+import { MainGrid } from "@/components";
 import {
   RegistrationCard,
   RegistrationDescriptionText,
