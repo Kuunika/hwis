@@ -1,6 +1,0 @@
-export * from "./airwayAndBreathing"
-export * from "./bloodCirculation"
-export * from "./consciousness"
-export * from "./persistentPain"
-export * from "./vitals"
-export * from "./table"
