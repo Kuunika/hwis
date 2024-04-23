@@ -159,7 +159,9 @@ const schema = Yup.object().shape({
       then: () => Yup.date().required(),
     })
     .test('valid-age', 'Age must be at least 14 years and not in the future', function (value) {
+
       if (!value) return true;
+
       const selectedDate = new Date(value);
       const today = new Date();
       let age = today.getFullYear() - selectedDate.getFullYear();
@@ -309,7 +311,6 @@ export const DemographicsForm: FC<Prop> = ({
       setNextOfKinInitialValue({
         [form.nextOfKinFirstName.name]: nextOfKin.names[0].given_name,
         [form.nextOfKinLastName.name]: nextOfKin.names[0].family_name,
-
       })
 
     }
@@ -398,6 +399,8 @@ export const DemographicsForm: FC<Prop> = ({
       const currentTraditionalAuthority = patient?.addresses[0]?.current_traditional_authority;
       const currentVillage = patient?.addresses[0]?.current_village
 
+
+      console.log(patient.birthdate)
 
       init = {
         [form.dob.name]: patient.birthdate,
@@ -520,6 +523,8 @@ export const DemographicsForm: FC<Prop> = ({
             width={"100%"}
             label={form.dob.label}
             name={form.dob.name}
+            getValue={(value: any, validateFunc: any) => {
+            }}
           />
 
 

@@ -1718,4 +1718,11 @@ export const countries =
       en_short_name: "Zimbabwe",
       nationality: "Zimbabwean",
     },
+    {
+      num_code: "4540",
+      alpha_2_code: "Unknown",
+      alpha_3_code: "Unknown",
+      en_short_name: "Unknown",
+      nationality: "Unknown",
+    },
   ];

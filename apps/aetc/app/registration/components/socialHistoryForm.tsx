@@ -143,6 +143,7 @@ export const SocialHistoryForm: FC<Prop> = ({
               { label: "Self Employed", value: "selfemployed" },
               { label: "Student", value: "student" },
               { label: "House Wife", value: "housewife" },
+              { label: "Unknown", value: "unknown" },
             ]}
           />
         </RegistrationCard>
@@ -156,6 +157,7 @@ export const SocialHistoryForm: FC<Prop> = ({
               { name: "Taxi", value: "Taxi" },
               { name: "Minibus", value: "Minibus" },
               { name: "Motorcycle", value: "motorcycle" },
+              { name: "Hired Car", value: "hired car" },
               { name: "Private transport", value: "private_transport" },
               { name: "Police vehicle", value: "police_vehicle" },
               {
@@ -180,7 +182,7 @@ export const SocialHistoryForm: FC<Prop> = ({
               { name: "Secondary", value: "secondary" },
               { name: "Tertiary", value: "tertiary" },
               { name: "None", value: "none" },
-              { name: "Other", value: "other" },
+              { name: "Unknown", value: "unknown" },
 
             ]}
             label={form.highestEducation.label}

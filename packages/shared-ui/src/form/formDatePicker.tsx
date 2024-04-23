@@ -14,7 +14,7 @@ type Prop = {
   sx?: SxProps;
   placeholder?: string;
   rows?: number;
-  getValue?: (value: any) => void;
+  getValue?: (value: any, validateFunc?: any) => void;
   size?: "small" | "medium";
   showHelperText?: boolean;
   disabled?: boolean;
@@ -29,13 +29,18 @@ export const FormDatePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const { value, setFieldValue, initialValues, errorMessage } = useFormikField(name);
+  const { value, setFieldValue, initialValues, errorMessage, validateField, hasError, setTouched, touched, setFieldError } = useFormikField(name);
+
+
+
+  let initialDate;
+
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
 
-  let initialDate = "2024-03-17";
+  // let initialDate = "2024-03-17";
 
   if (typeof initialValues == 'object' && initialValues !== null) {
 
@@ -54,11 +59,14 @@ export const FormDatePicker: FC<Prop> = ({
           ...sx,
         }}
 
-        defaultValue={dayjs(initialDate)}
+        defaultValue={Boolean(initialDate) ? dayjs(initialDate) : null}
         label={label}
         // value={value}
-        onChange={(dateValue: any) =>
-          setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
+        onChange={(dateValue: any) => {
+          setFieldError(name, '')
+          setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"));
+          setTouched({ [`${name}`]: true })
+        }
         }
 
         disabled={disabled}

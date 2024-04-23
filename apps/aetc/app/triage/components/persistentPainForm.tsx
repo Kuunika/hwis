@@ -47,7 +47,7 @@ const form = {
 
 type Prop = {
   onSubmit: (values: any) => void;
-
+  setTriageResult: (rre: any, name: string) => void;
   triageResult: string,
   continueTriage: boolean
   previous: () => void
@@ -74,7 +74,7 @@ const options = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
 ];
-export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, previous }: Prop) => {
+export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, previous, setTriageResult }: Prop) => {
   const { updateConditions } = useConditions();
   const [formValues, setFormValues] = useState<any>({});
 
@@ -99,8 +99,16 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
             label={form.activeSeizures.label}
             options={options}
             disabled={disableField(form.activeSeizures.name)}
-            getValue={(value) =>
+            getValue={(value) => {
               updateConditions(form.activeSeizures.name, value)
+
+              if (value == YES) {
+
+                setTriageResult('red', form.activeSeizures.name)
+              } else {
+                setTriageResult('green', form.activeSeizures.name)
+              }
+            }
             }
           />
           <RadioGroupInput
@@ -108,8 +116,14 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
             label={form.focalNeurological.label}
             options={options}
             disabled={disableField(form.focalNeurological.name)}
-            getValue={(value) =>
-              updateConditions(form.focalNeurological.name, value)
+            getValue={(value) => {
+              updateConditions(form.focalNeurological.name, value);
+              if (value == YES) {
+                setTriageResult('red', form.focalNeurological.name)
+              } else {
+                setTriageResult('green', form.focalNeurological.name)
+              }
+            }
             }
           />
         </FieldsContainer>
@@ -122,14 +136,31 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
             disabled={disableField(form.headache.name)}
             label={form.headache.label}
             options={options}
-            getValue={(value) => updateConditions(form.headache.name, value)}
+            getValue={(value) => {
+
+              if (value == YES) {
+                setTriageResult('yellow', form.headache.name)
+              } else {
+                setTriageResult('green', form.headache.name)
+              }
+
+              updateConditions(form.headache.name, value)
+            }
+            }
           />
           <RadioGroupInput
             name={form.weakness.name}
             disabled={disableField(form.weakness.name)}
             label={form.weakness.label}
             options={options}
-            getValue={(value) => updateConditions(form.weakness.name, value)}
+            getValue={(value) => {
+              updateConditions(form.weakness.name, value);
+              if (value == YES) {
+                setTriageResult('yellow', form.weakness.name)
+              } else {
+                setTriageResult('green', form.weakness.name)
+              }
+            }}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
@@ -140,14 +171,29 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
             disabled={disableField(form.severePain.name)}
             label={form.severePain.label}
             options={options}
-            getValue={(value) => updateConditions(form.severePain.name, value)}
+            getValue={(value) => {
+              updateConditions(form.severePain.name, value);
+              if (value == YES) {
+                setTriageResult('red', form.severePain.name)
+              } else {
+                setTriageResult('green', form.severePain.name)
+              }
+            }}
           />
           <RadioGroupInput
             name={form.confusion.name}
             disabled={disableField(form.confusion.name)}
             label={form.confusion.label}
             options={options}
-            getValue={(value) => updateConditions(form.confusion.name, value)}
+            getValue={(value) => {
+
+              updateConditions(form.confusion.name, value)
+              if (value == YES) {
+                setTriageResult('yellow', form.confusion.name)
+              } else {
+                setTriageResult('green', form.confusion.name)
+              }
+            }}
           />
         </FieldsContainer>
         <FieldsContainer>
@@ -156,6 +202,13 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
             name={form.moderatePain.name}
             label={form.moderatePain.label}
             options={options}
+            getValue={(value) => {
+              if (value == YES) {
+                setTriageResult('yellow', form.moderatePain.name)
+              } else {
+                setTriageResult('green', form.moderatePain.name)
+              }
+            }}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>

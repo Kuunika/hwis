@@ -9,12 +9,17 @@ export const useFormikField = (name: string) => {
     validateField,
     initialValues,
     handleBlur,
+    setTouched,
+    setFieldError
   } = useFormikContext();
 
   // console.log({ errors });
   // console.log({ values });
   //@ts-ignore
   const value = values[name];
+
+
+
 
   //@ts-ignore
   const hasError = touched[name] && Boolean(errors[name]);
@@ -32,6 +37,8 @@ export const useFormikField = (name: string) => {
     initialValues,
     handleBlur,
     values,
-    touched
+    touched,
+    setTouched,
+    setFieldError
   };
 };

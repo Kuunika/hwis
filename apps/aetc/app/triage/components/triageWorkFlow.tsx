@@ -26,7 +26,7 @@ import { Bounce, ToastContainer, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
 
 export default function TriageWorkFlow() {
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(5);
   const [formData, setFormData] = useState<any>({});
   const { params } = useParameters();
   const [triageResult, setTriageResult] = useState<TriageResult>("");
@@ -394,6 +394,7 @@ export default function TriageWorkFlow() {
           <PersistentPainForm
             previous={() => setActiveStep(4)}
             continueTriage={continueTriage}
+            setTriageResult={checkTriageResult}
             triageResult={triageResult}
             onSubmit={handlePersistentPain} />
         </NewStepperContainer>
