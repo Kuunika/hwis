@@ -7,7 +7,8 @@ import * as Yup from "yup";
 
 type Props = {
     onSubmit: (values: any) => void,
-    initialValues: any
+    initialValues: any,
+    currentLocation?: boolean,
 }
 
 const schema = Yup.object().shape({
@@ -15,25 +16,37 @@ const schema = Yup.object().shape({
     traditionalAuthority: Yup.string(),
     village: Yup.string(),
     nationality: Yup.string(),
+
 })
 
 export const EditLocation = ({
     onSubmit,
-    initialValues
+    initialValues,
+    currentLocation = false
 }: Props) => {
     const { villages, districts, traditionalAuthorities } = useContext(LocationContext) as LocationContextType
     const [selectedLocation, setSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
+    const [init, setInit] = useState({})
+
+
+    console.log({ initialValues })
 
     useEffect(() => {
         const districtId = districts.find(d => d.name == initialValues.district)?.district_id;
         const traditionalAuthorityId = traditionalAuthorities.find(d => d.name == initialValues.traditionalAuthority)?.traditional_authority_id;
         const villageId = villages.find(d => d.name == initialValues.village)?.village_id;
-
         setSelectedLocation({ village: villageId, traditionalAuthority: traditionalAuthorityId, district: districtId })
     }, [])
 
-    return <FormikInit submitButtonText="update" initialValues={initialValues} validationSchema={schema} onSubmit={onSubmit}>
-        <SearchComboBox
+
+    useEffect(() => {
+
+        setInit(initialValues)
+
+    }, [selectedLocation])
+
+    return <FormikInit submitButtonText="update" enableReinitialize={true} initialValues={init} validationSchema={schema} onSubmit={onSubmit}>
+        {!currentLocation && <SearchComboBox
             name={"nationality"}
             label={'Nationality'}
             multiple={false}
@@ -41,7 +54,7 @@ export const EditLocation = ({
                 id: c.nationality,
                 label: c.nationality,
             }))}
-        />
+        />}
         <SearchComboBox
             name={'district'}
             label={'District'}
@@ -59,7 +72,7 @@ export const EditLocation = ({
             })) : []}
         />
         <SearchComboBox
-            name={'traditionalAuthoruty'}
+            name={'traditionalAuthority'}
             label={'Traditional Authority '}
             multiple={false}
             getValue={(value) => {

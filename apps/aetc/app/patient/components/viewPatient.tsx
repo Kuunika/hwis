@@ -54,7 +54,12 @@ export const ViewPatient = ({ patient }: { patient: Person }) => {
                     <LabelValue label="Current Village" value={patient?.addresses[0]?.current_village} />
                     <LabelValue label="Close Land Mark" value={patient?.addresses[1]?.address2} />
                 </>
-                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => { }} />
+                <CurrentLocationDialog onClose={() => setCurrentLocation(false)} initialValues={{
+                    district: patient?.addresses[0]?.current_district,
+                    traditionalAuthority: patient?.addresses[0]?.current_traditional_authority,
+                    village: patient?.addresses[0]?.current_village
+                }} open={currentLocation} />
+                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setCurrentLocation(true)} />
             </ContainerCard>
         </>
 
@@ -85,7 +90,12 @@ const DemographicsDialog = ({ open, onClose, initialValues }: { open: boolean, o
     </GenericDialog>
 }
 const HomeLocationDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
-    return <GenericDialog maxWidth="sm" title="Edit Demographics" open={open} onClose={onClose}>
+    return <GenericDialog maxWidth="sm" title="Edit Home Location" open={open} onClose={onClose}>
         <EditLocation initialValues={initialValues} onSubmit={() => { }} />
+    </GenericDialog>
+}
+const CurrentLocationDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+    return <GenericDialog maxWidth="sm" title="Edit Current Location" open={open} onClose={onClose}>
+        <EditLocation currentLocation={true} initialValues={initialValues} onSubmit={() => { }} />
     </GenericDialog>
 }
