@@ -265,7 +265,7 @@ const relationships = [
   },
 ];
 
-type LocationType = {
+export type LocationType = {
   village: number | string | undefined,
   traditionalAuthority: number | string | undefined,
   district: number | string | undefined,
@@ -398,9 +398,6 @@ export const DemographicsForm: FC<Prop> = ({
       const currentDistrict = patient?.addresses[0]?.current_district;
       const currentTraditionalAuthority = patient?.addresses[0]?.current_traditional_authority;
       const currentVillage = patient?.addresses[0]?.current_village
-
-
-      console.log(patient.birthdate)
 
       init = {
         [form.dob.name]: patient.birthdate,

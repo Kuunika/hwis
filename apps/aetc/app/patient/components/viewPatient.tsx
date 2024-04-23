@@ -3,9 +3,13 @@ import { ReactNode, useState } from "react";
 import { WrapperBox, MainTypography, MainPaper, MainButton } from "shared-ui/src";
 import { EditDemographicsForm } from "./editDemographicsForm";
 import { GenericDialog } from "@/components/dialog";
+import { EditLocation } from ".";
 
 export const ViewPatient = ({ patient }: { patient: Person }) => {
     const [openDemographics, setOpenDemographics] = useState(false);
+    const [homeLocation, setHomeLocation] = useState(false);
+    const [currentLocation, setCurrentLocation] = useState(false);
+
     return <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
         <>
             <DemographicsDialog initialValues={{
@@ -34,7 +38,13 @@ export const ViewPatient = ({ patient }: { patient: Person }) => {
                     <LabelValue label="Home Village" value={patient?.addresses[0].address2} />
                     <LabelValue label="Home Traditional Authority" value={patient?.addresses[0].county_district} />
                 </>
-                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => { }} />
+                <HomeLocationDialog initialValues={{
+                    nationality: patient?.addresses[0].country,
+                    district: patient?.addresses[0].address1,
+                    village: patient?.addresses[0].address2,
+                    traditionalAuthority: patient?.addresses[0].county_district
+                }} open={homeLocation} onClose={() => setHomeLocation(false)} />
+                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setHomeLocation(true)} />
             </ContainerCard>
             <ContainerCard>
                 <>
@@ -72,5 +82,10 @@ const LabelValue = ({ label, value }: { label: string; value: any }) => {
 const DemographicsDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
     return <GenericDialog maxWidth="sm" title="Edit Demographics" open={open} onClose={onClose}>
         <EditDemographicsForm initialValues={initialValues} />
+    </GenericDialog>
+}
+const HomeLocationDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+    return <GenericDialog maxWidth="sm" title="Edit Demographics" open={open} onClose={onClose}>
+        <EditLocation initialValues={initialValues} onSubmit={() => { }} />
     </GenericDialog>
 }

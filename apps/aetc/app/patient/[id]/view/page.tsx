@@ -8,6 +8,8 @@ import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
 import { Person } from "@/interfaces";
+import { GenericDialog } from "@/components";
+import { EditLocation } from "../../components";
 
 const Page = () => {
     const { params } = useParameters();
@@ -60,3 +62,11 @@ const LabelValue = ({ label, value }: { label: string; value: any }) => {
         </WrapperBox>
     );
 };
+
+
+
+const HomeLocationDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+    return <GenericDialog maxWidth="sm" title="Edit Demographics" open={open} onClose={onClose}>
+        <EditLocation initialValues={initialValues} onSubmit={() => { }} />
+    </GenericDialog>
+}
