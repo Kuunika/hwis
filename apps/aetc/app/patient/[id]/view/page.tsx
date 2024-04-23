@@ -9,14 +9,15 @@ import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
 import { Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { EditLocation, EditSocialHistory } from "../../components";
+import { EditFinancingForm, EditLocation, EditSocialHistory } from "../../components";
 
 const Page = () => {
     const { params } = useParameters();
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const { data: patient, isLoading: patientLoading } = getOnePatient(params.id as string);
     const { data: loadedEncounters } = getPatientsEncounters(params.id as string)
-    const [socialHistoryDialogOpen, setSocialHistoryDialogOpen] = useState(false)
+    const [socialHistoryDialogOpen, setSocialHistoryDialogOpen] = useState(false);
+    const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
 
 
     const socialHistory = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.SOCIAL_HISTORY);
@@ -28,6 +29,14 @@ const Page = () => {
     const occupation: string = getObservationValue(socialHistory?.obs, concepts.OCCUPATION)
     const transportation: string = getObservationValue(socialHistory?.obs, concepts.METHOD_OF_TRANSPORTATION)
     const highestEducation: string = getObservationValue(socialHistory?.obs, concepts.HIGHEST_EDUCATION)
+
+
+    const paymentOptions = getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS);
+    const insuranceProvider = getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER);
+    const insuranceNumber = getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER);
+    const insuranceScheme = getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME);
+    const insuranceStatus = getObservationValue(financing?.obs, concepts.INSURANCE_STATUS)
+
 
 
     return <>
@@ -53,12 +62,19 @@ const Page = () => {
                     <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setSocialHistoryDialogOpen(true)} />
                 </ContainerCard>
                 <ContainerCard>
+                    <FinancingDialog initialValues={{
+                        [concepts.PAYMENT_OPTIONS]: paymentOptions,
+                        [concepts.INSURANCE_PROVIDER]: insuranceProvider,
+                        [concepts.INSURANCE_NUMBER]: insuranceNumber,
+                        [concepts.INSURANCE_STATUS]: insuranceStatus
+                    }} open={financingDialogOpen} onClose={() => setFinancingDialogOpen(false)} />
                     <MainTypography variant="h5">Financing</MainTypography>
-                    <LabelValue label="Payment Option" value={getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS)} />
-                    <LabelValue label="Insurance Provider" value={getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER)} />
-                    <LabelValue label="Insurance Number" value={getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER)} />
-                    <LabelValue label="Insurance Scheme" value={getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME)} />
-                    <LabelValue label="Insurance Status" value={getObservationValue(financing?.obs, concepts.INSURANCE_STATUS)} />
+                    <LabelValue label="Payment Option" value={paymentOptions} />
+                    <LabelValue label="Insurance Provider" value={insuranceProvider} />
+                    <LabelValue label="Insurance Number" value={insuranceNumber} />
+                    <LabelValue label="Insurance Scheme" value={insuranceScheme} />
+                    <LabelValue label="Insurance Status" value={insuranceStatus} />
+                    <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setFinancingDialogOpen(true)} />
                 </ContainerCard>
             </WrapperBox>
         </WrapperBox>
@@ -87,5 +103,10 @@ const LabelValue = ({ label, value }: { label: string; value: any }) => {
 const SocialHistoryDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
     return <GenericDialog maxWidth="sm" title="Edit Social History" open={open} onClose={onClose}>
         <EditSocialHistory initialValues={initialValues} onSubmit={() => { }} />
+    </GenericDialog>
+}
+const FinancingDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+    return <GenericDialog maxWidth="sm" title="Edit Financing" open={open} onClose={onClose}>
+        <EditFinancingForm initialValues={initialValues} onSubmit={() => { }} />
     </GenericDialog>
 }

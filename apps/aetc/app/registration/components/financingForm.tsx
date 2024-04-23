@@ -90,20 +90,6 @@ export const FinancingForm: FC<Props> = ({
             { label: "Staff", value: "staff" },
             { label: "Insurance", value: "insurance" },
           ]} />
-
-
-          {/* <RadioGroupInput
-            name={form.paymentOption.name}
-            getValue={(value: any) => setPayment(value)}
-            label={form.paymentOption.label}
-            options={[
-              { label: "Non-paying", value: "non-paying" },
-              { label: "Staff", value: "staff" },
-              { label: "Cash", value: "cash" },
-              { label: "Insurance", value: "insurance" },
-            ]}
-          /> */}
-
           {payment === "insurance" && (
             <>
               <SelectInputField
