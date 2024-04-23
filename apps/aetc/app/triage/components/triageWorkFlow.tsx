@@ -26,7 +26,7 @@ import { Bounce, ToastContainer, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
 
 export default function TriageWorkFlow() {
-  const [activeStep, setActiveStep] = useState<number>(5);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const [formData, setFormData] = useState<any>({});
   const { params } = useParameters();
   const [triageResult, setTriageResult] = useState<TriageResult>("");
