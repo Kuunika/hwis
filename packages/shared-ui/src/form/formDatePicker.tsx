@@ -29,7 +29,7 @@ export const FormDatePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const { value, setFieldValue, initialValues, errorMessage, validateField, hasError, setTouched, touched, setFieldError } = useFormikField(name);
+  const { value, setFieldValue, initialValues, errorMessage, setTouched, setFieldError } = useFormikField(name);
 
 
 
