@@ -130,7 +130,7 @@ export const ResultBox = ({ person, type, setOpen }: { person: Person, type: str
       <br />
       <WrapperBox sx={{ display: "flex", mb: 1 }}>
         <Label label="Date of birth" value={person.birthdate} />
-        <Label label="Gender" value="Male" />
+        <Label label="Gender" value={person.gender} />
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
         <Label label="Home district" value={person.addresses[0]?.address1} />

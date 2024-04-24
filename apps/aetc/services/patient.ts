@@ -15,8 +15,8 @@ export const getPatients = () => getAll<Array<any>>(endPoint);
 
 
 export const getDailyVisits = (queryParam?: string) =>
-  // getAll<Person[]>(`/visits?date_stopped&category=${queryParam}&paginate=false`);
-  getAll<Person[]>(`/daily_visits?category=${queryParam}`);
+  getAll<Person[]>(`/visits?date_stopped&category=${queryParam}&paginate=false`);
+// getAll<Person[]>(`/daily_visits?category=${queryParam}`);
 // getAll<{
 //   page: number,
 //   total_pages: number,
@@ -51,5 +51,5 @@ export const mergePatients = (data: any) => {
 
 
 export const getRelations = (patientId: string) => {
-  return getAll<Relationship[]>(`/relationships?person_a=${patientId}`)
+  return getAll<Relationship[]>(`/relationships?person_a=${patientId}&paginate=false`)
 }

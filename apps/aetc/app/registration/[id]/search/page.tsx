@@ -24,6 +24,7 @@ import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 import { Person } from "@/interfaces";
+import { searchRegPatients } from "@/hooks/people";
 
 function RegistrationSearch() {
   const { params } = useParameters();
@@ -31,7 +32,6 @@ function RegistrationSearch() {
   const { data } = getPatientsWaitingForRegistrations();
 
   const patient = data?.find((p) => p.uuid == params.id);
-
 
 
   useEffect(() => {
@@ -109,8 +109,14 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
 
   const { setSearchedPatient: setSearchedPatientContext } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
-  const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchDDEPatient(search.firstName, search.lastName, search.gender)
+
+
+  // const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchDDEPatient(search.firstName, search.lastName, search.gender)
   const [searchedPatient, setSearchedPatient] = useState({});
+
+
+  const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchRegPatients(search)
+
 
 
   useEffect(() => {
@@ -138,6 +144,8 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
 
 
   };
+
+  console.log({ data })
   return (
     <>
       <SearchForm
@@ -151,17 +159,11 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
       <br />
       <OverlayLoader open={isFetching} />
       {(searchComplete || isError) && <SearchResults
-        searchResults={data ? data : { remotes: [], locals: [] }}
+        searchResults={data ? { remotes: [], locals: data } : { remotes: [], locals: [] }}
         searchedPatient={searchedPatient}
       />
       }
-      {/* {(isPending || true) && (
-        <SearchResults
-          loading={isPending}
-          searchResults={{}}
-          searchedPatient={searchedPatient}
-        />
-      )} */}
+
     </>
   );
 };

@@ -15,10 +15,14 @@ export const LabOrderTable = () => {
     const { data: labOrders, isPending, isSuccess } = getPatientLabOrder(params?.id as string);
     const patient = patients?.find(p => p.uuid == params.id);
     const [showDialog, setShowDialog] = useState(false)
-    const [selectedTest, setSelectedTest] = useState({ test: "", ascension: "" })
+    const [selectedTest, setSelectedTest] = useState({ sampleType: "", ascension: "" })
 
     const columns = [
-        { field: "name", headerName: "Test", flex: 1 },
+        {
+            field: "specimen", headerName: "Specimen", flex: 1, renderCell: (cell: any) => {
+                return cell.row.specimen.name
+            }
+        },
         { field: "requesting_clinician", headerName: "Ordered By", flex: 1 },
         { field: "status", headerName: "status", flex: 1 },
         {
@@ -26,8 +30,9 @@ export const LabOrderTable = () => {
                 const trigger = () => <MainButton variant="text" sx={{ color: "#000" }} title={<FaPrint />} onClick={() => { }} />
                 return <MainButton title={"print"} variant="secondary" onClick={() => {
                     setShowDialog(true); setSelectedTest({
-                        test: cell.row.name,
+                        sampleType: cell.row.specimen.name,
                         ascension: cell.row.accession_number
+                        // tests: cell.
                     })
                 }} />
 
@@ -42,7 +47,7 @@ export const LabOrderTable = () => {
                 <BarcodeComponent setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={selectedTest.ascension}>
                     <></>
                     {/* <MainTypography fontWeight="600" variant="h6">{`${patient?.names[0].given_name} ${patient?.names[0].family_name}`}</MainTypography> */}
-                    <MainTypography fontWeight="600" variant="h6">{selectedTest.test}</MainTypography>
+                    <MainTypography fontWeight="600" variant="h6">{selectedTest.sampleType}</MainTypography>
                     <MainTypography variant="body2">{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
                 </BarcodeComponent>
                 <MainButton title={"Print Barcode"} onClick={() => {

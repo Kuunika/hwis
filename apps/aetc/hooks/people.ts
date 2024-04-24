@@ -1,5 +1,5 @@
 import { getDateTime } from "@/helpers/dateTime";
-import { createRelationship, createPerson, searchPerson } from "@/services/people";
+import { createRelationship, createPerson, searchPerson, searchRegistrationPerson } from "@/services/people";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 export const addPerson = () => {
@@ -45,7 +45,8 @@ export const searchPatients = (patient: any) => {
   const getall = (patient: any) => {
     const givenName = patient.firstName;
     const familyName = patient.lastName
-    return searchPerson(`given_name=${givenName}&family_name=${familyName}&gender=&middle_name`).then((response) => response.data.map((person: any) => {
+    const gender = patient.gender
+    return searchPerson(`given_name=${givenName}&family_name=${familyName}&gender=${gender}&middle_name&paginate=false`).then((response) => response.data.map((person: any) => {
       return {
         person_id: person.person_id,
         uuid: person.uuid,
@@ -64,3 +65,19 @@ export const searchPatients = (patient: any) => {
   });
 };
 
+
+export const searchRegPatients = (patient: any) => {
+
+
+  const getall = (patient: any) => {
+    const givenName = patient.firstName;
+    const familyName = patient.lastName;
+    const gender = patient.gender
+    return searchRegistrationPerson(`given_name=${givenName}&family_name=${familyName}&gender=${gender}&middle_name&paginate=false`).then((response) => response.data.map(d => d.patient));
+  }
+  return useQuery({
+    queryKey: ["search", `given_name=${patient.givenName}&family_name=${patient.familyName}&gender=${patient.gender}`],
+    queryFn: () => getall(patient),
+    enabled: false,
+  });
+}

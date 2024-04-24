@@ -306,7 +306,7 @@ export const DemographicsForm: FC<Prop> = ({
 
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && patientRelationships?.length > 0) {
       const nextOfKin = patientRelationships[0].person_b;
       setNextOfKinInitialValue({
         [form.nextOfKinFirstName.name]: nextOfKin.names[0].given_name,

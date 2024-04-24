@@ -2,13 +2,13 @@ import { getTestTypes, getSpecimenTypes, getLabReason, createLabOrder, getPatien
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
-export const getLabTestTypes = () => {
+export const getLabTestTypes = (name?: string) => {
     const findAll = async () => {
-        return getTestTypes().then(response => response.data)
+        return getTestTypes(name).then(response => response.data)
     };
 
     return useQuery({
-        queryKey: ["testTypes"],
+        queryKey: ["testTypes", name],
         queryFn: findAll,
         enabled: true,
 
