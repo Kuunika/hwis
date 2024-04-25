@@ -1,29 +1,37 @@
 'use client'
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getOnePatient } from "@/hooks/patientReg";
+import { getOnePatient, getPatientRelationshipTypes, getPatientRelationships } from "@/hooks/patientReg";
 import { WrapperBox, MainTypography, MainPaper, MainButton } from "shared-ui/src";
-import { ReactNode, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
-import { Encounter, Person } from "@/interfaces";
+import { Encounter, Person, Relationship } from "@/interfaces";
 import { GenericDialog } from "@/components";
 import { EditFinancingForm, EditLocation, EditSocialHistory } from "../../components";
 import CircularProgress from '@mui/material/CircularProgress';
+import { getRelationshipTypes } from "@/services/patient";
 
 const Page = () => {
     const { params } = useParameters();
 
     const { data: patient, isLoading: patientLoading } = getOnePatient(params.id as string);
-    const { data: loadedEncounters, isPending } = getPatientsEncounters(params.id as string)
+    const { data: loadedEncounters, isPending } = getPatientsEncounters(params.id as string);
+    const { data: relationships, isPending: loadingRelationships } = getPatientRelationships(params.id as string)
+
 
     const socialHistory = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.SOCIAL_HISTORY);
     const financing = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.FINANCING);
 
+
     return <>
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
             <ViewPatient patient={patient ?? {} as Person} />
+            <WrapperBox>
+                <br />
+                <DisplayRelationship loading={loadingRelationships} relationships={relationships ? relationships : []} />
+            </WrapperBox>
             <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
                 <DisplaySocialHistory loading={isPending || patientLoading} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
                 <DisplayFinancing loading={isPending || patientLoading} financing={financing ? financing : {} as Encounter} />
@@ -100,17 +108,31 @@ export const DisplaySocialHistory = ({ socialHistory, loading }: { socialHistory
 
 export const DisplayFinancing = ({ financing, loading }: { financing: Encounter, loading: boolen }) => {
     const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
-    const paymentOptions = getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS);
-    const insuranceProvider = getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER);
-    const insuranceNumber = getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER);
-    const insuranceScheme = getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME);
-    const insuranceStatus = getObservationValue(financing?.obs, concepts.INSURANCE_STATUS);
+    const [financingOption, setFinancingOptions] = useState({ paymentOptions: "", insuranceProvider: "", insuranceNumber: "", insuranceScheme: "", insuranceStatus: "" })
+
+    useEffect(() => {
+
+        const paymentOptions = getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS);
+        const insuranceProvider = getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER);
+        const insuranceNumber = getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER);
+        const insuranceScheme = getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME);
+        const insuranceStatus = getObservationValue(financing?.obs, concepts.INSURANCE_STATUS);
+
+        setFinancingOptions({ paymentOptions, insuranceProvider, insuranceNumber, insuranceScheme, insuranceStatus })
+
+    }, [financing]);
+
 
     if (loading) {
         return <WrapperBox sx={{ display: 'flex', width: "100%", alignItems: "center", justifyContent: "center" }}>
             <CircularProgress />
         </WrapperBox>
     }
+
+    const { paymentOptions, insuranceProvider, insuranceNumber, insuranceScheme, insuranceStatus } = financingOption
+
+
+    console.log({ paymentOptions, insuranceProvider, insuranceNumber, insuranceScheme, insuranceStatus })
 
     return <ContainerCard>
         <FinancingDialog initialValues={{
@@ -127,4 +149,40 @@ export const DisplayFinancing = ({ financing, loading }: { financing: Encounter,
         <LabelValue label="Insurance Status" value={insuranceStatus} />
         <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setFinancingDialogOpen(true)} />
     </ContainerCard>
+}
+
+
+const DisplayRelationship = ({ relationships, loading }: { relationships: Relationship[], loading: boolean }) => {
+    const [relationshipDialog, setRelationshipDialog] = useState(false);
+    const { data: relationshipTypes, isPending } = getPatientRelationshipTypes();
+
+    if (loading || isPending) {
+        return <WrapperBox sx={{ display: 'flex', width: "100%", alignItems: "center", justifyContent: "center" }}>
+            <CircularProgress />
+        </WrapperBox>
+    }
+
+    const mappedRelationships = relationships?.map(relationship => {
+        const relationshipId = relationship.relationship;
+        const relationshipType = relationshipTypes?.find(r => r.relationship_type_id == relationshipId);
+
+        return {
+            given_name: relationship.person_b.names[0].given_name,
+            family_name: relationship.person_b.names[0].family_name,
+            relationship: relationshipType?.b_is_to_a,
+            relationshipUUID: relationshipType?.uuid
+        }
+    })
+
+
+    return <WrapperBox sx={{ display: "flex", width: mappedRelationships.length == 1 ? "50%" : "100%" }}>
+        {mappedRelationships.map(relationship => {
+            return <ContainerCard >
+                <LabelValue label="First Name" value={relationship.given_name} />
+                <LabelValue label="Last Name" value={relationship.family_name} />
+                <LabelValue label="Relationship" value={relationship.relationship} />
+                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setRelationshipDialog(true)} />
+            </ContainerCard>
+        })}
+    </WrapperBox>
 }

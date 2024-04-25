@@ -8,6 +8,7 @@ import {
   getPatient,
   getPatients,
   getRelations,
+  getRelationshipTypes,
   initialRegistration,
   mergePatients,
   potentialDuplicates,
@@ -218,6 +219,18 @@ export const getPatientRelationships = (patientId: string) => {
   return useQuery({
     queryKey: ["patient_relations", patientId],
     queryFn: getAll,
-    enabled: false,
+    enabled: true,
+  });
+};
+
+
+export const getPatientRelationshipTypes = () => {
+  const getAll = () =>
+    getRelationshipTypes().then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["patient_relationship_types"],
+    queryFn: getAll,
+    enabled: true,
   });
 };

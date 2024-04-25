@@ -278,3 +278,21 @@ export type Relationship = {
   person_b: Person;
   uuid: string
 }
+
+export type RelationshipType = {
+
+  relationship_type_id: number;
+  a_is_to_b: string;
+  b_is_to_a: string;
+  preferred: number;
+  weight: number;
+  description: string;
+  creator: number;
+  date_created: string;
+  uuid: string;
+  retired: boolean;
+  retired_by: null | number;  // Assuming retired_by could potentially be a number if not null.
+  date_retired: null | string; // Assuming the date format is the same as `date_created` if not null.
+  retire_reason: null | string;
+
+}

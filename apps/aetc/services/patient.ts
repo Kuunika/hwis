@@ -1,4 +1,4 @@
-import { DDEScore, DDESearch, PatientUpdateResponse, Person, Relationship } from "@/interfaces";
+import { DDEScore, DDESearch, PatientUpdateResponse, Person, Relationship, RelationshipType } from "@/interfaces";
 import { create, edit, getAll, getOne } from "./httpService";
 
 
@@ -52,4 +52,9 @@ export const mergePatients = (data: any) => {
 
 export const getRelations = (patientId: string) => {
   return getAll<Relationship[]>(`/relationships?person_a=${patientId}&paginate=false`)
+}
+
+
+export const getRelationshipTypes = () => {
+  return getAll<RelationshipType[]>(`/relationship_types?paginate=false`)
 }

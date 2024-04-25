@@ -297,7 +297,7 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   const socialHistory = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.SOCIAL_HISTORY);
 
 
-  console.log({ financing })
+
 
   return <GenericDialog onClose={onClose} open={open} title="view patient">
     <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
