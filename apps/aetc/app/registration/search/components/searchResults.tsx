@@ -21,14 +21,14 @@ import {
 } from "@/contexts";
 import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { getOnePatient, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
+import { getOnePatient, getPatientRelationshipTypes, getPatientRelationships, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ViewPatient } from "@/app/patient/components/viewPatient";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { addVisit, closeCurrentVisit } from "@/hooks/visit";
 import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
 import { getObservation, getObservationValue } from "@/helpers/emr";
-import { DisplayFinancing, DisplaySocialHistory } from "@/app/patient/[id]/view/page";
+import { DisplayFinancing, DisplayRelationship, DisplaySocialHistory } from "@/app/patient/[id]/view/page";
 
 
 export const SearchResults = ({
@@ -196,6 +196,7 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   const { data: existingPatientEncounters, isPending } = getPatientsEncounters(patient.uuid);
   const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
   const { isLoading, data: patients } = getPatientsWaitingForRegistrations();
+  const { data: relationships, isPending: loadingRelationships } = getPatientRelationships(patient.uuid)
 
   const {
     mutate: createEncounter,
@@ -303,6 +304,8 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
     <MainButton title={"continue"} onClick={handleContinue} />
     <ViewPatient patient={patient} />
+    <br />
+    <DisplayRelationship loading={loadingRelationships} relationships={relationships ? relationships : []} />
     <br />
     <WrapperBox display={"flex"}>
       <DisplaySocialHistory loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />

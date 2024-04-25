@@ -1,6 +1,6 @@
 import { RegistrationCard, RegistrationCardTitle } from "@/app/registration/components/common"
 import { concepts } from "@/constants";
-import { FormikInit, SelectInputField, TextInputField } from "shared-ui/src"
+import { FormikInit, SelectInputField, TextInputField, WrapperBox } from "shared-ui/src"
 import * as Yup from "yup";
 
 const relationships = [
@@ -31,10 +31,11 @@ const schema = Yup.object().shape({
     relationship: Yup.string().required().label('Relationship'),
 })
 
-export const EditRelationship = ({ onSubmit, initialValues }: { initialValues: any, onSubmit: (values: any) => void }) => {
+export const EditRelationshipForm = ({ onSubmit, initialValues }: { initialValues: any, onSubmit: (values: any) => void }) => {
     return <FormikInit submitButtonText="Update" validationSchema={schema} initialValues={initialValues} onSubmit={onSubmit}>
-        <RegistrationCard>
-            <RegistrationCardTitle>Next of kin Information</RegistrationCardTitle>
+
+        <RegistrationCardTitle>Next of kin Information</RegistrationCardTitle>
+        <WrapperBox display={"flex"} flexDirection={"column"}>
             <TextInputField
                 name={'given_name'}
                 id={'given_name'}
@@ -56,6 +57,6 @@ export const EditRelationship = ({ onSubmit, initialValues }: { initialValues: a
                 id={'phoneNumber'}
                 label={'Phone Number'}
             />
-        </RegistrationCard>
+        </WrapperBox>
     </FormikInit>
 }

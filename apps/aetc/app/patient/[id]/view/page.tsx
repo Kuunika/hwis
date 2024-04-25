@@ -9,7 +9,7 @@ import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
 import { Encounter, Person, Relationship } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { EditFinancingForm, EditLocation, EditSocialHistory } from "../../components";
+import { EditFinancingForm, EditLocation, EditRelationshipForm, EditSocialHistory } from "../../components";
 import CircularProgress from '@mui/material/CircularProgress';
 import { getRelationshipTypes } from "@/services/patient";
 
@@ -66,6 +66,12 @@ const SocialHistoryDialog = ({ open, onClose, initialValues }: { open: boolean, 
 const FinancingDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
     return <GenericDialog maxWidth="sm" title="Edit Financing" open={open} onClose={onClose}>
         <EditFinancingForm initialValues={initialValues} onSubmit={() => { }} />
+    </GenericDialog>
+}
+
+const EditRelationship = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+    return <GenericDialog maxWidth="sm" title="Edit Relationships" open={open} onClose={onClose}>
+        <EditRelationshipForm initialValues={initialValues} onSubmit={(values) => { }} />
     </GenericDialog>
 }
 
@@ -131,9 +137,6 @@ export const DisplayFinancing = ({ financing, loading }: { financing: Encounter,
 
     const { paymentOptions, insuranceProvider, insuranceNumber, insuranceScheme, insuranceStatus } = financingOption
 
-
-    console.log({ paymentOptions, insuranceProvider, insuranceNumber, insuranceScheme, insuranceStatus })
-
     return <ContainerCard>
         <FinancingDialog initialValues={{
             [concepts.PAYMENT_OPTIONS]: paymentOptions,
@@ -152,9 +155,10 @@ export const DisplayFinancing = ({ financing, loading }: { financing: Encounter,
 }
 
 
-const DisplayRelationship = ({ relationships, loading }: { relationships: Relationship[], loading: boolean }) => {
+export const DisplayRelationship = ({ relationships, loading }: { relationships: Relationship[], loading: boolean }) => {
     const [relationshipDialog, setRelationshipDialog] = useState(false);
     const { data: relationshipTypes, isPending } = getPatientRelationshipTypes();
+    const [initialValues, setInitialValues] = useState({})
 
     if (loading || isPending) {
         return <WrapperBox sx={{ display: 'flex', width: "100%", alignItems: "center", justifyContent: "center" }}>
@@ -176,12 +180,16 @@ const DisplayRelationship = ({ relationships, loading }: { relationships: Relati
 
 
     return <WrapperBox sx={{ display: "flex", width: mappedRelationships.length == 1 ? "50%" : "100%" }}>
+        <EditRelationship initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
         {mappedRelationships.map(relationship => {
             return <ContainerCard >
                 <LabelValue label="First Name" value={relationship.given_name} />
                 <LabelValue label="Last Name" value={relationship.family_name} />
                 <LabelValue label="Relationship" value={relationship.relationship} />
-                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setRelationshipDialog(true)} />
+                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => {
+                    setRelationshipDialog(true);
+                    setInitialValues({ ...relationship, relationship: relationship.relationshipUUID })
+                }} />
             </ContainerCard>
         })}
     </WrapperBox>
