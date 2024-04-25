@@ -145,7 +145,7 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
 
   };
 
-  console.log({ data })
+
   return (
     <>
       <SearchForm

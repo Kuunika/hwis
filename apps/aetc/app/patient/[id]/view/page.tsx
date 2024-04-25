@@ -10,12 +10,13 @@ import { ViewPatient } from "../../components/viewPatient";
 import { Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
 import { EditFinancingForm, EditLocation, EditSocialHistory } from "../../components";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Page = () => {
     const { params } = useParameters();
-    const { data, isLoading } = getPatientsEncounters(params?.id as string);
+
     const { data: patient, isLoading: patientLoading } = getOnePatient(params.id as string);
-    const { data: loadedEncounters } = getPatientsEncounters(params.id as string)
+    const { data: loadedEncounters, isPending } = getPatientsEncounters(params.id as string)
 
     const socialHistory = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.SOCIAL_HISTORY);
     const financing = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.FINANCING);
@@ -24,8 +25,8 @@ const Page = () => {
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
             <ViewPatient patient={patient ?? {} as Person} />
             <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
-                <DisplaySocialHistory socialHistory={socialHistory ? socialHistory : {} as Encounter} />
-                <DisplayFinancing financing={financing ? financing : {} as Encounter} />
+                <DisplaySocialHistory loading={isPending || patientLoading} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
+                <DisplayFinancing loading={isPending || patientLoading} financing={financing ? financing : {} as Encounter} />
             </WrapperBox>
         </WrapperBox>
     </>
@@ -60,7 +61,7 @@ const FinancingDialog = ({ open, onClose, initialValues }: { open: boolean, onCl
     </GenericDialog>
 }
 
-export const DisplaySocialHistory = ({ socialHistory }: { socialHistory: Encounter }) => {
+export const DisplaySocialHistory = ({ socialHistory, loading }: { socialHistory: Encounter, loading: boolean }) => {
     const [socialHistoryDialogOpen, setSocialHistoryDialogOpen] = useState(false);
 
     const maritalStatus: string = getObservationValue(socialHistory?.obs, concepts.MARITAL_STATUS);
@@ -69,6 +70,12 @@ export const DisplaySocialHistory = ({ socialHistory }: { socialHistory: Encount
     const transportation: string = getObservationValue(socialHistory?.obs, concepts.METHOD_OF_TRANSPORTATION)
     const highestEducation: string = getObservationValue(socialHistory?.obs, concepts.HIGHEST_EDUCATION)
 
+
+    if (loading) {
+        return <WrapperBox sx={{ display: 'flex', width: "100%", alignItems: "center", justifyContent: "center" }}>
+            <CircularProgress />
+        </WrapperBox>
+    }
 
     return <ContainerCard>
         <SocialHistoryDialog initialValues={{
@@ -91,13 +98,19 @@ export const DisplaySocialHistory = ({ socialHistory }: { socialHistory: Encount
 }
 
 
-export const DisplayFinancing = ({ financing }: { financing: Encounter }) => {
+export const DisplayFinancing = ({ financing, loading }: { financing: Encounter, loading: boolen }) => {
     const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
     const paymentOptions = getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS);
     const insuranceProvider = getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER);
     const insuranceNumber = getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER);
     const insuranceScheme = getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME);
     const insuranceStatus = getObservationValue(financing?.obs, concepts.INSURANCE_STATUS);
+
+    if (loading) {
+        return <WrapperBox sx={{ display: 'flex', width: "100%", alignItems: "center", justifyContent: "center" }}>
+            <CircularProgress />
+        </WrapperBox>
+    }
 
     return <ContainerCard>
         <FinancingDialog initialValues={{

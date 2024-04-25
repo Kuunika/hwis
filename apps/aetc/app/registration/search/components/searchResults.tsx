@@ -1,4 +1,5 @@
 
+
 import { useContext, useEffect, useState } from "react";
 import {
   BaseTable,
@@ -18,7 +19,7 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import { DDESearch, Person } from "@/interfaces";
+import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
 import { getOnePatient, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
@@ -27,6 +28,7 @@ import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { addVisit, closeCurrentVisit } from "@/hooks/visit";
 import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
 import { getObservation, getObservationValue } from "@/helpers/emr";
+import { DisplayFinancing, DisplaySocialHistory } from "@/app/patient/[id]/view/page";
 
 
 export const SearchResults = ({
@@ -185,9 +187,14 @@ export const AddPatientButton = () => {
 
 
 const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClose: () => void, open: boolean }) => {
-  const { data: patientEncounters, isPending } = getPatientsEncounters(patient.uuid);
-  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
   const { params } = useParameters();
+
+  // encounters for the patient registered during the initial registration
+  const { data: patientEncounters } = getPatientsEncounters(params?.id as string);
+
+  // encounters for patient that was found in the system
+  const { data: existingPatientEncounters, isPending } = getPatientsEncounters(patient.uuid);
+  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
   const { isLoading, data: patients } = getPatientsWaitingForRegistrations();
 
   const {
@@ -286,10 +293,21 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     });
   }
 
+  const financing = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.FINANCING);
+  const socialHistory = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.SOCIAL_HISTORY);
+
+
+  console.log({ financing })
+
   return <GenericDialog onClose={onClose} open={open} title="view patient">
     <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
     <MainButton title={"continue"} onClick={handleContinue} />
     <ViewPatient patient={patient} />
+    <br />
+    <WrapperBox display={"flex"}>
+      <DisplaySocialHistory loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
+      <DisplayFinancing loading={isPending} financing={financing ? financing : {} as Encounter} />
+    </WrapperBox>
   </GenericDialog>
 }
 
@@ -300,7 +318,6 @@ const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => v
   // const { setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
   const { registrationType, initialRegisteredPatient, patient, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
-
 
   const identifier = patient?.identifiers?.find(id => id.identifier_type.name == "DDE person document ID");
 
