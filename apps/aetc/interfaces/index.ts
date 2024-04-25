@@ -87,7 +87,7 @@ interface EncounterType {
   uuid: string;
 }
 
-interface Obs {
+export interface Obs {
   obs_id: number;
   person_id: number;
   concept_id: number;
@@ -108,6 +108,7 @@ interface Obs {
   interpretation: any;
   value: any;
   value_coded_uuid: any;
+  names: Name[]
 }
 
 export interface Encounter {

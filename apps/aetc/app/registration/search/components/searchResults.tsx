@@ -20,8 +20,13 @@ import {
 } from "@/contexts";
 import { DDESearch, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { getOnePatient, merge } from "@/hooks/patientReg";
+import { getOnePatient, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
+import { ViewPatient } from "@/app/patient/components/viewPatient";
+import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import { addVisit, closeCurrentVisit } from "@/hooks/visit";
+import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
+import { getObservation, getObservationValue } from "@/helpers/emr";
 
 
 export const SearchResults = ({
@@ -38,7 +43,7 @@ export const SearchResults = ({
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [open, setOpen] = useState(false);
-  const { setRegistrationType, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { setRegistrationType, setPatient, patient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
   const { setPatient: setRegisterPatient } = useContext(
     SearchRegistrationContext
@@ -105,7 +110,8 @@ export const SearchResults = ({
           })
         }
       </WrapperBox>
-      <ConfirmationDialog open={open} onClose={() => setOpen(false)} />
+      <ViewPatientDialog patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open} />
+      {/* <ConfirmationDialog open={open} onClose={() => setOpen(false)} /> */}
     </WrapperBox>
   );
 };
@@ -177,6 +183,115 @@ export const AddPatientButton = () => {
   );
 };
 
+
+const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClose: () => void, open: boolean }) => {
+  const { data: patientEncounters, isPending } = getPatientsEncounters(patient.uuid);
+  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+  const { params } = useParameters();
+  const { isLoading, data: patients } = getPatientsWaitingForRegistrations();
+
+  const {
+    mutate: createEncounter,
+    isPending: creatingEncounter,
+    isSuccess: encounterCreated,
+    isError: encounterError,
+  } = addEncounter();
+
+  const {
+    mutate: createScreeningEncounter,
+    isPending: creatingScreeningEncounter,
+    isSuccess: screeningEncounterCreated,
+    isError: screeningEncounterErrored,
+  } = addEncounter();
+
+  const {
+    mutate: createVisit,
+    isPending: creatingVisit,
+    isSuccess: visitCreated,
+    data: visit,
+    isError: visitError,
+  } = addVisit();
+
+
+  useEffect(() => {
+    if (!visitCreated) return
+
+    const initialRegistration = patientEncounters?.find(p => p.encounter_type.uuid == encounters.INITIAL_REGISTRATION);
+
+    createEncounter({
+      encounterType: encounters.INITIAL_REGISTRATION,
+      visit: visit?.uuid,
+      patient: patient?.uuid,
+      encounterDatetime: initialRegistration?.encounter_datetime,
+      obs: [
+        {
+          concept: concepts.VISIT_NUMBER,
+          value: initialRegistration?.obs[0].value,
+          obsDatetime: initialRegistration?.obs[0].obs_datetime,
+        },
+      ],
+      includeAll: true,
+    });
+  }, [visitCreated]);
+
+
+  useEffect(() => {
+    if (encounterCreated) {
+      const screening = patientEncounters?.find(p => p.encounter_type.uuid == encounters.SCREENING_ENCOUNTER);
+      const isReferred = getObservation(screening?.obs, concepts.IS_PATIENT_REFERRED);
+      const isUrgent = getObservation(screening?.obs, concepts.IS_SITUATION_URGENT);
+
+      createScreeningEncounter({
+        encounterType: encounters.SCREENING_ENCOUNTER,
+        visit: visit?.uuid,
+        patient: patient.uuid,
+        encounterDatetime: screening?.encounter_datetime,
+        obs: [
+          {
+            concept: concepts.IS_PATIENT_REFERRED,
+            value: isReferred?.value_coded_uuid,
+            obsDatetime: isReferred?.obs_datetime,
+          },
+          {
+            concept: concepts.IS_SITUATION_URGENT,
+            value: isUrgent?.value_coded_uuid,
+            obsDatetime: isUrgent?.obs_datetime,
+          },
+
+        ],
+      });
+    }
+
+  }, [encounterCreated])
+
+
+  // close patient visit
+  useEffect(() => {
+    const patient = patients?.find(p => p.uuid == params?.id);
+    if (screeningEncounterCreated && patient) {
+
+      closeVisit(patient.visit_uuid);
+    }
+
+  }, [screeningEncounterCreated])
+
+
+  const handleContinue = () => {
+    const initialRegistration = patientEncounters?.find(p => p.encounter_type.uuid == encounters.INITIAL_REGISTRATION);
+    const uuid = patient?.uuid;
+    createVisit({
+      patient: uuid,
+      visitType: AETC_VISIT_TYPE,
+      startDatetime: initialRegistration?.encounter_datetime
+    });
+  }
+
+  return <GenericDialog onClose={onClose} open={open} title="view patient">
+    <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
+    <MainButton title={"continue"} onClick={handleContinue} />
+    <ViewPatient patient={patient} />
+  </GenericDialog>
+}
 
 const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
   const { params } = useParameters();

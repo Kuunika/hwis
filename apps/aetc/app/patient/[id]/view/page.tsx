@@ -7,7 +7,7 @@ import { ReactNode, useState } from "react"
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
-import { Person } from "@/interfaces";
+import { Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
 import { EditFinancingForm, EditLocation, EditSocialHistory } from "../../components";
 
@@ -16,66 +16,16 @@ const Page = () => {
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const { data: patient, isLoading: patientLoading } = getOnePatient(params.id as string);
     const { data: loadedEncounters } = getPatientsEncounters(params.id as string)
-    const [socialHistoryDialogOpen, setSocialHistoryDialogOpen] = useState(false);
-    const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
-
 
     const socialHistory = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.SOCIAL_HISTORY);
     const financing = loadedEncounters?.find(enc => enc.encounter_type.uuid == encounters.FINANCING);
-
-
-    const maritalStatus: string = getObservationValue(socialHistory?.obs, concepts.MARITAL_STATUS);
-    const religion: string = getObservationValue(socialHistory?.obs, concepts.RELIGION);
-    const occupation: string = getObservationValue(socialHistory?.obs, concepts.OCCUPATION)
-    const transportation: string = getObservationValue(socialHistory?.obs, concepts.METHOD_OF_TRANSPORTATION)
-    const highestEducation: string = getObservationValue(socialHistory?.obs, concepts.HIGHEST_EDUCATION)
-
-
-    const paymentOptions = getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS);
-    const insuranceProvider = getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER);
-    const insuranceNumber = getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER);
-    const insuranceScheme = getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME);
-    const insuranceStatus = getObservationValue(financing?.obs, concepts.INSURANCE_STATUS)
-
-
 
     return <>
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
             <ViewPatient patient={patient ?? {} as Person} />
             <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
-                <ContainerCard>
-                    <SocialHistoryDialog initialValues={{
-                        [concepts.MARITAL_STATUS]: maritalStatus,
-                        [concepts.RELIGION]: religion,
-                        [concepts.OCCUPATION]: occupation,
-                        [concepts.METHOD_OF_TRANSPORTATION]: transportation,
-                        [concepts.HIGHEST_EDUCATION]: highestEducation
-                    }}
-                        open={socialHistoryDialogOpen} onClose={() => setSocialHistoryDialogOpen(false)} />
-                    <MainTypography variant="h5">Social History</MainTypography>
-                    <LabelValue label="Marital Status" value={maritalStatus} />
-                    <LabelValue label="Religion" value={religion} />
-                    <LabelValue label="Occupation" value={occupation} />
-                    <LabelValue label="Transportation" value={transportation} />
-                    <LabelValue label="Highest Education" value={highestEducation} />
-
-                    <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setSocialHistoryDialogOpen(true)} />
-                </ContainerCard>
-                <ContainerCard>
-                    <FinancingDialog initialValues={{
-                        [concepts.PAYMENT_OPTIONS]: paymentOptions,
-                        [concepts.INSURANCE_PROVIDER]: insuranceProvider,
-                        [concepts.INSURANCE_NUMBER]: insuranceNumber,
-                        [concepts.INSURANCE_STATUS]: insuranceStatus
-                    }} open={financingDialogOpen} onClose={() => setFinancingDialogOpen(false)} />
-                    <MainTypography variant="h5">Financing</MainTypography>
-                    <LabelValue label="Payment Option" value={paymentOptions} />
-                    <LabelValue label="Insurance Provider" value={insuranceProvider} />
-                    <LabelValue label="Insurance Number" value={insuranceNumber} />
-                    <LabelValue label="Insurance Scheme" value={insuranceScheme} />
-                    <LabelValue label="Insurance Status" value={insuranceStatus} />
-                    <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setFinancingDialogOpen(true)} />
-                </ContainerCard>
+                <DisplaySocialHistory socialHistory={socialHistory ? socialHistory : {} as Encounter} />
+                <DisplayFinancing financing={financing ? financing : {} as Encounter} />
             </WrapperBox>
         </WrapperBox>
     </>
@@ -85,7 +35,6 @@ export default Page;
 const ContainerCard = ({ children }: { children: ReactNode }) => {
     return <MainPaper sx={{ p: "1ch", flex: 1, mx: "0.5ch" }} >{children}</MainPaper>
 }
-
 
 const LabelValue = ({ label, value }: { label: string; value: any }) => {
     return (
@@ -109,4 +58,60 @@ const FinancingDialog = ({ open, onClose, initialValues }: { open: boolean, onCl
     return <GenericDialog maxWidth="sm" title="Edit Financing" open={open} onClose={onClose}>
         <EditFinancingForm initialValues={initialValues} onSubmit={() => { }} />
     </GenericDialog>
+}
+
+export const DisplaySocialHistory = ({ socialHistory }: { socialHistory: Encounter }) => {
+    const [socialHistoryDialogOpen, setSocialHistoryDialogOpen] = useState(false);
+
+    const maritalStatus: string = getObservationValue(socialHistory?.obs, concepts.MARITAL_STATUS);
+    const religion: string = getObservationValue(socialHistory?.obs, concepts.RELIGION);
+    const occupation: string = getObservationValue(socialHistory?.obs, concepts.OCCUPATION)
+    const transportation: string = getObservationValue(socialHistory?.obs, concepts.METHOD_OF_TRANSPORTATION)
+    const highestEducation: string = getObservationValue(socialHistory?.obs, concepts.HIGHEST_EDUCATION)
+
+
+    return <ContainerCard>
+        <SocialHistoryDialog initialValues={{
+            [concepts.MARITAL_STATUS]: maritalStatus,
+            [concepts.RELIGION]: religion,
+            [concepts.OCCUPATION]: occupation,
+            [concepts.METHOD_OF_TRANSPORTATION]: transportation,
+            [concepts.HIGHEST_EDUCATION]: highestEducation
+        }}
+            open={socialHistoryDialogOpen} onClose={() => setSocialHistoryDialogOpen(false)} />
+        <MainTypography variant="h5">Social History</MainTypography>
+        <LabelValue label="Marital Status" value={maritalStatus} />
+        <LabelValue label="Religion" value={religion} />
+        <LabelValue label="Occupation" value={occupation} />
+        <LabelValue label="Transportation" value={transportation} />
+        <LabelValue label="Highest Education" value={highestEducation} />
+
+        <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setSocialHistoryDialogOpen(true)} />
+    </ContainerCard>
+}
+
+
+export const DisplayFinancing = ({ financing }: { financing: Encounter }) => {
+    const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
+    const paymentOptions = getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS);
+    const insuranceProvider = getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER);
+    const insuranceNumber = getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER);
+    const insuranceScheme = getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME);
+    const insuranceStatus = getObservationValue(financing?.obs, concepts.INSURANCE_STATUS);
+
+    return <ContainerCard>
+        <FinancingDialog initialValues={{
+            [concepts.PAYMENT_OPTIONS]: paymentOptions,
+            [concepts.INSURANCE_PROVIDER]: insuranceProvider,
+            [concepts.INSURANCE_NUMBER]: insuranceNumber,
+            [concepts.INSURANCE_STATUS]: insuranceStatus
+        }} open={financingDialogOpen} onClose={() => setFinancingDialogOpen(false)} />
+        <MainTypography variant="h5">Financing</MainTypography>
+        <LabelValue label="Payment Option" value={paymentOptions} />
+        <LabelValue label="Insurance Provider" value={insuranceProvider} />
+        <LabelValue label="Insurance Number" value={insuranceNumber} />
+        <LabelValue label="Insurance Scheme" value={insuranceScheme} />
+        <LabelValue label="Insurance Status" value={insuranceStatus} />
+        <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setFinancingDialogOpen(true)} />
+    </ContainerCard>
 }
