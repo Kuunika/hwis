@@ -7,6 +7,8 @@ import {
   getDailyVisits,
   getPatient,
   getPatients,
+  getRelations,
+  getRelationshipTypes,
   initialRegistration,
   mergePatients,
   potentialDuplicates,
@@ -37,6 +39,22 @@ export const initialPatientRegistration = () => {
   });
 };
 
+
+export const patchPatient = () => {
+
+
+  const addData = (patientData: any) => {
+    return updatePatient(patientData.id, { ...patientData.data }).then((response) => {
+      return response.data;
+    }
+    );
+  }
+
+  return useMutation({
+    mutationFn: addData,
+  });
+}
+
 export const registerPatient = () => {
   const addData = (patientData: any) => {
     const mappedPatient = {
@@ -54,6 +72,7 @@ export const registerPatient = () => {
         },
       ],
       gender: patientData.gender,
+      birthdateEstimated: patientData.birthdateEstimated,
       birthdate: patientData.birthDate,
       addresses: [
         {
@@ -77,7 +96,8 @@ export const registerPatient = () => {
     };
     return updatePatient(patientData.id, mappedPatient).then((response) => {
       return response.data;
-    });
+    }
+    );
     // return createPatient(mappedPatient).then((response) => {
     //   return response.data;
     // });
@@ -96,7 +116,7 @@ export const getPatientsWaitingForPrescreening = () => {
     queryKey: ["screening"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 30,
+    refetchInterval: 1000 * 60,
   });
 };
 
@@ -166,6 +186,7 @@ export const searchDDEPatient = (firstName: string, lastName: string, gender: st
     queryKey: ["find_by_gender", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
+    retry: false
   });
 };
 
@@ -204,5 +225,29 @@ export const merge = () => {
 
   return useMutation({
     mutationFn: addData,
+  });
+};
+
+
+export const getPatientRelationships = (patientId: string) => {
+  const getAll = () =>
+    getRelations(patientId).then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["patient_relations", patientId],
+    queryFn: getAll,
+    enabled: true,
+  });
+};
+
+
+export const getPatientRelationshipTypes = () => {
+  const getAll = () =>
+    getRelationshipTypes().then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["patient_relationship_types"],
+    queryFn: getAll,
+    enabled: true,
   });
 };

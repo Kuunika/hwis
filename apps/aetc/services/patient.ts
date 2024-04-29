@@ -1,5 +1,6 @@
-import { DDEScore, DDESearch, PatientUpdateResponse, Person } from "@/interfaces";
+import { DDEScore, DDESearch, PatientUpdateResponse, Person, Relationship, RelationshipType } from "@/interfaces";
 import { create, edit, getAll, getOne } from "./httpService";
+
 
 const endPoint = "/people";
 
@@ -11,8 +12,17 @@ export const initialRegistration = (patientData: any) =>
 
 export const getPatients = () => getAll<Array<any>>(endPoint);
 
+
+
 export const getDailyVisits = (queryParam?: string) =>
-  getAll<Person[]>(`/daily_visits?category=${queryParam}`);
+  getAll<Person[]>(`/visits?date_stopped&category=${queryParam}&paginate=false`);
+// getAll<Person[]>(`/daily_visits?category=${queryParam}`);
+// getAll<{
+//   page: number,
+//   total_pages: number,
+//   per_page: number,
+//   data: Person[]
+// }>(`/visits?date_stopped&category=${queryParam}`);
 
 export const updatePatient = (patientId: string, patientData: any) =>
   edit<PatientUpdateResponse>(patientId, patientData, endPoint);
@@ -38,4 +48,14 @@ export const findByDemographics =
 
 export const mergePatients = (data: any) => {
   return create<Person>(data, "/dde/patients/merge?visit_type_id=1")
+}
+
+
+export const getRelations = (patientId: string) => {
+  return getAll<Relationship[]>(`/relationships?person_a=${patientId}&paginate=false`)
+}
+
+
+export const getRelationshipTypes = () => {
+  return getAll<RelationshipType[]>(`/relationship_types?paginate=false`)
 }

@@ -25,7 +25,6 @@ export default function RegistrationSearch() {
   const { refetch, isFetching, isSuccess, data } = searchPatients(patientData)
   // search.
 
-
   useEffect(() => {
     if (!patientData) return;
     refetch();

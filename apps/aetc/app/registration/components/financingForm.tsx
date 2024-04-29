@@ -74,7 +74,7 @@ export const FinancingForm: FC<Props> = ({
       >
         <TrackFormikContext setFormContext={setContext} />
         <RegistrationCard>
-          <RegistrationCardTitle>Financing</RegistrationCardTitle>
+          <RegistrationCardTitle>Payment Options</RegistrationCardTitle>
           <CheckboxesGroup getValue={
             (value: Array<any>) => {
               const v = value?.find(v => v.key == 'insurance' && v.value);
@@ -90,20 +90,6 @@ export const FinancingForm: FC<Props> = ({
             { label: "Staff", value: "staff" },
             { label: "Insurance", value: "insurance" },
           ]} />
-
-
-          {/* <RadioGroupInput
-            name={form.paymentOption.name}
-            getValue={(value: any) => setPayment(value)}
-            label={form.paymentOption.label}
-            options={[
-              { label: "Non-paying", value: "non-paying" },
-              { label: "Staff", value: "staff" },
-              { label: "Cash", value: "cash" },
-              { label: "Insurance", value: "insurance" },
-            ]}
-          /> */}
-
           {payment === "insurance" && (
             <>
               <SelectInputField
@@ -116,6 +102,9 @@ export const FinancingForm: FC<Props> = ({
                   { name: "Reserve Bank", value: "Reserve Bank" },
                   { name: "Liberty", value: "Liberty" },
                   { name: "Unimed", value: "Unimed" },
+                  { name: "Medhealth", value: "Medhealth" },
+                  { name: "CIC Malawi", value: "CIC Malawi" },
+                  { name: "MRA", value: "MRA" },
                 ]}
               />
               <TextInputField

@@ -29,17 +29,24 @@ export interface Address {
   cityVillage?: string;
   country?: string;
   postalCode?: string;
-  preferred?: boolean
+  preferred?: boolean;
+  current_district?: string;
+  current_village?: string;
+  current_traditional_authority?: string;
+  home_district?: string;
+  home_village?: string;
+  home_traditional_authority?: string
 }
 
 export interface Identifier {
   identifier: string;
-  identifier_type: {
+  identifierType?: string;
+  identifier_type?: {
     name: string;
     uuid: string
   }
   preferred: boolean;
-  uuid: string
+  uuid?: string
 }
 
 
@@ -58,6 +65,7 @@ export interface Person {
   given_name: string;
   family_name: string;
   aetc_visit_number: string;
+  birthdateEstimated: boolean;
   gender: string;
   birthdate: Date;
   addresses: Address[];
@@ -80,7 +88,7 @@ interface EncounterType {
   uuid: string;
 }
 
-interface Obs {
+export interface Obs {
   obs_id: number;
   person_id: number;
   concept_id: number;
@@ -101,6 +109,7 @@ interface Obs {
   interpretation: any;
   value: any;
   value_coded_uuid: any;
+  names: Name[]
 }
 
 export interface Encounter {
@@ -260,4 +269,31 @@ export type Village = {
   village_id: number;
   name: string;
   traditional_authority_id: number
+}
+
+
+export type Relationship = {
+  relationship_id: number;
+  person_a: Person;
+  relationship: number;
+  person_b: Person;
+  uuid: string
+}
+
+export type RelationshipType = {
+
+  relationship_type_id: number;
+  a_is_to_b: string;
+  b_is_to_a: string;
+  preferred: number;
+  weight: number;
+  description: string;
+  creator: number;
+  date_created: string;
+  uuid: string;
+  retired: boolean;
+  retired_by: null | number;  // Assuming retired_by could potentially be a number if not null.
+  date_retired: null | string; // Assuming the date format is the same as `date_created` if not null.
+  retire_reason: null | string;
+
 }

@@ -4,8 +4,6 @@ import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { ErrorMessage } from 'formik';
-
 
 import {
   FormikInit,
@@ -16,6 +14,7 @@ import {
   SearchComboBox,
   WrapperBox,
   FormValuesListener,
+  MainTypography,
 } from "shared-ui/src";
 import {
   RegistrationCard,
@@ -35,6 +34,9 @@ import {
 } from "@/contexts";
 import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
 import { LocationContext, LocationContextType } from "@/contexts/location";
+import { getPatientRelationships } from "@/hooks/patientReg";
+import { OverlayLoader } from "@/components/backdrop";
+import { estimateBirthdate } from "@/helpers/dateTime";
 
 const form = {
   identificationNumber: {
@@ -60,6 +62,10 @@ const form = {
   gender: {
     name: "gender",
     label: "Gender",
+  },
+  birthDateEstimated: {
+    name: "birthdateEstimated",
+    label: "Birthdate Estimated",
   },
   currentDistrict: {
     name: "currentDistrict",
@@ -130,7 +136,10 @@ const form = {
     name: "guardianPresent",
     label: "Guardian Present",
   },
-
+  age: {
+    name: "age",
+    label: "Estimated Age",
+  },
 
 };
 const phoneRegex = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -144,12 +153,15 @@ const schema = Yup.object().shape({
     .min(10)
     .label(form.phoneNumber.label),
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
-
-
   [form.dob.name]: Yup.date()
-    .required(form.dob.label + ' is required')
+    .when(form.birthDateEstimated.name, {
+      is: (value: any) => value == 'true',
+      then: () => Yup.date().required(),
+    })
     .test('valid-age', 'Age must be at least 14 years and not in the future', function (value) {
+
       if (!value) return true;
+
       const selectedDate = new Date(value);
       const today = new Date();
       let age = today.getFullYear() - selectedDate.getFullYear();
@@ -173,7 +185,6 @@ const schema = Yup.object().shape({
     .required()
     .label(form.currentDistrict.label),
   [form.closeLandMark.name]: Yup.string()
-    .required()
     .label(form.closeLandMark.label),
   [form.nextOfKinFirstName.name]: Yup.string()
     .required()
@@ -214,6 +225,13 @@ const schema = Yup.object().shape({
     .label(form.guardianNumber.label),
   [form.guardianPresent.name]: Yup.string().required()
     .label(form.guardianPresent.label),
+  [form.birthDateEstimated.name]: Yup.boolean().required()
+    .label(form.birthDateEstimated.label),
+  [form.age.name]: Yup.number().when(form.birthDateEstimated.name, {
+    is: (value: any) => (value == true) || value == 'true',
+    then: () => Yup.number().required(),
+  })
+    .label(form.age.label),
 });
 
 const init = getInitialValues(form);
@@ -247,6 +265,12 @@ const relationships = [
   },
 ];
 
+export type LocationType = {
+  village: number | string | undefined,
+  traditionalAuthority: number | string | undefined,
+  district: number | string | undefined,
+}
+
 export const DemographicsForm: FC<Prop> = ({
   onSubmit,
   initialValues = init,
@@ -257,8 +281,8 @@ export const DemographicsForm: FC<Prop> = ({
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
 
-  const [selectedLocation, setSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
-  const [currentSelectedLocation, setCurrentSelectedLocation] = useState({ village: "", traditionalAuthority: "", district: "" })
+  const [selectedLocation, setSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
+  const [currentSelectedLocation, setCurrentSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
 
   const { villages, districts, traditionalAuthorities } = useContext(LocationContext) as LocationContextType
 
@@ -267,9 +291,11 @@ export const DemographicsForm: FC<Prop> = ({
   const [guardianChecked, setGuardianChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
-
+  const [_init, setInit] = useState({})
+  const [nextOfKinInitialValues, setNextOfKinInitialValue] = useState({})
 
   const { params } = useParameters();
+  const { refetch, isRefetching, data: patientRelationships, isSuccess } = getPatientRelationships(params.id as string)
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -279,6 +305,28 @@ export const DemographicsForm: FC<Prop> = ({
   };
 
 
+  useEffect(() => {
+    if (isSuccess && patientRelationships?.length > 0) {
+      const nextOfKin = patientRelationships[0].person_b;
+      setNextOfKinInitialValue({
+        [form.nextOfKinFirstName.name]: nextOfKin.names[0].given_name,
+        [form.nextOfKinLastName.name]: nextOfKin.names[0].family_name,
+      })
+
+    }
+  }, [isSuccess])
+
+
+  useEffect(() => {
+
+    if (fieldFunction) {
+      const { setFieldValue } = fieldFunction;
+      const date = estimateBirthdate(formValues[form.age.name])?.iso;
+      setFieldValue(form.dob.name, date);
+    }
+
+
+  }, [formValues[form.age.name]])
 
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
@@ -287,6 +335,7 @@ export const DemographicsForm: FC<Prop> = ({
       setFieldValue(form.firstName.name, searchedPatient.firstName);
       setFieldValue(form.lastName.name, searchedPatient.lastName)
       setFieldValue(form.gender.name, searchedPatient.gender)
+      setFieldValue(form.birthDateEstimated.name, false)
     }
   }, [initialRegisteredPatient]);
 
@@ -312,8 +361,6 @@ export const DemographicsForm: FC<Prop> = ({
 
 
 
-
-
   useEffect(() => {
     if (fieldFunction && guardianChecked) {
       const { setFieldValue } = fieldFunction;
@@ -333,26 +380,51 @@ export const DemographicsForm: FC<Prop> = ({
   }, [guardianChecked]);
 
 
-  let _init = {
+  useEffect(() => {
+    let init = {
 
-  }
-
-  if (registrationType == "local" || registrationType == "remote") {
-    _init = {
-      [form.dob.name]: patient.birthdate,
-      [form.nationality.name]: patient?.addresses[0]?.country,
-      [form.homeDistrict.name]: patient?.addresses[0]?.address1,
-      [form.homeTraditionalAuthority.name]: patient?.addresses[0]?.cityVillage,
-      [form.homeVillage.name]: patient?.addresses[0]?.address2,
-      [form.currentDistrict.name]: patient?.addresses[0]?.address3,
-      [form.currentTraditionalAuthority.name]: patient?.addresses[0]?.countyDistrict,
-      [form.currentVillage.name]: patient?.addresses[1]?.address1,
     }
-  }
 
-  let currentLocation = {};
+    if (registrationType == "local" || registrationType == "remote") {
 
+      // search for relations
+      refetch()
 
+      const homeDistrict = patient?.addresses[0]?.address1
+      const homeTraditionalAuthority = patient?.addresses[0]?.home_traditional_authority
+      const homeVillage = patient?.addresses[0]?.address2;
+
+      const currentDistrict = patient?.addresses[0]?.current_district;
+      const currentTraditionalAuthority = patient?.addresses[0]?.current_traditional_authority;
+      const currentVillage = patient?.addresses[0]?.current_village
+
+      init = {
+        [form.dob.name]: patient.birthdate,
+        [form.nationality.name]: patient?.addresses[0]?.country,
+        [form.homeDistrict.name]: homeDistrict,
+        [form.homeTraditionalAuthority.name]: homeTraditionalAuthority,
+        [form.homeVillage.name]: homeVillage,
+        [form.currentDistrict.name]: currentDistrict,
+        [form.currentTraditionalAuthority.name]: currentTraditionalAuthority,
+        [form.currentVillage.name]: currentVillage
+      }
+
+      setInit(init)
+
+      const homeDistrictId = districts.find(d => d.name == homeDistrict)?.district_id;
+      const homeTraditionalAuthorityId = traditionalAuthorities.find(d => d.name == homeTraditionalAuthority)?.traditional_authority_id;
+      const homeVillageId = villages.find(d => d.name == homeVillage)?.village_id;
+
+      const currentDistrictId = districts.find(d => d.name == currentDistrict)?.district_id;
+      const currentTraditionalAuthorityId = traditionalAuthorities.find(d => d.name == currentTraditionalAuthority)?.traditional_authority_id;
+      const currentVillageId = villages.find(d => d.name == currentVillage)?.village_id;
+
+      setCurrentSelectedLocation({ village: homeVillageId, traditionalAuthority: homeTraditionalAuthorityId, district: homeDistrictId });
+      setSelectedLocation({ village: currentVillageId, traditionalAuthority: currentTraditionalAuthorityId, district: currentDistrictId })
+
+    }
+
+  }, [])
 
 
   return (
@@ -368,12 +440,16 @@ export const DemographicsForm: FC<Prop> = ({
           ...initialValues, ..._init, [form.firstName.name]: searchedPatient.firstName,
           [form.lastName.name]: searchedPatient.lastName,
           [form.gender.name]: searchedPatient.gender == 'M' ? 'Male' : "Female",
+          ...nextOfKinInitialValues,
+          [form.birthDateEstimated.name]: false
         }}
         onSubmit={onSubmit}
         submitButtonText="next"
         submitButton={false}
+        enableReinitialize={true}
       >
         <FormValuesListener getValues={setFormValues} />
+
         <TrackFormikContext
           getSetFieldFunction={(func: any) => setFieldFunction(func)}
           setFormContext={setContext}
@@ -405,11 +481,51 @@ export const DemographicsForm: FC<Prop> = ({
             ]}
           />
 
+          <RadioGroupInput
+            name={form.birthDateEstimated.name}
+            label={form.birthDateEstimated.label}
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+          />
+
+          <TextInputField
+            sx={{
+              display: formValues[form.birthDateEstimated.name] == 'true' ? 'flex' : 'none'
+            }}
+            name={form.age.name}
+            id={form.age.name}
+            label={form.age.label}
+          />
+
+          {formValues[form.age.name] > 0 && formValues[form.birthDateEstimated.name] == 'true' && <>
+            <br />
+            <MainTypography variant="body1">
+              Estimated birth date  <b>{estimateBirthdate(formValues[form.age.name])?.readable}</b>
+            </MainTypography>
+            <br />
+
+          </>}
+
+
+
           <FormDatePicker
+            sx={{
+              display: (formValues[form.birthDateEstimated.name] == false || formValues[form.birthDateEstimated.name] == 'false') ? 'flex' : 'none',
+              width: "100%",
+
+            }}
             width={"100%"}
             label={form.dob.label}
             name={form.dob.name}
+            getValue={(value: any, validateFunc: any) => {
+            }}
           />
+
+
+
+
           {/* <ErrorMessage
             name={form.dob.name}
             component="div"
@@ -442,9 +558,7 @@ export const DemographicsForm: FC<Prop> = ({
             getValue={(value) => {
               const district = districts.find(d => d.name == value);
               if (district) {
-
                 setSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
-
               }
 
             }}
@@ -459,7 +573,6 @@ export const DemographicsForm: FC<Prop> = ({
             multiple={false}
             getValue={(value) => {
               const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
-
 
               if (traditionalAuthority)
                 setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.traditional_authority_id.toString() }))
@@ -599,6 +712,7 @@ export const DemographicsForm: FC<Prop> = ({
               label={form.guardianNumber.label}
             />
           </>}
+          <OverlayLoader open={isRefetching} />
         </RegistrationCard>
       </FormikInit>
     </>

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
@@ -12,7 +12,7 @@ import FormLabel from "@mui/material/FormLabel";
 import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
-import { LabRequest } from "@/interfaces";
+import { LabRequest, TestType } from "@/interfaces";
 import { createOrder, getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
 import { useParameters } from "@/hooks";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
@@ -27,14 +27,17 @@ export interface SimpleDialogProps {
 }
 
 export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps) {
-  const [searchSample, setSearchSample] = React.useState<string>("");
-  const [searchSampleTypes, setSearchSampleTypes] = React.useState<string>("");
+  const [searchSample, setSearchSample] = useState<string>("");
+  const [searchSampleTypes, setSearchSampleTypes] = useState<string>("");
   const [searchSpecimenSites, setSearchSpecimenSites] =
-    React.useState<string>("");
-  const [request, setRequest] = React.useState<any>({})
+    useState<string>("");
+  const [request, setRequest] = useState<any>({})
   const { data: specimenTypes, isLoading, isSuccess } = getLabSpecimenTypes()
   const { data: labReasons, isLoading: loadingReasons, isSuccess: labReasonsLoaded } = getLabTestReason();
-  const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded } = getLabTestTypes();
+
+  const [sampleName, setSampleName] = useState<string>('')
+  const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded, refetch, isRefetching } = getLabTestTypes(sampleName);
+
   const { params } = useParameters()
   const { data: patients } = getPatientsWaitingForAssessment();
   const { mutate, isPending, isSuccess: orderCreated } = createOrder()
@@ -50,30 +53,32 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
   };
 
 
-  React.useEffect(() => {
-
+  useEffect(() => {
     if (orderCreated) {
       addRequest({ ...request, id: Math.random(), status: "pending..." })
     }
 
   }, [orderCreated])
 
+  useEffect(() => {
+    refetch();
+  }, [sampleName])
+
+
 
 
   const handleSendLab = () => {
-    const patient = patients?.find(p => p.uuid == params.id,)
+    const patient = patients?.find(p => p.uuid == params.id)
+
 
     const order = {
       "orders": [
         {
           "patient": params.id,
           "visit": patient?.visit_uuid,
-          "tests": [
-            {
-              "concept": request.test.names[0].uuid
-            }
-          ],
-          "reason_for_test": request.sampleType,
+          "tests": request.tests,
+          // "reason_for_test": request.sampleType,
+          "reason_for_test": 'b998cdac-8d80-11d8-abbb-0024217bb78e',
           "target_lab": "Blantyre Dream Project Clinic",
           "date": getDateTime(),
           "requesting_clinician": "admin",
@@ -86,10 +91,26 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
     mutate(order);
   }
 
+  const handleSelectSampleType = (sample: any) => {
+    setRequest((req: any) => ({ ...req, sample: sample.id }))
+    setSampleName(sample.label);
+  }
+
+  const handleTestSelect = (tests: Array<number>) => {
+
+
+    const mappedTests = tests.map(test => {
+
+      return { concept: labTests?.find(lab => lab.concept_id == test)?.names[0]?.uuid }
+    });
+
+    setRequest((req: any) => ({ ...req, tests: mappedTests }))
+  }
+
 
   return (
     <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
-      <OverlayLoader open={isPending} />
+      <OverlayLoader open={isPending || isRefetching} />
       <DialogTitle>Lab Order</DialogTitle>
       <DialogContent>
         <WrapperBox display={"flex"}>
@@ -111,14 +132,18 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
                   label="Bedside"
                 />
                 <FormControlLabel value="Lab" control={<Radio />} label="Lab" />
-                <FormControlLabel
-                  value="Radiology"
-                  control={<Radio />}
-                  label="Radiology"
-                />
               </RadioGroup>
             </FormControl>
-            <TestList onSelectTest={(test: string | number) => setRequest((req: any) => ({ ...req, test: labTests?.find(lab => lab.concept_id == test) }))} />
+            <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mb: { xs: "3ch" } }}>
+              <MainTypography variant="h5">Sample Types</MainTypography>
+              <SearchInput setSearch={setSearchSample} />
+              <ListSelect
+                onSelectItem={handleSelectSampleType}
+                height="25ch"
+                list={specimenTypes ? specimenTypes.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []}
+                search={searchSample}
+              />
+            </WrapperBox>
           </WrapperBox>
           <WrapperBox
             sx={{
@@ -142,16 +167,8 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
               />
             </WrapperBox>
             <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
-              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mb: { xs: "3ch" } }}>
-                <MainTypography variant="h5">Sample Types</MainTypography>
-                <SearchInput setSearch={setSearchSample} />
-                <ListSelect
-                  onSelectItem={(sample: string | number) => setRequest((req: any) => ({ ...req, sample }))}
-                  height="25ch"
-                  list={specimenTypes ? specimenTypes.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []}
-                  search={searchSample}
-                />
-              </WrapperBox>
+              <TestList loading={isRefetching} testTypes={labTests ? labTests : []} onSelectTest={handleTestSelect} />
+
               <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mx: 1 }}>
                 <MainTypography variant="h5"> Specimen Site</MainTypography>
                 <SearchInput setSearch={setSearchSpecimenSites} />
@@ -184,9 +201,9 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 // registration workflow, patient lists(screening, assessments, triage), dde search workflow,
 // lab request form
 
-export const TestList = ({ onSelectTest }: { onSelectTest: (test: string | number) => void }) => {
-  const { data, isLoading, isSuccess } = getLabTestTypes()
-  const [search, setSearch] = React.useState<string>("");
+export const TestList = ({ onSelectTest, testTypes, loading }: { loading?: boolean, testTypes: TestType[], onSelectTest: (test: string | number) => void }) => {
+  const [search, setSearch] = useState<string>("");
+
 
   return (
     <WrapperBox>
@@ -196,7 +213,12 @@ export const TestList = ({ onSelectTest }: { onSelectTest: (test: string | numbe
       </MainTypography>
       <SearchInput setSearch={setSearch} placeHolder="search test" />
       <br />
-      <ListSelect onSelectItem={onSelectTest} list={data ? data.map(d => ({ id: d.concept_id, label: d.name })) : []} search={search} />
+      {
+        loading ? <>fetching tests...</> :
+          <>
+            {testTypes.length > 0 ? <ListSelect multiple={true} onSelectItem={onSelectTest} list={testTypes ? testTypes.map(d => ({ id: d.concept_id, label: d.name })) : []} search={search} /> : <>No Tests on the selected sample</>}
+          </>
+      }
     </WrapperBox>
   );
 };
@@ -213,7 +235,7 @@ export const SearchInput = ({
       <OutlinedInput
         id="outlined-adornment-weight"
         size="small"
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setSearch(event.target.value);
         }}
         endAdornment={
@@ -235,14 +257,53 @@ export const ListSelect = ({
   list,
   search = "",
   height = "50ch",
-  onSelectItem
+  onSelectItem,
+  multiple = false
 }: {
   list: Array<{ id: string | number, label: string }>;
   search?: string;
   height?: string;
-  onSelectItem: (item: string | number) => void
+  onSelectItem: (item: any) => void,
+  multiple?: boolean
 }) => {
-  const [selected, setSelected] = React.useState<string | number>("");
+  const [selected, setSelected] = useState<string | number>("");
+  const [selectMultiple, setSelectMultiple] = useState<Array<any>>([])
+
+  useEffect(() => {
+    onSelectItem(selectMultiple)
+  }, [selectMultiple])
+
+  const handleSelect = (lab: any) => {
+    if (multiple) {
+      setSelectMultiple(select => {
+
+        const index = select.findIndex(test => test == lab.id);
+
+        if (index < 0) {
+
+          return [...select, lab.id]
+        }
+
+        return select.filter(test => test != lab.id);
+
+      })
+
+      return
+    }
+    setSelected(lab.id);
+    onSelectItem(lab)
+  }
+
+
+  const checkIfSelected = (id: any) => {
+    if (multiple) {
+
+      return selectMultiple.find(select => select == id) ? true : false;
+    }
+
+    return id == selected
+  }
+
   return (
     <WrapperBox
       sx={{
@@ -255,7 +316,7 @@ export const ListSelect = ({
         .map((lab) => (
           <WrapperBox
             key={lab.label}
-            onClick={() => { setSelected(lab.id); onSelectItem(lab.id) }}
+            onClick={() => handleSelect(lab)}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -266,7 +327,8 @@ export const ListSelect = ({
               color: lab.id == selected ? "#006401" : "",
             }}
           >
-            {lab.id == selected ? <FaRegCheckSquare /> : <FaRegSquare />}
+            {/* {lab.id == selected ? <FaRegCheckSquare /> : <FaRegSquare />} */}
+            {checkIfSelected(lab.id) ? <FaRegCheckSquare /> : <FaRegSquare />}
             <MainTypography sx={{ ml: "1ch" }}>{lab.label}</MainTypography>
           </WrapperBox>
         ))}

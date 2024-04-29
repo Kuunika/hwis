@@ -10,7 +10,7 @@ import { SxProps } from "@mui/material";
 type Prop = {
   label: string;
   name: string;
-  options: Array<{ label: string; value: string | number }>;
+  options: Array<{ label: string; value: string | number | boolean }>;
   stylings?: boolean;
   sx?: SxProps;
   getValue?: (value: any) => void;

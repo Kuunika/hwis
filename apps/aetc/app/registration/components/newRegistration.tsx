@@ -184,7 +184,7 @@ export const NewRegistrationFlow = () => {
     }
   }, [relationshipCreated]);
 
-  console.log('======>', { patient })
+
 
   // create referral
   useEffect(() => {

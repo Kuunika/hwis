@@ -1,8 +1,10 @@
 import { SxProps } from "@mui/material";
-import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainButton, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaCheck } from "react-icons/fa";
 import { useNavigation } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";
+import { GenericDialog } from "@/components";
+import { useState } from "react";
 
 const color = "#B3B3B3";
 
@@ -11,6 +13,8 @@ type Prop = {
 };
 
 export function ResultBox({ searchResults }: Prop) {
+  const [patientId, setPatientId] = useState("");
+  const [open, setOpen] = useState(false);
   return (
     <MainPaper
       elevation={0}
@@ -23,6 +27,7 @@ export function ResultBox({ searchResults }: Prop) {
         width: "100%",
       }}
     >
+      <ConfirmationDialog patientId={patientId} onClose={() => setOpen(false)} open={open} />
       <Row
         person_id="ID"
         uuid="Id"
@@ -32,6 +37,8 @@ export function ResultBox({ searchResults }: Prop) {
         number="Number"
         birthdate="Birth date"
         sx={{ "&:hover": {} }}
+        setPatientId={() => { }}
+        setOpen={() => { }}
       />
       <WrapperBox
         sx={{
@@ -43,7 +50,8 @@ export function ResultBox({ searchResults }: Prop) {
       ></WrapperBox>
       <WrapperBox sx={{ maxHeight: "20ch", overflow: "scroll" }}>
         {searchResults.map((result: any) => (
-          <Row key={result.id} {...result} />
+          <Row setPatientId={setPatientId}
+            setOpen={() => setOpen(true)} key={result.id} {...result} />
         ))}
       </WrapperBox>
       {/* <WrapperBox sx={{ m: "1ch" }}>{"<AddPatientButton />"}</WrapperBox> */}
@@ -60,6 +68,8 @@ const Row = ({
   birthdate,
   person_id,
   sx,
+  setPatientId,
+  setOpen
 }: {
   uuid: string;
   given_name: string;
@@ -68,13 +78,14 @@ const Row = ({
   gender: string;
   birthdate: string;
   person_id: string;
-
+  setPatientId: (id: any) => void
+  setOpen: () => void
   sx?: SxProps;
 }) => {
   const { navigateTo } = useNavigation();
   return (
     <WrapperBox
-      onClick={() => navigateTo(`/patient/${uuid}/profile`)}
+      onClick={() => { setPatientId(uuid); setOpen() }}
       sx={{
         display: "flex",
         py: "1ch",
@@ -106,3 +117,15 @@ const Row = ({
     </WrapperBox>
   );
 };
+
+const ConfirmationDialog = ({ open, onClose, patientId }: { open: false, onClose: () => void, patientId: string }) => {
+  const { navigateTo } = useNavigation()
+
+  return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>
+    <MainTypography>you are opening patient profile in view mode. Do you want to continue</MainTypography>
+    <MainButton title={"YES"} sx={{ mr: "0.5ch" }} onClick={() => navigateTo(`/patient/${patientId}/profile`)} />
+    <MainButton variant="secondary" title={"NO"} onClick={onClose} />
+
+  </GenericDialog>
+
+}

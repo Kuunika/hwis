@@ -394,6 +394,7 @@ export default function TriageWorkFlow() {
           <PersistentPainForm
             previous={() => setActiveStep(4)}
             continueTriage={continueTriage}
+            setTriageResult={checkTriageResult}
             triageResult={triageResult}
             onSubmit={handlePersistentPain} />
         </NewStepperContainer>

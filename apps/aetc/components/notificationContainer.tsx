@@ -13,7 +13,6 @@ export const NotificationContainer = ({ message }: Props) => {
         color: "#026AA2",
         py: "2ch",
         px: "1ch",
-        borderRadius: "1ch",
         my: "1ch",
       }}
     >

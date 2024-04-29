@@ -1,4 +1,5 @@
 
+
 import { useContext, useEffect, useState } from "react";
 import {
   BaseTable,
@@ -18,25 +19,32 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import { DDESearch, Person } from "@/interfaces";
+import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { getOnePatient, merge } from "@/hooks/patientReg";
+import { getOnePatient, getPatientRelationshipTypes, getPatientRelationships, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
+import { ViewPatient } from "@/app/patient/components/viewPatient";
+import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import { addVisit, closeCurrentVisit } from "@/hooks/visit";
+import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
+import { getObservation, getObservationValue } from "@/helpers/emr";
+import { DisplayFinancing, DisplayRelationship, DisplaySocialHistory } from "@/app/patient/[id]/view/page";
+import { getDateTime } from "@/helpers/dateTime";
 
 
 export const SearchResults = ({
-
   searchedPatient,
   searchResults,
 }: {
 
   searchedPatient: any;
-  searchResults: DDESearch
+  searchResults: DDESearch,
+
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [open, setOpen] = useState(false);
-  const { setRegistrationType, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { setRegistrationType, setPatient, patient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
   const { setPatient: setRegisterPatient } = useContext(
     SearchRegistrationContext
@@ -53,7 +61,8 @@ export const SearchResults = ({
     setRegistrationType(registrationType)
   }
 
-  const resultNotFound = searchResults.locals.length == 0 && searchResults.remotes.length == 0;
+  const resultNotFound = (searchResults?.locals?.length == 0 && searchResults?.remotes?.length == 0)
+
   return (
     <WrapperBox
       sx={{
@@ -91,23 +100,28 @@ export const SearchResults = ({
       <br />
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
-          searchResults.locals.map(patient => {
+          searchResults?.locals?.map(patient => {
             return <ResultBox setOpen={(person: Person) => selectPatient(person, 'local')} type="Local" key={patient.uuid} person={patient} />
           })
         }
         {
-          searchResults.remotes.map(patient => {
+          searchResults?.remotes?.map(patient => {
             return <ResultBox setOpen={(person: Person) => selectPatient(person, 'remote')} type="Remote" key={patient.uuid} person={patient} />
           })
         }
       </WrapperBox>
-      <ConfirmationDialog open={open} onClose={() => setOpen(false)} />
+      <ViewPatientDialog patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open} />
+      {/* <ConfirmationDialog open={open} onClose={() => setOpen(false)} /> */}
     </WrapperBox>
   );
 };
 
 
 export const ResultBox = ({ person, type, setOpen }: { person: Person, type: string, setOpen: (person: Person) => void }) => {
+
+  // console.log(person);
+
+  // return
 
   const identifier = person.identifiers.find(i => i.identifier_type.name == 'National id');
 
@@ -126,7 +140,7 @@ export const ResultBox = ({ person, type, setOpen }: { person: Person, type: str
       <br />
       <WrapperBox sx={{ display: "flex", mb: 1 }}>
         <Label label="Date of birth" value={person.birthdate} />
-        <Label label="Gender" value="Male" />
+        <Label label="Gender" value={person.gender} />
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
         <Label label="Home district" value={person.addresses[0]?.address1} />
@@ -143,8 +157,6 @@ const Label = ({ label, value }: { label: string, value: string | undefined | Da
     <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value ? value.toString() : ''}</MainTypography>
   </WrapperBox>
 }
-
-
 
 export const AddPatientButton = () => {
   const { params } = useParameters();
@@ -174,6 +186,232 @@ export const AddPatientButton = () => {
 };
 
 
+const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClose: () => void, open: boolean }) => {
+
+  const { params } = useParameters();
+
+  // encounters for the patient registered during the initial registration
+  const { data: patientEncounters } = getPatientsEncounters(params?.id as string);
+
+  // encounters for patient that was found in the system
+  const { data: existingPatientEncounters, isPending } = getPatientsEncounters(patient?.uuid);
+  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+
+  const { data: relationships, isPending: loadingRelationships } = getPatientRelationships(patient?.uuid)
+  const [initialPatient, setInitialPatient] = useState({} as Person)
+
+  const {
+    mutate: createEncounter,
+    isPending: creatingEncounter,
+    isSuccess: encounterCreated,
+    isError: encounterError,
+  } = addEncounter();
+
+  const {
+    mutate: createScreeningEncounter,
+    isPending: creatingScreeningEncounter,
+    isSuccess: screeningEncounterCreated,
+    isError: screeningEncounterErrored,
+  } = addEncounter();
+
+
+  const {
+    mutate: createSocialHistoryEncounter,
+    isPending: creatingSocialHistoryEncounter,
+    isSuccess: socialHistoryEncounterCreated,
+    isError: socialHistoryEncounterErrored,
+  } = addEncounter();
+
+  const {
+    mutate: createFinancingEncounter,
+    isPending: creatingFinancingEncounter,
+    isSuccess: financingEncounterCreated,
+    isError: financingEncounterErrored,
+  } = addEncounter();
+
+  const { data: patientsWaitingForRegistration } = getPatientsWaitingForRegistrations();
+
+  const { mutate: mergePatients, isPending: merging, isSuccess: merged, isError } = merge()
+
+  const {
+    mutate: createVisit,
+    isPending: creatingVisit,
+    isSuccess: visitCreated,
+    data: visit,
+    isError: visitError,
+  } = addVisit();
+
+  const [socialHistory, setSocialHistory] = useState<Encounter>({} as Encounter);
+  const [financing, setFinancing] = useState<Encounter>({} as Encounter);
+
+  // console.log(patientsWaitingForRegistration)
+
+  console.log(patientsWaitingForRegistration?.find(p => p.uuid == params?.id))
+
+  useEffect(() => {
+    const initialPatient = patientsWaitingForRegistration?.find(p => p.uuid == params?.id);
+
+    console.log({ initialPatient })
+
+    if (initialPatient)
+      setInitialPatient(initialPatient)
+
+  }, [patientsWaitingForRegistration])
+
+  // useEffect(() => {
+  //   if (!visitCreated) return
+
+  //   const initialRegistration = patientEncounters?.find(p => p.encounter_type.uuid == encounters.INITIAL_REGISTRATION);
+
+  //   createEncounter({
+  //     encounterType: encounters.INITIAL_REGISTRATION,
+  //     visit: visit?.uuid,
+  //     patient: patient?.uuid,
+  //     encounterDatetime: initialRegistration?.encounter_datetime,
+  //     obs: [
+  //       {
+  //         concept: concepts.VISIT_NUMBER,
+  //         value: initialRegistration?.obs[0].value,
+  //         obsDatetime: initialRegistration?.obs[0].obs_datetime,
+  //       },
+  //     ],
+  //     includeAll: true,
+  //   });
+  // }, [visitCreated]);
+
+
+  // useEffect(() => {
+  //   if (encounterCreated) {
+  //     const screening = patientEncounters?.find(p => p.encounter_type.uuid == encounters.SCREENING_ENCOUNTER);
+  //     const isReferred = getObservation(screening?.obs, concepts.IS_PATIENT_REFERRED);
+  //     const isUrgent = getObservation(screening?.obs, concepts.IS_SITUATION_URGENT);
+
+  //     createScreeningEncounter({
+  //       encounterType: encounters.SCREENING_ENCOUNTER,
+  //       visit: visit?.uuid,
+  //       patient: patient.uuid,
+  //       encounterDatetime: screening?.encounter_datetime,
+  //       obs: [
+  //         {
+  //           concept: concepts.IS_PATIENT_REFERRED,
+  //           value: isReferred?.value_coded_uuid,
+  //           obsDatetime: isReferred?.obs_datetime,
+  //         },
+  //         {
+  //           concept: concepts.IS_SITUATION_URGENT,
+  //           value: isUrgent?.value_coded_uuid,
+  //           obsDatetime: isUrgent?.obs_datetime,
+  //         },
+
+  //       ],
+  //     });
+  //   }
+
+  // }, [encounterCreated])
+
+
+  // create social history
+  useEffect(() => {
+
+    createSocialHistoryEncounter({
+      encounterType: encounters.SOCIAL_HISTORY,
+      visit: initialPatient?.visit_uuid,
+      patient: patient.uuid,
+      encounterDatetime: getDateTime(),
+      obs: socialHistory?.obs?.map(ob => ({
+        concept: ob.names[0].uuid,
+        value: ob.value,
+        obsDatetime: getDateTime()
+      }))
+    })
+  }, [merged])
+
+  // create financing
+  useEffect(() => {
+    createFinancingEncounter({
+      encounterType: encounters.FINANCING,
+      visit: initialPatient?.visit_uuid,
+      patient: patient.uuid,
+      encounterDatetime: getDateTime(),
+      obs: financing?.obs?.map(ob => ({
+        concept: ob.names[0].uuid,
+        value: ob.value,
+        obsDatetime: getDateTime()
+      }))
+    })
+  }, [socialHistoryEncounterCreated])
+
+
+  // close patient visit
+  // useEffect(() => {
+  //   const patient = initialPatients?.find(p => p.uuid == params?.id);
+  //   if (screeningEncounterCreated && patient) {
+  //     closeVisit(patient.visit_uuid);
+  //   }
+
+  // }, [financingEncounterCreated])
+
+
+
+  const handleContinue = () => {
+    // const initialRegistration = patientEncounters?.find(p => p.encounter_type.uuid == encounters.INITIAL_REGISTRATION);
+    const uuid = patient?.uuid;
+
+    console.log({
+      primary: {
+        patient_id: uuid
+      },
+      secondary: [{
+        patient_id: initialPatient.uuid
+      }]
+    })
+
+    mergePatients({
+      primary: {
+        patient_id: uuid
+      },
+      secondary: [{
+        patient_id: initialPatient.uuid
+      }]
+    })
+    // createVisit({
+    //   patient: uuid,
+    //   visitType: AETC_VISIT_TYPE,
+    //   startDatetime: initialRegistration?.encounter_datetime
+    //   // startDatetime: getDateTime()
+    // });
+  }
+
+  useEffect(() => {
+
+    const financing = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.FINANCING);
+    const socialHistory = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.SOCIAL_HISTORY);
+
+    if (socialHistory)
+      setSocialHistory(socialHistory);
+
+    if (financing)
+      setFinancing(financing)
+
+  }, [existingPatientEncounters])
+
+
+
+
+  return <GenericDialog onClose={onClose} open={open} title="view patient">
+    <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
+    <MainButton title={"continue"} onClick={handleContinue} />
+    <ViewPatient patient={patient} />
+    <br />
+    <DisplayRelationship loading={loadingRelationships} relationships={relationships ? relationships : []} />
+    <br />
+    <WrapperBox display={"flex"}>
+      <DisplaySocialHistory onSubmit={() => { }} loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
+      <DisplayFinancing onSubmit={() => { }} loading={isPending} financing={financing ? financing : {} as Encounter} />
+    </WrapperBox>
+  </GenericDialog>
+}
+
 const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
   const { params } = useParameters();
   const { navigateTo } = useNavigation()
@@ -182,8 +420,7 @@ const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => v
 
   const { registrationType, initialRegisteredPatient, patient, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
-
-  const identifier = patient?.identifiers?.find(id => id.identifier_type.name == "DDE person document ID");
+  const identifier = patient?.identifiers?.find(id => id?.identifier_type?.name == "DDE person document ID");
 
   useEffect(() => {
 

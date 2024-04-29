@@ -439,7 +439,7 @@ export function VitalsForm({
               const heartRateValue = Number(value)
 
               if (heartRateValue > 129 || heartRateValue < 40) {
-                console.log({ heartRateValue })
+
                 addKeyToFlow({ heart: 'red' });
                 setTriageResult('red', form.heartRate.name)
               }

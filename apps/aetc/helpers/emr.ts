@@ -1,3 +1,5 @@
+import { Obs } from "@/interfaces";
+
 export const getObservationValue = (obs: any, uuid: string) => {
 
 
@@ -14,3 +16,15 @@ export const getObservationValue = (obs: any, uuid: string) => {
 
   return ob.value;
 };
+
+export const getObservation = (obs: any, uuid: string): Obs | null => {
+
+  if (!obs) {
+    return null;
+  }
+  return obs.find((ob: any) => {
+    return ob.names.find((n: any) => n.uuid == uuid);
+  });
+
+};
+

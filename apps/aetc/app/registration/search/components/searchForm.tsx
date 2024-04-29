@@ -111,6 +111,7 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
             label={form.gender.label}
             multiple={false}
             size="small"
+            applyPadding={false}
             options={[
               { label: "Male", id: "M" },
               { label: "Female", id: "F" },

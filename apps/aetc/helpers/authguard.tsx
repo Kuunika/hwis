@@ -26,15 +26,12 @@ export default function AuthGuard(Component: any, roles: Array<string>) {
                         const currentTime = new Date().getTime();
                         const difference = currentTime - startTime;
                         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-                        if (minutes > 30) {
+                        if (minutes > 60) {
                             setShow(false);
                             navigateTo("/");
                             localStorage.clear()
                             return
-
                         }
-
-
                     }
 
                     setShow(true)

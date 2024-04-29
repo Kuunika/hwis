@@ -26,6 +26,8 @@ import AuthGuard from "@/helpers/authguard";
 import { BarcodeDialog } from "./components/barcodeScanner";
 import { getDateTime } from "@/helpers/dateTime";
 import { FaBarcode } from "react-icons/fa6";
+import { PatientSearchResultsDialog } from "./components/patientsSearch";
+import { DDESearch } from "@/interfaces";
 
 
 
@@ -81,47 +83,27 @@ function InitialRegistration() {
     isError: visitNumberError,
   } = getVisitNum();
 
-  const { refetch, isRefetching, data: foundPatients } = searchDDEPatientByNpid(npid);
+  const { refetch, isRefetching, data: foundPatients, isSuccess: patientSearchSuccess } = searchDDEPatientByNpid(npid);
+  const [showSearchResultDialog, setShowSearchResultDialog] = useState(false)
 
-
-  const formatScanSearch = () => {
-
-    const defaultInitial = { firstName: "", lastName: "" };
-
-    if (!foundPatients) return defaultInitial;
-
-    if (foundPatients?.locals.length > 0) {
-      return {
-        firstName: foundPatients.locals[0].given_name,
-        lastName: foundPatients.locals[0].family_name,
-      }
-    }
-
-    if (foundPatients?.remotes.length > 0) {
-      return {
-        firstName: foundPatients.remotes[0].given_name,
-        lastName: foundPatients.remotes[0].family_name,
-      }
-    }
-
-    setShowDialog(false);
-
-    return defaultInitial
-  }
-
-  useEffect(() => {
-    setInitialValues(formatScanSearch());
-
-  }, [foundPatients])
-
-
+  // useEffect(() => {
+  //   setNpid('8UN1U3')
+  // }, [])
 
   //handle scan data
   useEffect(() => {
     if (npid == '') return
     refetch()
-
   }, [npid])
+
+
+  useEffect(() => {
+    if (patientSearchSuccess) {
+      setShowSearchResultDialog(true);
+    }
+
+  }, [patientSearchSuccess])
+
 
   // after patient registration create a visit
   useEffect(() => {
@@ -184,6 +166,8 @@ function InitialRegistration() {
     setError(error);
   }, [patientError, visitError, visitNumberError, encounterError]);
 
+  const secureLink = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+
   const handleSubmit = async (values: any, options: any) => {
     // options.resetForm();
     setMessage("creating patient");
@@ -211,8 +195,6 @@ function InitialRegistration() {
       },
     });
   };
-
-
 
 
   return (
@@ -254,14 +236,17 @@ function InitialRegistration() {
           )}
           {showForm && (
             <>
-
               <RegistrationCard >
                 {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
                 <br />
+                <PatientSearchResultsDialog open={showSearchResultDialog} onClose={() => setShowSearchResultDialog(false)} patientResults={foundPatients ? foundPatients : { locals: [], remotes: [] } as DDESearch} />
                 <BarcodeDialog isLoading={isRefetching} onBarcodeScan={(value: any) => setNpid(value)} open={showDialog} onClose={() => setShowDialog(false)} />
-                <MainTypography onClick={() => setShowDialog(true)} sx={{ cursor: "pointer", width: "10%", }} variant="h4">
-                  <FaBarcode />
-                </MainTypography>
+                <WrapperBox onClick={() => secureLink && setShowDialog(true)} sx={{ display: "flex", py: "1ch", alignItems: "center", justifyContent: "center", cursor: "pointer", backgroundColor: "#F5F5F5" }}>
+                  {
+                    secureLink ? <> <FaBarcode />
+                      <MainTypography variant="body1" sx={{ ml: "1ch" }}>Scan Barcode</MainTypography>
+                    </> : <MainTypography variant="subtitle2">Barcode scanning not available.</MainTypography>}
+                </WrapperBox>
                 <br />
                 <InitialRegistrationForm
                   initialValues={initialValues}
