@@ -40,12 +40,13 @@ export interface Address {
 
 export interface Identifier {
   identifier: string;
-  identifier_type: {
+  identifierType?: string;
+  identifier_type?: {
     name: string;
     uuid: string
   }
   preferred: boolean;
-  uuid: string
+  uuid?: string
 }
 
 

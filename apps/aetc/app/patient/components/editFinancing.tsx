@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import * as Yup from "yup";
 import {
@@ -55,7 +55,23 @@ export const EditFinancingForm: FC<Props> = ({
     initialValues,
 
 }) => {
+
     const [payment, setPayment] = useState("");
+
+    useEffect(() => {
+        const paymentOptions = initialValues[concepts.PAYMENT_OPTIONS]
+
+        if (Array.isArray(paymentOptions)) {
+            const insurance = paymentOptions.find(opt => opt == 'insurance');
+
+
+            if (insurance) {
+                setPayment('insurance')
+            }
+        }
+    }, [initialValues])
+
+
     return (
         <>
 
@@ -81,49 +97,49 @@ export const EditFinancingForm: FC<Props> = ({
                     { label: "Staff", value: "staff" },
                     { label: "Insurance", value: "insurance" },
                 ]} />
-                {payment === "insurance" && (
-                    <>
-                        <SelectInputField
-                            label={form.insuranceProvider.label}
-                            id={form.insuranceProvider.name}
-                            name={form.insuranceProvider.name}
-                            selectItems={[
-                                { name: "Masm", value: "masm" },
-                                { name: "Escom", value: "Escom" },
-                                { name: "Reserve Bank", value: "Reserve Bank" },
-                                { name: "Liberty", value: "Liberty" },
-                                { name: "Unimed", value: "Unimed" },
-                                { name: "Medhealth", value: "Medhealth" },
-                                { name: "CIC Malawi", value: "CIC Malawi" },
-                                { name: "MRA", value: "MRA" },
-                            ]}
-                        />
-                        <TextInputField
-                            name={form.insuranceIdNo.name}
-                            id={form.insuranceIdNo.name}
-                            label={form.insuranceIdNo.label}
-                        />
-                        <SelectInputField
-                            label={form.insuranceSchema.label}
-                            id={form.insuranceSchema.name}
-                            name={form.insuranceSchema.name}
-                            selectItems={[
-                                { name: "VVIP", value: "VVIP" },
-                                { name: "VIP", value: "VIP" },
-                                { name: "EXEC", value: "EXEC" },
-                                { name: "ECO", value: "ECO" },
-                            ]}
-                        />
-                        <RadioGroupInput
-                            name={form.status.name}
-                            label={form.status.label}
-                            options={[
-                                { label: "Active", value: "active" },
-                                { label: "Inactive", value: "inactive" },
-                            ]}
-                        />
-                    </>
-                )}
+
+                <>
+                    <SelectInputField
+                        label={form.insuranceProvider.label}
+                        id={form.insuranceProvider.name}
+                        name={form.insuranceProvider.name}
+                        selectItems={[
+                            { name: "Masm", value: "masm" },
+                            { name: "Escom", value: "Escom" },
+                            { name: "Reserve Bank", value: "Reserve Bank" },
+                            { name: "Liberty", value: "Liberty" },
+                            { name: "Unimed", value: "Unimed" },
+                            { name: "Medhealth", value: "Medhealth" },
+                            { name: "CIC Malawi", value: "CIC Malawi" },
+                            { name: "MRA", value: "MRA" },
+                        ]}
+                    />
+                    <TextInputField
+                        name={form.insuranceIdNo.name}
+                        id={form.insuranceIdNo.name}
+                        label={form.insuranceIdNo.label}
+                    />
+                    <SelectInputField
+                        label={form.insuranceSchema.label}
+                        id={form.insuranceSchema.name}
+                        name={form.insuranceSchema.name}
+                        selectItems={[
+                            { name: "VVIP", value: "VVIP" },
+                            { name: "VIP", value: "VIP" },
+                            { name: "EXEC", value: "EXEC" },
+                            { name: "ECO", value: "ECO" },
+                        ]}
+                    />
+                    <RadioGroupInput
+                        name={form.status.name}
+                        label={form.status.label}
+                        options={[
+                            { label: "Active", value: "active" },
+                            { label: "Inactive", value: "inactive" },
+                        ]}
+                    />
+                </>
+
 
             </FormikInit>
         </>

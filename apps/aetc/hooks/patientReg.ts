@@ -39,6 +39,22 @@ export const initialPatientRegistration = () => {
   });
 };
 
+
+export const patchPatient = () => {
+
+
+  const addData = (patientData: any) => {
+    return updatePatient(patientData.id, { ...patientData.data }).then((response) => {
+      return response.data;
+    }
+    );
+  }
+
+  return useMutation({
+    mutationFn: addData,
+  });
+}
+
 export const registerPatient = () => {
   const addData = (patientData: any) => {
     const mappedPatient = {
@@ -80,7 +96,8 @@ export const registerPatient = () => {
     };
     return updatePatient(patientData.id, mappedPatient).then((response) => {
       return response.data;
-    });
+    }
+    );
     // return createPatient(mappedPatient).then((response) => {
     //   return response.data;
     // });

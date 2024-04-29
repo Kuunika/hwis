@@ -26,6 +26,7 @@ export const getDailyVisits = (queryParam?: string) =>
 
 export const updatePatient = (patientId: string, patientData: any) =>
   edit<PatientUpdateResponse>(patientId, patientData, endPoint);
+
 export const potentialDuplicates = (patientData: any) =>
   create(patientData, "/search/people");
 

@@ -319,7 +319,6 @@ export const DemographicsForm: FC<Prop> = ({
 
   useEffect(() => {
 
-
     if (fieldFunction) {
       const { setFieldValue } = fieldFunction;
       const date = estimateBirthdate(formValues[form.age.name])?.iso;

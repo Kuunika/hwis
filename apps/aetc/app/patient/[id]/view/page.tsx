@@ -47,23 +47,23 @@ const ContainerCard = ({ children }: { children: ReactNode }) => {
 
 const LabelValue = ({ label, value }: { label: string; value: any }) => {
     return (
-        <WrapperBox sx={{ display: "flex", alignItems: "flex-start", mb: "0.5ch" }}>
-            <MainTypography width={"10ch"} sx={{ fontSize: "0.8rem" }}>
+        <WrapperBox sx={{ display: "flex", alignItems: "flex-start", py: "0.5ch", mb: "0.5ch", borderBottom: "#D8D8D8 solid 1px" }}>
+            <MainTypography width={"20ch"} sx={{ fontSize: "0.8rem" }}>
                 {label}
             </MainTypography>
-            <MainTypography sx={{ fontSize: "0.8rem" }}>{value}</MainTypography>
+            <MainTypography fontWeight={"900"} sx={{ fontSize: "0.8rem", textTransform: "capitalize" }}>{value}</MainTypography>
         </WrapperBox>
     );
 };
 
 
 
-const SocialHistoryDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+const SocialHistoryDialog = ({ open, onClose, initialValues, onSubmit }: { open: boolean, onClose: () => void, initialValues: any, onSubmit: (values: any) => void }) => {
     return <GenericDialog maxWidth="sm" title="Edit Social History" open={open} onClose={onClose}>
-        <EditSocialHistory initialValues={initialValues} onSubmit={() => { }} />
+        <EditSocialHistory initialValues={initialValues} onSubmit={onSubmit} />
     </GenericDialog>
 }
-const FinancingDialog = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+const FinancingDialog = ({ open, onClose, initialValues, onSubmit }: { open: boolean, onClose: () => void, initialValues: any, onSubmit: (values: any) => void }) => {
     return <GenericDialog maxWidth="sm" title="Edit Financing" open={open} onClose={onClose}>
         <EditFinancingForm initialValues={initialValues} onSubmit={() => { }} />
     </GenericDialog>
@@ -75,7 +75,7 @@ const EditRelationship = ({ open, onClose, initialValues }: { open: boolean, onC
     </GenericDialog>
 }
 
-export const DisplaySocialHistory = ({ socialHistory, loading }: { socialHistory: Encounter, loading: boolean }) => {
+export const DisplaySocialHistory = ({ socialHistory, loading, onSubmit }: { socialHistory: Encounter, loading: boolean, onSubmit: (values: any) => void }) => {
     const [socialHistoryDialogOpen, setSocialHistoryDialogOpen] = useState(false);
 
     const maritalStatus: string = getObservationValue(socialHistory?.obs, concepts.MARITAL_STATUS);
@@ -92,7 +92,7 @@ export const DisplaySocialHistory = ({ socialHistory, loading }: { socialHistory
     }
 
     return <ContainerCard>
-        <SocialHistoryDialog initialValues={{
+        <SocialHistoryDialog onSubmit={onSubmit} initialValues={{
             [concepts.MARITAL_STATUS]: maritalStatus,
             [concepts.RELIGION]: religion,
             [concepts.OCCUPATION]: occupation,
@@ -112,17 +112,17 @@ export const DisplaySocialHistory = ({ socialHistory, loading }: { socialHistory
 }
 
 
-export const DisplayFinancing = ({ financing, loading }: { financing: Encounter, loading: boolen }) => {
+export const DisplayFinancing = ({ financing, loading, onSubmit }: { financing: Encounter, loading: boolean, onSubmit: (values: any) => void }) => {
     const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
     const [financingOption, setFinancingOptions] = useState({ paymentOptions: "", insuranceProvider: "", insuranceNumber: "", insuranceScheme: "", insuranceStatus: "" })
 
     useEffect(() => {
 
-        const paymentOptions = getObservationValue(financing?.obs, concepts.PAYMENT_OPTIONS);
-        const insuranceProvider = getObservationValue(financing?.obs, concepts.INSURANCE_PROVIDER);
-        const insuranceNumber = getObservationValue(financing?.obs, concepts.INSURANCE_NUMBER);
-        const insuranceScheme = getObservationValue(financing?.obs, concepts.INSURANCE_SCHEME);
-        const insuranceStatus = getObservationValue(financing?.obs, concepts.INSURANCE_STATUS);
+        const paymentOptions = getObservationValue(financing?.obs, 'c7bcc8bd-09d5-4f98-8d58-5179f749fd99');
+        const insuranceProvider = getObservationValue(financing?.obs, 'b0ffce26-2d25-449e-871e-c702e44bb37e');
+        const insuranceNumber = getObservationValue(financing?.obs, '98b08fb2-f877-45b6-a95a-db89dffefb27');
+        const insuranceScheme = getObservationValue(financing?.obs, 'db2e6bba-7d04-4873-a0a2-ac7bd69dd7b1');
+        const insuranceStatus = getObservationValue(financing?.obs, '3cdd53d9-35a5-47e5-909f-654e5bc7c9a8');
 
         setFinancingOptions({ paymentOptions, insuranceProvider, insuranceNumber, insuranceScheme, insuranceStatus })
 
@@ -138,12 +138,15 @@ export const DisplayFinancing = ({ financing, loading }: { financing: Encounter,
     const { paymentOptions, insuranceProvider, insuranceNumber, insuranceScheme, insuranceStatus } = financingOption
 
     return <ContainerCard>
-        <FinancingDialog initialValues={{
-            [concepts.PAYMENT_OPTIONS]: paymentOptions,
-            [concepts.INSURANCE_PROVIDER]: insuranceProvider,
-            [concepts.INSURANCE_NUMBER]: insuranceNumber,
-            [concepts.INSURANCE_STATUS]: insuranceStatus
-        }} open={financingDialogOpen} onClose={() => setFinancingDialogOpen(false)} />
+        <FinancingDialog
+            onSubmit={onSubmit}
+            initialValues={{
+                [concepts.PAYMENT_OPTIONS]: [paymentOptions],
+                [concepts.INSURANCE_PROVIDER]: insuranceProvider,
+                [concepts.INSURANCE_NUMBER]: insuranceNumber,
+                [concepts.INSURANCE_STATUS]: insuranceStatus,
+                [concepts.INSURANCE_SCHEME]: insuranceScheme,
+            }} open={financingDialogOpen} onClose={() => setFinancingDialogOpen(false)} />
         <MainTypography variant="h5">Financing</MainTypography>
         <LabelValue label="Payment Option" value={paymentOptions} />
         <LabelValue label="Insurance Provider" value={insuranceProvider} />
@@ -183,6 +186,7 @@ export const DisplayRelationship = ({ relationships, loading }: { relationships:
         <EditRelationship initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
         {mappedRelationships.map(relationship => {
             return <ContainerCard >
+                <MainTypography variant="h5">{relationship.relationship?.toLowerCase() == 'guardian' ? "Guardian Information" : "Next Of Kin Information"}</MainTypography>
                 <LabelValue label="First Name" value={relationship.given_name} />
                 <LabelValue label="Last Name" value={relationship.family_name} />
                 <LabelValue label="Relationship" value={relationship.relationship} />

@@ -70,19 +70,18 @@ const schema = Yup.object().shape({
 
 
 type Prop = {
-    initialValues: any
+    initialValues: any;
+    onSubmit: (values: any) => void
 }
 
 
-export const EditDemographicsForm = ({ initialValues }: Prop) => {
+export const EditDemographicsForm = ({ initialValues, onSubmit }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
-
-    const handleSubmit = () => { }
 
     return <FormikInit
         validationSchema={schema}
         initialValues={initialValues}
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
         submitButtonText="update"
 
         enableReinitialize={true}
