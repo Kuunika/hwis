@@ -30,6 +30,8 @@ import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
 import { getObservation, getObservationValue } from "@/helpers/emr";
 import { DisplayFinancing, DisplayRelationship, DisplaySocialHistory } from "@/app/patient/[id]/view/page";
 import { getDateTime } from "@/helpers/dateTime";
+import { EditReferralForm } from "@/app/patient/components/editReferral";
+import { OperationSuccess } from "@/components/operationSuccess";
 
 
 export const SearchResults = ({
@@ -199,20 +201,23 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
 
   const { data: relationships, isPending: loadingRelationships } = getPatientRelationships(patient?.uuid)
   const [initialPatient, setInitialPatient] = useState({} as Person)
+  const [isReferred, setIsReferred] = useState<any>('')
+  const [openReferralDialog, setOpenReferralDialog] = useState(false);
+  const [transactionSuccess, setTransactionSuccess] = useState(false)
 
-  const {
-    mutate: createEncounter,
-    isPending: creatingEncounter,
-    isSuccess: encounterCreated,
-    isError: encounterError,
-  } = addEncounter();
+  // const {
+  //   mutate: createEncounter,
+  //   isPending: creatingEncounter,
+  //   isSuccess: encounterCreated,
+  //   isError: encounterError,
+  // } = addEncounter();
 
-  const {
-    mutate: createScreeningEncounter,
-    isPending: creatingScreeningEncounter,
-    isSuccess: screeningEncounterCreated,
-    isError: screeningEncounterErrored,
-  } = addEncounter();
+  // const {
+  //   mutate: createScreeningEncounter,
+  //   isPending: creatingScreeningEncounter,
+  //   isSuccess: screeningEncounterCreated,
+  //   isError: screeningEncounterErrored,
+  // } = addEncounter();
 
 
   const {
@@ -229,29 +234,36 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     isError: financingEncounterErrored,
   } = addEncounter();
 
-  const { data: patientsWaitingForRegistration } = getPatientsWaitingForRegistrations();
-
-  const { mutate: mergePatients, isPending: merging, isSuccess: merged, isError } = merge()
 
   const {
-    mutate: createVisit,
-    isPending: creatingVisit,
-    isSuccess: visitCreated,
-    data: visit,
-    isError: visitError,
-  } = addVisit();
+    mutate: createReferralEncounter,
+    isPending: creatingReferralEncounter,
+    isSuccess: referralCreated,
+    isError: referralErrored,
+  } = addEncounter();
+
+  const { data: patientsWaitingForRegistration } = getPatientsWaitingForRegistrations();
+
+  const { mutate: mergePatients, isPending: merging, isSuccess: merged, isError, data: mergedResponse } = merge()
+  // const {
+  //   mutate: createVisit,
+  //   isPending: creatingVisit,
+  //   isSuccess: visitCreated,
+  //   data: visit,
+  //   isError: visitError,
+  // } = addVisit();
+
+  const loading = merging || creatingReferralEncounter || creatingFinancingEncounter || creatingSocialHistoryEncounter
 
   const [socialHistory, setSocialHistory] = useState<Encounter>({} as Encounter);
   const [financing, setFinancing] = useState<Encounter>({} as Encounter);
+  const [referralData, setReferralData] = useState({ [concepts.REFERRED_FROM]: '' })
 
   // console.log(patientsWaitingForRegistration)
 
-  console.log(patientsWaitingForRegistration?.find(p => p.uuid == params?.id))
 
   useEffect(() => {
     const initialPatient = patientsWaitingForRegistration?.find(p => p.uuid == params?.id);
-
-    console.log({ initialPatient })
 
     if (initialPatient)
       setInitialPatient(initialPatient)
@@ -278,6 +290,16 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   //     includeAll: true,
   //   });
   // }, [visitCreated]);
+
+  useEffect(() => {
+
+    const referralEncounter = patientEncounters?.find(encounter => encounter.encounter_type.uuid == encounters.SCREENING_ENCOUNTER);
+
+    //TODO: remove the hard coded concept
+    const referred = getObservationValue(referralEncounter?.obs, "618c7457-9442-43c4-93a0-80686b3bca5f");
+
+    setIsReferred(referred);
+  }, [patientEncounters])
 
 
   // useEffect(() => {
@@ -315,8 +337,8 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
 
     createSocialHistoryEncounter({
       encounterType: encounters.SOCIAL_HISTORY,
-      visit: initialPatient?.visit_uuid,
-      patient: patient.uuid,
+      visit: mergedResponse?.active_visit.uuid,
+      patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: socialHistory?.obs?.map(ob => ({
         concept: ob.names[0].uuid,
@@ -330,8 +352,8 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   useEffect(() => {
     createFinancingEncounter({
       encounterType: encounters.FINANCING,
-      visit: initialPatient?.visit_uuid,
-      patient: patient.uuid,
+      visit: mergedResponse?.active_visit.uuid,
+      patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: financing?.obs?.map(ob => ({
         concept: ob.names[0].uuid,
@@ -341,30 +363,36 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     })
   }, [socialHistoryEncounterCreated])
 
-
-  // close patient visit
-  // useEffect(() => {
-  //   const patient = initialPatients?.find(p => p.uuid == params?.id);
-  //   if (screeningEncounterCreated && patient) {
-  //     closeVisit(patient.visit_uuid);
-  //   }
-
-  // }, [financingEncounterCreated])
-
-
-
-  const handleContinue = () => {
-    // const initialRegistration = patientEncounters?.find(p => p.encounter_type.uuid == encounters.INITIAL_REGISTRATION);
-    const uuid = patient?.uuid;
-
-    console.log({
-      primary: {
-        patient_id: uuid
-      },
-      secondary: [{
-        patient_id: initialPatient.uuid
+  // create referral
+  useEffect(() => {
+    createReferralEncounter({
+      encounterType: encounters.REFERRAL,
+      visit: mergedResponse?.active_visit.uuid,
+      patient: mergedResponse?.uuid,
+      encounterDatetime: getDateTime(),
+      obs: [{
+        concept: concepts.REFERRED_FROM,
+        value: referralData[concepts.REFERRED_FROM],
+        obsDatetime: getDateTime()
       }]
     })
+  }, [financingEncounterCreated])
+
+
+  // close patient visit
+  useEffect(() => {
+    // const patient = initialPatients?.find(p => p.uuid == params?.id);
+    if (referralCreated) {
+      // closeVisit(patient.visit_uuid);
+      setTransactionSuccess(true);
+    }
+
+  }, [referralCreated])
+
+
+
+  const triggerMerge = () => {
+    const uuid = patient?.uuid;
 
     mergePatients({
       primary: {
@@ -374,16 +402,23 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
         patient_id: initialPatient.uuid
       }]
     })
-    // createVisit({
-    //   patient: uuid,
-    //   visitType: AETC_VISIT_TYPE,
-    //   startDatetime: initialRegistration?.encounter_datetime
-    //   // startDatetime: getDateTime()
-    // });
+
+  }
+
+
+
+  const handleContinue = () => {
+
+    if (isReferred == "Yes") {
+      setOpenReferralDialog(true)
+      return
+    }
+
+    triggerMerge();
+
   }
 
   useEffect(() => {
-
     const financing = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.FINANCING);
     const socialHistory = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.SOCIAL_HISTORY);
 
@@ -396,17 +431,31 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   }, [existingPatientEncounters])
 
 
+  const handleReferralSubmit = (values: any) => {
+    setReferralData(values); triggerMerge();
+    setOpenReferralDialog(false);
+  }
 
 
-  return <GenericDialog onClose={onClose} open={open} title="view patient">
+
+  return <GenericDialog sx={{ backgroundColor: "#F6F6F6" }} onClose={onClose} open={open} title="view patient">
+
+    <OverlayLoader open={loading} />
+    <SuccessMessage open={transactionSuccess} />
     <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
-    <MainButton title={"continue"} onClick={handleContinue} />
+    <br />
+    <MainButton title={"Continue with Patient"} onClick={handleContinue} />
+    <AddReferralDialog open={openReferralDialog} onClose={() => setOpenReferralDialog(false)} onSubmit={handleReferralSubmit} />
+    <br />
     <ViewPatient patient={patient} />
+    <br />
     <br />
     <DisplayRelationship loading={loadingRelationships} relationships={relationships ? relationships : []} />
     <br />
+    <br />
     <WrapperBox display={"flex"}>
       <DisplaySocialHistory onSubmit={() => { }} loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
+
       <DisplayFinancing onSubmit={() => { }} loading={isPending} financing={financing ? financing : {} as Encounter} />
     </WrapperBox>
   </GenericDialog>
@@ -461,5 +510,29 @@ const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => v
     }} />
     <MainButton variant="secondary" title={"No"} onClick={onClose} />
     <OverlayLoader open={isPending} />
+  </GenericDialog>
+}
+
+const AddReferralDialog = ({ open, onClose, onSubmit }: { open: boolean, onClose: () => void, onSubmit: (values: any) => void }) => {
+  return <GenericDialog maxWidth="sm" title="Add Referral" open={open} onClose={onClose}>
+    <EditReferralForm onSubmit={onSubmit} />
+  </GenericDialog>
+}
+
+const SuccessMessage = ({ open }: { open: boolean }) => {
+  const { navigateTo } = useNavigation()
+  return <GenericDialog open={open} maxWidth="sm" title="" onClose={() => { }}>
+    <OperationSuccess
+      title="Process Completed Successfully"
+      primaryActionText="Register More"
+      secondaryActionText="Go Home"
+      onPrimaryAction={() => {
+        navigateTo("/registration/list");
+
+      }}
+      onSecondaryAction={() => {
+        navigateTo("/dashboard");
+      }}
+    />
   </GenericDialog>
 }

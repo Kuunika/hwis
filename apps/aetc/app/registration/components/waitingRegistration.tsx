@@ -46,7 +46,8 @@ export const WaitingRegistrationList = () => {
       flex: 1,
       renderCell: (cell: any) => {
 
-        const link = cell.row.gender != 'N/A' ? `/registration/${cell.id}/new` : `/registration/${cell.id}/search`;
+        // const link = cell.row.gender != 'N/A' ? `/registration/${cell.id}/new` : `/registration/${cell.id}/search`;
+        const link = `/registration/${cell.id}/search`;
 
         return (
           <>

@@ -297,3 +297,12 @@ export type RelationshipType = {
   retire_reason: null | string;
 
 }
+
+
+
+export interface ActiveVisit {
+  visit_id: number;
+  patient_id: number;
+  uuid: string;
+  visit_type_id: number
+}
