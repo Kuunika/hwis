@@ -19,7 +19,10 @@ export const WaitingRegistrationList = () => {
     isLoading,
     isRefetching
   } = getPatientsWaitingForRegistrations();
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
+  const rows = patients?.sort((p1, p2) => {
+    //@ts-ignore
+    return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+  }).map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
   const { setPatient, setRegistrationType, setSearchedPatient } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
