@@ -45,6 +45,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 
 
   const handleClose = () => {
+    onClose("");
     console.log({ request })
     console.log("closed");
   };
@@ -214,7 +215,7 @@ const validationSchema = Yup.object().shape({
   sampleType: Yup.string().required().label("Sample Type"),
 })
 
-const LabForm = () => {
+const LabForm = ({ onClose }: { onClose: () => void }) => {
   const { data: specimenTypes, isLoading, isSuccess, refetch: refetchLabSpecimen, isRefetching: refetchingLabSpecimen } = getLabSpecimenTypes()
   const [sampleName, setSampleName] = useState('')
   const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded, refetch, isRefetching } = getLabTestTypes(sampleName);
@@ -338,8 +339,6 @@ const LabForm = () => {
       return { concept: tests?.find(lab => lab.concept_id == test.id)?.names[0]?.uuid }
     });
 
-    console.log({ mappedTests })
-
     const order = {
       "orders": [
         {
@@ -359,6 +358,7 @@ const LabForm = () => {
     }
 
     mutate(order);
+    onClose()
   }
   return <FormikInit initialValues={initialValues} onSubmit={handleLabSend} validationSchema={validationSchema}>
     <OverlayLoader open={isPending || isLoading || isRefetching} />
