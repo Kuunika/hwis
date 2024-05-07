@@ -21,8 +21,9 @@ export const InitialRegistrationList = () => {
 
 
   const rows = patients?.sort((p1, p2) => {
-    return Number(p1.aetc_visit_number) - Number(p2.aetc_visit_number)
-  })?.map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted)
+    //@ts-ignore
+    return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+  }).map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted)
 
 
 
