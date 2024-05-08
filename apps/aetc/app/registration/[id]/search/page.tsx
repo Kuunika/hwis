@@ -110,7 +110,6 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
   const { setSearchedPatient: setSearchedPatientContext } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
 
-
   // const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchDDEPatient(search.firstName, search.lastName, search.gender)
   const [searchedPatient, setSearchedPatient] = useState({});
 
@@ -123,7 +122,6 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
     refetch();
 
   }, [search])
-
 
 
   const handleSubmit = (values: any) => {

@@ -175,8 +175,8 @@ export type TriageResult = "" | "yellow" | "red" | "green";
 
 
 export type DDESearch = {
-  locals: Person[];
-  remotes: Person[];
+  locals: Person[] | Patient[];
+  remotes: Person[] | Patient[];
 }
 
 export type DDEScore = {

@@ -118,7 +118,7 @@ const Row = ({
   );
 };
 
-const ConfirmationDialog = ({ open, onClose, patientId }: { open: false, onClose: () => void, patientId: string }) => {
+const ConfirmationDialog = ({ open, onClose, patientId }: { open: boolean, onClose: () => void, patientId: string }) => {
   const { navigateTo } = useNavigation()
 
   return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>

@@ -19,7 +19,7 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import { DDESearch, Encounter, Person } from "@/interfaces";
+import { DDESearch, Encounter, Patient, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
 import { getOnePatient, getPatientRelationshipTypes, getPatientRelationships, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
@@ -28,10 +28,10 @@ import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { addVisit, closeCurrentVisit } from "@/hooks/visit";
 import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
 import { getObservation, getObservationValue } from "@/helpers/emr";
-import { DisplayFinancing, DisplayRelationship, DisplaySocialHistory } from "@/app/patient/[id]/view/page";
 import { getDateTime } from "@/helpers/dateTime";
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { OperationSuccess } from "@/components/operationSuccess";
+import { DisplayFinancing, DisplayRelationship, DisplaySocialHistory } from "@/app/patient/[id]/view/components";
 
 
 export const SearchResults = ({
@@ -119,13 +119,13 @@ export const SearchResults = ({
 };
 
 
-export const ResultBox = ({ person, type, setOpen }: { person: Person, type: string, setOpen: (person: Person) => void }) => {
+export const ResultBox = ({ person, type, setOpen }: { person: any, type: string, setOpen: (person: any) => void }) => {
 
   // console.log(person);
 
   // return
 
-  const identifier = person.identifiers.find(i => i.identifier_type.name == 'National id');
+  const identifier = person.identifiers.find((i: any) => i?.identifier_type?.name == 'National id');
 
   return <MainPaper onClick={() => setOpen(person)} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
     <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
@@ -455,7 +455,6 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     <br />
     <WrapperBox display={"flex"}>
       <DisplaySocialHistory onSubmit={() => { }} loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
-
       <DisplayFinancing onSubmit={() => { }} loading={isPending} financing={financing ? financing : {} as Encounter} />
     </WrapperBox>
   </GenericDialog>

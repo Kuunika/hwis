@@ -117,7 +117,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
       <OverlayLoader open={isPending || isRefetching} />
       <DialogTitle>Lab Order</DialogTitle>
       <DialogContent>
-        <LabForm />
+        <LabForm onClose={() => onClose('')} />
         {/* <WrapperBox display={"flex"}>
           <WrapperBox
             sx={{ width: { xs: "40%", lg: "30%" }, borderRight: "solid #e0e0e0 1px", px: "1ch" }}
