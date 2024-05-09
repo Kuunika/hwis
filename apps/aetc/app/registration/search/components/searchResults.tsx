@@ -19,15 +19,15 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import { DDESearch, Encounter, Patient, Person } from "@/interfaces";
+import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { getOnePatient, getPatientRelationshipTypes, getPatientRelationships, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
+import { getPatientRelationships, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ViewPatient } from "@/app/patient/components/viewPatient";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-import { addVisit, closeCurrentVisit } from "@/hooks/visit";
-import { AETC_VISIT_TYPE, concepts, encounters } from "@/constants";
-import { getObservation, getObservationValue } from "@/helpers/emr";
+import { closeCurrentVisit } from "@/hooks/visit";
+import { concepts, encounters } from "@/constants";
+import { getObservationValue } from "@/helpers/emr";
 import { getDateTime } from "@/helpers/dateTime";
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { OperationSuccess } from "@/components/operationSuccess";
@@ -120,10 +120,6 @@ export const SearchResults = ({
 
 
 export const ResultBox = ({ person, type, setOpen }: { person: any, type: string, setOpen: (person: any) => void }) => {
-
-  // console.log(person);
-
-  // return
 
   const identifier = person.identifiers.find((i: any) => i?.identifier_type?.name == 'National id');
 
@@ -245,14 +241,6 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   const { data: patientsWaitingForRegistration } = getPatientsWaitingForRegistrations();
 
   const { mutate: mergePatients, isPending: merging, isSuccess: merged, isError, data: mergedResponse } = merge()
-  // const {
-  //   mutate: createVisit,
-  //   isPending: creatingVisit,
-  //   isSuccess: visitCreated,
-  //   data: visit,
-  //   isError: visitError,
-  // } = addVisit();
-
   const loading = merging || creatingReferralEncounter || creatingFinancingEncounter || creatingSocialHistoryEncounter
 
   const [socialHistory, setSocialHistory] = useState<Encounter>({} as Encounter);
@@ -292,7 +280,6 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   // }, [visitCreated]);
 
   useEffect(() => {
-
     const referralEncounter = patientEncounters?.find(encounter => encounter.encounter_type.uuid == encounters.SCREENING_ENCOUNTER);
 
     //TODO: remove the hard coded concept
@@ -334,7 +321,6 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
 
   // create social history
   useEffect(() => {
-
     createSocialHistoryEncounter({
       encounterType: encounters.SOCIAL_HISTORY,
       visit: mergedResponse?.active_visit.uuid,
@@ -406,7 +392,6 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
   }
 
 
-
   const handleContinue = () => {
 
     if (isReferred == "Yes") {
@@ -454,7 +439,7 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     <br />
     <br />
     <WrapperBox display={"flex"}>
-      <DisplaySocialHistory onSubmit={() => { }} loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
+      <DisplaySocialHistory onSubmit={(socialHistory: any) => console.log(({ socialHistory }))} loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
       <DisplayFinancing onSubmit={() => { }} loading={isPending} financing={financing ? financing : {} as Encounter} />
     </WrapperBox>
   </GenericDialog>
