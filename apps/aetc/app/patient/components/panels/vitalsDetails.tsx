@@ -19,6 +19,11 @@ export const VitalsPanel = () => {
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [vitals, setVitals] = useState<any>([]);
 
+
+  useEffect(() => {
+    console.log({ vitals })
+  }, [vitals])
+
   useEffect(() => {
 
     if (data) {
@@ -34,18 +39,21 @@ export const VitalsPanel = () => {
 
   }, [data])
 
-  useEffect(() => {
-    if (data && activeVisit !== 0) {
-      const encounter = data.filter(
-        (d) => d?.encounter_type.uuid == encounters.VITALS
-      ).find(d => d.visit_id == activeVisit);
 
-      const obs = encounter?.obs;
 
-      updateVitals(obs);
 
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data && activeVisit !== 0) {
+  //     const encounter = data.filter(
+  //       (d) => d?.encounter_type.uuid == encounters.VITALS
+  //     ).find(d => d.visit_id == activeVisit);
+
+  //     const obs = encounter?.obs;
+
+  //     updateVitals(obs);
+
+  //   }
+  // }, [data]);
 
 
   useEffect(() => {
@@ -124,7 +132,7 @@ export const VitalsPanel = () => {
       <br />
       <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
         {vitals.map(({ name, value }: any) => (
-          <Cell key={value} title={name} value={value} />
+          <Cell key={`${value}${name}`} title={name} value={value} />
         ))}
       </WrapperBox>
     </Panel>

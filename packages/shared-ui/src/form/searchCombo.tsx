@@ -75,8 +75,6 @@ export const SearchComboBox: FC<Props> = ({
           ...baseStyles,
           borderColor: hasError ? "red" : "#B3B3B3",
           ...padding,
-
-
         }),
 
       }}
