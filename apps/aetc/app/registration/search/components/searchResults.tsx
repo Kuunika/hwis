@@ -103,12 +103,12 @@ export const SearchResults = ({
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
           searchResults?.locals?.map(patient => {
-            return <ResultBox setOpen={(person: Person) => selectPatient(person, 'local')} type="Local" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => { }} type="Local" key={patient.uuid} person={patient} />
           })
         }
         {
           searchResults?.remotes?.map(patient => {
-            return <ResultBox setOpen={(person: Person) => selectPatient(person, 'remote')} type="Remote" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => { }} type="Remote" key={patient.uuid} person={patient} />
           })
         }
       </WrapperBox>
