@@ -27,7 +27,7 @@ export function GenericDialog({ onClose, open, children, title, maxWidth = "lg",
     return (
         <Dialog maxWidth={maxWidth} fullWidth={true} onClose={handleClose} open={open}>
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent sx={sx}>
+            <DialogContent sx={{ ...sx, overflow: "visible" }}>
                 {children}
             </DialogContent>
         </Dialog>
