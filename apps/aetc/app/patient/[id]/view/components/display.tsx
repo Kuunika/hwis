@@ -53,6 +53,8 @@ export const DisplayFinancing = ({ financing, loading, onSubmit }: { financing: 
     const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
     const [financingOption, setFinancingOptions] = useState({ paymentOptions: "", insuranceProvider: "", insuranceNumber: "", insuranceScheme: "", insuranceStatus: "" })
 
+
+
     useEffect(() => {
 
         const paymentOptions = getObservationValue(financing?.obs, 'c7bcc8bd-09d5-4f98-8d58-5179f749fd99');
@@ -76,7 +78,7 @@ export const DisplayFinancing = ({ financing, loading, onSubmit }: { financing: 
 
     return <ContainerCard>
         <FinancingDialog
-            onSubmit={onSubmit}
+            onSubmit={(values: any) => { onSubmit(values); setFinancingDialogOpen(false) }}
             initialValues={{
                 [concepts.PAYMENT_OPTIONS]: [paymentOptions],
                 [concepts.INSURANCE_PROVIDER]: insuranceProvider,
@@ -160,7 +162,7 @@ const SocialHistoryDialog = ({ open, onClose, initialValues, onSubmit }: { open:
 }
 const FinancingDialog = ({ open, onClose, initialValues, onSubmit }: { open: boolean, onClose: () => void, initialValues: any, onSubmit: (values: any) => void }) => {
     return <GenericDialog maxWidth="sm" title="Edit Financing" open={open} onClose={onClose}>
-        <EditFinancingForm initialValues={initialValues} onSubmit={() => { }} />
+        <EditFinancingForm initialValues={initialValues} onSubmit={onSubmit} />
     </GenericDialog>
 }
 

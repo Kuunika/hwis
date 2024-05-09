@@ -423,6 +423,53 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
 
 
 
+  const handleTransformFinancing = (financingData: any) => {
+
+
+
+    const found = financingData[concepts.PAYMENT_OPTIONS].filter((opt: any) => opt.value);
+
+
+    // TODO: remove this and have a proper implementation
+    const financingValue = found[0]?.key
+
+    financingData[concepts.PAYMENT_OPTIONS] = financingValue;
+
+
+    // console.log("financing", { financing })
+
+    const newFinancing = JSON.parse(JSON.stringify(financing));
+
+    const mappings: any = {
+      'c7bcc8bd-09d5-4f98-8d58-5179f749fd99': concepts.PAYMENT_OPTIONS,
+      'b0ffce26-2d25-449e-871e-c702e44bb37e': concepts.INSURANCE_PROVIDER,
+      '98b08fb2-f877-45b6-a95a-db89dffefb27': concepts.INSURANCE_NUMBER,
+      'db2e6bba-7d04-4873-a0a2-ac7bd69dd7b1': concepts.INSURANCE_SCHEME,
+      '3cdd53d9-35a5-47e5-909f-654e5bc7c9a8': concepts.INSURANCE_STATUS
+    }
+
+
+    const obs = newFinancing.obs.map((ob: any) => {
+      const conceptuuid = ob.names[0].uuid;
+      const formuuid = mappings[conceptuuid]
+
+      const newValue = financingData[formuuid]
+
+      return {
+        ...ob,
+        value: newValue
+      }
+    })
+
+    newFinancing.obs = obs;
+
+    setFinancing(newFinancing)
+    // console.log({ financing });
+    // console.log({ financingData })
+  }
+
+
+
   return <GenericDialog sx={{ backgroundColor: "#F6F6F6" }} onClose={onClose} open={open} title="view patient">
 
     <OverlayLoader open={loading} />
@@ -440,7 +487,7 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     <br />
     <WrapperBox display={"flex"}>
       <DisplaySocialHistory onSubmit={(socialHistory: any) => console.log(({ socialHistory }))} loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
-      <DisplayFinancing onSubmit={() => { }} loading={isPending} financing={financing ? financing : {} as Encounter} />
+      <DisplayFinancing onSubmit={handleTransformFinancing} loading={isPending} financing={financing ? financing : {} as Encounter} />
     </WrapperBox>
   </GenericDialog>
 }

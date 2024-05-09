@@ -84,6 +84,10 @@ export const EditFinancingForm: FC<Props> = ({
                 <RegistrationCardTitle>Payment Options</RegistrationCardTitle>
                 <CheckboxesGroup getValue={
                     (value: Array<any>) => {
+
+                        // TODO: fix this please
+
+                        if (!Array.isArray(value)) return;
                         const v = value?.find(v => v.key == 'insurance' && v.value);
                         if (v) {
                             setPayment(v.key)
