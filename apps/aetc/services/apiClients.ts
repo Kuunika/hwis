@@ -12,14 +12,14 @@ export const emrApiClient = () => {
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
     headers: {
-      Authorization: `Bearer ${token}o`,
+      Authorization: `Bearer ${token}`,
     },
   });
   api.interceptors.response.use(response => response, error => {
     if (error.response && error.response.status === 401) {
       // Refresh token logic here or redirect to login
 
-      console.log("unauthorized!!!")
+
 
       if (window) {
         toast.error('Your session has expired, please login in again.', {

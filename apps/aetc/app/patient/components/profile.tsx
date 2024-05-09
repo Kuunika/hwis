@@ -24,11 +24,14 @@ import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
 import { VitalsPanel } from "./panels/vitalsDetails";
 import { BasicSelect } from "./basicSelect";
 import { FaFileAlt } from "react-icons/fa";
-import { useParameters } from "@/hooks";
+import { checkPatientIfOnWaitingAssessment, useParameters } from "@/hooks";
 
 
 export const DesktopView = () => {
-  const { params } = useParameters()
+  const { params } = useParameters();
+  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string)
+
+
 
   return (
     <MainGrid
@@ -42,10 +45,12 @@ export const DesktopView = () => {
         <PersonalDetailsCard />
         <WrapperBox sx={{ my: "1ch" }}>
           <ConsultationCard
+            disabled={!isOnList}
             link={"/primary-assessment/" + params.id}
             title="Start Primary Survey"
           />
           <ConsultationCard
+            disabled={!isOnList}
             link="/primary-assessment"
             title="Start Secondary Survey"
           />

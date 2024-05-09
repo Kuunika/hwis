@@ -5,14 +5,30 @@ import { useNavigation } from "@/hooks";
 export const ConsultationCard = ({
   title,
   link,
+  disabled
 }: {
   title: string;
   link: string;
+  disabled?: boolean
 }) => {
   const { navigateTo } = useNavigation();
+
+  const disabledStyles = disabled ? {
+    color: 'gray', // Custom color for text
+    backgroundColor: 'lightgrey', // Custom background color
+    cursor: 'not-allowed',
+    textTransform: "capitalize",
+    borderRadius: "1px",
+  } : {}
+
   return (
     <WrapperBox
-      onClick={() => navigateTo(link)}
+      onClick={() => {
+
+        if (disabled) return
+
+        navigateTo(link)
+      }}
       sx={{
         display: "flex",
         alignItems: "center",
@@ -23,6 +39,7 @@ export const ConsultationCard = ({
         color: "#006401",
         cursor: "pointer",
         mb: "4px",
+        ...disabledStyles
       }}
     >
       <FaPlus />
