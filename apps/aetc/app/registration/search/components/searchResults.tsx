@@ -57,11 +57,13 @@ export const SearchResults = ({
     navigateTo(`/registration/${params.id}/new`);
   };
 
-  const selectPatient = (person: Person, registrationType: 'local' | 'remote') => {
+  const selectPatient = (person: Person) => {
     setPatient(person);
     setOpen(true);
-    setRegistrationType(registrationType)
+    // setRegistrationType(registrationType)
   }
+
+
 
   const resultNotFound = (searchResults?.locals?.length == 0 && searchResults?.remotes?.length == 0)
 
@@ -103,12 +105,12 @@ export const SearchResults = ({
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
           searchResults?.locals?.map(patient => {
-            return <ResultBox setOpen={(person: Person) => { }} type="Local" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person)} type="Local" key={patient.uuid} person={patient} />
           })
         }
         {
           searchResults?.remotes?.map(patient => {
-            return <ResultBox setOpen={(person: Person) => { }} type="Remote" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person)} type="Remote" key={patient.uuid} person={patient} />
           })
         }
       </WrapperBox>
