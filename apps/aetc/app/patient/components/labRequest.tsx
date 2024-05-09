@@ -363,14 +363,31 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
   return <FormikInit initialValues={initialValues} onSubmit={handleLabSend} validationSchema={validationSchema}>
     <OverlayLoader open={isPending || isLoading || isRefetching} />
 
-    <RadioGroupInput getValue={(test) => {
+    <WrapperBox sx={{ display: "flex" }}>
+      <RadioGroupInput getValue={(test) => {
+        setTestType(test)
+      }
+      } name="testType" options={[
+        { value: "bedside", label: "Bed Side" },
+        { value: "laboratory", label: "Laboratory" }]} label="Test Type" />
 
+      <RadioGroupInput getValue={(test) => {
+        setTestType(test)
+      }
+      } name="emergency" options={[
+        { value: "Yes", label: "Yes" },
+        { value: "No", label: "No" }]} label="Emergency" />
+    </WrapperBox>
+
+
+    <SearchComboBox getValue={handleSampleChange} multiple={false} label="Sample Type" name="sampleType" options={samples ? samples.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []} />
+    <RadioGroupInput getValue={(test) => {
       setTestType(test)
     }
-    } name="testType" options={[
-      { value: "bedside", label: "Bed Side" },
-      { value: "laboratory", label: "Laboratory" }]} label="Test Type" />
-    <SearchComboBox getValue={handleSampleChange} multiple={false} label="Sample Type" name="sampleType" options={samples ? samples.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []} />
+    } name="urgentSample" options={[
+      { value: "Yes", label: "Yes" },
+      { value: "No", label: "No" }]} label="Urgent Sample" />
+
     <SearchComboBox label="Tests" name="tests" options={tests ? tests.map(d => ({ id: d.concept_id, label: d.name })) : []} />
   </FormikInit>
 
