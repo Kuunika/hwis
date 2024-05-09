@@ -366,7 +366,8 @@ export default function TriageWorkFlow() {
           active={activeStep}
           onBack={() => navigateBack()}
         >
-          <PresentingComplaintsForm onSubmit={handlePresentComplaints} />
+          <PresentingComplaintsForm triageResult={triageResult}
+            setTriageResult={checkTriageResult} onSubmit={handlePresentComplaints} />
           <VitalsForm
             previous={() => setActiveStep(0)}
             triageResult={triageResult}

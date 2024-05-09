@@ -8,6 +8,8 @@ import { NO, YES, concepts } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  setTriageResult: (triage: any, name: string) => void;
+  triageResult: string;
 };
 const form = {
   complaints: {
@@ -210,7 +212,24 @@ const presentingComplaints = [
   { id: "Food Poisoning", label: "Food poisoning" }
 ];
 
-export const PresentingComplaintsForm = ({ onSubmit }: Prop) => {
+
+
+export const PresentingComplaintsForm = ({ onSubmit, setTriageResult }: Prop) => {
+  const handleValueChange = (values: Array<any>) => {
+    const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting blood']
+
+    triage.forEach(triage => {
+      const found = values.find(v => {
+        return v.id == triage
+      });
+
+      if (found) {
+        setTriageResult("red", triage)
+      } else {
+        setTriageResult("", triage)
+      }
+    })
+  }
   return (
     <FormikInit
       validationSchema={schema}
@@ -220,6 +239,7 @@ export const PresentingComplaintsForm = ({ onSubmit }: Prop) => {
       submitButtonText="next"
     >
       <SearchComboBox
+        getValue={handleValueChange}
         name={form.complaints.name}
         label={form.complaints.label}
         options={presentingComplaints}
