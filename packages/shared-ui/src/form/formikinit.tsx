@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import { Form, Formik } from "formik";
 
 import { SxProps } from "@mui/material";
@@ -31,6 +31,23 @@ export const FormikInit: FC<Prop> = ({
   loading,
   enableReinitialize = false,
 }) => {
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: any) => {
+      // Cancel the event as returning a string will prompt the user
+      event.preventDefault();
+      // Chrome requires returnValue to be set
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+
   return (
     <Formik
       initialValues={initialValues}
@@ -53,7 +70,7 @@ export const FormikInit: FC<Prop> = ({
                   submitButtonText
                 )
               }
-              onClick={() => {}}
+              onClick={() => { }}
             />
           )}
         </Form>

@@ -243,7 +243,7 @@ export const getPatientRelationships = (patientId: string) => {
 
 export const getPatientRelationshipTypes = () => {
   const getAll = () =>
-    getRelationshipTypes().then((response) => response.data);
+    getRelationshipTypes().then((response) => response?.data);
 
   return useQuery({
     queryKey: ["patient_relationship_types"],
