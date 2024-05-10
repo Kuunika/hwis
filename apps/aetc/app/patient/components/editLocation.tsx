@@ -28,9 +28,6 @@ export const EditLocation = ({
     const [selectedLocation, setSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
     const [init, setInit] = useState({})
 
-
-    console.log({ initialValues })
-
     useEffect(() => {
         const districtId = districts.find(d => d.name == initialValues.district)?.district_id;
         const traditionalAuthorityId = traditionalAuthorities.find(d => d.name == initialValues.traditionalAuthority)?.traditional_authority_id;

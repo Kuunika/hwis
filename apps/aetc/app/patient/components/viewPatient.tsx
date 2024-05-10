@@ -1,27 +1,106 @@
 import { Person } from "@/interfaces";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { WrapperBox, MainTypography, MainPaper, MainButton } from "shared-ui/src";
 import { EditDemographicsForm } from "./editDemographicsForm";
 import { GenericDialog } from "@/components/dialog";
 import { EditLocation } from ".";
 import { concepts } from "@/constants";
 import { patchPatient } from "@/hooks/patientReg";
+import { OverlayLoader } from "@/components/backdrop";
 
 
 type IProps = {
     patient: Person;
 
 }
-
 export const ViewPatient = ({ patient }: IProps) => {
-    const [patientPayload, setPatientPayload] = useState(patient);
+
+    // const [patient, setPatient] = useState<any>({} as Person);
+    // const [patientPayload, setPatientPayload] = useState(loadedPatient);
     const [openDemographics, setOpenDemographics] = useState(false);
     const [homeLocation, setHomeLocation] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(false);
-    const { mutate: updatePatient } = patchPatient()
+    const { mutate: updatePatient, isPending, isSuccess, data: updatedPatient } = patchPatient();
+    const [demographics, setDemographics] = useState<any>({
+        firstName: "",
+        lastName: "",
+        birthDate: "",
+        gender: "",
+        birthDateEstimated: ""
+    })
+
+    const [homeLocationAddress, setHomeLocationAddress] = useState({
+        nationality: "",
+        district: "",
+        village: "",
+        traditionalAuthority: ""
+    })
+
+    const [currentLocationAddress, setCurrentLocationAddress] = useState({
+        district: "",
+        traditionalAuthority: "",
+        village: "",
+        closeLandMark: ""
+    })
+    // console.log(loadedPatient)
+
+
+    useEffect(() => {
+        mapPatientDemographics(patient);
+        mapCurrentLocation(patient);
+        mapHomeLocation(patient)
+    }, [patient])
+
+    useEffect(() => {
+        if (isSuccess && updatedPatient) {
+            mapPatientDemographics(updatedPatient.patient);
+            mapHomeLocation(updatedPatient.patient)
+            mapCurrentLocation(updatedPatient.patient)
+        }
+    }, [updatedPatient])
+
+
+    const mapPatientDemographics = (patient: Person) => {
+        if (!patient) return
+        setDemographics({
+            firstName: patient?.given_name,
+            lastName: patient?.family_name,
+            birthDate: patient?.birthdate,
+            gender: patient?.gender,
+            birthDateEstimated: Boolean(patient?.birthdateEstimated),
+        })
+    }
+
+    const mapHomeLocation = (patient: Person) => {
+        if (!patient) return;
+        setHomeLocationAddress({
+            nationality: patient?.addresses[0]?.country ?? "",
+            district: patient?.addresses[0]?.address1 ?? "",
+            village: patient?.addresses[0]?.address2 ?? "",
+            traditionalAuthority: patient?.addresses[0]?.county_district ?? ""
+        })
+    }
+
+    const mapCurrentLocation = (patient: Person) => {
+        if (!patient) return;
+        setCurrentLocationAddress({
+            district: patient?.addresses[0]?.current_district ?? "",
+            traditionalAuthority: patient?.addresses[0]?.current_traditional_authority ?? "",
+            village: patient?.addresses[0]?.current_village ?? "",
+            closeLandMark: patient?.addresses[1]?.address2 ?? ""
+        })
+    }
+
+
+    // useEffect(() => {
+    //     setPatient(loadedPatient)
+    // }, [loadedPatient])
+
+    // useEffect(() => {
+    //     setPatient(data);
+    // }, [isSuccess])
 
     const updateDemographics = (demographics: any) => {
-
         const mappedPatient = {
             identifiers: [
                 {
@@ -41,12 +120,15 @@ export const ViewPatient = ({ patient }: IProps) => {
             birthdate: demographics.birthDate,
         }
 
-        setPatientPayload((patient: Person) => {
-            const newPatient = { ...patient }
-            newPatient.identifiers.push(mappedPatient.identifiers[0]);
-            // newPatient.names = mappedPatient.
-            return patient
-        })
+        updatePatient({ id: patient.uuid, data: mappedPatient });
+
+        // setPatientPayload((patient: Person) => {
+        //     const newPatient = { ...patient }
+        //     newPatient.identifiers.push(mappedPatient.identifiers[0]);
+        //     // newPatient.names = mappedPatient.
+        //     return patient
+        // })
+        setOpenDemographics(false);
 
     }
 
@@ -69,6 +151,8 @@ export const ViewPatient = ({ patient }: IProps) => {
             preferred: false,
         }]
         updatePatient({ id: patient.uuid, data: { addresses } })
+        setHomeLocation(false)
+
     }
 
     const handleCurrentLocationSubmit = (values: any) => {
@@ -91,58 +175,47 @@ export const ViewPatient = ({ patient }: IProps) => {
             preferred: false,
         }]
         updatePatient({ id: patient.uuid, data: { addresses } })
+        setCurrentLocation(false)
     }
 
     return <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
         <>
-            <DemographicsDialog onSubmit={() => { }} initialValues={{
-                firstName: patient?.given_name,
-                lastName: patient?.family_name,
-                birthDate: patient?.birthdate,
-                gender: patient?.gender,
-                birthDateEstimated: Boolean(patient.birthdateEstimated),
+            <OverlayLoader open={isPending} />
+            <DemographicsDialog onSubmit={updateDemographics} initialValues={{
+                ...demographics
                 // phoneNumber: patient.phoneNumber
             }} onClose={() => setOpenDemographics(false)} open={openDemographics} />
 
             <ContainerCard>
                 <>
                     <MainTypography variant="h5">Demographics</MainTypography>
-                    <LabelValue label="First Name" value={patient?.given_name} />
-                    <LabelValue label="Last Name" value={patient?.family_name} />
-                    <LabelValue label="Gender" value={patient?.gender} />
-                    <LabelValue label="Date of birth" value={patient?.birthdate} />
+                    <LabelValue label="First Name" value={demographics.firstName} />
+                    <LabelValue label="Last Name" value={demographics.lastName} />
+                    <LabelValue label="Gender" value={demographics.gender} />
+                    <LabelValue label="Date of birth" value={demographics.birthDate} />
                 </>
                 <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setOpenDemographics(true)} />
             </ContainerCard>
             <ContainerCard>
                 <>
                     <MainTypography variant="h5">Home Location</MainTypography>
-                    <LabelValue label="Country" value={patient?.addresses[0].country} />
-                    <LabelValue label="Home District" value={patient?.addresses[0].address1} />
-                    <LabelValue label="Home Village" value={patient?.addresses[0].address2} />
-                    <LabelValue label="Home Traditional Authority" value={patient?.addresses[0].county_district} />
+                    <LabelValue label="Country" value={homeLocationAddress.nationality} />
+                    <LabelValue label="Home District" value={homeLocationAddress.district} />
+                    <LabelValue label="Home Traditional Authority" value={homeLocationAddress.traditionalAuthority} />
+                    <LabelValue label="Home Village" value={homeLocationAddress.village} />
                 </>
-                <HomeLocationDialog onSubmit={handleHomeLocationSubmit} initialValues={{
-                    nationality: patient?.addresses[0].country,
-                    district: patient?.addresses[0].address1,
-                    village: patient?.addresses[0].address2,
-                    traditionalAuthority: patient?.addresses[0].county_district
-                }} open={homeLocation} onClose={() => setHomeLocation(false)} />
+                <HomeLocationDialog onSubmit={handleHomeLocationSubmit} initialValues={homeLocationAddress} open={homeLocation} onClose={() => setHomeLocation(false)} />
                 <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setHomeLocation(true)} />
             </ContainerCard>
             <ContainerCard>
                 <>
                     <MainTypography variant="h5">Current Location</MainTypography>
-                    <LabelValue label="Current District" value={patient?.addresses[0]?.current_district} />
-                    <LabelValue label="Current Traditional Authority" value={patient?.addresses[0]?.current_traditional_authority} />
-                    <LabelValue label="Current Village" value={patient?.addresses[0]?.current_village} />
-                    <LabelValue label="Close Land Mark" value={patient?.addresses[1]?.address2} />
+                    <LabelValue label="Current District" value={currentLocationAddress.district} />
+                    <LabelValue label="Current Traditional Authority" value={currentLocationAddress.traditionalAuthority} />
+                    <LabelValue label="Current Village" value={currentLocationAddress.village} />
+                    <LabelValue label="Close Land Mark" value={currentLocationAddress.closeLandMark} />
                 </>
-                <CurrentLocationDialog onSubmit={handleCurrentLocationSubmit} onClose={() => setCurrentLocation(false)} initialValues={{
-                    district: patient?.addresses[0]?.current_district,
-                    traditionalAuthority: patient?.addresses[0]?.current_traditional_authority,
-                    village: patient?.addresses[0]?.current_village
-                }} open={currentLocation} />
+                <CurrentLocationDialog onSubmit={handleCurrentLocationSubmit} onClose={() => setCurrentLocation(false)} initialValues={currentLocationAddress} open={currentLocation} />
                 <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setCurrentLocation(true)} />
             </ContainerCard>
         </>

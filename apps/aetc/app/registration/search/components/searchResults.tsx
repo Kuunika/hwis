@@ -466,8 +466,7 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     newFinancing.obs = obs;
 
     setFinancing(newFinancing)
-    // console.log({ financing });
-    // console.log({ financingData })
+
   }
 
 

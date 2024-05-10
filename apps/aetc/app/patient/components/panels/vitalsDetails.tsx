@@ -20,9 +20,7 @@ export const VitalsPanel = () => {
   const [vitals, setVitals] = useState<any>([]);
 
 
-  useEffect(() => {
-    console.log({ vitals })
-  }, [vitals])
+
 
   useEffect(() => {
 
