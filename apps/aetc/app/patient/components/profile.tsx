@@ -51,7 +51,7 @@ export const DesktopView = () => {
           />
           <ConsultationCard
             disabled={!isOnList}
-            link="/primary-assessment"
+            link={"/secondary-assessment/" + params.id}
             title="Start Secondary Survey"
           />
         </WrapperBox>
