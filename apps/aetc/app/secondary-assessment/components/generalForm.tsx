@@ -1,27 +1,17 @@
-import React from 'react';
 import * as Yup from 'yup';
-import {
-  FieldsContainer,
-  FormFieldContainerLayout,
-  TextInputField,
-  FormValuesListener,
-  FormikInit,
-  MainButton,
-  WrapperBox,
-} from 'shared-ui/src';
+import { FormFieldContainerLayout, TextInputField, FormikInit } from 'shared-ui/src';
 
-import { NO, YES, concepts } from "@/constants";
-import { getInitialValues, notify } from "@/helpers";
+import { getInitialValues } from "@/helpers";
 
 type Prop = {
     onSubmit: (values: any) => void;
   };
 
-  const form = {
-    general: {
-      name: "General Comments",
-      label: "General comments",
-    },}
+const form = {
+  general: {
+    name: "General Comments",
+    label: "General comments",
+  },};
 
 const schema = Yup.object().shape({
 [form.general.name]: Yup.string().required().label(form.general.label),

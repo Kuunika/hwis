@@ -1,14 +1,12 @@
-"use client";
-
-import { useEffect, useState } from "react";
+"use client";;
+import { useState } from "react";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { DisplayNone } from "@/components/displayNoneWrapper";
-import { NewStepperContainer, StepperContainer } from "shared-ui/src";
+import { NewStepperContainer } from "shared-ui/src";
 import { useNavigation, useParameters } from "@/hooks";
-import { GeneralForm } from "../components/GeneralForm";
-import {  HeadAndNeckForm } from "../components/HeadAndNeckForm";
+import { GeneralForm } from "../components/generalForm";
+import { HeadAndNeckForm } from "../components/headAndNeckForm";
 
 
 
