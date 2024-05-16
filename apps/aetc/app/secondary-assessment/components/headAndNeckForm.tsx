@@ -124,7 +124,7 @@ const form = {
     name: "Right ear laceration",
     label: "Right ear"
   },
-  lacerationDetails:{
+  earlacerationDetails:{
     id:"Laceration details",
     name: "Laceration details",
     label: "Laceration details"
@@ -144,7 +144,32 @@ const form = {
     name: "Otoscopy details",
     label: "Otoscopy details"
   },
-
+  noseBleed:{
+    id:"Nose bleed",
+    name:"Nose bleed",
+    label:"Nose bleed"
+  },
+  rhinorrhoea:{
+    id:"Rhinorrhoea",
+    name:"Rhinorrhoea",
+    label:"Rhinorrhoea"
+  },
+  noseLaceration:{
+    id:"Nose laceration",
+    name: "Nose laceration",
+    label: "Nose laceration"
+  },
+  noseLacerationDetails:{
+    id:"Laceration details",
+    name: "Laceration details",
+    label: "Laceration details"
+  },
+  leftTemporalLaceration:{
+    id:"Left Temporal laceration",
+    name: "Left Temporallaceration",
+    label: "Left Temporallaceration"
+  },
+  
 };
 
   const schema = Yup.object().shape({
@@ -171,10 +196,14 @@ const form = {
     [form.rightEarOtorrhoea.name]:Yup.string().required().label(form.rightEarOtorrhoea.label),
     [form.leftEarLaceration.name]:Yup.string().required().label(form.leftEarLaceration.label),
     [form.rightEarLaceration.name]:Yup.string().required().label(form.rightEarLaceration.label),
-    [form.lacerationDetails.name]:Yup.string().required().label(form.lacerationDetails.label),
+    [form.earlacerationDetails.name]:Yup.string().required(),
     [form.leftEarOtoscopy.name]:Yup.string().required().label(form.leftEarOtoscopy.label),
     [form.rightEarOtoscopy.name]:Yup.string().required().label(form.rightEarOtoscopy.label),
-    [form.otoscopyDetails.name]:Yup.string().required().label(form.otoscopyDetails.label)
+    [form.otoscopyDetails.name]:Yup.string(),
+    [form.noseBleed.name]:Yup.string().required().label(form.noseBleed.label),
+    [form.rhinorrhoea.name]:Yup.string().required().label(form.rhinorrhoea.label),
+    [form.noseLaceration.name]:Yup.string().required().label(form.noseLaceration.label),
+    [form.noseLacerationDetails.name]:Yup.string(),
     });
 
 const PartsList = [
@@ -203,7 +232,6 @@ const yesOrNo = [
 ];
 
 const EyesForm = ()=>{
-  
   return(
     <>
     <FieldsContainer sx={{ alignItems: "start" }}>
@@ -394,9 +422,9 @@ const EarForm = ()=>{
         </FieldsContainer>
         {lacerated &&
         <TextInputField
-                  name={form.lacerationDetails.name}
-                  label={form.lacerationDetails.label}
-                  id={form.lacerationDetails.name}
+                  name={form.earlacerationDetails.name}
+                  label={form.earlacerationDetails.label}
+                  id={form.earlacerationDetails.name}
                   disabled={false}
                   multiline={true}
                 />}
@@ -428,6 +456,47 @@ const EarForm = ()=>{
         </>
   )};
 
+const NoseForm =()=>{
+  const [lacerated, setLacerated] = useState(false);
+
+  const handleLaceratedNose=(value: string)=>{ 
+    setLacerated(false);
+    
+    if(value == 'yes'){
+      setLacerated(true);
+    }
+  };
+  return(
+    <>
+    <RadioGroupInput
+          name={form.noseBleed.name}
+          label={form.noseBleed.label}
+          options={yesOrNo}
+        />
+    <RadioGroupInput
+          name={form.rhinorrhoea.name}
+          label={form.rhinorrhoea.label}
+          options={yesOrNo}
+        />
+        <RadioGroupInput
+        getValue={handleLaceratedNose}
+          name={form.noseLaceration.name}
+          label={form.noseLaceration.label}
+          options={yesOrNo}
+        />
+        {lacerated &&
+        <TextInputField
+                  name={form.noseLacerationDetails.name}
+                  label={form.noseLacerationDetails.label}
+                  id={form.noseLacerationDetails.name}
+                  disabled={false}
+                  multiline={true}
+                />}
+        
+    </>
+  )
+};
+
 
 export const HeadAndNeckForm = ({onSubmit}: Prop) => {
 
@@ -456,6 +525,10 @@ export const HeadAndNeckForm = ({onSubmit}: Prop) => {
         return (
         <EarForm/>
         );
+      case 'Nose':
+        return (
+        <NoseForm/>
+        );
         break;
       default:
         return null;
@@ -477,7 +550,7 @@ export const HeadAndNeckForm = ({onSubmit}: Prop) => {
   getValue={handleValueChange}
   name="options"
   label="part"
-  selectItems={PartsList} id={''}      />
+  selectItems={PartsList} id={'selectParts'}      />
           {renderFormFields()}
       </FormFieldContainerLayout>
   </FormikInit>
