@@ -95,13 +95,13 @@ const form = {
 
   },
   leftEarBleeding:{
-    id:"Bleeding from the ear",
-    name: "Bleeding from the ear",
+    id:"Bleeding from the left ear",
+    name: "Bleeding from the left ear",
     label: "Left ear"
   },
   rightEarBleeding:{
-    id:"Bleeding from the ear",
-    name: "Bleeding from the ear",
+    id:"Bleeding from the right ear",
+    name: "Bleeding from the right ear",
     label: "Right ear"
   },
   leftEarOtorrhoea:{
@@ -369,7 +369,7 @@ const form = {
     [form.leftTemporalBruiseDetails.name]:Yup.string(),
     [form.leftTemporalHaematoma.name]:Yup.string().required().label(form.leftTemporalHaematoma.label),
     [form.leftTemporalFracture.name]:Yup.string().required().label(form.leftTemporalFracture.label),
-    [form.leftTemporalOther.name]:Yup.string().required().label(form.leftTemporalOther.label),
+    [form.leftTemporalOther.name]:Yup.string(),
     
     [form.rightTemporalLaceration.name]: Yup.string().required().label(form.rightTemporalLaceration.label),
     [form.rightTemporalLacerationLength.name]: Yup.string(),
@@ -378,7 +378,7 @@ const form = {
     [form.rightTemporalBruiseDetails.name]: Yup.string(),
     [form.rightTemporalHaematoma.name]: Yup.string().required().label(form.rightTemporalHaematoma.label),
     [form.rightTemporalFracture.name]: Yup.string().required().label(form.rightTemporalFracture.label),
-    [form.rightTemporalOther.name]: Yup.string().required().label(form.rightTemporalOther.label),
+    [form.rightTemporalOther.name]: Yup.string(),
 
     [form.occiputLaceration.name]: Yup.string().required().label(form.occiputLaceration.label),
     [form.occiputLacerationLength.name]: Yup.string(),
@@ -387,7 +387,7 @@ const form = {
     [form.occiputBruiseDetails.name]: Yup.string(),
     [form.occiputHaematoma.name]: Yup.string().required().label(form.occiputHaematoma.label),
     [form.occiputFracture.name]: Yup.string().required().label(form.occiputFracture.label),
-    [form.occiputOther.name]: Yup.string().required().label(form.occiputOther.label),
+    [form.occiputOther.name]: Yup.string(),
 
     [form.crownLaceration.name]: Yup.string().required().label(form.crownLaceration.label),
     [form.crownLacerationLength.name]: Yup.string(),
@@ -396,7 +396,7 @@ const form = {
     [form.crownBruiseDetails.name]: Yup.string(),
     [form.crownHaematoma.name]: Yup.string().required().label(form.crownHaematoma.label),
     [form.crownFracture.name]: Yup.string().required().label(form.crownFracture.label),
-    [form.crownOther.name]: Yup.string().required().label(form.crownOther.label),
+    [form.crownOther.name]: Yup.string(),
     });
 
 const PartsList = [
@@ -570,9 +570,9 @@ const EarForm = ()=>{
 
   return(
     <>
-    <FormFieldContainerLayout title="Bleeding from the ear">
-    <FieldsContainer sx={{ alignItems: "start" }}>
-    <RadioGroupInput
+     <FormFieldContainerLayout title="Bleeding from the ear">
+        <FieldsContainer sx={{ alignItems: "start" }}>
+        <RadioGroupInput
           name={form.leftEarBleeding.name}
           label={form.leftEarBleeding.label}
           options={yesOrNo}
@@ -927,7 +927,6 @@ case 'Crown':
       otherName={form.crownOther.name}
     />
   );
-
         break;
       default:
         return null;
