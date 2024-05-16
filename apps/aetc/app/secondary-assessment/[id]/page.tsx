@@ -10,7 +10,7 @@ import { HeadAndNeckForm } from "../components/headAndNeckForm";
 
 
 
-function secondaryAssessment() {
+const secondaryAssessment = () => {
 
   const { navigateTo, navigateBack } = useNavigation();
   const { params } = useParameters();

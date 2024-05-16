@@ -1,3 +1,5 @@
+'use client'
+
 import {
   FormikInit,
   FormFieldContainerLayout,
@@ -16,12 +18,12 @@ type Prop = {
 
 const form = {
   leftPupilSize: {
-    name: "Left Pupil size",
-    label: "Left Pupil",
+    name: "Left pupil size",
+    label: "Left pupil",
   },
   rightPupilSize:{
-    name: "Right Pupil size",
-    label: "Right Pupil",
+    name: "Right pupil size",
+    label: "Right pupil",
   },
   eyePallor:{
     name: "Pallor",
@@ -32,40 +34,66 @@ const form = {
     label: "Juandice",
   },
   racoonEyesLeftEye:{
-    name: "Racoon Eyes Left Eye",
-    label: "Left Eye",
+    name: "Racoon eyes left eye",
+    label: "Left eye",
   },
   racoonEyesRightEye:{
-    name: "Racoon Eyes Right Eye",
-    label: "Right Eye",
+    name: "Racoon eyes eight eye",
+    label: "Right eye",
   },
   hyphemaLeftEye:{
-    name: "hyphema Left Eye",
-    label: "Left Eye",
+    name: "hyphema left eye",
+    label: "Left eye",
   },
   hyphemaRightEye:{
-    name: "hyphema Right Eye",
-    label: "Right Eye",
+    name: "hyphema right Eye",
+    label: "Right eye",
   },
   eyelidLeftEye:{
-    name: "Eyelid Injury Left Eye",
-    label: "Left Eye",
+    name: "Eyelid injury left eye",
+    label: "Left eye",
   },
   eyelidRightEye:{
-    name: "Eyelid Injury Right Eye",
-    label: "Right Eye",
+    name: "Eyelid injury right eye",
+    label: "Right eye",
   },
   eyesOther:{
     id:"eyesOther",
     name: "Eyes other",
-    label: "Other eye issues"
+    label: "Other eye abnormalities"
 
   },
   fundoscopy:{
     id: "fundoscopy",
     name: "fundoscopy",
     label: "fundoscopy"
-  }
+  },
+  oralThrush:{
+    id: "Oral thrush",
+    name: "Oral thrush",
+    label: "Oral thrush"
+  },
+  kaposisSarcomaLesions:{
+    id: "Kaposi's sarcoma lesions",
+    name: "Kaposi's sarcoma lesions",
+    label: "Kaposi's sarcoma lesions"
+  },
+  tongueLaceration:{
+    id: "Tongue laceration",
+    name: "Tongue laceration",
+    label: "Tongue laceration"
+  },
+  looseTeeth:{
+    id: "Loose teeth",
+    name: "Loose teeth",
+    label: "Loose teeth"
+  },
+  mouthOther:{
+    id:"mouthOther",
+    name: "Mouth other",
+    label: "Other mouth abnormalities"
+
+  },
 };
 
   const schema = Yup.object().shape({
@@ -81,6 +109,11 @@ const form = {
     [form.eyelidRightEye.name]: Yup.string(),
     [form.eyesOther.name]: Yup.string(),
     [form.fundoscopy.name]: Yup.string(),
+    [form.oralThrush.name]: Yup.string().required().label(form.oralThrush.label),
+    [form.kaposisSarcomaLesions.name]: Yup.string().required().label(form.kaposisSarcomaLesions.label),
+    [form.tongueLaceration.name]: Yup.string(),
+    [form.looseTeeth.name]: Yup.string(),
+    [form.mouthOther.name]: Yup.string(),
     });
 
 const PartsList = [
@@ -109,8 +142,6 @@ const yesOrNo = [
 ];
 
 const EyesForm = ()=>{
-
-  const [pupils, setPupilSize] = useState('');
   
   return(
     <>
@@ -118,13 +149,11 @@ const EyesForm = ()=>{
     <RadioGroupInput
           name={form.leftPupilSize.name}
           label={form.leftPupilSize.label}
-          getValue={(value: any) => setPupilSize(value)}
           options={pupilSizes}
         />
         <RadioGroupInput
           name={form.rightPupilSize.name}
           label={form.rightPupilSize.label}
-          getValue={(value: any) => setPupilSize(value)}
           options={pupilSizes}
         />
         </FieldsContainer>
@@ -200,7 +229,43 @@ const EyesForm = ()=>{
         </FormFieldContainerLayout>
         </>
   )
-}
+};
+
+const MouthForm = ()=>{
+  return(
+    <>
+    <RadioGroupInput
+          name={form.oralThrush.name}
+          label={form.oralThrush.label}
+          options={yesOrNo}
+        />
+    <RadioGroupInput
+          name={form.kaposisSarcomaLesions.name}
+          label={form.kaposisSarcomaLesions.label}
+          options={yesOrNo}
+        />
+    <RadioGroupInput
+          name={form.tongueLaceration.name}
+          label={form.tongueLaceration.label}
+          options={yesOrNo}
+        />
+    <RadioGroupInput
+          name={form.looseTeeth.name}
+          label={form.looseTeeth.label}
+          options={yesOrNo}
+        />
+    <TextInputField
+                  name={form.mouthOther.name}
+                  label={form.mouthOther.label}
+                  id={form.eyesOther.name}
+                  disabled={false}
+                  multiline={true}
+                />
+  </>
+  )
+};
+
+
 
 export const HeadAndNeckForm = ({onSubmit}: Prop) => {
 
@@ -208,25 +273,32 @@ export const HeadAndNeckForm = ({onSubmit}: Prop) => {
 
 
   const handleValueChange = (value: string)=>{
+    if(value){
     setSelectedPart(value);
+    console.log(selectedPart);
+    }
   }
 
   const renderFormFields = () => {
+    if(selectedPart){
     switch (selectedPart) {
       case 'Eyes':
         return (
           <EyesForm/>
         );
-      case 'anotherSpecific':
-        // Return another set of fields
+      case 'Mouth':
+        return (
+        <MouthForm/>
+        );
         break;
       default:
         return null;
     }
+  }
   };
 
   return (
-
+    <>
   <FormikInit
     validationSchema={schema}
     initialValues={initialValues}
@@ -236,14 +308,15 @@ export const HeadAndNeckForm = ({onSubmit}: Prop) => {
   >
   <FormFieldContainerLayout last={false} title="Parts">
   <SelectInputField
-          getValue={handleValueChange}
-          name="options"
-          label="part"
-          selectItems={PartsList} id={''}      />
+  getValue={handleValueChange}
+  name="options"
+  label="part"
+  selectItems={PartsList} id={''}      />
           {renderFormFields()}
       </FormFieldContainerLayout>
   </FormikInit>
- 
+  
+  </>
   );
 };
 
