@@ -7,6 +7,7 @@ import { NewStepperContainer } from "shared-ui/src";
 import { useNavigation, useParameters } from "@/hooks";
 import { GeneralForm } from "../components/generalForm";
 import { HeadAndNeckForm } from "../components/headAndNeckForm";
+import { PatientInfoTab } from "@/components";
 
 
 
@@ -41,7 +42,7 @@ const secondaryAssessment = () => {
 
   return (
     <>
-
+<PatientInfoTab />
 <NewStepperContainer
   setActive={(value)=>{setActiveStep(value);}}
   title="Secondary assessment"

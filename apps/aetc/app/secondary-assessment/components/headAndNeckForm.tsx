@@ -165,11 +165,45 @@ const form = {
     label: "Laceration details"
   },
   leftTemporalLaceration:{
-    id:"Left Temporal laceration",
-    name: "Left Temporallaceration",
-    label: "Left Temporallaceration"
+    id:"Left temporal laceration",
+    name: "Left temporal laceration",
+    label: "Laceration"
   },
-  
+  leftTemporalLacerationLength:{
+    id:"Left temporal laceration length",
+    name: "Left temporal laceration length",
+    label: "Length"
+  },
+  leftTemporalLacerationDepth:{
+    id:"Left temporal laceration depth",
+    name: "Left temporal laceration depth",
+    label: "Depth"
+  },
+  leftTemporalBruise:{
+    id:"Left temporal bruise",
+    name: "Left temporal bruise",
+    label: "Left temporal bruise"
+  },
+  leftTemporalBruiseDetails:{
+    id:"Left temporal bruise details",
+    name: "Left temporal bruise details",
+    label: "Details"
+  },
+  leftTemporalHaematoma:{
+    id:"Left temporal haematoma",
+    name: "Left temporal haematoma",
+    label: "Haematoma"
+  },
+  leftTemporalFracture:{
+    id:"Left temporal fracture",
+    name: "Left temporal fracture",
+    label: "Fracture"
+  },
+  leftTemporalOther:{
+    id:"Left temporal other",
+    name: "Left temporal other",
+    label: "Other details"
+  }
 };
 
   const schema = Yup.object().shape({
@@ -204,6 +238,14 @@ const form = {
     [form.rhinorrhoea.name]:Yup.string().required().label(form.rhinorrhoea.label),
     [form.noseLaceration.name]:Yup.string().required().label(form.noseLaceration.label),
     [form.noseLacerationDetails.name]:Yup.string(),
+    [form.leftTemporalLaceration.name]:Yup.string().required().label(form.leftTemporalLaceration.label),
+    [form.leftTemporalLacerationLength.name]:Yup.string(),
+    [form.leftTemporalLacerationDepth.name]:Yup.string(),
+    [form.leftTemporalBruise.name]:Yup.string().required().label(form.leftTemporalBruise.label),
+    [form.leftTemporalBruiseDetails.name]:Yup.string(),
+    [form.leftTemporalHaematoma.name]:Yup.string().required().label(form.leftTemporalHaematoma.label),
+    [form.leftTemporalFracture.name]:Yup.string().required().label(form.leftTemporalFracture.label),
+    [form.leftTemporalOther.name]:Yup.string().required().label(form.leftTemporalOther.label),
     });
 
 const PartsList = [
@@ -497,6 +539,127 @@ const NoseForm =()=>{
   )
 };
 
+const OtherForm =({
+  lacerationLabel,
+  lacerationName,
+  lacerationDepthLabel,
+  lacerationDepthName,
+  lacerationLengthLabel,
+  lacerationLengthName,
+  bruiseLabel,
+  bruiseName,
+  bruiseDetailsLabel,
+  bruiseDetailsName,
+  haematomaLabel,
+  haematomaName,
+  fractureLabel,
+  fractureName,
+  otherLabel,
+  otherName,
+}: {
+  lacerationLabel: string;
+  lacerationName: string;
+  lacerationDepthLabel: string;
+  lacerationDepthName: string;
+  lacerationLengthLabel: string;
+  lacerationLengthName: string;
+  bruiseLabel: string;
+  bruiseName: string;
+  bruiseDetailsLabel: string;
+  bruiseDetailsName: string;
+  haematomaLabel: string;
+  haematomaName: string;
+  fractureLabel: string;
+  fractureName: string;
+  otherLabel: string;
+  otherName: string;
+})=>{
+  const [lacerated, setLacerated] = useState(false);
+  const [bruised, setBruised] = useState(false);
+
+  const handleLacerated=(value: string)=>{ 
+    setLacerated(false);
+    
+    if(value == 'yes'){
+      setLacerated(true);
+    }
+  };
+
+  const handleBruised=(value: string)=>{ 
+    setBruised(false);
+    
+    if(value == 'yes'){
+      setBruised(true);
+    }
+  };
+  return(
+    <>
+    <FormFieldContainerLayout title={lacerationLabel}>
+        <RadioGroupInput
+        getValue={handleLacerated}
+          name={lacerationName}
+          label=""
+          options={yesOrNo}
+        />
+        {lacerated &&
+        <div>
+        <TextInputField
+                  name={lacerationDepthName}
+                  label={lacerationDepthLabel}
+                  id={lacerationDepthName}
+                  disabled={false}
+                  multiline={false}
+                  unitOfMeasure="mm"
+                />
+                <TextInputField
+                  name={lacerationLengthName}
+                  label={lacerationLengthLabel}
+                  id={lacerationLengthName}
+                  disabled={false}
+                  multiline={false}
+                  unitOfMeasure="mm"
+                /></div>}
+    </FormFieldContainerLayout>
+    <FormFieldContainerLayout title={bruiseLabel}>
+        <RadioGroupInput
+        getValue={handleBruised}
+          name={bruiseName}
+          label=""
+          options={yesOrNo}
+        />
+        {bruised &&
+        <TextInputField
+                  name={bruiseDetailsName}
+                  label={bruiseDetailsLabel}
+                  id={bruiseDetailsName}
+                  disabled={false}
+                  multiline={false}
+                />
+             }
+    </FormFieldContainerLayout>
+    <RadioGroupInput
+          name={haematomaName}
+          label={haematomaLabel}
+          options={yesOrNo}
+        />
+    <RadioGroupInput
+          name={fractureName}
+          label={fractureLabel}
+          options={yesOrNo}
+        />
+        <FormFieldContainerLayout title={otherLabel}>
+<TextInputField
+                  name={otherName}
+                  label=""
+                  id={otherName}
+                  disabled={false}
+                  multiline={true}
+                />
+                </FormFieldContainerLayout>
+    </>
+  )
+};
+
 
 export const HeadAndNeckForm = ({onSubmit}: Prop) => {
 
@@ -528,6 +691,25 @@ export const HeadAndNeckForm = ({onSubmit}: Prop) => {
       case 'Nose':
         return (
         <NoseForm/>
+        );
+        case 'Left Temporal':
+        return (
+        <OtherForm lacerationLabel={form.leftTemporalLaceration.label}
+        lacerationName={form.leftTemporalLaceration.name}
+        lacerationDepthLabel={form.leftTemporalLacerationDepth.label}
+        lacerationDepthName={form.leftTemporalLacerationDepth.name}
+        lacerationLengthLabel={form.leftTemporalLacerationLength.label}
+        lacerationLengthName={form.leftTemporalLacerationLength.name}
+        bruiseLabel={form.leftTemporalBruise.label}
+        bruiseName={form.leftTemporalBruise.name}
+        bruiseDetailsLabel={form.leftTemporalBruiseDetails.label}
+        bruiseDetailsName={form.leftTemporalBruiseDetails.name}
+        haematomaLabel={form.leftTemporalHaematoma.label}
+        haematomaName={form.leftTemporalHaematoma.name}
+        fractureLabel={form.leftTemporalFracture.label}
+        fractureName={form.leftTemporalFracture.name}
+        otherLabel={form.leftTemporalOther.label}
+        otherName={form.leftTemporalOther.name} />
         );
         break;
       default:
