@@ -94,6 +94,57 @@ const form = {
     label: "Other mouth abnormalities"
 
   },
+  leftEarBleeding:{
+    id:"Bleeding from the ear",
+    name: "Bleeding from the ear",
+    label: "Left ear"
+  },
+  rightEarBleeding:{
+    id:"Bleeding from the ear",
+    name: "Bleeding from the ear",
+    label: "Right ear"
+  },
+  leftEarOtorrhoea:{
+    id:"Left ear otorrhoea",
+    name: "Left ear otorrhoea",
+    label: "Left ear"
+  },
+  rightEarOtorrhoea:{
+    id:"Right ear otorrhoea",
+    name: "Right ear otorrhoea",
+    label: "Right ear"
+  },
+  leftEarLaceration:{
+    id:"Left ear laceration",
+    name: "Left ear laceration",
+    label: "Left ear"
+  },
+  rightEarLaceration:{
+    id:"Right ear laceration",
+    name: "Right ear laceration",
+    label: "Right ear"
+  },
+  lacerationDetails:{
+    id:"Laceration details",
+    name: "Laceration details",
+    label: "Laceration details"
+  },
+  leftEarOtoscopy:{
+    id:"Left ear otoscopy",
+    name: "Left ear otoscopy",
+    label: "Left ear"
+  },
+  rightEarOtoscopy:{
+    id:"Right ear otoscopy",
+    name: "Right ear otoscopy",
+    label: "Right ear"
+  },
+  otoscopyDetails:{
+    id:"Otoscopy details",
+    name: "Otoscopy details",
+    label: "Otoscopy details"
+  },
+
 };
 
   const schema = Yup.object().shape({
@@ -114,6 +165,16 @@ const form = {
     [form.tongueLaceration.name]: Yup.string(),
     [form.looseTeeth.name]: Yup.string(),
     [form.mouthOther.name]: Yup.string(),
+    [form.leftEarBleeding.name]:Yup.string().required().label(form.leftEarBleeding.label),
+    [form.rightEarBleeding.name]:Yup.string().required().label(form.rightEarBleeding.label),
+    [form.leftEarOtorrhoea.name]:Yup.string().required().label(form.leftEarOtorrhoea.label),
+    [form.rightEarOtorrhoea.name]:Yup.string().required().label(form.rightEarOtorrhoea.label),
+    [form.leftEarLaceration.name]:Yup.string().required().label(form.leftEarLaceration.label),
+    [form.rightEarLaceration.name]:Yup.string().required().label(form.rightEarLaceration.label),
+    [form.lacerationDetails.name]:Yup.string().required().label(form.lacerationDetails.label),
+    [form.leftEarOtoscopy.name]:Yup.string().required().label(form.leftEarOtoscopy.label),
+    [form.rightEarOtoscopy.name]:Yup.string().required().label(form.rightEarOtoscopy.label),
+    [form.otoscopyDetails.name]:Yup.string().required().label(form.otoscopyDetails.label)
     });
 
 const PartsList = [
@@ -265,6 +326,107 @@ const MouthForm = ()=>{
   )
 };
 
+const EarForm = ()=>{
+
+  const [lacerated, setLacerated] = useState(false);
+  const [otoscopy, setOtoscopy]= useState(false);
+
+  const handleLaceratedEar=(value: string)=>{ 
+    setLacerated(false);
+    
+    if(value == 'yes'){
+      setLacerated(true);
+    }
+  };
+
+  const handleOtoscopy=(value: string)=>{ 
+    setOtoscopy(false);
+    
+    if(value == 'yes'){
+      setOtoscopy(true);
+    }
+  };
+
+  return(
+    <>
+    <FormFieldContainerLayout title="Bleeding from the ear">
+    <FieldsContainer sx={{ alignItems: "start" }}>
+    <RadioGroupInput
+          name={form.leftEarBleeding.name}
+          label={form.leftEarBleeding.label}
+          options={yesOrNo}
+        />
+        <RadioGroupInput
+          name={form.rightEarBleeding.name}
+          label={form.rightEarBleeding.label}
+          options={yesOrNo}
+        />
+        </FieldsContainer>
+        </FormFieldContainerLayout>
+    <FormFieldContainerLayout title="Otorrhoea">
+    <FieldsContainer sx={{ alignItems: "start" }}>
+    <RadioGroupInput
+          name={form.leftEarOtorrhoea.name}
+          label={form.leftEarOtorrhoea.label}
+          options={yesOrNo}
+        />
+        <RadioGroupInput
+          name={form.rightEarOtorrhoea.name}
+          label={form.rightEarOtorrhoea.label}
+          options={yesOrNo}
+        />
+        </FieldsContainer>
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Laceration">
+    <FieldsContainer sx={{ alignItems: "start" }}>
+    <RadioGroupInput
+    getValue={handleLaceratedEar}
+          name={form.leftEarLaceration.name}
+          label={form.leftEarLaceration.label}
+          options={yesOrNo}
+        />
+        <RadioGroupInput
+          getValue={handleLaceratedEar}
+          name={form.rightEarLaceration.name}
+          label={form.rightEarLaceration.label}
+          options={yesOrNo}
+        />
+        </FieldsContainer>
+        {lacerated &&
+        <TextInputField
+                  name={form.lacerationDetails.name}
+                  label={form.lacerationDetails.label}
+                  id={form.lacerationDetails.name}
+                  disabled={false}
+                  multiline={true}
+                />}
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Otoscopy">
+    <FieldsContainer sx={{ alignItems: "start" }}>
+    <RadioGroupInput
+    getValue={handleOtoscopy}
+          name={form.leftEarOtoscopy.name}
+          label={form.leftEarOtoscopy.label}
+          options={yesOrNo}
+        />
+        <RadioGroupInput
+          getValue={handleOtoscopy}
+          name={form.rightEarOtoscopy.name}
+          label={form.rightEarOtoscopy.label}
+          options={yesOrNo}
+        />
+        </FieldsContainer>
+        {otoscopy &&
+        <TextInputField
+                  name={form.otoscopyDetails.name}
+                  label={form.otoscopyDetails.label}
+                  id={form.otoscopyDetails.name}
+                  disabled={false}
+                  multiline={true}
+                />}
+        </FormFieldContainerLayout>
+        </>
+  )};
 
 
 export const HeadAndNeckForm = ({onSubmit}: Prop) => {
@@ -289,6 +451,10 @@ export const HeadAndNeckForm = ({onSubmit}: Prop) => {
       case 'Mouth':
         return (
         <MouthForm/>
+        );
+      case 'Ears':
+        return (
+        <EarForm/>
         );
         break;
       default:
