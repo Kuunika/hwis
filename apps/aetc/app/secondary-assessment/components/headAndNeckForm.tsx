@@ -182,7 +182,7 @@ const form = {
   leftTemporalBruise:{
     id:"Left temporal bruise",
     name: "Left temporal bruise",
-    label: "Left temporal bruise"
+    label: "Bruise"
   },
   leftTemporalBruiseDetails:{
     id:"Left temporal bruise details",
@@ -203,6 +203,126 @@ const form = {
     id:"Left temporal other",
     name: "Left temporal other",
     label: "Other details"
+  },
+  rightTemporalLaceration: {
+    id: 'RightTemporal laceration',
+    name: 'Right temporal laceration',
+    label: 'Laceration'
+  },
+  rightTemporalLacerationLength: {
+    id: 'RightTemporal laceration length',
+    name: 'Right temporal laceration length',
+    label: 'Length'
+  },
+  rightTemporalLacerationDepth: {
+    id: 'RightTemporal laceration depth',
+    name: 'Right temporal laceration depth',
+    label: 'Depth'
+  },
+  rightTemporalBruise: {
+    id: 'RightTemporal bruise',
+    name: 'Right temporal bruise',
+    label: 'Bruise'
+  },
+  rightTemporalBruiseDetails: {
+    id: 'RightTemporal bruise details',
+    name: 'Right temporal bruise details',
+    label: 'Details'
+  },
+  rightTemporalHaematoma: {
+    id: 'RightTemporal haematoma',
+    name: 'Right temporal haematoma',
+    label: 'Haematoma'
+  },
+  rightTemporalFracture: {
+    id: 'RightTemporal fracture',
+    name: 'Right temporal fracture',
+    label: 'Fracture'
+  },
+  rightTemporalOther: {
+    id: 'RightTemporal other',
+    name: 'Right temporal other',
+    label: 'Other details'
+  },
+  occiputLaceration: {
+    id: 'Occiput laceration',
+    name: 'Occiput laceration',
+    label: 'Laceration'
+  },
+  occiputLacerationLength: {
+    id: 'Occiput laceration length',
+    name: 'Occiput laceration length',
+    label: 'Length'
+  },
+  occiputLacerationDepth: {
+    id: 'Occiput laceration depth',
+    name: 'Occiput laceration depth',
+    label: 'Depth'
+  },
+  occiputBruise: {
+    id: 'Occiput bruise',
+    name: 'Occiput bruise',
+    label: 'Bruise'
+  },
+  occiputBruiseDetails: {
+    id: 'Occiput bruise details',
+    name: 'Occiput bruise details',
+    label: 'Details'
+  },
+  occiputHaematoma: {
+    id: 'Occiput haematoma',
+    name: 'Occiput haematoma',
+    label: 'Haematoma'
+  },
+  occiputFracture: {
+    id: 'Occiput fracture',
+    name: 'Occiput fracture',
+    label: 'Fracture'
+  },
+  occiputOther: {
+    id: 'Occiput other',
+    name: 'Occiput other',
+    label: 'Other details'
+  },
+  crownLaceration: {
+    id: 'Crown laceration',
+    name: 'Crown laceration',
+    label: 'Laceration'
+  },
+  crownLacerationLength: {
+    id: 'Crown laceration length',
+    name: 'Crown laceration length',
+    label: 'Length'
+  },
+  crownLacerationDepth: {
+    id: 'Crown laceration depth',
+    name: 'Crown laceration depth',
+    label: 'Depth'
+  },
+  crownBruise: {
+    id: 'Crown bruise',
+    name: 'Crown bruise',
+    label: 'Bruise'
+  },
+  crownBruiseDetails: {
+    id: 'Crown bruise details',
+    name: 'Crown bruise details',
+    label: 'Details'
+  },
+  crownHaematoma: {
+    id: 'Crown haematoma',
+    name: 'Crown haematoma',
+    label: 'Haematoma'
+  },
+  crownFracture: {
+    id: 'Crown fracture',
+    name: 'Crown fracture',
+    label: 'Fracture'
+  },
+  crownOther: {
+    id: 'Crown other',
+    name: 'Crown other',
+    label: 'Other details'
   }
 };
 
@@ -219,11 +339,13 @@ const form = {
     [form.eyelidRightEye.name]: Yup.string(),
     [form.eyesOther.name]: Yup.string(),
     [form.fundoscopy.name]: Yup.string(),
+
     [form.oralThrush.name]: Yup.string().required().label(form.oralThrush.label),
     [form.kaposisSarcomaLesions.name]: Yup.string().required().label(form.kaposisSarcomaLesions.label),
     [form.tongueLaceration.name]: Yup.string(),
     [form.looseTeeth.name]: Yup.string(),
     [form.mouthOther.name]: Yup.string(),
+
     [form.leftEarBleeding.name]:Yup.string().required().label(form.leftEarBleeding.label),
     [form.rightEarBleeding.name]:Yup.string().required().label(form.rightEarBleeding.label),
     [form.leftEarOtorrhoea.name]:Yup.string().required().label(form.leftEarOtorrhoea.label),
@@ -234,10 +356,12 @@ const form = {
     [form.leftEarOtoscopy.name]:Yup.string().required().label(form.leftEarOtoscopy.label),
     [form.rightEarOtoscopy.name]:Yup.string().required().label(form.rightEarOtoscopy.label),
     [form.otoscopyDetails.name]:Yup.string(),
+
     [form.noseBleed.name]:Yup.string().required().label(form.noseBleed.label),
     [form.rhinorrhoea.name]:Yup.string().required().label(form.rhinorrhoea.label),
     [form.noseLaceration.name]:Yup.string().required().label(form.noseLaceration.label),
     [form.noseLacerationDetails.name]:Yup.string(),
+
     [form.leftTemporalLaceration.name]:Yup.string().required().label(form.leftTemporalLaceration.label),
     [form.leftTemporalLacerationLength.name]:Yup.string(),
     [form.leftTemporalLacerationDepth.name]:Yup.string(),
@@ -246,6 +370,33 @@ const form = {
     [form.leftTemporalHaematoma.name]:Yup.string().required().label(form.leftTemporalHaematoma.label),
     [form.leftTemporalFracture.name]:Yup.string().required().label(form.leftTemporalFracture.label),
     [form.leftTemporalOther.name]:Yup.string().required().label(form.leftTemporalOther.label),
+    
+    [form.rightTemporalLaceration.name]: Yup.string().required().label(form.rightTemporalLaceration.label),
+    [form.rightTemporalLacerationLength.name]: Yup.string(),
+    [form.rightTemporalLacerationDepth.name]: Yup.string(),
+    [form.rightTemporalBruise.name]: Yup.string().required().label(form.rightTemporalBruise.label),
+    [form.rightTemporalBruiseDetails.name]: Yup.string(),
+    [form.rightTemporalHaematoma.name]: Yup.string().required().label(form.rightTemporalHaematoma.label),
+    [form.rightTemporalFracture.name]: Yup.string().required().label(form.rightTemporalFracture.label),
+    [form.rightTemporalOther.name]: Yup.string().required().label(form.rightTemporalOther.label),
+
+    [form.occiputLaceration.name]: Yup.string().required().label(form.occiputLaceration.label),
+    [form.occiputLacerationLength.name]: Yup.string(),
+    [form.occiputLacerationDepth.name]: Yup.string(),
+    [form.occiputBruise.name]: Yup.string().required().label(form.occiputBruise.label),
+    [form.occiputBruiseDetails.name]: Yup.string(),
+    [form.occiputHaematoma.name]: Yup.string().required().label(form.occiputHaematoma.label),
+    [form.occiputFracture.name]: Yup.string().required().label(form.occiputFracture.label),
+    [form.occiputOther.name]: Yup.string().required().label(form.occiputOther.label),
+
+    [form.crownLaceration.name]: Yup.string().required().label(form.crownLaceration.label),
+    [form.crownLacerationLength.name]: Yup.string(),
+    [form.crownLacerationDepth.name]: Yup.string(),
+    [form.crownBruise.name]: Yup.string().required().label(form.crownBruise.label),
+    [form.crownBruiseDetails.name]: Yup.string(),
+    [form.crownHaematoma.name]: Yup.string().required().label(form.crownHaematoma.label),
+    [form.crownFracture.name]: Yup.string().required().label(form.crownFracture.label),
+    [form.crownOther.name]: Yup.string().required().label(form.crownOther.label),
     });
 
 const PartsList = [
@@ -711,6 +862,72 @@ export const HeadAndNeckForm = ({onSubmit}: Prop) => {
         otherLabel={form.leftTemporalOther.label}
         otherName={form.leftTemporalOther.name} />
         );
+        case 'Right Temporal':
+  return (
+    <OtherForm
+      lacerationLabel={form.rightTemporalLaceration.label}
+      lacerationName={form.rightTemporalLaceration.name}
+      lacerationDepthLabel={form.rightTemporalLacerationDepth.label}
+      lacerationDepthName={form.rightTemporalLacerationDepth.name}
+      lacerationLengthLabel={form.rightTemporalLacerationLength.label}
+      lacerationLengthName={form.rightTemporalLacerationLength.name}
+      bruiseLabel={form.rightTemporalBruise.label}
+      bruiseName={form.rightTemporalBruise.name}
+      bruiseDetailsLabel={form.rightTemporalBruiseDetails.label}
+      bruiseDetailsName={form.rightTemporalBruiseDetails.name}
+      haematomaLabel={form.rightTemporalHaematoma.label}
+      haematomaName={form.rightTemporalHaematoma.name}
+      fractureLabel={form.rightTemporalFracture.label}
+      fractureName={form.rightTemporalFracture.name}
+      otherLabel={form.rightTemporalOther.label}
+      otherName={form.rightTemporalOther.name}
+    />
+  );
+
+case 'Occiput':
+  return (
+    <OtherForm
+      lacerationLabel={form.occiputLaceration.label}
+      lacerationName={form.occiputLaceration.name}
+      lacerationDepthLabel={form.occiputLacerationDepth.label}
+      lacerationDepthName={form.occiputLacerationDepth.name}
+      lacerationLengthLabel={form.occiputLacerationLength.label}
+      lacerationLengthName={form.occiputLacerationLength.name}
+      bruiseLabel={form.occiputBruise.label}
+      bruiseName={form.occiputBruise.name}
+      bruiseDetailsLabel={form.occiputBruiseDetails.label}
+      bruiseDetailsName={form.occiputBruiseDetails.name}
+      haematomaLabel={form.occiputHaematoma.label}
+      haematomaName={form.occiputHaematoma.name}
+      fractureLabel={form.occiputFracture.label}
+      fractureName={form.occiputFracture.name}
+      otherLabel={form.occiputOther.label}
+      otherName={form.occiputOther.name}
+    />
+  );
+
+case 'Crown':
+  return (
+    <OtherForm
+      lacerationLabel={form.crownLaceration.label}
+      lacerationName={form.crownLaceration.name}
+      lacerationDepthLabel={form.crownLacerationDepth.label}
+      lacerationDepthName={form.crownLacerationDepth.name}
+      lacerationLengthLabel={form.crownLacerationLength.label}
+      lacerationLengthName={form.crownLacerationLength.name}
+      bruiseLabel={form.crownBruise.label}
+      bruiseName={form.crownBruise.name}
+      bruiseDetailsLabel={form.crownBruiseDetails.label}
+      bruiseDetailsName={form.crownBruiseDetails.name}
+      haematomaLabel={form.crownHaematoma.label}
+      haematomaName={form.crownHaematoma.name}
+      fractureLabel={form.crownFracture.label}
+      fractureName={form.crownFracture.name}
+      otherLabel={form.crownOther.label}
+      otherName={form.crownOther.name}
+    />
+  );
+
         break;
       default:
         return null;
