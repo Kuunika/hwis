@@ -61,7 +61,6 @@ const form = {
     id:"eyesOther",
     name: "Eyes other",
     label: "Other eye abnormalities"
-
   },
   fundoscopy:{
     id: "fundoscopy",
@@ -1256,7 +1255,7 @@ const NeckForm = ()=>{
           <RadioGroupInput
           getValue={handleLymphNodes}
           name={form.lymphNodes.name}
-          label=""
+          label={form.lymphNodes.label}
           options={yesOrNo}
         /> {lymphNodes &&(
           <div>
@@ -1296,7 +1295,7 @@ const NeckForm = ()=>{
         <RadioGroupInput
           getValue={handleLacerated}
           name={form.neckLaceration.name}
-          label=""
+          label={form.neckLaceration.label}
           options={yesOrNo}
         />
         {lacerated && (
@@ -1324,7 +1323,7 @@ const NeckForm = ()=>{
         <RadioGroupInput
           getValue={handleBruised}
           name={form.neckBruise.name}
-          label=""
+          label={form.neckBruise.label}
           options={yesOrNo}
         />
         {bruised && (
