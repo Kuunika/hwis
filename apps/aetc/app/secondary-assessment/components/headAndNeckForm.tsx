@@ -323,7 +323,107 @@ const form = {
     id: 'Crown other',
     name: 'Crown other',
     label: 'Other details'
-  }
+  },
+  cheeksLaceration:{
+    id: 'Cheek laceration',
+    name: 'Cheek laceration',
+    label: 'Laceration'
+  },
+  cheeksLacerationLength: {
+    id: 'Cheek laceration length',
+    name: 'Cheek laceration length',
+    label: 'Length'
+  },
+  cheeksLacerationDepth: {
+    id: 'Cheek laceration depth',
+    name: 'Cheek laceration depth',
+    label: 'Depth'
+  },
+  cheeksBruise:{
+    id: 'Cheek bruise',
+    name: 'Cheek bruise',
+    label: 'Bruise'
+  },
+  cheeksBruiseDetails: {
+    id: 'Cheeks bruise details',
+    name: 'Cheeks bruise details',
+    label: 'Details'
+  },
+  foreheadLaceration: {
+    id: 'Forehead laceration',
+    name: 'Forehead laceration',
+    label: 'Laceration'
+  },
+  foreheadLacerationLength: {
+    id: 'Forehead laceration length',
+    name: 'Forehead laceration length',
+    label: 'Length'
+  },
+  foreheadLacerationDepth: {
+    id: 'Forehead laceration depth',
+    name: 'Forehead laceration depth',
+    label: 'Depth'
+  },
+  foreheadBruise: {
+    id: 'Forehead bruise',
+    name: 'Forehead bruise',
+    label: 'Bruise'
+  },
+  foreheadBruiseDetails: {
+    id: 'Forehead bruise details',
+    name: 'Forehead bruise details',
+    label: 'Details'
+  },
+  chinLaceration: {
+    id: 'Chin laceration',
+    name: 'Chin laceration',
+    label: 'Laceration'
+  },
+  chinLacerationLength: {
+    id: 'Chin laceration length',
+    name: 'Chin laceration length',
+    label: 'Length'
+  },
+  chinLacerationDepth: {
+    id: 'Chin laceration depth',
+    name: 'Chin laceration depth',
+    label: 'Depth'
+  },
+  chinBruise: {
+    id: 'Chin bruise',
+    name: 'Chin bruise',
+    label: 'Bruise'
+  },
+  chinBruiseDetails: {
+    id: 'Chin bruise details',
+    name: 'Chin bruise details',
+    label: 'Details'
+  },
+  lipsLaceration: {
+    id: 'Lips laceration',
+    name: 'Lips laceration',
+    label: 'Laceration'
+  },
+  lipsLacerationLength: {
+    id: 'Lips laceration length',
+    name: 'Lips laceration length',
+    label: 'Length'
+  },
+  lipsLacerationDepth: {
+    id: 'Lips laceration depth',
+    name: 'Lips laceration depth',
+    label: 'Depth'
+  },
+  lipsBruise: {
+    id: 'Lips bruise',
+    name: 'Lips bruise',
+    label: 'Bruise'
+  },
+  lipsBruiseDetails: {
+    id: 'Lips bruise details',
+    name: 'Lips bruise details',
+    label: 'Details'
+  },
 };
 
   const schema = Yup.object().shape({
@@ -397,6 +497,30 @@ const form = {
     [form.crownHaematoma.name]: Yup.string().required().label(form.crownHaematoma.label),
     [form.crownFracture.name]: Yup.string().required().label(form.crownFracture.label),
     [form.crownOther.name]: Yup.string(),
+
+    [form.cheeksLaceration.name]: Yup.string().required().label(form.cheeksLaceration.label),
+    [form.cheeksBruise.name]: Yup.string().required().label(form.cheeksBruise.label),
+    [form.cheeksBruiseDetails.name]: Yup.string(),
+    [form.cheeksLacerationLength.name]: Yup.string(),
+    [form.cheeksLacerationDepth.name]: Yup.string(),
+
+    [form.foreheadLaceration.name]: Yup.string().required().label(form.foreheadLaceration.label),
+    [form.foreheadLacerationLength.name]: Yup.string(),
+    [form.foreheadLacerationDepth.name]: Yup.string(),
+    [form.foreheadBruise.name]: Yup.string().required().label(form.foreheadBruise.label),
+    [form.foreheadBruiseDetails.name]: Yup.string(),
+
+    [form.chinLaceration.name]: Yup.string().required().label(form.chinLaceration.label),
+    [form.chinLacerationLength.name]: Yup.string(),
+    [form.chinLacerationDepth.name]: Yup.string(),
+    [form.chinBruise.name]: Yup.string().required().label(form.chinBruise.label),
+    [form.foreheadBruiseDetails.name]: Yup.string(),
+    
+    [form.lipsLaceration.name]: Yup.string().required().label(form.lipsLaceration.label),
+    [form.lipsLacerationLength.name]: Yup.string(),
+    [form.lipsLacerationDepth.name]: Yup.string(),
+    [form.lipsBruise.name]: Yup.string().required().label(form.lipsBruise.label),
+    [form.lipsBruiseDetails.name]: Yup.string(),
     });
 
 const PartsList = [
@@ -408,6 +532,10 @@ const PartsList = [
   { name: "Right Temporal", value: "Right Temporal" },
   { name: "Crown", value: "Crown" },
   { name: "Occiput", value: "Occiput" },
+  { name: "Cheeks", value: "Cheeks" },
+  { name: "Forehead", value: "Forehead" },
+  { name: "Chin", value: "Chin" },
+  { name: "Lips", value: "Lips" },
 ]
 
 const initialValues = getInitialValues(form);
@@ -788,6 +916,7 @@ const OtherForm =({
                 />
              }
     </FormFieldContainerLayout>
+ 
     <RadioGroupInput
           name={haematomaName}
           label={haematomaLabel}
@@ -807,9 +936,104 @@ const OtherForm =({
                   multiline={true}
                 />
                 </FormFieldContainerLayout>
+                
     </>
   )
 };
+
+const FacialInjuriesForm = ({
+  lacerationLabel,
+  lacerationName,
+  lacerationDepthLabel,
+  lacerationDepthName,
+  lacerationLengthLabel,
+  lacerationLengthName,
+  bruiseLabel,
+  bruiseName,
+  bruiseDetailsLabel,
+  bruiseDetailsName,
+}: {
+  lacerationLabel: string;
+  lacerationName: string;
+  lacerationDepthLabel: string;
+  lacerationDepthName: string;
+  lacerationLengthLabel: string;
+  lacerationLengthName: string;
+  bruiseLabel: string;
+  bruiseName: string;
+  bruiseDetailsLabel: string;
+  bruiseDetailsName: string;
+}) => {
+  const [lacerated, setLacerated] = useState(false);
+  const [bruised, setBruised] = useState(false);
+
+  const handleLacerated = (value: string) => {
+    setLacerated(false);
+
+    if (value === 'yes') {
+      setLacerated(true);
+    }
+  };
+
+  const handleBruised = (value: string) => {
+    setBruised(false);
+
+    if (value === 'yes') {
+      setBruised(true);
+    }
+  };
+
+  return (
+    <>
+      <FormFieldContainerLayout title={lacerationLabel}>
+        <RadioGroupInput
+          getValue={handleLacerated}
+          name={lacerationName}
+          label=""
+          options={yesOrNo}
+        />
+        {lacerated && (
+          <div>
+            <TextInputField
+              name={lacerationDepthName}
+              label={lacerationDepthLabel}
+              id={lacerationDepthName}
+              disabled={false}
+              multiline={false}
+              unitOfMeasure="mm"
+            />
+            <TextInputField
+              name={lacerationLengthName}
+              label={lacerationLengthLabel}
+              id={lacerationLengthName}
+              disabled={false}
+              multiline={false}
+              unitOfMeasure="mm"
+            />
+          </div>
+        )}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title={bruiseLabel}>
+        <RadioGroupInput
+          getValue={handleBruised}
+          name={bruiseName}
+          label=""
+          options={yesOrNo}
+        />
+        {bruised && (
+          <TextInputField
+            name={bruiseDetailsName}
+            label={bruiseDetailsLabel}
+            id={bruiseDetailsName}
+            disabled={false}
+            multiline={false}
+          />
+        )}
+      </FormFieldContainerLayout>
+    </>
+  );
+};
+
 
 
 export const HeadAndNeckForm = ({onSubmit}: Prop) => {
@@ -927,6 +1151,66 @@ case 'Crown':
       otherName={form.crownOther.name}
     />
   );
+  case 'Cheeks':
+  return (
+    <FacialInjuriesForm
+      lacerationLabel={form.cheeksLaceration.label}
+      lacerationName={form.cheeksLaceration.name}
+      lacerationDepthLabel={form.cheeksLacerationDepth.label}
+      lacerationDepthName={form.cheeksLacerationDepth.name}
+      lacerationLengthLabel={form.cheeksLacerationLength.label}
+      lacerationLengthName={form.cheeksLacerationLength.name}
+      bruiseLabel={form.cheeksBruise.label}
+      bruiseName={form.cheeksBruise.name}
+      bruiseDetailsLabel={form.cheeksBruiseDetails.label}
+      bruiseDetailsName={form.cheeksBruiseDetails.name}
+      />
+      );
+      case 'Forehead':
+  return (
+    <FacialInjuriesForm
+      lacerationLabel={form.foreheadLaceration.label}
+      lacerationName={form.foreheadLaceration.name}
+      lacerationDepthLabel={form.foreheadLacerationDepth.label}
+      lacerationDepthName={form.foreheadLacerationDepth.name}
+      lacerationLengthLabel={form.foreheadLacerationLength.label}
+      lacerationLengthName={form.foreheadLacerationLength.name}
+      bruiseLabel={form.foreheadBruise.label}
+      bruiseName={form.foreheadBruise.name}
+      bruiseDetailsLabel={form.foreheadBruiseDetails.label}
+      bruiseDetailsName={form.foreheadBruiseDetails.name}
+      />
+      );
+      case 'Chin':
+  return (
+    <FacialInjuriesForm
+      lacerationLabel={form.chinLaceration.label}
+      lacerationName={form.chinLaceration.name}
+      lacerationDepthLabel={form.chinLacerationDepth.label}
+      lacerationDepthName={form.chinLacerationDepth.name}
+      lacerationLengthLabel={form.chinLacerationLength.label}
+      lacerationLengthName={form.chinLacerationLength.name}
+      bruiseLabel={form.chinBruise.label}
+      bruiseName={form.chinBruise.name}
+      bruiseDetailsLabel={form.chinBruiseDetails.label}
+      bruiseDetailsName={form.chinBruiseDetails.name}
+      />
+      );
+      case 'Lips':
+  return (
+    <FacialInjuriesForm
+      lacerationLabel={form.lipsLaceration.label}
+      lacerationName={form.lipsLaceration.name}
+      lacerationDepthLabel={form.lipsLacerationDepth.label}
+      lacerationDepthName={form.lipsLacerationDepth.name}
+      lacerationLengthLabel={form.lipsLacerationLength.label}
+      lacerationLengthName={form.lipsLacerationLength.name}
+      bruiseLabel={form.lipsBruise.label}
+      bruiseName={form.lipsBruise.name}
+      bruiseDetailsLabel={form.lipsBruiseDetails.label}
+      bruiseDetailsName={form.lipsBruiseDetails.name}
+      />
+      );
         break;
       default:
         return null;
