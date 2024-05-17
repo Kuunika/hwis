@@ -987,7 +987,7 @@ const OtherForm =({
         <RadioGroupInput
         getValue={handleLacerated}
           name={lacerationName}
-          label=""
+          label={lacerationLabel}
           options={yesOrNo}
         />
         {lacerated &&
@@ -1013,7 +1013,7 @@ const OtherForm =({
         <RadioGroupInput
         getValue={handleBruised}
           name={bruiseName}
-          label=""
+          label={bruiseLabel}
           options={yesOrNo}
         />
         {bruised &&
@@ -1099,7 +1099,7 @@ const FacialInjuriesForm = ({
         <RadioGroupInput
           getValue={handleLacerated}
           name={lacerationName}
-          label=""
+          label={lacerationLabel}
           options={yesOrNo}
         />
         {lacerated && (
@@ -1127,7 +1127,7 @@ const FacialInjuriesForm = ({
         <RadioGroupInput
           getValue={handleBruised}
           name={bruiseName}
-          label=""
+          label={bruiseLabel}
           options={yesOrNo}
         />
         {bruised && (
@@ -1200,7 +1200,7 @@ const NeckForm = ()=>{
   <RadioGroupInput
           getValue={handleTrachea}
           name={form.trachea.name}
-          label=""
+          label={form.trachea.label}
           options={[
             { label: "Central", value: "central" },
             { label: "Deviated", value: "deviated" },]}
@@ -1227,7 +1227,7 @@ const NeckForm = ()=>{
           <RadioGroupInput
           getValue={handleNeckRaised}
           name={form.neckRaised.name}
-          label=""
+          label={form.neckRaised.label}
           options={yesOrNo}
         /> {raised &&(
           <TextInputField
