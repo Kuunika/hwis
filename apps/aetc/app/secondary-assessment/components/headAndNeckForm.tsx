@@ -424,6 +424,96 @@ const form = {
     name: 'Lips bruise details',
     label: 'Details'
   },
+  trachea:{
+    id: 'Trachea',
+    name: 'Trachea',
+    label: 'Trachea'
+  },
+  tracheaDeviation:{
+    id: 'Trachea deviation',
+    name: 'Trachea deviation',
+    label: 'Trachea deviation'
+  },
+  jugularVenousPressure:{
+    id: 'Jugular venous pressure',
+    name: 'Jugular venous pressure',
+    label: 'Jugular venous pressure'
+  },
+  neckRaised:{
+    id: 'Neck raised',
+    name: 'Neck raised',
+    label: 'Neck raised'
+  },
+  neckRaisedHeight:{
+    id: 'Neck raised height',
+    name: 'Neck raised height',
+    label: 'Neck raised height'
+  },
+  enlargedThyroid:{
+    id: 'Enlarged thyroid',
+    name: 'Enlarged thyroid',
+    label: 'Enlarged thyroid'
+  },
+  neckHaematoma: {
+    id: 'Neck haematoma',
+    name: 'Neck haematoma',
+    label: 'Haematoma'
+  },
+  lymphNodes: {
+    id: 'Lymph nodes',
+    name: 'Lymph nodes',
+    label: 'Lymph nodes'
+  },
+  lymphNodeLocation: {
+    id: 'Lymph node location',
+    name: 'Lymph node location',
+    label: 'Lymph node location'
+  },
+  lymphNodeSize: {
+    id: 'Lymph node size',
+    name: 'Lymph node size',
+    label: 'Lymph node size'
+  },
+  lymphNodeMobility: {
+    id: 'Lymph node mobility',
+    name: 'Lymph node mobility',
+    label: 'Lymph node mobility'
+  },
+  lymphNodeTenderness: {
+    id: 'Lymph node tenderness',
+    name: 'Lymph node tenderness',
+    label: 'Lymph node tenderness'
+  },
+  neckLaceration: {
+    id: 'Neck laceration',
+    name: 'Neck laceration',
+    label: 'Laceration'
+  },
+  neckLacerationLength: {
+    id: 'Neck laceration length',
+    name: 'Neck laceration length',
+    label: 'Length'
+  },
+  neckLacerationDepth: {
+    id: 'Neck laceration depth',
+    name: 'Neck laceration depth',
+    label: 'Depth'
+  },
+  neckBruise: {
+    id: 'Neck bruise',
+    name: 'Neck bruise',
+    label: 'Bruise'
+  },
+  neckBruiseDetails: {
+    id: 'Neck bruise details',
+    name: 'Neck bruise details',
+    label: 'Details'
+  },
+  neckAdditionalNotes:{
+    id: 'Neck additional notes',
+    name: 'Neck bruise details',
+    label: 'Details'
+  }
 };
 
   const schema = Yup.object().shape({
@@ -521,6 +611,25 @@ const form = {
     [form.lipsLacerationDepth.name]: Yup.string(),
     [form.lipsBruise.name]: Yup.string().required().label(form.lipsBruise.label),
     [form.lipsBruiseDetails.name]: Yup.string(),
+
+    [form.trachea.name]: Yup.string().required().label(form.trachea.label),
+    [form.tracheaDeviation.name]: Yup.string(),
+    [form.jugularVenousPressure.name]: Yup.string().required().label(form.trachea.label),
+    [form.neckRaised.name]: Yup.string().required().label(form.neckRaised.label),
+    [form.neckRaisedHeight.name]: Yup.string(),
+    [form.enlargedThyroid.name]: Yup.string().required().label(form.enlargedThyroid.label),
+    [form.neckHaematoma.name]: Yup.string().required().label(form.neckHaematoma.label),
+    [form.lymphNodes.name]: Yup.string().required().label(form.lymphNodes.label),
+    [form.lymphNodeLocation.name]: Yup.string(),
+    [form.lymphNodeSize.name]: Yup.string(),
+    [form.lymphNodeMobility.name]: Yup.string(),
+    [form.lymphNodeTenderness.name]: Yup.string(),
+    [form.neckLaceration.name]: Yup.string().required().label(form.neckLaceration.label),
+    [form.neckLacerationLength.name]: Yup.string(),
+    [form.neckLacerationDepth.name]: Yup.string(),
+    [form.neckBruise.name]: Yup.string().required().label(form.neckBruise.label),
+    [form.neckBruiseDetails.name]: Yup.string(),
+    [form.neckAdditionalNotes.name]: Yup.string(),
     });
 
 const PartsList = [
@@ -536,6 +645,7 @@ const PartsList = [
   { name: "Forehead", value: "Forehead" },
   { name: "Chin", value: "Chin" },
   { name: "Lips", value: "Lips" },
+  { name: "Neck", value: "Neck" },
 ]
 
 const initialValues = getInitialValues(form);
@@ -1034,6 +1144,202 @@ const FacialInjuriesForm = ({
   );
 };
 
+const NeckForm = ()=>{
+
+  const [deviated, setDeviated] = useState(false);
+  const [raised, setRaised] = useState(false);
+  const [lymphNodes, setLymphNodes] = useState(false);
+  const [lacerated, setLacerated] = useState(false);
+  const [bruised, setBruised] = useState(false);
+
+  const handleLacerated = (value: string) => {
+    setLacerated(false);
+
+    if (value === 'yes') {
+      setLacerated(true);
+    }
+  };
+
+  const handleBruised = (value: string) => {
+    setBruised(false);
+
+    if (value === 'yes') {
+      setBruised(true);
+    }
+  };
+
+  const handleTrachea=(value:string)=>{
+
+    setDeviated(false);
+    if (value === 'deviated') {
+      setDeviated(true);
+    }
+  };
+
+  const handleNeckRaised=(value:string)=>{
+
+    setRaised(false);
+    if (value === 'yes') {
+      setRaised(true);
+    }
+  };
+
+  const handleLymphNodes=(value:string)=>{
+
+    setLymphNodes(false);
+
+    if (value === 'yes') {
+      setLymphNodes(true);
+    }
+  };
+
+
+  return (
+    <>
+    <FormFieldContainerLayout title={form.trachea.label}>
+  <RadioGroupInput
+          getValue={handleTrachea}
+          name={form.trachea.name}
+          label=""
+          options={[
+            { label: "Central", value: "central" },
+            { label: "Deviated", value: "deviated" },]}
+        />
+        {deviated &&(
+          <RadioGroupInput
+          name={form.tracheaDeviation.name}
+          label={form.tracheaDeviation.label}
+          options={[
+            { label: "Left", value: "left" },
+            { label: "Right", value: "right" },]}
+        />
+        )}
+        </FormFieldContainerLayout>
+        <TextInputField
+            name={form.jugularVenousPressure.name}
+            label={form.jugularVenousPressure.label}
+            id={form.jugularVenousPressure.id}
+            disabled={false}
+            multiline={false}
+            unitOfMeasure='cm'
+          />
+          <FormFieldContainerLayout title={form.neckRaised.label}>
+          <RadioGroupInput
+          getValue={handleNeckRaised}
+          name={form.neckRaised.name}
+          label=""
+          options={yesOrNo}
+        /> {raised &&(
+          <TextInputField
+          name={form.neckRaisedHeight.name}
+          label={form.neckRaisedHeight.label}
+          id={form.neckRaisedHeight.id}
+          disabled={false}
+          multiline={false}
+          unitOfMeasure='cm'
+        />
+        )}
+        </FormFieldContainerLayout>
+         <RadioGroupInput
+          name={form.enlargedThyroid.name}
+          label={form.enlargedThyroid.label}
+          options={yesOrNo}
+        /> 
+        <TextInputField
+            name={form.neckHaematoma.name}
+            label={form.neckHaematoma.label}
+            id={form.neckHaematoma.id}
+            disabled={false}
+            multiline={true}
+          />
+          <FormFieldContainerLayout title={form.lymphNodes.label}>
+          <RadioGroupInput
+          getValue={handleLymphNodes}
+          name={form.lymphNodes.name}
+          label=""
+          options={yesOrNo}
+        /> {lymphNodes &&(
+          <div>
+          <TextInputField
+          name={form.lymphNodeLocation.name}
+          label={form.lymphNodeLocation.label}
+          id={form.lymphNodeLocation.id}
+          disabled={false}
+          multiline={true}
+        />
+          <TextInputField
+          name={form.lymphNodeSize.name}
+          label={form.lymphNodeSize.label}
+          id={form.lymphNodeSize.id}
+          disabled={false}
+          multiline={false}
+          unitOfMeasure='cm'
+        />
+        <TextInputField
+          name={form.lymphNodeMobility.name}
+          label={form.lymphNodeMobility.label}
+          id={form.lymphNodeMobility.id}
+          disabled={false}
+          multiline={true}
+        />
+        <TextInputField
+          name={form.lymphNodeTenderness.name}
+          label={form.lymphNodeTenderness.label}
+          id={form.lymphNodeTenderness.id}
+          disabled={false}
+          multiline={true}
+        />
+        </div>)}
+        </FormFieldContainerLayout>
+
+        <FormFieldContainerLayout title={form.neckLaceration.label}>
+        <RadioGroupInput
+          getValue={handleLacerated}
+          name={form.neckLaceration.name}
+          label=""
+          options={yesOrNo}
+        />
+        {lacerated && (
+          <div>
+            <TextInputField
+              name={form.neckLacerationLength.name}
+              label={form.neckLacerationLength.label}
+              id={form.neckLacerationLength.id}
+              disabled={false}
+              multiline={false}
+              unitOfMeasure="mm"
+            />
+            <TextInputField
+              name={form.neckLacerationDepth.name}
+              label={form.neckLacerationDepth.label}
+              id={form.neckLacerationDepth.id}
+              disabled={false}
+              multiline={false}
+              unitOfMeasure="mm"
+            />
+          </div>
+        )}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title={form.neckBruise.label}>
+        <RadioGroupInput
+          getValue={handleBruised}
+          name={form.neckBruise.name}
+          label=""
+          options={yesOrNo}
+        />
+        {bruised && (
+          <TextInputField
+            name={form.neckBruiseDetails.name}
+            label={form.neckBruiseDetails.label}
+            id={form.neckBruiseDetails.id}
+            disabled={false}
+            multiline={false}
+          />
+        )}
+        </FormFieldContainerLayout>
+   </>     
+  )
+};
 
 
 export const HeadAndNeckForm = ({onSubmit}: Prop) => {
@@ -1211,6 +1517,10 @@ case 'Crown':
       bruiseDetailsName={form.lipsBruiseDetails.name}
       />
       );
+      case 'Neck':
+        return (
+          <NeckForm/>
+        )
         break;
       default:
         return null;
