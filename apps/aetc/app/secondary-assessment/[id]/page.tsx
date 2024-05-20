@@ -8,6 +8,7 @@ import { useNavigation, useParameters } from "@/hooks";
 import { GeneralForm } from "../components/generalForm";
 import { HeadAndNeckForm } from "../components/headAndNeckForm";
 import { PatientInfoTab } from "@/components";
+import { ChestForm } from "../components/chestForm";
 
 
 
@@ -40,6 +41,12 @@ const secondaryAssessment = () => {
     setActiveStep(2);
   };
 
+  const handleChestSubmit = (values: any)=>{
+    console.log(values);
+    formData["chest"] = values;
+    setActiveStep(3);
+  };
+
   return (
     <>
 <PatientInfoTab />
@@ -56,6 +63,7 @@ onSubmit={handleGeneralSubmit}
 <HeadAndNeckForm
 onSubmit={handleHeadAndNeckSubmit}
 />
+<ChestForm onSubmit={handleChestSubmit}/>
 </NewStepperContainer>
 
 

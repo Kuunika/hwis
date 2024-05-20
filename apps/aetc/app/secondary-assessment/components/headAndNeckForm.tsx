@@ -1530,7 +1530,7 @@ case 'Crown':
   return (
     <>
   <FormikInit
-    validationSchema={schema}
+    validationSchema={null}//{schema}
     initialValues={initialValues}
     onSubmit={onSubmit}
     submitButtonText="next"
