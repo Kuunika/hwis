@@ -66,7 +66,7 @@ export const SearchComboBox: FC<Props> = ({
   } : {}
 
 
-  return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5 }}>
+  return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5}}>
     <MainTypography color={"#666666"} variant="subtitle2">{label}</MainTypography>
     <Select
       styles={{
@@ -75,8 +75,8 @@ export const SearchComboBox: FC<Props> = ({
           ...baseStyles,
           borderColor: hasError ? "red" : "#B3B3B3",
           ...padding,
+          zIndex:9999
         }),
-
       }}
       {...(multiple ? null : { value: mappedOptions.filter(op => op.value == value) })}
       isDisabled={disabled}

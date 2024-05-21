@@ -1530,7 +1530,7 @@ case 'Crown':
   return (
     <>
   <FormikInit
-    validationSchema={null}//{schema}
+    validationSchema={schema}
     initialValues={initialValues}
     onSubmit={onSubmit}
     submitButtonText="next"
@@ -1541,7 +1541,8 @@ case 'Crown':
   getValue={handleValueChange}
   name="options"
   label="part"
-  selectItems={PartsList} id={'selectParts'}      />
+  selectItems={PartsList} 
+  id={'selectParts'}/>
           {renderFormFields()}
       </FormFieldContainerLayout>
   </FormikInit>
