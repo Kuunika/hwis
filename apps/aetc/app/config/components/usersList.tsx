@@ -34,6 +34,7 @@ export const UsersList = () => {
             headerName: "Action",
             flex: 1,            
             renderCell: (cell: any) => {
+                const userId = cell.row.id;
                 return (
                     <>
                     <MainButton
@@ -46,7 +47,7 @@ export const UsersList = () => {
                         variant="primary"
                         sx={{ fontSize: "12px", marginLeft: "2px" }}
                         title={"edit"}
-                        onClick={() => { }}
+                        onClick={() => { navigateTo(`config/users/${userId}`) }}
                     />
                     </>
                 );
