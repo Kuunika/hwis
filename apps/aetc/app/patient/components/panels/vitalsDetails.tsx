@@ -21,7 +21,6 @@ export const VitalsPanel = () => {
 
 
 
-
   useEffect(() => {
 
     if (data) {

@@ -118,7 +118,6 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
             <SearchComboBox
                 label="Roles"
                 name={form.role.name}
-
                 options={data ? data.map(d => {
                     return { id: d.role, label: d.role }
                 }) : []} />

@@ -46,6 +46,7 @@ export const ViewPatient = ({ patient }: IProps) => {
 
 
     useEffect(() => {
+        console.log({ patient })
         mapPatientDemographics(patient);
         mapCurrentLocation(patient);
         mapHomeLocation(patient)
@@ -86,7 +87,7 @@ export const ViewPatient = ({ patient }: IProps) => {
         setCurrentLocationAddress({
             district: patient?.addresses[0]?.current_district ?? "",
             traditionalAuthority: patient?.addresses[0]?.current_traditional_authority ?? "",
-            village: patient?.addresses[0]?.current_village ?? "",
+            village: patient?.addresses[1]?.address1 ?? "",
             closeLandMark: patient?.addresses[1]?.address2 ?? ""
         })
     }
