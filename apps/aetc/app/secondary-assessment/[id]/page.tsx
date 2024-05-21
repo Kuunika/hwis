@@ -18,7 +18,7 @@ const secondaryAssessment = () => {
   const { params } = useParameters();
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
 
-  const [activeStep, setActiveStep] = useState<number>(2);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const [formData, setFormData] = useState<any>({});
 
   const steps = [
