@@ -56,6 +56,7 @@ interface IProps {
   steps: Step[];
   title: string;
   setActive?: (value: any) => void;
+  onClickAccordion?: (value: any) => void;
   onBack?: () => void;
 }
 
@@ -65,6 +66,7 @@ export function NewStepperContainer({
   steps,
   title,
   setActive,
+  onClickAccordion,
   onBack,
 }: IProps) {
   return (
@@ -90,7 +92,6 @@ export function NewStepperContainer({
       </MainGrid>
 
       <MainGrid item xs={1} lg={0}></MainGrid>
-
       <MainGrid item xs={10} lg={8}>
         <WrapperBox width={"100%"}>
           <MainGrid item sx={{ display: { xs: "block", lg: "none" } }} xs={12}>
@@ -146,8 +147,9 @@ export function NewStepperContainer({
                   },
                 }}
                 onChange={() => {
-                  if (setActive) {
+                  if (onClickAccordion) {
                     // setActive(key);
+                    onClickAccordion(key);
                   }
                 }}
                 expanded={key == active}

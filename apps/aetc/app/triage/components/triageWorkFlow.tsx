@@ -33,6 +33,7 @@ export default function TriageWorkFlow() {
   const [continueTriage, setContinueTriage] = useState(false)
   const { data: triageList } = getPatientsWaitingForTriage();
   const [conceptTriageResult, setConceptTriageResult] = useState<any>({})
+  const [submittedSteps, setSubmittedSteps] = useState<Array<number>>([])
 
 
   const {
@@ -254,19 +255,23 @@ export default function TriageWorkFlow() {
   const handleVitalsSubmit = (values: any) => {
     formData["vitals"] = values;
     setActiveStep(2);
+    setSubmittedSteps(steps => [...steps, 1])
   };
 
   const handleAirwaySubmit = (values: any) => {
     formData["airway"] = values;
     setActiveStep(3);
+    setSubmittedSteps(steps => [...steps, 2])
   };
   const handleBloodCirculationSubmit = (values: any) => {
     formData["bloodCirculation"] = values;
     setActiveStep(4);
+    setSubmittedSteps(steps => [...steps, 3])
   };
   const handleDisabilitySubmit = (values: any) => {
     formData["disability"] = values;
     setActiveStep(5);
+    setSubmittedSteps(steps => [...steps, 4])
   };
 
   const handlePresentComplaints = (values: any) => {
@@ -278,13 +283,13 @@ export default function TriageWorkFlow() {
       })
     );
     setActiveStep(1);
+    setSubmittedSteps(steps => [...steps, 0])
   };
 
 
   useEffect(() => {
     let tResult = '';
     const keys = Object.keys(conceptTriageResult);
-
     for (let i = 0; i < keys.length; i++) {
 
       if (conceptTriageResult[keys[i]] == 'red') {
@@ -342,6 +347,17 @@ export default function TriageWorkFlow() {
     })
 
   }
+
+  const handleClickAccordion = (activeStep: any) => {
+
+
+
+    const found = submittedSteps.find(step => step == activeStep);
+
+    if (found != undefined) setActiveStep(activeStep);
+
+    // TODO: send a message that you can't move
+  }
   return (
     <>
 
@@ -363,6 +379,7 @@ export default function TriageWorkFlow() {
           }}
           title="Triage"
           steps={steps}
+          onClickAccordion={handleClickAccordion}
           active={activeStep}
           onBack={() => navigateBack()}
         >

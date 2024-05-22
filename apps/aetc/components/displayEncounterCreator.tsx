@@ -21,6 +21,5 @@ export const DisplayEncounterCreator = ({ patientId, encounterType }: IProps) =>
     if (!encounters) return ''
 
 
-
     return <MainTypography>{encounters[encounters?.length - 1]?.created_by}</MainTypography>
 }
