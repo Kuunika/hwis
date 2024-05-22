@@ -6,6 +6,8 @@ import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
+import { DisplayEncounterCreator } from "@/components";
+import { encounters } from "@/constants";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState('')
@@ -30,6 +32,11 @@ export const ClientWaitingForTriage = () => {
     {
       field: "aggreg", headerName: "Aggregate", flex: 1, renderCell: (cell: any) => {
         return <CalculateAggregateTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
+      }
+    },
+    {
+      field: "registered", headerName: "Registered By", flex: 1, renderCell: (cell: any) => {
+        return <DisplayEncounterCreator encounterType={encounters.SOCIAL_HISTORY} patientId={cell.row.id} />
       }
     },
 
