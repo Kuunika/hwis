@@ -10,6 +10,8 @@ import { getPatientEncounters } from "@/services/encounter";
 import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
+import { DisplayEncounterCreator } from "@/components";
+import { encounters } from "@/constants";
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState('')
@@ -37,9 +39,9 @@ export const ClientWaitingForAssessment = () => {
     { field: "aetc_visit_number", headerName: "Visit No", },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "patient_arrival_time", headerName: "Arrival Time", flex: 1 },
+    { field: "patient_arrival_time", headerName: "Arrival Time", },
     { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
-    { field: "gender", headerName: "Gender", flex: 1 },
+    { field: "gender", headerName: "Gender", },
     {
       field: "waiting", headerName: "WaitingTime", flex: 1, renderCell: (cell: any) => {
         return <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} patientId={cell.row.id} />
@@ -51,9 +53,14 @@ export const ClientWaitingForAssessment = () => {
       }
     },
     {
+      field: "triage", headerName: "Triaged By", flex: 1, renderCell: (cell: any) => {
+        return <DisplayEncounterCreator encounterType={encounters.VITALS} patientId={cell.row.id} />
+      }
+    },
+    {
       field: "triage_result",
       headerName: "Triage Category",
-      flex: 1,
+
       renderCell: (cell: any) => {
         return (
           <WrapperBox

@@ -15,7 +15,12 @@ export const DisplayEncounterCreator = ({ patientId, encounterType }: IProps) =>
         return <Image src={"/loader.svg"} width={20} height={20} alt="loader" />
     }
 
-    const encounter = data?.find(encounter => encounter.encounter_type.uuid == encounterType)
+    const encounters = data?.filter(encounter => encounter.encounter_type.uuid == encounterType);
 
-    return <MainTypography>{encounter?.created_by}</MainTypography>
+
+    if (!encounters) return ''
+
+
+
+    return <MainTypography>{encounters[encounters?.length - 1]?.created_by}</MainTypography>
 }

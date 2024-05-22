@@ -14,10 +14,10 @@ export default function AssessmentPage() {
     <>
       <Navigation title="Patients Waiting For Assessments" link="/dashboard" />
       <MainGrid container>
-        <MainGrid xs={1} lg={1} item></MainGrid>
+        <MainGrid xs={1} lg={0} item></MainGrid>
         <MainGrid
           xs={10}
-          lg={10}
+          lg={12}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -33,11 +33,11 @@ export default function AssessmentPage() {
             This is a list of all patients that went through triage successfully
             and waiting for assessments.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ p: 0 }}>
+          <RegistrationCard sx={{ mx: 2, p: 0 }}>
             <ClientWaitingForAssessment />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid xs={1} lg={1} item></MainGrid>
+        <MainGrid xs={1} lg={0} item></MainGrid>
       </MainGrid>
     </>
   );
