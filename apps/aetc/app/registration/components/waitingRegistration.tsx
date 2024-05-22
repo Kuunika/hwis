@@ -9,6 +9,8 @@ import { AbscondButton } from "@/components/abscondButton";
 import { useContext, useState } from "react";
 import { Identifier } from "@/interfaces";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
+import { DisplayEncounterCreator } from "@/components";
+import { encounters } from "@/constants";
 
 
 export const WaitingRegistrationList = () => {
@@ -40,6 +42,11 @@ export const WaitingRegistrationList = () => {
     {
       field: "aggreg", headerName: "Aggregate", flex: 1, renderCell: (cell: any) => {
         return <CalculateAggregateTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
+      }
+    },
+    {
+      field: "screened", headerName: "Screened By", flex: 1, renderCell: (cell: any) => {
+        return <DisplayEncounterCreator encounterType={encounters.SCREENING_ENCOUNTER} patientId={cell.row.id} />
       }
     },
 

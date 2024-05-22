@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
+import { DisplayEncounterCreator } from "@/components";
+import { encounters } from "@/constants";
 
 export const InitialRegistrationList = () => {
   const { navigateTo } = useNavigation();
@@ -35,6 +37,11 @@ export const InitialRegistrationList = () => {
     {
       field: "waiting", headerName: "WaitingTime", flex: 1, renderCell: (cell: any) => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
+      }
+    },
+    {
+      field: "registeredBy", headerName: "Registered By", flex: 1, renderCell: (cell: any) => {
+        return <DisplayEncounterCreator encounterType={encounters.INITIAL_REGISTRATION} patientId={cell.row.id} />
       }
     },
 

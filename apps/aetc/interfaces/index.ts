@@ -121,6 +121,7 @@ export interface Encounter {
   visit_id: number;
   uuid: string;
   obs: Obs[];
+  created_by: string
 }
 
 export interface Visit {
