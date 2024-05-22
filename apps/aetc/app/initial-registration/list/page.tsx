@@ -15,10 +15,10 @@ function InitialList() {
     <>
       <Navigation title="Patients waiting prescreening" link="/dashboard" />
       <MainGrid container>
-        <MainGrid xs={0} lg={2} item></MainGrid>
+        <MainGrid xs={0} lg={1} item></MainGrid>
         <MainGrid
           xs={12}
-          lg={8}
+          lg={10}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -38,7 +38,7 @@ function InitialList() {
             <InitialRegistrationList />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid xs={0} lg={2} item></MainGrid>
+        <MainGrid xs={0} lg={1} item></MainGrid>
       </MainGrid>
     </>
   );
