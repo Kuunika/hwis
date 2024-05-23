@@ -1,10 +1,14 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { getUserById, updateUser } from '../../../../services/users';
+import { getUserById } from '../../../../services/users';
 import { useNavigation, useParameters } from '@/hooks';
 import { EditUserForm } from '../../components/editUserForm';
+import { editUser } from '@/hooks/users';
+import { OverlayLoader } from '@/components/backdrop';
 
 const EditUserPage = () => {
+
+  const { mutate, isPending, isSuccess } = editUser();
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [initialValues, setInitialValues] = useState({});
@@ -34,35 +38,32 @@ const EditUserPage = () => {
     }
   }, [params]);
 
+  useEffect(() => {
+
+    if (isSuccess) {
+        navigateTo("/config");
+    }
+
+}, [isSuccess, isPending, isLoading])
+
   const handleSubmit = async (values: { userName: any; firstName: any; lastName: any; role: any[]; password: any; }) => {
-        console.log('submitting');
-      const updatedUserData = {
-        username: values.userName,
-        roles: values.role.map((r) => ({
-          name: r.label,
-        })),
-        password: values.password
+  
+    const updatedValues = {
+        ...values,
+        userId,
       };
-      console.log(updatedUserData);
-      updateUser(userId, updatedUserData)
-      .then(() => {
-          navigateTo('/config');
-      })
-      .catch((error) => {
-          console.error('Error updating user:', error);
-      });
+
+      mutate(updatedValues);
 
   };
 
   return (
-    <div>
+    <>
       <h1>Edit User</h1>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
+
         <EditUserForm initialValues={initialValues} onSubmit={handleSubmit} />
-      )}
-    </div>
+    <OverlayLoader open={isPending} />
+    </>
   );
 };
 
