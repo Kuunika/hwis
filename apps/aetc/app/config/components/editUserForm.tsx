@@ -8,8 +8,8 @@ type props = {
 };
 
 const form = {
-    userName: {
-        name: "userName",
+    username: {
+        name: "username",
         label: "Username",
     },
     password: {
@@ -27,7 +27,7 @@ const form = {
 };
 
 const schema = yup.object({
-    [form.userName.name]: yup.string(),
+    [form.username.name]: yup.string(),
     [form.password.name]: yup.string(),
     [form.role.name]: yup.array().required().label(form.role.label),
     [form.passwordConfirmation.name]: yup.string().oneOf([yup.ref(form.password.name)], 'Passwords must match')
@@ -35,6 +35,8 @@ const schema = yup.object({
 
 export const EditUserForm = ({ initialValues, onSubmit }: props) => {
     const { isLoading, data } = getRoles();
+
+    console.log(initialValues);
 
     return (
         <FormikInit
@@ -44,9 +46,9 @@ export const EditUserForm = ({ initialValues, onSubmit }: props) => {
             submitButton={false}
         >
             <TextInputField
-                name={form.userName.name}
-                label={form.userName.label}
-                id={form.userName.name}
+                name={form.username.name}
+                label={form.username.label}
+                id={form.username.name}
                 sx={{ width: "100%"}}
             />
             <WrapperBox sx={{ display: "flex" }}>
@@ -67,7 +69,7 @@ export const EditUserForm = ({ initialValues, onSubmit }: props) => {
                 />
             </WrapperBox>
             <SearchComboBox
-                label="Roles"
+                label={form.role.label}
                 name={form.role.name}
                 options={data ? data.map(d => {
                     return { id: d.role, label: d.role }

@@ -37,6 +37,7 @@ export const SearchComboBox: FC<Props> = ({
   applyPadding = true
 
 }) => {
+  console.log(name);
   const { hasError, setFieldValue, initialValues, value, errorMessage } =
     useFormikField(name);
 
@@ -45,7 +46,14 @@ export const SearchComboBox: FC<Props> = ({
       value: op.id,
       label: op.label
     }
-  })
+  });
+
+  const mapObjectsToArray = (objects: any[]) => {
+    return objects.map(obj => ({
+        value: obj.name,
+        label: obj.name
+    }));
+};
 
   const handleChange = (values: any) => {
     const inputValue = multiple ? values.map((v: any) => ({
@@ -81,7 +89,7 @@ export const SearchComboBox: FC<Props> = ({
       {...(multiple ? null : { value: mappedOptions.filter(op => op.value == value) })}
       isDisabled={disabled}
       //@ts-ignore
-      defaultValue={mappedOptions.filter(op => op.value == initialValues[name])}
+      defaultValue={mapObjectsToArray(initialValues[name])}
       //@ts-ignore
       theme={theme => ({
         ...theme,

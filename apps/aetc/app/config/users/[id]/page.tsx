@@ -22,12 +22,9 @@ const EditUserPage = () => {
     if (userId) {
       getUserById(userId).then((user) => {
         setInitialValues({
-          userName: user.data.username,
-          firstName: user.data.person.names[0].given_name,
-          lastName: user.data.person.names[0].family_name,
+          username: user.data.username,
           role: user.data.user_roles.map(role => ({
-            id: role.role.uuid,
-            label: role.role.role
+            name: role.role.role
           }))
         });
         setIsLoading(false);
@@ -39,7 +36,6 @@ const EditUserPage = () => {
   }, [params]);
 
   useEffect(() => {
-
     if (isSuccess) {
         navigateTo("/config");
     }
@@ -47,7 +43,6 @@ const EditUserPage = () => {
 }, [isSuccess, isPending, isLoading])
 
   const handleSubmit = async (values: { userName: any; firstName: any; lastName: any; role: any[]; password: any; }) => {
-  
     const updatedValues = {
         ...values,
         userId,
@@ -59,9 +54,17 @@ const EditUserPage = () => {
 
   return (
     <>
+    <div>
+        
       <h1>Edit User</h1>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
 
         <EditUserForm initialValues={initialValues} onSubmit={handleSubmit} />
+      )}
+      
+    </div>
     <OverlayLoader open={isPending} />
     </>
   );
