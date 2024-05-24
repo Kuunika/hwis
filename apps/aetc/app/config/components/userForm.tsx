@@ -2,7 +2,6 @@ import { getRoles } from "@/hooks/role";
 import { checkUsername } from "@/hooks/users";
 import { useEffect, useState } from "react";
 import {
-    FieldsContainer,
     FormikInit,
     MainButton,
     MainTypography,
@@ -78,7 +77,7 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
                 name={form.userName.name}
                 label={form.userName.label}
                 id={form.userName.name}
-                sx={{ width: "100%" }}
+                sx={{ width: "100%"}}
                 getValue={value => setUsername(value)}
             />
             <MainTypography variant="caption" my={"1ch"}>{usernameResponseMessage}</MainTypography>
@@ -120,7 +119,8 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
                 name={form.role.name}
                 options={data ? data.map(d => {
                     return { id: d.role, label: d.role }
-                }) : []} />
+                }) : []} 
+                />
 
             <MainButton type="submit" title={"Submit"} onClick={() => { }} />
         </FormikInit>
