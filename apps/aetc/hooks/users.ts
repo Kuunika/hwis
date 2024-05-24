@@ -1,4 +1,4 @@
-import { createUser, getUsers, searchUser } from "@/services/users";
+import { createUser, getUsers, searchUser, updateUser } from "@/services/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 
@@ -55,4 +55,24 @@ export const checkUsername = (username: string) => {
         queryFn: () => getall(),
         enabled: false,
     });
+};
+
+export const editUser = ()=>{
+    const edit=(data: any)=>{
+    const updatedUserData = {
+        username: data.userName,
+        roles: data.role.map((r: { label: any; }) => ({
+          name: r.label,
+        })),
+        password: data.password
+      };
+   
+      return updateUser(data.userId, updatedUserData)
+      .then((response) => response.data)
+    };
+
+    return useMutation({
+        mutationFn: edit,
+    });
+    
 };
