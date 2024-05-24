@@ -164,7 +164,7 @@ const ActionMenu = () => {
                   {icon && <Image src={icon} alt="AETC Form icon" />}
                   <MainTypography
                     sx={{
-                      fontFamily: "Inter",
+                      //fontFamily: "Inter",
                       fontSize: "14px",
                       fontWeight: 500,
                       lineHeight: "17px",

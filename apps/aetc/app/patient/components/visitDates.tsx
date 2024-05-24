@@ -1,5 +1,4 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Grow from "@mui/material/Grow";
@@ -85,7 +84,7 @@ export function VisitDates({ visits }: Prop) {
           <MainTypography
             sx={{
               ml: "1ch",
-              fontFamily: "Inter",
+              //fontFamily: "Inter",
               lineHeight: "17px",
               letterSpacing: "0em",
               textAlign: "left",
@@ -147,7 +146,7 @@ export function VisitDates({ visits }: Prop) {
                       >
                         <MainTypography
                           sx={{
-                            fontFamily: "Inter",
+                            //fontFamily: "Inter",
                             fontSize: "14px",
                             fontWeight: 400,
                             lineHeight: "21px",

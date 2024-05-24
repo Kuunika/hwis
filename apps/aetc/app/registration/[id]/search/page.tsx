@@ -13,8 +13,7 @@ import { useParameters } from "@/hooks";
 import { SearchForm } from "../../search/components/searchForm";
 import { SearchResults } from "../../search/components/searchResults";
 import {
-  getPatientsWaitingForRegistrations, searchDDEPatient, searchPotentialDuplicates,
-
+  getPatientsWaitingForRegistrations
 } from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
 import { SearchNPIDForm } from "../../search/components/searchNpid";
@@ -60,7 +59,7 @@ function RegistrationSearch() {
         <MainTypography
           variant="h1"
           sx={{
-            fontFamily: "Inter",
+            //fontFamily: "Inter",
             fontSize: "24px",
             fontWeight: 700,
             lineHeight: "29px",
@@ -73,7 +72,7 @@ function RegistrationSearch() {
         <MainTypography
           variant="body1"
           sx={{
-            fontFamily: "Inter",
+            //fontFamily: "Inter",
             fontSize: "16px",
             fontWeight: 400,
             lineHeight: "19px",

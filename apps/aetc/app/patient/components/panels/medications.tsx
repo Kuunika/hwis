@@ -50,7 +50,7 @@ const MedicationRow = ({ medicine }: { medicine: string }) => {
     >
       <MainTypography
         sx={{
-          fontFamily: "Inter",
+          //fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 400,
           color: "#00190E",

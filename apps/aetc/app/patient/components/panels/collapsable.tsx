@@ -7,7 +7,6 @@ import { FaAngleDown } from "react-icons/fa";
 import { MainTypography, WrapperBox } from "shared-ui/src";
 import Link from "next/link";
 import Image from "next/image";
-import AETCFormIcon from "../../../../icons/aetc.svg";
 import gynacology from "../../../../icons/gynacology.svg";
 import medicalInpatient from "../../../../icons/medicalInpatient.svg";
 import monitoring from "../../../../icons/monitoring.svg";
@@ -54,7 +53,7 @@ export function BasicAccordion() {
           },
           "& .MuiAccordionSummary-content": {
             "& .MuiTypography-root": {
-              fontFamily: "Inter",
+              //fontFamily: "Inter",
               fontSize: "14px",
               fontWeight: 600,
               lineHeight: "17px",
@@ -119,7 +118,7 @@ const ListItem = ({
         {icon && <Image src={icon} alt="AETC Form icon" />}
         <MainTypography
           sx={{
-            fontFamily: "Inter",
+            //fontFamily: "Inter",
             fontSize: "14px",
             fontWeight: 500,
             lineHeight: "17px",

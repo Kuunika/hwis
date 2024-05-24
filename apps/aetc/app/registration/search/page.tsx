@@ -1,21 +1,13 @@
 "use client";
 
-import { ResultBox, SearchContainer } from "./components";
+import { ResultBox } from "./components";
 import {
-  MainButton,
-  MainPaper,
   MainTypography,
-  WrapperBox,
-  defaultTheme,
+  WrapperBox
 } from "shared-ui/src";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useNavigation } from "@/hooks";
-import plus from "../../../icons/plus.svg";
-import Image from "next/image";
 
 import { SearchForm } from "./components/searchForm";
-import { SearchResults } from "./components/searchResults";
 import { Navigation } from "@/app/components/navigation";
 import { searchPatients } from "@/hooks/people";
 import { OverlayLoader } from "@/components/backdrop";
@@ -52,7 +44,7 @@ export default function RegistrationSearch() {
         <MainTypography
           variant="h1"
           sx={{
-            fontFamily: "Inter",
+            //fontFamily: "Inter",
             fontSize: "24px",
             fontWeight: 700,
             lineHeight: "29px",
@@ -65,7 +57,7 @@ export default function RegistrationSearch() {
         <MainTypography
           variant="body1"
           sx={{
-            fontFamily: "Inter",
+            //fontFamily: "Inter",
             fontSize: "16px",
             fontWeight: 400,
             lineHeight: "19px",
@@ -104,7 +96,7 @@ export default function RegistrationSearch() {
 //     <Image src={plus} alt="plus" />
 //     <MainTypography
 //       sx={{
-//         fontFamily: "Inter",
+//         //fontFamily: "Inter",
 //         fontSize: "14px",
 //         fontWeight: 500,
 //         lineHeight: "17px",

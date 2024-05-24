@@ -17,7 +17,7 @@ import {
 import { useNavigation, useParameters } from "@/hooks";
 
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
-import { getObservations, successDialog } from "@/helpers";
+import { getObservations } from "@/helpers";
 import {
   getPatientsWaitingForRegistrations,
   registerPatient,
@@ -676,7 +676,7 @@ const NavBox = ({
     >
       <MainTypography
         sx={{
-          fontFamily: "Inter",
+          //fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 400,
           letterSpacing: "0em",

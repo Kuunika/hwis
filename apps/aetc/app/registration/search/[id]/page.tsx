@@ -4,8 +4,7 @@ import { SearchContainer } from "../components";
 import {
   MainPaper,
   MainTypography,
-  WrapperBox,
-  defaultTheme,
+  WrapperBox
 } from "shared-ui/src";
 
 import { useEffect, useState } from "react";
@@ -45,7 +44,7 @@ export default function RegistrationSearch() {
         <MainTypography
           variant="h1"
           sx={{
-            fontFamily: "Inter",
+            //fontFamily: "Inter",
             fontSize: "24px",
             fontWeight: 700,
             lineHeight: "29px",
@@ -58,7 +57,7 @@ export default function RegistrationSearch() {
         <MainTypography
           variant="body1"
           sx={{
-            fontFamily: "Inter",
+            //fontFamily: "Inter",
             fontSize: "16px",
             fontWeight: 400,
             lineHeight: "19px",
@@ -97,7 +96,7 @@ export default function RegistrationSearch() {
               >
                 <MainTypography
                   sx={{
-                    fontFamily: "Inter",
+                    //fontFamily: "Inter",
                     fontSize: "14px",
                     fontWeight: 500,
                     lineHeight: "24px",
@@ -126,7 +125,7 @@ export default function RegistrationSearch() {
 //     <Image src={plus} alt="plus" />
 //     <MainTypography
 //       sx={{
-//         fontFamily: "Inter",
+//         //fontFamily: "Inter",
 //         fontSize: "14px",
 //         fontWeight: 500,
 //         lineHeight: "17px",

@@ -66,7 +66,7 @@ export const ClinicalNotes = () => {
               ></WrapperBox>
               <MainTypography
                 sx={{
-                  fontFamily: "Inter",
+                  //fontFamily: "Inter",
                   fontSize: "14px",
                   fontWeight: 400,
                   lineHeight: "21px",

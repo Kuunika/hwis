@@ -2,18 +2,17 @@
 
 import { useContext, useEffect, useState } from "react";
 import {
-  BaseTable,
   MainButton,
   MainPaper,
   MainTypography,
   WrapperBox,
-  defaultTheme,
+  defaultTheme
 } from "shared-ui/src";
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
 import { useNavigation, useParameters } from "@/hooks";
-import { FaUser } from "react-icons/fa6"
+import { FaUser } from "react-icons/fa6";
 
 import {
   SearchRegistrationContext,
@@ -168,7 +167,7 @@ export const AddPatientButton = () => {
       <Image src={plus} alt="plus" />
       <MainTypography
         sx={{
-          fontFamily: "Inter",
+          //fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 500,
           lineHeight: "17px",

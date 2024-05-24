@@ -45,7 +45,7 @@ export const ConsultationCard = ({
       <FaPlus />
       <MainTypography
         sx={{
-          fontFamily: "Inter",
+          //fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 500,
           lineHeight: "17px",
