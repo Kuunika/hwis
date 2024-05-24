@@ -37,7 +37,6 @@ export const SearchComboBox: FC<Props> = ({
   applyPadding = true
 
 }) => {
-  console.log(name);
   const { hasError, setFieldValue, initialValues, value, errorMessage } =
     useFormikField(name);
 

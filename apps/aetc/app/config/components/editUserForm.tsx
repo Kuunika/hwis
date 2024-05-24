@@ -36,8 +36,6 @@ const schema = yup.object({
 export const EditUserForm = ({ initialValues, onSubmit }: props) => {
     const { isLoading, data } = getRoles();
 
-    console.log(initialValues);
-
     return (
         <FormikInit
             initialValues={initialValues}
@@ -49,6 +47,7 @@ export const EditUserForm = ({ initialValues, onSubmit }: props) => {
                 name={form.username.name}
                 label={form.username.label}
                 id={form.username.name}
+                disabled={true}
                 sx={{ width: "100%"}}
             />
             <WrapperBox sx={{ display: "flex" }}>
