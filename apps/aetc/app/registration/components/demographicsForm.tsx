@@ -179,10 +179,16 @@ const schema = Yup.object().shape({
     .required()
     .label(form.currentDistrict.label),
   [form.currentTraditionalAuthority.name]: Yup.string()
-    .required()
+    .when(form.nationality.name, {
+      is: (value: string) => value == 'Malawian',
+      then: () => Yup.string().required()
+    })
     .label(form.currentTraditionalAuthority.label),
   [form.currentVillage.name]: Yup.string()
-    .required()
+    .when(form.nationality.name, {
+      is: (value: string) => value == 'Malawian',
+      then: () => Yup.string().required()
+    })
     .label(form.currentDistrict.label),
   [form.closeLandMark.name]: Yup.string()
     .label(form.closeLandMark.label),
@@ -609,7 +615,7 @@ export const DemographicsForm: FC<Prop> = ({
           <RegistrationCardTitle>Current Location</RegistrationCardTitle>
           <WrapperBox>
             <FormControlLabel
-              sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
+
               control={<Checkbox checked={checked} onChange={handleChecked} />}
               label="same as home location"
             />
@@ -630,6 +636,7 @@ export const DemographicsForm: FC<Prop> = ({
             })) : []}
           />
           <SearchComboBox
+            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
             name={form.currentTraditionalAuthority.name}
             label={form.currentTraditionalAuthority.label}
             getValue={(value) => {
@@ -646,6 +653,7 @@ export const DemographicsForm: FC<Prop> = ({
           />
 
           <SearchComboBox
+            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
             name={form.currentVillage.name}
             label={form.currentVillage.label}
             // disabled={checked}
