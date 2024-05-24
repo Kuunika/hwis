@@ -25,6 +25,27 @@ export const MainButton: FC<Props> = ({
 }) => {
   const variantStyles = buttonStyles[variant];
 
+
+
+  if (disabled) {
+    return <Button
+      type={type}
+      sx={
+        {
+          color: 'gray', // Custom color for text
+          backgroundColor: 'lightgrey', // Custom background color
+          cursor: 'not-allowed',
+          textTransform: "capitalize",
+          borderRadius: "1px",
+        } as SxProps
+      }
+    >
+      {icon}
+      {title}
+      {iconRight}
+    </Button>
+  }
+
   return (
     <Button
       type={type}

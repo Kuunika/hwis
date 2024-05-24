@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
+import { DisplayEncounterCreator } from "@/components";
+import { encounters } from "@/constants";
 
 export const InitialRegistrationList = () => {
   const { navigateTo } = useNavigation();
@@ -21,8 +23,9 @@ export const InitialRegistrationList = () => {
 
 
   const rows = patients?.sort((p1, p2) => {
-    return Number(p1.aetc_visit_number) - Number(p2.aetc_visit_number)
-  })?.map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted)
+    //@ts-ignore
+    return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+  }).map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted)
 
 
 
@@ -34,6 +37,11 @@ export const InitialRegistrationList = () => {
     {
       field: "waiting", headerName: "WaitingTime", flex: 1, renderCell: (cell: any) => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
+      }
+    },
+    {
+      field: "registeredBy", headerName: "Registered By", flex: 1, renderCell: (cell: any) => {
+        return <DisplayEncounterCreator encounterType={encounters.INITIAL_REGISTRATION} patientId={cell.row.id} />
       }
     },
 

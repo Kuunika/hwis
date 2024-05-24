@@ -8,12 +8,13 @@ import { FormikInit, MainButton } from "shared-ui/src";
 export interface SimpleDialogProps {
     open: boolean;
     onClose: () => void;
-    children: React.ReactNode
-    title: string
-    maxWidth?: "md" | "sm" | "lg"
+    children: React.ReactNode;
+    title: string;
+    maxWidth?: "md" | "sm" | "lg";
+    sx?: any
 }
 
-export function GenericDialog({ onClose, open, children, title, maxWidth = "lg" }: SimpleDialogProps) {
+export function GenericDialog({ onClose, open, children, title, maxWidth = "lg", sx }: SimpleDialogProps) {
 
     const handleClose = () => {
         onClose()
@@ -26,7 +27,7 @@ export function GenericDialog({ onClose, open, children, title, maxWidth = "lg" 
     return (
         <Dialog maxWidth={maxWidth} fullWidth={true} onClose={handleClose} open={open}>
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ ...sx, overflow: "visible" }}>
                 {children}
             </DialogContent>
         </Dialog>

@@ -3,7 +3,7 @@ import { useNavigation } from "@/hooks";
 import { getAllUsers } from "@/hooks/users";
 
 
-import { BaseTable, MainButton, MainPaper } from "shared-ui/src";
+import { BaseTable, MainButton } from "shared-ui/src";
 
 export const UsersList = () => {
     const { navigateTo } = useNavigation();
@@ -32,14 +32,24 @@ export const UsersList = () => {
         {
             field: "action",
             headerName: "Action",
+            flex: 1,            
             renderCell: (cell: any) => {
+                const userId = cell.row.id;
                 return (
+                    <>
                     <MainButton
                         variant="secondary"
                         sx={{ fontSize: "12px" }}
                         title={"view"}
                         onClick={() => { }}
                     />
+                    <MainButton
+                        variant="primary"
+                        sx={{ fontSize: "12px", marginLeft: "2px" }}
+                        title={"edit"}
+                        onClick={() => { navigateTo(`config/users/${userId}`) }}
+                    />
+                    </>
                 );
             },
         },

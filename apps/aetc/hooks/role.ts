@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const getRoles = () => {
     const getall = () =>
-        getAll<Role[]>("/roles").then((response) => response.data);
+        getAll<Role[]>("/roles?paginate=false").then((response) => response.data);
 
     return useQuery({
         queryKey: ["roles"],

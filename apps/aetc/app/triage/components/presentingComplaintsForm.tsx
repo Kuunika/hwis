@@ -8,6 +8,8 @@ import { NO, YES, concepts } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  setTriageResult: (triage: any, name: string) => void;
+  triageResult: string;
 };
 const form = {
   complaints: {
@@ -43,7 +45,7 @@ const presentingComplaints = [
   { id: "Blood In Stool", label: "Blood in stool" },
   { id: "Burn Injury", label: "Burn injury" },
   { id: "Carbon Monoxide Poisoning", label: "Carbon monoxide poisoning" },
-  { id: "Cardiac Arrest", label: "Cardiac arrest" },
+  // { id: "Cardiac Arrest", label: "Cardiac arrest" },
   { id: "Catheter Change", label: "Catheter change (urethral)" },
   { id: "Cold Exposure", label: "Cold exposure" },
   { id: "Confusion", label: "Confusion" },
@@ -163,7 +165,7 @@ const presentingComplaints = [
   { id: "Pruritus", label: "Pruritus (Itching)" },
   { id: "Rash", label: "Rash" },
   { id: "Red Eye", label: "Red eye" },
-  { id: "Respiratory Arrest", label: "Respiratory arrest" },
+  // { id: "Respiratory Arrest", label: "Respiratory arrest" },
   { id: "Ring Removal", label: "Ring removal" },
   { id: "Self Harm", label: "Self harm" },
   { id: "Sexual Assault", label: "Sexual assault" },
@@ -210,7 +212,24 @@ const presentingComplaints = [
   { id: "Food Poisoning", label: "Food poisoning" }
 ];
 
-export const PresentingComplaintsForm = ({ onSubmit }: Prop) => {
+
+
+export const PresentingComplaintsForm = ({ onSubmit, setTriageResult }: Prop) => {
+  const handleValueChange = (values: Array<any>) => {
+    const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting blood']
+
+    triage.forEach(triage => {
+      const found = values.find(v => {
+        return v.id == triage
+      });
+
+      if (found) {
+        setTriageResult("red", triage)
+      } else {
+        setTriageResult("", triage)
+      }
+    })
+  }
   return (
     <FormikInit
       validationSchema={schema}
@@ -220,6 +239,7 @@ export const PresentingComplaintsForm = ({ onSubmit }: Prop) => {
       submitButtonText="next"
     >
       <SearchComboBox
+        getValue={handleValueChange}
         name={form.complaints.name}
         label={form.complaints.label}
         options={presentingComplaints}

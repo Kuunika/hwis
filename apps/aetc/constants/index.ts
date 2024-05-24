@@ -151,8 +151,8 @@ export const concepts = {
 
   NATIONAL_ID_IDENTIFIER_TYPE: "ba2f69d8-8d80-11d8-abbb-0024217bb78e",
   PARENT: "ba453f92-8d80-11d8-abbb-0024217bb78e",
-  UNCLE_AUNTIE: "8d91a3dc-c2cc-11de-8d13-0010c6dffd0f",
-  AUNTIE: "ba453f92-8d80-11d8-abbb-0024217bb78e", // temporary
+  UNCLE_AUNTIE: "68ee4bec-1e85-47c5-a6d3-02ff09e29112",
+  AUNTIE: "a7c2e3cf-3158-478b-bcd3-89bdbec43e80", // temporary
   GUARDIAN: "ba453344-8d80-11d8-abbb-0024217bb78e",
   SPOUSE: "c397168a-f8bd-4ad1-b865-e608c1f3487e",
   SIBLING: "8d91a01c-c2cc-11de-8d13-0010c6dffd0f",

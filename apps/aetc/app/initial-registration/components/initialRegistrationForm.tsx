@@ -25,7 +25,7 @@ const form = {
 };
 
 // Define a regular expression pattern to match alphabet letters and the ' symbol
-const nameRegex = /^[a-zA-Z]+(?:['-][a-zA-Z]+)*$/;
+const nameRegex = /^[a-zA-Z]+(?:['-][a-zA-Z]+)*\s*$/
 
 // Define the Yup schema
 const schema = yup.object({

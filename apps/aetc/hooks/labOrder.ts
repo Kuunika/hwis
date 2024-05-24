@@ -1,4 +1,4 @@
-import { getTestTypes, getSpecimenTypes, getLabReason, createLabOrder, getPatientLabTests } from "@/services/labService";
+import { getTestTypes, getSpecimenTypes, getLabReason, createLabOrder, getPatientLabTests, getSetMembers } from "@/services/labService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
@@ -48,6 +48,18 @@ export const getPatientLabOrder = (patientId: string) => {
         queryKey: ["patientsOrder", patientId],
         queryFn: findAll,
         enabled: true,
+    });
+};
+
+export const getConceptSetMembers = (id: string) => {
+    const findAll = async () => {
+        return getSetMembers(id).then(response => response.data)
+    };
+
+    return useQuery({
+        queryKey: ["concept-setmembers", id],
+        queryFn: findAll,
+        enabled: false,
     });
 };
 

@@ -17,10 +17,10 @@ function Triage() {
     <>
       <Navigation title="Patients waiting for Triage" link="/dashboard" />
       <MainGrid container>
-        <MainGrid xs={1} lg={2} item></MainGrid>
+        <MainGrid xs={1} lg={1} item></MainGrid>
         <MainGrid
           xs={10}
-          lg={8}
+          lg={10}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -40,7 +40,7 @@ function Triage() {
             <ClientWaitingForTriage />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid lg={2} item></MainGrid>
+        <MainGrid lg={1} item></MainGrid>
       </MainGrid>
     </>
   );

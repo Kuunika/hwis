@@ -10,6 +10,8 @@ import { getPatientEncounters } from "@/services/encounter";
 import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
+import { DisplayEncounterCreator } from "@/components";
+import { encounters } from "@/constants";
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState('')
@@ -18,11 +20,18 @@ export const ClientWaitingForAssessment = () => {
 
 
   const rows = patients?.sort((p1, p2) => {
-    if (p1.triage_result == 'red' && p2.triage_result == 'yellow') return -1;
-    if (p1.triage_result == 'red' && p2.triage_result == 'green') return -1;
-    if (p1.triage_result == 'yellow' && p2.triage_result == 'green') return -1;
-    return 1
+    const triagePriority: any = { 'red': 1, 'yellow': 2, 'green': 3 };
+    if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
+      return -1;
+    }
+    if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
+      return 1;
+    }
 
+    // If triage results are the same, then sort by arrival time (earliest first)
+
+    //@ts-ignore
+    return new Date(p1.arrival_time) - new Date(p2.arrival_time);
   }).map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) }));
 
 
@@ -30,9 +39,9 @@ export const ClientWaitingForAssessment = () => {
     { field: "aetc_visit_number", headerName: "Visit No", },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "patient_arrival_time", headerName: "Arrival Time", flex: 1 },
+    { field: "patient_arrival_time", headerName: "Arrival Time", },
     { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
-    { field: "gender", headerName: "Gender", flex: 1 },
+    { field: "gender", headerName: "Gender", },
     {
       field: "waiting", headerName: "WaitingTime", flex: 1, renderCell: (cell: any) => {
         return <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} patientId={cell.row.id} />
@@ -44,9 +53,14 @@ export const ClientWaitingForAssessment = () => {
       }
     },
     {
+      field: "triage", headerName: "Triaged By", flex: 1, renderCell: (cell: any) => {
+        return <DisplayEncounterCreator encounterType={encounters.VITALS} patientId={cell.row.id} />
+      }
+    },
+    {
       field: "triage_result",
       headerName: "Triage Category",
-      flex: 1,
+
       renderCell: (cell: any) => {
         return (
           <WrapperBox
@@ -101,21 +115,6 @@ export const ClientWaitingForAssessment = () => {
 
 
 function CalculateAggregateTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
-  // const { data, isLoading } = getPatientsEncounters(patientId);
-
-
-  // const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
-
-  // if (isLoading) {
-  //   return <Image src={"/loader.svg"} width={20} height={20} alt="loader" />
-  // }
-
-
-  // if (!encounter) {
-  //   return "No encounter data available";
-  // }
-
-  // const encounterDatetime = encounter.encounter_datetime;
 
   const currentTime: any = getCATTime()
 
@@ -136,9 +135,8 @@ function CalculateAggregateTime({ patientId, arrival_time }: { patientId: string
     }
   }
 
-  return (
-    <MainTypography>{aggTime}</MainTypography>
-  )
+  return aggTime
+
 }
 
 function CalculateWaitingTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {

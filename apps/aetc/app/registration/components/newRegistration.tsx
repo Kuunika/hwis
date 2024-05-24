@@ -378,7 +378,7 @@ export const NewRegistrationFlow = () => {
 
     if (!patient) return '';
 
-    const identifiers = patient.patient.identifiers.find(ide => ide.identifier_type.name == 'National id')
+    const identifiers = patient.patient.identifiers.find(ide => ide?.identifier_type?.name == 'National id')
 
     if (!identifiers) return '';
 

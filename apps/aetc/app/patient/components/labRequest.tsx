@@ -2,7 +2,7 @@ import { useEffect, useState, ChangeEvent } from "react";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
+import { FormikInit, MainButton, MainTypography, RadioGroupInput, SearchComboBox, WrapperBox } from "shared-ui/src";
 
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -13,12 +13,13 @@ import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import { LabRequest, TestType } from "@/interfaces";
-import { createOrder, getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
+import { createOrder, getConceptSetMembers, getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
 import { useParameters } from "@/hooks";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import { OverlayLoader } from "@/components/backdrop";
 import { BarcodeComponent } from "@/components/barcode";
+import * as Yup from 'yup';
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -44,6 +45,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 
 
   const handleClose = () => {
+    onClose("");
     console.log({ request })
     console.log("closed");
   };
@@ -69,7 +71,6 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 
   const handleSendLab = () => {
     const patient = patients?.find(p => p.uuid == params.id)
-
 
     const order = {
       "orders": [
@@ -98,7 +99,6 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 
   const handleTestSelect = (tests: Array<number>) => {
 
-
     const mappedTests = tests.map(test => {
 
       return { concept: labTests?.find(lab => lab.concept_id == test)?.names[0]?.uuid }
@@ -108,12 +108,17 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
   }
 
 
+
+  // return 
+
+
   return (
     <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
       <OverlayLoader open={isPending || isRefetching} />
       <DialogTitle>Lab Order</DialogTitle>
       <DialogContent>
-        <WrapperBox display={"flex"}>
+        <LabForm onClose={() => onClose('')} />
+        {/* <WrapperBox display={"flex"}>
           <WrapperBox
             sx={{ width: { xs: "40%", lg: "30%" }, borderRight: "solid #e0e0e0 1px", px: "1ch" }}
           >
@@ -192,10 +197,200 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
               </WrapperBox>
             </WrapperBox>
           </WrapperBox>
-        </WrapperBox>
+        </WrapperBox> */}
       </DialogContent>
     </Dialog>
   );
+}
+
+
+const initialValues = {
+  testType: "",
+  sampleType: ""
+}
+
+
+const validationSchema = Yup.object().shape({
+  testType: Yup.string().required().label("Test Type"),
+  sampleType: Yup.string().required().label("Sample Type"),
+})
+
+const LabForm = ({ onClose }: { onClose: () => void }) => {
+  const { data: specimenTypes, isLoading, isSuccess, refetch: refetchLabSpecimen, isRefetching: refetchingLabSpecimen } = getLabSpecimenTypes()
+  const [sampleName, setSampleName] = useState('')
+  const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded, refetch, isRefetching } = getLabTestTypes(sampleName);
+  const [request, setRequest] = useState<any>({})
+  const [testType, setTestType] = useState('');
+  const [sampleId, setSampleId] = useState(''); // to fetch bedside test samples
+  const [bedsideTestId, setBedsideTestId] = useState(''); // to fetch bedside tests for a sample
+  const { data: bedsideSampleTypes, isLoading: bedsideLoading, refetch: reloadSamples, isRefetching: reloading } = getConceptSetMembers(sampleId);
+  const { data: bedsideTests, isLoading: bedsideTestsLoading, refetch: reloadBedSideTests, isRefetching: reloadingBedsideTest } = getConceptSetMembers(bedsideTestId);
+
+
+  const [samples, setSamples] = useState<Array<any>>([]);
+  const [tests, setTests] = useState<Array<any>>([])
+
+  const { params } = useParameters()
+  const { data: patients } = getPatientsWaitingForAssessment();
+  const { mutate, isPending, isSuccess: orderCreated } = createOrder()
+
+  useEffect(() => {
+    refetch()
+  }, [sampleName])
+
+
+  //TODO: this is a temporary implementation for querying beside samples and tests as waiting for proper implementation of the api
+  useEffect(() => {
+    if (testType == 'bedside') {
+      setSampleId('beed8ce9-fd0f-4606-9911-dbb0ef9df055') // hard coded bedside
+      setSamples(transformedBedsideSamples)
+    } else {
+      refetchLabSpecimen()
+    }
+  }, [testType])
+
+  // load bedside samples
+  useEffect(() => {
+    reloadSamples()
+  }, [sampleId])
+
+  const transformedBedsideSamples = () => {
+    if (!bedsideSampleTypes) return []
+    return bedsideSampleTypes.map(c => ({
+      ...c,
+      names: c.names,
+      name: c.names[0].name
+    }))
+  }
+
+  const transformBedsideTests = () => {
+
+    if (!bedsideTests) return [];
+    return bedsideTests.map(bed => {
+      return {
+        ...bed,
+        name: bed.names[0].name,
+      }
+    })
+  }
+
+
+  // transform bedside samples
+  useEffect(() => {
+    if (!bedsideSampleTypes) return
+    const transformed = transformedBedsideSamples()
+
+    setSamples(transformed);
+  }, [bedsideSampleTypes])
+
+  useEffect(() => {
+
+    if (!specimenTypes) return;
+
+    setSamples(specimenTypes)
+
+  }, [specimenTypes, refetchingLabSpecimen])
+
+
+  useEffect(() => {
+
+    reloadBedSideTests()
+
+  }, [bedsideTestId])
+
+
+  useEffect(() => {
+    const transform = transformBedsideTests()
+    setTests(transform)
+
+  }, [bedsideTests])
+
+
+  useEffect(() => {
+
+    if (!labTests) return;
+
+    setTests(labTests)
+
+  }, [labTests])
+
+  // ------------------------------
+
+
+  const handleSampleChange = (uuid: string) => {
+    const specimen = samples?.find(specimen => specimen.names[0].uuid == uuid);
+
+    if (testType == 'bedside') {
+
+      setBedsideTestId(uuid)
+      setTests(transformBedsideTests());
+      return;
+    }
+
+    if (!specimen) return;
+
+    setSampleName(specimen.name)
+  }
+
+  const handleLabSend = (values: any) => {
+    const patient = patients?.find(p => p.uuid == params.id);
+
+    const mappedTests = values?.tests.map((test: any) => {
+      return { concept: tests?.find(lab => lab.concept_id == test.id)?.names[0]?.uuid }
+    });
+
+    const order = {
+      "orders": [
+        {
+          "patient": params.id,
+          "visit": patient?.visit_uuid,
+          "tests": mappedTests,
+          // "reason_for_test": request.sampleType,
+          "reason_for_test": 'b998cdac-8d80-11d8-abbb-0024217bb78e',
+          "target_lab": "Blantyre Dream Project Clinic",
+          "date": getDateTime(),
+          "requesting_clinician": "admin",
+          "specimen": {
+            "concept": values.sampleType
+          }
+        }
+      ]
+    }
+
+    mutate(order);
+    onClose()
+  }
+  return <FormikInit initialValues={initialValues} onSubmit={handleLabSend} validationSchema={validationSchema}>
+    <OverlayLoader open={isPending || isLoading || isRefetching} />
+
+    <WrapperBox sx={{ display: "flex" }}>
+      <RadioGroupInput getValue={(test) => {
+        setTestType(test)
+      }
+      } name="testType" options={[
+        { value: "bedside", label: "Bed Side" },
+        { value: "laboratory", label: "Laboratory" }]} label="Test Type" />
+
+      <RadioGroupInput getValue={(test) => {
+        setTestType(test)
+      }
+      } name="emergency" options={[
+        { value: "Yes", label: "Yes" },
+        { value: "No", label: "No" }]} label="Emergency" />
+    </WrapperBox>
+
+
+    <SearchComboBox getValue={handleSampleChange} multiple={false} label="Sample Type" name="sampleType" options={samples ? samples.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []} />
+    <RadioGroupInput getValue={(test) => {
+      setTestType(test)
+    }
+    } name="urgentSample" options={[
+      { value: "Yes", label: "Yes" },
+      { value: "No", label: "No" }]} label="Urgent Sample" />
+
+    <SearchComboBox label="Tests" name="tests" options={tests ? tests.map(d => ({ id: d.concept_id, label: d.name })) : []} />
+  </FormikInit>
+
 }
 
 // registration workflow, patient lists(screening, assessments, triage), dde search workflow,

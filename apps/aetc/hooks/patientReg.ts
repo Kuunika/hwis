@@ -56,7 +56,11 @@ export const patchPatient = () => {
 }
 
 export const registerPatient = () => {
+
   const addData = (patientData: any) => {
+
+    const getAddress = (address: any) => address !== "" ? address : "N/A";
+
     const mappedPatient = {
       identifiers: [
         {
@@ -76,20 +80,20 @@ export const registerPatient = () => {
       birthdate: patientData.birthDate,
       addresses: [
         {
-          address1: patientData.homeDistrict,
-          address2: patientData.homeVillage,
-          address3: patientData.currentDistrict,
-          stateProvince: patientData.currentTraditionalAuthority,
-          countyDistrict: patientData.homeTraditionalAuthority,
-          cityVillage: patientData.homeTraditionalAuthority,
-          country: patientData.nationality,
+          address1: getAddress(patientData.homeDistrict),
+          address2: getAddress(patientData.homeVillage),
+          address3: getAddress(patientData.currentDistrict),
+          stateProvince: getAddress(patientData.currentTraditionalAuthority),
+          countyDistrict: getAddress(patientData.homeTraditionalAuthority),
+          cityVillage: getAddress(patientData.homeTraditionalAuthority),
+          country: getAddress(patientData.nationality),
           preferred: true,
         },
         {
-          address1: patientData.currentVillage,
-          address2: patientData.closeLandMark,
-          countryDistrict: patientData.currentDistrict,
-          cityVillage: patientData.currentTraditionalAuthority,
+          address1: getAddress(patientData.currentVillage),
+          address2: getAddress(patientData.closeLandMark),
+          countryDistrict: getAddress(patientData.currentDistrict),
+          cityVillage: getAddress(patientData.currentTraditionalAuthority),
           preferred: false,
         },
       ],
@@ -243,7 +247,7 @@ export const getPatientRelationships = (patientId: string) => {
 
 export const getPatientRelationshipTypes = () => {
   const getAll = () =>
-    getRelationshipTypes().then((response) => response.data);
+    getRelationshipTypes().then((response) => response?.data);
 
   return useQuery({
     queryKey: ["patient_relationship_types"],

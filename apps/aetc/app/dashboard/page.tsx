@@ -3,7 +3,7 @@ import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
 import { useNavigation } from "@/hooks";
 
 
-import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings } from "react-icons/fc";
+import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings, FcAreaChart } from "react-icons/fc";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
@@ -90,6 +90,13 @@ function Home() {
                             icon={<FcSettings />}
                             link="/config"
                             title="Config"
+                        />
+                    </AuthGuardComp>
+                    <AuthGuardComp roles={[roles.ADMIN]}>
+                        <Card
+                            icon={<FcAreaChart />}
+                            link="/reports"
+                            title="Reports"
                         />
                     </AuthGuardComp>
 

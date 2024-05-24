@@ -34,6 +34,7 @@ export const ReferralForm: FC<Props> = ({
   const { params } = useParameters();
   const { data: encounterList, isLoading: loadingEncounters } = getPatientsEncounters(params?.id as string);
   const [isAvailable, setIsAvailable] = useState('yes')
+  const [selectedValue, setSelectedValue] = useState('')
 
 
 
@@ -66,6 +67,7 @@ export const ReferralForm: FC<Props> = ({
               label="Referral Medical Facility"
               name={concepts.REFERRED_FROM}
               multiple={false}
+              getValue={setSelectedValue}
               disabled={isAvailable == 'no'}
               options={
                 data
@@ -77,7 +79,7 @@ export const ReferralForm: FC<Props> = ({
               }
             />
           )}
-          <RadioGroupInput
+          {selectedValue == '' && <RadioGroupInput
             name={concepts.ADDITIONAL_NOTES}
             getValue={(value: any) => { setIsAvailable(value) }}
             label={"Is the facility you are looking for available?"}
@@ -85,7 +87,7 @@ export const ReferralForm: FC<Props> = ({
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" },
             ]}
-          />
+          />}
 
 
           {isAvailable == "no" && <TextInputField name={concepts.REFERRED_FROM} label="Other Facility" id={concepts.REFERRED_FROM} />}

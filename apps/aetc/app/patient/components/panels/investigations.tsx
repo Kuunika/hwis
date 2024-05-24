@@ -1,7 +1,7 @@
 import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
 import { FaPlus } from "react-icons/fa";
 import { Panel } from ".";
-import { useNavigation } from "@/hooks";
+import { checkPatientIfOnWaitingAssessment, useNavigation, useParameters } from "@/hooks";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { useState, useEffect } from "react";
 
@@ -14,8 +14,10 @@ import { LabRequest } from "@/interfaces";
 
 export const Investigations = () => {
   const { navigateTo } = useNavigation();
+  const { params } = useParameters()
   const [open, setOpen] = useState(false);
-  const [labRequests, setLabRequests] = useState<LabRequest[]>([])
+  const [labRequests, setLabRequests] = useState<LabRequest[]>([]);
+  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string)
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,6 +43,7 @@ export const Investigations = () => {
     >
       <WrapperBox>
         <MainButton
+          disabled={!isOnList}
           sx={{ borderRadius: "1px" }}
           title={"Lab Order"}
           onClick={() => setOpen(true)}

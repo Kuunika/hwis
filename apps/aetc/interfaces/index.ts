@@ -121,6 +121,7 @@ export interface Encounter {
   visit_id: number;
   uuid: string;
   obs: Obs[];
+  created_by: string
 }
 
 export interface Visit {
@@ -175,8 +176,8 @@ export type TriageResult = "" | "yellow" | "red" | "green";
 
 
 export type DDESearch = {
-  locals: Person[];
-  remotes: Person[];
+  locals: Person[] | Patient[];
+  remotes: Person[] | Patient[];
 }
 
 export type DDEScore = {
@@ -296,4 +297,13 @@ export type RelationshipType = {
   date_retired: null | string; // Assuming the date format is the same as `date_created` if not null.
   retire_reason: null | string;
 
+}
+
+
+
+export interface ActiveVisit {
+  visit_id: number;
+  patient_id: number;
+  uuid: string;
+  visit_type_id: number
 }

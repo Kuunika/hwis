@@ -6,13 +6,18 @@ import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { BaseTable, MainButton, MainTypography } from "shared-ui/src";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
+import { DisplayEncounterCreator } from "@/components";
+import { encounters } from "@/constants";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState('')
   const { data: patients, isLoading, isRefetching } = getPatientsWaitingForTriage();
   const { navigateTo } = useNavigation();
 
-  const rows = patients?.map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
+  const rows = patients?.sort((p1, p2) => {
+    //@ts-ignore
+    return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+  }).map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) })).filter(p => p.id != deleted);
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number" },
@@ -27,6 +32,11 @@ export const ClientWaitingForTriage = () => {
     {
       field: "aggreg", headerName: "Aggregate", flex: 1, renderCell: (cell: any) => {
         return <CalculateAggregateTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
+      }
+    },
+    {
+      field: "registered", headerName: "Registered By", flex: 1, renderCell: (cell: any) => {
+        return <DisplayEncounterCreator encounterType={encounters.SOCIAL_HISTORY} patientId={cell.row.id} />
       }
     },
 

@@ -179,10 +179,16 @@ const schema = Yup.object().shape({
     .required()
     .label(form.currentDistrict.label),
   [form.currentTraditionalAuthority.name]: Yup.string()
-    .required()
+    .when(form.nationality.name, {
+      is: (value: string) => value == 'Malawian',
+      then: () => Yup.string().required()
+    })
     .label(form.currentTraditionalAuthority.label),
   [form.currentVillage.name]: Yup.string()
-    .required()
+    .when(form.nationality.name, {
+      is: (value: string) => value == 'Malawian',
+      then: () => Yup.string().required()
+    })
     .label(form.currentDistrict.label),
   [form.closeLandMark.name]: Yup.string()
     .label(form.closeLandMark.label),
@@ -199,14 +205,19 @@ const schema = Yup.object().shape({
     form.nextOfKinRelationship.label
   ),
 
-  [form.homeDistrict.name]: Yup.string()
-    .required()
+  [form.homeDistrict.name]: Yup.string().required()
     .label(form.homeDistrict.label),
   [form.homeTraditionalAuthority.name]: Yup.string()
-    .required()
+    .when(form.nationality.name, {
+      is: (value: string) => value == 'Malawian',
+      then: () => Yup.string().required()
+    })
     .label(form.homeTraditionalAuthority.label),
   [form.homeVillage.name]: Yup.string()
-    .required()
+    .when(form.nationality.name, {
+      is: (value: string) => value == 'Malawian',
+      then: () => Yup.string().required()
+    })
     .label(form.homeVillage.label),
 
   [form.guardianPhoneNumber.name]: Yup.string()
@@ -293,6 +304,7 @@ export const DemographicsForm: FC<Prop> = ({
   const [fieldFunction, setFieldFunction] = useState<any>();
   const [_init, setInit] = useState({})
   const [nextOfKinInitialValues, setNextOfKinInitialValue] = useState({})
+  const [nationality, setNationality] = useState('')
 
   const { params } = useParameters();
   const { refetch, isRefetching, data: patientRelationships, isSuccess } = getPatientRelationships(params.id as string)
@@ -545,6 +557,9 @@ export const DemographicsForm: FC<Prop> = ({
           <SearchComboBox
             name={form.nationality.name}
             label={form.nationality.label}
+            getValue={(value) => {
+              setNationality(value)
+            }}
             multiple={false}
             options={countries.map((c) => ({
               id: c.nationality,
@@ -568,6 +583,7 @@ export const DemographicsForm: FC<Prop> = ({
             })) : []}
           />
           <SearchComboBox
+            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
             name={form.homeTraditionalAuthority.name}
             label={form.homeTraditionalAuthority.label}
             multiple={false}
@@ -584,6 +600,7 @@ export const DemographicsForm: FC<Prop> = ({
             })) : []}
           />
           <SearchComboBox
+            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
             name={form.homeVillage.name}
             label={form.homeVillage.label}
             multiple={false}
@@ -598,6 +615,7 @@ export const DemographicsForm: FC<Prop> = ({
           <RegistrationCardTitle>Current Location</RegistrationCardTitle>
           <WrapperBox>
             <FormControlLabel
+
               control={<Checkbox checked={checked} onChange={handleChecked} />}
               label="same as home location"
             />
@@ -618,6 +636,7 @@ export const DemographicsForm: FC<Prop> = ({
             })) : []}
           />
           <SearchComboBox
+            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
             name={form.currentTraditionalAuthority.name}
             label={form.currentTraditionalAuthority.label}
             getValue={(value) => {
@@ -634,6 +653,7 @@ export const DemographicsForm: FC<Prop> = ({
           />
 
           <SearchComboBox
+            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
             name={form.currentVillage.name}
             label={form.currentVillage.label}
             // disabled={checked}

@@ -16,7 +16,7 @@ type Props = {
   width?: string;
   sx?: SxProps;
   inputSx?: SxProps;
-  getValue?: (value: string) => void;
+  getValue?: (value: any) => void;
   disabled?: boolean;
   multiple?: boolean;
   size?: "small" | "medium";
@@ -41,11 +41,22 @@ export const SearchComboBox: FC<Props> = ({
     useFormikField(name);
 
   const mappedOptions = options.map(op => {
+
     return {
       value: op.id,
       label: op.label
     }
-  })
+  });
+
+  const mapObjectsToArray = (objects: any[]) => {
+    if (Array.isArray(objects)) {
+      return objects.map(obj => ({
+        value: obj.name,
+        label: obj.name
+      }));
+    };
+
+  };
 
   const handleChange = (values: any) => {
     const inputValue = multiple ? values.map((v: any) => ({
@@ -66,7 +77,7 @@ export const SearchComboBox: FC<Props> = ({
   } : {}
 
 
-  return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5, }}>
+  return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5 }}>
     <MainTypography color={"#666666"} variant="subtitle2">{label}</MainTypography>
     <Select
       styles={{
@@ -74,13 +85,14 @@ export const SearchComboBox: FC<Props> = ({
         control: (baseStyles, state) => ({
           ...baseStyles,
           borderColor: hasError ? "red" : "#B3B3B3",
-          ...padding
+          ...padding,
         }),
+
       }}
       {...(multiple ? null : { value: mappedOptions.filter(op => op.value == value) })}
       isDisabled={disabled}
       //@ts-ignore
-      defaultValue={mappedOptions.filter(op => op.value == initialValues[name])}
+      defaultValue={multiple ? mapObjectsToArray(initialValues[name]) : mappedOptions.filter(op => op.value == initialValues[name])}
       //@ts-ignore
       theme={theme => ({
         ...theme,
