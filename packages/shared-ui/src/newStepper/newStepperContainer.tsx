@@ -65,7 +65,6 @@ export function NewStepperContainer({
   active,
   steps,
   title,
-  setActive,
   onClickAccordion,
   onBack,
 }: IProps) {
