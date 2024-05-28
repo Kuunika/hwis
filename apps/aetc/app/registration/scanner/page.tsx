@@ -19,7 +19,7 @@ export default function Scanner() {
         <MainTypography
           variant="h1"
           sx={{
-            //fontFamily: "Inter",
+            fontFamily: "Inter",
             fontSize: "24px",
             fontWeight: 700,
             lineHeight: "29px",

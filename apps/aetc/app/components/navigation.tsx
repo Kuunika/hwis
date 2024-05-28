@@ -11,7 +11,7 @@ export const Navigation = ({
 }) => {
   const { navigateTo } = useNavigation();
   const fontStyles = {
-    //fontFamily: "Inter",
+    fontFamily: "Inter",
     fontSize: "14px",
     fontWeight: 400,
     lineHeight: "21px",

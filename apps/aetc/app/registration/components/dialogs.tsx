@@ -72,7 +72,7 @@ export const PatientNationalIdCheck = (patientId: any) => {
         <MainTypography
           variant="h1"
           sx={{
-            //fontFamily: "Inter",
+            fontFamily: "Inter",
             fontSize: "24px",
             fontWeight: 700,
             lineHeight: "29px",
@@ -108,7 +108,7 @@ export const LabRequest = (patientId: any) => {
         <MainTypography
           variant="h1"
           sx={{
-            //fontFamily: "Inter",
+            fontFamily: "Inter",
             fontSize: "24px",
             fontWeight: 700,
             lineHeight: "29px",

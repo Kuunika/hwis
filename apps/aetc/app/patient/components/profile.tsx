@@ -1,19 +1,19 @@
 import {
-  MainButton,
-  MainGrid,
-  MainPaper,
-  MainTypography,
-  WrapperBox,
+    MainButton,
+    MainGrid,
+    MainPaper,
+    MainTypography,
+    WrapperBox,
 } from "shared-ui/src";
 import { ConsultationCard, PersonalDetailsCard, VisitsBar } from ".";
 import {
-  BasicAccordion,
-  ClinicalNotes,
-  Investigations,
-  Medications,
-  Results,
-  aetcClecking,
-  templateForms,
+    BasicAccordion,
+    ClinicalNotes,
+    Investigations,
+    Medications,
+    Results,
+    aetcClecking,
+    templateForms,
 } from "./panels";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -164,7 +164,7 @@ const ActionMenu = () => {
                   {icon && <Image src={icon} alt="AETC Form icon" />}
                   <MainTypography
                     sx={{
-                      //fontFamily: "Inter",
+                      fontFamily: "Inter",
                       fontSize: "14px",
                       fontWeight: 500,
                       lineHeight: "17px",

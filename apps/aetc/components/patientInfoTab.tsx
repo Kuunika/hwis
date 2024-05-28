@@ -33,7 +33,7 @@ const LabelValue = ({ label, value, sx }: { label: string; value: string, sx?: a
     <WrapperBox sx={{ display: "flex", alignItems: "center", ...sx }}>
       <MainTypography
         sx={{
-          //fontFamily: "Inter",
+          fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 400,
           lineHeight: "21px",
@@ -46,7 +46,7 @@ const LabelValue = ({ label, value, sx }: { label: string; value: string, sx?: a
       </MainTypography>
       <MainTypography
         sx={{
-          //fontFamily: "Inter",
+          fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 500,
           lineHeight: "17px",

@@ -13,7 +13,7 @@ export const RegistrationMainHeader = ({
     <MainTypography
       id={id}
       sx={{
-        //fontFamily: "Inter",
+        fontFamily: "Inter",
         fontSize: 24,
         fontWeight: 700,
         lineHeight: "29px",
@@ -35,7 +35,7 @@ export const RegistrationDescriptionText = ({
     <MainTypography
       alignSelf={"center"}
       sx={{
-        //fontFamily: "Inter",
+        fontFamily: "Inter",
         fontSize: 14,
         fontWeight: 400,
         lineHeight: "21px",
@@ -84,7 +84,7 @@ export const RegistrationCardTitle = ({
   return (
     <MainTypography
       sx={{
-        //fontFamily: "Inter",
+        fontFamily: "Inter",
         fontSize: "16px",
         fontWeight: 600,
         lineHeight: "24px",

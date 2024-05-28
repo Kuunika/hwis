@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import {
-  MainPaper,
-  MainTypography,
-  WrapperBox
+    MainPaper,
+    MainTypography,
+    WrapperBox
 } from "shared-ui/src";
 
 type Props = {
@@ -26,7 +26,7 @@ export const Panel = ({ children, title, icon }: Props) => {
       <WrapperBox display={"flex"} alignItems={"center"}>
         <MainTypography
           sx={{
-            //fontFamily: "Inter",
+            fontFamily: "Inter",
             fontSize: "16px",
             fontWeight: 600,
             lineHeight: "24px",

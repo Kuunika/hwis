@@ -2,11 +2,11 @@
 
 import { useContext, useEffect, useState } from "react";
 import {
-  MainButton,
-  MainPaper,
-  MainTypography,
-  WrapperBox,
-  defaultTheme
+    MainButton,
+    MainPaper,
+    MainTypography,
+    WrapperBox,
+    defaultTheme
 } from "shared-ui/src";
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
@@ -15,8 +15,8 @@ import { useNavigation, useParameters } from "@/hooks";
 import { FaUser } from "react-icons/fa6";
 
 import {
-  SearchRegistrationContext,
-  SearchRegistrationContextType,
+    SearchRegistrationContext,
+    SearchRegistrationContextType,
 } from "@/contexts";
 import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
@@ -167,7 +167,7 @@ export const AddPatientButton = () => {
       <Image src={plus} alt="plus" />
       <MainTypography
         sx={{
-          //fontFamily: "Inter",
+          fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 500,
           lineHeight: "17px",

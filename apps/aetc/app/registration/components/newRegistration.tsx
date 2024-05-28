@@ -2,26 +2,26 @@
 import { useState, ReactNode, useEffect, useRef, useContext } from "react";
 import { Grid } from "@mui/material";
 import {
-  MainButton,
-  MainGrid,
-  MainTypography,
-  WrapperBox,
+    MainButton,
+    MainGrid,
+    MainTypography,
+    WrapperBox,
 } from "shared-ui/src";
 import {
-  DemographicsForm,
-  FinancingForm,
-  ReferralForm,
-  ShowFormErrors,
-  SocialHistoryForm,
+    DemographicsForm,
+    FinancingForm,
+    ReferralForm,
+    ShowFormErrors,
+    SocialHistoryForm,
 } from "../components";
 import { useNavigation, useParameters } from "@/hooks";
 
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 import { getObservations } from "@/helpers";
 import {
-  getPatientsWaitingForRegistrations,
-  registerPatient,
-  searchByDemographics,
+    getPatientsWaitingForRegistrations,
+    registerPatient,
+    searchByDemographics,
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
 import { addEncounter } from "@/hooks/encounter";
@@ -676,7 +676,7 @@ const NavBox = ({
     >
       <MainTypography
         sx={{
-          //fontFamily: "Inter",
+          fontFamily: "Inter",
           fontSize: "14px",
           fontWeight: 400,
           letterSpacing: "0em",
