@@ -105,12 +105,12 @@ export const SearchResults = ({
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {
           searchResults?.locals?.map(patient => {
-            return <ResultBox setOpen={(person: Person) => selectPatient(person)} type="Local" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person)} type="Local" key={patient?.uuid} person={patient} />
           })
         }
         {
           searchResults?.remotes?.map(patient => {
-            return <ResultBox setOpen={(person: Person) => selectPatient(person)} type="Remote" key={patient.uuid} person={patient} />
+            return <ResultBox setOpen={(person: Person) => selectPatient(person)} type="Remote" key={patient?.uuid} person={patient} />
           })
         }
       </WrapperBox>
@@ -123,7 +123,11 @@ export const SearchResults = ({
 
 export const ResultBox = ({ person, type, setOpen }: { person: any, type: string, setOpen: (person: any) => void }) => {
 
-  const identifier = person.identifiers.find((i: any) => i?.identifier_type?.name == 'National id');
+  if (!person) {
+    return <></>
+  }
+
+  const identifier = person?.identifiers?.find((i: any) => i?.identifier_type?.name == 'National id');
 
   return <MainPaper onClick={() => setOpen(person)} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
     <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>

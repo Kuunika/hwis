@@ -123,6 +123,12 @@ export const DisplayRelationship = ({ relationships, loading }: { relationships:
 
     return <WrapperBox sx={{ display: "flex", width: mappedRelationships.length == 1 ? "50%" : "100%" }}>
         <EditRelationship initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
+
+
+        {/* add guardian */}
+        <EditRelationship initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
+        {/* end add guardian */}
+
         {mappedRelationships.map(relationship => {
             return <ContainerCard >
                 <MainTypography variant="h5">{relationship.relationship?.toLowerCase() == 'guardian' ? "Guardian Information" : "Next Of Kin Information"}</MainTypography>
@@ -135,9 +141,12 @@ export const DisplayRelationship = ({ relationships, loading }: { relationships:
                 }} />
             </ContainerCard>
         })}
+        {
+            mappedRelationships.length == 1 &&
+            <MainButton sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => { }} />
+        }
     </WrapperBox>
 }
-
 const ContainerCard = ({ children }: { children: ReactNode }) => {
     return <MainPaper sx={{ p: "1ch", flex: 1, mx: "0.5ch" }} >{children}</MainPaper>
 }
@@ -168,6 +177,6 @@ const FinancingDialog = ({ open, onClose, initialValues, onSubmit }: { open: boo
 
 const EditRelationship = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
     return <GenericDialog maxWidth="sm" title="Edit Relationships" open={open} onClose={onClose}>
-        <EditRelationshipForm initialValues={initialValues} onSubmit={(values) => { }} />
+        <EditRelationshipForm initialValues={initialValues} onSubmit={values => console.log({ values })} />
     </GenericDialog>
 }

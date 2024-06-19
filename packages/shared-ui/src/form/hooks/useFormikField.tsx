@@ -13,7 +13,7 @@ export const useFormikField = (name: string) => {
     setFieldError
   } = useFormikContext();
 
-  // console.log({ errors });
+
   // console.log({ values });
   //@ts-ignore
   const value = values[name];

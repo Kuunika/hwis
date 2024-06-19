@@ -38,10 +38,10 @@ export default function AuthGuard(Component: any, roles: Array<string>) {
                 }
             }
         }, [])
+
+            console.log(roles)
+             console.log(getRoles())
         const isAuthorized = checkRole(roles, getRoles());
-
-
-
 
         if (show) {
 
