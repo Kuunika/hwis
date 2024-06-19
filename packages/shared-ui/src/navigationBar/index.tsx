@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -6,23 +5,22 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { FaRegBell, FaCircleUser } from "react-icons/fa6";
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { MainTypography } from "..";
+
 
 export function NavigationBar({
   search,
   onTitleClick,
   handleLogout,
-  loggedIn
-
+  loggedIn,
 }: {
   search?: any;
   onTitleClick: () => void;
   handleLogout?: () => void;
-  loggedIn?: boolean
+  loggedIn?: boolean;
 }) {
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -35,9 +33,8 @@ export function NavigationBar({
   const logout = () => {
     handleClose();
 
-    if (handleLogout)
-      handleLogout();
-  }
+    if (handleLogout) handleLogout();
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -54,7 +51,12 @@ export function NavigationBar({
             color="inherit"
             aria-label="open drawer"
           >
-            <img height={25} width={30} src="/Flag_of_Malawi.svg" alt="malawiflag" />
+            <img
+              height={25}
+              width={30}
+              src="/Flag_of_Malawi.svg"
+              alt="malawiflag"
+            />
             {/* <FaAlignJustify /> */}
           </IconButton>
           <Typography
@@ -70,26 +72,31 @@ export function NavigationBar({
             MAHIS AETC
           </Typography>
           {search}
-          {loggedIn &&
-            (<><MainTypography sx={{ mx: "1ch" }} variant="h5">
-              <FaRegBell />
-            </MainTypography>
+          {loggedIn && (
+            <>
+              <MainTypography sx={{ mx: "1ch" }} variant="h5">
+                <FaRegBell />
+              </MainTypography>
               <MainTypography sx={{ cursor: "pointer" }} variant="h5">
-                <FaCircleUser onClick={handleClick} />
+                <IconButton sx={{color:"#fff"}} onClick={handleClick}>
+                  <FaCircleUser />
+                </IconButton>
                 <Menu
                   id="basic-menu"
                   anchorEl={anchorEl}
                   open={open}
                   onClose={handleClose}
                   MenuListProps={{
-                    'aria-labelledby': 'basic-button',
+                    "aria-labelledby": "basic-button",
                   }}
                 >
                   <MenuItem onClick={handleClose}>Profile</MenuItem>
                   <MenuItem onClick={handleClose}>My account</MenuItem>
                   <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
-              </MainTypography></>)}
+              </MainTypography>
+            </>
+          )}
         </Toolbar>
       </AppBar>
     </Box>
