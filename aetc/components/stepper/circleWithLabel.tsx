@@ -1,0 +1,47 @@
+import { Box, Typography } from "@mui/material";
+import { FC } from "react";
+import { stepperStyles } from "./stepper.styles";
+
+type CircleProp = {
+  label: string | number;
+  active: boolean;
+};
+
+export const Circle: FC<CircleProp> = ({ label, active }) => {
+  const styles = {
+    ...(stepperStyles.circle ? stepperStyles.circle : {}),
+    ...(active ? stepperStyles.active : {}),
+  };
+
+  return (
+    <Box sx={styles}>
+      <Typography variant="h6">{label}</Typography>
+    </Box>
+  );
+};
+
+type CircleLabelProp = {
+  circleLabel: string | number;
+  active: boolean;
+  label: string;
+};
+
+export const CircleWithLabel: FC<CircleLabelProp> = ({
+  circleLabel,
+  active,
+  label,
+}) => {
+  return (
+    <Box sx={stepperStyles.circleWithLabel}>
+      <Circle label={circleLabel} active={active} />
+
+      <Typography
+        sx={{ display: { sm: active ? "block" : "none", md: "block" } }}
+        variant="h6"
+        fontWeight={active ? "700" : "200"}
+      >
+        {label}
+      </Typography>
+    </Box>
+  );
+};
