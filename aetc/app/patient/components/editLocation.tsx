@@ -2,7 +2,7 @@ import { LocationType } from "@/app/registration/components";
 import { countries } from "@/constants/contries";
 import { LocationContext, LocationContextType } from "@/contexts/location";
 import { useContext, useEffect, useState } from "react";
-import { FormikInit, SearchComboBox } from "shared-ui/src"
+import { FormikInit, SearchComboBox } from "@/components"
 import * as Yup from "yup";
 
 type Props = {

@@ -1,5 +1,5 @@
 import { getRoles } from "@/hooks/role";
-import { FormikInit, MainButton, SearchComboBox, TextInputField, WrapperBox } from "shared-ui/src";
+import { FormikInit, MainButton, SearchComboBox, TextInputField, WrapperBox } from "@/components";
 import * as yup from "yup";
 
 type props = {

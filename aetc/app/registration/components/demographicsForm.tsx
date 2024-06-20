@@ -520,8 +520,6 @@ export const DemographicsForm: FC<Prop> = ({
 
           </>}
 
-
-
           <FormDatePicker
             sx={{
               display: (formValues[form.birthDateEstimated.name] == false || formValues[form.birthDateEstimated.name] == 'false') ? 'flex' : 'none',
@@ -531,8 +529,7 @@ export const DemographicsForm: FC<Prop> = ({
             width={"100%"}
             label={form.dob.label}
             name={form.dob.name}
-            getValue={(value: any, validateFunc: any) => {
-            }}
+    
           />
 
 

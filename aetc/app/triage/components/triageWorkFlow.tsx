@@ -379,7 +379,7 @@ export default function TriageWorkFlow() {
           }}
           title="Triage"
           steps={steps}
-          onClickAccordion={handleClickAccordion}
+          // onClickAccordion={handleClickAccordion}
           active={activeStep}
           onBack={() => navigateBack()}
         >

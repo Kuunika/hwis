@@ -1,11 +1,10 @@
 
 import { getPatientRelationshipTypes } from "@/hooks/patientReg";
-import { WrapperBox, MainTypography, MainPaper, MainButton } from "shared-ui/src";
+import { WrapperBox, MainTypography, MainPaper, MainButton,GenericDialog } from "@/components"
 import { ReactNode, useEffect, useState } from "react"
 import { concepts } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { Encounter, Relationship } from "@/interfaces";
-import { GenericDialog } from "@/components";
 import { EditFinancingForm, EditRelationshipForm, EditSocialHistory } from "../../../components";
 import CircularProgress from '@mui/material/CircularProgress';
 

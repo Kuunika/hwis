@@ -17,7 +17,7 @@ type Props = {
   width?: string;
   sx?: SxProps;
   inputSx?: SxProps;
-  getValue?: (value: string) => void;
+  getValue?: (value: any) => void;
   disabled?: boolean;
   multiple?: boolean;
   size?: "small" | "medium";

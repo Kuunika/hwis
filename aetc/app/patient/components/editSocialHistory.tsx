@@ -2,7 +2,7 @@ import { TrackFormikContext } from "@/app/registration/components";
 import { RegistrationCard, RegistrationCardTitle } from "@/app/registration/components/common";
 import { concepts } from "@/constants";
 import { useState } from "react";
-import { FormikInit, RadioGroupInput, SelectInputField, TextInputField } from "shared-ui/src"
+import { FormikInit, RadioGroupInput, SelectInputField, TextInputField } from "@/components"
 import * as Yup from "yup";
 
 type Props = {

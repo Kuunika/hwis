@@ -1,6 +1,6 @@
 import { RegistrationCard, RegistrationCardTitle } from "@/app/registration/components/common"
 import { concepts } from "@/constants";
-import { FormikInit, SelectInputField, TextInputField, WrapperBox } from "shared-ui/src"
+import { FormikInit, SelectInputField, TextInputField, WrapperBox } from "@/components"
 import * as Yup from "yup";
 
 const relationships = [

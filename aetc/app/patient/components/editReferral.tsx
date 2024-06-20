@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import * as Yup from "yup";
-import { FormikInit, RadioGroupInput, SearchComboBox, TextInputField } from "shared-ui/src";
+import { FormikInit, RadioGroupInput, SearchComboBox, TextInputField } from "@/components"
 
 import { getFacilities, } from "@/hooks";
 
