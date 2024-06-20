@@ -1,4 +1,4 @@
-import { MainButton, MainTypography, WrapperBox } from "shared-ui/src"
+import { MainButton, MainTypography, WrapperBox } from "@/components"
 import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import { useState } from "react";
 

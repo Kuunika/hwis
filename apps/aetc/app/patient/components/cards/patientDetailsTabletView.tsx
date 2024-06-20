@@ -1,4 +1,4 @@
-import { MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainPaper, MainTypography, WrapperBox } from "@/components";
 import { Chip } from "@mui/material";
 import { Panel } from "../panels";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";

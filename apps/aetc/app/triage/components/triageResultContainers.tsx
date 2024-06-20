@@ -1,6 +1,6 @@
 import { confirmationDialog } from "@/helpers";
 import { TriageResult } from "@/interfaces";
-import { MainButton, MainPaper, MainTypography } from "shared-ui/src";
+import { MainButton, MainPaper, MainTypography } from "@/components";
 
 export const TriageContainer = ({
   message,

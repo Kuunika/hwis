@@ -2,7 +2,7 @@
 import { useParameters } from "@/hooks"
 import { getPatientLabOrder } from "@/hooks/labOrder"
 import { LabRequest } from "@/interfaces"
-import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src"
+import { BaseTable, MainButton, MainTypography, WrapperBox } from "@/components"
 import { FaPrint } from "react-icons/fa6";
 import { BarcodeComponent } from "@/components/barcode";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";

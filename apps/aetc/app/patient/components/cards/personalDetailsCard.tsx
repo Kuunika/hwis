@@ -1,4 +1,4 @@
-import { MainCard, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainCard, MainPaper, MainTypography, WrapperBox } from "@/components";
 import { Chip } from "@mui/material";
 import { getOnePatient, getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { useNavigation, useParameters } from "@/hooks";

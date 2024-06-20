@@ -1,7 +1,7 @@
 "use client";
 import { SearchContainer } from "@/app/registration/search/components";
 import { useNavigation } from "@/hooks";
-import { NavigationBar, WrapperBox } from "shared-ui/src";
+import { NavigationBar, WrapperBox } from "@/components";
 import { useContext, useEffect } from "react";
 import { AuthContext, AuthContextType } from "@/contexts";
 

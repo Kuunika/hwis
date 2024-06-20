@@ -9,7 +9,7 @@ import {
   MainTypography,
   RadioGroupInput,
   TextInputField,
-} from "shared-ui/src";
+} from "@/components";
 import * as yup from "yup";
 type Props = {
   onSubmit: (values: any) => void;

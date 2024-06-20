@@ -9,7 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Stack from "@mui/material/Stack";
 import { FaCalendarDays, FaCheck } from "react-icons/fa6";
-import { MainTypography } from "shared-ui/src";
+import { MainTypography } from "@/components";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 
 

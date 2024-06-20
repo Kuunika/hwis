@@ -4,7 +4,7 @@ import {
   MainPaper,
   MainTypography,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 
 type Props = {
   title: string;

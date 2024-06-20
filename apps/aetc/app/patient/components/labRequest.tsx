@@ -2,13 +2,10 @@ import { useEffect, useState, ChangeEvent } from "react";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { FormikInit, MainButton, MainTypography, RadioGroupInput, SearchComboBox, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox, FormikInit,RadioGroupInput,SearchComboBox } from "@/components";
 
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+
 import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";

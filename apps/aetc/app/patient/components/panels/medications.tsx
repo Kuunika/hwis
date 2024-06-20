@@ -1,4 +1,4 @@
-import { MainButton, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainButton, MainTypography, WrapperBox } from "@/components";
 import { Panel } from ".";
 import { useNavigation } from "@/hooks";
 import { FaPlus } from "react-icons/fa";

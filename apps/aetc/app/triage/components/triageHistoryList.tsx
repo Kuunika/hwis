@@ -2,7 +2,7 @@ import { TriageContext, TriageContextType } from "@/contexts";
 
 import Button from "@mui/material/Button";
 import { useContext } from "react";
-import { BaseTable, MainButton, WrapperBox } from "shared-ui/src";
+import { BaseTable, MainButton, WrapperBox } from "@/components";
 
 export const TriageHistoryList = () => {
   const { setShow } = useContext(TriageContext) as TriageContextType;

@@ -1,6 +1,6 @@
 'use client'
 import { SearchForm } from "@/app/registration/search/components/searchForm";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox } from "@/components";
 import { MergeDuplicates } from "./components/mergeDuplicates";
 import { SearchNPIDForm } from "@/app/registration/search/components/searchNpid";
 import { SearchTab } from "@/app/registration/components/searchTabs";

@@ -1,6 +1,6 @@
 import { Person } from "@/interfaces";
-import { ReactNode, useEffect, useState } from "react";
-import { WrapperBox, MainTypography, MainPaper, MainButton } from "shared-ui/src";
+import { ReactNode, useState, useEffect } from "react";
+import { WrapperBox, MainTypography, MainPaper, MainButton } from "@/components";
 import { EditDemographicsForm } from "./editDemographicsForm";
 import { GenericDialog } from "@/components/dialog";
 import { EditLocation } from ".";

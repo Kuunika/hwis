@@ -1,5 +1,5 @@
 "use client";
-import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
+import { MainGrid, MainPaper, MainTypography } from "@/components";
 import { useNavigation } from "@/hooks";
 
 

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { MainGrid, MainPaper, MainTypography } from "shared-ui/src";
+import { MainGrid, MainPaper, MainTypography } from "@/components";
 import { BackButton } from "../buttons";
 
 type Prop = {

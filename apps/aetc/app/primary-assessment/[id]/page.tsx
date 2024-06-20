@@ -1,5 +1,5 @@
 "use client";
-import { FormContainer } from "shared-ui/src";
+import { FormContainer } from "@/components";
 import { PrimaryAssessmentFlow } from "../components";
 import { PatientInfoTab } from "@/components";
 import { roles } from "@/constants";

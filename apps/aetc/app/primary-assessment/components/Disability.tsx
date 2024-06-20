@@ -7,7 +7,7 @@ import {
   MainTypography,
   RadioGroupInput,
   TextInputField,
-} from "shared-ui/src";
+} from "@/components";
 import * as yup from "yup";
 import { Box } from "@mui/material";
 import { NO, YES, concepts } from "@/constants";

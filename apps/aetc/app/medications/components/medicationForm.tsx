@@ -3,7 +3,7 @@ import {
   FormikInit,
   SearchComboBox,
   TextInputField,
-} from "shared-ui/src";
+} from "@/components";
 import * as yup from "yup";
 
 type props = {

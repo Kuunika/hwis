@@ -1,5 +1,6 @@
 import { SxProps } from "@mui/material";
-import { MainButton, MainPaper, MainTypography, WrapperBox } from "shared-ui/src";
+
+import { MainPaper, MainTypography, WrapperBox,MainButton } from "@/components";
 import { FaCheck } from "react-icons/fa";
 import { useNavigation } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";

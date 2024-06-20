@@ -1,7 +1,7 @@
 'use client'
 import { Main } from "next/document";
 import { ReactNode } from "react";
-import { MainGrid, MainTypography, WrapperBox } from "shared-ui/src";
+import { MainGrid, MainTypography, WrapperBox } from "@/components";
 import { FaUsers, FaCodeMerge } from "react-icons/fa6";
 import { useNavigation } from "@/hooks";
 

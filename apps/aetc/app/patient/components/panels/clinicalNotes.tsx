@@ -1,4 +1,4 @@
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox } from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";

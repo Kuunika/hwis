@@ -10,7 +10,7 @@ import {
   RadioGroupInput,
   SearchComboBox,
   TextInputField,
-} from "shared-ui/src";
+} from "@/components";
 import * as Yup from "yup";
 
 const form = {

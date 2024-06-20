@@ -6,7 +6,7 @@ import {
   MainGrid,
   MainTypography,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import {
   DemographicsForm,
   FinancingForm,

@@ -7,7 +7,7 @@ import {
   RegistrationCard,
 } from "@/app/registration/components/common";
 
-import { MainGrid } from "shared-ui/src";
+import { MainGrid } from "@/components";
 import { addEncounter } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";

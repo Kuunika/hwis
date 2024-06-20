@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Quagga from '@ericblade/quagga2';
-import { WrapperBox } from 'shared-ui/src';
+import { WrapperBox } from '@/components';
 
 export const BarcodeScanner = ({ onScan }: { onScan: (data: any) => void }) => {
 

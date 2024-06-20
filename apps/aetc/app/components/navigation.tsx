@@ -1,5 +1,5 @@
 import { useNavigation } from "@/hooks";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox } from "@/components";
 import { FaArrowLeftLong, FaRegCircleQuestion } from "react-icons/fa6";
 
 export const Navigation = ({

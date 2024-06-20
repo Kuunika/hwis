@@ -10,7 +10,7 @@ import {
   MainTypography,
   RadioGroupInput,
   TextInputField,
-} from "shared-ui/src";
+} from "@/components";
 import * as Yup from "yup";
 
 const form = {
@@ -194,7 +194,7 @@ export const BroughtDeadForm = () => {
       title: "Registration Completed",
       text: "",
       icon: "success",
-      onConfirm: () => {},
+      onConfirm: () => { },
       confirmButtonText: "Register More Patients",
       cancelButtonText: "Home",
       onDismiss: () => navigateTo("/"),

@@ -4,7 +4,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { FaAngleDown } from "react-icons/fa";
-import { MainTypography, WrapperBox } from "shared-ui/src";
+import { MainTypography, WrapperBox } from "@/components";
 import Link from "next/link";
 import Image from "next/image";
 import AETCFormIcon from "../../../../icons/aetc.svg";

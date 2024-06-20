@@ -1,7 +1,7 @@
 "use client";
 
 import { ClientWaitingForAssessment } from "./components";
-import { MainGrid } from "shared-ui/src";
+import { MainGrid } from "../../components";
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,

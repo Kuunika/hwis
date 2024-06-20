@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import { TreeView } from "@mui/x-tree-view/TreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
-import { MainPaper, MainTypography } from "shared-ui/src";
+import { MainPaper, MainTypography } from "@/components";
 import { useNavigation } from "@/hooks";
 
 export default function MenuTree() {

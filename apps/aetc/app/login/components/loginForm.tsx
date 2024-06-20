@@ -7,7 +7,7 @@ import {
   MainTypography,
   TextInputField,
   WrapperBox,
-} from "shared-ui/src";
+} from "@/components";
 import * as yup from "yup";
 import Image from "next/image";
 import { Login } from "@/hooks/login";

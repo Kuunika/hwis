@@ -2,9 +2,10 @@
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getOnePatient, getPatientRelationships } from "@/hooks/patientReg";
-import { WrapperBox } from "shared-ui/src";
-
-import { encounters } from "@/constants";
+import { WrapperBox, MainTypography, MainPaper } from "@/components";
+import { ReactNode } from "react"
+import { concepts, encounters } from "@/constants";
+import { getObservationValue } from "@/helpers/emr";
 import { ViewPatient } from "../../components/viewPatient";
 import { Encounter, Person } from "@/interfaces";
 
@@ -37,4 +38,20 @@ const Page = () => {
     </>
 }
 export default Page;
+
+// const ContainerCard = ({ children }: { children: ReactNode }) => {
+//     return <MainPaper sx={{ p: "1ch", flex: 1, mx: "0.5ch" }} >{children}</MainPaper>
+// }
+
+
+// const LabelValue = ({ label, value }: { label: string; value: any }) => {
+//     return (
+//         <WrapperBox sx={{ display: "flex", alignItems: "flex-start", mb: "0.5ch" }}>
+//             <MainTypography width={"10ch"} sx={{ fontSize: "0.8rem" }}>
+//                 {label}
+//             </MainTypography>
+//             <MainTypography sx={{ fontSize: "0.8rem" }}>{value}</MainTypography>
+//         </WrapperBox>
+//     );
+// };
 

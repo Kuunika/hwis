@@ -5,7 +5,7 @@ import {
   MainTypography,
   WrapperBox,
 
-} from "shared-ui/src";
+} from "@/components";
 
 import { useContext, useEffect, useState } from "react";
 import { useParameters } from "@/hooks";

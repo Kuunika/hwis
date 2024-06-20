@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { WrapperBox } from "shared-ui/src";
+import { WrapperBox } from "@/components";
 export default function Page() {
   const [part, setPart] = useState("select part");
   return (

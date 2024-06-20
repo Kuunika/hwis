@@ -6,7 +6,7 @@ import {
   MainTypography,
   WrapperBox,
   defaultTheme,
-} from "shared-ui/src";
+} from "@/components";
 
 import { useEffect, useState } from "react";
 import { useNavigation, useParameters } from "@/hooks";

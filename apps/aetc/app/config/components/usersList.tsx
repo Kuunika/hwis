@@ -3,7 +3,7 @@ import { useNavigation } from "@/hooks";
 import { getAllUsers } from "@/hooks/users";
 
 
-import { BaseTable, MainButton } from "shared-ui/src";
+import { BaseTable, MainButton, MainPaper } from "@/components";
 
 export const UsersList = () => {
     const { navigateTo } = useNavigation();

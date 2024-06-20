@@ -15,7 +15,7 @@ import {
   WrapperBox,
   FormValuesListener,
   MainTypography,
-} from "shared-ui/src";
+} from "@/components";
 import {
   RegistrationCard,
   RegistrationCardTitle,

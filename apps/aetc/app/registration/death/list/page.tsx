@@ -1,7 +1,7 @@
 "use client";
 import { MiddlePageLayout } from "@/components/layouts";
 import { BroughtInDeadList } from "../../components";
-import { MainButton } from "shared-ui/src";
+import { MainButton } from "@/components";
 import { useNavigation } from "@/hooks";
 
 export default function DeathList() {

@@ -1,5 +1,5 @@
 import { useNavigation } from "@/hooks";
-import { BaseTable, MainButton } from "shared-ui/src";
+import { BaseTable, MainButton } from "@/components";
 
 export const BroughtInDeadList = () => {
   const { navigateTo } = useNavigation();

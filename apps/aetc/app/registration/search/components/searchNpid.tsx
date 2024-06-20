@@ -4,7 +4,7 @@ import {
   WrapperBox,
   TextInputField,
   MainButton,
-} from "shared-ui/src";
+} from "@/components";
 import * as Yup from "yup";
 
 import { getInitialValues, notify } from "@/helpers";

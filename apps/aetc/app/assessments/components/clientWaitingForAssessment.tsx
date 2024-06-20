@@ -1,14 +1,14 @@
 import { getCATTime, getTime } from "@/helpers/dateTime";
 import { useState } from "react"
 import { useNavigation } from "@/hooks";
-import { getPatientsEncounters } from "@/hooks/encounter";
+
 import {
   getPatientsWaitingForAssessment,
-  getPatientsWaitingForTriage,
+
 } from "@/hooks/patientReg";
-import { getPatientEncounters } from "@/services/encounter";
-import { BaseTable, MainButton, MainTypography, WrapperBox } from "shared-ui/src";
-import Image from "next/image";
+
+import { BaseTable, MainButton, MainTypography, WrapperBox } from "../../../components";
+
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";

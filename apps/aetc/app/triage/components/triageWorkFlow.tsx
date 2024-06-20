@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { NewStepperContainer, StepperContainer } from "shared-ui/src";
+import { NewStepperContainer, StepperContainer } from "@/components";
 import {
   AirwayAndBreathingForm,
   BloodCirculationForm,
