@@ -1,32 +1,35 @@
-# Use Node.js base image
-FROM node:22-alpine AS builder
+# Use the official Node.js image as the base image
+FROM node:latest AS builder
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY package.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy application code
+# Copy the rest of the application code
 COPY . .
 
 # Build the Next.js application
 RUN npm run build
 
-# Use Nginx base image
-FROM nginx:alpine
+# Install serve to serve the application
+RUN npm install -g serve
 
-# Copy Nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+# Use a lightweight Node.js image for the final stage
+FROM node:22-alpine
 
-# Copy built Next.js application from builder stage
-COPY --from=builder /app/.next /usr/share/nginx/html
+# Set the working directory
+WORKDIR /app
 
-# Expose port
-EXPOSE 80
+# Copy the built application from the previous stage
+COPY --from=builder /app ./
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Serve the Next.js application
+CMD ["serve", "-s", "out", "-l", "3000"]
