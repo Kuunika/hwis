@@ -1,1 +1,0 @@
-export const getRoles = () => typeof window !== 'undefined' ? window.localStorage.getItem("roles")?.split(',') as string[] : []
