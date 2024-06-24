@@ -88,9 +88,9 @@ export const EditFinancingForm: FC<Props> = ({
                         // TODO: fix this please
 
                         if (!Array.isArray(value)) return;
-                        const v = value?.find(v => v.key == 'insurance' && v.value);
+                        const v = value?.find(v => v?.key == 'insurance' && v?.value);
                         if (v) {
-                            setPayment(v.key)
+                            setPayment(v?.key)
                         } else {
                             setPayment("")
                         }
