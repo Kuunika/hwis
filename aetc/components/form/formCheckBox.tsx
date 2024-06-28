@@ -22,7 +22,7 @@ export function CheckboxesGroup({ options, name, getValue }: Props) {
 
     useEffect(() => {
         if (value) {
-            if (value.filter((v: any) => v?.value).length == 2) {
+            if (value?.filter((v: any) => v?.value).length == 2) {
                 setDisabled(true)
             } else {
                 setDisabled(false)

@@ -17,14 +17,15 @@ import { getDateTime } from "@/helpers/dateTime";
 import { OverlayLoader } from "@/components/backdrop";
 import { BarcodeComponent } from "@/components/barcode";
 import * as Yup from 'yup';
+import Popover from '@mui/material/Popover';
 
 export interface SimpleDialogProps {
-  open: boolean;
   onClose: (value: string) => void;
   addRequest: (value: LabRequest) => void
 }
 
-export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps) {
+export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [searchSample, setSearchSample] = useState<string>("");
   const [searchSampleTypes, setSearchSampleTypes] = useState<string>("");
   const [searchSpecimenSites, setSearchSpecimenSites] =
@@ -43,8 +44,7 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 
   const handleClose = () => {
     onClose("");
-    console.log({ request })
-    console.log("closed");
+   
   };
 
   const handleListItemClick = (value: string) => {
@@ -110,93 +110,14 @@ export function LabRequestModal({ onClose, open, addRequest }: SimpleDialogProps
 
 
   return (
-    <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
-      <OverlayLoader open={isPending || isRefetching} />
-      <DialogTitle>Lab Order</DialogTitle>
-      <DialogContent>
         <LabForm onClose={() => onClose('')} />
-        {/* <WrapperBox display={"flex"}>
-          <WrapperBox
-            sx={{ width: { xs: "40%", lg: "30%" }, borderRight: "solid #e0e0e0 1px", px: "1ch" }}
-          >
-            <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">
-                Test Type
-              </FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-              >
-                <FormControlLabel
-                  value="Bedside"
-                  control={<Radio />}
-                  label="Bedside"
-                />
-                <FormControlLabel value="Lab" control={<Radio />} label="Lab" />
-              </RadioGroup>
-            </FormControl>
-            <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mb: { xs: "3ch" } }}>
-              <MainTypography variant="h5">Sample Types</MainTypography>
-              <SearchInput setSearch={setSearchSample} />
-              <ListSelect
-                onSelectItem={handleSelectSampleType}
-                height="25ch"
-                list={specimenTypes ? specimenTypes.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []}
-                search={searchSample}
-              />
-            </WrapperBox>
-          </WrapperBox>
-          <WrapperBox
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: { xs: "60%", lg: "70%" },
-              px: "1ch",
-            }}
-          >
-            <WrapperBox sx={{ mb: "2ch" }}>
-              <MainButton
-                sx={{ borderRadius: "1px" }}
-                title={"Send Order"}
-                onClick={handleSendLab}
-              />
-              <MainButton
-                variant="secondary"
-                sx={{ borderRadius: "1px", mx: "0.5ch" }}
-                title={"Cancel Order"}
-                onClick={handleListItemClick}
-              />
-            </WrapperBox>
-            <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
-              <TestList loading={isRefetching} testTypes={labTests ? labTests : []} onSelectTest={handleTestSelect} />
-
-              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 }, mx: 1 }}>
-                <MainTypography variant="h5"> Specimen Site</MainTypography>
-                <SearchInput setSearch={setSearchSpecimenSites} />
-                <ListSelect
-                  onSelectItem={(specimen: string | number) => { setRequest((req: any) => ({ ...req, specimen })) }}
-                  height="25ch"
-                  list={specimenSites.map(sp => ({ id: sp, label: sp }))}
-                  search={searchSpecimenSites}
-                />
-
-              </WrapperBox>
-              <WrapperBox sx={{ flex: { xs: '1 0 40%', lg: 1 } }}>
-                <MainTypography variant="h5">Reason for test</MainTypography>
-                <SearchInput setSearch={setSearchSampleTypes} />
-                <ListSelect
-                  onSelectItem={(sampleType: string | number) => { setRequest((req: any) => ({ ...req, sampleType })) }}
-                  height="25ch"
-                  list={labReasons ? labReasons.map(sp => ({ id: sp.uuid, label: sp.name })) : []}
-                  search={searchSampleTypes}
-                />
-              </WrapperBox>
-            </WrapperBox>
-          </WrapperBox>
-        </WrapperBox> */}
-      </DialogContent>
-    </Dialog>
+    // <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
+    //   <OverlayLoader open={isPending || isRefetching} />
+    //   <DialogTitle>Lab Order</DialogTitle>
+    //   <DialogContent>
+    //     <LabForm onClose={() => onClose('')} />
+    //   </DialogContent>
+    // </Dialog>
   );
 }
 
@@ -358,9 +279,9 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
     onClose()
   }
   return <FormikInit initialValues={initialValues} onSubmit={handleLabSend} validationSchema={validationSchema}>
-    <OverlayLoader open={isPending || isLoading || isRefetching} />
+    {/* <OverlayLoader open={isPending || isLoading || isRefetching} /> */}
 
-    <WrapperBox sx={{ display: "flex" }}>
+    <WrapperBox sx={{ display: "flex", width:"50ch"}}>
       <RadioGroupInput getValue={(test) => {
         setTestType(test)
       }

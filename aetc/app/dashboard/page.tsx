@@ -123,7 +123,7 @@ const Card = ({
             elevation={1}
             sx={{
                 p: "1ch",
-                m: "1ch",
+                m: "0.2ch",
                 width: { xs: "100%", sm: "25%" },
                 height: "15ch",
                 display: "flex",
@@ -131,10 +131,11 @@ const Card = ({
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
+                borderRadius:"1px"
             }}
         >
             <MainTypography variant="h2">{icon}</MainTypography>
-            <MainTypography textAlign={"center"}>{title}</MainTypography>
+            <MainTypography variant="h6" textAlign={"center"}>{title}</MainTypography>
         </MainPaper>
     );
 };
