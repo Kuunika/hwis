@@ -12,7 +12,6 @@ import { OverlayLoader } from "@/components/backdrop";
 
 const inter = Inter({ subsets: ["latin"] });
 
-
 export const metadata: Metadata = {
   title: "MAHIS",
   description: "Malawi Health information system",
@@ -23,8 +22,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
 
 
   return (
