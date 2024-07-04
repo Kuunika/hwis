@@ -15,11 +15,11 @@ export const UsersList = () => {
 
     const rows = users?.map(user => {
         return {
-            id: user.uuid,
-            userName: user.username,
-            firstName: user.person.names[0].given_name,
-            lastName: user.person.names[0].family_name,
-            roles: user.user_roles.reduce((acc, current) => { return acc + current.role.role + "," }, '')
+            id: user?.uuid,
+            userName: user?.username,
+            firstName: user?.person?.names[0]?.given_name,
+            lastName: user?.person?.names[0]?.family_name,
+            roles: user?.user_roles.reduce((acc, current) => { return acc + current.role.role + "," }, '')
         }
     })
 
