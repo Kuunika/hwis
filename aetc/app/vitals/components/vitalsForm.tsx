@@ -93,8 +93,9 @@ type props = {
   onSubmit: (values: any) => void;
   triageResult: string;
   setTriageResult: (rre: any, name: string) => void;
-  continueTriage: boolean
-  previous: () => void
+  continueTriage: boolean;
+  previous: () => void;
+  getFormValues: (values:any)=>void
 };
 const schema = yup.object({
   // [form.pulseOximetry.name]: yup
@@ -308,7 +309,8 @@ export function VitalsForm({
   triageResult,
   setTriageResult,
   continueTriage,
-  previous
+  previous,
+  getFormValues
 }: props) {
   const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType
   const [formValues, setFormValues] = useState<any>({});
@@ -400,6 +402,7 @@ export function VitalsForm({
       initialValues={{ ...initialValues, [form.units.name]: "mmol/l" }}
       submitButtonText="next"
       submitButton={false}
+      getFormValues={getFormValues}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Oxygen Saturation and Heart Rate">
@@ -569,7 +572,10 @@ export function VitalsForm({
               if (value == '') return;
               const glucoseValue = Number(value);
 
-              if (formValues[form.units.name] == "mmol/l") {
+              const units = formValues[form.units.name];
+              addKeyToFlow({glucose: `${glucoseValue} ${units}`})
+
+              if (units == "mmol/l") {
                 if (glucoseValue < 3 || glucoseValue > 30) {
                   setTriageResult("red", form.glucose.name)
                 }
@@ -584,7 +590,7 @@ export function VitalsForm({
               // Formula for converting mmol’l to mg/dl: (mmol/l × 18.018)
               const m = 18.018; //multiplicationFactor
 
-              if (formValues[form.units.name] == "mg/dl") {
+              if (units == "mg/dl") {
                 if (glucoseValue < 3 * m || glucoseValue > 30 * m) {
                   setTriageResult("red", form.glucose.name)
                 }

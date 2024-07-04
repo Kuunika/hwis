@@ -3,6 +3,7 @@ import * as React from "react";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+import { TextField, Toolbar } from '@mui/material';
 
 type IProp = {
   width?: string;
@@ -31,7 +32,25 @@ const Table: React.FC<IProp> = ({
   checkboxSelection = false,
   getSelectedItems = (items: any) => { console.log(items) }
 }) => {
+  const [searchText, setSearchText] = React.useState('');
+  const [filteredRows, setFilteredRows] = React.useState(rows);
   let columnVisibilityModel: any = {};
+
+
+  React.useEffect(()=>{
+    setFilteredRows(rows)
+  },[rows])
+
+
+  const requestSearch = (searchValue:any) => {
+    setSearchText(searchValue);
+    const filteredRows = rows.filter((row) => {
+      return Object.keys(row).some((field) =>
+        row[field]?.toString()?.toLowerCase()?.includes(searchValue.toLowerCase())
+      );
+    });
+    setFilteredRows(filteredRows);
+  };
 
   // if (columns.length > 0) {
   //   // if (columns[i]) columnVisibilityModel[columns[i].field] = false;
@@ -71,8 +90,19 @@ const Table: React.FC<IProp> = ({
       </Stack>
     );
   }
+
   return (
     <div style={{ height, width, ...style }}>
+    
+        <TextField
+        sx={{m:1}}
+          variant="outlined"
+          placeholder="Search…"
+          value={searchText}
+          onChange={(e) => requestSearch(e.target.value)}
+        />
+    
+
       <DataGrid
         // getRowClassName={(test: any) => {
         //   console.log({ test })
@@ -82,7 +112,7 @@ const Table: React.FC<IProp> = ({
         checkboxSelection={checkboxSelection}
         rowHeight={rowHeight}
         sx={{ my: "1ch", borderStyle: "none" }}
-        rows={rows}
+        rows={filteredRows}
         columns={columns}
         hideFooterPagination={hidePagination}
         initialState={{

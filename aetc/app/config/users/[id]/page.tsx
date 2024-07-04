@@ -39,7 +39,6 @@ const EditUserPage = () => {
     if (isSuccess) {
         navigateTo("/config");
     }
-
 }, [isSuccess])
 
   const handleSubmit = async (values: { userName: any; firstName: any; lastName: any; role: any[]; password: any; }) => {

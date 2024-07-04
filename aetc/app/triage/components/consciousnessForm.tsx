@@ -21,7 +21,8 @@ type Prop = {
   setTriageResult: (triage: any, name: string) => void
   triageResult: string,
   continueTriage: boolean,
-  previous: () => void
+  previous: () => void,
+    getFormValues: (values:any)=>void
 };
 const form = {
   consciousness: {
@@ -54,7 +55,7 @@ const options = [
 
 const initialValues = getInitialValues(form);
 
-export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous }: Prop) => {
+export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous, getFormValues }: Prop) => {
   const { flow } = useContext(TriageContext) as TriageContextType
   const [consciousness, setConsciousness] = useState();
   const [formValues, setFormValues] = useState<any>({});
@@ -84,7 +85,8 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={{ ...initialValues, [form.consciousness.name]: flow['gsc'] < 15 ? YES : NO }}
+      getFormValues={getFormValues}
+      initialValues={{ ...initialValues, [form.consciousness.name]: flow['gsc'] < 15 ? YES : NO, [form.gcs.name]:flow['gsc'], [form.bloodGlucose.name]:flow['glucose']  }}
       enableReinitialize={true}
       onSubmit={onSubmit}
       submitButtonText="next"
@@ -115,14 +117,16 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
                   name={form.bloodGlucose.name}
                   label={form.bloodGlucose.label}
                   id={form.bloodGlucose.name}
-                  disabled={disableField(form.bloodGlucose.name)}
+                  disabled={true}
+                  // disabled={disableField(form.bloodGlucose.name)}
                 />
                 <TextInputField
                   name={form.gcs.name}
                   label={form.gcs.label}
                   id={form.gcs.name}
                   getValue={checkGcs}
-                  disabled={disableField(form.gcs.name)}
+                  disabled={true}
+                  // disabled={disableField(form.gcs.name)}
                 />
               </FieldsContainer>
             </FormFieldContainerLayout>

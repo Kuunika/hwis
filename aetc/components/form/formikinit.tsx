@@ -1,5 +1,5 @@
 'use client'
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useRef } from "react";
 import { Form, Formik } from "formik";
 
 import { SxProps } from "@mui/material";
@@ -19,6 +19,7 @@ type Prop = {
   loading?: boolean;
   submitVariant?: "primary" | "secondary" | "text";
   enableReinitialize?: boolean;
+  getFormValues?: (values:any)=>void
 };
 
 export const FormikInit: FC<Prop> = ({
@@ -31,7 +32,9 @@ export const FormikInit: FC<Prop> = ({
   submitVariant = "primary",
   loading,
   enableReinitialize = false,
+  getFormValues=(values)=>{}
 }) => {
+
   return (
     <Formik
       initialValues={initialValues}
@@ -39,8 +42,9 @@ export const FormikInit: FC<Prop> = ({
       validationSchema={validationSchema}
       enableReinitialize={enableReinitialize}
     >
-      {() => (
+      {({values}) => (
         <Form>
+          <ListenToValueChanges getFormValues={getFormValues} values={values} />
           {children}
           {submitButton && (
             <MainButton
@@ -62,3 +66,11 @@ export const FormikInit: FC<Prop> = ({
     </Formik>
   );
 };
+
+
+const ListenToValueChanges = ({values, getFormValues}:{values:any, getFormValues:(values:any)=>void})=>{
+  useEffect(()=>{
+ getFormValues(values)
+  },[values])
+return null
+}

@@ -10,6 +10,7 @@ type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult: (triage: any, name: string) => void;
   triageResult: string;
+  getFormValues: (values:any)=>void
 };
 const form = {
   complaints: {
@@ -214,10 +215,10 @@ const presentingComplaints = [
 
 
 
-export const PresentingComplaintsForm = ({ onSubmit, setTriageResult }: Prop) => {
+export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormValues }: Prop) => {
+
   const handleValueChange = (values: Array<any>) => {
     const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting blood']
-
     triage.forEach(triage => {
       const found = values.find(v => {
         return v.id == triage
@@ -237,6 +238,7 @@ export const PresentingComplaintsForm = ({ onSubmit, setTriageResult }: Prop) =>
       onSubmit={onSubmit}
       submitButton={false}
       submitButtonText="next"
+      getFormValues={getFormValues}
     >
       <SearchComboBox
         getValue={handleValueChange}

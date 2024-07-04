@@ -141,4 +141,6 @@ const Card = ({
 };
 
 
+// export default Home;
+
 export default AuthGuard(Home, [roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK])

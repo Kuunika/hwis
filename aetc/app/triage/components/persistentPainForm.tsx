@@ -49,8 +49,9 @@ type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult: (rre: any, name: string) => void;
   triageResult: string,
-  continueTriage: boolean
-  previous: () => void
+  continueTriage: boolean,
+  previous: () => void,
+  getFormValues: (values:any)=>void
 };
 
 const schema = Yup.object().shape({
@@ -74,7 +75,7 @@ const options = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
 ];
-export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, previous, setTriageResult }: Prop) => {
+export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, previous, setTriageResult, getFormValues }: Prop) => {
   const { updateConditions } = useConditions();
   const [formValues, setFormValues] = useState<any>({});
 
@@ -88,6 +89,7 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
       initialValues={initialsValues}
       onSubmit={onSubmit}
       submitButton={false}
+      getFormValues={getFormValues}
     >
 
       <FormValuesListener getValues={setFormValues} />
