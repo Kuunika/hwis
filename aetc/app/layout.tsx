@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
@@ -10,7 +10,7 @@ import { useNavigation } from "@/hooks";
 import { OverlayLoader } from "@/components/backdrop";
 
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "MAHIS",
@@ -26,7 +26,8 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning={true}>
+      <body suppressHydrationWarning={true}>
+      {/* <body className={inter.className} suppressHydrationWarning={true}> */}
         <ReactQueryProvider>
           <ContextProviders>
             <ProviderTheme>
