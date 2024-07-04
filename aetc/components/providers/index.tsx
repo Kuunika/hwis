@@ -4,15 +4,15 @@ import { ReactNode } from "react";
 
 const theme = createTheme({
   typography: {
-    fontFamily: [
-      'Segoe UI',
-      'Roboto',
-      'Noto Sans',
-      'Ubuntu',
-      'Droid Sans',
-      'Helvetica Neue',
-      'sans-serif'
-    ].join(','),
+    // fontFamily: [
+    //   'Segoe UI',
+    //   'Roboto',
+    //   'Noto Sans',
+    //   'Ubuntu',
+    //   'Droid Sans',
+    //   'Helvetica Neue',
+    //   'sans-serif'
+    // ].join(','),
   },
   palette: {
     primary: {
