@@ -39,7 +39,6 @@ function RegistrationSearch() {
   }, [])
 
 
-
   useEffect(() => {
     if (patient) {
       setInitialRegisteredPatient(patient);

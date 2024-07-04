@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NewStepperContainer, StepperContainer } from "@/components";
 import {
   AirwayAndBreathingForm,
@@ -34,6 +34,13 @@ export default function TriageWorkFlow() {
   const { data: triageList } = getPatientsWaitingForTriage();
   const [conceptTriageResult, setConceptTriageResult] = useState<any>({})
   const [submittedSteps, setSubmittedSteps] = useState<Array<number>>([])
+
+ const [presentingComplaints, setPresentingComplaints]=useState({})
+ const [vitals, setVitals]=useState({})
+ const [airway, setAirway]=useState({})
+ const [circulation, setCirculation]=useState({})
+ const [consciousness, setConsciousness]=useState({})
+ const [persistentPain, setPersistentPain]=useState({})
 
 
   const {
@@ -126,7 +133,6 @@ export default function TriageWorkFlow() {
     if (vitalsCreated) {
       setCompleted(2);
       setMessage("adding airway...");
-
       createAirway({
         encounterType: encounters.AIRWAY_ASSESSMENT,
         visit: patient?.visit_uuid,
@@ -350,14 +356,23 @@ export default function TriageWorkFlow() {
 
   const handleClickAccordion = (activeStep: any) => {
 
-
-
     const found = submittedSteps.find(step => step == activeStep);
 
     if (found != undefined) setActiveStep(activeStep);
 
     // TODO: send a message that you can't move
   }
+
+
+const handleOnCompleteTriage = ()=>{
+  handlePresentComplaints(presentingComplaints);
+  handleAirwaySubmit(airway);
+  handleBloodCirculationSubmit(circulation)
+  handleDisabilitySubmit(circulation)
+  handleVitalsSubmit(vitals)
+  handlePersistentPain(persistentPain)
+}
+
   return (
     <>
 
@@ -365,7 +380,7 @@ export default function TriageWorkFlow() {
         {triageResult && (
           <>
             <TriageContainer
-              onCompleteTriage={() => { }}
+              onCompleteTriage={handleOnCompleteTriage}
               result={triageResult}
               message={"Interventions"}
               setContinueTriage={setContinueTriage}
@@ -383,7 +398,7 @@ export default function TriageWorkFlow() {
           active={activeStep}
           onBack={() => navigateBack()}
         >
-          <PresentingComplaintsForm triageResult={triageResult}
+          <PresentingComplaintsForm getFormValues={setPresentingComplaints}  triageResult={triageResult}
             setTriageResult={checkTriageResult} onSubmit={handlePresentComplaints} />
           <VitalsForm
             previous={() => setActiveStep(0)}
@@ -392,24 +407,32 @@ export default function TriageWorkFlow() {
             initialValues={{}}
             onSubmit={handleVitalsSubmit}
             continueTriage={continueTriage}
+            getFormValues={setVitals}
           />
           <AirwayAndBreathingForm
+            getFormValues={setAirway}
             previous={() => setActiveStep(1)}
             continueTriage={continueTriage}
             triageResult={triageResult}
             setTriageResult={checkTriageResult} onSubmit={handleAirwaySubmit} />
+
           <BloodCirculationForm
             previous={() => setActiveStep(2)}
+            getFormValues={setCirculation}
             continueTriage={continueTriage}
             triageResult={triageResult}
+            setTriageResult={checkTriageResult}
             onSubmit={handleBloodCirculationSubmit} />
+
           <ConsciousnessForm
+            getFormValues={setConsciousness}
             previous={() => setActiveStep(3)}
             continueTriage={continueTriage}
             triageResult={triageResult}
             setTriageResult={checkTriageResult}
             onSubmit={handleDisabilitySubmit} />
           <PersistentPainForm
+           getFormValues={setPersistentPain}
             previous={() => setActiveStep(4)}
             continueTriage={continueTriage}
             setTriageResult={checkTriageResult}

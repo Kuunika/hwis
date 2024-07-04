@@ -94,10 +94,11 @@ const schema = Yup.object().shape({
 const initialValues = getInitialValues(form);
 type Prop = {
   onSubmit: (values: any) => void;
-  setTriageResult?: (triage: any) => void
+  setTriageResult: (triage: any, name: string) => void;
   triageResult: string
   continueTriage: boolean
   previous: () => void
+  getFormValues: (values:any)=>void
 };
 
 const options = [
@@ -105,7 +106,7 @@ const options = [
   { label: "No", value: NO },
 ];
 
-export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, previous }: Prop) => {
+export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, previous, setTriageResult, getFormValues }: Prop) => {
   const [isCirculationAbnormal, setIsCirculationAbnormal] = useState("");
   const [formValues, setFormValues] = useState<any>({});
   const { updateConditions, aggregateOrCondition, conditions } =
@@ -118,7 +119,9 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
     return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
   };
 
-
+  const  handleTriage =(name:string, value:string)=>{
+    // setTriageResult(value==YES? "red": "",name);
+  }
 
   const circulationCondition = flow['heart'] == 'yellow' || flow['heart'] == 'red' || flow['diastolic'] == 'yellow' || flow['diastolic'] == 'red' || flow['systolic'] == 'yellow' || flow['systolic'] == 'red'
 
@@ -131,6 +134,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
       enableReinitialize={true}
       submitButtonText="next"
       submitButton={false}
+      getFormValues={getFormValues}
     >
 
       <FormValuesListener getValues={setFormValues} />
@@ -194,8 +198,10 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
                 name={form.reducedUrinaryOutput.name}
                 label={form.reducedUrinaryOutput.label}
                 options={options}
-                getValue={(value) =>
+                getValue={(value) =>{
                   updateConditions(form.reducedUrinaryOutput.name, value)
+                  handleTriage(form.reducedUrinaryOutput.name, value)
+                }
                 }
               />
               <RadioGroupInput
@@ -203,8 +209,11 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
                 name={form.clammyPeripherals.name}
                 label={form.clammyPeripherals.label}
                 options={options}
-                getValue={(value) =>
+                getValue={(value) =>{
+
                   updateConditions(form.clammyPeripherals.name, value)
+                  handleTriage(form.clammyPeripherals.name, value)
+                }
                 }
               />
             </FieldsContainer>
@@ -225,16 +234,20 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
                 name={form.hemorrhage.name}
                 label={form.hemorrhage.label}
                 options={options}
-                getValue={(value) =>
+                getValue={(value) =>{
                   updateConditions(form.hemorrhage.name, value)
+                  handleTriage(form.hemorrhage.name, value)
+                }
                 }
               />
               <RadioGroupInput
                 disabled={disableField(form.dehydration.name)}
                 name={form.dehydration.name}
                 label={form.dehydration.label}
-                getValue={(value) =>
-                  updateConditions(form.dehydration.name, value)
+                getValue={(value) => {
+                  updateConditions(form.dehydration.name, value);
+                  handleTriage(form.dehydration.name, value);
+                }
                 }
                 options={options}
               />

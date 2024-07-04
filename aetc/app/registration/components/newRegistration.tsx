@@ -501,7 +501,7 @@ export const NewRegistrationFlow = () => {
                 <BarcodeComponent setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={getPatientId(patient)}>
                   <></>
                   {/* <MainTypography fontWeight="600" variant="h6">{`${patient?.names[0].given_name} ${patient?.names[0].family_name}`}</MainTypography> */}
-                  <MainTypography fontWeight="600" variant="h6">{`${patient.names[0].given_name} ${patient.names[0].family_name}`}</MainTypography>
+                  <MainTypography fontWeight="600" variant="h6">{`${patient.names[0].given_name} ${patient.names[0].family_name} ~ ${getPatientId(patient)}`}</MainTypography>
                   <MainTypography fontStyle={"italic"}>{`${patient?.addresses[0]?.address1}, ${patient?.addresses[0]?.address2}, ${patient?.addresses[0]?.address3}`}</MainTypography>
                 </BarcodeComponent>
                 <MainButton sx={{ color: '#000' }} title={"Print Barcode"} variant='text' onClick={() => {
