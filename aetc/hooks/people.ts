@@ -1,4 +1,5 @@
 import { getDateTime } from "@/helpers/dateTime";
+import { findByNPID } from "@/services/patient";
 import { createRelationship, createPerson, searchPerson, searchRegistrationPerson } from "@/services/people";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
@@ -80,4 +81,15 @@ export const searchRegPatients = (patient: any) => {
     queryFn: () => getall(patient),
     enabled: false,
   });
+}
+
+export const searchNPID = (npid:string)=>{
+  const getOne = (npid:string)=>{
+    return findByNPID(npid).then((response) => response.data)
+  }
+  return useQuery({
+    queryKey: ["search_npid", npid],
+    queryFn: () => getOne(npid),
+    enabled: false,
+  });  
 }

@@ -24,7 +24,7 @@ import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 import { Person } from "@/interfaces";
-import { searchRegPatients } from "@/hooks/people";
+import { searchNPID, searchRegPatients } from "@/hooks/people";
 
 function RegistrationSearch() {
   const { params } = useParameters();
@@ -119,9 +119,7 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
   useEffect(() => {
     if (!Boolean(search.firstName)) return;
     refetch();
-
   }, [search])
-
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
@@ -130,15 +128,12 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
       lastName: values.lastName,
       gender: values.gender
     })
-
     setSearchedPatientContext({
       patient_id: patient.patient_id,
       firstName: values.firstName,
       lastName: values.lastName,
       gender: values.gender
     })
-
-
   };
 
 
@@ -157,15 +152,30 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
       {(searchComplete || isError) && <SearchResults
         searchResults={data ? { remotes: [], locals: data } : { remotes: [], locals: [] }}
         searchedPatient={searchedPatient}
-      />
-      }
-
+      />}
     </>
   );
 };
 
 const NPIDSearch = () => {
-  return <SearchNPIDForm onSubmit={() => { }} />;
+  const [search, setSearch]=useState('');
+  const { refetch, isFetching, isSuccess, data, isError } = searchNPID(search)
+
+  console.log({data})
+
+  useEffect(()=>{
+    if (!Boolean(search)) return;
+    refetch()
+  },[search])
+
+  return  <>
+  <OverlayLoader open={isFetching} />
+   <SearchNPIDForm onSubmit={(values:any)=>setSearch(values.npid)} />
+   {(isSuccess || isError) && <SearchResults
+        searchResults={data ? data : { remotes: [], locals: [] }}
+        searchedPatient={data}
+      />}
+  </>
 };
 
 export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])

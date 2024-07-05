@@ -34,7 +34,7 @@ export const potentialDuplicates = (patientData: any) =>
 export const getPatient = (uuid: string) => getOne<Person>(uuid, '/patients');
 
 export const findByNameAndGender = (firstName: string, lastName: string, gender: string) => getAll<DDESearch>(`/dde/patients/find_by_name_and_gender?given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
-export const findByNPID = (npid: string) => getAll<DDESearch>(`/dde/patients/find_by_npid?npid=${npid}&visit_type_id=1`);
+export const findByNPID = (npid: string) => getAll<DDESearch>(`/dde/patients/find_by_npid?npid=${npid}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`);
 
 export const findByDemographics =
   (firstName: string,
@@ -43,11 +43,11 @@ export const findByDemographics =
     birthdate: string,
     homeVillage: string,
     homeTA: string,
-    homeDistrict: string) => getAll<DDEScore[]>(`/dde/patients/match_by_demographics?home_district=${homeDistrict}&home_traditional_authority=${homeTA}&home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=1`);
+    homeDistrict: string) => getAll<DDEScore[]>(`/dde/patients/match_by_demographics?home_district=${homeDistrict}&home_traditional_authority=${homeTA}&home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`);
 
 
 export const mergePatients = (data: any) => {
-  return create<Person & { active_visit: ActiveVisit }>(data, "/dde/patients/merge?visit_type_id=1")
+  return create<Person & { active_visit: ActiveVisit }>(data, `/dde/patients/merge?visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`)
 }
 
 
