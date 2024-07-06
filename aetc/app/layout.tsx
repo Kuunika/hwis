@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigation } from "@/hooks";
 import { OverlayLoader } from "@/components/backdrop";
+import CssBaseline from '@mui/material/CssBaseline';
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,10 +30,18 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        {/* <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Droid+Sans:wght@400;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght=400;700&display=swap" rel="stylesheet" /> */}
+      </head>
       <body className={inter.className} suppressHydrationWarning={true}>
         <ReactQueryProvider>
           <ContextProviders>
             <ProviderTheme>
+            <CssBaseline />
               <NavBar />
               {children}
               <OverlayLoader open={false} />
