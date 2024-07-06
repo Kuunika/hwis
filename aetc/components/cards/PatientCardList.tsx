@@ -1,4 +1,5 @@
-import { Box, Paper, Typography } from "@mui/material"
+import { Box, Paper, TextField, Typography } from "@mui/material"
+import { useEffect, useState } from "react";
 
 
 
@@ -40,8 +41,32 @@ export const PatientCard = ({visitNumber, firstName, lastName,actor, actionName,
 
 
 export const PatientCardList = ({dataList}:{dataList:Prop[]})=>{
+    const [searchText, setSearchText] = useState('');
+    const [filteredRows, setFilteredRows] =useState(dataList);
 
-    return <>{
-        dataList.map(data=> <PatientCard key={data.id} {...data} />)
-    }</>
+    useEffect(()=>{
+        setFilteredRows(dataList)
+      },[dataList])
+
+      const requestSearch = (searchValue:any) => {
+        setSearchText(searchValue);
+        const filteredRows = dataList.filter((row:any) => {
+          return Object.keys(row).some((field) =>
+            row[field]?.toString()?.toLowerCase()?.includes(searchValue.toLowerCase())
+          );
+        });
+        setFilteredRows(filteredRows);
+      };
+    
+
+    return <>
+       <TextField
+        sx={{m:1}}
+          variant="outlined"
+          placeholder="Search…"
+          value={searchText}
+          onChange={(e) => requestSearch(e.target.value)}
+        />
+    {filteredRows.map(data=> <PatientCard key={data.id} {...data} />)}
+    </>
 }
