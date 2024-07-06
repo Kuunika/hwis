@@ -3,8 +3,9 @@ import { MainButton, MainTypography } from "@/components"
 import { GenericDialog } from ".";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { OverlayLoader } from "./backdrop";
+import { SxProps } from "@mui/material";
 
-export const AbscondButton = ({ patientId, visitId, onDelete }: { patientId: string, visitId: string, onDelete: () => void }) => {
+export const AbscondButton = ({ patientId, visitId, onDelete, sx }: { patientId: string, visitId: string, onDelete: () => void, sx?:SxProps }) => {
     const { mutate: closeVisit, isPending, isSuccess: visitClosed } = closeCurrentVisit();
     const [open, setOpen] = useState(false);
     const handleClick = () => {
@@ -22,7 +23,7 @@ export const AbscondButton = ({ patientId, visitId, onDelete }: { patientId: str
         closeVisit(visitId);
     }
     return <>
-        <MainButton variant="secondary" sx={{ fontSize: "12px",width:"50%" }} title={"Abscond"} onClick={handleClick} />
+        <MainButton variant="secondary" sx={{ fontSize: "12px",...sx }} title={"Abscond"} onClick={handleClick} />
         <GenericDialog maxWidth="sm" title="Abscond Patient" open={open} onClose={() => setOpen(false)}>
             <OverlayLoader open={isPending} />
             <MainTypography>Are you sure the patient absconded?</MainTypography>
