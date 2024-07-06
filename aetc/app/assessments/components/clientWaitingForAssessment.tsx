@@ -27,7 +27,7 @@ export const ClientWaitingForAssessment = () => {
     isLoading,
     isRefetching,
   } = getPatientsWaitingForAssessment();
-  const { isMediumOrSmall } = checkScreenSize();
+
 
   const rows = patients
     ?.sort((p1, p2) => {
@@ -47,7 +47,7 @@ export const ClientWaitingForAssessment = () => {
       id: p?.uuid,
       ...p,
       patient_arrival_time: getTime(p.arrival_time),
-    }));
+    })).filter(p => p.id != deleted);
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit No" },
@@ -178,6 +178,7 @@ export const ClientWaitingForAssessment = () => {
       actionName: "Triaged By",
       action: (
         <CardAction
+          setDeleted={(id:any)=>setDeleted(id)}
           triage={row.triage_result}
           visitId={row.visit_uuid}
           id={row.id}
@@ -196,12 +197,13 @@ const CardAction = ({
   id,
   visitId,
   triage,
+  setDeleted
 }: {
   id: string;
   visitId: string;
   triage: string;
+  setDeleted: (id:any)=>void
 }) => {
-  const [deleted, setDeleted] = useState("");
   const { navigateTo } = useNavigation();
 
   return (

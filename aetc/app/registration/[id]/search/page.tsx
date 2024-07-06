@@ -47,7 +47,7 @@ function RegistrationSearch() {
 
   return (
     <>
-      <Navigation title="Search Patient" link="/dashboard" />
+      <Navigation title="Search Patient" link="/registration/list" />
       <WrapperBox
         sx={{
           display: "flex",

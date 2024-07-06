@@ -8,7 +8,7 @@ import {
   RegistrationCard,
 } from "../registration/components/common";
 import { Navigation } from "../components/navigation";
-import { PatientCard } from "@/components/cards/PatientCardList";
+
 
 export default function AssessmentPage() {
   return (

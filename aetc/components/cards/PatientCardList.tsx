@@ -79,6 +79,9 @@ export const PatientCardList = ({dataList, loading}:{loading:boolean,dataList:Pr
         );
       }
     
+    if(dataList.length == 0) {
+        return <Typography variant="body1">No patients on this list</Typography>
+    }
 
     return <>
        <TextField

@@ -96,7 +96,7 @@ export const WaitingRegistrationList = () => {
       arrivalTime: row.patient_arrival_time,
       actor: (
         <DisplayEncounterCreator
-          encounterType={encounters.INITIAL_REGISTRATION}
+          encounterType={encounters.SCREENING_ENCOUNTER}
           patientId={row.id}
         />
       ),
@@ -110,8 +110,8 @@ export const WaitingRegistrationList = () => {
           {" "}
           <MainButton
             sx={{ fontSize: "12px",width:"49%", mr:"1px" }}
-            title={"screen"}
-            onClick={() => navigateTo(`/prescreening/${row.id}`)}
+            title={"start"}
+            onClick={() => navigateTo(`/registration/${row.id}/search`)}
           />
           <AbscondButton
           sx={{width:"49%"}}
