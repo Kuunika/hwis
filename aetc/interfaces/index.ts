@@ -73,6 +73,7 @@ export interface Person {
   visit_uuid: string;
   arrival_time: string;
   triage_result: string;
+  latest_encounter_time:any;
   names: Array<{
     given_name: string;
     family_name: string
