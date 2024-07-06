@@ -12,6 +12,8 @@ import { BaseTable, MainButton, MainTypography, WrapperBox } from "../../../comp
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
+import { PatientCardList } from "@/components/cards/PatientCardList";
+import { Box } from "@mui/material";
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState('')
@@ -29,7 +31,6 @@ export const ClientWaitingForAssessment = () => {
     }
 
     // If triage results are the same, then sort by arrival time (earliest first)
-
     //@ts-ignore
     return new Date(p1.arrival_time) - new Date(p2.arrival_time);
   }).map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) }));
@@ -107,13 +108,65 @@ export const ClientWaitingForAssessment = () => {
   ];
 
 
+  console.log({rows})
+
+
+  const formatForMobileView = rows?.map(row=>{
+    return {
+      id:row.id,
+      visitNumber: row.aetc_visit_number,
+      firstName: row.given_name,
+      lastName: row.family_name,
+      gender: row.gender,
+      arrivalTime: row.patient_arrival_time,
+      actor: <DisplayEncounterCreator encounterType={encounters.VITALS} patientId={row.id} />,
+      aggregate: <CalculateAggregateTime arrival_time={row.arrival_time} patientId={row.id} />,
+      waitingTime: <CalculateWaitingTime arrival_time={row?.latest_encounter_time} patientId={row.id} />,
+      actionName: "Triaged By",
+      action: <CardAction triage={row.triage_result}  visitId={row.visit_uuid} id={row.id} />
+    }
+  })
+
 
   return (
-    <BaseTable loading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
+    // <></>
+    <PatientCardList dataList={formatForMobileView ? formatForMobileView : []} />
+    // <BaseTable loading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
   );
 };
 
 
+const CardAction = ({id,visitId, triage}:{id:string, visitId:string, triage:string})=>{
+  const [deleted, setDeleted] = useState('')
+  const { navigateTo } = useNavigation();
+
+  console.log("===>",triage)
+  return <Box sx={{display:"flex",flexDirection:"column",flex:"1"}}> 
+    <WrapperBox
+            sx={{
+              borderRadius: "2px",
+              width: "100%",
+              height: "5ch",
+              backgroundColor:
+                triage== "red"
+                  ? "#B42318"
+                  : triage== "yellow"
+                    ? "#ede207"
+                    // : "#B54708",
+                    : triage== "green" ? "#016302" : '',
+              marginY: 1,
+            }}
+          ></WrapperBox>
+    <Box sx={{flex:"1"}}>
+    <MainButton
+              sx={{ fontSize: "12px", width:"49%",mr:'1px' }}
+              title={"start"}
+              onClick={() => navigateTo(`/patient/${id}/profile`)}
+            />
+            <AbscondButton onDelete={() => setDeleted(id)} visitId={visitId} patientId={id} />
+    </Box>
+  </Box>
+}
 function CalculateAggregateTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
 
   const currentTime: any = getCATTime()
@@ -174,9 +227,8 @@ function CalculateWaitingTime({ patientId, arrival_time }: { patientId: string, 
     }
   }
 
-  return (
-    <MainTypography>{waitingTime}</MainTypography>
-  )
+  return waitingTime
+  
 }
 
 

@@ -8,18 +8,20 @@ import {
   RegistrationCard,
 } from "../registration/components/common";
 import { Navigation } from "../components/navigation";
+import { PatientCard } from "@/components/cards/PatientCardList";
 
 export default function AssessmentPage() {
   return (
     <>
       <Navigation title="Patients Waiting For Assessments" link="/dashboard" />
+     
       <MainGrid container>
-        <MainGrid xs={1} lg={0} item></MainGrid>
+        <MainGrid xs={0} lg={0} item></MainGrid>
         <MainGrid
-          xs={10}
+          xs={12}
           lg={12}
           sx={{
-            display: "flex",
+            display: "flex", 
             flexDirection: "column",
           }}
           item
@@ -33,11 +35,11 @@ export default function AssessmentPage() {
             This is a list of all patients that went through triage successfully
             and waiting for assessments.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ mx: 2, p: 0 }}>
+          <RegistrationCard sx={{ mx:0, p: 0 }}>
             <ClientWaitingForAssessment />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid xs={1} lg={0} item></MainGrid>
+        <MainGrid xs={0} lg={0} item></MainGrid>
       </MainGrid>
     </>
   );
