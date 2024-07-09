@@ -110,7 +110,8 @@ export interface Obs {
   interpretation: any;
   value: any;
   value_coded_uuid: any;
-  names: Name[]
+  names: Name[];
+  created_by:string
 }
 
 export interface Encounter {

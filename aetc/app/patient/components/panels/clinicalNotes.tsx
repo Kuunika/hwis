@@ -52,7 +52,7 @@ export const ClinicalNotes = () => {
     console.log({obs})
     const notes = obs.map((ob) => ({
       note: ob.value_text,
-      creator: "",
+      creator: ob.created_by,
     }));
     setClinicalNotes(notes);
   };
@@ -119,7 +119,7 @@ export const ClinicalNotes = () => {
               >
                 <ReactMarkdown>{note.note}</ReactMarkdown>
                 <br />
-                <Typography>~ Dr John Doe</Typography>
+                <Typography>~ {note.creator}</Typography>
               </Box>
             );
           })
