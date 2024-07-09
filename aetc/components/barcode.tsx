@@ -45,22 +45,22 @@ const downloadZplData = async (labelName: string, canvas: HTMLCanvasElement) => 
         const gfa = await zplImageConvert.encode(base64);
         const zpl = `^XA^FO20,20${gfa}^XZ`;
 
-        console.log(zpl);
+        // console.log(zpl);
 
-        await axios.post("http://192.168.198.59:3000/print", { zpl });
+        await axios.post(`${process.env.NEXT_PUBLIC_PRINTER_IP}/print`, { zpl });
 
-        // Create a Blob with the ZPL content
-        const blob = new Blob([zpl], { type: 'text/plain' });
-        // Create a URL for the Blob
-        const url = window.URL.createObjectURL(blob);
-        // Create a link element for downloading
-        const downloadLink = document.createElement('a');
-        downloadLink.href = url;
-        downloadLink.download = `${labelName}.raw.z64.zpl`;
-        // Trigger a click event to download the file
-        downloadLink.click();
-        // Clean up by revoking the URL
-        window.URL.revokeObjectURL(url);
+       
+        // const blob = new Blob([zpl], { type: 'text/plain' });
+     
+        // const url = window.URL.createObjectURL(blob);
+
+        // const downloadLink = document.createElement('a');
+        // downloadLink.href = url;
+        // downloadLink.download = `${labelName}.raw.z64.zpl`;
+       
+        // downloadLink.click();
+    
+        // window.URL.revokeObjectURL(url);
     } catch (error) {
         console.error('Error encoding image to ZPL:', error);
     }
