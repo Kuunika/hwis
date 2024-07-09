@@ -1,3 +1,4 @@
+
 import React, { ReactNode, useEffect, useRef } from 'react';
 import Barcode from 'react-barcode';
 import { WrapperBox } from '@/components';

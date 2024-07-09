@@ -1,3 +1,4 @@
+'use client'
 import {
   MainButton,
   MainGrid,
@@ -30,8 +31,6 @@ import { checkPatientIfOnWaitingAssessment, useParameters } from "@/hooks";
 export const DesktopView = () => {
   const { params } = useParameters();
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string)
-
-
 
   return (
     <MainGrid

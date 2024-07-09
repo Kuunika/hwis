@@ -63,7 +63,7 @@ export const WaitingRegistrationList = () => {
           <>
 
             <MainButton
-              sx={{ fontSize: "12px" }}
+              sx={{ fontSize: "12px", mr:"1px" }}
               title={"start"}
               onClick={() => {
                 if (cell.row.gender != 'N/A') {

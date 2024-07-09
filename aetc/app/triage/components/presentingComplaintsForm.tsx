@@ -218,7 +218,7 @@ const presentingComplaints = [
 export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormValues }: Prop) => {
 
   const handleValueChange = (values: Array<any>) => {
-    const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting blood']
+    const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting Blood']
     triage.forEach(triage => {
       const found = values.find(v => {
         return v.id == triage
