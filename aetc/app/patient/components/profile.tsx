@@ -40,6 +40,7 @@ export const DesktopView = () => {
       spacing={1}
       mt={"2ch"}
       ml={"9ch"}
+  
     >
       <MainGrid item lg={2}>
         <PersonalDetailsCard />

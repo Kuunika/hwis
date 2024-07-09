@@ -21,7 +21,6 @@ export const VisitsBar = () => {
 
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
 
-
   const uniqueArray: any = {};
   data?.forEach(item => {
     uniqueArray[item.visit_id] = false

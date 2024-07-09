@@ -37,7 +37,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Droid+Sans:wght@400;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght=400;700&display=swap" rel="stylesheet" /> */}
       </head>
-      <body className={inter.className} suppressHydrationWarning={true}>
+      <body style={{backgroundColor:"#F6F6F6"}} className={inter.className} suppressHydrationWarning={true}>
         <ReactQueryProvider>
           <ContextProviders>
             <ProviderTheme>

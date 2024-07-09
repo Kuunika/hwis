@@ -4,6 +4,7 @@ import { useNavigation } from "@/hooks";
 import { FaPlus } from "react-icons/fa";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { useState, useEffect } from "react";
+import { Typography } from "@mui/material";
 
 export const Medications = () => {
   const { navigateTo } = useNavigation();
@@ -30,10 +31,11 @@ export const Medications = () => {
         />
       }
     >
-      <br />
+      <Typography>No medications added</Typography>
+      {/* <br />
       <MedicationRow medicine="Metformin Extended" />
       <MedicationRow medicine="Metformin Extended" />
-      <MedicationRow medicine="Metformin Extended" />
+      <MedicationRow medicine="Metformin Extended" /> */}
     </Panel>
   );
 };
