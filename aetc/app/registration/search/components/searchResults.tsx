@@ -63,8 +63,6 @@ export const SearchResults = ({
     // setRegistrationType(registrationType)
   }
 
-
-
   const resultNotFound = (searchResults?.locals?.length == 0 && searchResults?.remotes?.length == 0)
 
   return (
@@ -487,7 +485,7 @@ const ViewPatientDialog = ({ patient, onClose, open }: { patient: Person, onClos
     <ViewPatient patient={patient} />
     <br />
     <br />
-    <DisplayRelationship loading={loadingRelationships} relationships={relationships ? relationships : []} />
+    <DisplayRelationship patientId={patient?.uuid} loading={loadingRelationships} relationships={relationships ? relationships : []} />
     <br />
     <br />
     <WrapperBox display={"flex"}>
@@ -508,7 +506,6 @@ const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => v
   const identifier = patient?.identifiers?.find(id => id?.identifier_type?.name == "DDE person document ID");
 
   useEffect(() => {
-
     if (isSuccess) {
 
       setPatient(data);

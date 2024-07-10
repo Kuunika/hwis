@@ -31,10 +31,10 @@ const schema = Yup.object().shape({
     relationship: Yup.string().required().label('Relationship'),
 })
 
-export const EditRelationshipForm = ({ onSubmit, initialValues }: { initialValues: any, onSubmit: (values: any) => void }) => {
+export const EditRelationshipForm = ({ onSubmit, initialValues, isGuardian }: { initialValues: any, onSubmit: (values: any) => void, isGuardian?:boolean }) => {
     return <FormikInit submitButtonText="Update" validationSchema={schema} initialValues={initialValues} onSubmit={onSubmit}>
 
-        <RegistrationCardTitle>Next of kin Information</RegistrationCardTitle>
+        <RegistrationCardTitle>{isGuardian? 'Guardian information': `Next of kin Information`}</RegistrationCardTitle>
         <WrapperBox display={"flex"} flexDirection={"column"}>
             <TextInputField
                 name={'given_name'}
@@ -42,16 +42,16 @@ export const EditRelationshipForm = ({ onSubmit, initialValues }: { initialValue
                 label={'First Name'}
             />
             <TextInputField
-                name={'family_name'}
+                name={'family_name'} 
                 id={'family_name'}
                 label={'Last Name'}
             />
-            <SelectInputField
+          {!isGuardian && <SelectInputField
                 name={"relationship"}
                 id={"relationship"}
                 label={'Relationship'}
                 selectItems={relationships}
-            />
+            />}
             <TextInputField
                 name={'phoneNumber'}
                 id={'phoneNumber'}
