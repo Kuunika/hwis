@@ -73,6 +73,7 @@ export interface Person {
   visit_uuid: string;
   arrival_time: string;
   triage_result: string;
+  latest_encounter_time:any;
   names: Array<{
     given_name: string;
     family_name: string
@@ -109,7 +110,8 @@ export interface Obs {
   interpretation: any;
   value: any;
   value_coded_uuid: any;
-  names: Name[]
+  names: Name[];
+  created_by:string
 }
 
 export interface Encounter {
@@ -299,11 +301,11 @@ export type RelationshipType = {
 
 }
 
-
-
 export interface ActiveVisit {
   visit_id: number;
   patient_id: number;
   uuid: string;
-  visit_type_id: number
+  visit_type_id: number;
+  date_started: Date;
+  date_stopped: Date;
 }

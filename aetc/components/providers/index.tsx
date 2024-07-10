@@ -4,15 +4,15 @@ import { ReactNode } from "react";
 
 const theme = createTheme({
   typography: {
-    // fontFamily: [
-    //   'Segoe UI',
-    //   'Roboto',
-    //   'Noto Sans',
-    //   'Ubuntu',
-    //   'Droid Sans',
-    //   'Helvetica Neue',
-    //   'sans-serif'
-    // ].join(','),
+    fontFamily: [
+      'Segoe UI',
+      'Roboto',
+      'Noto Sans',
+      'Ubuntu',
+      'Droid Sans',
+      'Helvetica Neue',
+      'sans-serif'
+    ].join(','),
   },
   palette: {
     primary: {
@@ -20,7 +20,7 @@ const theme = createTheme({
     },
   },
 });
-
+// TODO:
 export const ProviderTheme = ({ children }: { children: ReactNode }) => {
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };

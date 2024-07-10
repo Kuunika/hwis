@@ -15,9 +15,9 @@ export default function List() {
     <>
       <Navigation title="Patients waiting registration" link="/dashboard" />
       <MainGrid container>
-        <MainGrid xs={1} lg={1} item></MainGrid>
+        <MainGrid xs={0} lg={1} item></MainGrid>
         <MainGrid
-          xs={10}
+          xs={12}
           lg={10}
           sx={{
             display: "flex",
@@ -38,7 +38,7 @@ export default function List() {
             <WaitingRegistrationList />
           </RegistrationCard>
         </MainGrid>
-        <MainGrid xs={1} lg={1} item></MainGrid>
+        <MainGrid xs={0} lg={1} item></MainGrid>
       </MainGrid>
     </>
   );

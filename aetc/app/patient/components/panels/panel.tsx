@@ -19,7 +19,7 @@ export const Panel = ({ children, title, icon }: Props) => {
         borderStyle: "solid",
         borderWidth: "0.1ch",
         borderColor: { xs: "#B3B3B3", lg: "#E6E6E6" },
-        p: "2ch",
+        p: "1ch",
         backgroundColor: "#fff",
         m: "0.5ch",
       }}

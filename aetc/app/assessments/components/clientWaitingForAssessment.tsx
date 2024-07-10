@@ -1,61 +1,97 @@
-import { getCATTime, getTime } from "@/helpers/dateTime";
-import { useState } from "react"
-import { useNavigation } from "@/hooks";
+'use client'
+import { calculateAge, getTime } from "@/helpers/dateTime";
+import { useState } from "react";
+import { checkScreenSize, useNavigation } from "@/hooks";
+
+import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 
 import {
-  getPatientsWaitingForAssessment,
-
-} from "@/hooks/patientReg";
-
-import { BaseTable, MainButton, MainTypography, WrapperBox } from "../../../components";
+  BaseTable,
+  CalculateWaitingTime,
+  MainButton,
+  PatientTableList,
+  WrapperBox,
+} from "../../../components";
 
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
-import { encounters } from "@/constants";
+import { encounters, triageResult } from "@/constants";
+import { PatientCardList } from "@/components/cards/PatientCardList";
+import { Box } from "@mui/material";
 
 export const ClientWaitingForAssessment = () => {
-  const [deleted, setDeleted] = useState('')
+  const [deleted, setDeleted] = useState("");
   const { navigateTo } = useNavigation();
-  const { data: patients, isLoading, isRefetching } = getPatientsWaitingForAssessment();
+  const {
+    data: patients,
+    isLoading,
+    isRefetching,
+  } = getPatientsWaitingForAssessment();
 
 
-  const rows = patients?.sort((p1, p2) => {
-    const triagePriority: any = { 'red': 1, 'yellow': 2, 'green': 3 };
-    if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
-      return -1;
-    }
-    if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
-      return 1;
-    }
+  const rows = patients
+    ?.sort((p1, p2) => {
+      const triagePriority: any = { red: 1, yellow: 2, green: 3 };
+      if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
+        return -1;
+      }
+      if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
+        return 1;
+      }
 
-    // If triage results are the same, then sort by arrival time (earliest first)
-
-    //@ts-ignore
-    return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-  }).map((p) => ({ id: p?.uuid, ...p, patient_arrival_time: getTime(p.arrival_time) }));
-
+      // If triage results are the same, then sort by arrival time (earliest first)
+      //@ts-ignore
+      return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+    })
+    .map((p) => ({
+      id: p?.uuid,
+      ...p,
+      patient_arrival_time: getTime(p.arrival_time),
+    })).filter(p => p.id != deleted);
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit No", },
+    { field: "aetc_visit_number", headerName: "Visit No" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "patient_arrival_time", headerName: "Arrival Time", },
+    { field: "patient_arrival_time", headerName: "Arrival Time" },
     { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
-    { field: "gender", headerName: "Gender", },
+    { field: "gender", headerName: "Gender" },
     {
-      field: "waiting", headerName: "WaitingTime", flex: 1, renderCell: (cell: any) => {
-        return <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} patientId={cell.row.id} />
-      }
+      field: "waiting",
+      headerName: "WaitingTime",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return (
+          <CalculateWaitingTime
+            arrival_time={cell.row.latest_encounter_time}
+          />
+        );
+      },
     },
     {
-      field: "aggreg", headerName: "Aggregate", flex: 1, renderCell: (cell: any) => {
-        return <CalculateAggregateTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
-      }
+      field: "aggreg",
+      headerName: "Aggregate",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return (
+          <CalculateWaitingTime
+            arrival_time={cell.row.arrival_time}
+          />
+        );
+      },
     },
     {
-      field: "triage", headerName: "Triaged By", flex: 1, renderCell: (cell: any) => {
-        return <DisplayEncounterCreator encounterType={encounters.VITALS} patientId={cell.row.id} />
-      }
+      field: "triage",
+      headerName: "Triaged By",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return (
+          <DisplayEncounterCreator
+            encounterType={encounters.VITALS}
+            patientId={cell.row.id}
+          />
+        );
+      },
     },
     {
       field: "triage_result",
@@ -72,9 +108,11 @@ export const ClientWaitingForAssessment = () => {
                 cell.value == "red"
                   ? "#B42318"
                   : cell.value == "yellow"
-                    ? "#ede207"
-                    // : "#B54708",
-                    : cell.value == "green" ? "#016302" : '',
+                  ? "#ede207"
+                  : // : "#B54708",
+                  cell.value == "green"
+                  ? "#016302"
+                  : "",
               marginY: 1,
             }}
           ></WrapperBox>
@@ -95,11 +133,15 @@ export const ClientWaitingForAssessment = () => {
         return (
           <>
             <MainButton
-              sx={{ fontSize: "12px" }}
+              sx={{ fontSize: "12px", mr: "1px" }}
               title={"start"}
               onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
             />
-            <AbscondButton onDelete={() => setDeleted(cell.id)} visitId={cell.row.visit_uuid} patientId={cell.id} />
+            <AbscondButton
+              onDelete={() => setDeleted(cell.id)}
+              visitId={cell.row.visit_uuid}
+              patientId={cell.id}
+            />
           </>
         );
       },
@@ -108,79 +150,95 @@ export const ClientWaitingForAssessment = () => {
 
 
 
-  return (
-    <BaseTable loading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
-  );
+  const formatForMobileView = rows?.map((row) => {
+    return {
+      id: row.id,
+      visitNumber: row.aetc_visit_number,
+      firstName: row.given_name,
+      lastName: row.family_name,
+      gender: row.gender,
+      arrivalTime: row.patient_arrival_time,
+      actor: (
+        <DisplayEncounterCreator
+          encounterType={encounters.VITALS}
+          patientId={row.id}
+        />
+      ),
+      aggregate: (
+        <CalculateWaitingTime
+          arrival_time={row.arrival_time}
+      
+        />
+      ),
+      waitingTime: (
+        <CalculateWaitingTime
+          arrival_time={row?.latest_encounter_time}
+        />
+      ),
+      actionName: "Triaged By",
+      action: (
+        <CardAction
+          setDeleted={(id:any)=>setDeleted(id)}
+          triage={row.triage_result}
+          visitId={row.visit_uuid}
+          id={row.id}
+        />
+      ),
+      age: `${calculateAge(row.birthdate)}yrs`,
+      triageResult: row.triage_result,
+    };
+  });
+
+  return  <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching}  columns={columns} />
+
 };
 
-
-function CalculateAggregateTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
-
-  const currentTime: any = getCATTime()
-
-  const differenceInMilliseconds = currentTime - Date.parse(arrival_time);
-
-  let aggTime;
-
-  const seconds = Math.floor(differenceInMilliseconds / 1000);
-  if (seconds < 60) {
-    aggTime = `${seconds} seconds`;
-  } else {
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) {
-      aggTime = `${minutes} minutes`;
-    } else {
-      const hours = Math.floor(minutes / 60);
-      aggTime = `${hours} hours`;
-    }
-  }
-
-  return aggTime
-
-}
-
-function CalculateWaitingTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
-  // const { data, isLoading } = getPatientsEncounters(patientId);
-
-
-  // const encounter = data?.find(encounter => encounter.encounter_type.name === 'Triage Result');
-
-  // if (isLoading) {
-  //   return <Image src={"/loader.svg"} width={20} height={20} alt="loader" />
-  // }
-
-  // if (!encounter) {
-  //   return "No encounter data available";
-  // }
-
-  // const encounterDatetime = encounter.encounter_datetime;
-
-  const currentTime: any = getCATTime()
-
-  const differenceInMilliseconds = currentTime - Date.parse(arrival_time);
-
-  let waitingTime;
-
-  const seconds = Math.floor(differenceInMilliseconds / 1000);
-  if (seconds < 60) {
-    waitingTime = `${seconds} seconds`;
-  } else {
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) {
-      waitingTime = `${minutes} minutes`;
-    } else {
-      const hours = Math.floor(minutes / 60);
-      waitingTime = `${hours} hours`;
-    }
-  }
+const CardAction = ({
+  id,
+  visitId,
+  triage,
+  setDeleted
+}: {
+  id: string;
+  visitId: string;
+  triage: string;
+  setDeleted: (id:any)=>void
+}) => {
+  const { navigateTo } = useNavigation();
 
   return (
-    <MainTypography>{waitingTime}</MainTypography>
-  )
-}
-
-
-
-
-
+    <Box sx={{ display: "flex", flexDirection: "column", flex: "1" }}>
+      <WrapperBox
+        sx={{
+          borderRadius: "2px",
+          width: "100%",
+          height: "5ch",
+          backgroundColor:
+            triage == "red"
+              ? "#B42318"
+              : triage == "yellow"
+              ? "#ede207"
+              : // : "#B54708",
+              triage == "green"
+              ? "#016302"
+              : "",
+          marginY: 1,
+        }}
+      ></WrapperBox>
+      <Box sx={{ flex: "1" }}>
+        <MainButton
+          sx={{ fontSize: "12px", width: "49%", mr: "2px" }}
+          title={"start"}
+          onClick={() => navigateTo(`/patient/${id}/profile`)}
+        />
+        <AbscondButton
+          sx={{ width: "49%" }}
+          onDelete={() => setDeleted(id)}
+          visitId={visitId}
+          patientId={id}
+        />
+      </Box>
+    </Box>
+  );
+};
 

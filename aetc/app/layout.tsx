@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-// import { Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
@@ -8,9 +8,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigation } from "@/hooks";
 import { OverlayLoader } from "@/components/backdrop";
+import CssBaseline from '@mui/material/CssBaseline';
 
 
-// const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "MAHIS",
@@ -26,11 +27,13 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true}>
-      {/* <body className={inter.className} suppressHydrationWarning={true}> */}
+      <head>
+      </head>
+      <body style={{backgroundColor:"#F6F6F6"}} className={inter.className} suppressHydrationWarning={true}>
         <ReactQueryProvider>
           <ContextProviders>
             <ProviderTheme>
+            <CssBaseline />
               <NavBar />
               {children}
               <OverlayLoader open={false} />

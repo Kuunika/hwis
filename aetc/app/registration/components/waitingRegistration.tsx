@@ -2,7 +2,7 @@ import { getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
-import { BaseTable, MainButton, MainTypography } from "@/components";
+import { BaseTable, CalculateWaitingTime, MainButton, MainTypography, PatientTableList } from "@/components";
 
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
@@ -36,12 +36,12 @@ export const WaitingRegistrationList = () => {
     { field: "patient_arrival_time", headerName: "Arrival Time", flex: 1 },
     {
       field: "waiting", headerName: "WaitingTime", flex: 1, renderCell: (cell: any) => {
-        return <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} patientId={cell.row.id} />
+        return <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} />
       }
     },
     {
       field: "aggreg", headerName: "Aggregate", flex: 1, renderCell: (cell: any) => {
-        return <CalculateAggregateTime arrival_time={cell.row.arrival_time} patientId={cell.row.id} />
+        return <CalculateWaitingTime arrival_time={cell.row.arrival_time}  />
       }
     },
     {
@@ -63,7 +63,7 @@ export const WaitingRegistrationList = () => {
           <>
 
             <MainButton
-              sx={{ fontSize: "12px" }}
+              sx={{ fontSize: "12px", mr:"1px" }}
               title={"start"}
               onClick={() => {
                 if (cell.row.gender != 'N/A') {
@@ -85,91 +85,49 @@ export const WaitingRegistrationList = () => {
     },
   ];
 
+
+  const formatForMobileView = rows?.map((row) => {
+    return {
+      id: row.id,
+      visitNumber: row.aetc_visit_number,
+      firstName: row.given_name,
+      lastName: row.family_name,
+      gender: row.gender,
+      arrivalTime: row.patient_arrival_time,
+      actor: (
+        <DisplayEncounterCreator
+          encounterType={encounters.SCREENING_ENCOUNTER}
+          patientId={row.id}
+        />
+      ),
+      aggregate: <CalculateWaitingTime arrival_time={row.arrival_time} />,
+      waitingTime: (
+        <CalculateWaitingTime arrival_time={row?.latest_encounter_time} />
+      ),
+      actionName: "screened by",
+      action: (
+        <>
+          {" "}
+          <MainButton
+            sx={{ fontSize: "12px",width:"49%", mr:"1px" }}
+            title={"start"}
+            onClick={() => navigateTo(`/registration/${row.id}/search`)}
+          />
+          <AbscondButton
+          sx={{width:"49%"}}
+            onDelete={() => setDeleted(row.id)}
+            visitId={row.visit_uuid}
+            patientId={row.id}
+          />
+        </>
+      ),
+      age: "N/A",
+      triageResult: row.triage_result,
+    };
+  });
+
   return (
-    <BaseTable loading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
+    <PatientTableList formatForMobileView={formatForMobileView}  isLoading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
   );
 };
 
-function CalculateAggregateTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
-  const { data, isLoading } = getPatientsEncounters(patientId);
-
-
-  // const encounter = data?.find(encounter => encounter.encounter_type.name === 'Initial Registration');
-
-  // if (isLoading) {
-  //   return <Image src={"/loader.svg"} width={20} height={20} alt="loader" />
-  // }
-  // if (!encounter) {
-  //   return "No encounter data available";
-  // }
-
-  // const encounterDatetime = encounter.encounter_datetime;
-
-  const currentTime: any = getCATTime()
-
-  const differenceInMilliseconds = currentTime - Date.parse(arrival_time);
-
-  let aggTime;
-
-  const seconds = Math.floor(differenceInMilliseconds / 1000);
-  if (seconds < 60) {
-    aggTime = `${seconds} seconds`;
-  } else {
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) {
-      aggTime = `${minutes} minutes`;
-    } else {
-      const hours = Math.floor(minutes / 60);
-      aggTime = `${hours} hours`;
-    }
-  }
-  if (isLoading) {
-    return "loading..."
-  }
-  return (
-    <MainTypography>{aggTime}</MainTypography>
-  )
-}
-
-function CalculateWaitingTime({ patientId, arrival_time }: { patientId: string, arrival_time: any }) {
-  const { data, isLoading } = getPatientsEncounters(patientId);
-
-
-
-  const encounter = data?.find(encounter => encounter.encounter_type.name === 'Screening');
-
-  if (isLoading) {
-    return <Image src={"/loader.svg"} width={20} height={20} alt="loader" />
-  }
-
-  if (!encounter) {
-    return "No encounter data available";
-  }
-
-  const encounterDatetime = encounter.encounter_datetime;
-
-  const currentTime: any = getCATTime()
-
-  const differenceInMilliseconds = currentTime - Date.parse(arrival_time);
-
-  let waitingTime;
-
-  const seconds = Math.floor(differenceInMilliseconds / 1000);
-  if (seconds < 60) {
-    waitingTime = `${seconds} seconds`;
-  } else {
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) {
-      waitingTime = `${minutes} minutes`;
-    } else {
-      const hours = Math.floor(minutes / 60);
-      waitingTime = `${hours} hours`;
-    }
-  }
-  if (isLoading) {
-    return "loading..."
-  }
-  return (
-    <MainTypography>{waitingTime}</MainTypography>
-  )
-}

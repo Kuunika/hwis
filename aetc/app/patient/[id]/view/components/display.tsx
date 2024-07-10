@@ -1,5 +1,5 @@
 
-import { getPatientRelationshipTypes } from "@/hooks/patientReg";
+import { getPatientRelationships, getPatientRelationshipTypes } from "@/hooks/patientReg";
 import { WrapperBox, MainTypography, MainPaper, MainButton,GenericDialog } from "@/components"
 import { ReactNode, useEffect, useState } from "react"
 import { concepts } from "@/constants";
@@ -7,6 +7,7 @@ import { getObservationValue } from "@/helpers/emr";
 import { Encounter, Relationship } from "@/interfaces";
 import { EditFinancingForm, EditRelationshipForm, EditSocialHistory } from "../../../components";
 import CircularProgress from '@mui/material/CircularProgress';
+import { addPerson, addRelationship } from "@/hooks/people";
 
 
 
@@ -96,18 +97,59 @@ export const DisplayFinancing = ({ financing, loading, onSubmit }: { financing: 
 }
 
 
-export const DisplayRelationship = ({ relationships, loading }: { relationships: Relationship[], loading: boolean }) => {
+export const DisplayRelationship = ({ patientId }: { relationships: Relationship[], loading: boolean, patientId:string }) => {
+    const { data: relationships, isPending: loadingRelationships, refetch  } = getPatientRelationships(patientId)
     const [relationshipDialog, setRelationshipDialog] = useState(false);
+    const [guardianDialog, setGuardianDialog] = useState(false);
     const { data: relationshipTypes, isPending } = getPatientRelationshipTypes();
     const [initialValues, setInitialValues] = useState({})
+    const [relationshipAdded, setRelationshipAdded] = useState('')
+    const {
+        mutate: createGuardian,
+        isPending: creatingGuardian,
+        isSuccess: guardianCreated,
+        isError: guardianError,
+        data: guardianData,
+      } = addPerson();
 
-    if (loading || isPending) {
+      const {
+        mutate: createGuardianRelationship,
+        isPending: creatingGuardianRelationship,
+        isSuccess: guardianRelationshipCreated,
+        data: guardianRelationship,
+        isError: guardianRelationshipError,
+      } = addRelationship();
+
+
+
+
+  useEffect(() => {
+    if (guardianCreated && guardianData) {
+      createGuardianRelationship({
+        patient: patientId,
+        person: guardianData?.uuid,
+        nextOfKinRelationship: relationshipAdded,
+      });
+    }
+  }, [guardianCreated]);
+
+
+
+  useEffect(()=>{
+    if(guardianRelationshipCreated){
+        refetch()
+        setGuardianDialog(false)
+    }
+
+  },[guardianRelationshipCreated])
+
+    if (loadingRelationships || isPending || creatingGuardian || creatingGuardianRelationship) {
         return <WrapperBox sx={{ display: 'flex', width: "100%", alignItems: "center", justifyContent: "center" }}>
             <CircularProgress />
         </WrapperBox>
     }
 
-    const mappedRelationships = relationships?.map(relationship => {
+    const mappedRelationships:any = relationships?.map(relationship => {
         const relationshipId = relationship.relationship;
         const relationshipType = relationshipTypes?.find(r => r.relationship_type_id == relationshipId);
 
@@ -119,16 +161,23 @@ export const DisplayRelationship = ({ relationships, loading }: { relationships:
         }
     })
 
+    const createRelationship = (values:any)=>{
+        setRelationshipAdded(values.relationship)
+        createGuardian({
+            nextOfKinFirstName: values.given_name,
+            nextOfKinLastName: values.family_name,
+          });
+    }
 
-    return <WrapperBox sx={{ display: "flex", width: mappedRelationships.length == 1 ? "50%" : "100%" }}>
-        <EditRelationship initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
+    return <WrapperBox sx={{ display: "flex", width: mappedRelationships?.length == 1 ? "50%" : "100%" }}>
+        <EditRelationship onSubmit={createRelationship} initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
 
 
         {/* add guardian */}
-        <EditRelationship initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
+        <EditRelationship onSubmit={createRelationship}  isGuardian={true} initialValues={{relationship: concepts.GUARDIAN}} open={guardianDialog} onClose={() => setGuardianDialog(false)} />
         {/* end add guardian */}
 
-        {mappedRelationships.map(relationship => {
+        {mappedRelationships?.map((relationship:any) => {
             return <ContainerCard >
                 <MainTypography variant="h5">{relationship.relationship?.toLowerCase() == 'guardian' ? "Guardian Information" : "Next Of Kin Information"}</MainTypography>
                 <LabelValue label="First Name" value={relationship.given_name} />
@@ -140,9 +189,11 @@ export const DisplayRelationship = ({ relationships, loading }: { relationships:
                 }} />
             </ContainerCard>
         })}
-        {
-            mappedRelationships.length == 1 &&
-            <MainButton sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => { }} />
+        {<>
+            {mappedRelationships?.length==0 && <MainButton sx={{ alignSelf: "flex-start", mr:"1px" }} title="Add Next Of Kin" onClick={() => setRelationshipDialog(true)} />}
+            {(mappedRelationships?.length == 1 || mappedRelationships?.length==0) &&
+            <MainButton sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => setGuardianDialog(true)} />}
+                </>
         }
     </WrapperBox>
 }
@@ -174,8 +225,8 @@ const FinancingDialog = ({ open, onClose, initialValues, onSubmit }: { open: boo
     </GenericDialog>
 }
 
-const EditRelationship = ({ open, onClose, initialValues }: { open: boolean, onClose: () => void, initialValues: any }) => {
+const EditRelationship = ({ open, onClose, initialValues, isGuardian, onSubmit }: { open: boolean, onClose: () => void, initialValues: any, isGuardian?:boolean, onSubmit:(values:any)=>void }) => {
     return <GenericDialog maxWidth="sm" title="Edit Relationships" open={open} onClose={onClose}>
-        <EditRelationshipForm initialValues={initialValues} onSubmit={values => console.log({ values })} />
+        <EditRelationshipForm isGuardian={isGuardian} initialValues={initialValues} onSubmit={onSubmit} />
     </GenericDialog>
 }

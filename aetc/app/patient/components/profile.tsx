@@ -1,3 +1,4 @@
+'use client'
 import {
   MainButton,
   MainGrid,
@@ -31,8 +32,6 @@ export const DesktopView = () => {
   const { params } = useParameters();
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string)
 
-
-
   return (
     <MainGrid
       display={{ xs: "none", lg: "flex" }}
@@ -40,6 +39,7 @@ export const DesktopView = () => {
       spacing={1}
       mt={"2ch"}
       ml={"9ch"}
+  
     >
       <MainGrid item lg={2}>
         <PersonalDetailsCard />

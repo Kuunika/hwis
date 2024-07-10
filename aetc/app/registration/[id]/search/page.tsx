@@ -24,7 +24,8 @@ import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 import { Person } from "@/interfaces";
-import { searchRegPatients } from "@/hooks/people";
+import { searchNPID, searchRegPatients } from "@/hooks/people";
+import { demographicSearchDDEAdaptor, demographicSearchLocalAdaptor } from "@/helpers/adapters";
 
 function RegistrationSearch() {
   const { params } = useParameters();
@@ -47,7 +48,7 @@ function RegistrationSearch() {
 
   return (
     <>
-      <Navigation title="Search Patient" link="/dashboard" />
+      <Navigation title="Search Patient" link="/registration/list" />
       <WrapperBox
         sx={{
           display: "flex",
@@ -109,19 +110,17 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
   const { setSearchedPatient: setSearchedPatientContext } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
   const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
 
-  // const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchDDEPatient(search.firstName, search.lastName, search.gender)
+  const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchDDEPatient(search.firstName, search.lastName, search.gender)
   const [searchedPatient, setSearchedPatient] = useState({});
 
 
-  const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchRegPatients(search)
+  // const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchRegPatients(search)
 
 
   useEffect(() => {
     if (!Boolean(search.firstName)) return;
     refetch();
-
   }, [search])
-
 
   const handleSubmit = (values: any) => {
     setSearchedPatient(values);
@@ -130,15 +129,12 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
       lastName: values.lastName,
       gender: values.gender
     })
-
     setSearchedPatientContext({
       patient_id: patient.patient_id,
       firstName: values.firstName,
       lastName: values.lastName,
       gender: values.gender
     })
-
-
   };
 
 
@@ -155,17 +151,33 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
       <br />
       <OverlayLoader open={isFetching} />
       {(searchComplete || isError) && <SearchResults
-        searchResults={data ? { remotes: [], locals: data } : { remotes: [], locals: [] }}
+        searchResults={demographicSearchDDEAdaptor(data)}
+        // searchResults={demographicSearchLocalAdaptor(data)}
         searchedPatient={searchedPatient}
-      />
-      }
-
+      />}
     </>
   );
 };
 
 const NPIDSearch = () => {
-  return <SearchNPIDForm onSubmit={() => { }} />;
+  const [search, setSearch]=useState('');
+  const { refetch, isFetching, isSuccess, data, isError } = searchNPID(search)
+
+  console.log({data})
+
+  useEffect(()=>{
+    if (!Boolean(search)) return;
+    refetch()
+  },[search])
+
+  return  <>
+  <OverlayLoader open={isFetching} />
+   <SearchNPIDForm onSubmit={(values:any)=>setSearch(values.npid)} />
+   {(isSuccess || isError) && <SearchResults
+        searchResults={data ? data : { remotes: [], locals: [] }}
+        searchedPatient={data}
+      />}
+  </>
 };
 
 export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])

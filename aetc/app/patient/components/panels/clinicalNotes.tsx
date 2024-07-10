@@ -1,27 +1,89 @@
-import { MainTypography, WrapperBox } from "@/components";
+import { MainButton, MainTypography, WrapperBox } from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { useState, useEffect } from "react";
+import MarkdownEditor from "@/components/markdownEditor";
+import Popover from "@mui/material/Popover";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import ReactMarkdown from "react-markdown";
+import { Box } from "@mui/material";
+import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import { useParameters } from "@/hooks";
+import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { concepts, encounters } from "@/constants";
+import { getDateTime } from "@/helpers/dateTime";
+import { Obs } from "@/interfaces";
 
 export const ClinicalNotes = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [clinicalNotes, setClinicalNotes] = useState<
+    Array<{ note: string | null; creator: string }>
+  >([]);
+  const { mutate, isSuccess, isPending, isError, data } = addEncounter();
+  const { params } = useParameters();
+  const { data: patients } = getPatientsWaitingForAssessment();
+  const {
+    data: patientEncounters,
+    isLoading,
+    isSuccess: encountersFetched,
+  } = getPatientsEncounters(params.id as string);
+
+
+  useEffect(()=>{
+
+    if(encountersFetched){
+     const noteEncounter= patientEncounters.find(encounter=>encounter.encounter_type.uuid==encounters.CLINICAL_NOTES)
+
+     if(noteEncounter)
+      formatNotes(noteEncounter.obs)
+    }
+
+  },[patientEncounters])
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-  });
+    if (isSuccess) {
+      formatNotes(data.obs);
+    }
+  }, [data]);
+
+  const formatNotes = (obs: Obs[]) => {
+    console.log({obs})
+    const notes = obs.map((ob) => ({
+      note: ob.value_text,
+      creator: ob.created_by,
+    }));
+    setClinicalNotes(notes);
+  };
+
+  const addClinicalNote = (note: any) => {
+    const patient = patients?.find((d) => d.uuid == params.id);
+    const dateTime = getDateTime();
+    mutate({
+      encounterType: encounters.CLINICAL_NOTES,
+      visit: patient?.visit_uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: [
+        {
+          concept: concepts.ADDITIONAL_NOTES,
+          value: note,
+          obsDatetime: dateTime,
+        },
+      ],
+    });
+  };
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 2000);
+  // });
 
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;
   }
-  const clinicalNotes = [
-    "The patient presents today with concerns related to diabetes The patient presents today with concerns related to diabetes",
-    "The patient appears well-nourished and in no acute distress The patient presents today with concerns related to diabetes",
-    "The patient appears well-nourished and in no acute distress",
-  ];
 
   const expandIcon = (
     <WrapperBox
@@ -40,49 +102,81 @@ export const ClinicalNotes = () => {
     <Panel title="Clinical Notes" icon={expandIcon}>
       <br />
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
-        <MainTypography color={"#636363"}></MainTypography>
+        <AddClinicalNotes onAddNote={addClinicalNote} />
         <FaRegChartBar />
       </WrapperBox>
-      <MainTypography color={"#636363"}>Notes</MainTypography>
-      <WrapperBox sx={{ mt: "1ch", overflow: "scroll", maxHeight: "10ch" }}>
-        <WrapperBox ml={"2ch"}>
-          {clinicalNotes.map((notes) => (
-            <WrapperBox
-              key={notes}
-              sx={{
-                display: "flex",
-                alignItems: "flex-start",
-              }}
-            >
-              <WrapperBox
-                sx={{
-                  backgroundColor: "black",
-                  borderRadius: "4px",
-                  height: "8px",
-                  width: "8px",
-                  mr: "1ch",
-                  mt: "5px",
-                }}
-              ></WrapperBox>
-              <MainTypography
-                sx={{
-                  fontFamily: "Inter",
-                  fontSize: "14px",
-                  fontWeight: 400,
-                  lineHeight: "21px",
-                  letterSpacing: "0em",
-                  textAlign: "left",
-                }}
-                width={"80%"}
-                variant="body1"
+      <WrapperBox
+        sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch", pl: "2ch" }}
+      >
+        {clinicalNotes.length == 0 ? (
+          <Typography>No Notes added</Typography>
+        ) : (
+          clinicalNotes.map((note: any) => {
+            return (
+              <Box
+                key={note.note}
+                sx={{ my: "1ch", py: "1ch", borderBottom: "1px solid #E0E0E0" }}
               >
-                {notes}
-              </MainTypography>
-            </WrapperBox>
-          ))}
-        </WrapperBox>
+                <ReactMarkdown>{note.note}</ReactMarkdown>
+                <br />
+                <Typography>~ {note.creator}</Typography>
+              </Box>
+            );
+          })
+        )}
       </WrapperBox>
     </Panel>
+  );
+};
+
+const AddClinicalNotes = ({
+  onAddNote,
+}: {
+  onAddNote: (value: any) => any;
+}) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const onSubmit = (values: any) => {
+    setAnchorEl(null);
+    onAddNote(values);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  return (
+    <div>
+      <MainButton
+        aria-describedby={id}
+        title={"Add Notes"}
+        variant="secondary"
+        onClick={handleClick}
+      />
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <MarkdownEditor onSubmit={onSubmit} />
+      </Popover>
+    </div>
   );
 };
 

@@ -8,6 +8,7 @@ import { BarcodeComponent } from "@/components/barcode";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { GenericDialog } from "@/components";
 import { useState } from "react";
+import { Typography } from "@mui/material";
 export const LabOrderTable = () => {
     const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { })
     const { params } = useParameters();
@@ -51,7 +52,7 @@ export const LabOrderTable = () => {
 
     ]
     return <>
-        <BaseTable height="25ch" rowHeight={25} rows={labOrders ? labOrders.map(lab => ({ ...lab, name: lab.tests[0].name, status: lab.tests[0].result ? "" : "waiting result..." })) : []} columns={columns} />
+       {labOrders?.length==0? <Typography>No lab orders added</Typography> :<BaseTable height="25ch" rowHeight={25} rows={labOrders ? labOrders.map(lab => ({ ...lab, name: lab.tests[0].name, status: lab.tests[0].result ? "" : "waiting result..." })) : []} columns={columns} /> }
         <GenericDialog maxWidth="sm" open={showDialog} onClose={() => setShowDialog(false)} title={"Preview Barcode"}>
             <WrapperBox sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <BarcodeComponent setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={selectedTest.ascension}>

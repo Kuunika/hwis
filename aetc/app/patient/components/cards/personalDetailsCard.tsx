@@ -1,5 +1,5 @@
 import { MainCard, MainPaper, MainTypography, WrapperBox } from "@/components";
-import { Chip } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 import { getOnePatient, getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { useNavigation, useParameters } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";
@@ -82,16 +82,16 @@ const LabelValue = ({ label, value }: { label: string; value: any }) => {
 };
 
 export const Allergies = () => {
-  const allergies = [
-    { id: "1", allergy: "Penicillin" },
-    { id: "3", allergy: "Aspirin" },
-    { id: "2", allergy: "Anticonvulsants" },
-    { id: "4", allergy: "Sulfa drugs" },
-    { id: "5", allergy: "Ibuprofen" },
+  const allergies:Array<{allergy:string, id:string}> = [
+    // { id: "1", allergy: "Penicillin" },
+    // { id: "3", allergy: "Aspirin" },
+    // { id: "2", allergy: "Anticonvulsants" },
+    // { id: "4", allergy: "Sulfa drugs" },
+    // { id: "5", allergy: "Ibuprofen" },
   ];
   return (
     <WrapperBox sx={{ display: "flex", flexWrap: "wrap", width: "20ch" }}>
-      {allergies.map(({ allergy, id }) => (
+      {allergies.length==0 ? <Typography variant="caption">No Allergies added</Typography>:allergies.map(({ allergy, id }) => (
         // <WrapperBox sx={{ backgroundColor: "gray", m: "1px" }}>
         //   <MainTypography>{allergy}</MainTypography>
         // </WrapperBox>
