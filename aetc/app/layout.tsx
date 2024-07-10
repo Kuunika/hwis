@@ -13,7 +13,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 const inter = Inter({ subsets: ["latin"] });
 
-
 export const metadata: Metadata = {
   title: "MAHIS",
   description: "Malawi Health information system",
@@ -26,16 +25,9 @@ export default function RootLayout({
 }) {
 
 
-
-
   return (
     <html lang="en">
       <head>
-        {/* <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Droid+Sans:wght@400;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght=400;700&display=swap" rel="stylesheet" /> */}
       </head>
       <body style={{backgroundColor:"#F6F6F6"}} className={inter.className} suppressHydrationWarning={true}>
         <ReactQueryProvider>
