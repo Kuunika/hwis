@@ -14,8 +14,11 @@ import {
 import { useNavigation, useParameters } from "@/hooks";
 import { VisitDates } from "./visitDates";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
+import { useContext } from "react";
 
 export const VisitsBar = () => {
+  const { openVisit  } = useContext(PatientProfileContext) as PatientProfileContextType;
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
 
@@ -26,7 +29,6 @@ export const VisitsBar = () => {
     uniqueArray[item.visit_id] = false
   });
 
-
   return (
     <WrapperBox
       sx={{
@@ -36,12 +38,12 @@ export const VisitsBar = () => {
         width: "100%",
         px: "2ch",
         py: "1ch",
-        // borderWidth: "1px",
-        // borderBottomStyle: "solid",
-        // borderColor: "#E6E6E6",
+        borderWidth: "1px",
+        borderBottomStyle: "solid",
+        borderColor: "#E6E6E6",
       }}
     >
-      <VisitDates visits={Object.keys(uniqueArray)} />
+      <VisitDates  />
       <WrapperBox sx={{ display: "flex", alignItems: "center", mx: "1ch" }}>
         <MainTypography sx={{ cursor: "pointer" }}>
           <FaChevronLeft />

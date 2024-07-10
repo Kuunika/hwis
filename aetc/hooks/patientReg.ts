@@ -6,6 +6,7 @@ import {
   findByNameAndGender,
   getDailyVisits,
   getPatient,
+  getPatientVisits,
   getPatients,
   getRelations,
   getRelationshipTypes,
@@ -251,6 +252,17 @@ export const getPatientRelationshipTypes = () => {
 
   return useQuery({
     queryKey: ["patient_relationship_types"],
+    queryFn: getAll,
+    enabled: true,
+  });
+};
+
+export const getPatientVisitTypes = (id:string) => {
+  const getAll = () =>
+    getPatientVisits(id).then((response) => response?.data);
+
+  return useQuery({
+    queryKey: ["patient",id,'visits'],
     queryFn: getAll,
     enabled: true,
   });

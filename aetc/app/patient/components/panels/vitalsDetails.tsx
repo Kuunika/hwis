@@ -13,44 +13,11 @@ import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 
 export const VitalsPanel = () => {
 
-  const { activeVisit, setVisits, setActiveVisit } = useContext(PatientProfileContext) as PatientProfileContextType
+  const { activeVisit } = useContext(PatientProfileContext) as PatientProfileContextType
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [vitals, setVitals] = useState<any>([]);
-
-
-
-  useEffect(() => {
-
-    if (data) {
-
-      const uniqueArray: any = {};
-      data?.forEach(item => {
-        uniqueArray[item.visit_id] = false
-      });
-      const visits = Object.keys(uniqueArray);
-      setVisits(visits)
-      setActiveVisit(visits[0]);
-    }
-
-  }, [data])
-
-
-
-
-  // useEffect(() => {
-  //   if (data && activeVisit !== 0) {
-  //     const encounter = data.filter(
-  //       (d) => d?.encounter_type.uuid == encounters.VITALS
-  //     ).find(d => d.visit_id == activeVisit);
-
-  //     const obs = encounter?.obs;
-
-  //     updateVitals(obs);
-
-  //   }
-  // }, [data]);
 
 
   useEffect(() => {
@@ -63,7 +30,7 @@ export const VitalsPanel = () => {
       updateVitals(obs);
 
     }
-  }, [activeVisit]);
+  }, [activeVisit,data]);
 
 
 

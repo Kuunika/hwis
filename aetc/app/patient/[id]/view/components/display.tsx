@@ -142,15 +142,14 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
     }
 
   },[guardianRelationshipCreated])
-    
 
-    if (loadingRelationships || isPending) {
+    if (loadingRelationships || isPending || creatingGuardian || creatingGuardianRelationship) {
         return <WrapperBox sx={{ display: 'flex', width: "100%", alignItems: "center", justifyContent: "center" }}>
             <CircularProgress />
         </WrapperBox>
     }
 
-    const mappedRelationships = relationships?.map(relationship => {
+    const mappedRelationships:any = relationships?.map(relationship => {
         const relationshipId = relationship.relationship;
         const relationshipType = relationshipTypes?.find(r => r.relationship_type_id == relationshipId);
 
@@ -178,7 +177,7 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
         <EditRelationship onSubmit={createRelationship}  isGuardian={true} initialValues={{relationship: concepts.GUARDIAN}} open={guardianDialog} onClose={() => setGuardianDialog(false)} />
         {/* end add guardian */}
 
-        {mappedRelationships?.map(relationship => {
+        {mappedRelationships?.map((relationship:any) => {
             return <ContainerCard >
                 <MainTypography variant="h5">{relationship.relationship?.toLowerCase() == 'guardian' ? "Guardian Information" : "Next Of Kin Information"}</MainTypography>
                 <LabelValue label="First Name" value={relationship.given_name} />
@@ -191,7 +190,7 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
             </ContainerCard>
         })}
         {<>
-            {mappedRelationships?.length==0 && <MainButton sx={{ alignSelf: "flex-start" }} title="Add Next Of Kin" onClick={() => setRelationshipDialog(true)} />}
+            {mappedRelationships?.length==0 && <MainButton sx={{ alignSelf: "flex-start", mr:"1px" }} title="Add Next Of Kin" onClick={() => setRelationshipDialog(true)} />}
             {(mappedRelationships?.length == 1 || mappedRelationships?.length==0) &&
             <MainButton sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => setGuardianDialog(true)} />}
                 </>

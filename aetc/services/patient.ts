@@ -58,3 +58,8 @@ export const getRelations = (patientId: string) => {
 export const getRelationshipTypes = () => {
   return getAll<RelationshipType[]>(`/relationship_types?paginate=false`)
 }
+
+export const getPatientVisits = (id:string) => {
+  return getAll<ActiveVisit[]>(`/patients/${id}/visits`)
+}
+

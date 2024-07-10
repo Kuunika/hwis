@@ -301,11 +301,11 @@ export type RelationshipType = {
 
 }
 
-
-
 export interface ActiveVisit {
   visit_id: number;
   patient_id: number;
   uuid: string;
-  visit_type_id: number
+  visit_type_id: number;
+  date_started: Date;
+  date_stopped: Date;
 }

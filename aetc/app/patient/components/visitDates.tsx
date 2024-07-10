@@ -11,23 +11,39 @@ import Stack from "@mui/material/Stack";
 import { FaCalendarDays, FaCheck } from "react-icons/fa6";
 import { MainTypography } from "@/components";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { useParameters } from "@/hooks";
+import { useEffect, useState } from "react";
+import { ActiveVisit } from "@/interfaces";
+import { getHumanReadableDate } from "@/helpers/dateTime";
 
 
-type Prop = {
-  visits: string[]
-}
-
-const dates = [
-  "Today",
-  "14th October, 2023",
-  "14th September, 2023",
-  "6th September, 2014",
-];
-
-export function VisitDates({ visits }: Prop) {
-  const { setActiveVisit } = React.useContext(PatientProfileContext) as PatientProfileContextType;
+export function VisitDates() {
+  const { setActiveVisit, activeVisit, setOpenVisit } = React.useContext(PatientProfileContext) as PatientProfileContextType;
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const {params} =useParameters()
+  const [visits, setVisits]=useState<ActiveVisit[]>([])
+  const [activeDate, setActiveDate]=useState<Date|string>('')
+
+
+  const {data, isLoading, isSuccess}=getPatientVisitTypes(params?.id as string);
+
+useEffect(()=>{
+  if(isSuccess){
+    const active=data.find(d=> !Boolean(d.date_stopped));
+    if(active){
+      setActiveDate(active?.date_started)
+      setActiveVisit(active?.visit_id)
+      setOpenVisit(true)
+    } else {
+      setOpenVisit(false)
+    }
+    setVisits(data)
+  }
+
+},[isSuccess])
+
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -92,7 +108,7 @@ export function VisitDates({ visits }: Prop) {
               textTransform: "capitalize",
             }}
           >
-            6th October, 2023
+           {getHumanReadableDate(activeDate)}
           </MainTypography>
         </Box>
         <Popper
@@ -133,15 +149,16 @@ export function VisitDates({ visits }: Prop) {
                             display: "none",
                           },
 
-                          "&:hover": {
-                            "& .icon": {
-                              display: "block",
-                            },
-                          },
+                          // "&:hover": {
+                          //   "& .icon": {
+                          //     display: "block",
+                          //   },
+                          // },
                         }}
-                        key={d}
+                        key={d.visit_id}
                         onClick={(event: any) => {
-                          setActiveVisit(d)
+                          setActiveVisit(d.visit_id)
+                          setActiveDate(d.date_started)
                           handleClose(event)
                         }}
                       >
@@ -155,11 +172,11 @@ export function VisitDates({ visits }: Prop) {
                             textAlign: "left",
                           }}
                         >
-                          {d}
+                          {getHumanReadableDate(d.date_started)}
                         </MainTypography>
-                        <MainTypography className="icon">
+                       { activeVisit==d.visit_id && <MainTypography>
                           <FaCheck />
-                        </MainTypography>
+                        </MainTypography>}
                       </MenuItem>
                     ))}
                   </MenuList>
