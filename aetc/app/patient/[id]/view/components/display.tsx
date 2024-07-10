@@ -103,7 +103,7 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
     const [guardianDialog, setGuardianDialog] = useState(false);
     const { data: relationshipTypes, isPending } = getPatientRelationshipTypes();
     const [initialValues, setInitialValues] = useState({})
-    const [guardian, setGuardian] = useState({})
+    const [relationshipAdded, setRelationshipAdded] = useState('')
     const {
         mutate: createGuardian,
         isPending: creatingGuardian,
@@ -128,7 +128,7 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
       createGuardianRelationship({
         patient: patientId,
         person: guardianData?.uuid,
-        nextOfKinRelationship: concepts.GUARDIAN,
+        nextOfKinRelationship: relationshipAdded,
       });
     }
   }, [guardianCreated]);
@@ -136,7 +136,6 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
 
 
   useEffect(()=>{
-
     if(guardianRelationshipCreated){
         refetch()
         setGuardianDialog(false)
@@ -163,7 +162,8 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
         }
     })
 
-    const addGuardian = (values:any)=>{
+    const createRelationship = (values:any)=>{
+        setRelationshipAdded(values.relationship)
         createGuardian({
             nextOfKinFirstName: values.given_name,
             nextOfKinLastName: values.family_name,
@@ -171,11 +171,11 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
     }
 
     return <WrapperBox sx={{ display: "flex", width: mappedRelationships?.length == 1 ? "50%" : "100%" }}>
-        <EditRelationship onSubmit={(value)=>console.log({value})} initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
+        <EditRelationship onSubmit={createRelationship} initialValues={initialValues} open={relationshipDialog} onClose={() => setRelationshipDialog(false)} />
 
 
         {/* add guardian */}
-        <EditRelationship onSubmit={addGuardian}  isGuardian={true} initialValues={{relationship: concepts.GUARDIAN}} open={guardianDialog} onClose={() => setGuardianDialog(false)} />
+        <EditRelationship onSubmit={createRelationship}  isGuardian={true} initialValues={{relationship: concepts.GUARDIAN}} open={guardianDialog} onClose={() => setGuardianDialog(false)} />
         {/* end add guardian */}
 
         {mappedRelationships?.map(relationship => {
@@ -190,9 +190,11 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
                 }} />
             </ContainerCard>
         })}
-        {
-            mappedRelationships?.length == 1 &&
-            <MainButton sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => setGuardianDialog(true)} />
+        {<>
+            {mappedRelationships?.length==0 && <MainButton sx={{ alignSelf: "flex-start" }} title="Add Next Of Kin" onClick={() => setRelationshipDialog(true)} />}
+            {(mappedRelationships?.length == 1 || mappedRelationships?.length==0) &&
+            <MainButton sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => setGuardianDialog(true)} />}
+                </>
         }
     </WrapperBox>
 }
