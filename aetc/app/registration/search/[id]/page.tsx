@@ -13,8 +13,10 @@ import { useNavigation, useParameters } from "@/hooks";
 
 import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { Navigation } from "@/app/components/navigation";
+import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
 
-export default function RegistrationSearch() {
+function RegistrationSearch() {
   const [searchResults, setSetResults] = useState<Array<any>>([]);
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
@@ -117,6 +119,9 @@ export default function RegistrationSearch() {
     </>
   );
 }
+
+
+export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN])
 
 // export const AddPatientButton = () => (
 //   <WrapperBox

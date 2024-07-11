@@ -1,20 +1,16 @@
 "use client";
 import { MainGrid, MainPaper, MainTypography } from "@/components";
 import { useNavigation } from "@/hooks";
-
-
 import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings, FcAreaChart } from "react-icons/fc";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
-import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { LocationContext, LocationContextType } from "@/contexts/location";
 
 
 function Home() {
     useContext(LocationContext) as LocationContextType
-
     return (
         <>
             <MainGrid container>
@@ -41,7 +37,7 @@ function Home() {
                             icon={<FcSearch />}
                         />
                     </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK]}>
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.INITIAL_REGISTRATION_CLERK]}>
                         <Card
                             link="/initial-registration"
                             title="Patient Arrival"
@@ -56,14 +52,14 @@ function Home() {
                             title="Brought In Dead"
                         />
                     </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.DATA_MANAGER]}>
                         <Card
                             icon={<FcTodoList />}
                             link="/initial-registration/list"
                             title="Patients Waiting for Screening"
                         />
                     </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN,]}>
                         <Card
                             icon={<FcTodoList />}
                             link="/registration/list"
@@ -85,14 +81,14 @@ function Home() {
                             title="Patients Waiting for Assessment "
                         />
                     </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.ADMIN]}>
+                    <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
                         <Card
                             icon={<FcSettings />}
                             link="/config"
                             title="Config"
                         />
                     </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.ADMIN]}>
+                    <AuthGuardComp roles={[roles.ADMIN, roles.REGISTRATION_CLERK]}>
                         <Card
                             icon={<FcAreaChart />}
                             link="/reports"

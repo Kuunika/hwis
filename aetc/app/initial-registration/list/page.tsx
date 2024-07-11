@@ -44,4 +44,4 @@ function InitialList() {
   );
 }
 
-export default AuthGuard(InitialList, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])
+export default AuthGuard(InitialList, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE, roles.DATA_MANAGER])

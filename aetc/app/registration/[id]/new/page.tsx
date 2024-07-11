@@ -8,4 +8,4 @@ function Page() {
 
   return <NewRegistrationFlow />;
 }
-export default AuthGuard(Page, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])
+export default AuthGuard(Page, [roles.ADMIN, roles.REGISTRATION_CLERK])
