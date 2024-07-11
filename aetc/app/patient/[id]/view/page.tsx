@@ -28,7 +28,7 @@ const Page = () => {
             <ViewPatient patient={patient ?? {} as Person} />
             <WrapperBox>
                 <br />
-                <DisplayRelationship loading={loadingRelationships} relationships={relationships ? relationships : []} />
+                <DisplayRelationship patientId={params.id as string} loading={loadingRelationships} relationships={relationships ? relationships : []} />
             </WrapperBox>
             <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
                 <DisplaySocialHistory onSubmit={() => { }} loading={isPending || patientLoading} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
