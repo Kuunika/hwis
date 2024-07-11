@@ -21,7 +21,8 @@ type Props = {
   disabled?: boolean;
   multiple?: boolean;
   size?: "small" | "medium";
-  applyPadding?: boolean
+  applyPadding?: boolean;
+  manualInitialValues?: Array<any>;
 };
 
 const animatedComponents = makeAnimated();
@@ -33,6 +34,7 @@ export const SearchComboBox: FC<Props> = ({
   width = "100%",
   sx,
   getValue,
+  manualInitialValues,
   disabled = false,
   multiple = true,
   applyPadding = true
@@ -48,6 +50,9 @@ export const SearchComboBox: FC<Props> = ({
     }
   })
 
+
+
+
   const handleChange = (values: any) => {
     const inputValue = multiple ? values.map((v: any) => ({
       id: v.value,
@@ -61,6 +66,7 @@ export const SearchComboBox: FC<Props> = ({
     }
   }
 
+
   const padding = applyPadding ? {
     paddingTop: "1ch",
     paddingBottom: "1ch",
@@ -69,7 +75,7 @@ export const SearchComboBox: FC<Props> = ({
 
   return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5, }}>
     <MainTypography color={"#666666"} variant="subtitle2">{label}</MainTypography>
-    <Select
+   {mappedOptions && mappedOptions.length>0 ? <Select
       styles={{
         //@ts-ignore
         control: (baseStyles, state) => ({
@@ -81,7 +87,7 @@ export const SearchComboBox: FC<Props> = ({
       {...(multiple ? null : { value: mappedOptions.filter(op => op.value == value) })}
       isDisabled={disabled}
       //@ts-ignore
-      defaultValue={mappedOptions.filter(op => op.value == initialValues[name])}
+      defaultValue={manualInitialValues}
       //@ts-ignore
       theme={theme => ({
         ...theme,
@@ -95,7 +101,7 @@ export const SearchComboBox: FC<Props> = ({
       onChange={values => handleChange(values)}
       isMulti={multiple}
       components={animatedComponents}
-      options={mappedOptions} />
+      options={mappedOptions} /> : null}
     <MainTypography color={"red"} variant="subtitle2">{errorMessage}</MainTypography>
   </WrapperBox>
 

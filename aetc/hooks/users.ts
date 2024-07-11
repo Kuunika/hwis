@@ -66,7 +66,7 @@ export const editUser = ()=>{
         })),
         password: data.password
       };
-   
+
       return updateUser(data.userId, updatedUserData)
       .then((response) => response.data)
     };

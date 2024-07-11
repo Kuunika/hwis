@@ -20,7 +20,7 @@ import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { getDateTime } from "@/helpers/dateTime";
-import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import { getPatientsWaitingForTriage, getPatientVisitTypes } from "@/hooks/patientReg";
 import { TriageResult } from "@/interfaces";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
@@ -112,6 +112,10 @@ export default function TriageWorkFlow() {
   ];
 
   const patient = triageList?.find((d) => d.uuid == params.id);
+  const {data:patientVisits, isLoading, isSuccess}=getPatientVisitTypes(params?.id as string);
+  const activeVisit=patientVisits?.find(d=> !Boolean(d.date_stopped));
+
+
   const dateTime = getDateTime();
 
   useEffect(() => {
@@ -121,7 +125,7 @@ export default function TriageWorkFlow() {
 
       createVitals({
         encounterType: encounters.VITALS,
-        visit: patient?.visit_uuid,
+        visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: getObservations(formData.vitals, dateTime),
@@ -135,7 +139,7 @@ export default function TriageWorkFlow() {
       setMessage("adding airway...");
       createAirway({
         encounterType: encounters.AIRWAY_ASSESSMENT,
-        visit: patient?.visit_uuid,
+        visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: getObservations(formData.airway, dateTime),
@@ -150,7 +154,7 @@ export default function TriageWorkFlow() {
 
       createBlood({
         encounterType: encounters.BLOOD_CIRCULATION,
-        visit: patient?.visit_uuid,
+        visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: getObservations(formData.bloodCirculation, dateTime),
@@ -165,7 +169,7 @@ export default function TriageWorkFlow() {
 
       createDisability({
         encounterType: encounters.DISABILITY_ASSESSMENT,
-        visit: patient?.visit_uuid,
+        visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: getObservations(formData.disability, dateTime),
@@ -180,7 +184,7 @@ export default function TriageWorkFlow() {
 
       createPain({
         encounterType: encounters.PERSISTENT_PAIN,
-        visit: patient?.visit_uuid,
+        visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: getObservations(formData.pain, dateTime),
@@ -196,7 +200,7 @@ export default function TriageWorkFlow() {
 
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
-        visit: patient?.visit_uuid,
+        visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: [{
@@ -251,7 +255,7 @@ export default function TriageWorkFlow() {
     setMessage("adding complaints...");
     createPresenting({
       encounterType: encounters.PRESENTING_COMPLAINTS,
-      visit: patient?.visit_uuid,
+      visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
       obs: formData.presentingComplaints,
