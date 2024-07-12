@@ -121,7 +121,7 @@ export const ClientWaitingForTriage = () => {
       waitingTime: (
         <CalculateWaitingTime arrival_time={row?.latest_encounter_time} />
       ),
-      actionName: "screened by",
+      actionName: "Registered by",
       action: (
         <>
           {" "}
