@@ -38,7 +38,30 @@ export const formatAllObsToObject = (obs:Obs[])=>{
   const bloodPressureSystolic=filterObservations(obs,concepts.BLOOD_PRESSURE_SYSTOLIC);
   const temperature=filterObservations(obs,concepts.TEMPERATURE);
   const glucose=filterObservations(obs,concepts.GLUCOSE);
-  const AVPU=filterObservations(obs,concepts.AVPU);
+  const avpu=filterObservations(obs,concepts.AVPU);
+
+
+ const results = [oxygen,heartRate, bloodPressureDiastolic, respiratoryRate, bloodPressureSystolic, temperature, glucose, avpu];
+
+  let totalNumberOfTriageConducted: number =0;
+
+  results.forEach((r:any)=>{
+    totalNumberOfTriageConducted = r.length>totalNumberOfTriageConducted ?r?.length : totalNumberOfTriageConducted;
+  })
+
+  let formattedTriageResults:any = {}
+
+  for (let i=0; i<totalNumberOfTriageConducted; i++){
+
+      const formattedVitals:any = []
+      results.forEach((result)=>{
+        if(result)
+        formattedVitals.push(result[i])
+      })
+      formattedTriageResults[i]=formattedVitals
+  }
+
+return formattedTriageResults;
 }
 
 export const filterObservations = (obs: Obs[], uuid: string): Obs[] | null => {
