@@ -1,6 +1,6 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
-import { NewStepperContainer, StepperContainer } from "@/components";
+"use client";;
+import { useEffect, useState } from "react";
+import { NewStepperContainer } from "@/components";
 import {
   AirwayAndBreathingForm,
   BloodCirculationForm,
@@ -22,8 +22,11 @@ import { OperationSuccess } from "@/components/operationSuccess";
 import { getDateTime } from "@/helpers/dateTime";
 import { getPatientsWaitingForTriage, getPatientVisitTypes } from "@/hooks/patientReg";
 import { TriageResult } from "@/interfaces";
-import { Bounce, ToastContainer, toast } from "react-toastify";
+import { Bounce, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
+import { GenericDialog } from "@/components/dialog";
+import { ServiceAreaForm } from "./serviceAreaForm";
+
 
 export default function TriageWorkFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -41,6 +44,7 @@ export default function TriageWorkFlow() {
  const [circulation, setCirculation]=useState({})
  const [consciousness, setConsciousness]=useState({})
  const [persistentPain, setPersistentPain]=useState({})
+ const [showModal, setShowModal] = useState(false);
 
 
   const {
@@ -296,24 +300,28 @@ export default function TriageWorkFlow() {
     setSubmittedSteps(steps => [...steps, 0])
   };
 
+  const handleServiceArea = ()=>{
+    console.log('handling');
+  }
+
 
   useEffect(() => {
-    let tResult = '';
-    const keys = Object.keys(conceptTriageResult);
-    for (let i = 0; i < keys.length; i++) {
+    let tResult = 'green';
+    // const keys = Object.keys(conceptTriageResult);
+    // for (let i = 0; i < keys.length; i++) {
 
-      if (conceptTriageResult[keys[i]] == 'red') {
-        tResult = 'red';
-        break;
-      }
-      if (conceptTriageResult[keys[i]] == 'yellow') {
-        tResult = 'yellow';
-      }
+    //   if (conceptTriageResult[keys[i]] == 'red') {
+    //     tResult = 'red';
+    //     break;
+    //   }
+    //   if (conceptTriageResult[keys[i]] == 'yellow') {
+    //     tResult = 'yellow';
+    //   }
 
-      if (tResult != 'yellow') {
-        tResult = "green"
-      }
-    }
+    //   if (tResult != 'yellow') {
+    //     tResult = "green"
+    //   }
+    // }
 
     setTriageResult(tResult as TriageResult)
   }, [conceptTriageResult])
@@ -349,6 +357,10 @@ export default function TriageWorkFlow() {
       });
     }
 
+    if(triageResult == 'green'){
+      setShowModal(true);
+    }
+
   }, [triageResult])
 
   const checkTriageResult = (triage: TriageResult, name: string) => {
@@ -367,6 +379,11 @@ export default function TriageWorkFlow() {
     // TODO: send a message that you can't move
   }
 
+  const closeModal = () => {
+    setShowModal(false);
+    navigateBack();
+  };
+
 
 const handleOnCompleteTriage = ()=>{
   handlePresentComplaints(presentingComplaints);
@@ -383,6 +400,7 @@ const handleOnCompleteTriage = ()=>{
       <DisplayNone hidden={!showForm}>
         {triageResult && (
           <>
+          
             <TriageContainer
               onCompleteTriage={handleOnCompleteTriage}
               result={triageResult}
@@ -402,6 +420,7 @@ const handleOnCompleteTriage = ()=>{
           active={activeStep}
           onBack={() => navigateBack()}
         >
+          
           <PresentingComplaintsForm getFormValues={setPresentingComplaints}  triageResult={triageResult}
             setTriageResult={checkTriageResult} onSubmit={handlePresentComplaints} />
           <VitalsForm
@@ -476,6 +495,19 @@ const handleOnCompleteTriage = ()=>{
           }}
         />
       )}
+
+<GenericDialog
+        open={showModal}
+        onClose={closeModal}
+        title="Triage Decision"
+        //onConfirm={() => void()}
+        //onCancel={closeModal}
+      >
+        <p>
+  Triage status is <span style={{ color: 'green' }}>GREEN</span>. Where should this patient go next?
+</p>
+        <ServiceAreaForm onSubmit={handleServiceArea}/>
+      </GenericDialog>
 
       {loading && !error && (
         <>
