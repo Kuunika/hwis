@@ -300,8 +300,9 @@ export default function TriageWorkFlow() {
     setSubmittedSteps(steps => [...steps, 0])
   };
 
-  const handleServiceArea = ()=>{
-    console.log('handling');
+  const handleServiceArea = (values: any)=>{
+    formData["serviceArea"] = values;
+    console.table(formData);
   }
 
 
@@ -500,8 +501,6 @@ const handleOnCompleteTriage = ()=>{
         open={showModal}
         onClose={closeModal}
         title="Triage Decision"
-        //onConfirm={() => void()}
-        //onCancel={closeModal}
       >
         <p>
   Triage status is <span style={{ color: 'green' }}>GREEN</span>. Where should this patient go next?

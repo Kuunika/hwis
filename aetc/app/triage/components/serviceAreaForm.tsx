@@ -1,4 +1,4 @@
-import { SearchComboBox, FormikInit, MainButton } from "@/components";
+import { SelectInputField, FormikInit, MainButton } from "@/components";
 import * as Yup from "yup";
 
 import { getInitialValues } from "@/helpers";
@@ -15,18 +15,18 @@ const form = {
 };
 
 const schema = Yup.object().shape({
-  [form.serviceArea.name]: Yup.array().required().label(form.serviceArea.label),
+  [form.serviceArea.name]: Yup.string().required().label(form.serviceArea.label),
 });
 
 const initialValues = getInitialValues(form);
 
 const serviceAreas = [
-  { id: "Medical", label: "Medical" },
-  { id: "Surgical", label: "Surgical" },
-  { id: "Trauma", label: "Trauma" },
-  { id: "Gynaecology", label: "Gynaecology" },
-  { id: "Orthopaedic", label: "Orthopaedic" },
-  { id: "Unknown", label: "Unknown" },
+  { name: "Medical", value: "Medical" },
+  { name: "Surgical", value: "Surgical" },
+  { name: "Trauma", value: "Trauma" },
+  { name: "Gynaecology", value: "Gynaecology" },
+  { name: "Orthopaedic", value: "Orthopaedic" },
+  { name: "Unknown", value: "Unknown" },
 ];
 
 export const ServiceAreaForm = ({ onSubmit }: Prop) => {
@@ -38,10 +38,11 @@ export const ServiceAreaForm = ({ onSubmit }: Prop) => {
       submitButton={false}
       submitButtonText="Next"
     >
-      <SearchComboBox
+      <SelectInputField
+      id={form.serviceArea.name}
         name={form.serviceArea.name}
         label={form.serviceArea.label}
-        options={serviceAreas}
+        selectItems={serviceAreas}
       />
 
       <MainButton sx={{ m: 0.5 }} title="Next" type="submit" onClick={() => { }} />
