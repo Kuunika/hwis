@@ -8,9 +8,11 @@ import {
   RegistrationCard,
 } from "../registration/components/common";
 import { Navigation } from "../components/navigation";
+import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
 
 
-export default function AssessmentPage() {
+ function AssessmentPage() {
   return (
     <>
       <Navigation title="Patients Waiting For Assessments" link="/dashboard" />
@@ -44,3 +46,5 @@ export default function AssessmentPage() {
     </>
   );
 }
+
+export default AuthGuard(AssessmentPage, [roles.ADMIN, roles.CLINICIAN])

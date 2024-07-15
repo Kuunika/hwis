@@ -7,3 +7,4 @@ export const createVisit = (visitData: any) =>
 
 export const closeVisit = (visitUUID: string, closeData: any) =>
   edit(visitUUID, closeData, endpoint);
+

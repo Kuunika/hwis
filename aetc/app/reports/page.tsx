@@ -1,7 +1,9 @@
 'use client'
 import { BackButton } from "@/components/buttons"
+import { roles } from "@/constants"
+import AuthGuard from "@/helpers/authguard"
 
-export default function Reports() {
+function Reports() {
     return <>
         <BackButton />
         <iframe
@@ -11,3 +13,5 @@ export default function Reports() {
         ></iframe>
     </>
 }
+
+export default AuthGuard(Reports, [roles.ADMIN,roles.REGISTRATION_CLERK])

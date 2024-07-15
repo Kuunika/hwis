@@ -7,7 +7,6 @@ import { editUser } from '@/hooks/users';
 import { OverlayLoader } from '@/components/backdrop';
 
 const EditUserPage = () => {
-
   const { mutate, isPending, isSuccess } = editUser();
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
@@ -18,7 +17,6 @@ const EditUserPage = () => {
   useEffect(() => {
     const userId = params.id.toString();
     setUserId(userId);
-
     if (userId) {
       getUserById(userId).then((user) => {
         setInitialValues({
@@ -35,6 +33,7 @@ const EditUserPage = () => {
     }
   }, [params]);
 
+
   useEffect(() => {
     if (isSuccess) {
         navigateTo("/config");
@@ -42,19 +41,18 @@ const EditUserPage = () => {
 }, [isSuccess])
 
   const handleSubmit = async (values: { userName: any; firstName: any; lastName: any; role: any[]; password: any; }) => {
+
     const updatedValues = {
         ...values,
         userId,
       };
-
       mutate(updatedValues);
 
   };
 
   return (
     <>
-    <div>
-        
+    <div>   
       <h1>Edit User</h1>
       {isLoading ? (
         <p>Loading...</p>
@@ -68,5 +66,4 @@ const EditUserPage = () => {
     </>
   );
 };
-
 export default EditUserPage;

@@ -9,8 +9,10 @@ import {
   RegistrationCard,
 } from "../components/common";
 import { Navigation } from "@/app/components/navigation";
+import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
 
-export default function List() {
+function List() {
   return (
     <>
       <Navigation title="Patients waiting registration" link="/dashboard" />
@@ -43,3 +45,5 @@ export default function List() {
     </>
   );
 }
+
+export default AuthGuard(List, [roles.ADMIN, roles.REGISTRATION_CLERK])

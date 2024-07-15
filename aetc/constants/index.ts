@@ -151,7 +151,7 @@ export const concepts = {
   PATIENT_REFERRED_TO: "b9a64022-8d80-11d8-abbb-0024217bb78e",
   // 
 
-  NATIONAL_ID_IDENTIFIER_TYPE: "ba067294-8d80-11d8-abbb-0024217bb78e",
+  NATIONAL_ID_IDENTIFIER_TYPE: "dc047ea8-e9ce-4fd0-af93-a2ade6b14b42",
   PARENT: "ba453f92-8d80-11d8-abbb-0024217bb78e",
   UNCLE_AUNTIE: "68ee4bec-1e85-47c5-a6d3-02ff09e29112",
   AUNTIE: "a7c2e3cf-3158-478b-bcd3-89bdbec43e80", // temporary
@@ -438,11 +438,12 @@ export const malawiVillages = [
 
 
 export const roles = {
-  ADMIN: 'Superuser',
-  REGISTRATION_CLERK: "Data Assistant",
-  CLINICIAN: "Clinician",
-  NURSE: "Adults",
-  INITIAL_REGISTRATION_CLERK: "Data Element Contributor"
+  ADMIN: process.env.NEXT_PUBLIC_SUPER_USER_ROLE as string,
+  REGISTRATION_CLERK:process.env.NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE as string,
+  CLINICIAN: process.env.NEXT_PUBLIC_CLINICIAN_USER_ROLE as string,
+  NURSE: process.env.NEXT_PUBLIC_NURSE_USER_ROLE as string,
+  INITIAL_REGISTRATION_CLERK: process.env.NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE as string,
+  DATA_MANAGER: process.env.NEXT_PUBLIC_DATA_MANAGER as string
 }
 
 
