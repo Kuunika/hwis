@@ -5,7 +5,7 @@ import { useNavigation, useParameters } from "@/hooks";
 import { BasicSelect } from "../basicSelect";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { getObservationValue } from "@/helpers/emr";
+import { filterObservations, getObservationValue } from "@/helpers/emr";
 import { useContext, useEffect, useState } from "react";
 
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
@@ -25,8 +25,10 @@ export const VitalsPanel = () => {
       const encounter = data.filter(
         (d) => d?.encounter_type.uuid == encounters.VITALS
       ).find(d => d.visit_id == activeVisit);
-      const obs = encounter?.obs;
+      const obs = encounter?.obs??[];
 
+     const oxygen= filterObservations(obs,concepts.OXYGEN_SATURATION);
+     console.log({oxygen})
       updateVitals(obs);
 
     }

@@ -121,10 +121,14 @@ export const SearchResults = ({
 
 export const ResultBox = ({ person, type, setOpen }: { person: any, type: string, setOpen: (person: any) => void }) => {
 
+
+ console.log("chisomo",person)
+
   if (!person) {
     return <></>
   }
 
+  // return <></>;
   const identifier = person?.identifiers?.find((i: any) => i?.identifier_type?.name == 'National id');
 
   return <MainPaper onClick={() => setOpen(person)} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
@@ -133,7 +137,7 @@ export const ResultBox = ({ person, type, setOpen }: { person: any, type: string
     </WrapperBox>
     <WrapperBox>
       <WrapperBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <MainTypography variant="h5">{person.given_name} {person.family_name}</MainTypography>
+        <MainTypography variant="h5">{person?.given_name} {person?.family_name}</MainTypography>
         <MainTypography>{type}</MainTypography>
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
@@ -141,13 +145,13 @@ export const ResultBox = ({ person, type, setOpen }: { person: any, type: string
       </WrapperBox>
       <br />
       <WrapperBox sx={{ display: "flex", mb: 1 }}>
-        <Label label="Date of birth" value={person.birthdate} />
-        <Label label="Gender" value={person.gender} />
+        <Label label="Date of birth" value={person?.birthdate} />
+        <Label label="Gender" value={person?.gender} />
       </WrapperBox>
       <WrapperBox sx={{ display: "flex" }}>
-        <Label label="Home district" value={person.addresses[0]?.address1} />
-        <Label label="Home traditional authority" value={person.addresses[0]?.cityVillage} />
-        <Label label="Home village" value={person.addresses[0]?.address2} />
+        <Label label="Home district" value={person?.addresses[0]?.address1} />
+        <Label label="Home traditional authority" value={person?.addresses[0]?.cityVillage} />
+        <Label label="Home village" value={person?.addresses[0]?.address2} />
       </WrapperBox>
     </WrapperBox>
   </MainPaper>

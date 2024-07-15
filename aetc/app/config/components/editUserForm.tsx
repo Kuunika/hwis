@@ -70,7 +70,7 @@ export const EditUserForm = ({ initialValues, onSubmit }: props) => {
             <SearchComboBox
                 label={form.role.label}
                 name={form.role.name}
-                manualInitialValues={initialValues?.role?.map((role:any)=>({value:role.name,label:role.name}))}
+                manualInitialValues={initialValues?.role?.map((role:any)=>({value:role.id,label:role.id}))}
                 options={data ? data.map(d => {
                     return { id: d.role, label: d.role }
                 }) : []} 
