@@ -20,6 +20,8 @@ export const demographicSearchDDEAdaptor = (
  const remotes = data?.remotes?.map(d=>{
   return {
     identifiers: d.patient_identifiers,
+    patient_id: d.patient_identifiers[0].identifier,
+    uuid: d.patient_identifiers[0].identifier,
     given_name: d.person.names[0].given_name,
     family_name: d.person.names[0].family_name,
     ...d.person

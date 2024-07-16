@@ -108,6 +108,8 @@ export const SearchResults = ({
         }
         {
           searchResults?.remotes?.map(patient => {
+
+            //@ts-ignore
             return <ResultBox setOpen={(person: Person) => selectPatient(person)} type="Remote" key={patient?.uuid} person={patient} />
           })
         }

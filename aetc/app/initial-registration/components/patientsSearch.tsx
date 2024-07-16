@@ -21,7 +21,8 @@ import { BaseTable, MainButton } from "@/components";
 export const PatientSearchResultsDialog = ({ open, onClose, isLoading, patientResults }: { open: boolean, isLoading?: boolean, onClose: () => void, patientResults: DDESearch }) => {
     const { navigateTo } = useNavigation();
     const [selectedPatient, setSelectedPatient] = useState<Person | undefined>();
-    const rows = [...patientResults.locals, ...patientResults.remotes].map(row => ({ id: row.patient_id, ...row }))
+    //@ts-ignore
+    const rows = [...patientResults.locals, ...patientResults.remotes].map(row => ({ id: row?.patient_id, ...row }))
     const {
         loading,
         setLoading,
