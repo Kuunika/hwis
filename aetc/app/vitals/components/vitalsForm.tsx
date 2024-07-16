@@ -23,7 +23,7 @@ import { notify } from "@/helpers";
 import { useNavigation } from "@/hooks";
 import { TriageContext, TriageContextType } from "@/contexts";
 
-const form = {
+export const VitalFormConfig = {
   temperature: {
     name: concepts.TEMPERATURE,
     // label: "Blood Circulation Temperature",
@@ -98,62 +98,62 @@ type props = {
   getFormValues: (values:any)=>void
 };
 const schema = yup.object({
-  // [form.pulseOximetry.name]: yup
+  // [VitalFormConfig.pulseOximetry.name]: yup
   //   .string()
   //   .required()
-  //   .label(form.pulseOximetry.label),
-  [form.respiratoryRate.name]: yup
+  //   .label(VitalFormConfig.pulseOximetry.label),
+  [VitalFormConfig.respiratoryRate.name]: yup
     .number()
     .required()
     .min(0)
     .max(90)
-    .label(form.respiratoryRate.label),
-  [form.saturationRate.name]: yup
+    .label(VitalFormConfig.respiratoryRate.label),
+  [VitalFormConfig.saturationRate.name]: yup
     .number()
     .required()
     .min(20)
     .max(100)
-    .label(form.saturationRate.label),
-  // [form.pulseRate.name]: yup.string().required().label(form.pulseRate.label),
-  [form.bloodPressure.name]: yup
+    .label(VitalFormConfig.saturationRate.label),
+  // [VitalFormConfig.pulseRate.name]: yup.string().required().label(VitalFormConfig.pulseRate.label),
+  [VitalFormConfig.bloodPressure.name]: yup
     .number()
     .min(0)
     .max(300)
     .required()
-    .label(form.bloodPressure.label),
-  [form.bloodPressureDiastolic.name]: yup
+    .label(VitalFormConfig.bloodPressure.label),
+  [VitalFormConfig.bloodPressureDiastolic.name]: yup
     .number()
     .min(0)
     .max(300)
     .required()
-    .label(form.bloodPressureDiastolic.label),
-  [form.heartRate.name]: yup
+    .label(VitalFormConfig.bloodPressureDiastolic.label),
+  [VitalFormConfig.heartRate.name]: yup
     .number()
     .required()
-    .label(form.heartRate.label)
+    .label(VitalFormConfig.heartRate.label)
     .min(0)
     .max(400),
-  [form.temperature.name]: yup
+  [VitalFormConfig.temperature.name]: yup
     .number()
     .min(20)
     .max(45)
     .required()
-    .label(form.temperature.label),
-  [form.eyeOpeningResponse.name]: yup
+    .label(VitalFormConfig.temperature.label),
+  [VitalFormConfig.eyeOpeningResponse.name]: yup
     .string()
     .required()
-    .label(form.eyeOpeningResponse.label),
-  [form.motorResponse.name]: yup
+    .label(VitalFormConfig.eyeOpeningResponse.label),
+  [VitalFormConfig.motorResponse.name]: yup
     .string()
     .required()
-    .label(form.motorResponse.label),
-  [form.verbalResponse.name]: yup
+    .label(VitalFormConfig.motorResponse.label),
+  [VitalFormConfig.verbalResponse.name]: yup
     .string()
     .required()
-    .label(form.verbalResponse.label),
-  [form.glucose.name]: yup.number().min(0).max(1000).label(form.glucose.label),
-  [form.avpu.name]: yup.string().required().label(form.avpu.label),
-  [form.units.name]: yup.string().required().label(form.units.label)
+    .label(VitalFormConfig.verbalResponse.label),
+  [VitalFormConfig.glucose.name]: yup.number().min(0).max(1000).label(VitalFormConfig.glucose.label),
+  [VitalFormConfig.avpu.name]: yup.string().required().label(VitalFormConfig.avpu.label),
+  [VitalFormConfig.units.name]: yup.string().required().label(VitalFormConfig.units.label)
 });
 
 const eyeOpeningResponses = [
@@ -185,7 +185,7 @@ const avpuLists = [
 ];
 
 const rules = {
-  [form.temperature.name]: [
+  [VitalFormConfig.temperature.name]: [
     { operator: "<", value: 34, result: triageResult.RED, bound: 0 },
     {
       operator: ">",
@@ -221,7 +221,7 @@ const rules = {
       bound: 0,
     },
   ],
-  [form.heartRate.name]: [
+  [VitalFormConfig.heartRate.name]: [
     {
       operator: ">",
       value: 110,
@@ -242,7 +242,7 @@ const rules = {
       bound: 0,
     },
   ],
-  [form.respiratoryRate.name]: [
+  [VitalFormConfig.respiratoryRate.name]: [
     { operator: ">", value: 30, result: triageResult.RED, bound: 100 },
     { operator: "<", value: 8, result: triageResult.RED, bound: 0 },
     {
@@ -274,7 +274,7 @@ const rules = {
     },
   ],
 
-  [form.saturationRate.name]: [
+  [VitalFormConfig.saturationRate.name]: [
     { operator: "<", value: 90, result: triageResult.RED, bound: 0 },
     { operator: "<=", value: 93, result: triageResult.YELLOW, bound: 90 },
     // { operator: "=", value: 93, result: triageResult.GREEN, bound: 0 },
@@ -288,7 +288,7 @@ const rules = {
       bound: 0,
     },
   ],
-  [form.glucose.name]: [
+  [VitalFormConfig.glucose.name]: [
     { operator: "<", value: 40, result: triageResult.RED, bound: 0 },
     { operator: "<", value: 60, result: triageResult.YELLOW, bound: 40 },
     {
@@ -372,14 +372,14 @@ export function VitalsForm({
   useEffect(() => {
     let _total: number = 0;
 
-    if (Boolean(formValues[form.eyeOpeningResponse.name]) &&
-      Boolean(formValues[form.motorResponse.name]) &&
-      Boolean(formValues[form.verbalResponse.name])
+    if (Boolean(formValues[VitalFormConfig.eyeOpeningResponse.name]) &&
+      Boolean(formValues[VitalFormConfig.motorResponse.name]) &&
+      Boolean(formValues[VitalFormConfig.verbalResponse.name])
     ) {
 
-      _total = getWeight(formValues[form.eyeOpeningResponse.name], eyeOpeningResponses)
-        + getWeight(formValues[form.motorResponse.name], motorResponses)
-        + getWeight(formValues[form.verbalResponse.name], verbalResponses)
+      _total = getWeight(formValues[VitalFormConfig.eyeOpeningResponse.name], eyeOpeningResponses)
+        + getWeight(formValues[VitalFormConfig.motorResponse.name], motorResponses)
+        + getWeight(formValues[VitalFormConfig.verbalResponse.name], verbalResponses)
 
       addKeyToFlow({ 'gsc': _total });
 
@@ -399,7 +399,7 @@ export function VitalsForm({
     <FormikInit
       onSubmit={onSubmit}
       validationSchema={schema}
-      initialValues={{ ...initialValues, [form.units.name]: "mmol/l" }}
+      initialValues={{ ...initialValues, [VitalFormConfig.units.name]: "mmol/l" }}
       submitButtonText="next"
       submitButton={false}
       getFormValues={getFormValues}
@@ -408,33 +408,33 @@ export function VitalsForm({
       <FormFieldContainerLayout title="Oxygen Saturation and Heart Rate">
         <FieldsContainer>
           <TextInputField
-            id={form.saturationRate.name}
-            name={form.saturationRate.name}
-            label={form.saturationRate.label}
-            disabled={disableField(form.saturationRate.name)}
+            id={VitalFormConfig.saturationRate.name}
+            name={VitalFormConfig.saturationRate.name}
+            label={VitalFormConfig.saturationRate.label}
+            disabled={disableField(VitalFormConfig.saturationRate.name)}
             handleBlurEvent={(value: string) => {
               if (value == '') return;
 
               const saturationRateValue = Number(value);
               if (saturationRateValue < 90) {
-                setTriageResult('red', form.saturationRate.name)
+                setTriageResult('red', VitalFormConfig.saturationRate.name)
               }
               if (saturationRateValue >= 94) {
-                setTriageResult('green', form.saturationRate.name)
+                setTriageResult('green', VitalFormConfig.saturationRate.name)
               }
               if (saturationRateValue >= 90 && saturationRateValue < 94) {
-                setTriageResult('yellow', form.saturationRate.name)
+                setTriageResult('yellow', VitalFormConfig.saturationRate.name)
               }
 
-              // checkTriage(form.saturationRate.name, value);
+              // checkTriage(VitalFormConfig.saturationRate.name, value);
             }}
             unitOfMeasure="%"
           />
           <TextInputField
-            id={form.heartRate.name}
-            name={form.heartRate.name}
-            label={form.heartRate.label}
-            disabled={disableField(form.heartRate.name)}
+            id={VitalFormConfig.heartRate.name}
+            name={VitalFormConfig.heartRate.name}
+            label={VitalFormConfig.heartRate.label}
+            disabled={disableField(VitalFormConfig.heartRate.name)}
             unitOfMeasure="bpm"
             handleBlurEvent={(value: string) => {
               if (value == '') return;
@@ -444,21 +444,21 @@ export function VitalsForm({
               if (heartRateValue > 129 || heartRateValue < 40) {
 
                 addKeyToFlow({ heart: 'red' });
-                setTriageResult('red', form.heartRate.name)
+                setTriageResult('red', VitalFormConfig.heartRate.name)
               }
               if ((heartRateValue >= 101 && heartRateValue <= 129) || (heartRateValue >= 40 && heartRateValue <= 59)) {
                 addKeyToFlow({ heart: 'yellow' });
-                setTriageResult('yellow', form.heartRate.name)
+                setTriageResult('yellow', VitalFormConfig.heartRate.name)
               }
               // if (heartRateValue > 129 || heartRateValue < 40) {
               //   addKeyToFlow({ heart: 'red' });
-              //   setTriageResult('red', form.heartRate.name)
+              //   setTriageResult('red', VitalFormConfig.heartRate.name)
               // } 
               if (heartRateValue >= 60 && heartRateValue <= 100) {
                 addKeyToFlow({ heart: 'green' });
-                setTriageResult('green', form.heartRate.name)
+                setTriageResult('green', VitalFormConfig.heartRate.name)
               }
-              // checkTriage(form.heartRate.name, value);
+              // checkTriage(VitalFormConfig.heartRate.name, value);
             }}
           />
         </FieldsContainer>
@@ -467,10 +467,10 @@ export function VitalsForm({
       <FormFieldContainerLayout title="Blood Pressure (mmHg))">
         <FieldsContainer>
           <TextInputField
-            id={form.bloodPressure.name}
-            name={form.bloodPressure.name}
-            label={form.bloodPressure.label}
-            disabled={disableField(form.bloodPressure.name)}
+            id={VitalFormConfig.bloodPressure.name}
+            name={VitalFormConfig.bloodPressure.name}
+            label={VitalFormConfig.bloodPressure.label}
+            disabled={disableField(VitalFormConfig.bloodPressure.name)}
             helperTextWidth="10ch"
             sx={{
               width: "10ch",
@@ -480,44 +480,44 @@ export function VitalsForm({
               const systolicValue = Number(value);
               if (systolicValue > 200 || systolicValue < 80) {
                 addKeyToFlow({ systolic: 'red' });
-                setTriageResult('red', form.bloodPressure.name)
+                setTriageResult('red', VitalFormConfig.bloodPressure.name)
                 return
               }
 
               if ((systolicValue >= 81 && systolicValue <= 89) || (systolicValue >= 150 && systolicValue <= 200)) {
-                setTriageResult('yellow', form.bloodPressure.name)
+                setTriageResult('yellow', VitalFormConfig.bloodPressure.name)
                 addKeyToFlow({ systolic: 'yellow' });
                 return
               }
               if (systolicValue >= 90 || (systolicValue > 89 && systolicValue <= 149)) {
-                setTriageResult('green', form.bloodPressure.name)
+                setTriageResult('green', VitalFormConfig.bloodPressure.name)
                 addKeyToFlow({ systolic: 'green' });
                 return
               }
             }}
           />
           <TextInputField
-            id={form.bloodPressureDiastolic.name}
-            name={form.bloodPressureDiastolic.name}
-            label={form.bloodPressureDiastolic.label}
+            id={VitalFormConfig.bloodPressureDiastolic.name}
+            name={VitalFormConfig.bloodPressureDiastolic.name}
+            label={VitalFormConfig.bloodPressureDiastolic.label}
             sx={{ width: "10ch" }}
             helperTextWidth="10ch"
-            disabled={disableField(form.bloodPressureDiastolic.name)}
+            disabled={disableField(VitalFormConfig.bloodPressureDiastolic.name)}
             handleBlurEvent={(value) => {
               if (value == '') return;
 
               const diastolicValue = Number(value);
               if (diastolicValue > 119) {
                 addKeyToFlow({ diastolic: 'red' });
-                setTriageResult('red', form.bloodPressureDiastolic.name)
+                setTriageResult('red', VitalFormConfig.bloodPressureDiastolic.name)
               }
               if (diastolicValue >= 100 && diastolicValue <= 119) {
                 addKeyToFlow({ diastolic: 'yellow' });
-                setTriageResult('yellow', form.bloodPressureDiastolic.name)
+                setTriageResult('yellow', VitalFormConfig.bloodPressureDiastolic.name)
               }
               if (diastolicValue < 100) {
                 addKeyToFlow({ diastolic: 'green' });
-                setTriageResult('green', form.bloodPressureDiastolic.name)
+                setTriageResult('green', VitalFormConfig.bloodPressureDiastolic.name)
               }
             }}
           />
@@ -526,24 +526,24 @@ export function VitalsForm({
       <FormFieldContainerLayout title="Respiratory and Temperature">
         <FieldsContainer>
           <TextInputField
-            id={form.respiratoryRate.name}
-            name={form.respiratoryRate.name}
-            label={form.respiratoryRate.label}
+            id={VitalFormConfig.respiratoryRate.name}
+            name={VitalFormConfig.respiratoryRate.name}
+            label={VitalFormConfig.respiratoryRate.label}
             handleBlurEvent={(value: string) => {
               if (value == '') return;
-              checkTriage(form.respiratoryRate.name, value);
+              checkTriage(VitalFormConfig.respiratoryRate.name, value);
             }}
-            disabled={disableField(form.respiratoryRate.name)}
+            disabled={disableField(VitalFormConfig.respiratoryRate.name)}
             unitOfMeasure="bs/m"
           />
           <TextInputField
-            id={form.temperature.name}
-            name={form.temperature.name}
-            label={form.temperature.label}
-            disabled={disableField(form.temperature.name)}
+            id={VitalFormConfig.temperature.name}
+            name={VitalFormConfig.temperature.name}
+            label={VitalFormConfig.temperature.label}
+            disabled={disableField(VitalFormConfig.temperature.name)}
             handleBlurEvent={(value: string) => {
               if (value == '') return;
-              checkTriage(form.temperature.name, value);
+              checkTriage(VitalFormConfig.temperature.name, value);
             }}
             unitOfMeasure="°C"
           />
@@ -553,37 +553,37 @@ export function VitalsForm({
           <SelectInputField
             sx={{ mt: 1 }}
             width="20%"
-            name={form.units.name}
+            name={VitalFormConfig.units.name}
             selectItems={[
               { name: "mmol/l", value: "mmol/l" },
               { name: "mg/dl", value: "mg/dl" },
             ]}
-            label={form.units.label}
-            id={form.units.name}
+            label={VitalFormConfig.units.label}
+            id={VitalFormConfig.units.name}
           />
           <TextInputField
-            id={form.glucose.name}
-            name={form.glucose.name}
-            label={form.glucose.label}
-            disabled={disableField(form.glucose.name)}
+            id={VitalFormConfig.glucose.name}
+            name={VitalFormConfig.glucose.name}
+            label={VitalFormConfig.glucose.label}
+            disabled={disableField(VitalFormConfig.glucose.name)}
             sx={{ m: 0, my: "1ch" }}
 
             handleBlurEvent={(value: string) => {
               if (value == '') return;
               const glucoseValue = Number(value);
 
-              const units = formValues[form.units.name];
+              const units = formValues[VitalFormConfig.units.name];
               addKeyToFlow({glucose: `${glucoseValue} ${units}`})
 
               if (units == "mmol/l") {
                 if (glucoseValue < 3 || glucoseValue > 30) {
-                  setTriageResult("red", form.glucose.name)
+                  setTriageResult("red", VitalFormConfig.glucose.name)
                 }
                 if ((glucoseValue >= 3.1 && glucoseValue <= 3.8) || (glucoseValue > 11.1 && glucoseValue <= 29.9)) {
-                  setTriageResult("yellow", form.glucose.name)
+                  setTriageResult("yellow", VitalFormConfig.glucose.name)
                 }
                 if (glucoseValue >= 3.9 && glucoseValue <= 11.1) {
-                  setTriageResult("green", form.glucose.name)
+                  setTriageResult("green", VitalFormConfig.glucose.name)
                 }
               }
 
@@ -592,18 +592,18 @@ export function VitalsForm({
 
               if (units == "mg/dl") {
                 if (glucoseValue < 3 * m || glucoseValue > 30 * m) {
-                  setTriageResult("red", form.glucose.name)
+                  setTriageResult("red", VitalFormConfig.glucose.name)
                 }
                 if ((glucoseValue >= 3.1 * m && glucoseValue <= 3.8 * m) || (glucoseValue > 11.1 * m && glucoseValue <= 29.9 * m)) {
-                  setTriageResult("yellow", form.glucose.name)
+                  setTriageResult("yellow", VitalFormConfig.glucose.name)
                 }
                 if (glucoseValue >= 3.9 * m && glucoseValue <= 11.1 * m) {
-                  setTriageResult("green", form.glucose.name)
+                  setTriageResult("green", VitalFormConfig.glucose.name)
                 }
               }
-              // checkTriage(form.glucose.name, value);
+              // checkTriage(VitalFormConfig.glucose.name, value);
             }}
-            unitOfMeasure={formValues[form.units.name]}
+            unitOfMeasure={formValues[VitalFormConfig.units.name]}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
@@ -611,38 +611,38 @@ export function VitalsForm({
       <FormFieldContainerLayout last={true} title="GCS">
         <FieldsContainer sx={{ alignItems: "start" }}>
           <RadioGroupInput
-            name={form.motorResponse.name}
-            label={form.motorResponse.label}
+            name={VitalFormConfig.motorResponse.name}
+            label={VitalFormConfig.motorResponse.label}
             options={motorResponses}
-            disabled={disableField(form.motorResponse.name)}
+            disabled={disableField(VitalFormConfig.motorResponse.name)}
             row={false}
           />
           <RadioGroupInput
-            name={form.verbalResponse.name}
-            label={form.verbalResponse.label}
+            name={VitalFormConfig.verbalResponse.name}
+            label={VitalFormConfig.verbalResponse.label}
             options={verbalResponses}
-            disabled={disableField(form.verbalResponse.name)}
+            disabled={disableField(VitalFormConfig.verbalResponse.name)}
             row={false}
           />
           <RadioGroupInput
-            name={form.eyeOpeningResponse.name}
-            label={form.eyeOpeningResponse.label}
+            name={VitalFormConfig.eyeOpeningResponse.name}
+            label={VitalFormConfig.eyeOpeningResponse.label}
             options={eyeOpeningResponses}
-            disabled={disableField(form.eyeOpeningResponse.name)}
+            disabled={disableField(VitalFormConfig.eyeOpeningResponse.name)}
             row={false}
           />
         </FieldsContainer>
         <br />
         <MainTypography fontWeight={"800"} variant="body2">
-          (M{getWeight(formValues[form.motorResponse.name], motorResponses)} V{getWeight(formValues[form.verbalResponse.name], verbalResponses)} E{getWeight(formValues[form.eyeOpeningResponse.name], eyeOpeningResponses)})   {total}/15
+          (M{getWeight(formValues[VitalFormConfig.motorResponse.name], motorResponses)} V{getWeight(formValues[VitalFormConfig.verbalResponse.name], verbalResponses)} E{getWeight(formValues[VitalFormConfig.eyeOpeningResponse.name], eyeOpeningResponses)})   {total}/15
         </MainTypography>
         <SearchComboBox
-          name={form.avpu.name}
+          name={VitalFormConfig.avpu.name}
           options={avpuLists}
-          label={form.avpu.label}
+          label={VitalFormConfig.avpu.label}
           sx={{ my: "1ch" }}
           multiple={false}
-          disabled={disableField(form.avpu.name)}
+          disabled={disableField(VitalFormConfig.avpu.name)}
         />
       </FormFieldContainerLayout>
       <br />

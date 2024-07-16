@@ -5,7 +5,7 @@ import { useNavigation, useParameters } from "@/hooks";
 import { BasicSelect } from "../basicSelect";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { filterObservations, formatAllObsToObject, getObservationValue } from "@/helpers/emr";
+import { filterObservations, formatAllVitalsToObject, getObservationValue } from "@/helpers/emr";
 import { useContext, useEffect, useState } from "react";
 
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
@@ -27,7 +27,7 @@ export const VitalsPanel = () => {
     updateVitals(Object.keys(formattedVitals).length>0 ? formattedVitals[activePage] : []);
   },[activePage])
 
-  
+
 
   useEffect(()=>{
    setOptions(Object.keys(formattedVitals).map(key=>({
@@ -45,7 +45,7 @@ export const VitalsPanel = () => {
       ).find(d => d.visit_id == activeVisit);
       const obs = encounter?.obs??[];
       
-      setFormattedVitals(formatAllObsToObject(obs))
+      setFormattedVitals(formatAllVitalsToObject(obs))
       // updateVitals(obs);
     }
   }, [activeVisit,data]);
