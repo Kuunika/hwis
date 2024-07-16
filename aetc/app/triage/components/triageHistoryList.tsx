@@ -7,7 +7,7 @@ import {
 
 import Button from "@mui/material/Button";
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { BaseTable, MainButton, WrapperBox } from "@/components";
+import {  WrapperBox } from "@/components";
 import {
   findEncounterObs,
   formatAllAirwayBreathing,
@@ -33,6 +33,8 @@ import AccordionActions from '@mui/material/AccordionActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import { FaAngleDown } from "react-icons/fa";
+import { BasicSelect } from "@/app/patient/components/basicSelect";
+import { VisitDates } from "@/app/patient/components/visitDates";
 
 
 export const TriageHistoryList = () => {
@@ -58,19 +60,22 @@ export const TriageHistoryList = () => {
   const [formattedPersistent, setFormattedPersistent] = useState<any>({});
   const [options, setOptions] = useState<Array<any>>([]);
 
+
+  useEffect(() => {
+    updateData()
+  }, [activePage])
+
   useEffect(() => {
     setOptions(
       Object.keys(formattedVitals).map((key) => ({
         value: Number(key),
-        label: Number(key) + 1,
+        label: `Triage ${Number(key) + 1}`,
       }))
     );
     updateData();
   }, [formattedVitals, formattedAirway]);
 
   const updateData = () => {
-
-    console.log("formatted==>",formattedAirway)
     updateAirwayBreathing(
       Object.keys(formattedAirway).length > 0 ? formattedAirway[activePage] : []
     );
@@ -104,7 +109,7 @@ export const TriageHistoryList = () => {
       );
       const consciousnessObs = findEncounterObs(
         data,
-        encounters.CONSCIOUSNESS,
+        encounters.DISABILITY_ASSESSMENT,
         activeVisit
       );
       const painObs = findEncounterObs(
@@ -117,8 +122,6 @@ export const TriageHistoryList = () => {
         encounters.BLOOD_CIRCULATION,
         activeVisit
       );
-      
-      console.log("airway====>",{airwayObs})
 
       setFormattedVitals(formatAllVitalsToObject(vitalsObs));
       setFormattedAirway(formatAllAirwayBreathing(airwayObs));
@@ -210,7 +213,6 @@ export const TriageHistoryList = () => {
       },
     ];
 
-    console.log("======>",initialAirwayBreathing);
     setAirwayBreathing(initialAirwayBreathing);
   };
   const updateBloodCirculation = (obs: any) => {
@@ -318,101 +320,106 @@ export const TriageHistoryList = () => {
 
   return (
     <>
-    <VisitsBar />
-    <Box>
-    <Accordion>
-    <AccordionSummary
-          expandIcon={<FaAngleDown />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-         Vitals
-        </AccordionSummary>
-        <AccordionDetails>
-        <CellContainer>
-        {vitals.map(({ name, value }: any) => (
-          <Cell key={`${value}${name}`} title={name} value={value} />
-        ))}
-        </CellContainer>
-        </AccordionDetails>
-    </Accordion>
-    <Accordion>
-    <AccordionSummary
-          expandIcon={<FaAngleDown />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-         Airway
-        </AccordionSummary>
-        <AccordionDetails>
-        <CellContainer>
-        {airwayBreathing.map(({ name, value }: any) => (
-          <Cell key={`${value}${name}`} title={name} value={value} />
-        ))}
-        </CellContainer>
-        </AccordionDetails>
-    </Accordion>
-    <Accordion>
-    <AccordionSummary
-          expandIcon={<FaAngleDown />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-         Blood Circulation
-        </AccordionSummary>
-        <AccordionDetails>
-        <CellContainer>
-        {blood.map(({ name, value }: any) => (
-          <Cell key={`${value}${name}`} title={name} value={value} />
-        ))}
-        </CellContainer>
-        </AccordionDetails>
-    </Accordion>
-    <Accordion>
-    <AccordionSummary
-          expandIcon={<FaAngleDown />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-         Disability
-        </AccordionSummary>
-        <AccordionDetails>
-        <CellContainer>
-        {consciousness.map(({ name, value }: any) => (
-          <Cell key={`${value}${name}`} title={name} value={value} />
-        ))}
-        </CellContainer>
-        </AccordionDetails>
-    </Accordion>
-    <Accordion>
-    <AccordionSummary
-          expandIcon={<FaAngleDown />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-         Persistent Pain
-        </AccordionSummary>
-        <AccordionDetails>
-        <CellContainer>
-        {persistent.map(({ name, value }: any) => (
-          <Cell key={`${value}${name}`} title={name} value={value} />
-        ))}
-        </CellContainer>
-        </AccordionDetails>
-    </Accordion>
-    
+    <Box sx={{display:"flex", justifyContent:"space-between", my:"2ch"}}>
+      <WrapperBox width={"20%"}>
+        <BasicSelect defaultValue={{value:activePage}}  getValue={(value: any) => setActivePage(Number(value))} label="" options={options} />
+      </WrapperBox>
+      <VisitDates />
     </Box>
-      </>
+      <Box>
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<FaAngleDown />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Vitals
+          </AccordionSummary>
+          <AccordionDetails>
+            <CellContainer>
+              {vitals.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </CellContainer>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<FaAngleDown />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Airway
+          </AccordionSummary>
+          <AccordionDetails>
+            <CellContainer>
+              {airwayBreathing.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </CellContainer>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<FaAngleDown />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Blood Circulation
+          </AccordionSummary>
+          <AccordionDetails>
+            <CellContainer>
+              {blood.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </CellContainer>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<FaAngleDown />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Disability
+          </AccordionSummary>
+          <AccordionDetails>
+            <CellContainer>
+              {consciousness.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </CellContainer>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<FaAngleDown />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Persistent Pain
+          </AccordionSummary>
+          <AccordionDetails>
+            <CellContainer>
+              {persistent.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </CellContainer>
+          </AccordionDetails>
+        </Accordion>
+
+      </Box>
+    </>
   );
 };
 
 
-const CellContainer = ({children, }:{children: ReactNode})=>{
-return <Box>
-  <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-    {children}
+const CellContainer = ({ children, }: { children: ReactNode }) => {
+  return <Box>
+    <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+      {children}
+    </Box>
   </Box>
-</Box>
 }
 
 const Cell = ({ title, value }: { title: string; value: string }) => {

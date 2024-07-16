@@ -32,7 +32,7 @@ export const VitalsPanel = () => {
   useEffect(()=>{
    setOptions(Object.keys(formattedVitals).map(key=>({
       value:Number(key),
-      label:Number(key)+1
+      label:`Triage ${Number(key)+1}`
     })))
     updateVitals(Object.keys(formattedVitals).length>0 ? formattedVitals[activePage] : []);
   },[formattedVitals])
