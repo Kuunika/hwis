@@ -314,16 +314,23 @@ export default function TriageWorkFlow() {
   const handleServiceArea = (values: any) => {
     formData["serviceArea"] = values;
     setMessage("adding next service area...");
-
-    createNextServiceArea({
-      encounterType: 'Next Service Area',
+  
+    const nextServiceAreaObject = {
+      encounterType: 'NEXT_SERVICE_AREA', // use the appropriate encounter type UUID
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
-      obs: formData.serviceArea,
-    });
-
-
+      obs: [
+        {
+          concept: 'Service_Area', // use the appropriate concept UUID
+          value: formData.serviceArea.SERVICE_AREA,
+          obsDatetime: dateTime
+        }
+      ]
+    };
+  
+    createNextServiceArea(nextServiceAreaObject);
+    setShowModal(false);
   };
   
 
