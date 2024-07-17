@@ -163,8 +163,6 @@ const NPIDSearch = () => {
   const [search, setSearch]=useState('');
   const { refetch, isFetching, isSuccess, data, isError } = searchNPID(search)
 
-  console.log({data})
-
   useEffect(()=>{
     if (!Boolean(search)) return;
     refetch()

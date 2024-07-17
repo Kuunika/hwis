@@ -46,7 +46,6 @@ export const ViewPatient = ({ patient }: IProps) => {
 
 
     useEffect(() => {
-        console.log({ patient })
         mapPatientDemographics(patient);
         mapCurrentLocation(patient);
         mapHomeLocation(patient)
