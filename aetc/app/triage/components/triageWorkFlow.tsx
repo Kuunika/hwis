@@ -104,6 +104,13 @@ export default function TriageWorkFlow() {
     isError: triageResultError,
   } = addEncounter();
 
+  const {
+    mutate: createNextServiceArea,
+    isSuccess: nextServiceAreaCreated,
+    isPending: creatingNextServiceArea,
+    isError: NextServiceAreaError,
+  } = addEncounter();
+
   const { navigateTo, navigateBack } = useNavigation();
 
   const steps = [
@@ -202,6 +209,10 @@ export default function TriageWorkFlow() {
       setCompleted(6);
       setMessage("finalizing...");
 
+    if(triageResult == 'green')
+    {
+      setShowModal(true);
+    }
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,
@@ -300,29 +311,40 @@ export default function TriageWorkFlow() {
     setSubmittedSteps(steps => [...steps, 0])
   };
 
-  const handleServiceArea = (values: any)=>{
+  const handleServiceArea = (values: any) => {
     formData["serviceArea"] = values;
-    console.table(formData);
-  }
+    setMessage("adding next service area...");
+
+    createNextServiceArea({
+      encounterType: 'Next Service Area',
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: formData.serviceArea,
+    });
+
+
+  };
+  
 
 
   useEffect(() => {
-    let tResult = 'green';
-    // const keys = Object.keys(conceptTriageResult);
-    // for (let i = 0; i < keys.length; i++) {
+    let tResult = '';
+    const keys = Object.keys(conceptTriageResult);
+    for (let i = 0; i < keys.length; i++) {
 
-    //   if (conceptTriageResult[keys[i]] == 'red') {
-    //     tResult = 'red';
-    //     break;
-    //   }
-    //   if (conceptTriageResult[keys[i]] == 'yellow') {
-    //     tResult = 'yellow';
-    //   }
+      if (conceptTriageResult[keys[i]] == 'red') {
+        tResult = 'red';
+        break;
+      }
+      if (conceptTriageResult[keys[i]] == 'yellow') {
+        tResult = 'yellow';
+      }
 
-    //   if (tResult != 'yellow') {
-    //     tResult = "green"
-    //   }
-    // }
+      if (tResult != 'yellow') {
+        tResult = "green"
+      }
+    }
 
     setTriageResult(tResult as TriageResult)
   }, [conceptTriageResult])
@@ -356,10 +378,6 @@ export default function TriageWorkFlow() {
         theme: "colored",
         transition: Bounce,
       });
-    }
-
-    if(triageResult == 'green'){
-      setShowModal(true);
     }
 
   }, [triageResult])
