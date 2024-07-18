@@ -106,20 +106,51 @@ export const DesktopView = () => {
           <p>Graph 2 Placeholder</p>
         </div>
       </WrapperBox>
+<br/>
 
-      <Tabs value = {value} onChange={handleChange}>
-          <Tab label="Investigations">
-  
-              
-            
+      <Tabs value = {value} onChange={handleChange} style={{
+    backgroundColor: '#f0f0f0',  // Background color of the tabs
+    borderRadius: '4px',         // Rounded corners
+    boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)'  // Drop shadow for depth
+  }}>
+          <Tab style={{
+      borderTopLeftRadius: '4px',
+      padding: '10px 20px',       // Padding inside the tab
+      minWidth: '120px',          // Minimum width of the tab
+      background: value === 0 ? '#ffffff' : 'transparent',  // Active tab background color
+      fontWeight: value === 0 ? 'bold' : 'normal',          // Active tab font weight
+      border: '1px solid #ggg',   // Border for inactive tabs
+      borderRight: 'none'         // No right border for the first tab
+    }} label="Investigations"> 
             </Tab>
-            <Tab label="Clinical Notes"> 
+            <Tab label="Clinical Notes" style={{
+      padding: '10px 20px',
+      minWidth: '120px',
+      background: value === 1 ? '#ffffff' : 'transparent',
+      fontWeight: value === 1 ? 'bold' : 'normal',
+      border: '1px solid #ccc',
+      borderRight: 'none'
+    }}>  
+              </Tab>
+              <Tab label="Results" style={{
+      padding: '10px 20px',
+      minWidth: '120px',
+      background: value === 2 ? '#ffffff' : 'transparent',
+      fontWeight: value === 2 ? 'bold' : 'normal',
+      border: '1px solid #ccc',
+      borderRight: 'none'
+    }}>
               
               </Tab>
-              <Tab label="Results">
-              
-              </Tab>
-              <Tab label="Medications">
+              <Tab label="Medications" style={{
+      borderBottomRightRadius: '4px',
+      borderTopRightRadius: '4px',
+      padding: '10px 20px',
+      minWidth: '120px',
+      background: value === 3 ? '#ffffff' : 'transparent',
+      fontWeight: value === 3 ? 'bold' : 'normal',
+      border: '1px solid #ccc'
+    }}>
               
               </Tab>
    
@@ -127,11 +158,16 @@ export const DesktopView = () => {
               
               
         </Tabs>
+        <Box style={{
+    backgroundColor: '#ffffff',  // Background color of the tabs
+    borderRadius: '4px',         // Rounded corners
+    boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)'  // Drop shadow for depth
+  }} >
         <CustomTabPanel value={value} index={0}><Investigations /></CustomTabPanel>
 <CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>
 <CustomTabPanel value={value} index={2}><Results /></CustomTabPanel>
 <CustomTabPanel value={value} index={3}><Medications /></CustomTabPanel>  
-
+</Box>
       </MainGrid>
     </MainGrid>
   );
