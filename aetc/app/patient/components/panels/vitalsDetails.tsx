@@ -10,6 +10,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
+import { VisitDates } from "../visitDates";
 
 export const VitalsPanel = () => {
 
@@ -87,8 +88,12 @@ export const VitalsPanel = () => {
       title="Vitals"
       icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
     >
+      <WrapperBox>
+      <VisitDates/>
+      </WrapperBox>
       <br />
       <WrapperBox>
+        
         <WrapperBox width={"20%"}>
           <BasicSelect label="" options={options} />
         </WrapperBox>

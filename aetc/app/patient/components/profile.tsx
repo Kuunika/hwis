@@ -1,12 +1,6 @@
-'use client'
-import {
-  MainButton,
-  MainGrid,
-  MainPaper,
-  MainTypography,
-  WrapperBox,
-} from "@/components";
-import { ConsultationCard, PersonalDetailsCard, VisitsBar } from ".";
+'use client';
+import { MainButton, MainGrid, MainTypography, WrapperBox } from "@/components";
+import { ConsultationCard, PersonalDetailsCard } from ".";
 import {
   BasicAccordion,
   ClinicalNotes,
@@ -26,12 +20,45 @@ import { VitalsPanel } from "./panels/vitalsDetails";
 import { BasicSelect } from "./basicSelect";
 import { FaFileAlt } from "react-icons/fa";
 import { checkPatientIfOnWaitingAssessment, useParameters } from "@/hooks";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { Box } from "@mui/material";
 
+
+
+
+ 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
 export const DesktopView = () => {
   const { params } = useParameters();
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string)
+  
+  const [value, setValue] = React.useState(0);
 
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+  
   return (
     <MainGrid
       display={{ xs: "none", lg: "flex" }}
@@ -58,25 +85,53 @@ export const DesktopView = () => {
         <BasicAccordion />
       </MainGrid>
       <MainGrid item lg={9}>
-        <MainPaper
-          elevation={0}
-          sx={{ pb: "5ch", display: { xs: "none", lg: "block" } }}
-        >
-          <VisitsBar />
-          <WrapperBox mx={"2ch"}>
-            <WrapperBox sx={{ display: "flex" }}>
-              <VitalsPanel />
-              <Investigations />
-            </WrapperBox>
-            <WrapperBox sx={{ display: "flex" }}>
-              <ClinicalNotes />
-              <Results />
-            </WrapperBox>
-            <WrapperBox>
-              <Medications />
-            </WrapperBox>
-          </WrapperBox>
-        </MainPaper>
+      <VitalsPanel />
+      <WrapperBox sx={{ display: "flex", gap: "1ch" }}>
+        <div style={{ flex: 1,
+          backgroundColor: '#f0f0f0', // Light grey background for placeholders
+          height: '300px', // Height of the graph placeholders
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid #ccc'}}>
+          <p>Graph 1 Placeholder</p>
+        </div>
+        <div style={{ flex: 1,
+          backgroundColor: '#f0f0f0', // Light grey background for placeholders
+          height: '300px', // Height of the graph placeholders
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid #ccc'}}>
+          <p>Graph 2 Placeholder</p>
+        </div>
+      </WrapperBox>
+
+      <Tabs value = {value} onChange={handleChange}>
+          <Tab label="Investigations">
+  
+              
+            
+            </Tab>
+            <Tab label="Clinical Notes"> 
+              
+              </Tab>
+              <Tab label="Results">
+              
+              </Tab>
+              <Tab label="Medications">
+              
+              </Tab>
+   
+              
+              
+              
+        </Tabs>
+        <CustomTabPanel value={value} index={0}><Investigations /></CustomTabPanel>
+<CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>
+<CustomTabPanel value={value} index={2}><Results /></CustomTabPanel>
+<CustomTabPanel value={value} index={3}><Medications /></CustomTabPanel>  
+
       </MainGrid>
     </MainGrid>
   );
