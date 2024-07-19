@@ -11,9 +11,10 @@ import { OverlayLoader } from "@/components/backdrop";
 
 type IProps = {
     patient: Person;
+    disabled:boolean
 
 }
-export const ViewPatient = ({ patient }: IProps) => {
+export const ViewPatient = ({ patient, disabled }: IProps) => {
 
     // const [patient, setPatient] = useState<any>({} as Person);
     // const [patientPayload, setPatientPayload] = useState(loadedPatient);
@@ -119,7 +120,6 @@ export const ViewPatient = ({ patient }: IProps) => {
             birthdateEstimated: demographics.birthdateEstimated,
             birthdate: demographics.birthDate,
         }
-
         updatePatient({ id: patient.uuid, data: mappedPatient });
 
         // setPatientPayload((patient: Person) => {
@@ -156,15 +156,16 @@ export const ViewPatient = ({ patient }: IProps) => {
     }
 
     const handleCurrentLocationSubmit = (values: any) => {
+        // console.log({values})
 
         const addresses = [{
-            address1: patient?.addresses[0].address1,
-            address2: patient?.addresses[0].address2,
+            address1: patient?.addresses[0]?.address1,
+            address2: patient?.addresses[0]?.address2,
             address3: values.district,
             stateProvince: values.traditionalAuthority,
-            countyDistrict: patient?.addresses[0].county_district,
-            cityVillage: patient?.addresses[0].county_district,
-            country: patient?.addresses[0].country,
+            countyDistrict: patient?.addresses[0]?.county_district,
+            cityVillage: patient?.addresses[0]?.county_district,
+            country: patient?.addresses[0]?.country,
             preferred: true,
         },
         {
@@ -174,6 +175,8 @@ export const ViewPatient = ({ patient }: IProps) => {
             cityVillage: values.traditionalAuthority,
             preferred: false,
         }]
+
+     
         updatePatient({ id: patient.uuid, data: { addresses } })
         setCurrentLocation(false)
     }
@@ -194,7 +197,7 @@ export const ViewPatient = ({ patient }: IProps) => {
                     <LabelValue label="Gender" value={demographics.gender} />
                     <LabelValue label="Date of birth" value={demographics.birthDate} />
                 </>
-                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setOpenDemographics(true)} />
+                <MainButton disabled={disabled} variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setOpenDemographics(true)} />
             </ContainerCard>
             <ContainerCard>
                 <>
@@ -204,8 +207,8 @@ export const ViewPatient = ({ patient }: IProps) => {
                     <LabelValue label="Home Traditional Authority" value={homeLocationAddress.traditionalAuthority} />
                     <LabelValue label="Home Village" value={homeLocationAddress.village} />
                 </>
-                <HomeLocationDialog onSubmit={handleHomeLocationSubmit} initialValues={homeLocationAddress} open={homeLocation} onClose={() => setHomeLocation(false)} />
-                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setHomeLocation(true)} />
+                <HomeLocationDialog  onSubmit={handleHomeLocationSubmit} initialValues={homeLocationAddress} open={homeLocation} onClose={() => setHomeLocation(false)} />
+                <MainButton disabled={disabled} variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setHomeLocation(true)} />
             </ContainerCard>
             <ContainerCard>
                 <>

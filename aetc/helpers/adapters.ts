@@ -1,5 +1,6 @@
     //@ts-nocheck
 import { DDESearch, Patient } from "@/interfaces";
+import { findByNPID } from "@/services/patient";
 
 export const demographicSearchLocalAdaptor = (
   data: Patient[] | undefined
@@ -18,22 +19,20 @@ export const demographicSearchDDEAdaptor = (
 
 
  const remotes = data?.remotes?.map(d=>{
+  // findByNPID(d.patient_identifiers[0].identifier).then(response=>console.log(response))
   return {
     identifiers: d.patient_identifiers,
     patient_id: d.patient_identifiers[0].identifier,
-    uuid: d.patient_identifiers[0].identifier,
+    uuid: d.patient_identifiers[1].identifier,
     given_name: d.person.names[0].given_name,
     family_name: d.person.names[0].family_name,
     ...d.person
   }
  })
 
-
- console.log( { remotes, locals: data.locals})
-
-
   if (data) return { remotes, locals: data.locals}
 
 
   return {remotes:[], locals:[]}
 };
+

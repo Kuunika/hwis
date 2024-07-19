@@ -36,6 +36,7 @@ import { SearchRegistrationContext, SearchRegistrationContextType } from "@/cont
 import { FaPrint } from "react-icons/fa6";
 import { BarcodeComponent } from "@/components/barcode";
 import { PatientUpdateResponse } from "@/interfaces";
+import { BasicSelect } from "@/app/patient/components/basicSelect";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -131,6 +132,7 @@ export const NewRegistrationFlow = () => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
+  const [printer, setPrinter]=useState("http://localhost:3000")
   const trigger = () => <MainButton variant="text" sx={{ color: "#000", ml: 0.5, fontSize: "2em" }} title={<FaPrint />} onClick={() => { }} />
 
 
@@ -423,6 +425,8 @@ export const NewRegistrationFlow = () => {
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
                     formData["demographics"] = values;
+                    console.log({values})
+
                     setPatientValues({
                       ...values,
                       homeDistrict: values.homeDistrict,
@@ -498,12 +502,23 @@ export const NewRegistrationFlow = () => {
               {/* <BarcodeComponent value={getPatientId(patient)}> */}
               <br />
               <>
-                <BarcodeComponent setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={getPatientId(patient)}>
-                  <></>
+                <BarcodeComponent printer={printer} setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={getPatientId(patient)}>
                   {/* <MainTypography fontWeight="600" variant="h6">{`${patient?.names[0].given_name} ${patient?.names[0].family_name}`}</MainTypography> */}
-                  <MainTypography fontWeight="600" variant="h6">{`${patient.names[0].given_name} ${patient.names[0].family_name} ~ ${getPatientId(patient)}`}</MainTypography>
-                  <MainTypography fontStyle={"italic"}>{`${patient?.addresses[0]?.address1}, ${patient?.addresses[0]?.address2}, ${patient?.addresses[0]?.address3}`}</MainTypography>
+                  <MainTypography fontWeight="600" variant="h4">{`${patient.names[0].given_name} ${patient.names[0].family_name} ~ ${getPatientId(patient)}`}</MainTypography>
+                  <MainTypography fontSize={30}>{`${patient?.addresses[0]?.address1}, ${patient?.addresses[0]?.address2}, ${patient?.addresses[0]?.address3}`}</MainTypography>
                 </BarcodeComponent>
+                <br />
+                <BasicSelect getValue={(value:any)=> {
+                    setPrinter(value)
+                }} label="Select Printer" options={[
+                    {
+                    value:"http://localhost:3000",
+                    label:"Local" },
+                    {
+                    value:`${process.env.NEXT_PUBLIC_PRINTER_IP}`,
+                    label:"Network" }
+                ]} />
+                <br />
                 <MainButton sx={{ color: '#000' }} title={"Print Barcode"} variant='text' onClick={() => {
                   const func = triggerPrintFunc();
                   if (typeof func === 'function') {

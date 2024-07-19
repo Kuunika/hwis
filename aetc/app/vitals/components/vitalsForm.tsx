@@ -28,26 +28,32 @@ export const VitalFormConfig = {
     name: concepts.TEMPERATURE,
     // label: "Blood Circulation Temperature",
     label: "Body Temperature",
+    short: "Temp",
   },
   pulseRate: {
     name: concepts.PULSE_RATE,
     label: "Pulse Rate",
+    short: "PR"
   },
   respiratoryRate: {
     name: concepts.RESPIRATORY_RATE,
     label: "Respiratory rate",
+    short:"RR"
   },
   saturationRate: {
     name: concepts.SATURATION_RATE,
     label: "Oxygen Saturation",
+    short: "SPO2"
   },
   heartRate: {
     name: concepts.HEART_RATE,
     label: "Heart rate",
+    short: "HR",
   },
   bloodPressure: {
     name: concepts.BLOOD_PRESSURE_SYSTOLIC,
     label: "Systolic",
+    short:"BP"
   },
   bloodPressureDiastolic: {
     name: concepts.BLOOD_PRESSURE_DIASTOLIC,
@@ -86,6 +92,7 @@ export const VitalFormConfig = {
   pulseOximetry: {
     name: concepts.PULSE_OXIMETRY,
     label: "Pulse Oximetry",
+    short: "SPO"
   },
 };
 type props = {
@@ -104,7 +111,6 @@ const schema = yup.object({
   //   .label(VitalFormConfig.pulseOximetry.label),
   [VitalFormConfig.respiratoryRate.name]: yup
     .number()
-    .required()
     .min(0)
     .max(90)
     .label(VitalFormConfig.respiratoryRate.label),

@@ -1,5 +1,4 @@
 export const checkRole = (requiredRoles: string[], authenticatedRoles: string[] | undefined) => {
-
   
     // return true;
     if (!authenticatedRoles) return false

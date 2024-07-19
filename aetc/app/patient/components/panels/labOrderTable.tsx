@@ -9,6 +9,7 @@ import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { GenericDialog } from "@/components";
 import { useState } from "react";
 import { Typography } from "@mui/material";
+import { BasicSelect } from "../basicSelect";
 export const LabOrderTable = () => {
     const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { })
     const { params } = useParameters();
@@ -17,6 +18,7 @@ export const LabOrderTable = () => {
     const patient = patients?.find(p => p.uuid == params.id);
     const [showDialog, setShowDialog] = useState(false)
     const [selectedTest, setSelectedTest] = useState({ sampleType: "", ascension: "", tests: "" })
+    const [printer, setPrinter]=useState("http://localhost:3000")
 
     const columns = [
         {
@@ -52,16 +54,26 @@ export const LabOrderTable = () => {
 
     ]
     return <>
-       {labOrders?.length==0? <Typography>No lab orders added</Typography> :<BaseTable height="25ch" rowHeight={25} rows={labOrders ? labOrders.map(lab => ({ ...lab, name: lab.tests[0].name, status: lab.tests[0].result ? "" : "waiting result..." })) : []} columns={columns} /> }
+       {labOrders?.length==0? <Typography>No lab orders added</Typography> :<BaseTable height="25ch" rowHeight={25} rows={labOrders ? labOrders.map(lab => ({ ...lab, name: lab.tests[0]?.name, status: lab.tests[0]?.result ? "" : "waiting result..." })) : []} columns={columns} /> }
         <GenericDialog maxWidth="sm" open={showDialog} onClose={() => setShowDialog(false)} title={"Preview Barcode"}>
             <WrapperBox sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <BarcodeComponent setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={selectedTest.ascension}>
-                    <></>
-                    {/* <MainTypography fontWeight="600" variant="h6">{`${patient?.names[0].given_name} ${patient?.names[0].family_name}`}</MainTypography> */}
-                    <MainTypography fontWeight="600" variant="h6">{selectedTest.sampleType}</MainTypography>
-                    <MainTypography variant="body2">{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
-                    <MainTypography variant="body2">{selectedTest.tests}</MainTypography>
+                <BarcodeComponent printer={printer} setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={selectedTest.ascension}>
+                    <MainTypography fontWeight="600" variant="h4">{selectedTest.sampleType}</MainTypography>
+                    <MainTypography fontSize={30}>{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
+                    <MainTypography fontSize={30}>{selectedTest.tests}</MainTypography>
                 </BarcodeComponent>
+                <br />
+                <BasicSelect getValue={(value:any)=> {
+                    setPrinter(value)
+                }} label="Select Printer" options={[
+                    {
+                    value:"http://localhost:3000",
+                    label:"Local" },
+                    {
+                    value:`${process.env.NEXT_PUBLIC_PRINTER_IP}`,
+                    label:"Network" }
+                ]} />
+                <br />
                 <MainButton title={"Print Barcode"} onClick={() => {
                     const func = triggerPrintFunc();
                     if (typeof func === 'function') {

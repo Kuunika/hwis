@@ -179,14 +179,14 @@ export const TriageHistoryList = () => {
         name: `${AirwayBreathingForm.breathing.label}`,
         value: getObservationValue(obs, concepts.IS_BREATHING_ABNORMAL),
       },
-      {
-        name: `${AirwayBreathingForm.oxygenStats.label}`,
-        value: getObservationValue(obs, concepts.OXYGEN_STATS_89),
-      },
-      {
-        name: `${AirwayBreathingForm.respiratoryRate.label}`,
-        value: getObservationValue(obs, concepts.RESPIRATORY_RATE_8_31),
-      },
+      // {
+      //   name: `${AirwayBreathingForm.oxygenStats.label}`,
+      //   value: getObservationValue(obs, concepts.OXYGEN_STATS_89),
+      // },
+      // {
+      //   name: `${AirwayBreathingForm.respiratoryRate.label}`,
+      //   value: getObservationValue(obs, concepts.RESPIRATORY_RATE_8_31),
+      // },
       {
         name: `${AirwayBreathingForm.respiratoryDysfunction.label}`,
         value: getObservationValue(obs, concepts.SEVERE_RESPIRATORY),
@@ -203,14 +203,14 @@ export const TriageHistoryList = () => {
         name: `${AirwayBreathingForm.reducedLevelOfConsciousness.label}`,
         value: getObservationValue(obs, concepts.REDUCED_LEVEL_CONSCIOUSNESS),
       },
-      {
-        name: `${AirwayBreathingForm.oxygenSats9092.label}`,
-        value: getObservationValue(obs, concepts.OXYGEN_STATS_90_92),
-      },
-      {
-        name: `${AirwayBreathingForm.respiratoryRate92130.label}`,
-        value: getObservationValue(obs, concepts.RESPIRATORY_RATE_9_21_30),
-      },
+      // {
+      //   name: `${AirwayBreathingForm.oxygenSats9092.label}`,
+      //   value: getObservationValue(obs, concepts.OXYGEN_STATS_90_92),
+      // },
+      // {
+      //   name: `${AirwayBreathingForm.respiratoryRate92130.label}`,
+      //   value: getObservationValue(obs, concepts.RESPIRATORY_RATE_9_21_30),
+      // },
     ];
 
     setAirwayBreathing(initialAirwayBreathing);
@@ -249,14 +249,14 @@ export const TriageHistoryList = () => {
         name: `${BloodFormConfig.dehydration.label}`,
         value: getObservationValue(obs, concepts.DEHYDRATION_SKIN),
       },
-      {
-        name: `${BloodFormConfig.heartRate5060.label}`,
-        value: getObservationValue(obs, concepts.HEART_RATE_50),
-      },
-      {
-        name: `${BloodFormConfig.temperature3738.label}`,
-        value: getObservationValue(obs, concepts.TEMPERATURE),
-      },
+      // {
+      //   name: `${BloodFormConfig.heartRate5060.label}`,
+      //   value: getObservationValue(obs, concepts.HEART_RATE_50),
+      // },
+      // {
+      //   name: `${BloodFormConfig.temperature3738.label}`,
+      //   value: getObservationValue(obs, concepts.TEMPERATURE),
+      // },
     ];
 
     setBlood(initialBloodForm);

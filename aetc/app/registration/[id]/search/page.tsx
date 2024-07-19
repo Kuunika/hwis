@@ -116,7 +116,6 @@ const DemographicsSearch = ({ patient }: { patient: Person }) => {
 
   // const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchRegPatients(search)
 
-
   useEffect(() => {
     if (!Boolean(search.firstName)) return;
     refetch();

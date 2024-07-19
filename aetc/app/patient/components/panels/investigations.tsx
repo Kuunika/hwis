@@ -57,7 +57,6 @@ export const Investigations = () => {
 
 export default function BasicPopover() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };

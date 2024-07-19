@@ -6,8 +6,10 @@ import { FormikInit, RadioGroupInput, SelectInputField, TextInputField } from "@
 import * as Yup from "yup";
 
 type Props = {
-    initialValues: any,
-    onSubmit: (values: any) => void
+    initialValues: any;
+    onSubmit: (values: any) => void;
+    setContext?: (context: any) => void;
+    submitButton?: boolean
 }
 const form = {
     maritalStatus: {
@@ -49,15 +51,19 @@ const schema = Yup.object().shape({
         .required()
         .label(form.methodOfTransportation.label),
 });
-export const EditSocialHistory = ({ initialValues, onSubmit }: Props) => {
+export const EditSocialHistory = ({ initialValues, onSubmit, submitButton=true,  setContext=(values)=>{}  }: Props) => {
     const [religion, setReligion] = useState('')
     return <FormikInit
         onSubmit={onSubmit}
         initialValues={initialValues}
         validationSchema={schema}
         submitButtonText="Update"
+        submitButton={submitButton}
 
     >
+        <TrackFormikContext
+          setFormContext={setContext}
+        />
 
         <RegistrationCardTitle>Marital Status</RegistrationCardTitle>
         <RadioGroupInput

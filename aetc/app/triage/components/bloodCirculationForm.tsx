@@ -54,14 +54,14 @@ export const BloodFormConfig = {
     name: concepts.DEHYDRATION_SKIN,
     label: "Dehydration skin turgor, sunken eyes",
   },
-  heartRate5060: {
-    name: concepts.HEART_RATE_50,
-    label: "Heart Rate <50, >60 or  100-110",
-  },
-  temperature3738: {
-    name: concepts.TEMPERATURE,
-    label: "Temperature 37-38C",
-  },
+  // heartRate5060: {
+  //   name: concepts.HEART_RATE_50,
+  //   label: "Heart Rate <50, >60 or  100-110",
+  // },
+  // temperature3738: {
+  //   name: concepts.TEMPERATURE,
+  //   label: "Temperature 37-38C",
+  // },
 
 };
 
@@ -83,8 +83,8 @@ const schema = Yup.object().shape({
   // [BloodFormConfig.temperature.name]: Yup.string().label(BloodFormConfig.temperature.label),
   [BloodFormConfig.hemorrhage.name]: Yup.string().label(BloodFormConfig.hemorrhage.label),
   [BloodFormConfig.dehydration.name]: Yup.string().label(BloodFormConfig.dehydration.label),
-  [BloodFormConfig.temperature3738.name]: Yup.string().label(BloodFormConfig.temperature3738.label),
-  [BloodFormConfig.heartRate5060.name]: Yup.string().label(BloodFormConfig.heartRate5060.label),
+  // [BloodFormConfig.temperature3738.name]: Yup.string().label(BloodFormConfig.temperature3738.label),
+  // [BloodFormConfig.heartRate5060.name]: Yup.string().label(BloodFormConfig.heartRate5060.label),
 });
 
 const initialValues = getInitialValues(BloodFormConfig);
