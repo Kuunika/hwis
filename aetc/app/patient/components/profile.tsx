@@ -86,7 +86,7 @@ export const DesktopView = () => {
       </MainGrid>
       <MainGrid item lg={9}>
       <VitalsPanel />
-      <WrapperBox sx={{ display: "flex", gap: "1ch" }}>
+      <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch" }}>
         <div style={{ flex: 1,
           backgroundColor: '#f0f0f0', // Light grey background for placeholders
           height: '300px', // Height of the graph placeholders
@@ -109,9 +109,6 @@ export const DesktopView = () => {
 <br/>
 
       <Tabs value = {value} onChange={handleChange} style={{
-    backgroundColor: '#f0f0f0',  // Background color of the tabs
-    borderRadius: '4px',         // Rounded corners
-    boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)'  // Drop shadow for depth
   }}>
           <Tab style={{
       borderTopLeftRadius: '4px',
@@ -119,7 +116,7 @@ export const DesktopView = () => {
       minWidth: '120px',          // Minimum width of the tab
       background: value === 0 ? '#ffffff' : 'transparent',  // Active tab background color
       fontWeight: value === 0 ? 'bold' : 'normal',          // Active tab font weight
-      border: '1px solid #ggg',   // Border for inactive tabs
+      border: '1px solid #ccc',   // Border for inactive tabs
       borderRight: 'none'         // No right border for the first tab
     }} label="Investigations"> 
             </Tab>

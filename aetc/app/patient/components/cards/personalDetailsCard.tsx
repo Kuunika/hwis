@@ -1,6 +1,6 @@
-import { MainCard, MainPaper, MainTypography, WrapperBox } from "@/components";
+import { MainPaper, MainTypography, WrapperBox } from "@/components";
 import { Chip, Typography } from "@mui/material";
-import { getOnePatient, getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { getOnePatient } from "@/hooks/patientReg";
 import { useNavigation, useParameters } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
