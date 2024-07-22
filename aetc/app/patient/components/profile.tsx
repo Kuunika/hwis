@@ -12,7 +12,7 @@ import {
 } from "./panels";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
@@ -23,6 +23,8 @@ import { checkPatientIfOnWaitingAssessment, useParameters } from "@/hooks";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Box } from "@mui/material";
+import { LineChart } from "@mui/x-charts/LineChart";
+import { getPatientsEncounters } from "@/hooks/encounter";
 
 
 
@@ -51,14 +53,95 @@ function CustomTabPanel(props: TabPanelProps) {
 
 export const DesktopView = () => {
   const { params } = useParameters();
-  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string)
-  
+  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
+  const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [value, setValue] = React.useState(0);
+  const [chartData, setChartData] = useState({ xAxisData: [], systolicbpData: [], diastolicbpData: [] });
+
+  const extractTriages = (obs: any) => {
+    const triageCount = Math.floor(obs.length / 12);
+    const triages = [];
+  
+    for (let i = 0; i < triageCount; i++) {
+      const startIndex = i * 12;
+      const triageDatetime = obs[startIndex + 3]?.obs_datetime;
+      const triage = {
+        systolicbp: obs[startIndex + 3]?.value,
+        diastolicbp: obs[startIndex + 4]?.value,
+        respiratoryrate: obs[startIndex + 5]?.value,
+        temperature: obs[startIndex + 6]?.value,
+        glu: obs[startIndex + 7]?.value,
+        heartrate: obs[startIndex + 2]?.value,
+        triage_datetime: triageDatetime
+      };
+      triages.push(triage);
+    }
+  
+    return triages;
+  };
+
+  const extractVisits = (data: any) => {
+    const visits = [];
+  
+    for (let i = 6; i < data.length; i += 12) {
+      const obs = data[i]?.obs;
+      if (obs && Array.isArray(obs)) {
+        const triages = extractTriages(obs);
+        visits.push({ triages });
+      }
+    }
+  
+    return visits;
+  };
+
+  const createPatientObject = (data: any) => {
+    if (!data || !Array.isArray(data)) {
+      return null; // Or handle the error as needed
+    }
+  
+    const visits = extractVisits(data);
+    return { visits };
+  };
+
+  useEffect(() => {
+    const extractChartData = (patientObject: any) => {
+      const triageData = [];
+
+      patientObject.visits.forEach((visit: any) => {
+        visit.triages.forEach((triage: any) => {
+          console.log(triage.triage_datetime);
+          const datetime = new Date(triage.triage_datetime);
+          console.log(datetime);
+          const timestamp = datetime.getTime();
+          triageData.push({
+            timestamp: isNaN(timestamp) ? null : timestamp,
+            systolicbp: triage.systolicbp,
+            diastolicbp: triage.diastolicbp
+          });
+        });
+      });
+
+      triageData.sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0));
+
+      const xAxisData = triageData.map(data => data.timestamp);
+      const systolicbpData = triageData.map(data => data.systolicbp !== undefined ? data.systolicbp : null);
+      const diastolicbpData = triageData.map(data => data.diastolicbp !== undefined ? data.diastolicbp : null);
+
+      return { xAxisData, systolicbpData, diastolicbpData };
+    };
+
+    const patientObject = createPatientObject(data);
+    if (patientObject) {
+      const chartData = extractChartData(patientObject);
+      console.log(chartData);
+      setChartData(chartData);
+    }
+  }, [data]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  
+
   return (
     <MainGrid
       display={{ xs: "none", lg: "flex" }}
@@ -66,7 +149,6 @@ export const DesktopView = () => {
       spacing={1}
       mt={"2ch"}
       ml={"9ch"}
-  
     >
       <MainGrid item lg={2}>
         <PersonalDetailsCard />
@@ -85,86 +167,84 @@ export const DesktopView = () => {
         <BasicAccordion />
       </MainGrid>
       <MainGrid item lg={9}>
-      <VitalsPanel />
-      <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch" }}>
-        <div style={{ flex: 1,
-          backgroundColor: '#f0f0f0', // Light grey background for placeholders
-          height: '300px', // Height of the graph placeholders
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: '1px solid #ccc'}}>
-          <p>Graph 1 Placeholder</p>
-        </div>
-        <div style={{ flex: 1,
-          backgroundColor: '#f0f0f0', // Light grey background for placeholders
-          height: '300px', // Height of the graph placeholders
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: '1px solid #ccc'}}>
-          <p>Graph 2 Placeholder</p>
-        </div>
-      </WrapperBox>
-<br/>
-
-      <Tabs value = {value} onChange={handleChange} style={{
-  }}>
+        <VitalsPanel />
+        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "1ch" }}>
+          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+            <LineChart
+              xAxis={[{ data: chartData.xAxisData }]}
+              series={[
+                {
+                  data: chartData.systolicbpData,
+                  label: 'Systolic BP',
+                  color: 'blue',
+                  valueFormatter: (value) => (value == null ? 'NaN' : value.toString()),
+                },
+                {
+                  data: chartData.diastolicbpData,
+                  label: 'Diastolic BP',
+                  color: 'red',
+                  valueFormatter: (value) => (value == null ? 'NaN' : value.toString()),
+                }
+              ]}
+              height={300}
+              margin={{ top: 10, bottom: 20 }}
+            />
+          </div>
+          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+            {/* Placeholder chart or additional chart if needed */}
+          </div>
+        </WrapperBox>
+        <br />
+        <Tabs value={value} onChange={handleChange} style={{}}>
           <Tab style={{
-      borderTopLeftRadius: '4px',
-      padding: '10px 20px',       // Padding inside the tab
-      minWidth: '120px',          // Minimum width of the tab
-      background: value === 0 ? '#ffffff' : 'transparent',  // Active tab background color
-      fontWeight: value === 0 ? 'bold' : 'normal',          // Active tab font weight
-      border: '1px solid #ccc',   // Border for inactive tabs
-      borderRight: 'none'         // No right border for the first tab
-    }} label="Investigations"> 
-            </Tab>
-            <Tab label="Clinical Notes" style={{
-      padding: '10px 20px',
-      minWidth: '120px',
-      background: value === 1 ? '#ffffff' : 'transparent',
-      fontWeight: value === 1 ? 'bold' : 'normal',
-      border: '1px solid #ccc',
-      borderRight: 'none'
-    }}>  
-              </Tab>
-              <Tab label="Results" style={{
-      padding: '10px 20px',
-      minWidth: '120px',
-      background: value === 2 ? '#ffffff' : 'transparent',
-      fontWeight: value === 2 ? 'bold' : 'normal',
-      border: '1px solid #ccc',
-      borderRight: 'none'
-    }}>
-              
-              </Tab>
-              <Tab label="Medications" style={{
-      borderBottomRightRadius: '4px',
-      borderTopRightRadius: '4px',
-      padding: '10px 20px',
-      minWidth: '120px',
-      background: value === 3 ? '#ffffff' : 'transparent',
-      fontWeight: value === 3 ? 'bold' : 'normal',
-      border: '1px solid #ccc'
-    }}>
-              
-              </Tab>
-   
-              
-              
-              
+            borderTopLeftRadius: '4px',
+            padding: '10px 20px',
+            minWidth: '120px',
+            background: value === 0 ? '#ffffff' : 'transparent',
+            fontWeight: value === 0 ? 'bold' : 'normal',
+            border: '1px solid #ccc',
+            borderRight: 'none'
+          }} label="Investigations">
+          </Tab>
+          <Tab label="Clinical Notes" style={{
+            padding: '10px 20px',
+            minWidth: '120px',
+            background: value === 1 ? '#ffffff' : 'transparent',
+            fontWeight: value === 1 ? 'bold' : 'normal',
+            border: '1px solid #ccc',
+            borderRight: 'none'
+          }}>
+          </Tab>
+          <Tab label="Results" style={{
+            padding: '10px 20px',
+            minWidth: '120px',
+            background: value === 2 ? '#ffffff' : 'transparent',
+            fontWeight: value === 2 ? 'bold' : 'normal',
+            border: '1px solid #ccc',
+            borderRight: 'none'
+          }}>
+          </Tab>
+          <Tab label="Medications" style={{
+            borderBottomRightRadius: '4px',
+            borderTopRightRadius: '4px',
+            padding: '10px 20px',
+            minWidth: '120px',
+            background: value === 3 ? '#ffffff' : 'transparent',
+            fontWeight: value === 3 ? 'bold' : 'normal',
+            border: '1px solid #ccc'
+          }}>
+          </Tab>
         </Tabs>
         <Box style={{
-    backgroundColor: '#ffffff',  // Background color of the tabs
-    borderRadius: '4px',         // Rounded corners
-    boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)'  // Drop shadow for depth
-  }} >
-        <CustomTabPanel value={value} index={0}><Investigations /></CustomTabPanel>
-<CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>
-<CustomTabPanel value={value} index={2}><Results /></CustomTabPanel>
-<CustomTabPanel value={value} index={3}><Medications /></CustomTabPanel>  
-</Box>
+          backgroundColor: '#ffffff',
+          borderRadius: '4px',
+          boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)'
+        }}>
+          <CustomTabPanel value={value} index={0}><Investigations /></CustomTabPanel>
+          <CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>
+          <CustomTabPanel value={value} index={2}><Results /></CustomTabPanel>
+          <CustomTabPanel value={value} index={3}><Medications /></CustomTabPanel>
+        </Box>
       </MainGrid>
     </MainGrid>
   );

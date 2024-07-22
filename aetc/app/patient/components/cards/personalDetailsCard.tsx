@@ -17,7 +17,13 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   }
 
   return (
-    <MainPaper elevation={0} sx={{ backgroundColor: "#fff", p: 1, ...sx }}>
+    <MainPaper elevation={0} sx={{ flex: 1,
+      backgroundColor: '#ffffff', // Light grey background for placeholders
+      height: '300px', // Height of the graph placeholders
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1ch',
+      border: '1px solid #ccc', ...sx }}>
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
         <WrapperBox
           sx={{
