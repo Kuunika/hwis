@@ -58,48 +58,45 @@ export const DesktopView = () => {
   const [value, setValue] = React.useState(0);
   const [chartData, setChartData] = useState({ xAxisData: [], systolicbpData: [], diastolicbpData: [] });
 
-  const extractTriages = (obs: any) => {
-    const triageCount = Math.floor(obs.length / 12);
-    const triages = [];
-  
-    for (let i = 0; i < triageCount; i++) {
-      const startIndex = i * 12;
-      const triageDatetime = obs[startIndex + 3]?.obs_datetime;
-      const triage = {
-        systolicbp: obs[startIndex + 3]?.value,
-        diastolicbp: obs[startIndex + 4]?.value,
-        respiratoryrate: obs[startIndex + 5]?.value,
-        temperature: obs[startIndex + 6]?.value,
-        glu: obs[startIndex + 7]?.value,
-        heartrate: obs[startIndex + 2]?.value,
-        triage_datetime: triageDatetime
-      };
-      triages.push(triage);
+  const extractTriages = (obs: any, index = 0, triages = []): any => {
+    if (index >= obs.length) {
+      return triages;
     }
   
-    return triages;
-  };
-
-  const extractVisits = (data: any) => {
-    const visits = [];
+    const triage = {
+      systolicbp: obs[index + 3]?.value,
+      diastolicbp: obs[index + 4]?.value,
+      respiratoryrate: obs[index + 5]?.value,
+      temperature: obs[index + 6]?.value,
+      glu: obs[index + 7]?.value,
+      heartrate: obs[index + 2]?.value,
+      triage_datetime: obs[index + 3]?.obs_datetime
+    };
   
-    for (let i = 6; i < data.length; i += 12) {
-      const obs = data[i]?.obs;
-      if (obs && Array.isArray(obs)) {
-        const triages = extractTriages(obs);
-        visits.push({ triages });
-      }
+    return extractTriages(obs, index + 12, [...triages, triage]);
+  };
+  
+  const extractVisits = (data: any, index = 6, visits = []): any => {
+    if (index >= data.length) {
+      return visits;
+    }
+  
+    const obs = data[index]?.obs;
+    if (obs && Array.isArray(obs)) {
+      const triages = extractTriages(obs);
+      return extractVisits(data, index + 12, [...visits, { triages }]);
     }
   
     return visits;
   };
-
-  const createPatientObject = (data: any) => {
+  
+  const createPatientObject = (data: any): any => {
     if (!data || !Array.isArray(data)) {
       return null; // Or handle the error as needed
     }
   
     const visits = extractVisits(data);
+    console.log(visits);
     return { visits };
   };
 
