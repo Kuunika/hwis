@@ -116,8 +116,8 @@ export const SearchResults = ({
           })
         }
       </WrapperBox>
-      <ViewPatientDialog type={type} patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open} />
-      {/* <DDEPatientRegistration patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open}  /> */}
+      {/* <ViewPatientDialog type={type} patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open} /> */}
+      <DDEPatientRegistration patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open}  />
       {/* <ConfirmationDialog open={open} onClose={() => setOpen(false)} /> */}
     </WrapperBox>
   );

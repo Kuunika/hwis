@@ -39,7 +39,7 @@ export const DDEPatientRegistration = ({ patient, open, onClose }: IProps) => {
           {active == 0 && (
             <PatientDetails patient={patient} next={() => setActive(1)} />
           )}
-          {active == 1 && <EditDemographics next={() => setActive(2)} />}
+          {active == 1 && <EditDemographics person={patient} next={() => setActive(2)} />}
           {active == 2 && <SocialForm next={() => setActive(3)} />}
           {active == 3 && <RelationshipForm next={() => setActive(4)} />}
           {active == 4 && <GuardianForm next={() => setActive(5)} />}
@@ -116,6 +116,9 @@ const PatientDetails = ({
     mapCurrentLocation(patient);
   }, [patient]);
 
+
+  console.log(patient.addresses)
+
   return (
     <Box>
       <ContainerCard>
@@ -178,6 +181,11 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
     isSuccess,
     data: updatedPatient,
   } = patchPatient();
+  const {
+    mutate: updatePatientLocation,
+    isPending:locationPending,
+    isSuccess: locationUpdated,
+  } = patchPatient();
   const { params } = useParameters();
   const [homeLocation, setHomeLocation] = useState<any>({});
   const [currentLocation, setCurrentLocation] = useState<any>({});
@@ -194,14 +202,16 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
   }, [isSuccess]);
 
   const updateDemographics = (demographics: any) => {
+
+    const identifiers = !Boolean(demographics.identificationNumber) ? []: [
+      {
+        identifier: demographics.identificationNumber,
+        identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
+        preferred: true,
+      },
+    ]
     const mappedPatient = {
-      identifiers: [
-        {
-          identifier: demographics.identificationNumber,
-          identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
-          preferred: true,
-        },
-      ],
+      identifiers,
       names: [
         {
           givenName: demographics.firstName,
@@ -221,7 +231,7 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
       {
         address1: homeLocation?.district,
         address2: homeLocation?.village,
-        address3: currentLocation?.traditionalAuthority,
+        address3: currentLocation?.district,
         stateProvince: currentLocation?.traditionalAuthority,
         countyDistrict: homeLocation?.traditionalAuthority,
         cityVillage: homeLocation?.traditionalAuthority,
@@ -236,19 +246,23 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         preferred: false,
       },
     ];
-    updatePatient({ id: params?.id, data: { addresses } });
-    // setHomeLocation?(false)
+    updatePatientLocation({ id: params?.id, data: { addresses } });
   };
 
   useEffect(() => {
     if (
       Object.keys(homeLocation).length == 0 ||
       Object.keys(currentLocation).length == 0
-    )
-      return;
+    )return;
 
     handleLocationSubmit();
   }, [homeLocation, currentLocation]);
+
+  useEffect(()=>{
+    if(locationUpdated){
+next()
+    }
+  },[locationUpdated])
 
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = demographicsContext;
@@ -272,9 +286,14 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
 
     if (isValid && hLIsValid && cLIsValid) {
       // move next
-      next();
+      // next();
     }
   };
+
+
+ const nationalId = person.identifiers.find(identifier=>identifier?.identifier_type?.uuid==concepts.NATIONAL_ID_IDENTIFIER_TYPE)?.identifier;
+
+
 
   return (
     <>
@@ -283,9 +302,17 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         <Typography variant="h5">Edit Demographics</Typography>
         <br />
         <EditDemographicsForm
+        
           setContext={setDemographicsContext}
           submitButton={false}
-          initialValues={{}}
+          initialValues={{
+            identificationNumber:nationalId,
+          firstName: person.given_name,
+          lastName: person.family_name,
+          gender: person.gender,
+          birthDate: person.birthdate,
+          birthdateEstimated:false,
+          }}
           onSubmit={(values) => {
             updateDemographics(values);
           }}
@@ -296,7 +323,12 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         <br />
         <EditLocation
           setContext={setHomeLocationContext}
-          initialValues={{}}
+          initialValues={{
+            nationality: person?.addresses[0]?.country ?? "",
+            district: person?.addresses[0]?.address1 ?? "",
+            village: person?.addresses[0]?.address2 ?? "",
+            traditionalAuthority: person?.addresses[0]?.county_district ?? "",
+          }}
           onSubmit={setHomeLocation}
           submitButton={false}
         />
@@ -307,7 +339,12 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         <EditLocation
           currentLocation={true}
           setContext={setCurrentLocationContext}
-          initialValues={{}}
+          initialValues={{
+            district: person?.addresses[0]?.current_district ?? "",
+            traditionalAuthority: person?.addresses[0]?.current_traditional_authority ?? "",
+            village: person?.addresses[1]?.address1 ?? "",
+            closeLandMark: person?.addresses[1]?.address2 ?? "",
+          }}
           onSubmit={setCurrentLocation}
           submitButton={false}
         />

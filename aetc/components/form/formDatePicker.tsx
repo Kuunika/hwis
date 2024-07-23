@@ -36,12 +36,14 @@ export const FormDatePicker: FC<Prop> = ({
     getValue && getValue(value);
   }, [value]);
 
-  let initialDate = "2024-03-17";
+  let initialDate = "";
 
   if (typeof initialValues == 'object' && initialValues !== null) {
 
     //@ts-ignore
     initialDate = initialValues[name] as Date
+
+    console.log({initialDate})
   }
 
   return (
