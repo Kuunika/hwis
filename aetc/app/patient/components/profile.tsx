@@ -190,7 +190,7 @@ export const DesktopView = () => {
                 }
               ]}
               height={300}
-              margin={{ top: 10, bottom: 20 }}
+              margin={{ top: 50, bottom: 30 }}
             />
           </div>
           <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
