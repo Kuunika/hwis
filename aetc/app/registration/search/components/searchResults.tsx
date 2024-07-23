@@ -414,7 +414,6 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
 
   const handleDDEMerge = ()=>{
     const uuid = patient?.uuid;
-
     ddeMergePatients({
       primary: {
         patient_id: initialPatient.uuid
@@ -426,7 +425,6 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
   }
 
   const handleSocialHistorySubmit = (social: any) => {
- 
     const obs = Object.keys(social).map((key)=>({
       names: [
         {uuid: key}

@@ -15,6 +15,7 @@ import { useParameters } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import {
   getPatientsWaitingForRegistrations,
+  merge,
   patchPatient,
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
@@ -58,6 +59,7 @@ const PatientDetails = ({
   patient: Person;
   next: () => void;
 }) => {
+  const {params}=useParameters()
   const [demographics, setDemographics] = useState<any>({
     firstName: "",
     lastName: "",
@@ -110,14 +112,36 @@ const PatientDetails = ({
     });
   };
 
+  const {mutate, isPending, isSuccess, data:mergeResponse}=merge();
+
+
+
+  const handleMerge = ()=>{
+    mutate(
+      {
+        primary: {
+          patient_id: params?.id
+        },
+        secondary: [{
+          doc_id: patient.uuid, 
+        }]
+      }
+    )
+  }
+
+useEffect(()=>{
+  if(isSuccess){
+    next();
+  }
+
+},[isSuccess])
+
   useEffect(() => {
     mapPatientDemographics(patient);
     mapHomeLocation(patient);
     mapCurrentLocation(patient);
   }, [patient]);
 
-
-  console.log(patient.addresses)
 
   return (
     <Box>
@@ -166,9 +190,7 @@ const PatientDetails = ({
       <MainButton
         sx={{ width: "100%", borderRadius: "1ch" }}
         title={"Merge"}
-        onClick={() => {
-          next();
-        }}
+        onClick={handleMerge}
       />
     </Box>
   );
@@ -290,10 +312,7 @@ next()
     }
   };
 
-
  const nationalId = person.identifiers.find(identifier=>identifier?.identifier_type?.uuid==concepts.NATIONAL_ID_IDENTIFIER_TYPE)?.identifier;
-
-
 
   return (
     <>
@@ -592,6 +611,7 @@ const RelationshipForm = ({ next }: { next: () => void }) => {
   );
 };
 const GuardianForm = ({ next }: { next: () => void }) => {
+  const { params } = useParameters();
   const [context, setContext] = useState<any>();
   const {
     mutate: createGuardian,
@@ -608,11 +628,31 @@ const GuardianForm = ({ next }: { next: () => void }) => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
+
+  useEffect(() => {
+    if (guardianCreated) {
+      createGuardianRelationship({
+        patient: params?.id,
+        person: guardian?.uuid,
+        nextOfKinRelationship:  concepts.GUARDIAN,
+      });
+    }
+  }, [guardianCreated]);
+
+
+  useEffect(()=>{
+    if(guardianRelationshipCreated) {
+      next();
+    }
+  },[guardianRelationshipCreated])
+
+
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
     submitForm();
-    next();
   };
+
+
   return (
     <>
       <ContainerCard>
