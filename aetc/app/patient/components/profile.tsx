@@ -58,7 +58,7 @@ export const DesktopView = () => {
   const [value, setValue] = React.useState(0);
   const [chartData, setChartData] = useState({ xAxisData: [], systolicbpData: [], diastolicbpData: [] });
 
-  const extractTriages = (obs: any, index = 0, triages = []): any => {
+  const extractTriages = (obs: any, index = 0, triages: any = []): any => {
     if (index >= obs.length) {
       return triages;
     }
@@ -76,7 +76,8 @@ export const DesktopView = () => {
     return extractTriages(obs, index + 12, [...triages, triage]);
   };
   
-  const extractVisits = (data: any, index = 6, visits = []): any => {
+  const extractVisits = (data: any, index = 6, visits: { triages: any }[] = []): any => {
+
     if (index >= data.length) {
       return visits;
     }
@@ -102,16 +103,15 @@ export const DesktopView = () => {
 
   useEffect(() => {
     const extractChartData = (patientObject: any) => {
-      const triageData = [];
+      const triageData:  any []= [];
 
       patientObject.visits.forEach((visit: any) => {
         visit.triages.forEach((triage: any) => {
           console.log(triage.triage_datetime);
           const datetime = new Date(triage.triage_datetime);
-          console.log(datetime);
-          const timestamp = datetime.getTime();
+          
           triageData.push({
-            timestamp: isNaN(timestamp) ? null : timestamp,
+            timestamp: isNaN(datetime) ? null : datetime,
             systolicbp: triage.systolicbp,
             diastolicbp: triage.diastolicbp
           });
@@ -129,7 +129,7 @@ export const DesktopView = () => {
 
     const patientObject = createPatientObject(data);
     if (patientObject) {
-      const chartData = extractChartData(patientObject);
+      const chartData: any = extractChartData(patientObject);
       console.log(chartData);
       setChartData(chartData);
     }
@@ -168,7 +168,7 @@ export const DesktopView = () => {
         <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "1ch" }}>
           <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
             <LineChart
-              xAxis={[{ data: chartData.xAxisData }]}
+              xAxis={[{scaleType: "utc", data: chartData.xAxisData }]}
               series={[
                 {
                   data: chartData.systolicbpData,
