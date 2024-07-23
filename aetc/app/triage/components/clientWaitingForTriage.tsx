@@ -124,7 +124,6 @@ export const ClientWaitingForTriage = () => {
       actionName: "Registered by",
       action: (
         <>
-          {" "}
           <MainButton
             sx={{ fontSize: "12px", width: "49%", mr: "1px" }}
             title={"start"}

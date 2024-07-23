@@ -58,3 +58,10 @@ export const getHumanReadableDateTime = (date:string|Date|undefined)=>{
 
   return dayjs(date).format('dddd, MMMM D, YYYY h:mm A');
 }
+
+export const getHumanReadableDateTimeLab = (date:string|Date|undefined)=>{
+
+  if(!date) return ""
+
+  return dayjs(date).format('YYYY-MM-DD h:mm A');
+}

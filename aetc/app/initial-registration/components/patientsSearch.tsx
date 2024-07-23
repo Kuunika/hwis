@@ -168,7 +168,7 @@ export const PatientSearchResultsDialog = ({ open, onClose, isLoading, patientRe
         {showForm && <>
             {!selectedPatient && <BaseTable columns={columns} rows={rows} />}
             {selectedPatient && <>
-                <ViewPatient patient={selectedPatient} />
+                <ViewPatient disabled={false} patient={selectedPatient} />
                 <br />
                 <MainButton title={"Continue"} sx={{ mr: "0.5ch" }} onClick={triggerSave} />
                 <MainButton variant="secondary" title={"Cancel"} onClick={() => setSelectedPatient(undefined)} />

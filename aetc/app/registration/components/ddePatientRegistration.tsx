@@ -13,7 +13,10 @@ import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { useParameters } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
-import { getPatientsWaitingForRegistrations, patchPatient } from "@/hooks/patientReg";
+import {
+  getPatientsWaitingForRegistrations,
+  patchPatient,
+} from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
 import { Person } from "@/interfaces";
 import { Box, Paper, Typography } from "@mui/material";
@@ -33,20 +36,28 @@ export const DDEPatientRegistration = ({ patient, open, onClose }: IProps) => {
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
         <Box sx={{ width: { sm: "100%", lg: "40%" } }}>
-          {active == 0 && <PatientDetails patient={patient} next={()=> setActive(1)} />}
-          {active == 1 && <EditDemographics next={()=> setActive(2)} />}
-          {active == 2 && <SocialForm next={()=> setActive(3)} />}
-          {active == 3 && <RelationshipForm next={()=> setActive(4)}  />}
-          {active == 4 && <GuardianForm next={()=> setActive(5)}  />}
-          {active == 5 && <ReferralForm next={()=> setActive(6)}  />}
-          {active == 6 && <FinanceForm next={()=> {}}  />}
+          {active == 0 && (
+            <PatientDetails patient={patient} next={() => setActive(1)} />
+          )}
+          {active == 1 && <EditDemographics next={() => setActive(2)} />}
+          {active == 2 && <SocialForm next={() => setActive(3)} />}
+          {active == 3 && <RelationshipForm next={() => setActive(4)} />}
+          {active == 4 && <GuardianForm next={() => setActive(5)} />}
+          {active == 5 && <ReferralForm next={() => setActive(6)} />}
+          {active == 6 && <FinanceForm next={() => {}} />}
         </Box>
       </Box>
     </GenericDialog>
   );
 };
 
-const PatientDetails = ({ patient, next }: { patient: Person, next:()=>void }) => {
+const PatientDetails = ({
+  patient,
+  next,
+}: {
+  patient: Person;
+  next: () => void;
+}) => {
   const [demographics, setDemographics] = useState<any>({
     firstName: "",
     lastName: "",
@@ -109,6 +120,7 @@ const PatientDetails = ({ patient, next }: { patient: Person, next:()=>void }) =
     <Box>
       <ContainerCard>
         <Typography variant="h5">Demographics</Typography>
+        <br />
         <LabelValue label="First Name" value={demographics.firstName} />
         <LabelValue label="Last Name" value={demographics.lastName} />
         <LabelValue label="Gender" value={demographics.gender} />
@@ -116,6 +128,7 @@ const PatientDetails = ({ patient, next }: { patient: Person, next:()=>void }) =
       </ContainerCard>
       <ContainerCard>
         <Typography variant="h5">Home Location</Typography>
+        <br />
         <LabelValue label="Country" value={homeLocationAddress.nationality} />
         <LabelValue
           label="Home District"
@@ -129,6 +142,7 @@ const PatientDetails = ({ patient, next }: { patient: Person, next:()=>void }) =
       </ContainerCard>
       <ContainerCard>
         <Typography variant="h5">Current Location</Typography>
+        <br />
         <LabelValue
           label="Current District"
           value={currentLocationAddress.district}
@@ -149,13 +163,15 @@ const PatientDetails = ({ patient, next }: { patient: Person, next:()=>void }) =
       <MainButton
         sx={{ width: "100%", borderRadius: "1ch" }}
         title={"Merge"}
-        onClick={() => {next()}}
+        onClick={() => {
+          next();
+        }}
       />
     </Box>
   );
 };
 
-const EditDemographics = ({next}:{next:()=>void}) => {
+const EditDemographics = ({ next, person }: { next: () => void, person: Person }) => {
   const {
     mutate: updatePatient,
     isPending,
@@ -171,12 +187,11 @@ const EditDemographics = ({next}:{next:()=>void}) => {
   const [currentLocationContext, setCurrentLocationContext] = useState<any>();
   const [locations, setLocation] = useState([]);
 
-  useEffect(()=>{
-    if(isSuccess){
-        next()
+  useEffect(() => {
+    if (isSuccess) {
+      next();
     }
-  },[isSuccess])
-
+  }, [isSuccess]);
 
   const updateDemographics = (demographics: any) => {
     const mappedPatient = {
@@ -221,11 +236,17 @@ const EditDemographics = ({next}:{next:()=>void}) => {
         preferred: false,
       },
     ];
-    updatePatient({ id: params?.id, data: { addresses } })
+    updatePatient({ id: params?.id, data: { addresses } });
     // setHomeLocation?(false)
   };
 
   useEffect(() => {
+    if (
+      Object.keys(homeLocation).length == 0 ||
+      Object.keys(currentLocation).length == 0
+    )
+      return;
+
     handleLocationSubmit();
   }, [homeLocation, currentLocation]);
 
@@ -251,14 +272,16 @@ const EditDemographics = ({next}:{next:()=>void}) => {
 
     if (isValid && hLIsValid && cLIsValid) {
       // move next
-      next()
+      next();
     }
   };
 
   return (
     <>
-    <OverlayLoader open={isPending} />
+      <OverlayLoader open={isPending} />
       <ContainerCard>
+        <Typography variant="h5">Edit Demographics</Typography>
+        <br />
         <EditDemographicsForm
           setContext={setDemographicsContext}
           submitButton={false}
@@ -269,6 +292,8 @@ const EditDemographics = ({next}:{next:()=>void}) => {
         />
       </ContainerCard>
       <ContainerCard>
+        <Typography variant="h5">Home Location</Typography>
+        <br />
         <EditLocation
           setContext={setHomeLocationContext}
           initialValues={{}}
@@ -277,6 +302,8 @@ const EditDemographics = ({next}:{next:()=>void}) => {
         />
       </ContainerCard>
       <ContainerCard>
+        <Typography variant="h5">Current Location</Typography>
+        <br />
         <EditLocation
           currentLocation={true}
           setContext={setCurrentLocationContext}
@@ -294,30 +321,28 @@ const EditDemographics = ({next}:{next:()=>void}) => {
   );
 };
 
-const SocialForm = ({next}:{next:()=>void}) => {
-    const { data: initialRegistrationList } =
+const SocialForm = ({ next }: { next: () => void }) => {
+  const { data: initialRegistrationList } =
     getPatientsWaitingForRegistrations();
-    const {params}=useParameters()
-    const {
-        mutate: createSocialHistory,
-        isSuccess: socialHistoryCreated,
-        isPending: creatingSocialHistory,
-        isError: socialHistoryError,
-      } = addEncounter();
+  const { params } = useParameters();
+  const {
+    mutate: createSocialHistory,
+    isSuccess: socialHistoryCreated,
+    isPending: creatingSocialHistory,
+    isError: socialHistoryError,
+  } = addEncounter();
   const [context, setContext] = useState<any>();
   const patient = initialRegistrationList?.find((d) => d.uuid == params?.id);
 
-  useEffect(()=>{
-    if(socialHistoryCreated){
-        next()
+  useEffect(() => {
+    if (socialHistoryCreated) {
+      next();
     }
- 
-  },[socialHistoryCreated])
+  }, [socialHistoryCreated]);
 
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
     submitForm();
-  
   };
   return (
     <>
@@ -348,11 +373,11 @@ const SocialForm = ({next}:{next:()=>void}) => {
   );
 };
 
-const ReferralForm = ({next}:{next:()=>void}) => {
+const ReferralForm = ({ next }: { next: () => void }) => {
   const [context, setContext] = useState<any>();
-  const {params}=useParameters()
+  const { params } = useParameters();
   const { data: initialRegistrationList } =
-  getPatientsWaitingForRegistrations();
+    getPatientsWaitingForRegistrations();
   const patient = initialRegistrationList?.find((d) => d.uuid == params?.id);
 
   const {
@@ -365,7 +390,7 @@ const ReferralForm = ({next}:{next:()=>void}) => {
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
     submitForm();
-    next()
+    next();
   };
   return (
     <>
@@ -374,15 +399,17 @@ const ReferralForm = ({next}:{next:()=>void}) => {
           setContext={setContext}
           submitButton={false}
           onSubmit={(values) => {
-            const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
+            const patient = initialRegistrationList?.find(
+              (d) => d.uuid == params.id
+            );
             const dateTime = getDateTime();
             createReferral({
-                encounterType: encounters.REFERRAL,
-                visit: patient?.visit_uuid,
-                patient: params.id,
-                encounterDatetime: dateTime,
-                obs: getObservations(values, dateTime),
-              });
+              encounterType: encounters.REFERRAL,
+              visit: patient?.visit_uuid,
+              patient: params.id,
+              encounterDatetime: dateTime,
+              obs: getObservations(values, dateTime),
+            });
           }}
         />
       </ContainerCard>
@@ -394,11 +421,11 @@ const ReferralForm = ({next}:{next:()=>void}) => {
     </>
   );
 };
-const FinanceForm = ({next}:{next:()=>void}) => {
+const FinanceForm = ({ next }: { next: () => void }) => {
   const [context, setContext] = useState<any>();
-  const {params}=useParameters()
+  const { params } = useParameters();
   const { data: initialRegistrationList } =
-  getPatientsWaitingForRegistrations();
+    getPatientsWaitingForRegistrations();
   const patient = initialRegistrationList?.find((d) => d.uuid == params?.id);
   const {
     mutate: createFinancing,
@@ -407,16 +434,16 @@ const FinanceForm = ({next}:{next:()=>void}) => {
     isError: financingError,
   } = addEncounter();
 
-useEffect(()=>{
-    if(financingCreated){
-        next()
+  useEffect(() => {
+    if (financingCreated) {
+      next();
     }
-},[financingCreated])
+  }, [financingCreated]);
 
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
     submitForm();
-    next()
+    next();
   };
   return (
     <>
@@ -428,22 +455,24 @@ useEffect(()=>{
           onSubmit={(values) => {
             const dateTime = getDateTime();
 
-            const payments = values[concepts.PAYMENT_OPTIONS]
-      
-            const paymentObs = payments.filter((pay: any) => pay.value).map((p: any) => {
-              return {
-                concept: concepts.PAYMENT_OPTIONS,
-                value: p.key,
-                obsDatetime: dateTime,
-              }
-            })
-            createFinancing({
-                encounterType: encounters.FINANCING,
-                visit: patient?.visit_uuid,
-                patient: params.id,
-                encounterDatetime: dateTime,
-                obs: [...getObservations(values, dateTime), ...paymentObs],
+            const payments = values[concepts.PAYMENT_OPTIONS];
+
+            const paymentObs = payments
+              .filter((pay: any) => pay.value)
+              .map((p: any) => {
+                return {
+                  concept: concepts.PAYMENT_OPTIONS,
+                  value: p.key,
+                  obsDatetime: dateTime,
+                };
               });
+            createFinancing({
+              encounterType: encounters.FINANCING,
+              visit: patient?.visit_uuid,
+              patient: params.id,
+              encounterDatetime: dateTime,
+              obs: [...getObservations(values, dateTime), ...paymentObs],
+            });
           }}
         />
       </ContainerCard>
@@ -456,14 +485,13 @@ useEffect(()=>{
   );
 };
 
-
 // TODO: START FROM HERE
-const RelationshipForm = ({next}:{next:()=>void}) => {
+const RelationshipForm = ({ next }: { next: () => void }) => {
   const [context, setContext] = useState<any>();
-  const [relationshipName, setRelationshipName]= useState("")
-  const {params}=useParameters()
+  const [relationshipName, setRelationshipName] = useState("");
+  const { params } = useParameters();
   const { data: initialRegistrationList } =
-  getPatientsWaitingForRegistrations();
+    getPatientsWaitingForRegistrations();
   const patient = initialRegistrationList?.find((d) => d.uuid == params?.id);
 
   const {
@@ -482,24 +510,23 @@ const RelationshipForm = ({next}:{next:()=>void}) => {
     data: nextOfKin,
   } = addPerson();
 
-
-  useEffect(()=>{
-    if(nextOfKinCreated){
-        const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
-        const dateTime = getDateTime();
-        createRelationship({
-            patient: patient?.uuid,
-            person: nextOfKin?.uuid,
-            nextOfKinRelationship: relationshipName,
-          });
+  useEffect(() => {
+    if (nextOfKinCreated) {
+      const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
+      const dateTime = getDateTime();
+      createRelationship({
+        patient: patient?.uuid,
+        person: nextOfKin?.uuid,
+        nextOfKinRelationship: relationshipName,
+      });
     }
-  },[nextOfKinCreated])
+  }, [nextOfKinCreated]);
 
-  useEffect(()=>{
-if(relationshipCreated){
-    next()
-}
-  },[relationshipCreated])
+  useEffect(() => {
+    if (relationshipCreated) {
+      next();
+    }
+  }, [relationshipCreated]);
 
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
@@ -514,9 +541,9 @@ if(relationshipCreated){
           setContext={setContext}
           submitButton={false}
           onSubmit={(values) => {
-            createNextOfKin(values)
-            setRelationshipName(values.relationship)
-        }}
+            createNextOfKin(values);
+            setRelationshipName(values.relationship);
+          }}
         />
       </ContainerCard>
       <MainButton
@@ -527,7 +554,7 @@ if(relationshipCreated){
     </>
   );
 };
-const GuardianForm = ({next}:{next:()=>void}) => {
+const GuardianForm = ({ next }: { next: () => void }) => {
   const [context, setContext] = useState<any>();
   const {
     mutate: createGuardian,
@@ -547,7 +574,7 @@ const GuardianForm = ({next}:{next:()=>void}) => {
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
     submitForm();
-    next()
+    next();
   };
   return (
     <>
@@ -559,9 +586,9 @@ const GuardianForm = ({next}:{next:()=>void}) => {
           submitButton={false}
           onSubmit={(values) => {
             createGuardian({
-                nextOfKinFirstName: values.given_name,
-                nextOfKinLastName: values.family_name,
-              });
+              nextOfKinFirstName: values.given_name,
+              nextOfKinLastName: values.family_name,
+            });
           }}
         />
       </ContainerCard>

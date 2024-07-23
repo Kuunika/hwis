@@ -87,7 +87,7 @@ export default function BasicPopover() {
         <Box sx={{padding:"2ch"}}>  
           <Typography variant="h4">Lab Order</Typography>
           <br />
-     <LabRequestModal
+        <LabRequestModal
             addRequest={()=>{}}
             onClose={() => setAnchorEl(null)}
           />

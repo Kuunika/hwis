@@ -104,21 +104,8 @@ export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
     setRequest((req: any) => ({ ...req, tests: mappedTests }))
   }
 
-
-
-  // return 
-
-
-  return (
-        <LabForm onClose={() => onClose('')} />
-    // <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
-    //   <OverlayLoader open={isPending || isRefetching} />
-    //   <DialogTitle>Lab Order</DialogTitle>
-    //   <DialogContent>
-    //     <LabForm onClose={() => onClose('')} />
-    //   </DialogContent>
-    // </Dialog>
-  );
+  return <LabForm onClose={() => onClose('')} />
+ 
 }
 
 
@@ -278,6 +265,7 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
     mutate(order);
     onClose()
   }
+  
   return <FormikInit initialValues={initialValues} onSubmit={handleLabSend} validationSchema={validationSchema}>
     {/* <OverlayLoader open={isPending || isLoading || isRefetching} /> */}
 

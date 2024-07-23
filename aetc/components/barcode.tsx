@@ -14,6 +14,7 @@ interface Props {
   children: ReactNode;
   setTriggerFunc: (func: any) => void;
   printer: string;
+  orderDate?:string;
 }
 
 export const BarcodeComponent: React.FC<Props> = ({
@@ -21,6 +22,7 @@ export const BarcodeComponent: React.FC<Props> = ({
   children,
   setTriggerFunc,
   printer,
+  orderDate
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -46,17 +48,21 @@ export const BarcodeComponent: React.FC<Props> = ({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent:"center",
+        paddingLeft:"13ch"
           }}
           ref={ref}
         >
           {children}
           <Barcode
-            width={5}
-            height={100}
+            width={1}
+            height={40}
             margin={0}
             displayValue={false}
             value={value}
           />
+          <Typography variant="caption">{value}</Typography>
+          <Typography variant="caption">Order date: {orderDate}</Typography>
         </WrapperBox>
       </div>
     </WrapperBox>
