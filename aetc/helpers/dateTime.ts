@@ -34,11 +34,9 @@ export function getCATTime() {
 
 export const getTime = (dateString: string) => {
   const date = new Date(dateString);
-
   const hours = date.getUTCHours();
   const minutes = date.getUTCMinutes();
   const seconds = date.getUTCSeconds();
-
 
   return `${hours}:${minutes}:${seconds}`
 }
@@ -53,4 +51,17 @@ export const estimateBirthdate = (years: number) => {
 
 export const getHumanReadableDate = (date:string|Date)=>{
   return dayjs(date).format('dddd, MMMM D, YYYY');
+}
+export const getHumanReadableDateTime = (date:string|Date|undefined)=>{
+
+  if(!date) return ""
+
+  return dayjs(date).format('dddd, MMMM D, YYYY h:mm A');
+}
+
+export const getHumanReadableDateTimeLab = (date:string|Date|undefined)=>{
+
+  if(!date) return ""
+
+  return dayjs(date).format('YYYY-MM-DD h:mm A');
 }

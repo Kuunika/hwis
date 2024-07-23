@@ -14,7 +14,7 @@ import { TriageContainer } from ".";
 import { getInitialValues, notify, successDialog } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 
-const form = {
+export const PersistentFormConfig = {
   activeSeizures: {
     name: concepts.ACTIVE_SEIZURES,
     label: "Active Seizures",
@@ -55,22 +55,22 @@ type Prop = {
 };
 
 const schema = Yup.object().shape({
-  [form.activeSeizures.name]: Yup.string()
+  [PersistentFormConfig.activeSeizures.name]: Yup.string()
     .required()
-    .label(form.activeSeizures.label),
-  [form.confusion.name]: Yup.string().required().label(form.confusion.label),
-  [form.headache.name]: Yup.string().required().label(form.headache.label),
-  [form.moderatePain.name]: Yup.string()
+    .label(PersistentFormConfig.activeSeizures.label),
+  [PersistentFormConfig.confusion.name]: Yup.string().required().label(PersistentFormConfig.confusion.label),
+  [PersistentFormConfig.headache.name]: Yup.string().required().label(PersistentFormConfig.headache.label),
+  [PersistentFormConfig.moderatePain.name]: Yup.string()
     .required()
-    .label(form.moderatePain.label),
-  [form.severePain.name]: Yup.string().required().label(form.severePain.label),
-  [form.weakness.name]: Yup.string().required().label(form.weakness.label),
-  [form.focalNeurological.name]: Yup.string()
+    .label(PersistentFormConfig.moderatePain.label),
+  [PersistentFormConfig.severePain.name]: Yup.string().required().label(PersistentFormConfig.severePain.label),
+  [PersistentFormConfig.weakness.name]: Yup.string().required().label(PersistentFormConfig.weakness.label),
+  [PersistentFormConfig.focalNeurological.name]: Yup.string()
     .required()
-    .label(form.focalNeurological.label),
+    .label(PersistentFormConfig.focalNeurological.label),
 });
 
-const initialsValues = getInitialValues(form);
+const initialsValues = getInitialValues(PersistentFormConfig);
 const options = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
@@ -97,33 +97,33 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
       <FormFieldContainerLayout title="Seizures and Focal Neurologic">
         <FieldsContainer>
           <RadioGroupInput
-            name={form.activeSeizures.name}
-            label={form.activeSeizures.label}
+            name={PersistentFormConfig.activeSeizures.name}
+            label={PersistentFormConfig.activeSeizures.label}
             options={options}
-            disabled={disableField(form.activeSeizures.name)}
+            disabled={disableField(PersistentFormConfig.activeSeizures.name)}
             getValue={(value) => {
-              updateConditions(form.activeSeizures.name, value)
+              updateConditions(PersistentFormConfig.activeSeizures.name, value)
 
               if (value == YES) {
 
-                setTriageResult('red', form.activeSeizures.name)
+                setTriageResult('red', PersistentFormConfig.activeSeizures.name)
               } else {
-                setTriageResult('green', form.activeSeizures.name)
+                setTriageResult('green', PersistentFormConfig.activeSeizures.name)
               }
             }
             }
           />
           <RadioGroupInput
-            name={form.focalNeurological.name}
-            label={form.focalNeurological.label}
+            name={PersistentFormConfig.focalNeurological.name}
+            label={PersistentFormConfig.focalNeurological.label}
             options={options}
-            disabled={disableField(form.focalNeurological.name)}
+            disabled={disableField(PersistentFormConfig.focalNeurological.name)}
             getValue={(value) => {
-              updateConditions(form.focalNeurological.name, value);
+              updateConditions(PersistentFormConfig.focalNeurological.name, value);
               if (value == YES) {
-                setTriageResult('red', form.focalNeurological.name)
+                setTriageResult('red', PersistentFormConfig.focalNeurological.name)
               } else {
-                setTriageResult('green', form.focalNeurological.name)
+                setTriageResult('green', PersistentFormConfig.focalNeurological.name)
               }
             }
             }
@@ -134,33 +134,33 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
       <FormFieldContainerLayout title="Headache and Weakness">
         <FieldsContainer>
           <RadioGroupInput
-            name={form.headache.name}
-            disabled={disableField(form.headache.name)}
-            label={form.headache.label}
+            name={PersistentFormConfig.headache.name}
+            disabled={disableField(PersistentFormConfig.headache.name)}
+            label={PersistentFormConfig.headache.label}
             options={options}
             getValue={(value) => {
 
               if (value == YES) {
-                setTriageResult('yellow', form.headache.name)
+                setTriageResult('yellow', PersistentFormConfig.headache.name)
               } else {
-                setTriageResult('green', form.headache.name)
+                setTriageResult('green', PersistentFormConfig.headache.name)
               }
 
-              updateConditions(form.headache.name, value)
+              updateConditions(PersistentFormConfig.headache.name, value)
             }
             }
           />
           <RadioGroupInput
-            name={form.weakness.name}
-            disabled={disableField(form.weakness.name)}
-            label={form.weakness.label}
+            name={PersistentFormConfig.weakness.name}
+            disabled={disableField(PersistentFormConfig.weakness.name)}
+            label={PersistentFormConfig.weakness.label}
             options={options}
             getValue={(value) => {
-              updateConditions(form.weakness.name, value);
+              updateConditions(PersistentFormConfig.weakness.name, value);
               if (value == YES) {
-                setTriageResult('yellow', form.weakness.name)
+                setTriageResult('yellow', PersistentFormConfig.weakness.name)
               } else {
-                setTriageResult('green', form.weakness.name)
+                setTriageResult('green', PersistentFormConfig.weakness.name)
               }
             }}
           />
@@ -169,46 +169,46 @@ export const PersistentPainForm = ({ onSubmit, triageResult, continueTriage, pre
       <FormFieldContainerLayout last={true} title="Severe Pain and Confusion">
         <FieldsContainer>
           <RadioGroupInput
-            name={form.severePain.name}
-            disabled={disableField(form.severePain.name)}
-            label={form.severePain.label}
+            name={PersistentFormConfig.severePain.name}
+            disabled={disableField(PersistentFormConfig.severePain.name)}
+            label={PersistentFormConfig.severePain.label}
             options={options}
             getValue={(value) => {
-              updateConditions(form.severePain.name, value);
+              updateConditions(PersistentFormConfig.severePain.name, value);
               if (value == YES) {
-                setTriageResult('red', form.severePain.name)
+                setTriageResult('red', PersistentFormConfig.severePain.name)
               } else {
-                setTriageResult('green', form.severePain.name)
+                setTriageResult('green', PersistentFormConfig.severePain.name)
               }
             }}
           />
           <RadioGroupInput
-            name={form.confusion.name}
-            disabled={disableField(form.confusion.name)}
-            label={form.confusion.label}
+            name={PersistentFormConfig.confusion.name}
+            disabled={disableField(PersistentFormConfig.confusion.name)}
+            label={PersistentFormConfig.confusion.label}
             options={options}
             getValue={(value) => {
 
-              updateConditions(form.confusion.name, value)
+              updateConditions(PersistentFormConfig.confusion.name, value)
               if (value == YES) {
-                setTriageResult('yellow', form.confusion.name)
+                setTriageResult('yellow', PersistentFormConfig.confusion.name)
               } else {
-                setTriageResult('green', form.confusion.name)
+                setTriageResult('green', PersistentFormConfig.confusion.name)
               }
             }}
           />
         </FieldsContainer>
         <FieldsContainer>
           <RadioGroupInput
-            disabled={disableField(form.moderatePain.name)}
-            name={form.moderatePain.name}
-            label={form.moderatePain.label}
+            disabled={disableField(PersistentFormConfig.moderatePain.name)}
+            name={PersistentFormConfig.moderatePain.name}
+            label={PersistentFormConfig.moderatePain.label}
             options={options}
             getValue={(value) => {
               if (value == YES) {
-                setTriageResult('yellow', form.moderatePain.name)
+                setTriageResult('yellow', PersistentFormConfig.moderatePain.name)
               } else {
-                setTriageResult('green', form.moderatePain.name)
+                setTriageResult('green', PersistentFormConfig.moderatePain.name)
               }
             }}
           />

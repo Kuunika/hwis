@@ -21,7 +21,7 @@ export function CheckboxesGroup({ options, name, getValue }: Props) {
         useFormikField(name);
 
     useEffect(() => {
-        if (value) {
+        if (value && Array.isArray(value)) {
             if (value?.filter((v: any) => v?.value).length == 2) {
                 setDisabled(true)
             } else {

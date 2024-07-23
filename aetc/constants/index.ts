@@ -151,10 +151,21 @@ export const concepts = {
   PATIENT_REFERRED_TO: "b9a64022-8d80-11d8-abbb-0024217bb78e",
   // 
 
+
+  // parent:8d91a210-c2cc-11de-8d13-0010c6dffd0f
+  // uncle-auntie: 8d91a3dc-c2cc-11de-8d13-0010c6dffd0f
+  // auntie:68e31ef5-113f-46a9-b34c-98302611e5fd
+  // guardian:ba453344-8d80-11d8-abbb-0024217bb78e
+  // spouse:c397168a-f8bd-4ad1-b865-e608c1f3487e
+  // sibling:8d91a01c-c2cc-11de-8d13-0010c6dffd0f
+  // uncle:fa7799e2-fe4c-49be-a326-53320008aeb1
+
   NATIONAL_ID_IDENTIFIER_TYPE: "dc047ea8-e9ce-4fd0-af93-a2ade6b14b42",
-  PARENT: "ba453f92-8d80-11d8-abbb-0024217bb78e",
-  UNCLE_AUNTIE: "68ee4bec-1e85-47c5-a6d3-02ff09e29112",
-  AUNTIE: "a7c2e3cf-3158-478b-bcd3-89bdbec43e80", // temporary
+  // PARENT: "ba453f92-8d80-11d8-abbb-0024217bb78e",
+  PARENT: "8d91a210-c2cc-11de-8d13-0010c6dffd0f",
+  // UNCLE_AUNTIE: "68ee4bec-1e85-47c5-a6d3-02ff09e29112",
+  UNCLE_AUNTIE: "8d91a3dc-c2cc-11de-8d13-0010c6dffd0f",
+  AUNTIE: "68e31ef5-113f-46a9-b34c-98302611e5fd", 
   GUARDIAN: "ba453344-8d80-11d8-abbb-0024217bb78e",
   SPOUSE: "c397168a-f8bd-4ad1-b865-e608c1f3487e",
   SIBLING: "8d91a01c-c2cc-11de-8d13-0010c6dffd0f",

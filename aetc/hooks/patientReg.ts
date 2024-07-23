@@ -62,14 +62,15 @@ export const registerPatient = () => {
 
     const getAddress = (address: any) => address !== "" ? address : "N/A";
 
+
+    const identifiers = patientData.identificationNumber == "" ? [] :   [{
+      identifier: patientData.identificationNumber,
+      identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
+      preferred: true,
+    }]
+
     const mappedPatient = {
-      identifiers: [
-        {
-          identifier: patientData.identificationNumber,
-          identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
-          preferred: true,
-        },
-      ],
+      identifiers,
       names: [
         {
           givenName: patientData.firstName,

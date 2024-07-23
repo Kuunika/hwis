@@ -14,12 +14,12 @@ import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
-import { getDateTime } from "@/helpers/dateTime";
+import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Obs } from "@/interfaces";
 
 export const ClinicalNotes = () => {
   const [clinicalNotes, setClinicalNotes] = useState<
-    Array<{ note: string | null; creator: string }>
+    Array<{ note: string | null; creator: string; time:any }>
   >([]);
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
@@ -49,11 +49,12 @@ export const ClinicalNotes = () => {
   }, [data]);
 
   const formatNotes = (obs: Obs[]) => {
-    console.log({obs})
     const notes = obs.map((ob) => ({
       note: ob.value_text,
       creator: ob.created_by,
+      time: getHumanReadableDateTime(ob.obs_datetime)
     }));
+
     setClinicalNotes(notes);
   };
 
@@ -119,7 +120,10 @@ export const ClinicalNotes = () => {
               >
                 <ReactMarkdown>{note.note}</ReactMarkdown>
                 <br />
+                <Box sx={{display:"flex", justifyContent:"space-between", alignItems:"center"}}> 
                 <Typography>~ {note.creator}</Typography>
+                <Typography variant="caption">{note.time}</Typography>
+                </Box>
               </Box>
             );
           })

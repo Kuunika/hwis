@@ -24,7 +24,7 @@ type Prop = {
   previous: () => void,
     getFormValues: (values:any)=>void
 };
-const form = {
+export const ConsciousnessFormConfig = {
   consciousness: {
     name: concepts.DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS,
     label: "Does the patient have a reduced Level of consciousness",
@@ -41,11 +41,11 @@ const form = {
 };
 
 const schema = Yup.object().shape({
-  [form.consciousness.name]: Yup.string()
+  [ConsciousnessFormConfig.consciousness.name]: Yup.string()
     .required()
-    .label(form.consciousness.label),
-  [form.bloodGlucose.name]: Yup.string().label(form.bloodGlucose.label),
-  [form.gcs.name]: Yup.string().label(form.gcs.label),
+    .label(ConsciousnessFormConfig.consciousness.label),
+  [ConsciousnessFormConfig.bloodGlucose.name]: Yup.string().label(ConsciousnessFormConfig.bloodGlucose.label),
+  [ConsciousnessFormConfig.gcs.name]: Yup.string().label(ConsciousnessFormConfig.gcs.label),
 });
 
 const options = [
@@ -53,7 +53,7 @@ const options = [
   { label: "No", value: NO },
 ];
 
-const initialValues = getInitialValues(form);
+const initialValues = getInitialValues(ConsciousnessFormConfig);
 
 export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous, getFormValues }: Prop) => {
   const { flow } = useContext(TriageContext) as TriageContextType
@@ -62,16 +62,16 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
 
   const checkGcs = (value: number) => {
     if (!value) {
-      setTriageResult("", form.gcs.name);
+      setTriageResult("", ConsciousnessFormConfig.gcs.name);
       return;
     }
 
     if (value < 10) {
-      setTriageResult("red", form.gcs.name);
+      setTriageResult("red", ConsciousnessFormConfig.gcs.name);
     }
 
     if (value >= 10 && value <= 14) {
-      setTriageResult("yellow", form.gcs.name);
+      setTriageResult("yellow", ConsciousnessFormConfig.gcs.name);
     }
   };
 
@@ -86,7 +86,7 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
     <FormikInit
       validationSchema={schema}
       getFormValues={getFormValues}
-      initialValues={{ ...initialValues, [form.consciousness.name]: flow['gsc'] < 15 ? YES : NO, [form.gcs.name]:flow['gsc'], [form.bloodGlucose.name]:flow['glucose']  }}
+      initialValues={{ ...initialValues, [ConsciousnessFormConfig.consciousness.name]: flow['gsc'] < 15 ? YES : NO, [ConsciousnessFormConfig.gcs.name]:flow['gsc'], [ConsciousnessFormConfig.bloodGlucose.name]:flow['glucose']  }}
       enableReinitialize={true}
       onSubmit={onSubmit}
       submitButtonText="next"
@@ -100,11 +100,11 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
         title="Consciousness"
       >
         <RadioGroupInput
-          name={form.consciousness.name}
-          label={form.consciousness.label}
+          name={ConsciousnessFormConfig.consciousness.name}
+          label={ConsciousnessFormConfig.consciousness.label}
           options={options}
           getValue={(value) => setConsciousness(value)}
-          disabled={disableField(form.consciousness.name)}
+          disabled={disableField(ConsciousnessFormConfig.consciousness.name)}
         />
       </FormFieldContainerLayout>
 
@@ -114,19 +114,19 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
             <FormFieldContainerLayout last={true} title="Blood Glucose and GCS">
               <FieldsContainer>
                 <TextInputField
-                  name={form.bloodGlucose.name}
-                  label={form.bloodGlucose.label}
-                  id={form.bloodGlucose.name}
+                  name={ConsciousnessFormConfig.bloodGlucose.name}
+                  label={ConsciousnessFormConfig.bloodGlucose.label}
+                  id={ConsciousnessFormConfig.bloodGlucose.name}
                   disabled={true}
-                  // disabled={disableField(form.bloodGlucose.name)}
+                  // disabled={disableField(ConsciousnessFormConfig.bloodGlucose.name)}
                 />
                 <TextInputField
-                  name={form.gcs.name}
-                  label={form.gcs.label}
-                  id={form.gcs.name}
+                  name={ConsciousnessFormConfig.gcs.name}
+                  label={ConsciousnessFormConfig.gcs.label}
+                  id={ConsciousnessFormConfig.gcs.name}
                   getValue={checkGcs}
                   disabled={true}
-                  // disabled={disableField(form.gcs.name)}
+                  // disabled={disableField(ConsciousnessFormConfig.gcs.name)}
                 />
               </FieldsContainer>
             </FormFieldContainerLayout>

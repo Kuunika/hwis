@@ -2,6 +2,7 @@ import { RegistrationCard, RegistrationCardTitle } from "@/app/registration/comp
 import { concepts } from "@/constants";
 import { FormikInit, SelectInputField, TextInputField, WrapperBox } from "@/components"
 import * as Yup from "yup";
+import { TrackFormikContext } from "@/app/registration/components";
 
 const relationships = [
     {
@@ -31,9 +32,10 @@ const schema = Yup.object().shape({
     relationship: Yup.string().required().label('Relationship'),
 })
 
-export const EditRelationshipForm = ({ onSubmit, initialValues, isGuardian }: { initialValues: any, onSubmit: (values: any) => void, isGuardian?:boolean }) => {
-    return <FormikInit submitButtonText="Update" validationSchema={schema} initialValues={initialValues} onSubmit={onSubmit}>
-
+export const EditRelationshipForm = ({ onSubmit, initialValues, isGuardian, setContext=()=>{},submitButton }: { initialValues: any, onSubmit: (values: any) => void, isGuardian?:boolean, setContext?: (context: any) => void;
+    submitButton?: boolean; }) => {
+    return <FormikInit submitButton={submitButton} submitButtonText="Update" validationSchema={schema} initialValues={initialValues} onSubmit={onSubmit}>
+  <TrackFormikContext setFormContext={setContext} />
         <RegistrationCardTitle>{isGuardian? 'Guardian information': `Next of kin Information`}</RegistrationCardTitle>
         <WrapperBox display={"flex"} flexDirection={"column"}>
             <TextInputField

@@ -57,7 +57,7 @@ export const checkUsername = (username: string) => {
     });
 };
 
-export const editUser = ()=>{
+export const  editUser = ()=>{
     const edit=(data: any)=>{
     const updatedUserData = {
         username: data.userName,

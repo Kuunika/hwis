@@ -179,7 +179,7 @@ export type TriageResult = "" | "yellow" | "red" | "green";
 
 export type DDESearch = {
   locals: Person[] | Patient[];
-  remotes: Person[] | Patient[];
+  remotes: Person[] | Patient[] | Array<{patient_identifiers:Array<any>; person:Person}>;
 }
 
 export type DDEScore = {
