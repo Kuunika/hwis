@@ -23,7 +23,7 @@ import { checkPatientIfOnWaitingAssessment, useParameters } from "@/hooks";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Box } from "@mui/material";
-import { LineChart } from "@mui/x-charts/LineChart";
+import LineChartComponent from "./lineChart";
 import { getPatientsEncounters } from "@/hooks/encounter";
 
 
@@ -56,13 +56,23 @@ export const DesktopView = () => {
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [value, setValue] = React.useState(0);
-  const [chartData, setChartData] = useState({ xAxisData: [], systolicbpData: [], diastolicbpData: [] });
+  const [chartData, setChartData] = useState({ xAxisData: [], systolicbpData: [], diastolicbpData: [], heartRateData: [], glucoseData: [], tempData: [], rrData: [] });
+  const [selectedChartTop, setSelectedChartTop] = useState('bp'); // State for top chart container
+  const [selectedChartBottom, setSelectedChartBottom] = useState('glu'); // State for bottom chart container
+
+  const handleButtonClickTop = (chartType: string) => {
+    setSelectedChartTop(chartType);
+  };
+
+  const handleButtonClickBottom = (chartType: string) => {
+    setSelectedChartBottom(chartType);
+  };
 
   const extractTriages = (obs: any, index = 0, triages: any = []): any => {
     if (index >= obs.length) {
       return triages;
     }
-  
+
     const triage = {
       systolicbp: obs[index + 3]?.value,
       diastolicbp: obs[index + 4]?.value,
@@ -72,30 +82,29 @@ export const DesktopView = () => {
       heartrate: obs[index + 2]?.value,
       triage_datetime: obs[index + 3]?.obs_datetime
     };
-  
+
     return extractTriages(obs, index + 12, [...triages, triage]);
   };
-  
-  const extractVisits = (data: any, index = 6, visits: { triages: any }[] = []): any => {
 
+  const extractVisits = (data: any, index = 6, visits: { triages: any }[] = []): any => {
     if (index >= data.length) {
       return visits;
     }
-  
+
     const obs = data[index]?.obs;
     if (obs && Array.isArray(obs)) {
       const triages = extractTriages(obs);
       return extractVisits(data, index + 12, [...visits, { triages }]);
     }
-  
+
     return visits;
   };
-  
+
   const createPatientObject = (data: any): any => {
     if (!data || !Array.isArray(data)) {
       return null; // Or handle the error as needed
     }
-  
+
     const visits = extractVisits(data);
     console.log(visits);
     return { visits };
@@ -103,17 +112,21 @@ export const DesktopView = () => {
 
   useEffect(() => {
     const extractChartData = (patientObject: any) => {
-      const triageData:  any []= [];
+      const triageData: any[] = [];
 
       patientObject.visits.forEach((visit: any) => {
         visit.triages.forEach((triage: any) => {
           console.log(triage.triage_datetime);
           const datetime = new Date(triage.triage_datetime);
-          
+
           triageData.push({
             timestamp: isNaN(datetime) ? null : datetime,
             systolicbp: triage.systolicbp,
-            diastolicbp: triage.diastolicbp
+            diastolicbp: triage.diastolicbp,
+            heartrate: triage.heartrate,
+            glucose: triage.glu,
+            temperature: triage.temperature,
+            rr: triage.respiratoryrate
           });
         });
       });
@@ -123,26 +136,23 @@ export const DesktopView = () => {
       const xAxisData = triageData.map(data => data.timestamp);
       const systolicbpData = triageData.map(data => data.systolicbp !== undefined ? data.systolicbp : null);
       const diastolicbpData = triageData.map(data => data.diastolicbp !== undefined ? data.diastolicbp : null);
+      const heartRateData = triageData.map(data => data.heartrate !== undefined ? data.heartrate : null);
+      const glucoseData = triageData.map(data => data.glucose !== undefined ? data.glucose : null);
+      const tempData = triageData.map(data => data.temperature !== undefined ? data.temperature : null);
+      const rrData = triageData.map(data => data.rr !== undefined ? data.rr : null);
 
-      return { xAxisData, systolicbpData, diastolicbpData };
+      return { xAxisData, systolicbpData, diastolicbpData, heartRateData, glucoseData, tempData, rrData };
     };
 
     const patientObject = createPatientObject(data);
     if (patientObject) {
       const chartData: any = extractChartData(patientObject);
-      console.log(chartData);
       setChartData(chartData);
     }
   }, [data]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-  };
-
-  const formatDate = (value) => {
-    if (value == null) return 'NaN';
-    const date = new Date(value);
-    return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
   };
 
   return (
@@ -172,29 +182,70 @@ export const DesktopView = () => {
       <MainGrid item lg={9}>
         <VitalsPanel />
         <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "1ch" }}>
-          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
-            <LineChart
-              xAxis={[{scaleType: "utc", data: chartData.xAxisData, valueFormatter: (value) => (value == null ? 'NaN' : formatDate(value))}]}
-              series={[
-                {
-                  data: chartData.systolicbpData,
-                  label: 'Systolic BP',
-                  color: 'blue',
-                  valueFormatter: (value) => (value == null ? 'NaN' : value.toString()),
-                },
-                {
-                  data: chartData.diastolicbpData,
-                  label: 'Diastolic BP',
-                  color: 'red',
-                  valueFormatter: (value) => (value == null ? 'NaN' : value.toString()),
-                }
-              ]}
-              height={300}
-              margin={{ top: 50, bottom: 30 }}
-            />
+          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
+              <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{ margin: "0 1ch 0 0" }} />
+              <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} />
+            </div>
+            {selectedChartTop === 'bp' && (
+              <LineChartComponent
+              key={`top-bp-${JSON.stringify(chartData.xAxisData)}`}
+                chartData={chartData}
+                xAxisData={chartData.xAxisData}
+                series={[
+                  { key: 'systolicbpData', label: 'Systolic BP', color: 'blue' },
+                  { key: 'diastolicbpData', label: 'Diastolic BP', color: 'red' }
+                ]}
+              />
+            )}
+            {selectedChartTop === 'hr' && (
+              <LineChartComponent
+              key={`top-hr-${JSON.stringify(chartData.xAxisData)}`}
+                chartData={chartData}
+                xAxisData={chartData.xAxisData}
+                series={[
+                  { key: 'heartRateData', label: 'Heart Rate', color: 'green' }
+                ]}
+              />
+            )}
           </div>
-          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
-            {/* Placeholder chart or additional chart if needed */}
+          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
+              <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0" }} />
+              <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0" }} />
+              <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} />
+            </div>
+      
+              {selectedChartBottom === 'glu' && (
+                <LineChartComponent
+                key={`bottom-glu-${JSON.stringify(chartData.xAxisData)}`}
+                  chartData={chartData}
+                  xAxisData={chartData.xAxisData}
+                  series={[
+                    { key: 'glucoseData', label: 'Glucose', color: 'purple' }
+                  ]}
+                />
+              )}
+              {selectedChartBottom === 'temp' && (
+                <LineChartComponent
+                key={`bottom-temp-${JSON.stringify(chartData.xAxisData)}`}
+                  chartData={chartData}
+                  xAxisData={chartData.xAxisData}
+                  series={[
+                    { key: 'tempData', label: 'Temperature', color: 'orange' }
+                  ]}
+                />
+              )}
+              {selectedChartBottom === 'rr' && (
+                <LineChartComponent
+                key={`bottom-rr-${JSON.stringify(chartData.xAxisData)}`}
+                  chartData={chartData}
+                  xAxisData={chartData.xAxisData}
+                  series={[
+                    { key: 'rrData', label: 'Respiratory Rate', color: 'cyan' }
+                  ]}
+                />
+              )}
           </div>
         </WrapperBox>
         <br />
