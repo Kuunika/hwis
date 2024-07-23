@@ -110,6 +110,12 @@ export const DesktopView = () => {
     return { visits };
   };
 
+  const activeButtonStyle = {
+    backgroundColor: '#007bff',
+    color: '#ffffff'
+  };
+
+
   useEffect(() => {
     const extractChartData = (patientObject: any) => {
       const triageData: any[] = [];
@@ -184,8 +190,8 @@ export const DesktopView = () => {
         <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "1ch" }}>
           <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
-              <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{ margin: "0 1ch 0 0" }} />
-              <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} />
+              <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartTop === 'bp' ? activeButtonStyle : {}), }} />
+              <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={selectedChartTop === 'hr' ? activeButtonStyle : {}}  />
             </div>
             {selectedChartTop === 'bp' && (
               <LineChartComponent
@@ -211,9 +217,9 @@ export const DesktopView = () => {
           </div>
           <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
-              <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0" }} />
-              <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0" }} />
-              <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} />
+              <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0" , ...(selectedChartBottom === 'glu' ? activeButtonStyle : {}),}} />
+              <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartBottom === 'temp' ? activeButtonStyle : {}),}}/>
+              <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} sx={selectedChartBottom === 'rr' ? activeButtonStyle : {}} />
             </div>
       
               {selectedChartBottom === 'glu' && (
