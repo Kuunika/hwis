@@ -139,6 +139,12 @@ export const DesktopView = () => {
     setValue(newValue);
   };
 
+  const formatDate = (value) => {
+    if (value == null) return 'NaN';
+    const date = new Date(value);
+    return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
+  };
+
   return (
     <MainGrid
       display={{ xs: "none", lg: "flex" }}
@@ -168,7 +174,7 @@ export const DesktopView = () => {
         <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "1ch" }}>
           <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
             <LineChart
-              xAxis={[{scaleType: "utc", data: chartData.xAxisData }]}
+              xAxis={[{scaleType: "utc", data: chartData.xAxisData, valueFormatter: (value) => (value == null ? 'NaN' : formatDate(value))}]}
               series={[
                 {
                   data: chartData.systolicbpData,

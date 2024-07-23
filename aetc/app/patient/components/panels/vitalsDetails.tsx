@@ -90,6 +90,13 @@ export const VitalsPanel = () => {
     >
       <WrapperBox>
       <VisitDates/>
+      <MainButton
+        onClick={() => navigateTo(`/triage/${params?.id}/history`)}
+        sx={{ ml: "1ch" }}
+        variant="secondary"
+        title={"Triage"}
+      // size="small"
+      />
       </WrapperBox>
       <br />
       <WrapperBox>
