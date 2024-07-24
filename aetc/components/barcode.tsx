@@ -16,6 +16,55 @@ interface Props {
   printer: string;
   orderDate?:string;
 }
+export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
+  value,
+  children,
+  setTriggerFunc,
+  printer,
+  orderDate
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const convertToCanvas = async () => {
+      const element = document.getElementById("barcode");
+      if (element) {
+        const canvas = await htmlToImage.toCanvas(element);
+        downloadZplData("test", canvas, printer);
+      }
+    };
+    setTriggerFunc(() => convertToCanvas);
+  }, [printer]);
+
+  return (
+    <WrapperBox
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
+      <div id="barcode">
+        <WrapperBox
+          sx={{
+            pb: "2px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent:"center",
+          }}
+          ref={ref}
+        >
+          {children}
+          <Barcode
+            width={4}
+            height={50}
+            margin={0}
+            displayValue={false}
+            value={value}
+          />
+        </WrapperBox>
+      </div>
+    </WrapperBox>
+  );
+};
+
+
 
 export const BarcodeComponent: React.FC<Props> = ({
   value,
@@ -41,7 +90,6 @@ export const BarcodeComponent: React.FC<Props> = ({
       sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <div id="barcode">
-        {/* <Table /> */}
         <WrapperBox
           sx={{
             pb: "2px",
@@ -68,6 +116,10 @@ export const BarcodeComponent: React.FC<Props> = ({
     </WrapperBox>
   );
 };
+
+
+
+
 
 const downloadZplData = async (
   labelName: string,

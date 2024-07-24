@@ -37,6 +37,7 @@ import { FaPrint } from "react-icons/fa6";
 import { BarcodeComponent } from "@/components/barcode";
 import { PatientUpdateResponse } from "@/interfaces";
 import { BasicSelect } from "@/app/patient/components/basicSelect";
+import { PatientBarcodePrinter } from "@/components/patientBarcodePrinter";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -376,18 +377,7 @@ export const NewRegistrationFlow = () => {
   ]);
 
 
-  const getPatientId = (patient: PatientUpdateResponse) => {
-
-    if (!patient) return '';
-
-    const identifiers = patient.patient.identifiers.find(ide => ide?.identifier_type?.name == 'National id')
-
-    if (!identifiers) return '';
-
-    return identifiers.identifier;
-
-  }
-
+ 
 
   return (
     <>
@@ -502,25 +492,10 @@ export const NewRegistrationFlow = () => {
               {/* <BarcodeComponent value={getPatientId(patient)}> */}
               <br />
               <>
-                <BarcodeComponent printer={printer} setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={getPatientId(patient)}>
-                  {/* <MainTypography fontWeight="600" variant="h6">{`${patient?.names[0].given_name} ${patient?.names[0].family_name}`}</MainTypography> */}
-                  <MainTypography fontWeight="600" variant="h4">{`${patient.names[0].given_name} ${patient.names[0].family_name} ~ ${getPatientId(patient)}`}</MainTypography>
-                  <MainTypography fontSize={30}>{`${patient?.addresses[0]?.address1}, ${patient?.addresses[0]?.address2}, ${patient?.addresses[0]?.address3}`}</MainTypography>
-                </BarcodeComponent>
-                <br />
-                <BasicSelect getValue={(value:any)=> {
-                    setPrinter(value)
-                }} label="Select Printer" options={[
-                    {
-                    value:"http://localhost:3000",
-                    label:"Local" },
-                    {
-                    value:`${process.env.NEXT_PUBLIC_PRINTER_IP}`,
-                    label:"Network" }
-                ]} />
+              <PatientBarcodePrinter firstName={patient.given_name} lastName={patient.family_name} addresses={patient.addresses} identifiers={patient.identifiers} />
                 <br />
                 <MainButton sx={{ color: '#000' }} title={"Print Barcode"} variant='text' onClick={() => {
-                  const func = triggerPrintFunc();
+                  const func = triggerPrintFunc(); 
                   if (typeof func === 'function') {
                     func()
                   }

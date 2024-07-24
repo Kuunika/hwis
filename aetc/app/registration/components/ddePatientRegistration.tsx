@@ -8,6 +8,7 @@ import {
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { GenericDialog, MainButton } from "@/components";
 import { OverlayLoader } from "@/components/backdrop";
+import { PatientBarcodePrinter } from "@/components/patientBarcodePrinter";
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
@@ -31,21 +32,30 @@ type IProps = {
 
 export const DDEPatientRegistration = ({ patient, open, onClose }: IProps) => {
   const [active, setActive] = useState(0);
+  const [updatedPatient, setUpdatedPatient]=useState<Person>({} as Person)
+
+
+  useEffect(()=>{
+    console.log(updatedPatient)
+  },[updatedPatient])
   return (
     <GenericDialog onClose={onClose} open={open} title="Remote Patient">
       <Box
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
+
         <Box sx={{ width: { sm: "100%", lg: "40%" } }}>
           {active == 0 && (
             <PatientDetails patient={patient} next={() => setActive(1)} />
           )}
-          {active == 1 && <EditDemographics person={patient} next={() => setActive(2)} />}
+          {active == 1 && <EditDemographics setUpdatedPatient={setUpdatedPatient} person={patient} next={() => setActive(2)} />}
           {active == 2 && <SocialForm next={() => setActive(3)} />}
           {active == 3 && <RelationshipForm next={() => setActive(4)} />}
           {active == 4 && <GuardianForm next={() => setActive(5)} />}
           {active == 5 && <ReferralForm next={() => setActive(6)} />}
-          {active == 6 && <FinanceForm next={() => {}} />}
+          {active == 6 && <FinanceForm next={() => setActive(7)} />}
+          {active == 7 && <PatientBarcodePrinter firstName={updatedPatient.given_name} lastName={updatedPatient.family_name} addresses={updatedPatient.addresses} identifiers={updatedPatient.identifiers} />}
+          
         </Box>
       </Box>
     </GenericDialog>
@@ -196,7 +206,7 @@ useEffect(()=>{
   );
 };
 
-const EditDemographics = ({ next, person }: { next: () => void, person: Person }) => {
+const EditDemographics = ({ next, person, setUpdatedPatient }: { next: () => void, person: Person, setUpdatedPatient:(patient:any)=>void }) => {
   const {
     mutate: updatePatient,
     isPending,
@@ -207,6 +217,7 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
     mutate: updatePatientLocation,
     isPending:locationPending,
     isSuccess: locationUpdated,
+    data
   } = patchPatient();
   const { params } = useParameters();
   const [homeLocation, setHomeLocation] = useState<any>({});
@@ -282,6 +293,7 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
 
   useEffect(()=>{
     if(locationUpdated){
+      setUpdatedPatient(data?.patient)
 next()
     }
   },[locationUpdated])
@@ -628,7 +640,6 @@ const GuardianForm = ({ next }: { next: () => void }) => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
-
   useEffect(() => {
     if (guardianCreated) {
       createGuardianRelationship({
@@ -650,6 +661,7 @@ const GuardianForm = ({ next }: { next: () => void }) => {
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
     submitForm();
+    console.log(errors)
   };
 
 
@@ -658,10 +670,11 @@ const GuardianForm = ({ next }: { next: () => void }) => {
       <ContainerCard>
         <EditRelationshipForm
           isGuardian={true}
-          initialValues={{}}
+          initialValues={{given_name:"", family_name:"", relationship: concepts.GUARDIAN}}
           setContext={setContext}
           submitButton={false}
           onSubmit={(values) => {
+            console.log({values})
             createGuardian({
               nextOfKinFirstName: values.given_name,
               nextOfKinLastName: values.family_name,
