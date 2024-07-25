@@ -122,7 +122,7 @@ export const getPatientsWaitingForPrescreening = () => {
     queryKey: ["screening"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 60,
+    // refetchInterval: 1000 * 60,
   });
 };
 
@@ -134,7 +134,7 @@ export const getPatientsWaitingForRegistrations = () => {
     queryKey: ["registration"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 30,
+    // refetchInterval: 1000 * 30,
   });
 };
 
@@ -146,7 +146,7 @@ export const getPatientsWaitingForTriage = () => {
     queryKey: ["triage"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 30,
+    // refetchInterval: 1000 * 30,
   });
 };
 export const getPatientsWaitingForAssessment = () => {

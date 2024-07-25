@@ -1,18 +1,27 @@
 import { Address, Identifier, Person } from "@/interfaces";
-import { MainButton, MainTypography } from ".";
-import { BarcodeComponent, PatientRegistrationBarcodeTemplate } from "./barcode";
+import { GenericDialog, MainButton, MainTypography } from ".";
+import {
+  BarcodeComponent,
+  PatientRegistrationBarcodeTemplate,
+} from "./barcode";
 import { useState } from "react";
 import { BasicSelect } from "@/app/patient/components/basicSelect";
 import { getPatientId } from "@/helpers/emr";
+import { SxProps } from "@mui/material";
 
 type Props = {
-firstName: string;
-lastName:string;
-identifiers: Identifier[],
-addresses: Address[]
+  firstName: string;
+  lastName: string;
+  identifiers: Identifier[];
+  addresses: Address[];
 };
 
-export const PatientBarcodePrinter = ({ firstName,lastName, identifiers, addresses  }: Props) => {
+export const PatientBarcodePrinter = ({
+  firstName,
+  lastName,
+  identifiers,
+  addresses,
+}: Props) => {
   const [printer, setPrinter] = useState("http://localhost:3000");
   const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
   return (
@@ -22,9 +31,10 @@ export const PatientBarcodePrinter = ({ firstName,lastName, identifiers, address
         setTriggerFunc={(test) => setTriggerPrintFunc(test)}
         value={getPatientId(identifiers)}
       >
-        <MainTypography fontWeight="600" variant="h4">{`${
-          firstName
-        } ${lastName} ~ ${getPatientId(
+        <MainTypography
+          fontWeight="600"
+          variant="h4"
+        >{`${firstName} ${lastName} ~ ${getPatientId(
           identifiers
         )}`}</MainTypography>
         <MainTypography
@@ -60,6 +70,33 @@ export const PatientBarcodePrinter = ({ firstName,lastName, identifiers, address
           }
         }}
       />
+    </>
+  );
+};
+
+export const PrinterBarcodeButton = ({ patient, sx }: { patient: Person, sx?:SxProps }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <MainButton
+        size="small"
+        variant="secondary"
+        sx={{ fontSize: "12px", ml: "1px",...sx }}
+        title="Print"
+        onClick={() => setOpen(true)}
+      />
+      <GenericDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Print Patient Barcode"
+      >
+        <PatientBarcodePrinter
+          firstName={patient.given_name}
+          lastName={patient.family_name}
+          addresses={patient.addresses}
+          identifiers={patient.identifiers}
+        />
+      </GenericDialog>
     </>
   );
 };

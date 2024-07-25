@@ -42,8 +42,6 @@ export const FormDatePicker: FC<Prop> = ({
 
     //@ts-ignore
     initialDate = initialValues[name] as Date
-
-    console.log({initialDate})
   }
 
   return (

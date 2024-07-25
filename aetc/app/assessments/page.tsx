@@ -37,7 +37,7 @@ import { roles } from "@/constants";
             This is a list of all patients that went through triage successfully
             and waiting for assessments.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ mx:0, p: 0 }}>
+          <RegistrationCard sx={{ mx:1, p: 0 }}>
             <ClientWaitingForAssessment />
           </RegistrationCard>
         </MainGrid>

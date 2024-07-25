@@ -12,7 +12,7 @@ import { PatientBarcodePrinter } from "@/components/patientBarcodePrinter";
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
-import { useParameters } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import {
   getPatientsWaitingForRegistrations,
@@ -31,13 +31,12 @@ type IProps = {
 };
 
 export const DDEPatientRegistration = ({ patient, open, onClose }: IProps) => {
+  const {navigateTo}=useNavigation()
   const [active, setActive] = useState(0);
   const [updatedPatient, setUpdatedPatient]=useState<Person>({} as Person)
 
 
-  useEffect(()=>{
-    console.log(updatedPatient)
-  },[updatedPatient])
+
   return (
     <GenericDialog onClose={onClose} open={open} title="Remote Patient">
       <Box
@@ -54,7 +53,13 @@ export const DDEPatientRegistration = ({ patient, open, onClose }: IProps) => {
           {active == 4 && <GuardianForm next={() => setActive(5)} />}
           {active == 5 && <ReferralForm next={() => setActive(6)} />}
           {active == 6 && <FinanceForm next={() => setActive(7)} />}
-          {active == 7 && <PatientBarcodePrinter firstName={updatedPatient.given_name} lastName={updatedPatient.family_name} addresses={updatedPatient.addresses} identifiers={updatedPatient.identifiers} />}
+          {active == 7 && <>
+            <PatientBarcodePrinter firstName={updatedPatient.given_name} lastName={updatedPatient.family_name} addresses={Boolean(updatedPatient?.addresses) ? updatedPatient?.addresses : [] } identifiers={updatedPatient.identifiers} />
+            <br />
+            <MainButton title="Register More" sx={{mr:"1px"}} onClick={()=>navigateTo("/registration/list")} />
+            <MainButton title="Home" onClick={()=>navigateTo("/dashboard")}  />
+          </>
+          }
           
         </Box>
       </Box>

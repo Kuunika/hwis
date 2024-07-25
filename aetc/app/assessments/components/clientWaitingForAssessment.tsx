@@ -18,6 +18,7 @@ import { DisplayEncounterCreator } from "@/components";
 import { encounters, triageResult } from "@/constants";
 import { PatientCardList } from "@/components/cards/PatientCardList";
 import { Box } from "@mui/material";
+import { PrinterBarcodeButton } from "@/components/patientBarcodePrinter";
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState("");
@@ -50,11 +51,11 @@ export const ClientWaitingForAssessment = () => {
     })).filter(p => p.id != deleted);
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit No" },
+    { field: "aetc_visit_number", headerName: "Visit" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "patient_arrival_time", headerName: "Arrival Time" },
-    { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
+    // { field: "patient_arrival_time", headerName: "Arrival Time" },
+    { field: "birthdate", headerName: "Date Of Birth",},
     { field: "gender", headerName: "Gender" },
     {
       field: "waiting",
@@ -133,6 +134,7 @@ export const ClientWaitingForAssessment = () => {
         return (
           <>
             <MainButton
+            size="small"
               sx={{ fontSize: "12px", mr: "1px" }}
               title={"start"}
               onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
@@ -142,6 +144,7 @@ export const ClientWaitingForAssessment = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+            <PrinterBarcodeButton patient={cell.row} />
           </>
         );
       },
@@ -178,6 +181,7 @@ export const ClientWaitingForAssessment = () => {
       actionName: "Triaged By",
       action: (
         <CardAction
+        patient={row}
           setDeleted={(id:any)=>setDeleted(id)}
           triage={row.triage_result}
           visitId={row.visit_uuid}
@@ -197,12 +201,14 @@ const CardAction = ({
   id,
   visitId,
   triage,
-  setDeleted
+  setDeleted,
+  patient
 }: {
   id: string;
   visitId: string;
   triage: string;
-  setDeleted: (id:any)=>void
+  setDeleted: (id:any)=>void,
+  patient:any
 }) => {
   const { navigateTo } = useNavigation();
 
@@ -227,16 +233,18 @@ const CardAction = ({
       ></WrapperBox>
       <Box sx={{ flex: "1" }}>
         <MainButton
-          sx={{ fontSize: "12px", width: "49%", mr: "2px" }}
+          sx={{ fontSize: "12px", width: "30%", mr: "2px", mb:"1px" }}
           title={"start"}
           onClick={() => navigateTo(`/patient/${id}/profile`)}
         />
         <AbscondButton
-          sx={{ width: "49%" }}
+          sx={{ width: "30%" }}
           onDelete={() => setDeleted(id)}
           visitId={visitId}
           patientId={id}
+         
         />
+         <PrinterBarcodeButton sx={{width:"30%"}} patient={patient} />
       </Box>
     </Box>
   );

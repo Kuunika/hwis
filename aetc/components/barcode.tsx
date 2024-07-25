@@ -42,7 +42,7 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
       <div id="barcode">
         <WrapperBox
           sx={{
-            pb: "2px",
+            pb: "8px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -52,7 +52,7 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
         >
           {children}
           <Barcode
-            width={4}
+            width={3}
             height={50}
             margin={0}
             displayValue={false}

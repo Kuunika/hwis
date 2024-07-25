@@ -492,14 +492,7 @@ export const NewRegistrationFlow = () => {
               {/* <BarcodeComponent value={getPatientId(patient)}> */}
               <br />
               <>
-              <PatientBarcodePrinter firstName={patient.given_name} lastName={patient.family_name} addresses={patient.addresses} identifiers={patient.identifiers} />
-                <br />
-                <MainButton sx={{ color: '#000' }} title={"Print Barcode"} variant='text' onClick={() => {
-                  const func = triggerPrintFunc(); 
-                  if (typeof func === 'function') {
-                    func()
-                  }
-                }} />
+              <PatientBarcodePrinter firstName={patient.names[0].given_name} lastName={patient.names[0].family_name} addresses={patient.addresses} identifiers={patient?.patient?.identifiers} />
               </>
             </>
           )}
