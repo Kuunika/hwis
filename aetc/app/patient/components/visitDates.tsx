@@ -88,8 +88,6 @@ useEffect(()=>{
           aria-haspopup="true"
           onClick={handleToggle}
           sx={{
-            fontSize: "14px",
-            fontWeight: 500,
             display: "flex",
             cursor: "pointer",
             alignItems:"center"
@@ -102,7 +100,6 @@ useEffect(()=>{
           <MainTypography
             sx={{
               ml: "1ch",
-              fontFamily: "Inter",
               lineHeight: "17px",
               letterSpacing: "0em",
               textAlign: "left",
@@ -166,9 +163,6 @@ useEffect(()=>{
                       >
                         <MainTypography
                           sx={{
-                            fontFamily: "Inter",
-                            fontSize: "14px",
-                            fontWeight: 400,
                             lineHeight: "21px",
                             letterSpacing: "0em",
                             textAlign: "left",
