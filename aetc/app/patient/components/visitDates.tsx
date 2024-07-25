@@ -41,7 +41,6 @@ useEffect(()=>{
     }
     setVisits(data)
   }
-
 },[isSuccess])
 
 

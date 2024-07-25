@@ -25,6 +25,7 @@ import Tab from '@mui/material/Tab';
 import { Box } from "@mui/material";
 import LineChartComponent from "./lineChart";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 
 
 
@@ -59,7 +60,7 @@ export const DesktopView = () => {
   const [chartData, setChartData] = useState({ xAxisData: [], systolicbpData: [], diastolicbpData: [], heartRateData: [], glucoseData: [], tempData: [], rrData: [] });
   const [selectedChartTop, setSelectedChartTop] = useState('bp'); // State for top chart container
   const [selectedChartBottom, setSelectedChartBottom] = useState('glu'); // State for bottom chart container
-
+  const { setActiveVisit, activeVisit, setOpenVisit } = React.useContext(PatientProfileContext) as PatientProfileContextType;
   const handleButtonClickTop = (chartType: string) => {
     setSelectedChartTop(chartType);
   };
@@ -117,12 +118,11 @@ export const DesktopView = () => {
 
 
   useEffect(() => {
+    console.log(`Active visit: ${activeVisit}`);
     const extractChartData = (patientObject: any) => {
       const triageData: any[] = [];
-
       patientObject.visits.forEach((visit: any) => {
         visit.triages.forEach((triage: any) => {
-          console.log(triage.triage_datetime);
           const datetime = new Date(triage.triage_datetime);
 
           triageData.push({
@@ -150,9 +150,11 @@ export const DesktopView = () => {
       return { xAxisData, systolicbpData, diastolicbpData, heartRateData, glucoseData, tempData, rrData };
     };
 
+    console.log(data);
     const patientObject = createPatientObject(data);
     if (patientObject) {
       const chartData: any = extractChartData(patientObject);
+      console.log(chartData);
       setChartData(chartData);
     }
   }, [data]);
