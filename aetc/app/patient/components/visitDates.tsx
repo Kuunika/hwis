@@ -1,5 +1,4 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Grow from "@mui/material/Grow";
@@ -32,6 +31,7 @@ export function VisitDates() {
 useEffect(()=>{
   if(isSuccess){
     const active=data.find(d=> !Boolean(d.date_stopped));
+    console.log(active);
     if(active){
       setActiveDate(active?.date_started)
       setActiveVisit(active?.visit_id)

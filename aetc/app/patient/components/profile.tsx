@@ -24,6 +24,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Box } from "@mui/material";
 import LineChartComponent from "./lineChart";
+import FlowStarter from "./flowStarter";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 
@@ -47,7 +48,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3, border: "1px solid #E6E6E6" }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 3, border: "1px solid #E6E6E6", borderRadius: "5px" }}>{children}</Box>}
     </div>
   );
 }
@@ -118,7 +119,7 @@ export const DesktopView = () => {
 
 
   useEffect(() => {
-    console.log(`Active visit: ${activeVisit}`);
+    
     const extractChartData = (patientObject: any) => {
       const triageData: any[] = [];
       patientObject.visits.forEach((visit: any) => {
@@ -154,7 +155,7 @@ export const DesktopView = () => {
     const patientObject = createPatientObject(data);
     if (patientObject) {
       const chartData: any = extractChartData(patientObject);
-      console.log(chartData);
+      console.log(`Active visit: ${activeVisit}`);
       setChartData(chartData);
     }
   }, [data]);
@@ -190,7 +191,7 @@ export const DesktopView = () => {
       <MainGrid item lg={9}>
         <VitalsPanel />
         <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "0.3ch" }}>
-          <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+          <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
               <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartTop === 'bp' ? activeButtonStyle : {}), }} />
               <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={selectedChartTop === 'hr' ? activeButtonStyle : {}}  />
@@ -217,7 +218,7 @@ export const DesktopView = () => {
               />
             )}
           </div>
-          <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+          <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
               <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0" , ...(selectedChartBottom === 'glu' ? activeButtonStyle : {}),}} />
               <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartBottom === 'temp' ? activeButtonStyle : {}),}}/>
@@ -265,6 +266,7 @@ export const DesktopView = () => {
             background: value === 0 ? '#ffffff' : 'transparent',
             fontWeight: value === 0 ? 'bold' : 'normal',
             border: '1px solid #ccc',
+            borderBottom: 'none',
             borderRight: 'none'
           }} label="Investigations">
           </Tab>
@@ -274,6 +276,7 @@ export const DesktopView = () => {
             background: value === 1 ? '#ffffff' : 'transparent',
             fontWeight: value === 1 ? 'bold' : 'normal',
             border: '1px solid #ccc',
+            borderBottom: 'none',
             borderRight: 'none'
           }}>
           </Tab>
@@ -283,6 +286,7 @@ export const DesktopView = () => {
             background: value === 2 ? '#ffffff' : 'transparent',
             fontWeight: value === 2 ? 'bold' : 'normal',
             border: '1px solid #ccc',
+            borderBottom: 'none',
             borderRight: 'none'
           }}>
           </Tab>
@@ -293,7 +297,8 @@ export const DesktopView = () => {
             minWidth: '120px',
             background: value === 3 ? '#ffffff' : 'transparent',
             fontWeight: value === 3 ? 'bold' : 'normal',
-            border: '1px solid #ccc'
+            border: '1px solid #ccc',
+            borderBottom: 'none',
           }}>
           </Tab>
         </Tabs>
@@ -301,12 +306,13 @@ export const DesktopView = () => {
           backgroundColor: '#ffffff',
           borderRadius: '4px',
         }}>
-          <CustomTabPanel value={value} index={0}><Investigations /></CustomTabPanel>
+          <CustomTabPanel value={value} index={0} ><Investigations /></CustomTabPanel>
           <CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>
           <CustomTabPanel value={value} index={2}><Results /></CustomTabPanel>
           <CustomTabPanel value={value} index={3}><Medications /></CustomTabPanel>
         </Box>
       </MainGrid>
+      <FlowStarter />
     </MainGrid>
   );
 };
