@@ -47,7 +47,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 3, border: "1px solid #E6E6E6" }}>{children}</Box>}
     </div>
   );
 }
@@ -189,8 +189,8 @@ export const DesktopView = () => {
       </MainGrid>
       <MainGrid item lg={9}>
         <VitalsPanel />
-        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "1ch" }}>
-          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "0.3ch" }}>
+          <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
               <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartTop === 'bp' ? activeButtonStyle : {}), }} />
               <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={selectedChartTop === 'hr' ? activeButtonStyle : {}}  />
@@ -217,7 +217,7 @@ export const DesktopView = () => {
               />
             )}
           </div>
-          <div style={{ flex: 1, backgroundColor: '#f0f0f0', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
+          <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
               <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0" , ...(selectedChartBottom === 'glu' ? activeButtonStyle : {}),}} />
               <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartBottom === 'temp' ? activeButtonStyle : {}),}}/>
@@ -300,7 +300,6 @@ export const DesktopView = () => {
         <Box style={{
           backgroundColor: '#ffffff',
           borderRadius: '4px',
-          boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)'
         }}>
           <CustomTabPanel value={value} index={0}><Investigations /></CustomTabPanel>
           <CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>

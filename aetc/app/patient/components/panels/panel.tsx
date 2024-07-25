@@ -1,10 +1,5 @@
 import { ReactNode } from "react";
-import {
-  MainButton,
-  MainPaper,
-  MainTypography,
-  WrapperBox,
-} from "@/components";
+import { MainPaper, MainTypography, WrapperBox } from "@/components";
 
 type Props = {
   title: string;
@@ -26,9 +21,9 @@ export const Panel = ({ children, title, icon }: Props) => {
     >
       <WrapperBox display={"flex"} alignItems={"center"} justifyContent={"space-between"}>
         <MainTypography
+        variant="h5" fontWeight={"700"}
           sx={{
-            fontSize: "16px",
-            fontWeight: 600,
+
             lineHeight: "24px",
             letterSpacing: "0em",
             textAlign: "left",
