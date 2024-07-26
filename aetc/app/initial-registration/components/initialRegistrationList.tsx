@@ -50,20 +50,7 @@ export const InitialRegistrationList = () => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
-    {
-      field: "registeredBy",
-      headerName: "Registered By",
-      flex: 1,
-      renderCell: (cell: any) => {
-        return (
-          <DisplayEncounterCreator
-            encounterType={encounters.INITIAL_REGISTRATION}
-            patientId={cell.row.id}
-          />
-        );
-      },
-    },
-
+    { field: "last_encounter_creator", headerName: "Registered By", flex: 1 },
     {
       field: "action",
       flex: 1,
@@ -72,6 +59,7 @@ export const InitialRegistrationList = () => {
         return (
           <>
             <MainButton
+              size="small"
               sx={{ fontSize: "12px", mr:"1px" }}
               title={"screen"}
               onClick={() => navigateTo(`/prescreening/${cell.id}`)}
@@ -81,7 +69,7 @@ export const InitialRegistrationList = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
-          </>
+          </> 
         );
       },
     },

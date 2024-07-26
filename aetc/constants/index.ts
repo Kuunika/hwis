@@ -187,6 +187,8 @@ export const concepts = {
 
 
   ELECTIVE: "2d7d1b0c-1867-4dbd-8b49-4335548a42bf",
+
+  INVESTIGATIONS:"76dcafcb-2148-4919-9b3b-cd7f3f77d19e"
 };
 
 export const triageResult = {

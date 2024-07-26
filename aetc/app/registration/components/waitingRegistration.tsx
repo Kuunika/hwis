@@ -44,11 +44,8 @@ export const WaitingRegistrationList = () => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time}  />
       }
     },
-    {
-      field: "screened", headerName: "Screened By", flex: 1, renderCell: (cell: any) => {
-        return <DisplayEncounterCreator encounterType={encounters.SCREENING_ENCOUNTER} patientId={cell.row.id} />
-      }
-    },
+  
+    { field: "last_encounter_creator", headerName: "Screened By", flex: 1 },
 
     {
       field: "action",

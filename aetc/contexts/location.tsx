@@ -23,7 +23,6 @@ export const LocationProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const { data: _districts, isSuccess: districtsLoaded } = getDistricts();
     const { data: _traditionalAuthorities, isSuccess: traditionalAuthoritiesLoaded } = getTraditionalAuthorities();
 
-
     const [villages, setVillages] = useState<Village[]>([]);
     const [districts, setDistricts] = useState<District[]>([]);
     const [traditionalAuthorities, setTraditionalAuthorities] = useState<TraditionalAuthority[]>([]);
