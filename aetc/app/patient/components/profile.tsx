@@ -62,14 +62,14 @@ export const DesktopView = () => {
   const [selectedChartTop, setSelectedChartTop] = useState('bp'); // State for top chart container
   const [selectedChartBottom, setSelectedChartBottom] = useState('glu'); // State for bottom chart container
   const { setActiveVisit, activeVisit, setOpenVisit } = React.useContext(PatientProfileContext) as PatientProfileContextType;
-  const handleButtonClickTop = (chartType: string) => {
-    setSelectedChartTop(chartType);
+  
+  const handleButtonClickTop = (selectedChartType: string) => {
+    setSelectedChartTop(selectedChartType);
   };
 
-  const handleButtonClickBottom = (chartType: string) => {
-    setSelectedChartBottom(chartType);
+  const handleButtonClickBottom = (selectedChartType: string) => {
+    setSelectedChartBottom(selectedChartType);
   };
-
   const extractTriages = (obs: any, index = 0, triages: any = []): any => {
     if (index >= obs.length) {
       return triages;
@@ -151,14 +151,21 @@ export const DesktopView = () => {
       return { xAxisData, systolicbpData, diastolicbpData, heartRateData, glucoseData, tempData, rrData };
     };
 
-    console.log(data);
+    
     const patientObject = createPatientObject(data);
+    console.log(patientObject);
     if (patientObject) {
       const chartData: any = extractChartData(patientObject);
       console.log(`Active visit: ${activeVisit}`);
       setChartData(chartData);
     }
   }, [data]);
+
+  useEffect(() => {
+    setSelectedChartTop(prevTop => prevTop === selectedChartTop ? prevTop : selectedChartTop);
+    setSelectedChartBottom(prevBottom => prevBottom === selectedChartBottom ? prevBottom : selectedChartBottom);
+  }, [selectedChartBottom, selectedChartTop]);
+
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -312,7 +319,7 @@ export const DesktopView = () => {
           <CustomTabPanel value={value} index={3}><Medications /></CustomTabPanel>
         </Box>
       </MainGrid>
-      <FlowStarter />
+      <FlowStarter patient={params} />
     </MainGrid>
   );
 };

@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Box, Button, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography} from '@mui/material';
 import { useNavigation } from '@/hooks';
 
-const FlowStarter = () => {
+interface FlowStarterProps {
+    patient: any;
+  }
+  
+  const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   const [open, setOpen] = useState(false);
   const { navigateTo } = useNavigation();
 
@@ -49,7 +53,7 @@ const FlowStarter = () => {
             <Typography variant="body2">Triage</Typography>
           </Box>} // Replace with your icons
         tooltipTitle="Start Triage Flow"
-        onClick={() => startFlow('/triageflow')}
+        onClick={() => startFlow(`/triage/${patient?.id}/history`)}
       />
       <SpeedDialAction
         key="Primary Survey"

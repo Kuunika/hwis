@@ -48,10 +48,10 @@ export const VitalsPanel = () => {
       const obs = encounter?.obs??[];
       
       setFormattedVitals(formatAllVitalsToObject(obs))
+     
       // updateVitals(obs);
     }
   }, [activeVisit,data]);
-
 
   const updateVitals = (obs: any) => {
     const initialVitals = [

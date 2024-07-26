@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Stack from "@mui/material/Stack";
 import { FaCalendarDays, FaCheck } from "react-icons/fa6";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { MainTypography } from "@/components";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
@@ -94,11 +95,11 @@ useEffect(()=>{
         
           }}
         >
-       
+       <MainTypography sx={{marginRight:"1ch", fontWeight:"bold"}}>Visit date:</MainTypography>
             <FaCalendarDays />
-        
           <MainTypography
             sx={{
+              marginRight:"1ch", 
               ml: "1ch",
               lineHeight: "17px",
               letterSpacing: "0em",
@@ -108,6 +109,7 @@ useEffect(()=>{
           >
            {getHumanReadableDate(activeDate)}
           </MainTypography>
+          {open?<IoIosArrowUp />:<IoIosArrowDown />}
         </Box>
         <Popper
           open={open}
