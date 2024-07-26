@@ -1,118 +1,112 @@
-import React, { useState } from 'react';
-import { Box, Button, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography} from '@mui/material';
+import React from 'react';
+import { Box, Button, Typography, Menu, MenuItem } from '@mui/material';
 import { useNavigation } from '@/hooks';
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { FaPlus } from "react-icons/fa6";
+import { CiMedicalClipboard } from "react-icons/ci";
 
 interface FlowStarterProps {
-    patient: any;
-  }
-  
-  const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
-  const [open, setOpen] = useState(false);
+  patient: any;
+}
+
+const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   const { navigateTo } = useNavigation();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  const startFlow = (path) => {
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const startFlow = (path: string) => {
     handleClose();
     navigateTo(path);
   };
 
   return (
-    <SpeedDial
-      ariaLabel="Flow Starter"
-      sx={{ position: 'absolute', bottom: 16, right: 16,  width:200, margin: '1ch', backgroundcolor: 'green'}}
-      icon={<SpeedDialIcon/>}
-      onClose={handleClose}
-      onOpen={handleOpen}
-      open={open}
-    >
-      <SpeedDialAction
-        key="Triage Flow"
-        icon={ <Box 
-            display="flex" 
-            alignItems="center" 
-            justifyContent="center" 
-            bgcolor="White" 
-            borderRadius={5} 
-            p={1}
-            sx={{ 
-                color: 'green',
-                fontWeight: 'bold',
-                padding: '5px',
-              display: 'flex', 
-              alignItems: 'left',
-              border: '1px solid',
-              borderColor: 'divider',
-              '&:hover': {
-                backgroundColor: 'Green',
-                color: 'white',
-              }
-            }}
-          >
-            <Typography variant="body2">Triage</Typography>
-          </Box>} // Replace with your icons
-        tooltipTitle="Start Triage Flow"
-        onClick={() => startFlow(`/triage/${patient?.id}/history`)}
-      />
-      <SpeedDialAction
-        key="Primary Survey"
-        icon={ <Box 
-            display="flex" 
-            alignItems="center" 
-            justifyContent="center" 
-            bgcolor="White" 
-            borderRadius={5} 
-            p={1}
-            sx={{ 
-                color: 'green',
-                fontWeight: 'bold',
-                padding: '5px',
-              display: 'flex', 
-              alignItems: 'left',
-              border: '1px solid',
-              borderColor: 'divider',
-              '&:hover': {
-                backgroundColor: 'Green',
-                color: 'white',
-              }
-            }}
-          >
-            <Typography variant="body2">Primary Survey</Typography>
-          </Box>} // Replace with your icons
-        tooltipTitle="Start Primary Survey"
-        onClick={() => startFlow('/triageflow')}
-      />
- 
-      <SpeedDialAction
-        key="Secondary Survey"
-        icon={<Box 
-            display="flex" 
-            alignItems="center" 
-            justifyContent="center" 
-            bgcolor="White" 
-            borderRadius={5} 
-            p={1}
-            sx={{ 
-                color: 'green',
-                fontWeight: 'bold',
-                padding: '5px',
-              display: 'flex', 
-              alignItems: 'left',
-              border: '1px solid',
-              borderColor: 'divider',
-              '&:hover': {
-                backgroundColor: 'Green',
-                color: 'white',
-              }
-            }}
-          >
-            <Typography variant="body2">Secondary Survey</Typography>
-          </Box>} // Replace with your icons
-        onClick={() => startFlow('/secondarysurveyflow')}
-        tooltipTitle="Start Secondary Survey"
-      />
-    </SpeedDial>
+    <Box sx={{ position: 'absolute', bottom: 16, right: 16 }}>
+      <Button
+        variant="contained"
+        color="primary"
+        endIcon={anchorEl ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        onClick={handleClick}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          borderRadius: '20px',
+          padding: '10px 10px 10px 10px',
+          color: '#fff',
+        }}
+      >
+        <CiMedicalClipboard style={{ margin: '1ch' }} />
+        Start Assessment
+      </Button>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            borderRadius: '10px',
+            marginTop: '10px',
+          },
+        }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      >
+        <MenuItem
+          onClick={() => startFlow(`/triage/${patient?.id}/history`)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
+            },
+          }}
+        >
+            <FaPlus/>
+          <Typography variant="body2">Start Triage</Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => startFlow(`/primary-assessment/${patient?.id}`)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
+            },
+          }}
+        >
+            <FaPlus/>
+          <Typography variant="body2">Start Primary Survey</Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => startFlow('/primary-assessment')}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
+            },
+          }}
+        ><FaPlus/>
+
+          <Typography variant="body2">Start Secondary Survey</Typography>
+        </MenuItem>
+      </Menu>
+    </Box>
   );
 };
 

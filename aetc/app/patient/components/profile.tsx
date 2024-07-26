@@ -182,16 +182,6 @@ export const DesktopView = () => {
       <MainGrid item lg={2}>
         <PersonalDetailsCard />
         <WrapperBox sx={{ my: "1ch" }}>
-          <ConsultationCard
-            disabled={!isOnList}
-            link={"/primary-assessment/" + params.id}
-            title="Start Primary Survey"
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            link="/primary-assessment"
-            title="Start Secondary Survey"
-          />
         </WrapperBox>
         <BasicAccordion />
       </MainGrid>
