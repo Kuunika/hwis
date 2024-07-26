@@ -27,7 +27,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   };
 
   return (
-    <Box sx={{ position: 'absolute', bottom: 16, right: 16 }}>
+    <Box sx={{ position: 'absolute', bottom:1, right: 20 }}>
       <Button
         variant="contained"
         color="primary"
