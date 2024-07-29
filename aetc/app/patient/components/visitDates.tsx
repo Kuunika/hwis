@@ -32,7 +32,6 @@ export function VisitDates() {
 useEffect(()=>{
   if(isSuccess){
     const active=data.find(d=> !Boolean(d.date_stopped));
-    console.log(active);
     if(active){
       setActiveDate(active?.date_started)
       setActiveVisit(active?.visit_id)

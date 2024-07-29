@@ -27,7 +27,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   };
 
   return (
-    <Box sx={{ position: 'absolute', bottom:1, right: 20 }}>
+    <Box sx={{ position: 'absolute', bottom:5, right: 20 }}>
       <Button
         variant="contained"
         color="primary"
@@ -51,7 +51,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         PaperProps={{
           style: {
             borderRadius: '10px',
-            marginTop: '10px',
+            marginTop: '-5px',
           },
         }}
         anchorOrigin={{

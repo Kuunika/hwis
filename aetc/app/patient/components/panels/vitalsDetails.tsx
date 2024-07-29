@@ -48,6 +48,7 @@ export const VitalsPanel = () => {
       const obs = encounter?.obs??[];
       
       setFormattedVitals(formatAllVitalsToObject(obs))
+      
      
       // updateVitals(obs);
     }
