@@ -177,9 +177,9 @@ useEffect(() => {
       </MainGrid>
       <MainGrid item lg={9}>
         <VitalsPanel />
-        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "2ch", marginLeft: "0.3ch" }}>
+        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "1ch", marginLeft: "0.3ch" }}>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch' }}>
               <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartTop === 'bp' ? {} : inActiveButtonStyle), }} />
               <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={{borderRadius:"5px",...(selectedChartTop === 'hr' ? {} : inActiveButtonStyle),}} />
             </div>
@@ -206,7 +206,7 @@ useEffect(() => {
             )}
           </div>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch' }}>
               <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px" , ...(selectedChartBottom === 'glu' ? {} : inActiveButtonStyle),}} />
               <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartBottom === 'temp' ? {} : inActiveButtonStyle),}}/>
               <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} sx={{borderRadius:"5px",...(selectedChartBottom === 'rr' ?  {}: inActiveButtonStyle),}} />
