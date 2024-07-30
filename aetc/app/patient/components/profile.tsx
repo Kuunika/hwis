@@ -29,7 +29,7 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 import { formatAllVitalsToObject } from "@/helpers/emr";
 import { encounters } from "@/constants";
-
+import { OverlayLoader } from "@/components/backdrop";
 
  
 interface TabPanelProps {
@@ -171,6 +171,7 @@ useEffect(() => {
     >
       <MainGrid item lg={2}>
         <PersonalDetailsCard />
+        <OverlayLoader open={isLoading} />
         <WrapperBox sx={{ my: "1ch" }}>
         </WrapperBox>
         <BasicAccordion />
