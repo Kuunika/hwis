@@ -63,6 +63,7 @@ export const DesktopView = () => {
   const [selectedChartBottom, setSelectedChartBottom] = useState('glu'); // State for bottom chart container
   const { setActiveVisit, activeVisit, setOpenVisit } = React.useContext(PatientProfileContext) as PatientProfileContextType;
   const [formattedVitals, setFormattedVitals]=useState<any>({});
+  const [chartLoading, setChartLoading] = useState(true);
   const handleButtonClickTop = (selectedChartType: string) => {
     setSelectedChartTop(selectedChartType);
   };
@@ -94,6 +95,7 @@ export const DesktopView = () => {
 useEffect(() => {
   // Function to extract chart data
   const extractChartData = (triages: any[]) => {
+    setChartLoading(true);
     const triageData: any[] = [];
 
     for (const observations of triages) {
@@ -146,6 +148,7 @@ useEffect(() => {
     const allTriages = Object.values(formattedVitals);
     const chartData = extractChartData(allTriages);
     setChartData(chartData);
+    setChartLoading(false);
   } else {
     console.warn('Formatted vitals data is empty, undefined, or not in expected format.');
   }
@@ -171,7 +174,7 @@ useEffect(() => {
     >
       <MainGrid item lg={2}>
         <PersonalDetailsCard />
-        <OverlayLoader open={isLoading} />
+        <OverlayLoader open={isLoading || chartLoading} />
         <WrapperBox sx={{ my: "1ch" }}>
         </WrapperBox>
         <BasicAccordion />
