@@ -71,9 +71,10 @@ export const DesktopView = () => {
     setSelectedChartBottom(selectedChartType);
   };
   
-  const activeButtonStyle = {
-    backgroundColor: '#007bff',
-    color: '#ffffff'
+  const inActiveButtonStyle = {
+    backgroundColor: 'white',
+    color: 'green',
+    border:'1px solid green',
   };
 
   useEffect(() => {
@@ -98,7 +99,6 @@ useEffect(() => {
     for (const observations of triages) {
       // Ensure observations is an array or convert to array
       const obsArray = Array.isArray(observations) ? observations : [observations];
-      console.log('Observations:', obsArray);
       if (!obsArray || !Array.isArray(obsArray)) {
         console.warn('Expected array but got:', obsArray);
         continue; // Skip this triage if it's not an array
@@ -124,7 +124,6 @@ useEffect(() => {
         temperature,
         rr
       });
-      console.log(triageData);
     }
 
     // Sort triage data by timestamp
@@ -178,11 +177,11 @@ useEffect(() => {
       </MainGrid>
       <MainGrid item lg={9}>
         <VitalsPanel />
-        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "3ch", marginLeft: "0.3ch" }}>
+        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "2ch", marginLeft: "0.3ch" }}>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
-              <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartTop === 'bp' ? activeButtonStyle : {}), }} />
-              <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={selectedChartTop === 'hr' ? activeButtonStyle : {}}  />
+              <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartTop === 'bp' ? {} : inActiveButtonStyle), }} />
+              <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={{borderRadius:"5px",...(selectedChartTop === 'hr' ? {} : inActiveButtonStyle),}} />
             </div>
             {selectedChartTop === 'bp' && (
               <LineChartComponent
@@ -208,9 +207,9 @@ useEffect(() => {
           </div>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1ch', paddingTop: '1ch' }}>
-              <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0" , ...(selectedChartBottom === 'glu' ? activeButtonStyle : {}),}} />
-              <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", ...(selectedChartBottom === 'temp' ? activeButtonStyle : {}),}}/>
-              <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} sx={selectedChartBottom === 'rr' ? activeButtonStyle : {}} />
+              <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px" , ...(selectedChartBottom === 'glu' ? {} : inActiveButtonStyle),}} />
+              <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartBottom === 'temp' ? {} : inActiveButtonStyle),}}/>
+              <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} sx={{borderRadius:"5px",...(selectedChartBottom === 'rr' ?  {}: inActiveButtonStyle),}} />
             </div>
       
               {selectedChartBottom === 'glu' && (

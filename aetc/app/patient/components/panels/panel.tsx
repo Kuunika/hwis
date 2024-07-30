@@ -11,12 +11,11 @@ export const Panel = ({ children, title, icon }: Props) => {
     <MainPaper
       sx={{
         width: "100%",
-        borderStyle: "solid",
-        borderWidth: "0.1ch",
-        borderColor: { xs: "#B3B3B3", lg: "#E6E6E6" },
+        border: '1px solid #ccc',
         p: "1ch",
         backgroundColor: "#fff",
         m: "0.5ch",
+        boxShadow:'none',
       }}
     >
       <WrapperBox display={"flex"} alignItems={"center"} justifyContent={"space-between"}>
