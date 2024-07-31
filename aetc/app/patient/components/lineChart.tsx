@@ -10,12 +10,12 @@ const formatDate = (value) => {
 const LineChartComponent = ({ chartData, xAxisData, series, height = 300 }) => {
   return (
     <LineChart
-      xAxis={[{ scaleType: "utc", data: xAxisData, valueFormatter: (value) => (value == null ? 'NaN' : formatDate(value)) }]}
+      xAxis={[{ scaleType: "utc", data: xAxisData, valueFormatter: (value) => (value == null ? 'No Data' : formatDate(value)) }]}
       series={series.map((s, index) => ({
         data: chartData[s.key],
         label: s.label,
         color: s.color,
-        valueFormatter: (value) => (value == null ? 'NaN' : value.toString()),
+        valueFormatter: (value) => (value == null ? 'No data' : value.toString()),
       }))}
       height={height}
       margin={{ top: 50, bottom: 30 }}
