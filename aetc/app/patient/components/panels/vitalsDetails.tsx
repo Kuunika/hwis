@@ -100,7 +100,7 @@ export const VitalsPanel = () => {
       title={"Vitals"}
       icon={ <VisitDates />}
     >
-      <WrapperBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <WrapperBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}>
       <WrapperBox width={"20%"}>
           <BasicSelect getValue={(value:any)=> setActivePage(Number(value))}  label="" options={options} />
         </WrapperBox>

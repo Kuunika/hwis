@@ -48,7 +48,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3, border: "1px solid #E6E6E6", borderRadius: "5px" }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 3, borderRadius: "5px" }}>{children}</Box>}
     </div>
   );
 }
@@ -180,8 +180,8 @@ useEffect(() => {
         <BasicAccordion />
       </MainGrid>
       <MainGrid item lg={9}>
-        <VitalsPanel />
-        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "1ch", marginLeft: "0.3ch" }}>
+        <VitalsPanel/>
+        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "1ch", marginLeft: "5px"  }}>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch' }}>
               <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartTop === 'bp' ? {} : inActiveButtonStyle), }} />
@@ -210,7 +210,7 @@ useEffect(() => {
             )}
           </div>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch'}}>
               <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px" , ...(selectedChartBottom === 'glu' ? {} : inActiveButtonStyle),}} />
               <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartBottom === 'temp' ? {} : inActiveButtonStyle),}}/>
               <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} sx={{borderRadius:"5px",...(selectedChartBottom === 'rr' ?  {}: inActiveButtonStyle),}} />
@@ -248,8 +248,8 @@ useEffect(() => {
               )}
           </div>
         </WrapperBox>
-        <br />
-        <Tabs value={value} onChange={handleChange} style={{}}>
+
+        <Tabs value={value} onChange={handleChange} style={{ marginTop:"1ch", marginLeft:"5px"}}>
           <Tab style={{
             borderTopLeftRadius: '4px',
             padding: '10px 20px',
@@ -296,6 +296,8 @@ useEffect(() => {
         <Box style={{
           backgroundColor: '#ffffff',
           borderRadius: '4px',
+          border: '1px solid #ccc',
+          marginLeft:"5px"
         }}>
           <CustomTabPanel value={value} index={0} ><Investigations /></CustomTabPanel>
           <CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>
