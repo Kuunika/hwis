@@ -27,7 +27,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   };
 
   return (
-    <Box sx={{ position: 'absolute', bottom:5, right: 20 }}>
+    <Box sx={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1000 }}>
       <Button
         variant="contained"
         color="primary"
@@ -74,7 +74,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
             },
           }}
         >
-            <FaPlus/>
+          <FaPlus/>
           <Typography variant="body2">Start Triage</Typography>
         </MenuItem>
         <MenuItem
@@ -88,7 +88,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
             },
           }}
         >
-            <FaPlus/>
+          <FaPlus/>
           <Typography variant="body2">Start Primary Survey</Typography>
         </MenuItem>
         <MenuItem
@@ -101,8 +101,8 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
               backgroundColor: '#f0f0f0',
             },
           }}
-        ><FaPlus/>
-
+        >
+          <FaPlus/>
           <Typography variant="body2">Start Secondary Survey</Typography>
         </MenuItem>
       </Menu>
