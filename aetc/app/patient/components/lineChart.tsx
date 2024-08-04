@@ -18,6 +18,7 @@ const LineChartComponent = ({ chartData, xAxisData, series, height = 300 }) => {
         valueFormatter: (value) => (value == null ? 'No data' : value.toString()),
       }))}
       height={height}
+      grid={{horizontal:true}}
       margin={{ top: 50, bottom: 30 }}
     />
   );
