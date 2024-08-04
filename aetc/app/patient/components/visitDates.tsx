@@ -90,8 +90,10 @@ useEffect(()=>{
           sx={{
             display: "flex",
             cursor: "pointer",
-            alignItems:"center"
-        
+            alignItems:"center",
+            backgroundColor: "#ccc",
+            padding: "1ch",
+            borderRadius: "5px"
           }}
         >
        <MainTypography sx={{marginRight:"1ch", fontWeight:"bold"}}>Visit date:</MainTypography>
@@ -103,7 +105,7 @@ useEffect(()=>{
               lineHeight: "17px",
               letterSpacing: "0em",
               textAlign: "left",
-              textTransform: "capitalize",
+              textTransform: "capitalize"
             }}
           >
            {getHumanReadableDate(activeDate)}
