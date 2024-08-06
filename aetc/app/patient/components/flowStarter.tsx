@@ -31,7 +31,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       <Button
         variant="contained"
         color="primary"
-        endIcon={anchorEl ? <IoIosArrowUp style={{borderLeft:'1px solid #fff' , paddingLeft:"5px" }} /> : <IoIosArrowDown style={{borderLeft:'1px solid #fff', paddingLeft:"5px" }}/>}
+        endIcon={anchorEl ? <IoIosArrowUp  /> : <IoIosArrowDown />}
         onClick={handleClick}
         sx={{
           display: 'flex',
