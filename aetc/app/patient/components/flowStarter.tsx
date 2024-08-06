@@ -31,7 +31,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       <Button
         variant="contained"
         color="primary"
-        endIcon={anchorEl ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        endIcon={anchorEl ? <IoIosArrowUp style={{borderLeft:'1px solid #fff' , paddingLeft:"5px" }} /> : <IoIosArrowDown style={{borderLeft:'1px solid #fff', paddingLeft:"5px" }}/>}
         onClick={handleClick}
         sx={{
           display: 'flex',
@@ -41,7 +41,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           color: '#fff',
         }}
       >
-        <CiMedicalClipboard style={{ margin: '1ch' }} />
+        <CiMedicalClipboard style={{ margin: '1ch'}} />
         Start Assessment
       </Button>
       <Menu
