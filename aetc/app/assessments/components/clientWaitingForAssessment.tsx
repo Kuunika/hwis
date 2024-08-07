@@ -81,19 +81,7 @@ export const ClientWaitingForAssessment = () => {
         );
       },
     },
-    {
-      field: "triage",
-      headerName: "Triaged By",
-      flex: 1,
-      renderCell: (cell: any) => {
-        return (
-          <DisplayEncounterCreator
-            encounterType={encounters.VITALS}
-            patientId={cell.row.id}
-          />
-        );
-      },
-    },
+    { field: "last_encounter_creator", headerName: "Triaged By", flex: 1 },
     {
       field: "triage_result",
       headerName: "Triage Category",

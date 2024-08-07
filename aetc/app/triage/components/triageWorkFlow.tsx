@@ -37,7 +37,7 @@ export default function TriageWorkFlow() {
   const [conceptTriageResult, setConceptTriageResult] = useState<any>({})
   const [submittedSteps, setSubmittedSteps] = useState<Array<number>>([])
 
- const [presentingComplaints, setPresentingComplaints]=useState({})
+ const [presentingComplaints, setPresentingComplaints]=useState<any>({})
  const [vitals, setVitals]=useState<any>({})
  const [airway, setAirway]=useState({})
  const [circulation, setCirculation]=useState({})
@@ -51,7 +51,6 @@ export default function TriageWorkFlow() {
 
 
  const referralHealthFacility= getObservationValue(referral?.obs, concepts.REFERRED_FROM);
-
 
 
 
@@ -136,6 +135,9 @@ export default function TriageWorkFlow() {
 
 
   const dateTime = getDateTime();
+
+
+  console.log({dateTime})
 
   useEffect(() => {
     if (presentingCreated) {
@@ -466,14 +468,17 @@ const handleOnCompleteTriage = ()=>{
       {completed == 7 && (
         <>
         <GenericDialog maxWidth="sm" open={triagePrintOpen} onClose={() => setTriagePrintOpen(false)} title="Print Triage details" >
-        <TriagePrintTemplate triageCategory={triageResult} date={getHumanReadableDateTime(dateTime)} arrivalTime={""} referredFrom={referralHealthFacility} triagedBy={presentingComplaintsResponse?.created_by as string} vitals={[
+       
+        <TriagePrintTemplate presentingComplaints={presentingComplaints[concepts.COMPLAINTS].reduce((prev:any,current:any)=>{
+            return prev==""? current.id : prev+","+current.id
+          },'')} triageCategory={triageResult} date={getHumanReadableDateTime(dateTime)} arrivalTime={""} referredFrom={referralHealthFacility} triagedBy={presentingComplaintsResponse?.created_by as string} vitals={[
           { name: VitalFormConfig.saturationRate.short, value: vitals[VitalFormConfig.saturationRate.name] },
           { name: VitalFormConfig.heartRate.short, value: vitals[VitalFormConfig.heartRate.name] },
           { name: VitalFormConfig.bloodPressure.short, value: `${vitals[VitalFormConfig.bloodPressure.name]}/${vitals[VitalFormConfig.bloodPressureDiastolic.name]}` },
           { name: VitalFormConfig.respiratoryRate.short, value: vitals[VitalFormConfig.respiratoryRate.name] },
           { name: VitalFormConfig.temperature.short, value: vitals[VitalFormConfig.temperature.name] },
           { name: VitalFormConfig.avpu.label, value: vitals[VitalFormConfig.avpu.name] },
-          { name: VitalFormConfig.glucose.label, value: vitals[VitalFormConfig.glucose.name] },
+          { name: `${VitalFormConfig.glucose.label}(${vitals[VitalFormConfig.units.name]})`, value: vitals[VitalFormConfig.glucose.name] },
           ]} />
         </GenericDialog>
         <OperationSuccess

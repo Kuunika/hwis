@@ -60,20 +60,7 @@ export const ClientWaitingForTriage = () => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
-    {
-      field: "registered",
-      headerName: "Registered By",
-      flex: 1,
-      renderCell: (cell: any) => {
-        return (
-          <DisplayEncounterCreator
-            encounterType={encounters.SOCIAL_HISTORY}
-            patientId={cell.row.id}
-          />
-        );
-      },
-    },
-
+    { field: "last_encounter_creator", headerName: "Registered By", flex: 1 },
     {
       field: "action",
       headerName: "Action",

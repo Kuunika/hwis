@@ -52,8 +52,8 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
         >
           {children}
           <Barcode
-            width={3}
-            height={50}
+            width={6}
+            height={120}
             margin={0}
             displayValue={false}
             value={value}
@@ -155,10 +155,12 @@ type TriagePrintTempProp = {
   arrivalTime: string;
   referredFrom: string;
   triageCategory:string;
-  triagedBy:string
+  triagedBy:string;
+  presentingComplaints?:string;
 };
 
 export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
+  presentingComplaints,
   vitals,
   date,
   arrivalTime,
@@ -182,7 +184,7 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
     <div id="triage">
       <WrapperBox
         sx={{
-          pb: "2px",
+          p: "5px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -190,32 +192,29 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
       >
         <Box sx={{ width: "100%" }}>
           <Box sx={{ display: "flex", width: "100%" }}>
-            <Typography variant="h6" mr={"1ch"}>
+            <Typography variant="body2" mr={"1ch"}>
               Date: {date}
             </Typography>
-            {/* <Typography variant="h6" mr={"1ch"}>
-              Arrival Time: {arrivalTime}
-            </Typography> */}
-            <Typography variant="h6">Referred From: {referredFrom}</Typography>
+            <Typography variant="body2">Referred From: {referredFrom}</Typography>
           </Box>
-          <br />
           <Box sx={{display:"flex"}}>
-
-          <Typography sx={{mr:"1ch"}} variant="h6">Category: {triageCategory}</Typography>
-          <Typography variant="h6">Reason: {reason}</Typography>
+          <Typography mr={"1ch"} variant="body1">Category: {triageCategory}</Typography>
+          <Typography variant="body1">Reason: {reason}</Typography>
           </Box>
-          <br />
-          <WrapperBox sx={{ display: "flex" }}>
+       
+          <Typography sx={{mt:"1ch"}} variant="subtitle1">Presenting Complaints: {presentingComplaints} </Typography>
+    
+          <WrapperBox sx={{ display: "flex", border:"dashed", my:"1ch" }}>
             {vitals.map(({ name, value }: any) => (
               <Cell key={`${value}${name}`} title={name} value={value} />
             ))}
           </WrapperBox>
-          <br />
-          <Typography variant="h6">Triaged By: {triagedBy}</Typography>
+    
+
+          <Typography variant="body1">Triaged By: {triagedBy}</Typography>
         </Box>
       </WrapperBox>
     </div>
-    <br />
 
     <BasicSelect getValue={(value:any)=>setReason(value)} label={"Reasons for triage category:"} options={[{
         value:"Vitals above/below threshold",
@@ -254,17 +253,16 @@ const Cell = ({ title, value }: { title: string; value: string }) => {
   return (
     <WrapperBox
       sx={{
-        mx: "1.5ch",
+        mx: "0.5ch",
         display: "flex",
         flexDirection: "column",
-        my: "0.5ch",
         alignItems: "center",
       }}
     >
-      <MainTypography variant="h5" textAlign={"center"}>
+      <MainTypography variant="h6" textAlign={"center"}>
         {title}
       </MainTypography>
-      <MainTypography variant="h4">{value}</MainTypography>
+      <MainTypography variant="h6">{value}</MainTypography>
     </WrapperBox>
   );
 };

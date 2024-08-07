@@ -346,7 +346,7 @@
     "region_id": 2,
     "creator": 1,
     "date_created": "01/01/2024",
-    "retired": "",
+    "retired": "", 
     "retired_by": "",
     "date_retired": "",
     "retire_reason": ""

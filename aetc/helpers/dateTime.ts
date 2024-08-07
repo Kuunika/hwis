@@ -56,7 +56,7 @@ export const getHumanReadableDateTime = (date:string|Date|undefined)=>{
 
   if(!date) return ""
 
-  return dayjs(date).format('dddd, MMMM D, YYYY h:mm A');
+  return dayjs(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').subtract(2, 'hour').format('MMMM D, YYYY h:mm A')
 }
 
 export const getHumanReadableDateTimeLab = (date:string|Date|undefined)=>{

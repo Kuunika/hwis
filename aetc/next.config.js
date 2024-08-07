@@ -1,3 +1,5 @@
+
+const withSvgr = require("@svgr/webpack");
 const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
   disable: process.env.NODE_ENV === 'development',
@@ -18,6 +20,14 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 // })
 const nextConfig = {
   output: 'standalone',
+  // webpack(config) {
+  //   config.module.rules.push({
+  //     test: /\.svg$/,
+  //     use: ['@svgr/webpack'],
+  //   });
+
+  //   return config;
+  // },
 }
 
 module.exports = nextConfig

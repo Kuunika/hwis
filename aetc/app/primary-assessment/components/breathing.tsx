@@ -1,6 +1,7 @@
 import { NotificationContainer } from "@/components";
 import { NO, YES, concepts } from "@/constants";
 import React, { useState } from "react";
+import { ReactSVG } from "react-svg";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -11,6 +12,10 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
+import lung from "../../../assets/lung.svg";
+import Image from "next/image";
+import { Box } from "@mui/material";
+import { LungImage } from "@/components/svgImages";
 
 const form = {
   isPatientBreathing: {
@@ -312,6 +317,9 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               <>
                 <br />
                 <NotificationContainer message="Diagram to select area" />
+                <LungImage />
+
+                {/* <Image src="/lung.svg" alt="Lung" width={500} height={500} /> */}
 
                 <br />
                 <FieldsContainer>
