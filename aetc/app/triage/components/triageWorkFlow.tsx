@@ -305,7 +305,8 @@ export default function TriageWorkFlow() {
     setSubmittedSteps(steps => [...steps, 4])
   };
 
-  const handlePresentComplaints = (values: any) => {
+  const handlePresentComplaints = (values: any, event: any) => {
+
     formData["presentingComplaints"] = values[concepts.COMPLAINTS].map(
       (v: any) => ({
         concept: concepts.COMPLAINTS,

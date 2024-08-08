@@ -192,7 +192,7 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
         >
           <Box sx={{ width: "100%" }}>
             <Typography variant="body2" mr={"1ch"}>
-              Arrival Time: {arrivalTime}
+              Arrival Date Time: {arrivalTime}
             </Typography>
             <Box sx={{ display: "flex", width: "100%" }}>
               <Typography variant="body2" mr={"1ch"}>

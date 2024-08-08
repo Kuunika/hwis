@@ -25,7 +25,6 @@ type Props = {
 
 export const PatientTriageBarcodePrinter = (props: Props) => {
 
-    console.log({ props })
     return <GenericDialog
         maxWidth="sm"
         open={props.open}

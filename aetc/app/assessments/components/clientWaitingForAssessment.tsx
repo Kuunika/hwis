@@ -258,15 +258,14 @@ export function BasicMenu({ patient }: { patient: any }) {
 
   return (
     <div>
-      <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
+      <MainButton
+        size="small"
+        sx={{ fontSize: "12px", ml: "1px" }}
+        variant="secondary"
+        title={"Print"}
         onClick={handleClick}
-      >
-        Print
-      </Button>
+      />
+
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
