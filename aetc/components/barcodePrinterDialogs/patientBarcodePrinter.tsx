@@ -1,9 +1,9 @@
 import { Address, Identifier, Person } from "@/interfaces";
-import { GenericDialog, MainButton, MainTypography } from ".";
+import { GenericDialog, MainButton, MainTypography } from "..";
 import {
   BarcodeComponent,
   PatientRegistrationBarcodeTemplate,
-} from "./barcode";
+} from "../barcode";
 import { useState } from "react";
 import { BasicSelect } from "@/app/patient/components/basicSelect";
 import { getPatientId } from "@/helpers/emr";
@@ -74,20 +74,25 @@ export const PatientBarcodePrinter = ({
   );
 };
 
-export const PrinterBarcodeButton = ({ patient, sx }: { patient: Person, sx?:SxProps }) => {
+export const PrinterBarcodeButton = ({ patient, sx, onClose, variant="secondary", title="Print" }: { patient: Person, sx?:SxProps, onClose?:()=>void, variant?: "secondary" | "text" | "primary", title?:string  }) => {
   const [open, setOpen] = useState(false);
   return (
     <>
       <MainButton
         size="small"
-        variant="secondary"
+        variant={variant}
         sx={{ fontSize: "12px", ml: "1px",...sx }}
-        title="Print"
+        title={title}
         onClick={() => setOpen(true)}
       />
       <GenericDialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+          if(onClose) {
+            onClose()
+          }
+        }}
         title="Print Patient Barcode"
       >
         <PatientBarcodePrinter

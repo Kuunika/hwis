@@ -1,4 +1,10 @@
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 export const getDateTime = () => {
   let date = new Date();
@@ -49,19 +55,33 @@ export const estimateBirthdate = (years: number) => {
   }
 }
 
-export const getHumanReadableDate = (date:string|Date)=>{
+export const getHumanReadableDate = (date: string | Date) => {
   return dayjs(date).format('dddd, MMMM D, YYYY');
 }
-export const getHumanReadableDateTime = (date:string|Date|undefined)=>{
+// export const getHumanReadableDateTime = (date: string | Date | undefined) => {
 
-  if(!date) return ""
+//   if (!date) return ""
+//   return new Date(date).toLocaleString('en-US', {
+//     year: 'numeric',
+//     month: 'long',
+//     day: 'numeric',
+//     hour: 'numeric',
+//     minute: 'numeric',
+//     second: 'numeric',
+//   });
+//   // return dayjs(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').format('MMMM D, YYYY h:mm A')
+// }
 
-  return dayjs(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').subtract(2, 'hour').format('MMMM D, YYYY h:mm A')
-}
+export const getHumanReadableDateTime = (date: string | Date | undefined): string => {
+  if (!date) return "";
 
-export const getHumanReadableDateTimeLab = (date:string|Date|undefined)=>{
+  return dayjs(date).tz('Africa/Maputo').format('MMMM D, YYYY h:mm:ss A');
+};
 
-  if(!date) return ""
+
+export const getHumanReadableDateTimeLab = (date: string | Date | undefined) => {
+
+  if (!date) return ""
 
   return dayjs(date).format('YYYY-MM-DD h:mm A');
 }

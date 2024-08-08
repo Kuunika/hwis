@@ -14,7 +14,7 @@ import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { PrinterBarcodeButton } from "@/components/patientBarcodePrinter";
+import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
@@ -109,7 +109,7 @@ export const ClientWaitingForTriage = () => {
         <>
           <MainButton
             size="small"
-            sx={{ fontSize: "12px", width: "30%", mr: "1px", mb:"1px" }}
+            sx={{ fontSize: "12px", width: "30%", mr: "1px", mb: "1px" }}
             title={"start"}
             onClick={() => navigateTo(`/triage/${row.id}/start`)}
           />

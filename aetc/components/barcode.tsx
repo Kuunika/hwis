@@ -14,7 +14,7 @@ interface Props {
   children: ReactNode;
   setTriggerFunc: (func: any) => void;
   printer: string;
-  orderDate?:string;
+  orderDate?: string;
 }
 export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   value,
@@ -46,7 +46,7 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent:"center",
+            justifyContent: "center",
           }}
           ref={ref}
         >
@@ -96,8 +96,8 @@ export const BarcodeComponent: React.FC<Props> = ({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent:"center",
-        paddingLeft:"13ch"
+            justifyContent: "center",
+            paddingLeft: "13ch"
           }}
           ref={ref}
         >
@@ -154,9 +154,9 @@ type TriagePrintTempProp = {
   date: string;
   arrivalTime: string;
   referredFrom: string;
-  triageCategory:string;
-  triagedBy:string;
-  presentingComplaints?:string;
+  triageCategory: string;
+  triagedBy: string;
+  presentingComplaints?: string;
 };
 
 export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
@@ -168,81 +168,84 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
   triageCategory,
   triagedBy
 }) => {
-    const [printer,setPrinter]=useState('')
-    const [reason,setReason]=useState('')
+  const [printer, setPrinter] = useState('')
+  const [reason, setReason] = useState('')
 
-    const convertToCanvas = async () => {
-        const element = document.getElementById("triage");
-        if (element) {
-          const canvas = await htmlToImage.toCanvas(element);
-          downloadZplData("test", canvas, printer);
-        }
-      };
+  const convertToCanvas = async () => {
+    const element = document.getElementById("triage");
+    if (element) {
+      const canvas = await htmlToImage.toCanvas(element);
+      downloadZplData("test", canvas, printer);
+    }
+  };
 
   return (
     <Box>
-    <div id="triage">
-      <WrapperBox
-        sx={{
-          p: "5px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Box sx={{ width: "100%" }}>
-          <Box sx={{ display: "flex", width: "100%" }}>
+      <div id="triage">
+        <WrapperBox
+          sx={{
+            p: "5px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Box sx={{ width: "100%" }}>
             <Typography variant="body2" mr={"1ch"}>
-              Date: {date}
+              Arrival Time: {arrivalTime}
             </Typography>
-            <Typography variant="body2">Referred From: {referredFrom}</Typography>
-          </Box>
-          <Box sx={{display:"flex"}}>
-          <Typography mr={"1ch"} variant="body1">Category: {triageCategory}</Typography>
-          <Typography variant="body1">Reason: {reason}</Typography>
-          </Box>
-       
-          <Typography sx={{mt:"1ch"}} variant="subtitle1">Presenting Complaints: {presentingComplaints} </Typography>
-    
-          <WrapperBox sx={{ display: "flex", border:"dashed", my:"1ch" }}>
-            {vitals.map(({ name, value }: any) => (
-              <Cell key={`${value}${name}`} title={name} value={value} />
-            ))}
-          </WrapperBox>
-    
+            <Box sx={{ display: "flex", width: "100%" }}>
+              <Typography variant="body2" mr={"1ch"}>
+                Triage Date Time: {date}
+              </Typography>
+              <Typography variant="body2">Referred From: {referredFrom}</Typography>
+            </Box>
+            <Box sx={{ display: "flex" }}>
+              <Typography mr={"1ch"} variant="body1">Category: {triageCategory}</Typography>
+              <Typography variant="body1">Reason: {reason}</Typography>
+            </Box>
 
-          <Typography variant="body1">Triaged By: {triagedBy}</Typography>
-        </Box>
-      </WrapperBox>
-    </div>
+            <Typography sx={{ mt: "1ch" }} variant="subtitle1">Presenting Complaints: {presentingComplaints} </Typography>
 
-    <BasicSelect getValue={(value:any)=>setReason(value)} label={"Reasons for triage category:"} options={[{
-        value:"Vitals above/below threshold",
-        label:"Vitals above/below threshold"
-    },
-    {
-        value:"Airway/Breathing compromised",
-        label:"Airway/Breathing compromised"
-    },
-    {
-        value:"Blood circulation compromised",
-        label:"Blood circulation compromised"
-    },
-    {
-        value:"Disability",
-        label:"Disability"
-    },
-    {
-        value:"Persistent pain and other concerns ",
-        label:"Persistent pain and other concerns "
-    }
-    ]} />
-    <br />
-    <br />
-    <PrinterSelect getValue={(value:string)=>setPrinter(value)}  />
-        <br />
-        <br />
-    <MainButton onClick={convertToCanvas} title={"print"} />
+            <WrapperBox sx={{ display: "flex", border: "dashed", my: "1ch" }}>
+              {vitals.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </WrapperBox>
+
+
+            <Typography variant="body1">Triaged By: {triagedBy}</Typography>
+          </Box>
+        </WrapperBox>
+      </div>
+
+      <BasicSelect getValue={(value: any) => setReason(value)} label={"Reasons for triage category:"} options={[{
+        value: "Vitals above/below threshold",
+        label: "Vitals above/below threshold"
+      },
+      {
+        value: "Airway/Breathing compromised",
+        label: "Airway/Breathing compromised"
+      },
+      {
+        value: "Blood circulation compromised",
+        label: "Blood circulation compromised"
+      },
+      {
+        value: "Disability",
+        label: "Disability"
+      },
+      {
+        value: "Persistent pain and other concerns ",
+        label: "Persistent pain and other concerns "
+      }
+      ]} />
+      <br />
+      <br />
+      <PrinterSelect getValue={(value: string) => setPrinter(value)} />
+      <br />
+      <br />
+      <MainButton onClick={convertToCanvas} title={"print"} />
     </Box>
   );
 };
