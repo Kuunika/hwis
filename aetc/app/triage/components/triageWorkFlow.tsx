@@ -21,7 +21,7 @@ import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { getDateTime, getHumanReadableDate, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { getPatientsWaitingForTriage, getPatientVisitTypes } from "@/hooks/patientReg";
-import { TriageResult } from "@/interfaces";
+import { Encounter, TriageResult } from "@/interfaces";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
 import { TriagePrintTemplate } from "@/components/barcode";
@@ -44,21 +44,6 @@ export default function TriageWorkFlow() {
   const [circulation, setCirculation] = useState({})
   const [consciousness, setConsciousness] = useState({})
   const [persistentPain, setPersistentPain] = useState({})
-
-
-  const { data } = getPatientsEncounters(params?.id as string);
-
-  const referral = data?.find(enc => enc.encounter_type.uuid === encounters.REFERRAL);
-
-
-  const referralHealthFacility = getObservationValue(referral?.obs, concepts.REFERRED_FROM);
-
-
-
-
-
-
-
   const [triagePrintOpen, setTriagePrintOpen] = useState(false)
   const {
     loading,
@@ -129,16 +114,30 @@ export default function TriageWorkFlow() {
     { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
-
   const patient = triageList?.find((d) => d.uuid == params.id);
   const { data: patientVisits, isLoading, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find(d => !Boolean(d.date_stopped));
 
+  const { data } = getPatientsEncounters(params?.id as string);
+  const [referral, setReferral] = useState<Encounter>()
+  const [initialRegistration, setInitialRegistration] = useState<Encounter>()
+
+
+  const getEncounterActiveVisit = (encounterType: string) => {
+    return data?.filter(
+      (d) => d?.encounter_type.uuid == encounterType
+    ).find(d => d.visit_id == activeVisit?.visit_id);
+  }
 
   const dateTime = getDateTime();
 
 
-  console.log({ dateTime })
+  useEffect(() => {
+    setReferral(getEncounterActiveVisit(encounters.REFERRAL))
+    setInitialRegistration(getEncounterActiveVisit(encounters.INITIAL_REGISTRATION))
+  }, [data])
+
+  const referralHealthFacility = getObservationValue(referral?.obs, concepts.REFERRED_FROM);
 
   useEffect(() => {
     if (presentingCreated) {
@@ -468,7 +467,7 @@ export default function TriageWorkFlow() {
 
       {completed == 7 && (
         <>
-          <PatientTriageBarcodePrinter open={triagePrintOpen} onClose={() => setTriagePrintOpen(false)} presentingComplaints={presentingComplaints[concepts.COMPLAINTS].reduce((prev: any, current: any) => {
+          <PatientTriageBarcodePrinter arrivalTime={getHumanReadableDateTime(initialRegistration?.encounter_datetime)} open={triagePrintOpen} onClose={() => setTriagePrintOpen(false)} presentingComplaints={presentingComplaints[concepts.COMPLAINTS].reduce((prev: any, current: any) => {
             return prev == "" ? current.id : prev + "," + current.id
           }, '')} triageCategory={triageResult}
             date={getHumanReadableDateTime(dateTime)}

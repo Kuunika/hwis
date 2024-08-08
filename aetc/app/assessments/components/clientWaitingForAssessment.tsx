@@ -275,8 +275,8 @@ export function BasicMenu({ patient }: { patient: any }) {
         onClose={handleClose}
 
       >
-        <MenuItem><PrinterBarcodeButton title="Demographics" sx={{ color: "ButtonText" }} variant="text" onClose={handleClose} patient={patient} /> </MenuItem>
-        <MenuItem><FetchAndDisplayTriageBarcode arrivalDateTime={patient.arrival_time} patientId={patient.id} activeVisitId={patient?.active_visit?.visit_id} /></MenuItem>
+        <MenuItem sx={{ justifyContent: "flex-start" }}><PrinterBarcodeButton title="Demographics" sx={{ color: "ButtonText" }} variant="text" onClose={handleClose} patient={patient} /> </MenuItem>
+        <MenuItem sx={{ justifyContent: "flex-start" }}><FetchAndDisplayTriageBarcode arrivalDateTime={patient.arrival_time} patientId={patient.id} activeVisitId={patient?.active_visit?.visit_id} /></MenuItem>
       </Menu>
     </div>
   );
