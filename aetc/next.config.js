@@ -1,25 +1,22 @@
-
 const withSvgr = require("@svgr/webpack");
 const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
-  disable: process.env.NODE_ENV === 'development',
-  register: true, 
+  disable: process.env.NODE_ENV === "development",
+  register: true,
   skipWaiting: true,
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
-  reloadOnOnline:true,
-
+  reloadOnOnline: true,
+  reactStrictMode: false,
 });
 
-
 /** @type {import('next').NextConfig} */
-
 
 // const nextConfig = withPWA({
 //   output: 'standalone',
 // })
 const nextConfig = {
-  output: 'standalone',
+  output: "standalone",
   // webpack(config) {
   //   config.module.rules.push({
   //     test: /\.svg$/,
@@ -28,6 +25,6 @@ const nextConfig = {
 
   //   return config;
   // },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

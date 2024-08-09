@@ -10,6 +10,8 @@ import { useContext, useEffect, useState } from "react";
 
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
+import { VisitDates } from "../visitDates";
+import { Box } from "@mui/material";
 
 export const VitalsPanel = () => {
 
@@ -48,6 +50,7 @@ export const VitalsPanel = () => {
       setFormattedVitals(formatAllVitalsToObject(obs))
       // updateVitals(obs);
     }
+
   }, [activeVisit, data]);
 
   const updateVitals = (obs: any) => {
@@ -93,16 +96,17 @@ export const VitalsPanel = () => {
   }
   return (
     <Panel
-      title="Vitals"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
+      title={"Vitals"}
+      icon={<VisitDates />}
     >
-      <br />
-      <WrapperBox>
+      <WrapperBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <WrapperBox width={"20%"}>
           <BasicSelect getValue={(value: any) => setActivePage(Number(value))} label="" options={options} />
         </WrapperBox>
+
       </WrapperBox>
-      <br />
+
+
       <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
         {vitals.map(({ name, value }: any) => (
           <Cell key={`${value}${name}`} title={name} value={value} />

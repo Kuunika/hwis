@@ -12,6 +12,7 @@
     "@ducanh2912/next-pwa": "^10.2.7",
     "@ericblade/quagga2": "^1.8.4",
     "@mui/material": "^5.14.4",
+    "@mui/x-charts": "^7.11.0",
     "@mui/x-data-grid": "^6.11.1",
     "@mui/x-date-pickers": "^6.18.3",
     "@mui/x-tree-view": "^6.17.0",
