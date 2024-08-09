@@ -322,9 +322,9 @@ export default function TriageWorkFlow() {
       encounterDatetime: dateTime,
       obs: [
         {
-          concept: 'Service_Area', // use the appropriate concept UUID
-          value: formData.serviceArea.SERVICE_AREA,
-          obsDatetime: dateTime
+          concept: concepts.PATIENT_REFERRED_TO,
+          value: values[concepts.PATIENT_REFERRED_TO],
+          obsDatetime: getDateTime(),
         }
       ]
     };
