@@ -28,6 +28,8 @@ export const addPerson = () => {
 };
 export const addRelationship = () => {
   const addData = (data: any) => {
+
+    console.log("=======>",data.nextOfKinRelationship)
     const mappedData = {
       person_a: data.patient,
       person_b: data.person,

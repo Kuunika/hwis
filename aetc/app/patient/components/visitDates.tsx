@@ -1,5 +1,4 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Grow from "@mui/material/Grow";
@@ -9,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Stack from "@mui/material/Stack";
 import { FaCalendarDays, FaCheck } from "react-icons/fa6";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { MainTypography } from "@/components";
 import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
@@ -41,7 +41,6 @@ useEffect(()=>{
     }
     setVisits(data)
   }
-
 },[isSuccess])
 
 
@@ -89,27 +88,29 @@ useEffect(()=>{
           aria-haspopup="true"
           onClick={handleToggle}
           sx={{
-            fontSize: "14px",
-            fontWeight: 500,
             display: "flex",
             cursor: "pointer",
+            alignItems:"center",
+            backgroundColor: "#ccc",
+            padding: "1ch",
+            borderRadius: "5px"
           }}
         >
-          <h3>
+       <MainTypography sx={{marginRight:"1ch", fontWeight:"bold"}}>Visit date:</MainTypography>
             <FaCalendarDays />
-          </h3>
           <MainTypography
             sx={{
+              marginRight:"1ch", 
               ml: "1ch",
-              fontFamily: "Inter",
               lineHeight: "17px",
               letterSpacing: "0em",
               textAlign: "left",
-              textTransform: "capitalize",
+              textTransform: "capitalize"
             }}
           >
            {getHumanReadableDate(activeDate)}
           </MainTypography>
+          {open?<IoIosArrowUp />:<IoIosArrowDown />}
         </Box>
         <Popper
           open={open}
@@ -118,6 +119,7 @@ useEffect(()=>{
           placement="bottom-start"
           transition
           disablePortal
+          sx={{zIndex:100000}}
         >
           {({ TransitionProps, placement }) => (
             <Grow
@@ -127,12 +129,12 @@ useEffect(()=>{
                   placement === "bottom-start" ? "left top" : "left bottom",
               }}
             >
-              <Paper>
+              <Paper >
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList
                     autoFocusItem={open}
                     id="composition-menu"
-
+             
                     aria-labelledby="composition-button"
                     onKeyDown={handleListKeyDown}
                   >
@@ -164,9 +166,6 @@ useEffect(()=>{
                       >
                         <MainTypography
                           sx={{
-                            fontFamily: "Inter",
-                            fontSize: "14px",
-                            fontWeight: 400,
                             lineHeight: "21px",
                             letterSpacing: "0em",
                             textAlign: "left",

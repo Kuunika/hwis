@@ -8,13 +8,18 @@ import React from "react";
 type BasicSelectProp = {
   label: string;
   options: Array<{ value: string; label: string }>;
+  getValue?: (selectedValue:any)=>void,
+  defaultValue?: any
 };
 
-export function BasicSelect({ label, options }: BasicSelectProp) {
+export function BasicSelect({ label, options, getValue,defaultValue }: BasicSelectProp) {
   const [age, setAge] = React.useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
+
+    if(getValue)
+    getValue(event.target.value as string);
   };
 
   return (
@@ -23,6 +28,7 @@ export function BasicSelect({ label, options }: BasicSelectProp) {
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
+        defaultValue={defaultValue}
         value={age}
         label={label}
         onChange={handleChange}

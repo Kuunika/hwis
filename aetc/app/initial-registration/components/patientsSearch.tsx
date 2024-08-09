@@ -21,7 +21,8 @@ import { BaseTable, MainButton } from "@/components";
 export const PatientSearchResultsDialog = ({ open, onClose, isLoading, patientResults }: { open: boolean, isLoading?: boolean, onClose: () => void, patientResults: DDESearch }) => {
     const { navigateTo } = useNavigation();
     const [selectedPatient, setSelectedPatient] = useState<Person | undefined>();
-    const rows = [...patientResults.locals, ...patientResults.remotes].map(row => ({ id: row.patient_id, ...row }))
+    //@ts-ignore
+    const rows = [...patientResults.locals, ...patientResults.remotes].map(row => ({ id: row?.patient_id, ...row }))
     const {
         loading,
         setLoading,
@@ -167,7 +168,7 @@ export const PatientSearchResultsDialog = ({ open, onClose, isLoading, patientRe
         {showForm && <>
             {!selectedPatient && <BaseTable columns={columns} rows={rows} />}
             {selectedPatient && <>
-                <ViewPatient patient={selectedPatient} />
+                <ViewPatient disabled={false} patient={selectedPatient} />
                 <br />
                 <MainButton title={"Continue"} sx={{ mr: "0.5ch" }} onClick={triggerSave} />
                 <MainButton variant="secondary" title={"Cancel"} onClick={() => setSelectedPatient(undefined)} />

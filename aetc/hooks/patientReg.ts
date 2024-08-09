@@ -62,14 +62,15 @@ export const registerPatient = () => {
 
     const getAddress = (address: any) => address !== "" ? address : "N/A";
 
+
+    const identifiers = patientData.identificationNumber == "" ? [] :   [{
+      identifier: patientData.identificationNumber,
+      identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
+      preferred: true,
+    }]
+
     const mappedPatient = {
-      identifiers: [
-        {
-          identifier: patientData.identificationNumber,
-          identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
-          preferred: true,
-        },
-      ],
+      identifiers,
       names: [
         {
           givenName: patientData.firstName,
@@ -121,7 +122,7 @@ export const getPatientsWaitingForPrescreening = () => {
     queryKey: ["screening"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 60,
+    // refetchInterval: 1000 * 60,
   });
 };
 
@@ -133,7 +134,7 @@ export const getPatientsWaitingForRegistrations = () => {
     queryKey: ["registration"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 30,
+    // refetchInterval: 1000 * 30,
   });
 };
 
@@ -145,7 +146,7 @@ export const getPatientsWaitingForTriage = () => {
     queryKey: ["triage"],
     queryFn: getall,
     enabled: true,
-    refetchInterval: 1000 * 30,
+    // refetchInterval: 1000 * 30,
   });
 };
 export const getPatientsWaitingForAssessment = () => {

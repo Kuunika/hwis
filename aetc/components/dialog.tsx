@@ -15,7 +15,6 @@ export interface SimpleDialogProps {
 }
 
 export function GenericDialog({ onClose, open, children, title, maxWidth = "lg", sx }: SimpleDialogProps) {
-
     const handleClose = () => {
         onClose()
     };

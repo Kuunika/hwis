@@ -1,6 +1,6 @@
-"use client";;
+"use client";
 import { useEffect, useState } from "react";
-import { NewStepperContainer } from "@/components";
+import { GenericDialog, MainButton, NewStepperContainer } from "@/components";
 import {
   AirwayAndBreathingForm,
   BloodCirculationForm,
@@ -9,24 +9,25 @@ import {
   PresentingComplaintsForm,
   TriageContainer,
 } from ".";
-import { VitalsForm } from "@/app/vitals/components/vitalsForm";
+import { VitalFormConfig, VitalsForm } from "@/app/vitals/components/vitalsForm";
 import { useNavigation, useParameters } from "@/hooks";
 
 import { concepts, encounters } from "@/constants";
 import { getObservations, } from "@/helpers";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
-import { getDateTime } from "@/helpers/dateTime";
+import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { getPatientsWaitingForTriage, getPatientVisitTypes } from "@/hooks/patientReg";
-import { TriageResult } from "@/interfaces";
+import { ServiceAreaForm } from "./serviceAreaForm";
+import { Encounter, TriageResult } from "@/interfaces";
 import { Bounce, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
-import { GenericDialog } from "@/components/dialog";
-import { ServiceAreaForm } from "./serviceAreaForm";
 
+import { getObservationValue } from "@/helpers/emr";
+import { PatientTriageBarcodePrinter } from "@/components/barcodePrinterDialogs";
 
 export default function TriageWorkFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -38,15 +39,15 @@ export default function TriageWorkFlow() {
   const [conceptTriageResult, setConceptTriageResult] = useState<any>({})
   const [submittedSteps, setSubmittedSteps] = useState<Array<number>>([])
 
- const [presentingComplaints, setPresentingComplaints]=useState({})
- const [vitals, setVitals]=useState({})
- const [airway, setAirway]=useState({})
- const [circulation, setCirculation]=useState({})
- const [consciousness, setConsciousness]=useState({})
- const [persistentPain, setPersistentPain]=useState({})
- const [showModal, setShowModal] = useState(false);
+  const [presentingComplaints, setPresentingComplaints] = useState<any>({})
+  const [vitals, setVitals] = useState<any>({})
+  const [airway, setAirway] = useState({})
+  const [circulation, setCirculation] = useState({})
+  const [consciousness, setConsciousness] = useState({})
+  const [persistentPain, setPersistentPain] = useState({})
+  const [showModal, setShowModal] = useState(false);
 
-
+  const [triagePrintOpen, setTriagePrintOpen] = useState(false)
   const {
     loading,
     setLoading,
@@ -65,6 +66,7 @@ export default function TriageWorkFlow() {
     isSuccess: presentingCreated,
     isPending: creatingPresenting,
     isError: presentingError,
+    data: presentingComplaintsResponse
   } = addEncounter();
   const {
     mutate: createVitals,
@@ -77,6 +79,7 @@ export default function TriageWorkFlow() {
     isSuccess: airwayCreated,
     isPending: creatingAirway,
     isError: airwayError,
+
   } = addEncounter();
   const {
     mutate: createBlood,
@@ -121,13 +124,30 @@ export default function TriageWorkFlow() {
     { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
-
   const patient = triageList?.find((d) => d.uuid == params.id);
-  const {data:patientVisits, isLoading, isSuccess}=getPatientVisitTypes(params?.id as string);
-  const activeVisit=patientVisits?.find(d=> !Boolean(d.date_stopped));
+  const { data: patientVisits, isLoading, isSuccess } = getPatientVisitTypes(params?.id as string);
+  const activeVisit = patientVisits?.find(d => !Boolean(d.date_stopped));
 
+  const { data } = getPatientsEncounters(params?.id as string);
+  const [referral, setReferral] = useState<Encounter>()
+  const [initialRegistration, setInitialRegistration] = useState<Encounter>()
+
+
+  const getEncounterActiveVisit = (encounterType: string) => {
+    return data?.filter(
+      (d) => d?.encounter_type.uuid == encounterType
+    ).find(d => d.visit_id == activeVisit?.visit_id);
+  }
 
   const dateTime = getDateTime();
+
+
+  useEffect(() => {
+    setReferral(getEncounterActiveVisit(encounters.REFERRAL))
+    setInitialRegistration(getEncounterActiveVisit(encounters.INITIAL_REGISTRATION))
+  }, [data])
+
+  const referralHealthFacility = getObservationValue(referral?.obs, concepts.REFERRED_FROM);
 
   useEffect(() => {
     if (presentingCreated) {
@@ -209,10 +229,9 @@ export default function TriageWorkFlow() {
       setCompleted(6);
       setMessage("finalizing...");
 
-    if(triageResult == 'green')
-    {
-      setShowModal(true);
-    }
+      if (triageResult == 'green') {
+        setShowModal(true);
+      }
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,
@@ -300,6 +319,7 @@ export default function TriageWorkFlow() {
   };
 
   const handlePresentComplaints = (values: any) => {
+
     formData["presentingComplaints"] = values[concepts.COMPLAINTS].map(
       (v: any) => ({
         concept: concepts.COMPLAINTS,
@@ -314,7 +334,7 @@ export default function TriageWorkFlow() {
   const handleServiceArea = (values: any) => {
     formData["serviceArea"] = values;
     setMessage("adding next service area...");
-  
+
     const nextServiceAreaObject = {
       encounterType: 'NEXT_SERVICE_AREA', // use the appropriate encounter type UUID
       visit: activeVisit?.uuid,
@@ -328,11 +348,11 @@ export default function TriageWorkFlow() {
         }
       ]
     };
-  
+
     createNextServiceArea(nextServiceAreaObject);
     setShowModal(false);
   };
-  
+
 
 
   useEffect(() => {
@@ -397,7 +417,6 @@ export default function TriageWorkFlow() {
   }
 
   const handleClickAccordion = (activeStep: any) => {
-
     const found = submittedSteps.find(step => step == activeStep);
 
     if (found != undefined) setActiveStep(activeStep);
@@ -411,14 +430,14 @@ export default function TriageWorkFlow() {
   };
 
 
-const handleOnCompleteTriage = ()=>{
-  handlePresentComplaints(presentingComplaints);
-  handleAirwaySubmit(airway);
-  handleBloodCirculationSubmit(circulation)
-  handleDisabilitySubmit(circulation)
-  handleVitalsSubmit(vitals)
-  handlePersistentPain(persistentPain)
-}
+  const handleOnCompleteTriage = () => {
+    handlePresentComplaints(presentingComplaints);
+    handleAirwaySubmit(airway);
+    handleBloodCirculationSubmit(circulation)
+    handleDisabilitySubmit(circulation)
+    handleVitalsSubmit(vitals)
+    handlePersistentPain(persistentPain)
+  }
 
   return (
     <>
@@ -426,7 +445,7 @@ const handleOnCompleteTriage = ()=>{
       <DisplayNone hidden={!showForm}>
         {triageResult && (
           <>
-          
+
             <TriageContainer
               onCompleteTriage={handleOnCompleteTriage}
               result={triageResult}
@@ -446,8 +465,7 @@ const handleOnCompleteTriage = ()=>{
           active={activeStep}
           onBack={() => navigateBack()}
         >
-          
-          <PresentingComplaintsForm getFormValues={setPresentingComplaints}  triageResult={triageResult}
+          <PresentingComplaintsForm getFormValues={setPresentingComplaints} triageResult={triageResult}
             setTriageResult={checkTriageResult} onSubmit={handlePresentComplaints} />
           <VitalsForm
             previous={() => setActiveStep(0)}
@@ -481,68 +499,91 @@ const handleOnCompleteTriage = ()=>{
             setTriageResult={checkTriageResult}
             onSubmit={handleDisabilitySubmit} />
           <PersistentPainForm
-           getFormValues={setPersistentPain}
+            getFormValues={setPersistentPain}
             previous={() => setActiveStep(4)}
             continueTriage={continueTriage}
             setTriageResult={checkTriageResult}
             triageResult={triageResult}
             onSubmit={handlePersistentPain} />
-        </NewStepperContainer>
-      </DisplayNone>
-
+        </NewStepperContainer >
+      </DisplayNone >
       {completed == 7 && (
-        <OperationSuccess
-          title="Patient Triaged Successfully"
-          primaryActionText="Triage more patients"
-          secondaryActionText="Go Home"
-          onPrimaryAction={() => {
-            setShowForm(true);
-            setCompleted(0);
-            navigateTo("/triage");
-          }}
-          onSecondaryAction={() => navigateTo("/dashboard")}
-        />
-      )}
+        <>
+          <PatientTriageBarcodePrinter arrivalTime={getHumanReadableDateTime(initialRegistration?.encounter_datetime)} open={triagePrintOpen} onClose={() => setTriagePrintOpen(false)} presentingComplaints={presentingComplaints[concepts.COMPLAINTS].reduce((prev: any, current: any) => {
+            return prev == "" ? current.id : prev + "," + current.id
+          }, '')} triageCategory={triageResult}
+            date={getHumanReadableDateTime(dateTime)}
+            triagedBy={presentingComplaintsResponse?.created_by as string}
+            referredFrom={referralHealthFacility}
+            vitals={[
+              { name: VitalFormConfig.saturationRate.short, value: vitals[VitalFormConfig.saturationRate.name] },
+              { name: VitalFormConfig.heartRate.short, value: vitals[VitalFormConfig.heartRate.name] },
+              { name: VitalFormConfig.bloodPressure.short, value: `${vitals[VitalFormConfig.bloodPressure.name]}/${vitals[VitalFormConfig.bloodPressureDiastolic.name]}` },
+              { name: VitalFormConfig.respiratoryRate.short, value: vitals[VitalFormConfig.respiratoryRate.name] },
+              { name: VitalFormConfig.temperature.short, value: vitals[VitalFormConfig.temperature.name] },
+              { name: VitalFormConfig.avpu.label, value: vitals[VitalFormConfig.avpu.name] },
+              { name: `${VitalFormConfig.glucose.label}(${vitals[VitalFormConfig.units.name]})`, value: vitals[VitalFormConfig.glucose.name] },
+            ]} />
 
-      {error && (
-        <FormError
-          error={message}
-          onPrimaryAction={() => {
-            setError(false);
-            setCompleted(0);
-            setLoading(false);
-            setShowForm(true);
-          }}
-          onSecondaryAction={() => {
-            setCompleted(0);
-            setShowForm(true);
-            setLoading(false);
-            setError(false);
-          }}
-        />
-      )}
+          <OperationSuccess
+            title="Patient Triaged Successfully"
+            primaryActionText="Triage more patients"
+            secondaryActionText="Go Home"
+            printButton={<MainButton sx={{ mx: "2px" }} variant="secondary" title={"print"} onClick={() => setTriagePrintOpen(true)} />}
+            onPrimaryAction={() => {
+              setShowForm(true);
+              setCompleted(0);
+              navigateTo("/triage");
+            }}
+            onSecondaryAction={() => navigateTo("/dashboard")}
+          />
+        </>
+      )
+      }
 
-<GenericDialog
+      {
+        error && (
+          <FormError
+            error={message}
+            onPrimaryAction={() => {
+              setError(false);
+              setCompleted(0);
+              setLoading(false);
+              setShowForm(true);
+            }}
+            onSecondaryAction={() => {
+              setCompleted(0);
+              setShowForm(true);
+              setLoading(false);
+              setError(false);
+            }}
+          />
+        )
+      }
+
+      <GenericDialog
         open={showModal}
         onClose={closeModal}
         title="Triage Decision"
       >
         <p>
-  Triage status is <span style={{ color: 'green' }}>GREEN</span>. Where should this patient go next?
-</p>
-        <ServiceAreaForm onSubmit={handleServiceArea}/>
+          Triage status is <span style={{ color: 'green' }}>GREEN</span>. Where should this patient go next?
+        </p>
+        <ServiceAreaForm onSubmit={handleServiceArea} />
       </GenericDialog>
 
-      {loading && !error && (
-        <>
-          <br />
-          <br />
-          <CustomizedProgressBars
-            message={message}
-            progress={(completed / 7) * 100}
-          />
-        </>
-      )}
+      {
+        loading && !error && (
+          <>
+            <br />
+            <br />
+            <CustomizedProgressBars
+              message={message}
+              progress={(completed / 7) * 100}
+            />
+          </>
+        )
+      }
     </>
   );
 }

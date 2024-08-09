@@ -16,7 +16,7 @@ import { getInitialValues, notify } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 import { TriageContext, TriageContextType } from "@/contexts";
 
-const form = {
+export const BloodFormConfig = {
   isCirculationAbnormal: {
     name: concepts.IS_CIRCULATION_ABNORMAL,
     label: "Is Circulation Abnormal",
@@ -46,10 +46,6 @@ const form = {
     name: concepts.CAPILLARY_REFILL,
     label: "Cool clammy peripherals or cap refill > 4 seconds",
   },
-  // temperature: {
-  //   name: "temp",
-  //   label: "Temperature",
-  // },
   hemorrhage: {
     name: concepts.HEMORRHAGE,
     label: "Hemorrhage",
@@ -58,40 +54,40 @@ const form = {
     name: concepts.DEHYDRATION_SKIN,
     label: "Dehydration skin turgor, sunken eyes",
   },
-  heartRate5060: {
-    name: concepts.HEART_RATE_50,
-    label: "Heart Rate <50, >60 or  100-110",
-  },
-  temperature3738: {
-    name: concepts.TEMPERATURE,
-    label: "Temperature 37-38C",
-  },
+  // heartRate5060: {
+  //   name: concepts.HEART_RATE_50,
+  //   label: "Heart Rate <50, >60 or  100-110",
+  // },
+  // temperature3738: {
+  //   name: concepts.TEMPERATURE,
+  //   label: "Temperature 37-38C",
+  // },
 
 };
 
 const schema = Yup.object().shape({
-  [form.isCirculationAbnormal.name]: Yup.string()
+  [BloodFormConfig.isCirculationAbnormal.name]: Yup.string()
     .required()
-    .label(form.isCirculationAbnormal.label),
-  [form.heartRate.name]: Yup.string().label(form.heartRate.label),
-  [form.pulseRate.name]: Yup.string().label(form.pulseRate.label),
-  [form.weakIrregularPulse.name]: Yup.string().label(
-    form.weakIrregularPulse.label
+    .label(BloodFormConfig.isCirculationAbnormal.label),
+  [BloodFormConfig.heartRate.name]: Yup.string().label(BloodFormConfig.heartRate.label),
+  [BloodFormConfig.pulseRate.name]: Yup.string().label(BloodFormConfig.pulseRate.label),
+  [BloodFormConfig.weakIrregularPulse.name]: Yup.string().label(
+    BloodFormConfig.weakIrregularPulse.label
   ),
-  [form.reducedUrinaryOutput.name]: Yup.string().label(
-    form.reducedUrinaryOutput.label
+  [BloodFormConfig.reducedUrinaryOutput.name]: Yup.string().label(
+    BloodFormConfig.reducedUrinaryOutput.label
   ),
-  [form.clammyPeripherals.name]: Yup.string().label(
-    form.clammyPeripherals.label
+  [BloodFormConfig.clammyPeripherals.name]: Yup.string().label(
+    BloodFormConfig.clammyPeripherals.label
   ),
-  // [form.temperature.name]: Yup.string().label(form.temperature.label),
-  [form.hemorrhage.name]: Yup.string().label(form.hemorrhage.label),
-  [form.dehydration.name]: Yup.string().label(form.dehydration.label),
-  [form.temperature3738.name]: Yup.string().label(form.temperature3738.label),
-  [form.heartRate5060.name]: Yup.string().label(form.heartRate5060.label),
+  // [BloodFormConfig.temperature.name]: Yup.string().label(BloodFormConfig.temperature.label),
+  [BloodFormConfig.hemorrhage.name]: Yup.string().label(BloodFormConfig.hemorrhage.label),
+  [BloodFormConfig.dehydration.name]: Yup.string().label(BloodFormConfig.dehydration.label),
+  // [BloodFormConfig.temperature3738.name]: Yup.string().label(BloodFormConfig.temperature3738.label),
+  // [BloodFormConfig.heartRate5060.name]: Yup.string().label(BloodFormConfig.heartRate5060.label),
 });
 
-const initialValues = getInitialValues(form);
+const initialValues = getInitialValues(BloodFormConfig);
 type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult: (triage: any, name: string) => void;
@@ -129,7 +125,7 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={{ ...initialValues, [form.isCirculationAbnormal.name]: circulationCondition ? YES : NO }}
+      initialValues={{ ...initialValues, [BloodFormConfig.isCirculationAbnormal.name]: circulationCondition ? YES : NO }}
       onSubmit={onSubmit}
       enableReinitialize={true}
       submitButtonText="next"
@@ -144,11 +140,11 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
         title="Circulation"
       >
         <RadioGroupInput
-          name={form.isCirculationAbnormal.name}
-          label={form.isCirculationAbnormal.label}
+          name={BloodFormConfig.isCirculationAbnormal.name}
+          label={BloodFormConfig.isCirculationAbnormal.label}
           options={options}
           getValue={(value) => setIsCirculationAbnormal(value)}
-          disabled={disableField(form.isCirculationAbnormal.name)}
+          disabled={disableField(BloodFormConfig.isCirculationAbnormal.name)}
         />
       </FormFieldContainerLayout>
       <br />
@@ -157,36 +153,36 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
           <FormFieldContainerLayout title="Heart Rate and Pulse">
             <FieldsContainer>
               {/* <RadioGroupInput
-                name={form.heartRate.name}
-                label={form.heartRate.label}
+                name={BloodFormConfig.heartRate.name}
+                label={BloodFormConfig.heartRate.label}
                 options={options}
-                disabled={disableField(form.heartRate.name)}
+                disabled={disableField(BloodFormConfig.heartRate.name)}
                 getValue={(value) =>
-                  updateConditions(form.heartRate.name, value)
+                  updateConditions(BloodFormConfig.heartRate.name, value)
                 }
               /> */}
               <RadioGroupInput
-                name={form.heartRate.name}
-                label={form.heartRate.label}
+                name={BloodFormConfig.heartRate.name}
+                label={BloodFormConfig.heartRate.label}
                 options={[
                   { label: "Weak/Thready", value: "Weak/Thready" },
                   { label: "Strong", value: "Strong" },
                 ]}
-                disabled={disableField(form.heartRate.name)}
+                disabled={disableField(BloodFormConfig.heartRate.name)}
                 getValue={(value) =>
-                  updateConditions(form.heartRate.name, value)
+                  updateConditions(BloodFormConfig.heartRate.name, value)
                 }
               />
               <RadioGroupInput
-                name={form.pulseRate.name}
-                label={form.pulseRate.label}
+                name={BloodFormConfig.pulseRate.name}
+                label={BloodFormConfig.pulseRate.label}
                 options={[
                   { label: "Irregular", value: "Irregular" },
                   { label: "Regular", value: "Regular" },
                 ]}
-                disabled={disableField(form.pulseRate.name)}
+                disabled={disableField(BloodFormConfig.pulseRate.name)}
                 getValue={(value) =>
-                  updateConditions(form.pulseRate.name, value)
+                  updateConditions(BloodFormConfig.pulseRate.name, value)
                 }
               />
             </FieldsContainer>
@@ -194,25 +190,25 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
           <FormFieldContainerLayout title="Reduced Urinary and Clammy Peripherals">
             <FieldsContainer>
               <RadioGroupInput
-                disabled={disableField(form.reducedUrinaryOutput.name)}
-                name={form.reducedUrinaryOutput.name}
-                label={form.reducedUrinaryOutput.label}
+                disabled={disableField(BloodFormConfig.reducedUrinaryOutput.name)}
+                name={BloodFormConfig.reducedUrinaryOutput.name}
+                label={BloodFormConfig.reducedUrinaryOutput.label}
                 options={options}
                 getValue={(value) =>{
-                  updateConditions(form.reducedUrinaryOutput.name, value)
-                  handleTriage(form.reducedUrinaryOutput.name, value)
+                  updateConditions(BloodFormConfig.reducedUrinaryOutput.name, value)
+                  handleTriage(BloodFormConfig.reducedUrinaryOutput.name, value)
                 }
                 }
               />
               <RadioGroupInput
-                disabled={disableField(form.clammyPeripherals.name)}
-                name={form.clammyPeripherals.name}
-                label={form.clammyPeripherals.label}
+                disabled={disableField(BloodFormConfig.clammyPeripherals.name)}
+                name={BloodFormConfig.clammyPeripherals.name}
+                label={BloodFormConfig.clammyPeripherals.label}
                 options={options}
                 getValue={(value) =>{
 
-                  updateConditions(form.clammyPeripherals.name, value)
-                  handleTriage(form.clammyPeripherals.name, value)
+                  updateConditions(BloodFormConfig.clammyPeripherals.name, value)
+                  handleTriage(BloodFormConfig.clammyPeripherals.name, value)
                 }
                 }
               />
@@ -221,32 +217,32 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
           <FormFieldContainerLayout title="Hemorrhage and Skin Turgor">
             <FieldsContainer>
               {/* <RadioGroupInput
-              disabled={disableField(form.temperature.name)}
-              name={form.temperature.name}
-              label={form.temperature.label}
+              disabled={disableField(BloodFormConfig.temperature.name)}
+              name={BloodFormConfig.temperature.name}
+              label={BloodFormConfig.temperature.label}
               options={options}
               getValue={(value) =>
-                updateConditions(form.temperature.name, value)
+                updateConditions(BloodFormConfig.temperature.name, value)
               }
             /> */}
               <RadioGroupInput
-                disabled={disableField(form.hemorrhage.name)}
-                name={form.hemorrhage.name}
-                label={form.hemorrhage.label}
+                disabled={disableField(BloodFormConfig.hemorrhage.name)}
+                name={BloodFormConfig.hemorrhage.name}
+                label={BloodFormConfig.hemorrhage.label}
                 options={options}
                 getValue={(value) =>{
-                  updateConditions(form.hemorrhage.name, value)
-                  handleTriage(form.hemorrhage.name, value)
+                  updateConditions(BloodFormConfig.hemorrhage.name, value)
+                  handleTriage(BloodFormConfig.hemorrhage.name, value)
                 }
                 }
               />
               <RadioGroupInput
-                disabled={disableField(form.dehydration.name)}
-                name={form.dehydration.name}
-                label={form.dehydration.label}
+                disabled={disableField(BloodFormConfig.dehydration.name)}
+                name={BloodFormConfig.dehydration.name}
+                label={BloodFormConfig.dehydration.label}
                 getValue={(value) => {
-                  updateConditions(form.dehydration.name, value);
-                  handleTriage(form.dehydration.name, value);
+                  updateConditions(BloodFormConfig.dehydration.name, value);
+                  handleTriage(BloodFormConfig.dehydration.name, value);
                 }
                 }
                 options={options}
@@ -261,15 +257,15 @@ export const BloodCirculationForm = ({ onSubmit, triageResult, continueTriage, p
               >
                 <FieldsContainer>
                   <RadioGroupInput
-                    disabled={disableField(form.heartRate5060.name)}
-                    name={form.heartRate5060.name}
-                    label={form.heartRate5060.label}
+                    disabled={disableField(BloodFormConfig.heartRate5060.name)}
+                    name={BloodFormConfig.heartRate5060.name}
+                    label={BloodFormConfig.heartRate5060.label}
                     options={options}
                   />
                   <RadioGroupInput
-                    disabled={disableField(form.temperature3738.name)}
-                    name={form.temperature3738.name}
-                    label={form.temperature3738.label}
+                    disabled={disableField(BloodFormConfig.temperature3738.name)}
+                    name={BloodFormConfig.temperature3738.name}
+                    label={BloodFormConfig.temperature3738.label}
                     options={options}
                   />
                 </FieldsContainer>

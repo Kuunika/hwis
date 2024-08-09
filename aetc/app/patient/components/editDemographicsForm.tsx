@@ -2,6 +2,7 @@ import { estimateBirthdate } from "@/helpers/dateTime";
 import { useState } from "react";
 import { FormDatePicker, FormValuesListener, FormikInit, MainTypography, RadioGroupInput, TextInputField, WrapperBox } from "@/components";
 import * as Yup from "yup";
+import { TrackFormikContext } from "@/app/registration/components";
 
 const form = {
     identificationNumber: {
@@ -71,11 +72,14 @@ const schema = Yup.object().shape({
 
 type Prop = {
     initialValues: any;
-    onSubmit: (values: any) => void
+    onSubmit: (values: any) => void;
+    onFormValueChange?:(values:any)=>void;
+    submitButton?: boolean;
+    setContext?: (context: any) => void;
 }
 
 
-export const EditDemographicsForm = ({ initialValues, onSubmit }: Prop) => {
+export const EditDemographicsForm = ({ initialValues, onSubmit, onFormValueChange=()=>{}, submitButton=true, setContext=(values)=>{} }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
 
     return <FormikInit
@@ -83,9 +87,13 @@ export const EditDemographicsForm = ({ initialValues, onSubmit }: Prop) => {
         initialValues={initialValues}
         onSubmit={onSubmit}
         submitButtonText="update"
-
+        getFormValues={onFormValueChange}
         enableReinitialize={true}
+        submitButton={submitButton}
     >
+          <TrackFormikContext
+          setFormContext={setContext}
+        />
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
             <FormValuesListener getValues={setFormValues} />
             <TextInputField
