@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { GenericDialog, MainButton, NewStepperContainer, StepperContainer } from "@/components";
+import { useEffect, useState } from "react";
+import { GenericDialog, MainButton, NewStepperContainer } from "@/components";
 import {
   AirwayAndBreathingForm,
   BloodCirculationForm,
@@ -19,12 +19,14 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
-import { getDateTime, getHumanReadableDate, getHumanReadableDateTime } from "@/helpers/dateTime";
+import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { getPatientsWaitingForTriage, getPatientVisitTypes } from "@/hooks/patientReg";
+import { ServiceAreaForm } from "./serviceAreaForm";
 import { Encounter, TriageResult } from "@/interfaces";
-import { Bounce, ToastContainer, toast } from "react-toastify";
+import { Bounce, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
-import { TriagePrintTemplate } from "@/components/barcode";
+import { closeCurrentVisit } from "@/hooks/visit";
+
 import { getObservationValue } from "@/helpers/emr";
 import { PatientTriageBarcodePrinter } from "@/components/barcodePrinterDialogs";
 
@@ -44,6 +46,8 @@ export default function TriageWorkFlow() {
   const [circulation, setCirculation] = useState({})
   const [consciousness, setConsciousness] = useState({})
   const [persistentPain, setPersistentPain] = useState({})
+  const [showModal, setShowModal] = useState(false);
+
   const [triagePrintOpen, setTriagePrintOpen] = useState(false)
   const {
     loading,
@@ -104,6 +108,7 @@ export default function TriageWorkFlow() {
     isError: triageResultError,
   } = addEncounter();
 
+
   const { navigateTo, navigateBack } = useNavigation();
 
   const steps = [
@@ -117,6 +122,9 @@ export default function TriageWorkFlow() {
   const patient = triageList?.find((d) => d.uuid == params.id);
   const { data: patientVisits, isLoading, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find(d => !Boolean(d.date_stopped));
+
+
+  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
 
   const { data } = getPatientsEncounters(params?.id as string);
   const [referral, setReferral] = useState<Encounter>()
@@ -228,9 +236,18 @@ export default function TriageWorkFlow() {
           concept: concepts.TRIAGE_RESULT,
           value: triageResult,
           obsDatetime: dateTime
-        }]
+        },
+        {
+          concept: concepts.PATIENT_REFERRED_TO,
+          value: formData.serviceArea[concepts.PATIENT_REFERRED_TO],
+          obsDatetime: getDateTime(),
+        }
+        ]
       });
     }
+
+    setMessage("closing visit...");
+    closeVisit(activeVisit?.uuid as string);
   }, [painCreated]);
 
   useEffect(() => {
@@ -271,16 +288,11 @@ export default function TriageWorkFlow() {
 
   const handlePersistentPain = (values: any) => {
     formData["pain"] = values;
-    setLoading(true);
     setShowForm(false);
-    setMessage("adding complaints...");
-    createPresenting({
-      encounterType: encounters.PRESENTING_COMPLAINTS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: formData.presentingComplaints,
-    });
+    if (triageResult == 'green') {
+      setShowModal(true);
+    }
+
   };
 
   const handleVitalsSubmit = (values: any) => {
@@ -317,6 +329,24 @@ export default function TriageWorkFlow() {
     setActiveStep(1);
     setSubmittedSteps(steps => [...steps, 0])
   };
+
+  const handleServiceArea = (values: any) => {
+    formData["serviceArea"] = values;
+    setMessage("adding next service area...");
+    setLoading(true);
+
+    setMessage("adding complaints...");
+    createPresenting({
+      encounterType: encounters.PRESENTING_COMPLAINTS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: formData.presentingComplaints,
+    });
+
+    setShowModal(false);
+  };
+
 
 
   useEffect(() => {
@@ -388,6 +418,11 @@ export default function TriageWorkFlow() {
     // TODO: send a message that you can't move
   }
 
+  const closeModal = () => {
+    setShowModal(false);
+    navigateBack();
+  };
+
 
   const handleOnCompleteTriage = () => {
     handlePresentComplaints(presentingComplaints);
@@ -404,6 +439,7 @@ export default function TriageWorkFlow() {
       <DisplayNone hidden={!showForm}>
         {triageResult && (
           <>
+
             <TriageContainer
               onCompleteTriage={handleOnCompleteTriage}
               result={triageResult}
@@ -463,9 +499,8 @@ export default function TriageWorkFlow() {
             setTriageResult={checkTriageResult}
             triageResult={triageResult}
             onSubmit={handlePersistentPain} />
-        </NewStepperContainer>
-      </DisplayNone>
-
+        </NewStepperContainer >
+      </DisplayNone >
       {completed == 7 && (
         <>
           <PatientTriageBarcodePrinter arrivalTime={getHumanReadableDateTime(initialRegistration?.encounter_datetime)} open={triagePrintOpen} onClose={() => setTriagePrintOpen(false)} presentingComplaints={presentingComplaints[concepts.COMPLAINTS].reduce((prev: any, current: any) => {
@@ -497,36 +532,52 @@ export default function TriageWorkFlow() {
             onSecondaryAction={() => navigateTo("/dashboard")}
           />
         </>
-      )}
+      )
+      }
 
-      {error && (
-        <FormError
-          error={message}
-          onPrimaryAction={() => {
-            setError(false);
-            setCompleted(0);
-            setLoading(false);
-            setShowForm(true);
-          }}
-          onSecondaryAction={() => {
-            setCompleted(0);
-            setShowForm(true);
-            setLoading(false);
-            setError(false);
-          }}
-        />
-      )}
-
-      {loading && !error && (
-        <>
-          <br />
-          <br />
-          <CustomizedProgressBars
-            message={message}
-            progress={(completed / 7) * 100}
+      {
+        error && (
+          <FormError
+            error={message}
+            onPrimaryAction={() => {
+              setError(false);
+              setCompleted(0);
+              setLoading(false);
+              setShowForm(true);
+            }}
+            onSecondaryAction={() => {
+              setCompleted(0);
+              setShowForm(true);
+              setLoading(false);
+              setError(false);
+            }}
           />
-        </>
-      )}
+        )
+      }
+
+      <GenericDialog
+        open={showModal}
+        onClose={closeModal}
+        title="Triage Decision"
+      >
+        <p>
+          Triage status is <span style={{ color: 'green' }}>GREEN</span>. Where should this patient go next?
+        </p>
+        <ServiceAreaForm onSubmit={handleServiceArea} />
+      </GenericDialog>
+
+      {
+        loading && !error && (
+          <>
+            <br />
+            <br />
+            <CustomizedProgressBars
+              message={message}
+              progress={(completed / 7) * 100}
+            />
+          </>
+        )
+      }
     </>
   );
 }
