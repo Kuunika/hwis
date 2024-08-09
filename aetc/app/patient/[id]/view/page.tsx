@@ -25,14 +25,14 @@ const Page = () => {
 
     return <>
         <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
-            <ViewPatient patient={patient ?? {} as Person} />
+            <ViewPatient disabled={false} patient={patient ?? {} as Person} />
             <WrapperBox>
                 <br />
-                <DisplayRelationship patientId={params.id as string} loading={loadingRelationships} relationships={relationships ? relationships : []} />
+                <DisplayRelationship disabled={false} patientId={params.id as string} loading={loadingRelationships} relationships={relationships ? relationships : []} />
             </WrapperBox>
             <WrapperBox sx={{ display: "flex", mt: "1ch" }}>
-                <DisplaySocialHistory onSubmit={() => { }} loading={isPending || patientLoading} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
-                <DisplayFinancing onSubmit={() => { }} loading={isPending || patientLoading} financing={financing ? financing : {} as Encounter} />
+                <DisplaySocialHistory disabled={false} onSubmit={() => { }} loading={isPending || patientLoading} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
+                <DisplayFinancing disabled={false} onSubmit={() => { }} loading={isPending || patientLoading} financing={financing ? financing : {} as Encounter} />
             </WrapperBox>
         </WrapperBox>
     </>

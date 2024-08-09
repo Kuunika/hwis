@@ -25,7 +25,9 @@ export const getTraditionalAuthorities = () => {
 };
 
 export const getDistricts = () => {
-    const getall = () => axios.get<District[]>("/constants/districts.json").then(response => response.data)
+    const getall = () => axios.get<District[]>("/constants/districts.json").then(response => response.data);
+
+
     return useQuery({
         queryKey: ["districts"],
         queryFn: getall,

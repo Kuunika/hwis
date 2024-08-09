@@ -19,7 +19,7 @@ function TriageHistory() {
         <MainGrid item lg={2}>
           <PersonalDetailsCard />
         </MainGrid>
-        <MainGrid item lg={6}>
+        <MainGrid item lg={8}>
           <MainPaper elevation={0} sx={{ p: "1ch" }}>
             <BackButton />
             <>
@@ -31,8 +31,8 @@ function TriageHistory() {
             </>
           </MainPaper>
         </MainGrid>
-        <MainGrid item lg={3}>
-          <ViewTriageResults />
+        <MainGrid item lg={2}>
+          {/* <ViewTriageResults /> */}
         </MainGrid>
       </MainGrid>
     </>

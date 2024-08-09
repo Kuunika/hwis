@@ -12,7 +12,7 @@ import { addPerson, addRelationship } from "@/hooks/people";
 
 
 
-export const DisplaySocialHistory = ({ socialHistory, loading, onSubmit }: { socialHistory: Encounter, loading: boolean, onSubmit: (values: any) => void }) => {
+export const DisplaySocialHistory = ({ socialHistory, loading, onSubmit, disabled }: { socialHistory: Encounter, loading: boolean, onSubmit: (values: any) => void, disabled: boolean }) => {
     const [socialHistoryDialogOpen, setSocialHistoryDialogOpen] = useState(false);
 
     const maritalStatus: string = getObservationValue(socialHistory?.obs, concepts.MARITAL_STATUS);
@@ -29,7 +29,7 @@ export const DisplaySocialHistory = ({ socialHistory, loading, onSubmit }: { soc
     }
 
     return <ContainerCard>
-        <SocialHistoryDialog onSubmit={onSubmit} initialValues={{
+        <SocialHistoryDialog onSubmit={(values)=>{onSubmit(values); setSocialHistoryDialogOpen(false)}} initialValues={{
             [concepts.MARITAL_STATUS]: maritalStatus,
             [concepts.RELIGION]: religion,
             [concepts.OCCUPATION]: occupation,
@@ -44,12 +44,12 @@ export const DisplaySocialHistory = ({ socialHistory, loading, onSubmit }: { soc
         <LabelValue label="Transportation" value={transportation} />
         <LabelValue label="Highest Education" value={highestEducation} />
 
-        <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setSocialHistoryDialogOpen(true)} />
+        <MainButton disabled={disabled} variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setSocialHistoryDialogOpen(true)} />
     </ContainerCard>
 }
 
 
-export const DisplayFinancing = ({ financing, loading, onSubmit }: { financing: Encounter, loading: boolean, onSubmit: (values: any) => void }) => {
+export const DisplayFinancing = ({ financing, loading, onSubmit, disabled }: { financing: Encounter, loading: boolean, onSubmit: (values: any) => void, disabled:boolean }) => {
     const [financingDialogOpen, setFinancingDialogOpen] = useState(false);
     const [financingOption, setFinancingOptions] = useState({ paymentOptions: "", insuranceProvider: "", insuranceNumber: "", insuranceScheme: "", insuranceStatus: "" })
 
@@ -92,12 +92,12 @@ export const DisplayFinancing = ({ financing, loading, onSubmit }: { financing: 
         <LabelValue label="Insurance Number" value={insuranceNumber} />
         <LabelValue label="Insurance Scheme" value={insuranceScheme} />
         <LabelValue label="Insurance Status" value={insuranceStatus} />
-        <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setFinancingDialogOpen(true)} />
+        <MainButton disabled={disabled} variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => setFinancingDialogOpen(true)} />
     </ContainerCard>
 }
 
 
-export const DisplayRelationship = ({ patientId }: { relationships: Relationship[], loading: boolean, patientId:string }) => {
+export const DisplayRelationship = ({ patientId, disabled }: { relationships: Relationship[], loading: boolean, patientId:string, disabled:boolean }) => {
     const { data: relationships, isPending: loadingRelationships, refetch  } = getPatientRelationships(patientId)
     const [relationshipDialog, setRelationshipDialog] = useState(false);
     const [guardianDialog, setGuardianDialog] = useState(false);
@@ -183,7 +183,7 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
                 <LabelValue label="First Name" value={relationship.given_name} />
                 <LabelValue label="Last Name" value={relationship.family_name} />
                 <LabelValue label="Relationship" value={relationship.relationship} />
-                <MainButton variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => {
+                <MainButton disabled={disabled} variant="secondary" sx={{ width: "10%" }} title="Edit" onClick={() => {
                     setRelationshipDialog(true);
                     setInitialValues({ ...relationship, relationship: relationship.relationshipUUID })
                 }} />
@@ -192,7 +192,7 @@ export const DisplayRelationship = ({ patientId }: { relationships: Relationship
         {<>
             {mappedRelationships?.length==0 && <MainButton sx={{ alignSelf: "flex-start", mr:"1px" }} title="Add Next Of Kin" onClick={() => setRelationshipDialog(true)} />}
             {(mappedRelationships?.length == 1 || mappedRelationships?.length==0) &&
-            <MainButton sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => setGuardianDialog(true)} />}
+            <MainButton disabled={disabled} sx={{ alignSelf: "flex-start" }} title="Add Guardian" onClick={() => setGuardianDialog(true)} />}
                 </>
         }
     </WrapperBox>

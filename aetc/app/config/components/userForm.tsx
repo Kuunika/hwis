@@ -10,6 +10,8 @@ import {
     WrapperBox,
 } from "@/components";
 import * as yup from "yup";
+import CircularProgress from '@mui/material/CircularProgress';
+import { Box, Button, Typography } from "@mui/material";
 
 type props = {
     initialValues: any;
@@ -64,8 +66,7 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
     }, [username])
 
 
-    const usernameResponseMessage = usernameResponse?.length == 0 ? 'username is available' : 'username not available'
-
+    const usernameResponseMessage = usernameResponse?.length == 0 ? 'username is available' : 'username already taken'
     return (
         <FormikInit
             initialValues={initialValues}
@@ -80,7 +81,8 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
                 sx={{ width: "100%"}}
                 getValue={value => setUsername(value)}
             />
-            <MainTypography variant="caption" my={"1ch"}>{usernameResponseMessage}</MainTypography>
+            {isFetching && <CircularIndeterminate />}
+           {username?.length>0 && !isFetching && <Typography fontWeight={600}  variant="body1" my={"1ch"}>{usernameResponseMessage}</Typography>}
             <WrapperBox sx={{ display: "flex" }}>
                 <TextInputField
                     name={form.password.name}
@@ -122,7 +124,16 @@ export const UserForm = ({ initialValues, onSubmit }: props) => {
                 }) : []} 
                 />
 
-            <MainButton type="submit" title={"Submit"} onClick={() => { }} />
+            <Button variant="contained" disabled={usernameResponse && usernameResponse?.length > 0 } type="submit">Submit</Button>
         </FormikInit>
     );
 };
+
+
+function CircularIndeterminate() {
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }

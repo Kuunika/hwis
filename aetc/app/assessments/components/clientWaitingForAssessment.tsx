@@ -2,8 +2,11 @@
 import { calculateAge, getTime } from "@/helpers/dateTime";
 import { useState } from "react";
 import { checkScreenSize, useNavigation } from "@/hooks";
-
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 import {
   BaseTable,
@@ -13,11 +16,13 @@ import {
   WrapperBox,
 } from "../../../components";
 
+
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters, triageResult } from "@/constants";
-import { PatientCardList } from "@/components/cards/PatientCardList";
 import { Box } from "@mui/material";
+import { FetchAndDisplayTriageBarcode, PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState("");
@@ -50,11 +55,11 @@ export const ClientWaitingForAssessment = () => {
     })).filter(p => p.id != deleted);
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit No" },
+    { field: "aetc_visit_number", headerName: "Visit" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "patient_arrival_time", headerName: "Arrival Time" },
-    { field: "birthdate", headerName: "Date Of Birth", flex: 1 },
+    // { field: "patient_arrival_time", headerName: "Arrival Time" },
+    { field: "birthdate", headerName: "Date Of Birth", },
     { field: "gender", headerName: "Gender" },
     {
       field: "waiting",
@@ -80,19 +85,7 @@ export const ClientWaitingForAssessment = () => {
         );
       },
     },
-    {
-      field: "triage",
-      headerName: "Triaged By",
-      flex: 1,
-      renderCell: (cell: any) => {
-        return (
-          <DisplayEncounterCreator
-            encounterType={encounters.VITALS}
-            patientId={cell.row.id}
-          />
-        );
-      },
-    },
+    { field: "last_encounter_creator", headerName: "Triaged By", flex: 1 },
     {
       field: "triage_result",
       headerName: "Triage Category",
@@ -108,11 +101,11 @@ export const ClientWaitingForAssessment = () => {
                 cell.value == "red"
                   ? "#B42318"
                   : cell.value == "yellow"
-                  ? "#ede207"
-                  : // : "#B54708",
-                  cell.value == "green"
-                  ? "#016302"
-                  : "",
+                    ? "#ede207"
+                    : // : "#B54708",
+                    cell.value == "green"
+                      ? "#016302"
+                      : "",
               marginY: 1,
             }}
           ></WrapperBox>
@@ -133,6 +126,7 @@ export const ClientWaitingForAssessment = () => {
         return (
           <>
             <MainButton
+              size="small"
               sx={{ fontSize: "12px", mr: "1px" }}
               title={"start"}
               onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
@@ -142,11 +136,14 @@ export const ClientWaitingForAssessment = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+            <BasicMenu patient={cell.row} />
           </>
         );
       },
     },
   ];
+
+
 
 
 
@@ -167,7 +164,7 @@ export const ClientWaitingForAssessment = () => {
       aggregate: (
         <CalculateWaitingTime
           arrival_time={row.arrival_time}
-      
+
         />
       ),
       waitingTime: (
@@ -178,7 +175,8 @@ export const ClientWaitingForAssessment = () => {
       actionName: "Triaged By",
       action: (
         <CardAction
-          setDeleted={(id:any)=>setDeleted(id)}
+          patient={row}
+          setDeleted={(id: any) => setDeleted(id)}
           triage={row.triage_result}
           visitId={row.visit_uuid}
           id={row.id}
@@ -189,7 +187,7 @@ export const ClientWaitingForAssessment = () => {
     };
   });
 
-  return  <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching}  columns={columns} />
+  return <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} />
 
 };
 
@@ -197,12 +195,14 @@ const CardAction = ({
   id,
   visitId,
   triage,
-  setDeleted
+  setDeleted,
+  patient
 }: {
   id: string;
   visitId: string;
   triage: string;
-  setDeleted: (id:any)=>void
+  setDeleted: (id: any) => void,
+  patient: any
 }) => {
   const { navigateTo } = useNavigation();
 
@@ -217,28 +217,66 @@ const CardAction = ({
             triage == "red"
               ? "#B42318"
               : triage == "yellow"
-              ? "#ede207"
-              : // : "#B54708",
-              triage == "green"
-              ? "#016302"
-              : "",
+                ? "#ede207"
+                : // : "#B54708",
+                triage == "green"
+                  ? "#016302"
+                  : "",
           marginY: 1,
         }}
       ></WrapperBox>
       <Box sx={{ flex: "1" }}>
         <MainButton
-          sx={{ fontSize: "12px", width: "49%", mr: "2px" }}
+          sx={{ fontSize: "12px", width: "30%", mr: "2px", mb: "1px" }}
           title={"start"}
           onClick={() => navigateTo(`/patient/${id}/profile`)}
         />
         <AbscondButton
-          sx={{ width: "49%" }}
+          sx={{ width: "30%" }}
           onDelete={() => setDeleted(id)}
           visitId={visitId}
           patientId={id}
+
         />
+        <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
       </Box>
     </Box>
   );
 };
 
+
+export function BasicMenu({ patient }: { patient: any }) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
+  return (
+    <div>
+      <MainButton
+        size="small"
+        sx={{ fontSize: "12px", ml: "1px" }}
+        variant="secondary"
+        title={"Print"}
+        onClick={handleClick}
+      />
+
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+
+        open={open}
+        onClose={handleClose}
+
+      >
+        <MenuItem sx={{ justifyContent: "flex-start" }}><PrinterBarcodeButton title="Demographics" sx={{ color: "ButtonText" }} variant="text" onClose={handleClose} patient={patient} /> </MenuItem>
+        <MenuItem sx={{ justifyContent: "flex-start" }}><FetchAndDisplayTriageBarcode arrivalDateTime={patient.arrival_time} patientId={patient.id} activeVisitId={patient?.active_visit?.visit_id} /></MenuItem>
+      </Menu>
+    </div>
+  );
+}

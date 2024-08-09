@@ -93,11 +93,13 @@ useEffect(()=>{
             fontWeight: 500,
             display: "flex",
             cursor: "pointer",
+            alignItems:"center"
+        
           }}
         >
-          <h3>
+       
             <FaCalendarDays />
-          </h3>
+        
           <MainTypography
             sx={{
               ml: "1ch",
@@ -118,6 +120,7 @@ useEffect(()=>{
           placement="bottom-start"
           transition
           disablePortal
+          sx={{zIndex:100000}}
         >
           {({ TransitionProps, placement }) => (
             <Grow
@@ -127,12 +130,12 @@ useEffect(()=>{
                   placement === "bottom-start" ? "left top" : "left bottom",
               }}
             >
-              <Paper>
+              <Paper >
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList
                     autoFocusItem={open}
                     id="composition-menu"
-
+             
                     aria-labelledby="composition-button"
                     onKeyDown={handleListKeyDown}
                   >

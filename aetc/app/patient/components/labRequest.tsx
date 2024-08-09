@@ -9,7 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import { FaRegCheckSquare, FaRegSquare, FaSearch } from "react-icons/fa";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
-import { LabRequest, TestType } from "@/interfaces";
+import { Concept, LabRequest, TestType } from "@/interfaces";
 import { createOrder, getConceptSetMembers, getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
 import { useParameters } from "@/hooks";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
@@ -104,21 +104,8 @@ export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
     setRequest((req: any) => ({ ...req, tests: mappedTests }))
   }
 
-
-
-  // return 
-
-
-  return (
-        <LabForm onClose={() => onClose('')} />
-    // <Dialog maxWidth="lg" fullWidth={true} onClose={handleClose} open={open}>
-    //   <OverlayLoader open={isPending || isRefetching} />
-    //   <DialogTitle>Lab Order</DialogTitle>
-    //   <DialogContent>
-    //     <LabForm onClose={() => onClose('')} />
-    //   </DialogContent>
-    // </Dialog>
-  );
+  return <LabForm onClose={() => onClose('')} />
+ 
 }
 
 
@@ -145,8 +132,8 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
   const { data: bedsideTests, isLoading: bedsideTestsLoading, refetch: reloadBedSideTests, isRefetching: reloadingBedsideTest } = getConceptSetMembers(bedsideTestId);
 
 
-  const [samples, setSamples] = useState<Array<any>>([]);
-  const [tests, setTests] = useState<Array<any>>([])
+  const [samples, setSamples] = useState<Concept[]>([]);
+  const [tests, setTests] = useState<Concept[]>([])
 
   const { params } = useParameters()
   const { data: patients } = getPatientsWaitingForAssessment();
@@ -187,7 +174,7 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
     return bedsideTests.map(bed => {
       return {
         ...bed,
-        name: bed.names[0].name,
+        name: bed.names[0]?.name,
       }
     })
   }
@@ -205,6 +192,8 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
 
     if (!specimenTypes) return;
 
+
+    //TODO:  
     setSamples(specimenTypes)
 
   }, [specimenTypes, refetchingLabSpecimen])
@@ -236,18 +225,19 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
 
 
   const handleSampleChange = (uuid: string) => {
-    const specimen = samples?.find(specimen => specimen.names[0].uuid == uuid);
-
+  
+    const specimen = samples?.find(specimen => specimen.names[0]?.uuid == uuid);
     if (testType == 'bedside') {
-
       setBedsideTestId(uuid)
       setTests(transformBedsideTests());
       return;
     }
 
-    if (!specimen) return;
+    // if (!specimen) return;
 
-    setSampleName(specimen.name)
+
+
+    setSampleName(uuid)
   }
 
   const handleLabSend = (values: any) => {
@@ -278,6 +268,7 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
     mutate(order);
     onClose()
   }
+  
   return <FormikInit initialValues={initialValues} onSubmit={handleLabSend} validationSchema={validationSchema}>
     {/* <OverlayLoader open={isPending || isLoading || isRefetching} /> */}
 
@@ -298,7 +289,7 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
     </WrapperBox>
 
 
-    <SearchComboBox getValue={handleSampleChange} multiple={false} label="Sample Type" name="sampleType" options={samples ? samples.map(sp => ({ id: sp.names[0].uuid, label: sp.name })) : []} />
+    <SearchComboBox getValue={handleSampleChange} multiple={false} label="Sample Type" name="sampleType" options={samples ? samples.map(sp => ({label: sp?.names[0]?.name, id: sp.names[0].uuid })) : []} />
     <RadioGroupInput getValue={(test) => {
       setTestType(test)
     }
@@ -306,7 +297,7 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
       { value: "Yes", label: "Yes" },
       { value: "No", label: "No" }]} label="Urgent Sample" />
 
-    <SearchComboBox label="Tests" name="tests" options={tests ? tests.map(d => ({ id: d.concept_id, label: d.name })) : []} />
+    <SearchComboBox label="Tests" name="tests" options={tests ? tests.map(d => ({ id: d.concept_id, label: d.names[0]?.name })) : []} />
   </FormikInit>
 
 }

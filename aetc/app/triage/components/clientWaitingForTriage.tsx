@@ -14,6 +14,7 @@ import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
+import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
@@ -40,17 +41,14 @@ export const ClientWaitingForTriage = () => {
     { field: "aetc_visit_number", headerName: "Visit Number" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "patient_arrival_time", headerName: "Arrival Time", flex: 1 },
+    { field: "patient_arrival_time", headerName: "Arrival Time" },
     {
       field: "waiting",
       headerName: "WaitingTime",
       flex: 1,
       renderCell: (cell: any) => {
         return (
-          <CalculateWaitingTime
-            arrival_time={cell.row.latest_encounter_time}
-          
-          />
+          <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} />
         );
       },
     },
@@ -59,36 +57,20 @@ export const ClientWaitingForTriage = () => {
       headerName: "Aggregate",
       flex: 1,
       renderCell: (cell: any) => {
-        return (
-          <CalculateWaitingTime
-            arrival_time={cell.row.arrival_time}
-          />
-        );
+        return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
-    {
-      field: "registered",
-      headerName: "Registered By",
-      flex: 1,
-      renderCell: (cell: any) => {
-        return (
-          <DisplayEncounterCreator
-            encounterType={encounters.SOCIAL_HISTORY}
-            patientId={cell.row.id}
-          />
-        );
-      },
-    },
-
+    { field: "last_encounter_creator", headerName: "Registered By", flex: 1 },
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
+      flex: 1.2,
       renderCell: (cell: any) => {
         return (
           <>
             <MainButton
-              sx={{ fontSize: "12px", mr:"1px" }}
+              size="small"
+              sx={{ fontSize: "12px", mr: "1px" }}
               title={"start"}
               onClick={() => navigateTo(`/triage/${cell.id}/start`)}
             />
@@ -97,6 +79,7 @@ export const ClientWaitingForTriage = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+            <PrinterBarcodeButton patient={cell.row} />
           </>
         );
       },
@@ -121,21 +104,22 @@ export const ClientWaitingForTriage = () => {
       waitingTime: (
         <CalculateWaitingTime arrival_time={row?.latest_encounter_time} />
       ),
-      actionName: "screened by",
+      actionName: "Registered by",
       action: (
         <>
-          {" "}
           <MainButton
-            sx={{ fontSize: "12px", width: "49%", mr: "1px" }}
+            size="small"
+            sx={{ fontSize: "12px", width: "30%", mr: "1px", mb: "1px" }}
             title={"start"}
             onClick={() => navigateTo(`/triage/${row.id}/start`)}
           />
           <AbscondButton
-            sx={{ width: "49%" }}
+            sx={{ width: "30%" }}
             onDelete={() => setDeleted(row.id)}
             visitId={row.visit_uuid}
             patientId={row.id}
           />
+          <PrinterBarcodeButton sx={{ width: "30%" }} patient={row} />
         </>
       ),
       age: calculateAge(row.birthdate),

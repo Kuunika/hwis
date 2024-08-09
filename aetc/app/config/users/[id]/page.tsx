@@ -22,7 +22,8 @@ const EditUserPage = () => {
         setInitialValues({
           username: user.data.username,
           role: user.data.user_roles.map(role => ({
-            name: role.role.role
+            id: role.role.role,
+            label: role.role.role
           }))
         });
         setIsLoading(false);
@@ -46,6 +47,8 @@ const EditUserPage = () => {
         ...values,
         userId,
       };
+
+      console.log({updatedValues})
       mutate(updatedValues);
 
   };

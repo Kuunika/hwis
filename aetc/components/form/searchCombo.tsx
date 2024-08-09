@@ -52,7 +52,6 @@ export const SearchComboBox: FC<Props> = ({
 
 
 
-
   const handleChange = (values: any) => {
     const inputValue = multiple ? values.map((v: any) => ({
       id: v.value,
@@ -73,9 +72,9 @@ export const SearchComboBox: FC<Props> = ({
   } : {}
 
 
-  return <WrapperBox sx={{ width, ...sx, p: 0.5, borderRadius: 0.5, }}>
+  return <WrapperBox sx={{ width, ...sx, borderRadius: 0.5, }}>
     <MainTypography color={"#666666"} variant="subtitle2">{label}</MainTypography>
-   {mappedOptions && mappedOptions.length>0 ? <Select
+    {mappedOptions && mappedOptions.length > 0 ? <Select
       styles={{
         //@ts-ignore
         control: (baseStyles, state) => ({
@@ -104,50 +103,4 @@ export const SearchComboBox: FC<Props> = ({
       options={mappedOptions} /> : null}
     <MainTypography color={"red"} variant="subtitle2">{errorMessage}</MainTypography>
   </WrapperBox>
-
-  // return (
-  //   <Autocomplete
-  //     multiple={multiple}
-  //     disablePortal
-  //     id={name}
-  //     disabled={disabled}
-  //     getOptionLabel={(option) => option.label}
-  //     isOptionEqualToValue={(option, value) => option.id == value.id}
-  //     disableCloseOnSelect
-  //     size={size}
-  //     //@ts-ignore
-  //     defaultValue={initialValues[name] ? initialValues[name] : undefined}
-  //     options={options}
-  //     sx={{ width, ...sx }}
-  //     renderOption={(props, option, { selected }) => (
-  //       <li {...props} key={option.id}>
-  //         <Checkbox
-  //           icon={icon}
-  //           checkedIcon={checkedIcon}
-  //           style={{ marginRight: 8 }}
-  //           checked={selected}
-  //         />
-  //         {option.label}
-  //       </li>
-  //     )}
-  //     onChange={(event: any, newValue: any) => {
-
-  //       const inputValue = multiple ? newValue : newValue.id;
-  //       setFieldValue(name, inputValue);
-  //       if (getValue) {
-  //         getValue(inputValue);
-  //       }
-  //     }}
-  //     renderInput={(params) => (
-  //       <TextField
-  //         {...params}
-  //         label={label}
-  //         error={hasError}
-  //         variant="outlined"
-  //         sx={{ my: "1ch", ...inputSx }}
-  //         helperText={errorMessage}
-  //       />
-  //     )}
-  //   />
-  // );
 };

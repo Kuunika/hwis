@@ -17,13 +17,14 @@ function Triage() {
     <>
       <Navigation title="Patients waiting for Triage" link="/dashboard" />
       <MainGrid container>
-        <MainGrid xs={0} lg={1} item></MainGrid>
+        <MainGrid xs={0} lg={0} item></MainGrid>
         <MainGrid
           xs={12}
-          lg={10}
+          lg={12}
           sx={{
             display: "flex",
             flexDirection: "column",
+            mx:"2ch"
           }}
           item
         >
@@ -36,7 +37,7 @@ function Triage() {
             This is a list of all patients that went through registration
             successfully and waiting for triage.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ p: 0 }}>
+          <RegistrationCard sx={{ p: 0,}}>
             <ClientWaitingForTriage />
           </RegistrationCard>
         </MainGrid>

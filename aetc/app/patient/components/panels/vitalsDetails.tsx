@@ -5,7 +5,7 @@ import { useNavigation, useParameters } from "@/hooks";
 import { BasicSelect } from "../basicSelect";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { getObservationValue } from "@/helpers/emr";
+import { filterObservations, formatAllVitalsToObject, getObservationValue } from "@/helpers/emr";
 import { useContext, useEffect, useState } from "react";
 
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
@@ -18,6 +18,24 @@ export const VitalsPanel = () => {
   const { params } = useParameters();
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [vitals, setVitals] = useState<any>([]);
+  const [formattedVitals, setFormattedVitals] = useState<any>({});
+  const [options, setOptions] = useState<Array<any>>([]);
+  const [activePage, setActivePage] = useState<number>(0)
+
+
+  useEffect(() => {
+    updateVitals(Object.keys(formattedVitals).length > 0 ? formattedVitals[activePage] : []);
+  }, [activePage])
+
+
+
+  useEffect(() => {
+    setOptions(Object.keys(formattedVitals).map(key => ({
+      value: Number(key),
+      label: `Triage ${Number(key) + 1}`
+    })))
+    updateVitals(Object.keys(formattedVitals).length > 0 ? formattedVitals[activePage] : []);
+  }, [formattedVitals])
 
 
   useEffect(() => {
@@ -25,15 +43,12 @@ export const VitalsPanel = () => {
       const encounter = data.filter(
         (d) => d?.encounter_type.uuid == encounters.VITALS
       ).find(d => d.visit_id == activeVisit);
-      const obs = encounter?.obs;
+      const obs = encounter?.obs ?? [];
 
-      updateVitals(obs);
-
+      setFormattedVitals(formatAllVitalsToObject(obs))
+      // updateVitals(obs);
     }
-  }, [activeVisit,data]);
-
-
-
+  }, [activeVisit, data]);
 
   const updateVitals = (obs: any) => {
     const initialVitals = [
@@ -73,12 +88,6 @@ export const VitalsPanel = () => {
     setVitals(initialVitals);
   }
 
-  const options = [
-    { label: "1", value: "1" },
-    { label: "2 ", value: "2" },
-    { label: "3", value: "3" },
-  ];
-
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;
   }
@@ -90,7 +99,7 @@ export const VitalsPanel = () => {
       <br />
       <WrapperBox>
         <WrapperBox width={"20%"}>
-          <BasicSelect label="" options={options} />
+          <BasicSelect getValue={(value: any) => setActivePage(Number(value))} label="" options={options} />
         </WrapperBox>
       </WrapperBox>
       <br />
