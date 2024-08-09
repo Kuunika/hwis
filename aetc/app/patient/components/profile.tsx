@@ -31,7 +31,7 @@ import { formatAllVitalsToObject } from "@/helpers/emr";
 import { encounters } from "@/constants";
 import { OverlayLoader } from "@/components/backdrop";
 
- 
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -58,11 +58,11 @@ export const DesktopView = () => {
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [value, setValue] = React.useState(0);
-  const [chartData, setChartData] = useState({ xAxisData: [], systolicbpData: [], diastolicbpData: [], heartRateData: [], glucoseData: [], tempData: [], rrData: [] });
+  const [chartData, setChartData] = useState<any>({ xAxisData: [], systolicbpData: [], diastolicbpData: [], heartRateData: [], glucoseData: [], tempData: [], rrData: [] });
   const [selectedChartTop, setSelectedChartTop] = useState('bp'); // State for top chart container
   const [selectedChartBottom, setSelectedChartBottom] = useState('glu'); // State for bottom chart container
   const { setActiveVisit, activeVisit, setOpenVisit } = React.useContext(PatientProfileContext) as PatientProfileContextType;
-  const [formattedVitals, setFormattedVitals]=useState<any>({});
+  const [formattedVitals, setFormattedVitals] = useState<any>({});
   const [chartLoading, setChartLoading] = useState(true);
   const handleButtonClickTop = (selectedChartType: string) => {
     setSelectedChartTop(selectedChartType);
@@ -71,90 +71,90 @@ export const DesktopView = () => {
   const handleButtonClickBottom = (selectedChartType: string) => {
     setSelectedChartBottom(selectedChartType);
   };
-  
+
   const inActiveButtonStyle = {
     backgroundColor: 'white',
     color: 'green',
-    border:'1px solid green',
+    border: '1px solid green',
   };
 
   useEffect(() => {
     if (data && activeVisit !== 0) {
-        const encounter = data.filter(
-            (d) => d?.encounter_type.uuid === encounters.VITALS
-        ).find(d => d.visit_id === activeVisit);
-        const obs = encounter?.obs ?? [];
-        
-        const formattedVitals = formatAllVitalsToObject(obs);
-        setFormattedVitals(formattedVitals);
- 
+      const encounter = data.filter(
+        (d) => d?.encounter_type.uuid === encounters.VITALS
+      ).find(d => d.visit_id === activeVisit);
+      const obs = encounter?.obs ?? [];
+
+      const formattedVitals = formatAllVitalsToObject(obs);
+      setFormattedVitals(formattedVitals);
+
     }
-}, [activeVisit, data]);
+  }, [activeVisit, data]);
 
 
-useEffect(() => {
-  // Function to extract chart data
-  const extractChartData = (triages: any[]) => {
-    setChartLoading(true);
-    const triageData: any[] = [];
+  useEffect(() => {
+    // Function to extract chart data
+    const extractChartData = (triages: any[]) => {
+      setChartLoading(true);
+      const triageData: any[] = [];
 
-    for (const observations of triages) {
-      // Ensure observations is an array or convert to array
-      const obsArray = Array.isArray(observations) ? observations : [observations];
-      if (!obsArray || !Array.isArray(obsArray)) {
-        console.warn('Expected array but got:', obsArray);
-        continue; // Skip this triage if it's not an array
+      for (const observations of triages) {
+        // Ensure observations is an array or convert to array
+        const obsArray = Array.isArray(observations) ? observations : [observations];
+        if (!obsArray || !Array.isArray(obsArray)) {
+          console.warn('Expected array but got:', obsArray);
+          continue; // Skip this triage if it's not an array
+        }
+
+        // Extract relevant data based on concept_id
+        const systolicbp = obsArray.find((obs: any) => obs?.concept_id === 5085)?.value_numeric || null;
+        const diastolicbp = obsArray.find((obs: any) => obs?.concept_id === 5086)?.value_numeric || null;
+        const heartrate = obsArray.find((obs: any) => obs?.concept_id === 5087)?.value_numeric || null;
+        const glucose = obsArray.find((obs: any) => obs?.concept_id === 887)?.value_numeric || null;
+        const temperature = obsArray.find((obs: any) => obs?.concept_id === 5088)?.value_numeric || null;
+        const rr = obsArray.find((obs: any) => obs?.concept_id === 5242)?.value_text || null;
+
+        // Extract and format timestamp
+        const datetime = new Date(obsArray.find((obs: any) => obs?.obs_datetime)?.obs_datetime || '');
+
+        triageData.push({
+          timestamp: isNaN(datetime.getTime()) ? null : datetime,
+          systolicbp,
+          diastolicbp,
+          heartrate,
+          glucose,
+          temperature,
+          rr
+        });
       }
 
-      // Extract relevant data based on concept_id
-      const systolicbp = obsArray.find((obs: any) => obs?.concept_id === 5085)?.value_numeric || null;
-      const diastolicbp = obsArray.find((obs: any) => obs?.concept_id === 5086)?.value_numeric || null;
-      const heartrate = obsArray.find((obs: any) => obs?.concept_id === 5087)?.value_numeric || null;
-      const glucose = obsArray.find((obs: any) => obs?.concept_id === 887)?.value_numeric || null;
-      const temperature = obsArray.find((obs: any) => obs?.concept_id === 5088)?.value_numeric || null;
-      const rr = obsArray.find((obs: any) => obs?.concept_id === 5242)?.value_text || null;
+      // Sort triage data by timestamp
+      triageData.sort((a, b) => (a.timestamp?.getTime() ?? 0) - (b.timestamp?.getTime() ?? 0));
 
-      // Extract and format timestamp
-      const datetime = new Date(obsArray.find((obs: any) => obs?.obs_datetime)?.obs_datetime || '');
+      // Map sorted data to chart data arrays
+      const xAxisData = triageData.map(data => data.timestamp);
+      const systolicbpData = triageData.map(data => data.systolicbp);
+      const diastolicbpData = triageData.map(data => data.diastolicbp);
+      const heartRateData = triageData.map(data => data.heartrate);
+      const glucoseData = triageData.map(data => data.glucose);
+      const tempData = triageData.map(data => data.temperature);
+      const rrData = triageData.map(data => data.rr);
 
-      triageData.push({
-        timestamp: isNaN(datetime.getTime()) ? null : datetime,
-        systolicbp,
-        diastolicbp,
-        heartrate,
-        glucose,
-        temperature,
-        rr
-      });
+      return { xAxisData, systolicbpData, diastolicbpData, heartRateData, glucoseData, tempData, rrData };
+    };
+
+    // Extract chart data from formattedVitals
+    if (formattedVitals && typeof formattedVitals === 'object' && Object.keys(formattedVitals).length > 0) {
+      const allTriages = Object.values(formattedVitals);
+      const chartData = extractChartData(allTriages);
+      setChartData(chartData);
+      setChartLoading(false);
+    } else {
+      console.warn('Formatted vitals data is empty, undefined, or not in expected format.');
     }
+  }, [formattedVitals]);
 
-    // Sort triage data by timestamp
-    triageData.sort((a, b) => (a.timestamp?.getTime() ?? 0) - (b.timestamp?.getTime() ?? 0));
-
-    // Map sorted data to chart data arrays
-    const xAxisData = triageData.map(data => data.timestamp);
-    const systolicbpData = triageData.map(data => data.systolicbp);
-    const diastolicbpData = triageData.map(data => data.diastolicbp);
-    const heartRateData = triageData.map(data => data.heartrate);
-    const glucoseData = triageData.map(data => data.glucose);
-    const tempData = triageData.map(data => data.temperature);
-    const rrData = triageData.map(data => data.rr);
-
-    return { xAxisData, systolicbpData, diastolicbpData, heartRateData, glucoseData, tempData, rrData };
-  };
-
-  // Extract chart data from formattedVitals
-  if (formattedVitals && typeof formattedVitals === 'object' && Object.keys(formattedVitals).length > 0) {
-    const allTriages = Object.values(formattedVitals);
-    const chartData = extractChartData(allTriages);
-    setChartData(chartData);
-    setChartLoading(false);
-  } else {
-    console.warn('Formatted vitals data is empty, undefined, or not in expected format.');
-  }
-}, [formattedVitals]);
-
-useEffect(() => {
+  useEffect(() => {
     setSelectedChartTop(prevTop => prevTop === selectedChartTop ? prevTop : selectedChartTop);
     setSelectedChartBottom(prevBottom => prevBottom === selectedChartBottom ? prevBottom : selectedChartBottom);
   }, [selectedChartBottom, selectedChartTop]);
@@ -180,16 +180,16 @@ useEffect(() => {
         <BasicAccordion />
       </MainGrid>
       <MainGrid item lg={9}>
-        <VitalsPanel/>
-        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "1ch", marginLeft: "5px"  }}>
+        <VitalsPanel />
+        <WrapperBox sx={{ display: "flex", gap: "1ch", marginTop: "1ch", marginLeft: "5px" }}>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch' }}>
-              <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartTop === 'bp' ? {} : inActiveButtonStyle), }} />
-              <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={{borderRadius:"5px",...(selectedChartTop === 'hr' ? {} : inActiveButtonStyle),}} />
+              <MainButton title={"BP"} onClick={() => handleButtonClickTop('bp')} sx={{ margin: "0 1ch 0 0", borderRadius: "5px", ...(selectedChartTop === 'bp' ? {} : inActiveButtonStyle), }} />
+              <MainButton title={"HeartRate"} onClick={() => handleButtonClickTop('hr')} sx={{ borderRadius: "5px", ...(selectedChartTop === 'hr' ? {} : inActiveButtonStyle), }} />
             </div>
             {selectedChartTop === 'bp' && (
               <LineChartComponent
-              key={`top-bp-${JSON.stringify(chartData.xAxisData)}`}
+                key={`top-bp-${JSON.stringify(chartData.xAxisData)}`}
                 chartData={chartData}
                 xAxisData={chartData.xAxisData}
                 series={[
@@ -200,7 +200,7 @@ useEffect(() => {
             )}
             {selectedChartTop === 'hr' && (
               <LineChartComponent
-              key={`top-hr-${JSON.stringify(chartData.xAxisData)}`}
+                key={`top-hr-${JSON.stringify(chartData.xAxisData)}`}
                 chartData={chartData}
                 xAxisData={chartData.xAxisData}
                 series={[
@@ -210,46 +210,46 @@ useEffect(() => {
             )}
           </div>
           <div style={{ flex: 1, backgroundColor: '#ffffff', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #ccc', borderRadius: '5px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch'}}>
-              <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px" , ...(selectedChartBottom === 'glu' ? {} : inActiveButtonStyle),}} />
-              <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", borderRadius:"5px", ...(selectedChartBottom === 'temp' ? {} : inActiveButtonStyle),}}/>
-              <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} sx={{borderRadius:"5px",...(selectedChartBottom === 'rr' ?  {}: inActiveButtonStyle),}} />
+            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1ch' }}>
+              <MainButton title={"Glucose"} onClick={() => handleButtonClickBottom('glu')} sx={{ margin: "0 1ch 0 0", borderRadius: "5px", ...(selectedChartBottom === 'glu' ? {} : inActiveButtonStyle), }} />
+              <MainButton title={"Temp"} onClick={() => handleButtonClickBottom('temp')} sx={{ margin: "0 1ch 0 0", borderRadius: "5px", ...(selectedChartBottom === 'temp' ? {} : inActiveButtonStyle), }} />
+              <MainButton title={"RR"} onClick={() => handleButtonClickBottom('rr')} sx={{ borderRadius: "5px", ...(selectedChartBottom === 'rr' ? {} : inActiveButtonStyle), }} />
             </div>
-      
-              {selectedChartBottom === 'glu' && (
-                <LineChartComponent
+
+            {selectedChartBottom === 'glu' && (
+              <LineChartComponent
                 key={`bottom-glu-${JSON.stringify(chartData.xAxisData)}`}
-                  chartData={chartData}
-                  xAxisData={chartData.xAxisData}
-                  series={[
-                    { key: 'glucoseData', label: 'Glucose', color: 'purple' }
-                  ]}
-                />
-              )}
-              {selectedChartBottom === 'temp' && (
-                <LineChartComponent
+                chartData={chartData}
+                xAxisData={chartData.xAxisData}
+                series={[
+                  { key: 'glucoseData', label: 'Glucose', color: 'purple' }
+                ]}
+              />
+            )}
+            {selectedChartBottom === 'temp' && (
+              <LineChartComponent
                 key={`bottom-temp-${JSON.stringify(chartData.xAxisData)}`}
-                  chartData={chartData}
-                  xAxisData={chartData.xAxisData}
-                  series={[
-                    { key: 'tempData', label: 'Temperature', color: 'orange' }
-                  ]}
-                />
-              )}
-              {selectedChartBottom === 'rr' && (
-                <LineChartComponent
+                chartData={chartData}
+                xAxisData={chartData.xAxisData}
+                series={[
+                  { key: 'tempData', label: 'Temperature', color: 'orange' }
+                ]}
+              />
+            )}
+            {selectedChartBottom === 'rr' && (
+              <LineChartComponent
                 key={`bottom-rr-${JSON.stringify(chartData.xAxisData)}`}
-                  chartData={chartData}
-                  xAxisData={chartData.xAxisData}
-                  series={[
-                    { key: 'rrData', label: 'Respiratory Rate', color: 'cyan' }
-                  ]}
-                />
-              )}
+                chartData={chartData}
+                xAxisData={chartData.xAxisData}
+                series={[
+                  { key: 'rrData', label: 'Respiratory Rate', color: 'cyan' }
+                ]}
+              />
+            )}
           </div>
         </WrapperBox>
 
-        <Tabs value={value} onChange={handleChange} style={{ marginTop:"1ch", marginLeft:"5px"}}>
+        <Tabs value={value} onChange={handleChange} style={{ marginTop: "1ch", marginLeft: "5px" }}>
           <Tab style={{
             borderTopLeftRadius: '4px',
             padding: '10px 20px',
@@ -297,7 +297,7 @@ useEffect(() => {
           backgroundColor: '#ffffff',
           borderRadius: '4px',
           border: '1px solid #ccc',
-          marginLeft:"5px"
+          marginLeft: "5px"
         }}>
           <CustomTabPanel value={value} index={0} ><Investigations /></CustomTabPanel>
           <CustomTabPanel value={value} index={1}><ClinicalNotes /></CustomTabPanel>
