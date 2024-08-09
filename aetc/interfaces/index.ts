@@ -12,6 +12,7 @@ export interface Name {
 }
 
 export interface Concept {
+  concept_set_id?:number;
   concept_id: number;
   is_set: number;
   uuid: string;

@@ -5,12 +5,13 @@ import * as Yup from "yup";
 
 import { getInitialValues, notify } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
+import { TextInputDisplay } from "@/components/form/textInputDisplay";
 
 type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult: (triage: any, name: string) => void;
   triageResult: string;
-  getFormValues: (values:any)=>void
+  getFormValues: (values: any) => void
 };
 const form = {
   complaints: {
@@ -139,7 +140,7 @@ const presentingComplaints = [
   { id: "Oedema Bilateral Leg", label: "Oedema bilateral leg (Leg swelling)" },
   { id: "Oedema Generalised", label: "Oedema generalised (General body swelling)" },
   { id: "Oliguria", label: "Oliguria (Reduced urine output" },
-  // { id: "Other", label: "Other" },
+  { id: "Other", label: "Other" },
   // { id: "Other Specify", label: "Specify" },
   { id: "Pain Abdominal", label: "Pain abdominal" },
   { id: "Pain Back", label: "Pain back" },
@@ -174,7 +175,6 @@ const presentingComplaints = [
   { id: "Sleep Disturbance", label: "Sleep disturbance" },
   { id: "Social Problem", label: "Social problem" },
   { id: "Sore Throat", label: "Sore throat" },
-
   { id: "Sting Bee", label: "Sting Bee" },
   { id: "Sting Scorpion", label: "Sting Scorpion" },
   { id: "Sting Wasp", label: "Sting Wasp" },
@@ -217,8 +217,14 @@ const presentingComplaints = [
 
 export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormValues }: Prop) => {
 
+  const [otherPresenting, setOtherPresenting] = useState([]);
+  const [showInputTextDisplay, setShowInputTextDisplay] = useState(false)
+
   const handleValueChange = (values: Array<any>) => {
     const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting Blood']
+
+    setShowInputTextDisplay(Boolean(values.find(v => v.id == "Other")))
+
     triage.forEach(triage => {
       const found = values.find(v => {
         return v.id == triage
@@ -231,11 +237,20 @@ export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormVal
       }
     })
   }
+
+
+  const handleSubmit = (values: any) => {
+    const other = otherPresenting.map(value => ({ id: value, label: value }))
+    values[form.complaints.name] = [...values[form.complaints.name], ...other]
+    onSubmit(values)
+  }
+
+
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       submitButton={false}
       submitButtonText="next"
       getFormValues={getFormValues}
@@ -246,8 +261,12 @@ export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormVal
         label={form.complaints.label}
         options={presentingComplaints}
       />
+      <br />
 
-      <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+      {showInputTextDisplay && <TextInputDisplay getValues={setOtherPresenting} />}
+      <br />
+
+      <MainButton title={"next"} type="submit" onClick={() => { }} />
     </FormikInit>
   );
 }; 

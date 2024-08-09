@@ -1,5 +1,3 @@
-
-
 import { useContext, useEffect, useState } from "react";
 import {
   BaseTable,
@@ -13,7 +11,7 @@ import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
 import { useNavigation, useParameters } from "@/hooks";
-import { FaUser } from "react-icons/fa6"
+import { FaUser, FaBarcode } from "react-icons/fa6";
 
 import {
   SearchRegistrationContext,
@@ -21,7 +19,11 @@ import {
 } from "@/contexts";
 import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import { getPatientRelationships, getPatientsWaitingForRegistrations, merge } from "@/hooks/patientReg";
+import {
+  getPatientRelationships,
+  getPatientsWaitingForRegistrations,
+  merge,
+} from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ViewPatient } from "@/app/patient/components/viewPatient";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
@@ -31,24 +33,31 @@ import { getObservationValue } from "@/helpers/emr";
 import { getDateTime } from "@/helpers/dateTime";
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { OperationSuccess } from "@/components/operationSuccess";
-import { DisplayFinancing, DisplayRelationship, DisplaySocialHistory } from "@/app/patient/[id]/view/components";
+import {
+  DisplayFinancing,
+  DisplayRelationship,
+  DisplaySocialHistory,
+} from "@/app/patient/[id]/view/components";
 import { DDEPatientRegistration } from "../../components/ddePatientRegistration";
-
+import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { Typography } from "@mui/material";
 
 export const SearchResults = ({
   searchedPatient,
   searchResults,
+  genericSearch
 }: {
-
   searchedPatient: any;
-  searchResults: DDESearch,
-
+  searchResults: DDESearch;
+  genericSearch: boolean
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [open, setOpen] = useState(false);
-  const { setRegistrationType, setPatient, patient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
-  const [type,setType]=useState('')
+  const { setRegistrationType, setPatient, patient } = useContext(
+    SearchRegistrationContext
+  ) as SearchRegistrationContextType;
+  const [type, setType] = useState("");
 
   const { setPatient: setRegisterPatient } = useContext(
     SearchRegistrationContext
@@ -59,14 +68,15 @@ export const SearchResults = ({
     navigateTo(`/registration/${params.id}/new`);
   };
 
-  const selectPatient = (person: Person, type:string) => {
+  const selectPatient = (person: Person, type: string) => {
     setPatient(person);
     setOpen(true);
-    setType(type)
+    setType(type);
     // setRegistrationType(registrationType)
-  }
+  };
 
-  const resultNotFound = (searchResults?.locals?.length == 0 && searchResults?.remotes?.length == 0)
+  const resultNotFound =
+    searchResults?.locals?.length == 0 && searchResults?.remotes?.length == 0;
 
   return (
     <WrapperBox
@@ -78,93 +88,197 @@ export const SearchResults = ({
     >
       <MainTypography variant="h5">Search Results</MainTypography>
 
-      {
-        resultNotFound && (
-          <WrapperBox sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <br />
-            <MainTypography variant="body2">No patient with similar demographics found</MainTypography>
-            <br />
-            <MainButton
-              sx={{ mr: "0.2ch", borderRadius: "1px" }}
-              variant="secondary"
-              title="add new record"
-              onClick={handleNewRecord}
-            />
-          </WrapperBox>
-        )
-      }
+      {resultNotFound && (
+        <WrapperBox
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <br />
+          <MainTypography variant="body2">
+            No patient with similar demographics found
+          </MainTypography>
+          <br />
+
+          {!genericSearch && <MainButton
+            sx={{ mr: "0.2ch", borderRadius: "1px" }}
+            variant="secondary"
+            title="add new record"
+            onClick={handleNewRecord}
+          />}
+        </WrapperBox>
+      )}
       <br />
-      {!resultNotFound && <WrapperBox sx={{ width: "100%" }}>
-        <MainButton
-          sx={{ mr: "0.2ch", borderRadius: "1px" }}
-          variant="secondary"
-          title="add new record"
-          onClick={handleNewRecord}
-        />
-      </WrapperBox>}
+      {!resultNotFound && (
+        <WrapperBox sx={{ width: "100%" }}>
+          {!genericSearch && <MainButton
+            sx={{ mr: "0.2ch", borderRadius: "1px" }}
+            variant="secondary"
+            title="add new record"
+            onClick={handleNewRecord}
+          />}
+        </WrapperBox>
+      )}
       <br />
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
-        {
-          searchResults?.locals?.map(patient => {
-            return <ResultBox setOpen={(person: Person) => selectPatient(person,'local')} type="Local" key={patient?.uuid} person={patient} />
-          })
-        }
-        {
-          searchResults?.remotes?.map(patient => {
-            //@ts-ignore
-            return <ResultBox setOpen={(person: Person) => selectPatient(person,'remote')} type="Remote" key={patient?.uuid} person={patient} />
-          })
-        }
+        {searchResults?.locals?.map((patient) => {
+          return (
+            <>
+              <ResultBox
+                genericSearch={genericSearch}
+                setOpen={(person: Person) => !genericSearch && selectPatient(person, "local")}
+                type="Local"
+                key={patient?.uuid}
+                person={patient}
+              />
+            </>
+          );
+        })}
+        {searchResults?.remotes?.map((patient) => {
+          //@ts-ignore
+          return (
+            <ResultBox
+              genericSearch={genericSearch}
+              setOpen={(person: Person) => !genericSearch && selectPatient(person, "remote")}
+              type="Remote"
+
+              //@ts-ignore
+              key={patient?.uuid}
+              person={patient}
+            />
+          );
+        })}
       </WrapperBox>
-      <ViewPatientDialog type={type} patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open} />
-      {/* <DDEPatientRegistration patient={patient ? patient : {} as Person} onClose={() => setOpen(false)} open={open}  /> */}
+      {type == "local" && (
+        <ViewPatientDialog
+          type={type}
+          patient={patient ? patient : ({} as Person)}
+          onClose={() => setOpen(false)}
+          open={open}
+        />
+      )}
+      {type == "remote" && (
+        <DDEPatientRegistration
+          patient={patient ? patient : ({} as Person)}
+          onClose={() => setOpen(false)}
+          open={open}
+        />
+      )}
       {/* <ConfirmationDialog open={open} onClose={() => setOpen(false)} /> */}
     </WrapperBox>
   );
 };
 
+export const ResultBox = ({
+  person,
+  type,
+  setOpen,
+  genericSearch
+}: {
+  person: any;
+  type: string;
+  setOpen: (person: any) => void;
+  genericSearch: boolean
 
-export const ResultBox = ({ person, type, setOpen }: { person: any, type: string, setOpen: (person: any) => void }) => {
-
+}) => {
   if (!person) {
-    return <></>
+    return <></>;
   }
 
   // return <></>;
-  const identifier = person?.identifiers?.find((i: any) => i?.identifier_type?.name == 'National id');
+  const identifier = person?.identifiers?.find(
+    (i: any) => i?.identifier_type?.name == "National id"
+  );
 
-  return <MainPaper onClick={() => setOpen(person)} sx={{ display: "flex", padding: 2, width: "100%", my: 1, cursor: "pointer" }}>
-    <WrapperBox sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20%", backgroundColor: "#F5F5F5", mr: 1 }}>
-      <MainTypography color={defaultTheme.primary} variant="h1"><FaUser /></MainTypography>
+  return (
+    <MainPaper
+      onClick={() => setOpen(person)}
+      sx={{
+        display: "flex",
+        padding: 2,
+        width: "100%",
+        my: 1,
+        cursor: "pointer",
+      }}
+    >
+      <WrapperBox sx={{ display: "flex", flexDirection: "column", justifyContent: "center", mr: 1, }}>
+        <WrapperBox
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#F5F5F5",
+
+          }}
+        >
+          <MainTypography color={defaultTheme.primary} variant="h1">
+            <FaUser />
+          </MainTypography>
+        </WrapperBox>
+        <br />
+        {type == "Local" && genericSearch && <PrinterBarcodeButton title={`Print Barcode`} icon={<Typography mr="1ch"><FaBarcode /></Typography>} variant="primary" patient={person} />}
+        {/* <MainButton title="print barcode" onClick={() => { }} /> */}
+      </WrapperBox>
+
+      <WrapperBox>
+        <WrapperBox
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <MainTypography variant="h5">
+            {person?.given_name} {person?.family_name}
+          </MainTypography>
+          <MainTypography>{type}</MainTypography>
+        </WrapperBox>
+        <WrapperBox sx={{ display: "flex" }}>
+          <MainTypography color={"GrayText"} sx={{ mr: 1 }}>
+            NPID:
+          </MainTypography>
+          <MainTypography color={"GrayText"}>
+            {identifier?.identifier}
+          </MainTypography>
+        </WrapperBox>
+        <br />
+        <WrapperBox sx={{ display: "flex", mb: 1 }}>
+          <Label label="Date of birth" value={person?.birthdate} />
+          <Label label="Gender" value={person?.gender} />
+        </WrapperBox>
+        <WrapperBox sx={{ display: "flex" }}>
+          <Label label="Home district" value={person?.addresses[0]?.address1} />
+          <Label
+            label="Home traditional authority"
+            value={person?.addresses[0]?.cityVillage}
+          />
+          <Label label="Home village" value={person?.addresses[0]?.address2} />
+        </WrapperBox>
+      </WrapperBox>
+    </MainPaper>
+  );
+};
+
+const Label = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | undefined | Date;
+}) => {
+  return (
+    <WrapperBox sx={{ display: "flex", flexDirection: "column", mr: 1 }}>
+      <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>
+        {label}
+      </MainTypography>
+      <MainTypography variant="subtitle2" color={"#585858"}>
+        {value ? value.toString() : ""}
+      </MainTypography>
     </WrapperBox>
-    <WrapperBox>
-      <WrapperBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <MainTypography variant="h5">{person?.given_name} {person?.family_name}</MainTypography>
-        <MainTypography>{type}</MainTypography>
-      </WrapperBox>
-      <WrapperBox sx={{ display: "flex" }}>
-        <MainTypography color={"GrayText"} sx={{ mr: 1 }}>NPID:</MainTypography><MainTypography color={"GrayText"} >{identifier?.identifier}</MainTypography>
-      </WrapperBox>
-      <br />
-      <WrapperBox sx={{ display: "flex", mb: 1 }}>
-        <Label label="Date of birth" value={person?.birthdate} />
-        <Label label="Gender" value={person?.gender} />
-      </WrapperBox>
-      <WrapperBox sx={{ display: "flex" }}>
-        <Label label="Home district" value={person?.addresses[0]?.address1} />
-        <Label label="Home traditional authority" value={person?.addresses[0]?.cityVillage} />
-        <Label label="Home village" value={person?.addresses[0]?.address2} />
-      </WrapperBox>
-    </WrapperBox>
-  </MainPaper>
-}
-
-
-const Label = ({ label, value }: { label: string, value: string | undefined | Date }) => {
-  return <WrapperBox sx={{ display: "flex", flexDirection: "column", mr: 1 }}>
-    <MainTypography variant="subtitle2" color={"#C0C0C0"} sx={{ mr: 0.5 }}>{label}</MainTypography><MainTypography variant="subtitle2" color={"#585858"} >{value ? value.toString() : ''}</MainTypography>
-  </WrapperBox>
-}
+  );
+};
 
 export const AddPatientButton = () => {
   const { params } = useParameters();
@@ -193,24 +307,37 @@ export const AddPatientButton = () => {
   );
 };
 
-
-const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient: Person, onClose: () => void, open: boolean, type:string }) => {
-
-  const [mergeType,setMergeType]=useState(type)
+const ViewPatientDialog = ({
+  patient,
+  onClose,
+  open,
+  type = "remote",
+}: {
+  patient: Person;
+  onClose: () => void;
+  open: boolean;
+  type: string;
+}) => {
+  const [mergeType, setMergeType] = useState(type);
   const { params } = useParameters();
 
   // encounters for the patient registered during the initial registration
-  const { data: patientEncounters } = getPatientsEncounters(params?.id as string);
+  const { data: patientEncounters } = getPatientsEncounters(
+    params?.id as string
+  );
 
   // encounters for patient that was found in the system
-  const { data: existingPatientEncounters, isPending } = getPatientsEncounters(patient?.uuid);
+  const { data: existingPatientEncounters, isPending } = getPatientsEncounters(
+    patient?.uuid
+  );
   const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
 
-  const { data: relationships, isPending: loadingRelationships } = getPatientRelationships(patient?.uuid)
-  const [initialPatient, setInitialPatient] = useState({} as Person)
-  const [isReferred, setIsReferred] = useState<any>('')
+  const { data: relationships, isPending: loadingRelationships } =
+    getPatientRelationships(patient?.uuid);
+  const [initialPatient, setInitialPatient] = useState({} as Person);
+  const [isReferred, setIsReferred] = useState<any>("");
   const [openReferralDialog, setOpenReferralDialog] = useState(false);
-  const [transactionSuccess, setTransactionSuccess] = useState(false)
+  const [transactionSuccess, setTransactionSuccess] = useState(false);
 
   const {
     mutate: createSocialHistoryEncounter,
@@ -226,7 +353,6 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
     isError: financingEncounterErrored,
   } = addEncounter();
 
-
   const {
     mutate: createReferralEncounter,
     isPending: creatingReferralEncounter,
@@ -234,40 +360,64 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
     isError: referralErrored,
   } = addEncounter();
 
-  const { data: patientsWaitingForRegistration } = getPatientsWaitingForRegistrations();
+  const { data: patientsWaitingForRegistration } =
+    getPatientsWaitingForRegistrations();
 
-  const { mutate: mergePatients, isPending: merging, isSuccess: merged, isError, data: mergedResponse } = merge()
-  const { mutate: ddeMergePatients, isPending: ddeMerging, isSuccess: ddeMerged, isError:ddeMergeError, data: ddeMergedResponse } = merge()
- 
+  const {
+    mutate: mergePatients,
+    isPending: merging,
+    isSuccess: merged,
+    isError,
+    data: mergedResponse,
+  } = merge();
+  const {
+    mutate: ddeMergePatients,
+    isPending: ddeMerging,
+    isSuccess: ddeMerged,
+    isError: ddeMergeError,
+    data: ddeMergedResponse,
+  } = merge();
 
-  const loading = merging || creatingReferralEncounter || creatingFinancingEncounter || creatingSocialHistoryEncounter
+  const loading =
+    merging ||
+    creatingReferralEncounter ||
+    creatingFinancingEncounter ||
+    creatingSocialHistoryEncounter;
 
   const [socialHistory, setSocialHistory] = useState<any>({} as Encounter);
   const [financing, setFinancing] = useState<Encounter>({} as Encounter);
-  const [referralData, setReferralData] = useState({ [concepts.REFERRED_FROM]: '' })
+  const [referralData, setReferralData] = useState({
+    [concepts.REFERRED_FROM]: "",
+  });
 
   useEffect(() => {
-    const initialPatient = patientsWaitingForRegistration?.find(p => p.uuid == params?.id);
+    const initialPatient = patientsWaitingForRegistration?.find(
+      (p) => p.uuid == params?.id
+    );
 
-    if (initialPatient)
-      setInitialPatient(initialPatient)
+    if (initialPatient) setInitialPatient(initialPatient);
+  }, [patientsWaitingForRegistration]);
 
-  }, [patientsWaitingForRegistration])
-
-  useEffect(()=>{
-    if(ddeMerged){
-      setMergeType('')
+  useEffect(() => {
+    if (ddeMerged) {
+      setMergeType("");
     }
-  },[ddeMerged])
+  }, [ddeMerged]);
 
   useEffect(() => {
-    const referralEncounter = patientEncounters?.find(encounter => encounter.encounter_type.uuid == encounters.SCREENING_ENCOUNTER);
+    const referralEncounter = patientEncounters?.find(
+      (encounter) =>
+        encounter.encounter_type.uuid == encounters.SCREENING_ENCOUNTER
+    );
 
     //TODO: remove the hard coded concept
-    const referred = getObservationValue(referralEncounter?.obs, "618c7457-9442-43c4-93a0-80686b3bca5f");
+    const referred = getObservationValue(
+      referralEncounter?.obs,
+      "618c7457-9442-43c4-93a0-80686b3bca5f"
+    );
 
     setIsReferred(referred);
-  }, [patientEncounters])
+  }, [patientEncounters]);
 
   // create social history
   useEffect(() => {
@@ -276,13 +426,13 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
       visit: mergedResponse?.active_visit.uuid,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
-      obs: socialHistory?.obs?.map((ob:any)=> ({
+      obs: socialHistory?.obs?.map((ob: any) => ({
         concept: ob.names[0].uuid,
         value: ob.value,
-        obsDatetime: getDateTime()
-      }))
-    })
-  }, [merged])
+        obsDatetime: getDateTime(),
+      })),
+    });
+  }, [merged]);
 
   // create financing
   useEffect(() => {
@@ -291,13 +441,13 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
       visit: mergedResponse?.active_visit.uuid,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
-      obs: financing?.obs?.map(ob => ({
+      obs: financing?.obs?.map((ob) => ({
         concept: ob.names[0].uuid,
         value: ob.value,
-        obsDatetime: getDateTime()
-      }))
-    })
-  }, [socialHistoryEncounterCreated])
+        obsDatetime: getDateTime(),
+      })),
+    });
+  }, [socialHistoryEncounterCreated]);
 
   // create referral
   useEffect(() => {
@@ -306,14 +456,15 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
       visit: mergedResponse?.active_visit.uuid,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
-      obs: [{
-        concept: concepts.REFERRED_FROM,
-        value: referralData[concepts.REFERRED_FROM],
-        obsDatetime: getDateTime()
-      }]
-    })
-  }, [financingEncounterCreated])
-
+      obs: [
+        {
+          concept: concepts.REFERRED_FROM,
+          value: referralData[concepts.REFERRED_FROM],
+          obsDatetime: getDateTime(),
+        },
+      ],
+    });
+  }, [financingEncounterCreated]);
 
   // close patient visit
   useEffect(() => {
@@ -322,217 +473,277 @@ const ViewPatientDialog = ({ patient, onClose, open, type="remote" }: { patient:
       // closeVisit(patient.visit_uuid);
       setTransactionSuccess(true);
     }
-
-  }, [referralCreated])
-
-
+  }, [referralCreated]);
 
   const triggerMerge = () => {
     const uuid = patient?.uuid;
 
     mergePatients({
       primary: {
-        patient_id: uuid
+        patient_id: uuid,
       },
-      secondary: [{
-        patient_id: initialPatient.uuid
-      }]
-    })
-
-  }
-
+      secondary: [
+        {
+          patient_id: initialPatient.uuid,
+        },
+      ],
+    });
+  };
 
   const handleContinue = () => {
     if (isReferred == "Yes") {
-      setOpenReferralDialog(true)
-      return
+      setOpenReferralDialog(true);
+      return;
     }
     triggerMerge();
-
-  }
+  };
 
   useEffect(() => {
-    const financing = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.FINANCING);
-    const socialHistory = existingPatientEncounters?.find(p => p.encounter_type.uuid == encounters.SOCIAL_HISTORY);
+    const financing = existingPatientEncounters?.find(
+      (p) => p.encounter_type.uuid == encounters.FINANCING
+    );
+    const socialHistory = existingPatientEncounters?.find(
+      (p) => p.encounter_type.uuid == encounters.SOCIAL_HISTORY
+    );
 
-    if (socialHistory)
-      setSocialHistory(socialHistory);
+    if (socialHistory) setSocialHistory(socialHistory);
 
-    if (financing)
-      setFinancing(financing)
-
-  }, [existingPatientEncounters])
-
+    if (financing) setFinancing(financing);
+  }, [existingPatientEncounters]);
 
   const handleReferralSubmit = (values: any) => {
-    setReferralData(values); triggerMerge();
+    setReferralData(values);
+    triggerMerge();
     setOpenReferralDialog(false);
-  }
-
-
+  };
 
   const handleTransformFinancing = (financingData: any) => {
-
-
-    const found = financingData[concepts.PAYMENT_OPTIONS].filter((opt: any) => opt.value);
-
+    const found = financingData[concepts.PAYMENT_OPTIONS].filter(
+      (opt: any) => opt.value
+    );
 
     // TODO: remove this and have a proper implementation
-    const financingValue = found[0]?.key
+    const financingValue = found[0]?.key;
 
     financingData[concepts.PAYMENT_OPTIONS] = financingValue;
-
 
     // console.log("financing", { financing })
 
     const newFinancing = JSON.parse(JSON.stringify(financing));
 
     const mappings: any = {
-      'c7bcc8bd-09d5-4f98-8d58-5179f749fd99': concepts.PAYMENT_OPTIONS,
-      'b0ffce26-2d25-449e-871e-c702e44bb37e': concepts.INSURANCE_PROVIDER,
-      '98b08fb2-f877-45b6-a95a-db89dffefb27': concepts.INSURANCE_NUMBER,
-      'db2e6bba-7d04-4873-a0a2-ac7bd69dd7b1': concepts.INSURANCE_SCHEME,
-      '3cdd53d9-35a5-47e5-909f-654e5bc7c9a8': concepts.INSURANCE_STATUS
-    }
-
+      "c7bcc8bd-09d5-4f98-8d58-5179f749fd99": concepts.PAYMENT_OPTIONS,
+      "b0ffce26-2d25-449e-871e-c702e44bb37e": concepts.INSURANCE_PROVIDER,
+      "98b08fb2-f877-45b6-a95a-db89dffefb27": concepts.INSURANCE_NUMBER,
+      "db2e6bba-7d04-4873-a0a2-ac7bd69dd7b1": concepts.INSURANCE_SCHEME,
+      "3cdd53d9-35a5-47e5-909f-654e5bc7c9a8": concepts.INSURANCE_STATUS,
+    };
 
     const obs = newFinancing.obs.map((ob: any) => {
       const conceptuuid = ob.names[0].uuid;
-      const formuuid = mappings[conceptuuid]
+      const formuuid = mappings[conceptuuid];
 
-      const newValue = financingData[formuuid]
+      const newValue = financingData[formuuid];
 
       return {
         ...ob,
-        value: newValue
-      }
-    })
+        value: newValue,
+      };
+    });
 
     newFinancing.obs = obs;
-    setFinancing(newFinancing)
-  }
+    setFinancing(newFinancing);
+  };
 
-  const handleDDEMerge = ()=>{
+  const handleDDEMerge = () => {
     const uuid = patient?.uuid;
-
     ddeMergePatients({
       primary: {
-        patient_id: initialPatient.uuid
+        patient_id: initialPatient.uuid,
       },
-      secondary: [{
-        doc_id: uuid, 
-      }]
-    })
-  }
+      secondary: [
+        {
+          doc_id: uuid,
+        },
+      ],
+    });
+  };
 
   const handleSocialHistorySubmit = (social: any) => {
- 
-    const obs = Object.keys(social).map((key)=>({
-      names: [
-        {uuid: key}
-      ],
+    const obs = Object.keys(social).map((key) => ({
+      names: [{ uuid: key }],
       concept: key,
       value: social[key],
-      obsDatetime: getDateTime()
-    }))
-    setSocialHistory({obs})
-    }
+      obsDatetime: getDateTime(),
+    }));
+    setSocialHistory({ obs });
+  };
 
+  return (
+    <GenericDialog
+      sx={{ backgroundColor: "#F6F6F6" }}
+      onClose={onClose}
+      open={open}
+      title="view patient"
+    >
+      <OverlayLoader open={loading || ddeMerging} />
+      <SuccessMessage open={transactionSuccess} />
+      <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
+      <br />
+      <MainButton title={"Continue with Patient"} onClick={handleContinue} />
+      {mergeType == "remote" && (
+        <MainButton
+          sx={{ mx: "1px" }}
+          title={"Merge Patient"}
+          onClick={handleDDEMerge}
+        />
+      )}
+      <AddReferralDialog
+        open={openReferralDialog}
+        onClose={() => setOpenReferralDialog(false)}
+        onSubmit={handleReferralSubmit}
+      />
+      <br />
+      <ViewPatient disabled={mergeType == "remote"} patient={patient} />
+      <br />
+      <br />
+      <DisplayRelationship
+        disabled={mergeType == "remote"}
+        patientId={patient?.uuid}
+        loading={loadingRelationships}
+        relationships={relationships ? relationships : []}
+      />
+      <br />
+      <br />
+      <WrapperBox display={"flex"}>
+        <DisplaySocialHistory
+          disabled={mergeType == "remote"}
+          onSubmit={handleSocialHistorySubmit}
+          loading={isPending}
+          socialHistory={socialHistory ? socialHistory : ({} as Encounter)}
+        />
+        <DisplayFinancing
+          disabled={mergeType == "remote"}
+          onSubmit={handleTransformFinancing}
+          loading={isPending}
+          financing={financing ? financing : ({} as Encounter)}
+        />
+      </WrapperBox>
+    </GenericDialog>
+  );
+};
 
-
-  return <GenericDialog sx={{ backgroundColor: "#F6F6F6" }} onClose={onClose} open={open} title="view patient">
-    <OverlayLoader open={loading || ddeMerging} />
-    <SuccessMessage open={transactionSuccess} />
-    <MainTypography variant="h4">{`${patient.given_name} ${patient.family_name}`}</MainTypography>
-    <br />
-    <MainButton title={"Continue with Patient"} onClick={handleContinue} />
-   {mergeType=="remote" && <MainButton sx={{mx:"1px"}} title={"Merge Patient"} onClick={handleDDEMerge} />}
-    <AddReferralDialog open={openReferralDialog} onClose={() => setOpenReferralDialog(false)} onSubmit={handleReferralSubmit} />
-    <br />
-    <ViewPatient disabled={mergeType=="remote"} patient={patient} />
-    <br />
-    <br />
-    <DisplayRelationship disabled={mergeType=="remote"} patientId={patient?.uuid} loading={loadingRelationships} relationships={relationships ? relationships : []} />
-    <br />
-    <br />
-    <WrapperBox display={"flex"}>
-      <DisplaySocialHistory disabled={mergeType=="remote"} onSubmit={handleSocialHistorySubmit} loading={isPending} socialHistory={socialHistory ? socialHistory : {} as Encounter} />
-      <DisplayFinancing disabled={mergeType=="remote"} onSubmit={handleTransformFinancing} loading={isPending} financing={financing ? financing : {} as Encounter} />
-    </WrapperBox>
-  </GenericDialog>
-}
-
-const ConfirmationDialog = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
+const ConfirmationDialog = ({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) => {
   const { params } = useParameters();
-  const { navigateTo } = useNavigation()
+  const { navigateTo } = useNavigation();
   const { mutate, isPending, isSuccess, data } = merge();
   // const { setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
 
-  const { registrationType, initialRegisteredPatient, patient, setPatient } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
+  const { registrationType, initialRegisteredPatient, patient, setPatient } =
+    useContext(SearchRegistrationContext) as SearchRegistrationContextType;
 
-  const identifier = patient?.identifiers?.find(id => id?.identifier_type?.name == "DDE person document ID");
+  const identifier = patient?.identifiers?.find(
+    (id) => id?.identifier_type?.name == "DDE person document ID"
+  );
 
   useEffect(() => {
     if (isSuccess) {
-
       setPatient(data);
-      navigateTo(`/registration/${params.id}/new`)
+      navigateTo(`/registration/${params.id}/new`);
     }
+  }, [isSuccess]);
 
-  }, [isSuccess])
+  return (
+    <GenericDialog
+      maxWidth="sm"
+      title="Confirmation"
+      open={open}
+      onClose={onClose}
+    >
+      <MainTypography>
+        {" "}
+        {registrationType == "local"
+          ? "Are you sure you want to continue registration with the local record?"
+          : "Are you sure you want to continue registration with the remote record?"}
+      </MainTypography>
+      <MainButton
+        sx={{ mr: 0.5 }}
+        title={"Yes"}
+        onClick={() => {
+          // patient available in DDE and merge with Local
+          if (identifier) {
+            mutate({
+              primary: { patient_id: initialRegisteredPatient.patient_id },
+              secondary: [
+                {
+                  doc_id: identifier?.identifier,
+                },
+              ],
+            });
+          } else {
+            if (registrationType == "local") {
+              mutate({
+                primary: { patient_id: initialRegisteredPatient.patient_id },
+                secondary: [
+                  {
+                    patient_id: patient.uuid,
+                  },
+                ],
+              });
+            } else {
+              navigateTo(`/registration/${params.id}/new`);
+            }
+          }
+        }}
+      />
+      <MainButton variant="secondary" title={"No"} onClick={onClose} />
+      <OverlayLoader open={isPending} />
+    </GenericDialog>
+  );
+};
 
-
-  return <GenericDialog maxWidth="sm" title="Confirmation" open={open} onClose={onClose}>
-    <MainTypography> {registrationType == "local" ? "Are you sure you want to continue registration with the local record?" : "Are you sure you want to continue registration with the remote record?"}</MainTypography>
-    <MainButton sx={{ mr: 0.5 }} title={"Yes"} onClick={() => {
-
-      // patient available in DDE and merge with Local
-      if (identifier) {
-        mutate({
-          primary: { patient_id: initialRegisteredPatient.patient_id },
-          secondary: [{
-            "doc_id": identifier?.identifier
-          }]
-        })
-      } else {
-        if (registrationType == "local") {
-          mutate({
-            primary: { patient_id: initialRegisteredPatient.patient_id },
-            secondary: [{
-              "patient_id": patient.uuid
-            }]
-          })
-
-        } else {
-          navigateTo(`/registration/${params.id}/new`)
-        }
-      }
-    }} />
-    <MainButton variant="secondary" title={"No"} onClick={onClose} />
-    <OverlayLoader open={isPending} />
-  </GenericDialog>
-}
-
-const AddReferralDialog = ({ open, onClose, onSubmit }: { open: boolean, onClose: () => void, onSubmit: (values: any) => void }) => {
-  return <GenericDialog maxWidth="sm" title="Add Referral" open={open} onClose={onClose}>
-    <EditReferralForm onSubmit={onSubmit} />
-  </GenericDialog>
-}
+const AddReferralDialog = ({
+  open,
+  onClose,
+  onSubmit,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (values: any) => void;
+}) => {
+  return (
+    <GenericDialog
+      maxWidth="sm"
+      title="Add Referral"
+      open={open}
+      onClose={onClose}
+    >
+      <EditReferralForm onSubmit={onSubmit} />
+    </GenericDialog>
+  );
+};
 
 const SuccessMessage = ({ open }: { open: boolean }) => {
-  const { navigateTo } = useNavigation()
-  return <GenericDialog open={open} maxWidth="sm" title="" onClose={() => { }}>
-    <OperationSuccess
-      title="Process Completed Successfully"
-      primaryActionText="Register More"
-      secondaryActionText="Go Home"
-      onPrimaryAction={() => {
-        navigateTo("/registration/list");
-
-      }}
-      onSecondaryAction={() => {
-        navigateTo("/dashboard");
-      }}
-    />
-  </GenericDialog>
-}
+  const { navigateTo } = useNavigation();
+  return (
+    <GenericDialog open={open} maxWidth="sm" title="" onClose={() => { }}>
+      <OperationSuccess
+        title="Process Completed Successfully"
+        primaryActionText="Register More"
+        secondaryActionText="Go Home"
+        onPrimaryAction={() => {
+          navigateTo("/registration/list");
+        }}
+        onSecondaryAction={() => {
+          navigateTo("/dashboard");
+        }}
+      />
+    </GenericDialog>
+  );
+};

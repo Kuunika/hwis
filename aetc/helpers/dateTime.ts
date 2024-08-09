@@ -1,4 +1,10 @@
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 export const getDateTime = () => {
   let date = new Date();
@@ -49,19 +55,50 @@ export const estimateBirthdate = (years: number) => {
   }
 }
 
-export const getHumanReadableDate = (date:string|Date)=>{
+export const getHumanReadableDate = (date: string | Date) => {
   return dayjs(date).format('dddd, MMMM D, YYYY');
 }
-export const getHumanReadableDateTime = (date:string|Date|undefined)=>{
+// export const getHumanReadableDateTime = (date: string | Date | undefined) => {
 
-  if(!date) return ""
+//   if (!date) return ""
+//   return new Date(date).toLocaleString('en-US', {
+//     year: 'numeric',
+//     month: 'long',
+//     day: 'numeric',
+//     hour: 'numeric',
+//     minute: 'numeric',
+//     second: 'numeric',
+//   });
+//   // return dayjs(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').format('MMMM D, YYYY h:mm A')
+// }
 
-  return dayjs(date).format('dddd, MMMM D, YYYY h:mm A');
-}
+export const getHumanReadableDateTime = (isoString: string | Date | undefined): string => {
+  if (!isoString) return "";
 
-export const getHumanReadableDateTimeLab = (date:string|Date|undefined)=>{
 
-  if(!date) return ""
+  const isoStringFormatted = typeof isoString === 'string' ? isoString : isoString.toISOString();
+
+
+  const timePart = isoStringFormatted.split('T')[1].split('+')[0];
+  const [hours, minutes, seconds] = timePart.split(':').map((part) => part.split('.')[0]);
+
+
+  let hoursNum = parseInt(hours, 10);
+  const period = hoursNum >= 12 ? 'PM' : 'AM';
+  const formattedHours = hoursNum % 12 || 12;
+
+
+  const formattedTime = `${formattedHours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')} ${period}`;
+
+
+  const parsedDate = dayjs(isoStringFormatted).format('MMMM D, YYYY');
+  return `${parsedDate} at ${formattedTime}`;
+};
+
+
+export const getHumanReadableDateTimeLab = (date: string | Date | undefined) => {
+
+  if (!date) return ""
 
   return dayjs(date).format('YYYY-MM-DD h:mm A');
 }

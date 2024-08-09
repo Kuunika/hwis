@@ -10,22 +10,18 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { useParameters } from "@/hooks";
 
-import { SearchForm } from "../../search/components/searchForm";
-import { SearchResults } from "../../search/components/searchResults";
 import {
-  getPatientsWaitingForRegistrations, searchDDEPatient, searchPotentialDuplicates,
-
+  getPatientsWaitingForRegistrations
 } from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
-import { SearchNPIDForm } from "../../search/components/searchNpid";
 import { Navigation } from "@/app/components/navigation";
-import { OverlayLoader } from "@/components/backdrop";
+
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 import { Person } from "@/interfaces";
-import { searchNPID, searchRegPatients } from "@/hooks/people";
-import { demographicSearchDDEAdaptor, demographicSearchLocalAdaptor } from "@/helpers/adapters";
+
+import { DemographicsSearch, NPIDSearch } from "../../components/searchComponents";
 
 function RegistrationSearch() {
   const { params } = useParameters();
@@ -105,76 +101,6 @@ function RegistrationSearch() {
   );
 }
 
-const DemographicsSearch = ({ patient }: { patient: Person }) => {
 
-  const { setSearchedPatient: setSearchedPatientContext } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
-  const [search, setSearch] = useState({ firstName: "", lastName: "", gender: "" })
-
-  const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchDDEPatient(search.firstName, search.lastName, search.gender)
-  const [searchedPatient, setSearchedPatient] = useState({});
-
-
-  // const { refetch, isFetching, isSuccess: searchComplete, data, isError } = searchRegPatients(search)
-
-  useEffect(() => {
-    if (!Boolean(search.firstName)) return;
-    refetch();
-  }, [search])
-
-  const handleSubmit = (values: any) => {
-    setSearchedPatient(values);
-    setSearch({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      gender: values.gender
-    })
-    setSearchedPatientContext({
-      patient_id: patient.patient_id,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      gender: values.gender
-    })
-  };
-
-
-  return (
-    <>
-      <SearchForm
-        init={{
-          firstName: patient?.given_name,
-          lastName: patient?.family_name,
-        }}
-        onSubmit={handleSubmit}
-        fullForm={false}
-      />
-      <br />
-      <OverlayLoader open={isFetching} />
-      {(searchComplete || isError) && <SearchResults
-        searchResults={demographicSearchDDEAdaptor(data)}
-        // searchResults={demographicSearchLocalAdaptor(data)}
-        searchedPatient={searchedPatient}
-      />}
-    </>
-  );
-};
-
-const NPIDSearch = () => {
-  const [search, setSearch]=useState('');
-  const { refetch, isFetching, isSuccess, data, isError } = searchNPID(search)
-
-  useEffect(()=>{
-    if (!Boolean(search)) return;
-    refetch()
-  },[search])
-
-  return  <>
-  <OverlayLoader open={isFetching} />
-   <SearchNPIDForm onSubmit={(values:any)=>setSearch(values.npid)} />
-   {(isSuccess || isError) && <SearchResults
-        searchResults={data ? data : { remotes: [], locals: [] }}
-        searchedPatient={data}
-      />}
-  </>
-};
 
 export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])

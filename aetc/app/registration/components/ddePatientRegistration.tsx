@@ -8,13 +8,16 @@ import {
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { GenericDialog, MainButton } from "@/components";
 import { OverlayLoader } from "@/components/backdrop";
+import { PatientBarcodePrinter } from "@/components/barcodePrinterDialogs";
+
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
-import { useParameters } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import {
   getPatientsWaitingForRegistrations,
+  merge,
   patchPatient,
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
@@ -29,22 +32,36 @@ type IProps = {
 };
 
 export const DDEPatientRegistration = ({ patient, open, onClose }: IProps) => {
+  const { navigateTo } = useNavigation()
   const [active, setActive] = useState(0);
+  const [updatedPatient, setUpdatedPatient] = useState<Person>({} as Person)
+
+
+
   return (
     <GenericDialog onClose={onClose} open={open} title="Remote Patient">
       <Box
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
+
         <Box sx={{ width: { sm: "100%", lg: "40%" } }}>
           {active == 0 && (
             <PatientDetails patient={patient} next={() => setActive(1)} />
           )}
-          {active == 1 && <EditDemographics next={() => setActive(2)} />}
+          {active == 1 && <EditDemographics setUpdatedPatient={setUpdatedPatient} person={patient} next={() => setActive(2)} />}
           {active == 2 && <SocialForm next={() => setActive(3)} />}
           {active == 3 && <RelationshipForm next={() => setActive(4)} />}
           {active == 4 && <GuardianForm next={() => setActive(5)} />}
           {active == 5 && <ReferralForm next={() => setActive(6)} />}
-          {active == 6 && <FinanceForm next={() => {}} />}
+          {active == 6 && <FinanceForm next={() => setActive(7)} />}
+          {active == 7 && <>
+            <PatientBarcodePrinter firstName={updatedPatient.given_name} lastName={updatedPatient.family_name} addresses={Boolean(updatedPatient?.addresses) ? updatedPatient?.addresses : []} identifiers={updatedPatient.identifiers} />
+            <br />
+            <MainButton title="Register More" sx={{ mr: "1px" }} onClick={() => navigateTo("/registration/list")} />
+            <MainButton title="Home" onClick={() => navigateTo("/dashboard")} />
+          </>
+          }
+
         </Box>
       </Box>
     </GenericDialog>
@@ -58,6 +75,7 @@ const PatientDetails = ({
   patient: Person;
   next: () => void;
 }) => {
+  const { params } = useParameters()
   const [demographics, setDemographics] = useState<any>({
     firstName: "",
     lastName: "",
@@ -110,11 +128,36 @@ const PatientDetails = ({
     });
   };
 
+  const { mutate, isPending, isSuccess, data: mergeResponse } = merge();
+
+
+
+  const handleMerge = () => {
+    mutate(
+      {
+        primary: {
+          patient_id: params?.id
+        },
+        secondary: [{
+          doc_id: patient.uuid,
+        }]
+      }
+    )
+  }
+
+  useEffect(() => {
+    if (isSuccess) {
+      next();
+    }
+
+  }, [isSuccess])
+
   useEffect(() => {
     mapPatientDemographics(patient);
     mapHomeLocation(patient);
     mapCurrentLocation(patient);
   }, [patient]);
+
 
   return (
     <Box>
@@ -163,20 +206,24 @@ const PatientDetails = ({
       <MainButton
         sx={{ width: "100%", borderRadius: "1ch" }}
         title={"Merge"}
-        onClick={() => {
-          next();
-        }}
+        onClick={handleMerge}
       />
     </Box>
   );
 };
 
-const EditDemographics = ({ next, person }: { next: () => void, person: Person }) => {
+const EditDemographics = ({ next, person, setUpdatedPatient }: { next: () => void, person: Person, setUpdatedPatient: (patient: any) => void }) => {
   const {
     mutate: updatePatient,
     isPending,
     isSuccess,
     data: updatedPatient,
+  } = patchPatient();
+  const {
+    mutate: updatePatientLocation,
+    isPending: locationPending,
+    isSuccess: locationUpdated,
+    data
   } = patchPatient();
   const { params } = useParameters();
   const [homeLocation, setHomeLocation] = useState<any>({});
@@ -194,14 +241,16 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
   }, [isSuccess]);
 
   const updateDemographics = (demographics: any) => {
+
+    const identifiers = !Boolean(demographics.identificationNumber) ? [] : [
+      {
+        identifier: demographics.identificationNumber,
+        identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
+        preferred: true,
+      },
+    ]
     const mappedPatient = {
-      identifiers: [
-        {
-          identifier: demographics.identificationNumber,
-          identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
-          preferred: true,
-        },
-      ],
+      identifiers,
       names: [
         {
           givenName: demographics.firstName,
@@ -221,7 +270,7 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
       {
         address1: homeLocation?.district,
         address2: homeLocation?.village,
-        address3: currentLocation?.traditionalAuthority,
+        address3: currentLocation?.district,
         stateProvince: currentLocation?.traditionalAuthority,
         countyDistrict: homeLocation?.traditionalAuthority,
         cityVillage: homeLocation?.traditionalAuthority,
@@ -236,19 +285,24 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         preferred: false,
       },
     ];
-    updatePatient({ id: params?.id, data: { addresses } });
-    // setHomeLocation?(false)
+    updatePatientLocation({ id: params?.id, data: { addresses } });
   };
 
   useEffect(() => {
     if (
       Object.keys(homeLocation).length == 0 ||
       Object.keys(currentLocation).length == 0
-    )
-      return;
+    ) return;
 
     handleLocationSubmit();
   }, [homeLocation, currentLocation]);
+
+  useEffect(() => {
+    if (locationUpdated) {
+      setUpdatedPatient(data?.patient)
+      next()
+    }
+  }, [locationUpdated])
 
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = demographicsContext;
@@ -272,9 +326,11 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
 
     if (isValid && hLIsValid && cLIsValid) {
       // move next
-      next();
+      // next();
     }
   };
+
+  const nationalId = person.identifiers.find(identifier => identifier?.identifier_type?.uuid == concepts.NATIONAL_ID_IDENTIFIER_TYPE)?.identifier;
 
   return (
     <>
@@ -283,9 +339,17 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         <Typography variant="h5">Edit Demographics</Typography>
         <br />
         <EditDemographicsForm
+
           setContext={setDemographicsContext}
           submitButton={false}
-          initialValues={{}}
+          initialValues={{
+            identificationNumber: nationalId,
+            firstName: person.given_name,
+            lastName: person.family_name,
+            gender: person.gender,
+            birthDate: person.birthdate,
+            birthdateEstimated: false,
+          }}
           onSubmit={(values) => {
             updateDemographics(values);
           }}
@@ -296,7 +360,12 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         <br />
         <EditLocation
           setContext={setHomeLocationContext}
-          initialValues={{}}
+          initialValues={{
+            nationality: person?.addresses[0]?.country ?? "",
+            district: person?.addresses[0]?.address1 ?? "",
+            village: person?.addresses[0]?.address2 ?? "",
+            traditionalAuthority: person?.addresses[0]?.county_district ?? "",
+          }}
           onSubmit={setHomeLocation}
           submitButton={false}
         />
@@ -307,7 +376,12 @@ const EditDemographics = ({ next, person }: { next: () => void, person: Person }
         <EditLocation
           currentLocation={true}
           setContext={setCurrentLocationContext}
-          initialValues={{}}
+          initialValues={{
+            district: person?.addresses[0]?.current_district ?? "",
+            traditionalAuthority: person?.addresses[0]?.current_traditional_authority ?? "",
+            village: person?.addresses[1]?.address1 ?? "",
+            closeLandMark: person?.addresses[1]?.address2 ?? "",
+          }}
           onSubmit={setCurrentLocation}
           submitButton={false}
         />
@@ -555,6 +629,7 @@ const RelationshipForm = ({ next }: { next: () => void }) => {
   );
 };
 const GuardianForm = ({ next }: { next: () => void }) => {
+  const { params } = useParameters();
   const [context, setContext] = useState<any>();
   const {
     mutate: createGuardian,
@@ -571,20 +646,41 @@ const GuardianForm = ({ next }: { next: () => void }) => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
+  useEffect(() => {
+    if (guardianCreated) {
+      createGuardianRelationship({
+        patient: params?.id,
+        person: guardian?.uuid,
+        nextOfKinRelationship: concepts.GUARDIAN,
+      });
+    }
+  }, [guardianCreated]);
+
+
+  useEffect(() => {
+    if (guardianRelationshipCreated) {
+      next();
+    }
+  }, [guardianRelationshipCreated])
+
+
   const handleSubmit = () => {
     const { submitForm, errors, isValid, touched, dirty } = context;
     submitForm();
-    next();
+    console.log(errors)
   };
+
+
   return (
     <>
       <ContainerCard>
         <EditRelationshipForm
           isGuardian={true}
-          initialValues={{}}
+          initialValues={{ given_name: "", family_name: "", relationship: concepts.GUARDIAN }}
           setContext={setContext}
           submitButton={false}
           onSubmit={(values) => {
+            console.log({ values })
             createGuardian({
               nextOfKinFirstName: values.given_name,
               nextOfKinLastName: values.family_name,

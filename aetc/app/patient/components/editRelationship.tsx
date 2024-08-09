@@ -34,7 +34,7 @@ const schema = Yup.object().shape({
 
 export const EditRelationshipForm = ({ onSubmit, initialValues, isGuardian, setContext=()=>{},submitButton }: { initialValues: any, onSubmit: (values: any) => void, isGuardian?:boolean, setContext?: (context: any) => void;
     submitButton?: boolean; }) => {
-    return <FormikInit submitButton={submitButton} submitButtonText="Update" validationSchema={schema} initialValues={initialValues} onSubmit={onSubmit}>
+    return <FormikInit submitButton={submitButton} enableReinitialize={true} submitButtonText="Update" validationSchema={schema} initialValues={initialValues} onSubmit={onSubmit}>
   <TrackFormikContext setFormContext={setContext} />
         <RegistrationCardTitle>{isGuardian? 'Guardian information': `Next of kin Information`}</RegistrationCardTitle>
         <WrapperBox display={"flex"} flexDirection={"column"}>

@@ -1,0 +1,26 @@
+/* styles/Home.module.css */
+#right_middle_lobe:hover {
+    fill: yellow;
+    cursor: pointer;
+  }
+  
+  #right_superior_lobe:hover {
+    fill: yellow;
+    cursor: pointer;
+  }
+  
+  #left_inferior_lobe:hover {
+    fill: yellow;
+    cursor: pointer;
+  }
+  
+  #left_superior_lobe:hover {
+    fill: yellow;
+    cursor: pointer;
+  }
+  
+  #right_inferior_lobe:hover {
+    fill: yellow;
+    cursor: pointer;
+  }
+  

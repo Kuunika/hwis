@@ -14,8 +14,57 @@ interface Props {
   children: ReactNode;
   setTriggerFunc: (func: any) => void;
   printer: string;
-  orderDate?:string;
+  orderDate?: string;
 }
+export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
+  value,
+  children,
+  setTriggerFunc,
+  printer,
+  orderDate
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const convertToCanvas = async () => {
+      const element = document.getElementById("barcode");
+      if (element) {
+        const canvas = await htmlToImage.toCanvas(element);
+        downloadZplData("test", canvas, printer);
+      }
+    };
+    setTriggerFunc(() => convertToCanvas);
+  }, [printer]);
+
+  return (
+    <WrapperBox
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
+      <div id="barcode">
+        <WrapperBox
+          sx={{
+            pb: "8px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          ref={ref}
+        >
+          {children}
+          <Barcode
+            width={6}
+            height={120}
+            margin={0}
+            displayValue={false}
+            value={value}
+          />
+        </WrapperBox>
+      </div>
+    </WrapperBox>
+  );
+};
+
+
 
 export const BarcodeComponent: React.FC<Props> = ({
   value,
@@ -41,15 +90,14 @@ export const BarcodeComponent: React.FC<Props> = ({
       sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <div id="barcode">
-        {/* <Table /> */}
         <WrapperBox
           sx={{
             pb: "2px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent:"center",
-        paddingLeft:"13ch"
+            justifyContent: "center",
+            paddingLeft: "13ch"
           }}
           ref={ref}
         >
@@ -68,6 +116,10 @@ export const BarcodeComponent: React.FC<Props> = ({
     </WrapperBox>
   );
 };
+
+
+
+
 
 const downloadZplData = async (
   labelName: string,
@@ -102,11 +154,13 @@ type TriagePrintTempProp = {
   date: string;
   arrivalTime: string;
   referredFrom: string;
-  triageCategory:string;
-  triagedBy:string
+  triageCategory: string;
+  triagedBy: string;
+  presentingComplaints?: string;
 };
 
 export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
+  presentingComplaints,
   vitals,
   date,
   arrivalTime,
@@ -114,84 +168,84 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
   triageCategory,
   triagedBy
 }) => {
-    const [printer,setPrinter]=useState('')
-    const [reason,setReason]=useState('')
+  const [printer, setPrinter] = useState('')
+  const [reason, setReason] = useState('')
 
-    const convertToCanvas = async () => {
-        const element = document.getElementById("triage");
-        if (element) {
-          const canvas = await htmlToImage.toCanvas(element);
-          downloadZplData("test", canvas, printer);
-        }
-      };
+  const convertToCanvas = async () => {
+    const element = document.getElementById("triage");
+    if (element) {
+      const canvas = await htmlToImage.toCanvas(element);
+      downloadZplData("test", canvas, printer);
+    }
+  };
 
   return (
     <Box>
-    <div id="triage">
-      <WrapperBox
-        sx={{
-          pb: "2px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Box sx={{ width: "100%" }}>
-          <Box sx={{ display: "flex", width: "100%" }}>
-            <Typography variant="h6" mr={"1ch"}>
-              Date: {date}
+      <div id="triage">
+        <WrapperBox
+          sx={{
+            p: "5px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Box sx={{ width: "100%" }}>
+            <Typography variant="body2" mr={"1ch"}>
+              Arrival Date Time: {arrivalTime}
             </Typography>
-            {/* <Typography variant="h6" mr={"1ch"}>
-              Arrival Time: {arrivalTime}
-            </Typography> */}
-            <Typography variant="h6">Referred From: {referredFrom}</Typography>
-          </Box>
-          <br />
-          <Box sx={{display:"flex"}}>
+            <Box sx={{ display: "flex", width: "100%" }}>
+              <Typography variant="body2" mr={"1ch"}>
+                Triage Date Time: {date}
+              </Typography>
+              <Typography variant="body2">Referred From: {referredFrom}</Typography>
+            </Box>
+            <Box sx={{ display: "flex" }}>
+              <Typography mr={"1ch"} variant="body1">Category: {triageCategory}</Typography>
+              <Typography variant="body1">Reason: {reason}</Typography>
+            </Box>
 
-          <Typography sx={{mr:"1ch"}} variant="h6">Category: {triageCategory}</Typography>
-          <Typography variant="h6">Reason: {reason}</Typography>
-          </Box>
-          <br />
-          <WrapperBox sx={{ display: "flex" }}>
-            {vitals.map(({ name, value }: any) => (
-              <Cell key={`${value}${name}`} title={name} value={value} />
-            ))}
-          </WrapperBox>
-          <br />
-          <Typography variant="h6">Triaged By: {triagedBy}</Typography>
-        </Box>
-      </WrapperBox>
-    </div>
-    <br />
+            <Typography sx={{ mt: "1ch" }} variant="subtitle1">Presenting Complaints: {presentingComplaints} </Typography>
 
-    <BasicSelect getValue={(value:any)=>setReason(value)} label={"Reasons for triage category:"} options={[{
-        value:"Vitals above/below threshold",
-        label:"Vitals above/below threshold"
-    },
-    {
-        value:"Airway/Breathing compromised",
-        label:"Airway/Breathing compromised"
-    },
-    {
-        value:"Blood circulation compromised",
-        label:"Blood circulation compromised"
-    },
-    {
-        value:"Disability",
-        label:"Disability"
-    },
-    {
-        value:"Persistent pain and other concerns ",
-        label:"Persistent pain and other concerns "
-    }
-    ]} />
-    <br />
-    <br />
-    <PrinterSelect getValue={(value:string)=>setPrinter(value)}  />
-        <br />
-        <br />
-    <MainButton onClick={convertToCanvas} title={"print"} />
+            <WrapperBox sx={{ display: "flex", border: "dashed", my: "1ch" }}>
+              {vitals.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </WrapperBox>
+
+
+            <Typography variant="body1">Triaged By: {triagedBy}</Typography>
+          </Box>
+        </WrapperBox>
+      </div>
+
+      <BasicSelect getValue={(value: any) => setReason(value)} label={"Reasons for triage category:"} options={[{
+        value: "Vitals above/below threshold",
+        label: "Vitals above/below threshold"
+      },
+      {
+        value: "Airway/Breathing compromised",
+        label: "Airway/Breathing compromised"
+      },
+      {
+        value: "Blood circulation compromised",
+        label: "Blood circulation compromised"
+      },
+      {
+        value: "Disability",
+        label: "Disability"
+      },
+      {
+        value: "Persistent pain and other concerns ",
+        label: "Persistent pain and other concerns "
+      }
+      ]} />
+      <br />
+      <br />
+      <PrinterSelect getValue={(value: string) => setPrinter(value)} />
+      <br />
+      <br />
+      <MainButton onClick={convertToCanvas} title={"print"} />
     </Box>
   );
 };
@@ -202,17 +256,16 @@ const Cell = ({ title, value }: { title: string; value: string }) => {
   return (
     <WrapperBox
       sx={{
-        mx: "1.5ch",
+        mx: "0.5ch",
         display: "flex",
         flexDirection: "column",
-        my: "0.5ch",
         alignItems: "center",
       }}
     >
-      <MainTypography variant="h5" textAlign={"center"}>
+      <MainTypography variant="h6" textAlign={"center"}>
         {title}
       </MainTypography>
-      <MainTypography variant="h4">{value}</MainTypography>
+      <MainTypography variant="h6">{value}</MainTypography>
     </WrapperBox>
   );
 };

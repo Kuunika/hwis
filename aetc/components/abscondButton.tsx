@@ -23,7 +23,7 @@ export const AbscondButton = ({ patientId, visitId, onDelete, sx }: { patientId:
         closeVisit(visitId);
     }
     return <>
-        <MainButton variant="secondary" sx={{ fontSize: "12px",...sx }} title={"Abscond"} onClick={handleClick} />
+        <MainButton   size="small" variant="secondary" sx={{ fontSize: "12px",...sx }} title={"Abscond"} onClick={handleClick} />
         <GenericDialog maxWidth="sm" title="Abscond Patient" open={open} onClose={() => setOpen(false)}>
             <OverlayLoader open={isPending} />
             <MainTypography>Are you sure the patient absconded?</MainTypography>

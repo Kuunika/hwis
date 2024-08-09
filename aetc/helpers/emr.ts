@@ -1,5 +1,5 @@
 import { concepts, NO, YES } from "@/constants";
-import { Encounter, Obs } from "@/interfaces";
+import { Encounter, Identifier, Obs, PatientUpdateResponse, Person } from "@/interfaces";
 import dayjs from 'dayjs';
 
 
@@ -192,3 +192,15 @@ export const filterObservations = (obs: Obs[], uuid: string): Obs[] | null => {
   }).sort((a:Obs,b:Obs)=>dayjs(a?.obs_datetime).isBefore(dayjs(b?.obs_datetime)) ? -1:1)
 };
 
+
+export const getPatientId = (patientIdentifiers: Identifier[]) => {
+
+  if (!patientIdentifiers) return '';
+
+  const identifiers = patientIdentifiers.find(ide => ide?.identifier_type?.name == 'National id')
+
+  if (!identifiers) return '';
+
+  return identifiers.identifier;
+
+}
