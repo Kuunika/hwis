@@ -227,9 +227,6 @@ export default function TriageWorkFlow() {
       setCompleted(6);
       setMessage("finalizing...");
 
-      if (triageResult == 'green') {
-        setShowModal(true);
-      }
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,
@@ -295,16 +292,7 @@ export default function TriageWorkFlow() {
     if (triageResult == 'green') {
       setShowModal(true);
     }
-    // setLoading(true);
-    // 
-    // setMessage("adding complaints...");
-    // createPresenting({
-    //   encounterType: encounters.PRESENTING_COMPLAINTS,
-    //   visit: activeVisit?.uuid,
-    //   patient: params.id,
-    //   encounterDatetime: dateTime,
-    //   obs: formData.presentingComplaints,
-    // });
+
   };
 
   const handleVitalsSubmit = (values: any) => {
