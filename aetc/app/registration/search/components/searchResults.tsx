@@ -11,7 +11,7 @@ import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
 import { useNavigation, useParameters } from "@/hooks";
-import { FaUser } from "react-icons/fa6";
+import { FaUser, FaBarcode } from "react-icons/fa6";
 
 import {
   SearchRegistrationContext,
@@ -39,13 +39,17 @@ import {
   DisplaySocialHistory,
 } from "@/app/patient/[id]/view/components";
 import { DDEPatientRegistration } from "../../components/ddePatientRegistration";
+import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { Typography } from "@mui/material";
 
 export const SearchResults = ({
   searchedPatient,
   searchResults,
+  genericSearch
 }: {
   searchedPatient: any;
   searchResults: DDESearch;
+  genericSearch: boolean
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
@@ -97,45 +101,50 @@ export const SearchResults = ({
             No patient with similar demographics found
           </MainTypography>
           <br />
-          <MainButton
+
+          {!genericSearch && <MainButton
             sx={{ mr: "0.2ch", borderRadius: "1px" }}
             variant="secondary"
             title="add new record"
             onClick={handleNewRecord}
-          />
+          />}
         </WrapperBox>
       )}
       <br />
       {!resultNotFound && (
         <WrapperBox sx={{ width: "100%" }}>
-          <MainButton
+          {!genericSearch && <MainButton
             sx={{ mr: "0.2ch", borderRadius: "1px" }}
             variant="secondary"
             title="add new record"
             onClick={handleNewRecord}
-          />
+          />}
         </WrapperBox>
       )}
       <br />
       <WrapperBox sx={{ width: "100%", height: "50ch", overflow: "scroll" }}>
         {searchResults?.locals?.map((patient) => {
           return (
-            <ResultBox
-              setOpen={(person: Person) => selectPatient(person, "local")}
-              type="Local"
-              key={patient?.uuid}
-              person={patient}
-            />
+            <>
+              <ResultBox
+                genericSearch={genericSearch}
+                setOpen={(person: Person) => !genericSearch && selectPatient(person, "local")}
+                type="Local"
+                key={patient?.uuid}
+                person={patient}
+              />
+            </>
           );
         })}
         {searchResults?.remotes?.map((patient) => {
           //@ts-ignore
           return (
             <ResultBox
-              setOpen={(person: Person) => selectPatient(person, "remote")}
+              genericSearch={genericSearch}
+              setOpen={(person: Person) => !genericSearch && selectPatient(person, "remote")}
               type="Remote"
 
-                //@ts-ignore
+              //@ts-ignore
               key={patient?.uuid}
               person={patient}
             />
@@ -166,10 +175,13 @@ export const ResultBox = ({
   person,
   type,
   setOpen,
+  genericSearch
 }: {
   person: any;
   type: string;
   setOpen: (person: any) => void;
+  genericSearch: boolean
+
 }) => {
   if (!person) {
     return <></>;
@@ -191,20 +203,25 @@ export const ResultBox = ({
         cursor: "pointer",
       }}
     >
-      <WrapperBox
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "20%",
-          backgroundColor: "#F5F5F5",
-          mr: 1,
-        }}
-      >
-        <MainTypography color={defaultTheme.primary} variant="h1">
-          <FaUser />
-        </MainTypography>
+      <WrapperBox sx={{ display: "flex", flexDirection: "column", justifyContent: "center", mr: 1, }}>
+        <WrapperBox
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#F5F5F5",
+
+          }}
+        >
+          <MainTypography color={defaultTheme.primary} variant="h1">
+            <FaUser />
+          </MainTypography>
+        </WrapperBox>
+        <br />
+        {type == "Local" && genericSearch && <PrinterBarcodeButton title={`Print Barcode`} icon={<Typography mr="1ch"><FaBarcode /></Typography>} variant="primary" patient={person} />}
+        {/* <MainButton title="print barcode" onClick={() => { }} /> */}
       </WrapperBox>
+
       <WrapperBox>
         <WrapperBox
           sx={{
@@ -715,7 +732,7 @@ const AddReferralDialog = ({
 const SuccessMessage = ({ open }: { open: boolean }) => {
   const { navigateTo } = useNavigation();
   return (
-    <GenericDialog open={open} maxWidth="sm" title="" onClose={() => {}}>
+    <GenericDialog open={open} maxWidth="sm" title="" onClose={() => { }}>
       <OperationSuccess
         title="Process Completed Successfully"
         primaryActionText="Register More"

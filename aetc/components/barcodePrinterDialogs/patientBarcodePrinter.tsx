@@ -23,7 +23,7 @@ export const PatientBarcodePrinter = ({
   addresses,
 }: Props) => {
   const [printer, setPrinter] = useState("http://localhost:3000");
-  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
+  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { });
   return (
     <>
       <PatientRegistrationBarcodeTemplate
@@ -74,32 +74,33 @@ export const PatientBarcodePrinter = ({
   );
 };
 
-export const PrinterBarcodeButton = ({ patient, sx, onClose, variant="secondary", title="Print" }: { patient: Person, sx?:SxProps, onClose?:()=>void, variant?: "secondary" | "text" | "primary", title?:string  }) => {
+export const PrinterBarcodeButton = ({ patient, sx, onClose, variant = "secondary", title = "Print", icon }: { patient: Person, sx?: SxProps, onClose?: () => void, variant?: "secondary" | "text" | "primary", title?: string, icon?: any }) => {
   const [open, setOpen] = useState(false);
   return (
     <>
       <MainButton
         size="small"
         variant={variant}
-        sx={{ fontSize: "12px", ml: "1px",...sx }}
+        sx={{ fontSize: "12px", ml: "1px", ...sx }}
         title={title}
+        icon={icon}
         onClick={() => setOpen(true)}
       />
       <GenericDialog
         open={open}
         onClose={() => {
           setOpen(false);
-          if(onClose) {
+          if (onClose) {
             onClose()
           }
         }}
         title="Print Patient Barcode"
       >
         <PatientBarcodePrinter
-          firstName={patient.given_name}
-          lastName={patient.family_name}
-          addresses={patient.addresses}
-          identifiers={patient.identifiers}
+          firstName={patient?.given_name}
+          lastName={patient?.family_name}
+          addresses={patient?.addresses}
+          identifiers={patient?.identifiers}
         />
       </GenericDialog>
     </>

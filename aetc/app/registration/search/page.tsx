@@ -19,6 +19,9 @@ import { SearchResults } from "./components/searchResults";
 import { Navigation } from "@/app/components/navigation";
 import { searchPatients } from "@/hooks/people";
 import { OverlayLoader } from "@/components/backdrop";
+import { Person } from "@/interfaces";
+import { DemographicsSearch, NPIDSearch } from "../components/searchComponents";
+import { SearchTab } from "../components/searchTabs";
 
 export default function RegistrationSearch() {
   const [patientData, setPatientData] = useState()
@@ -86,9 +89,10 @@ export default function RegistrationSearch() {
             position: "relative",
           }}
         >
-          <SearchForm fullForm={false} onSubmit={searchPatient} />
-          <br />
-          {isSuccess && <ResultBox searchResults={data ? data : []} />}
+          <SearchTab
+            demographics={<DemographicsSearch genericSearch={true} patient={{} as Person} />}
+            npid={<NPIDSearch genericSearch={true} />}
+          />
         </WrapperBox>
         <OverlayLoader open={isFetching} />
       </WrapperBox>

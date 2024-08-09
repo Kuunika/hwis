@@ -37,7 +37,8 @@ import { FaPrint } from "react-icons/fa6";
 import { BarcodeComponent } from "@/components/barcode";
 import { PatientUpdateResponse } from "@/interfaces";
 import { BasicSelect } from "@/app/patient/components/basicSelect";
-import { PatientBarcodePrinter } from "@/components/patientBarcodePrinter";
+import { PatientBarcodePrinter } from "@/components/barcodePrinterDialogs";
+
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -133,7 +134,7 @@ export const NewRegistrationFlow = () => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
-  const [printer, setPrinter]=useState("http://localhost:3000")
+  const [printer, setPrinter] = useState("http://localhost:3000")
   const trigger = () => <MainButton variant="text" sx={{ color: "#000", ml: 0.5, fontSize: "2em" }} title={<FaPrint />} onClick={() => { }} />
 
 
@@ -377,7 +378,7 @@ export const NewRegistrationFlow = () => {
   ]);
 
 
- 
+
 
   return (
     <>
@@ -415,7 +416,7 @@ export const NewRegistrationFlow = () => {
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
                     formData["demographics"] = values;
-                    console.log({values})
+                    console.log({ values })
 
                     setPatientValues({
                       ...values,
@@ -492,7 +493,7 @@ export const NewRegistrationFlow = () => {
               {/* <BarcodeComponent value={getPatientId(patient)}> */}
               <br />
               <>
-              <PatientBarcodePrinter firstName={patient.names[0].given_name} lastName={patient.names[0].family_name} addresses={patient.addresses} identifiers={patient?.patient?.identifiers} />
+                <PatientBarcodePrinter firstName={patient.names[0].given_name} lastName={patient.names[0].family_name} addresses={patient.addresses} identifiers={patient?.patient?.identifiers} />
               </>
             </>
           )}
