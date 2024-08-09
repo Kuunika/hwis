@@ -235,7 +235,7 @@ export const ResultBox = ({
         </WrapperBox>
         <br />
         {type == "Local" && genericSearch && <PrinterBarcodeButton title={`Print Barcode`} icon={<Typography mr="1ch"><FaBarcode /></Typography>} variant="primary" patient={person} />}
-        {visitActive && <AbscondButton patientId="" dialogTitle="Close Patient Visit" dialogConfirmationMsg="Are you sure you want to close this visit?" visitId={person?.active_visit?.uuid} buttonTitle="Close Visit" onDelete={() => setVisitActive(false)} />}
+        {visitActive && !genericSearch && <AbscondButton patientId="" dialogTitle="Close Patient Visit" dialogConfirmationMsg="Are you sure you want to close this visit?" visitId={person?.active_visit?.uuid} buttonTitle="Close Visit" onDelete={() => setVisitActive(false)} />}
       </WrapperBox>
       <WrapperBox>
         <WrapperBox
