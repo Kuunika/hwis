@@ -40,7 +40,9 @@ import {
 } from "@/app/patient/[id]/view/components";
 import { DDEPatientRegistration } from "../../components/ddePatientRegistration";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
-import { Typography } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
+import { AbscondButton } from "@/components/abscondButton";
+
 
 export const SearchResults = ({
   searchedPatient,
@@ -183,6 +185,16 @@ export const ResultBox = ({
   genericSearch: boolean
 
 }) => {
+
+  const [visitActive, setVisitActive] = useState(false);
+
+
+  useEffect(() => {
+    setVisitActive(Boolean(person?.active_visit))
+
+  }, [person])
+
+
   if (!person) {
     return <></>;
   }
@@ -194,7 +206,11 @@ export const ResultBox = ({
 
   return (
     <MainPaper
-      onClick={() => setOpen(person)}
+      onClick={() => {
+        if (visitActive) return
+        setOpen(person)
+      }
+      }
       sx={{
         display: "flex",
         padding: 2,
@@ -219,9 +235,8 @@ export const ResultBox = ({
         </WrapperBox>
         <br />
         {type == "Local" && genericSearch && <PrinterBarcodeButton title={`Print Barcode`} icon={<Typography mr="1ch"><FaBarcode /></Typography>} variant="primary" patient={person} />}
-        {/* <MainButton title="print barcode" onClick={() => { }} /> */}
+        {visitActive && !genericSearch && <AbscondButton patientId="" dialogTitle="Close Patient Visit" dialogConfirmationMsg="Are you sure you want to close this visit?" visitId={person?.active_visit?.uuid} buttonTitle="Close Visit" onDelete={() => setVisitActive(false)} />}
       </WrapperBox>
-
       <WrapperBox>
         <WrapperBox
           sx={{
@@ -256,6 +271,9 @@ export const ResultBox = ({
           />
           <Label label="Home village" value={person?.addresses[0]?.address2} />
         </WrapperBox>
+      </WrapperBox>
+      <WrapperBox sx={{ ml: "1ch" }}>
+        {visitActive && <Chip color="success" label="Visit" />}
       </WrapperBox>
     </MainPaper>
   );
