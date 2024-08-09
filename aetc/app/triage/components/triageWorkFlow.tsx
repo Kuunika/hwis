@@ -25,6 +25,7 @@ import { ServiceAreaForm } from "./serviceAreaForm";
 import { Encounter, TriageResult } from "@/interfaces";
 import { Bounce, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
+import { closeCurrentVisit } from "@/hooks/visit";
 
 import { getObservationValue } from "@/helpers/emr";
 import { PatientTriageBarcodePrinter } from "@/components/barcodePrinterDialogs";
@@ -107,12 +108,6 @@ export default function TriageWorkFlow() {
     isError: triageResultError,
   } = addEncounter();
 
-  const {
-    mutate: createNextServiceArea,
-    isSuccess: nextServiceAreaCreated,
-    isPending: creatingNextServiceArea,
-    isError: NextServiceAreaError,
-  } = addEncounter();
 
   const { navigateTo, navigateBack } = useNavigation();
 
@@ -127,6 +122,9 @@ export default function TriageWorkFlow() {
   const patient = triageList?.find((d) => d.uuid == params.id);
   const { data: patientVisits, isLoading, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find(d => !Boolean(d.date_stopped));
+
+
+  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
 
   const { data } = getPatientsEncounters(params?.id as string);
   const [referral, setReferral] = useState<Encounter>()
@@ -241,9 +239,18 @@ export default function TriageWorkFlow() {
           concept: concepts.TRIAGE_RESULT,
           value: triageResult,
           obsDatetime: dateTime
-        }]
+        },
+        {
+          concept: concepts.PATIENT_REFERRED_TO,
+          value: formData.serviceArea[concepts.PATIENT_REFERRED_TO],
+          obsDatetime: getDateTime(),
+        }
+        ]
       });
     }
+
+    setMessage("closing visit...");
+    closeVisit(activeVisit?.uuid as string);
   }, [painCreated]);
 
   useEffect(() => {
@@ -284,16 +291,20 @@ export default function TriageWorkFlow() {
 
   const handlePersistentPain = (values: any) => {
     formData["pain"] = values;
-    setLoading(true);
     setShowForm(false);
-    setMessage("adding complaints...");
-    createPresenting({
-      encounterType: encounters.PRESENTING_COMPLAINTS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: formData.presentingComplaints,
-    });
+    if (triageResult == 'green') {
+      setShowModal(true);
+    }
+    // setLoading(true);
+    // 
+    // setMessage("adding complaints...");
+    // createPresenting({
+    //   encounterType: encounters.PRESENTING_COMPLAINTS,
+    //   visit: activeVisit?.uuid,
+    //   patient: params.id,
+    //   encounterDatetime: dateTime,
+    //   obs: formData.presentingComplaints,
+    // });
   };
 
   const handleVitalsSubmit = (values: any) => {
@@ -334,22 +345,17 @@ export default function TriageWorkFlow() {
   const handleServiceArea = (values: any) => {
     formData["serviceArea"] = values;
     setMessage("adding next service area...");
+    setLoading(true);
 
-    const nextServiceAreaObject = {
-      encounterType: 'NEXT_SERVICE_AREA', // use the appropriate encounter type UUID
+    setMessage("adding complaints...");
+    createPresenting({
+      encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
-      obs: [
-        {
-          concept: concepts.PATIENT_REFERRED_TO,
-          value: values[concepts.PATIENT_REFERRED_TO],
-          obsDatetime: getDateTime(),
-        }
-      ]
-    };
+      obs: formData.presentingComplaints,
+    });
 
-    createNextServiceArea(nextServiceAreaObject);
     setShowModal(false);
   };
 
