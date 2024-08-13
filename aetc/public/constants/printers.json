@@ -1,0 +1,6 @@
+[
+  { "name": "local", "ipAddress": "http://localhost:3000" },
+  { "name": "Registration 1", "ipAddress": "http://10.43.31.9:3000" },
+  { "name": "Registration 2", "ipAddress": "http://10.43.31.38:3000" },
+  { "name": "Triage", "ipAddress": "http://10.43.31.43:3000" }
+]

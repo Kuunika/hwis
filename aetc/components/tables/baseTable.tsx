@@ -3,7 +3,9 @@ import * as React from "react";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-import { TextField, Toolbar } from '@mui/material';
+import { Box, FormControlLabel, InputAdornment, Switch, TextField, Toolbar } from '@mui/material';
+import { FaMagnifyingGlass } from "react-icons/fa6"
+import { isToday } from "@/helpers/dateTime";
 
 type IProp = {
   width?: string;
@@ -30,41 +32,43 @@ const Table: React.FC<IProp> = ({
   style,
   rowHeight,
   checkboxSelection = false,
-  getSelectedItems = (items: any) => { console.log(items) }
+  getSelectedItems = (items: any) => { }
 }) => {
   const [searchText, setSearchText] = React.useState('');
   const [filteredRows, setFilteredRows] = React.useState(rows);
+  const [showTodayOnly, setShowTodayOnly] = React.useState(false)
+
   let columnVisibilityModel: any = {};
 
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setFilteredRows(rows)
-  },[rows])
+  }, [rows])
 
 
-  const requestSearch = (searchValue:any) => {
+  React.useEffect(() => {
+    requestSearch('')
+  }, [showTodayOnly])
+
+  const requestSearch = (searchValue: any) => {
     setSearchText(searchValue);
-    const filteredRows = rows.filter((row) => {
+    let filteredRows = rows.filter((row) => {
       return Object.keys(row).some((field) =>
         row[field]?.toString()?.toLowerCase()?.includes(searchValue.toLowerCase())
       );
-    });
+    })
+
+
+
+    if (showTodayOnly) {
+      filteredRows = filteredRows.filter(row => isToday(row.arrival_time))
+    }
+
     setFilteredRows(filteredRows);
   };
 
-  // if (columns.length > 0) {
-  //   // if (columns[i]) columnVisibilityModel[columns[i].field] = false;
-  //   columns.reduce((cumulative, current) => {
-  //     cumulative[`${current.field}`] = false;
-  //     return;
-  //   }, {});
-  // }
 
-  // if (columns.length > 4) {
-  //   for (let i = 4; i < columns.length - 1, i++; ) {
-  //     // if (columns[i]) columnVisibilityModel[columns[i].field] = false;
-  //   }
-  // }
+
 
   if (loading) {
     return (
@@ -91,17 +95,33 @@ const Table: React.FC<IProp> = ({
     );
   }
 
+
+  const handleSwitchChange = (value: any) => {
+    setShowTodayOnly(value.target.checked)
+  }
+
   return (
     <div style={{ height, width, ...style }}>
-    
+      <Box>
         <TextField
-        sx={{m:1}}
+          sx={{ m: 1, width: "30%" }}
           variant="outlined"
-          placeholder="Search…"
+          placeholder="Search Patient"
           value={searchText}
           onChange={(e) => requestSearch(e.target.value)}
+          InputProps={{
+            startAdornment: <InputAdornment position="start"><FaMagnifyingGlass /></InputAdornment>,
+          }}
         />
-    
+
+        <FormControlLabel
+          control={
+            <Switch onChange={handleSwitchChange} name="" size="medium" />
+          }
+          label="Show only patients registered today"
+        />
+
+      </Box>
 
       <DataGrid
         // getRowClassName={(test: any) => {

@@ -94,6 +94,7 @@ export const ClientWaitingForTriage = () => {
       lastName: row.family_name,
       gender: row.gender,
       arrivalTime: row.patient_arrival_time,
+      arrivalDateTime: row.arrival_time,
       actor: (
         <DisplayEncounterCreator
           encounterType={encounters.SOCIAL_HISTORY}

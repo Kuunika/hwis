@@ -27,9 +27,19 @@ export const getTraditionalAuthorities = () => {
 export const getDistricts = () => {
     const getall = () => axios.get<District[]>("/constants/districts.json").then(response => response.data);
 
-
     return useQuery({
         queryKey: ["districts"],
+        queryFn: getall,
+        enabled: true,
+        staleTime: Infinity
+    });
+};
+
+export const getPrinters = () => {
+    const getall = () => axios.get<Array<{ name: string, ipAddress: string }>>("/constants/printers.json").then(response => response.data);
+
+    return useQuery({
+        queryKey: ["printers"],
         queryFn: getall,
         enabled: true,
         staleTime: Infinity

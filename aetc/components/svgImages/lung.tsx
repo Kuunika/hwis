@@ -2,7 +2,6 @@ import { ReactSVG } from "react-svg";
 import styles from "./styles/lung.module.css";
 import { useEffect } from "react";
 
-
 export const LungImage = () => {
     useEffect(() => {
         const rightMiddleLobe = document.getElementById("right_middle_lobe-6");

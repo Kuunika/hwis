@@ -1,6 +1,6 @@
 'use client'
 import { calculateAge, getTime } from "@/helpers/dateTime";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { checkScreenSize, useNavigation } from "@/hooks";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import * as React from 'react';
@@ -31,28 +31,44 @@ export const ClientWaitingForAssessment = () => {
     data: patients,
     isLoading,
     isRefetching,
+    refetch
   } = getPatientsWaitingForAssessment();
+  const [rows, setRows] = useState<any>([])
+
+  useEffect(() => {
+    updatePatients()
+  }, [patients])
 
 
-  const rows = patients
-    ?.sort((p1, p2) => {
-      const triagePriority: any = { red: 1, yellow: 2, green: 3 };
-      if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
-        return -1;
-      }
-      if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
-        return 1;
-      }
+  useEffect(() => {
+    refetch()
+  }, [deleted])
 
-      // If triage results are the same, then sort by arrival time (earliest first)
-      //@ts-ignore
-      return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-    })
-    .map((p) => ({
-      id: p?.uuid,
-      ...p,
-      patient_arrival_time: getTime(p.arrival_time),
-    })).filter(p => p.id != deleted);
+
+
+  const updatePatients = () => {
+    const updatedPatients = patients
+      ?.sort((p1, p2) => {
+        const triagePriority: any = { red: 1, yellow: 2, green: 3 };
+        if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
+          return -1;
+        }
+        if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
+          return 1;
+        }
+
+        // If triage results are the same, then sort by arrival time (earliest first)
+        //@ts-ignore
+        return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+      })
+      .map((p) => ({
+        id: p?.uuid,
+        ...p,
+        patient_arrival_time: getTime(p.arrival_time),
+      })).filter(p => p.id != deleted);
+
+    setRows(updatedPatients)
+  }
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit" },
@@ -145,9 +161,7 @@ export const ClientWaitingForAssessment = () => {
 
 
 
-
-
-  const formatForMobileView = rows?.map((row) => {
+  const formatForMobileView = rows?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -155,6 +169,7 @@ export const ClientWaitingForAssessment = () => {
       lastName: row.family_name,
       gender: row.gender,
       arrivalTime: row.patient_arrival_time,
+      arrivalDateTime: row.arrival_time,
       actor: (
         <DisplayEncounterCreator
           encounterType={encounters.VITALS}

@@ -239,15 +239,17 @@ export default function TriageWorkFlow() {
         },
         {
           concept: concepts.PATIENT_REFERRED_TO,
-          value: formData.serviceArea[concepts.PATIENT_REFERRED_TO],
+          value: triageResult == "green" ? formData.serviceArea[concepts.PATIENT_REFERRED_TO] : '',
           obsDatetime: getDateTime(),
         }
         ]
       });
     }
+    if (triageResult == "green") {
 
-    setMessage("closing visit...");
-    closeVisit(activeVisit?.uuid as string);
+      setMessage("closing visit...");
+      closeVisit(activeVisit?.uuid as string);
+    }
   }, [painCreated]);
 
   useEffect(() => {
@@ -273,8 +275,6 @@ export default function TriageWorkFlow() {
       disabilityError ||
       triageResultError ||
       painError
-
-
     setError(error);
   }, [
     presentingError,
@@ -291,7 +291,9 @@ export default function TriageWorkFlow() {
     setShowForm(false);
     if (triageResult == 'green') {
       setShowModal(true);
+      return
     }
+    triggerSubmission()
 
   };
 
@@ -333,8 +335,13 @@ export default function TriageWorkFlow() {
   const handleServiceArea = (values: any) => {
     formData["serviceArea"] = values;
     setMessage("adding next service area...");
-    setLoading(true);
 
+    triggerSubmission()
+    setShowModal(false);
+  };
+
+  const triggerSubmission = () => {
+    setLoading(true);
     setMessage("adding complaints...");
     createPresenting({
       encounterType: encounters.PRESENTING_COMPLAINTS,
@@ -343,9 +350,7 @@ export default function TriageWorkFlow() {
       encounterDatetime: dateTime,
       obs: formData.presentingComplaints,
     });
-
-    setShowModal(false);
-  };
+  }
 
 
 

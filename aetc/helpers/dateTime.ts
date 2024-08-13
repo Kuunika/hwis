@@ -102,3 +102,13 @@ export const getHumanReadableDateTimeLab = (date: string | Date | undefined) => 
 
   return dayjs(date).format('YYYY-MM-DD h:mm A');
 }
+
+
+export function isToday(dateString: string) {
+
+  const inputDate = new Date(dateString);
+  const today = new Date();
+  const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  const inputDateUTC = new Date(Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate()));
+  return inputDateUTC.getTime() === todayUTC.getTime();
+}

@@ -41,10 +41,10 @@ export const WaitingRegistrationList = () => {
     },
     {
       field: "aggreg", headerName: "Aggregate", flex: 1, renderCell: (cell: any) => {
-        return <CalculateWaitingTime arrival_time={cell.row.arrival_time}  />
+        return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />
       }
     },
-  
+
     { field: "last_encounter_creator", headerName: "Screened By", flex: 1 },
 
     {
@@ -60,7 +60,7 @@ export const WaitingRegistrationList = () => {
           <>
 
             <MainButton
-              sx={{ fontSize: "12px", mr:"1px" }}
+              sx={{ fontSize: "12px", mr: "1px" }}
               title={"start"}
               onClick={() => {
                 if (cell.row.gender != 'N/A') {
@@ -90,6 +90,7 @@ export const WaitingRegistrationList = () => {
       firstName: row.given_name,
       lastName: row.family_name,
       gender: row.gender,
+      arrivalDateTime: row.arrival_time,
       arrivalTime: row.patient_arrival_time,
       actor: (
         <DisplayEncounterCreator
@@ -106,12 +107,12 @@ export const WaitingRegistrationList = () => {
         <>
           {" "}
           <MainButton
-            sx={{ fontSize: "12px",width:"49%", mr:"1px" }}
+            sx={{ fontSize: "12px", width: "49%", mr: "1px" }}
             title={"start"}
             onClick={() => navigateTo(`/registration/${row.id}/search`)}
           />
           <AbscondButton
-          sx={{width:"49%"}}
+            sx={{ width: "49%" }}
             onDelete={() => setDeleted(row.id)}
             visitId={row.visit_uuid}
             patientId={row.id}
@@ -124,7 +125,7 @@ export const WaitingRegistrationList = () => {
   });
 
   return (
-    <PatientTableList formatForMobileView={formatForMobileView}  isLoading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
+    <PatientTableList formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} />
   );
 };
 
