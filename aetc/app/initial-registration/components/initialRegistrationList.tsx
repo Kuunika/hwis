@@ -60,7 +60,7 @@ export const InitialRegistrationList = () => {
           <>
             <MainButton
               size="small"
-              sx={{ fontSize: "12px", mr:"1px" }}
+              sx={{ fontSize: "12px", mr: "1px" }}
               title={"screen"}
               onClick={() => navigateTo(`/prescreening/${cell.id}`)}
             />
@@ -69,7 +69,7 @@ export const InitialRegistrationList = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
-          </> 
+          </>
         );
       },
     },
@@ -83,6 +83,7 @@ export const InitialRegistrationList = () => {
       lastName: row.family_name,
       gender: row.gender,
       arrivalTime: row.patient_arrival_time,
+      arrivalDateTime: row.arrival_time,
       actor: (
         <DisplayEncounterCreator
           encounterType={encounters.INITIAL_REGISTRATION}
@@ -98,12 +99,12 @@ export const InitialRegistrationList = () => {
         <>
           {" "}
           <MainButton
-            sx={{ fontSize: "12px",width:"49%", mr:"1px" }}
+            sx={{ fontSize: "12px", width: "49%", mr: "1px" }}
             title={"screen"}
             onClick={() => navigateTo(`/prescreening/${row.id}`)}
           />
           <AbscondButton
-          sx={{width:"49%"}}
+            sx={{ width: "49%" }}
             onDelete={() => setDeleted(row.id)}
             visitId={row.visit_uuid}
             patientId={row.id}
@@ -116,9 +117,9 @@ export const InitialRegistrationList = () => {
   });
 
   return (
-    <PatientTableList formatForMobileView={formatForMobileView}  isLoading={isLoading || isRefetching}
-    columns={columns}
-    rows={rows ? rows : []} />
+    <PatientTableList formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching}
+      columns={columns}
+      rows={rows ? rows : []} />
   );
 };
 

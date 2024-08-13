@@ -8,6 +8,7 @@ import { useState } from "react";
 import { BasicSelect } from "@/app/patient/components/basicSelect";
 import { getPatientId } from "@/helpers/emr";
 import { SxProps } from "@mui/material";
+import { getPrinters } from "@/hooks/loadStatic";
 
 type Props = {
   firstName: string;
@@ -24,6 +25,8 @@ export const PatientBarcodePrinter = ({
 }: Props) => {
   const [printer, setPrinter] = useState("http://localhost:3000");
   const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { });
+  const { data, isLoading } = getPrinters();
+
   return (
     <>
       <PatientRegistrationBarcodeTemplate
@@ -47,16 +50,9 @@ export const PatientBarcodePrinter = ({
           setPrinter(value);
         }}
         label="Select Printer"
-        options={[
-          {
-            value: "http://localhost:3000",
-            label: "Local",
-          },
-          {
-            value: `${process.env.NEXT_PUBLIC_PRINTER_IP}`,
-            label: "Network",
-          },
-        ]}
+        options={!data ? [] : data?.map(d => {
+          return { value: d.ipAddress, label: d.name }
+        })}
       />
       <br />
       <MainButton

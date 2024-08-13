@@ -1,13 +1,15 @@
 import { BasicSelect } from "@/app/patient/components/basicSelect";
+import { getPrinters } from "@/hooks/loadStatic";
 import { useEffect, useState } from "react";
 
 
 
-export const PrinterSelect = ({getValue}:{getValue:(value:any)=>void}) => {
+export const PrinterSelect = ({ getValue }: { getValue: (value: any) => void }) => {
   const [printer, setPrinter] = useState("http://localhost:3000");
-  useEffect(()=>{
+  const { data, isLoading } = getPrinters();
+  useEffect(() => {
     getValue(printer)
-  },[printer])
+  }, [printer])
 
 
   return (
@@ -16,16 +18,9 @@ export const PrinterSelect = ({getValue}:{getValue:(value:any)=>void}) => {
         setPrinter(value);
       }}
       label="Select Printer"
-      options={[
-        {
-          value: "http://localhost:3000",
-          label: "Local",
-        },
-        {
-          value: `${process.env.NEXT_PUBLIC_PRINTER_IP}`,
-          label: "Network",
-        },
-      ]}
+      options={!data ? [] : data?.map(d => {
+        return { value: d.ipAddress, label: d.name }
+      })}
     />
   );
 };
