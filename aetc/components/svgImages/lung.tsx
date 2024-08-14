@@ -1,10 +1,15 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import Lung from "../../assets/lung";
+import { Box, Popover, Typography } from "@mui/material";
+import { BreathingLungForm } from "@/app/primary-assessment/components/forms/breathingLungForm";
 
 export const LungImage = () => {
     const containerRef = useRef<SVGSVGElement>(null);
     const [ids, setIds] = useState<Array<{ id: string | null, label: string | null }>>([])
     const [counter, setCounter] = useState(0) // state used just to persist an click color highlight after mouseleave event
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [selectedSection, setSelectedSection] = useState<{ id: string | null, label: string | null }>({ id: "", label: "" })
+
 
     const highlightcolor = "#708090"
 
@@ -16,11 +21,7 @@ export const LungImage = () => {
     }
     const handleMouseLeave = (e: MouseEvent) => {
         const target = e.currentTarget as SVGElement;
-        // const found = ids.find(id => id.id == target.id);
 
-        // console.log(found)
-
-        // if (found) return
         target.style.fill = ""
         target.style.opacity = `0`;
         // highLightPath();
@@ -29,7 +30,7 @@ export const LungImage = () => {
 
     useEffect(() => {
         highLightPath()
-        console.log(counter)
+
     }, [ids, counter])
 
     const highLightPath = () => {
@@ -43,10 +44,11 @@ export const LungImage = () => {
     }
 
     const handleClickLister = (e: Event) => {
-        console.log(e)
         const target = e.currentTarget as SVGElement;
         const label = target.getAttribute('data-label'); // Retrieve custom attribute
         const id = target.id
+        setAnchorEl(e?.currentTarget);
+        setSelectedSection({ id, label })
         setIds(ids => [...ids, { id, label }]);
     }
 
@@ -71,13 +73,39 @@ export const LungImage = () => {
             }
         };
     }
-
         , [])
 
 
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
     return (
-        <div  >
+        <div>
             <Lung ref={containerRef} />
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+            >
+                <Box sx={{ padding: "1ch", width: "30ch" }}>
+                    <Typography variant="h5">{selectedSection.label}</Typography>
+                    <br />
+                    <BreathingLungForm onSubmit={(values: any) => console.log({ values })} />
+                </Box>
+            </Popover>
         </div>
     );
 
