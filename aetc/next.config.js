@@ -17,14 +17,14 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 // })
 const nextConfig = {
   output: "standalone",
-  // webpack(config) {
-  //   config.module.rules.push({
-  //     test: /\.svg$/,
-  //     use: ['@svgr/webpack'],
-  //   });
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
 
-  //   return config;
-  // },
+    return config;
+  },
 };
 
 module.exports = nextConfig;

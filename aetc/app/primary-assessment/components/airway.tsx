@@ -12,6 +12,7 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
+import { LungImage } from "@/components/svgImages";
 
 const form = {
   isAirwayPatent: {
@@ -118,6 +119,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout title="Airway Patent">
+        <LungImage />
         <FieldsContainer sx={{ alignItems: "flex-start" }}>
           <RadioGroupInput
             name={form.isAirwayPatent.name}
