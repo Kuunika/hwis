@@ -105,6 +105,20 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           <FaPlus/>
           <Typography variant="body2">Start Secondary Survey</Typography>
         </MenuItem>
+        <MenuItem
+          onClick={() => startFlow(`/nursing-chart/${patient?.id}`)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
+            },
+          }}
+        >
+          <FaPlus/>
+          <Typography variant="body2">Start Monitoring</Typography>
+        </MenuItem>
       </Menu>
     </Box>
   );
