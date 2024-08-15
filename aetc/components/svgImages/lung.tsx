@@ -27,17 +27,22 @@ export const LungImage = () => {
     }
 
     useEffect(() => {
-        if (containerRef.current) {
-            for (let i = 0; i < ids.length; i++) {
-                highlightSection(ids[i].id as string, highlightcolor, "0.5");
-            }
-        }
+        highlightAllSelectedSections()
     }, [ids, counter])
 
     useEffect(() => {
         highlightSection(selectedSection.id as string, highlightcolor, "0.5")
     }, [selectedSection, counter])
 
+
+
+    const highlightAllSelectedSections = () => {
+        if (containerRef.current) {
+            for (let i = 0; i < ids.length; i++) {
+                highlightSection(ids[i].id as string, highlightcolor, "0.5");
+            }
+        }
+    }
     const highlightSection = (id: string, color: string, opacity: string) => {
         if (containerRef.current) {
             const rect = containerRef.current.getElementById(id) as SVGAElement;
@@ -86,13 +91,15 @@ export const LungImage = () => {
         setAnchorEl(null);
         highlightSection(selectedSection.id as string, "", "0");
         setSelectedSection({ id: null, label: null })
+        highlightAllSelectedSections()
     };
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
     const handleFormSubmit = (values: any) => {
-
+        setIds(ids => [...ids, { ...selectedSection }])
+        handleClose()
     }
     return (
         <div>
@@ -114,7 +121,7 @@ export const LungImage = () => {
                 <Box sx={{ padding: "1ch", width: "30ch" }}>
                     <Typography variant="h5">{selectedSection.label}</Typography>
                     <br />
-                    <BreathingLungForm onSubmit={(values: any) => console.log({ values })} />
+                    <BreathingLungForm onSubmit={handleFormSubmit} />
                 </Box>
             </Popover>
         </div>
