@@ -7,7 +7,6 @@ import { FaAngleDown } from "react-icons/fa";
 import { MainTypography, WrapperBox } from "@/components";
 import Link from "next/link";
 import Image from "next/image";
-import AETCFormIcon from "../../../../icons/aetc.svg";
 import gynacology from "../../../../icons/gynacology.svg";
 import medicalInpatient from "../../../../icons/medicalInpatient.svg";
 import monitoring from "../../../../icons/monitoring.svg";
@@ -23,7 +22,7 @@ export const templateForms = [
   { label: "Surgical Notes", link: "surgicalNotes", icon: surgical },
   { label: "Gynacological ", link: "gynacological", icon: gynacology },
   { label: "SOAP ", link: "soap", icon: surgical },
-  { label: "Monitoring Chat ", link: "monitoring", icon: monitoring },
+  { label: "Monitoring Chart ", link: `nursingChart`, icon: monitoring },
   { label: "Referral ", link: "referral", icon: referral },
 ];
 
