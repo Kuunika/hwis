@@ -1,5 +1,7 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
+import { checkLoggedIn } from "@/hooks/auth";
 import { Button } from "@mui/material";
+import { useState } from "react";
 import { FaFileLines } from "react-icons/fa6";
 
 import * as Yup from "yup";
@@ -7,6 +9,7 @@ import * as Yup from "yup";
 const schema = Yup.object().shape({
     'description': Yup.array().required().label("Description of Abnormality"),
     'notes': Yup.string().required().label("Notes"),
+    'specify': Yup.string().label("Specify"),
 });
 
 
@@ -22,18 +25,25 @@ const options = [
 ]
 
 export const BreathingLungForm = (props: Props) => {
+    const [showInputTextDisplay, setShowInputTextDisplay] = useState(false);
+
     return <FormikInit validationSchema={schema}
         initialValues={{ description: "", notes: "" }}
         onSubmit={props.onSubmit}
         submitButton={false}
         submitButtonText="next"
     >
-        <TextInputField multiline rows={4} sx={{ width: "100%" }} id={"notes"} name={"notes"} label={"Notes"} />
+        <TextInputField multiline rows={2} sx={{ width: "100%" }} id={"notes"} name={"notes"} label={"Notes"} />
         <SearchComboBox
+            getValue={(values) => {
+                if (values)
+                    setShowInputTextDisplay(Boolean(values.find((v: any) => v.id == "Other")))
+            }}
             name={'description'}
             label={'Description of Abnormality'}
             options={options}
         />
+        {showInputTextDisplay && <TextInputField sx={{ width: "100%" }} id={"specify"} name={"specify"} label={"Specify"} />}
         <br />
         <Button type="submit" sx={{ borderRadius: "1px" }} variant="contained" fullWidth>Submit</Button>
     </FormikInit>

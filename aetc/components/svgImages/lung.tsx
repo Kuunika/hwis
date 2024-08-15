@@ -21,25 +21,29 @@ export const LungImage = () => {
     }
     const handleMouseLeave = (e: MouseEvent) => {
         const target = e.currentTarget as SVGElement;
-
         target.style.fill = ""
         target.style.opacity = `0`;
-        // highLightPath();
         setCounter(count => count + 1)
     }
 
     useEffect(() => {
-        highLightPath()
-
-    }, [ids, counter])
-
-    const highLightPath = () => {
         if (containerRef.current) {
             for (let i = 0; i < ids.length; i++) {
-                const rect = containerRef.current.getElementById(ids[i].id as string) as SVGRectElement;
-                rect.style.fill = highlightcolor
-                rect.style.opacity = `0.5`;
+                highlightSection(ids[i].id as string, highlightcolor, "0.5");
             }
+        }
+    }, [ids, counter])
+
+    useEffect(() => {
+        highlightSection(selectedSection.id as string, highlightcolor, "0.5")
+    }, [selectedSection, counter])
+
+    const highlightSection = (id: string, color: string, opacity: string) => {
+        if (containerRef.current) {
+            const rect = containerRef.current.getElementById(id) as SVGAElement;
+            if (!rect) return;
+            rect.style.fill = color;
+            rect.style.opacity = opacity
         }
     }
 
@@ -47,9 +51,10 @@ export const LungImage = () => {
         const target = e.currentTarget as SVGElement;
         const label = target.getAttribute('data-label'); // Retrieve custom attribute
         const id = target.id
+        //@ts-ignore
         setAnchorEl(e?.currentTarget);
         setSelectedSection({ id, label })
-        setIds(ids => [...ids, { id, label }]);
+        // setIds(ids => [...ids, { id, label }]);
     }
 
 
@@ -66,6 +71,7 @@ export const LungImage = () => {
 
             }
         }
+
         return () => {
             for (let i = 0; i < rects.length; i++) {
                 rects[i].removeEventListener('mouseleave', handleMouseLeave);
@@ -78,11 +84,16 @@ export const LungImage = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
+        highlightSection(selectedSection.id as string, "", "0");
+        setSelectedSection({ id: null, label: null })
     };
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
+    const handleFormSubmit = (values: any) => {
+
+    }
     return (
         <div>
             <Lung ref={containerRef} />
@@ -112,45 +123,3 @@ export const LungImage = () => {
 };
 
 export default LungImage;
-
-
-interface DynamicSVGProps {
-    svgContent: string;
-    onClickHandlers: {
-        [key: string]: (event: React.MouseEvent<SVGElement>) => void;
-    };
-}
-
-
-const DynamicSVG: React.FC<DynamicSVGProps> = ({ svgContent, onClickHandlers }) => {
-    const svgContainerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (svgContainerRef.current) {
-            // Clear any existing content
-            svgContainerRef.current.innerHTML = svgContent;
-            // Add event listeners
-            Object.keys(onClickHandlers).forEach((selector) => {
-                const elements = svgContainerRef.current?.querySelectorAll(selector);
-                elements?.forEach((element) => {
-
-                    //@ts-ignore
-                    element.addEventListener('click', onClickHandlers[selector]);
-                });
-            });
-
-            // Cleanup event listeners on component unmount
-            return () => {
-                Object.keys(onClickHandlers).forEach((selector) => {
-                    const elements = svgContainerRef.current?.querySelectorAll(selector);
-                    elements?.forEach((element) => {
-                        //@ts-ignore
-                        element.removeEventListener('click', onClickHandlers[selector]);
-                    });
-                });
-            };
-        }
-    }, [svgContent, onClickHandlers]);
-
-    return <Lung />
-};
