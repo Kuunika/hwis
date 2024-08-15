@@ -62,7 +62,7 @@ export const ObservationFormConfig = {
     label: "Peak Expiratory Flow Rate (PEFR)",
   },
   triageScore: {
-    name: "TRIAGE_SCORE",
+    name: concepts.TRIAGE_RESULT,
     label: "Triage Score",
   },
 };
