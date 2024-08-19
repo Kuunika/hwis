@@ -1,5 +1,5 @@
 import { useConditions, useNavigation } from "@/hooks";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -7,12 +7,13 @@ import {
   FormikInit,
   MainButton,
   SearchComboBox,
+  SelectInputField,
   TextInputField,
   WrapperBox,
 } from "@/components";
 import * as Yup from "yup";
 import { getInitialValues } from "@/helpers";
-import { concepts } from "@/constants";
+import { concepts, triageResult } from "@/constants";
 import { TriageContext, TriageContextType } from "@/contexts";
 
 
@@ -22,7 +23,7 @@ type Prop = {
 
 export const ObservationFormConfig = {
   oxygenSaturation: {
-    name: concepts.OXYGEN_SATURATION,
+    name: concepts.SATURATION_RATE,
     label: "Oxygen Saturation (O2 Sat)",
   },
   heartRate: {
@@ -65,6 +66,10 @@ export const ObservationFormConfig = {
     name: concepts.TRIAGE_RESULT,
     label: "Triage Score",
   },
+  units: {
+    name: concepts.ADDITIONAL_NOTES, // change concept
+    label: "Units",
+  },
 };
 
 
@@ -80,18 +85,20 @@ const schema = Yup.object().shape({
   [ObservationFormConfig.avpu.name]: Yup.string().label(ObservationFormConfig.avpu.label),
   [ObservationFormConfig.pefr.name]: Yup.string().label(ObservationFormConfig.pefr.label),
   [ObservationFormConfig.triageScore.name]: Yup.string().label(ObservationFormConfig.triageScore.label),
+  [ObservationFormConfig.units.name]: Yup.string().required().label(ObservationFormConfig.units.label),
 });
 
 const initialValues = getInitialValues(ObservationFormConfig);
 
 export const ObservationsForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const { updateConditions } = useConditions();
   const { navigateTo } = useNavigation();
-  const { flow } = useContext(TriageContext) as TriageContextType;
+  const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType;
+  const [caseType, setCaseType] = useState<string>("default");
+
 
   const handleSubmit = (values: any) => {
-    const triageScore = calculateTriageScore(values);
+    const triageScore = flow[ObservationFormConfig.triageScore.name];
     // Add the triage score to the form values
     values[ObservationFormConfig.triageScore.name] = triageScore;
 
@@ -106,62 +113,210 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
     { id: "Unresponsive", label: "Unresponsive" },
   ];
 
-  const calculateTriageScore = (values: any) => {
+  const traigeScores =[
+    "Emergency", "Priority", "Queue"
+  ]
+
+  const respiratoryRateBounds = [
+    { operator: ">", value: 30, result: traigeScores[0], bound: 100 },
+    { operator: "<", value: 8, result: traigeScores[0], bound: 0 },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 21,
+      operator2: "<=",
+      value2: 30,
+      result: traigeScores[1],
+      bound: 0,
+    },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 8,
+      operator2: "<=",
+      value2: 11,
+      result: traigeScores[1],
+      bound: 0,
+    },
+    {
+      operator: "combined",
+      operator1: ">=",
+      value: 12,
+      operator2: "<=",
+      value2: 20,
+      result:  traigeScores[2],
+      bound: 0,
+    },
+  ];
+  
+
+
+  
+  const calculateTriageScore = (value: any, type: string) => {
     let score = "";
   
-    // Parse numerical values
-    const oxygenSaturation = parseFloat(values[ObservationFormConfig.oxygenSaturation.name]) || 0;
-    const heartRate = parseFloat(values[ObservationFormConfig.heartRate.name]) || 0;
-    const bloodPressureSystolic = parseFloat(values[ObservationFormConfig.bloodPressureSystolic.name]) || 0;
-    const bloodPressureDiastolic = parseFloat(values[ObservationFormConfig.bloodPressureDiastolic.name]) || 0;
-    const respiratoryRate = parseFloat(values[ObservationFormConfig.respiratoryRate.name]) || 0;
-    const temperature = parseFloat(values[ObservationFormConfig.temperature.name]) || 0;
-    const randomBloodGlucose = parseFloat(values[ObservationFormConfig.randomBloodGlucose.name]) || 0;
-    const avpu = values[ObservationFormConfig.avpu.name] || '';
+    // Parse numerical value
+    const numericalValue = parseFloat(value) || 0;
+    switch (type) {
+      case ObservationFormConfig.oxygenSaturation.name:
+        if (numericalValue < 90) {
+          score = traigeScores[0];
+        } 
+        if (numericalValue >= 90 && numericalValue  < 94) {
+          score = traigeScores[1];
+        } 
+        if (numericalValue >= 94) {
+          score = traigeScores[2];
+        }
+        break;
   
-    // Emergency Criteria
-    if (
-      heartRate < 40 || heartRate > 130 ||
-      bloodPressureSystolic < 80 || bloodPressureDiastolic < 40 ||
-      temperature > 40 ||
-      respiratoryRate < 10 || respiratoryRate > 24 ||
-      avpu === "Pain" || avpu === "Unresponsive" ||
-      randomBloodGlucose < 2 || randomBloodGlucose > 20 ||
-      oxygenSaturation < 90
-    ) {
-      score = "Emergency";
+      case ObservationFormConfig.heartRate.name:
+        if (numericalValue < 40 || numericalValue > 129) {
+          score = traigeScores[0];
+        } 
+        if ((numericalValue >= 40 && numericalValue <= 59) || (numericalValue >= 101 && numericalValue <= 129)) {
+          score = traigeScores[1];
+        } 
+        if (numericalValue >= 60 && numericalValue <= 100){
+          score = traigeScores[2];
+        } 
+        break;
+  
+      case ObservationFormConfig.bloodPressureSystolic.name:
+        if (numericalValue > 200 || numericalValue < 80) {
+          score = traigeScores[0];
+        } 
+        if ((numericalValue >= 81 && numericalValue <= 89) || (numericalValue >= 150 && numericalValue <= 200)) {
+          score = traigeScores[1];
+        } 
+        if (numericalValue >= 90 || (numericalValue > 89 && numericalValue <= 149)){
+          score = traigeScores[2];
+        }
+        break;
+  
+      case ObservationFormConfig.bloodPressureDiastolic.name:
+        if (numericalValue > 119) {
+          score = traigeScores[0];
+        } 
+        if (numericalValue >= 100 && numericalValue <= 119) {
+          score = traigeScores[1];
+        } 
+        if (numericalValue < 100) {
+          score = traigeScores[2];
+        } 
+        break;
+  
+      case ObservationFormConfig.respiratoryRate.name:
+    for (const bound of respiratoryRateBounds) {
+        if (bound.operator === ">" && numericalValue > bound.value) {
+            score = bound.result;
+            break;
+        }
+
+        if (bound.operator === "<" && numericalValue < bound.value) {
+            score = bound.result;
+            break;
+        }
+
+        if (
+            bound.operator === "combined" &&
+            typeof bound.value2 !== "undefined" && 
+            numericalValue >= bound.value &&
+            numericalValue <= bound.value2
+        ) {
+            score = bound.result;
+            break;
+        }
     }
-    // Priority Criteria
-    else if (
-      heartRate < 50 || heartRate > 110 ||
-      bloodPressureSystolic < 90 || bloodPressureDiastolic < 50 ||
-      temperature > 38 ||
-      respiratoryRate < 9 || respiratoryRate > 20 ||
-      avpu === "Pain" ||
-      randomBloodGlucose < 4 || randomBloodGlucose > 10 ||
-      oxygenSaturation < 93
-    ) {
-      score = "Priority";
-    }
-    // Queue Criteria
-    else if (
-      heartRate >= 60 && heartRate <= 100 &&
-      bloodPressureSystolic >= 90 && bloodPressureDiastolic >= 60 &&
-      temperature >= 36.5 && temperature <= 37.5 &&
-      respiratoryRate >= 12 && respiratoryRate <= 20 &&
-      avpu === "Alert" &&
-      randomBloodGlucose >= 4 && randomBloodGlucose <= 7 &&
-      oxygenSaturation >= 95
-    ) {
-      score = "Queue";
-    }
-    else {
-      score = "No score";
+    break;
+  
+      case ObservationFormConfig.temperature.name:
+        if (numericalValue > 40) {
+          score = traigeScores[0];
+        } else if (numericalValue > 38) {
+          score = traigeScores[1];
+        } else if (numericalValue >= 36.5 && numericalValue <= 37.5) {
+          score = traigeScores[2];
+        } else {
+          score = "No score";
+        }
+        break;
+  
+      case ObservationFormConfig.randomBloodGlucose.name:
+        if (numericalValue < 2 || numericalValue > 20) {
+          score = traigeScores[0];
+        } else if (numericalValue < 4 || numericalValue > 10) {
+          score = traigeScores[1];
+        } else if (numericalValue >= 4 && numericalValue <= 7) {
+          score = traigeScores[2];
+        } else {
+          score = "No score";
+        }
+        break;
+  
+      case ObservationFormConfig.avpu.name:
+        if (value === "Pain" || value === "Unresponsive") {
+          score = traigeScores[0];
+        } else if (value === "Pain") {
+          score = traigeScores[1];
+        } else if (value === "Alert") {
+          score = traigeScores[2];
+        } else {
+          score = "No score";
+        }
+        break;
+  
+      default:
+        score = "No score";
     }
   
     return score;
   };
   
+  
+  
+
+  const getBackgroundColor = (caseType: string) => {
+    switch (caseType) {
+      case traigeScores[0]:
+        return "#FECDCA";
+      case traigeScores[1]:
+        return "#FEDF89";
+      case traigeScores[2]:
+        return "#DDEEDD";
+      default:
+        return "#FFFFFF"; // Default color
+    }
+  };
+
+  useEffect(() => {
+    let maxScore = "Queue"; // Initialize with the default value
+    let newScores: Record<string, string> = {};
+  
+    Object.keys(flow).forEach((key) => {
+      const value = flow[key];
+      if (value) {
+        const score = calculateTriageScore(value, key);
+        console.log(score);
+        newScores[key] = score;
+      }
+
+      for (const key in newScores) {
+        if (newScores.hasOwnProperty(key)) {
+          if(newScores[key] == traigeScores[0])
+            maxScore = traigeScores[0]
+
+          if(newScores[key] == traigeScores[1] && maxScore !== traigeScores[0])
+            maxScore = traigeScores[1]
+
+        }}
+
+        setCaseType(maxScore);
+
+    });
+  
+
+  }, [flow]);
 
   return (
     <FormikInit
@@ -173,52 +328,97 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
-
+      <div
+        style={{
+          backgroundColor: getBackgroundColor(caseType),
+          width: "100%",
+          height: "200px",
+          marginTop: "20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#000",
+          fontSize: "18px",
+          fontWeight: "bold",
+        }}
+      >
+        {caseType.charAt(0).toUpperCase() + caseType.slice(1)} Case
+      </div>
       <FormFieldContainerLayout title="Observations">
-        <FieldsContainer>
+        <FieldsContainer >
           <TextInputField
             name={ObservationFormConfig.oxygenSaturation.name}
             label={ObservationFormConfig.oxygenSaturation.label}
             id={ObservationFormConfig.oxygenSaturation.name}
             unitOfMeasure="%"
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.oxygenSaturation.name]: value })}
           />
           <TextInputField
             name={ObservationFormConfig.respiratoryRate.name}
             label={ObservationFormConfig.respiratoryRate.label}
             id={ObservationFormConfig.respiratoryRate.name}
             unitOfMeasure="bs/m"
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.respiratoryRate.name]: value })}
           />
         </FieldsContainer>
-        <FieldsContainer>
           <TextInputField
             name={ObservationFormConfig.heartRate.name}
             label={ObservationFormConfig.heartRate.label}
             id={ObservationFormConfig.heartRate.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.heartRate.name]: value })}
+            unitOfMeasure="bpm"
           />
+
+          <FieldsContainer sx={{mt:"2ch"}}>
           <TextInputField
             name={ObservationFormConfig.bloodPressureSystolic.name}
             label={ObservationFormConfig.bloodPressureSystolic.label}
             id={ObservationFormConfig.bloodPressureSystolic.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.bloodPressureSystolic.name]: value })}
+            unitOfMeasure="mmHg"
           />
           <TextInputField
             name={ObservationFormConfig.bloodPressureDiastolic.name}
             label={ObservationFormConfig.bloodPressureDiastolic.label}
             id={ObservationFormConfig.bloodPressureDiastolic.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.bloodPressureDiastolic.name]: value })}
+            unitOfMeasure="mmHg"
           />
+          </FieldsContainer>
+
           <TextInputField
             name={ObservationFormConfig.temperature.name}
             label={ObservationFormConfig.temperature.label}
             id={ObservationFormConfig.temperature.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.temperature.name]: value })}
+            unitOfMeasure="°C"
           />
+          
+          <FieldsContainer>
+         
           <TextInputField
             name={ObservationFormConfig.randomBloodGlucose.name}
             label={ObservationFormConfig.randomBloodGlucose.label}
             id={ObservationFormConfig.randomBloodGlucose.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.randomBloodGlucose.name]: value })}
           />
+           <SelectInputField
+            sx={{ mt: '2ch' }}
+            width="20%"
+            name={ObservationFormConfig.units.name}
+            selectItems={[
+              { name: "mmol/l", value: "mmol/l" },
+              { name: "mg/dl", value: "mg/dl" },
+            ]}
+            label={ObservationFormConfig.units.label}
+            id={ObservationFormConfig.units.name}
+          />
+          </FieldsContainer>
           <TextInputField
             name={ObservationFormConfig.urineDipstickKetones.name}
             label={ObservationFormConfig.urineDipstickKetones.label}
             id={ObservationFormConfig.urineDipstickKetones.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.urineDipstickKetones.name]: value })}
           />
           <SearchComboBox
             name={ObservationFormConfig.avpu.name}
@@ -232,8 +432,9 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
             name={ObservationFormConfig.pefr.name}
             label={ObservationFormConfig.pefr.label}
             id={ObservationFormConfig.pefr.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.pefr.name]: value })}
           />
-        </FieldsContainer>
+        
       </FormFieldContainerLayout>
 
       <WrapperBox>
@@ -242,3 +443,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
     </FormikInit>
   );
 };
+
+function forEach(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
