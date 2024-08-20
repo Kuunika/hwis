@@ -246,7 +246,6 @@ export default function TriageWorkFlow() {
       });
     }
     if (triageResult == "green") {
-
       setMessage("closing visit...");
       closeVisit(activeVisit?.uuid as string);
     }
@@ -377,7 +376,6 @@ export default function TriageWorkFlow() {
 
 
   useEffect(() => {
-
     if (triageResult == 'red') {
       toast.error('Triage Red', {
         position: "bottom-right",
@@ -466,6 +464,9 @@ export default function TriageWorkFlow() {
         >
           <PresentingComplaintsForm getFormValues={setPresentingComplaints} triageResult={triageResult}
             setTriageResult={checkTriageResult} onSubmit={handlePresentComplaints} />
+
+
+            
           <VitalsForm
             previous={() => setActiveStep(0)}
             triageResult={triageResult}

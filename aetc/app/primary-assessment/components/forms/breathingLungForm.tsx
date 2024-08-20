@@ -1,6 +1,6 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { checkLoggedIn } from "@/hooks/auth";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useState } from "react";
 import { FaFileLines } from "react-icons/fa6";
 
@@ -14,7 +14,8 @@ const schema = Yup.object().shape({
 
 
 type Props = {
-    onSubmit: (values: any) => void
+    onSubmit: (values: any) => void;
+    onCancel: () => void
 }
 const options = [
     { id: "Wound", label: "Wound" },
@@ -45,6 +46,9 @@ export const BreathingLungForm = (props: Props) => {
         />
         {showInputTextDisplay && <TextInputField sx={{ width: "100%" }} id={"specify"} name={"specify"} label={"Specify"} />}
         <br />
-        <Button type="submit" sx={{ borderRadius: "1px" }} variant="contained" fullWidth>Submit</Button>
+        <Box sx={{ display: "flex", gap: "0.2ch" }}>
+            <Button type="submit" sx={{ borderRadius: "1px" }} variant="contained" fullWidth>Submit</Button>
+            <Button sx={{ borderRadius: "1px" }} fullWidth onClick={props.onCancel}>Cancel</Button>
+        </Box>
     </FormikInit>
 }

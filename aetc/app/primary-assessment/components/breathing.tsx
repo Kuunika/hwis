@@ -12,10 +12,8 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import lung from "../../../assets/lung.svg";
-import Image from "next/image";
-import { Box } from "@mui/material";
-import { LungImage } from "@/components/svgImages";
+
+import { LungImage, LungBackImage } from "@/components/svgImages";
 
 const form = {
   isPatientBreathing: {
@@ -359,7 +357,17 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 ]}
               />
             </FieldsContainer>
+            {formValues[form.chestExpansion.name] == "reduced" && (
+              <FieldsContainer>
+                <>Diagram</>
+              </FieldsContainer>
+            )}
             <br />
+            {formValues[form.percussion.name] == "abnormal" && (
+              <FieldsContainer>
+                <LungBackImage />
+              </FieldsContainer>
+            )}
             <FieldsContainer>
               <TextInputField
                 sx={{ m: 0, width: "100%" }}

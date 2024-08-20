@@ -222,7 +222,6 @@ export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormVal
 
   const handleValueChange = (values: Array<any>) => {
     const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting Blood']
-
     setShowInputTextDisplay(Boolean(values.find(v => v.id == "Other")))
 
     triage.forEach(triage => {
