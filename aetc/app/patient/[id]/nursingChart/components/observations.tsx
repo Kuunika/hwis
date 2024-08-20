@@ -1,5 +1,5 @@
-import { useConditions, useNavigation } from "@/hooks";
-import React, { useContext, useEffect, useState } from "react";
+import { useNavigation } from "@/hooks";
+import { useContext, useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -13,7 +13,7 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 import { getInitialValues } from "@/helpers";
-import { concepts, triageResult } from "@/constants";
+import { concepts } from "@/constants";
 import { TriageContext, TriageContextType } from "@/contexts";
 
 
@@ -47,7 +47,7 @@ export const ObservationFormConfig = {
     label: "Temperature (Temp)",
   },
   randomBloodGlucose: {
-    name: "RANDOM_BLOOD_GLUCOSE",
+    name: concepts.BLOOD_GLUCOSE,
     label: "Random Blood Glucose (RBG)",
   },
   urineDipstickKetones: {
@@ -94,14 +94,13 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const { navigateTo } = useNavigation();
   const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType;
-  const [caseType, setCaseType] = useState<string>("default");
+  const [caseType, setCaseType] = useState<string>("Default");
 
 
   const handleSubmit = (values: any) => {
-    const triageScore = flow[ObservationFormConfig.triageScore.name];
+    const triageScore = caseType;
     // Add the triage score to the form values
     values[ObservationFormConfig.triageScore.name] = triageScore;
-
     // Call the onSubmit handler with updated values
     onSubmit(values);
   };
@@ -117,43 +116,78 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
     "Emergency", "Priority", "Queue"
   ]
 
-  const respiratoryRateBounds = [
-    { operator: ">", value: 30, result: traigeScores[0], bound: 100 },
-    { operator: "<", value: 8, result: traigeScores[0], bound: 0 },
-    {
-      operator: "combined",
-      operator1: ">=",
-      value: 21,
-      operator2: "<=",
-      value2: 30,
-      result: traigeScores[1],
-      bound: 0,
-    },
-    {
-      operator: "combined",
-      operator1: ">=",
-      value: 8,
-      operator2: "<=",
-      value2: 11,
-      result: traigeScores[1],
-      bound: 0,
-    },
-    {
-      operator: "combined",
-      operator1: ">=",
-      value: 12,
-      operator2: "<=",
-      value2: 20,
-      result:  traigeScores[2],
-      bound: 0,
-    },
-  ];
-  
+  const rules = {
+    [ObservationFormConfig.temperature.name]: [
+      { operator: "<", value: 34, result: traigeScores[0], bound: 0 },
+      {
+        operator: ">",
+        value: 39.9,
+        result: traigeScores[0],
+        bound: 100,
+      },
+      {
+        operator: "combined",
+        operator1: ">=",
+        value: 37.5,
+        operator2: "<=",
+        value2: 39.9,
+        result: traigeScores[1],
+        bound: 0,
+      },
+      {
+        operator: "combined",
+        operator1: ">=",
+        value: 34.1,
+        operator2: "<=",
+        value2: 35.4,
+        result: traigeScores[1],
+        bound: 0,
+      },
+      {
+        operator: "combined",
+        operator1: ">=",
+        value: 35.5,
+        operator2: "<=",
+        value2: 37.4,
+        result: traigeScores[2],
+        bound: 0,
+      }],[ObservationFormConfig.respiratoryRate.name]:[
+        { operator: ">", value: 30, result: traigeScores[0], bound: 100 },
+        { operator: "<", value: 8, result: traigeScores[0], bound: 0 },
+        {
+          operator: "combined",
+          operator1: ">=",
+          value: 21,
+          operator2: "<=",
+          value2: 30,
+          result: traigeScores[1],
+          bound: 0,
+        },
+        {
+          operator: "combined",
+          operator1: ">=",
+          value: 8,
+          operator2: "<=",
+          value2: 11,
+          result: traigeScores[1],
+          bound: 0,
+        },
+        {
+          operator: "combined",
+          operator1: ">=",
+          value: 12,
+          operator2: "<=",
+          value2: 20,
+          result:  traigeScores[2],
+          bound: 0,
+        },
+      ]};
+
 
 
   
   const calculateTriageScore = (value: any, type: string) => {
-    let score = "";
+    let score = "Green";
   
     // Parse numerical value
     const numericalValue = parseFloat(value) || 0;
@@ -184,13 +218,13 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
   
       case ObservationFormConfig.bloodPressureSystolic.name:
         if (numericalValue > 200 || numericalValue < 80) {
-          score = traigeScores[0];
+          return score = traigeScores[0];
         } 
-        if ((numericalValue >= 81 && numericalValue <= 89) || (numericalValue >= 150 && numericalValue <= 200)) {
-          score = traigeScores[1];
+        if ((numericalValue >= 80 && numericalValue <= 89) || (numericalValue >= 150 && numericalValue <= 200)) {
+          return score = traigeScores[1];
         } 
         if (numericalValue >= 90 || (numericalValue > 89 && numericalValue <= 149)){
-          score = traigeScores[2];
+          return score = traigeScores[2];
         }
         break;
   
@@ -207,7 +241,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
         break;
   
       case ObservationFormConfig.respiratoryRate.name:
-    for (const bound of respiratoryRateBounds) {
+      for (const bound of rules[ObservationFormConfig.respiratoryRate.name]) {
         if (bound.operator === ">" && numericalValue > bound.value) {
             score = bound.result;
             break;
@@ -231,43 +265,58 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
     break;
   
       case ObservationFormConfig.temperature.name:
-        if (numericalValue > 40) {
-          score = traigeScores[0];
-        } else if (numericalValue > 38) {
-          score = traigeScores[1];
-        } else if (numericalValue >= 36.5 && numericalValue <= 37.5) {
-          score = traigeScores[2];
-        } else {
-          score = "No score";
-        }
-        break;
+        for (const bound of rules[ObservationFormConfig.temperature.name]) {
+          if (bound.operator === ">" && numericalValue > bound.value) {
+              score = bound.result;
+              break;
+          }
+  
+          if (bound.operator === "<" && numericalValue < bound.value) {
+              score = bound.result;
+              break;
+          }
+  
+          if (
+              bound.operator === "combined" &&
+              typeof bound.value2 !== "undefined" && 
+              numericalValue >= bound.value &&
+              numericalValue <= bound.value2
+          ) {
+              score = bound.result;
+              break;
+          }
+      }
+      break;
   
       case ObservationFormConfig.randomBloodGlucose.name:
-        if (numericalValue < 2 || numericalValue > 20) {
+        const m = 18.018; //multiplicationFactor
+        const units = formValues[ObservationFormConfig.units.name];
+        if(units)
+        {
+        if (units == "mg/dl") {
+        if (numericalValue < 3 * m || numericalValue > 30 * m) {
           score = traigeScores[0];
-        } else if (numericalValue < 4 || numericalValue > 10) {
+        } else if ((numericalValue >= 3.1 * m && numericalValue <= 3.8 * m) || (numericalValue > 11.1 * m && numericalValue <= 29.9 * m)) {
           score = traigeScores[1];
-        } else if (numericalValue >= 4 && numericalValue <= 7) {
+        } else if (numericalValue >= 3.9 * m && numericalValue <= 11.1 * m) {
           score = traigeScores[2];
-        } else {
-          score = "No score";
-        }
-        break;
-  
-      case ObservationFormConfig.avpu.name:
-        if (value === "Pain" || value === "Unresponsive") {
-          score = traigeScores[0];
-        } else if (value === "Pain") {
-          score = traigeScores[1];
-        } else if (value === "Alert") {
-          score = traigeScores[2];
-        } else {
-          score = "No score";
+        } }
+        if (units == "mmol/l") {
+          if (numericalValue < 3 || numericalValue > 30) {
+            score = traigeScores[0];
+                }
+          if ((numericalValue >= 3.1 && numericalValue <= 3.8) || (numericalValue > 11.1 && numericalValue <= 29.9)) {
+            score = traigeScores[1];
+                }
+          if (numericalValue >= 3.9 && numericalValue <= 11.1) {
+            score = traigeScores[2];
+                }
+              }
         }
         break;
   
       default:
-        score = "No score";
+        score = "Green";
     }
   
     return score;
@@ -290,14 +339,13 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
   };
 
   useEffect(() => {
-    let maxScore = "Queue"; // Initialize with the default value
+    let maxScore = "Default"; // Initialize with the default value
     let newScores: Record<string, string> = {};
-  
+
     Object.keys(flow).forEach((key) => {
       const value = flow[key];
       if (value) {
         const score = calculateTriageScore(value, key);
-        console.log(score);
         newScores[key] = score;
       }
 
@@ -311,11 +359,9 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
 
         }}
 
-        setCaseType(maxScore);
-
+        
     });
-  
-
+    setCaseType(maxScore);
   }, [flow]);
 
   return (
@@ -328,21 +374,34 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
-      <div
-        style={{
-          backgroundColor: getBackgroundColor(caseType),
+      <div style={{
           width: "100%",
-          height: "200px",
+          height: "50px",
           marginTop: "20px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#000",
-          fontSize: "18px",
           fontWeight: "bold",
+          color: "#000",
+        }}>
+        <p>Triage Score:</p>
+      <div
+        style={{
+          backgroundColor: getBackgroundColor(caseType),
+          width: "100%",
+          height: "50px",
+          marginTop: "20px",
+          marginLeft: "300px",
+          marginRight: "100px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#000",
+          
         }}
       >
         {caseType.charAt(0).toUpperCase() + caseType.slice(1)} Case
+      </div>
       </div>
       <FormFieldContainerLayout title="Observations">
         <FieldsContainer >
@@ -427,6 +486,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
             sx={{ my: "1ch" }}
             multiple={false}
             disabled={false}
+            getValue={(value) => addKeyToFlow({ [ObservationFormConfig.avpu.name]: value })}
           />
           <TextInputField
             name={ObservationFormConfig.pefr.name}
@@ -444,6 +504,3 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
   );
 };
 
-function forEach(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
