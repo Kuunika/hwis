@@ -36,8 +36,8 @@ export const MonitoringChart = () => {
   const activeVisit = patientVisits?.find(d => !Boolean(d.date_stopped));
 
   const steps = [
-    { id: 1, label: "Observations" },
-    { id: 2, label: "Interventions" },
+    { id: 0, label: "Observations" },
+    { id: 1, label: "Interventions" },
   ];
 
 
@@ -57,7 +57,7 @@ export const MonitoringChart = () => {
         obs: getObservations(values, dateTime),
       });
       
-      setActiveStep(2);
+      setActiveStep(1);
   };
 
 
@@ -75,9 +75,9 @@ export const MonitoringChart = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <ObservationsForm onSubmit={handleObservationsSubmit}/>
-        <InterventionsForm onSubmit={handleInterventionsSubmit}/>
-      </NewStepperContainer >
+        <ObservationsForm onSubmit={handleObservationsSubmit} />
+       <InterventionsForm onSubmit={handleInterventionsSubmit} />
+      </NewStepperContainer>
     </>
   );
 };

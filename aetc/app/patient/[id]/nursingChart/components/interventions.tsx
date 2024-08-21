@@ -43,8 +43,6 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
         
     ];
 
-
-        
     return(
         <FormikInit
       validationSchema={schema}
@@ -54,6 +52,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
       submitButtonText="Submit"
       submitButton={false}
     >
+        
         <SearchComboBox
             name={InterventionFormConfig.breathingIntervention.name}
             options={breathingList}
