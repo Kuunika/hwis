@@ -74,7 +74,6 @@ export function NewStepperContainer({
         <MainPaper elevation={0} sx={{ p: "1ch", width: "288px" }}>
           <MainTypography
             sx={{
-              fontFamily: "Inter",
               fontSize: "20px",
               fontWeight: 600,
               lineHeight: "24px",
@@ -113,7 +112,6 @@ export function NewStepperContainer({
             </MainTypography>
             <MainTypography
               sx={{
-                fontFamily: "Inter",
                 fontSize: "14px",
                 fontWeight: 400,
                 lineHeight: "21px",
@@ -138,7 +136,6 @@ export function NewStepperContainer({
                     borderBottom: "solid 0.2ch #B3B3B3",
                   },
                   "& .css-1betqn-MuiAccordionSummary-content p": {
-                    fontFamily: "Inter",
                     fontSize: "24px",
                     fontWeight: 700,
                     lineHeight: "29px",

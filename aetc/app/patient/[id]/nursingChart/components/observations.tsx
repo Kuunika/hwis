@@ -187,7 +187,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
 
   
   const calculateTriageScore = (value: any, type: string) => {
-    let score = "Green";
+    let score = traigeScores[2];
   
     // Parse numerical value
     const numericalValue = parseFloat(value) || 0;
@@ -339,7 +339,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
   };
 
   useEffect(() => {
-    let maxScore = "Default"; // Initialize with the default value
+    let maxScore = "No Score"; // Initialize with the default value
     let newScores: Record<string, string> = {};
 
     Object.keys(flow).forEach((key) => {
@@ -347,6 +347,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
       if (value) {
         const score = calculateTriageScore(value, key);
         newScores[key] = score;
+        maxScore = score;
       }
 
       for (const key in newScores) {
@@ -376,21 +377,21 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
       <FormValuesListener getValues={setFormValues} />
       <div style={{
           width: "100%",
-          height: "50px",
+          height: "20px",
           marginTop: "20px",
+          marginBottom: "20px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontWeight: "bold",
           color: "#000",
         }}>
-        <p>Triage Score:</p>
+        <p>Triage Score</p>
       <div
         style={{
           backgroundColor: getBackgroundColor(caseType),
           width: "100%",
           height: "50px",
-          marginTop: "20px",
           marginLeft: "300px",
           marginRight: "100px",
           display: "flex",
@@ -400,7 +401,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
           
         }}
       >
-        {caseType.charAt(0).toUpperCase() + caseType.slice(1)} Case
+        {caseType.charAt(0).toUpperCase() + caseType.slice(1)}
       </div>
       </div>
       <FormFieldContainerLayout title="Observations">
@@ -454,14 +455,7 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
           />
           
           <FieldsContainer>
-         
-          <TextInputField
-            name={ObservationFormConfig.randomBloodGlucose.name}
-            label={ObservationFormConfig.randomBloodGlucose.label}
-            id={ObservationFormConfig.randomBloodGlucose.name}
-            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.randomBloodGlucose.name]: value })}
-          />
-           <SelectInputField
+          <SelectInputField
             sx={{ mt: '2ch' }}
             width="20%"
             name={ObservationFormConfig.units.name}
@@ -471,6 +465,12 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
             ]}
             label={ObservationFormConfig.units.label}
             id={ObservationFormConfig.units.name}
+          />
+          <TextInputField
+            name={ObservationFormConfig.randomBloodGlucose.name}
+            label={ObservationFormConfig.randomBloodGlucose.label}
+            id={ObservationFormConfig.randomBloodGlucose.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.randomBloodGlucose.name]: value })}
           />
           </FieldsContainer>
           <TextInputField

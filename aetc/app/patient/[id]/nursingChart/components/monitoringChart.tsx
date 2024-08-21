@@ -1,39 +1,70 @@
-"use client";
-import React from "react";
+"use client";;
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { ObservationsForm } from "./observations";
 import { InterventionsForm } from "./interventions";
 
 import { encounters } from "@/constants";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
+import { getDateTime } from "@/helpers/dateTime";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { getObservations } from "@/helpers";
+import { useFormLoading } from "@/hooks/formLoading";
+
 
 export const MonitoringChart = () => {
+    const {
+        loading,
+        setLoading,
+        completed,
+        setCompleted,
+        message,
+        setMessage,
+        showForm,
+        setShowForm,
+        error,
+        setError,
+      } = useFormLoading();
   const [activeStep, setActiveStep] = useState<number>(0);
+  const { params } = useParameters();
   const { mutate } = addEncounter();
   const { navigateTo, navigateBack } = useNavigation();
+  const dateTime = getDateTime();
+
+  const { data: patientVisits, isLoading, isSuccess } = getPatientVisitTypes(params?.id as string);
+  const activeVisit = patientVisits?.find(d => !Boolean(d.date_stopped));
 
   const steps = [
     { id: 1, label: "Observations" },
     { id: 2, label: "Interventions" },
   ];
 
+
+  const {
+    mutate: createVitals,
+    isSuccess: vitalsCreated,
+    isPending: creatingVitals,
+    isError: vitalsError,
+  } = addEncounter();
+
   const handleObservationsSubmit = (values: any) => {
-    console.log(values);
+    createVitals({
+        encounterType: encounters.VITALS,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: getObservations(values, dateTime),
+      });
+      
+      setActiveStep(2);
   };
+
+
   const handleInterventionsSubmit = (values: any) => {
 
   };
 
-  const handleCirculationSubmit = (values: any) => {
-    mutate({ encounter: encounters.CIRCULATION_ASSESSMENT, obs: values });
-    setActiveStep(3);
-  };
-  const handleDisabilitySubmit = (values: any) => {
-    mutate({ encounter: encounters.DISABILITY_ASSESSMENT, obs: values });
-    setActiveStep(4);
-  };
 
   return (
     <>
@@ -50,3 +81,5 @@ export const MonitoringChart = () => {
     </>
   );
 };
+
+
