@@ -88,6 +88,7 @@ export const TextInputField: FC<Prop> = ({
         size={size}
         helperText={showHelperText && errorMessage}
         placeholder={placeholder}
+
         rows={rows}
         disabled={disabled}
         multiline={multiline}

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import SimpleMDE from "react-simplemde-editor";
-import ReactMarkdown from "react-markdown";
 import "easymde/dist/easymde.min.css";
 import { Button } from "@mui/material";
 

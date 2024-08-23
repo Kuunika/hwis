@@ -5,8 +5,16 @@ type Prop = {
   children: ReactNode;
   anchorEl: any;
   onClose: () => void;
+  anchorOrigin?: any;
+  transformOrigin?: any
 };
-export const BasePopover: FC<Prop> = ({ children, anchorEl, onClose }) => {
+export const BasePopover: FC<Prop> = ({ children, anchorEl, onClose, anchorOrigin = {
+  vertical: "top",
+  horizontal: "right",
+}, transformOrigin = {
+  vertical: "top",
+  horizontal: "left",
+} }) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   return (
@@ -15,14 +23,8 @@ export const BasePopover: FC<Prop> = ({ children, anchorEl, onClose }) => {
       open={open}
       anchorEl={anchorEl}
       onClose={onClose}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "left",
-      }}
+      anchorOrigin={anchorOrigin}
+      transformOrigin={transformOrigin}
     >
       {children}
     </Popover>
