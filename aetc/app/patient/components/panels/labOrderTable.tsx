@@ -1,91 +1,282 @@
-
-import { useParameters } from "@/hooks"
-import { getPatientLabOrder } from "@/hooks/labOrder"
-import { LabRequest } from "@/interfaces"
-import { BaseTable, MainButton, MainTypography, WrapperBox } from "@/components"
+import { useParameters } from "@/hooks";
+import { getPatientLabOrder } from "@/hooks/labOrder";
+import { LabRequest } from "@/interfaces";
+import {
+  BaseTable,
+  MainButton,
+  MainTypography,
+  WrapperBox,
+} from "@/components";
 import { FaPrint } from "react-icons/fa6";
 import { BarcodeComponent } from "@/components/barcode";
 import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { GenericDialog } from "@/components";
 import { useState } from "react";
-import { Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { BasicSelect } from "../basicSelect";
-import { getHumanReadableDate, getHumanReadableDateTime, getHumanReadableDateTimeLab } from "@/helpers/dateTime";
+import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
+import { any } from "prop-types";
 export const LabOrderTable = () => {
-    const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { })
-    const { params } = useParameters();
-    const { data: patients } = getPatientsWaitingForAssessment();
-    const { data: labOrders, isPending, isSuccess } = getPatientLabOrder(params?.id as string);
-    const patient = patients?.find(p => p.uuid == params.id);
-    const [showDialog, setShowDialog] = useState(false)
-    const [selectedTest, setSelectedTest] = useState({ sampleType: "", ascension: "", tests: "", orderDate:"" })
-    const [printer, setPrinter]=useState("http://localhost:3000")
+  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
+  const { params } = useParameters();
+  const { data: patients } = getPatientsWaitingForAssessment();
+  const {
+    data: labOrders,
+    isPending,
+    isSuccess,
+  } = getPatientLabOrder(params?.id as string);
+  const patient = patients?.find((p) => p.uuid == params.id);
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedTest, setSelectedTest] = useState({
+    sampleType: "",
+    ascension: "",
+    tests: "",
+    orderDate: "",
+  });
+  const [printer, setPrinter] = useState("http://localhost:3000");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [fullResults, setFullResults] = useState([
+    {
+      name: "",
+      value: "",
+      testName: "",
+    },
+  ]);
 
+  const handleViewClick = (results: any, name: any) => {
+    const formattedResults = results.map((item: any) => ({
+      name: item.indicator.name,
+      value: item.value,
+      testName: name,
+    }));
+    setFullResults(formattedResults);
+    setOpenDialog(true);
+  };
 
-    const columns = [
-        {
-            field: "specimen", headerName: "Specimen", flex: 1, renderCell: (cell: any) => {
-                return cell.row.specimen.name
-            }
-        },
-        { field: "requesting_clinician", headerName: "Ordered By", flex: 1 },
-        { field: "status", headerName: "status", flex: 1 },
-        {
-            field: "action", headerName: "Action", renderCell: (cell: any) => {
-                const trigger = () => <MainButton variant="text" sx={{ color: "#000" }} title={<FaPrint />} onClick={() => { }} />
-                const tests = cell.row?.tests.reduce((acc: any, current: any, index: any, array: any) => {
-                    let separator = ', ';
-                    if (index == array.length - 1) {
-                        separator = '';
-                    }
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+  const columns = [
+    {
+      field: "specimen",
+      headerName: "Specimen",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return cell.row.specimen.name;
+      },
+    },
+    {
+      field: "test",
+      headerName: "Test(s)",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return cell.row.test.name;
+      },
+    },
+    { field: "requesting_clinician", headerName: "Ordered By", flex: 1 },
+    { field: "status", headerName: "Status", flex: 1 },
+    {
+      field: "accessionNumber",
+      headerName: "Accession Number",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return cell.row.accession_number;
+      },
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            {cell.row.test.result && cell.row.test.result.length > 0 ? (
+              <>
+                <MainButton
+                  title={"view"}
+                  variant="primary"
+                  onClick={() => {
+                    const results = cell.row.test.result;
+                    handleViewClick(results, cell.row.test.name);
+                  }}
+                  sx={{
+                    width: "48%",
+                    padding: "4px 8px",
+                  }}
+                />
+                <Dialog
+                  open={openDialog}
+                  onClose={handleClose}
+                  maxWidth="sm"
+                  fullWidth
+                >
+                  <DialogTitle>
+                    Test results for {fullResults[0].testName}
+                  </DialogTitle>
+                  <DialogContent>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Measure</TableCell>
+                          <TableCell>Result</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {fullResults.map((result: any, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{result.name}</TableCell>
+                            <TableCell>{result.value}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                <MainButton
+                  title={"print"}
+                  variant="secondary"
+                  onClick={() => {
+                    setShowDialog(true);
+                    setSelectedTest({
+                      sampleType: cell.row.specimen.name,
+                      ascension: cell.row.accession_number,
+                      orderDate: getHumanReadableDateTimeLab(
+                        cell.row.order_date
+                      ),
+                      tests: cell.row.test.name,
+                    });
+                  }}
+                  sx={{
+                    width: "48%",
+                    padding: "4px 8px",
+                  }}
+                />
+              </>
+            ) : (
+              <MainButton
+                title={"print"}
+                variant="secondary"
+                onClick={() => {
+                  setShowDialog(true);
+                  setSelectedTest({
+                    sampleType: cell.row.specimen.name,
+                    ascension: cell.row.accession_number,
+                    orderDate: getHumanReadableDateTimeLab(cell.row.order_date),
+                    tests: cell.row.test.name,
+                  });
+                }}
+                sx={{
+                  width: "100%",
+                  padding: "5px 10px",
+                }}
+              />
+            )}
+          </Box>
+        );
+      },
+    },
+  ];
 
-                    return acc + current.name + separator
-                }, "");
+  const flattenedLabOrders =
+    labOrders?.flatMap((lab) =>
+      lab.tests.map((test) => ({
+        ...lab,
+        id: test.id,
+        test,
+        status: test.result ? "Results Available" : "Waiting for result(s)",
+      }))
+    ) || [];
 
-
-                return <MainButton title={"print"} variant="secondary" onClick={() => {
-                    setShowDialog(true); setSelectedTest({
-                        sampleType: cell.row.specimen.name,
-                        ascension: cell.row.accession_number,
-                        orderDate: getHumanReadableDateTimeLab(cell.row.order_date),
-                        tests
-                    })
-                }} />
-
-            }
-        }
-
-    ]
-    return <>
-       {labOrders?.length==0? <Typography>No lab orders added</Typography> :<BaseTable height="25ch" rowHeight={25} rows={labOrders ? labOrders.map(lab => ({ ...lab, name: lab.tests[0]?.name, status: lab.tests[0]?.result ? "" : "waiting result..." })) : []} columns={columns} /> }
-        <GenericDialog maxWidth="sm" open={showDialog} onClose={() => setShowDialog(false)} title={"Preview Barcode"}>
-            <WrapperBox sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <BarcodeComponent printer={printer} orderDate={selectedTest.orderDate} setTriggerFunc={(test) => setTriggerPrintFunc(test)} value={selectedTest.ascension}>
-                    {/* <MainTypography fontWeight="600" variant="body2">{selectedTest.sampleType}</MainTypography> */}
-                    <MainTypography variant="caption">{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
-                    <MainTypography variant="caption">{selectedTest.tests}</MainTypography>
-                </BarcodeComponent>
-                <br />
-                <BasicSelect getValue={(value:any)=> {
-                    setPrinter(value)
-                }} label="Select Printer" options={[
-                    {
-                    value:"http://localhost:3000",
-                    label:"Local" },
-                    {
-                    value:`${process.env.NEXT_PUBLIC_PRINTER_IP}`,
-                    label:"Network" }
-                ]} />
-                <br />
-                <MainButton title={"Print Barcode"} onClick={() => {
-                    const func = triggerPrintFunc();
-                    if (typeof func === 'function') {
-                        func()
-                    }
-                }} />
-            </WrapperBox>
-        </GenericDialog>
+  return (
+    <>
+      {flattenedLabOrders.length === 0 ? (
+        <Typography>No lab orders added</Typography>
+      ) : (
+        <BaseTable
+          height="25ch"
+          rowHeight={25}
+          rows={flattenedLabOrders}
+          columns={columns}
+        />
+      )}
+      <GenericDialog
+        maxWidth="sm"
+        open={showDialog}
+        onClose={() => setShowDialog(false)}
+        title={"Preview Barcode"}
+      >
+        <WrapperBox
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <BarcodeComponent
+            printer={printer}
+            orderDate={selectedTest.orderDate}
+            setTriggerFunc={(test) => setTriggerPrintFunc(test)}
+            value={selectedTest.ascension}
+          >
+            <MainTypography variant="caption">{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
+            <MainTypography variant="caption">
+              {selectedTest.tests}
+            </MainTypography>
+          </BarcodeComponent>
+          <br />
+          <BasicSelect
+            getValue={(value: any) => {
+              setPrinter(value);
+            }}
+            label="Select Printer"
+            options={[
+              {
+                value: "http://localhost:3000",
+                label: "Local",
+              },
+              {
+                value: `${process.env.NEXT_PUBLIC_PRINTER_IP}`,
+                label: "Network",
+              },
+            ]}
+          />
+          <br />
+          <MainButton
+            title={"Print Barcode"}
+            onClick={() => {
+              const func = triggerPrintFunc();
+              if (typeof func === "function") {
+                func();
+              }
+            }}
+          />
+        </WrapperBox>
+      </GenericDialog>
     </>
-}
-
-
+  );
+};
