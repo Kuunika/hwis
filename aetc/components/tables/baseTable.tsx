@@ -1,10 +1,17 @@
-'use client'
+"use client";
 import * as React from "react";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-import { Box, FormControlLabel, InputAdornment, Switch, TextField, Toolbar } from '@mui/material';
-import { FaMagnifyingGlass } from "react-icons/fa6"
+import {
+  Box,
+  FormControlLabel,
+  InputAdornment,
+  Switch,
+  TextField,
+  Toolbar,
+} from "@mui/material";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 import { isToday } from "@/helpers/dateTime";
 
 type IProp = {
@@ -17,9 +24,9 @@ type IProp = {
   style?: any;
   rowHeight?: number;
   loading?: boolean;
-  checkboxSelection?: boolean
+  checkboxSelection?: boolean;
 
-  getSelectedItems?: (items: any) => void
+  getSelectedItems?: (items: any) => void;
 };
 
 const Table: React.FC<IProp> = ({
@@ -32,43 +39,39 @@ const Table: React.FC<IProp> = ({
   style,
   rowHeight,
   checkboxSelection = false,
-  getSelectedItems = (items: any) => { }
+  getSelectedItems = (items: any) => {},
 }) => {
-  const [searchText, setSearchText] = React.useState('');
+  const [searchText, setSearchText] = React.useState("");
   const [filteredRows, setFilteredRows] = React.useState(rows);
-  const [showTodayOnly, setShowTodayOnly] = React.useState(false)
+  const [showTodayOnly, setShowTodayOnly] = React.useState(false);
 
   let columnVisibilityModel: any = {};
 
+  React.useEffect(() => {
+    setFilteredRows(rows);
+  }, [rows]);
 
   React.useEffect(() => {
-    setFilteredRows(rows)
-  }, [rows])
-
-
-  React.useEffect(() => {
-    requestSearch('')
-  }, [showTodayOnly])
+    requestSearch("");
+  }, [showTodayOnly]);
 
   const requestSearch = (searchValue: any) => {
     setSearchText(searchValue);
     let filteredRows = rows.filter((row) => {
       return Object.keys(row).some((field) =>
-        row[field]?.toString()?.toLowerCase()?.includes(searchValue.toLowerCase())
+        row[field]
+          ?.toString()
+          ?.toLowerCase()
+          ?.includes(searchValue.toLowerCase())
       );
-    })
-
-
+    });
 
     if (showTodayOnly) {
-      filteredRows = filteredRows.filter(row => isToday(row.arrival_time))
+      filteredRows = filteredRows.filter((row) => isToday(row.arrival_time));
     }
 
     setFilteredRows(filteredRows);
   };
-
-
-
 
   if (loading) {
     return (
@@ -95,10 +98,9 @@ const Table: React.FC<IProp> = ({
     );
   }
 
-
   const handleSwitchChange = (value: any) => {
-    setShowTodayOnly(value.target.checked)
-  }
+    setShowTodayOnly(value.target.checked);
+  };
 
   return (
     <div style={{ height, width, ...style }}>
@@ -110,7 +112,11 @@ const Table: React.FC<IProp> = ({
           value={searchText}
           onChange={(e) => requestSearch(e.target.value)}
           InputProps={{
-            startAdornment: <InputAdornment position="start"><FaMagnifyingGlass /></InputAdornment>,
+            startAdornment: (
+              <InputAdornment position="start">
+                <FaMagnifyingGlass />
+              </InputAdornment>
+            ),
           }}
         />
 
@@ -120,7 +126,6 @@ const Table: React.FC<IProp> = ({
           }
           label="Show only patients registered today"
         />
-
       </Box>
 
       <DataGrid
