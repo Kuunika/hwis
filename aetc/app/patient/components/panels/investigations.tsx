@@ -41,7 +41,7 @@ export const Investigations = () => {
   return (
     <Panel
       title="Investigations"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => {}} />}
+      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
     >
       <WrapperBox>
         <BasicPopover />
@@ -74,21 +74,21 @@ export default function BasicPopover() {
         Add Lab Order
       </Button>
       <Popover
-      
+
         id={id}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
           vertical: "top",
-          horizontal: "right",
+          horizontal: "left",
         }}
       >
-        <Box sx={{padding:"2ch"}}>  
+        <Box sx={{ padding: "2ch" }}>
           <Typography variant="h4">Lab Order</Typography>
           <br />
-        <LabRequestModal
-            addRequest={()=>{}}
+          <LabRequestModal
+            addRequest={() => { }}
             onClose={() => setAnchorEl(null)}
           />
         </Box>

@@ -2,7 +2,7 @@ import { useEffect, useState, ChangeEvent } from "react";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { MainTypography, WrapperBox, FormikInit,RadioGroupInput,SearchComboBox } from "@/components";
+import { MainTypography, WrapperBox, FormikInit, RadioGroupInput, SearchComboBox } from "@/components";
 
 import FormControl from "@mui/material/FormControl";
 
@@ -44,7 +44,7 @@ export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
 
   const handleClose = () => {
     onClose("");
-   
+
   };
 
   const handleListItemClick = (value: string) => {
@@ -105,7 +105,7 @@ export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
   }
 
   return <LabForm onClose={() => onClose('')} />
- 
+
 }
 
 
@@ -225,7 +225,7 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
 
 
   const handleSampleChange = (uuid: string) => {
-  
+
     const specimen = samples?.find(specimen => specimen.names[0]?.uuid == uuid);
     if (testType == 'bedside') {
       setBedsideTestId(uuid)
@@ -268,11 +268,11 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
     mutate(order);
     onClose()
   }
-  
+
   return <FormikInit initialValues={initialValues} onSubmit={handleLabSend} validationSchema={validationSchema}>
     {/* <OverlayLoader open={isPending || isLoading || isRefetching} /> */}
 
-    <WrapperBox sx={{ display: "flex", width:"50ch"}}>
+    <WrapperBox sx={{ display: "flex", width: "50ch" }}>
       <RadioGroupInput getValue={(test) => {
         setTestType(test)
       }
@@ -286,16 +286,17 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
       } name="emergency" options={[
         { value: "Yes", label: "Yes" },
         { value: "No", label: "No" }]} label="Emergency" />
+      <RadioGroupInput getValue={(test) => {
+        setTestType(test)
+      }
+      } name="urgentSample" options={[
+        { value: "Yes", label: "Yes" },
+        { value: "No", label: "No" }]} label="Urgent Sample" />
     </WrapperBox>
 
 
-    <SearchComboBox getValue={handleSampleChange} multiple={false} label="Sample Type" name="sampleType" options={samples ? samples.map(sp => ({label: sp?.names[0]?.name, id: sp.names[0].uuid })) : []} />
-    <RadioGroupInput getValue={(test) => {
-      setTestType(test)
-    }
-    } name="urgentSample" options={[
-      { value: "Yes", label: "Yes" },
-      { value: "No", label: "No" }]} label="Urgent Sample" />
+    <SearchComboBox getValue={handleSampleChange} multiple={false} label="Sample Type" name="sampleType" options={samples ? samples.map(sp => ({ label: sp?.names[0]?.name, id: sp.names[0].uuid })) : []} />
+
 
     <SearchComboBox label="Tests" name="tests" options={tests ? tests.map(d => ({ id: d.concept_id, label: d.names[0]?.name })) : []} />
   </FormikInit>
