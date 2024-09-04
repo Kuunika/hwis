@@ -62,7 +62,7 @@ export const MonitoringChart = () => {
 
 
   const handleInterventionsSubmit = (values: any) => {
-
+      console.log(values);
   };
 
 
@@ -72,7 +72,7 @@ export const MonitoringChart = () => {
         setActive={setActiveStep}
         title="Monitoring Chart"
         steps={steps}
-        active={activeStep}
+        active={1}
         onBack={() => navigateBack()}
       >
         <ObservationsForm onSubmit={handleObservationsSubmit} />
