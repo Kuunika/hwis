@@ -14,6 +14,7 @@ import {
 } from "@/components";
 import * as yup from "yup";
 import { LegAbnomalityImage } from "@/components/svgImages/legAbnormality";
+import { AbdomenImage, AbdomenImageWithOtherForm } from "@/components/svgImages";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -432,12 +433,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
         </FieldsContainer>
         {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
           <>
-            <NotificationContainer
-              message="Picture of abdomen to select areas of abnormalites with the options
-            below:1. Right Hyphochondriac 4. Right Lumbar 7. Right iliac 2.
-            Epigrastric 5. Umbilical 3. Left Hypochondriac6.Left Lumbar 9. Left
-            Iliac 8. Suprapubic/Hypogastric"
-            />
+            <AbdomenImage />
           </>
         )}
         <FieldsContainer>
@@ -451,11 +447,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
           <>
             <br />
 
-            <NotificationContainer
+            {/* <NotificationContainer
               message=" (Picture Comes Up and indicate the following) Tenderness (Multiple
             Selection) Wound (Multiple Selection) Laceration Stab/Puncture
             Bruise Burns Wound"
-            />
+            /> */}
+            <AbdomenImageWithOtherForm />
             <br />
           </>
         )}
