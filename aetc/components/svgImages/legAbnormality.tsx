@@ -1,14 +1,15 @@
-import LungBack from "@/assets/lungBack";
+
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { BreathingLungForm } from "./form"
-export function LungBackImage() {
+import { LegAbnormality } from "@/assets/legAbnormality";
+import { LegDeformityForm } from "./form"
+export function LegAbnomalityImage() {
     const { handleClose, handleFormSubmit, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
 
     return <>
-        <LungBack ref={containerRef} />
+        <LegAbnormality ref={containerRef} />
         <SVGPopover section={section} selectedSection={selectedSection} anchorEl={anchorEl} handleClose={handleClose}>
-            <BreathingLungForm onCancel={handleClose} onSubmit={handleFormSubmit} />
+            <LegDeformityForm onCancel={handleClose} onSubmit={handleFormSubmit} />
         </SVGPopover>
     </>
 }

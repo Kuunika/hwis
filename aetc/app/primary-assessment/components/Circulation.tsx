@@ -13,6 +13,7 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
+import { LegAbnomalityImage } from "@/components/svgImages/legAbnormality";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -409,6 +410,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   message="(Diagram) posterior and anterior, with the following options for the
                 sections of the legs"
                 />
+                <LegAbnomalityImage />
                 <br />
               </>
             )}
