@@ -1,2 +1,5 @@
 export * from "./lung"
 export * from "./lungBack"
+export * from "./abdomen"
+export * from "./legAbnormality"
+export * from "./abdomenWithOtherForm"

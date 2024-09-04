@@ -93,7 +93,7 @@ function RegistrationSearch() {
         >
           <SearchTab
             demographics={<DemographicsSearch patient={patient ? patient : {} as Person} />}
-            npid={<NPIDSearch />}
+            npid={<NPIDSearch genericSearch={false} />}
           />
         </WrapperBox>
       </WrapperBox>

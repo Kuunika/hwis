@@ -1,14 +1,18 @@
-import LungBack from "@/assets/lungBack";
+import { Abdomen } from "@/assets/abdomen";
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { BreathingLungForm } from "./form"
-export function LungBackImage() {
+import { Box, Button } from "@mui/material";
+export function AbdomenImage() {
     const { handleClose, handleFormSubmit, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
 
     return <>
-        <LungBack ref={containerRef} />
+        <Abdomen ref={containerRef} />
         <SVGPopover section={section} selectedSection={selectedSection} anchorEl={anchorEl} handleClose={handleClose}>
-            <BreathingLungForm onCancel={handleClose} onSubmit={handleFormSubmit} />
+            <Box sx={{ display: "flex", gap: "0.2ch" }}>
+                <Button type="submit" onClick={handleFormSubmit} sx={{ borderRadius: "1px" }} variant="contained" fullWidth>Select</Button>
+                <Button sx={{ borderRadius: "1px" }} fullWidth onClick={handleClose}>Cancel</Button>
+            </Box>
         </SVGPopover>
     </>
 }
