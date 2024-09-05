@@ -40,10 +40,6 @@ export const InterventionFormConfig = {
     name: `fluidEntries[${index}].intakeFluidAmount`,
     label: "Intake Fluid Amount",
   }),
-  intakeFluidAmountOther: (index: number) => ({
-    name: `fluidEntries[${index}].intakeFluidAmountOther`,
-    label: "Specify Intake Fluid Amount",
-  }),
   outputFluidType: (index: number) => ({
     name: `fluidEntries[${index}].outputFluidType`,
     label: "Output Fluid Type",
@@ -51,10 +47,6 @@ export const InterventionFormConfig = {
   outputFluidAmount: (index: number) => ({
     name: `fluidEntries[${index}].outputFluidAmount`,
     label: "Output Fluid Amount",
-  }),
-  outputFluidAmountOther: (index: number) => ({
-    name: `fluidEntries[${index}].outputFluidAmountOther`,
-    label: "Specify Output Fluid Amount",
   }),
   balance: (index: number) => ({
     name: `fluidEntries[${index}].balance`,
@@ -94,14 +86,10 @@ const schema = Yup.object().shape({
         .required(InterventionFormConfig.intakeFluidType(0).label),
       [InterventionFormConfig.intakeFluidAmount(0).name.split('.').pop()]: Yup.string()
         .required(InterventionFormConfig.intakeFluidAmount(0).label),
-      [InterventionFormConfig.intakeFluidAmountOther(0).name.split('.').pop()]: Yup.string()
-        .nullable(),
       [InterventionFormConfig.outputFluidType(0).name.split('.').pop()]: Yup.string()
         .required(InterventionFormConfig.outputFluidType(0).label),
       [InterventionFormConfig.outputFluidAmount(0).name.split('.').pop()]: Yup.string()
         .required(InterventionFormConfig.outputFluidAmount(0).label),
-      [InterventionFormConfig.outputFluidAmountOther(0).name.split('.').pop()]: Yup.string()
-        .nullable(),
       [InterventionFormConfig.balance(0).name.split('.').pop()]: Yup.number()
         .required(InterventionFormConfig.balance(0).label),
     })
@@ -211,20 +199,9 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
     setFluidEntries(updatedEntries);
   };
 
-  const calculateBalance = (intakeAmount: string, outputAmount: string) => {
-    const intake = parseFloat(intakeAmount) || 0;
-    const output = parseFloat(outputAmount) || 0;
-    return intake - output;
-  };
-
   const handleFluidChange = (index: number, field: string, value: string) => {
     const updatedEntries = [...fluidEntries];
     updatedEntries[index][field] = value;
-
-    const intakeAmount = updatedEntries[index].intakeFluidAmount;
-    const outputAmount = updatedEntries[index].outputFluidAmount;
-    updatedEntries[index].balance = calculateBalance(intakeAmount, outputAmount);
-
     setFluidEntries(updatedEntries);
   };
 
@@ -288,60 +265,67 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
         />
         {circulationIVFluids && (
           <WrapperBox>
-            {fluidEntries.map((entry, index) => (
-              <><FieldsContainer key={index}>
-                <WrapperBox>
+          {fluidEntries.map((entry, index) => (
+            <FieldsContainer key={index}>
+              <WrapperBox>
                 <GroupedSearchComboBox
-                    name={`fluidEntries[${index}].intakeFluidType`}
-                    label="Intake Fluid Type"
-                    options={groupedOptions}
-                    multiple={false}
-                    sx={{ mb: "2ch" }}
-                  />
-                  <TextInputField
-                      id={`fluidEntries[${index}].intakeFluidAmount`}
-                      name={`fluidEntries[${index}].intakeFluidAmount`}
-                      label="Intake Fluid Amount"
-                      unitOfMeasure="ml" />
-                      
-                </WrapperBox>
-                
-                <WrapperBox>
-                  <GroupedSearchComboBox
-                    name={`fluidEntries[${index}].outputFluidType`}
-                    label="Output Fluid Type"
-                    options={outputFluidList}
-                    multiple={false}
-                    sx={{ mb: "2ch" }} />
-                    <TextInputField
-                      id={`fluidEntries[${index}].outputFluidAmount`}
-                      name={`fluidEntries[${index}].outputFluidAmount`}
-                      label="Output Fluid amount"
-                      unitOfMeasure="ml" />
-                </WrapperBox>
-                <WrapperBox>
-                  
-                  <TextInputField
-                    id={`Fluid balance[${index}]`}
-                    name={`fluidEntries[${index}].balance`}
-                    label="Fluid balance"
-                    sx={{ mt: "0.3ch", ml: "0.2ch" }}
-                    unitOfMeasure="ml" />
-                </WrapperBox>
-                <IconButton
-                disabled={index==0?true:false}
+                  name={`fluidEntries[${index}].intakeFluidType`}
+                  label="Intake Fluid Type"
+                  options={groupedOptions}
+                  multiple={false}
+                  getValue={(value) => handleFluidChange(index, "intakeFluidType", value)}
+                  sx={{ mb: "2ch" }}
+                />
+                <TextInputField
+                  id={`fluidEntries[${index}].intakeFluidAmount`}
+                  name={`fluidEntries[${index}].intakeFluidAmount`}
+                  label="Intake Fluid Amount"
+                  unitOfMeasure="ml"
+                  getValue={(value) => handleFluidChange(index, "intakeFluidAmount", value)}
+                />
+              </WrapperBox>
+
+              <WrapperBox>
+                <GroupedSearchComboBox
+                  name={`fluidEntries[${index}].outputFluidType`}
+                  label="Output Fluid Type"
+                  options={outputFluidList}
+                  multiple={false}
+                  getValue={(value) => handleFluidChange(index, "outputFluidType", value)}
+                  sx={{ mb: "2ch" }}
+                />
+                <TextInputField
+                  id={`fluidEntries[${index}].outputFluidAmount`}
+                  name={`fluidEntries[${index}].outputFluidAmount`}
+                  label="Output Fluid Amount"
+                  unitOfMeasure="ml"
+                  getValue={(value) => handleFluidChange(index, "outputFluidAmount", value)}
+                />
+              </WrapperBox>
+
+              <WrapperBox>
+                <TextInputField
+                  id={`fluidEntries[${index}].balance`}
+                  name={`fluidEntries[${index}].balance`}
+                  label="Fluid Balance"
+                  unitOfMeasure="ml"
+                  getValue={(value) => handleFluidChange(index, "balance", value)}
+                />
+              </WrapperBox>
+
+              <IconButton
+                disabled={index === 0}
                 onClick={() => handleRemoveFluidEntry(index)}
                 color="error"
               >
-                  <FaMinus/>
-                </IconButton><IconButton onClick={handleAddFluidEntry} color="primary">
-                  <FaPlus />
-                </IconButton>
-
-                
-              </FieldsContainer></>
-            ))}
-          </WrapperBox>
+                <FaMinus />
+              </IconButton>
+              <IconButton onClick={handleAddFluidEntry} color="primary">
+                <FaPlus />
+              </IconButton>
+            </FieldsContainer>
+          ))}
+        </WrapperBox>
         )}
       </WrapperBox>
      
