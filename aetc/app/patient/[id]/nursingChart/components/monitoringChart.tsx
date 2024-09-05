@@ -1,8 +1,9 @@
-"use client";;
+"use client";
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { ObservationsForm } from "./observations";
 import { InterventionsForm } from "./interventions";
+import { MedicationsForm } from "./medications"; // Import the MedicationsForm
 
 import { encounters } from "@/constants";
 import { useNavigation, useParameters } from "@/hooks";
@@ -12,20 +13,20 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
 
-
 export const MonitoringChart = () => {
-    const {
-        loading,
-        setLoading,
-        completed,
-        setCompleted,
-        message,
-        setMessage,
-        showForm,
-        setShowForm,
-        error,
-        setError,
-      } = useFormLoading();
+  const {
+    loading,
+    setLoading,
+    completed,
+    setCompleted,
+    message,
+    setMessage,
+    showForm,
+    setShowForm,
+    error,
+    setError,
+  } = useFormLoading();
+
   const [activeStep, setActiveStep] = useState<number>(0);
   const { params } = useParameters();
   const { mutate } = addEncounter();
@@ -33,13 +34,13 @@ export const MonitoringChart = () => {
   const dateTime = getDateTime();
 
   const { data: patientVisits, isLoading, isSuccess } = getPatientVisitTypes(params?.id as string);
-  const activeVisit = patientVisits?.find(d => !Boolean(d.date_stopped));
+  const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
   const steps = [
     { id: 0, label: "Observations" },
     { id: 1, label: "Interventions" },
+    { id: 2, label: "Medications" }, 
   ];
-
 
   const {
     mutate: createVitals,
@@ -50,21 +51,23 @@ export const MonitoringChart = () => {
 
   const handleObservationsSubmit = (values: any) => {
     createVitals({
-        encounterType: encounters.VITALS,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: getObservations(values, dateTime),
-      });
-      
-      setActiveStep(1);
+      encounterType: encounters.VITALS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: getObservations(values, dateTime),
+    });
+    setActiveStep(1);
   };
-
 
   const handleInterventionsSubmit = (values: any) => {
-      console.log(values);
+    console.log(values);
+    setActiveStep(2); 
   };
 
+  const handleMedicationsSubmit = (values: any) => {
+    console.log("Medications:", values); 
+  };
 
   return (
     <>
@@ -72,14 +75,13 @@ export const MonitoringChart = () => {
         setActive={setActiveStep}
         title="Monitoring Chart"
         steps={steps}
-        active={1}
+        active={activeStep}
         onBack={() => navigateBack()}
       >
-        <ObservationsForm onSubmit={handleObservationsSubmit} />
-       <InterventionsForm onSubmit={handleInterventionsSubmit} />
+        {activeStep === 0 && <ObservationsForm onSubmit={handleObservationsSubmit} />}
+        {activeStep === 1 && <InterventionsForm onSubmit={handleInterventionsSubmit} />}
+        {activeStep === 2 && <MedicationsForm onSubmit={handleMedicationsSubmit} />} 
       </NewStepperContainer>
     </>
   );
 };
-
-

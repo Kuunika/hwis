@@ -85,7 +85,7 @@ const schema = Yup.object().shape({
   [ObservationFormConfig.avpu.name]: Yup.string().label(ObservationFormConfig.avpu.label),
   [ObservationFormConfig.pefr.name]: Yup.string().label(ObservationFormConfig.pefr.label),
   [ObservationFormConfig.triageScore.name]: Yup.string().label(ObservationFormConfig.triageScore.label),
-  [ObservationFormConfig.units.name]: Yup.string().required().label(ObservationFormConfig.units.label),
+  [ObservationFormConfig.units.name]: Yup.string().label(ObservationFormConfig.units.label),
 });
 
 const initialValues = getInitialValues(ObservationFormConfig);
