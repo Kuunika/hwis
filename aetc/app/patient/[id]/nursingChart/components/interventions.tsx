@@ -13,6 +13,7 @@ import { FaPlus } from "react-icons/fa6";
 import { FaMinus } from "react-icons/fa6";
 import { useState } from "react";
 import * as Yup from "yup";
+import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -31,9 +32,38 @@ export const InterventionFormConfig = {
     name: "CIRCULATION_INTERVENTION",
     label: "Circulation intervention(s)",
   },
+  intakeFluidType: (index: number) => ({
+    name: `fluidEntries[${index}].intakeFluidType`,
+    label: "Intake Fluid Type",
+  }),
+  intakeFluidAmount: (index: number) => ({
+    name: `fluidEntries[${index}].intakeFluidAmount`,
+    label: "Intake Fluid Amount",
+  }),
+  intakeFluidAmountOther: (index: number) => ({
+    name: `fluidEntries[${index}].intakeFluidAmountOther`,
+    label: "Specify Intake Fluid Amount",
+  }),
+  outputFluidType: (index: number) => ({
+    name: `fluidEntries[${index}].outputFluidType`,
+    label: "Output Fluid Type",
+  }),
+  outputFluidAmount: (index: number) => ({
+    name: `fluidEntries[${index}].outputFluidAmount`,
+    label: "Output Fluid Amount",
+  }),
+  outputFluidAmountOther: (index: number) => ({
+    name: `fluidEntries[${index}].outputFluidAmountOther`,
+    label: "Specify Output Fluid Amount",
+  }),
+  balance: (index: number) => ({
+    name: `fluidEntries[${index}].balance`,
+    label: "Fluid Balance",
+  }),
 };
 
 const schema = Yup.object().shape({
+  // Airway Intervention Validation
   [InterventionFormConfig.airwayIntervention.name]: Yup.array().of(
     Yup.object().shape({
       id: Yup.string().required(),
@@ -41,6 +71,7 @@ const schema = Yup.object().shape({
     })
   ).label(InterventionFormConfig.airwayIntervention.label),
 
+  // Breathing Intervention Validation
   [InterventionFormConfig.breathingIntervention.name]: Yup.array().of(
     Yup.object().shape({
       id: Yup.string().required(),
@@ -48,12 +79,33 @@ const schema = Yup.object().shape({
     })
   ).label(InterventionFormConfig.breathingIntervention.label),
 
+  // Circulation Intervention Validation
   [InterventionFormConfig.circulationIntervention.name]: Yup.array().of(
     Yup.object().shape({
       id: Yup.string().required(),
       label: Yup.string().required(),
     })
   ).label(InterventionFormConfig.circulationIntervention.label),
+
+  // Fluid Entries Validation
+  fluidEntries: Yup.array().of(
+    Yup.object().shape({
+      [InterventionFormConfig.intakeFluidType(0).name.split('.').pop()]: Yup.string()
+        .required(InterventionFormConfig.intakeFluidType(0).label),
+      [InterventionFormConfig.intakeFluidAmount(0).name.split('.').pop()]: Yup.string()
+        .required(InterventionFormConfig.intakeFluidAmount(0).label),
+      [InterventionFormConfig.intakeFluidAmountOther(0).name.split('.').pop()]: Yup.string()
+        .nullable(),
+      [InterventionFormConfig.outputFluidType(0).name.split('.').pop()]: Yup.string()
+        .required(InterventionFormConfig.outputFluidType(0).label),
+      [InterventionFormConfig.outputFluidAmount(0).name.split('.').pop()]: Yup.string()
+        .required(InterventionFormConfig.outputFluidAmount(0).label),
+      [InterventionFormConfig.outputFluidAmountOther(0).name.split('.').pop()]: Yup.string()
+        .nullable(),
+      [InterventionFormConfig.balance(0).name.split('.').pop()]: Yup.number()
+        .required(InterventionFormConfig.balance(0).label),
+    })
+  ),
 });
 
 export const InterventionsForm = ({ onSubmit }: Prop) => {
@@ -67,8 +119,8 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
     { intakeFluidType: "", intakeFluidAmount: "", outputFluidType: "", outputFluidAmount: "", balance: 0 },
   ]);
 
-  const handleSubmit = (values: any) => {
-    onSubmit(values);
+  const handleSubmit = () => {
+    onSubmit(formValues);
   };
 
   const airwayList = [
@@ -87,7 +139,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
   ];
 
   const circulationList = [
-    { id: "IV fluids", label: "IV fluids" },
+    { id: "Intake fluids", label: "Intake fluids" },
     { id: "Hemorrhage control", label: "Hemorrhage control" },
     { id: "Blood sample", label: "Blood sample" },
     { id: "Catheter", label: "Catheter" },
@@ -98,35 +150,56 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
   ];
 
   const fluidsList = [
-    { id: "Lingers Lactate", label: "Lingers Lactate" },
-    { id: "Saline 5%", label: "Saline 5%" },
-    { id: "Saline 3%", label: "Saline 3%" },
-    { id: "Saline 0.9%", label: "Saline 0.9%" },
-    { id: "Saline 0.45%", label: "Saline 0.45%" },
-    { id: "Dextrose 10%", label: "Dextrose 10%" },
-    { id: "Dextrose 5%", label: "Dextrose 5%" },
-    { id: "Haemacel", label: "Haemacel" },
+    { id: "Whole blood", label: "Whole blood" },
+    { id: "Packed Red cells", label: "Packed Red cells" },
+    { id: "Platelets", label: "Platelets" },
+    { id: "Fresh frozen plasma", label: "Fresh frozen plasma" },
+  ];
+  const groupedOptions = [
+    {
+      label: 'IV Fluids',
+      options: [
+        { id: "Lingers Lactate", label: "Lingers Lactate" },
+        { id: "Saline 5%", label: "Saline 5%" },
+        { id: "Saline 3%", label: "Saline 3%" },
+        { id: "Saline 0.9%", label: "Saline 0.9%" },
+        { id: "Saline 0.45%", label: "Saline 0.45%" },
+        { id: "Dextrose 10%", label: "Dextrose 10%" },
+        { id: "Dextrose 5%", label: "Dextrose 5%" },
+        { id: "Haemacel", label: "Haemacel" },
+      ],
+    },
+    {
+      label: 'Blood products',
+      options: [
+        { id: "Whole blood", label: "Whole blood" },
+        { id: "Packed Red cells", label: "Packed Red cells" },
+        { id: "Platelets", label: "Platelets" },
+        { id: "Fresh frozen plasma", label: "Fresh frozen plasma" },
+      ],
+    },
+    {
+      label: 'Oral products',
+      options: [
+        { id: "Water", label: "Water" },
+        { id: "Juice", label: "Juice" },
+      ],
+    },
   ];
 
   const outputFluidList = [
     { id: "Urine", label: "Urine" },
     { id: "Stool", label: "Stool" },
-    { id: "Lungs", label: "Lungs" },
-    { id: "Skin", label: "Skin" },
+    { id: "Nasal gastric tube drainage", label: "Nasal gastric tube drainage" },
+    { id: "Vomitting", label: "Vomitting" },
     { id: "Insensible loss", label: "Insensible loss" },
+
   ];
 
   const volumeList = [
     { id: "1000ml", label: "1000ml" },
     { id: "500ml", label: "500ml" },
     { id: "Other", label: "Other" },
-  ];
-
-  const bloodProducts = [
-    { id: "Whole blood", label: "Whole blood" },
-    { id: "Packed Red cells", label: "Packed Red cells" },
-    { id: "Platelets", label: "Platelets" },
-    { id: "Fresh frozen plasma", label: "Fresh frozen plasma" },
   ];
 
   const handleAddFluidEntry = () => {
@@ -156,6 +229,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
   };
 
   return (
+    <>
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
@@ -217,56 +291,36 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
             {fluidEntries.map((entry, index) => (
               <><FieldsContainer key={index}>
                 <WrapperBox>
-                  <SearchComboBox
+                <GroupedSearchComboBox
                     name={`fluidEntries[${index}].intakeFluidType`}
                     label="Intake Fluid Type"
-                    options={fluidsList}
-                    sx={{ mb: "2ch" }} />
-                  <SearchComboBox
-                    name={`fluidEntries[${index}].intakeFluidAmount`}
-                    label="Intake Fluid Amount"
-                    options={volumeList}
-                    getValue={(value: any) => {
-                      const exists = value.some((item: { id: string; }) => item.id === volumeList[2].label);
-                      if (exists) setOtherAmount(true);
-                      else setOtherAmount(false);
-                    } }
-                    sx={{ mb: "2ch" }} />
-                  {otherAmount && (
-                    <TextInputField
-                      id={`Specify Intake[${index}] Fluid amount`}
-                      name={`fluidEntries[${index}].intakeFluidAmountOther`}
-                      label="Specify Intake Fluid amount"
-                      sx={{ mb: "2ch" }}
+                    options={groupedOptions}
+                    multiple={false}
+                    sx={{ mb: "2ch" }}
+                  />
+                  <TextInputField
+                      id={`fluidEntries[${index}].intakeFluidAmount`}
+                      name={`fluidEntries[${index}].intakeFluidAmount`}
+                      label="Intake Fluid Amount"
                       unitOfMeasure="ml" />
-                  )}
+                      
                 </WrapperBox>
+                
                 <WrapperBox>
-                  <SearchComboBox
+                  <GroupedSearchComboBox
                     name={`fluidEntries[${index}].outputFluidType`}
                     label="Output Fluid Type"
                     options={outputFluidList}
+                    multiple={false}
                     sx={{ mb: "2ch" }} />
-                  <SearchComboBox
-                    name={`fluidEntries[${index}].outputFluidAmount`}
-                    label="Output Fluid Amount"
-                    options={volumeList}
-                    getValue={(value: any) => {
-                      const exists = value.some((item: { id: string; }) => item.id === volumeList[2].label);
-                      if (exists) setOtherAmount(true);
-                      else setOtherAmount(false);
-                    } }
-                    sx={{ mb: "2ch" }} />
-                  {otherAmount && (
                     <TextInputField
-                      id={`Specify Output[${index}] Fluid amount`}
-                      name={`fluidEntries[${index}].outputFluidAmountOther`}
-                      label="Specify Output Fluid amount"
-                      sx={{ mb: "2ch" }}
+                      id={`fluidEntries[${index}].outputFluidAmount`}
+                      name={`fluidEntries[${index}].outputFluidAmount`}
+                      label="Output Fluid amount"
                       unitOfMeasure="ml" />
-                  )}
                 </WrapperBox>
                 <WrapperBox>
+                  
                   <TextInputField
                     id={`Fluid balance[${index}]`}
                     name={`fluidEntries[${index}].balance`}
@@ -274,39 +328,27 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
                     sx={{ mt: "0.3ch", ml: "0.2ch" }}
                     unitOfMeasure="ml" />
                 </WrapperBox>
-
-              </FieldsContainer><IconButton
+                <IconButton
+                disabled={index==0?true:false}
                 onClick={() => handleRemoveFluidEntry(index)}
                 color="error"
               >
-                  <FaMinus />
+                  <FaMinus/>
                 </IconButton><IconButton onClick={handleAddFluidEntry} color="primary">
                   <FaPlus />
-                </IconButton></>
+                </IconButton>
+
+                
+              </FieldsContainer></>
             ))}
           </WrapperBox>
         )}
-        {circulationTransfusion && (
-          <FieldsContainer>
-            <SearchComboBox
-              name="Blood product"
-              label="Blood product"
-              sx={{ mb: "2ch" }}
-              options={bloodProducts}
-            />
-            <TextInputField
-              id={"Blood product quantity"}
-              name={"Blood product quantity"}
-              label="Blood product quantity"
-              sx={{ mt: "0.4ch" }}
-              unitOfMeasure="ml"
-            />
-          </FieldsContainer>
-        )}
       </WrapperBox>
+     
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
       </WrapperBox>
     </FormikInit>
+    </>
   );
 };
