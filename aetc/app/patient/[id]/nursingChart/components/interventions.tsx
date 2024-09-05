@@ -282,6 +282,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
                   label="Intake Fluid Amount"
                   unitOfMeasure="ml"
                   getValue={(value) => handleFluidChange(index, "intakeFluidAmount", value)}
+                  sx={{ mb: "2ch" }}
                 />
               </WrapperBox>
 
@@ -300,6 +301,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
                   label="Output Fluid Amount"
                   unitOfMeasure="ml"
                   getValue={(value) => handleFluidChange(index, "outputFluidAmount", value)}
+                  sx={{ mb: "2ch" }}
                 />
               </WrapperBox>
 
@@ -310,6 +312,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
                   label="Fluid Balance"
                   unitOfMeasure="ml"
                   getValue={(value) => handleFluidChange(index, "balance", value)}
+                  sx={{ ml: "1ch", mt:"0.5ch" }}
                 />
               </WrapperBox>
 
