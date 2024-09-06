@@ -74,7 +74,7 @@ export const MonitoringChart = () => {
 
 
   const handleNursingNotesSubmit = (values: any) => {
-    console.log("Medications:", values); 
+    console.log("Nursing notes:", values); 
   };
 
   return (

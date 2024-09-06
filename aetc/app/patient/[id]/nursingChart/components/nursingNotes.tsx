@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInputField, MultlineInput, WrapperBox, FieldsContainer, MainButton, FormikInit, FormFieldContainerLayout } from "@/components";
+import { TextInputField, MultlineInput, WrapperBox, FieldsContainer, MainButton, FormikInit, FormFieldContainerLayout, FormValuesListener } from "@/components";
 import * as Yup from "yup";
 type Prop = {
   onSubmit: (values: any) => void;
@@ -78,19 +78,6 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
     [nursingNotesFormConfig.interventions.name]: Yup.string().required(`${nursingNotesFormConfig.interventions.label} is required`),
   });
 
-  const handleInputChange = (section: string, field: string, value: string) => {
-    if (section === "objective" || section === "investigations") {
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        [section]: { ...prevValues[section], [field]: value },
-      }));
-    } else {
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        [section]: value,
-      }));
-    }
-  };
 
   const handleSubmit = () => {
     onSubmit(formValues);
@@ -105,6 +92,7 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
       submitButtonText="Submit"
       submitButton={false}
     >
+        <FormValuesListener getValues={setFormValues} />
       <WrapperBox>
       <FormFieldContainerLayout title="Subjective Data">
         <FieldsContainer>
@@ -123,25 +111,27 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
           <MultlineInput
             id={nursingNotesFormConfig.objective.head.name}
             name={nursingNotesFormConfig.objective.head.name}
-            label={nursingNotesFormConfig.objective.head.label}
+            label="Head"
             maxRows={5}
           />
           <MultlineInput
             id={nursingNotesFormConfig.objective.chest.name}
             name={nursingNotesFormConfig.objective.chest.name}
-            label={nursingNotesFormConfig.objective.chest.label}
+            label="Chest"
             maxRows={5}
           />
+          </FieldsContainer>
+          <FieldsContainer>
           <MultlineInput
             id={nursingNotesFormConfig.objective.abdomen.name}
             name={nursingNotesFormConfig.objective.abdomen.name}
-            label={nursingNotesFormConfig.objective.abdomen.label}
+            label="Abdomen"
             maxRows={5}
           />
           <MultlineInput
             id={nursingNotesFormConfig.objective.extremities.name}
             name={nursingNotesFormConfig.objective.extremities.name}
-            label={nursingNotesFormConfig.objective.extremities.label}
+            label="Extremities"
             maxRows={5}
           />
 </FieldsContainer>
@@ -161,6 +151,8 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
             label={nursingNotesFormConfig.investigations.RBG.label}
             maxRows={5}
           />
+          </FieldsContainer>
+          <FieldsContainer>
           <MultlineInput
             id={nursingNotesFormConfig.investigations.PT.name}
             name={nursingNotesFormConfig.investigations.PT.name}
@@ -173,6 +165,8 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
             label={nursingNotesFormConfig.investigations.FBC.label}
             maxRows={5}
           />
+          </FieldsContainer>
+          <FieldsContainer>
           <MultlineInput
             id={nursingNotesFormConfig.investigations.urineDipstick.name}
             name={nursingNotesFormConfig.investigations.urineDipstick.name}
@@ -198,7 +192,7 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
           <MultlineInput
             id={nursingNotesFormConfig.plan.name}
             name={nursingNotesFormConfig.plan.name}
-            label={nursingNotesFormConfig.plan.label}
+            label="Recommendation"
             maxRows={5}
           />
             </FieldsContainer>
