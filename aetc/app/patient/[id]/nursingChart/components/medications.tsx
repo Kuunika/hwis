@@ -1,5 +1,6 @@
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
   FormikInit,
   FormValuesListener,
   MainButton,
@@ -58,12 +59,21 @@ export const MedicationsForm = ({ onSubmit }: Prop) => {
     ]);
   };
 
+  const handleInputChange = (index: number, field: string, value: string) => {
+    const updatedMedications = medications.map((medication, i) =>
+      i === index ? { ...medication, [field]: value } : medication
+    );
+    setMedications(updatedMedications);
+  };
+
   const handleRemoveMedication = (index: number) => {
     const updatedMedications = medications.filter((_, i) => i !== index);
     setMedications(updatedMedications);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (values: any) => {
+    values["medications"] = medications
+    console.log("Medications updated",values);
     onSubmit(formValues);
   };
 
@@ -77,6 +87,7 @@ export const MedicationsForm = ({ onSubmit }: Prop) => {
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
+
       <WrapperBox>
         {medications.map((medication, index) => (
           <FieldsContainer key={index}>
@@ -84,34 +95,39 @@ export const MedicationsForm = ({ onSubmit }: Prop) => {
               id={`drugName-${index}`}
               name={medicationFormConfig.drugName(index).name}
               label={medicationFormConfig.drugName(index).label}
+              handleBlurEvent={(value) => handleInputChange(index, "drugName", value)}
               sx={{ mb: "2ch" }}
             />
             <TextInputField
               id={`dose-${index}`}
               name={medicationFormConfig.dose(index).name}
               label={medicationFormConfig.dose(index).label}
-              sx={{ mb: "2ch" }}
+              handleBlurEvent={(value) => handleInputChange(index, "dose", value)}
+              sx={{ mb: "2ch", ml:"0.2ch" }}
             />
             <TextInputField
               id={`route-${index}`}
               name={medicationFormConfig.route(index).name}
               label={medicationFormConfig.route(index).label}
-              sx={{ mb: "2ch" }}
+              handleBlurEvent={(value) => handleInputChange(index, "route", value)}
+              sx={{ mb: "2ch", ml:"0.5ch" }}
             />
             <TextInputField
               id={`prescriber-${index}`}
               name={medicationFormConfig.prescriber(index).name}
               label={medicationFormConfig.prescriber(index).label}
-              sx={{ mb: "2ch" }}
+              handleBlurEvent={(value) => handleInputChange(index, "prescriber", value)}
+              sx={{ mb: "2ch", ml:"0.5ch" }}
             />
             <IconButton
               disabled={index === 0}
               onClick={() => handleRemoveMedication(index)}
               color="error"
+              style={{marginBottom:"2ch", marginLeft:"2ch"}}
             >
               <FaMinus />
             </IconButton>
-            <IconButton onClick={handleAddMedication} color="primary">
+            <IconButton onClick={handleAddMedication} color="primary" style={{marginBottom:"2ch"}}>
               <FaPlus />
             </IconButton>
           </FieldsContainer>

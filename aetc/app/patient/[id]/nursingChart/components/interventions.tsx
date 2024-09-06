@@ -1,5 +1,6 @@
 import {
   FieldsContainer,
+  FormFieldContainerLayout,
   FormikInit,
   FormValuesListener,
   MainButton,
@@ -312,7 +313,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
                   label="Fluid Balance"
                   unitOfMeasure="ml"
                   getValue={(value) => handleFluidChange(index, "balance", value)}
-                  sx={{ ml: "1ch", mt:"0.5ch" }}
+                  sx={{ ml: "0.3ch", mt:"0.5ch" }}
                 />
               </WrapperBox>
 
@@ -331,7 +332,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
         </WrapperBox>
         )}
       </WrapperBox>
-     
+
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
       </WrapperBox>

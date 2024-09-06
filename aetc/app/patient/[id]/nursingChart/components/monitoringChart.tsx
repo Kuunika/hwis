@@ -12,6 +12,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
+import { NursingNotesForm } from "./nursingNotes";
 
 export const MonitoringChart = () => {
   const {
@@ -40,6 +41,7 @@ export const MonitoringChart = () => {
     { id: 0, label: "Observations" },
     { id: 1, label: "Interventions" },
     { id: 2, label: "Medications" }, 
+    { id: 3, label: "Nursing Notes" },
   ];
 
   const {
@@ -67,6 +69,12 @@ export const MonitoringChart = () => {
 
   const handleMedicationsSubmit = (values: any) => {
     console.log("Medications:", values); 
+    setActiveStep(3); 
+  };
+
+
+  const handleNursingNotesSubmit = (values: any) => {
+    console.log("Medications:", values); 
   };
 
   return (
@@ -80,7 +88,8 @@ export const MonitoringChart = () => {
       >
         {activeStep === 0 && <ObservationsForm onSubmit={handleObservationsSubmit} />}
         {activeStep === 1 && <InterventionsForm onSubmit={handleInterventionsSubmit} />}
-        {activeStep === 2 && <MedicationsForm onSubmit={handleMedicationsSubmit} />} 
+        {activeStep === 2 && <MedicationsForm onSubmit={handleMedicationsSubmit} />}
+        {activeStep === 3 && <NursingNotesForm onSubmit={handleNursingNotesSubmit} />}
       </NewStepperContainer>
     </>
   );
