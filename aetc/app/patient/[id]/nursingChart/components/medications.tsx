@@ -14,6 +14,7 @@ import * as Yup from "yup";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  onSkip: () => void;
 };
 
 const medicationFormConfig = {
@@ -46,7 +47,7 @@ const schema = Yup.object().shape({
   ),
 });
 
-export const MedicationsForm = ({ onSubmit }: Prop) => {
+export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [medications, setMedications] = useState([
     { drugName: "", dose: "", route: "", prescriber: "" },
@@ -134,6 +135,7 @@ export const MedicationsForm = ({ onSubmit }: Prop) => {
         ))}
       </WrapperBox>
       <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
+      <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
     </FormikInit>
   );
 };

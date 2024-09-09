@@ -18,6 +18,7 @@ import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  onSkip: () => void;
 };
 
 export const InterventionFormConfig = {
@@ -83,7 +84,7 @@ const schema = Yup.object().shape({
   // Fluid Entries Validation
   fluidEntries: Yup.array().of(
     Yup.object().shape({
-      [InterventionFormConfig.intakeFluidType(0).name.split('.').pop()]: Yup.string()
+      [(InterventionFormConfig.intakeFluidType(0).name.split('.').pop())]: Yup.string()
         .required(InterventionFormConfig.intakeFluidType(0).label),
       [InterventionFormConfig.intakeFluidAmount(0).name.split('.').pop()]: Yup.string()
         .required(InterventionFormConfig.intakeFluidAmount(0).label),
@@ -97,7 +98,7 @@ const schema = Yup.object().shape({
   ),
 });
 
-export const InterventionsForm = ({ onSubmit }: Prop) => {
+export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   const initialValues = getInitialValues(InterventionFormConfig);
   const [formValues, setFormValues] = useState<any>({});
   const [airwayOther, setAirwayOther] = useState(false);
@@ -335,6 +336,7 @@ export const InterventionsForm = ({ onSubmit }: Prop) => {
 
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
+        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
       </WrapperBox>
     </FormikInit>
     </>

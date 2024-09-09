@@ -13,6 +13,7 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
 import { NursingNotesForm } from "./nursingNotes";
+import { Switch } from "@mui/material";
 
 export const MonitoringChart = () => {
   const {
@@ -77,6 +78,26 @@ export const MonitoringChart = () => {
     console.log("Nursing notes:", values); 
   };
 
+  const handleSkip =()=>{
+    switch(activeStep){
+     case 0:
+      setActiveStep(1);
+      return;
+     case 1:
+        setActiveStep(2);
+        return;
+     case 2:
+        setActiveStep(3);
+        return;
+     case 3:
+        navigateBack();
+        return;
+     default:
+        return;
+    }
+  }
+
+
   return (
     <>
       <NewStepperContainer
@@ -86,10 +107,10 @@ export const MonitoringChart = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        {activeStep === 0 && <ObservationsForm onSubmit={handleObservationsSubmit} />}
-        {activeStep === 1 && <InterventionsForm onSubmit={handleInterventionsSubmit} />}
-        {activeStep === 2 && <MedicationsForm onSubmit={handleMedicationsSubmit} />}
-        {activeStep === 3 && <NursingNotesForm onSubmit={handleNursingNotesSubmit} />}
+        {activeStep === 0 && <ObservationsForm onSubmit={handleObservationsSubmit} onSkip={handleSkip}/>}
+        {activeStep === 1 && <InterventionsForm onSubmit={handleInterventionsSubmit} onSkip={handleSkip}/>}
+        {activeStep === 2 && <MedicationsForm onSubmit={handleMedicationsSubmit} onSkip={handleSkip}/>}
+        {activeStep === 3 && <NursingNotesForm onSubmit={handleNursingNotesSubmit} onSkip={handleSkip}/>}
       </NewStepperContainer>
     </>
   );

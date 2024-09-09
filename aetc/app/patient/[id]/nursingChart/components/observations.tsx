@@ -19,6 +19,7 @@ import { TriageContext, TriageContextType } from "@/contexts";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  onSkip: () => void;
 };
 
 export const ObservationFormConfig = {
@@ -90,7 +91,7 @@ const schema = Yup.object().shape({
 
 const initialValues = getInitialValues(ObservationFormConfig);
 
-export const ObservationsForm = ({ onSubmit }: Prop) => {
+export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const { navigateTo } = useNavigation();
   const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType;
@@ -498,7 +499,8 @@ export const ObservationsForm = ({ onSubmit }: Prop) => {
       </FormFieldContainerLayout>
 
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" />
+        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
+        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
       </WrapperBox>
     </FormikInit>
   );

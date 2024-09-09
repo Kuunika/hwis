@@ -3,6 +3,7 @@ import { TextInputField, MultlineInput, WrapperBox, FieldsContainer, MainButton,
 import * as Yup from "yup";
 type Prop = {
   onSubmit: (values: any) => void;
+  onSkip: () => void;
 };
 
 const nursingNotesFormConfig = {
@@ -37,7 +38,7 @@ const nursingNotesFormConfig = {
     },
   };
 
-export const NursingNotesForm = ({ onSubmit }: Prop) => {
+export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState({
     subjective: "",
     objective: {
@@ -59,23 +60,23 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
   });
 
   const schema = Yup.object().shape({
-    [nursingNotesFormConfig.subjective.name]: Yup.string().required(`${nursingNotesFormConfig.subjective.label} is required`),
+    [nursingNotesFormConfig.subjective.name]: Yup.string(),
     objective: Yup.object().shape({
-      [nursingNotesFormConfig.objective.head.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.objective.head.label} is required`),
-      [nursingNotesFormConfig.objective.chest.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.objective.chest.label} is required`),
-      [nursingNotesFormConfig.objective.abdomen.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.objective.abdomen.label} is required`),
-      [nursingNotesFormConfig.objective.extremities.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.objective.extremities.label} is required`),
+      [nursingNotesFormConfig.objective.head.name.split(".")[1]]: Yup.string(),
+      [nursingNotesFormConfig.objective.chest.name.split(".")[1]]: Yup.string(),
+      [nursingNotesFormConfig.objective.abdomen.name.split(".")[1]]: Yup.string(),
+      [nursingNotesFormConfig.objective.extremities.name.split(".")[1]]: Yup.string(),
     }),
     investigations: Yup.object().shape({
-      [nursingNotesFormConfig.investigations.MRDT.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.investigations.MRDT.label} is required`),
-      [nursingNotesFormConfig.investigations.RBG.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.investigations.RBG.label} is required`),
-      [nursingNotesFormConfig.investigations.PT.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.investigations.PT.label} is required`),
-      [nursingNotesFormConfig.investigations.FBC.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.investigations.FBC.label} is required`),
-      [nursingNotesFormConfig.investigations.urineDipstick.name.split(".")[1]]: Yup.string().required(`${nursingNotesFormConfig.investigations.urineDipstick.label} is required`),
+      [nursingNotesFormConfig.investigations.MRDT.name.split(".")[1]]: Yup.string(),
+      [nursingNotesFormConfig.investigations.RBG.name.split(".")[1]]: Yup.string(),
+      [nursingNotesFormConfig.investigations.PT.name.split(".")[1]]: Yup.string(),
+      [nursingNotesFormConfig.investigations.FBC.name.split(".")[1]]: Yup.string(),
+      [nursingNotesFormConfig.investigations.urineDipstick.name.split(".")[1]]: Yup.string(),
     }),
-    [nursingNotesFormConfig.assessment.name]: Yup.string().required(`${nursingNotesFormConfig.assessment.label} is required`),
-    [nursingNotesFormConfig.plan.name]: Yup.string().required(`${nursingNotesFormConfig.plan.label} is required`),
-    [nursingNotesFormConfig.interventions.name]: Yup.string().required(`${nursingNotesFormConfig.interventions.label} is required`),
+    [nursingNotesFormConfig.assessment.name]: Yup.string(),
+    [nursingNotesFormConfig.plan.name]: Yup.string(),
+    [nursingNotesFormConfig.interventions.name]: Yup.string(),
   });
 
 
@@ -210,7 +211,8 @@ export const NursingNotesForm = ({ onSubmit }: Prop) => {
         </FormFieldContainerLayout>
         
       </WrapperBox>
-      <MainButton title="Submit" type="submit" />
+      <MainButton title="Submit" type="submit" onClick={handleSubmit}/>
+      <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
     </FormikInit>
   );
 };
