@@ -77,7 +77,7 @@ export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
           "tests": request.tests,
           // "reason_for_test": request.sampleType,
           "reason_for_test": 'b998cdac-8d80-11d8-abbb-0024217bb78e',
-          "target_lab": "Blantyre Dream Project Clinic",
+          "target_lab": "Queen Elizabeth Central Hospital",
           "date": getDateTime(),
           "requesting_clinician": "admin",
           "specimen": {
@@ -165,20 +165,34 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
       ...c,
       names: c.names,
       name: c.names[0].name
-    }))
+    })).sort((a, b) => a.name.localeCompare(b.name))
   }
 
   const transformBedsideTests = () => {
-
     if (!bedsideTests) return [];
-    return bedsideTests.map(bed => {
-      return {
-        ...bed,
-        name: bed.names[0]?.name,
-      }
-    })
-  }
+    
+    let bedSideTestTypes  = [
+      'Random Blood Glucose (RBS)', 
+      'Fasting Blood Glucose (FBS)',
+      'H. Pylori',
+      'C-Reactive Protein (CRP)',
+      'Haemoglobin',
+      'Pregnancy Test',
+      'HIV',
+      'C-reactive protein',
+      'Malaria Screening',
+      'Blood Gas',
+      'Urine Chemistries'
+    ].map(name => name.toLowerCase()) as any
 
+    return bedsideTests
+    .filter(bed => bed.names.length > 0 && bed.names.some(n => n?.name))
+    .map(bed => ({
+      ...bed,
+      name: bed.names.find(n => n?.name)?.name
+    })).sort((a: any, b: any) => a.name.localeCompare(b.name))
+    .filter(bed => bedSideTestTypes.includes(bed.name?.toLowerCase())); 
+  };
 
   // transform bedside samples
   useEffect(() => {
