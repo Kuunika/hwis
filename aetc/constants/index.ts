@@ -76,7 +76,7 @@ export const concepts = {
   DEHYDRATION_SKIN: "b9d366c4-8d80-11d8-abbb-0024217bb78e",
   HEART_RATE_50: "f5ed8c3c-6258-431e-a78a-0f2642724633",
   CIRCULATION_INTERVENTIONS:"7a974a19-a8b4-4d15-a6fc-37f56a448e5f",
-  INTAKE_FLUIDS:"27883239-00e4-4c41-acc0-989c4c737b47",
+  //INTAKE_FLUIDS:"27883239-00e4-4c41-acc0-989c4c737b47",
 
   // consciousness
 
@@ -130,7 +130,10 @@ export const concepts = {
   ADDITIONAL_NOTES: "b9bd915a-8d80-11d8-abbb-0024217bb78e",
   DESCRIPTION: "2b304cb7-cae4-433c-b7f0-828795c515e9",
 
-  //breathing inter
+  //breathing interventions
+  BREATHING_INTERVENTIONS: "a630f47e-dce9-46ec-92ec-3198b5bc9900",
+  BAG_AND_MASK: "3595f986-0174-45c1-a2c4-bf10f0aebe27",
+  INTERCOSTAL_DRAINAGE: "10a56562-dc1b-437e-972a-4a72cf06cb68",
 
   // circulation
   IS_PATIENT_ACTIVELY_BLEEDING: "b9d5c504-8d80-11d8-abbb-0024217bb78e",
@@ -145,6 +148,9 @@ export const concepts = {
   SIZE_OF_CATHETER: "149c9177-f42f-4484-9b31-6d9d76e08b1c",
   IS_PELVIS_STABLE: "34685972-06e2-4fa5-a084-65ef02fd45b0",
   IS_FEMUR_TIBIA_NORMAL: "81218793-3a5b-4dc1-ab7d-cb7a923206a0",
+
+  //circulation interventions
+  INTAKE_FLUIDS:"e3fee88b-2fac-4e0f-a9b7-c6dbcce971b1",
 
   //Change this concept
   IS_ABDONORMINAL_DISTENTION: "30ad573a-58bb-44b8-88c6-3ea6753c67b5",

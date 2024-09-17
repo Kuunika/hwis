@@ -27,7 +27,7 @@ export const InterventionFormConfig = {
     label: "Airway intervention(s)",
   },
   breathingIntervention: {
-    name: concepts.DEVICE_USED_FOR_INTERVENTION,
+    name: concepts.BREATHING_INTERVENTIONS,
     label: "Breathing intervention(s)",
   },
   circulationIntervention: {
@@ -86,9 +86,9 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   ];
 
   const breathingList = [
-    { id: "Oxygen therapy", label: "Oxygen therapy" },
-    { id: "Bag and mask", label: "Bag and mask" },
-    { id: "Intercostal drainage", label: "Intercostal drainage" },
+    { id: concepts.OXYGEN_GIVEN, label: "Oxygen therapy" },
+    { id: concepts.BAG_AND_MASK, label: "Bag and mask" },
+    { id: concepts.INTERCOSTAL_DRAINAGE, label: "Intercostal drainage" },
   ];
 
   const circulationList = [

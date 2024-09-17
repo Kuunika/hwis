@@ -52,17 +52,10 @@ export const MonitoringChart = () => {
   } = addEncounter();
 
   const {
-    mutate: createCirculationIntervention,
-    isSuccess: CirculationInterventionCreated,
-    isPending: creatingCirculationIntervention,
-    isError: CirculationInterventionError, 
-  } = addEncounter();
-
-  const {
-    mutate: createAirwayIntervention,
-    isSuccess: AirwayInterventionCreated,
-    isPending: creatingAirwayIntervention,
-    isError: AirwayInterventionError, 
+    mutate: createInterventions,
+    isSuccess: InterventionsCreated,
+    isPending: creatingInterventions,
+    isError: InterventionError, 
   } = addEncounter();
 
   const handleObservationsSubmit = (values: any) => {
@@ -76,50 +69,38 @@ export const MonitoringChart = () => {
     setActiveStep(1);
   };
 
-  const convertArrayToObject = (arr: { id: string, label: string }[]) => {
-    return arr.reduce((acc, item) => {
-      acc[item.id] = item.label;
-      return acc;
-    }, {} as { [key: string]: string });
-  };
-
   const handleInterventionsSubmit = (values: any) => {
-    console.log(values);
-
+    //console.log(values);
     const airwayKey = concepts.AIRWAY_OPENING_INTERVENTIONS;
     const otherKey = `${airwayKey}_Other`;
 
-    // console.log(values[airwayKey]);
-    // const circulationKey = concepts.CIRCULATION_INTERVENTIONS;
-
-      values[airwayKey] = values[airwayKey].map((item: any) => {
-      if (item.id === concepts.OTHER_AIRWAY_INTERVENTION) {
-        return {
-              id: concepts.OTHER_AIRWAY_INTERVENTION,
-              label:values [otherKey]
-            };
+    if(values[airwayKey]){
+      values[airwayKey] = values[airwayKey]?.map((item: any) => {
+        if (item.id === concepts.OTHER_AIRWAY_INTERVENTION) {
+          const newLabel = values[otherKey];
+          delete values[otherKey];
+          return {
+            id: concepts.OTHER_AIRWAY_INTERVENTION,
+            label: newLabel
+          };
         }
         return item;
-        });
+      });
+    };
 
+    if (values.fluidEntries) {
+      values[concepts.INTAKE_FLUIDS] = values.fluidEntries;
+      delete values.fluidEntries;   
+      }
 
-    //   const intakeFluids = values[circulationKey].find((item: any) => item.id === "Intake fluids");
+    createInterventions({
+        encounterType: encounters.PROCEDURES_DONE,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: getObservations(values, dateTime),
+      });
 
-    //     if (intakeFluids) {
-    //       intakeFluids.fluidEntries = values.fluidEntries;
-    //     }
-
-    //   delete values.fluidEntries;
-
-    //   console.log(values);
-
-    createAirwayIntervention({
-      encounterType: encounters.PROCEDURES_DONE,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: getObservations(convertArrayToObject(values[airwayKey]), dateTime),
-    });
     setActiveStep(2); 
   };
 
