@@ -58,6 +58,13 @@ export const MonitoringChart = () => {
     isError: InterventionError, 
   } = addEncounter();
 
+  const {
+    mutate: createNursingNotes,
+    isSuccess: NursingNotesCreated,
+    isPending: creatingNursingNotes,
+    isError: NursingNotesError, 
+  } = addEncounter();
+
   const handleObservationsSubmit = (values: any) => {
     createVitals({
       encounterType: encounters.VITALS,
@@ -70,7 +77,6 @@ export const MonitoringChart = () => {
   };
 
   const handleInterventionsSubmit = (values: any) => {
-    //console.log(values);
     const airwayKey = concepts.AIRWAY_OPENING_INTERVENTIONS;
     const otherKey = `${airwayKey}_Other`;
 
@@ -111,7 +117,28 @@ export const MonitoringChart = () => {
 
 
   const handleNursingNotesSubmit = (values: any) => {
-    console.log("Nursing notes:", values); 
+    const objectiveKey = concepts.OBJECTIVE_DATA;
+    const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS; 
+
+      if (values.objective) {
+        values[objectiveKey] = values.objective;
+        delete values.objective; 
+      }
+
+      if (values.investigations){
+        values[investigationsKey] = values.investigations;
+        delete values.investigations; 
+      }
+
+
+    createNursingNotes({
+      encounterType: encounters.NURSING_NOTES,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: getObservations(values, dateTime),
+    });
+    navigateBack();
   };
 
   const handleSkip =()=>{

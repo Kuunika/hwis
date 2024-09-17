@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TextInputField, MultlineInput, WrapperBox, FieldsContainer, MainButton, FormikInit, FormFieldContainerLayout, FormValuesListener } from "@/components";
 import * as Yup from "yup";
+import { concepts } from "@/constants";
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
@@ -8,7 +9,7 @@ type Prop = {
 
 const nursingNotesFormConfig = {
     subjective: {
-      name: "subjective",
+      name: concepts.SUBJECTIVE_DATA,
       label: "Subjective Data",
     },
     objective: {
@@ -25,39 +26,21 @@ const nursingNotesFormConfig = {
       urineDipstick: { name: "investigations.urineDipstick", label: "Urine Dipstick" },
     },
     assessment: {
-      name: "assessment",
+      name: concepts.ASSESSMENT_COMMENTS,
       label: "Assessment",
     },
     plan: {
-      name: "plan",
+      name: concepts.TREATMENT_PLAN,
       label: "Plan (Recommendations)",
     },
     interventions: {
-      name: "interventions",
+      name: concepts.INTERVENTION_NOTES,
       label: "Interventions",
     },
   };
 
 export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
-  const [formValues, setFormValues] = useState({
-    subjective: "",
-    objective: {
-      head: "",
-      chest: "",
-      abdomen: "",
-      extremities: "",
-    },
-    investigations: {
-      MRDT: "",
-      RBG: "",
-      PT: "",
-      FBC: "",
-      urineDipstick: "",
-    },
-    assessment: "",
-    plan: "",
-    interventions: "",
-  });
+  const [formValues, setFormValues] = useState<any>({});
 
   const schema = Yup.object().shape({
     [nursingNotesFormConfig.subjective.name]: Yup.string(),
