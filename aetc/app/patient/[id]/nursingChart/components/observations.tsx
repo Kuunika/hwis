@@ -52,7 +52,7 @@ export const ObservationFormConfig = {
     label: "Random Blood Glucose (RBG)",
   },
   urineDipstickKetones: {
-    name: "URINE_DIPSTICK_KETONES",
+    name: concepts.URINE_DIPSTICK_KETONES,
     label: "Urine Dipstick - Ketones",
   },
   avpu: {
@@ -60,7 +60,7 @@ export const ObservationFormConfig = {
     label: "AVPU Scale",
   },
   pefr: {
-    name: "PEFR",
+    name: concepts.PEAK_EXPIRATORY_FLOW_RATE,
     label: "Peak Expiratory Flow Rate (PEFR)",
   },
   triageScore: {
@@ -100,10 +100,8 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const handleSubmit = (values: any) => {
     const triageScore = caseType;
-    // Add the triage score to the form values
-    values[ObservationFormConfig.triageScore.name] = triageScore;
-    // Call the onSubmit handler with updated values
-    onSubmit(values);
+    formValues[ObservationFormConfig.triageScore.name] = triageScore;
+    onSubmit(formValues);
   };
 
   const avpuLists = [
@@ -494,6 +492,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
             label={ObservationFormConfig.pefr.label}
             id={ObservationFormConfig.pefr.name}
             handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.pefr.name]: value })}
+            unitOfMeasure="L/min"
           />
         
       </FormFieldContainerLayout>

@@ -1,6 +1,5 @@
 import {
   FieldsContainer,
-  FormFieldContainerLayout,
   FormikInit,
   FormValuesListener,
   MainButton,
@@ -9,12 +8,13 @@ import {
   WrapperBox,
 } from "@/components";
 import { getInitialValues } from "@/helpers";
-import { IconButton, Typography } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { FaPlus } from "react-icons/fa6";
 import { FaMinus } from "react-icons/fa6";
 import { useState } from "react";
 import * as Yup from "yup";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
+import { concepts } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -23,37 +23,17 @@ type Prop = {
 
 export const InterventionFormConfig = {
   airwayIntervention: {
-    name: "AIRWAY_INTERVENTION",
+    name: concepts.AIRWAY_OPENING_INTERVENTIONS,
     label: "Airway intervention(s)",
   },
   breathingIntervention: {
-    name: "BREATHING_INTERVENTION",
+    name: concepts.DEVICE_USED_FOR_INTERVENTION,
     label: "Breathing intervention(s)",
   },
   circulationIntervention: {
-    name: "CIRCULATION_INTERVENTION",
+    name: concepts.CIRCULATION_INTERVENTIONS,
     label: "Circulation intervention(s)",
   },
-  intakeFluidType: (index: number) => ({
-    name: `fluidEntries[${index}].intakeFluidType`,
-    label: "Intake Fluid Type",
-  }),
-  intakeFluidAmount: (index: number) => ({
-    name: `fluidEntries[${index}].intakeFluidAmount`,
-    label: "Intake Fluid Amount",
-  }),
-  outputFluidType: (index: number) => ({
-    name: `fluidEntries[${index}].outputFluidType`,
-    label: "Output Fluid Type",
-  }),
-  outputFluidAmount: (index: number) => ({
-    name: `fluidEntries[${index}].outputFluidAmount`,
-    label: "Output Fluid Amount",
-  }),
-  balance: (index: number) => ({
-    name: `fluidEntries[${index}].balance`,
-    label: "Fluid Balance",
-  }),
 };
 
 const schema = Yup.object().shape({
@@ -80,22 +60,6 @@ const schema = Yup.object().shape({
       label: Yup.string().required(),
     })
   ).label(InterventionFormConfig.circulationIntervention.label),
-
-  // Fluid Entries Validation
-  fluidEntries: Yup.array().of(
-    Yup.object().shape({
-      [(InterventionFormConfig.intakeFluidType(0).name.split('.').pop())]: Yup.string()
-        .required(InterventionFormConfig.intakeFluidType(0).label),
-      [InterventionFormConfig.intakeFluidAmount(0).name.split('.').pop()]: Yup.string()
-        .required(InterventionFormConfig.intakeFluidAmount(0).label),
-      [InterventionFormConfig.outputFluidType(0).name.split('.').pop()]: Yup.string()
-        .required(InterventionFormConfig.outputFluidType(0).label),
-      [InterventionFormConfig.outputFluidAmount(0).name.split('.').pop()]: Yup.string()
-        .required(InterventionFormConfig.outputFluidAmount(0).label),
-      [InterventionFormConfig.balance(0).name.split('.').pop()]: Yup.number()
-        .required(InterventionFormConfig.balance(0).label),
-    })
-  ),
 });
 
 export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
@@ -103,23 +67,22 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [airwayOther, setAirwayOther] = useState(false);
   const [circulationIVFluids, setCirculationIVFluids] = useState(false);
-  const [circulationTransfusion, setCirculationTransfusion] = useState(false);
-  const [otherAmount, setOtherAmount] = useState(false);
   const [fluidEntries, setFluidEntries] = useState([
     { intakeFluidType: "", intakeFluidAmount: "", outputFluidType: "", outputFluidAmount: "", balance: 0 },
   ]);
 
   const handleSubmit = () => {
+    console.log(formValues);
     onSubmit(formValues);
   };
 
   const airwayList = [
-    { id: "Positioning", label: "Positioning" },
-    { id: "C-Spine Stablilization", label: "C-Spine Stablilization" },
-    { id: "Suctioning", label: "Suctioning" },
-    { id: "Foreign body removal", label: "Foreign body removal" },
-    { id: 'Insertion of airway "Guedel"', label: 'Insertion of airway "Guedel"' },
-    { id: "Other", label: "Other" },
+    { id: concepts.POSITIONING, label: "Positioning" },
+    { id: concepts.C_SPINE_STABILIZATION, label: "C-Spine Stabilization" },
+    { id: concepts.SUCTIONING, label: "Suctioning" },
+    { id: concepts.FOREIGN_BODY_REMOVAL, label: "Foreign body removal" },
+    { id: concepts.INSERTION_OF_GUEDEL, label: 'Insertion of airway "Guedel"' },
+    { id: concepts.OTHER_AIRWAY_INTERVENTION, label: "Other" },
   ];
 
   const breathingList = [
@@ -139,12 +102,6 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
     { id: "Keep warm", label: "Keep warm" },
   ];
 
-  const fluidsList = [
-    { id: "Whole blood", label: "Whole blood" },
-    { id: "Packed Red cells", label: "Packed Red cells" },
-    { id: "Platelets", label: "Platelets" },
-    { id: "Fresh frozen plasma", label: "Fresh frozen plasma" },
-  ];
   const groupedOptions = [
     {
       label: 'IV Fluids',
@@ -186,11 +143,6 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
 
   ];
 
-  const volumeList = [
-    { id: "1000ml", label: "1000ml" },
-    { id: "500ml", label: "500ml" },
-    { id: "Other", label: "Other" },
-  ];
 
   const handleAddFluidEntry = () => {
     setFluidEntries([...fluidEntries, { intakeFluidType: "", intakeFluidAmount: "", outputFluidType: "", outputFluidAmount: "", balance: 0 }]);
@@ -227,7 +179,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
           multiple={true}
           disabled={false}
           getValue={(value: any) => {
-            const exists = value.some((item: { id: string }) => item.id === airwayList[5].label);
+            const exists = value.some((item: { id: string }) => item.id === airwayList[5].id);
             if (exists) return setAirwayOther(true);
             setAirwayOther(false);
           }}
@@ -256,9 +208,6 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
             if (existsIV) setCirculationIVFluids(true);
             else setCirculationIVFluids(false);
 
-            const existsTrans = value.some((item: { id: string }) => item.id === circulationList[4].label);
-            if (existsTrans) setCirculationTransfusion(true);
-            else setCirculationTransfusion(false);
           }}
           label={InterventionFormConfig.circulationIntervention.label}
           sx={{ mb: "2ch" }}

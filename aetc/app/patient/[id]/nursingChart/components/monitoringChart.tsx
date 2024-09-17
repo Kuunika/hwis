@@ -1,11 +1,11 @@
-"use client";
+"use client";;
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { ObservationsForm } from "./observations";
 import { InterventionsForm } from "./interventions";
 import { MedicationsForm } from "./medications"; // Import the MedicationsForm
 
-import { encounters } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { useNavigation, useParameters } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
@@ -13,7 +13,6 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
 import { NursingNotesForm } from "./nursingNotes";
-import { Switch } from "@mui/material";
 
 export const MonitoringChart = () => {
   const {
@@ -52,6 +51,20 @@ export const MonitoringChart = () => {
     isError: vitalsError,
   } = addEncounter();
 
+  const {
+    mutate: createCirculationIntervention,
+    isSuccess: CirculationInterventionCreated,
+    isPending: creatingCirculationIntervention,
+    isError: CirculationInterventionError, 
+  } = addEncounter();
+
+  const {
+    mutate: createAirwayIntervention,
+    isSuccess: AirwayInterventionCreated,
+    isPending: creatingAirwayIntervention,
+    isError: AirwayInterventionError, 
+  } = addEncounter();
+
   const handleObservationsSubmit = (values: any) => {
     createVitals({
       encounterType: encounters.VITALS,
@@ -63,8 +76,50 @@ export const MonitoringChart = () => {
     setActiveStep(1);
   };
 
+  const convertArrayToObject = (arr: { id: string, label: string }[]) => {
+    return arr.reduce((acc, item) => {
+      acc[item.id] = item.label;
+      return acc;
+    }, {} as { [key: string]: string });
+  };
+
   const handleInterventionsSubmit = (values: any) => {
     console.log(values);
+
+    const airwayKey = concepts.AIRWAY_OPENING_INTERVENTIONS;
+    const otherKey = `${airwayKey}_Other`;
+
+    // console.log(values[airwayKey]);
+    // const circulationKey = concepts.CIRCULATION_INTERVENTIONS;
+
+      values[airwayKey] = values[airwayKey].map((item: any) => {
+      if (item.id === concepts.OTHER_AIRWAY_INTERVENTION) {
+        return {
+              id: concepts.OTHER_AIRWAY_INTERVENTION,
+              label:values [otherKey]
+            };
+        }
+        return item;
+        });
+
+
+    //   const intakeFluids = values[circulationKey].find((item: any) => item.id === "Intake fluids");
+
+    //     if (intakeFluids) {
+    //       intakeFluids.fluidEntries = values.fluidEntries;
+    //     }
+
+    //   delete values.fluidEntries;
+
+    //   console.log(values);
+
+    createAirwayIntervention({
+      encounterType: encounters.PROCEDURES_DONE,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: getObservations(convertArrayToObject(values[airwayKey]), dateTime),
+    });
     setActiveStep(2); 
   };
 

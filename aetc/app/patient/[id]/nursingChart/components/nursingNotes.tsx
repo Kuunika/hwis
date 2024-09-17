@@ -103,6 +103,7 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
             name={nursingNotesFormConfig.subjective.name}
             label={nursingNotesFormConfig.subjective.label}
             maxRows={5}
+            sx={{ lineHeight: '250px' }}
           />
 </FieldsContainer>
 </FormFieldContainerLayout>
@@ -145,6 +146,7 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
             name={nursingNotesFormConfig.investigations.MRDT.name}
             label={nursingNotesFormConfig.investigations.MRDT.label}
             maxRows={5}
+            
           />
           <MultlineInput
             id={nursingNotesFormConfig.investigations.RBG.name}
@@ -211,7 +213,7 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
         </FormFieldContainerLayout>
         
       </WrapperBox>
-      <MainButton title="Submit" type="submit" onClick={handleSubmit}/>
+      <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit}/>
       <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
     </FormikInit>
   );

@@ -72,9 +72,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     setMedications(updatedMedications);
   };
 
-  const handleSubmit = (values: any) => {
-    values["medications"] = medications
-    console.log("Medications updated",values);
+  const handleSubmit = () => {
+    formValues["medications"] = medications
     onSubmit(formValues);
   };
 
