@@ -16,6 +16,7 @@ const LineChartComponent = ({ chartData, xAxisData, series, height = 300 }: { ch
         label: s.label,
         color: s.color,
         valueFormatter: (value: any) => (value == null ? 'No data' : value.toString()),
+        connectNulls: true,
       }))}
       height={height}
       grid={{ horizontal: true }}

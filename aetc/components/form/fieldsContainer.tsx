@@ -48,7 +48,6 @@ export const FormFieldContainerLayout = ({
     >
       <MainTypography
         sx={{
-          fontFamily: "Inter",
           fontSize: "16px",
           fontWeight: 600,
           lineHeight: "24px",
