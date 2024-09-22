@@ -14,7 +14,7 @@ import {
 import * as Yup from "yup";
 import { getInitialValues } from "@/helpers";
 import { concepts } from "@/constants";
-import { TriageContext, TriageContextType } from "@/contexts";
+import { KeyValueContext, KeyValueContextType } from "@/contexts/keyValueContext";
 
 
 type Prop = {
@@ -94,7 +94,7 @@ const initialValues = getInitialValues(ObservationFormConfig);
 export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const { navigateTo } = useNavigation();
-  const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType;
+  const { flow, addKeyToFlow} = useContext(KeyValueContext) as KeyValueContextType;
   const [caseType, setCaseType] = useState<string>("Default");
 
 
