@@ -4,20 +4,25 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const getLabTestTypes = (name: string) => {
     const findAll = async () => {
-        return getTestTypes(name).then(response => response.data)
+        return getTestTypes(name).then(response => {
+            return response.data
+                .filter((test: any) => test.names.length > 0 && test.names.some((n: any) => n?.name))
+                .map((test: any) => ({
+                    ...test,
+                    name: test.names.find((n: any) => n?.name)?.name
+                })).sort((a: any, b: any) => a.name.localeCompare(b.name));
+        });
     };
-
     return useQuery({
         queryKey: ["testTypes", name],
         queryFn: findAll,
         enabled: true,
-
     });
 };
 
 export const getLabSpecimenTypes = () => {
     const findAll = async () => {
-        return getSpecimenTypes().then(response => response.data)
+        return getSpecimenTypes().then(response => response.data.sort((a: any, b: any) => a.names[0].name.localeCompare(b.names[0].name)));
     };
 
     return useQuery({
