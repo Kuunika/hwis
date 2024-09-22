@@ -53,7 +53,7 @@ export const FormikInit: FC<Prop> = ({
               type={"submit"}
               title={
                 loading ? (
-                  <i style={{ textTransform: "lowercase" }}>loading...</i>
+                  <i style={{ textTransform: "lowercase"  }}>loading...</i>
                 ) : (
                   submitButtonText
                 )

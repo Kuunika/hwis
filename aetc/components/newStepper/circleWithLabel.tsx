@@ -20,7 +20,6 @@ export const NewCircle: FC<CircleProp> = ({ label, active, last }) => {
       <Box sx={styles}>
         <Typography
           sx={{
-            fontFamily: "Inter",
             fontSize: "16px",
             fontWeight: 400,
             lineHeight: "24px",
@@ -56,7 +55,6 @@ export const NewCircleWithLabel: FC<CircleLabelProp> = ({
       <NewCircle label={circleLabel} active={active} last={last} />
       <Typography
         sx={{
-          font: "intel",
           fontSize: "16px",
           lineHeight: "24px",
           color: active ? defaultTheme.primary : "",

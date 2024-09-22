@@ -2,7 +2,7 @@
 import { FC } from "react";
 
 import { useFormikField } from "./hooks";
-import { SxProps } from "@mui/material";
+import { InputLabel, SxProps } from "@mui/material";
 
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -73,7 +73,9 @@ export const SearchComboBox: FC<Props> = ({
 
 
   return <WrapperBox sx={{ width, ...sx, borderRadius: 0.5, }}>
-    <MainTypography color={"#666666"} variant="subtitle2">{label}</MainTypography>
+    <InputLabel shrink>
+        {label}
+      </InputLabel>
     {mappedOptions && mappedOptions.length > 0 ? <Select
       styles={{
         //@ts-ignore
