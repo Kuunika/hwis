@@ -2,7 +2,7 @@
 import { calculateAge, getTime } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { checkScreenSize, useNavigation } from "@/hooks";
-import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { getPatientsWaitingForAssessment, getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -13,6 +13,7 @@ import {
   CalculateWaitingTime,
   MainButton,
   PatientTableList,
+  ServerPaginationTable,
   WrapperBox,
 } from "../../../components";
 
@@ -26,49 +27,65 @@ import { FetchAndDisplayTriageBarcode, PrinterBarcodeButton } from "@/components
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState("");
+  const [paginationModel, setPaginationModel]=useState({page:1,pageSize:10})
   const { navigateTo } = useNavigation();
-  const {
-    data: patients,
+  // const {
+  //   data: patients,
+  //   isLoading,
+  //   isRefetching,
+  //   refetch
+  // } = getPatientsWaitingForAssessment();
+  const [searchText, setSearchText]=useState('');
+   const {
+    data,
     isLoading,
-    isRefetching,
-    refetch
-  } = getPatientsWaitingForAssessment();
-  const [rows, setRows] = useState<any>([])
-
-  useEffect(() => {
-    updatePatients()
-  }, [patients])
+    refetch,
+    isPending,
+    isFetching
+  } = getPatientsWaitingForAssessmentPaginated(paginationModel,searchText);
 
 
-  useEffect(() => {
-    refetch()
-  }, [deleted])
+  useEffect(()=>{
+    refetch();
+  },[paginationModel])
 
 
+  // const [rows, setRows] = useState<any>([]);
+  
 
-  const updatePatients = () => {
-    const updatedPatients = patients
-      ?.sort((p1, p2) => {
-        const triagePriority: any = { red: 1, yellow: 2, green: 3 };
-        if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
-          return -1;
-        }
-        if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
-          return 1;
-        }
+  // useEffect(() => {
+  //   updatePatients()
+  // }, [patients])
 
-        // If triage results are the same, then sort by arrival time (earliest first)
-        //@ts-ignore
-        return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-      })
-      .map((p) => ({
-        id: p?.uuid,
-        ...p,
-        patient_arrival_time: getTime(p.arrival_time),
-      })).filter(p => p.id != deleted);
 
-    setRows(updatedPatients)
-  }
+  // useEffect(() => {
+  //   refetch()
+  // }, [deleted])
+
+
+  // const updatePatients = () => {
+  //   const updatedPatients = patients
+  //     ?.sort((p1, p2) => {
+  //       const triagePriority: any = { red: 1, yellow: 2, green: 3 };
+  //       if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
+  //         return -1;
+  //       }
+  //       if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
+  //         return 1;
+  //       }
+
+  //       // If triage results are the same, then sort by arrival time (earliest first)
+  //       //@ts-ignore
+  //       return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+  //     })
+  //     .map((p) => ({
+  //       id: p?.uuid,
+  //       ...p,
+  //       patient_arrival_time: getTime(p.arrival_time),
+  //     })).filter(p => p.id != deleted);
+
+  //   setRows(updatedPatients)
+  // }
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit" },
@@ -160,49 +177,50 @@ export const ClientWaitingForAssessment = () => {
   ];
 
 
+  // const formatForMobileView = rows?.map((row: any) => {
+  //   return {
+  //     id: row.id,
+  //     visitNumber: row.aetc_visit_number,
+  //     firstName: row.given_name,
+  //     lastName: row.family_name,
+  //     gender: row.gender,
+  //     arrivalTime: row.patient_arrival_time,
+  //     arrivalDateTime: row.arrival_time,
+  //     actor: (
+  //       <DisplayEncounterCreator
+  //         encounterType={encounters.VITALS}
+  //         patientId={row.id}
+  //       />
+  //     ),
+  //     aggregate: (
+  //       <CalculateWaitingTime
+  //         arrival_time={row.arrival_time}
 
-  const formatForMobileView = rows?.map((row: any) => {
-    return {
-      id: row.id,
-      visitNumber: row.aetc_visit_number,
-      firstName: row.given_name,
-      lastName: row.family_name,
-      gender: row.gender,
-      arrivalTime: row.patient_arrival_time,
-      arrivalDateTime: row.arrival_time,
-      actor: (
-        <DisplayEncounterCreator
-          encounterType={encounters.VITALS}
-          patientId={row.id}
-        />
-      ),
-      aggregate: (
-        <CalculateWaitingTime
-          arrival_time={row.arrival_time}
+  //       />
+  //     ),
+  //     waitingTime: (
+  //       <CalculateWaitingTime
+  //         arrival_time={row?.latest_encounter_time}
+  //       />
+  //     ),
+  //     actionName: "Triaged By",
+  //     action: (
+  //       <CardAction
+  //         patient={row}
+  //         setDeleted={(id: any) => setDeleted(id)}
+  //         triage={row.triage_result}
+  //         visitId={row.visit_uuid}
+  //         id={row.id}
+  //       />
+  //     ),
+  //     age: `${calculateAge(row.birthdate)}yrs`,
+  //     triageResult: row.triage_result,
+  //   };
+  // });
 
-        />
-      ),
-      waitingTime: (
-        <CalculateWaitingTime
-          arrival_time={row?.latest_encounter_time}
-        />
-      ),
-      actionName: "Triaged By",
-      action: (
-        <CardAction
-          patient={row}
-          setDeleted={(id: any) => setDeleted(id)}
-          triage={row.triage_result}
-          visitId={row.visit_uuid}
-          id={row.id}
-        />
-      ),
-      age: `${calculateAge(row.birthdate)}yrs`,
-      triageResult: row.triage_result,
-    };
-  });
+  return <ServerPaginationTable searchText={searchText} setSearchString={setSearchText} rowCount={data?.data ? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} rows={data?.data? data?.data?.map(p=>({id:p.patient_id,...p})): []} columns={columns}  />
 
-  return <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} />
+  // return <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} />
 
 };
 
@@ -295,3 +313,5 @@ export function BasicMenu({ patient }: { patient: any }) {
     </div>
   );
 }
+
+

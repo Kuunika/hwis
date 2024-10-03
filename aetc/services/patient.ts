@@ -1,4 +1,4 @@
-import { ActiveVisit, DDEScore, DDESearch, PatientUpdateResponse, Person, Relationship, RelationshipType } from "@/interfaces";
+import { ActiveVisit, DailyVisitPaginated, DDEScore, DDESearch, PatientUpdateResponse, Person, Relationship, RelationshipType } from "@/interfaces";
 import { create, edit, getAll, getOne } from "./httpService";
 
 
@@ -16,6 +16,10 @@ export const getPatients = () => getAll<Array<any>>(endPoint);
 
 export const getDailyVisits = (queryParam?: string) =>
   getAll<Person[]>(`/visits?date_stopped&category=${queryParam}&paginate=false`);
+
+export const getDailyVisitsPaginated = (queryParam?: string) =>
+  getAll<DailyVisitPaginated>(`/visits?date_stopped&${queryParam}&paginate=true`);
+
 // getAll<Person[]>(`/daily_visits?category=${queryParam}`);
 // getAll<{
 //   page: number,

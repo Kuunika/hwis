@@ -81,6 +81,19 @@ export interface Person {
   }>
 }
 
+
+export interface DailyVisitPaginated {
+  page:number;
+  total_pages: number;
+  per_page:number;
+  data: Person[]
+}
+
+export interface PaginationModel {
+  pageSize: number;
+  page: number;
+}
+
 export interface PatientUpdateResponse extends Person { patient: Patient };
 
 

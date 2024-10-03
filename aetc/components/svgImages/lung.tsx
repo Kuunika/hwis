@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import Lung from "../../assets/lung";
-import { Box, Typography } from "@mui/material";
 import { BreathingLungForm } from "./form"
-import { BasePopover } from "../popover";
+
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 
 export const LungImage = () => {
-    const { handleFormSubmit, handleClose, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
+    const { handleFormSubmit, handleClose, containerRef, section, anchorEl, selectedSection } = useImage()
 
     return (
         <div>

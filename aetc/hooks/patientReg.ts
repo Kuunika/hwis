@@ -1,10 +1,12 @@
 import { concepts } from "@/constants";
+import { PaginationModel } from "@/interfaces";
 import {
   createPatient,
   findByDemographics,
   findByNPID,
   findByNameAndGender,
   getDailyVisits,
+  getDailyVisitsPaginated,
   getPatient,
   getPatientVisits,
   getPatients,
@@ -40,34 +42,34 @@ export const initialPatientRegistration = () => {
   });
 };
 
-
 export const patchPatient = () => {
-
-
   const addData = (patientData: any) => {
-    return updatePatient(patientData.id, { ...patientData.data }).then((response) => {
-      return response.data;
-    }
+    return updatePatient(patientData.id, { ...patientData.data }).then(
+      (response) => {
+        return response.data;
+      }
     );
-  }
+  };
 
   return useMutation({
     mutationFn: addData,
   });
-}
+};
 
 export const registerPatient = () => {
-
   const addData = (patientData: any) => {
+    const getAddress = (address: any) => (address !== "" ? address : "N/A");
 
-    const getAddress = (address: any) => address !== "" ? address : "N/A";
-
-
-    const identifiers = patientData.identificationNumber == "" ? [] :   [{
-      identifier: patientData.identificationNumber,
-      identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
-      preferred: true,
-    }]
+    const identifiers =
+      patientData.identificationNumber == ""
+        ? []
+        : [
+            {
+              identifier: patientData.identificationNumber,
+              identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
+              preferred: true,
+            },
+          ];
 
     const mappedPatient = {
       identifiers,
@@ -102,8 +104,7 @@ export const registerPatient = () => {
     };
     return updatePatient(patientData.id, mappedPatient).then((response) => {
       return response.data;
-    }
-    );
+    });
     // return createPatient(mappedPatient).then((response) => {
     //   return response.data;
     // });
@@ -160,6 +161,22 @@ export const getPatientsWaitingForAssessment = () => {
   });
 };
 
+export const getPatientsWaitingForAssessmentPaginated = (
+  paginationDetails: PaginationModel, search?:string
+) => {
+  const page = paginationDetails.page==0 ? 1 :paginationDetails.page;
+  const getall = () =>
+    getDailyVisitsPaginated(
+      `category=assessment&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+    ).then((response) => response.data);
+
+  return useQuery({
+    queryKey: ["assessment",paginationDetails.page, paginationDetails.pageSize, search],
+    queryFn: getall,
+    enabled: true,
+  });
+};
+
 export const searchPotentialDuplicates = () => {
   const addData = (patientData: any) => {
     return potentialDuplicates(patientData).then((response) => {
@@ -168,15 +185,11 @@ export const searchPotentialDuplicates = () => {
   };
   return useMutation({
     mutationFn: addData,
-
   });
 };
 
-
-
 export const getOnePatient = (patientId: string) => {
-  const getOne = () =>
-    getPatient(patientId).then((response) => response.data);
+  const getOne = () => getPatient(patientId).then((response) => response.data);
 
   return useQuery({
     queryKey: ["patients", patientId],
@@ -184,21 +197,26 @@ export const getOnePatient = (patientId: string) => {
     enabled: true,
   });
 };
-export const searchDDEPatient = (firstName: string, lastName: string, gender: string) => {
+export const searchDDEPatient = (
+  firstName: string,
+  lastName: string,
+  gender: string
+) => {
   const findAll = () =>
-    findByNameAndGender(firstName, lastName, gender).then((response) => response.data);
+    findByNameAndGender(firstName, lastName, gender).then(
+      (response) => response.data
+    );
 
   return useQuery({
     queryKey: ["find_by_gender", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
-    retry: false
+    retry: false,
   });
 };
 
 export const searchDDEPatientByNpid = (npid: string) => {
-  const findAll = () =>
-    findByNPID(npid).then((response) => response.data);
+  const findAll = () => findByNPID(npid).then((response) => response.data);
   return useQuery({
     queryKey: ["find_by_npid", npid],
     queryFn: findAll,
@@ -206,13 +224,25 @@ export const searchDDEPatientByNpid = (npid: string) => {
   });
 };
 
-
-export const searchByDemographics = (firstName: string, lastName: string, gender: string, birthdate: string,
+export const searchByDemographics = (
+  firstName: string,
+  lastName: string,
+  gender: string,
+  birthdate: string,
   homeVillage: string,
   homeTA: string,
-  homeDistrict: string) => {
+  homeDistrict: string
+) => {
   const findAll = () =>
-    findByDemographics(firstName, lastName, gender, birthdate, homeVillage, homeTA, homeDistrict).then((response) => response.data);
+    findByDemographics(
+      firstName,
+      lastName,
+      gender,
+      birthdate,
+      homeVillage,
+      homeTA,
+      homeDistrict
+    ).then((response) => response.data);
 
   return useQuery({
     queryKey: ["find_by_demographics", firstName, lastName, gender],
@@ -220,7 +250,6 @@ export const searchByDemographics = (firstName: string, lastName: string, gender
     enabled: false,
   });
 };
-
 
 export const merge = () => {
   const addData = (patientData: any) => {
@@ -234,7 +263,6 @@ export const merge = () => {
   });
 };
 
-
 export const getPatientRelationships = (patientId: string) => {
   const getAll = () =>
     getRelations(patientId).then((response) => response.data);
@@ -245,7 +273,6 @@ export const getPatientRelationships = (patientId: string) => {
     enabled: true,
   });
 };
-
 
 export const getPatientRelationshipTypes = () => {
   const getAll = () =>
@@ -258,12 +285,11 @@ export const getPatientRelationshipTypes = () => {
   });
 };
 
-export const getPatientVisitTypes = (id:string) => {
-  const getAll = () =>
-    getPatientVisits(id).then((response) => response?.data);
+export const getPatientVisitTypes = (id: string) => {
+  const getAll = () => getPatientVisits(id).then((response) => response?.data);
 
   return useQuery({
-    queryKey: ["patient",id,'visits'],
+    queryKey: ["patient", id, "visits"],
     queryFn: getAll,
     enabled: true,
   });
