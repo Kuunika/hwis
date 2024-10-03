@@ -13,6 +13,7 @@ import {
   CalculateWaitingTime,
   MainButton,
   PatientTableList,
+  PatientTableListServer,
   ServerPaginationTable,
   WrapperBox,
 } from "../../../components";
@@ -24,6 +25,7 @@ import { encounters, triageResult } from "@/constants";
 import { Box } from "@mui/material";
 import { FetchAndDisplayTriageBarcode, PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 import { PatientCardListServer } from "@/components/cards/PatientCardList";
+import { DailyVisitPaginated, PaginationModel } from "@/interfaces";
 
 
 export const ClientWaitingForAssessment = () => {
@@ -219,10 +221,11 @@ export const ClientWaitingForAssessment = () => {
     };
   });
 
-  return <PatientCardListServer totalPages={data?.total_pages??0} searchText={searchText} setSearchString={setSearchText} rowCount={10} setPaginationModel={setPaginationModel} pagination={paginationModel} loading={isPending} dataList={formatForMobileView? formatForMobileView: []} />
-  // return <ServerPaginationTable searchText={searchText} setSearchString={setSearchText} rowCount={data?.data? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} rows={data?.data? data?.data?.map(p=>({id:p.patient_id,...p})): []} columns={columns}  />
+  // console.log({data});
 
-  // return <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} />
+  return <PatientTableListServer  columns={columns} data={data?.data ? data : {data:[], page:1,per_page:10, total_pages:0}} searchText={searchText} setSearchString={setSearchText} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} formatForMobileView={formatForMobileView? formatForMobileView: []} />
+
+
 
 };
 
