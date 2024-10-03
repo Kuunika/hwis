@@ -7,9 +7,9 @@ export const Abdomen = forwardRef<
         ref={ref}
         version="1.1"
         id="svg182"
-        width="200"
-        height="200"
-        viewBox="0 0 409 610"
+        width="400"
+        height="400"
+        viewBox="100 0 300 200"
         {...props}
     >
         <defs>
