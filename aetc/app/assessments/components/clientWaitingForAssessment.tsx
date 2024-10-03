@@ -23,6 +23,7 @@ import { DisplayEncounterCreator } from "@/components";
 import { encounters, triageResult } from "@/constants";
 import { Box } from "@mui/material";
 import { FetchAndDisplayTriageBarcode, PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { PatientCardListServer } from "@/components/cards/PatientCardList";
 
 
 export const ClientWaitingForAssessment = () => {
@@ -177,48 +178,49 @@ export const ClientWaitingForAssessment = () => {
   ];
 
 
-  // const formatForMobileView = rows?.map((row: any) => {
-  //   return {
-  //     id: row.id,
-  //     visitNumber: row.aetc_visit_number,
-  //     firstName: row.given_name,
-  //     lastName: row.family_name,
-  //     gender: row.gender,
-  //     arrivalTime: row.patient_arrival_time,
-  //     arrivalDateTime: row.arrival_time,
-  //     actor: (
-  //       <DisplayEncounterCreator
-  //         encounterType={encounters.VITALS}
-  //         patientId={row.id}
-  //       />
-  //     ),
-  //     aggregate: (
-  //       <CalculateWaitingTime
-  //         arrival_time={row.arrival_time}
+  const formatForMobileView = data?.data?.map((row: any) => {
+    return {
+      id: row.id,
+      visitNumber: row.aetc_visit_number,
+      firstName: row.given_name,
+      lastName: row.family_name,
+      gender: row.gender,
+      arrivalTime: row.patient_arrival_time,
+      arrivalDateTime: row.arrival_time,
+      actor: (
+        <DisplayEncounterCreator
+          encounterType={encounters.VITALS}
+          patientId={row.id}
+        />
+      ),
+      aggregate: (
+        <CalculateWaitingTime
+          arrival_time={row.arrival_time}
 
-  //       />
-  //     ),
-  //     waitingTime: (
-  //       <CalculateWaitingTime
-  //         arrival_time={row?.latest_encounter_time}
-  //       />
-  //     ),
-  //     actionName: "Triaged By",
-  //     action: (
-  //       <CardAction
-  //         patient={row}
-  //         setDeleted={(id: any) => setDeleted(id)}
-  //         triage={row.triage_result}
-  //         visitId={row.visit_uuid}
-  //         id={row.id}
-  //       />
-  //     ),
-  //     age: `${calculateAge(row.birthdate)}yrs`,
-  //     triageResult: row.triage_result,
-  //   };
-  // });
+        />
+      ),
+      waitingTime: (
+        <CalculateWaitingTime
+          arrival_time={row?.latest_encounter_time}
+        />
+      ),
+      actionName: "Triaged By",
+      action: (
+        <CardAction
+          patient={row}
+          setDeleted={(id: any) => setDeleted(id)}
+          triage={row.triage_result}
+          visitId={row.visit_uuid}
+          id={row.id}
+        />
+      ),
+      age: `${calculateAge(row.birthdate)}yrs`,
+      triageResult: row.triage_result,
+    };
+  });
 
-  return <ServerPaginationTable searchText={searchText} setSearchString={setSearchText} rowCount={data?.data ? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} rows={data?.data? data?.data?.map(p=>({id:p.patient_id,...p})): []} columns={columns}  />
+  return <PatientCardListServer totalPages={data?.total_pages??0} searchText={searchText} setSearchString={setSearchText} rowCount={10} setPaginationModel={setPaginationModel} pagination={paginationModel} loading={isPending} dataList={formatForMobileView? formatForMobileView: []} />
+  // return <ServerPaginationTable searchText={searchText} setSearchString={setSearchText} rowCount={data?.data? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} rows={data?.data? data?.data?.map(p=>({id:p.patient_id,...p})): []} columns={columns}  />
 
   // return <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} />
 
