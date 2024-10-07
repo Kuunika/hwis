@@ -9,7 +9,7 @@ import {
 } from "@/components";
 import { FaPrint } from "react-icons/fa6";
 import { BarcodeComponent } from "@/components/barcode";
-import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { getOnePatient, getPatientsWaitingForAssessment } from "@/hooks/patientReg";
 import { GenericDialog } from "@/components";
 import { useState } from "react";
 import {
@@ -31,14 +31,15 @@ import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
 import { any } from "prop-types";
 export const LabOrderTable = () => {
   const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
+  
   const { params } = useParameters();
-  const { data: patients } = getPatientsWaitingForAssessment();
+  const { data: patient, isLoading } = getOnePatient(params.id as string);
   const {
     data: labOrders,
     isPending,
     isSuccess,
   } = getPatientLabOrder(params?.id as string);
-  const patient = patients?.find((p) => p.uuid == params.id);
+
   const [showDialog, setShowDialog] = useState(false);
   const [selectedTest, setSelectedTest] = useState({
     sampleType: "",

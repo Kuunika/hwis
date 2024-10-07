@@ -2,7 +2,7 @@
 import { calculateAge, getTime } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { checkScreenSize, useNavigation } from "@/hooks";
-import { getPatientsWaitingForAssessment, getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
+import {  getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -32,12 +32,7 @@ export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState("");
   const [paginationModel, setPaginationModel]=useState({page:1,pageSize:10})
   const { navigateTo } = useNavigation();
-  // const {
-  //   data: patients,
-  //   isLoading,
-  //   isRefetching,
-  //   refetch
-  // } = getPatientsWaitingForAssessment();
+
   const [searchText, setSearchText]=useState('');
    const {
     data,

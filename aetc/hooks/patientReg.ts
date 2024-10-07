@@ -1,6 +1,7 @@
 import { concepts } from "@/constants";
 import { PaginationModel } from "@/interfaces";
 import {
+  checkPatientIfOnAssessment,
   createPatient,
   findByDemographics,
   findByNPID,
@@ -294,3 +295,17 @@ export const getPatientVisitTypes = (id: string) => {
     enabled: true,
   });
 };
+
+export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
+  const getAll = () => checkPatientIfOnAssessment(id).then((response) => response?.data);
+
+  return useQuery({
+    queryKey: ["visits", id, "eligible"],
+    queryFn: getAll,
+    enabled: true,
+  });
+};
+
+
+
+

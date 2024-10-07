@@ -7,12 +7,11 @@ import { useState, useEffect } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import ReactMarkdown from "react-markdown";
 import { Box } from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
-import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { getOnePatient } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Obs } from "@/interfaces";
@@ -23,7 +22,8 @@ export const ClinicalNotes = () => {
   >([]);
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
-  const { data: patients } = getPatientsWaitingForAssessment();
+  const { data: patient } = getOnePatient(params.id as string);
+
   const {
     data: patientEncounters,
     isLoading,
@@ -59,7 +59,6 @@ export const ClinicalNotes = () => {
   };
 
   const addClinicalNote = (note: any) => {
-    const patient = patients?.find((d) => d.uuid == params.id);
     const dateTime = getDateTime();
     mutate({
       encounterType: encounters.CLINICAL_NOTES,
@@ -76,11 +75,7 @@ export const ClinicalNotes = () => {
     });
   };
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, 2000);
-  // });
+
 
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;

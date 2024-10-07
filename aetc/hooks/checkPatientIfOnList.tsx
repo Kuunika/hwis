@@ -1,20 +1,18 @@
 'use client'
 import { useEffect, useState } from "react"
-import { getPatientsWaitingForAssessment } from "./patientReg";
+import { checkIfPatientIsOnWaitingForAssessmentList } from "./patientReg";
+
 
 export const checkPatientIfOnWaitingAssessment = (patientId: string) => {
     const [isOnList, setIsOnList] = useState(false);
-    const { data: patients } = getPatientsWaitingForAssessment();
+
+    const {data}=checkIfPatientIsOnWaitingForAssessmentList(patientId);
 
     useEffect(() => {
 
-        const found = patients?.find(p => p.uuid == patientId);
+        setIsOnList(Boolean(data))
 
-        if (found) return setIsOnList(true)
-
-        setIsOnList(false)
-
-    }, [patients, patientId])
+    }, [data, patientId])
 
     return { isOnList }
 

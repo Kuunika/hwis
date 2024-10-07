@@ -1,6 +1,14 @@
-import { ActiveVisit, DailyVisitPaginated, DDEScore, DDESearch, PatientUpdateResponse, Person, Relationship, RelationshipType } from "@/interfaces";
-import { create, edit, getAll, getOne } from "./httpService";
-
+import {
+  ActiveVisit,
+  DailyVisitPaginated,
+  DDEScore,
+  DDESearch,
+  PatientUpdateResponse,
+  Person,
+  Relationship,
+  RelationshipType,
+} from "@/interfaces";
+import { create, edit, get, getAll, getOne } from "./httpService";
 
 const endPoint = "/people";
 
@@ -12,13 +20,15 @@ export const initialRegistration = (patientData: any) =>
 
 export const getPatients = () => getAll<Array<any>>(endPoint);
 
-
-
 export const getDailyVisits = (queryParam?: string) =>
-  getAll<Person[]>(`/visits?date_stopped&category=${queryParam}&paginate=false`);
+  getAll<Person[]>(
+    `/visits?date_stopped&category=${queryParam}&paginate=false`
+  );
 
 export const getDailyVisitsPaginated = (queryParam?: string) =>
-  getAll<DailyVisitPaginated>(`/visits?date_stopped&${queryParam}&paginate=true`);
+  getAll<DailyVisitPaginated>(
+    `/visits?date_stopped&${queryParam}&paginate=true`
+  );
 
 // getAll<Person[]>(`/daily_visits?category=${queryParam}`);
 // getAll<{
@@ -34,36 +44,55 @@ export const updatePatient = (patientId: string, patientData: any) =>
 export const potentialDuplicates = (patientData: any) =>
   create(patientData, "/search/people");
 
+export const getPatient = (uuid: string) => getOne<Person>(uuid, "/patients");
 
-export const getPatient = (uuid: string) => getOne<Person>(uuid, '/patients');
- 
-export const findByNameAndGender = (firstName: string, lastName: string, gender: string) => getAll<DDESearch>(`/dde/patients/find_by_name_and_gender?given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`);
-export const findByNPID = (npid: string) => getAll<DDESearch>(`/dde/patients/find_by_npid?npid=${npid}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`);
+export const findByNameAndGender = (
+  firstName: string,
+  lastName: string,
+  gender: string
+) =>
+  getAll<DDESearch>(
+    `/dde/patients/find_by_name_and_gender?given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`
+  );
+export const findByNPID = (npid: string) =>
+  getAll<DDESearch>(
+    `/dde/patients/find_by_npid?npid=${npid}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`
+  );
 
-export const findByDemographics =
-  (firstName: string,
-    lastName: string,
-    gender: string,
-    birthdate: string,
-    homeVillage: string,
-    homeTA: string,
-    homeDistrict: string) => getAll<DDEScore[]>(`/dde/patients/match_by_demographics?home_district=${homeDistrict}&home_traditional_authority=${homeTA}&home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`);
-
+export const findByDemographics = (
+  firstName: string,
+  lastName: string,
+  gender: string,
+  birthdate: string,
+  homeVillage: string,
+  homeTA: string,
+  homeDistrict: string
+) =>
+  getAll<DDEScore[]>(
+    `/dde/patients/match_by_demographics?home_district=${homeDistrict}&home_traditional_authority=${homeTA}&home_village=${homeVillage}&birthdate=${birthdate}&given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`
+  );
 
 export const mergePatients = (data: any) => {
-  return create<Person & { active_visit: ActiveVisit }>(data, `/dde/patients/merge?visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`)
-}
-
+  return create<Person & { active_visit: ActiveVisit }>(
+    data,
+    `/dde/patients/merge?visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`
+  );
+};
 
 export const getRelations = (patientId: string) => {
-  return getAll<Relationship[]>(`/relationships?person_a=${patientId}&paginate=false`)
-}
+  return getAll<Relationship[]>(
+    `/relationships?person_a=${patientId}&paginate=false`
+  );
+};
 
 export const getRelationshipTypes = () => {
-  return getAll<RelationshipType[]>(`/relationship_types?paginate=false`)
-}
+  return getAll<RelationshipType[]>(`/relationship_types?paginate=false`);
+};
 
-export const getPatientVisits = (id:string) => {
-  return getAll<ActiveVisit[]>(`/patients/${id}/visits`)
-}
+export const getPatientVisits = (id: string) => {
+  return getAll<ActiveVisit[]>(`/patients/${id}/visits`);
+};
 
+export const checkPatientIfOnAssessment = (id: string) => {
+  return get(`/visits/${id}/eligible?category=assessment`);
+};

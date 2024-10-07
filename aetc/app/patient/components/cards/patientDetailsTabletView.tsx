@@ -3,14 +3,13 @@ import { Chip } from "@mui/material";
 import { Panel } from "../panels";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { useParameters } from "@/hooks";
-import { getPatientsWaitingForAssessment, getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import { getOnePatient, getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import { calculateAge } from "@/helpers/dateTime";
 
 export const PersonalDetailsTabletView = ({ sx }: { sx?: any }) => {
-  const { data: patients, isLoading } = getPatientsWaitingForAssessment();
   const { params } = useParameters();
+  const { data: patient, isLoading } = getOnePatient(params.id as string);
 
-  const patient = patients?.find((p) => p.uuid == params.id);
 
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;

@@ -12,7 +12,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { Concept, LabRequest, TestType } from "@/interfaces";
 import { createOrder, getConceptSetMembers, getLabSpecimenTypes, getLabTestReason, getLabTestTypes } from "@/hooks/labOrder";
 import { useParameters } from "@/hooks";
-import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import { getOnePatient } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import { OverlayLoader } from "@/components/backdrop";
 import { BarcodeComponent } from "@/components/barcode";
@@ -37,8 +37,9 @@ export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
   const [sampleName, setSampleName] = useState<string>('')
   const { data: labTests, isLoading: loadingTests, isSuccess: testLoaded, refetch, isRefetching } = getLabTestTypes(sampleName);
 
-  const { params } = useParameters()
-  const { data: patients } = getPatientsWaitingForAssessment();
+  
+  const { params } = useParameters();
+  const { data: patient } = getOnePatient(params.id as string);
   const { mutate, isPending, isSuccess: orderCreated } = createOrder()
 
 
@@ -67,7 +68,6 @@ export function LabRequestModal({ onClose, addRequest }: SimpleDialogProps) {
 
 
   const handleSendLab = () => {
-    const patient = patients?.find(p => p.uuid == params.id)
 
     const order = {
       "orders": [
@@ -135,9 +135,10 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
   const [samples, setSamples] = useState<Concept[]>([]);
   const [tests, setTests] = useState<Concept[]>([])
 
-  const { params } = useParameters()
-  const { data: patients } = getPatientsWaitingForAssessment();
+  const { params } = useParameters();
+  const { data: patient } = getOnePatient(params.id as string);
   const { mutate, isPending, isSuccess: orderCreated } = createOrder()
+
 
   useEffect(() => {
     refetch()
@@ -255,7 +256,6 @@ const LabForm = ({ onClose }: { onClose: () => void }) => {
   }
 
   const handleLabSend = (values: any) => {
-    const patient = patients?.find(p => p.uuid == params.id);
 
     const mappedTests = values?.tests.map((test: any) => {
       return { concept: tests?.find(lab => lab.concept_id == test.id)?.names[0]?.uuid }
