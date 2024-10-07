@@ -15,6 +15,7 @@ import * as Yup from "yup";
 import { useConditions } from "@/hooks";
 import { getInitialValues } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
+import { CanvasImage } from "@/components/canvasImage/canvasImage";
 
 export const AirwayBreathingForm = {
   airway: {
@@ -25,14 +26,6 @@ export const AirwayBreathingForm = {
     name: concepts.IS_BREATHING_ABNORMAL,
     label: "is Breathing Abnormal",
   },
-  // oxygenStats: {
-  //   name: concepts.OXYGEN_STATS_89,
-  //   label: "Oxygen Stats < 89",
-  // },
-  // respiratoryRate: {
-  //   name: concepts.RESPIRATORY_RATE_8_31,
-  //   label: "Respiratory Rate <8 or > 31",
-  // },
   respiratoryDysfunction: {
     name: concepts.SEVERE_RESPIRATORY,
     label: "Severe Respiratory dysfunction or exhaustion ",
@@ -49,21 +42,11 @@ export const AirwayBreathingForm = {
     name: concepts.REDUCED_LEVEL_CONSCIOUSNESS,
     label: "Reduced Level of Consciousness due to low oxygen ",
   },
-  // oxygenSats9092: {
-  //   name: concepts.OXYGEN_STATS_90_92,
-  //   label: "Oxygen Sats 90-92%",
-  // },
-  // respiratoryRate92130: {
-  //   name: concepts.RESPIRATORY_RATE_9_21_30,
-  //   label: "Respiratory Rate > 9 or 21-30",
-  // },
 };
 
 const schema = Yup.object().shape({
   [AirwayBreathingForm.airway.name]: Yup.string().required().label(AirwayBreathingForm.airway.label),
   [AirwayBreathingForm.breathing.name]: Yup.string().required().label(AirwayBreathingForm.breathing.label),
-  // [AirwayBreathingForm.oxygenStats.name]: Yup.string().label(AirwayBreathingForm.oxygenStats.label),
-  // [AirwayBreathingForm.respiratoryRate.name]: Yup.string().label(AirwayBreathingForm.respiratoryRate.label),
   [AirwayBreathingForm.respiratoryDysfunction.name]: Yup.string().label(
     AirwayBreathingForm.respiratoryDysfunction.label
   ),
@@ -137,6 +120,7 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
     >
 
       <FormValuesListener getValues={setFormValues} />
+  
 
       <FormFieldContainerLayout
         last={isBreathingAbnormal != YES}

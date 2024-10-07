@@ -46,7 +46,7 @@ export const PatientTableList = ({isLoading, columns,rows,formatForMobileView}:p
       return isMediumOrSmall ? (
         <PatientCardListServer totalPages={data?.total_pages??0} searchText={searchText} setSearchString={setSearchString} rowCount={10} setPaginationModel={setPaginationModel} pagination={paginationModel} loading={loading} dataList={formatForMobileView? formatForMobileView: []} />
         ) : (
-          <ServerPaginationTable searchText={searchText} setSearchString={setSearchString} rowCount={data?.data? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={loading} rows={data?.data? data?.data?.map(p=>({id:p.patient_id,...p})): []} columns={columns}  />
+          <ServerPaginationTable searchText={searchText} setSearchString={setSearchString} rowCount={data?.data? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={loading} rows={data?.data? data?.data?.map(p=>({id:p.uuid,...p})): []} columns={columns}  />
         );
       };
   

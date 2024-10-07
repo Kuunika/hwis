@@ -36,7 +36,7 @@ export const potentialDuplicates = (patientData: any) =>
 
 
 export const getPatient = (uuid: string) => getOne<Person>(uuid, '/patients');
-
+ 
 export const findByNameAndGender = (firstName: string, lastName: string, gender: string) => getAll<DDESearch>(`/dde/patients/find_by_name_and_gender?given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`);
 export const findByNPID = (npid: string) => getAll<DDESearch>(`/dde/patients/find_by_npid?npid=${npid}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`);
 
