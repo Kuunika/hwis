@@ -1,31 +1,27 @@
 'use client'
-import { calculateAge, getTime } from "@/helpers/dateTime";
+import { calculateAge } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
-import { checkScreenSize, useNavigation } from "@/hooks";
+import { useNavigation } from "@/hooks";
 import {  getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
 import * as React from 'react';
-import Button from '@mui/material/Button';
+
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
 import {
-  BaseTable,
   CalculateWaitingTime,
   MainButton,
-  PatientTableList,
   PatientTableListServer,
-  ServerPaginationTable,
   WrapperBox,
 } from "../../../components";
 
 
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
-import { encounters, triageResult } from "@/constants";
+import { encounters, } from "@/constants";
 import { Box } from "@mui/material";
 import { FetchAndDisplayTriageBarcode, PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
-import { PatientCardListServer } from "@/components/cards/PatientCardList";
-import { DailyVisitPaginated, PaginationModel } from "@/interfaces";
+
 
 
 export const ClientWaitingForAssessment = () => {
@@ -36,10 +32,8 @@ export const ClientWaitingForAssessment = () => {
   const [searchText, setSearchText]=useState('');
    const {
     data,
-    isLoading,
     refetch,
     isPending,
-    isFetching
   } = getPatientsWaitingForAssessmentPaginated(paginationModel,searchText);
 
 
@@ -48,48 +42,10 @@ export const ClientWaitingForAssessment = () => {
   },[paginationModel])
 
 
-  // const [rows, setRows] = useState<any>([]);
-  
-
-  // useEffect(() => {
-  //   updatePatients()
-  // }, [patients])
-
-
-  // useEffect(() => {
-  //   refetch()
-  // }, [deleted])
-
-
-  // const updatePatients = () => {
-  //   const updatedPatients = patients
-  //     ?.sort((p1, p2) => {
-  //       const triagePriority: any = { red: 1, yellow: 2, green: 3 };
-  //       if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
-  //         return -1;
-  //       }
-  //       if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
-  //         return 1;
-  //       }
-
-  //       // If triage results are the same, then sort by arrival time (earliest first)
-  //       //@ts-ignore
-  //       return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-  //     })
-  //     .map((p) => ({
-  //       id: p?.uuid,
-  //       ...p,
-  //       patient_arrival_time: getTime(p.arrival_time),
-  //     })).filter(p => p.id != deleted);
-
-  //   setRows(updatedPatients)
-  // }
-
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    // { field: "patient_arrival_time", headerName: "Arrival Time" },
     { field: "birthdate", headerName: "Date Of Birth", },
     { field: "gender", headerName: "Gender" },
     {
@@ -143,12 +99,7 @@ export const ClientWaitingForAssessment = () => {
         );
       },
     },
-    // { field: "patientWaitingTime", headerName: "Waiting Time", flex: 1 },
-    // {
-    //   field: "aggreWaitingTime",
-    //   headerName: "Aggre Waiting Time since arrival",
-    //   flex: 1,
-    // },
+
     {
       field: "action",
       headerName: "Action",
@@ -216,7 +167,6 @@ export const ClientWaitingForAssessment = () => {
     };
   });
 
-  // console.log({data});
 
   return <PatientTableListServer  columns={columns} data={data?.data ? data : {data:[], page:1,per_page:10, total_pages:0}} searchText={searchText} setSearchString={setSearchText} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} formatForMobileView={formatForMobileView? formatForMobileView: []} />
 
