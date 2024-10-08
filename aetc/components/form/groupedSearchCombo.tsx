@@ -44,7 +44,20 @@ export const GroupedSearchComboBox: FC<Props> = ({
 }) => {
   const { hasError, setFieldValue, value, errorMessage } = useFormikField(name);
 
+  const handleChange = (selectedOptions: any) => {
+    const inputValue = multiple
+      ? selectedOptions.map((option: any) => ({
+          value: option.value,
+          label: option.label,
+        }))
+      : { value: selectedOptions?.value, label: selectedOptions?.label };
 
+    setFieldValue(name, inputValue);
+
+    if (getValue) {
+      getValue(inputValue); 
+    }
+  };
   
 
   const padding = applyPadding
@@ -77,6 +90,7 @@ export const GroupedSearchComboBox: FC<Props> = ({
             }),
           }}
           defaultValue={manualInitialValues}
+          onChange={handleChange}
           isDisabled={disabled}
           isMulti={multiple}
           options={options}

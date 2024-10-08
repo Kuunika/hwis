@@ -335,7 +335,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
             label={form.complaints_duration_units.label}
             options={durationOptions}
             getValue={(value) => console.log("Selected value:", value)}
-            sx={{width:200}}
+            sx={{width:250}}
             multiple={true}
           />
         <div style={{display:'flex', marginTop:30}}>
@@ -357,7 +357,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Allergies">
         <FieldsContainer>
-        <GroupedSearchComboBox options={groupedOptions} getValue={(value) => console.log(value)}  multiple={false} name={form.allergy.name}label={form.allergy.label} />
+        <GroupedSearchComboBox options={groupedOptions} getValue={(value) => console.log(value)}  multiple={true} name={form.allergy.name}label={form.allergy.label} />
         </FieldsContainer>
       </FormFieldContainerLayout>
     </FormikInit>
