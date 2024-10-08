@@ -544,8 +544,10 @@ const ActionMenu = () => {
                     py: "1ch",
                     px: "2ch",
                   }}
+                  // 0tnxas
+                  // Yc7flfzx
                 >
-                  {icon && <Image src={icon} alt="AETC Form icon" />}
+                  {icon && <Image src={icon? icon : ""} alt="AETC Form icon" />}
                   <MainTypography
                     sx={{
                       fontFamily: "Inter",

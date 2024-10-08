@@ -3,16 +3,18 @@ import * as React from "react";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
+
 import {
   Box,
   FormControlLabel,
   InputAdornment,
   Switch,
   TextField,
-  Toolbar,
 } from "@mui/material";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { isToday } from "@/helpers/dateTime";
+import { PaginationModel } from "@/interfaces";
 
 type IProp = {
   width?: string;
@@ -25,7 +27,7 @@ type IProp = {
   rowHeight?: number;
   loading?: boolean;
   checkboxSelection?: boolean;
-
+  paginationMode?: "client" | "server";
   getSelectedItems?: (items: any) => void;
 };
 
@@ -73,30 +75,30 @@ const Table: React.FC<IProp> = ({
     setFilteredRows(filteredRows);
   };
 
-  if (loading) {
-    return (
-      <Stack sx={{ m: "1ch" }} spacing={1}>
-        <Stack direction={"row"} spacing={1}>
-          <Skeleton variant="rounded" width={"100%"} height={40} />
-          <Skeleton variant="rounded" width={"100%"} height={40} />
-          <Skeleton variant="rounded" width={"100%"} height={40} />
-          <Skeleton variant="rounded" width={"100%"} height={40} />
-          <Skeleton variant="rounded" width={"100%"} height={40} />
-        </Stack>
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-        <Skeleton variant="rounded" width={"100%"} height={20} />
-      </Stack>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Stack sx={{ m: "1ch" }} spacing={1}>
+  //       <Stack direction={"row"} spacing={1}>
+  //         <Skeleton variant="rounded" width={"100%"} height={40} />
+  //         <Skeleton variant="rounded" width={"100%"} height={40} />
+  //         <Skeleton variant="rounded" width={"100%"} height={40} />
+  //         <Skeleton variant="rounded" width={"100%"} height={40} />
+  //         <Skeleton variant="rounded" width={"100%"} height={40} />
+  //       </Stack>
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //       <Skeleton variant="rounded" width={"100%"} height={20} />
+  //     </Stack>
+  //   );
+  // }
 
   const handleSwitchChange = (value: any) => {
     setShowTodayOnly(value.target.checked);
@@ -104,42 +106,23 @@ const Table: React.FC<IProp> = ({
 
   return (
     <div style={{ height, width, ...style }}>
-      <Box>
-        <TextField
-          sx={{ m: 1, width: "30%" }}
-          variant="outlined"
-          placeholder="Search Patient"
-          value={searchText}
-          onChange={(e) => requestSearch(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FaMagnifyingGlass />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <FormControlLabel
-          control={
-            <Switch onChange={handleSwitchChange} name="" size="medium" />
-          }
-          label="Show only patients registered today"
-        />
-      </Box>
-
+      <TopBarComponents
+        searchText={searchText}
+        handleSwitchChange={handleSwitchChange}
+        requestSearch={requestSearch}
+      />
       <DataGrid
-        // getRowClassName={(test: any) => {
-        //   console.log({ test })
-        //   return 'triage-red'
-        // }}
         onRowSelectionModelChange={getSelectedItems}
         checkboxSelection={checkboxSelection}
         rowHeight={rowHeight}
         sx={{ my: "1ch", borderStyle: "none" }}
+        loading={loading}
         rows={filteredRows}
         columns={columns}
         hideFooterPagination={hidePagination}
+        paginationModel={{ page: 0, pageSize: 10 }}
+        paginationMode="server"
+        onPaginationModelChange={(pagination) => console.log({ pagination })}
         initialState={{
           columns: {
             columnVisibilityModel,
@@ -147,6 +130,83 @@ const Table: React.FC<IProp> = ({
         }}
       />
     </div>
+  );
+};
+
+interface ServerPaginationTableProp {
+  columns: any;
+  rows: Array<any>;
+  loading: boolean;
+  paginationModel: PaginationModel;
+  setPaginationModel: (values: any) => void;
+  rowCount: number;
+  searchText?:string;
+  setSearchString: (values:any)=>void
+}
+
+export const ServerPaginationTable = ({
+  columns,
+  rows,
+  loading,
+  setPaginationModel,
+  paginationModel,
+  rowCount,
+  searchText,
+  setSearchString
+}: ServerPaginationTableProp) => {
+  
+  return (
+    <>
+    <TopBarComponents searchText={searchText ?? ""} requestSearch={setSearchString} />
+      <DataGrid
+        sx={{ my: "1ch", borderStyle: "none" }}
+        initialState={{
+          pagination: { paginationModel: { page: 1, pageSize: 10 } },
+        }}
+        loading={loading}
+        rows={rows}
+        columns={columns}
+        paginationModel={paginationModel}
+        rowCount={rowCount}
+        paginationMode="server"
+        onPaginationModelChange={setPaginationModel}
+        autoHeight
+      />
+    </>
+  );
+};
+
+const TopBarComponents = ({
+  searchText,
+  requestSearch,
+  handleSwitchChange,
+}: {
+  searchText: string;
+  requestSearch: (value: any) => void;
+  handleSwitchChange?: (values: any) => void;
+}) => {
+  return (
+    <Box>
+      <TextField
+        sx={{ m: 1, width: "30%" }}
+        variant="outlined"
+        placeholder="Search Patient"
+        value={searchText}
+        onChange={(e) => requestSearch(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <FaMagnifyingGlass />
+            </InputAdornment>
+          ),
+        }}
+      />
+
+    { handleSwitchChange && <FormControlLabel
+        control={<Switch onChange={handleSwitchChange} name="" size="medium" />}
+        label="Show only patients registered today"
+      />}
+    </Box>
   );
 };
 

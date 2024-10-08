@@ -2,7 +2,7 @@
 import { calculateAge, getTime } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { checkScreenSize, useNavigation } from "@/hooks";
-import { getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import {  getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -13,6 +13,8 @@ import {
   CalculateWaitingTime,
   MainButton,
   PatientTableList,
+  PatientTableListServer,
+  ServerPaginationTable,
   WrapperBox,
 } from "../../../components";
 
@@ -22,53 +24,66 @@ import { DisplayEncounterCreator } from "@/components";
 import { encounters, triageResult } from "@/constants";
 import { Box } from "@mui/material";
 import { FetchAndDisplayTriageBarcode, PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { PatientCardListServer } from "@/components/cards/PatientCardList";
+import { DailyVisitPaginated, PaginationModel } from "@/interfaces";
 
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState("");
+  const [paginationModel, setPaginationModel]=useState({page:1,pageSize:10})
   const { navigateTo } = useNavigation();
-  const {
-    data: patients,
+
+  const [searchText, setSearchText]=useState('');
+   const {
+    data,
     isLoading,
-    isRefetching,
-    refetch
-  } = getPatientsWaitingForAssessment();
-  const [rows, setRows] = useState<any>([])
-
-  useEffect(() => {
-    updatePatients()
-  }, [patients])
+    refetch,
+    isPending,
+    isFetching
+  } = getPatientsWaitingForAssessmentPaginated(paginationModel,searchText);
 
 
-  useEffect(() => {
-    refetch()
-  }, [deleted])
+  useEffect(()=>{
+    refetch();
+  },[paginationModel])
 
 
+  // const [rows, setRows] = useState<any>([]);
+  
 
-  const updatePatients = () => {
-    const updatedPatients = patients
-      ?.sort((p1, p2) => {
-        const triagePriority: any = { red: 1, yellow: 2, green: 3 };
-        if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
-          return -1;
-        }
-        if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
-          return 1;
-        }
+  // useEffect(() => {
+  //   updatePatients()
+  // }, [patients])
 
-        // If triage results are the same, then sort by arrival time (earliest first)
-        //@ts-ignore
-        return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-      })
-      .map((p) => ({
-        id: p?.uuid,
-        ...p,
-        patient_arrival_time: getTime(p.arrival_time),
-      })).filter(p => p.id != deleted);
 
-    setRows(updatedPatients)
-  }
+  // useEffect(() => {
+  //   refetch()
+  // }, [deleted])
+
+
+  // const updatePatients = () => {
+  //   const updatedPatients = patients
+  //     ?.sort((p1, p2) => {
+  //       const triagePriority: any = { red: 1, yellow: 2, green: 3 };
+  //       if (triagePriority[p1.triage_result] < triagePriority[p2.triage_result]) {
+  //         return -1;
+  //       }
+  //       if (triagePriority[p1.triage_result] > triagePriority[p2.triage_result]) {
+  //         return 1;
+  //       }
+
+  //       // If triage results are the same, then sort by arrival time (earliest first)
+  //       //@ts-ignore
+  //       return new Date(p1.arrival_time) - new Date(p2.arrival_time);
+  //     })
+  //     .map((p) => ({
+  //       id: p?.uuid,
+  //       ...p,
+  //       patient_arrival_time: getTime(p.arrival_time),
+  //     })).filter(p => p.id != deleted);
+
+  //   setRows(updatedPatients)
+  // }
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit" },
@@ -160,8 +175,7 @@ export const ClientWaitingForAssessment = () => {
   ];
 
 
-
-  const formatForMobileView = rows?.map((row: any) => {
+  const formatForMobileView = data?.data?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -202,7 +216,11 @@ export const ClientWaitingForAssessment = () => {
     };
   });
 
-  return <PatientTableList rows={rows} formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} />
+  // console.log({data});
+
+  return <PatientTableListServer  columns={columns} data={data?.data ? data : {data:[], page:1,per_page:10, total_pages:0}} searchText={searchText} setSearchString={setSearchText} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} formatForMobileView={formatForMobileView? formatForMobileView: []} />
+
+
 
 };
 
@@ -295,3 +313,5 @@ export function BasicMenu({ patient }: { patient: any }) {
     </div>
   );
 }
+
+

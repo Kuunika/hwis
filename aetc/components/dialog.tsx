@@ -19,9 +19,6 @@ export function GenericDialog({ onClose, open, children, title, maxWidth = "lg",
         onClose()
     };
 
-    const handleListItemClick = (value: string) => {
-        onClose();
-    };
 
     return (
         <Dialog maxWidth={maxWidth} fullWidth={true} onClose={handleClose} open={open}>

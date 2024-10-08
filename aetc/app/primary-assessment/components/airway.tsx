@@ -1,4 +1,4 @@
-import { NotificationContainer } from "@/components";
+import { GenericDialog, NotificationContainer } from "@/components";
 import { NO, YES, concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useState } from "react";
@@ -12,6 +12,8 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
+import { CanvasImage } from "@/components/canvasImage/canvasImage";
+import { Button } from "@mui/material";
 
 const form = {
   isAirwayPatent: {
@@ -108,6 +110,7 @@ const radioOptions = [
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
+  const [anatomyOpen, setAnatomyOpen] = useState(false);
 
   return (
     <FormikInit
@@ -116,6 +119,15 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
     >
       <FormValuesListener getValues={setFormValues} />
+      <Button onClick={() => setAnatomyOpen(true)}>Image</Button>
+      <GenericDialog
+        maxWidth="lg"
+        open={anatomyOpen}
+        onClose={() => setAnatomyOpen(false)}
+        title=""
+      >
+        <CanvasImage imageUrl="/anatomy.webp" />
+      </GenericDialog>
 
       <FormFieldContainerLayout title="Airway Patent">
         <FieldsContainer sx={{ alignItems: "flex-start" }}>

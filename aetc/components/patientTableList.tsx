@@ -1,7 +1,8 @@
 'use client'
 import { checkScreenSize } from "@/hooks";
-import { PatientCardList } from "./cards/PatientCardList";
-import { BaseTable } from "./tables";
+import { PatientCardList, PatientCardListServer } from "./cards/PatientCardList";
+import { BaseTable, ServerPaginationTable } from "./tables";
+import { DailyVisitPaginated, PaginationModel } from "@/interfaces";
 
 type props = {
     isLoading:boolean;
@@ -26,3 +27,29 @@ export const PatientTableList = ({isLoading, columns,rows,formatForMobileView}:p
         />
       );
     };
+
+    interface PatientTableServerProps {
+      data: DailyVisitPaginated,
+      searchText:string,
+      setSearchString:(search:any)=>void,
+      setPaginationModel: (pagination:any)=>void,
+      paginationModel: PaginationModel,
+      loading: boolean,
+      formatForMobileView: any,
+      columns: any
+
+    }
+
+    export const PatientTableListServer = ({loading,searchText,setPaginationModel, setSearchString,paginationModel, columns,data,formatForMobileView}:PatientTableServerProps)=>{
+      const { isMediumOrSmall } = checkScreenSize();
+  
+      return isMediumOrSmall ? (
+        <PatientCardListServer totalPages={data?.total_pages??0} searchText={searchText} setSearchString={setSearchString} rowCount={10} setPaginationModel={setPaginationModel} pagination={paginationModel} loading={loading} dataList={formatForMobileView? formatForMobileView: []} />
+        ) : (
+          <ServerPaginationTable searchText={searchText} setSearchString={setSearchString} rowCount={data?.data? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={loading} rows={data?.data? data?.data?.map(p=>({id:p.uuid,...p})): []} columns={columns}  />
+        );
+      };
+  
+
+
+  
