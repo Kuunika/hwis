@@ -60,8 +60,9 @@ export const TextInputField: FC<Prop> = ({
       </InputLabel>
       <TextField
         sx={{
+          backgroundColor:'white',
           "label + &": {
-            marginTop: "2ch",
+            marginTop: "2.3ch",
           },
           "& .MuiInputBase-input": {
             width: "25ch",

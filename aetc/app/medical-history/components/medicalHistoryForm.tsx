@@ -1,4 +1,4 @@
-import { NotificationContainer, SearchComboBox } from "@/components";
+import { SearchComboBox,  SelectInputField, WrapperBox } from "@/components";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -11,8 +11,10 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import { MultiValue } from "react-select/animated";
 import { concepts } from "@/constants";
+import { IconButton } from "@mui/material";
+import { FaMinus, FaPlus } from "react-icons/fa6";
+import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 type Props = {
   onSubmit: (values: any) => void;
 };
@@ -22,14 +24,29 @@ const form = {
     label: "Complaints",
   },
   complaints_duration: {
-    name: concepts.COMPLAINTS_DURATION,
-    label: "Complaints",
+    name: 'complaints_duration',
+    label: "Duration",
+  },
+  complaints_duration_units: {
+    name: 'complaints_duration_units',
+    label: "Units",
+  },
+  allergy: {
+    name: concepts.ALLERGY,
+    label: "Allergies",
   },
 };
 
 const schema = yup.object({
   [form.complaints.name]: yup.array().required().label(form.complaints.label),
 });
+
+const durationOptions= [
+  { id: "Days", label: "Days" },
+  { id: "Weeks", label: "Weeks" },
+  { id: "Months", label: "Months" },
+  { id: "Years", label: "Years" },
+]
 
 const presentingComplaints = [
   { id: "Ascites", label: "Ascites" },
@@ -218,6 +235,48 @@ const presentingComplaints = [
   { id: "Food Poisoning", label: "Food poisoning" }
 ];
 
+const groupedOptions = [
+  {
+    label: 'Medications',
+    options: [
+      { value: "Aspirin", label: "Aspirin" },
+      { value: "Ibuprofen", label: "Ibuprofen" },
+      { value: "Indomethacin", label: "Indomethacin" },
+      { value: "Diclofenac", label: "Diclofenac" },
+      { value: "Amoxicillin", label: "Amoxicillin" },
+      { value: "Penicillin V", label: "Penicillin V" },
+      { value: "Amoxicillin - clavulanic acid", label: "Amoxicillin - clavulanic acid" },
+      { value: "Cotrimoxazole", label: "Cotrimoxazole" },
+      { value: "Sulfadoxime Pyrimethamine (SP)", label: "Sulfadoxime Pyrimethamine (SP)" },
+      { value: "Sulphur containing medication", label: "Sulphur containing medication" },
+    ],
+  },
+  {
+    label: 'Medical Substances',
+    options: [
+      { value: "Radiocontrast", label: "Radiocontrast" },
+      { value: "Latex", label: "Latex" },
+    ],
+  },
+  {
+    label: 'Other Substances',
+    options: [
+      { value: "Pollen", label: "Pollen" },
+      { value: "Bees", label: "Bees" },
+      { value: "Wasps", label: "Wasps" },
+    ],
+  },
+  {
+    label: 'Food',
+    options: [
+      { value: "Seafood: Shellfish, prawns, calamari", label: "Seafood: Shellfish, prawns, calamari" },
+      { value: "Other fish", label: "Other fish" },
+      { value: "Eggs", label: "Eggs" },
+      { value: "Peanut butter", label: "Peanut butter" },
+    ],
+  },
+];
+
 
 const initialValues = {
   temperatureInfo: "",
@@ -226,9 +285,24 @@ const initialValues = {
 };
 export const MedicalHistoryForm = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
+  const [complaints, setComplaints] = useState([
+    { complaint: "", duration: 0, duration_unit: "" },
+  ]);
 
-  function handleValueChange(value: any): void {
-    throw new Error("Function not implemented.");
+  const handleValueChange = (value: any)=>{
+    return;
+  }
+
+  function handleRemoveComplaint(index: number): void {
+    const updatedComplaints = complaints.filter((_, i) => i !== index);
+    setComplaints(updatedComplaints);
+  }
+
+  function handleAddComplaint(): void {
+    setComplaints([
+      ...complaints,
+      { complaint: "", duration: 0, duration_unit: "" },
+    ]);;
   }
 
   return (
@@ -239,23 +313,52 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       submitButtonText="submit"
     >
       <FormValuesListener getValues={setFormValues} />
-
       <FormFieldContainerLayout last={true} title="Presenting Complaints">
+      <WrapperBox>
+      {complaints.map((complaint, index) => (
         <FieldsContainer>
         <SearchComboBox
         getValue={handleValueChange}
         name={form.complaints.name}
         label={form.complaints.label}
         options={presentingComplaints}
+        multiple={false}
+      />
+      
+      <TextInputField
+        id={form.complaints_duration.name}
+        name={form.complaints_duration.name}
+        label={form.complaints_duration.label}
       />
       <SearchComboBox
-        getValue={handleValueChange}
-        name={form.complaints.name}
-        label={form.complaints.label}
-        options={presentingComplaints}
-      />
+            name={form.complaints_duration_units.name}
+            label={form.complaints_duration_units.label}
+            options={durationOptions}
+            getValue={(value) => console.log("Selected value:", value)}
+            sx={{width:200}}
+            multiple={true}
+          />
+        <div style={{display:'flex', marginTop:30}}>
+          <IconButton
+          disabled={index === 0}
+          onClick={() => handleRemoveComplaint(index)}
+          color="error"
+          style={{marginBottom:"2ch", marginLeft:"2ch"}}
+        >
+          <FaMinus />
+        </IconButton>
+        <IconButton onClick={handleAddComplaint} color="primary" style={{marginBottom:"2ch"}}>
+          <FaPlus />
+        </IconButton>
+        </div>
         </FieldsContainer>
-        
+    ))}
+  </WrapperBox>
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Allergies">
+        <FieldsContainer>
+        <GroupedSearchComboBox options={groupedOptions} getValue={(value) => console.log(value)}  multiple={false} name={form.allergy.name}label={form.allergy.label} />
+        </FieldsContainer>
       </FormFieldContainerLayout>
     </FormikInit>
   );

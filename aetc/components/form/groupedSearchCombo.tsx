@@ -5,14 +5,19 @@ import { InputLabel, SxProps } from '@mui/material';
 import Select from 'react-select';
 import { MainTypography, WrapperBox, defaultTheme } from '..';
 
-type GroupOption = {
-  label: string;
-  options: Array<{ id: number | string; label: number | string }>;
-};
+export interface GroupedOption {
+  readonly label: string;
+  readonly options: readonly Option[];
+}
+
+export interface Option {
+  readonly value: string;
+  readonly label: string;
+}
 
 type Props = {
   name: string;
-  options: Array<GroupOption>;
+  options: Array<GroupedOption>;
   label: string;
   width?: string;
   sx?: SxProps;
@@ -39,19 +44,8 @@ export const GroupedSearchComboBox: FC<Props> = ({
 }) => {
   const { hasError, setFieldValue, value, errorMessage } = useFormikField(name);
 
-  const handleChange = (values: any) => {
-    const inputValue = multiple
-      ? values.map((v: any) => ({
-          id: v.value,
-          label: v.label,
-        }))
-      : { id: values?.value, label: values?.label };
 
-    setFieldValue(name, inputValue);
-    if (getValue) {
-      getValue(inputValue);
-    }
-  };
+  
 
   const padding = applyPadding
     ? {
@@ -84,7 +78,6 @@ export const GroupedSearchComboBox: FC<Props> = ({
           }}
           defaultValue={manualInitialValues}
           isDisabled={disabled}
-          onChange={handleChange}
           isMulti={multiple}
           options={options}
           formatGroupLabel={(group) => (
