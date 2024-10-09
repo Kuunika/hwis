@@ -56,6 +56,7 @@ const schema = Yup.object().shape({
  
   [form.otocopyFindings.name]: Yup.string()
     .label(form.otocopyFindings.label),
+
   [form.lacerationDepth.name]: Yup.string()
     .label(form.lacerationDepth.label),
   [form.lacerationOther.name]: Yup.string()
@@ -129,7 +130,6 @@ export const EarForm = ({ onSubmit }: Prop) => {
         )}
 
 <RadioGroupInput name={form.otoscopyDone.name} options={radioOptions} label={form.otoscopyDone.label} />
-
         {formValues[form.otoscopyDone.name]==concepts.YES && (
           <>
             <TextInputField
