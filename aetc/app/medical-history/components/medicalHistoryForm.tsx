@@ -1,5 +1,6 @@
 import { SearchComboBox,  SelectInputField, WrapperBox } from "@/components";
 import React, { useState } from "react";
+import medicationNames from "../../../constants/medicationnames.json"
 import {
   FieldsContainer,
   FormFieldContainer,
@@ -34,6 +35,22 @@ const form = {
   allergy: {
     name: concepts.ALLERGY,
     label: "Allergies",
+  },
+  medication_name: {
+    name: 'Medication',
+    label: "Name",
+  },
+  medication_formulation: {
+    name: 'medication_formulation',
+    label: "Formulation",
+  },
+  medication_dose: {
+    name: 'Medication_dose',
+    label: "Dose",
+  },
+  medication_dose_unit: {
+    name: 'medication_dose_unit',
+    label: "Unit",
   },
 };
 
@@ -235,7 +252,7 @@ const presentingComplaints = [
   { id: "Food Poisoning", label: "Food poisoning" }
 ];
 
-const groupedOptions = [
+const allergyOptions = [
   {
     label: 'Medications',
     options: [
@@ -277,16 +294,44 @@ const groupedOptions = [
   },
 ];
 
+const formulationOptions =   [
+{ id: "Tablet", label: "Tablet" },
+{ id: "Vial", label: "Vial" },
+{ id: "Intravenous", label: "Intravenous" },
+{ id: "Powder", label: "Powder" },
+{ id: "Solution", label: "Solution" },
+{ id: "Eye Ointment", label: "Eye Ointment" },
+{ id: "Cream", label: "Cream" },
+{ id: "Eye Drops", label: "Eye Drops" },
+{ id: "Ointment", label: "Ointment" },
+{ id: "Inhaler", label: "Inhaler" },
+{ id: "Suppository", label: "Suppository" },
+{ id: "Pessary", label: "Pessary" },
+{ id: "Suspension", label: "Suspension" },
+{ id: "Shampoo", label: "Shampoo" },
+{ id: "Ear Drops", label: "Ear Drops" },
+{ id: "Eye Paste", label: "Eye Paste" },
+];
 
-const initialValues = {
-  temperatureInfo: "",
-  skinRashInfo: "",
-  rashDescription: "",
-};
+const medicationUnits = [
+  { id: "Milligrams", label: "Milligrams (mg)" },
+  { id: "Micrograms", label: "Micrograms (µg)" },
+  { id: "Grams ", label: "Grams (g)" },
+  { id: "International Units", label: "International Units (IU)" },
+  { id: "Milliliters", label: "Milliliters (ml)" },
+  { id: "Millimoles", label: "Millimoles (mmol)" },	
+]
+
+
+const initialValues = {};
+
 export const MedicalHistoryForm = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
   const [complaints, setComplaints] = useState([
     { complaint: "", duration: 0, duration_unit: "" },
+  ]);
+  const [medications, setMedication] = useState([
+    { name: "", formulation: "", medication_dose:0, medication_dose_unit: "" },
   ]);
 
   const handleValueChange = (value: any)=>{
@@ -305,6 +350,18 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
     ]);;
   }
 
+  function handleRemoveMedication(index: number): void {
+    const updatedMedications = medications.filter((_, i) => i !== index);
+    setMedication(updatedMedications);
+  }
+
+  function handleAddMedication(): void {
+    setMedication([
+      ...medications,
+      { name: "", formulation: "", medication_dose:0, medication_dose_unit: "" },
+    ]);;
+  }
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -313,7 +370,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       submitButtonText="submit"
     >
       <FormValuesListener getValues={setFormValues} />
-      <FormFieldContainerLayout last={true} title="Presenting Complaints">
+      <FormFieldContainerLayout title="Presenting Complaints">
       <WrapperBox>
       {complaints.map((complaint, index) => (
         <FieldsContainer>
@@ -336,7 +393,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
             options={durationOptions}
             getValue={(value) => console.log("Selected value:", value)}
             sx={{width:250}}
-            multiple={true}
+            multiple={false}
           />
         <div style={{display:'flex', marginTop:30}}>
           <IconButton
@@ -357,8 +414,59 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Allergies">
         <FieldsContainer>
-        <GroupedSearchComboBox options={groupedOptions} getValue={(value) => console.log(value)}  multiple={true} name={form.allergy.name}label={form.allergy.label} />
+        <GroupedSearchComboBox options={allergyOptions} getValue={(value) => console.log(value)}  multiple={true} name={form.allergy.name}label={form.allergy.label} />
         </FieldsContainer>
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Medications">
+      {medications.map((medication, index) => (
+        <WrapperBox>
+        <FieldsContainer>
+        <SearchComboBox
+            name={form.medication_name.name}
+            label={form.medication_name.label}
+            options={medicationNames}
+            getValue={(value) => console.log("Selected value:", value)}
+            sx={{width:250}}
+            multiple={false}
+          />
+
+        <SearchComboBox
+            name={form.medication_formulation.name}
+            label={form.medication_formulation.label}
+            options={formulationOptions}
+            getValue={(value) => console.log("Selected value:", value)}
+            sx={{width:250}}
+            multiple={false}
+          />
+          <TextInputField
+        id={form.medication_dose.name}
+        name={form.medication_dose.name}
+        label={form.medication_dose.label}
+        sx={{ml:'2px'}}
+      />
+      <SearchComboBox
+            name={form.medication_dose_unit.name}
+            label={form.medication_dose_unit.label}
+            options={medicationUnits}
+            getValue={(value) => console.log("Selected value:", value)}
+            sx={{width:250}}
+            multiple={false}
+          />
+<div style={{display:'flex', marginTop:30}}>
+          <IconButton
+          disabled={index === 0}
+          onClick={() => handleRemoveMedication(index)}
+          color="error"
+          style={{marginBottom:"2ch", marginLeft:"2ch"}}
+        >
+          <FaMinus />
+        </IconButton>
+        <IconButton onClick={handleAddMedication} color="primary" style={{marginBottom:"2ch"}}>
+          <FaPlus />
+        </IconButton>
+        </div>
+        </FieldsContainer>
+        </WrapperBox>))}
       </FormFieldContainerLayout>
       
     </FormikInit>
