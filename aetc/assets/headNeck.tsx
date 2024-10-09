@@ -136,6 +136,7 @@ export const HeadNeck = forwardRef<
     <g>
       <path
         id="left_ear"
+        data-label="Left Ear"
         d="m500.81 380.97 14.615-61.383v-45.794l7.7947-2.923 2.923 6.8204-7.7947 43.845-3.8974 38.974-2.923 13.641z"
         fill="#99614c"
         opacity=".52"
@@ -143,6 +144,7 @@ export const HeadNeck = forwardRef<
       <path d="m153.95 319.58v-43.845" fill="#9a5848" opacity=".52" />
       <path
         id="right_ear"
+        data-label="Right Ear"
         d="m152.97 276.71-6.8204-8.7691-5.846 13.641 10.718 40.922 5.846 49.691 13.641 11.692-3.8974-25.333z"
         fill="#9a5848"
         opacity=".52"
