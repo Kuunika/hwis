@@ -1,6 +1,6 @@
 import { NO, YES, concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -31,14 +31,6 @@ const form = {
     name: concepts.PUPIL_SIZE,
     label: "Pupil Size",
   },
-  fundoscopyDone: {
-    name: concepts.FONDOSCOPY,
-    label: "Fundo Scopy Done",
-  },
-  fundoscopyFinding: {
-    name: concepts.FONDO_FINDINGS,
-    label: "Fundo Scopy Findings",
-  },
 };
 
 type Prop = {
@@ -54,8 +46,6 @@ const schema = Yup.object().shape({
   ),
   [form.description.name]: Yup.string().label(form.otherAbnormalities.label),
   [form.sizeOfPupil.name]: Yup.string().label(form.sizeOfPupil.label),
-  [form.fundoscopyDone.name]: Yup.string().required().label(form.sizeOfPupil.label),
-  [form.fundoscopyFinding.name]: Yup.string().label(form.sizeOfPupil.label),
 });
 
 const initialsValues = getInitialValues(form);
@@ -88,7 +78,6 @@ export const EyeForm = ({ onSubmit }: Prop) => {
       Boolean(values.find((v) => v.id == concepts.EYELID_INJURY))
     );
   };
-
   return (
     <FormikInit
       validationSchema={schema}
@@ -108,7 +97,6 @@ export const EyeForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
-          sx={{mb:"1ch"}}
         />
 
         {showOtherAbnormalities && (
@@ -129,17 +117,6 @@ export const EyeForm = ({ onSubmit }: Prop) => {
               id={form.description.name}
               name={form.description.name}
               label={form.description.label}
-            />
-          </>
-        )}
-        <RadioGroupInput name={form.fundoscopyDone.name} options={radioOptions} label={form.fundoscopyDone.label} />
-        {formValues[form.fundoscopyDone.name]==concepts.YES && (
-          <>
-            <TextInputField
-              sx={{ my: "1ch", width:"100%" }}
-              id={form.fundoscopyFinding.name}
-              name={form.fundoscopyFinding.name}
-              label={form.fundoscopyFinding.label}
             />
           </>
         )}

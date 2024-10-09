@@ -225,6 +225,7 @@ export const concepts = {
   HYPHEMA: 'hyphema',
   EYELID_INJURY: 'eyelid_injury',
   FONDOSCOPY: 'fundoscopy',
+  FONDO_FINDINGS: 'fundoscopy_finding',
   ORAL_THRUSH: 'oral_thrush',
   KAPOSI_SARCOMA_LESIONS: 'kaposi_sarcoma_lesions',
   TONGUE_LACERATION: 'tongue_laceration',
