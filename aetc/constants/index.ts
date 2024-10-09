@@ -213,11 +213,35 @@ export const concepts = {
 
   // TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096"
   TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096",
-
-
   ELECTIVE: "2d7d1b0c-1867-4dbd-8b49-4335548a42bf",
+  INVESTIGATIONS:"76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
 
-  INVESTIGATIONS:"76dcafcb-2148-4919-9b3b-cd7f3f77d19e"
+
+  // Secondary survey
+  PUPIL_SIZE: 'pupil_size',
+  PALLOR: 'pallor',
+  JAUNDICE: 'jaundice',
+  RACCOON_EYES: 'raccoon_eyes',
+  HYPHEMA: 'hyphema',
+  EYELID_INJURY: 'eyelid_injury',
+  FONDOSCOPY: 'fundoscopy',
+  ORAL_THRUSH: 'oral_thrush',
+  KAPOSI_SARCOMA_LESIONS: 'kaposi_sarcoma_lesions',
+  TONGUE_LACERATION: 'tongue_laceration',
+  LOOSE_TEETH: 'loose_teeth',
+  BLEEDING_FROM_EAR: 'bleeding_from_ear',
+  OTORRHOEA: 'otorrhoea',
+  LACERATION: 'laceration',
+  OTOSCOPY: 'otoscopy',
+  BLEEDING_FROM_INSIDE: 'bleeding_from_inside',
+  RHINORRHOEA: 'rhinorrhoea',
+  LEFT_TEMPORAL: 'left_temporal',
+  RIGHT_TEMPORAL: 'right_temporal',
+  OCCIPUT: 'occiput',
+  CROWN: 'crown',
+  ABNORMALITIES:'abnormalities',
+  OTHER:"other"
+
 };
 
 export const triageResult = {

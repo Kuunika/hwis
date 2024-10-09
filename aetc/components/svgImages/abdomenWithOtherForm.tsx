@@ -2,7 +2,7 @@ import { Abdomen } from "@/assets/abdomen";
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { Box, Button } from "@mui/material";
-import { OtherAbnormalityForm } from "./form";
+import { OtherAbnormalityForm } from "./forms";
 
 export function AbdomenImageWithOtherForm() {
     const { handleClose, handleFormSubmit, containerRef, section, anchorEl, selectedSection } = useImage()

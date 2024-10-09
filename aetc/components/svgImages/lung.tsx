@@ -1,6 +1,6 @@
 import React from "react";
 import Lung from "../../assets/lung";
-import { BreathingLungForm } from "./form"
+import { BreathingLungForm } from "./forms"
 
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";

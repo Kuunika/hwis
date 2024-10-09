@@ -42,7 +42,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         }}
       >
         <CiMedicalClipboard style={{ margin: '1ch'}} />
-        Start Assessment
+        Start Assessment 
       </Button>
       <Menu
         anchorEl={anchorEl}
@@ -92,7 +92,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           <Typography variant="body2">Start Primary Survey</Typography>
         </MenuItem>
         <MenuItem
-          onClick={() => startFlow('/primary-assessment')}
+          onClick={() => startFlow(`/secondary-assessment/${patient?.id}`)}
           sx={{
             display: 'flex',
             alignItems: 'center',

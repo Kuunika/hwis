@@ -15,7 +15,4 @@ function PrimaryAssessment() {
     </>
   );
 }
-
-
-export default PrimaryAssessment;
-// export default AuthGuard(PrimaryAssessment, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);
+export default AuthGuard(PrimaryAssessment, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);

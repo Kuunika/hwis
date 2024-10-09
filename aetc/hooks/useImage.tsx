@@ -21,7 +21,7 @@ export const useImage = () => {
         target.style.fill = highlightcolor
         target.style.cursor = "pointer"
     }
-    const handleMouseLeave = (e: MouseEvent) => {
+    const handleMouseLeave = (e: MouseEvent|Event) => {
         const target = e.currentTarget as SVGElement;
         target.style.fill = ""
         target.style.opacity = `0`;
@@ -37,21 +37,28 @@ export const useImage = () => {
     }, [selectedSection, counter])
 
     useEffect(() => {
-        let rects: HTMLCollectionOf<SVGRectElement>;
+        let elements: Array<SVGRectElement|SVGPathElement>=[];
         if (containerRef.current) {
-            rects = containerRef.current.getElementsByTagName('rect');
-            for (let i = 0; i < rects.length; i++) {
-                rects[i].style.fill = ``;
-                rects[i].style.opacity = `0`;
-                rects[i].addEventListener('mouseleave', handleMouseLeave);
-                rects[i].addEventListener('mouseenter', handleMouseEnter);
-                rects[i].addEventListener('click', handleClickLister)
+            const rects = Array.from(containerRef.current.getElementsByTagName('rect'));
+            const paths = Array.from(containerRef.current.getElementsByTagName('path'));
+
+
+            elements = [...rects, ...paths];
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].style.fill = ``;
+                elements[i].style.opacity = `0`;
+                elements[i].addEventListener('mouseleave', handleMouseLeave);
+
+                //@ts-ignore
+                elements[i].addEventListener('mouseenter', handleMouseEnter);
+                elements[i].addEventListener('click', handleClickLister)
             }
         }
         return () => {
-            for (let i = 0; i < rects.length; i++) {
-                rects[i].removeEventListener('mouseleave', handleMouseLeave);
-                rects[i].removeEventListener('mouseenter', handleMouseEnter);
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].removeEventListener('mouseleave', handleMouseLeave);
+                //@ts-ignore
+                elements[i].removeEventListener('mouseenter', handleMouseEnter);
             }
         };
     }
