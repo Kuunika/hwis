@@ -96,6 +96,7 @@ export const HeadNeck = forwardRef<
       />
       <path
         id="mouth"
+        data-label="Mouth"
         d="m257.23 435.53v31.179l33.128 13.641 90.614 1.9487 40.922-20.461 0.97434-23.384-46.768-17.538-57.486 1.9487z"
         fill="#be7960"
         opacity=".52"

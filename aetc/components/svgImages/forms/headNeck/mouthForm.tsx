@@ -25,12 +25,9 @@ const form = {
   },
   description: {
     name: concepts.DESCRIPTION,
-    label: "Description of Eyelid Injury",
+    label: "Description of Tongue Laceration",
   },
-  sizeOfPupil: {
-    name: concepts.PUPIL_SIZE,
-    label: "Pupil Size",
-  },
+ 
 };
 
 type Prop = {
@@ -45,7 +42,7 @@ const schema = Yup.object().shape({
     form.otherAbnormalities.label
   ),
   [form.description.name]: Yup.string().label(form.otherAbnormalities.label),
-  [form.sizeOfPupil.name]: Yup.string().label(form.sizeOfPupil.label),
+ 
 });
 
 const initialsValues = getInitialValues(form);
@@ -56,26 +53,26 @@ const radioOptions = [
 ];
 
 const abnormalities = [
-  { id: concepts.PALLOR, label: "Pallor" },
-  { id: concepts.JAUNDICE, label: "Jaundice" },
-  { id: concepts.RACCOON_EYES, label: "Racoon Eyes" },
-  { id: concepts.HYPHEMA, label: "Hyphema" },
-  { id: concepts.EYELID_INJURY, label: "Eyelid Injury" },
+  { id: concepts.ORAL_THRUSH, label: "Oral Thrush" },
+  { id: concepts.KAPOSI_SARCOMA_LESIONS, label: "Kaposi's Sarcoma lesions" },
+  { id: concepts.TONGUE_LACERATION, label: "Tongue Laceration" },
+  { id: concepts.LOOSE_TEETH, label: "Loose Teeth" },
   { id: concepts.OTHER, label: "Other" },
 ];
 
-export const EyeForm = ({ onSubmit }: Prop) => {
+export const MouthForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showOtherAbnormalities, setShowOtherAbnormalities] =
     useState<boolean>(false);
-  const [showEyeInjury, setShowEyeInjury] = useState<boolean>(false);
+
+  const [tongueLaceration, setTongueLaceration] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
     setShowOtherAbnormalities(
       Boolean(values.find((v) => v.id == form.otherAbnormalities.name))
     );
-    setShowEyeInjury(
-      Boolean(values.find((v) => v.id == concepts.EYELID_INJURY))
+    setTongueLaceration(
+      Boolean(values.find((v) => v.id == concepts.TONGUE_LACERATION))
     );
   };
   return (
@@ -86,12 +83,6 @@ export const EyeForm = ({ onSubmit }: Prop) => {
     >  
       <Box>
         <FormValuesListener getValues={setFormValues} />
-        <TextInputField
-              sx={{ my: "1ch", width:"100%" }}
-              id={form.sizeOfPupil.name}
-              name={form.sizeOfPupil.name}
-              label={form.sizeOfPupil.label}
-            />
         <SearchComboBox
           getValue={handleValueChange}
           name={form.abnormalities.name}
@@ -110,7 +101,7 @@ export const EyeForm = ({ onSubmit }: Prop) => {
           </>
         )}
 
-        {showEyeInjury && (
+        {tongueLaceration && (
           <>
             <TextInputField
               sx={{ my: "1ch", width:"100%" }}
