@@ -45,19 +45,44 @@ export const GroupedSearchComboBox: FC<Props> = ({
   const { hasError, setFieldValue, value, errorMessage } = useFormikField(name);
 
   const handleChange = (selectedOptions: any) => {
-    const inputValue = multiple
-      ? selectedOptions.map((option: any) => ({
-          value: option.value,
-          label: option.label,
-        }))
-      : { value: selectedOptions?.value, label: selectedOptions?.label };
+    if (multiple) {
+      // Multiple selection case: create an array of selected options with groups
+      const selectedWithGroup = selectedOptions.map((selectedOption: any) => {
+        // Find the group the selected option belongs to
+        const group = options.find(group =>
+          group.options.some(option => option.value === selectedOption.value)
+        );
 
-    setFieldValue(name, inputValue);
+        return {
+          group: group?.label || 'Unknown', // Include the group label
+          value: selectedOption.value,
+          label: selectedOption.label,
+        };
+      });
 
-    if (getValue) {
-      getValue(inputValue); 
+      setFieldValue(name, selectedWithGroup); // Set field value as an array
+      if (getValue) {
+        getValue(selectedWithGroup); // Pass the array to the getValue callback
+      }
+    } else {
+      // Single selection case: create an object with selected option and its group
+      const group = options.find(group =>
+        group.options.some(option => option.value === selectedOptions.value)
+      );
+
+      const selectedWithGroup = {
+        group: group?.label || 'Unknown', // Include the group label
+        value: selectedOptions.value,
+        label: selectedOptions.label,
+      };
+
+      setFieldValue(name, selectedWithGroup); // Set field value as an object
+      if (getValue) {
+        getValue(selectedWithGroup); // Pass the object to the getValue callback
+      }
     }
   };
+
   
 
   const padding = applyPadding

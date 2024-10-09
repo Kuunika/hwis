@@ -360,6 +360,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
         <GroupedSearchComboBox options={groupedOptions} getValue={(value) => console.log(value)}  multiple={true} name={form.allergy.name}label={form.allergy.label} />
         </FieldsContainer>
       </FormFieldContainerLayout>
+      
     </FormikInit>
   );
 };
