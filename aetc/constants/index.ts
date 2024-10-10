@@ -248,7 +248,20 @@ export const concepts = {
   BRUISE:"Bruise",
   HAEMATOMA:"Haematoma",
   FRACTURE:"Fracture",
-  OTHER:"other"
+  OTHER:"other",
+  TRACHEA:"Trachea",
+  TRACHEA_DEVIATED:"trachea_deviated",
+  JUGULAR_VENOUS_PRESSURE:"Jugular_venous_pressure",
+  RAISED:"raised",
+  RAISED_HEIGHT:"raised_height",
+  ENLARGED_THYROID:"enlarged_thyroid",
+  LYMPH_NODES:"Lymph_nodes",
+  LOCATION:'location',
+  SIZE:"size",
+  MOBILITY:"mobility",
+  TENDERNESS:"tenderness",
+
+  
 
 };
 
