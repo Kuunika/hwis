@@ -245,6 +245,9 @@ export const concepts = {
   OCCIPUT: 'occiput',
   CROWN: 'crown',
   ABNORMALITIES:'abnormalities',
+  BRUISE:"Bruise",
+  HAEMATOMA:"Haematoma",
+  FRACTURE:"Fracture",
   OTHER:"other"
 
 };

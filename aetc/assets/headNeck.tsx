@@ -43,6 +43,7 @@ export const HeadNeck = forwardRef<
     <g>
       <rect
         id="right_temporal"
+        data-label="Right Temporal"
         transform="matrix(1 0 0 1.0591 -.051321 -27.322)"
         x="147.13"
         y="148.1"
@@ -54,6 +55,7 @@ export const HeadNeck = forwardRef<
       />
       <rect
         id="left_temporal"
+           data-label="Left Temporal"
         transform="matrix(1 0 0 1.0476 0 -25.621)"
         x="339.07"
         y="147.13"
@@ -65,6 +67,7 @@ export const HeadNeck = forwardRef<
       />
       <rect
         id="crown"
+        data-label="Crown"
         transform="translate(-4)"
         x="168.56"
         y="10.718"
@@ -104,31 +107,35 @@ export const HeadNeck = forwardRef<
       />
       <path
         id="neck"
+           data-label="Neck"
         d="m199.33 484.33-3.3928 59.375-11.875 25.446 35.625 60.223 49.196 50.893 138.26-10.179 89.91-96.696-16.964-27.143-10.179-54.286-20.357 43.259-20.357 30.536-36.473 26.295-85.669 2.5446-21.205-5.9375-30.536-19.509z"
         fill="#9a5848"
         opacity=".52"
       />
       <path
         id="forehead"
+           data-label="Forehead"
         d="m208.66 122.14-11.875 91.607 27.143-17.812 57.678 5.0893 33.08 26.295 46.652-2.5446 31.384-21.205 61.071-4.241 27.143 10.179-5.9375-82.277z"
         fill="#be7760"
         opacity=".52"
       />
       <path
         id="chin"
-      
+         data-label="Chin"
         d="m271.43 535.22 44.107-23.75 35.625-6.7857 39.866 9.3303 26.295 11.027 3.3928 35.625-20.357 20.357-19.509 9.3303-72.098 0.84821-44.107-22.054z"
         fill="#c27a63"
         opacity=".52"
       />
       <path
         id="right_cheek"
+        data-label="Right Cheek"
         d="m227.32 486.03 0.84821-69.553-22.902-65.312-38.17-4.2411 31.384 130.62z"
         fill="#c17961"
         opacity=".52"
       />
       <path
         id="left_cheek"
+        data-label="Left Cheek"
         d="m452.95 464.82-5.0893-79.732 32.232-39.866 26.295 7.6339-32.232 136.56-25.446-12.723z"
         fill="#794834"
         opacity=".52"
