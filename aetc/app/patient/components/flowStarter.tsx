@@ -64,6 +64,20 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         }}
       >
         <MenuItem
+          onClick={() => startFlow(`/medical-history/${patient?.id}`)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
+            },
+          }}
+        >
+          <FaPlus/>
+          <Typography variant="body2">Update Medical History</Typography>
+        </MenuItem>
+        <MenuItem
           onClick={() => startFlow(`/triage/${patient?.id}/history`)}
           sx={{
             display: 'flex',

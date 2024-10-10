@@ -1,5 +1,5 @@
-import { SearchComboBox,  SelectInputField, WrapperBox } from "@/components";
-import React, { useState } from "react";
+import { FormDatePicker, SearchComboBox,  SelectInputField, WrapperBox } from "@/components";
+import React, { useEffect, useState } from "react";
 import medicationNames from "../../../constants/medicationnames.json"
 import {
   FieldsContainer,
@@ -20,18 +20,18 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 const form = {
-  complaints: {
-    name: concepts.COMPLAINTS,
-    label: "Complaints",
-  },
-  complaints_duration: {
-    name: 'complaints_duration',
+  complaints_name: (index: number) => ({
+    name: `${concepts.COMPLAINTS}[${index}].name`,
+    label: `Complaints`,
+  }),
+  complaints_duration: (index: number) => ({
+    name: `${concepts.COMPLAINTS}[${index}].duration`,
     label: "Duration",
-  },
-  complaints_duration_units: {
-    name: 'complaints_duration_units',
+  }),
+  complaints_duration_units: (index: number) => ({
+    name: `${concepts.COMPLAINTS}[${index}].duration_units`,
     label: "Units",
-  },
+  }),
   allergy: {
     name: concepts.ALLERGY,
     label: "Allergies",
@@ -52,10 +52,34 @@ const form = {
     name: 'medication_dose_unit',
     label: "Unit",
   },
+  medication_frequency: {
+    name: 'medication_frequency',
+    label: "Frequency",
+  },
+  medication_route:{
+    name: 'medication_route',
+    label: 'Route'
+  },
+  medication_duration:{
+    name: 'medication_duration',
+    label: 'Duration'
+  },
+  medication_duration_unit:{
+    name: 'medication_duration_unit',
+    label: 'Unit'
+  },
+  medication_date_last_taken:{
+    name: 'medication_date_last_taken',
+    label: 'Last Taken'
+  },
+  medication_date_of_last_prescription:{
+    name: 'medication_date_of_last_prescription',
+    label: 'Last Prescribed'
+  }
 };
 
 const schema = yup.object({
-  [form.complaints.name]: yup.array().required().label(form.complaints.label),
+
 });
 
 const durationOptions= [
@@ -320,7 +344,31 @@ const medicationUnits = [
   { id: "International Units", label: "International Units (IU)" },
   { id: "Milliliters", label: "Milliliters (ml)" },
   { id: "Millimoles", label: "Millimoles (mmol)" },	
-]
+];
+
+const frequencyOptions = [
+  {id:'Once a day', label:'24 Hourly (OD) - Once a day '},
+  {id:'Twice a day', label:'12 Hourly (BID) - Twice a day'},
+  {id:'Three times a day', label:'8 Hourly (TID) - Three times a day'},
+  {id:'Four times a day', label:'6 Hourly (QID) - Four times a day'},
+  {id:'Six times a day', label:'4 Hourly (OD) - Six times a day '},
+  {id:'Once a week', label:'Once a week'},
+  {id:'Once a month', label:'Once a month'},
+  {id:'Other', label:'Other'},
+];
+
+const routeOptions = [
+  { label: "Oral", id: "Oral" },
+  { label: "Suppository", id: "Suppository" },
+  { label: "Intravenous", id: "Intravenous" },
+  { label: "Intramuscular", id: "Intramuscular" },
+  { label: "Subcutaneous", id: "Subcutaneous" },
+  { label: "Infiltration", id: "Infiltration" },
+  {label: "Intrathecal", id: "Intrathecal"},
+  {label: "Dermal", id: "Dermal"},
+  {label: "Inhaled", id: "Inhaled"},
+];
+
 
 
 const initialValues = {};
@@ -333,10 +381,8 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
   const [medications, setMedication] = useState([
     { name: "", formulation: "", medication_dose:0, medication_dose_unit: "" },
   ]);
+  const [otherFrequency, setOtherFrequency] = useState(false);
 
-  const handleValueChange = (value: any)=>{
-    return;
-  }
 
   function handleRemoveComplaint(index: number): void {
     const updatedComplaints = complaints.filter((_, i) => i !== index);
@@ -362,6 +408,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
     ]);;
   }
 
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -371,25 +418,24 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Presenting Complaints">
-      <WrapperBox>
+      <WrapperBox >
       {complaints.map((complaint, index) => (
-        <FieldsContainer>
+        <FieldsContainer key={index}>
         <SearchComboBox
-        getValue={handleValueChange}
-        name={form.complaints.name}
-        label={form.complaints.label}
+        getValue={(value) => console.log("Selected value:", value)}
+        name={form.complaints_name(index).name}
+        label={form.complaints_name(index).label}
         options={presentingComplaints}
         multiple={false}
       />
-      
       <TextInputField
-        id={form.complaints_duration.name}
-        name={form.complaints_duration.name}
-        label={form.complaints_duration.label}
+        id={form.complaints_duration(index).name}
+        name={form.complaints_duration(index).name}
+        label={form.complaints_duration(index).label}
       />
       <SearchComboBox
-            name={form.complaints_duration_units.name}
-            label={form.complaints_duration_units.label}
+            name={form.complaints_duration_units(index).name}
+            label={form.complaints_duration_units(index).label}
             options={durationOptions}
             getValue={(value) => console.log("Selected value:", value)}
             sx={{width:250}}
@@ -419,8 +465,8 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Medications">
       {medications.map((medication, index) => (
-        <WrapperBox>
-        <FieldsContainer>
+        <WrapperBox sx={{borderBottom:'1px solid #B3B3B3', marginBottom:'2ch'}}>
+        <FieldsContainer sx={{mb:3}}>
         <SearchComboBox
             name={form.medication_name.name}
             label={form.medication_name.label}
@@ -429,7 +475,6 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
             sx={{width:250}}
             multiple={false}
           />
-
         <SearchComboBox
             name={form.medication_formulation.name}
             label={form.medication_formulation.label}
@@ -449,10 +494,48 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
             label={form.medication_dose_unit.label}
             options={medicationUnits}
             getValue={(value) => console.log("Selected value:", value)}
-            sx={{width:250}}
+            sx={{width:250, mr:'5px'}}
             multiple={false}
           />
-<div style={{display:'flex', marginTop:30}}>
+</FieldsContainer>
+<FieldsContainer>
+  {!otherFrequency &&
+      <SearchComboBox
+            name={form.medication_frequency.name}
+            label={form.medication_frequency.label}
+            options={frequencyOptions}
+            getValue={(value) => {if(value == 'Other') setOtherFrequency(true)}}
+            sx={{width:250}}
+            multiple={false}
+          />}
+          {otherFrequency && <TextInputField id={form.medication_frequency.name}
+        name={form.medication_frequency.name}
+        label='Specify frequency'
+        sx={{ml:'2px'}}/>}
+        <SearchComboBox
+        name={form.medication_route.name}
+        label={form.medication_route.label}
+        options={routeOptions}
+        sx={{width:250}}
+        multiple={false}
+      />
+       <TextInputField
+        id={form.medication_duration.name}
+        name={form.medication_duration.name}
+        label={form.medication_duration.label}
+        sx={{ml:'2px'}}
+      />
+      <SearchComboBox
+            name={form.medication_duration_unit.name}
+            label={form.medication_duration_unit.label}
+            options={durationOptions}
+            getValue={(value) => console.log("Selected value:", value)}
+            sx={{width:250, mr:'5px', padding:0}}
+            multiple={false}
+          />
+
+          
+      <div style={{display:'flex', marginTop:30}}>
           <IconButton
           disabled={index === 0}
           onClick={() => handleRemoveMedication(index)}
@@ -466,7 +549,16 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
         </IconButton>
         </div>
         </FieldsContainer>
+        <FieldsContainer>
+        <FormDatePicker name={form.medication_date_last_taken.name} label={form.medication_date_last_taken.label} sx={{background:'white'}}/>
+        <FormDatePicker name={form.medication_date_of_last_prescription.name}  label={form.medication_date_of_last_prescription.label} sx={{background:'white'}}/>
+        </FieldsContainer>
         </WrapperBox>))}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Prior/Existing Conditions">
+        <FieldsContainer>
+
+        </FieldsContainer>
       </FormFieldContainerLayout>
       
     </FormikInit>
