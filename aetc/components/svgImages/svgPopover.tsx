@@ -22,7 +22,6 @@ export const SVGPopover = ({ handleClose, anchorEl, section, selectedSection, ch
       }}>
         <Box sx={{ padding: "1ch", width}}>
             <Typography variant="h5">{selectedSection.label}</Typography>
-            <br />
             <Typography>{section?.notes}</Typography>
             <Typography>{section?.description?.reduce((acc: any, item: any) => {
                 return acc + "," + item.id

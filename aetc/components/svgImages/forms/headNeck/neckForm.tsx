@@ -271,20 +271,20 @@ export const NeckForm = ({ onSubmit }: Prop) => {
            <Typography variant="subtitle2">Laceration</Typography>
             <FieldsContainer>
               <TextInputField
-                sx={{ my: "1ch", width: "100%" }}
+                sx={{  width: "100%" }}
                 id={form.lacerationLength.name}
                 name={form.lacerationLength.name}
                 label={form.lacerationLength.label}
               />
               <TextInputField
-                sx={{ my: "1ch", width: "100%" }}
+                sx={{  width: "100%" }}
                 id={form.lacerationDepth.name}
                 name={form.lacerationDepth.name}
                 label={form.lacerationDepth.label}
               />
             </FieldsContainer>
             <TextInputField
-              sx={{ my: "1ch", width: "100%" }}
+              sx={{  width: "100%" }}
               id={form.lacerationOther.name}
               name={form.lacerationOther.name}
               label={form.lacerationOther.label}
@@ -294,13 +294,13 @@ export const NeckForm = ({ onSubmit }: Prop) => {
 
         <DashedContainer>
           <TextInputField
-            sx={{ my: "1ch", width: "100%" }}
+            sx={{  width: "100%" }}
             id={form.haemotoma.name}
             name={form.haemotoma.name}
             label={form.haemotoma.label}
           />
           <TextInputField
-            sx={{ my: "1ch", width: "100%" }}
+            sx={{ width: "100%" }}
             id={form.additionalNotes.name}
             name={form.additionalNotes.name}
             label={form.additionalNotes.label}

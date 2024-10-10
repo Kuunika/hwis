@@ -83,5 +83,5 @@ export const DashedContainer = ({
         : undefined,
   };
 
-  return <Box sx={{ ...borderStyles, my }}>{children}</Box>;
+  return <Box sx={{ ...borderStyles, my,py:'0.5ch' }}>{children}</Box>;
 };
