@@ -13,7 +13,7 @@ import {
 } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
-import { IconButton } from "@mui/material";
+import { Checkbox, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 type Props = {
@@ -75,6 +75,22 @@ const form = {
   medication_date_of_last_prescription:{
     name: 'medication_date_of_last_prescription',
     label: 'Last Prescribed'
+  },
+  conditions:{
+    name:'condition',
+    label:'Condition'
+  },
+  conditions_diagnosis_date:{
+    name:'conditions_diagnosis_date',
+    label:'Date of diagnosis'
+  },
+  conditions_additional_details:{
+    name:'conditions_additional_details',
+    label:'Additional details'
+  },
+  conditions_on_treatment:{
+    name:'conditions_on_treatment',
+    label:'On treatment?'
   }
 };
 
@@ -369,7 +385,24 @@ const routeOptions = [
   {label: "Inhaled", id: "Inhaled"},
 ];
 
+const binaryOptions = [
+  {label:'yes', value:'yes'},
+  {label:'no', value:'no'}
+]
 
+const commonConditions=[
+  {id: 'HIV', label:'HIV'},
+  {id: 'Tuberculosis', label:'TB'},
+  {id: 'Chronic Obstructive Pulmonary Disease', label:'COPD'},
+  {id: 'Diabetes Mellitus', label:'Type 1/Type 2 Diabetes'},
+  {id: 'Epilepsy', label:'Epilepsy'},
+  {id: 'Cerebrovascular accident', label:'CVA'},
+  {id: 'Asthma', label:'Asthma'},
+  {id: 'Bleeding disorders', label:'Bleeding disorders'},
+  {id: 'Hypertension', label:'Hypertension'},
+  {id: 'Rheumatoid disorders', label:'Rheumatoid disorders'},
+  {id: 'Other', label:'Other'},
+]
 
 const initialValues = {};
 
@@ -418,45 +451,66 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Presenting Complaints">
-      <WrapperBox >
+        <Table>
+        <TableHead>
+        </TableHead>
+        <TableBody>
       {complaints.map((complaint, index) => (
-        <FieldsContainer key={index}>
-        <SearchComboBox
-        getValue={(value) => console.log("Selected value:", value)}
-        name={form.complaints_name(index).name}
-        label={form.complaints_name(index).label}
-        options={presentingComplaints}
-        multiple={false}
-      />
-      <TextInputField
-        id={form.complaints_duration(index).name}
-        name={form.complaints_duration(index).name}
-        label={form.complaints_duration(index).label}
-      />
-      <SearchComboBox
-            name={form.complaints_duration_units(index).name}
-            label={form.complaints_duration_units(index).label}
-            options={durationOptions}
-            getValue={(value) => console.log("Selected value:", value)}
-            sx={{width:250}}
-            multiple={false}
-          />
-        <div style={{display:'flex', marginTop:30}}>
-          <IconButton
-          disabled={index === 0}
-          onClick={() => handleRemoveComplaint(index)}
-          color="error"
-          style={{marginBottom:"2ch", marginLeft:"2ch"}}
-        >
-          <FaMinus />
-        </IconButton>
-        <IconButton onClick={handleAddComplaint} color="primary" style={{marginBottom:"2ch"}}>
-          <FaPlus />
-        </IconButton>
-        </div>
-        </FieldsContainer>
-    ))}
-  </WrapperBox>
+        <TableRow key={index}>
+          {/* Complaint */}
+          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
+            <SearchComboBox
+              name={form.complaints_name(index).name}
+              label={form.complaints_name(index).label}
+              options={presentingComplaints}
+              multiple={false}
+              sx={{ width: '100%' }} // Adjust width to match the cell
+            />
+          </TableCell>
+
+          {/* Duration */}
+          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center',  marginTop:'5px' }}>
+              <TextInputField
+                id={form.complaints_duration(index).name}
+                name={form.complaints_duration(index).name}
+                label={form.complaints_duration(index).label}
+                sx={{ width: '100%' }}
+              />
+            </div>
+          </TableCell>
+
+          {/* Units */}
+          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
+            <SearchComboBox
+              name={form.complaints_duration_units(index).name}
+              label={form.complaints_duration_units(index).label}
+              options={durationOptions}
+              multiple={false}
+              sx={{ width: '100%' }}
+            />
+          </TableCell>
+
+          {/* Action Buttons */}
+          <TableCell sx={{ width: '10%', textAlign: 'center' }}>
+            <IconButton
+              disabled={index === 0}
+              onClick={() => handleRemoveComplaint(index)}
+              color="error"
+            >
+              <FaMinus />
+            </IconButton>
+            {index === complaints.length - 1 && (
+              <IconButton onClick={handleAddComplaint} color="primary">
+                <FaPlus />
+              </IconButton>
+            )}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+      </Table>
+
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Allergies">
         <FieldsContainer>
@@ -557,8 +611,23 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Prior/Existing Conditions">
         <FieldsContainer>
+        <SearchComboBox
+            name={form.conditions.name}
+            label={form.conditions.label}
+            options={commonConditions}
+            getValue={(value) => console.log("Selected value:", value)}
+            multiple={false}
+          />
+          <FormDatePicker name={form.conditions_diagnosis_date.name}  label={form.conditions_diagnosis_date.label} sx={{background:'white'}}/>
+        <Checkbox name={form.conditions_on_treatment.name}></Checkbox>
 
-        </FieldsContainer>
+        <TextInputField
+        id={form.conditions_additional_details.name}
+        name={form.conditions_additional_details.name}
+        label={form.conditions_additional_details.label}
+        sx={{ml:'2px'}}
+        />
+      </FieldsContainer>
       </FormFieldContainerLayout>
       
     </FormikInit>
