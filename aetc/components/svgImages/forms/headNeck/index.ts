@@ -1,3 +1,4 @@
 export * from "./eyeForm"
 export * from "./mouthForm"
 export * from "./earForm"
+export * from "./noseForm"

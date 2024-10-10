@@ -5,7 +5,7 @@ import { Box, Button } from "@mui/material";
 
 import React from "react";
 import { HeadNeck } from "@/assets/headNeck";
-import { EarForm, EyeForm, MouthForm } from "./forms/headNeck";
+import { EarForm, EyeForm, MouthForm, NoseForm } from "./forms/headNeck";
 
 
 export function HeadNeckImage() {
@@ -15,7 +15,8 @@ export function HeadNeckImage() {
         <HeadNeck ref={containerRef} />
         <SVGPopover width="50ch" section={section} selectedSection={selectedSection} anchorEl={anchorEl} handleClose={handleClose}>
                {(idSelected=='right_eye' || idSelected=='left_eye') && <EyeForm onSubmit={()=>{}} />} 
-               {idSelected=='mouth'  && <MouthForm onSubmit={()=>{}} />} 
+               {idSelected=='mouth' && <MouthForm onSubmit={()=>{}} />} 
+               {idSelected=='nose' && <NoseForm onSubmit={()=>{}} />} 
                {(idSelected=='right_ear' || idSelected=='left_ear' ) && <EarForm onSubmit={()=>{}} />} 
         </SVGPopover>
     </>

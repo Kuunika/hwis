@@ -24,7 +24,7 @@ export const useImage = () => {
     const handleMouseLeave = (e: MouseEvent|Event) => {
         const target = e.currentTarget as SVGElement;
         target.style.fill = ""
-        target.style.opacity = `0`;
+        target.style.opacity = `0.4`;
         setCounter(count => count + 1)
     }
 
@@ -46,7 +46,8 @@ export const useImage = () => {
             elements = [...rects, ...paths];
             for (let i = 0; i < elements.length; i++) {
                 elements[i].style.fill = ``;
-                elements[i].style.opacity = `0`;
+                elements[i].style.opacity = `0.4`;
+                elements[i].style.stroke = `black`;
                 elements[i].addEventListener('mouseleave', handleMouseLeave);
 
                 //@ts-ignore
