@@ -5,7 +5,7 @@ import { Box, Button } from "@mui/material";
 
 import React from "react";
 import { HeadNeck } from "@/assets/headNeck";
-import { EarForm, EyeForm, MouthForm, NoseForm, OtherTemporalCrownForm } from "./forms/headNeck";
+import { EarForm, EyeForm, MouthForm, NoseForm, OtherPartsOfTheHeadForm, OtherTemporalCrownForm } from "./forms/headNeck";
 import { OtherAbnormalityForm } from "./forms";
 
 
@@ -19,6 +19,7 @@ export function HeadNeckImage() {
                {idSelected=='mouth' && <MouthForm onSubmit={()=>{}} />} 
                {idSelected=='nose' && <NoseForm onSubmit={()=>{}} />} 
                {(idSelected=='left_temporal' || idSelected=='right_temporal' || idSelected=='crown') && <OtherTemporalCrownForm onSubmit={()=>{}} />}
+               {(idSelected=='chin' || idSelected=='left_cheek' || idSelected=='right_cheek' || idSelected=="forehead") && <OtherPartsOfTheHeadForm onSubmit={()=>{}} />}
                {(idSelected=='right_ear' || idSelected=='left_ear' ) && <EarForm onSubmit={()=>{}} />} 
         </SVGPopover>
     </>
