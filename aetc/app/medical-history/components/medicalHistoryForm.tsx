@@ -13,7 +13,7 @@ import {
 } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
-import { Checkbox, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Checkbox, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 type Props = {
@@ -468,10 +468,12 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       <FormFieldContainerLayout title="Presenting Complaints">
         <Table>
         <TableHead>
+          <TableRow>
         <TableCell sx={{ width: '30%', textAlign: 'left' }}>{form.complaints_name(0).label}</TableCell>
         <TableCell sx={{ width: '20%', textAlign: 'left' }}>{form.complaints_duration(0).label}</TableCell>
         <TableCell sx={{ width: '20%', textAlign: 'left' }}>{form.complaints_duration_units(0).label}</TableCell>
         <TableCell sx={{ width: '10%', textAlign: 'left' }}>Actions</TableCell>
+        </TableRow>
         </TableHead>
         <TableBody>
       {complaints.map((complaint, index) => (
@@ -537,97 +539,159 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
         </FieldsContainer>
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Medications">
-      {medications.map((medication, index) => (
-        <WrapperBox sx={{borderBottom:'1px solid #B3B3B3', marginBottom:'2ch'}}>
-        <FieldsContainer sx={{mb:3}}>
-        <SearchComboBox
+  {medications.map((medication, index) => (
+    <WrapperBox key={index} sx={{ borderBottom: '1px solid #B3B3B3', marginBottom: '2ch' }}>
+      <Grid container spacing={2}>
+        {/* Medication Name */}
+        <Grid item xs={12} sm={6} md={3}>
+          <SearchComboBox
             name={form.medication_name.name}
             label={form.medication_name.label}
             options={medicationNames}
             getValue={(value) => console.log("Selected value:", value)}
-            sx={{width:250}}
+            sx={{ width: '100%' }}
             multiple={false}
           />
-        <SearchComboBox
+        </Grid>
+
+        {/* Formulation */}
+        <Grid item xs={12} sm={6} md={3}>
+          <SearchComboBox
             name={form.medication_formulation.name}
             label={form.medication_formulation.label}
             options={formulationOptions}
             getValue={(value) => console.log("Selected value:", value)}
-            sx={{width:250}}
+            sx={{ width: '100%' }}
             multiple={false}
           />
+        </Grid>
+
+        {/* Dose */}
+        <Grid item xs={12} sm={6} md={2}>
           <TextInputField
-        id={form.medication_dose.name}
-        name={form.medication_dose.name}
-        label={form.medication_dose.label}
-        sx={{ml:'2px'}}
-      />
-      <SearchComboBox
+            id={form.medication_dose.name}
+            name={form.medication_dose.name}
+            label={form.medication_dose.label}
+            sx={{ width: '100%' }}
+          />
+        </Grid>
+
+        {/* Dose Unit */}
+        <Grid item xs={12} sm={6} md={2}>
+          <SearchComboBox
             name={form.medication_dose_unit.name}
             label={form.medication_dose_unit.label}
             options={medicationUnits}
             getValue={(value) => console.log("Selected value:", value)}
-            sx={{width:250, mr:'5px'}}
+            sx={{ width: '100%' }}
             multiple={false}
           />
-</FieldsContainer>
-<FieldsContainer>
-  {!otherFrequency &&
-      <SearchComboBox
-            name={form.medication_frequency.name}
-            label={form.medication_frequency.label}
-            options={frequencyOptions}
-            getValue={(value) => {if(value == 'Other') setOtherFrequency(true)}}
-            sx={{width:250}}
+        </Grid>
+
+        {/* Frequency */}
+        <Grid item xs={12} sm={6} md={2}>
+          {!otherFrequency && (
+            <SearchComboBox
+              name={form.medication_frequency.name}
+              label={form.medication_frequency.label}
+              options={frequencyOptions}
+              getValue={(value) => {
+                if (value === 'Other') setOtherFrequency(true);
+              }}
+              sx={{ width: '100%' }}
+              multiple={false}
+            />
+          )}
+          {otherFrequency && (
+            <TextInputField
+              id={form.medication_frequency.name}
+              name={form.medication_frequency.name}
+              label="Specify frequency"
+              sx={{ width: '100%' }}
+            />
+          )}
+        </Grid>
+
+        {/* Route */}
+        <Grid item xs={12} sm={6} md={3}>
+          <SearchComboBox
+            name={form.medication_route.name}
+            label={form.medication_route.label}
+            options={routeOptions}
+            sx={{ width: '100%' }}
             multiple={false}
-          />}
-          {otherFrequency && <TextInputField id={form.medication_frequency.name}
-        name={form.medication_frequency.name}
-        label='Specify frequency'
-        sx={{ml:'2px'}}/>}
-        <SearchComboBox
-        name={form.medication_route.name}
-        label={form.medication_route.label}
-        options={routeOptions}
-        sx={{width:250}}
-        multiple={false}
-      />
-       <TextInputField
-        id={form.medication_duration.name}
-        name={form.medication_duration.name}
-        label={form.medication_duration.label}
-        sx={{ml:'2px'}}
-      />
-      <SearchComboBox
+          />
+        </Grid>
+
+        {/* Duration */}
+        <Grid item xs={12} sm={6} md={2}>
+          <TextInputField
+            id={form.medication_duration.name}
+            name={form.medication_duration.name}
+            label={form.medication_duration.label}
+            sx={{ width: '100%' }}
+          />
+        </Grid>
+
+        {/* Duration Unit */}
+        <Grid item xs={12} sm={6} md={2}>
+          <SearchComboBox
             name={form.medication_duration_unit.name}
             label={form.medication_duration_unit.label}
             options={durationOptions}
             getValue={(value) => console.log("Selected value:", value)}
-            sx={{width:250, mr:'5px', padding:0}}
+            sx={{ width: '100%' }}
             multiple={false}
           />
+        </Grid>
 
-          
-      <div style={{display:'flex', marginTop:30}}>
-          <IconButton
-          disabled={index === 0}
-          onClick={() => handleRemoveMedication(index)}
-          color="error"
-          style={{marginBottom:"2ch", marginLeft:"2ch"}}
-        >
-          <FaMinus />
-        </IconButton>
-        <IconButton onClick={handleAddMedication} color="primary" style={{marginBottom:"2ch"}}>
-          <FaPlus />
-        </IconButton>
-        </div>
-        </FieldsContainer>
-        <FieldsContainer>
-        <FormDatePicker name={form.medication_date_last_taken.name} label={form.medication_date_last_taken.label} sx={{background:'white'}}/>
-        <FormDatePicker name={form.medication_date_of_last_prescription.name}  label={form.medication_date_of_last_prescription.label} sx={{background:'white'}}/>
-        </FieldsContainer>
-        </WrapperBox>))}
-      </FormFieldContainerLayout>
+        
+
+        {/* Date of Last Taken */}
+        <Grid item xs={12} sm={6} md={3}>
+          <FormDatePicker
+            name={form.medication_date_last_taken.name}
+            label={form.medication_date_last_taken.label}
+            sx={{ background: 'white', width: '100%' }}
+          />
+        </Grid>
+
+        {/* Date of Last Prescription */}
+        <Grid item xs={12} sm={6} md={3}>
+          <FormDatePicker
+            name={form.medication_date_of_last_prescription.name}
+            label={form.medication_date_of_last_prescription.label}
+            sx={{ background: 'white', width: '100%' }}
+          />
+        </Grid>
+        {/* Action Buttons */}
+        <Grid 
+  item 
+  xs={12} 
+  sm={12} 
+  md={2} 
+  sx={{ 
+    textAlign: 'center', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center'  // Center both icons horizontally
+  }}>
+  <IconButton
+    disabled={index === 0}
+    onClick={() => handleRemoveMedication(index)}
+    color="error"
+    sx={{ mb: 1 }}  // Add margin bottom to space out the buttons
+  >
+    <FaMinus />
+  </IconButton>
+  <IconButton onClick={handleAddMedication} color="primary">
+    <FaPlus />
+  </IconButton>
+</Grid>
+      </Grid>
+    </WrapperBox>
+  ))}
+</FormFieldContainerLayout>
       <FormFieldContainerLayout title="Prior/Existing Conditions">
       <Table>
     <TableHead>
