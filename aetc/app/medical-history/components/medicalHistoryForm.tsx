@@ -76,22 +76,23 @@ const form = {
     name: 'medication_date_of_last_prescription',
     label: 'Last Prescribed'
   },
-  conditions:{
+  conditions_name: (index: number) => ({
     name:'condition',
     label:'Condition'
-  },
-  conditions_diagnosis_date:{
+  }),
+  conditions_diagnosis_date: (index: number) => ({
     name:'conditions_diagnosis_date',
     label:'Date of diagnosis'
-  },
-  conditions_additional_details:{
+  }),
+
+  conditions_additional_details:(index: number) => ({
     name:'conditions_additional_details',
     label:'Additional details'
-  },
-  conditions_on_treatment:{
+  }),
+  conditions_on_treatment:(index: number) => ({
     name:'conditions_on_treatment',
     label:'On treatment?'
-  }
+  })
 };
 
 const schema = yup.object({
@@ -414,6 +415,9 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
   const [medications, setMedication] = useState([
     { name: "", formulation: "", medication_dose:0, medication_dose_unit: "" },
   ]);
+  const [conditions, setConditions] = useState([
+    { name: "", date_of_diagnosis: "", on_treatment:"No", additional_notes: "" },
+  ]);
   const [otherFrequency, setOtherFrequency] = useState(false);
 
 
@@ -426,6 +430,17 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
     setComplaints([
       ...complaints,
       { complaint: "", duration: 0, duration_unit: "" },
+    ]);;
+  }
+  function handleRemoveCondition(index: number): void {
+    const updatedConditions = conditions.filter((_, i) => i !== index);
+    setConditions(updatedConditions);
+  }
+
+  function handleAddCondition(): void {
+    setConditions([
+      ...conditions,
+      { name: "", date_of_diagnosis: "", on_treatment:"No", additional_notes: ""  },
     ]);;
   }
 
@@ -453,6 +468,10 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
       <FormFieldContainerLayout title="Presenting Complaints">
         <Table>
         <TableHead>
+        <TableCell sx={{ width: '30%', textAlign: 'left' }}>{form.complaints_name(0).label}</TableCell>
+        <TableCell sx={{ width: '20%', textAlign: 'left' }}>{form.complaints_duration(0).label}</TableCell>
+        <TableCell sx={{ width: '20%', textAlign: 'left' }}>{form.complaints_duration_units(0).label}</TableCell>
+        <TableCell sx={{ width: '10%', textAlign: 'left' }}>Actions</TableCell>
         </TableHead>
         <TableBody>
       {complaints.map((complaint, index) => (
@@ -461,7 +480,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
           <TableCell sx={{ width: '30%', textAlign: 'center' }}>
             <SearchComboBox
               name={form.complaints_name(index).name}
-              label={form.complaints_name(index).label}
+              label=""
               options={presentingComplaints}
               multiple={false}
               sx={{ width: '100%' }} // Adjust width to match the cell
@@ -474,7 +493,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
               <TextInputField
                 id={form.complaints_duration(index).name}
                 name={form.complaints_duration(index).name}
-                label={form.complaints_duration(index).label}
+                label=""
                 sx={{ width: '100%' }}
               />
             </div>
@@ -484,7 +503,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
           <TableCell sx={{ width: '30%', textAlign: 'center' }}>
             <SearchComboBox
               name={form.complaints_duration_units(index).name}
-              label={form.complaints_duration_units(index).label}
+              label=""
               options={durationOptions}
               multiple={false}
               sx={{ width: '100%' }}
@@ -610,24 +629,77 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
         </WrapperBox>))}
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Prior/Existing Conditions">
-        <FieldsContainer>
-        <SearchComboBox
-            name={form.conditions.name}
-            label={form.conditions.label}
-            options={commonConditions}
-            getValue={(value) => console.log("Selected value:", value)}
-            multiple={false}
-          />
-          <FormDatePicker name={form.conditions_diagnosis_date.name}  label={form.conditions_diagnosis_date.label} sx={{background:'white'}}/>
-        <Checkbox name={form.conditions_on_treatment.name}></Checkbox>
+      <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell sx={{ width: '25%', textAlign: 'left' }}>Condition</TableCell>
+        <TableCell sx={{ width: '20%', textAlign: 'left' }}>Diagnosis Date</TableCell>
+        <TableCell sx={{ width: '10%', textAlign: 'left' }}>On Treatment?</TableCell>
+        <TableCell sx={{ width: '30%', textAlign: 'left' }}>Additional Details</TableCell>
+        <TableCell sx={{ width: '15%', textAlign: 'left' }}>Actions</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {conditions.map((condition, index) => (
+        <TableRow key={index}>
+          {/* Condition */}
+          <TableCell sx={{ width: '25%', textAlign: 'center' }}>
+            <SearchComboBox
+              name={form.conditions_name(index).name}
+              label=""
+              options={commonConditions}
+              multiple={false}
+              sx={{ width: '100%' }} // Adjust width to fit the cell
+            />
+          </TableCell>
 
-        <TextInputField
-        id={form.conditions_additional_details.name}
-        name={form.conditions_additional_details.name}
-        label={form.conditions_additional_details.label}
-        sx={{ml:'2px'}}
-        />
-      </FieldsContainer>
+          {/* Diagnosis Date */}
+          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
+            <FormDatePicker 
+              name={form.conditions_diagnosis_date(index).name}  
+              label=""
+              sx={{ background: 'white', width: '100%' }}
+            />
+          </TableCell>
+
+          {/* On Treatment */}
+          <TableCell sx={{ width: '10%', textAlign: 'center' }}>
+            <Checkbox
+              name={form.conditions_on_treatment(index).name}
+              sx={{ margin: '0 auto' }} // Center the checkbox
+            />
+          </TableCell>
+
+          {/* Additional Details */}
+          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
+            <TextInputField
+              id={form.conditions_additional_details(index).name}
+              name={form.conditions_additional_details(index).name}
+              label=""
+              sx={{ width: '100%' }}
+              multiline={true}
+            />
+          </TableCell>
+
+          {/* Action Buttons */}
+          <TableCell sx={{ width: '15%', textAlign: 'center' }}>
+            <IconButton
+              disabled={index === 0}
+              onClick={() => handleRemoveCondition(index)}
+              color="error"
+            >
+              <FaMinus />
+            </IconButton>
+            {index === conditions.length - 1 && (
+              <IconButton onClick={handleAddCondition} color="primary">
+                <FaPlus />
+              </IconButton>
+            )}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
       </FormFieldContainerLayout>
       
     </FormikInit>
