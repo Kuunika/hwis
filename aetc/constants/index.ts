@@ -260,6 +260,14 @@ export const concepts = {
   SIZE:"size",
   MOBILITY:"mobility",
   TENDERNESS:"tenderness",
+  PECTUS_EXCAVATUM:'Pectus excavatum',
+  PECTUS_CARINATUM:'Pectus Carinatum',
+  BARREL_CHEST:'Barrel Chest',
+  LOCALISED_CHEST_WALL_ABNORMALITY:'Localised Chest Abnormality',
+  NORMAL:'Normal',
+  REDUCED:'reduced',
+  INCREASED:'increased',
+  TACTILE_FREMITUS: 'Tactile Fremitus',
 
   
 

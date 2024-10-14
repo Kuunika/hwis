@@ -17,14 +17,14 @@ export const useImage = () => {
         setHoverId(target.id);
         //@ts-ignore
         setAnchorElDisplay(e.target)
-        target.style.opacity = `0.5`;
+        target.style.opacity = `0.4`;
         target.style.fill = highlightcolor
         target.style.cursor = "pointer"
     }
     const handleMouseLeave = (e: MouseEvent|Event) => {
         const target = e.currentTarget as SVGElement;
-        target.style.fill = ""
         target.style.opacity = `0.4`;
+        target.style.fill = ``
         setCounter(count => count + 1)
     }
 

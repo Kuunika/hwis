@@ -21,16 +21,13 @@ const form = {
     name: "generalInformation",
     label: "General Information",
   },
-
-
 };
 
 const schema = yup.object({
   [form.generalInformation.name]: yup
     .string()
-    .required()
+
     .label(form.generalInformation.label),
-  
 });
 
 const initialValues = {
@@ -49,17 +46,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       submitButtonText="Next"
     >
       <FormValuesListener getValues={setFormValues} />
-
-     <HeadNeckImage />
-        <FieldsContainer>
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.generalInformation.name}
-            label={form.generalInformation.label}
-            id={form.generalInformation.name}
-          />
-          </FieldsContainer>
-    
+      <HeadNeckImage />
     </FormikInit>
   );
 };

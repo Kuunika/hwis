@@ -7,16 +7,18 @@ import { WrapperBox, MainTypography } from "..";
 type Prop = {
   children: ReactNode;
   sx?: SxProps;
+  mr?:string
 };
-export const FieldsContainer = ({ children, sx }: Prop) => {
+export const FieldsContainer = ({ children, sx, mr='5ch' }: Prop) => {
   return (
     <WrapperBox
       display={"flex"}
       justifyContent={"flex-start"}
       sx={{
         ...sx,
+     
         "& > :first-child": {
-          mr: "5px",
+          mr,
         },
       }}
     >
