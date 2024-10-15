@@ -1,3 +1,5 @@
+
+
 export const encounters = {
   VITALS: "ba05bfc0-8d80-11d8-abbb-0024217bb78e",
   AIRWAY_BREATHING: "e8322627-662a-4a88-aa69-925ca5a39161",
@@ -268,8 +270,29 @@ export const concepts = {
   REDUCED:'reduced',
   INCREASED:'increased',
   TACTILE_FREMITUS: 'Tactile Fremitus',
-
-  
+  APEX_BEAT: 'Apex Beat',
+  DISPLACED:'displaced',
+  NOT_DISPLACED:'not displaced',
+  THRILL:'trill',
+  HEAVES:'heaves',
+  HEAVES_DESCRIPTION:'heaves description',
+  ABNORMAL: 'Abnormal',
+  HYPERRESONANT:"Hyperresonant",
+  DULL:"dull",
+  STONY_DULL:"stony dull",
+  BREATHING_SOUNDS:"breathing sounds",
+  ABSENT:"absent",
+  ADDED:"ADDED",
+  CRACKLES:"CRACKLES",
+  WHEEZES:"WHEEZES",
+  BRONCHIAL:"BRONCHIAL",
+  VOCAL_FREMITUS:'VOCAL_FREMTUS',
+  HEART_SOUNDS:'HEART_SOUNDS',
+  LOUD_P2:'LOUD_P2',
+  SPLITTING_P2:'SPLITTING_P2',
+  GALLOP_RHYTHM:'GALLOP_RHYTHM',
+  MURMUR:'MURMUR',
+  TYPE_OF_MURMUR:'TYPE_OF_MURMUR',
 
 };
 

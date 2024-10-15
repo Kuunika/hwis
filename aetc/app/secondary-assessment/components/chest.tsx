@@ -12,7 +12,11 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import { ChestLung } from "@/components/svgImages";
+import {
+  BreathingSoundsChestLung,
+  ChestLung,
+  PercussionChestLung,
+} from "@/components/svgImages";
 import { Box } from "@mui/material";
 
 const form = {
@@ -44,6 +48,59 @@ const form = {
     name: concepts.TACTILE_FREMITUS,
     label: "Tactile Fremitus",
   },
+  apexBeat: {
+    name: concepts.APEX_BEAT,
+    label: "Apex Beat",
+  },
+  position: {
+    name: concepts.POSITIONING,
+    label: "Position",
+  },
+  thrill: {
+    name: concepts.THRILL,
+    label: "Thrill",
+  },
+  thrillDescription: {
+    name: concepts.DESCRIPTION,
+    label: "Thrill Description",
+  },
+  heaves: {
+    name: concepts.HEAVES,
+    label: "Heaves",
+  },
+  heavesDescription: {
+    name: concepts.HEAVES_DESCRIPTION,
+    label: "Heaves Description",
+  },
+  percussion: {
+    name: concepts.PERCUSSION,
+    label: "Percussion",
+  },
+  breathingSounds: {
+    name: concepts.BREATHING_SOUNDS,
+    label: "Breathing sounds",
+  },
+  vocalFremitus: {
+    name: concepts.VOCAL_FREMITUS,
+    label: "Vocal Fremitus",
+  },
+  heartSounds: {
+    name: concepts.HEART_SOUNDS,
+    label: "Heart Sounds",
+  },
+  abnormalities: {
+    name: concepts.ABNORMALITIES,
+    label: "Description of Abnormality",
+  },
+  location: {
+    name: concepts.LOCATION,
+    label: "Location of murmur",
+  },
+  type: {
+    name: concepts.TYPE_OF_MURMUR,
+    label: "Type of murmur",
+  },
+
 
   isAirwayPatent: {
     name: concepts.AIRWAY_PATENT,
@@ -113,6 +170,33 @@ const schema = Yup.object().shape({
   [form.tactileFremitus.name]: Yup.string()
     .required()
     .label(form.tactileFremitus.label),
+  [form.apexBeat.name]: Yup.string().required().label(form.apexBeat.label),
+  [form.position.name]: Yup.string().label(form.position.label),
+  [form.thrill.name]: Yup.string().required().label(form.thrill.label),
+  [form.thrillDescription.name]: Yup.string().label(
+    form.thrillDescription.label
+  ),
+  [form.heaves.name]: Yup.string().required().label(form.heaves.label),
+  [form.heavesDescription.name]: Yup.string().label(
+    form.heavesDescription.label
+  ),
+  [form.percussion.name]: Yup.string().required().label(form.percussion.label),
+  [form.breathingSounds.name]: Yup.string()
+    .required()
+    .label(form.breathingSounds.label),
+  [form.vocalFremitus.name]: Yup.string()
+    .required()
+    .label(form.vocalFremitus.label),
+  [form.heartSounds.name]: Yup.string()
+    .required()
+    .label(form.heartSounds.label),
+  [form.abnormalities.name]: Yup.array()
+    .required()
+    .label(form.abnormalities.label),
+    [form.location.name]: Yup.string()
+    .label(form.location.label),
+    [form.type.name]: Yup.string()
+    .label(form.type.label),
 });
 
 const chestWallAbnormalities = [
@@ -129,14 +213,32 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 
+const apexBeatOptions = [
+  { label: "Displaced", value: concepts.DISPLACED },
+  { label: "Not Displaced", value: concepts.NOT_DISPLACED },
+];
+
+const percussionOptions = [
+  { label: "Normal", value: concepts.NORMAL },
+  { label: "Abnormal", value: concepts.ABNORMAL },
+];
+
 const chestExpansionOptions = [
   { value: concepts.NORMAL, label: "Normal" },
   { value: concepts.REDUCED, label: "Reduced" },
   { value: concepts.INCREASED, label: "Increased" },
 ];
+
+const abnormalities = [
+  { id: concepts.LOUD_P2, label: "Loud p2" },
+  { id: concepts.SPLITTING_P2, label: "Splitting P2" },
+  { id: concepts.GALLOP_RHYTHM, label: "Gallop rhythm" },
+  { id: concepts.MURMUR, label: "Murmur" },
+];
 export const ChestForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showSpecify, setShowSpecify] = useState(false);
+  const [showAbnormalities, setShowAbnormalities] = useState(false);
 
   const handleValueChange = (values: Array<any>) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
@@ -149,10 +251,9 @@ export const ChestForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
     >
       <FormValuesListener getValues={setFormValues} />
-      <FormFieldContainerLayout title="Lungs">
-    
+      <FormFieldContainerLayout title="Palpation (Lungs)">
         <TextInputField
-          sx={{width:"100%"}}
+          sx={{ width: "100%" }}
           name={form.respiratoryRate.name}
           label={form.respiratoryRate.label}
           id={form.respiratoryRate.name}
@@ -165,46 +266,160 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           options={radioOptions}
         />
 
-      {formValues[form.chestWallAbnormality.name] == YES && (
-        <SearchComboBox
-          sx={{ mb: "2ch" }}
-          getValue={handleValueChange}
-          options={chestWallAbnormalities}
-          name={form.chestWallAbnormalities.name}
-          label={form.chestWallAbnormalities.label}
-        />
-      )}
-      {showSpecify && formValues[form.chestWallAbnormality.name] == YES && (
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={form.otherSpecify.name}
-          label={form.otherSpecify.label}
-          id={form.otherSpecify.name}
-        />
-      )}
+        {formValues[form.chestWallAbnormality.name] == YES && (
+          <SearchComboBox
+            sx={{ mb: "2ch" }}
+            getValue={handleValueChange}
+            options={chestWallAbnormalities}
+            name={form.chestWallAbnormalities.name}
+            label={form.chestWallAbnormalities.label}
+          />
+        )}
+        {showSpecify && formValues[form.chestWallAbnormality.name] == YES && (
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={form.otherSpecify.name}
+            label={form.otherSpecify.label}
+            id={form.otherSpecify.name}
+          />
+        )}
 
-      <RadioGroupInput
-        sx={{ flex: 1 }}
-        row={true}
-        name={form.localizedChestAbnormality.name}
-        label={form.localizedChestAbnormality.label}
-        options={radioOptions}
-      />
-      {formValues[form.localizedChestAbnormality.name] == YES && <ChestLung />}
-      <RadioGroupInput
-            row={true}
-            name={form.chestExpansion.name}
-            options={chestExpansionOptions}
-            label={form.chestExpansion.label}
+        <RadioGroupInput
+          sx={{ flex: 1 }}
+          row={true}
+          name={form.localizedChestAbnormality.name}
+          label={form.localizedChestAbnormality.label}
+          options={radioOptions}
+        />
+        {formValues[form.localizedChestAbnormality.name] == YES && (
+          <ChestLung />
+        )}
+        <RadioGroupInput
+          row={true}
+          name={form.chestExpansion.name}
+          options={chestExpansionOptions}
+          label={form.chestExpansion.label}
+        />
+        {(formValues[form.chestExpansion.name] == concepts.REDUCED ||
+          formValues[form.chestExpansion.name] == concepts.INCREASED) && (
+          <ChestLung />
+        )}
+        <RadioGroupInput
+          row={true}
+          name={form.tactileFremitus.name}
+          options={chestExpansionOptions}
+          label={form.tactileFremitus.label}
+        />
+        {(formValues[form.tactileFremitus.name] == concepts.REDUCED ||
+          formValues[form.tactileFremitus.name] == concepts.INCREASED) && (
+          <ChestLung />
+        )}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Palpation (Heart)">
+        <RadioGroupInput
+          row={true}
+          name={form.apexBeat.name}
+          options={apexBeatOptions}
+          label={form.apexBeat.label}
+        />
+        {formValues[form.apexBeat.name] == concepts.DISPLACED && (
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={form.position.name}
+            id={form.position.name}
+            label={form.position.label}
           />
-          {(formValues[form.chestExpansion.name]==concepts.REDUCED || formValues[form.chestExpansion.name]==concepts.INCREASED) && <ChestLung />}
-          <RadioGroupInput
-           row={true}
-            name={form.tactileFremitus.name}
-            options={chestExpansionOptions}
-            label={form.tactileFremitus.label}
+        )}
+
+        <RadioGroupInput
+          row={true}
+          name={form.thrill.name}
+          options={radioOptions}
+          label={form.thrill.label}
+        />
+        {formValues[form.thrill.name] == YES && (
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={form.thrillDescription.name}
+            id={form.thrillDescription.name}
+            label={form.thrillDescription.label}
           />
-          {(formValues[form.tactileFremitus.name]==concepts.REDUCED || formValues[form.tactileFremitus.name]==concepts.INCREASED) && <ChestLung />}
+        )}
+        <RadioGroupInput
+          row={true}
+          name={form.heaves.name}
+          options={radioOptions}
+          label={form.heaves.label}
+        />
+        {formValues[form.heaves.name] == YES && (
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={form.heavesDescription.name}
+            id={form.heavesDescription.name}
+            label={form.heavesDescription.label}
+          />
+        )}
+        <RadioGroupInput
+          row={true}
+          name={form.percussion.name}
+          options={percussionOptions}
+          label={form.percussion.label}
+        />
+        {formValues[form.percussion.name] == concepts.ABNORMAL && (
+          <PercussionChestLung />
+        )}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Auscultation (Lungs)">
+        <RadioGroupInput
+          row
+          name={form.breathingSounds.name}
+          label={form.breathingSounds.label}
+          options={percussionOptions}
+        />
+        {formValues[form.breathingSounds.name] == concepts.ABNORMAL && (
+          <BreathingSoundsChestLung />
+        )}
+        <RadioGroupInput
+          row
+          name={form.vocalFremitus.name}
+          label={form.vocalFremitus.label}
+          options={chestExpansionOptions}
+        />
+        {formValues[form.vocalFremitus.name] == concepts.REDUCED ||
+          (formValues[form.vocalFremitus.name] == concepts.INCREASED && (
+            <BreathingSoundsChestLung />
+          ))}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Auscultation (Chest)">
+        <RadioGroupInput
+          row
+          name={form.heartSounds.name}
+          label={form.heartSounds.label}
+          options={percussionOptions}
+        />
+        {formValues[form.heartSounds.name] == concepts.ABNORMAL && (
+          <>
+            <SearchComboBox
+              getValue={(values) => {
+                if (values)
+                  setShowAbnormalities(
+                    Boolean(values.find((v: any) => v.id == concepts.MURMUR))
+                  );
+              }}
+              name={form.abnormalities.name}
+              label={form.abnormalities.label}
+              options={abnormalities}
+            />
+
+            {showAbnormalities && <>
+            <FieldsContainer sx={{mt:'1ch'}} mr="1ch">
+            <TextInputField name={form.location.name} label={form.location.label} id={form.location.name} />
+            <TextInputField name={form.type.name} label={form.type.label} id={form.type.name} />
+            </FieldsContainer>
+            
+            </>}
+          </>
+        )}
       </FormFieldContainerLayout>
     </FormikInit>
   );
