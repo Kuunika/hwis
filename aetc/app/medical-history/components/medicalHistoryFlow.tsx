@@ -6,7 +6,8 @@ import {
   ComplaintsForm,
   SurgeriesForm,
   AllergiesForm,
-  MedicationsForm
+  MedicationsForm,
+  PriorConditionsForm
 } from ".";
 
 import { encounters } from "@/constants";
@@ -22,8 +23,9 @@ export const MedicalHistoryFlow = () => {
     { id: 1, label: "Presenting Complaints" },
     { id: 2, label: "Allergies" },
     { id: 3, label: "Medications" },
-    { id: 4, label: "Surgeries" },
-    { id: 5, label: "Prior conditions" },
+    { id: 4, label: "Prior/Existing conditions" },
+    { id: 5, label: "Surgeries" },
+    
     
   ];
 
@@ -56,7 +58,10 @@ export const MedicalHistoryFlow = () => {
      case 2:
         setActiveStep(3);
         return;
-     case 3:
+    case 3:
+      setActiveStep(4);
+        return;
+     case 4:
         navigateBack();
         return;
      default:
@@ -76,6 +81,7 @@ export const MedicalHistoryFlow = () => {
         <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip}/>
         <AllergiesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
         <MedicationsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
+        <PriorConditionsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
         <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
         
       </NewStepperContainer >
