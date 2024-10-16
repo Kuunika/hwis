@@ -74,6 +74,26 @@ const form = {
     name: concepts.BRUIT,
     label: "Bruit",
   },
+  general: {
+    name: concepts.GENERAL,
+    label: "General",
+  },
+  prostate: {
+    name: concepts.PROSTATE,
+    label: "Prostate",
+  },
+  mass: {
+    name: concepts.MASS,
+    label: "Mass",
+  },
+  massDescription: {
+    name: concepts.DESCRIPTION,
+    label: "Mass Description",
+  },
+  sphincterTone: {
+    name: concepts.SPHINCTER_TONE,
+    label: "Sphincter Tone",
+  },
 
 };
 
@@ -117,13 +137,28 @@ const schema = Yup.object().shape({
   [form.fluidThrill.name]: Yup.string().required().label(form.fluidThrill.label),
   [form.bruit.name]: Yup.string().label(form.bruit.label).required(),
   [form.bowelSounds.name]: Yup.string().label(form.bowelSounds.label).required(),
+  [form.general.name]: Yup.string().label(form.general.label).required(),
+  [form.prostate.name]: Yup.string().label(form.prostate.label).required(),
+  [form.mass.name]: Yup.string().label(form.mass.label).required(),
+  [form.massDescription.name]: Yup.string().label(form.massDescription.label),
+  [form.sphincterTone.name]: Yup.string().required().label(form.sphincterTone.label),
 });
 
-const chestWallAbnormalities = [
-  { id: concepts.PECTUS_CARINATUM, label: "Pectus Carinatum" },
-  { id: concepts.PECTUS_EXCAVATUM, label: "Pectus Exavatum" },
-  { id: concepts.BARREL_CHEST, label: "Barrel Chest" },
-  { id: concepts.OTHER, label: "Other" },
+const prostateOptions = [
+  { id: concepts.NORMAL, label: "Normal" },
+  { id: concepts.ENLARGED, label: "Enlarged" },
+  { id: concepts.HIGH_RIDING, label: "High Riding" },
+];
+const generalOptions = [
+  { id: concepts.NORMAL, label: "Normal" },
+  { id: concepts.EMPTY_RECTUM, label: "Empty rectum" },
+  { id: concepts.MALAENA, label: "Malaena" },
+  { id: concepts.FRESH_BLOOD, label: "Fresh blood (Haematochezia)" },
+];
+const sphincterOptions = [
+  { id: concepts.NORMAL, label: "Normal" },
+  { id: concepts.REDUCED, label: "Reduced" },
+  { id: concepts.ABSENT, label: "Absent" },
 ];
 
 const initialsValues = getInitialValues(form);
@@ -279,8 +314,6 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         </FieldsContainer>
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Auscultation">
-      
-
           <RadioGroupInput
             row
             options={radioOptions}
@@ -288,9 +321,14 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             label={form.bruit.label}
           />
           <SearchComboBox multiple={false} options={bowelSounds} name={form.bowelSounds.name} label={form.bowelSounds.label} />
-     
-
-
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Digital Rectal Examination">
+        <SearchComboBox multiple={false} options={generalOptions} label={form.general.label} name={form.general.name} />
+        <SearchComboBox sx={{mt:'1ch'}} multiple={false} options={prostateOptions} label={form.prostate.label} name={form.prostate.name} />
+        <RadioGroupInput row sx={{mt:'1ch'}} name={form.mass.name} label={form.mass.label} options={radioOptions} />
+        {formValues[form.mass.name]==YES && <TextInputField sx={{width:'100%'}} id={form.massDescription.name} name={form.massDescription.name} label={form.massDescription.label} />}
+        <SearchComboBox sx={{mt:'1ch'}} multiple={false} options={sphincterOptions} label={form.sphincterTone.label} name={form.sphincterTone.name} />
+      
       </FormFieldContainerLayout>
 
       {/* <FormFieldContainerLayout title="Palpation (Heart)">
