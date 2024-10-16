@@ -451,44 +451,14 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
   const [conditions, setConditions] = useState([
     { name: "", date_of_diagnosis: "", on_treatment:"No", additional_notes: "" },
   ]);
+  const [surgeries, setSurgeries] = useState([
+    { name: "", indication: "", date:"", complications: "" },
+  ]);
   const [otherFrequency, setOtherFrequency] = useState(false);
 
 
-function handleRemoveItem<T>(index: number, items: T[], setItems: React.Dispatch<React.SetStateAction<T[]>>): void {
-  const updatedItems = items.filter((_, i) => i !== index);
-  setItems(updatedItems);
-}
 
 
-function handleAddItem<T>(newItem: T, items: T[], setItems: React.Dispatch<React.SetStateAction<T[]>>): void {
-  setItems([...items, newItem]);
-}
-
-
-function handleRemoveComplaint(index: number): void {
-  handleRemoveItem(index, complaints, setComplaints);
-}
-
-function handleAddComplaint(): void {
-  handleAddItem({ complaint: "", duration: 0, duration_unit: "" }, complaints, setComplaints);
-}
-
-
-function handleRemoveCondition(index: number): void {
-  handleRemoveItem(index, conditions, setConditions);
-}
-
-function handleAddCondition(): void {
-  handleAddItem({ name: "", date_of_diagnosis: "", on_treatment: "No", additional_notes: "" }, conditions, setConditions);
-}
-
-function handleRemoveMedication(index: number): void {
-  handleRemoveItem(index, medications, setMedication);
-}
-
-function handleAddMedication(): void {
-  handleAddItem({ name: "", formulation: "", medication_dose: 0, medication_dose_unit: "" }, medications, setMedication);
-}
 
 
   return (
@@ -502,8 +472,8 @@ function handleAddMedication(): void {
       <FormFieldContainerLayout title="Presenting Complaints">
       <DynamicFormList
         items={complaints}
-        addItem={handleAddComplaint}
-        removeItem={handleRemoveComplaint}
+        setItems={setComplaints}
+        newItem={{ complaint: "", duration: 0, duration_unit: "" }} 
         headings={['Complaint', 'Duration', 'Units']}
         renderFields={(complaint, index) => (
           <>
@@ -747,51 +717,7 @@ function handleAddMedication(): void {
 />
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Surgical History">
-      <DynamicFormList
-        items={conditions}
-        addItem={handleAddCondition}
-        removeItem={handleRemoveCondition}
-        headings={['Condition', 'Duration', 'On treatment?','Additional Details']}
-        renderFields={(condition, index) => (
-        <>
-          <TableCell sx={{ width: '25%', textAlign: 'center' }}>
-            <SearchComboBox
-              name={form.surgical_procedure_name(index).name}
-              label=""
-              options={surgicalProcedures}
-              multiple={false}
-              sx={{ width: '100%' }} // Adjust width to fit the cell
-            />
-          </TableCell>
-          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
-          <SearchComboBox
-              name={form.surgical_procedure_indication(index).name}
-              label=""
-              options={[{id: 'Bowel obstruction on appendicitis', label: 'Bowel obstruction on appendicitis'},{id: 'Obstetrics to populate', label: 'Obstetrics to populate'}]}
-              multiple={false}
-              sx={{ width: '100%' }} // Adjust width to fit the cell
-            />
-          </TableCell>
-          <TableCell sx={{ width: '10%', textAlign: 'center' }}>
-          <FormDatePicker 
-              name={form.surgical_procedure_date(index).name}  
-              label=""
-              sx={{ background: 'white', width: '100%' }}
-            />
-          </TableCell>
-
-          {/* Additional Details */}
-          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
-            <TextInputField
-              id={form.conditions_additional_details(index).name}
-              name={form.conditions_additional_details(index).name}
-              label=""
-              sx={{ width: '100%' }}
-              multiline={true}
-            />
-          </TableCell>
-        </>)}
-        />
+     
       </FormFieldContainerLayout>
     </FormikInit>
   );
