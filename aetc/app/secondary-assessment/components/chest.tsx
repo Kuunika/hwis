@@ -100,7 +100,10 @@ const form = {
     name: concepts.TYPE_OF_MURMUR,
     label: "Type of murmur",
   },
-
+  additionalNotes: {
+    name: concepts.ADDITIONAL_NOTES,
+    label: "Additional Notes",
+  },
 
   isAirwayPatent: {
     name: concepts.AIRWAY_PATENT,
@@ -193,10 +196,9 @@ const schema = Yup.object().shape({
   [form.abnormalities.name]: Yup.array()
     .required()
     .label(form.abnormalities.label),
-    [form.location.name]: Yup.string()
-    .label(form.location.label),
-    [form.type.name]: Yup.string()
-    .label(form.type.label),
+  [form.location.name]: Yup.string().label(form.location.label),
+  [form.type.name]: Yup.string().label(form.type.label),
+  [form.additionalNotes.name]: Yup.string().label(form.additionalNotes.label),
 });
 
 const chestWallAbnormalities = [
@@ -411,15 +413,32 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               options={abnormalities}
             />
 
-            {showAbnormalities && <>
-            <FieldsContainer sx={{mt:'1ch'}} mr="1ch">
-            <TextInputField name={form.location.name} label={form.location.label} id={form.location.name} />
-            <TextInputField name={form.type.name} label={form.type.label} id={form.type.name} />
-            </FieldsContainer>
-            
-            </>}
+            {showAbnormalities && (
+              <>
+                <FieldsContainer sx={{ mt: "1ch" }} mr="1ch">
+                  <TextInputField
+                    name={form.location.name}
+                    label={form.location.label}
+                    id={form.location.name}
+                  />
+                  <TextInputField
+                    name={form.type.name}
+                    label={form.type.label}
+                    id={form.type.name}
+                  />
+                </FieldsContainer>
+              </>
+            )}
           </>
         )}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Additional Notes">
+        <TextInputField
+        sx={{width:"100%"}}
+          name={form.additionalNotes.name}
+          label={form.additionalNotes.label}
+          id={form.additionalNotes.name}
+        />
       </FormFieldContainerLayout>
     </FormikInit>
   );
