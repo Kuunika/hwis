@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Box, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { FaPlus, FaMinus } from "react-icons/fa";
 
 interface DynamicFormListProps<T> {
@@ -30,6 +30,7 @@ function DynamicFormList<T>({
   }
 
   return (
+    <Box sx={{ maxWidth: '1000px', overflowX: 'auto', margin: '0 auto' }}>
     <Table>
       <TableHead>
         <TableRow>
@@ -66,6 +67,7 @@ function DynamicFormList<T>({
         ))}
       </TableBody>
     </Table>
+    </Box>
   );
 }
 
