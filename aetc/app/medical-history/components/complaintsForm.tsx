@@ -227,7 +227,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
   ]);
 
   // Function to access field names dynamically
-  const form = {
+  const complaintsFormConfig = {
     complaints_name: (index: number) => ({ name: `complaints[${index}].complaint` }),
     complaints_duration: (index: number) => ({ name: `complaints[${index}].duration` }),
     complaints_duration_units: (index: number) => ({ name: `complaints[${index}].duration_unit` }),
@@ -265,7 +265,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
         <>
           <TableCell sx={{ width: '30%', textAlign: 'center' }}>
             <SearchComboBox
-              name={form.complaints_name(index).name}
+              name={complaintsFormConfig.complaints_name(index).name}
               label=""
               options={presentingComplaints}
               multiple={false}
@@ -281,8 +281,8 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
 
           <TableCell sx={{ width: '20%', textAlign: 'center' }}>
             <TextInputField
-              id={form.complaints_duration(index).name}
-              name={form.complaints_duration(index).name}
+              id={complaintsFormConfig.complaints_duration(index).name}
+              name={complaintsFormConfig.complaints_duration(index).name}
               label=""
               sx={{ width: '100%' }}
               // Handle the change for duration field
@@ -296,7 +296,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
 
           <TableCell sx={{ width: '20%', textAlign: 'center' }}>
             <SearchComboBox
-              name={form.complaints_duration_units(index).name}
+              name={complaintsFormConfig.complaints_duration_units(index).name}
               label=""
               options={durationOptions}
               multiple={false}

@@ -5,6 +5,7 @@ import { NewStepperContainer } from "@/components";
 import {
   ComplaintsForm,
   SurgeriesForm,
+  AllergiesForm
 } from ".";
 
 import { encounters } from "@/constants";
@@ -18,7 +19,8 @@ export const MedicalHistoryFlow = () => {
 
   const steps = [
     { id: 1, label: "Presenting Complaints" },
-    { id: 2, label: "Surgeries" },
+    { id: 2, label: "Allergies" },
+    { id: 3, label: "Surgeries" },
     { id: 11, label: "Medications" },
     { id: 2, label: "Prior conditions" },
     
@@ -71,6 +73,7 @@ export const MedicalHistoryFlow = () => {
         onBack={() => navigateBack()}
       >
         <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip}/>
+        <AllergiesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
         <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
         
       </NewStepperContainer >

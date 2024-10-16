@@ -716,9 +716,7 @@ export const MedicalHistoryForm = ({ onSubmit }: Props) => {
 )}
 />
       </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Surgical History">
-     
-      </FormFieldContainerLayout>
+    
     </FormikInit>
   );
 };
