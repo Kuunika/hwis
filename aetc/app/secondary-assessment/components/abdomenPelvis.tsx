@@ -12,6 +12,7 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 import {
+  AbdomenImage,
   SecondaryAbdomenImage,
 } from "@/components/svgImages";
 
@@ -24,90 +25,43 @@ const form = {
     name: concepts.ABNORMALITIES_PRESENT,
     label: "Are there abnormalities",
   },
-  respiratoryRate: {
-    name: concepts.RESPIRATORY_RATE,
-    label: "Respiratory Rate",
+  tenderness:{
+    name: concepts.TENDERNESS,
+    label:'Tenderness'
   },
-  chestWallAbnormality: {
-    name: concepts.CHEST_WALL_ABNORMALITY,
-    label: "Chest Wall Abnormality",
+  hepatomegaly:{
+    name: concepts.HEPATOMEGALY,
+    label:'Hepatomegaly'
   },
-  chestWallAbnormalities: {
-    name: concepts.ABNORMALITIES,
-    label: "Chest Wall Abnormalities",
+  hepatomegalyDescription:{
+    name: concepts.HEPATOMEGALY_DESCRIPTION,
+    label:'Hepatomegaly Description'
   },
-  otherSpecify: {
-    name: concepts.OTHER,
-    label: "Specify",
+  splenomegaly:{
+    name: concepts.SPLENOMEGALY,
+    label:'Splenomegaly'
   },
-  localizedChestAbnormality: {
-    name: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
-    label: "Localised Chest Wall Abnormality",
+  splenomegalyDescription:{
+    name: concepts.SPLENOMEGALY_DESCRIPTION,
+    label:'Splenomegaly Description'
   },
-  chestExpansion: {
-    name: concepts.CHEST_EXPANSION,
-    label: "Chest Expansion",
+  kidneyBallotable:{
+    name: concepts.KIDNEYS_BALLOTABLE,
+    label:'Kidney Ballotable'
   },
-  tactileFremitus: {
-    name: concepts.TACTILE_FREMITUS,
-    label: "Tactile Fremitus",
+  fullBladder:{
+    name: concepts.FULL_BLADDER,
+    label:'Full Bladder'
   },
-  apexBeat: {
-    name: concepts.APEX_BEAT,
-    label: "Apex Beat",
+  otherMasses:{
+    name: concepts.OTHER_MASSES,
+    label:'Other Masses'
   },
-  position: {
-    name: concepts.POSITIONING,
-    label: "Position",
+  otherMassesDescription:{
+    name: concepts.OTHER_MASSES_DESCRIPTION,
+    label:'Other Masses Description'
   },
-  thrill: {
-    name: concepts.THRILL,
-    label: "Thrill",
-  },
-  thrillDescription: {
-    name: concepts.DESCRIPTION,
-    label: "Thrill Description",
-  },
-  heaves: {
-    name: concepts.HEAVES,
-    label: "Heaves",
-  },
-  heavesDescription: {
-    name: concepts.HEAVES_DESCRIPTION,
-    label: "Heaves Description",
-  },
-  percussion: {
-    name: concepts.PERCUSSION,
-    label: "Percussion",
-  },
-  breathingSounds: {
-    name: concepts.BREATHING_SOUNDS,
-    label: "Breathing sounds",
-  },
-  vocalFremitus: {
-    name: concepts.VOCAL_FREMITUS,
-    label: "Vocal Fremitus",
-  },
-  heartSounds: {
-    name: concepts.HEART_SOUNDS,
-    label: "Heart Sounds",
-  },
-  abnormalities: {
-    name: concepts.ABNORMALITIES,
-    label: "Description of Abnormality",
-  },
-  location: {
-    name: concepts.LOCATION,
-    label: "Location of murmur",
-  },
-  type: {
-    name: concepts.TYPE_OF_MURMUR,
-    label: "Type of murmur",
-  },
-  additionalNotes: {
-    name: concepts.ADDITIONAL_NOTES,
-    label: "Additional Notes",
-  },
+
 };
 
 type Prop = {
@@ -121,7 +75,27 @@ const schema = Yup.object().shape({
   [form.abnormalitiesPresent.name]: Yup.string()
     .required()
     .label(form.abnormalitiesPresent.label),
-  
+  [form.tenderness.name]: Yup.string()
+    .required()
+    .label(form.tenderness.label),
+  [form.hepatomegaly.name]: Yup.string()
+    .required()
+    .label(form.hepatomegaly.label),
+  [form.hepatomegalyDescription.name]: Yup.string()
+    .label(form.hepatomegalyDescription.label),
+  [form.splenomegaly.name]: Yup.string()
+    .required()
+    .label(form.splenomegaly.label),
+  [form.splenomegalyDescription.name]: Yup.string()
+    .label(form.splenomegalyDescription.label),
+  [form.kidneyBallotable.name]: Yup.string().required()
+    .label(form.kidneyBallotable.label),
+  [form.fullBladder.name]: Yup.string().required()
+    .label(form.fullBladder.label),
+  [form.otherMasses.name]: Yup.string().required()
+    .label(form.otherMasses.label),
+  [form.otherMassesDescription.name]: Yup.string()
+    .label(form.otherMassesDescription.label),
 });
 
 const chestWallAbnormalities = [
@@ -178,11 +152,36 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Inspection">
         <FieldsContainer>
-
         <RadioGroupInput options={radioOptions}  name={form.abdominalDistention.name} label={form.abdominalDistention.label} />
         <RadioGroupInput options={radioOptions}  name={form.abnormalitiesPresent.name} label={form.abnormalitiesPresent.label} />
         </FieldsContainer>
         {formValues[form.abnormalitiesPresent.name]==concepts.YES && <SecondaryAbdomenImage />}
+      </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Palpation">
+        <FieldsContainer>
+        <RadioGroupInput row options={radioOptions} name={form.hepatomegaly.name} label={form.hepatomegaly.label}  />
+        <RadioGroupInput row options={radioOptions} name={form.splenomegaly.name} label={form.splenomegaly.label}  />
+        </FieldsContainer>
+        <FieldsContainer mr="5px">
+          <>
+          {formValues[form.hepatomegaly.name]==YES && <TextInputField id={form.hepatomegalyDescription.name} name={form.hepatomegalyDescription.name} label={form.hepatomegalyDescription.label} />}
+          </>
+          <>
+          {formValues[form.splenomegaly.name]==YES && <TextInputField id={form.splenomegalyDescription.name} name={form.splenomegalyDescription.name} label={form.splenomegalyDescription.label} />}
+          </>
+        </FieldsContainer>
+        <FieldsContainer>
+          <RadioGroupInput row options={radioOptions} name={form.kidneyBallotable.name} label={form.kidneyBallotable.label} />
+          <RadioGroupInput row options={radioOptions} name={form.fullBladder.name} label={form.fullBladder.label} />
+        </FieldsContainer>
+        <FieldsContainer>
+        <RadioGroupInput row options={radioOptions} name={form.tenderness.name} label={form.tenderness.label}  />
+        <RadioGroupInput row options={radioOptions} name={form.otherMasses.name} label={form.otherMasses.label}  />
+        </FieldsContainer>
+        {formValues[form.otherMasses.name]==YES && <TextInputField id={form.otherMassesDescription.name} name={form.otherMassesDescription.name} label={form.otherMassesDescription.label} />}
+        <FieldsContainer>
+        {formValues[form.tenderness.name]==YES && <AbdomenImage />}
+        </FieldsContainer>
       </FormFieldContainerLayout>
       {/* <FormFieldContainerLayout title="Palpation (Heart)">
         <RadioGroupInput

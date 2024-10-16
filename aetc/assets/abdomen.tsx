@@ -9,7 +9,7 @@ export const Abdomen = forwardRef<
         id="svg182"
         width="400"
         height="400"
-        viewBox="100 0 300 200"
+        viewBox="150 10 300 200"
         {...props}
     >
         <defs>
