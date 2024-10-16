@@ -26,7 +26,6 @@ const form = {
 const schema = yup.object({
   [form.generalInformation.name]: yup
     .string()
-
     .label(form.generalInformation.label),
 });
 

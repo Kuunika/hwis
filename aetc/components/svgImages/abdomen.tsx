@@ -1,7 +1,6 @@
 import { Abdomen } from "@/assets/abdomen";
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { BreathingLungForm } from "./forms"
 import { Box, Button } from "@mui/material";
 export function AbdomenImage() {
     const { handleClose, handleFormSubmit, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
