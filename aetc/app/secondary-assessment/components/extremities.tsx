@@ -33,6 +33,10 @@ const form = {
         name: concepts.ABNORMALITIES_UPPER_LIMB,
         label: "Are there other abnormalities  in the upper limbs",
     },
+    abnormalitiesLowerLimb: {
+        name: concepts.ABNORMALITIES_LOWER_LIMB,
+        label: "Are there other abnormalities  in the lower limbs",
+    },
 
 };
 
@@ -53,6 +57,9 @@ const schema = Yup.object().shape({
     ),
     [form.abnormalitiesUpperLimb.name]: Yup.string().required().label(
         form.abnormalitiesUpperLimb.label
+    ),
+    [form.abnormalitiesLowerLimb.name]: Yup.string().required().label(
+        form.abnormalitiesLowerLimb.label
     ),
 
 });
@@ -97,8 +104,10 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
                 </FieldsContainer>
                 {formValues[form.oedama.name] == YES && <SearchComboBox sx={{ width: '100%' }} multiple={false} name={form.oedamaDetails.name} options={oedamaOptions} label={form.oedamaDetails.label} />}
                 <RadioGroupInput row options={radioOptions} name={form.abnormalitiesUpperLimb.name} label={form.abnormalitiesUpperLimb.label} />
+                {formValues[form.abnormalitiesUpperLimb.name]==YES && <LowerLimbPosterior />}
+                <RadioGroupInput row options={radioOptions} name={form.abnormalitiesLowerLimb.name} label={form.abnormalitiesLowerLimb.label} />
+                {formValues[form.abnormalitiesLowerLimb.name]==YES && <LowerLimbPosterior />}
             </FormFieldContainerLayout>
-            <LowerLimbPosterior />
 
         </FormikInit>
     );
