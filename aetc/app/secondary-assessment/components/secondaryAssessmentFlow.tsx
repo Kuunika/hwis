@@ -2,10 +2,10 @@
 import { NewStepperContainer } from "@/components";
 import { useNavigation } from "@/hooks";
 import React, { useState } from "react";
-import { AbdomenPelvisForm, ChestForm, GeneralInformation, HeadAndNeck } from ".";
+import { AbdomenPelvisForm, ChestForm, ExtremitiesForm, GeneralInformation, HeadAndNeck } from ".";
 
 export function SecondaryAssessmentFlow() {
-  const [activeStep, setActiveStep] = useState<number>(3);
+  const [activeStep, setActiveStep] = useState<number>(4);
   const { navigateTo, navigateBack } = useNavigation();
 
   const steps = [
@@ -26,6 +26,12 @@ export function SecondaryAssessmentFlow() {
   const handleChestSubmit = ()=>{
     setActiveStep(3);
   }
+  const handleAbdomenSubmit = ()=>{
+    setActiveStep(4);
+  }
+  const handleExtremitiesSubmit = ()=>{
+    setActiveStep(1);
+  }
 
   return (
     <NewStepperContainer
@@ -38,7 +44,8 @@ export function SecondaryAssessmentFlow() {
       <GeneralInformation onSubmit={handleGeneralInformationSubmit} />
       <HeadAndNeck onSubmit={handleHeadAndNeckSubmit} />
       <ChestForm onSubmit={handleChestSubmit} />
-      <AbdomenPelvisForm onSubmit={()=>{}} />
+      <AbdomenPelvisForm onSubmit={handleAbdomenSubmit} />
+      <ExtremitiesForm onSubmit={handleExtremitiesSubmit} />
     </NewStepperContainer>
   );
 }

@@ -16,7 +16,7 @@ import {
   ChestLung,
   PercussionChestLung,
 } from "@/components/svgImages";
-import { Box } from "@mui/material";
+
 
 const form = {
   respiratoryRate: {
