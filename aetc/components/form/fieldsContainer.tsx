@@ -1,22 +1,24 @@
-'use client'
+"use client";
 import { ReactNode } from "react";
 
-import { SxProps } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import { WrapperBox, MainTypography } from "..";
 
 type Prop = {
   children: ReactNode;
   sx?: SxProps;
+  mr?:string
 };
-export const FieldsContainer = ({ children, sx }: Prop) => {
+export const FieldsContainer = ({ children, sx, mr='5ch' }: Prop) => {
   return (
     <WrapperBox
       display={"flex"}
       justifyContent={"flex-start"}
       sx={{
         ...sx,
+     
         "& > :first-child": {
-          mr: "5px",
+          mr,
         },
       }}
     >
@@ -38,7 +40,6 @@ export const FormFieldContainerLayout = ({
     <WrapperBox
       sx={{
         display: "flex",
-
         flexDirection: { xs: "column", lg: "row" },
         my: "1ch",
         py: "2ch",
@@ -64,4 +65,25 @@ export const FormFieldContainerLayout = ({
       </WrapperBox>
     </WrapperBox>
   );
+};
+
+export const DashedContainer = ({
+  children,
+  my = "0.5ch",
+  border = "top",
+}: {
+  children: ReactNode;
+  my?: string;
+  border?: "bottom" | "top" | "both";
+}) => {
+  const borderStyles = {
+    borderTop:
+      border === "top" || border === "both" ? "2px dashed #B3B3B3" : undefined,
+    borderBottom:
+      border === "bottom" || border === "both"
+        ? "2px dashed #B3B3B3"
+        : undefined,
+  };
+
+  return <Box sx={{ ...borderStyles, my,py:'0.5ch' }}>{children}</Box>;
 };
