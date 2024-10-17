@@ -59,7 +59,9 @@ export function NewStepperContainer({
   onBack,
 }: IProps) {
   // Map children to steps to ensure order consistency
-  const validChildren = steps.map((step, index) => children[index]);
+  const filteredChildren = children.filter(child => child !== false);
+  const validChildren = steps.map((step, index) => filteredChildren[index]);
+
 
   return (
     <MainGrid container spacing={5}>
