@@ -192,17 +192,17 @@ const schema = Yup.object().shape({
   [form.sphincterTone.name]: Yup.string()
     .required()
     .label(form.sphincterTone.label),
-  [form.periymen.name]: Yup.string().required().label(form.periymen.label),
+  [form.periymen.name]: Yup.array().required().label(form.periymen.label),
   [form.scrotum.name]: Yup.string().label(form.scrotum.label),
-  [form.vagina.name]: Yup.string().label(form.vagina.label),
-  [form.urethralMeatus.name]: Yup.string().label(form.urethralMeatus.label),
+  [form.vagina.name]: Yup.array().label(form.vagina.label),
+  [form.urethralMeatus.name]: Yup.array().label(form.urethralMeatus.label),
   [form.unusualAppearance.name]: Yup.string().label(
     form.unusualAppearance.label
   ),
   [form.circumcisionStatus.name]: Yup.string().label(
     form.circumcisionStatus.label
   ),
-  [form.generalInspection.name]: Yup.string().label(
+  [form.generalInspection.name]: Yup.array().label(
     form.generalInspection.label
   ),
   [form.pelvicExamination.name]: Yup.string().label(
