@@ -12,8 +12,7 @@ export const useFormikField = (name: string) => {
     handleBlur,
   } = useFormikContext();
 
-  // console.log({ errors });
-  // console.log({ values });
+
   //@ts-ignore
   const value = values[name];
 

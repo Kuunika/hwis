@@ -2,7 +2,7 @@
 import { calculateAge } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
-import {  getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
+import { getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
 import * as React from 'react';
 
 import Menu from '@mui/material/Menu';

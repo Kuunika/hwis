@@ -9,7 +9,7 @@ import { PersonalDetailsCard } from "@/app/patient/components";
 import { VisitDates } from "@/app/patient/components/visitDates";
 import { BackButton } from "@/components/buttons";
 import { useEffect, useState } from "react";
-import { DiagnosisTable } from "./components/diagnosisTable";
+import { DiagnosisTable } from "./DiagnosisTable";
 import * as Yup from "yup";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 

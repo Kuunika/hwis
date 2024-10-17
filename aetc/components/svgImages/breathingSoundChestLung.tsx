@@ -1,23 +1,23 @@
 import React from "react";
 import Lung from "../../assets/lung";
-import { BreathingLungForm } from "./forms"
+import {  BreathingSoundsChestLungForm } from "./forms"
 
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 
-export const LungImage = () => {
+
+export const BreathingSoundsChestLung = () => {
     const { handleFormSubmit, handleClose, containerRef, section, anchorEl, selectedSection } = useImage()
 
     return (
         <div>
             <Lung ref={containerRef} />
             <SVGPopover section={section} selectedSection={selectedSection} anchorEl={anchorEl} handleClose={handleClose}>
-                <BreathingLungForm onCancel={handleClose} onSubmit={handleFormSubmit} />
+                <BreathingSoundsChestLungForm onCancel={handleClose} onSubmit={handleFormSubmit} />
             </SVGPopover>
-
         </div>
     );
 
 };
 
-export default LungImage;
+export default BreathingSoundsChestLung;
