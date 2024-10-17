@@ -1,3 +1,4 @@
+'use client'
 import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
@@ -11,16 +12,16 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import { getInitialValues } from "@/helpers";
-import { concepts } from "@/constants";
 type Props = {
   onSubmit: (values: any) => void;
 };
 const form = {
   generalInformation: {
-    name: concepts.ADDITIONAL_NOTES,
-    label: "Notes",
+    name: "generalInformation",
+    label: "General Information",
   },
+
+
 };
 
 const schema = yup.object({
@@ -31,10 +32,14 @@ const schema = yup.object({
   
 });
 
-const initialValues = getInitialValues(form);
-
-export const NeurologicalExamination = ({ onSubmit }: Props) => {
+const initialValues = {
+  temperatureInfo: "",
+  skinRashInfo: "",
+  rashDescription: "",
+};
+export const GeneralInformation = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -43,6 +48,8 @@ export const NeurologicalExamination = ({ onSubmit }: Props) => {
       submitButtonText="Next"
     >
       <FormValuesListener getValues={setFormValues} />
+
+     
         <FieldsContainer>
           <TextInputField
             sx={{ width: "100%" }}
@@ -51,6 +58,7 @@ export const NeurologicalExamination = ({ onSubmit }: Props) => {
             id={form.generalInformation.name}
           />
           </FieldsContainer>
+    
     </FormikInit>
   );
 };

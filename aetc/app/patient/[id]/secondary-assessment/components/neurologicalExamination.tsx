@@ -1,26 +1,23 @@
+'use client'
 import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
   FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
-  MainTypography,
-  RadioGroupInput,
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
+import { getInitialValues } from "@/helpers";
+import { concepts } from "@/constants";
 type Props = {
   onSubmit: (values: any) => void;
 };
 const form = {
   generalInformation: {
-    name: "generalInformation",
-    label: "General Information",
+    name: concepts.ADDITIONAL_NOTES,
+    label: "Notes",
   },
-
-
 };
 
 const schema = yup.object({
@@ -31,14 +28,10 @@ const schema = yup.object({
   
 });
 
-const initialValues = {
-  temperatureInfo: "",
-  skinRashInfo: "",
-  rashDescription: "",
-};
-export const GeneralInformation = ({ onSubmit }: Props) => {
-  const [formValues, setFormValues] = useState<any>({});
+const initialValues = getInitialValues(form);
 
+export const NeurologicalExamination = ({ onSubmit }: Props) => {
+  const [formValues, setFormValues] = useState<any>({});
   return (
     <FormikInit
       validationSchema={schema}
@@ -47,8 +40,6 @@ export const GeneralInformation = ({ onSubmit }: Props) => {
       submitButtonText="Next"
     >
       <FormValuesListener getValues={setFormValues} />
-
-     
         <FieldsContainer>
           <TextInputField
             sx={{ width: "100%" }}
@@ -57,7 +48,6 @@ export const GeneralInformation = ({ onSubmit }: Props) => {
             id={form.generalInformation.name}
           />
           </FieldsContainer>
-    
     </FormikInit>
   );
 };

@@ -78,7 +78,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           <Typography variant="body2">Start Triage</Typography>
         </MenuItem>
         <MenuItem
-          onClick={() => startFlow(`/primary-assessment/${patient?.id}`)}
+          onClick={() => startFlow(`/patient/${patient?.id}/primary-assessment`)}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -92,7 +92,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           <Typography variant="body2">Start Primary Survey</Typography>
         </MenuItem>
         <MenuItem
-          onClick={() => startFlow(`/secondary-assessment/${patient?.id}`)}
+          onClick={() => startFlow(`/patient/${patient?.id}/secondary-assessment`)}
           sx={{
             display: 'flex',
             alignItems: 'center',

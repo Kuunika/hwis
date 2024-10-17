@@ -1,3 +1,4 @@
+'use client'
 import { NO, YES, concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useState } from "react";
