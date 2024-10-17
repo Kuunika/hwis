@@ -103,12 +103,8 @@ type props = {
   continueTriage: boolean;
   previous: () => void;
   getFormValues: (values:any)=>void
-};
+}; 
 const schema = yup.object({
-  // [VitalFormConfig.pulseOximetry.name]: yup
-  //   .string()
-  //   .required()
-  //   .label(VitalFormConfig.pulseOximetry.label),
   [VitalFormConfig.respiratoryRate.name]: yup
     .number()
     .min(0)
@@ -511,7 +507,6 @@ export function VitalsForm({
             disabled={disableField(VitalFormConfig.bloodPressureDiastolic.name)}
             handleBlurEvent={(value) => {
               if (value == '') return;
-
               const diastolicValue = Number(value);
               if (diastolicValue > 119) {
                 addKeyToFlow({ diastolic: 'red' });
