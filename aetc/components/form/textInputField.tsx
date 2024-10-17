@@ -11,7 +11,7 @@ type Prop = {
   label: string;
   width?: any;
   sx?: SxProps;
-  type?: "password" | "text" | "date";
+  type?: "password" | "text" | "date" | "number";
   placeholder?: string;
   rows?: number;
   getValue?: (value: any) => void;
