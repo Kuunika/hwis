@@ -51,20 +51,20 @@ age_at_menarche: {
 export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
 
-const contraceptiveOptions = 
-[
-    {id: 'HIV', label:'HIV'},
-    {id: 'Tuberculosis', label:'TB'},
-    {id: 'Chronic Obstructive Pulmonary Disease', label:'COPD'},
-    {id: 'Diabetes Mellitus', label:'Type 1/Type 2 Diabetes'},
-    {id: 'Epilepsy', label:'Epilepsy'},
-    {id: 'Cerebrovascular accident', label:'CVA'},
-    {id: 'Asthma', label:'Asthma'},
-    {id: 'Bleeding disorders', label:'Bleeding disorders'},
-    {id: 'Hypertension', label:'Hypertension'},
-    {id: 'Rheumatoid disorders', label:'Rheumatoid disorders'},
-    {id: 'Other', label:'Other'},
-  ];
+    const contraceptiveOptions = [
+        { id: 'Jadelle', label: 'Jadelle' },
+        { id: 'Implanon', label: 'Implanon' },
+        { id: 'Levoplant', label: 'Levoplant' },
+        { id: 'DepoProvera', label: 'Depo Provera' },
+        { id: 'IUCD', label: 'Intra Uterine Contraceptive Device (IUCD)' },
+        { id: 'ProgestinOnlyPills', label: 'Progestin only pills' },
+        { id: 'Vasectomy', label: 'Vasectomy' },
+        { id: 'TubalLigation', label: 'Tubal ligation' },
+        { id: 'CombinedOralPills', label: 'Combined oral contraceptive pills' },
+        { id: 'MaleFemaleCondoms', label: 'Condoms (Male and female)' },
+        { id: 'LactationAmenorrhea', label: 'Lactation amenorrhea' },
+        { id: 'Natural', label: 'Natural' },
+      ];
   
 
 const schema = yup.object().shape({
