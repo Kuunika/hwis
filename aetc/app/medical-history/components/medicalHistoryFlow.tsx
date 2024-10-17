@@ -1,32 +1,41 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NewStepperContainer } from "@/components";
 import {
   ComplaintsForm,
   SurgeriesForm,
   AllergiesForm,
   MedicationsForm,
-  PriorConditionsForm
+  PriorConditionsForm,
+  ObstetricsForm,
 } from ".";
 
 import { encounters } from "@/constants";
 import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
+import { useParameters } from "@/hooks";
+import { getOnePatient } from "@/hooks/patientReg";
 
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addEncounter();
-  const { navigateTo, navigateBack } = useNavigation();
+  const { navigateBack } = useNavigation();
+  const { params } = useParameters();
+  const { data: patient, isLoading } = getOnePatient(params?.id as string);
 
+  // Wait for patient data to load
+  if (isLoading) {
+    return <div>Loading patient data...</div>; // Loading state or spinner
+  }
+
+  // Construct steps based on patient gender
   const steps = [
-    { id: 1, label: "Presenting Complaints" },
+    { id: 1, label: "Presenting complaints" },
     { id: 2, label: "Allergies" },
     { id: 3, label: "Medications" },
     { id: 4, label: "Prior/Existing conditions" },
     { id: 5, label: "Surgeries" },
-    
-    
+    ...(patient?.gender === "Female" ? [{ id: 6, label: "Gynaecology and Obstetrics" }] : []),
   ];
 
   const handlePresentingComplaintsSubmission = (values: any) => {
@@ -47,27 +56,15 @@ export const MedicalHistoryFlow = () => {
     setActiveStep(4);
   };
 
-  const handleSkip =()=>{
-    switch(activeStep){
-     case 0:
-      setActiveStep(1);
-      return;
-     case 1:
-        setActiveStep(2);
-        return;
-     case 2:
-        setActiveStep(3);
-        return;
-    case 3:
-      setActiveStep(4);
-        return;
-     case 4:
-        navigateBack();
-        return;
-     default:
-        return;
+  const handleSkip = () => {
+    const nextStep = activeStep + 1;
+  
+    if (nextStep < steps.length) {
+      setActiveStep(nextStep);
+    } else {
+      navigateBack();
     }
-  }
+  };
 
   return (
     <>
@@ -78,13 +75,16 @@ export const MedicalHistoryFlow = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip}/>
-        <AllergiesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
-        <MedicationsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
-        <PriorConditionsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
-        <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
-        
-      </NewStepperContainer >
+        <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip} />
+        <AllergiesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <MedicationsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <PriorConditionsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+
+        {patient?.gender === "Female" && (
+          <ObstetricsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        )}
+      </NewStepperContainer>
     </>
   );
 };

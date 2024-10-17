@@ -154,7 +154,7 @@ export function NewStepperContainer({
                   aria-controls="panel1d-content"
                   id="panel1d-header"
                 >
-                  <Typography>{steps[key].label}</Typography>
+                  <Typography>{steps[key]?.label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>{child}</AccordionDetails>
               </Accordion>
