@@ -99,7 +99,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
       >
         <FormValuesListener getValues={setFormValues} />
   
-        <WrapperBox>
+        <WrapperBox sx={{mb:'2ch'}}>
         <DynamicFormList
         items={surgeries}
         setItems={setSurgeries}

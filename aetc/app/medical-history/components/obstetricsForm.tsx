@@ -155,8 +155,8 @@ return (
               <TextInputField
                 id={`number_of_births_${index}`}
                 name={`number_of_births_${index}`}
-                label="Number of births"
-                sx={{ marginRight: '2ch' }}
+                label= {`Number of births(Pregnancy ${index+1})`}
+                sx={{ marginRight: '2ch', mt:'1ch' }}
               />
             )}
           </React.Fragment>

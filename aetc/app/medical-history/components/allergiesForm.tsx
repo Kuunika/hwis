@@ -110,7 +110,7 @@ return (
 
         <GroupedSearchComboBox options={allergyOptions} getValue={(value) => console.log(value)}  multiple={true} name={allergiesFormConfig.allergy.name}label={allergiesFormConfig.allergy.label} />
 
-    <WrapperBox>
+    <WrapperBox sx={{mt:'2ch'}}>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
         <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
  </WrapperBox>

@@ -313,7 +313,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
       )}
       headings={["Complaint", "Duration", "Duration Unit"]} // Table headers
     />
-    <WrapperBox>
+    <WrapperBox sx={{mt:'2ch'}}>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
         <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
       </WrapperBox>
