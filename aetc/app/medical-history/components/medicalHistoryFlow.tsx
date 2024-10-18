@@ -9,6 +9,7 @@ import {
   PriorConditionsForm,
   ObstetricsForm,
   FamilyHistoryForm,
+  AdmissionsForm
 } from ".";
 
 import { encounters } from "@/constants";
@@ -38,6 +39,7 @@ export const MedicalHistoryFlow = () => {
     { id: 5, label: "Surgeries" },
     ...(patient?.gender === "Female" ? [{ id: 6, label: "Gynaecology and Obstetrics" }] : []),
     { id: patient?.gender === "Female" ? 7 : 6, label: "Family history" },
+    { id: patient?.gender === "Female" ? 8 : 7, label: "Previous Admissions" },
   ];
 
   const handlePresentingComplaintsSubmission = (values: any) => {
@@ -86,6 +88,7 @@ export const MedicalHistoryFlow = () => {
           <ObstetricsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
         )}
         <FamilyHistoryForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <AdmissionsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
 
       </NewStepperContainer>
     </>

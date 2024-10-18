@@ -262,6 +262,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       id={medicationFormConfig.medication_dose(index).name}
       name={medicationFormConfig.medication_dose(index).name}
       label=""
+      placeholder="e.g., 500 and select a unit"
       sx={{ width: '100%' }}
     />
   </TableCell>

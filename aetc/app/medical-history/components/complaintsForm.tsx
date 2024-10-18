@@ -285,6 +285,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
               name={complaintsFormConfig.complaints_duration(index).name}
               label=""
               sx={{ width: '100%' }}
+              placeholder="e.g. 7 and select a time unit"
               // Handle the change for duration field
             //   onChange={(e) => {
             //     const updatedComplaints = [...complaints];
@@ -311,7 +312,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
           </TableCell>
         </>
       )}
-      headings={["Complaint", "Duration", "Duration Unit"]} // Table headers
+      headings={["Complaint", "Duration", "Time Unit"]} // Table headers
     />
     <WrapperBox sx={{mt:'2ch'}}>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
