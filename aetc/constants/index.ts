@@ -211,18 +211,9 @@ export const concepts = {
 
   // TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096"
   TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096",
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
   ELECTIVE: "2d7d1b0c-1867-4dbd-8b49-4335548a42bf",
   INVESTIGATIONS: "76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
 
-<<<<<<< HEAD
-  INVESTIGATIONS: "76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
-
-
-=======
   // Secondary survey
   PUPIL_SIZE: "pupil_size",
   PALLOR: "pallor",
@@ -361,8 +352,8 @@ export const concepts = {
   UP_TO_THIGH: "UP_TO_THIGH",
   WHOLE_BODY: "WHOLE_BODY",
   COLD_CLAMMY: "COLD_CLAMMY",
-  ABNORMALITIES_UPPER_LIMB:"ABNORMALITIES_UPPER_LIMB",
-  ABNORMALITIES_LOWER_LIMB:"ABNORMALITIES_LOWER_LIMB",
+  ABNORMALITIES_UPPER_LIMB: "ABNORMALITIES_UPPER_LIMB",
+  ABNORMALITIES_LOWER_LIMB: "ABNORMALITIES_LOWER_LIMB",
   DEFORMITY: "DEFORMITY",
   CREPITUS: "CREPITUS",
   SCARS: "SCARS",
@@ -371,7 +362,6 @@ export const concepts = {
   DEFORMITY_DESCRIPTION: "DEFORMITY_DESCRIPTION",
   MASS_DESCRIPTION: "MASS_DESCRIPTION",
   BURNS_DESCRIPTION: "BURNS_DESCRIPTION",
->>>>>>> origin/main
 };
 
 export const triageResult = {
@@ -634,12 +624,8 @@ export const malawiVillages = [
 
 export const roles = {
   ADMIN: process.env.NEXT_PUBLIC_SUPER_USER_ROLE as string,
-<<<<<<< HEAD
-  REGISTRATION_CLERK: process.env.NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE as string,
-=======
   REGISTRATION_CLERK: process.env
     .NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE as string,
->>>>>>> origin/main
   CLINICIAN: process.env.NEXT_PUBLIC_CLINICIAN_USER_ROLE as string,
   NURSE: process.env.NEXT_PUBLIC_NURSE_USER_ROLE as string,
   INITIAL_REGISTRATION_CLERK: process.env

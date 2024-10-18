@@ -436,29 +436,6 @@ export default function TriageWorkFlow() {
     handlePersistentPain(persistentPain)
   }
 
-  const { mutate, isPending, isSuccess: successful } = addEncounter()
-
-
-  const handleSubmit = (values: any) => {
-
-    mutate({
-
-      "encounterType": "7a74549b-8ff1-4bd1-ba84-bd1605e8e500",
-      "visit": "b71e9ecd-af1b-4531-8ff3-175e227bf08e",
-      "patient": "96df93e8-5796-4424-aad8-5fc939ff1c4c",
-      "encounterDatetime": "2024-03-01T09:50:09.472Z",
-      "obs": [
-        {
-          "concept": "896123ef-8e8f-4d80-b1cb-218b65707096",
-          "value": "yellow",
-          "obsDatetime": "2024-03-01T09:50:09.472Z"
-        }
-      ]
-
-    })
-
-  }
-
   return (
     <>
 
