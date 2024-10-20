@@ -1,4 +1,4 @@
-import { MainPaper, MainTypography, WrapperBox } from "@/components";
+import { MainButton, MainPaper, MainTypography, WrapperBox } from "@/components";
 import { Chip, Typography } from "@mui/material";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useNavigation, useParameters } from "@/hooks";
@@ -17,13 +17,15 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   }
 
   return (
-    <MainPaper elevation={0} sx={{ flex: 1,
+    <MainPaper elevation={0} sx={{
+      flex: 1,
       backgroundColor: '#ffffff', // Light grey background for placeholders
       height: '300px', // Height of the graph placeholders
       alignItems: 'center',
       justifyContent: 'center',
       padding: '1ch',
-      border: '1px solid #ccc', ...sx }}>
+      border: '1px solid #ccc', ...sx
+    }}>
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
         <WrapperBox
           sx={{
@@ -72,6 +74,14 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
         </WrapperBox>
         <Allergies />
       </WrapperBox>
+      <MainButton
+        title={"Diagnosis"}
+        onClick={() => navigateTo(`/patient/${params.id}/diagnosis`)}
+        sx={{
+          borderRadius: "5px",
+
+        }}
+      />
     </MainPaper>
   );
 };
@@ -88,12 +98,12 @@ const LabelValue = ({ label, value }: { label: string; value: any }) => {
 };
 
 export const Allergies = () => {
-  const allergies:Array<{allergy:string, id:string}> = [
+  const allergies: Array<{ allergy: string, id: string }> = [
 
   ];
   return (
     <WrapperBox sx={{ display: "flex", flexWrap: "wrap", width: "20ch" }}>
-      {allergies.length==0 ? <Typography variant="caption">No Allergies added</Typography>:allergies.map(({ allergy, id }) => (
+      {allergies.length == 0 ? <Typography variant="caption">No Allergies added</Typography> : allergies.map(({ allergy, id }) => (
         <Chip
           variant="outlined"
           size="small"
