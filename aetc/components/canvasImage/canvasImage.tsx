@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from "react";
 
-
 interface Point {
   x: number;
   y: number;
@@ -50,25 +49,53 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
           context.drawImage(img, 0, 0);
 
           positions.forEach((position) => {
-            drawOval(context, position.x, position.y, position.width, position.height);
+            drawOval(
+              context,
+              position.x,
+              position.y,
+              position.width,
+              position.height
+            );
           });
 
           if (currentPoint && !clickPositions.includes(currentPoint)) {
-            drawOval(context, currentPoint.x, currentPoint.y, currentWidth, currentHeight);
+            drawOval(
+              context,
+              currentPoint.x,
+              currentPoint.y,
+              currentWidth,
+              currentHeight
+            );
           }
 
           if (currentPoint && clickPositions.includes(currentPoint)) {
-            drawOval(context, currentPoint.x, currentPoint.y, currentPoint.width, currentPoint.height, true);
+            drawOval(
+              context,
+              currentPoint.x,
+              currentPoint.y,
+              currentPoint.width,
+              currentPoint.height,
+              true
+            );
           }
         }
       };
     }
   };
 
-  const drawOval = (context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, highlight: boolean = false) => {
+  const drawOval = (
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    highlight: boolean = false
+  ) => {
     context.beginPath();
     context.ellipse(x, y, width, height, 0, 0, 2 * Math.PI);
-    context.fillStyle = highlight ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.4)";
+    context.fillStyle = highlight
+      ? "rgba(0, 0, 255, 0.1)"
+      : "rgba(255, 0, 0, 0.4)";
     context.fill();
     context.strokeStyle = "black";
   };
@@ -81,7 +108,9 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
       const y = e.clientY - rect.top;
 
       const existingPoint = clickPositions.find(
-        (point) => Math.hypot(point.x - x, point.y - y) <= Math.max(point.width, point.height) + 5
+        (point) =>
+          Math.hypot(point.x - x, point.y - y) <=
+          Math.max(point.width, point.height) + 5
       );
 
       if (existingPoint) {
@@ -99,11 +128,16 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
       if (clickPositions.includes(currentPoint)) {
         setClickPositions((prevPositions) =>
           prevPositions.map((point) =>
-            point === currentPoint ? { ...point, width: currentWidth, height: currentHeight } : point
+            point === currentPoint
+              ? { ...point, width: currentWidth, height: currentHeight }
+              : point
           )
         );
       } else {
-        setClickPositions((prevPositions) => [...prevPositions, { ...currentPoint, width: currentWidth, height: currentHeight }]);
+        setClickPositions((prevPositions) => [
+          ...prevPositions,
+          { ...currentPoint, width: currentWidth, height: currentHeight },
+        ]);
       }
       setCurrentPoint(null);
     }
@@ -111,7 +145,9 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
 
   const deletePoint = () => {
     if (currentPoint) {
-      setClickPositions((prevPositions) => prevPositions.filter((point) => point !== currentPoint));
+      setClickPositions((prevPositions) =>
+        prevPositions.filter((point) => point !== currentPoint)
+      );
       setCurrentPoint(null);
     }
   };
@@ -121,7 +157,7 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
     setCurrentWidth(newWidth);
 
     if (currentPoint) {
-      setCurrentPoint((prevPoint) => ({
+      setCurrentPoint((prevPoint: any) => ({
         ...prevPoint,
         width: newWidth,
       }));
@@ -133,7 +169,7 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
     setCurrentHeight(newHeight);
 
     if (currentPoint) {
-      setCurrentPoint((prevPoint) => ({
+      setCurrentPoint((prevPoint: any) => ({
         ...prevPoint,
         height: newHeight,
       }));
@@ -160,18 +196,37 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
       <div style={{ marginBottom: "10px" }}>
         <label>
           Adjust Oval Width: {currentWidth}
-          <input type="range" min="1" max="100" value={currentWidth} onChange={handleWidthChange} style={{ marginLeft: "10px" }} />
+          <input
+            type="range"
+            min="1"
+            max="100"
+            value={currentWidth}
+            onChange={handleWidthChange}
+            style={{ marginLeft: "10px" }}
+          />
         </label>
         <label style={{ marginLeft: "20px" }}>
           Adjust Oval Height: {currentHeight}
-          <input type="range" min="1" max="100" value={currentHeight} onChange={handleHeightChange} style={{ marginLeft: "10px" }} />
+          <input
+            type="range"
+            min="1"
+            max="100"
+            value={currentHeight}
+            onChange={handleHeightChange}
+            style={{ marginLeft: "10px" }}
+          />
         </label>
       </div>
-      <canvas ref={canvasRef} onClick={handleClick} style={{ border: "1px solid black", cursor: "crosshair" }} />
+      <canvas
+        ref={canvasRef}
+        onClick={handleClick}
+        style={{ border: "1px solid black", cursor: "crosshair" }}
+      />
       {currentPoint && (
         <div style={popoverStyle}>
           <p>
-            Current position: x: {currentPoint.x}, y: {currentPoint.y}, width: {currentWidth}, height: {currentHeight}
+            Current position: x: {currentPoint.x}, y: {currentPoint.y}, width:{" "}
+            {currentWidth}, height: {currentHeight}
           </p>
           <button onClick={confirmPoint} style={{ marginTop: "10px" }}>
             Confirm Point
@@ -184,13 +239,11 @@ export const CanvasImage: React.FC<CanvasProps> = ({ imageUrl }) => {
       <div>
         {clickPositions.map((position, index) => (
           <div key={index}>
-            Clicked position: x: {position.x}, y: {position.y}, width: {position.width}, height: {position.height}
+            Clicked position: x: {position.x}, y: {position.y}, width:{" "}
+            {position.width}, height: {position.height}
           </div>
         ))}
       </div>
     </div>
   );
 };
-
-
- 

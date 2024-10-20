@@ -38,28 +38,34 @@ export const InterventionFormConfig = {
 
 const schema = Yup.object().shape({
   // Airway Intervention Validation
-  [InterventionFormConfig.airwayIntervention.name]: Yup.array().of(
-    Yup.object().shape({
-      id: Yup.string().required(),
-      label: Yup.string().required(),
-    })
-  ).label(InterventionFormConfig.airwayIntervention.label),
+  [InterventionFormConfig.airwayIntervention.name]: Yup.array()
+    .of(
+      Yup.object().shape({
+        id: Yup.string().required(),
+        label: Yup.string().required(),
+      })
+    )
+    .label(InterventionFormConfig.airwayIntervention.label),
 
   // Breathing Intervention Validation
-  [InterventionFormConfig.breathingIntervention.name]: Yup.array().of(
-    Yup.object().shape({
-      id: Yup.string().required(),
-      label: Yup.string().required(),
-    })
-  ).label(InterventionFormConfig.breathingIntervention.label),
+  [InterventionFormConfig.breathingIntervention.name]: Yup.array()
+    .of(
+      Yup.object().shape({
+        id: Yup.string().required(),
+        label: Yup.string().required(),
+      })
+    )
+    .label(InterventionFormConfig.breathingIntervention.label),
 
   // Circulation Intervention Validation
-  [InterventionFormConfig.circulationIntervention.name]: Yup.array().of(
-    Yup.object().shape({
-      id: Yup.string().required(),
-      label: Yup.string().required(),
-    })
-  ).label(InterventionFormConfig.circulationIntervention.label),
+  [InterventionFormConfig.circulationIntervention.name]: Yup.array()
+    .of(
+      Yup.object().shape({
+        id: Yup.string().required(),
+        label: Yup.string().required(),
+      })
+    )
+    .label(InterventionFormConfig.circulationIntervention.label),
 });
 
 export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
@@ -68,7 +74,13 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   const [airwayOther, setAirwayOther] = useState(false);
   const [circulationIVFluids, setCirculationIVFluids] = useState(false);
   const [fluidEntries, setFluidEntries] = useState([
-    { intakeFluidType: "", intakeFluidAmount: "", outputFluidType: "", outputFluidAmount: "", balance: 0 },
+    {
+      intakeFluidType: "",
+      intakeFluidAmount: "",
+      outputFluidType: "",
+      outputFluidAmount: "",
+      balance: 0,
+    },
   ]);
 
   const handleSubmit = () => {
@@ -104,7 +116,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const groupedOptions = [
     {
-      label: 'IV Fluids',
+      label: "IV Fluids",
       options: [
         { id: "Lingers Lactate", label: "Lingers Lactate" },
         { id: "Saline 5%", label: "Saline 5%" },
@@ -117,7 +129,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: 'Blood products',
+      label: "Blood products",
       options: [
         { id: "Whole blood", label: "Whole blood" },
         { id: "Packed Red cells", label: "Packed Red cells" },
@@ -126,7 +138,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: 'Oral products',
+      label: "Oral products",
       options: [
         { id: "Water", label: "Water" },
         { id: "Juice", label: "Juice" },
@@ -140,12 +152,19 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
     { id: "Nasal gastric tube drainage", label: "Nasal gastric tube drainage" },
     { id: "Vomitting", label: "Vomitting" },
     { id: "Insensible loss", label: "Insensible loss" },
-
   ];
 
-
   const handleAddFluidEntry = () => {
-    setFluidEntries([...fluidEntries, { intakeFluidType: "", intakeFluidAmount: "", outputFluidType: "", outputFluidAmount: "", balance: 0 }]);
+    setFluidEntries([
+      ...fluidEntries,
+      {
+        intakeFluidType: "",
+        intakeFluidAmount: "",
+        outputFluidType: "",
+        outputFluidAmount: "",
+        balance: 0,
+      },
+    ]);
   };
 
   const handleRemoveFluidEntry = (index: number) => {
@@ -154,140 +173,165 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   const handleFluidChange = (index: number, field: string, value: string) => {
-    const updatedEntries = [...fluidEntries];
+    const updatedEntries: any = [...fluidEntries];
     updatedEntries[index][field] = value;
     setFluidEntries(updatedEntries);
   };
 
   return (
     <>
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      enableReinitialize={true}
-      submitButtonText="Submit"
-      submitButton={false}
-    >
-      <FormValuesListener getValues={setFormValues} />
-      <WrapperBox>
-        <SearchComboBox
-          name={InterventionFormConfig.airwayIntervention.name}
-          options={airwayList}
-          label={InterventionFormConfig.airwayIntervention.label}
-          sx={{ mb: "2ch" }}
-          multiple={true}
-          disabled={false}
-          getValue={(value: any) => {
-            const exists = value.some((item: { id: string }) => item.id === airwayList[5].id);
-            if (exists) return setAirwayOther(true);
-            setAirwayOther(false);
-          }}
-        />
-        {airwayOther && (
-          <TextInputField
-            id="airwayOtherInput"
-            name={InterventionFormConfig.airwayIntervention.name + "_Other"}
-            label="Please specify"
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        enableReinitialize={true}
+        submitButtonText="Submit"
+        submitButton={false}
+      >
+        <FormValuesListener getValues={setFormValues} />
+        <WrapperBox>
+          <SearchComboBox
+            name={InterventionFormConfig.airwayIntervention.name}
+            options={airwayList}
+            label={InterventionFormConfig.airwayIntervention.label}
             sx={{ mb: "2ch" }}
+            multiple={true}
+            disabled={false}
+            getValue={(value: any) => {
+              const exists = value.some(
+                (item: { id: string }) => item.id === airwayList[5].id
+              );
+              if (exists) return setAirwayOther(true);
+              setAirwayOther(false);
+            }}
           />
-        )}
-        <SearchComboBox
-          name={InterventionFormConfig.breathingIntervention.name}
-          options={breathingList}
-          label={InterventionFormConfig.breathingIntervention.label}
-          sx={{ mb: "2ch" }}
-          multiple={true}
-          disabled={false}
-        />
-        <SearchComboBox
-          name={InterventionFormConfig.circulationIntervention.name}
-          options={circulationList}
-          getValue={(value: any) => {
-            const existsIV = value.some((item: { id: string }) => item.id === circulationList[0].label);
-            if (existsIV) setCirculationIVFluids(true);
-            else setCirculationIVFluids(false);
+          {airwayOther && (
+            <TextInputField
+              id="airwayOtherInput"
+              name={InterventionFormConfig.airwayIntervention.name + "_Other"}
+              label="Please specify"
+              sx={{ mb: "2ch" }}
+            />
+          )}
+          <SearchComboBox
+            name={InterventionFormConfig.breathingIntervention.name}
+            options={breathingList}
+            label={InterventionFormConfig.breathingIntervention.label}
+            sx={{ mb: "2ch" }}
+            multiple={true}
+            disabled={false}
+          />
+          <SearchComboBox
+            name={InterventionFormConfig.circulationIntervention.name}
+            options={circulationList}
+            getValue={(value: any) => {
+              const existsIV = value.some(
+                (item: { id: string }) => item.id === circulationList[0].label
+              );
+              if (existsIV) setCirculationIVFluids(true);
+              else setCirculationIVFluids(false);
+            }}
+            label={InterventionFormConfig.circulationIntervention.label}
+            sx={{ mb: "2ch" }}
+            multiple={true}
+            disabled={false}
+          />
+          {circulationIVFluids && (
+            <WrapperBox>
+              {fluidEntries.map((entry, index) => (
+                <FieldsContainer key={index}>
+                  <WrapperBox>
+                    <GroupedSearchComboBox
+                      name={`fluidEntries[${index}].intakeFluidType`}
+                      label="Intake Fluid Type"
+                      options={groupedOptions}
+                      multiple={false}
+                      getValue={(value) =>
+                        handleFluidChange(index, "intakeFluidType", value)
+                      }
+                      sx={{ mb: "2ch" }}
+                    />
+                    <TextInputField
+                      id={`fluidEntries[${index}].intakeFluidAmount`}
+                      name={`fluidEntries[${index}].intakeFluidAmount`}
+                      label="Intake Fluid Amount"
+                      unitOfMeasure="ml"
+                      getValue={(value) =>
+                        handleFluidChange(index, "intakeFluidAmount", value)
+                      }
+                      sx={{ mb: "2ch" }}
+                    />
+                  </WrapperBox>
 
-          }}
-          label={InterventionFormConfig.circulationIntervention.label}
-          sx={{ mb: "2ch" }}
-          multiple={true}
-          disabled={false}
-        />
-        {circulationIVFluids && (
-          <WrapperBox>
-          {fluidEntries.map((entry, index) => (
-            <FieldsContainer key={index}>
-              <WrapperBox>
-                <GroupedSearchComboBox
-                  name={`fluidEntries[${index}].intakeFluidType`}
-                  label="Intake Fluid Type"
-                  options={groupedOptions}
-                  multiple={false}
-                  getValue={(value) => handleFluidChange(index, "intakeFluidType", value)}
-                  sx={{ mb: "2ch" }}
-                />
-                <TextInputField
-                  id={`fluidEntries[${index}].intakeFluidAmount`}
-                  name={`fluidEntries[${index}].intakeFluidAmount`}
-                  label="Intake Fluid Amount"
-                  unitOfMeasure="ml"
-                  getValue={(value) => handleFluidChange(index, "intakeFluidAmount", value)}
-                  sx={{ mb: "2ch" }}
-                />
-              </WrapperBox>
+                  <WrapperBox>
+                    <GroupedSearchComboBox
+                      name={`fluidEntries[${index}].outputFluidType`}
+                      label="Output Fluid Type"
+                      //TODO: clear the typescript error
+                      //@ts-ignore
+                      options={outputFluidList}
+                      multiple={false}
+                      getValue={(value) =>
+                        handleFluidChange(index, "outputFluidType", value)
+                      }
+                      sx={{ mb: "2ch" }}
+                    />
+                    <TextInputField
+                      id={`fluidEntries[${index}].outputFluidAmount`}
+                      name={`fluidEntries[${index}].outputFluidAmount`}
+                      label="Output Fluid Amount"
+                      unitOfMeasure="ml"
+                      getValue={(value) =>
+                        handleFluidChange(index, "outputFluidAmount", value)
+                      }
+                      sx={{ mb: "2ch" }}
+                    />
+                  </WrapperBox>
 
-              <WrapperBox>
-                <GroupedSearchComboBox
-                  name={`fluidEntries[${index}].outputFluidType`}
-                  label="Output Fluid Type"
-                  options={outputFluidList}
-                  multiple={false}
-                  getValue={(value) => handleFluidChange(index, "outputFluidType", value)}
-                  sx={{ mb: "2ch" }}
-                />
-                <TextInputField
-                  id={`fluidEntries[${index}].outputFluidAmount`}
-                  name={`fluidEntries[${index}].outputFluidAmount`}
-                  label="Output Fluid Amount"
-                  unitOfMeasure="ml"
-                  getValue={(value) => handleFluidChange(index, "outputFluidAmount", value)}
-                  sx={{ mb: "2ch" }}
-                />
-              </WrapperBox>
+                  <WrapperBox>
+                    <TextInputField
+                      id={`fluidEntries[${index}].balance`}
+                      name={`fluidEntries[${index}].balance`}
+                      label="Fluid Balance"
+                      unitOfMeasure="ml"
+                      getValue={(value) =>
+                        handleFluidChange(index, "balance", value)
+                      }
+                      sx={{ ml: "0.3ch", mt: "0.5ch" }}
+                    />
+                  </WrapperBox>
 
-              <WrapperBox>
-                <TextInputField
-                  id={`fluidEntries[${index}].balance`}
-                  name={`fluidEntries[${index}].balance`}
-                  label="Fluid Balance"
-                  unitOfMeasure="ml"
-                  getValue={(value) => handleFluidChange(index, "balance", value)}
-                  sx={{ ml: "0.3ch", mt:"0.5ch" }}
-                />
-              </WrapperBox>
-
-              <IconButton
-                disabled={index === 0}
-                onClick={() => handleRemoveFluidEntry(index)}
-                color="error"
-              >
-                <FaMinus />
-              </IconButton>
-              <IconButton onClick={handleAddFluidEntry} color="primary">
-                <FaPlus />
-              </IconButton>
-            </FieldsContainer>
-          ))}
+                  <IconButton
+                    disabled={index === 0}
+                    onClick={() => handleRemoveFluidEntry(index)}
+                    color="error"
+                  >
+                    <FaMinus />
+                  </IconButton>
+                  <IconButton onClick={handleAddFluidEntry} color="primary">
+                    <FaPlus />
+                  </IconButton>
+                </FieldsContainer>
+              ))}
+            </WrapperBox>
+          )}
         </WrapperBox>
-        )}
-      </WrapperBox>
 
-      <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
-      </WrapperBox>
-    </FormikInit>
+        <WrapperBox>
+          <MainButton
+            sx={{ m: 0.5 }}
+            title={"Submit"}
+            type="submit"
+            onClick={handleSubmit}
+          />
+          <MainButton
+            variant={"secondary"}
+            title="Skip"
+            type="button"
+            onClick={onSkip}
+          />
+        </WrapperBox>
+      </FormikInit>
     </>
   );
 };

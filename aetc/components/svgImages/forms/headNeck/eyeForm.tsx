@@ -42,7 +42,7 @@ const form = {
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, formConceptsLabels: any) => void;
 };
 
 const schema = Yup.object().shape({
@@ -54,7 +54,9 @@ const schema = Yup.object().shape({
   ),
   [form.description.name]: Yup.string().label(form.otherAbnormalities.label),
   [form.sizeOfPupil.name]: Yup.string().label(form.sizeOfPupil.label),
-  [form.fundoscopyDone.name]: Yup.string().required().label(form.sizeOfPupil.label),
+  [form.fundoscopyDone.name]: Yup.string()
+    .required()
+    .label(form.fundoscopyDone.label),
   [form.fundoscopyFinding.name]: Yup.string().label(form.sizeOfPupil.label),
 });
 
@@ -93,28 +95,28 @@ export const EyeForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
-    >  
+      onSubmit={(values: any) => onSubmit(values, form)}
+    >
       <Box>
         <FormValuesListener getValues={setFormValues} />
         <TextInputField
-              sx={{ my: "1ch", width:"100%" }}
-              id={form.sizeOfPupil.name}
-              name={form.sizeOfPupil.name}
-              label={form.sizeOfPupil.label}
-            />
+          sx={{ my: "1ch", width: "100%" }}
+          id={form.sizeOfPupil.name}
+          name={form.sizeOfPupil.name}
+          label={form.sizeOfPupil.label}
+        />
         <SearchComboBox
           getValue={handleValueChange}
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
-          sx={{mb:"1ch"}}
+          sx={{ mb: "1ch" }}
         />
 
         {showOtherAbnormalities && (
           <>
             <TextInputField
-              sx={{ my: "1ch",width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.abnormalities.name}
               name={form.otherAbnormalities.name}
               label={form.otherAbnormalities.label}
@@ -125,18 +127,22 @@ export const EyeForm = ({ onSubmit }: Prop) => {
         {showEyeInjury && (
           <>
             <TextInputField
-              sx={{ my: "1ch", width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.description.name}
               name={form.description.name}
               label={form.description.label}
             />
           </>
         )}
-        <RadioGroupInput name={form.fundoscopyDone.name} options={radioOptions} label={form.fundoscopyDone.label} />
-        {formValues[form.fundoscopyDone.name]==concepts.YES && (
+        <RadioGroupInput
+          name={form.fundoscopyDone.name}
+          options={radioOptions}
+          label={form.fundoscopyDone.label}
+        />
+        {formValues[form.fundoscopyDone.name] == concepts.YES && (
           <>
             <TextInputField
-              sx={{ my: "1ch", width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.fundoscopyFinding.name}
               name={form.fundoscopyFinding.name}
               label={form.fundoscopyFinding.label}
