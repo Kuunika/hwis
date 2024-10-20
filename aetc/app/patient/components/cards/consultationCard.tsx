@@ -88,7 +88,7 @@ const Row = ({ title, link }: { title: string; link: string }) => {
         cursor: "pointer",
         my: "0.2ch",
         backgroundColor: "#fff",
-        ml: "5ch",
+        ml: "4ch",
         borderRadius: "0.5ch",
         border: "1px solid #ccc",
         transition: "background-color 0.3s, transform 0.3s", // Smooth hover effect
