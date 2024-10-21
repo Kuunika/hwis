@@ -8,19 +8,20 @@ type Prop = {
     selectedSection: any;
     section: any;
     children: ReactNode
+    width?:string
 }
 
-export const SVGPopover = ({ handleClose, anchorEl, section, selectedSection, children }: Prop) => {
-    return <BasePopover onClose={handleClose} anchorEl={anchorEl} anchorOrigin={{
+export const SVGPopover = ({ handleClose, anchorEl, section, selectedSection, children, width="30ch" }: Prop) => {
+    return <BasePopover onClose={handleClose} anchorEl={anchorEl}  anchorOrigin={{
         vertical: 'top',
         horizontal: 'left',
-    }} transformOrigin={{
-        vertical: 'top',
+      }}
+      transformOrigin={{
+        vertical: 'bottom',
         horizontal: 'right',
-    }}>
-        <Box sx={{ padding: "1ch", width: "30ch" }}>
+      }}>
+        <Box sx={{ padding: "1ch", width}}>
             <Typography variant="h5">{selectedSection.label}</Typography>
-            <br />
             <Typography>{section?.notes}</Typography>
             <Typography>{section?.description?.reduce((acc: any, item: any) => {
                 return acc + "," + item.id

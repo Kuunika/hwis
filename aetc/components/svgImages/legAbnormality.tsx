@@ -2,7 +2,7 @@
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { LegAbnormality } from "@/assets/legAbnormality";
-import { LegDeformityForm } from "./form"
+import { LegDeformityForm } from "./forms"
 export function LegAbnomalityImage() {
     const { handleClose, handleFormSubmit, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
 

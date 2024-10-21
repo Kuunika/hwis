@@ -9,7 +9,10 @@ import {
 } from "@/components";
 import { FaPrint } from "react-icons/fa6";
 import { BarcodeComponent } from "@/components/barcode";
-import { getOnePatient, getPatientsWaitingForAssessment } from "@/hooks/patientReg";
+import {
+  getOnePatient,
+  getPatientsWaitingForAssessment,
+} from "@/hooks/patientReg";
 import { GenericDialog } from "@/components";
 import { useState } from "react";
 import {
@@ -28,10 +31,10 @@ import {
 } from "@mui/material";
 import { BasicSelect } from "../basicSelect";
 import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
-import { any } from "prop-types";
+
 export const LabOrderTable = () => {
   const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
-  
+
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params.id as string);
   const {
@@ -111,74 +114,56 @@ export const LabOrderTable = () => {
               width: "100%",
             }}
           >
-            {cell.row.test.result && cell.row.test.result.length > 0 ? (
-              <>
-                <MainButton
-                  title={"view"}
-                  variant="primary"
-                  onClick={() => {
-                    const results = cell.row.test.result;
-                    handleViewClick(results, cell.row.test.name);
-                  }}
-                  sx={{
-                    width: "48%",
-                    padding: "4px 8px",
-                  }}
-                />
-                <Dialog
-                  open={openDialog}
-                  onClose={handleClose}
-                  maxWidth="sm"
-                  fullWidth
-                >
-                  <DialogTitle>
-                    Test results for {fullResults[0].testName}
-                  </DialogTitle>
-                  <DialogContent>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Measure</TableCell>
-                          <TableCell>Result</TableCell>
+            <>
+              <Button
+                disabled={
+                  !(cell.row.test.result && cell.row.test.result.length > 0)
+                }
+                variant="contained"
+                onClick={() => {
+                  const results = cell.row.test.result;
+                  handleViewClick(results, cell.row.test.name);
+                }}
+                sx={{
+                  width: "48%",
+                  padding: "4px 8px",
+                }}
+              >
+                View
+              </Button>
+              <Dialog
+                open={openDialog}
+                onClose={handleClose}
+                maxWidth="sm"
+                fullWidth
+              >
+                <DialogTitle>
+                  Test results for {fullResults[0].testName}
+                </DialogTitle>
+                <DialogContent>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Measure</TableCell>
+                        <TableCell>Result</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {fullResults.map((result: any, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{result.name}</TableCell>
+                          <TableCell>{result.value}</TableCell>
                         </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {fullResults.map((result: any, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{result.name}</TableCell>
-                            <TableCell>{result.value}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                      Close
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-                <MainButton
-                  title={"print"}
-                  variant="secondary"
-                  onClick={() => {
-                    setShowDialog(true);
-                    setSelectedTest({
-                      sampleType: cell.row.specimen.name,
-                      ascension: cell.row.accession_number,
-                      orderDate: getHumanReadableDateTimeLab(
-                        cell.row.order_date
-                      ),
-                      tests: cell.row.test.name,
-                    });
-                  }}
-                  sx={{
-                    width: "48%",
-                    padding: "4px 8px",
-                  }}
-                />
-              </>
-            ) : (
+                      ))}
+                    </TableBody>
+                  </Table>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    Close
+                  </Button>
+                </DialogActions>
+              </Dialog>
               <MainButton
                 title={"print"}
                 variant="secondary"
@@ -192,11 +177,11 @@ export const LabOrderTable = () => {
                   });
                 }}
                 sx={{
-                  width: "100%",
-                  padding: "5px 10px",
+                  width: "48%",
+                  padding: "4px 8px",
                 }}
               />
-            )}
+            </>
           </Box>
         );
       },
@@ -220,6 +205,7 @@ export const LabOrderTable = () => {
       ) : (
         <BaseTable
           height="25ch"
+          showTopBar={false}
           rowHeight={25}
           rows={flattenedLabOrders}
           columns={columns}

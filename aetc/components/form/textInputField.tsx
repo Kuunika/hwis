@@ -11,7 +11,7 @@ type Prop = {
   label: string;
   width?: any;
   sx?: SxProps;
-  type?: "password" | "text" | "date";
+  type?: "password" | "text" | "date" | "number";
   placeholder?: string;
   rows?: number;
   getValue?: (value: any) => void;
@@ -54,7 +54,7 @@ export const TextInputField: FC<Prop> = ({
 
 
   return (
-    <FormControl variant="standard" sx={{ mb: "1ch", ...sx }}>
+    <FormControl variant="standard" sx={{ mb: "1ch", ...sx,  }}>
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
@@ -66,12 +66,13 @@ export const TextInputField: FC<Prop> = ({
           },
           "& .MuiInputBase-input": {
             width: "25ch",
+          
           },
           "& .MuiFormHelperText-root": {
             width: helperTextWidth,
           },
 
-          "& fieldset": { borderRadius: "5px" },
+          "& fieldset": { borderRadius: "5px"},
           ...sx,
         }}
         id={id}
@@ -89,7 +90,6 @@ export const TextInputField: FC<Prop> = ({
         size={size}
         helperText={showHelperText && errorMessage}
         placeholder={placeholder}
-
         rows={rows}
         disabled={disabled}
         multiline={multiline}
