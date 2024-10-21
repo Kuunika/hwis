@@ -8,7 +8,7 @@ import {
   Header,
 } from "@/components";
 import FormControl from "@mui/material/FormControl";
-import { Concept, LabRequest, TestType } from "@/interfaces";
+import { Concept, LabFormProps, LabRequest, TestType } from "@/interfaces";
 import {
   createOrder,
   getConceptSetMembers,
@@ -21,11 +21,6 @@ import { getOnePatient } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import * as Yup from "yup";
 import { Typography } from "@mui/material";
-
-export interface LabFormProps {
-  onClose: () => void;
-  addRequest: (value: LabRequest) => void;
-}
 
 export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
   const [sampleName, setSampleName] = useState<string>("");
