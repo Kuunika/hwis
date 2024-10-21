@@ -5,6 +5,7 @@ import {
     SearchComboBox,
     FormValuesListener,
     MainButton,
+    FormDatePicker,
     RadioGroupInput,
     WrapperBox,
 } from "@/components";
@@ -52,6 +53,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         { id: "4-Hourly-Six-times-a-day", label: "4 Hourly- Six times a day" },
     ];
 
+    const durationLists = [
+        { id: "singledose", label: "Single dose" },
+        { id: "numberofdays", label: "Number of days" },
+        { id: "numberofmonths", label: "Number of months" },
+        { id: "numberofyears", label: "Number of years" },
+    ];
+
     const handleInputChange = (index: number, field: string, value: string) => {
         const updatedMedications = medications.map((medication, i) =>
             i === index ? { ...medication, [field]: value } : medication
@@ -89,42 +97,42 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                     <div key={index}>
                         {/* Formulation */}
                         <FieldsContainer sx={{ mb: "1.5ch" }}>
-                    
 
-                        <FormControl sx={{ width: 300 }}>
-                            <InputLabel id={`formulation-label-${index}`}>Formulation</InputLabel>
-                            <Select
-                                labelId={`formulation-label-${index}`}
-                                id={`formulation-${index}`}
-                                value={medications[index].formulation || ""}
-                                onChange={(e) => handleInputChange(index, "formulation", e.target.value)}
-                                label="Formulation"
-                            >
-                                {formulationLists.map((option) => (
-                                    <MenuItem key={option.id} value={option.id}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        
 
-                        <FormControl sx={{ width: 300 }}>
-                            <InputLabel id={`frequency-${index}`}>Frequency</InputLabel>
-                            <Select
-                                labelId={`frequency-label-${index}`}
-                                id={`frequency-${index}`}
-                                value={medications[index].frequency || ""}
-                                onChange={(e) => handleInputChange(index, "frequency", e.target.value)}
-                                label="Frequency"
-                            >
-                                {frequencyLists.map((option) => (
-                                    <MenuItem key={option.id} value={option.id}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                            <FormControl sx={{ width: 300 }}>
+                                <InputLabel id={`formulation-label-${index}`}>Formulation</InputLabel>
+                                <Select
+                                    labelId={`formulation-label-${index}`}
+                                    id={`formulation-${index}`}
+                                    value={medications[index].formulation || ""}
+                                    onChange={(e) => handleInputChange(index, "formulation", e.target.value)}
+                                    label="Formulation"
+                                >
+                                    {formulationLists.map((option) => (
+                                        <MenuItem key={option.id} value={option.id}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+
+                            <FormControl sx={{ width: 300 }}>
+                                <InputLabel id={`frequency-${index}`}>Frequency</InputLabel>
+                                <Select
+                                    labelId={`frequency-label-${index}`}
+                                    id={`frequency-${index}`}
+                                    value={medications[index].frequency || ""}
+                                    onChange={(e) => handleInputChange(index, "frequency", e.target.value)}
+                                    label="Frequency"
+                                >
+                                    {frequencyLists.map((option) => (
+                                        <MenuItem key={option.id} value={option.id}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </FieldsContainer>
 
                         {/* Route of Administration */}
@@ -141,20 +149,26 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                             />
                         </FieldsContainer>
 
-                        {/* Duration */}
-                        <FieldsContainer sx={{ mb: "1.5ch" }}>
-                            <RadioGroupInput
-                                row={true}
-                                name={`medications[${index}].duration`}
+
+
+
+                        <FormControl sx={{ width: 300, marginBottom: '2ch' }}>
+                            <InputLabel id={`duration-label-${index}`}>Duration</InputLabel>
+                            <Select
+                                labelId={`duration-label-${index}`}
+                                id={`duration-${index}`}
+                                value={medications[index].duration || ""}
+                                onChange={(e) => handleInputChange(index, "duration", e.target.value)}
                                 label="Duration"
-                                options={[
-                                    { label: "Single dose", value: "single dose" },
-                                    { label: "Number of days", value: "number of days" },
-                                    { label: "Number of months", value: "number of months" },
-                                    { label: "Number of years", value: "number of years" },
-                                ]}
-                            />
-                        </FieldsContainer>
+                            >
+                                {durationLists.map((option) => (
+                                    <MenuItem key={option.id} value={option.id}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
 
                         {/* Last Prescribed Date */}
                         <FieldsContainer sx={{ mb: "1.5ch" }}>
@@ -201,6 +215,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                                 }}
                             />
                         </FieldsContainer>
+
                     </div>
                 ))}
             </WrapperBox>
