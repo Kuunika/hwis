@@ -1,6 +1,6 @@
 "use client";
 import { MainButton, MainGrid, MainTypography, WrapperBox } from "@/components";
-import { PersonalDetailsCard } from ".";
+import { ConsultationCard, PersonalDetailsCard } from ".";
 import {
   BasicAccordion,
   ClinicalNotes,
@@ -221,7 +221,36 @@ export const DesktopView = () => {
         <PersonalDetailsCard />
         <Button onClick={()=>navigateTo(`/patient/${params.id}/patient-management-plan`)}>Click</Button>
         <OverlayLoader open={isLoading || chartLoading} />
-        <WrapperBox sx={{ my: "1ch" }}></WrapperBox>
+        <WrapperBox sx={{ my: "1ch" }}>
+          <ConsultationCard
+            disabled={!isOnList}
+            title="Assessments"
+            links={[
+              {
+                title: "Primary Assessment",
+                link: `/patient/${params.id}/primary-assessment`,
+              },
+              {
+                title: "Secondary Assessment",
+                link: `/patient/${params.id}/secondary-assessment`,
+              },
+            ]}
+          />
+          <ConsultationCard
+            disabled={!isOnList}
+            links={[
+              {
+                title: "Consultation 1",
+                link: `/patient/${params.id}/consultation`,
+              },
+              {
+                title: "Consultation 2",
+                link: `/patient/${params.id}/consultation`,
+              },
+            ]}
+            title="Consultation"
+          />
+        </WrapperBox>
         <BasicAccordion />
       </MainGrid>
       <MainGrid item lg={9}>
@@ -549,7 +578,9 @@ const ActionMenu = () => {
                   // 0tnxas
                   // Yc7flfzx
                 >
-                  {icon && <Image src={icon? icon : ""} alt="AETC Form icon" />}
+                  {icon && (
+                    <Image src={icon ? icon : ""} alt="AETC Form icon" />
+                  )}
                   <MainTypography
                     sx={{
                       fontFamily: "Inter",

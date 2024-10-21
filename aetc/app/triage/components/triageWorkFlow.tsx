@@ -466,7 +466,7 @@ export default function TriageWorkFlow() {
             setTriageResult={checkTriageResult} onSubmit={handlePresentComplaints} />
 
 
-            
+
           <VitalsForm
             previous={() => setActiveStep(0)}
             triageResult={triageResult}

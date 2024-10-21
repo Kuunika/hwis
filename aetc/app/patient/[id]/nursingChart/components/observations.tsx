@@ -1,218 +1,507 @@
+import { useNavigation } from "@/hooks";
+import { useContext, useEffect, useState } from "react";
 import {
   FieldsContainer,
-  FormikInit,
-  SearchComboBox,
+  FormFieldContainerLayout,
   FormValuesListener,
+  FormikInit,
   MainButton,
-  RadioGroupInput,
+  SearchComboBox,
+  SelectInputField,
   TextInputField,
   WrapperBox,
 } from "@/components";
-import { IconButton } from "@mui/material";
-import { FaPlus, FaMinus } from "react-icons/fa6";
-import { useContext, useState } from "react";
 import * as Yup from "yup";
-import { KeyValueContext, KeyValueContextType } from "@/contexts/keyValueContext"; 
+import { getInitialValues } from "@/helpers";
 import { concepts } from "@/constants";
+import { KeyValueContext, KeyValueContextType } from "@/contexts/keyValueContext";
+
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
 };
 
-const form = {
-  duration: {
-    name: concepts.DURATION,
-    label: "Duration",
+export const ObservationFormConfig = {
+  oxygenSaturation: {
+    name: concepts.SATURATION_RATE,
+    label: "Oxygen Saturation (O2 Sat)",
   },
-  route_of_administration: {
-    name: concepts.ROUTEOFADMIN,
-    label: "Route of administration",
+  heartRate: {
+    name: concepts.HEART_RATE,
+    label: "Heart Rate (HR)",
+  },
+  bloodPressureSystolic: {
+    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
+    label: "Blood Pressure Systolic",
+  },
+  bloodPressureDiastolic: {
+    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
+    label: "Blood Pressure Diastolic",
+  },
+  respiratoryRate: {
+    name: concepts.RESPIRATORY_RATE,
+    label: "Respiratory Rate (RR)",
+  },
+  temperature: {
+    name: concepts.TEMPERATURE,
+    label: "Temperature (Temp)",
+  },
+  randomBloodGlucose: {
+    name: concepts.BLOOD_GLUCOSE,
+    label: "Random Blood Glucose (RBG)",
+  },
+  urineDipstickKetones: {
+    name: concepts.URINE_DIPSTICK_KETONES,
+    label: "Urine Dipstick - Ketones",
+  },
+  avpu: {
+    name: concepts.AVPU,
+    label: "AVPU Scale",
+  },
+  pefr: {
+    name: concepts.PEAK_EXPIRATORY_FLOW_RATE,
+    label: "Peak Expiratory Flow Rate (PEFR)",
+  },
+  triageScore: {
+    name: concepts.TRIAGE_RESULT,
+    label: "Triage Score",
+  },
+  units: {
+    name: concepts.ADDITIONAL_NOTES, // change concept
+    label: "Units",
   },
 };
 
-const medicationFormConfig = {
-  formulation: (index: number) => ({
-    name: `medications[${index}].formulation`,
-    label: "Formulation",
-  }),
-  frequency: (index: number) => ({
-    name: `medications[${index}].frequency`,
-    label: "Frequency",
-  }),
-  route_of_administration: (index: number) => ({
-    name: `medications[${index}].route_of_administration`,
-    label: "Route of administration",
-  }),
-  duration: (index: number) => ({
-    name: `medications[${index}].duration`,
-    label: "Duration",
-  }),
-  last_prescribed_date: (index: number) => ({
-    name: `medications[${index}].last_prescribed_date`,
-    label: "Date last prescribed",
-  }),
-  date_and_time_of_last_med: (index: number) => ({
-    name: `medications[${index}].date_and_time_of_last_med`,
-    label: "Date and time last taken",
-  }),
-};
 
 const schema = Yup.object().shape({
-  medications: Yup.array().of(
-    Yup.object().shape({
-      formulation: Yup.string().required("Formulation is required"),
-      frequency: Yup.string().required("Frequency is required"),
-      route_of_administration: Yup.string().required("Route of administration is required"),
-      duration: Yup.string().required("Duration is required"),
-      last_prescribed_date: Yup.string().required("Date last prescribed is required"),
-      date_and_time_of_last_med: Yup.string().required("Date and time last taken is required"),
-    })
-  ),
+  [ObservationFormConfig.oxygenSaturation.name]: Yup.string().label(ObservationFormConfig.oxygenSaturation.label),
+  [ObservationFormConfig.heartRate.name]: Yup.string().label(ObservationFormConfig.heartRate.label),
+  [ObservationFormConfig.bloodPressureSystolic.name]: Yup.string().label(ObservationFormConfig.bloodPressureSystolic.label),
+  [ObservationFormConfig.bloodPressureDiastolic.name]: Yup.string().label(ObservationFormConfig.bloodPressureDiastolic.label),
+  [ObservationFormConfig.respiratoryRate.name]: Yup.string().label(ObservationFormConfig.respiratoryRate.label),
+  [ObservationFormConfig.temperature.name]: Yup.string().label(ObservationFormConfig.temperature.label),
+  [ObservationFormConfig.randomBloodGlucose.name]: Yup.string().label(ObservationFormConfig.randomBloodGlucose.label),
+  [ObservationFormConfig.urineDipstickKetones.name]: Yup.string().label(ObservationFormConfig.urineDipstickKetones.label),
+  [ObservationFormConfig.avpu.name]: Yup.string().label(ObservationFormConfig.avpu.label),
+  [ObservationFormConfig.pefr.name]: Yup.string().label(ObservationFormConfig.pefr.label),
+  [ObservationFormConfig.triageScore.name]: Yup.string().label(ObservationFormConfig.triageScore.label),
+  [ObservationFormConfig.units.name]: Yup.string().label(ObservationFormConfig.units.label),
 });
 
-export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
+const initialValues = getInitialValues(ObservationFormConfig);
+
+export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const [medications, setMedications] = useState([
-    { formulation: { label: "" }, frequency: { label: "" }, route_of_administration: "", duration: "", last_prescribed_date: "", date_and_time_of_last_med: "" },
-  ]);
-  const { flow, addKeyToFlow } = useContext(KeyValueContext) as KeyValueContextType;
+  const { navigateTo } = useNavigation();
+  const { flow, addKeyToFlow} = useContext(KeyValueContext) as KeyValueContextType;
+  const [caseType, setCaseType] = useState<string>("Default");
 
-  const formulationLists = [{ id: "Tablet", label: "tablet" }];
 
-  const handleAddMedication = () => {
-    setMedications([
-      ...medications,
-      { formulation: { label: "" }, frequency: { label: "" }, route_of_administration: "", duration: "", last_prescribed_date: "", date_and_time_of_last_med: "" },
-    ]);
-  };
-
-  const handleInputChange = (index: number, field: string, value: string) => {
-    const updatedMedications = medications.map((medication, i) =>
-      i === index ? { ...medication, [field]: value } : medication
-    );
-    setMedications(updatedMedications);
-  };
-
-  const handleRemoveMedication = (index: number) => {
-    const updatedMedications = medications.filter((_, i) => i !== index);
-    setMedications(updatedMedications);
-  };
-
-  const handleSubmit = () => {
-    formValues["medications"] = medications;
+  const handleSubmit = (values: any) => {
+    const triageScore = caseType;
+    formValues[ObservationFormConfig.triageScore.name] = triageScore;
     onSubmit(formValues);
   };
+
+  const avpuLists = [
+    { id: "Alert", label: "Alert" },
+    { id: "Verbal", label: "Verbal" },
+    { id: "Pain", label: "Pain" },
+    { id: "Unresponsive", label: "Unresponsive" },
+  ];
+
+  const traigeScores =[
+    "Emergency", "Priority", "Queue"
+  ]
+
+  const rules = {
+    [ObservationFormConfig.temperature.name]: [
+      { operator: "<", value: 34, result: traigeScores[0], bound: 0 },
+      {
+        operator: ">",
+        value: 39.9,
+        result: traigeScores[0],
+        bound: 100,
+      },
+      {
+        operator: "combined",
+        operator1: ">=",
+        value: 37.5,
+        operator2: "<=",
+        value2: 39.9,
+        result: traigeScores[1],
+        bound: 0,
+      },
+      {
+        operator: "combined",
+        operator1: ">=",
+        value: 34.1,
+        operator2: "<=",
+        value2: 35.4,
+        result: traigeScores[1],
+        bound: 0,
+      },
+      {
+        operator: "combined",
+        operator1: ">=",
+        value: 35.5,
+        operator2: "<=",
+        value2: 37.4,
+        result: traigeScores[2],
+        bound: 0,
+      }],[ObservationFormConfig.respiratoryRate.name]:[
+        { operator: ">", value: 30, result: traigeScores[0], bound: 100 },
+        { operator: "<", value: 8, result: traigeScores[0], bound: 0 },
+        {
+          operator: "combined",
+          operator1: ">=",
+          value: 21,
+          operator2: "<=",
+          value2: 30,
+          result: traigeScores[1],
+          bound: 0,
+        },
+        {
+          operator: "combined",
+          operator1: ">=",
+          value: 8,
+          operator2: "<=",
+          value2: 11,
+          result: traigeScores[1],
+          bound: 0,
+        },
+        {
+          operator: "combined",
+          operator1: ">=",
+          value: 12,
+          operator2: "<=",
+          value2: 20,
+          result:  traigeScores[2],
+          bound: 0,
+        },
+      ]};
+
+
+
+  
+  const calculateTriageScore = (value: any, type: string) => {
+    let score = traigeScores[2];
+  
+    // Parse numerical value
+    const numericalValue = parseFloat(value) || 0;
+    switch (type) {
+      case ObservationFormConfig.oxygenSaturation.name:
+        if (numericalValue < 90) {
+          score = traigeScores[0];
+        } 
+        if (numericalValue >= 90 && numericalValue  < 94) {
+          score = traigeScores[1];
+        } 
+        if (numericalValue >= 94) {
+          score = traigeScores[2];
+        }
+        break;
+  
+      case ObservationFormConfig.heartRate.name:
+        if (numericalValue < 40 || numericalValue > 129) {
+          score = traigeScores[0];
+        } 
+        if ((numericalValue >= 40 && numericalValue <= 59) || (numericalValue >= 101 && numericalValue <= 129)) {
+          score = traigeScores[1];
+        } 
+        if (numericalValue >= 60 && numericalValue <= 100){
+          score = traigeScores[2];
+        } 
+        break;
+  
+      case ObservationFormConfig.bloodPressureSystolic.name:
+        if (numericalValue > 200 || numericalValue < 80) {
+          return score = traigeScores[0];
+        } 
+        if ((numericalValue >= 80 && numericalValue <= 89) || (numericalValue >= 150 && numericalValue <= 200)) {
+          return score = traigeScores[1];
+        } 
+        if (numericalValue >= 90 || (numericalValue > 89 && numericalValue <= 149)){
+          return score = traigeScores[2];
+        }
+        break;
+  
+      case ObservationFormConfig.bloodPressureDiastolic.name:
+        if (numericalValue > 119) {
+          score = traigeScores[0];
+        } 
+        if (numericalValue >= 100 && numericalValue <= 119) {
+          score = traigeScores[1];
+        } 
+        if (numericalValue < 100) {
+          score = traigeScores[2];
+        } 
+        break;
+  
+      case ObservationFormConfig.respiratoryRate.name:
+      for (const bound of rules[ObservationFormConfig.respiratoryRate.name]) {
+        if (bound.operator === ">" && numericalValue > bound.value) {
+            score = bound.result;
+            break;
+        }
+
+        if (bound.operator === "<" && numericalValue < bound.value) {
+            score = bound.result;
+            break;
+        }
+
+        if (
+            bound.operator === "combined" &&
+            typeof bound.value2 !== "undefined" && 
+            numericalValue >= bound.value &&
+            numericalValue <= bound.value2
+        ) {
+            score = bound.result;
+            break;
+        }
+    }
+    break;
+  
+      case ObservationFormConfig.temperature.name:
+        for (const bound of rules[ObservationFormConfig.temperature.name]) {
+          if (bound.operator === ">" && numericalValue > bound.value) {
+              score = bound.result;
+              break;
+          }
+  
+          if (bound.operator === "<" && numericalValue < bound.value) {
+              score = bound.result;
+              break;
+          }
+  
+          if (
+              bound.operator === "combined" &&
+              typeof bound.value2 !== "undefined" && 
+              numericalValue >= bound.value &&
+              numericalValue <= bound.value2
+          ) {
+              score = bound.result;
+              break;
+          }
+      }
+      break;
+  
+      case ObservationFormConfig.randomBloodGlucose.name:
+        const m = 18.018; //multiplicationFactor
+        const units = formValues[ObservationFormConfig.units.name];
+        if(units)
+        {
+        if (units == "mg/dl") {
+        if (numericalValue < 3 * m || numericalValue > 30 * m) {
+          score = traigeScores[0];
+        } else if ((numericalValue >= 3.1 * m && numericalValue <= 3.8 * m) || (numericalValue > 11.1 * m && numericalValue <= 29.9 * m)) {
+          score = traigeScores[1];
+        } else if (numericalValue >= 3.9 * m && numericalValue <= 11.1 * m) {
+          score = traigeScores[2];
+        } }
+        if (units == "mmol/l") {
+          if (numericalValue < 3 || numericalValue > 30) {
+            score = traigeScores[0];
+                }
+          if ((numericalValue >= 3.1 && numericalValue <= 3.8) || (numericalValue > 11.1 && numericalValue <= 29.9)) {
+            score = traigeScores[1];
+                }
+          if (numericalValue >= 3.9 && numericalValue <= 11.1) {
+            score = traigeScores[2];
+                }
+              }
+        }
+        break;
+  
+      default:
+        score = "Green";
+    }
+  
+    return score;
+  };
+  
+  
+  
+
+  const getBackgroundColor = (caseType: string) => {
+    switch (caseType) {
+      case traigeScores[0]:
+        return "#FECDCA";
+      case traigeScores[1]:
+        return "#FEDF89";
+      case traigeScores[2]:
+        return "#DDEEDD";
+      default:
+        return "#FFFFFF"; // Default color
+    }
+  };
+
+  useEffect(() => {
+    let maxScore = "No Score"; // Initialize with the default value
+    let newScores: Record<string, string> = {};
+
+    Object.keys(flow).forEach((key) => {
+      const value = flow[key];
+      if (value) {
+        const score = calculateTriageScore(value, key);
+        newScores[key] = score;
+        maxScore = score;
+      }
+
+      for (const key in newScores) {
+        if (newScores.hasOwnProperty(key)) {
+          if(newScores[key] == traigeScores[0])
+            maxScore = traigeScores[0]
+
+          if(newScores[key] == traigeScores[1] && maxScore !== traigeScores[0])
+            maxScore = traigeScores[1]
+
+        }}
+
+        
+    });
+    setCaseType(maxScore);
+  }, [flow]);
 
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={{ medications }}
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       enableReinitialize={true}
       submitButtonText="Submit"
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
+      <div style={{
+          width: "100%",
+          height: "20px",
+          marginTop: "20px",
+          marginBottom: "20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontWeight: "bold",
+          color: "#000",
+        }}>
+        <p>Triage Score</p>
+      <div
+        style={{
+          backgroundColor: getBackgroundColor(caseType),
+          width: "100%",
+          height: "50px",
+          marginLeft: "300px",
+          marginRight: "100px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#000",
+          
+        }}
+      >
+        {caseType.charAt(0).toUpperCase() + caseType.slice(1)}
+      </div>
+      </div>
+      <FormFieldContainerLayout title="Observations">
+        <FieldsContainer >
+          <TextInputField
+            name={ObservationFormConfig.oxygenSaturation.name}
+            label={ObservationFormConfig.oxygenSaturation.label}
+            id={ObservationFormConfig.oxygenSaturation.name}
+            unitOfMeasure="%"
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.oxygenSaturation.name]: value })}
+          />
+          <TextInputField
+            name={ObservationFormConfig.respiratoryRate.name}
+            label={ObservationFormConfig.respiratoryRate.label}
+            id={ObservationFormConfig.respiratoryRate.name}
+            unitOfMeasure="bs/m"
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.respiratoryRate.name]: value })}
+          />
+        </FieldsContainer>
+          <TextInputField
+            name={ObservationFormConfig.heartRate.name}
+            label={ObservationFormConfig.heartRate.label}
+            id={ObservationFormConfig.heartRate.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.heartRate.name]: value })}
+            unitOfMeasure="bpm"
+          />
 
-      <WrapperBox sx={{ padding: "1.5rem", borderRadius: "8px", backgroundColor: "#f7f9fc" }}>
-        {medications.map((medication, index) => (
-          <FieldsContainer key={index} sx={{ mb: "2ch", border: "1px solid #ccc", padding: "1rem", borderRadius: "8px" }}>
-
-            {/* Formulation */}
-            <FieldsContainer sx={{ mb: "1.5ch" }}>
-              <SearchComboBox
-                name={medicationFormConfig.formulation(index).name}
-                options={formulationLists}
-                label={medicationFormConfig.formulation(index).label}
-                sx={{ my: "1ch" }}
-                multiple={false}
-                disabled={false}
-                getValue={(value) => addKeyToFlow({ [medicationFormConfig.formulation(index).name]: value })}
-              />
-            </FieldsContainer>
-
-            {/* Frequency */}
-            <FieldsContainer sx={{ mb: "1.5ch" }}>
-              <SearchComboBox
-                name={medicationFormConfig.frequency(index).name}
-                options={formulationLists}
-                label={medicationFormConfig.frequency(index).label}
-                sx={{ my: "1ch" }}
-                multiple={false}
-                disabled={false}
-                getValue={(value) => addKeyToFlow({ [medicationFormConfig.frequency(index).name]: value })}
-              />
-            </FieldsContainer>
-
-            {/* Route of Administration */}
-            <FieldsContainer sx={{ mb: "1.5ch" }}>
-              <RadioGroupInput
-                row={true}
-                name={medicationFormConfig.route_of_administration(index).name}
-                label={medicationFormConfig.route_of_administration(index).label}
-                options={[
-                  { label: "", value: "" },
-                  { label: "", value: "" },
-                  { label: "", value: "" },
-                ]}
-              />
-            </FieldsContainer>
-
-            {/* Duration */}
-            <FieldsContainer sx={{ mb: "1.5ch" }}>
-              <RadioGroupInput
-                row={true}
-                name={medicationFormConfig.duration(index).name}
-                label={medicationFormConfig.duration(index).label}
-                options={[
-                  { label: "Single dose", value: "single dose" },
-                  { label: "Number of days", value: "number of days" },
-                  { label: "Number of months", value: "number of months" },
-                ]}
-              />
-            </FieldsContainer>
-
-            {/* Last Prescribed Date */}
-            <FieldsContainer sx={{ mb: "1.5ch" }}>
-              <TextInputField
-                id={`last_prescribed_date-${index}`}
-                name={medicationFormConfig.last_prescribed_date(index).name}
-                label={medicationFormConfig.last_prescribed_date(index).label}
-                handleBlurEvent={(value) => handleInputChange(index, "last_prescribed_date", value)}
-                sx={{ mb: "2ch" }}
-              />
-            </FieldsContainer>
-
-            {/* Date and Time of Last Medication */}
-            <FieldsContainer sx={{ mb: "1.5ch" }}>
-              <TextInputField
-                id={`date_and_time_of_last_med-${index}`}
-                name={medicationFormConfig.date_and_time_of_last_med(index).name}
-                label={medicationFormConfig.date_and_time_of_last_med(index).label}
-                handleBlurEvent={(value) => handleInputChange(index, "date_and_time_of_last_med", value)}
-                sx={{ mb: "2ch", ml: "0.5ch" }}
-              />
-            </FieldsContainer>
-
-            <IconButton
-              disabled={index === 0}
-              onClick={() => handleRemoveMedication(index)}
-              color="error"
-              sx={{ marginBottom: "2ch", marginLeft: "2ch" }}
-            >
-              <FaMinus />
-            </IconButton>
-
-            <IconButton onClick={handleAddMedication} color="primary" sx={{ marginBottom: "2ch" }}>
-              <FaPlus />
-            </IconButton>
+          <FieldsContainer sx={{mt:"2ch"}}>
+          <TextInputField
+            name={ObservationFormConfig.bloodPressureSystolic.name}
+            label={ObservationFormConfig.bloodPressureSystolic.label}
+            id={ObservationFormConfig.bloodPressureSystolic.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.bloodPressureSystolic.name]: value })}
+            unitOfMeasure="mmHg"
+          />
+          <TextInputField
+            name={ObservationFormConfig.bloodPressureDiastolic.name}
+            label={ObservationFormConfig.bloodPressureDiastolic.label}
+            id={ObservationFormConfig.bloodPressureDiastolic.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.bloodPressureDiastolic.name]: value })}
+            unitOfMeasure="mmHg"
+          />
           </FieldsContainer>
-        ))}
-      </WrapperBox>
 
-      <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
-      <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
+          <TextInputField
+            name={ObservationFormConfig.temperature.name}
+            label={ObservationFormConfig.temperature.label}
+            id={ObservationFormConfig.temperature.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.temperature.name]: value })}
+            unitOfMeasure="°C"
+          />
+          
+          <FieldsContainer>
+          <SelectInputField
+            sx={{ mt: '2ch' }}
+            width="20%"
+            name={ObservationFormConfig.units.name}
+            selectItems={[
+              { name: "mmol/l", value: "mmol/l" },
+              { name: "mg/dl", value: "mg/dl" },
+            ]}
+            label={ObservationFormConfig.units.label}
+            id={ObservationFormConfig.units.name}
+          />
+          <TextInputField
+            name={ObservationFormConfig.randomBloodGlucose.name}
+            label={ObservationFormConfig.randomBloodGlucose.label}
+            id={ObservationFormConfig.randomBloodGlucose.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.randomBloodGlucose.name]: value })}
+          />
+          </FieldsContainer>
+          <TextInputField
+            name={ObservationFormConfig.urineDipstickKetones.name}
+            label={ObservationFormConfig.urineDipstickKetones.label}
+            id={ObservationFormConfig.urineDipstickKetones.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.urineDipstickKetones.name]: value })}
+          />
+          <SearchComboBox
+            name={ObservationFormConfig.avpu.name}
+            options={avpuLists}
+            label={ObservationFormConfig.avpu.label}
+            sx={{ my: "1ch" }}
+            multiple={false}
+            disabled={false}
+            getValue={(value) => addKeyToFlow({ [ObservationFormConfig.avpu.name]: value })}
+          />
+          <TextInputField
+            name={ObservationFormConfig.pefr.name}
+            label={ObservationFormConfig.pefr.label}
+            id={ObservationFormConfig.pefr.name}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.pefr.name]: value })}
+            unitOfMeasure="L/min"
+          />
+        
+      </FormFieldContainerLayout>
+
+      <WrapperBox>
+        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
+        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
+      </WrapperBox>
     </FormikInit>
   );
 };
+

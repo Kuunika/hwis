@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useFormikContext } from "formik";
 export const useFormikField = (name: string) => {
   const {
@@ -12,8 +12,8 @@ export const useFormikField = (name: string) => {
     handleBlur,
   } = useFormikContext();
 
-  // console.log({ errors });
-  // console.log({ values });
+  console.log({ errors });
+
   //@ts-ignore
   const value = values[name];
 
@@ -33,6 +33,6 @@ export const useFormikField = (name: string) => {
     initialValues,
     handleBlur,
     values,
-    touched
+    touched,
   };
 };

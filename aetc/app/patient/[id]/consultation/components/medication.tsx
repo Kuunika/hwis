@@ -115,8 +115,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                                 label="Route of Administration"
                                 options={[
                                     { label: "Oral", value: "oral" },
-                                    { label: "Injection", value: "injection" },
-                                    { label: "Topical", value: "topical" },
+                                    { label: "Oral suppository", value: "oral-suppository" },
+                                    { label: "Intravenous", value: "Intravenous" },
                                 ]}
                             />
                         </FieldsContainer>

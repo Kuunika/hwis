@@ -1,7 +1,7 @@
 import LungBack from "@/assets/lungBack";
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { BreathingLungForm } from "./form"
+import { BreathingLungForm } from "./forms"
 export function LungBackImage() {
     const { handleClose, handleFormSubmit, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
 
