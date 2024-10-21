@@ -27,6 +27,7 @@ type IProp = {
   rowHeight?: number;
   loading?: boolean;
   checkboxSelection?: boolean;
+  showTopBar?: boolean;
   paginationMode?: "client" | "server";
   getSelectedItems?: (items: any) => void;
 };
@@ -41,7 +42,9 @@ const Table: React.FC<IProp> = ({
   style,
   rowHeight,
   checkboxSelection = false,
-  getSelectedItems = (items: any) => {},
+  getSelectedItems = (items: any) => { },
+  showTopBar = true, // New prop to control visibility of the top bar
+
 }) => {
   const [searchText, setSearchText] = React.useState("");
   const [filteredRows, setFilteredRows] = React.useState(rows);
@@ -106,11 +109,13 @@ const Table: React.FC<IProp> = ({
 
   return (
     <div style={{ height, width, ...style }}>
-      <TopBarComponents
-        searchText={searchText}
-        handleSwitchChange={handleSwitchChange}
-        requestSearch={requestSearch}
-      />
+      {showTopBar && ( // Conditionally render TopBarComponents based on the new prop
+        <TopBarComponents
+          searchText={searchText}
+          handleSwitchChange={handleSwitchChange}
+          requestSearch={requestSearch}
+        />
+      )}
       <DataGrid
         onRowSelectionModelChange={getSelectedItems}
         checkboxSelection={checkboxSelection}
@@ -140,8 +145,8 @@ interface ServerPaginationTableProp {
   paginationModel: PaginationModel;
   setPaginationModel: (values: any) => void;
   rowCount: number;
-  searchText?:string;
-  setSearchString: (values:any)=>void
+  searchText?: string;
+  setSearchString: (values: any) => void
 }
 
 export const ServerPaginationTable = ({
@@ -154,10 +159,10 @@ export const ServerPaginationTable = ({
   searchText,
   setSearchString
 }: ServerPaginationTableProp) => {
-  
+
   return (
     <>
-    <TopBarComponents searchText={searchText ?? ""} requestSearch={setSearchString} />
+      <TopBarComponents searchText={searchText ?? ""} requestSearch={setSearchString} />
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
         initialState={{
@@ -202,7 +207,7 @@ const TopBarComponents = ({
         }}
       />
 
-    { handleSwitchChange && <FormControlLabel
+      {handleSwitchChange && <FormControlLabel
         control={<Switch onChange={handleSwitchChange} name="" size="medium" />}
         label="Show only patients registered today"
       />}

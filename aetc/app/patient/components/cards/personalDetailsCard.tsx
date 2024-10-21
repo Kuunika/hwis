@@ -1,4 +1,9 @@
-import { MainPaper, MainTypography, WrapperBox } from "@/components";
+import {
+  MainButton,
+  MainPaper,
+  MainTypography,
+  WrapperBox,
+} from "@/components";
 import { Chip, Typography } from "@mui/material";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useNavigation, useParameters } from "@/hooks";
@@ -7,7 +12,7 @@ import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   const { params } = useParameters();
-  const { navigateTo } = useNavigation()
+  const { navigateTo } = useNavigation();
   const { data: patient, isLoading } = getOnePatient(params.id as string);
 
   // const patient = patients?.find((p) => p.uuid == params.id);
@@ -17,13 +22,19 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   }
 
   return (
-    <MainPaper elevation={0} sx={{ flex: 1,
-      backgroundColor: '#ffffff', // Light grey background for placeholders
-      height: '300px', // Height of the graph placeholders
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1ch',
-      border: '1px solid #ccc', ...sx }}>
+    <MainPaper
+      elevation={0}
+      sx={{
+        flex: 1,
+        backgroundColor: "#ffffff", // Light grey background for placeholders
+        height: "300px", // Height of the graph placeholders
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1ch",
+        border: "1px solid #ccc",
+        ...sx,
+      }}
+    >
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
         <WrapperBox
           sx={{
@@ -58,7 +69,18 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
           `  (Age ${patient?.birthdate && calculateAge(patient?.birthdate)})`
         }
       />
-      <LabelValue label="" value={<MainTypography onClick={() => navigateTo(`/patient/${params.id}/view`)} sx={{ color: "blue", cursor: "pointer" }} variant="inherit">see more</MainTypography>} />
+      <LabelValue
+        label=""
+        value={
+          <MainTypography
+            onClick={() => navigateTo(`/patient/${params.id}/view`)}
+            sx={{ color: "blue", cursor: "pointer" }}
+            variant="inherit"
+          >
+            see more
+          </MainTypography>
+        }
+      />
       <WrapperBox
         sx={{
           display: "flex",
@@ -88,27 +110,29 @@ const LabelValue = ({ label, value }: { label: string; value: any }) => {
 };
 
 export const Allergies = () => {
-  const allergies:Array<{allergy:string, id:string}> = [
-
-  ];
+  const allergies: Array<{ allergy: string; id: string }> = [];
   return (
     <WrapperBox sx={{ display: "flex", flexWrap: "wrap", width: "20ch" }}>
-      {allergies.length==0 ? <Typography variant="caption">No Allergies added</Typography>:allergies.map(({ allergy, id }) => (
-        <Chip
-          variant="outlined"
-          size="small"
-          color="error"
-          key={id}
-          sx={{
-            m: "2px",
-            backgroundColor: "#FECDCA",
-            color: "#B42318",
-            fontSize: "0.7rem",
-            borderRadius: "1ch",
-          }}
-          label={allergy}
-        />
-      ))}
+      {allergies.length == 0 ? (
+        <Typography variant="caption">No Allergies added</Typography>
+      ) : (
+        allergies.map(({ allergy, id }) => (
+          <Chip
+            variant="outlined"
+            size="small"
+            color="error"
+            key={id}
+            sx={{
+              m: "2px",
+              backgroundColor: "#FECDCA",
+              color: "#B42318",
+              fontSize: "0.7rem",
+              borderRadius: "1ch",
+            }}
+            label={allergy}
+          />
+        ))
+      )}
     </WrapperBox>
   );
 };
