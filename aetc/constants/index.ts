@@ -213,15 +213,12 @@ export const concepts = {
   TRIAGE_RESULT: "896123ef-8e8f-4d80-b1cb-218b65707096",
   ELECTIVE: "2d7d1b0c-1867-4dbd-8b49-4335548a42bf",
 
-
-  INVESTIGATIONS:"76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
-
   //medical history
   DURATION_OF_SYMPTONS_DAYS: "b9a22488-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_WEEKS: "b9a8dfc6-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_MONTHS: "b9a8e0f2-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_YEARS: "b9a962ac-8d80-11d8-abbb-0024217bb78e",
-  ALLERGY:"b8ce61de-8d80-11d8-abbb-0024217bb78e"
+  ALLERGY:"b8ce61de-8d80-11d8-abbb-0024217bb78e",
   INVESTIGATIONS: "76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
   // Secondary survey
   PUPIL_SIZE: "pupil_size",

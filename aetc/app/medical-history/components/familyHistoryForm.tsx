@@ -39,51 +39,42 @@ import {
     });
   
     const schema = yup.object().shape({
-      asthma: yup.boolean(),
-      asthmaRelationship: yup.string().when("asthma", {
-        is: true,
-        then: yup.string().required("Please specify relationship for asthma"),
-      }),
-      hypertension: yup.boolean(),
-      hypertensionRelationship: yup.string().when("hypertension", {
-        is: true,
-        then: yup.string().required("Please specify relationship for hypertension"),
-      }),
-      diabetes_mellitus: yup.boolean(),
-      diabetesMellitusRelationship: yup.string().when("diabetes_mellitus", {
-        is: true,
-        then: yup.string().required("Please specify relationship for diabetes mellitus"),
-      }),
-      epilepsy: yup.boolean(),
-      epilepsyRelationship: yup.string().when("epilepsy", {
-        is: true,
-        then: yup.string().required("Please specify relationship for epilepsy"),
-      }),
-      cancer: yup.boolean(),
-      cancerType: yup.string().when("cancer", {
-        is: true,
-        then: yup.string().required("Please specify the type of cancer"),
-      }),
-      cancerRelationship: yup.string().when("cancer", {
-        is: true,
-        then: yup.string().required("Please specify relationship for cancer"),
-      }),
-      tuberculosis: yup.boolean(),
-      tuberculosisRelationship: yup.string().when("tuberculosis", {
-        is: true,
-        then: yup.string().required("Please specify relationship for tuberculosis"),
-      }),
-      other: yup.boolean(),
-      otherSpecify: yup.string().when("other", {
-        is: true,
-        then: yup.string().required("Please specify the other condition"),
-      }),
-      otherRelationship: yup.string().when("other", {
-        is: true,
-        then: yup.string().required("Please specify relationship for the other condition"),
-      }),
-    });
-  
+        asthma: yup.boolean(),
+        asthmaRelationship: yup.string().when("asthma", (asthma, schema) => 
+          asthma ? schema.required("Please specify relationship for asthma") : schema
+        ),
+        hypertension: yup.boolean(),
+        hypertensionRelationship: yup.string().when("hypertension", (hypertension, schema) => 
+          hypertension ? schema.required("Please specify relationship for hypertension") : schema
+        ),
+        diabetes_mellitus: yup.boolean(),
+        diabetesMellitusRelationship: yup.string().when("diabetes_mellitus", (diabetes_mellitus, schema) => 
+          diabetes_mellitus ? schema.required("Please specify relationship for diabetes mellitus") : schema
+        ),
+        epilepsy: yup.boolean(),
+        epilepsyRelationship: yup.string().when("epilepsy", (epilepsy, schema) => 
+          epilepsy ? schema.required("Please specify relationship for epilepsy") : schema
+        ),
+        cancer: yup.boolean(),
+        cancerType: yup.string().when("cancer", (cancer, schema) => 
+          cancer ? schema.required("Please specify the type of cancer") : schema
+        ),
+        cancerRelationship: yup.string().when("cancer", (cancer, schema) => 
+          cancer ? schema.required("Please specify relationship for cancer") : schema
+        ),
+        tuberculosis: yup.boolean(),
+        tuberculosisRelationship: yup.string().when("tuberculosis", (tuberculosis, schema) => 
+          tuberculosis ? schema.required("Please specify relationship for tuberculosis") : schema
+        ),
+        other: yup.boolean(),
+        otherSpecify: yup.string().when("other", (other, schema) => 
+          other ? schema.required("Please specify the other condition") : schema
+        ),
+        otherRelationship: yup.string().when("other", (other, schema) => 
+          other ? schema.required("Please specify relationship for the other condition") : schema
+        ),
+      });
+      
     const initialValues = {
       asthma: false,
       hypertension: false,
@@ -100,7 +91,7 @@ import {
         ...prev,
         [field]: isChecked,
       }));
-      setFormValues((prev) => ({
+      setFormValues((prev: any) => ({
         ...prev,
         [field]: isChecked,
       }));
@@ -120,61 +111,66 @@ import {
       >
         <FormValuesListener getValues={setFormValues} />
         <FormFieldContainer direction="row">
-          <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width:'100%' }}>
-            {Object.keys(familyHistoryFormConfig).map((key) => (
-              <div key={key}>
-                <LabelledCheckbox
-                  label={familyHistoryFormConfig[key].label}
-                  checked={formValues[key] || false}
-                  onChange={(e) => handleCheckboxChange(e, key)}
+        <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width:'100%' }}>
+  {Object.keys(familyHistoryFormConfig).map((key) => {
+    // Ensure TypeScript knows that `key` is one of the keys in `familyHistoryFormConfig`
+    const typedKey = key as keyof typeof familyHistoryFormConfig;
+
+    return (
+      <div key={typedKey}>
+        <LabelledCheckbox
+          label={familyHistoryFormConfig[typedKey].label}
+          checked={formValues[typedKey] || false}
+          onChange={(e) => handleCheckboxChange(e, typedKey)}
+        />
+        {showRelationshipFields[typedKey] && (
+          <>
+            {typedKey === "cancer" ? (
+              <>
+                <TextInputField
+                  id="cancerType"
+                  label="Type of Cancer"
+                  name="cancerType"
+                  placeholder="Specify type of cancer"
+                  sx={{mr:'2ch'}}
                 />
-                {showRelationshipFields[key] && (
-                  <>
-                    {key === "cancer" ? (
-                      <>
-                        <TextInputField
-                        id="cancerType"
-                          label="Type of Cancer"
-                          name="cancerType"
-                          placeholder="Specify type of cancer"
-                          sx={{mr:'2ch'}}
-                        />
-                        <TextInputField
-                        id="cancerRelationship"
-                          label="Relationship to family member"
-                          name="cancerRelationship"
-                          placeholder="e.g., Mother"
-                        />
-                      </>
-                    ) : key === "other" ? (
-                      <>
-                        <TextInputField
-                        id="otherSpecify"
-                          label="Specify Other Condition"
-                          name="otherSpecify"
-                          placeholder="Specify the condition"
-                          sx={{mr:'2ch'}}
-                        />
-                        <TextInputField
-                            id="otherRelationship"
-                          label="Relationship to family member"
-                          name="otherRelationship"
-                          placeholder="e.g., Mother"
-                        />
-                      </>
-                    ) : (
-                      <TextInputField
-                        id={`${key}Relationship`}
-                        label="Relationship to family member"
-                        name={`${key}Relationship`}
-                        placeholder="e.g., Mother"
-                      />
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
-          </WrapperBox>
+                <TextInputField
+                  id="cancerRelationship"
+                  label="Relationship to family member"
+                  name="cancerRelationship"
+                  placeholder="e.g., Mother"
+                />
+              </>
+            ) : typedKey === "other" ? (
+              <>
+                <TextInputField
+                  id="otherSpecify"
+                  label="Specify Other Condition"
+                  name="otherSpecify"
+                  placeholder="Specify the condition"
+                  sx={{mr:'2ch'}}
+                />
+                <TextInputField
+                  id="otherRelationship"
+                  label="Relationship to family member"
+                  name="otherRelationship"
+                  placeholder="e.g., Mother"
+                />
+              </>
+            ) : (
+              <TextInputField
+                id={`${typedKey}Relationship`}
+                label="Relationship to family member"
+                name={`${typedKey}Relationship`}
+                placeholder="e.g., Mother"
+              />
+            )}
+          </>
+        )}
+      </div>
+    );
+  })}
+</WrapperBox>
         </FormFieldContainer>
   
         <WrapperBox>
