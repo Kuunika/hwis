@@ -7,8 +7,8 @@ import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 
 function PatientProfile() {
-  const { params } = useParameters();
-  const { data, isLoading } = getPatientsEncounters(params?.id as string);
+  // const { params } = useParameters();
+  // const { data, isLoading } = getPatientsEncounters(params?.id as string);
   return (
     <>
       <DesktopView />

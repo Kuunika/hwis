@@ -1,10 +1,5 @@
 "use client";
-import {
-    MainGrid,
-    MainPaper,
-    FormikInit,
-    SearchComboBox,
-} from "@/components";
+import { MainGrid, MainPaper, FormikInit, SearchComboBox } from "@/components";
 import { PersonalDetailsCard } from "@/app/patient/components";
 import { VisitDates } from "@/app/patient/components/visitDates";
 import { BackButton } from "@/components/buttons";
@@ -20,21 +15,28 @@ interface Diagnosis {
 }
 
 function DiagnosisForm() {
-    const { data: bedsideTests, isLoading: bedsideTestsLoading, refetch: reloadBedSideTests, isRefetching: reloadingBedsideTest } = getConceptSetMembers('b9af45fa-8d80-11d8-abbb-0024217bb78e');
+    const {
+        data: bedsideTests,
+        isLoading: bedsideTestsLoading,
+        refetch: reloadBedSideTests,
+        isRefetching: reloadingBedsideTest,
+    } = getConceptSetMembers("b9af45fa-8d80-11d8-abbb-0024217bb78e");
     // Define the type of diagnosisList explicitly
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
 
     useEffect(() => {
-        reloadBedSideTests()
-    }, [])
+        reloadBedSideTests();
+    }, []);
+
 
 
 
     // Modify the condition options to use data from the API
-    const conditionOptions = bedsideTests?.map(test => ({
-        id: test.uuid,  // UUID as the identifier
-        label: test.names[0]?.name,  // Get the name attribute
-    })) || [];
+    const conditionOptions =
+        bedsideTests?.map((test) => ({
+            id: test.uuid, // UUID as the identifier
+            label: test.names[0]?.name, // Get the name attribute
+        })) || [];
 
 
 
@@ -114,6 +116,7 @@ function DiagnosisForm() {
                 </MainGrid>
             </MainGrid>
         </>
+
     );
 }
 

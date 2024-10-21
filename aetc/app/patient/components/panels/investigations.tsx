@@ -41,7 +41,7 @@ export const Investigations = () => {
   return (
     <Panel
       title="Investigations"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
+      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => {}} />}
     >
       <WrapperBox>
         <BasicPopover />
@@ -50,10 +50,6 @@ export const Investigations = () => {
     </Panel>
   );
 };
-
-
-
-
 
 export default function BasicPopover() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -66,7 +62,7 @@ export default function BasicPopover() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? "simple-popover" : undefined;
 
   return (
     <>
@@ -74,25 +70,24 @@ export default function BasicPopover() {
         Add Lab Order
       </Button>
       <Popover
-
         id={id}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+          vertical: "top",
+          horizontal: "left",
         }}
         transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: "bottom",
+          horizontal: "right",
         }}
       >
         <Box sx={{ padding: "2ch" }}>
           <Typography variant="h4">Lab Order</Typography>
           <br />
           <LabRequestModal
-            addRequest={() => { }}
+            addRequest={() => {}}
             onClose={() => setAnchorEl(null)}
           />
         </Box>
