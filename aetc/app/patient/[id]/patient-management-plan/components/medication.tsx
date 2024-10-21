@@ -11,6 +11,7 @@ import {
 import { useContext, useState } from "react";
 import * as Yup from "yup";
 import { KeyValueContext, KeyValueContextType } from "@/contexts/keyValueContext";
+import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -88,23 +89,42 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                     <div key={index}>
                         {/* Formulation */}
                         <FieldsContainer sx={{ mb: "1.5ch" }}>
-                            <SearchComboBox
-                                name={`medications[${index}].formulation`}
-                                sx={{ width: 300 }}
-                                options={formulationLists}
-                                label="Formulation"
-                                getValue={(value) => handleInputChange(index, "formulation", value?.id)}
-                               
-                            />
+                    
 
-                            <SearchComboBox
-                                name={`medications[${index}].frequency`}
-                                sx={{ width: 300 }}
-                                options={frequencyLists}
+                        <FormControl sx={{ width: 300 }}>
+                            <InputLabel id={`formulation-label-${index}`}>Formulation</InputLabel>
+                            <Select
+                                labelId={`formulation-label-${index}`}
+                                id={`formulation-${index}`}
+                                value={medications[index].formulation || ""}
+                                onChange={(e) => handleInputChange(index, "formulation", e.target.value)}
+                                label="Formulation"
+                            >
+                                {formulationLists.map((option) => (
+                                    <MenuItem key={option.id} value={option.id}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        
+
+                        <FormControl sx={{ width: 300 }}>
+                            <InputLabel id={`frequency-${index}`}>Frequency</InputLabel>
+                            <Select
+                                labelId={`frequency-label-${index}`}
+                                id={`frequency-${index}`}
+                                value={medications[index].frequency || ""}
+                                onChange={(e) => handleInputChange(index, "frequency", e.target.value)}
                                 label="Frequency"
-                                getValue={(value) => handleInputChange(index, "frequency", value?.id)}
-                                
-                            />
+                            >
+                                {frequencyLists.map((option) => (
+                                    <MenuItem key={option.id} value={option.id}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         </FieldsContainer>
 
                         {/* Route of Administration */}
