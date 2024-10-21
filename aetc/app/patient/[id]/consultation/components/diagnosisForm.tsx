@@ -1,12 +1,12 @@
 "use client";
-import { MainGrid, MainPaper, FormikInit, SearchComboBox } from "@/components";
-import { PersonalDetailsCard } from "@/app/patient/components";
-import { VisitDates } from "@/app/patient/components/visitDates";
-import { BackButton } from "@/components/buttons";
+import { FormikInit, SearchComboBox } from "@/components";
+
 import { useEffect, useState } from "react";
 import { DiagnosisTable } from "./DiagnosisTable";
 import * as Yup from "yup";
 import { getConceptSetMembers } from "@/hooks/labOrder";
+import { Typography } from "@mui/material";
+
 
 // Define the Diagnosis interface
 interface Diagnosis {
@@ -70,51 +70,31 @@ function DiagnosisForm() {
 
     return (
         <>
-            <MainGrid container spacing={1} mt={"2ch"} ml={"9ch"}>
-                <MainGrid item xs={12} lg={2}>
-                    {/* <PersonalDetailsCard /> */}
-                </MainGrid>
-                <MainGrid item xs={12} lg={8}>
-                    <MainPaper elevation={0} sx={{ p: "1ch" }}>
-                        <BackButton />
-                        <h2>Differential Diagnosis</h2>
-                        {/* <VisitDates /> */}
+            <Typography variant="h6">Differential Diagnosis</Typography>
 
-                        <FormikInit
-                            initialValues={initialValues}
-                            onSubmit={handleAddDiagnosis}
-                            validationSchema={validationSchema}
-                            submitButtonText="Add"
-                        >
-                            <MainGrid container spacing={2}>
-                                <MainGrid item xs={12} lg={6}>
-                                    <SearchComboBox
-                                        label="Condition"
-                                        name="condition"
-                                        options={conditionOptions}
-                                        sx={{ width: "80%" }}
-                                        multiple={false}
-                                    />
+            <FormikInit
+                initialValues={initialValues}
+                onSubmit={handleAddDiagnosis}
+                validationSchema={validationSchema}
+                submitButtonText="Add"
+            >
+                <SearchComboBox
+                    label="Condition"
+                    name="condition"
+                    options={conditionOptions}
+                    sx={{ width: "100%" }}
+                    multiple={false}
+                />
 
-                                </MainGrid>
+            </FormikInit>
 
-                                <MainGrid item xs={12} lg={2}>
-                                </MainGrid>
-                            </MainGrid>
+            {/* Diagnosis Table */}
+            <h3>List of Diagnosis</h3>
+            <DiagnosisTable
+                diagnoses={diagnosisList}
+                onDelete={handleDeleteDiagnosis}
+            />
 
-                            <MainGrid item xs={12} mt={2}>
-                            </MainGrid>
-                        </FormikInit>
-
-                        {/* Diagnosis Table */}
-                        <h3>List of Diagnosis</h3>
-                        <DiagnosisTable
-                            diagnoses={diagnosisList}
-                            onDelete={handleDeleteDiagnosis}
-                        />
-                    </MainPaper>
-                </MainGrid>
-            </MainGrid>
         </>
 
     );
