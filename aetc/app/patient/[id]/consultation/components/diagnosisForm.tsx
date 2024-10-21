@@ -28,15 +28,7 @@ function DiagnosisForm() {
         reloadBedSideTests()
     }, [])
 
-    // console.log({ bedsideTests })
 
-    // Sample condition options
-    // const conditionOptions = [
-    //     { id: 1, label: "HIV" },
-    //     { id: 2, label: "Tuberculosis" },
-    //     { id: 3, label: "Cholera" },
-    //     { id: 4, label: "Diabetes Mellitus" },
-    // ];
 
     // Modify the condition options to use data from the API
     const conditionOptions = bedsideTests?.map(test => ({
@@ -78,13 +70,13 @@ function DiagnosisForm() {
         <>
             <MainGrid container spacing={1} mt={"2ch"} ml={"9ch"}>
                 <MainGrid item xs={12} lg={2}>
-                    <PersonalDetailsCard />
+                    {/* <PersonalDetailsCard /> */}
                 </MainGrid>
                 <MainGrid item xs={12} lg={8}>
                     <MainPaper elevation={0} sx={{ p: "1ch" }}>
                         <BackButton />
                         <h2>Differential Diagnosis</h2>
-                        <VisitDates />
+                        {/* <VisitDates /> */}
 
                         <FormikInit
                             initialValues={initialValues}
@@ -105,12 +97,10 @@ function DiagnosisForm() {
                                 </MainGrid>
 
                                 <MainGrid item xs={12} lg={2}>
-                                    {/* Additional styling or button can go here */}
                                 </MainGrid>
                             </MainGrid>
 
                             <MainGrid item xs={12} mt={2}>
-                                {/* The button is added within Formik so the form can be reset */}
                             </MainGrid>
                         </FormikInit>
 
