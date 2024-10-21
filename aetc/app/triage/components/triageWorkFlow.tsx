@@ -470,11 +470,6 @@ export default function TriageWorkFlow() {
             onSubmit={handlePresentComplaints}
           />
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> bc43b5612ae4e903e696462e855270b697910c8d
           <VitalsForm
             previous={() => setActiveStep(0)}
             triageResult={triageResult}
