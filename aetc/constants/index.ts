@@ -221,8 +221,7 @@ export const concepts = {
   DURATION_OF_SYMPTONS_WEEKS: "b9a8dfc6-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_MONTHS: "b9a8e0f2-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_YEARS: "b9a962ac-8d80-11d8-abbb-0024217bb78e",
-  ALLERGY:"b8ce61de-8d80-11d8-abbb-0024217bb78e"
-  INVESTIGATIONS: "76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
+  ALLERGY:"b8ce61de-8d80-11d8-abbb-0024217bb78e",
   // Secondary survey
   PUPIL_SIZE: "pupil_size",
   PALLOR: "pallor",
