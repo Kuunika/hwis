@@ -10,7 +10,7 @@ import {
   TextInputField,
 } from "@/components";
 import { concepts, NO, YES } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
 
 const form = {
@@ -100,11 +100,11 @@ const schema = Yup.object().shape({
   [form.rash.name]: Yup.string().required().label(form.rash.label),
 });
 const burnsOptions = [
-    { value: concepts.SUPERFICIAL, label: "Superficial" },
-    { value: concepts.PARTIAL, label: "Partial" },
-    { value: concepts.THICKNESS, label: "Thickness" },
-    { value: concepts.FULL_THICKNESS, label: "Full Thickness" },
-  ];
+  { value: concepts.SUPERFICIAL, label: "Superficial" },
+  { value: concepts.PARTIAL, label: "Partial" },
+  { value: concepts.THICKNESS, label: "Thickness" },
+  { value: concepts.FULL_THICKNESS, label: "Full Thickness" },
+];
 
 const radioOptions = [
   { value: YES, label: "YES" },
@@ -112,7 +112,7 @@ const radioOptions = [
 ];
 
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, formConceptsLabels: any) => void;
   onCancel: () => void;
 };
 
@@ -124,86 +124,97 @@ export const ExtremitiesLegForm = (props: Props) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={props.onSubmit}
+      onSubmit={(values: any) =>
+        props.onSubmit(values, getFormLabels(form, [], radioOptions))
+      }
       submitButton={false}
       submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
+      <RadioGroupInput
+        row
+        options={radioOptions}
+        name={form.deformity.name}
+        label={form.deformity.label}
+      />
+      {formValues[form.deformity.name] == YES && (
+        <TextInputField
+          id={form.deformityDescription.name}
+          label={form.deformityDescription.label}
+          name={form.deformityDescription.name}
+        />
+      )}
+      <RadioGroupInput
+        row
+        options={radioOptions}
+        name={form.fracture.name}
+        label={form.fracture.label}
+      />
+
+      {formValues[form.fracture.name] == YES && (
+        <TextInputField
+          id={form.fractureDescription.name}
+          label={form.fractureDescription.label}
+          name={form.deformityDescription.name}
+        />
+      )}
+
+      <RadioGroupInput
+        row
+        options={radioOptions}
+        name={form.crepitus.name}
+        label={form.crepitus.label}
+      />
+      <RadioGroupInput
+        row
+        options={radioOptions}
+        name={form.tenderness.name}
+        label={form.tenderness.label}
+      />
+
+      <RadioGroupInput
+        row
+        options={radioOptions}
+        name={form.rash.name}
+        label={form.rash.label}
+      />
+      <RadioGroupInput
+        row
+        options={radioOptions}
+        name={form.scars.name}
+        label={form.scars.label}
+      />
+
+      <RadioGroupInput
+        row
+        options={radioOptions}
+        name={form.burns.name}
+        label={form.burns.label}
+      />
+      {formValues[form.burns.name] == YES && (
         <RadioGroupInput
           row
-          options={radioOptions}
-          name={form.deformity.name}
-          label={form.deformity.label}
+          options={burnsOptions}
+          label={form.burnsDescription.label}
+          name={form.burnsDescription.name}
         />
-        {formValues[form.deformity.name] == YES && (
-          <TextInputField
-            id={form.deformityDescription.name}
-            label={form.deformityDescription.label}
-            name={form.deformityDescription.name}
-          />
-        )}
-        <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.fracture.name}
-          label={form.fracture.label}
-        />
-    
-        {formValues[form.fracture.name] == YES && (
-          <TextInputField
-            id={form.fractureDescription.name}
-            label={form.fractureDescription.label}
-            name={form.deformityDescription.name}
-          />
-        )}
-    
-        <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.crepitus.name}
-          label={form.crepitus.label}
-        />
-        <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.tenderness.name}
-          label={form.tenderness.label}
-        />
-      
+      )}
       <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.rash.name}
-          label={form.rash.label}
+        row
+        options={radioOptions}
+        name={form.mass.name}
+        label={form.mass.label}
+      />
+
+      {formValues[form.mass.name] == YES && (
+        <TextInputField
+          sx={{ width: "100%" }}
+          id={form.massDescription.name}
+          name={form.massDescription.name}
+          label={form.massDescription.label}
         />
-      <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.scars.name}
-          label={form.scars.label}
-        />
-    
-      <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.burns.name}
-          label={form.burns.label}
-        />
-          {formValues[form.burns.name]==YES && <RadioGroupInput row options={burnsOptions} label={form.burnsDescription.label} name={form.burnsDescription.name} />}
-      <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.mass.name}
-          label={form.mass.label}
-        />
-    
-        {formValues[form.mass.name]==YES &&   <TextInputField
-                sx={{ width: "100%" }}
-                id={form.massDescription.name}
-                name={form.massDescription.name}
-                label={form.massDescription.label}
-              />}
-     
+      )}
+
       <RadioGroupInput
         row
         options={radioOptions}
@@ -212,24 +223,24 @@ export const ExtremitiesLegForm = (props: Props) => {
       />
       {formValues[form.laceration.name] == YES && (
         <>
-              <TextInputField
-                sx={{ width: "100%" }}
-                id={form.lacerationLength.name}
-                name={form.lacerationLength.name}
-                label={form.lacerationLength.label}
-              />
-              <TextInputField
-                sx={{ width: "100%" }}
-                id={form.lacerationDepth.name}
-                name={form.lacerationDepth.name}
-                label={form.lacerationDepth.label}
-              />
-            <TextInputField
-              sx={{ width: "100%" }}
-              id={form.lacerationOther.name}
-              name={form.lacerationOther.name}
-              label={form.lacerationOther.label}
-            />
+          <TextInputField
+            sx={{ width: "100%" }}
+            id={form.lacerationLength.name}
+            name={form.lacerationLength.name}
+            label={form.lacerationLength.label}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            id={form.lacerationDepth.name}
+            name={form.lacerationDepth.name}
+            label={form.lacerationDepth.label}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            id={form.lacerationOther.name}
+            name={form.lacerationOther.name}
+            label={form.lacerationOther.label}
+          />
         </>
       )}
       <Box sx={{ display: "flex", gap: "0.2ch" }}>

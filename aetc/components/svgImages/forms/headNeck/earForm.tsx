@@ -1,5 +1,5 @@
 import { NO, YES, concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -39,11 +39,10 @@ const form = {
     name: concepts.OTOSCOPY_FINDINGS,
     label: "Otoscopty Findings",
   },
- 
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, formConceptsLabels: any) => void;
 };
 
 const schema = Yup.object().shape({
@@ -53,17 +52,12 @@ const schema = Yup.object().shape({
   [form.otoscopyDone.name]: Yup.string()
     .required()
     .label(form.otoscopyDone.label),
- 
-  [form.otocopyFindings.name]: Yup.string()
-    .label(form.otocopyFindings.label),
 
-  [form.lacerationDepth.name]: Yup.string()
-    .label(form.lacerationDepth.label),
-  [form.lacerationOther.name]: Yup.string()
-    .label(form.lacerationOther.label),
-  [form.lacerationLength.name]: Yup.string()
-    .label(form.lacerationLength.label),
- 
+  [form.otocopyFindings.name]: Yup.string().label(form.otocopyFindings.label),
+
+  [form.lacerationDepth.name]: Yup.string().label(form.lacerationDepth.label),
+  [form.lacerationOther.name]: Yup.string().label(form.lacerationOther.label),
+  [form.lacerationLength.name]: Yup.string().label(form.lacerationLength.label),
 });
 
 const initialsValues = getInitialValues(form);
@@ -82,21 +76,19 @@ const abnormalities = [
 
 export const EarForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const [showLaceration, setShowLaceration] =
-    useState<boolean>(false);
+  const [showLaceration, setShowLaceration] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(
-      Boolean(values.find((v) => v.id == concepts.LACERATION))
-    );
-
+    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
   };
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
-    >  
+      onSubmit={(values: any) =>
+        onSubmit(values, getFormLabels(form, abnormalities, radioOptions))
+      }
+    >
       <Box>
         <FormValuesListener getValues={setFormValues} />
         <SearchComboBox
@@ -109,19 +101,19 @@ export const EarForm = ({ onSubmit }: Prop) => {
         {showLaceration && (
           <>
             <TextInputField
-              sx={{ my: "1ch",width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.lacerationLength.name}
               name={form.lacerationLength.name}
               label={form.lacerationLength.label}
             />
             <TextInputField
-              sx={{ my: "1ch",width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.lacerationDepth.name}
               name={form.lacerationDepth.name}
               label={form.lacerationDepth.label}
             />
             <TextInputField
-              sx={{ my: "1ch",width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.lacerationOther.name}
               name={form.lacerationOther.name}
               label={form.lacerationOther.label}
@@ -129,11 +121,15 @@ export const EarForm = ({ onSubmit }: Prop) => {
           </>
         )}
 
-<RadioGroupInput name={form.otoscopyDone.name} options={radioOptions} label={form.otoscopyDone.label} />
-        {formValues[form.otoscopyDone.name]==concepts.YES && (
+        <RadioGroupInput
+          name={form.otoscopyDone.name}
+          options={radioOptions}
+          label={form.otoscopyDone.label}
+        />
+        {formValues[form.otoscopyDone.name] == concepts.YES && (
           <>
             <TextInputField
-              sx={{ my: "1ch", width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.otocopyFindings.name}
               name={form.otocopyFindings.name}
               label={form.otocopyFindings.label}

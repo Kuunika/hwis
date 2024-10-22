@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { NO, YES, concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useState } from "react";
@@ -192,8 +192,8 @@ const schema = Yup.object().shape({
   [form.sphincterTone.name]: Yup.string()
     .required()
     .label(form.sphincterTone.label),
-  [form.periymen.name]: Yup.array().required().label(form.periymen.label),
-  [form.scrotum.name]: Yup.string().label(form.scrotum.label),
+  [form.periymen.name]: Yup.array().label(form.periymen.label),
+  [form.scrotum.name]: Yup.array().label(form.scrotum.label),
   [form.vagina.name]: Yup.array().label(form.vagina.label),
   [form.urethralMeatus.name]: Yup.array().label(form.urethralMeatus.label),
   [form.unusualAppearance.name]: Yup.string().label(
@@ -470,18 +470,22 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           name={form.generalInspection.name}
           label={form.generalInspection.label}
         />
-        {gender == 'Male' && <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.circumcisionStatus.name}
-          label={form.circumcisionStatus.label}
-        />}
-        {gender == 'Female' && <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.unusualAppearance.name}
-          label={form.unusualAppearance.label}
-        />}
+        {gender == "Male" && (
+          <RadioGroupInput
+            row
+            options={radioOptions}
+            name={form.circumcisionStatus.name}
+            label={form.circumcisionStatus.label}
+          />
+        )}
+        {gender == "Female" && (
+          <RadioGroupInput
+            row
+            options={radioOptions}
+            name={form.unusualAppearance.name}
+            label={form.unusualAppearance.label}
+          />
+        )}
         <SearchComboBox
           sx={{ mt: "1ch" }}
           options={urethralOptions}

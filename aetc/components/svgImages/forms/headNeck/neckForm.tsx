@@ -1,5 +1,5 @@
 import { NO, YES, concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
   DashedContainer,
@@ -88,15 +88,14 @@ const form = {
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, formConceptsLabels: any) => void;
 };
 
 const schema = Yup.object().shape({
   [form.abnormalities.name]: Yup.array()
     .required()
     .label(form.abnormalities.label),
-  [form.trachea.name]: Yup.array()
-  .label(form.trachea.label),
+  [form.trachea.name]: Yup.array().label(form.trachea.label),
   [form.lacerationDepth.name]: Yup.string().label(form.lacerationDepth.label),
   [form.lacerationOther.name]: Yup.string().label(form.lacerationOther.label),
   [form.lacerationLength.name]: Yup.string().label(form.lacerationLength.label),
@@ -137,6 +136,10 @@ const tracheaOptions = [
   { label: "Central", value: "Central" },
   { label: "Deviated", value: "Deviated" },
 ];
+const deviatedSide = [
+  { label: "Left", value: "Left" },
+  { label: "Right", value: "Right" },
+];
 
 export const NeckForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
@@ -163,7 +166,15 @@ export const NeckForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={(values: any) =>
+        onSubmit(
+          values,
+          getFormLabels(form, abnormalities, [
+            ...tracheaOptions,
+            ...deviatedSide,
+          ])
+        )
+      }
     >
       <Box>
         <FormValuesListener getValues={setFormValues} />
@@ -178,10 +189,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
               <>
                 <RadioGroupInput
                   name={form.tracheaDeviated.name}
-                  options={[
-                    { label: "Left", value: "Left" },
-                    { label: "Right", value: "Right" },
-                  ]}
+                  options={deviatedSide}
                   label={form.tracheaDeviated.label}
                 />
               </>
@@ -268,23 +276,23 @@ export const NeckForm = ({ onSubmit }: Prop) => {
 
         {showLaceration && (
           <DashedContainer>
-           <Typography variant="subtitle2">Laceration</Typography>
+            <Typography variant="subtitle2">Laceration</Typography>
             <FieldsContainer>
               <TextInputField
-                sx={{  width: "100%" }}
+                sx={{ width: "100%" }}
                 id={form.lacerationLength.name}
                 name={form.lacerationLength.name}
                 label={form.lacerationLength.label}
               />
               <TextInputField
-                sx={{  width: "100%" }}
+                sx={{ width: "100%" }}
                 id={form.lacerationDepth.name}
                 name={form.lacerationDepth.name}
                 label={form.lacerationDepth.label}
               />
             </FieldsContainer>
             <TextInputField
-              sx={{  width: "100%" }}
+              sx={{ width: "100%" }}
               id={form.lacerationOther.name}
               name={form.lacerationOther.name}
               label={form.lacerationOther.label}
@@ -294,7 +302,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
 
         <DashedContainer>
           <TextInputField
-            sx={{  width: "100%" }}
+            sx={{ width: "100%" }}
             id={form.haemotoma.name}
             name={form.haemotoma.name}
             label={form.haemotoma.label}

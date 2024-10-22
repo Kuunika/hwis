@@ -1,5 +1,5 @@
 import { NO, YES, concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -27,11 +27,10 @@ const form = {
     name: concepts.DESCRIPTION,
     label: "Description of Tongue Laceration",
   },
- 
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, formConceptsLabels: any) => void;
 };
 
 const schema = Yup.object().shape({
@@ -42,15 +41,9 @@ const schema = Yup.object().shape({
     form.otherAbnormalities.label
   ),
   [form.description.name]: Yup.string().label(form.otherAbnormalities.label),
- 
 });
 
 const initialsValues = getInitialValues(form);
-
-const radioOptions = [
-  { label: "Yes", value: YES },
-  { label: "No", value: NO },
-];
 
 const abnormalities = [
   { id: concepts.ORAL_THRUSH, label: "Oral Thrush" },
@@ -79,8 +72,10 @@ export const MouthForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
-    >  
+      onSubmit={(values: any) =>
+        onSubmit(values, getFormLabels(form, abnormalities, []))
+      }
+    >
       <Box>
         <FormValuesListener getValues={setFormValues} />
         <SearchComboBox
@@ -93,7 +88,7 @@ export const MouthForm = ({ onSubmit }: Prop) => {
         {showOtherAbnormalities && (
           <>
             <TextInputField
-              sx={{ my: "1ch",width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.abnormalities.name}
               name={form.otherAbnormalities.name}
               label={form.otherAbnormalities.label}
@@ -104,7 +99,7 @@ export const MouthForm = ({ onSubmit }: Prop) => {
         {tongueLaceration && (
           <>
             <TextInputField
-              sx={{ my: "1ch", width:"100%" }}
+              sx={{ my: "1ch", width: "100%" }}
               id={form.description.name}
               name={form.description.name}
               label={form.description.label}
