@@ -25,43 +25,43 @@ type Prop = {
 
   const medicationFormConfig = {
     medication_name: (index: number) => ({
-        name: 'Medication',
+        name: `medications[${index}].MedicationName`,
         label: "Name",
       }),
       medication_formulation:(index: number) => ( {
-        name: 'medication_formulation',
+        name: `medications[${index}].medication_formulation`,
         label: "Formulation",
       }),
       medication_dose: (index: number) => ({
-        name: 'Medication_dose',
+        name: `medications[${index}].Medication_dose`,
         label: "Dose",
       }),
       medication_dose_unit: (index: number) => ({
-        name: 'medication_dose_unit',
+        name: `medications[${index}].medication_dose_unit`,
         label: "Unit",
       }),
       medication_frequency: (index: number) => ({
-        name: 'medication_frequency',
+        name: `medications[${index}].medication_frequency`,
         label: "Frequency",
       }),
       medication_route: (index: number) => ({
-        name: 'medication_route',
+        name: `medications[${index}].medication_route`,
         label: 'Route'
       }),
       medication_duration: (index: number) => ({
-        name: 'medication_duration',
+        name: `medications[${index}].medication_duration`,
         label: 'Duration'
       }),
       medication_duration_unit:(index: number) => ({
-        name: 'medication_duration_unit',
+        name: `medications[${index}].medication_duration_unit`,
         label: 'Unit'
       }),
       medication_date_last_taken:(index: number) => ({
-        name: 'medication_date_last_taken',
+        name: `medications[${index}].medication_date_last_taken`,
         label: 'Last Taken'
       }),
       medication_date_of_last_prescription:(index: number) => ({
-        name: 'medication_date_of_last_prescription',
+        name: `medications[${index}].medication_date_of_last_prescription`,
         label: 'Last Prescribed'
       })}
 
@@ -190,6 +190,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   
     const handleSubmit = () => {
         console.log(formValues);
+        console.log(medications);
+        return;
         //onSubmit(formValues);
       };
 
