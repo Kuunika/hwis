@@ -67,9 +67,12 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     },
   ]);
 
-  const hospitalOptions = ["Hospital A", "Hospital B", "Hospital C"];
-  const wardOptions = ["Ward 1", "Ward 2", "Ward 3"];
-  const diagnosisOptions = ["Diagnosis A", "Diagnosis B", "Diagnosis C"];
+  const hospitalOptions = [
+    { id: "QECH", label: "Queen Elizabeth" }];
+  const wardOptions = [
+    { id: "Chatinkha", label: "Chatinkha" }];
+  const diagnosisOptions = [
+    { id: "TB", label: "Tuberculosis" }];
 
   const schema = yup.object().shape({
     // Validation schema
