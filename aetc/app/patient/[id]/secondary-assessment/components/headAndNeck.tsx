@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {

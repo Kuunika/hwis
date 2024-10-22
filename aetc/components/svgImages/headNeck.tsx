@@ -2,7 +2,7 @@ import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { Box, Button, Typography } from "@mui/material";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { HeadNeck } from "@/assets/headNeck";
 import {
   EarForm,
@@ -13,7 +13,8 @@ import {
   OtherPartsOfTheHeadForm,
   OtherTemporalCrownForm,
 } from "./forms/headNeck";
-import { OtherAbnormalityForm } from "./forms";
+import { DataBox, OtherAbnormalityForm } from "./forms";
+import { FormValueLabel } from "@/interfaces";
 
 export function HeadNeckImage() {
   const {
@@ -30,37 +31,51 @@ export function HeadNeckImage() {
     setIds,
   } = useImage();
   const idSelected = selectedSection.id;
-
-  const data = [
-    {
-      id: "",
-      label: "",
-      values: [{ value: [{ value: "", label: "" }], label: "" }],
-    },
-  ];
+  const [submittedValues, setSubmittedValues] = useState<Array<FormValueLabel>>(
+    []
+  );
 
   const handleDataSubmission = (
     section: string,
     data: any,
-    formConceptsLabels: any
+    formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
-    const nameLabels = Object.keys(formConceptsLabels).map(
-      (key) => formConceptsLabels[key]
-    );
     const formData = Object.keys(data).map((key) => {
-      const label = nameLabels.find(({ name }) => name == key)?.label;
-      return { label, value: data[key] };
+      const label = formConceptsLabels.find(
+        ({ concept }: any) => concept == key
+      )?.label;
+
+      const labelValue = formConceptsLabels.find(
+        (label) => label.concept == data[key]
+      )?.label;
+
+      return { label, value: labelValue ?? data[key] };
     });
 
-    console.log({ formData });
+    setSubmittedValues((values) => {
+      const index = values.findIndex((v) => v.section == section);
+
+      if (index < 0) {
+        return [...values, { section, formValues: formData }];
+      }
+
+      values[index] = { section, formValues: formData };
+
+      return [...values];
+    });
   };
+
+  useEffect(() => {
+    console.log({ submittedValues });
+  }, [submittedValues]);
 
   return (
     <>
       <HeadNeck ref={containerRef} />
       <Box display="flex">
-        <DataBox />
-        <DataBox />
+        {submittedValues.map((value) => (
+          <DataBox key={value.section} labelValue={value} />
+        ))}
       </Box>
       <SVGPopover
         width="50ch"
@@ -100,19 +115,3 @@ export function HeadNeckImage() {
     </>
   );
 }
-
-const DataBox = () => {
-  return (
-    <Box border="solid black 1px" p="2ch" m="1px">
-      <Typography variant="h6">Right Eye</Typography>
-      <Box>
-        <Box display="flex" alignItems="center">
-          <Typography variant="body2">Abnormalities</Typography>:
-          <Typography ml={1} variant="body2">
-            Abnormalities
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
