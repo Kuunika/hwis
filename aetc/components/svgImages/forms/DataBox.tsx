@@ -1,7 +1,13 @@
 import { FormValueLabel } from "@/interfaces";
 import { Box, Typography } from "@mui/material";
 
-export const DataBox = ({ labelValue }: { labelValue: FormValueLabel }) => {
+export const DataBox = ({
+  labelValue,
+  maxWidth = "250px",
+}: {
+  labelValue: FormValueLabel;
+  maxWidth?: string;
+}) => {
   const renderValues = (values: any) => {
     if (Array.isArray(values)) {
       return values.reduce((acc, current, currentIndex) => {
@@ -15,7 +21,7 @@ export const DataBox = ({ labelValue }: { labelValue: FormValueLabel }) => {
   return (
     <Box
       width="100%"
-      maxWidth="250px"
+      maxWidth={maxWidth}
       border="1px solid #E0E0E0"
       p="6px"
       m="2px"
@@ -46,7 +52,7 @@ export const DataBox = ({ labelValue }: { labelValue: FormValueLabel }) => {
               flex="2"
               ml={2}
               color="textPrimary"
-              //   wordBreak="break-word"
+              // wordBreak="break-word"
               whiteSpace="normal"
             >
               {renderValues(value)}
