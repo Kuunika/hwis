@@ -238,7 +238,7 @@ export const concepts = {
   BLEEDING_FROM_EAR: "bleeding_from_ear",
   OTORRHOEA: "otorrhoea",
   LACERATION: "laceration",
-  LACERATION_LENGTH: "laceration_depth",
+  LACERATION_LENGTH: "laceration_length",
   LACERATION_DEPTH: "laceration_depth",
   LACERATION_OTHER: "laceration_other",
   OTOSCOPY: "otoscopy",

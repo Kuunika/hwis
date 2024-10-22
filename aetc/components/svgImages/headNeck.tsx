@@ -18,9 +18,17 @@ import { FormValueLabel } from "@/interfaces";
 import { useImageFormTransform } from "@/hooks";
 
 export function HeadNeckImage() {
-  const { handleClose, containerRef, section, anchorEl, selectedSection } =
-    useImage();
+  const {
+    handleClose,
+    containerRef,
+    section,
+    anchorEl,
+    selectedSection,
+    setAnchorEl,
+  } = useImage();
   const idSelected = selectedSection.id;
+  const labelSelected = selectedSection.label;
+
   const { setData, submittedValues } = useImageFormTransform();
 
   const handleDataSubmission = (
@@ -29,12 +37,13 @@ export function HeadNeckImage() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
+    setAnchorEl(null);
   };
 
   return (
     <>
       <HeadNeck ref={containerRef} />
-      <Box display="flex">
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />
         ))}
@@ -53,25 +62,72 @@ export function HeadNeckImage() {
             }
           />
         )}
-        {idSelected == "left_eye" && <EyeForm onSubmit={() => {}} />}
-        {idSelected == "mouth" && (
-          <MouthForm onSubmit={(value) => console.log({ value })} />
+        {idSelected == "left_eye" && (
+          <EyeForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission("Left Eye", values, formConceptsLabels)
+            }
+          />
         )}
-        {idSelected == "nose" && <NoseForm onSubmit={() => {}} />}
-        {idSelected == "neck" && <NeckForm onSubmit={() => {}} />}
+        {idSelected == "mouth" && (
+          <MouthForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission("Mouth", values, formConceptsLabels)
+            }
+          />
+        )}
+        {idSelected == "nose" && (
+          <NoseForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission("Nose", values, formConceptsLabels)
+            }
+          />
+        )}
+        {idSelected == "neck" && (
+          <NeckForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission("Nose", values, formConceptsLabels)
+            }
+          />
+        )}
+
         {(idSelected == "left_temporal" ||
           idSelected == "right_temporal" ||
           idSelected == "crown") && (
-          <OtherTemporalCrownForm onSubmit={() => {}} />
+          <OtherTemporalCrownForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                labelSelected as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
         )}
         {(idSelected == "chin" ||
           idSelected == "left_cheek" ||
           idSelected == "right_cheek" ||
           idSelected == "forehead") && (
-          <OtherPartsOfTheHeadForm onSubmit={() => {}} />
+          <OtherPartsOfTheHeadForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                labelSelected as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
         )}
         {(idSelected == "right_ear" || idSelected == "left_ear") && (
-          <EarForm onSubmit={() => {}} />
+          <EarForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                labelSelected as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
         )}
       </SVGPopover>
     </>
