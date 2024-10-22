@@ -15,59 +15,21 @@ import {
 } from "./forms/headNeck";
 import { DataBox, OtherAbnormalityForm } from "./forms";
 import { FormValueLabel } from "@/interfaces";
+import { useImageFormTransform } from "@/hooks";
 
 export function HeadNeckImage() {
-  const {
-    handleClose,
-    handleFormSubmit,
-    containerRef,
-    section,
-    anchorEl,
-    setAnchorEl,
-    highlightSection,
-    selectedSection,
-    setSelectedSection,
-    highlightAllSelectedSections,
-    setIds,
-  } = useImage();
+  const { handleClose, containerRef, section, anchorEl, selectedSection } =
+    useImage();
   const idSelected = selectedSection.id;
-  const [submittedValues, setSubmittedValues] = useState<Array<FormValueLabel>>(
-    []
-  );
+  const { setData, submittedValues } = useImageFormTransform();
 
   const handleDataSubmission = (
     section: string,
-    data: any,
+    formData: any,
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
-    const formData = Object.keys(data).map((key) => {
-      const label = formConceptsLabels.find(
-        ({ concept }: any) => concept == key
-      )?.label;
-
-      const labelValue = formConceptsLabels.find(
-        (label) => label.concept == data[key]
-      )?.label;
-
-      return { label, value: labelValue ?? data[key] };
-    });
-
-    setSubmittedValues((values) => {
-      const index = values.findIndex((v) => v.section == section);
-
-      if (index < 0) {
-        return [...values, { section, formValues: formData }];
-      }
-
-      values[index] = { section, formValues: formData };
-
-      return [...values];
-    });
+    setData({ section, formData, formConceptsLabels });
   };
-
-  useEffect(() => {
-    console.log({ submittedValues });
-  }, [submittedValues]);
 
   return (
     <>
