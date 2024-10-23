@@ -18,6 +18,7 @@ import {
   AbdomenImage,
   AbdomenImageWithOtherForm,
 } from "@/components/svgImages";
+import { Box, Typography } from "@mui/material";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -45,11 +46,11 @@ const form = {
   },
   intravenousAccess: {
     name: concepts.PATIENT_INTRAVENOUS,
-    label: "Intravenous",
+    label: "Does the patient need intravenous access",
   },
   traumatizedInfo: {
     name: concepts.IS_PATIENT_TRAUMATIZED,
-    label: "Trauma",
+    label: "Is the patient injured",
   },
 
   abnormalitiesInfo: {
@@ -136,11 +137,14 @@ const schema = yup.object({
     .string()
     .label(form.bleedingActionDone.label),
   [form.bloodPressureSystolic.name]: yup
-    .string()
-
+    .number()
+    .min(90)
+    .max(180)
     .label(form.bloodPressureSystolic.label),
   [form.bloodPressureDiastolic.name]: yup
-    .string()
+    .number()
+    .min(60)
+    .max(120)
     .label(form.bloodPressureDiastolic.label),
   [form.intravenousAccess.name]: yup
     .string()
@@ -342,19 +346,36 @@ export const Circulation = ({ onSubmit }: Prop) => {
         {formValues[form.bloodPressureMeasured.name] == "Done" && (
           <>
             <br />
-            <FieldsContainer>
+            <FieldsContainer mr="1ch">
               <TextInputField
-                sx={{ m: 0 }}
+                sx={{ width: "100%" }}
+                unitOfMeasure="mmHg"
                 name={form.bloodPressureSystolic.name}
                 label={form.bloodPressureSystolic.label}
                 id={form.bloodPressureSystolic.name}
               />
               <TextInputField
+                sx={{ width: "100%" }}
+                unitOfMeasure="mmHg"
                 name={form.bloodPressureDiastolic.name}
                 label={form.bloodPressureDiastolic.label}
                 id={form.bloodPressureDiastolic.name}
               />
             </FieldsContainer>
+            {formValues[form.bloodPressureSystolic.name] &&
+              formValues[form.bloodPressureDiastolic.name] && (
+                <>
+                  <Box>
+                    <Typography variant="subtitle1">
+                      Mean Arterial Pressure:{" "}
+                      {(formValues[form.bloodPressureDiastolic.name] * 2 +
+                        formValues[form.bloodPressureSystolic.name]) /
+                        3}{" "}
+                      mmHg
+                    </Typography>
+                  </Box>
+                </>
+              )}
             <br />
           </>
         )}
