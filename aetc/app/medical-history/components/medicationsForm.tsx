@@ -138,7 +138,14 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
               medication_date_of_last_prescription: "" 
             },
           ]);
-          const [otherFrequency, setOtherFrequency] = useState(false);
+        const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
+
+        const handleUpdateFrequency = (index: number, value: boolean) => {
+            setOtherFrequency(prevState => ({
+              ...prevState,   
+              [index]: value      
+            }));
+          };
 
 
           const schema = yup.object().shape({
@@ -241,7 +248,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       label=""
       options={medicationNames}
       getValue={(value) => console.log("Selected value:", value)}
-      sx={{ width: '100%' }}
+      sx={{ width: '200px' }}
       multiple={false}
     />
   </TableCell>
@@ -253,7 +260,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       label=""
       options={formulationOptions}
       getValue={(value) => console.log("Selected value:", value)}
-      sx={{ width: '100%' }}
+      sx={{ width: '200px'}}
       multiple={false}
     />
   </TableCell>
@@ -265,7 +272,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       name={medicationFormConfig.medication_dose(index).name}
       label=""
       placeholder="e.g., 500 and select a unit"
-      sx={{ width: '100%' }}
+      sx={{ width: '230px'}}
     />
   </TableCell>
 
@@ -276,22 +283,22 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       label=""
       options={medicationUnits}
       getValue={(value) => console.log("Selected value:", value)}
-      sx={{ width: '100%' }}
+      sx={{ width: '180px'}}
       multiple={false}
     />
   </TableCell>
 
   {/* Frequency */}
   <TableCell>
-    {!otherFrequency ? (
+    {!otherFrequency[index] ? (
       <SearchComboBox
         name={medicationFormConfig.medication_frequency(index).name}
         label=""
         options={frequencyOptions}
         getValue={(value) => {
-          if (value === 'Other') setOtherFrequency(true);
+          if (value === 'Other') handleUpdateFrequency(index,true);
         }}
-        sx={{ width: '100%' }}
+        sx={{ width: '180px'}}
         multiple={false}
       />
     ) : (
