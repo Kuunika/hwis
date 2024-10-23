@@ -381,6 +381,7 @@ export const concepts = {
   SCALE: "SCALE",
   SKIN_RASH: "SKIN_RASH",
   INJURY: "INJURY",
+  WOUND: "WOUND",
 
 };
 

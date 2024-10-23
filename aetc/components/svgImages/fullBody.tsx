@@ -30,7 +30,7 @@ export function FullBodyImage() {
   };
 
   return (
-    <>
+    <div>
       <FullBody ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
@@ -54,6 +54,6 @@ export function FullBodyImage() {
           }
         />
       </SVGPopover>
-    </>
+    </div>
   );
 }
