@@ -122,7 +122,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     >
       <FormValuesListener getValues={setFormValues} />
 
-      <Button onClick={() => setAnatomyOpen(true)}>Image</Button>
+      {/* <Button onClick={() => setAnatomyOpen(true)}>Image</Button>
       <GenericDialog
         maxWidth="lg"
         open={anatomyOpen}
@@ -132,8 +132,8 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         <FullBodyImage />
         <FullBodyBackImage />
 
-        {/* <CanvasImage imageUrl="/anatomy.webp" /> */}
-      </GenericDialog>
+        <CanvasImage imageUrl="/anatomy.webp" />
+      </GenericDialog> */}
 
       <FormFieldContainerLayout title="Airway Patent">
         <FieldsContainer sx={{ alignItems: "flex-start" }}>

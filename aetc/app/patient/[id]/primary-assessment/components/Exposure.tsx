@@ -11,6 +11,7 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
+import { FullBodyBackImage, FullBodyImage } from "@/components/svgImages";
 type Props = {
   onSubmit: (values: any) => void;
 };
@@ -87,10 +88,8 @@ export const Exposure = ({ onSubmit }: Props) => {
         </FieldsContainer>
         {formValues[form.skinRashInfo.name] == "yes" && (
           <>
-            <NotificationContainer
-              message="(Diagram) location (Body part and exact site) pop up image to appear where the
-            user selects the location"
-            />
+            <FullBodyImage />
+            <FullBodyBackImage />
 
             <TextInputField
               name={form.rashDescription.name}
