@@ -379,6 +379,8 @@ export const concepts = {
   PUSTULE: "PUSTULE",
   BULLAE: "BULLAE",
   SCALE: "SCALE",
+  SKIN_RASH: "SKIN_RASH",
+  INJURY: "INJURY",
 
 };
 

@@ -12,25 +12,31 @@ import {
 } from "@/components";
 import * as yup from "yup";
 import { FullBodyBackImage, FullBodyImage } from "@/components/svgImages";
+import { concepts } from "@/constants";
+import { getInitialValues } from "@/helpers";
 type Props = {
   onSubmit: (values: any) => void;
 };
 const form = {
   temperatureInfo: {
-    name: "temperatureInfo",
+    name: concepts.TEMPERATURE,
     label: "Temperature",
   },
   skinRashInfo: {
-    name: "skinRashInfo",
+    name: concepts.SKIN_RASH,
     label: "Does the patient has skin rash",
   },
-  rashDescription: {
-    name: "rashDescription",
-    label: "Describe the skin rash",
-  },
   additionalNotes: {
-    name: "additionalNotes",
+    name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
+  },
+  abnormalities: {
+    name: concepts.ABNORMALITIES,
+    label: "Other Abnormalities",
+  },
+  injuries: {
+    name: concepts.INJURY,
+    label: "Other Injuries",
   },
 };
 
@@ -45,18 +51,20 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.skinRashInfo.label),
-  [form.rashDescription.name]: yup
+  [form.abnormalities.name]: yup
     .string()
     .required()
-    .label(form.rashDescription.label),
+    .label(form.abnormalities.label),
+  [form.injuries.name]: yup.string().required().label(form.injuries.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
 });
 
-const initialValues = {
-  temperatureInfo: "",
-  skinRashInfo: "",
-  rashDescription: "",
-};
+const initialValues = getInitialValues(form);
+
+const radioOptions = [
+  { label: "Yes", value: concepts.YES },
+  { label: "No", value: concepts.NO },
+];
 export const Exposure = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
 
@@ -70,35 +78,57 @@ export const Exposure = ({ onSubmit }: Props) => {
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout last={true} title="Temperature and Rash">
-        <FieldsContainer>
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.temperatureInfo.name}
-            label={form.temperatureInfo.label}
-            id={form.temperatureInfo.name}
-          />
-          <RadioGroupInput
-            name={form.skinRashInfo.name}
-            label={form.skinRashInfo.label}
-            options={[
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" },
-            ]}
-          />
-        </FieldsContainer>
-        {formValues[form.skinRashInfo.name] == "yes" && (
+        <TextInputField
+          sx={{ width: "100%" }}
+          name={form.temperatureInfo.name}
+          label={form.temperatureInfo.label}
+          id={form.temperatureInfo.name}
+        />
+
+        <RadioGroupInput
+          name={form.skinRashInfo.name}
+          row
+          label={form.skinRashInfo.label}
+          options={radioOptions}
+        />
+
+        {formValues[form.skinRashInfo.name] == concepts.YES && (
           <>
             <FullBodyImage />
             <FullBodyBackImage />
-
-            <TextInputField
-              name={form.rashDescription.name}
-              label={form.rashDescription.label}
-              id={form.rashDescription.name}
-            />
           </>
         )}
+
+        <RadioGroupInput
+          name={form.abnormalities.name}
+          row
+          label={form.abnormalities.label}
+          options={radioOptions}
+        />
+
+        {formValues[form.abnormalities.name] == concepts.YES && (
+          <>
+            <FullBodyImage />
+            <FullBodyBackImage />
+          </>
+        )}
+
+        <RadioGroupInput
+          name={form.injuries.name}
+          row
+          label={form.injuries.label}
+          options={radioOptions}
+        />
+
+        {formValues[form.injuries.name] == concepts.YES && (
+          <>
+            <FullBodyImage />
+            <FullBodyBackImage />
+          </>
+        )}
+
         <TextInputField
+          sx={{ width: "100%" }}
           name={form.additionalNotes.name}
           label={form.additionalNotes.label}
           id={form.additionalNotes.name}
