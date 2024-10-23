@@ -2,7 +2,7 @@ import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { Box, Button, Typography } from "@mui/material";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { HeadNeck } from "@/assets/headNeck";
 import {
   EarForm,
@@ -24,10 +24,10 @@ export function HeadNeckImage() {
     section,
     anchorEl,
     selectedSection,
-    setAnchorEl,
+    handleFormSubmit,
   } = useImage();
   const idSelected = selectedSection.id;
-  const labelSelected = selectedSection.label;
+  const labelSelected = selectedSection.label as string;
 
   const { setData, submittedValues } = useImageFormTransform();
 
@@ -37,7 +37,7 @@ export function HeadNeckImage() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    setAnchorEl(null);
+    handleFormSubmit(formData);
   };
 
   return (
@@ -58,35 +58,35 @@ export function HeadNeckImage() {
         {idSelected == "right_eye" && (
           <EyeForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission("Right Eye", values, formConceptsLabels)
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
         {idSelected == "left_eye" && (
           <EyeForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission("Left Eye", values, formConceptsLabels)
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
         {idSelected == "mouth" && (
           <MouthForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission("Mouth", values, formConceptsLabels)
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
         {idSelected == "nose" && (
           <NoseForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission("Nose", values, formConceptsLabels)
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
         {idSelected == "neck" && (
           <NeckForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission("Nose", values, formConceptsLabels)
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
@@ -96,11 +96,7 @@ export function HeadNeckImage() {
           idSelected == "crown") && (
           <OtherTemporalCrownForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(
-                labelSelected as string,
-                values,
-                formConceptsLabels
-              )
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
@@ -110,22 +106,14 @@ export function HeadNeckImage() {
           idSelected == "forehead") && (
           <OtherPartsOfTheHeadForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(
-                labelSelected as string,
-                values,
-                formConceptsLabels
-              )
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
         {(idSelected == "right_ear" || idSelected == "left_ear") && (
           <EarForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(
-                labelSelected as string,
-                values,
-                formConceptsLabels
-              )
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}

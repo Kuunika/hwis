@@ -28,7 +28,6 @@ export function FullBodyBackImage() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    setAnchorEl(null);
     handleFormSubmit(formData);
   };
 
@@ -47,7 +46,7 @@ export function FullBodyBackImage() {
         handleClose={handleClose}
       >
         <RushForm
-          onCancel={() => setAnchorEl(null)}
+          onCancel={handleClose}
           onSubmit={(values, formConceptsLabels) =>
             handleDataSubmission(
               selectedSection.label as string,

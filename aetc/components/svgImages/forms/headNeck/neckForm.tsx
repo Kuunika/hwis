@@ -95,7 +95,7 @@ const schema = Yup.object().shape({
   [form.abnormalities.name]: Yup.array()
     .required()
     .label(form.abnormalities.label),
-  [form.trachea.name]: Yup.array().label(form.trachea.label),
+  [form.trachea.name]: Yup.string().label(form.trachea.label),
   [form.lacerationDepth.name]: Yup.string().label(form.lacerationDepth.label),
   [form.lacerationOther.name]: Yup.string().label(form.lacerationOther.label),
   [form.lacerationLength.name]: Yup.string().label(form.lacerationLength.label),

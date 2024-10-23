@@ -13,8 +13,11 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import { LegAbnomalityImage } from "@/components/svgImages/legAbnormality";
-import { AbdomenImage, AbdomenImageWithOtherForm } from "@/components/svgImages";
+import { LegAbnormalityImage } from "@/components/svgImages/legAbnormality";
+import {
+  AbdomenImage,
+  AbdomenImageWithOtherForm,
+} from "@/components/svgImages";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -42,11 +45,11 @@ const form = {
   },
   intravenousAccess: {
     name: concepts.PATIENT_INTRAVENOUS,
-    label: "Does the patient need  intravenous access",
+    label: "Intravenous",
   },
   traumatizedInfo: {
     name: concepts.IS_PATIENT_TRAUMATIZED,
-    label: "Is the patient traumatized?",
+    label: "Trauma",
   },
 
   abnormalitiesInfo: {
@@ -356,20 +359,51 @@ export const Circulation = ({ onSubmit }: Prop) => {
           </>
         )}
       </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Trauma">
+        <RadioGroupInput
+          row
+          name={form.traumatizedInfo.name}
+          label={form.traumatizedInfo.label}
+          options={radioOptions}
+        />
+        {formValues[form.traumatizedInfo.name] == YES && (
+          <>
+            <RadioGroupInput
+              row
+              name={form.pelvisInfo.name}
+              label={form.pelvisInfo.label}
+              options={radioOptions}
+            />
+            {formValues[form.pelvisInfo.name] == YES && (
+              <>
+                <NotificationContainer message="apply pelvic binder" />
+              </>
+            )}
+            <RadioGroupInput
+              row
+              name={form.femurAndTibiaNormalInfo.name}
+              label={form.femurAndTibiaNormalInfo.label}
+              options={radioOptions}
+            />
 
-      <FormFieldContainerLayout title="intravenous and Traumatized">
-        <FieldsContainer>
-          <RadioGroupInput
-            name={form.intravenousAccess.name}
-            label={form.intravenousAccess.label}
-            options={radioOptions}
-          />
-          <RadioGroupInput
-            name={form.traumatizedInfo.name}
-            label={form.traumatizedInfo.label}
-            options={radioOptions}
-          />
-        </FieldsContainer>
+            {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
+              <>
+                <br />
+                <LegAbnormalityImage />
+                <br />
+              </>
+            )}
+          </>
+        )}
+      </FormFieldContainerLayout>
+
+      <FormFieldContainerLayout title="Intravenous">
+        <RadioGroupInput
+          name={form.intravenousAccess.name}
+          label={form.intravenousAccess.label}
+          options={radioOptions}
+        />
+
         {formValues[form.intravenousAccess.name] == YES && (
           <>
             <br />
@@ -382,39 +416,6 @@ export const Circulation = ({ onSubmit }: Prop) => {
               <MainTypography>Diagram</MainTypography>
             </FieldsContainer>
             <br />
-          </>
-        )}
-        {formValues[form.traumatizedInfo.name] == YES && (
-          <>
-            <FieldsContainer>
-              <RadioGroupInput
-                name={form.pelvisInfo.name}
-                label={form.pelvisInfo.label}
-                options={radioOptions}
-              />
-              <RadioGroupInput
-                name={form.femurAndTibiaNormalInfo.name}
-                label={form.femurAndTibiaNormalInfo.label}
-                options={radioOptions}
-              />
-            </FieldsContainer>
-
-            {formValues[form.pelvisInfo.name] == YES && (
-              <>
-                <NotificationContainer message="apply pelvic binder" />
-              </>
-            )}
-            {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
-              <>
-                <br />
-                <NotificationContainer
-                  message="(Diagram) posterior and anterior, with the following options for the
-                sections of the legs"
-                />
-                <LegAbnomalityImage />
-                <br />
-              </>
-            )}
           </>
         )}
       </FormFieldContainerLayout>

@@ -25,7 +25,7 @@ export const ChestLung = () => {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    setAnchorEl(null);
+    handleFormSubmit(formData);
   };
 
   return (
