@@ -111,7 +111,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                 <FormDatePicker
                   name={admissionsFormConfig.admission_dates(index).name}
                   label=""
-                  sx={{ background: "white", width: "100%" }}
+                  sx={{ background: "white", width: "150px" }}
                 />
               </TableCell>
 
@@ -122,7 +122,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                   label=""
                   options={hospitalOptions}
                   multiple={false}
-                  sx={{ width: "100%" }}
+                  sx={{ width: "150px" }}
                 />
               </TableCell>
 
@@ -133,7 +133,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                   label=""
                   options={wardOptions}
                   multiple={false}
-                  sx={{ width: "100%" }}
+                  sx={{ width: "150px" }}
                 />
               </TableCell>
 
@@ -144,7 +144,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                   label=""
                   options={diagnosisOptions}
                   multiple={false}
-                  sx={{ width: "100%" }}
+                  sx={{ width: "150px" }}
                 />
               </TableCell>
               <TableCell sx={{ width: "25%", textAlign: "center" }}>

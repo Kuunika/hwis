@@ -129,7 +129,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
           <FormDatePicker 
               name={surgeryFormConfig.surgical_procedure_date(index).name}  
               label=""
-              sx={{ background: 'white', width: '100%' }}
+              sx={{ background: 'white', width: '150px' }}
             />
           </TableCell>
 
@@ -140,6 +140,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
               label=""
               sx={{ width: '100%' }}
               multiline={true}
+              rows={3}
             />
           </TableCell>
         </>)}

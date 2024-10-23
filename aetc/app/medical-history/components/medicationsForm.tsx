@@ -306,7 +306,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         id={medicationFormConfig.medication_frequency(index).name}
         name={medicationFormConfig.medication_frequency(index).name}
         label="Specify frequency"
-        sx={{ width: '100%' }}
+        sx={{ width: '180px'}}
       />
     )}
   </TableCell>
@@ -317,7 +317,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       name={medicationFormConfig.medication_route(index).name}
       label=""
       options={routeOptions}
-      sx={{ width: '100%' }}
+      sx={{ width: '150px'}}
       multiple={false}
     />
   </TableCell>
@@ -327,8 +327,9 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     <TextInputField
       id={medicationFormConfig.medication_duration(index).name}
       name={medicationFormConfig.medication_duration(index).name}
+      placeholder="e.g. 7"
       label=""
-      sx={{ width: '100%' }}
+      sx={{ width: '100px' }}
     />
   </TableCell>
 
@@ -339,7 +340,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       label=""
       options={durationOptions}
       getValue={(value) => console.log("Selected value:", value)}
-      sx={{ width: '100%' }}
+      sx={{ width: '100px' }}
       multiple={false}
     />
   </TableCell>
@@ -349,7 +350,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     <FormDatePicker
       name={medicationFormConfig.medication_date_last_taken(index).name}
       label=""
-      sx={{ background: 'white', width: '100%' }}
+      sx={{ background: 'white', width: '150px' }}
     />
   </TableCell>
 
@@ -358,7 +359,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     <FormDatePicker
       name={medicationFormConfig.medication_date_of_last_prescription(index).name}
       label=""
-      sx={{ background: 'white', width: '100%' }}
+      sx={{ background: 'white', width: '150px' }}
     />
   </TableCell>
 
