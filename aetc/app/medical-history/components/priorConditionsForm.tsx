@@ -14,6 +14,7 @@ import {
   import { useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
+import { FaExternalLinkAlt } from "react-icons/fa";
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -102,11 +103,12 @@ import DynamicFormList from "@/components/form/dynamicFormList";
         <FormValuesListener getValues={setFormValues} />
   
         <WrapperBox sx={{mb:'2ch'}} >
+          <a href="https://icd.who.int/browse/2024-01/mms/en" style={{color:'primary',textDecorationLine:'underline', paddingRight:'1ch', fontSize:'small'}}>ICD11 List of diagnoses <FaExternalLinkAlt /></a>
         <DynamicFormList
         items={conditions}
         setItems={setConditions}
         newItem={{ name: "", date_of_diagnosis: "", on_treatment:"No", additional_notes: "" }}
-        headings={['Condition', 'Duration', 'On treatment?','Additional Details']}
+        headings={['Condition', 'Date of diagnosis', 'On treatment?','Additional Details']}
         renderFields={(surgery, index) => (
         <>
          <TableCell sx={{ width: '25%', textAlign: 'center' }}>
@@ -124,7 +126,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
             <FormDatePicker 
               name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}  
               label=""
-              sx={{ background: 'white', width: '100%' }}
+              sx={{ background: 'white', width: '150px' }}
             />
           </TableCell>
 
@@ -144,6 +146,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
               label=""
               sx={{ width: '100%' }}
               multiline={true}
+              rows={3}
             />
           </TableCell>
         </>)}
