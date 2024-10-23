@@ -103,8 +103,8 @@ const schema = Yup.object().shape({
   [form.deviceForIntervention.name]: Yup.string().label(
     form.deviceForIntervention.label
   ),
-  [form.respiratoryRate.name]: Yup.string().label(form.respiratoryRate.label),
-  [form.oxygenSaturation.name]: Yup.string().label(form.oxygenSaturation.label),
+  [form.respiratoryRate.name]: Yup.number().label(form.respiratoryRate.label),
+  [form.oxygenSaturation.name]: Yup.number().label(form.oxygenSaturation.label),
   [form.oxygenNeeded.name]: Yup.string().label(form.oxygenNeeded.label),
   [form.oxygenGiven.name]: Yup.string().label(form.oxygenGiven.label),
   [form.oxygenSource.name]: Yup.string().label(form.oxygenSource.label),
@@ -202,6 +202,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       <FormFieldContainerLayout title="Breathing">
         <FieldsContainer>
           <RadioGroupInput
+            row
             name={form.isPatientBreathing.name}
             label={form.isPatientBreathing.label}
             options={radioOptions}
@@ -242,13 +243,17 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       {formValues[form.isPatientBreathing.name] == YES && (
         <>
           <FormFieldContainerLayout title="Respiratory and Oxygen">
-            <FieldsContainer>
+            <FieldsContainer mr="1ch">
               <TextInputField
+                sx={{ width: "100%" }}
+                unitOfMeasure="bpm"
                 name={form.respiratoryRate.name}
                 label={form.respiratoryRate.label}
                 id={form.respiratoryRate.name}
               />
               <TextInputField
+                sx={{ width: "100%" }}
+                unitOfMeasure="%"
                 name={form.oxygenSaturation.name}
                 label={form.oxygenSaturation.label}
                 id={form.oxygenSaturation.name}

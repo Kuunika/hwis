@@ -12,6 +12,7 @@ export function LowerLimbPosterior() {
     anchorEl,
     selectedSection,
     setAnchorEl,
+    handleFormSubmit,
   } = useImage();
   const idSelected = selectedSection.id;
   const labelSelected = selectedSection.label;
@@ -24,7 +25,7 @@ export function LowerLimbPosterior() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    setAnchorEl(null);
+    handleFormSubmit(formData);
   };
 
   return (

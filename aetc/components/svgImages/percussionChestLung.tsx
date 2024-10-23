@@ -26,7 +26,6 @@ export const PercussionChestLung = () => {
   ) => {
     console.log({ formData });
     setData({ section, formData, formConceptsLabels });
-    setAnchorEl(null);
     handleFormSubmit(formData);
   };
 

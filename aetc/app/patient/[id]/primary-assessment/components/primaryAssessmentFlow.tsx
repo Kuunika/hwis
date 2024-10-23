@@ -15,7 +15,7 @@ import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 
 export const PrimaryAssessmentFlow = () => {
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(4);
   const { mutate } = addEncounter();
   const { navigateTo, navigateBack } = useNavigation();
 
@@ -59,7 +59,7 @@ export const PrimaryAssessmentFlow = () => {
         <Circulation onSubmit={handleCirculationSubmit} />
         <Disability onSubmit={handleDisabilitySubmit} />
         <Exposure onSubmit={() => setActiveStep(5)} />
-      </NewStepperContainer >
+      </NewStepperContainer>
     </>
   );
 };
