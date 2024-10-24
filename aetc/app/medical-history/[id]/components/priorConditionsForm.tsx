@@ -86,7 +86,14 @@ import LabelledCheckbox from "@/components/form/labelledCheckBox";
     // };
   
     const handleCheckboxChange = (e: any, field: string) => {
+ 
       const isChecked = e.target.checked;
+
+
+      setFormValues((prev: any) => ({
+        ...prev,
+        [field]: isChecked,
+      }));
 
     };
   
@@ -112,7 +119,7 @@ import LabelledCheckbox from "@/components/form/labelledCheckBox";
         items={conditions}
         setItems={setConditions}
         newItem={{ name: "", date_of_diagnosis: "", on_treatment:"No", additional_notes: "" }}
-        renderFields={(surgery, index) => (
+        renderFields={(condition, index) => (
         <>
             <SearchComboBox
               name={priorConditionsFormConfig.conditions_name(index).name}
@@ -128,8 +135,8 @@ import LabelledCheckbox from "@/components/form/labelledCheckBox";
             />
             <LabelledCheckbox
               label={priorConditionsFormConfig.conditions_on_treatment(index).label}
-              checked={formValues[index] || false}
-              onChange={(e) => handleCheckboxChange(e, surgery.on_treatment)}
+              checked={formValues[condition.on_treatment] || false}
+              onChange={(e) => handleCheckboxChange(e, condition.on_treatment)}
             />
             <TextInputField
               id={priorConditionsFormConfig.conditions_additional_details(index).name}

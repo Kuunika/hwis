@@ -9,7 +9,8 @@ import {
   PriorConditionsForm,
   ObstetricsForm,
   FamilyHistoryForm,
-  AdmissionsForm
+  AdmissionsForm,
+  ReviewOfSystemsForm
 } from ".";
 
 import { encounters } from "@/constants";
@@ -17,6 +18,7 @@ import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
+
 
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -39,7 +41,8 @@ export const MedicalHistoryFlow = () => {
     { id: 5, label: "Surgeries" },
     ...(patient?.gender === "Female" ? [{ id: 6, label: "Gynaecology and Obstetrics" }] : []),
     { id: patient?.gender === "Female" ? 7 : 6, label: "Previous Admissions" },
-    { id: patient?.gender === "Female" ? 8 : 7, label: "Family history" },
+    { id: patient?.gender === "Female" ? 8 : 7, label: "Review of Systems" },
+    { id: patient?.gender === "Female" ? 9 : 8, label: "Family history" },
     
   ];
 
@@ -89,6 +92,7 @@ export const MedicalHistoryFlow = () => {
           <ObstetricsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
         )}
         <AdmissionsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
+        <ReviewOfSystemsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
         <FamilyHistoryForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
         
 
