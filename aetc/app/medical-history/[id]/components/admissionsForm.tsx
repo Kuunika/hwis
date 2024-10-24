@@ -16,31 +16,31 @@ const admissionsFormConfig = {
   },
   admission_dates: (index: number) => ({
     name: `admission_date_${index}`,
-    label: `Admission Date ${index + 1}`,
+    label: `Admission Date`,
   }),
   hospitals: (index: number) => ({
     name: `hospital_${index}`,
-    label: `Hospital ${index + 1}`,
+    label: `Hospital`,
   }),
   wards: (index: number) => ({
     name: `ward_${index}`,
-    label: `Ward ${index + 1}`,
+    label: `Ward`,
   }),
   diagnoses: (index: number) => ({
     name: `diagnosis_${index}`,
-    label: `Diagnosis ${index + 1}`,
+    label: `Diagnosis`,
   }),
   interventions: (index: number) => ({
     name: `interventions_${index}`,
-    label: `Interventions ${index + 1}`,
+    label: `Interventions`,
   }),
   discharge_instructions:  (index: number) => ({
     name: `discharge_instructions_${index}`,
-    label: `Discharge Instructions ${index + 1}`,
+    label: `Discharge Instructions`,
   }),
   follow_up_plans:  (index: number) => ({
     name: `follow_up_plans_${index}`,
-    label: `Follow-up Plans ${index + 1}`,
+    label: `Follow-up Plans`,
   }),
 };
 
@@ -103,51 +103,37 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
             interventions: "", 
             discharge_instructions: "", 
             follow_up_plan: "", }}
-          headings={["Admission Date", "Hospital", "Ward(s)", "Diagnoses", "Interventions", "Discharge instructions","follow up plan"]}
           renderFields={(admission, index) => (
             <>
-              {/* Admission Date */}
-              <TableCell sx={{ width: "25%", textAlign: "center" }}>
+           
                 <FormDatePicker
                   name={admissionsFormConfig.admission_dates(index).name}
-                  label=""
+                  label={admissionsFormConfig.admission_dates(index).label}
                   sx={{ background: "white", width: "150px" }}
                 />
-              </TableCell>
-
-              {/* Hospital */}
-              <TableCell sx={{ width: "25%", textAlign: "center" }}>
                 <SearchComboBox
                   name={admissionsFormConfig.hospitals(index).name}
-                  label=""
+                  label={admissionsFormConfig.hospitals(index).label}
                   options={hospitalOptions}
                   multiple={false}
                   sx={{ width: "150px" }}
                 />
-              </TableCell>
-
-              {/* Ward */}
-              <TableCell sx={{ width: "25%", textAlign: "center" }}>
                 <SearchComboBox
                   name={admissionsFormConfig.wards(index).name}
-                  label=""
+                  label={admissionsFormConfig.wards(index).label}
                   options={wardOptions}
                   multiple={false}
                   sx={{ width: "150px" }}
                 />
-              </TableCell>
 
-              {/* Diagnosis */}
-              <TableCell sx={{ width: "25%", textAlign: "center" }}>
                 <SearchComboBox
                   name={admissionsFormConfig.diagnoses(index).name}
-                  label=""
+                  label={admissionsFormConfig.diagnoses(index).label}
                   options={diagnosisOptions}
                   multiple={false}
                   sx={{ width: "150px" }}
                 />
-              </TableCell>
-              <TableCell sx={{ width: "25%", textAlign: "center" }}>
+  
               <TextInputField
                     id={admissionsFormConfig.interventions(index).name}
                     name={admissionsFormConfig.interventions(index).name}
@@ -155,8 +141,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                     multiline
                     rows={4}
                 />
-              </TableCell>
-              <TableCell sx={{ width: "25%", textAlign: "center" }}>
+
               <TextInputField
                     id={admissionsFormConfig.discharge_instructions(index).name}
                     name={admissionsFormConfig.discharge_instructions(index).name}
@@ -164,8 +149,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                     multiline
                     rows={4}
                 />
-              </TableCell>
-              <TableCell sx={{ width: "25%", textAlign: "center" }}>
+
               <TextInputField
             id={admissionsFormConfig.follow_up_plans(index).name}
             name={admissionsFormConfig.follow_up_plans(index).name}
@@ -173,7 +157,6 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
             multiline
             rows={4}
           />
-              </TableCell>
             </>
           )}
         />

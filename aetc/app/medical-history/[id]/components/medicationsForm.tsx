@@ -1,21 +1,12 @@
-import { FormDatePicker, MainButton, SearchComboBox,  SelectInputField, WrapperBox } from "@/components";
-import React, { useEffect, useState } from "react";
-import medicationNames from "../../../constants/medicationnames.json"
+import { FormDatePicker, MainButton, SearchComboBox, WrapperBox } from "@/components";
+import React, { useState } from "react";
+import medicationNames from "../../../../constants/medicationnames.json";
 import {
-  FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
-  FormValuesListener,
-  FormikInit,
-  MainTypography,
-  RadioGroupInput,
-  TextInputField,
+    FormValuesListener,
+    FormikInit, TextInputField
 } from "@/components";
 import * as yup from "yup";
-import { concepts } from "@/constants";
-import { Box, Checkbox, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import { FaMinus, FaPlus } from "react-icons/fa6";
-import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
+import { TableCell } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
 
 type Prop = {
@@ -227,73 +218,47 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             medication_date_last_taken: "", 
             medication_date_of_last_prescription: "" 
            }}
-           headings = {[
-            'Name', 
-            'Formulation', 
-            'Dose', 
-            'Dose Unit', 
-            'Frequency', 
-            'Route', 
-            'Duration', 
-            'Duration Unit', 
-            'Last Taken', 
-            'Last Prescribed', 
-          ]}
          renderFields={(medication, index) => (
             <>
-  {/* Medication Name */}
-  <TableCell>
+
     <SearchComboBox
       name={medicationFormConfig.medication_name(index).name}
-      label=""
+      label={medicationFormConfig.medication_name(index).label}
       options={medicationNames}
       getValue={(value) => console.log("Selected value:", value)}
       sx={{ width: '200px' }}
       multiple={false}
     />
-  </TableCell>
-
-  {/* Formulation */}
-  <TableCell>
     <SearchComboBox
       name={medicationFormConfig.medication_formulation(index).name}
-      label=""
+      label={medicationFormConfig.medication_formulation(index).label}
       options={formulationOptions}
       getValue={(value) => console.log("Selected value:", value)}
       sx={{ width: '200px'}}
       multiple={false}
     />
-  </TableCell>
 
-  {/* Dose */}
-  <TableCell>
     <TextInputField
       id={medicationFormConfig.medication_dose(index).name}
       name={medicationFormConfig.medication_dose(index).name}
-      label=""
+      label={medicationFormConfig.medication_dose(index).label}
       placeholder="e.g., 500 and select a unit"
       sx={{ width: '230px'}}
     />
-  </TableCell>
 
-  {/* Dose Unit */}
-  <TableCell>
+
     <SearchComboBox
       name={medicationFormConfig.medication_dose_unit(index).name}
-      label=""
+      label={medicationFormConfig.medication_dose_unit(index).label}
       options={medicationUnits}
       getValue={(value) => console.log("Selected value:", value)}
       sx={{ width: '180px'}}
       multiple={false}
     />
-  </TableCell>
-
-  {/* Frequency */}
-  <TableCell>
     {!otherFrequency[index] ? (
       <SearchComboBox
         name={medicationFormConfig.medication_frequency(index).name}
-        label=""
+        label={medicationFormConfig.medication_frequency(index).label}
         options={frequencyOptions}
         getValue={(value) => {
           if (value === 'Other') handleUpdateFrequency(index,true);
@@ -309,59 +274,42 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         sx={{ width: '180px'}}
       />
     )}
-  </TableCell>
 
-  {/* Route */}
-  <TableCell>
     <SearchComboBox
       name={medicationFormConfig.medication_route(index).name}
-      label=""
+      label={medicationFormConfig.medication_route(index).label}
       options={routeOptions}
       sx={{ width: '150px'}}
       multiple={false}
     />
-  </TableCell>
 
-  {/* Duration */}
-  <TableCell>
     <TextInputField
       id={medicationFormConfig.medication_duration(index).name}
       name={medicationFormConfig.medication_duration(index).name}
       placeholder="e.g. 7"
-      label=""
+      label={medicationFormConfig.medication_duration(index).label}
       sx={{ width: '100px' }}
     />
-  </TableCell>
 
-  {/* Duration Unit */}
-  <TableCell>
     <SearchComboBox
       name={medicationFormConfig.medication_duration_unit(index).name}
-      label=""
+      label={medicationFormConfig.medication_duration_unit(index).label}
       options={durationOptions}
       getValue={(value) => console.log("Selected value:", value)}
       sx={{ width: '100px' }}
       multiple={false}
     />
-  </TableCell>
-
-  {/* Date of Last Taken */}
-  <TableCell>
     <FormDatePicker
       name={medicationFormConfig.medication_date_last_taken(index).name}
-      label=""
+      label={medicationFormConfig.medication_date_last_taken(index).label}
       sx={{ background: 'white', width: '150px' }}
     />
-  </TableCell>
 
-  {/* Date of Last Prescription */}
-  <TableCell>
     <FormDatePicker
       name={medicationFormConfig.medication_date_of_last_prescription(index).name}
-      label=""
+      label={medicationFormConfig.medication_date_of_last_prescription(index).label}
       sx={{ background: 'white', width: '150px' }}
     />
-  </TableCell>
 
             </>
           )}
