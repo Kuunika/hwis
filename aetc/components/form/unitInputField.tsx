@@ -1,8 +1,9 @@
 "use client";
 
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState } from "react";
 import { TextField, FormControl, InputLabel, MenuItem, Select, Box, InputAdornment } from "@mui/material";
 import { SxProps } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
 
 type UnitInputFieldProps = {
   id: string;
@@ -38,8 +39,8 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
     onValueChange && onValueChange(newValue);
   };
 
-  const handleUnitChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    const newUnit = e.target.value as string;
+  const handleUnitChange = (event: SelectChangeEvent<string>, child: React.ReactNode) => {
+    const newUnit = event.target.value; // Access value from event
     setUnit(newUnit);
     onUnitChange && onUnitChange(newUnit);
   };
