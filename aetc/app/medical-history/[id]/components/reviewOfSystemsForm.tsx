@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker } from "@/components";
+import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener } from "@/components";
 import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
 
@@ -98,7 +98,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
  
 
   const handleSubmit = () => {
-    onSubmit(formValues);
+    console.log(formValues);
+    //onSubmit(formValues);
   };
 
     function handleTraumaMechanismChange(e: React.ChangeEvent<HTMLInputElement>, name: string): void {
@@ -112,6 +113,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       onSubmit={onSubmit}
       submitButton={false}
     >
+        <FormValuesListener getValues={setFormValues} />
      <FormFieldContainer direction="row">
      <FormDatePicker
         label={symptomList.lastMeal.label}
@@ -161,9 +163,9 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                     {/* Show 'Specify site' for symptoms that require it */}
                     {symptom.requiresSite  && typedKey !== "poisoning" && (
                       <TextInputField
-                        id="specifySite"
+                        id={`${symptom.name}_site`}
                         label="Specify Site"
-                        name="specifySite"
+                        name={`${symptom.name}_site`}
                         placeholder="Specify the site"
                       />
                     )}
