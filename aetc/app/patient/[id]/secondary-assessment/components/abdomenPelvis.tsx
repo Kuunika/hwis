@@ -348,7 +348,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
   };
 
-  const gender = "Male"; //patient && patient?.gender;
+  const gender = patient && patient?.gender;
 
   return (
     <FormikInit
