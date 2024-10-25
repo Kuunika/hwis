@@ -137,7 +137,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
             return (
               <div key={typedKey}>
-                {typedKey !== "intentional" &&(
+                {typedKey !== "intentional" && typedKey !== "lastMeal" && typedKey !== "events" &&(
                 <LabelledCheckbox
                     label={symptomList[typedKey].label}
                     checked={formValues[typedKey] || false}
