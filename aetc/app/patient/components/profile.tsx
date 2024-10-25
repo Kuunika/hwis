@@ -19,7 +19,11 @@ import { PersonalDetailsTabletView } from "./cards/patientDetailsTabletView";
 import { VitalsPanel } from "./panels/vitalsDetails";
 import { BasicSelect } from "./basicSelect";
 import { FaFileAlt } from "react-icons/fa";
-import { checkPatientIfOnWaitingAssessment, useNavigation, useParameters } from "@/hooks";
+import {
+  checkPatientIfOnWaitingAssessment,
+  useNavigation,
+  useParameters,
+} from "@/hooks";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Box, Button } from "@mui/material";
@@ -56,7 +60,7 @@ function CustomTabPanel(props: TabPanelProps) {
 
 export const DesktopView = () => {
   const { params } = useParameters();
-  const {navigateTo}=useNavigation();
+  const { navigateTo } = useNavigation();
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [value, setValue] = React.useState(0);
@@ -219,7 +223,6 @@ export const DesktopView = () => {
     >
       <MainGrid item lg={2}>
         <PersonalDetailsCard />
-        <Button onClick={()=>navigateTo(`/patient/${params.id}/patient-management-plan`)}>Click</Button>
         <OverlayLoader open={isLoading || chartLoading} />
         <WrapperBox sx={{ my: "1ch" }}>
           <ConsultationCard

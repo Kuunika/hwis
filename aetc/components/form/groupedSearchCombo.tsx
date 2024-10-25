@@ -5,14 +5,19 @@ import { InputLabel, SxProps } from '@mui/material';
 import Select from 'react-select';
 import { MainTypography, WrapperBox, defaultTheme } from '..';
 
-type GroupOption = {
-  label: string;
-  options: Array<{ id: number | string; label: number | string }>;
-};
+export interface GroupedOption {
+  readonly label: string;
+  readonly options: readonly Option[];
+}
+
+export interface Option {
+  readonly value: string;
+  readonly label: string;
+}
 
 type Props = {
   name: string;
-  options: Array<GroupOption>;
+  options: Array<GroupedOption>;
   label: string;
   width?: string;
   sx?: SxProps;
@@ -39,19 +44,46 @@ export const GroupedSearchComboBox: FC<Props> = ({
 }) => {
   const { hasError, setFieldValue, value, errorMessage } = useFormikField(name);
 
-  const handleChange = (values: any) => {
-    const inputValue = multiple
-      ? values.map((v: any) => ({
-          id: v.value,
-          label: v.label,
-        }))
-      : { id: values?.value, label: values?.label };
+  const handleChange = (selectedOptions: any) => {
+    if (multiple) {
+      // Multiple selection case: create an array of selected options with groups
+      const selectedWithGroup = selectedOptions.map((selectedOption: any) => {
+        // Find the group the selected option belongs to
+        const group = options.find(group =>
+          group.options.some(option => option.value === selectedOption.value)
+        );
 
-    setFieldValue(name, inputValue);
-    if (getValue) {
-      getValue(inputValue);
+        return {
+          group: group?.label || 'Unknown', // Include the group label
+          value: selectedOption.value,
+          label: selectedOption.label,
+        };
+      });
+
+      setFieldValue(name, selectedWithGroup); // Set field value as an array
+      if (getValue) {
+        getValue(selectedWithGroup); // Pass the array to the getValue callback
+      }
+    } else {
+      // Single selection case: create an object with selected option and its group
+      const group = options.find(group =>
+        group.options.some(option => option.value === selectedOptions.value)
+      );
+
+      const selectedWithGroup = {
+        group: group?.label || 'Unknown', // Include the group label
+        value: selectedOptions.value,
+        label: selectedOptions.label,
+      };
+
+      setFieldValue(name, selectedWithGroup); // Set field value as an object
+      if (getValue) {
+        getValue(selectedWithGroup); // Pass the object to the getValue callback
+      }
     }
   };
+
+  
 
   const padding = applyPadding
     ? {
@@ -83,8 +115,8 @@ export const GroupedSearchComboBox: FC<Props> = ({
             }),
           }}
           defaultValue={manualInitialValues}
-          isDisabled={disabled}
           onChange={handleChange}
+          isDisabled={disabled}
           isMulti={multiple}
           options={options}
           formatGroupLabel={(group) => (

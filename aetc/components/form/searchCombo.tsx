@@ -85,8 +85,6 @@ export const SearchComboBox: FC<Props> = ({
           ...padding
         }),
       }}
-      {...(multiple ? null : { value: mappedOptions.filter(op => op.value == value) })}
-      isDisabled={disabled}
       //@ts-ignore
       defaultValue={manualInitialValues}
       //@ts-ignore

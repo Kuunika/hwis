@@ -50,7 +50,7 @@ export const FormDatePicker: FC<Prop> = ({
         slotProps={{ textField: { size, helperText: errorMessage } }}
         sx={{
           width,
-          my: "1ch",
+          my: "2.5ch",
           "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}

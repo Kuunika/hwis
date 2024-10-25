@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { MedicationsForm } from "./medication"; // Import the MedicationsForm
+import { MedicationsForm } from "../../consultation/components/medication"; // Import the MedicationsForm
 
 
 
