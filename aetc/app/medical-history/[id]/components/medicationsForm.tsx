@@ -1,4 +1,4 @@
-import { FormDatePicker, MainButton, SearchComboBox, WrapperBox } from "@/components";
+import { FormDatePicker, MainButton, SearchComboBox, UnitInputField, WrapperBox } from "@/components";
 import React, { useState } from "react";
 import medicationNames from "../../../../constants/medicationnames.json";
 import {
@@ -8,6 +8,8 @@ import {
 import * as yup from "yup";
 import { TableCell } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
+import { IoTimeOutline } from "react-icons/io5";
+import { GiMedicines } from "react-icons/gi";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -56,20 +58,21 @@ type Prop = {
         label: 'Last Prescribed'
       })}
 
+ 
       const durationOptions= [
-        { id: "Days", label: "Days" },
-        { id: "Weeks", label: "Weeks" },
-        { id: "Months", label: "Months" },
-        { id: "Years", label: "Years" },
-      ]
+        "Days",
+      "Weeks",
+         "Months",
+        "Years",
+        ]
 
       const medicationUnits = [
-        { id: "Milligrams", label: "Milligrams (mg)" },
-        { id: "Micrograms", label: "Micrograms (µg)" },
-        { id: "Grams ", label: "Grams (g)" },
-        { id: "International Units", label: "International Units (IU)" },
-        { id: "Milliliters", label: "Milliliters (ml)" },
-        { id: "Millimoles", label: "Millimoles (mmol)" },	
+        "Milligrams (mg)" ,
+       "Micrograms (µg)" ,
+    "Grams (g)" ,
+  "International Units (IU)",
+"Milliliters (ml)" ,
+"Millimoles (mmol)",	
       ];
       const routeOptions = [
         { label: "Oral", id: "Oral" },
@@ -115,6 +118,7 @@ type Prop = {
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         const [formValues, setFormValues] = useState<any>({});
+        const [value, setValue] = useState<number | string>("");
         const [medications, setMedications] = React.useState([
             { 
               name: "", 
@@ -238,23 +242,18 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       multiple={false}
     />
 
-    <TextInputField
-      id={medicationFormConfig.medication_dose(index).name}
-      name={medicationFormConfig.medication_dose(index).name}
-      label={medicationFormConfig.medication_dose(index).label}
-      placeholder="e.g., 500 and select a unit"
-      sx={{ width: '230px'}}
-    />
-
-
-    <SearchComboBox
-      name={medicationFormConfig.medication_dose_unit(index).name}
-      label={medicationFormConfig.medication_dose_unit(index).label}
-      options={medicationUnits}
-      getValue={(value) => console.log("Selected value:", value)}
-      sx={{ width: '180px'}}
-      multiple={false}
-    />
+<UnitInputField
+  id={medicationFormConfig.medication_dose(index).name}
+  label={medicationFormConfig.medication_dose(index).label}
+  initialValue=""  
+  initialUnit={medicationUnits[0]} 
+  unitOptions={medicationUnits} 
+  placeholder="e.g., 500"
+  sx={{ width: '320px' }}  
+  onValueChange={(value) => console.log("Entered dose:", value)} 
+  onUnitChange={(unit) => console.log("Selected unit:", unit)}  
+  inputIcon={<GiMedicines />} 
+/>
     {!otherFrequency[index] ? (
       <SearchComboBox
         name={medicationFormConfig.medication_frequency(index).name}
@@ -283,22 +282,17 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       multiple={false}
     />
 
-    <TextInputField
-      id={medicationFormConfig.medication_duration(index).name}
-      name={medicationFormConfig.medication_duration(index).name}
-      placeholder="e.g. 7"
-      label={medicationFormConfig.medication_duration(index).label}
-      sx={{ width: '100px' }}
-    />
-
-    <SearchComboBox
-      name={medicationFormConfig.medication_duration_unit(index).name}
-      label={medicationFormConfig.medication_duration_unit(index).label}
-      options={durationOptions}
-      getValue={(value) => console.log("Selected value:", value)}
-      sx={{ width: '100px' }}
-      multiple={false}
-    />
+<UnitInputField
+  id={medicationFormConfig.medication_duration(index).name}
+  label={medicationFormConfig.medication_duration(index).label}
+  initialValue=""  // Replace with the appropriate initial value if needed
+  initialUnit={durationOptions[0]}   // Replace with the appropriate initial unit if needed
+  unitOptions={durationOptions}  // Pass the unit options
+  placeholder="e.g. 7"
+  onValueChange={(value) => console.log("Entered duration:", value)}
+  onUnitChange={(unit) => console.log("Selected unit:", unit)}
+  inputIcon={<IoTimeOutline/>}  // Optional icon, adjust as needed
+/>
     <FormDatePicker
       name={medicationFormConfig.medication_date_last_taken(index).name}
       label={medicationFormConfig.medication_date_last_taken(index).label}
