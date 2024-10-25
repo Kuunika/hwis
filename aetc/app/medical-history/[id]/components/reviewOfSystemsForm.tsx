@@ -20,7 +20,7 @@ const symptomList = {
   poorVision: { name: "poorVision", label: "Poor Vision", requiresSite: true },
   toothache: { name: "toothache", label: "Toothache", requiresSite: true },
   runnyNose: { name: "runnyNose", label: "Runny Nose", requiresSite: false },
-  noseBleeding: { name: "noseBleeding", label: "Nose Bleeding", requiresSite: true },
+  noseBleeding: { name: "noseBleeding", label: "Nose Bleeding", requiresSite: false},
   jointSwelling: { name: "jointSwelling", label: "Joint Swelling", requiresSite: true },
   jointPain: { name: "jointPain", label: "Joint Pain", requiresSite: true },
   deformity: { name: "deformity", label: "Deformity", requiresSite: true },
@@ -71,6 +71,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     pain: false,
     duration: "",
     specifySite: "",
+    assaultPhysical: false
     // Initialize other symptoms
   };
 
@@ -97,6 +98,10 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const handleSubmit = () => {
     onSubmit(formValues);
   };
+
+    function handleTraumaMechanismChange(e: React.ChangeEvent<HTMLInputElement>, name: string): void {
+        throw new Error("Function not implemented.");
+    }
 
   return (
     <FormikInit
@@ -128,7 +133,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                
                       <>
                         <FormDatePicker
-                        id={`${typedKey}Date`}
                         label={`${symptom.label} Date`}
                         name={`${typedKey}Date`}
                       />
@@ -170,6 +174,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 {showTraumaFields && (
   <>
     <TextInputField
+      id="timeOfInjury"
       label="Time of Injury"
       name="timeOfInjury"
       placeholder="e.g., 10:30 AM"
@@ -181,14 +186,13 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     <div>
       <h4>Mechanism of Injury</h4>
   
-        return (
+     
           <LabelledCheckbox
-            key={mechanism.name}
-            label={mechanism.label}
-            checked={formValues.mechanismOfInjury.includes(mechanism.name)}
-            onChange={(e) => handleTraumaMechanismChange(e, mechanism.name)}
+            label={injuryMechanismList.assaultPhysical.label}
+            checked={formValues[injuryMechanismList.assaultPhysical.name]}
+            onChange={(e) => handleTraumaMechanismChange(e, injuryMechanismList.assaultPhysical.name)}
           />
-        );
+        
     </div>
     <LabelledCheckbox
       label="Occupational Injury"
