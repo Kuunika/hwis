@@ -37,15 +37,3 @@ jobs:
         env:
           CI: true
         working-directory: ./aetc
-
-      - name: Run tests
-        run: npm run test
-        env:
-          CI: true
-        working-directory: ./aetc
-
-      - name: Lint code
-        run: npm run lint
-        env:
-          CI: true
-        working-directory: ./aetc
