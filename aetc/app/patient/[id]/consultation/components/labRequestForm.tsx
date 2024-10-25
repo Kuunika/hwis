@@ -7,7 +7,6 @@ import {
   SearchComboBox,
   Header,
 } from "@/components";
-import FormControl from "@mui/material/FormControl";
 import { Concept, LabFormProps, LabRequest, TestType } from "@/interfaces";
 import {
   createOrder,
