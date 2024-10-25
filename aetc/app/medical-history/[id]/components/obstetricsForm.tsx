@@ -1,22 +1,10 @@
-import { FormDatePicker, MainButton, SearchComboBox,  SelectInputField, WrapperBox } from "@/components";
-import React, { useEffect, useState } from "react";
-import medicationNames from "../../../constants/medicationnames.json"
+import { FormDatePicker, MainButton, SearchComboBox, WrapperBox } from "@/components";
+import React, { useState } from "react";
 import {
-  FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
-  FormValuesListener,
-  FormikInit,
-  MainTypography,
-  RadioGroupInput,
-  TextInputField,
+    FormFieldContainer, FormValuesListener,
+    FormikInit, TextInputField
 } from "@/components";
 import * as yup from "yup";
-import { concepts } from "@/constants";
-import { Checkbox, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import { FaMinus, FaPlus } from "react-icons/fa6";
-import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
-import DynamicFormList from "@/components/form/dynamicFormList";
 
 
 type Prop = {

@@ -228,9 +228,9 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
 
   // Function to access field names dynamically
   const complaintsFormConfig = {
-    complaints_name: (index: number) => ({ name: `complaints[${index}].complaint` }),
-    complaints_duration: (index: number) => ({ name: `complaints[${index}].duration` }),
-    complaints_duration_units: (index: number) => ({ name: `complaints[${index}].duration_unit` }),
+    complaints_name: (index: number) => ({ name: `complaints[${index}].complaint`, label:'Name' }),
+    complaints_duration: (index: number) => ({ name: `complaints[${index}].duration`, label:'Duration' }),
+    complaints_duration_units: (index: number) => ({ name: `complaints[${index}].duration_unit`, label:'Unit' }),
   };
 
   const schema = Yup.object().shape({
@@ -263,10 +263,10 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
       newItem={{ complaint: "", duration: "", duration_unit: "" }} // Template for a new complaint
       renderFields={(item, index) => (
         <>
-          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
+     
             <SearchComboBox
               name={complaintsFormConfig.complaints_name(index).name}
-              label=""
+              label={complaintsFormConfig.complaints_name(index).label}
               options={presentingComplaints}
               multiple={false}
               sx={{ width: '100%' }}
@@ -277,13 +277,13 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
             //     setComplaints(updatedComplaints);
             //   }}
             />
-          </TableCell>
+ 
 
-          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
+
             <TextInputField
               id={complaintsFormConfig.complaints_duration(index).name}
               name={complaintsFormConfig.complaints_duration(index).name}
-              label=""
+              label={complaintsFormConfig.complaints_duration(index).label}
               sx={{ width: '100%' }}
               placeholder="e.g. 7 and select a time unit"
               // Handle the change for duration field
@@ -293,12 +293,10 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
             //     setComplaints(updatedComplaints);
             //   }}
             />
-          </TableCell>
 
-          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
             <SearchComboBox
               name={complaintsFormConfig.complaints_duration_units(index).name}
-              label=""
+              label={complaintsFormConfig.complaints_duration_units(index).label}
               options={durationOptions}
               multiple={false}
               sx={{ width: '100%' }}
@@ -309,10 +307,10 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
             //     setComplaints(updatedComplaints);
             //   }}
             />
-          </TableCell>
+
         </>
       )}
-      headings={["Complaint", "Duration", "Time Unit"]} // Table headers
+
     />
     <WrapperBox sx={{mt:'2ch'}}>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
