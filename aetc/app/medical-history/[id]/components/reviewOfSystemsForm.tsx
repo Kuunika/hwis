@@ -9,6 +9,8 @@ type Prop = {
 };
 
 const symptomList = {
+    lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
+    events: { name: "events", label: "Events(History of presenting complaints)", requiresSite: true },
   pain: { name: "pain", label: "Pain", requiresSite: true },
   rash: { name: "rash", label: "Rash", requiresSite: true },
   itching: { name: "itching", label: "Itching", requiresSite: true },
@@ -110,8 +112,24 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       onSubmit={onSubmit}
       submitButton={false}
     >
-      <FormFieldContainer direction="row">
-        <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: '100%' }}>
+     <FormFieldContainer direction="row">
+     <FormDatePicker
+        label={symptomList.lastMeal.label}
+        name={symptomList.lastMeal.name}
+        sx={{ background: 'white'}}
+    />
+     </FormFieldContainer>
+
+        <TextInputField
+            id={symptomList.events.name}
+            label={symptomList.events.label}
+            name={symptomList.events.name}
+            placeholder="e.g. Started with mild abdominal pain 3 days ago, gradually worsened..."
+            multiline={true}
+            rows={4}
+        />
+    <FormFieldContainer direction="row">
+    <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: '100%' }}>
           <h3>General History</h3>
           {Object.keys(symptomList).map((key) => {
             const typedKey = key as keyof typeof symptomList;
