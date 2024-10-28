@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
-// Import the MedicationsForm
+import { MedicationsForm } from "../../consultation/components/medication"; // Import the MedicationsForm
+
+
 
 export const PatientManagementPlan = () => {
-  return <></>;
-};
+
+  return  <MedicationsForm onSkip={()=>{}} onSubmit={()=>{}} />
+};  
