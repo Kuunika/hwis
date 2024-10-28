@@ -132,6 +132,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
           ]);
         const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
          const { data } = getAllDrugs();
+         const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
+
         const handleUpdateFrequency = (index: number, value: boolean) => {
             setOtherFrequency(prevState => ({
               ...prevState,   
@@ -193,9 +195,19 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         //onSubmit(formValues);
       };
 
-      useEffect(()=>{
-        console.log(data);
-      },[data])
+      useEffect(() => {
+        if (data) {
+          const formatMedicationOptions = (data: any) => {
+            return data.map((drug: { drug_id: number; name: string }) => ({
+              id: drug.drug_id.toString(),
+              label: drug.name,
+            }));
+          };
+      
+          // Set medication options with formatted array
+          setMedicationOptions(formatMedicationOptions(data));
+        }
+      }, [data]);
 
     return (
         <FormikInit
@@ -228,7 +240,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     <SearchComboBox
       name={medicationFormConfig.medication_name(index).name}
       label={medicationFormConfig.medication_name(index).label}
-      options={medicationNames}
+      options={medicationOptions}
       getValue={(value) => console.log("Selected value:", value)}
       sx={{ width: '200px' }}
       multiple={false}
