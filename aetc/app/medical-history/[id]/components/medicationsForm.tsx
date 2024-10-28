@@ -10,6 +10,7 @@ import { TableCell } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
+import { durationOptions } from "@/constants";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -59,12 +60,7 @@ type Prop = {
       })}
 
  
-      const durationOptions= [
-        "Days",
-      "Weeks",
-         "Months",
-        "Years",
-        ]
+      
 
       const medicationUnits = [
         "Milligrams (mg)" ,

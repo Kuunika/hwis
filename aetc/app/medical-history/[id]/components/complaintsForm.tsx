@@ -16,7 +16,7 @@ import {
   } from "@/components";
   import * as Yup from "yup";
   import { IoTimeOutline } from "react-icons/io5";
-
+  import { durationOptions } from "@/constants";
 // Define the structure of a complaint
 interface Complaint {
   complaint: string;
@@ -216,12 +216,7 @@ const presentingComplaints = [
     { id: "Food Poisoning", label: "Food poisoning" }
   ];
 
-  const durationOptions= [
-  "Days",
-"Weeks",
-   "Months",
-  "Years",
-  ]
+
 
 export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
