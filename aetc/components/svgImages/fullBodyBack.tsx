@@ -1,22 +1,25 @@
-import { Abdomen } from "@/assets/abdomen";
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { DataBox, SecondaryAbdomenPelvicForm } from "./forms";
-import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
 
-export function SecondaryAbdomenImage() {
+import { DataBox, RushForm } from "./forms";
+import { useImageFormTransform } from "@/hooks";
+import { FullBodyBack } from "@/assets";
+
+export function FullBodyBackImage() {
   const {
     handleClose,
+    handleFormSubmit,
     containerRef,
     section,
     anchorEl,
+    setAnchorEl,
+    highlightSection,
     selectedSection,
-    handleFormSubmit,
+    setSelectedSection,
+    highlightAllSelectedSections,
+    setIds,
   } = useImage();
-  const idSelected = selectedSection.id;
-  const labelSelected = selectedSection.label;
-
   const { setData, submittedValues } = useImageFormTransform();
 
   const handleDataSubmission = (
@@ -29,11 +32,11 @@ export function SecondaryAbdomenImage() {
   };
 
   return (
-    <>
-      <Abdomen ref={containerRef} />
+    <div>
+      <FullBodyBack ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
-          <DataBox maxWidth="230px" key={value.section} labelValue={value} />
+          <DataBox key={value.section} labelValue={value} />
         ))}
       </Box>
       <SVGPopover
@@ -42,7 +45,7 @@ export function SecondaryAbdomenImage() {
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <SecondaryAbdomenPelvicForm
+        <RushForm
           onCancel={handleClose}
           onSubmit={(values, formConceptsLabels) =>
             handleDataSubmission(
@@ -53,6 +56,6 @@ export function SecondaryAbdomenImage() {
           }
         />
       </SVGPopover>
-    </>
+    </div>
   );
 }

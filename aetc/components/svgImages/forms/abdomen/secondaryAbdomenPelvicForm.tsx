@@ -7,6 +7,7 @@ import {
   TextInputField,
 } from "@/components";
 import { concepts } from "@/constants";
+import { getFormLabels, getInitialValues } from "@/helpers";
 import { Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
 
@@ -44,7 +45,7 @@ const schema = Yup.object().shape({
 });
 
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, formConceptsLabels: any) => void;
   onCancel: () => void;
 };
 const options = [
@@ -75,8 +76,10 @@ export const SecondaryAbdomenPelvicForm = (props: Props) => {
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={{ description: "", notes: "" }}
-      onSubmit={props.onSubmit}
+      initialValues={getInitialValues(form)}
+      onSubmit={(values: any) =>
+        props.onSubmit(values, getFormLabels(form, options, radioOptions))
+      }
       submitButton={false}
       submitButtonText="next"
     >

@@ -1,18 +1,26 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { concepts } from "@/constants";
+import { getFormLabels, getInitialValues } from "@/helpers";
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
 
 import * as Yup from "yup";
 
+const form = {
+  abnormalities: {
+    name: concepts.ABNORMALITIES,
+    label: "Description of Abnormality",
+  },
+};
+
 const schema = Yup.object().shape({
-  [concepts.ABNORMALITIES]: Yup.array()
+  [concepts.ABNORMALITIES]: Yup.string()
     .required()
-    .label("Description of Abnormality"),
+    .label(form.abnormalities.label),
 });
 
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, formConceptsLabels: any) => void;
   onCancel: () => void;
 };
 const options = [
@@ -25,16 +33,18 @@ export const PercussionChestLungForm = (props: Props) => {
   return (
     <FormikInit
       validationSchema={schema}
-      initialValues={{ description: "", notes: "" }}
-      onSubmit={props.onSubmit}
+      initialValues={getInitialValues(form)}
+      onSubmit={(values: any) =>
+        props.onSubmit(values, getFormLabels(form, options, []))
+      }
       submitButton={false}
       submitButtonText="next"
     >
       <br />
       <SearchComboBox
         multiple={false}
-        name={concepts.ABNORMALITIES}
-        label={"Description of Abnormality"}
+        name={form.abnormalities.name}
+        label={form.abnormalities.label}
         options={options}
       />
       <br />

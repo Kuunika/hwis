@@ -59,7 +59,7 @@ export const PrimaryAssessmentFlow = () => {
         <Circulation onSubmit={handleCirculationSubmit} />
         <Disability onSubmit={handleDisabilitySubmit} />
         <Exposure onSubmit={() => setActiveStep(5)} />
-      </NewStepperContainer >
+      </NewStepperContainer>
     </>
   );
 };
