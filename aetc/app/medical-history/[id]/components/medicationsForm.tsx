@@ -1,5 +1,5 @@
 import { FormDatePicker, MainButton, SearchComboBox, UnitInputField, WrapperBox } from "@/components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import medicationNames from "../../../../constants/medicationnames.json";
 import {
     FormValuesListener,
@@ -11,6 +11,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
 import { durationOptions } from "@/constants";
+import { getAllDrugs } from "@/hooks/drugs";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -130,7 +131,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             },
           ]);
         const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
-
+         const { data } = getAllDrugs();
         const handleUpdateFrequency = (index: number, value: boolean) => {
             setOtherFrequency(prevState => ({
               ...prevState,   
@@ -187,11 +188,14 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     };
   
     const handleSubmit = () => {
-        console.log(formValues);
         console.log(medications);
         return;
         //onSubmit(formValues);
       };
+
+      useEffect(()=>{
+        console.log(data);
+      },[data])
 
     return (
         <FormikInit

@@ -323,3 +323,23 @@ export interface ActiveVisit {
   date_started: Date;
   date_stopped: Date;
 }
+
+export interface Drugs {
+  drug_id: number;
+  concept_id: number;
+  name: string;
+  combination: number;
+  dosage_form: string | null;
+  dose_strength: string | null;
+  maximum_daily_dose: string | null;
+  minimum_daily_dose: string | null;
+  route: string | null;
+  units: string;
+  creator: number;
+  date_created: Date;
+  retired: number;
+  retired_by: number | null;
+  date_retired: Date | null;
+  retire_reason: string | null;
+  uuid: string;
+}
