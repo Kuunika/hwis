@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { NO, YES, concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useState } from "react";
@@ -17,7 +17,6 @@ import {
   ChestLung,
   PercussionChestLung,
 } from "@/components/svgImages";
-
 
 const form = {
   respiratoryRate: {
@@ -57,7 +56,7 @@ const form = {
     label: "Position",
   },
   thrill: {
-    name: concepts.THRILL,
+    name: concepts.TRILL,
     label: "Thrill",
   },
   thrillDescription: {
@@ -152,8 +151,7 @@ const schema = Yup.object().shape({
   [form.heartSounds.name]: Yup.string()
     .required()
     .label(form.heartSounds.label),
-  [form.abnormalities.name]: Yup.array()
-    .label(form.abnormalities.label),
+  [form.abnormalities.name]: Yup.array().label(form.abnormalities.label),
   [form.location.name]: Yup.string().label(form.location.label),
   [form.type.name]: Yup.string().label(form.type.label),
   [form.additionalNotes.name]: Yup.string().label(form.additionalNotes.label),
@@ -392,7 +390,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Additional Notes">
         <TextInputField
-        sx={{width:"100%"}}
+          sx={{ width: "100%" }}
           name={form.additionalNotes.name}
           label={form.additionalNotes.label}
           id={form.additionalNotes.name}
