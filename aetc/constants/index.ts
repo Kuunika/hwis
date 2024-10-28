@@ -392,6 +392,7 @@ export const concepts = {
   URETHRAL_NOTES: "9cfc046c-35f0-4a6e-80b4-ca52e46d2905",
   SCROTUM_NOTES: "96089bcd-7b9a-4383-a171-5d5c5b5dafdb",
   DIAGNOSIS: "b8e32cd6-8d80-11d8-abbb-0024217bb78e",
+  FUNDO_SCOPY_FINDINGS: "8d167df8-fbd0-4c5d-b383-1e6f8341c6f4",
 };
 
 export const triageResult = {

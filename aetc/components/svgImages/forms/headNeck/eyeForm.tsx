@@ -32,11 +32,11 @@ const form = {
     label: "Pupil Size",
   },
   fundoscopyDone: {
-    name: concepts.FONDOSCOPY,
+    name: concepts.FUNDOSCOPY,
     label: "Fundo Scopy Done",
   },
   fundoscopyFinding: {
-    name: concepts.FONDO_FINDINGS,
+    name: concepts.FUNDO_SCOPY_FINDINGS,
     label: "Fundo Scopy Findings",
   },
 };
