@@ -1,76 +1,135 @@
 "use client";
 import { FormikInit, SearchComboBox } from "@/components";
-
 import { useEffect, useState } from "react";
 import { DiagnosisTable } from "./DiagnosisTable";
 import * as Yup from "yup";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Typography } from "@mui/material";
-
+import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import { getDateTime } from "@/helpers/dateTime";
+import { toast } from "react-toastify";
+import { useParameters } from "@/hooks";
+import { getOnePatient } from "@/hooks/patientReg";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
 
 // Define the Diagnosis interface
 interface Diagnosis {
-    id: number;
+    id: string;
     condition: string;
+    obsDatetime: string; // Updated for observation date
 }
 
 function DiagnosisForm() {
-    const {
-        data: bedsideTests,
-        isLoading: bedsideTestsLoading,
-        refetch: reloadBedSideTests,
-        isRefetching: reloadingBedsideTest,
-    } = getConceptSetMembers("b9af45fa-8d80-11d8-abbb-0024217bb78e");
-    // Define the type of diagnosisList explicitly
+    const { data: bedsideTests, refetch: reloadBedSideTests } = getConceptSetMembers("b9af45fa-8d80-11d8-abbb-0024217bb78e");
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
+    const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
+    const { params } = useParameters();
+    const { data: patient } = getOnePatient(params.id as string);
+
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const [showTable, setShowTable] = useState(false);
+
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { data: patientEncounters } = getPatientsEncounters(params.id as string);
+
+    useEffect(() => {
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
 
     useEffect(() => {
         reloadBedSideTests();
-    }, []);
 
+        // Fetch diagnosis records from encounters using obs_datetime
+        if (patientEncounters) {
+            const diagnosisRecords = patientEncounters
+                .filter(encounter => encounter.encounter_type.uuid === "ba05c128-8d80-11d8-abbb-0024217bb78e")
+                .flatMap(encounter => {
+                    return encounter.obs.map(obs => ({
+                        id: obs.uuid,
+                        condition: obs.value,
+                        obsDatetime: obs.obs_datetime || "", // Using obs_datetime
+                    }));
+                });
 
+            setDiagnosisList(diagnosisRecords);
+        }
+    }, [patientEncounters]);
 
+    const conditionOptions = bedsideTests?.map((test) => ({
+        id: test.names[0]?.uuid,
+        label: test.names[0]?.name,
+    })) || [];
 
-    // Modify the condition options to use data from the API
-    const conditionOptions =
-        bedsideTests?.map((test) => ({
-            id: test.uuid, // UUID as the identifier
-            label: test.names[0]?.name, // Get the name attribute
-        })) || [];
-
-
-
-    // Initial values for Formik
-    const initialValues = {
-        condition: "",
-    };
-
-    // Validation Schema
+    const initialValues = { condition: "" };
     const validationSchema = Yup.object().shape({
         condition: Yup.string().required("Condition is required"),
     });
 
-    // Function to add a diagnosis to the list
     const handleAddDiagnosis = (values: any, resetForm: any) => {
         const selectedCondition = conditionOptions.find(option => option.id === values.condition);
-        if (selectedCondition) {
-            setDiagnosisList([
-                ...diagnosisList,
-                { id: diagnosisList.length + 1, condition: selectedCondition.label },
-            ]);
+        const currentDateTime = getDateTime(); // Capture the current date-time
+
+        // console.log("Encounter Date Generated:", currentDateTime); // Debugging log
+
+        if (selectedCondition && activeVisit?.uuid) {
+            createDiagnosis({
+                encounterType: "ba05c128-8d80-11d8-abbb-0024217bb78e",
+                visit: activeVisit?.uuid,
+                patient: params.id,
+                encounterDatetime: currentDateTime, // Set the date-time here
+                obs: [{
+                    concept: selectedCondition.id,
+                    value: selectedCondition.label,
+                    obsDatetime: currentDateTime,
+                }],
+            });
+
+            if (isSuccess) {
+                setDiagnosisList(prev => [
+                    ...prev,
+                    {
+                        id: Date.now().toString(),
+                        condition: selectedCondition.label,
+                        obsDatetime: currentDateTime // Using obsDatetime here
+                    },
+                ]);
+                toast.success("Diagnosis submitted successfully!");
+            } else if (isError) {
+                toast.error("Failed to submit diagnosis.");
+            }
+
             resetForm();
+        } else {
+            toast.error("Visit information is missing, cannot add diagnosis.");
         }
     };
 
-    // Function to delete a diagnosis
-    const handleDeleteDiagnosis = (id: number) => {
-        const updatedList = diagnosisList.filter((item) => item.id !== id);
-        setDiagnosisList(updatedList);
+    const toggleTableVisibility = () => {
+        setShowTable(!showTable);
     };
 
     return (
         <>
-            <Typography variant="h6">Differential Diagnosis</Typography>
+            {/* <Typography variant="h6">Differential Diagnosis</Typography> */}
+
+            {/* Conditionally Render Recent Diagnosis Table */}
+            {diagnosisList.length > 0 && (
+                <>
+                    <Typography variant="h6" style={{ marginTop: "20px" }}>
+                        Recent Diagnosis
+                    </Typography>
+                    <DiagnosisTable
+                        diagnoses={diagnosisList.slice(-3)}  // Show only the most recent entry
+                    />
+                </>
+            )}
 
             <FormikInit
                 initialValues={initialValues}
@@ -85,18 +144,23 @@ function DiagnosisForm() {
                     sx={{ width: "100%" }}
                     multiple={false}
                 />
-
             </FormikInit>
 
-            {/* Diagnosis Table */}
-            <h3>List of Diagnosis</h3>
-            <DiagnosisTable
-                diagnoses={diagnosisList}
-                onDelete={handleDeleteDiagnosis}
-            />
+            <Typography
+                variant="h5"
+                onClick={toggleTableVisibility}
+                style={{ cursor: "pointer", marginTop: "20px", marginBottom: "10px" }}
+            >
+                {showTable ? "Hide Previous Diagnosis" : "Show Previous Diagnosis"}
+            </Typography>
 
+            {/* Conditionally Render Previous Diagnosis Table */}
+            {showTable && (
+                <DiagnosisTable
+                    diagnoses={diagnosisList}
+                />
+            )}
         </>
-
     );
 }
 
