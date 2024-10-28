@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from "react";
 import { TableCell } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";; // Import the updated component
@@ -10,9 +11,11 @@ import {
     MainButton,
     SearchComboBox,
     TextInputField,
+    UnitInputField,
     WrapperBox,
   } from "@/components";
   import * as Yup from "yup";
+  import { IoTimeOutline } from "react-icons/io5";
 
 // Define the structure of a complaint
 interface Complaint {
@@ -214,10 +217,10 @@ const presentingComplaints = [
   ];
 
   const durationOptions= [
-    { id: "Days", label: "Days" },
-    { id: "Weeks", label: "Weeks" },
-    { id: "Months", label: "Months" },
-    { id: "Years", label: "Years" },
+  "Days",
+"Weeks",
+   "Months",
+  "Years",
   ]
 
 export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
@@ -225,12 +228,14 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
   const [complaints, setComplaints] = useState<Complaint[]>([
     { complaint: "", duration: "", duration_unit: "" }
   ]);
+  const [value, setValue] = useState<number | string>("");
+ 
 
   // Function to access field names dynamically
   const complaintsFormConfig = {
-    complaints_name: (index: number) => ({ name: `complaints[${index}].complaint` }),
-    complaints_duration: (index: number) => ({ name: `complaints[${index}].duration` }),
-    complaints_duration_units: (index: number) => ({ name: `complaints[${index}].duration_unit` }),
+    complaints_name: (index: number) => ({ name: `complaints[${index}].complaint`, label:'Name' }),
+    complaints_duration: (index: number) => ({ name: `complaints[${index}].duration`, label:'Duration' }),
+    complaints_duration_units: (index: number) => ({ name: `complaints[${index}].duration_unit`, label:'Unit' }),
   };
 
   const schema = Yup.object().shape({
@@ -263,56 +268,30 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
       newItem={{ complaint: "", duration: "", duration_unit: "" }} // Template for a new complaint
       renderFields={(item, index) => (
         <>
-          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
-            <SearchComboBox
+       {/* Complaint Name Field */}
+       <SearchComboBox
               name={complaintsFormConfig.complaints_name(index).name}
-              label=""
+              label={complaintsFormConfig.complaints_name(index).label}
               options={presentingComplaints}
               multiple={false}
               sx={{ width: '100%' }}
-              // Handle the change for complaint field
-            //   onChange={(newValue) => {
-            //     const updatedComplaints = [...complaints];
-            //     updatedComplaints[index].complaint = newValue;
-            //     setComplaints(updatedComplaints);
-            //   }}
             />
-          </TableCell>
-
-          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
-            <TextInputField
-              id={complaintsFormConfig.complaints_duration(index).name}
-              name={complaintsFormConfig.complaints_duration(index).name}
-              label=""
-              sx={{ width: '100%' }}
-              placeholder="e.g. 7 and select a time unit"
-              // Handle the change for duration field
-            //   onChange={(e) => {
-            //     const updatedComplaints = [...complaints];
-            //     updatedComplaints[index].duration = e.target.value;
-            //     setComplaints(updatedComplaints);
-            //   }}
-            />
-          </TableCell>
-
-          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
-            <SearchComboBox
-              name={complaintsFormConfig.complaints_duration_units(index).name}
-              label=""
-              options={durationOptions}
-              multiple={false}
-              sx={{ width: '100%' }}
-              // Handle the change for duration_unit field
-            //   onChange={(newValue) => {
-            //     const updatedComplaints = [...complaints];
-            //     updatedComplaints[index].duration_unit = newValue;
-            //     setComplaints(updatedComplaints);
-            //   }}
-            />
-          </TableCell>
+          
+          {/* Duration and Unit Field */}
+          <UnitInputField
+            id={`duration_${index}`}
+            label={complaintsFormConfig.complaints_duration(index).label}
+            initialValue={complaints[index].duration}
+            onValueChange={(val) =>{console.log(val)}}
+            initialUnit={durationOptions[0]}
+            onUnitChange={(unit) => {console.log(unit)}}
+            unitOptions={durationOptions}
+            placeholder="e.g., 3"
+            inputIcon={<IoTimeOutline/>} // Optional icon
+          />
         </>
       )}
-      headings={["Complaint", "Duration", "Time Unit"]} // Table headers
+
     />
     <WrapperBox sx={{mt:'2ch'}}>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>

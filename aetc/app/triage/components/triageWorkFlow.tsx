@@ -129,6 +129,7 @@ export default function TriageWorkFlow() {
     isLoading,
     isSuccess,
   } = getPatientVisitTypes(params?.id as string);
+
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
   const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();

@@ -13,8 +13,12 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import { LegAbnomalityImage } from "@/components/svgImages/legAbnormality";
-import { AbdomenImage, AbdomenImageWithOtherForm } from "@/components/svgImages";
+import { LegAbnormalityImage } from "@/components/svgImages/legAbnormality";
+import {
+  AbdomenImage,
+  AbdomenImageWithOtherForm,
+} from "@/components/svgImages";
+import { Box, Typography } from "@mui/material";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -42,11 +46,11 @@ const form = {
   },
   intravenousAccess: {
     name: concepts.PATIENT_INTRAVENOUS,
-    label: "Does the patient need  intravenous access",
+    label: "Does the patient need intravenous access",
   },
   traumatizedInfo: {
     name: concepts.IS_PATIENT_TRAUMATIZED,
-    label: "Is the patient traumatized?",
+    label: "Is the patient injured",
   },
 
   abnormalitiesInfo: {
@@ -133,11 +137,14 @@ const schema = yup.object({
     .string()
     .label(form.bleedingActionDone.label),
   [form.bloodPressureSystolic.name]: yup
-    .string()
-
+    .number()
+    .min(90)
+    .max(180)
     .label(form.bloodPressureSystolic.label),
   [form.bloodPressureDiastolic.name]: yup
-    .string()
+    .number()
+    .min(60)
+    .max(120)
     .label(form.bloodPressureDiastolic.label),
   [form.intravenousAccess.name]: yup
     .string()
@@ -339,37 +346,85 @@ export const Circulation = ({ onSubmit }: Prop) => {
         {formValues[form.bloodPressureMeasured.name] == "Done" && (
           <>
             <br />
-            <FieldsContainer>
+            <FieldsContainer mr="1ch">
               <TextInputField
-                sx={{ m: 0 }}
+                sx={{ width: "100%" }}
+                unitOfMeasure="mmHg"
                 name={form.bloodPressureSystolic.name}
                 label={form.bloodPressureSystolic.label}
                 id={form.bloodPressureSystolic.name}
               />
               <TextInputField
+                sx={{ width: "100%" }}
+                unitOfMeasure="mmHg"
                 name={form.bloodPressureDiastolic.name}
                 label={form.bloodPressureDiastolic.label}
                 id={form.bloodPressureDiastolic.name}
               />
             </FieldsContainer>
+            {formValues[form.bloodPressureSystolic.name] &&
+              formValues[form.bloodPressureDiastolic.name] && (
+                <>
+                  <Box>
+                    <Typography variant="subtitle1">
+                      Mean Arterial Pressure:{" "}
+                      {(formValues[form.bloodPressureDiastolic.name] * 2 +
+                        formValues[form.bloodPressureSystolic.name]) /
+                        3}{" "}
+                      mmHg
+                    </Typography>
+                  </Box>
+                </>
+              )}
             <br />
           </>
         )}
       </FormFieldContainerLayout>
+      <FormFieldContainerLayout title="Trauma">
+        <RadioGroupInput
+          row
+          name={form.traumatizedInfo.name}
+          label={form.traumatizedInfo.label}
+          options={radioOptions}
+        />
+        {formValues[form.traumatizedInfo.name] == YES && (
+          <>
+            <RadioGroupInput
+              row
+              name={form.pelvisInfo.name}
+              label={form.pelvisInfo.label}
+              options={radioOptions}
+            />
+            {formValues[form.pelvisInfo.name] == YES && (
+              <>
+                <NotificationContainer message="apply pelvic binder" />
+              </>
+            )}
+            <RadioGroupInput
+              row
+              name={form.femurAndTibiaNormalInfo.name}
+              label={form.femurAndTibiaNormalInfo.label}
+              options={radioOptions}
+            />
 
-      <FormFieldContainerLayout title="intravenous and Traumatized">
-        <FieldsContainer>
-          <RadioGroupInput
-            name={form.intravenousAccess.name}
-            label={form.intravenousAccess.label}
-            options={radioOptions}
-          />
-          <RadioGroupInput
-            name={form.traumatizedInfo.name}
-            label={form.traumatizedInfo.label}
-            options={radioOptions}
-          />
-        </FieldsContainer>
+            {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
+              <>
+                <br />
+                <LegAbnormalityImage />
+                <br />
+              </>
+            )}
+          </>
+        )}
+      </FormFieldContainerLayout>
+
+      <FormFieldContainerLayout title="Intravenous">
+        <RadioGroupInput
+          name={form.intravenousAccess.name}
+          label={form.intravenousAccess.label}
+          options={radioOptions}
+        />
+
         {formValues[form.intravenousAccess.name] == YES && (
           <>
             <br />
@@ -382,39 +437,6 @@ export const Circulation = ({ onSubmit }: Prop) => {
               <MainTypography>Diagram</MainTypography>
             </FieldsContainer>
             <br />
-          </>
-        )}
-        {formValues[form.traumatizedInfo.name] == YES && (
-          <>
-            <FieldsContainer>
-              <RadioGroupInput
-                name={form.pelvisInfo.name}
-                label={form.pelvisInfo.label}
-                options={radioOptions}
-              />
-              <RadioGroupInput
-                name={form.femurAndTibiaNormalInfo.name}
-                label={form.femurAndTibiaNormalInfo.label}
-                options={radioOptions}
-              />
-            </FieldsContainer>
-
-            {formValues[form.pelvisInfo.name] == YES && (
-              <>
-                <NotificationContainer message="apply pelvic binder" />
-              </>
-            )}
-            {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
-              <>
-                <br />
-                <NotificationContainer
-                  message="(Diagram) posterior and anterior, with the following options for the
-                sections of the legs"
-                />
-                <LegAbnomalityImage />
-                <br />
-              </>
-            )}
           </>
         )}
       </FormFieldContainerLayout>

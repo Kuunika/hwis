@@ -227,6 +227,16 @@ export const DesktopView = () => {
         <WrapperBox sx={{ my: "1ch" }}>
           <ConsultationCard
             disabled={!isOnList}
+            title="Sample History"
+            links={[
+              {
+                title: "Sample History",
+                link: `/medical-history/${params.id}`,
+              },
+            ]}
+          />
+          <ConsultationCard
+            disabled={!isOnList}
             title="Assessments"
             links={[
               {

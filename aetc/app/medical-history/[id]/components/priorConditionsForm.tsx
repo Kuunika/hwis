@@ -14,6 +14,8 @@ import {
   import { useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -83,7 +85,17 @@ import DynamicFormList from "@/components/form/dynamicFormList";
     //   setMedications(updatedMedications);
     // };
   
-  
+    const handleCheckboxChange = (e: any, field: string) => {
+ 
+      const isChecked = e.target.checked;
+
+
+      setFormValues((prev: any) => ({
+        ...prev,
+        [field]: isChecked,
+      }));
+
+    };
   
     const handleSubmit = () => {
       formValues["conditions"] = conditions
@@ -102,50 +114,38 @@ import DynamicFormList from "@/components/form/dynamicFormList";
         <FormValuesListener getValues={setFormValues} />
   
         <WrapperBox sx={{mb:'2ch'}} >
+          <a href="https://icd.who.int/browse/2024-01/mms/en" style={{color:'primary',textDecorationLine:'underline', paddingRight:'1ch', fontSize:'small'}}>ICD11 List of diagnoses <FaExternalLinkAlt /></a>
         <DynamicFormList
         items={conditions}
         setItems={setConditions}
         newItem={{ name: "", date_of_diagnosis: "", on_treatment:"No", additional_notes: "" }}
-        headings={['Condition', 'Duration', 'On treatment?','Additional Details']}
-        renderFields={(surgery, index) => (
+        renderFields={(condition, index) => (
         <>
-         <TableCell sx={{ width: '25%', textAlign: 'center' }}>
             <SearchComboBox
               name={priorConditionsFormConfig.conditions_name(index).name}
-              label=""
+              label={priorConditionsFormConfig.conditions_name(index).label}
               options={commonConditions}
               multiple={false}
               sx={{ width: '100%' }} // Adjust width to fit the cell
             />
-          </TableCell>
-
-          {/* Diagnosis Date */}
-          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
             <FormDatePicker 
               name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}  
-              label=""
-              sx={{ background: 'white', width: '100%' }}
+              label={priorConditionsFormConfig.conditions_diagnosis_date(index).label}
+              sx={{ background: 'white', width: '150px' }}
             />
-          </TableCell>
-
-          {/* On Treatment */}
-          <TableCell sx={{ width: '10%', textAlign: 'center' }}>
-            <Checkbox
-              name={priorConditionsFormConfig.conditions_on_treatment(index).name}
-              sx={{ margin: '0 auto' }} // Center the checkbox
+            <LabelledCheckbox
+              label={priorConditionsFormConfig.conditions_on_treatment(index).label}
+              checked={formValues[condition.on_treatment] || false}
+              onChange={(e) => handleCheckboxChange(e, condition.on_treatment)}
             />
-          </TableCell>
-
-          {/* Additional Details */}
-          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
             <TextInputField
               id={priorConditionsFormConfig.conditions_additional_details(index).name}
               name={priorConditionsFormConfig.conditions_additional_details(index).name}
-              label=""
+              label={priorConditionsFormConfig.conditions_additional_details(index).label}
               sx={{ width: '100%' }}
               multiline={true}
+              rows={3}
             />
-          </TableCell>
         </>)}
         />
         </WrapperBox>

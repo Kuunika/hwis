@@ -1,15 +1,56 @@
-
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { LegAbnormality } from "@/assets/legAbnormality";
-import { LegDeformityForm } from "./forms"
-export function LegAbnomalityImage() {
-    const { handleClose, handleFormSubmit, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
+import { DataBox, LegDeformityForm } from "./forms";
+import { useImageFormTransform } from "@/hooks";
+import { Box } from "@mui/material";
+export function LegAbnormalityImage() {
+  const {
+    handleClose,
+    handleFormSubmit,
+    containerRef,
+    section,
+    anchorEl,
+    setAnchorEl,
 
-    return <>
-        <LegAbnormality ref={containerRef} />
-        <SVGPopover section={section} selectedSection={selectedSection} anchorEl={anchorEl} handleClose={handleClose}>
-            <LegDeformityForm onCancel={handleClose} onSubmit={handleFormSubmit} />
-        </SVGPopover>
+    selectedSection,
+  } = useImage();
+  const { setData, submittedValues } = useImageFormTransform();
+
+  const handleDataSubmission = (
+    section: string,
+    formData: any,
+    formConceptsLabels: Array<{ concept: string; label: string }>
+  ) => {
+    setData({ section, formData, formConceptsLabels });
+    handleFormSubmit(formData);
+  };
+
+  return (
+    <>
+      <LegAbnormality ref={containerRef} />
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+        {submittedValues.map((value) => (
+          <DataBox key={value.section} labelValue={value} />
+        ))}
+      </Box>
+      <SVGPopover
+        section={section}
+        selectedSection={selectedSection}
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+      >
+        <LegDeformityForm
+          onCancel={handleClose}
+          onSubmit={(values, formConceptsLabels) =>
+            handleDataSubmission(
+              selectedSection.label as string,
+              values,
+              formConceptsLabels
+            )
+          }
+        />
+      </SVGPopover>
     </>
+  );
 }

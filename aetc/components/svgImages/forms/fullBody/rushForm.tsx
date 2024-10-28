@@ -1,30 +1,31 @@
-import { FormikInit, SearchComboBox, TextInputField } from "@/components";
+import {
+  DashedContainer,
+  FieldsContainer,
+  FormikInit,
+  RadioGroupInput,
+  SearchComboBox,
+  TextInputField,
+} from "@/components";
 import { concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
 import { Box, Button } from "@mui/material";
-import { useState } from "react";
 
 import * as Yup from "yup";
 
 const form = {
   description: {
     name: concepts.DESCRIPTION,
-    label: "Description of Abnormality",
+    label: "Description of Rush",
   },
   notes: {
     name: concepts.ADDITIONAL_NOTES,
-    label: "Notes",
-  },
-  specify: {
-    name: concepts.SPECIFY,
-    label: "Specify",
+    label: "Additional Notes",
   },
 };
 
 const schema = Yup.object().shape({
   [form.description.name]: Yup.array().required().label(form.description.label),
-  [form.notes.name]: Yup.string().required().label(form.notes.label),
-  [form.specify.name]: Yup.string().label(form.specify.label),
+  [form.notes.name]: Yup.string().label(form.notes.label),
 });
 
 type Props = {
@@ -32,16 +33,20 @@ type Props = {
   onCancel: () => void;
 };
 const options = [
-  { id: "Wound", label: "Wound" },
-  { id: "Surgical Emphyema", label: "Surgical Emphyema" },
-  { id: "Rib Deformity", label: "Rib Deformity" },
-  { id: "Frail chest", label: "Frail chest" },
-  { id: "Other", label: "Other" },
+  { id: concepts.BRUISE, label: "Bruise" },
+  { id: concepts.PETECHIAE, label: "Petechiae" },
+  { id: concepts.URTICARIA, label: "Urtcaria" },
+  { id: concepts.BURNS, label: "Burns" },
+  { id: concepts.BITE, label: "Bite" },
+  { id: concepts.STING, label: "Sting" },
+  { id: concepts.MACULE, label: "Macule" },
+  { id: concepts.PAPULE, label: "Papule" },
+  { id: concepts.VESICLE, label: "Vesicle" },
+  { id: concepts.PUSTULE, label: "Pustule" },
+  { id: concepts.SCALE, label: "Scale" },
 ];
 
-export const BreathingLungForm = (props: Props) => {
-  const [showInputTextDisplay, setShowInputTextDisplay] = useState(false);
-
+export const RushForm = (props: Props) => {
   return (
     <FormikInit
       validationSchema={schema}
@@ -52,33 +57,20 @@ export const BreathingLungForm = (props: Props) => {
       submitButton={false}
       submitButtonText="next"
     >
-      <TextInputField
-        multiline
-        rows={2}
-        sx={{ width: "100%" }}
-        id={form.notes.name}
-        name={form.notes.name}
-        label={form.notes.label}
-      />
       <SearchComboBox
-        getValue={(values) => {
-          if (values)
-            setShowInputTextDisplay(
-              Boolean(values.find((v: any) => v.id == "Other"))
-            );
-        }}
         name={form.description.name}
         label={form.description.label}
         options={options}
       />
-      {showInputTextDisplay && (
-        <TextInputField
-          sx={{ width: "100%" }}
-          id={form.specify.name}
-          name={form.specify.name}
-          label={form.specify.label}
-        />
-      )}
+      <TextInputField
+        sx={{
+          width: "100%",
+          mt: "1ch",
+        }}
+        name={form.notes.name}
+        label={form.notes.label}
+        id={form.notes.name}
+      />
       <br />
       <Box sx={{ display: "flex", gap: "0.2ch" }}>
         <Button

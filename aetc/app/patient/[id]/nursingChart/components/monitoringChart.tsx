@@ -170,10 +170,10 @@ export const MonitoringChart = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        {activeStep === 0 && <ObservationsForm onSubmit={handleObservationsSubmit} onSkip={handleSkip}/>}
-        {activeStep === 1 && <InterventionsForm onSubmit={handleInterventionsSubmit} onSkip={handleSkip}/>}
-        {activeStep === 2 && <MedicationsForm onSubmit={handleMedicationsSubmit} onSkip={handleSkip}/>}
-        {activeStep === 3 && <NursingNotesForm onSubmit={handleNursingNotesSubmit} onSkip={handleSkip}/>}
+        <ObservationsForm onSubmit={handleObservationsSubmit} onSkip={handleSkip}/>
+       <InterventionsForm onSubmit={handleInterventionsSubmit} onSkip={handleSkip}/>
+        <MedicationsForm onSubmit={handleMedicationsSubmit} onSkip={handleSkip}/>
+        <NursingNotesForm onSubmit={handleNursingNotesSubmit} onSkip={handleSkip}/>
       </NewStepperContainer>
     </>
   );

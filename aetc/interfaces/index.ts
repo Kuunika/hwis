@@ -318,3 +318,12 @@ export interface LabFormProps {
   onClose: () => void;
   addRequest: (value: LabRequest) => void;
 }
+
+
+export interface FormValueLabel {
+  section:string,
+  formValues: Array<{
+    label:string|undefined,
+    value:string|undefined
+  }>
+}

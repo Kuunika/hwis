@@ -15,3 +15,30 @@ export const getObservations = (values: any, dateTime: any) => {
     obsDatetime: dateTime,
   }));
 };
+
+
+export const getFormLabels = (formConceptLabels:any, selectOptionsFormLabels:Array<{label:string,id:string}>, radioOptionFormLabels:Array<{label:string,value:string}> )=>{
+ let form=Object.keys(formConceptLabels).map((key:string)=>{
+  return {
+    concept:formConceptLabels[key].name,
+    label: formConceptLabels[key].label,
+  }
+ })
+
+
+ const selects= selectOptionsFormLabels.map(op=>{
+    return {
+      concept: op.id,
+      label: op.label
+    }
+})
+
+  const radios =radioOptionFormLabels.map(op=>{
+    return {
+      concept: op.value,
+      label: op.label
+    }
+})
+
+return [...form, ...radios, ...selects]
+}

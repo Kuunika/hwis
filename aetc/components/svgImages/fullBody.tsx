@@ -1,18 +1,59 @@
-
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { Box, Button } from "@mui/material";
 import { FullBody } from "@/assets/fullBody";
+import { DataBox, RushForm } from "./forms";
+import { useImageFormTransform } from "@/hooks";
 export function FullBodyImage() {
-    const { handleClose, handleFormSubmit, containerRef, section, anchorEl, setAnchorEl, highlightSection, selectedSection, setSelectedSection, highlightAllSelectedSections, setIds } = useImage()
+  const {
+    handleClose,
+    handleFormSubmit,
+    containerRef,
+    section,
+    anchorEl,
+    setAnchorEl,
+    highlightSection,
+    selectedSection,
+    setSelectedSection,
+    highlightAllSelectedSections,
+    setIds,
+  } = useImage();
+  const { setData, submittedValues } = useImageFormTransform();
 
-    return <>
-        <FullBody ref={containerRef} />
-        <SVGPopover section={section} selectedSection={selectedSection} anchorEl={anchorEl} handleClose={handleClose}>
-            <Box sx={{ display: "flex", gap: "0.2ch" }}>
-                <Button type="submit" onClick={handleFormSubmit} sx={{ borderRadius: "1px" }} variant="contained" fullWidth>Select</Button>
-                <Button sx={{ borderRadius: "1px" }} fullWidth onClick={handleClose}>Cancel</Button>
-            </Box>
-        </SVGPopover>
-    </>
+  const handleDataSubmission = (
+    section: string,
+    formData: any,
+    formConceptsLabels: Array<{ concept: string; label: string }>
+  ) => {
+    setData({ section, formData, formConceptsLabels });
+    handleFormSubmit(formData);
+  };
+
+  return (
+    <div>
+      <FullBody ref={containerRef} />
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+        {submittedValues.map((value) => (
+          <DataBox key={value.section} labelValue={value} />
+        ))}
+      </Box>
+      <SVGPopover
+        section={section}
+        selectedSection={selectedSection}
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+      >
+        <RushForm
+          onCancel={handleClose}
+          onSubmit={(values, formConceptsLabels) =>
+            handleDataSubmission(
+              selectedSection.label as string,
+              values,
+              formConceptsLabels
+            )
+          }
+        />
+      </SVGPopover>
+    </div>
+  );
 }

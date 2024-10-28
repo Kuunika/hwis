@@ -1,12 +1,22 @@
-'use client'
+"use client";
 import { styled } from "@mui/material/styles";
 import { FaAngleDown, FaAngleLeft } from "react-icons/fa";
 import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
-import MuiAccordionSummary, { AccordionSummaryProps } from "@mui/material/AccordionSummary";
+import MuiAccordionSummary, {
+  AccordionSummaryProps,
+} from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { ReactNode } from "react";
-import { MainGrid, MainPaper, MainTypography, NewStepper, Step, StepperTablet, WrapperBox } from "..";
+import {
+  MainGrid,
+  MainPaper,
+  MainTypography,
+  NewStepper,
+  Step,
+  StepperTablet,
+  WrapperBox,
+} from "..";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -59,9 +69,8 @@ export function NewStepperContainer({
   onBack,
 }: IProps) {
   // Map children to steps to ensure order consistency
-  const filteredChildren = children.filter(child => child !== false);
+  const filteredChildren = children.filter((child) => child !== false);
   const validChildren = steps.map((step, index) => filteredChildren[index]);
-
 
   return (
     <MainGrid container spacing={5}>

@@ -104,44 +104,36 @@ import DynamicFormList from "@/components/form/dynamicFormList";
         items={surgeries}
         setItems={setSurgeries}
         newItem={{ name: "", indication: "", date:"", complications: "" }}
-        headings={['Name', 'Indication', 'Date','Complication']}
         renderFields={(surgery, index) => (
         <>
-          <TableCell sx={{ width: '25%', textAlign: 'center' }}>
             <SearchComboBox
               name={surgeryFormConfig.surgical_procedure_name(index).name}
-              label=""
+              label={surgeryFormConfig.surgical_procedure_name(index).label}
               options={surgicalProcedures}
               multiple={false}
               sx={{ width: '100%' }} // Adjust width to fit the cell
             />
-          </TableCell>
-          <TableCell sx={{ width: '20%', textAlign: 'center' }}>
           <SearchComboBox
               name={surgeryFormConfig.surgical_procedure_indication(index).name}
-              label=""
+              label={surgeryFormConfig.surgical_procedure_indication(index).label}
               options={[{id: 'Bowel obstruction on appendicitis', label: 'Bowel obstruction on appendicitis'},{id: 'Obstetrics to populate', label: 'Obstetrics to populate'}]}
               multiple={false}
-              sx={{ width: '100%' }} // Adjust width to fit the cell
+              sx={{ width: '100%' }} 
             />
-          </TableCell>
-          <TableCell sx={{ width: '10%', textAlign: 'center' }}>
           <FormDatePicker 
               name={surgeryFormConfig.surgical_procedure_date(index).name}  
-              label=""
-              sx={{ background: 'white', width: '100%' }}
+              label={surgeryFormConfig.surgical_procedure_date(index).label}  
+              sx={{ background: 'white', width: '150px' }}
             />
-          </TableCell>
 
-          <TableCell sx={{ width: '30%', textAlign: 'center' }}>
             <TextInputField
               id={surgeryFormConfig.surgical_procedure_complications(index).name}
               name={surgeryFormConfig.surgical_procedure_complications(index).name}
-              label=""
+              label={surgeryFormConfig.surgical_procedure_complications(index).label}
               sx={{ width: '100%' }}
               multiline={true}
+              rows={3}
             />
-          </TableCell>
         </>)}
         />
         </WrapperBox>

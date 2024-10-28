@@ -1,22 +1,12 @@
-import { FormDatePicker, MainButton, SearchComboBox,  SelectInputField, WrapperBox } from "@/components";
-import React, { useEffect, useState } from "react";
-import medicationNames from "../../../constants/medicationnames.json"
+import { MainButton, TextInputField, WrapperBox } from "@/components";
+import { useState } from "react";
 import {
-  FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
-  FormValuesListener,
-  FormikInit,
-  MainTypography,
-  RadioGroupInput,
-  TextInputField,
+    FormValuesListener,
+    FormikInit
 } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
-import { Checkbox, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import { FaMinus, FaPlus } from "react-icons/fa6";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
-import DynamicFormList from "@/components/form/dynamicFormList";
 
 
 type Prop = {
@@ -29,11 +19,16 @@ const allergiesFormConfig = {
 allergy: {
     name: concepts.ALLERGY,
     label: "Allergies",
+  },
+  allergyDetails:{
+    name:'AllergyDetails',
+    label:'Allergy Details'
   }
 }
 
 export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
+    const [allergySelected,  setAllergySelected] = useState<boolean>(false);
 
 const allergyOptions = [
   {
@@ -108,8 +103,18 @@ return (
     >
     <FormValuesListener getValues={setFormValues} />
 
-        <GroupedSearchComboBox options={allergyOptions} getValue={(value) => console.log(value)}  multiple={true} name={allergiesFormConfig.allergy.name}label={allergiesFormConfig.allergy.label} />
-
+        <GroupedSearchComboBox options={allergyOptions} getValue={(value) => { setAllergySelected(true); console.log(value)}}  multiple={true} name={allergiesFormConfig.allergy.name}label={allergiesFormConfig.allergy.label} />
+{allergySelected &&(
+  <TextInputField 
+  id={allergiesFormConfig.allergyDetails.name}
+  name={allergiesFormConfig.allergyDetails.name}
+  label={allergiesFormConfig.allergyDetails.label}
+  sx={{ width: '100%', mt:'2ch' }}
+  multiline={true}
+  rows={3}
+/>
+ 
+)}
     <WrapperBox sx={{mt:'2ch'}}>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
         <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />

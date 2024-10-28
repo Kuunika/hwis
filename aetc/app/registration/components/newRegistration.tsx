@@ -1,12 +1,7 @@
 "use client";
 import { useState, ReactNode, useEffect, useRef, useContext } from "react";
 import { Grid } from "@mui/material";
-import {
-  MainButton,
-  MainGrid,
-  MainTypography,
-  WrapperBox,
-} from "@/components";
+import { MainButton, MainGrid, MainTypography, WrapperBox } from "@/components";
 import {
   DemographicsForm,
   FinancingForm,
@@ -32,13 +27,12 @@ import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { SearchPotentialDuplicates } from "./searchPontentialDuplicates";
 import { OverlayLoader } from "@/components/backdrop";
-import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
+import {
+  SearchRegistrationContext,
+  SearchRegistrationContextType,
+} from "@/contexts";
 import { FaPrint } from "react-icons/fa6";
-import { BarcodeComponent } from "@/components/barcode";
-import { PatientUpdateResponse } from "@/interfaces";
-import { BasicSelect } from "@/app/patient/components/basicSelect";
 import { PatientBarcodePrinter } from "@/components/barcodePrinterDialogs";
-
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -49,11 +43,14 @@ export const NewRegistrationFlow = () => {
   const [showForm, setShowForm] = useState(true); //TODO: change to true
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const { registrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType;
-  const [formError, setFormError] = useState<{ hasError: boolean, errors: any }>({ hasError: false, errors: '' })
+  const { registrationType } = useContext(
+    SearchRegistrationContext
+  ) as SearchRegistrationContextType;
+  const [formError, setFormError] = useState<{
+    hasError: boolean;
+    errors: any;
+  }>({ hasError: false, errors: "" });
   const scrollableRef = useRef<any>({});
-  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { })
-
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
@@ -61,13 +58,29 @@ export const NewRegistrationFlow = () => {
   const [financingFormContext, setFinancingFormContext] = useState<any>();
   const [formData, setFormData] = useState<any>({});
   const [patientValues, setPatientValues] = useState({
-    firstName: '', lastName: '', gender: '', birthdate: '',
-    homeVillage: '',
-    homeTA: '',
-    homeDistrict: ''
-  })
+    firstName: "",
+    lastName: "",
+    gender: "",
+    birthdate: "",
+    homeVillage: "",
+    homeTA: "",
+    homeDistrict: "",
+  });
 
-  const { refetch, isFetching, isSuccess, data: ddePatients } = searchByDemographics(patientValues.firstName, patientValues.lastName, patientValues.gender, patientValues.birthdate, patientValues.homeVillage, patientValues.homeTA, patientValues.homeDistrict)
+  const {
+    refetch,
+    isFetching,
+    isSuccess,
+    data: ddePatients,
+  } = searchByDemographics(
+    patientValues.firstName,
+    patientValues.lastName,
+    patientValues.gender,
+    patientValues.birthdate,
+    patientValues.homeVillage,
+    patientValues.homeTA,
+    patientValues.homeDistrict
+  );
   const { data: initialRegistrationList } =
     getPatientsWaitingForRegistrations();
   const { params } = useParameters();
@@ -78,7 +91,6 @@ export const NewRegistrationFlow = () => {
     isError: patientError,
     data: patient,
   } = registerPatient();
-
 
   const {
     mutate: createNextOfKin,
@@ -125,7 +137,6 @@ export const NewRegistrationFlow = () => {
     isError: relationshipError,
   } = addRelationship();
 
-
   const {
     mutate: createGuardianRelationship,
     isPending: creatingGuardianRelationship,
@@ -134,20 +145,23 @@ export const NewRegistrationFlow = () => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
-  const [printer, setPrinter] = useState("http://localhost:3000")
-  const trigger = () => <MainButton variant="text" sx={{ color: "#000", ml: 0.5, fontSize: "2em" }} title={<FaPrint />} onClick={() => { }} />
-
+  const [printer, setPrinter] = useState("http://localhost:3000");
+  const trigger = () => (
+    <MainButton
+      variant="text"
+      sx={{ color: "#000", ml: 0.5, fontSize: "2em" }}
+      title={<FaPrint />}
+      onClick={() => {}}
+    />
+  );
 
   useEffect(() => {
+    if (!Boolean(patientValues.firstName)) return;
 
-    if (!Boolean(patientValues.firstName)) return
-
-    if (registrationType != 'remote') {
-
-      refetch()
+    if (registrationType != "remote") {
+      refetch();
     }
-
-  }, [patientValues])
+  }, [patientValues]);
 
   // patient created
   useEffect(() => {
@@ -170,7 +184,6 @@ export const NewRegistrationFlow = () => {
     }
   }, [nextOfKinCreated]);
 
-
   //create socialHistory
   useEffect(() => {
     if (relationshipCreated) {
@@ -188,8 +201,6 @@ export const NewRegistrationFlow = () => {
     }
   }, [relationshipCreated]);
 
-
-
   // create referral
   useEffect(() => {
     if (socialHistoryCreated) {
@@ -197,12 +208,31 @@ export const NewRegistrationFlow = () => {
       setMessage("adding referral...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
       const dateTime = getDateTime();
+
+      const diagnosis = formData.referral[concepts.DIAGNOSIS];
+
+      // console.log({ diagnosis });
+      // console.log(Array.isArray(diagnosis));
+
+      // return;
+
+      const diagnosisObs = Array.isArray(diagnosis)
+        ? diagnosis.map((p: any) => {
+            return {
+              concept: concepts.DIAGNOSIS,
+              value: p.id,
+              obsDatetime: dateTime,
+            };
+          })
+        : [];
+      delete formData.referral[concepts.DIAGNOSIS];
+
       createReferral({
         encounterType: encounters.REFERRAL,
         visit: patient?.visit_uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.referral, dateTime),
+        obs: [...getObservations(formData.referral, dateTime), ...diagnosisObs],
       });
     }
   }, [socialHistoryCreated]);
@@ -215,18 +245,19 @@ export const NewRegistrationFlow = () => {
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
       const dateTime = getDateTime();
 
-      const payments = formData.financing[concepts.PAYMENT_OPTIONS]
+      const payments = formData.financing[concepts.PAYMENT_OPTIONS];
 
-      const paymentObs = payments.filter((pay: any) => pay.value).map((p: any) => {
-        return {
-          concept: concepts.PAYMENT_OPTIONS,
-          value: p.key,
-          obsDatetime: dateTime,
-        }
-      })
+      const paymentObs = payments
+        .filter((pay: any) => pay.value)
+        .map((p: any) => {
+          return {
+            concept: concepts.PAYMENT_OPTIONS,
+            value: p.key,
+            obsDatetime: dateTime,
+          };
+        });
 
-
-      delete formData.financing[concepts.PAYMENT_OPTIONS]
+      delete formData.financing[concepts.PAYMENT_OPTIONS];
 
       createFinancing({
         encounterType: encounters.FINANCING,
@@ -238,7 +269,6 @@ export const NewRegistrationFlow = () => {
     }
   }, [referralCreated]);
 
-
   useEffect(() => {
     if (financingCreated) {
       setCompleted(6);
@@ -249,7 +279,6 @@ export const NewRegistrationFlow = () => {
       });
     }
   }, [financingCreated]);
-
 
   useEffect(() => {
     if (guardianCreated && guardian && patient) {
@@ -263,7 +292,6 @@ export const NewRegistrationFlow = () => {
     }
   }, [guardianCreated]);
 
-
   useEffect(() => {
     if (guardianRelationshipCreated) {
       setLoading(false);
@@ -271,37 +299,37 @@ export const NewRegistrationFlow = () => {
     }
   }, [guardianRelationshipCreated]);
 
-
-
   const formatErrorsToList = (errors: any) => {
-
     const errorKeys = Object.keys(errors);
 
     if (errorKeys.length == 0) {
       return;
     }
 
-    const errorList = <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
-      {errorKeys.map(key => {
-        return <MainTypography color={"#800000"} variant="subtitle2" key={key}>{errors[key]}</MainTypography>
-      })}
-    </WrapperBox>
+    const errorList = (
+      <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
+        {errorKeys.map((key) => {
+          return (
+            <MainTypography color={"#800000"} variant="subtitle2" key={key}>
+              {errors[key]}
+            </MainTypography>
+          );
+        })}
+      </WrapperBox>
+    );
 
     setFormError({
       hasError: true,
-      errors: errorList
-    })
-
-
-  }
-
+      errors: errorList,
+    });
+  };
 
   const changeActive = async (step: number) => {
     if (active == 1) {
       const { submitForm, errors, isValid, touched, dirty } =
         demographicsContext;
       submitForm();
-      formatErrorsToList(errors)
+      formatErrorsToList(errors);
 
       if (isValid && dirty) {
         setActive(active + 1);
@@ -314,7 +342,7 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } =
         socialHistoryContext;
       submitForm();
-      formatErrorsToList(errors)
+      formatErrorsToList(errors);
 
       if (isValid && dirty) {
         setActive(active + 1);
@@ -324,7 +352,7 @@ export const NewRegistrationFlow = () => {
     if (active == 3) {
       const { submitForm, errors, isValid, touched, dirty } = referralContext;
       submitForm();
-      formatErrorsToList(errors)
+      formatErrorsToList(errors);
 
       if (isValid) {
         setActive(active + 1);
@@ -335,7 +363,7 @@ export const NewRegistrationFlow = () => {
       const { submitForm, errors, isValid, touched, dirty } =
         financingFormContext;
       submitForm();
-      formatErrorsToList(errors)
+      formatErrorsToList(errors);
 
       if (isValid && dirty) {
         // setActive(active + 1);
@@ -364,7 +392,7 @@ export const NewRegistrationFlow = () => {
       relationshipError ||
       financingError ||
       nextOfKinError ||
-      guardianRelationshipError
+      guardianRelationshipError;
 
     setError(error);
   }, [
@@ -374,16 +402,17 @@ export const NewRegistrationFlow = () => {
     relationshipError,
     financingError,
     nextOfKinError,
-    guardianRelationshipError
+    guardianRelationshipError,
   ]);
-
-
-
 
   return (
     <>
       <OverlayLoader open={isFetching} />
-      <SearchPotentialDuplicates close={() => setDialogOpen(false)} open={isSuccess && dialogOpen} ddePatients={ddePatients ? ddePatients : []} />
+      <SearchPotentialDuplicates
+        close={() => setDialogOpen(false)}
+        open={isSuccess && dialogOpen}
+        ddePatients={ddePatients ? ddePatients : []}
+      />
       <Grid sx={{ height: "95vh", position: "relative" }} container>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         <Grid
@@ -397,47 +426,51 @@ export const NewRegistrationFlow = () => {
             display: "flex",
             flexDirection: "column",
             height: "90vh",
-            overflowY: "auto"
+            overflowY: "auto",
           }}
         >
           {showForm && (
             <>
-
-              <ShowFormErrors open={formError.hasError} onClose={() => setFormError({ hasError: false, errors: "" })}>
+              <ShowFormErrors
+                open={formError.hasError}
+                onClose={() => setFormError({ hasError: false, errors: "" })}
+              >
                 {formError.errors}
               </ShowFormErrors>
               <br />
               <br />
 
-              <WrapperBox sx={{
-                display: active == 1 ? "block" : "none"
-              }}>
+              <WrapperBox
+                sx={{
+                  display: active == 1 ? "block" : "none",
+                }}
+              >
                 <DemographicsForm
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
                     formData["demographics"] = values;
-                    console.log({ values })
+                    console.log({ values });
 
                     setPatientValues({
                       ...values,
                       homeDistrict: values.homeDistrict,
                       homeTA: values.homeTraditionalAuthority,
                       homeVillage: values.homeVillage,
-                      birthdate: values.birthDate
-                    })
+                      birthdate: values.birthDate,
+                    });
 
-                    if (registrationType != 'remote') {
-                      setDialogOpen(true)
+                    if (registrationType != "remote") {
+                      setDialogOpen(true);
                     }
-
-                  }
-                  }
+                  }}
                 />
               </WrapperBox>
 
-              <WrapperBox sx={{
-                display: active == 2 ? "block" : "none"
-              }}>
+              <WrapperBox
+                sx={{
+                  display: active == 2 ? "block" : "none",
+                }}
+              >
                 <SocialHistoryForm
                   setContext={setSocialHistoryContext}
                   onSubmit={(values: any) =>
@@ -446,32 +479,37 @@ export const NewRegistrationFlow = () => {
                 />
               </WrapperBox>
 
-              <WrapperBox sx={{
-                display: active == 3 ? "block" : "none"
-              }}>
+              <WrapperBox
+                sx={{
+                  display: active == 3 ? "block" : "none",
+                }}
+              >
                 <ReferralForm
                   setContext={setReferralContext}
                   initialValues={{}}
-                  onSubmit={(values: any) => (formData["referral"] = values)}
+                  onSkip={() => setActive((step) => step + 1)}
+                  onSubmit={(values: any) => {
+                    formData["referral"] = values;
+                  }}
                 />
               </WrapperBox>
 
-
-              <WrapperBox sx={{
-                display: active == 4 ? "block" : "none"
-              }}>
+              <WrapperBox
+                sx={{
+                  display: active == 4 ? "block" : "none",
+                }}
+              >
                 <FinancingForm
                   setContext={setFinancingFormContext}
                   initialValues={{}}
                   onSubmit={handleSubmitFinancing}
                 />
               </WrapperBox>
-
             </>
           )}
 
           {/* {completed == 8 && ( //TODO: change to completed == 6  */}
-          {completed == 8 && ( //TODO: change to completed == 6 
+          {completed == 8 && ( //TODO: change to completed == 6
             <>
               <br />
               <br />
@@ -487,13 +525,17 @@ export const NewRegistrationFlow = () => {
                 onSecondaryAction={() => {
                   navigateTo("/dashboard");
                 }}
-
               />
 
               {/* <BarcodeComponent value={getPatientId(patient)}> */}
               <br />
               <>
-                <PatientBarcodePrinter firstName={patient.names[0].given_name} lastName={patient.names[0].family_name} addresses={patient.addresses} identifiers={patient?.patient?.identifiers} />
+                <PatientBarcodePrinter
+                  firstName={patient.names[0].given_name}
+                  lastName={patient.names[0].family_name}
+                  addresses={patient.addresses}
+                  identifiers={patient?.patient?.identifiers}
+                />
               </>
             </>
           )}
@@ -533,7 +575,11 @@ export const NewRegistrationFlow = () => {
         </Grid>
         <MainGrid item xs={1} sm={2} md={3} lg={4}></MainGrid>
         {showForm && (
-          <RegistrationNavigation onPrevious={(active: number) => setActive(active)} active={active} setActive={changeActive} />
+          <RegistrationNavigation
+            onPrevious={(active: number) => setActive(active)}
+            active={active}
+            setActive={changeActive}
+          />
         )}
       </Grid>
     </>
@@ -543,13 +589,12 @@ export const NewRegistrationFlow = () => {
 const RegistrationNavigation = ({
   active,
   setActive,
-  onPrevious
+  onPrevious,
 }: {
   active: number;
   setActive: (step: number) => void;
-  onPrevious: (active: number) => void
+  onPrevious: (active: number) => void;
 }) => {
-
   const buttonStyles = {
     width: "126px",
     height: "44px",
@@ -557,7 +602,6 @@ const RegistrationNavigation = ({
     borderRadius: "8px",
     gap: "8px",
   };
-
 
   return (
     <WrapperBox
@@ -585,7 +629,6 @@ const RegistrationNavigation = ({
         }}
         title={"previous"}
         onClick={() => {
-
           if (active == 1) return;
           onPrevious(active - 1);
         }}
@@ -628,7 +671,6 @@ const RegistrationNavigation = ({
           //   return;
           // }
           setActive(active + 1);
-
         }}
       />
     </WrapperBox>
@@ -646,7 +688,7 @@ const NavBox = ({
 }) => {
   return (
     <WrapperBox
-      onClick={() => { }}
+      onClick={() => {}}
       sx={{
         display: "flex",
         alignItems: "center",
