@@ -1,5 +1,5 @@
 import { FormDatePicker, MainButton, SearchComboBox, UnitInputField, WrapperBox } from "@/components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import medicationNames from "../../../../constants/medicationnames.json";
 import {
     FormValuesListener,
@@ -10,6 +10,8 @@ import { TableCell } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
+import { durationOptions } from "@/constants";
+import { getAllDrugs } from "@/hooks/drugs";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -59,12 +61,7 @@ type Prop = {
       })}
 
  
-      const durationOptions= [
-        "Days",
-      "Weeks",
-         "Months",
-        "Years",
-        ]
+      
 
       const medicationUnits = [
         "Milligrams (mg)" ,
@@ -134,6 +131,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             },
           ]);
         const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
+         const { data } = getAllDrugs();
+         const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
 
         const handleUpdateFrequency = (index: number, value: boolean) => {
             setOtherFrequency(prevState => ({
@@ -191,11 +190,24 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     };
   
     const handleSubmit = () => {
-        console.log(formValues);
         console.log(medications);
         return;
         //onSubmit(formValues);
       };
+
+      useEffect(() => {
+        if (data) {
+          const formatMedicationOptions = (data: any) => {
+            return data.map((drug: { drug_id: number; name: string }) => ({
+              id: drug.drug_id.toString(),
+              label: drug.name,
+            }));
+          };
+      
+          // Set medication options with formatted array
+          setMedicationOptions(formatMedicationOptions(data));
+        }
+      }, [data]);
 
     return (
         <FormikInit
@@ -228,7 +240,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     <SearchComboBox
       name={medicationFormConfig.medication_name(index).name}
       label={medicationFormConfig.medication_name(index).label}
-      options={medicationNames}
+      options={medicationOptions}
       getValue={(value) => console.log("Selected value:", value)}
       sx={{ width: '200px' }}
       multiple={false}

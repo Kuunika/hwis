@@ -50,7 +50,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
-      <Box display="flex" alignItems="center">
+      <Box position="relative" display="flex" alignItems="center" mt="2.5ch">
         {/* Input Field */}
         <TextField
           id={id}
@@ -58,7 +58,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           onChange={handleValueChange}
           placeholder={placeholder}
           variant="outlined"
-          sx={{ flexGrow: 1, mr: 1, marginTop: "2.3ch", background: "white" }}
+          sx={{ flexGrow: 1, background: "white" }}
           InputProps={{
             startAdornment: inputIcon && (
               <InputAdornment position="start">
@@ -67,12 +67,19 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
             ),
           }}
         />
-        {/* Unit Selector */}
+        {/* Unit Selector with Absolute Positioning and Custom Border Radius */}
         <Select
           value={unit}
           onChange={handleUnitChange}
           variant="outlined"
-          sx={{ minWidth: 80, marginTop: "2.5ch", background: "white" }}
+          sx={{
+            position: "absolute",
+            right: 0,
+            minWidth: 80,
+            background: "white",
+            borderTopLeftRadius: 0,
+            borderBottomLeftRadius: 0,
+          }}
           MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
         >
           {unitOptions.map((option) => (
