@@ -333,6 +333,7 @@ export interface Drugs {
   date_retired: Date | null;
   retire_reason: string | null;
   uuid: string;
+}
 
 export interface LabFormProps {
   onClose: () => void;
