@@ -1,6 +1,6 @@
 import { GenericDialog, NotificationContainer } from "@/components";
-import { NO, YES, concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { NO, YES, concepts, encounters } from "@/constants";
+import { getInitialValues, getObservations } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -12,10 +12,10 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import { CanvasImage } from "@/components/canvasImage/canvasImage";
-import { Button } from "@mui/material";
-import { FullBodyImage } from "@/components/svgImages/fullBody";
-import { FullBodyBackImage } from "@/components/svgImages";
+import { addEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
 
 const form = {
   isAirwayPatent: {
@@ -43,7 +43,7 @@ const form = {
     label: "Reason",
   },
   otherReason: {
-    name: "otherReason",
+    name: concepts.OTHER,
     label: "Specify",
   },
   intervention: {
@@ -61,7 +61,7 @@ const form = {
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 
 const schema = Yup.object().shape({
@@ -84,20 +84,20 @@ const schema = Yup.object().shape({
 });
 
 const airwayThreatenedReasons = [
-  { id: "secretion", label: "Secretions - blood, vomit, other" },
-  { id: "Tongue swelling", label: "Tongue swelling" },
-  { id: "Neck swelling", label: "Neck swelling" },
-  { id: "Neck haematoma", label: "Neck haematoma" },
-  { id: "Tongue falling back", label: "Tongue falling back" },
-  { id: "other", label: "Other" },
+  { id: concepts.SECRETION, label: "Secretions - blood, vomit, other" },
+  { id: concepts.TONGUE_SWELLING, label: "Tongue swelling" },
+  { id: concepts.NECK_SWELLING, label: "Neck swelling" },
+  { id: concepts.NECK_HAEMATOMA, label: "Neck haematoma" },
+  { id: concepts.TONGUE_FALLING_BACK, label: "Tongue falling back" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const airwayInterventionsList = [
-  { id: "Suctioning Airway", label: "Suctioning Airway" },
-  { id: "Jaw thrust manoeuvre", label: "Jaw thrust manoeuvre" },
-  { id: "Head tilt/chin lift", label: "Head tilt/chin lift" },
+  { id: concepts.SUCTIONING_AIRWAY, label: "Suctioning Airway" },
+  { id: concepts.JAW_THRUST_MANOEUVER, label: "Jaw thrust manoeuver" },
+  { id: concepts.HEAD_TILT_CHIN_LIFT, label: "Head tilt/chin lift" },
   {
-    id: "oropharyngeal",
+    id: concepts.OROPHARYNGEAL,
     label:
       "Airway adjunct (Oropharyngeal airway and size / nasopharyngeal airway)",
   },
@@ -112,28 +112,36 @@ const radioOptions = [
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const [anatomyOpen, setAnatomyOpen] = useState(false);
+  const { mutate, isSuccess: airwaySubmitted, isPending } = addEncounter();
+  const { params } = useParameters();
+  const {
+    data: patientVisits,
+    isLoading,
+    isSuccess,
+  } = getPatientVisitTypes(params?.id as string);
+  const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
+
+  const handleSubmit = async (formValues: any) => {
+    const dateTime = getDateTime();
+    // console.log(getObservations(formValues, dateTime));
+    // return;
+    await mutate({
+      encounterType: encounters.AIRWAY_ASSESSMENT,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      dateTime,
+      obs: getObservations(formValues, dateTime),
+    });
+    onSubmit();
+  };
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
     >
       <FormValuesListener getValues={setFormValues} />
-
-      {/* <Button onClick={() => setAnatomyOpen(true)}>Image</Button>
-      <GenericDialog
-        maxWidth="lg"
-        open={anatomyOpen}
-        onClose={() => setAnatomyOpen(false)}
-        title=""
-      >
-        <FullBodyImage />
-        <FullBodyBackImage />
-
-        <CanvasImage imageUrl="/anatomy.webp" />
-      </GenericDialog> */}
 
       <FormFieldContainerLayout title="Airway Patent">
         <FieldsContainer sx={{ alignItems: "flex-start" }}>
@@ -142,7 +150,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
             label={form.isAirwayPatent.label}
             options={[
               ...radioOptions,
-              { label: "Threatened", value: "threatened" },
+              { label: "Threatened", value: concepts.THREATENED },
             ]}
           />
           {formValues[form.isAirwayPatent.name] == YES && (
@@ -153,7 +161,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
             />
           )}
         </FieldsContainer>
-        {formValues[form.isAirwayPatent.name] === "threatened" && (
+        {formValues[form.isAirwayPatent.name] === concepts.THREATENED && (
           <FieldsContainer sx={{ my: "1ch" }}>
             <SearchComboBox
               name={form.airWayThreatenedReason.name}
@@ -164,7 +172,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
           </FieldsContainer>
         )}
 
-        {formValues[form.airWayThreatenedReason.name] == "other" && (
+        {formValues[form.airWayThreatenedReason.name] == concepts.OTHER && (
           <>
             <br />
             <FieldsContainer>
@@ -222,7 +230,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
               />
             </FieldsContainer>
             <br />
-            {formValues[form.intervention.name] == "oropharyngeal" && (
+            {formValues[form.intervention.name] == concepts.OROPHARYNGEAL && (
               <>
                 <FieldsContainer sx={{ alignItems: "flex-start" }}>
                   <RadioGroupInput

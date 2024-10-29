@@ -393,6 +393,16 @@ export const concepts = {
   SCROTUM_NOTES: "96089bcd-7b9a-4383-a171-5d5c5b5dafdb",
   DIAGNOSIS: "b8e32cd6-8d80-11d8-abbb-0024217bb78e",
   FUNDO_SCOPY_FINDINGS: "8d167df8-fbd0-4c5d-b383-1e6f8341c6f4",
+  THREATENED: "THREATENED",
+  SECRETION: "SECRETION",
+  TONGUE_SWELLING: "TONGUE_SWELLING",
+  NECK_SWELLING: "NECK_SWELLING",
+  NECK_HAEMATOMA: "NECK_HAEMATOMA",
+  TONGUE_FALLING_BACK: "TONGUE_FALLING_BACK",
+  SUCTIONING_AIRWAY: "SUCTIONING_AIRWAY",
+  JAW_THRUST_MANOEUVER: "JAW_THRUST_MANOEUVER",
+  HEAD_TILT_CHIN_LIFT: "HEAD_TILT_CHIN_LIFT",
+  OROPHARYNGEAL: "OROPHARYNGEAL",
 };
 
 export const triageResult = {
@@ -665,9 +675,4 @@ export const roles = {
 };
 
 // username: registration, clinician, nurse
-export const durationOptions= [
-  "Day(s)",
-"Week(s)",
-   "Month(s)",
-  "Year(s)",
-  ]
+export const durationOptions = ["Day(s)", "Week(s)", "Month(s)", "Year(s)"];
