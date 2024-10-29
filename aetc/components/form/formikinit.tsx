@@ -1,13 +1,13 @@
 'use client'
-import { FC, ReactNode, useEffect, useRef } from "react";
-import { Form, Formik } from "formik";
 
 import { SxProps } from "@mui/material";
+import { Formik, Form } from "formik";
+import { ReactNode, FC, useEffect } from "react";
 import { MainButton } from "../buttons";
 
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
-  children: ReactNode;
+  children: ReactNode | ((props: { values: any; setFieldValue: any }) => ReactNode);
   validationSchema: any;
   initialValues: any;
   width?: string;
@@ -19,7 +19,7 @@ type Prop = {
   loading?: boolean;
   submitVariant?: "primary" | "secondary" | "text";
   enableReinitialize?: boolean;
-  getFormValues?: (values:any)=>void
+  getFormValues?: (values: any) => void;
 };
 
 export const FormikInit: FC<Prop> = ({
@@ -32,9 +32,8 @@ export const FormikInit: FC<Prop> = ({
   submitVariant = "primary",
   loading,
   enableReinitialize = false,
-  getFormValues=(values)=>{}
+  getFormValues = (values) => {}
 }) => {
-
   return (
     <Formik
       initialValues={initialValues}
@@ -42,10 +41,10 @@ export const FormikInit: FC<Prop> = ({
       validationSchema={validationSchema}
       enableReinitialize={enableReinitialize}
     >
-      {({values}) => (
+      {({ values, setFieldValue }) => (
         <Form>
           <ListenToValueChanges getFormValues={getFormValues} values={values} />
-          {children}
+          {typeof children === "function" ? children({ values, setFieldValue }) : children}
           {submitButton && (
             <MainButton
               sx={{ mt: 3 }}
@@ -53,12 +52,12 @@ export const FormikInit: FC<Prop> = ({
               type={"submit"}
               title={
                 loading ? (
-                  <i style={{ textTransform: "lowercase"  }}>loading...</i>
+                  <i style={{ textTransform: "lowercase" }}>loading...</i>
                 ) : (
                   submitButtonText
                 )
               }
-              onClick={() => { }}
+              onClick={() => {}}
             />
           )}
         </Form>
@@ -67,10 +66,16 @@ export const FormikInit: FC<Prop> = ({
   );
 };
 
+const ListenToValueChanges = ({
+  values,
+  getFormValues
+}: {
+  values: any;
+  getFormValues: (values: any) => void;
+}) => {
+  useEffect(() => {
+    getFormValues(values);
+  }, [values]);
 
-const ListenToValueChanges = ({values, getFormValues}:{values:any, getFormValues:(values:any)=>void})=>{
-  useEffect(()=>{
- getFormValues(values)
-  },[values])
-return null
-}
+  return null;
+};
