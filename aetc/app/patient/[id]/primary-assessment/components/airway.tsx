@@ -1,7 +1,7 @@
 import { GenericDialog, NotificationContainer } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
 import { getInitialValues, getObservations } from "@/helpers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -16,6 +16,7 @@ import { addEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
+import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 
 const form = {
   isAirwayPatent: {
@@ -112,34 +113,20 @@ const radioOptions = [
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const { mutate, isSuccess: airwaySubmitted, isPending } = addEncounter();
-  const { params } = useParameters();
-  const {
-    data: patientVisits,
-    isLoading,
-    isSuccess,
-  } = getPatientVisitTypes(params?.id as string);
-  const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
+  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
+    encounters.AIRWAY_ASSESSMENT,
+    onSubmit
+  );
 
-  const handleSubmit = async (formValues: any) => {
-    const dateTime = getDateTime();
-    // console.log(getObservations(formValues, dateTime));
-    // return;
-    await mutate({
-      encounterType: encounters.AIRWAY_ASSESSMENT,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      dateTime,
-      obs: getObservations(formValues, dateTime),
-    });
-    onSubmit();
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(getObservations(values, getDateTime()));
   };
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
 

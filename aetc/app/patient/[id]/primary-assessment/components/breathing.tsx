@@ -14,6 +14,7 @@ import {
 import * as Yup from "yup";
 
 import { LungImage, LungBackImage } from "@/components/svgImages";
+import { getInitialValues } from "@/helpers";
 
 const form = {
   isPatientBreathing: {
@@ -121,7 +122,8 @@ const schema = Yup.object().shape({
   ),
 });
 
-const initialsValues = {};
+const initialsValues = getInitialValues(form);
+
 type Prop = {
   onSubmit: (values: any) => void;
 };
@@ -129,59 +131,59 @@ type Prop = {
 const sourceOxygen = [
   {
     label: "Concentrator",
-    value: "Concentrator",
+    value: concepts.CONCENTRATOR,
   },
   {
     label: "Cylinder",
-    value: "Cylinder",
+    value: concepts.CYLINDER,
   },
   {
     label: "Piped Oxygen",
-    value: "Piped Oxygen",
+    value: concepts.PIPED_OXYGEN,
   },
 ];
 
 const deviceUsed = [
   {
     label: "Nasal Prongs",
-    id: "Nasal Prongs",
+    id: concepts.NASAL_PRONGS,
   },
   {
     label: "Simple face mask",
-    id: "Simple face mask",
+    id: concepts.SIMPLE_FACE_MASK,
   },
   {
     label: "Venturi face mask",
-    id: "Venturi face mask",
+    id: concepts.VENTURI_FACE_MASK,
   },
   {
     label: "Face mask with nebulising chamber",
-    id: "Face mask with nebulising chamber",
+    id: concepts.NEBULISING_CHAMBER,
   },
   {
     label: "Nonrebreather face mask",
-    id: "Nonrebreather face mask",
+    id: concepts.NON_REBREATHER,
   },
   {
     label: "Noninvasive ventilation mask",
-    id: "Noninvasive ventilation mask",
+    id: concepts.NON_INVASIVE_VENTILATION_MASK,
   },
   {
     label: "Laryngeal mask airway",
-    id: "Laryngeal mask airway",
+    id: concepts.LARYNGEAL,
   },
   {
     label: "Endotracheal tube",
-    id: "Endotracheal tube",
+    id: concepts.ENDOTRACHEAL,
   },
 ];
 
 const descriptionOfAbnormality = [
-  { id: "Wound", label: "Wound" },
-  { id: "Other", label: "Other" },
-  { id: "Flail Chest", label: "Flail Chest" },
-  { id: "Surgical Emphayema", label: "Surgical Emphayema" },
-  { id: "Rib Deformity", label: "Rib Deformity" },
+  { id: concepts.WOUND, label: "Wound" },
+  { id: concepts.FLAIL_CHEST, label: "Flail Chest" },
+  { id: concepts.SURGICAL_EMPHAYEMA, label: "Surgical Emphayema" },
+  { id: concepts.DEFORMITY, label: "Rib Deformity" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const radioOptions = [
@@ -190,6 +192,8 @@ const radioOptions = [
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
+
+  const handleSubmit = (formValues: any) => {};
 
   return (
     <FormikInit
@@ -230,10 +234,10 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               name={form.deviceForIntervention.name}
               label={form.deviceForIntervention.label}
               options={[
-                { label: "Bag and mask", value: "bag and mask" },
+                { label: "Bag and mask", value: concepts.BAG_AND_MASK },
                 {
                   label: "Laryngeal Mask Airway and bag",
-                  value: "laryngeal Mask Airway and bag",
+                  value: concepts.LARYNGEAL_MASK_AIRWAY_AND_BAG,
                 },
               ]}
             />
@@ -309,8 +313,8 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                     name={form.deviationSide.name}
                     label={form.deviationSide.label}
                     options={[
-                      { label: "Left", value: "left" },
-                      { label: "Right", value: "right" },
+                      { label: "Left", value: concepts.LEFT },
+                      { label: "Right", value: concepts.RIGHT },
                     ]}
                   />
                 </>
@@ -322,8 +326,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 <NotificationContainer message="Diagram to select area" />
                 <LungImage />
 
-                {/* <Image src="/lung.svg" alt="Lung" width={500} height={500} /> */}
-
                 <br />
                 <FieldsContainer>
                   <SearchComboBox
@@ -331,7 +333,8 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                     label={form.descriptionAbnormality.label}
                     options={descriptionOfAbnormality}
                   />
-                  {formValues[form.descriptionAbnormality.name] == "other" && (
+                  {formValues[form.descriptionAbnormality.name] ==
+                    concepts.OTHER && (
                     <FieldsContainer>
                       <TextInputField
                         name={form.descriptionAbnormality.name}
@@ -349,26 +352,26 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 name={form.chestExpansion.name}
                 label={form.chestExpansion.label}
                 options={[
-                  { label: "Normal", value: "normal" },
-                  { label: "Reduced", value: "reduced" },
+                  { label: "Normal", value: concepts.NORMAL },
+                  { label: "Reduced", value: concepts.REDUCED },
                 ]}
               />
               <RadioGroupInput
                 name={form.percussion.name}
                 label={form.percussion.label}
                 options={[
-                  { label: "Normal", value: "normal" },
-                  { label: "Abnormal", value: "abnormal" },
+                  { label: "Normal", value: concepts.NORMAL },
+                  { label: "Abnormal", value: concepts.ABNORMAL },
                 ]}
               />
             </FieldsContainer>
-            {formValues[form.chestExpansion.name] == "reduced" && (
+            {formValues[form.chestExpansion.name] == concepts.REDUCED && (
               <FieldsContainer>
                 <>Diagram</>
               </FieldsContainer>
             )}
             <br />
-            {formValues[form.percussion.name] == "abnormal" && (
+            {formValues[form.percussion.name] == concepts.ABNORMAL && (
               <FieldsContainer>
                 <LungBackImage />
               </FieldsContainer>
