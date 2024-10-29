@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { TextField, FormControl, InputLabel, MenuItem, Select, Box, InputAdornment } from "@mui/material";
 import { SxProps } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
@@ -39,6 +39,11 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
 
   const { value: unitValue } = useFormikField(unitName);
 
+  useEffect(() => {
+    if (!unitValue) {
+      setFieldValue(unitName, unitOptions[0]);
+    }
+  }, [unitValue, unitOptions, setFieldValue, unitName]);
   // Handle unit change with Formik's setFieldValue
   const handleUnitChange = (event: SelectChangeEvent<string>) => {
     setFieldValue(unitName, event.target.value);
@@ -69,7 +74,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
         />
         {/* Unit Selector with Absolute Positioning and Custom Border Radius */}
         <Select
-          value={unitValue}
+          value={unitValue|| unitOptions[0]}
           onChange={handleUnitChange}
           variant="outlined"
           sx={{
