@@ -1,5 +1,4 @@
 "use client";
-
 import { FormDatePicker, FormikInit, FormValuesListener, MainButton, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
 import React, { useEffect, useState } from "react";
 import medicationNames from "../../../../constants/medicationnames.json";
@@ -166,6 +165,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       options={medicationOptions}
                       getValue={(value) => setFieldValue(`medications[${index}].name`, value)}
                       sx={{ width: "200px" }}
+                      multiple={false}
                     />
                     <SearchComboBox
                       name={`medications[${index}].formulation`}
@@ -173,6 +173,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       options={formulationOptions}
                       getValue={(value) => setFieldValue(`medications[${index}].formulation`, value)}
                       sx={{ width: "200px" }}
+                      multiple={false}
                     />
                     <UnitInputField
                       id={`medications[${index}].medication_dose`}
@@ -194,6 +195,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                           setFieldValue(`medications[${index}].medication_frequency`, value);
                         }}
                         sx={{ width: "180px" }}
+                        multiple={false}
                       />
                     ) : (
                       <TextInputField
