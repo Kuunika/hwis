@@ -12,7 +12,7 @@ export const DiagnosisTable = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
         { field: "condition", headerName: "Diagnosis", flex: 1 },
         {
             field: "label",
-            headerName: " ",
+            headerName: "Diagnosis Type ",
             flex: 1,
             renderCell: () => <span>Differential Diagnosis</span>,
         },
