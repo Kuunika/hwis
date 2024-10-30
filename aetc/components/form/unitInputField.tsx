@@ -85,7 +85,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
             borderTopLeftRadius: 0,
             borderBottomLeftRadius: 0,
           }}
-          MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
+          MenuProps={{ PaperProps: { style: { maxHeight: 200 } }, disableScrollLock: true, }}
         >
           {unitOptions.map((option) => (
             <MenuItem key={option} value={option}>
