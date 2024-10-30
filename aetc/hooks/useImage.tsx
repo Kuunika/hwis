@@ -1,3 +1,4 @@
+import { getDateTime } from "@/helpers/dateTime";
 import React from "react";
 import { useRef, useState, useEffect } from "react";
 
@@ -111,8 +112,32 @@ export const useImage = () => {
     highlightAllSelectedSections();
   };
 
-  const handleFormSubmit = (values: any) => {
-    setIds((ids) => [...ids, { ...selectedSection, ...values }]);
+  const handleFormSubmit = (formData: any) => {
+    const dateTime = getDateTime();
+    const obs = Object.keys(formData).flatMap((key) => {
+      const conceptData = formData[key];
+      return Array.isArray(conceptData)
+        ? conceptData.map((p: any) => {
+            return {
+              concept: key,
+              value: p.id,
+              obsDatetime: dateTime,
+            };
+          })
+        : {
+            concept: key,
+            value: conceptData,
+            obsDatetime: dateTime,
+          };
+    });
+
+    formData = {
+      encounterDateTime: dateTime,
+      encounterType: selectedSection.id,
+      obs,
+    };
+
+    setIds((ids) => [...ids, { ...selectedSection, formData }]);
     handleClose();
   };
 
@@ -130,5 +155,6 @@ export const useImage = () => {
     highlightSection,
     highlightAllSelectedSections,
     setIds,
+    ids,
   };
 };

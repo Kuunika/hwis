@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Lung from "../../assets/lung";
 import { BreathingLungForm, DataBox } from "./forms";
 
@@ -7,21 +7,25 @@ import { SVGPopover } from "./svgPopover";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
 
-export const LungImage = () => {
+interface Props {
+  onValueChange: (values: any) => void;
+}
+
+export const LungImage = ({ onValueChange }: Props) => {
   const {
     handleClose,
     handleFormSubmit,
     containerRef,
     section,
     anchorEl,
-    setAnchorEl,
-    highlightSection,
     selectedSection,
-    setSelectedSection,
-    highlightAllSelectedSections,
-    setIds,
+    ids,
   } = useImage();
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,

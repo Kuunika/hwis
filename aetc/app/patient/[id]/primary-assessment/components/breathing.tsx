@@ -1,6 +1,6 @@
 import { NotificationContainer } from "@/components";
-import { NO, YES, concepts } from "@/constants";
-import React, { useState } from "react";
+import { NO, YES, concepts, encounters } from "@/constants";
+import React, { useEffect, useState } from "react";
 import { ReactSVG } from "react-svg";
 import {
   FieldsContainer,
@@ -14,7 +14,9 @@ import {
 import * as Yup from "yup";
 
 import { LungImage, LungBackImage } from "@/components/svgImages";
-import { getInitialValues } from "@/helpers";
+import { getInitialValues, getObservations } from "@/helpers";
+import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
+import { getDateTime } from "@/helpers/dateTime";
 
 const form = {
   isPatientBreathing: {
@@ -125,7 +127,7 @@ const schema = Yup.object().shape({
 const initialsValues = getInitialValues(form);
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 
 const sourceOxygen = [
@@ -192,14 +194,25 @@ const radioOptions = [
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
+  const [chestAbnormalitiesImage, setChestAbnormalitiesImage] = useState({});
+  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
+    encounters.AIRWAY_ASSESSMENT,
+    onSubmit
+  );
 
-  const handleSubmit = (formValues: any) => {};
+  useEffect(() => {
+    console.log({ chestAbnormalitiesImage });
+  }, [chestAbnormalitiesImage]);
+
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(getObservations(values, getDateTime()));
+  };
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
 
@@ -324,8 +337,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               <>
                 <br />
                 <NotificationContainer message="Diagram to select area" />
-                <LungImage />
-
+                <LungImage onValueChange={setChestAbnormalitiesImage} />
                 <br />
                 <FieldsContainer>
                   <SearchComboBox
