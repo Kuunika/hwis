@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput } from "@/components";
+import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox } from "@/components";
 import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
 
@@ -34,7 +34,7 @@ const symptomList = {
   bodySwelling: { name: "bodySwelling", label: "Body Swelling", requiresSite: true },
   fatigue: { name: "fatigue", label: "Fatigue", requiresSite: false },
   poisoning: { name: "poisoning", label: "Poisoning", requiresSite: false },
-  intentional: { name: "intentional", label: "Intentional Poisoning", requiresSite: false },
+  poisoningIntentional: { name: "intentionalPoisoning", label: "Intentional Poisoning", requiresSite: false },
   ulcerWound: { name: "ulcerOrWound", label: "Ulcer/Wound", requiresSite: true },
 };
 
@@ -50,6 +50,60 @@ const injuryMechanismList = {
   drowning: { name: "drowning", label: "Drowning" },
   occupationalInjury: { name: "occupationalInjury", label: "Occupational Injury" },
 };
+
+const GastrointenstinalOptions = [
+  { id: 'YellowingOfEyesOrSkin', label: 'Yellowing of eyes or skin' },
+  { id: 'Nausea', label: 'Nausea' },
+  { id: 'Dyspepsia', label: 'Dyspepsia' },
+  { id: 'AbdominalPains', label: 'Abdominal pains' },
+  { id: 'Vomiting', label: 'Vomiting' },
+  { id: 'Diarrhoea', label: 'Diarrhoea' },
+  { id: 'DifficultyInSwallowing', label: 'Difficulty in swallowing' },
+  { id: 'PainfulSwallowing', label: 'Painful in swallowing' },
+  { id: 'AbdominalDistension', label: 'Abdominal distension' },
+  { id: 'BloodyStool', label: 'Bloody stool' },
+  { id: 'StoolIncontinence', label: 'Stool incontinence' },
+  { id: 'AnalSwelling', label: 'Anal swelling' },
+  { id: 'AnalDischarge', label: 'Anal discharge' }
+];
+
+const cardiacRespiratoryOptions = [
+  { id: 'Cough', label: 'Cough' },
+  { id: 'ChestPain', label: 'Chest pain' },
+  { id: 'ShortnessOfBreath', label: 'Shortness of breath' },
+  { id: 'HeartPalpitations', label: 'Heart palpitations' },
+  { id: 'Wheezing', label: 'Wheezing' }
+];
+
+const nervousSystemOptions = [
+  { id: 'Headache', label: 'Headache' },
+  { id: 'Convulsions', label: 'Convulsions' },
+  { id: 'Confusions', label: 'Confusions' },
+  { id: 'Hallucinations', label: 'Hallucinations' },
+  { id: 'AbnormalBehaviour', label: 'Abnormal behaviour' },
+  { id: 'Tremor', label: 'Tremor' },
+  { id: 'AbnormalGait', label: 'Abnormal gait' },
+  { id: 'Numbness', label: 'Numbness' },
+  { id: 'NeckPain', label: 'Neck pain' },
+  { id: 'NeckStiffness', label: 'Neck stiffness' },
+  { id: 'Weakness', label: 'Weakness' }
+];
+
+const genitourinaryOptions = [
+  { id: 'FrequentUrination', label: 'Frequent urination' },
+  { id: 'PainfulUrination', label: 'Painful urination' },
+  { id: 'BloodyUrine', label: 'Bloody urine' },
+  { id: 'AbnormalVaginalDischarge', label: 'Abnormal vaginal discharge' },
+  { id: 'VaginalBleeding', label: 'Vaginal bleeding' },
+  { id: 'ScrotalSwelling', label: 'Scrotal swelling' },
+  { id: 'GenitalUlcer', label: 'Genital ulcer' },
+  { id: 'UrinaryRetention', label: 'Urinary retention' },
+  { id: 'UrineIncontinence', label: 'Urine incontinence' },
+  { id: 'ErectileDysfunction', label: 'Erectile dysfunction' },
+  { id: 'Infertility', label: 'Infertility' },
+  { id: 'Prolapse', label: 'Prolapse' },
+  { id: 'Other', label: 'Other' }
+];
 
 export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
@@ -144,7 +198,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
             return (
               <div key={typedKey}>
-                {typedKey !== "intentional" && typedKey !== "lastMeal" && typedKey !== "events" &&(
+                {typedKey !== "poisoningIntentional" && typedKey !== "lastMeal" && typedKey !== "events" &&(
                 <LabelledCheckbox
                     label={symptomList[typedKey].label}
                     checked={formValues[typedKey] || false}
@@ -153,7 +207,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
            
           )}
                 {/* Show extra fields if the smptom is selected */}
-                {showExtraFields[typedKey]&& typedKey !== "intentional" && (
+                {showExtraFields[typedKey]&& typedKey !== "poisoningIntentional" && (
                   <>
                
                       <>
@@ -177,9 +231,9 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
                     {typedKey == "poisoning" && (
                      <LabelledCheckbox
-                     label={symptomList["intentional"].label}
-                     checked={formValues["intentional"] || false}
-                     onChange={(e) => handleSymptomChange(e, "intentional")}
+                     label={symptomList["poisoningIntentional"].label}
+                     checked={formValues["poisoningIntentional"] || false}
+                     onChange={(e) => handleSymptomChange(e, "poisoningIntentional")}
                    />
                     )}
                   </>
@@ -241,9 +295,51 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
               />
             </>
           )}
+
+
         </WrapperBox>
       </FormFieldContainer>
-
+      <FormFieldContainer direction="row">
+        <SearchComboBox
+        name="Gastrointenstinal history"
+        label="Gastrointestinal history"
+        options={GastrointenstinalOptions}
+        multiple={true}
+        />
+        </FormFieldContainer>
+<FormFieldContainer direction="row">
+      <SearchComboBox
+        name="Cardiac/Respiratory history"
+        label="Cardiac/Respiratory history"
+        options={cardiacRespiratoryOptions}
+        multiple={true}
+        />
+</FormFieldContainer>
+<FormFieldContainer direction="row">
+<SearchComboBox
+        name="Nervous system history"
+        label="Nervous system history"
+        options={nervousSystemOptions}
+        multiple={true}
+        />
+</FormFieldContainer>
+<FormFieldContainer direction="row">
+<SearchComboBox
+        name="Genitourinary history"
+        label="Genitourinary history"
+        options={genitourinaryOptions}
+        multiple={true}
+        />
+      </FormFieldContainer>
+      <FormFieldContainer direction="row">
+          <TextInputField
+           id="socialHistory"
+           name="socialHistory"
+           label="Social History"
+           multiline
+           rows={4}
+          />
+      </FormFieldContainer>
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={() => {console.log(formValues)}} />
         <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
