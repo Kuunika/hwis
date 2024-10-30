@@ -1,8 +1,7 @@
-'use client'
+"use client";
 import { styled } from "@mui/material/styles";
-import { FaAngleDown } from "react-icons/fa";
+import { FaAngleDown, FaAngleLeft } from "react-icons/fa";
 import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
-import { FaAngleLeft } from "react-icons/fa";
 import MuiAccordionSummary, {
   AccordionSummaryProps,
 } from "@mui/material/AccordionSummary";
@@ -18,6 +17,7 @@ import {
   StepperTablet,
   WrapperBox,
 } from "..";
+
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
@@ -68,6 +68,10 @@ export function NewStepperContainer({
   setActive,
   onBack,
 }: IProps) {
+  // Map children to steps to ensure order consistency
+  const filteredChildren = children.filter((child) => child !== false);
+  const validChildren = steps.map((step, index) => filteredChildren[index]);
+
   return (
     <MainGrid container spacing={5}>
       <MainGrid sx={{ display: { xs: "none", lg: "block" } }} item lg={3}>
@@ -122,7 +126,7 @@ export function NewStepperContainer({
               Back
             </MainTypography>
           </WrapperBox>
-          {children.map((child, key) => {
+          {validChildren.map((child, key) => {
             return (
               <Accordion
                 sx={{
@@ -145,16 +149,17 @@ export function NewStepperContainer({
                 }}
                 onChange={() => {
                   if (setActive) {
-                    // setActive(key);
+                    setActive(key);
                   }
                 }}
-                expanded={key == active}
+                expanded={key === active}
+                key={key}
               >
                 <AccordionSummary
-                  aria-controls="panel1d-content"
-                  id="panel1d-header"
+                  aria-controls={`panel${key + 1}-content`}
+                  id={`panel${key + 1}-header`}
                 >
-                  <Typography>{steps[key].label}</Typography>
+                  <Typography>{steps[key]?.label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>{child}</AccordionDetails>
               </Accordion>

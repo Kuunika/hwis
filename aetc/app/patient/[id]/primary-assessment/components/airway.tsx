@@ -15,6 +15,7 @@ import * as Yup from "yup";
 import { CanvasImage } from "@/components/canvasImage/canvasImage";
 import { Button } from "@mui/material";
 import { FullBodyImage } from "@/components/svgImages/fullBody";
+import { FullBodyBackImage } from "@/components/svgImages";
 
 const form = {
   isAirwayPatent: {
@@ -120,17 +121,19 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       onSubmit={onSubmit}
     >
       <FormValuesListener getValues={setFormValues} />
-   
-      <Button onClick={() => setAnatomyOpen(true)}>Image</Button>
+
+      {/* <Button onClick={() => setAnatomyOpen(true)}>Image</Button>
       <GenericDialog
         maxWidth="lg"
         open={anatomyOpen}
         onClose={() => setAnatomyOpen(false)}
         title=""
       >
-           <FullBodyImage />
-        {/* <CanvasImage imageUrl="/anatomy.webp" /> */}
-      </GenericDialog>
+        <FullBodyImage />
+        <FullBodyBackImage />
+
+        <CanvasImage imageUrl="/anatomy.webp" />
+      </GenericDialog> */}
 
       <FormFieldContainerLayout title="Airway Patent">
         <FieldsContainer sx={{ alignItems: "flex-start" }}>

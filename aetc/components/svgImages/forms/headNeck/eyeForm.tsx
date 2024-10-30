@@ -1,5 +1,5 @@
 import { NO, YES, concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getFormLabels, getInitialValues } from "@/helpers";
 import { useEffect, useState } from "react";
 import {
   FieldsContainer,
@@ -95,7 +95,9 @@ export const EyeForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={(values: any) => onSubmit(values, form)}
+      onSubmit={(values: any) =>
+        onSubmit(values, getFormLabels(form, abnormalities, radioOptions))
+      }
     >
       <Box>
         <FormValuesListener getValues={setFormValues} />

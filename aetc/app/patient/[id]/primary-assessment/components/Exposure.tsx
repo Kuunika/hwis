@@ -11,25 +11,33 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
+import { FullBodyBackImage, FullBodyImage } from "@/components/svgImages";
+import { concepts } from "@/constants";
+import { getInitialValues } from "@/helpers";
+import { Box } from "@mui/material";
 type Props = {
   onSubmit: (values: any) => void;
 };
 const form = {
   temperatureInfo: {
-    name: "temperatureInfo",
+    name: concepts.TEMPERATURE,
     label: "Temperature",
   },
   skinRashInfo: {
-    name: "skinRashInfo",
+    name: concepts.SKIN_RASH,
     label: "Does the patient has skin rash",
   },
-  rashDescription: {
-    name: "rashDescription",
-    label: "Describe the skin rash",
-  },
   additionalNotes: {
-    name: "additionalNotes",
+    name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
+  },
+  abnormalities: {
+    name: concepts.ABNORMALITIES,
+    label: "Other Abnormalities",
+  },
+  injuries: {
+    name: concepts.INJURY,
+    label: "Other Injuries",
   },
 };
 
@@ -44,18 +52,20 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.skinRashInfo.label),
-  [form.rashDescription.name]: yup
+  [form.abnormalities.name]: yup
     .string()
     .required()
-    .label(form.rashDescription.label),
+    .label(form.abnormalities.label),
+  [form.injuries.name]: yup.string().required().label(form.injuries.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
 });
 
-const initialValues = {
-  temperatureInfo: "",
-  skinRashInfo: "",
-  rashDescription: "",
-};
+const initialValues = getInitialValues(form);
+
+const radioOptions = [
+  { label: "Yes", value: concepts.YES },
+  { label: "No", value: concepts.NO },
+];
 export const Exposure = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
 
@@ -68,43 +78,73 @@ export const Exposure = ({ onSubmit }: Props) => {
     >
       <FormValuesListener getValues={setFormValues} />
 
-      <FormFieldContainerLayout last={true} title="Temperature and Rash">
-        <FieldsContainer>
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.temperatureInfo.name}
-            label={form.temperatureInfo.label}
-            id={form.temperatureInfo.name}
-          />
-          <RadioGroupInput
-            name={form.skinRashInfo.name}
-            label={form.skinRashInfo.label}
-            options={[
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" },
-            ]}
-          />
-        </FieldsContainer>
-        {formValues[form.skinRashInfo.name] == "yes" && (
-          <>
-            <NotificationContainer
-              message="(Diagram) location (Body part and exact site) pop up image to appear where the
-            user selects the location"
-            />
+      <TextInputField
+        sx={{ width: "100%" }}
+        name={form.temperatureInfo.name}
+        label={form.temperatureInfo.label}
+        id={form.temperatureInfo.name}
+      />
 
-            <TextInputField
-              name={form.rashDescription.name}
-              label={form.rashDescription.label}
-              id={form.rashDescription.name}
-            />
-          </>
-        )}
-        <TextInputField
-          name={form.additionalNotes.name}
-          label={form.additionalNotes.label}
-          id={form.additionalNotes.name}
-        />
-      </FormFieldContainerLayout>
+      <RadioGroupInput
+        name={form.skinRashInfo.name}
+        row
+        label={form.skinRashInfo.label}
+        options={radioOptions}
+      />
+
+      {formValues[form.skinRashInfo.name] == concepts.YES && (
+        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+            <FullBodyImage />
+          </Box>
+          <Box>
+            <FullBodyBackImage />
+          </Box>
+        </Box>
+      )}
+
+      <RadioGroupInput
+        name={form.abnormalities.name}
+        row
+        label={form.abnormalities.label}
+        options={radioOptions}
+      />
+
+      {formValues[form.abnormalities.name] == concepts.YES && (
+        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+            <FullBodyImage />
+          </Box>
+          <Box>
+            <FullBodyBackImage />
+          </Box>
+        </Box>
+      )}
+
+      <RadioGroupInput
+        name={form.injuries.name}
+        row
+        label={form.injuries.label}
+        options={radioOptions}
+      />
+
+      {formValues[form.injuries.name] == concepts.YES && (
+        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+            <FullBodyImage />
+          </Box>
+          <Box>
+            <FullBodyBackImage />
+          </Box>
+        </Box>
+      )}
+
+      <TextInputField
+        sx={{ width: "100%" }}
+        name={form.additionalNotes.name}
+        label={form.additionalNotes.label}
+        id={form.additionalNotes.name}
+      />
     </FormikInit>
   );
 };

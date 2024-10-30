@@ -1,142 +1,181 @@
 "use client";
 import { MainGrid, MainPaper, MainTypography } from "@/components";
 import { useNavigation } from "@/hooks";
-import { FcRules, FcSearch, FcTodoList, FcPlus, FcSettings, FcAreaChart } from "react-icons/fc";
+import {
+  FcRules,
+  FcSearch,
+  FcTodoList,
+  FcPlus,
+  FcSettings,
+  FcAreaChart,
+} from "react-icons/fc";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
 import { useContext } from "react";
 import { LocationContext, LocationContextType } from "@/contexts/location";
-
+import { useTheme } from "@mui/material/styles"; // Import MUI theme
 
 function Home() {
-    useContext(LocationContext) as LocationContextType
-    return (
-        <>
-            <MainGrid container>
-                <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
-                <MainGrid
-                    item
-                    xs={10}
-                    md={10}
-                    lg={8}
-                    sx={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        alignItems: "center",
-                        justifyContent: { xs: "center", lg: "start" },
+  useContext(LocationContext) as LocationContextType;
 
-                        flexDirection: { xs: "column", sm: "row" },
-                    }}
-                    pt="5ch"
-                >
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
-                        <Card
-                            link="/registration/search"
-                            title="Find Patient"
-                            icon={<FcSearch />}
-                        />
-                    </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.INITIAL_REGISTRATION_CLERK]}>
-                        <Card
-                            link="/initial-registration"
-                            title="Patient Arrival"
-                            icon={<FcPlus />}
-                        />
-                    </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
-
-                        <Card
-                            icon={<FcRules />}
-                            link="/registration/death/list"
-                            title="Brought In Dead"
-                        />
-                    </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.DATA_MANAGER]}>
-                        <Card
-                            icon={<FcTodoList />}
-                            link="/initial-registration/list"
-                            title="Patients Waiting for Screening"
-                        />
-                    </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN,]}>
-                        <Card
-                            icon={<FcTodoList />}
-                            link="/registration/list"
-                            title="Patients Waiting for Registration"
-                        />
-                    </AuthGuardComp>
-
-                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
-                        <Card
-                            icon={<FcTodoList />}
-                            link="/triage"
-                            title="Patients Waiting for Triage"
-                        />
-                    </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN]}>
-                        <Card
-                            icon={<FcTodoList />}
-                            link="/assessments"
-                            title="Patients Waiting for Assessment "
-                        />
-                    </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
-                        <Card
-                            icon={<FcSettings />}
-                            link="/config"
-                            title="Config"
-                        />
-                    </AuthGuardComp>
-                    <AuthGuardComp roles={[roles.ADMIN, roles.REGISTRATION_CLERK]}>
-                        <Card
-                            icon={<FcAreaChart />}
-                            link="/reports"
-                            title="Reports"
-                        />
-                    </AuthGuardComp>
-
-                </MainGrid>
-                <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
-            </MainGrid >
-        </>
-    );
+  return (
+    <>
+      <MainGrid container>
+        <MainGrid item xs={1} sm={1} md={1} lg={2}></MainGrid>
+        <MainGrid
+          item
+          xs={10}
+          md={10}
+          lg={8}
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: { xs: "center", lg: "start" },
+            flexDirection: { xs: "column", sm: "row" },
+            gap: "0.5ch",
+          }}
+          pt="5ch"
+        >
+          {/* Cards with roles */}
+          <AuthGuardComp
+            roles={[
+              roles.REGISTRATION_CLERK,
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+            ]}
+          >
+            <Card
+              link="/registration/search"
+              title="Find Patient"
+              icon={<FcSearch />}
+            />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.REGISTRATION_CLERK,
+              roles.ADMIN,
+              roles.INITIAL_REGISTRATION_CLERK,
+            ]}
+          >
+            <Card
+              link="/initial-registration"
+              title="Patient Arrival"
+              icon={<FcPlus />}
+            />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.REGISTRATION_CLERK,
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+            ]}
+          >
+            <Card
+              icon={<FcRules />}
+              link="/registration/death/list"
+              title="Brought In Dead"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.DATA_MANAGER,
+            ]}
+          >
+            <Card
+              icon={<FcTodoList />}
+              link="/initial-registration/list"
+              title="Patients Waiting for Screening"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN]}>
+            <Card
+              icon={<FcTodoList />}
+              link="/registration/list"
+              title="Patients Waiting for Registration"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+            <Card
+              icon={<FcTodoList />}
+              link="/triage"
+              title="Patients Waiting for Triage"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN]}>
+            <Card
+              icon={<FcTodoList />}
+              link="/assessments"
+              title="Patients Waiting for Assessment "
+            />
+          </AuthGuardComp>
+          <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
+            <Card icon={<FcSettings />} link="/config" title="Config" />
+          </AuthGuardComp>
+          <AuthGuardComp roles={[roles.ADMIN, roles.REGISTRATION_CLERK]}>
+            <Card icon={<FcAreaChart />} link="/reports" title="Reports" />
+          </AuthGuardComp>
+        </MainGrid>
+        <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
+      </MainGrid>
+    </>
+  );
 }
 
 const Card = ({
-    link,
-    title,
-    icon,
+  link,
+  title,
+  icon,
 }: {
-    link: string;
-    title: string;
-    icon: any;
+  link: string;
+  title: string;
+  icon: any;
 }) => {
-    const { navigateTo } = useNavigation();
-    return (
-        <MainPaper
-            onClick={() => navigateTo(link)}
-            elevation={1}
-            sx={{
-                p: "1ch",
-                m: "0.2ch",
-                width: { xs: "100%", sm: "25%" },
-                height: "15ch",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                borderRadius:"1px"
-            }}
-        >
-            <MainTypography variant="h2">{icon}</MainTypography>
-            <MainTypography variant="h6" textAlign={"center"}>{title}</MainTypography>
-        </MainPaper>
-    );
+  const { navigateTo } = useNavigation();
+  const theme = useTheme();
+  return (
+    <MainPaper
+      onClick={() => navigateTo(link)}
+      elevation={3}
+      sx={{
+        p: "2ch",
+        m: "0.5ch",
+        width: { xs: "100%", sm: "22%" },
+        height: "15ch",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        borderRadius: "12px",
+        backgroundColor: "#f9fafb",
+        transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+        },
+      }}
+    >
+      <MainTypography variant="h2" sx={{ color: theme.palette.primary.main }}>
+        {icon}
+      </MainTypography>
+      <MainTypography variant="h6" textAlign={"center"}>
+        {title}
+      </MainTypography>
+    </MainPaper>
+  );
 };
 
-
-// export default Home;
-
-export default AuthGuard(Home, [roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN, roles.NURSE, roles.INITIAL_REGISTRATION_CLERK])
+export default AuthGuard(Home, [
+  roles.REGISTRATION_CLERK,
+  roles.ADMIN,
+  roles.CLINICIAN,
+  roles.NURSE,
+  roles.INITIAL_REGISTRATION_CLERK,
+]);

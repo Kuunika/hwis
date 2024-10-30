@@ -7,16 +7,16 @@ import { WrapperBox, MainTypography } from "..";
 type Prop = {
   children: ReactNode;
   sx?: SxProps;
-  mr?:string
+  mr?: string;
 };
-export const FieldsContainer = ({ children, sx, mr='5ch' }: Prop) => {
+export const FieldsContainer = ({ children, sx, mr = "5ch" }: Prop) => {
   return (
     <WrapperBox
       display={"flex"}
       justifyContent={"flex-start"}
       sx={{
         ...sx,
-     
+
         "& > :first-child": {
           mr,
         },
@@ -85,5 +85,5 @@ export const DashedContainer = ({
         : undefined,
   };
 
-  return <Box sx={{ ...borderStyles, my,py:'0.5ch' }}>{children}</Box>;
+  return <Box sx={{ ...borderStyles, my, py: "0.5ch" }}>{children}</Box>;
 };

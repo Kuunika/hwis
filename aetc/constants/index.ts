@@ -19,6 +19,8 @@ export const encounters = {
   CLINICAL_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   PROCEDURES_DONE: "ba0656ec-8d80-11d8-abbb-0024217bb78e",
   NURSING_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
+  OUTPATIENT_DIAGNOSIS: "ba05c128-8d80-11d8-abbb-0024217bb78e",
+
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -43,6 +45,7 @@ export const concepts = {
   PULSE_RATE: "b9afedfc-8d80-11d8-abbb-0024217bb78e",
   URINE_DIPSTICK_KETONES: "b9cc6afe-8d80-11d8-abbb-0024217bb78e",
   PEAK_EXPIRATORY_FLOW_RATE: "f2adaf9e-63bf-4a2a-955f-5084d53affa6",
+  CONDITION: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
 
   //airway
   IS_AIRWAY_COMPROMISED: "e42e6502-860f-4465-854a-41aa1defd49f",

@@ -12,7 +12,7 @@ export interface Name {
 }
 
 export interface Concept {
-  concept_set_id?:number;
+  concept_set_id?: number;
   concept_id: number;
   is_set: number;
   uuid: string;
@@ -36,7 +36,7 @@ export interface Address {
   current_traditional_authority?: string;
   home_district?: string;
   home_village?: string;
-  home_traditional_authority?: string
+  home_traditional_authority?: string;
 }
 
 export interface Identifier {
@@ -44,13 +44,11 @@ export interface Identifier {
   identifierType?: string;
   identifier_type?: {
     name: string;
-    uuid: string
-  }
+    uuid: string;
+  };
   preferred: boolean;
-  uuid?: string
+  uuid?: string;
 }
-
-
 
 export interface Patient {
   patient_id: number;
@@ -74,19 +72,18 @@ export interface Person {
   visit_uuid: string;
   arrival_time: string;
   triage_result: string;
-  latest_encounter_time:any;
+  latest_encounter_time: any;
   names: Array<{
     given_name: string;
-    family_name: string
-  }>
+    family_name: string;
+  }>;
 }
 
-
 export interface DailyVisitPaginated {
-  page:number;
+  page: number;
   total_pages: number;
-  per_page:number;
-  data: Person[]
+  per_page: number;
+  data: Person[];
 }
 
 export interface PaginationModel {
@@ -94,8 +91,9 @@ export interface PaginationModel {
   page: number;
 }
 
-export interface PatientUpdateResponse extends Person { patient: Patient };
-
+export interface PatientUpdateResponse extends Person {
+  patient: Patient;
+}
 
 interface EncounterType {
   name: string;
@@ -125,7 +123,7 @@ export interface Obs {
   value: any;
   value_coded_uuid: any;
   names: Name[];
-  created_by:string
+  created_by: string;
 }
 
 export interface Encounter {
@@ -137,7 +135,7 @@ export interface Encounter {
   visit_id: number;
   uuid: string;
   obs: Obs[];
-  created_by: string
+  created_by: string;
 }
 
 export interface Visit {
@@ -149,33 +147,30 @@ export interface Visit {
 
 export interface LabRequest {
   id?: any;
-  uuid: string,
+  uuid: string;
   // test: string;
   sample: string;
   sampleType: string;
-  specimenSite: string
-  testType?: string
-  test: TestType,
+  specimenSite: string;
+  testType?: string;
+  test: TestType;
 }
-
-
 
 export interface Role {
   role: string;
   description: string;
-  uuid: string
+  uuid: string;
 }
 
 export interface UserRole {
   user_id: number;
-  role: Role
-
+  role: Role;
 }
 export interface User {
   uuid: string;
   username: string;
-  user_roles: UserRole[],
-  person: Person
+  user_roles: UserRole[];
+  person: Person;
 }
 
 export interface IApiService {
@@ -190,51 +185,51 @@ export interface IApiService {
 
 export type TriageResult = "" | "yellow" | "red" | "green";
 
-
 export type DDESearch = {
   locals: Person[] | Patient[];
-  remotes: Person[] | Patient[] | Array<{patient_identifiers:Array<any>; person:Person}>;
-}
+  remotes:
+    | Person[]
+    | Patient[]
+    | Array<{ patient_identifiers: Array<any>; person: Person }>;
+};
 
 export type DDEScore = {
   person: Person;
-  score: number
-}
-
+  score: number;
+};
 
 export type TestType = {
   name: string;
   concept_id: number;
   names: Name[];
-}
+};
 
 export type SpecimenType = {
   name: string;
   concept_id: number;
   names: Name[];
-}
+};
 
 export type LabReason = {
   name: string;
   concept_id: number;
-  uuid: string
-}
-
+  uuid: string;
+};
 
 export type Order = {
   id: number;
   concept_id: number;
   name: string;
-  accession_number: string
-}
+  accession_number: string;
+};
 
 export type LabResult = {
   id: number;
   concept_id: number;
   name: string;
-  order: Order
-  result: any
-}
+  order: Order;
+  result: any;
+};
 
 interface Specimen {
   concept_id: number;
@@ -254,7 +249,6 @@ interface Test {
   result: any;
 }
 
-
 export type PatientLabOrder = {
   id: number;
   order_id: number;
@@ -268,37 +262,34 @@ export type PatientLabOrder = {
   reason_for_test: ReasonForTest;
   delivery_mode: any;
   tests: Test[];
-
-}
+};
 
 export type District = {
   district_id: number;
   name: string;
-}
+};
 
 export type TraditionalAuthority = {
   traditional_authority_id: number;
   name: string;
-  district_id: number
-}
+  district_id: number;
+};
 
 export type Village = {
   village_id: number;
   name: string;
-  traditional_authority_id: number
-}
-
+  traditional_authority_id: number;
+};
 
 export type Relationship = {
   relationship_id: number;
   person_a: Person;
   relationship: number;
   person_b: Person;
-  uuid: string
-}
+  uuid: string;
+};
 
 export type RelationshipType = {
-
   relationship_type_id: number;
   a_is_to_b: string;
   b_is_to_a: string;
@@ -309,11 +300,10 @@ export type RelationshipType = {
   date_created: string;
   uuid: string;
   retired: boolean;
-  retired_by: null | number;  // Assuming retired_by could potentially be a number if not null.
+  retired_by: null | number; // Assuming retired_by could potentially be a number if not null.
   date_retired: null | string; // Assuming the date format is the same as `date_created` if not null.
   retire_reason: null | string;
-
-}
+};
 
 export interface ActiveVisit {
   visit_id: number;
@@ -322,4 +312,38 @@ export interface ActiveVisit {
   visit_type_id: number;
   date_started: Date;
   date_stopped: Date;
+}
+
+
+export interface Drugs {
+  drug_id: number;
+  concept_id: number;
+  name: string;
+  combination: number;
+  dosage_form: string | null;
+  dose_strength: string | null;
+  maximum_daily_dose: string | null;
+  minimum_daily_dose: string | null;
+  route: string | null;
+  units: string;
+  creator: number;
+  date_created: Date;
+  retired: number;
+  retired_by: number | null;
+  date_retired: Date | null;
+  retire_reason: string | null;
+  uuid: string;
+}
+
+export interface LabFormProps {
+  onClose: () => void;
+  addRequest: (value: LabRequest) => void;
+}
+
+export interface FormValueLabel {
+  section:string,
+  formValues: Array<{
+    label:string|undefined,
+    value:string|undefined
+  }>
 }

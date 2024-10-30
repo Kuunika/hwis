@@ -1,0 +1,1667 @@
+[
+    {
+      "id": "6 - Mercaptopurine",
+      "label": "6 - Mercaptopurine"
+    },
+    {
+      "id": "Acetazolamide",
+      "label": "Acetazolamide"
+    },
+    {
+      "id": "Acyclovir",
+      "label": "Acyclovir"
+    },
+    {
+      "id": "Allopurinol",
+      "label": "Allopurinol"
+    },
+    {
+      "id": "Aminophylline",
+      "label": "Aminophylline"
+    },
+    {
+      "id": "Amiodarone",
+      "label": "Amiodarone"
+    },
+    {
+      "id": "Amitriptyline",
+      "label": "Amitriptyline"
+    },
+    {
+      "id": "Amlodipine",
+      "label": "Amlodipine"
+    },
+    {
+      "id": "Amoxycillin",
+      "label": "Amoxycillin"
+    },
+    {
+      "id": "Amoxycillin-Clavulanic acid",
+      "label": "Amoxycillin-Clavulanic acid"
+    },
+    {
+      "id": "Artesunate 50mg+Amodiaquine 153mg(base)",
+      "label": "Artesunate 50mg+Amodiaquine 153mg(base)"
+    },
+    {
+      "id": "Artesunate 50mg+Amodiaquine 153mg(base)",
+      "label": "Artesunate 50mg+Amodiaquine 153mg(base)"
+    },
+    {
+      "id": "Artesunate 50mg+Amodiaquine 153mg(base)",
+      "label": "Artesunate 50mg+Amodiaquine 153mg(base)"
+    },
+    {
+      "id": "Aspirin",
+      "label": "Aspirin"
+    },
+    {
+      "id": "Atenolol",
+      "label": "Atenolol"
+    },
+    {
+      "id": "Azithromycin",
+      "label": "Azithromycin"
+    },
+    {
+      "id": "Benzhexol",
+      "label": "Benzhexol"
+    },
+    {
+      "id": "Bisacodyl",
+      "label": "Bisacodyl"
+    },
+    {
+      "id": "Bromocriptine",
+      "label": "Bromocriptine"
+    },
+    {
+      "id": "Calciferol",
+      "label": "Calciferol"
+    },
+    {
+      "id": "Calcitriol",
+      "label": "Calcitriol"
+    },
+    {
+      "id": "Calcium gluconate",
+      "label": "Calcium gluconate"
+    },
+    {
+      "id": "Captopril",
+      "label": "Captopril"
+    },
+    {
+      "id": "Carbamazepine",
+      "label": "Carbamazepine"
+    },
+    {
+      "id": "Carbimazole",
+      "label": "Carbimazole"
+    },
+    {
+      "id": "Cephalexin",
+      "label": "Cephalexin"
+    },
+    {
+      "id": "Cetirizine hydrochloride",
+      "label": "Cetirizine hydrochloride"
+    },
+    {
+      "id": "Chlorpheniramine maleate",
+      "label": "Chlorpheniramine maleate"
+    },
+    {
+      "id": "Chlorpromazine",
+      "label": "Chlorpromazine"
+    },
+    {
+      "id": "Cimetidine",
+      "label": "Cimetidine"
+    },
+    {
+      "id": "Ciprofloxacin",
+      "label": "Ciprofloxacin"
+    },
+    {
+      "id": "Cloxacillin",
+      "label": "Cloxacillin"
+    },
+    {
+      "id": "Clozapine",
+      "label": "Clozapine"
+    },
+    {
+      "id": "Codeine phosphate",
+      "label": "Codeine phosphate"
+    },
+    {
+      "id": "Conjugated Oestrogen",
+      "label": "Conjugated Oestrogen"
+    },
+    {
+      "id": "Cotrimoxazole",
+      "label": "Cotrimoxazole"
+    },
+    {
+      "id": "Cyclophosphamide",
+      "label": "Cyclophosphamide"
+    },
+    {
+      "id": "Dapson  100mg, Tablet",
+      "label": "Dapson  100mg, Tablet"
+    },
+    {
+      "id": "Dexamethasone",
+      "label": "Dexamethasone"
+    },
+    {
+      "id": "Diazepam",
+      "label": "Diazepam"
+    },
+    {
+      "id": "Diclofenac sodium Slow Release",
+      "label": "Diclofenac sodium Slow Release"
+    },
+    {
+      "id": "Diclofenac sodium ",
+      "label": "Diclofenac sodium "
+    },
+    {
+      "id": "Digoxin",
+      "label": "Digoxin"
+    },
+    {
+      "id": "Diltiazem",
+      "label": "Diltiazem"
+    },
+    {
+      "id": "Doxycycline",
+      "label": "Doxycycline"
+    },
+    {
+      "id": "Enalapril maleate",
+      "label": "Enalapril maleate"
+    },
+    {
+      "id": "Erythromycin",
+      "label": "Erythromycin"
+    },
+    {
+      "id": "Etoposide",
+      "label": "Etoposide"
+    },
+    {
+      "id": "Ferrous sulphate 200mg / folic acid 250 micrograms",
+      "label": "Ferrous sulphate 200mg / folic acid 250 micrograms"
+    },
+    {
+      "id": "Ferrous sulphate",
+      "label": "Ferrous sulphate"
+    },
+    {
+      "id": "Flucloxacillin",
+      "label": "Flucloxacillin"
+    },
+    {
+      "id": "Fluconazole",
+      "label": "Fluconazole"
+    },
+    {
+      "id": "Fluoxetine",
+      "label": "Fluoxetine"
+    },
+    {
+      "id": "Folic acid",
+      "label": "Folic acid"
+    },
+    {
+      "id": "Furosemide",
+      "label": "Furosemide"
+    },
+    {
+      "id": "Glibenclamide",
+      "label": "Glibenclamide"
+    },
+    {
+      "id": "Griseofulvin",
+      "label": "Griseofulvin"
+    },
+    {
+      "id": "Haloperidol",
+      "label": "Haloperidol"
+    },
+    {
+      "id": "Hydralazine",
+      "label": "Hydralazine"
+    },
+    {
+      "id": "Hydrochlorothiazide",
+      "label": "Hydrochlorothiazide"
+    },
+    {
+      "id": "Hydrocortisone acetate",
+      "label": "Hydrocortisone acetate"
+    },
+    {
+      "id": "Hydroxyurea",
+      "label": "Hydroxyurea"
+    },
+    {
+      "id": "Ibuprofen",
+      "label": "Ibuprofen"
+    },
+    {
+      "id": "Imatinib Mesylate",
+      "label": "Imatinib Mesylate"
+    },
+    {
+      "id": "Imipramine Hcl",
+      "label": "Imipramine Hcl"
+    },
+    {
+      "id": "Indomethacin",
+      "label": "Indomethacin"
+    },
+    {
+      "id": "Isosorbide dinitrate",
+      "label": "Isosorbide dinitrate"
+    },
+    {
+      "id": "Ivermectin",
+      "label": "Ivermectin"
+    },
+    {
+      "id": "Ketoconazole",
+      "label": "Ketoconazole"
+    },
+    {
+      "id": "Lenalidomide",
+      "label": "Lenalidomide"
+    },
+    {
+      "id": "Leucovorin",
+      "label": "Leucovorin"
+    },
+    {
+      "id": "Lisinopril",
+      "label": "Lisinopril"
+    },
+    {
+      "id": "Lithium carbonate",
+      "label": "Lithium carbonate"
+    },
+    {
+      "id": "Loperamide HCl ",
+      "label": "Loperamide HCl "
+    },
+    {
+      "id": "Lorazepam",
+      "label": "Lorazepam"
+    },
+    {
+      "id": "Losartan",
+      "label": "Losartan"
+    },
+    {
+      "id": "L-Thyroxine sodium",
+      "label": "L-Thyroxine sodium"
+    },
+    {
+      "id": "Lumefantrine 120mg/Artemether 20mg,   30x6, Tablet",
+      "label": "Lumefantrine 120mg/Artemether 20mg,   30x6, Tablet"
+    },
+    {
+      "id": "Lumefantrine 120mg/Artemether 20mg,  30x12, Tablet",
+      "label": "Lumefantrine 120mg/Artemether 20mg,  30x12, Tablet"
+    },
+    {
+      "id": "Lumefantrine 120mg/Artemether 20mg,  30x18, Tablet",
+      "label": "Lumefantrine 120mg/Artemether 20mg,  30x18, Tablet"
+    },
+    {
+      "id": "Lumefantrine 120mg/Artemether 20mg, 30x24, Tablet",
+      "label": "Lumefantrine 120mg/Artemether 20mg, 30x24, Tablet"
+    },
+    {
+      "id": "Magnesium trisilicate",
+      "label": "Magnesium trisilicate"
+    },
+    {
+      "id": "Megestrol Acetate ",
+      "label": "Megestrol Acetate "
+    },
+    {
+      "id": "Metformin hydrochloride",
+      "label": "Metformin hydrochloride"
+    },
+    {
+      "id": "Methotrexate",
+      "label": "Methotrexate"
+    },
+    {
+      "id": "Methyldopa",
+      "label": "Methyldopa"
+    },
+    {
+      "id": "Metoclopromide",
+      "label": "Metoclopromide"
+    },
+    {
+      "id": "Metronidazole",
+      "label": "Metronidazole"
+    },
+    {
+      "id": "Mirtazapine",
+      "label": "Mirtazapine"
+    },
+    {
+      "id": "Misoprostol",
+      "label": "Misoprostol"
+    },
+    {
+      "id": "Morphine sulphate he (slow release)",
+      "label": "Morphine sulphate he (slow release)"
+    },
+    {
+      "id": "Nalidixic acid ",
+      "label": "Nalidixic acid "
+    },
+    {
+      "id": "Nicotinamide",
+      "label": "Nicotinamide"
+    },
+    {
+      "id": "Nifedipine",
+      "label": "Nifedipine"
+    },
+    {
+      "id": "Nifedipine (slow release)",
+      "label": "Nifedipine (slow release)"
+    },
+    {
+      "id": "Nitrofurantoin 50mg, Tablet",
+      "label": "Nitrofurantoin 50mg, Tablet"
+    },
+    {
+      "id": "Norethisterone",
+      "label": "Norethisterone"
+    },
+    {
+      "id": "Norfloxacin",
+      "label": "Norfloxacin"
+    },
+    {
+      "id": "Olanzepine",
+      "label": "Olanzepine"
+    },
+    {
+      "id": "Omeprazole",
+      "label": "Omeprazole"
+    },
+    {
+      "id": "Ondancetrone",
+      "label": "Ondancetrone"
+    },
+    {
+      "id": "Paracetamol",
+      "label": "Paracetamol"
+    },
+    {
+      "id": "Phenobarbitone",
+      "label": "Phenobarbitone"
+    },
+    {
+      "id": "Phenytoin sodium",
+      "label": "Phenytoin sodium"
+    },
+    {
+      "id": "Potassium chloride (slow release)",
+      "label": "Potassium chloride (slow release)"
+    },
+    {
+      "id": "Praziquantel",
+      "label": "Praziquantel"
+    },
+    {
+      "id": "Prazosin",
+      "label": "Prazosin"
+    },
+    {
+      "id": "Prednisolone",
+      "label": "Prednisolone"
+    },
+    {
+      "id": "Procarbazine Hydrochloride",
+      "label": "Procarbazine Hydrochloride"
+    },
+    {
+      "id": "Procyclidine",
+      "label": "Procyclidine"
+    },
+    {
+      "id": "Proguanil hydrochloride",
+      "label": "Proguanil hydrochloride"
+    },
+    {
+      "id": "Promethazine hydrochloride",
+      "label": "Promethazine hydrochloride"
+    },
+    {
+      "id": "Propantheline bromide",
+      "label": "Propantheline bromide"
+    },
+    {
+      "id": "Propranolol hydrochloride",
+      "label": "Propranolol hydrochloride"
+    },
+    {
+      "id": "Pyridoxine (Vitamin B6)",
+      "label": "Pyridoxine (Vitamin B6)"
+    },
+    {
+      "id": "Quentiapine",
+      "label": "Quentiapine"
+    },
+    {
+      "id": "Quinine sulphate",
+      "label": "Quinine sulphate"
+    },
+    {
+      "id": "Ranitidine",
+      "label": "Ranitidine"
+    },
+    {
+      "id": "Risperidone",
+      "label": "Risperidone"
+    },
+    {
+      "id": "Salbutamol",
+      "label": "Salbutamol"
+    },
+    {
+      "id": "Simvastatin",
+      "label": "Simvastatin"
+    },
+    {
+      "id": "Sodium valproate",
+      "label": "Sodium valproate"
+    },
+    {
+      "id": "Sorafanib",
+      "label": "Sorafanib"
+    },
+    {
+      "id": "Spironolactone",
+      "label": "Spironolactone"
+    },
+    {
+      "id": "Sulphadoxine 500mg / pyrimethamine 25mg (SP)",
+      "label": "Sulphadoxine 500mg / pyrimethamine 25mg (SP)"
+    },
+    {
+      "id": "Sunitinib",
+      "label": "Sunitinib"
+    },
+    {
+      "id": "Tamoxifene",
+      "label": "Tamoxifene"
+    },
+    {
+      "id": "Temozolomide",
+      "label": "Temozolomide"
+    },
+    {
+      "id": "Terbinafine",
+      "label": "Terbinafine"
+    },
+    {
+      "id": "Thalidomide",
+      "label": "Thalidomide"
+    },
+    {
+      "id": "Thioridazine",
+      "label": "Thioridazine"
+    },
+    {
+      "id": "Tramadol hydrochloride",
+      "label": "Tramadol hydrochloride"
+    },
+    {
+      "id": "Tranexamic acid",
+      "label": "Tranexamic acid"
+    },
+    {
+      "id": "Trifluoperazine",
+      "label": "Trifluoperazine"
+    },
+    {
+      "id": "Verapamil",
+      "label": "Verapamil"
+    },
+    {
+      "id": "Vitamin A",
+      "label": "Vitamin A"
+    },
+    {
+      "id": "Vitamin B complex strong",
+      "label": "Vitamin B complex strong"
+    },
+    {
+      "id": "Vitamin, multiple, Tablet(Without Cyanocobalamine)",
+      "label": "Vitamin, multiple, Tablet(Without Cyanocobalamine)"
+    },
+    {
+      "id": "Warfarin sodium",
+      "label": "Warfarin sodium"
+    },
+    {
+      "id": "Zinc sulphate",
+      "label": "Zinc sulphate"
+    },
+    {
+      "id": "label",
+      "label": "label"
+    },
+    {
+      "id": "Class B: Injectables",
+      "label": "Class B: Injectables"
+    },
+    {
+      "id": "5 - Fluorouracil",
+      "label": "5 - Fluorouracil"
+    },
+    {
+      "id": "Acetylchloline Chloride",
+      "label": "Acetylchloline Chloride"
+    },
+    {
+      "id": "Actinomycin D  (with mannitol)",
+      "label": "Actinomycin D  (with mannitol)"
+    },
+    {
+      "id": "Acyclovir 250mg PFR  Vial",
+      "label": "Acyclovir 250mg PFR  Vial"
+    },
+    {
+      "id": "Adrenaline 1/1000, 1ml",
+      "label": "Adrenaline 1/1000, 1ml"
+    },
+    {
+      "id": "Amifostine",
+      "label": "Amifostine"
+    },
+    {
+      "id": "Amikacin",
+      "label": "Amikacin"
+    },
+    {
+      "id": "Aminophylline",
+      "label": "Aminophylline"
+    },
+    {
+      "id": "Amiodarone",
+      "label": "Amiodarone"
+    },
+    {
+      "id": "Amphotericin",
+      "label": "Amphotericin"
+    },
+    {
+      "id": "Ampicillin injection",
+      "label": "Ampicillin injection"
+    },
+    {
+      "id": "Artesunate",
+      "label": "Artesunate"
+    },
+    {
+      "id": "Atracurium besylate",
+      "label": "Atracurium besylate"
+    },
+    {
+      "id": "Atropine sulphate  600 micrograms/ml, 1ml",
+      "label": "Atropine sulphate  600 micrograms/ml, 1ml"
+    },
+    {
+      "id": "Benzathine benzylpenicillin 1.44g (2.4MU), PFR",
+      "label": "Benzathine benzylpenicillin 1.44g (2.4MU), PFR"
+    },
+    {
+      "id": "Benzylpenicillin 3g (5MU), PFR",
+      "label": "Benzylpenicillin 3g (5MU), PFR"
+    },
+    {
+      "id": "Bevacizumab ",
+      "label": "Bevacizumab "
+    },
+    {
+      "id": "Bleomycin",
+      "label": "Bleomycin"
+    },
+    {
+      "id": "Bortezomide",
+      "label": "Bortezomide"
+    },
+    {
+      "id": "Bortezomide",
+      "label": "Bortezomide"
+    },
+    {
+      "id": "Bupivacaine spinal hyperbaric 0.5%",
+      "label": "Bupivacaine spinal hyperbaric 0.5%"
+    },
+    {
+      "id": "Bupivacaine spinal isobaric 0.5%",
+      "label": "Bupivacaine spinal isobaric 0.5%"
+    },
+    {
+      "id": "Calcium Chloride 10%",
+      "label": "Calcium Chloride 10%"
+    },
+    {
+      "id": "Calcium gluconate 10%",
+      "label": "Calcium gluconate 10%"
+    },
+    {
+      "id": "Capecitabine",
+      "label": "Capecitabine"
+    },
+    {
+      "id": "Carboplatin",
+      "label": "Carboplatin"
+    },
+    {
+      "id": "Carmustine ",
+      "label": "Carmustine "
+    },
+    {
+      "id": "Cefotaxime",
+      "label": "Cefotaxime"
+    },
+    {
+      "id": "Ceftazidime",
+      "label": "Ceftazidime"
+    },
+    {
+      "id": "Ceftriaxone 1g",
+      "label": "Ceftriaxone 1g"
+    },
+    {
+      "id": "Cervical Cancer Vaccine",
+      "label": "Cervical Cancer Vaccine"
+    },
+    {
+      "id": "Chloramphenicol Sodium",
+      "label": "Chloramphenicol Sodium"
+    },
+    {
+      "id": "Chlorpromazine hydrochloride",
+      "label": "Chlorpromazine hydrochloride"
+    },
+    {
+      "id": "Cisplatin",
+      "label": "Cisplatin"
+    },
+    {
+      "id": "Clopixol Acuphase",
+      "label": "Clopixol Acuphase"
+    },
+    {
+      "id": "Cloxacillin",
+      "label": "Cloxacillin"
+    },
+    {
+      "id": "Cyclophospamide",
+      "label": "Cyclophospamide"
+    },
+    {
+      "id": "Cytarabine",
+      "label": "Cytarabine"
+    },
+    {
+      "id": "Dacarbazine",
+      "label": "Dacarbazine"
+    },
+    {
+      "id": "Dactinomycin",
+      "label": "Dactinomycin"
+    },
+    {
+      "id": "Darbepoetin Alfa 100mcg/ml, Injection, prefilled syringe",
+      "label": "Darbepoetin Alfa 100mcg/ml, Injection, prefilled syringe"
+    },
+    {
+      "id": "Daunorubicin",
+      "label": "Daunorubicin"
+    },
+    {
+      "id": "Dexamethasone sodium phosphate",
+      "label": "Dexamethasone sodium phosphate"
+    },
+    {
+      "id": "Dextrose (glucose) 5%",
+      "label": "Dextrose (glucose) 5%"
+    },
+    {
+      "id": "Dextrose 50%,",
+      "label": "Dextrose 50%,"
+    },
+    {
+      "id": "Diazepam 5mg/ml, 2ml",
+      "label": "Diazepam 5mg/ml, 2ml"
+    },
+    {
+      "id": "Diclofenac sodium 75mg/ml, 3ml",
+      "label": "Diclofenac sodium 75mg/ml, 3ml"
+    },
+    {
+      "id": "Digoxin 250 micrograms/ml, 2ml",
+      "label": "Digoxin 250 micrograms/ml, 2ml"
+    },
+    {
+      "id": "Dobutamine",
+      "label": "Dobutamine"
+    },
+    {
+      "id": "Dopamine",
+      "label": "Dopamine"
+    },
+    {
+      "id": "Enoxaparin sodium",
+      "label": "Enoxaparin sodium"
+    },
+    {
+      "id": "Ephedrine sulphate",
+      "label": "Ephedrine sulphate"
+    },
+    {
+      "id": "Epirubicin Hydrochloride for Injection 10mg ",
+      "label": "Epirubicin Hydrochloride for Injection 10mg "
+    },
+    {
+      "id": "Erythropoietin, 4000IU  prefilled syringe",
+      "label": "Erythropoietin, 4000IU  prefilled syringe"
+    },
+    {
+      "id": "Etomidate solution for injection  2mg/ml, 10ml",
+      "label": "Etomidate solution for injection  2mg/ml, 10ml"
+    },
+    {
+      "id": "Fentanyl 50micrograms/ml,2ml",
+      "label": "Fentanyl 50micrograms/ml,2ml"
+    },
+    {
+      "id": "Flucloxacillin 250mg, PFR",
+      "label": "Flucloxacillin 250mg, PFR"
+    },
+    {
+      "id": "Fluconazole",
+      "label": "Fluconazole"
+    },
+    {
+      "id": "Fluphenazine decanoate",
+      "label": "Fluphenazine decanoate"
+    },
+    {
+      "id": "Furosemide",
+      "label": "Furosemide"
+    },
+    {
+      "id": "Ganciclovir",
+      "label": "Ganciclovir"
+    },
+    {
+      "id": "Gentamycin Sulphate",
+      "label": "Gentamycin Sulphate"
+    },
+    {
+      "id": "Haloperidol decanoate oily ",
+      "label": "Haloperidol decanoate oily "
+    },
+    {
+      "id": "Heparin sodium 5,000 IU/ml, 5ml",
+      "label": "Heparin sodium 5,000 IU/ml, 5ml"
+    },
+    {
+      "id": "Hydralazine hydrochloride 20mg/ml, 1ml",
+      "label": "Hydralazine hydrochloride 20mg/ml, 1ml"
+    },
+    {
+      "id": "Hydrocortisone acetate",
+      "label": "Hydrocortisone acetate"
+    },
+    {
+      "id": "Hydrocortisone sodium succinate 100mg PFR",
+      "label": "Hydrocortisone sodium succinate 100mg PFR"
+    },
+    {
+      "id": "Imipenem",
+      "label": "Imipenem"
+    },
+    {
+      "id": "Insulin Biphasic(Intermediate and short acting Insulin 30/70 %",
+      "label": "Insulin Biphasic(Intermediate and short acting Insulin 30/70 %"
+    },
+    {
+      "id": "Insulin soluble",
+      "label": "Insulin soluble"
+    },
+    {
+      "id": "Insulin zinc suspension (lente)",
+      "label": "Insulin zinc suspension (lente)"
+    },
+    {
+      "id": "Iron Sucrose",
+      "label": "Iron Sucrose"
+    },
+    {
+      "id": "Ketamine hydrochloride 50mg/ml, 10ml",
+      "label": "Ketamine hydrochloride 50mg/ml, 10ml"
+    },
+    {
+      "id": "Labetalol 5mg/ml, 20ml",
+      "label": "Labetalol 5mg/ml, 20ml"
+    },
+    {
+      "id": "Lignocaine hydrochloride 1%",
+      "label": "Lignocaine hydrochloride 1%"
+    },
+    {
+      "id": "Lignocaine hydrochloride 2%",
+      "label": "Lignocaine hydrochloride 2%"
+    },
+    {
+      "id": "Lignocaine hydrochloride 5%+glucose 7.5%,heavy spinal, 2ml",
+      "label": "Lignocaine hydrochloride 5%+glucose 7.5%,heavy spinal, 2ml"
+    },
+    {
+      "id": "Lorazepam ",
+      "label": "Lorazepam "
+    },
+    {
+      "id": "Magnesium Sulphate 50%",
+      "label": "Magnesium Sulphate 50%"
+    },
+    {
+      "id": "Mannitol 20%",
+      "label": "Mannitol 20%"
+    },
+    {
+      "id": "Medroxyprogesterone acetate injection 150mg/mL, 1mL vial with 2ml syringe with 22g 0.7 X 25mm needle",
+      "label": "Medroxyprogesterone acetate injection 150mg/mL, 1mL vial with 2ml syringe with 22g 0.7 X 25mm needle"
+    },
+    {
+      "id": "Meropenem",
+      "label": "Meropenem"
+    },
+    {
+      "id": "Methotrexate",
+      "label": "Methotrexate"
+    },
+    {
+      "id": "Methylprednisolone acetate",
+      "label": "Methylprednisolone acetate"
+    },
+    {
+      "id": "Methylprednisolone sodium succinate",
+      "label": "Methylprednisolone sodium succinate"
+    },
+    {
+      "id": "Metoclopramide hydrochloride",
+      "label": "Metoclopramide hydrochloride"
+    },
+    {
+      "id": "Metronidazole",
+      "label": "Metronidazole"
+    },
+    {
+      "id": "Morphine sulphate",
+      "label": "Morphine sulphate"
+    },
+    {
+      "id": "Naloxone",
+      "label": "Naloxone"
+    },
+    {
+      "id": "Neostigmine",
+      "label": "Neostigmine"
+    },
+    {
+      "id": "Noradrenalin",
+      "label": "Noradrenalin"
+    },
+    {
+      "id": "Ondansetron",
+      "label": "Ondansetron"
+    },
+    {
+      "id": "Oxytocin",
+      "label": "Oxytocin"
+    },
+    {
+      "id": "Pancuronium Bromide",
+      "label": "Pancuronium Bromide"
+    },
+    {
+      "id": "Pethidine hydrochloride ",
+      "label": "Pethidine hydrochloride "
+    },
+    {
+      "id": "Phenobarbitone sodium",
+      "label": "Phenobarbitone sodium"
+    },
+    {
+      "id": "Phenytoin soldium",
+      "label": "Phenytoin soldium"
+    },
+    {
+      "id": "Phytomenadione 10mg/ml, 1ml (Vitamin K)",
+      "label": "Phytomenadione 10mg/ml, 1ml (Vitamin K)"
+    },
+    {
+      "id": "Piperacillin 4g and Tazobactam 0.5g  [4.5g] PFR",
+      "label": "Piperacillin 4g and Tazobactam 0.5g  [4.5g] PFR"
+    },
+    {
+      "id": "Potassium chloride 20%",
+      "label": "Potassium chloride 20%"
+    },
+    {
+      "id": "Pralidoxime mesylate",
+      "label": "Pralidoxime mesylate"
+    },
+    {
+      "id": "Procaine benzylpenicillin",
+      "label": "Procaine benzylpenicillin"
+    },
+    {
+      "id": "Procyclidine HCl ",
+      "label": "Procyclidine HCl "
+    },
+    {
+      "id": "Promethazine hydrochloride",
+      "label": "Promethazine hydrochloride"
+    },
+    {
+      "id": "Propofol",
+      "label": "Propofol"
+    },
+    {
+      "id": "Quinine dihydrochloride",
+      "label": "Quinine dihydrochloride"
+    },
+    {
+      "id": "Ranitidine",
+      "label": "Ranitidine"
+    },
+    {
+      "id": "Rituximab",
+      "label": "Rituximab"
+    },
+    {
+      "id": "Salbutamol sulphate",
+      "label": "Salbutamol sulphate"
+    },
+    {
+      "id": "Sodium bicarbonate 8.4%",
+      "label": "Sodium bicarbonate 8.4%"
+    },
+    {
+      "id": "Sodium chloride 0.9% (Normal saline)",
+      "label": "Sodium chloride 0.9% (Normal saline)"
+    },
+    {
+      "id": "Sodium lactate compound (Ringer's lactate)",
+      "label": "Sodium lactate compound (Ringer's lactate)"
+    },
+    {
+      "id": "Suxamethonium chloride",
+      "label": "Suxamethonium chloride"
+    },
+    {
+      "id": "Thiopentone sodium",
+      "label": "Thiopentone sodium"
+    },
+    {
+      "id": "Tramadol",
+      "label": "Tramadol"
+    },
+    {
+      "id": "Tranexamic Acid",
+      "label": "Tranexamic Acid"
+    },
+    {
+      "id": "Triamcinolone acetate ",
+      "label": "Triamcinolone acetate "
+    },
+    {
+      "id": "Vancomycin",
+      "label": "Vancomycin"
+    },
+    {
+      "id": "Vecuronium Bromide",
+      "label": "Vecuronium Bromide"
+    },
+    {
+      "id": "Vinblastine",
+      "label": "Vinblastine"
+    },
+    {
+      "id": "Vincristine",
+      "label": "Vincristine"
+    },
+    {
+      "id": "Zoledronic Acid",
+      "label": "Zoledronic Acid"
+    },
+    {
+      "id": "Anti-D human immunoglobulin 300 micrograms/ml",
+      "label": "Anti-D human immunoglobulin 300 micrograms/ml"
+    },
+    {
+      "id": "Hepatitis B vaccine",
+      "label": "Hepatitis B vaccine"
+    },
+    {
+      "id": "Human Papillomavirus",
+      "label": "Human Papillomavirus"
+    },
+    {
+      "id": "Rabies vaccine",
+      "label": "Rabies vaccine"
+    },
+    {
+      "id": "Snake Venom Antiserum, Polyvalent, 10ml, Lyophilized, with sterile water for injection 10ml as diluent [made from the following snake venoms : • Naja  melanoleuca  venom:  20LD50",
+      "label": "Snake Venom Antiserum, Polyvalent, 10ml, Lyophilized, with sterile water for injection 10ml as diluent [made from the following snake venoms : • Naja  melanoleuca  venom:  20LD50"
+    },
+    {
+      "id": "Tetanus antitoxin",
+      "label": "Tetanus antitoxin"
+    },
+    {
+      "id": "Yellow fever vaccine",
+      "label": "Yellow fever vaccine"
+    },
+    {
+      "id": "Activated charcoal powder",
+      "label": "Activated charcoal powder"
+    },
+    {
+      "id": "Acyclovir eye ointment 3%",
+      "label": "Acyclovir eye ointment 3%"
+    },
+    {
+      "id": "Adacin Cream 15g",
+      "label": "Adacin Cream 15g"
+    },
+    {
+      "id": "Amethocaine hydrochloride eye drops 1% , 5ml",
+      "label": "Amethocaine hydrochloride eye drops 1% , 5ml"
+    },
+    {
+      "id": "Amethocaine hydrochloride eye drops 1%",
+      "label": "Amethocaine hydrochloride eye drops 1%"
+    },
+    {
+      "id": "Amoxycillin/Clavulanic acid 125 mg/31.25 mg per 5 ml.PFR",
+      "label": "Amoxycillin/Clavulanic acid 125 mg/31.25 mg per 5 ml.PFR"
+    },
+    {
+      "id": "Atropine Sulphate eye drops 0.5%",
+      "label": "Atropine Sulphate eye drops 0.5%"
+    },
+    {
+      "id": "Atropine Sulphate Eye Drops 1%",
+      "label": "Atropine Sulphate Eye Drops 1%"
+    },
+    {
+      "id": "Beclomethasone diproprionate inhalation, 50mcg/dose, 200 doses",
+      "label": "Beclomethasone diproprionate inhalation, 50mcg/dose, 200 doses"
+    },
+    {
+      "id": "Benzoic acid 1%+ salicylic acid 2% compound lotion, ",
+      "label": "Benzoic acid 1%+ salicylic acid 2% compound lotion, "
+    },
+    {
+      "id": "Benzoic acid 6% + salicylic acid 3% ointment",
+      "label": "Benzoic acid 6% + salicylic acid 3% ointment"
+    },
+    {
+      "id": "Betamethasone 0.1% – Neomycin 0.5% Eye Ointment",
+      "label": "Betamethasone 0.1% – Neomycin 0.5% Eye Ointment"
+    },
+    {
+      "id": "Betamethasone cream 0.1%",
+      "label": "Betamethasone cream 0.1%"
+    },
+    {
+      "id": "Betamethasone sodium ear drops 0.1%",
+      "label": "Betamethasone sodium ear drops 0.1%"
+    },
+    {
+      "id": "Betoptic 0.5% eye drops",
+      "label": "Betoptic 0.5% eye drops"
+    },
+    {
+      "id": "Bimatoprost 0.03% eye drops",
+      "label": "Bimatoprost 0.03% eye drops"
+    },
+    {
+      "id": "Bismuth subgallate compound suppositories ",
+      "label": "Bismuth subgallate compound suppositories "
+    },
+    {
+      "id": "Brilliant green paint 0.1%,",
+      "label": "Brilliant green paint 0.1%,"
+    },
+    {
+      "id": "Calamine lotion 15%+ sulphur 2%",
+      "label": "Calamine lotion 15%+ sulphur 2%"
+    },
+    {
+      "id": "Calamine lotion aqueous 15%,Cre",
+      "label": "Calamine lotion aqueous 15%,Cre"
+    },
+    {
+      "id": "Cetrimide 15% + chlorhexidine 1.5% solution",
+      "label": "Cetrimide 15% + chlorhexidine 1.5% solution"
+    },
+    {
+      "id": "Chloramphenicol 0.5% + Dexamethasone 0.1%",
+      "label": "Chloramphenicol 0.5% + Dexamethasone 0.1%"
+    },
+    {
+      "id": "Chloramphenicol 1% Eye Ointment",
+      "label": "Chloramphenicol 1% Eye Ointment"
+    },
+    {
+      "id": "Chloramphenicol",
+      "label": "Chloramphenicol"
+    },
+    {
+      "id": "Chloramphenicol ear drops 5%, 5ml",
+      "label": "Chloramphenicol ear drops 5%, 5ml"
+    },
+    {
+      "id": "Chloramphenicol eye drops 0.5%",
+      "label": "Chloramphenicol eye drops 0.5%"
+    },
+    {
+      "id": "Chlorhexidine 1.5% solution",
+      "label": "Chlorhexidine 1.5% solution"
+    },
+    {
+      "id": "Chlorhexidine 4% solution,",
+      "label": "Chlorhexidine 4% solution,"
+    },
+    {
+      "id": "Chlorhexidine mouthwash 0.2%",
+      "label": "Chlorhexidine mouthwash 0.2%"
+    },
+    {
+      "id": "Ciprofloxacin ear/eye drops 0.3mg/ml",
+      "label": "Ciprofloxacin ear/eye drops 0.3mg/ml"
+    },
+    {
+      "id": "Clotrimazole cream 1%",
+      "label": "Clotrimazole cream 1%"
+    },
+    {
+      "id": "Clotrimazole ear/eye drops 1%",
+      "label": "Clotrimazole ear/eye drops 1%"
+    },
+    {
+      "id": "Clotrimoxazole vaginal pessaries, 500mg",
+      "label": "Clotrimoxazole vaginal pessaries, 500mg"
+    },
+    {
+      "id": "Cyclopentolate 0.5% + Phenylephrine Eye Drops 2.5%, 5ml",
+      "label": "Cyclopentolate 0.5% + Phenylephrine Eye Drops 2.5%, 5ml"
+    },
+    {
+      "id": "Cyclopentolate hydrochloride eye drops 0.5%",
+      "label": "Cyclopentolate hydrochloride eye drops 0.5%"
+    },
+    {
+      "id": "Dexamethasone 0.1% and Neomycin 0.35% (as sulphate) eye drops",
+      "label": "Dexamethasone 0.1% and Neomycin 0.35% (as sulphate) eye drops"
+    },
+    {
+      "id": "Dexamethasone eye drops 0.1%",
+      "label": "Dexamethasone eye drops 0.1%"
+    },
+    {
+      "id": "Dextran '70' 0.1%hypromellose 0.3% eye drops, tears natural",
+      "label": "Dextran '70' 0.1%hypromellose 0.3% eye drops, tears natural"
+    },
+    {
+      "id": "Dextrose monohydrate (glucose), 500g",
+      "label": "Dextrose monohydrate (glucose), 500g"
+    },
+    {
+      "id": "Docusate sodium ear drops 0.5%",
+      "label": "Docusate sodium ear drops 0.5%"
+    },
+    {
+      "id": "Econazole 2% eye drops",
+      "label": "Econazole 2% eye drops"
+    },
+    {
+      "id": "Emedastine 0.05% eye drops",
+      "label": "Emedastine 0.05% eye drops"
+    },
+    {
+      "id": "Ferrous sulphate mixture",
+      "label": "Ferrous sulphate mixture"
+    },
+    {
+      "id": "Flucloxacillin ",
+      "label": "Flucloxacillin "
+    },
+    {
+      "id": "Fluid, viscoelastic hydroxypropylmethylcellulose, 2% w/v, 3ml ampoule",
+      "label": "Fluid, viscoelastic hydroxypropylmethylcellulose, 2% w/v, 3ml ampoule"
+    },
+    {
+      "id": "Fluorescein sodium eye drops 1%",
+      "label": "Fluorescein sodium eye drops 1%"
+    },
+    {
+      "id": "Fluticasone proprionate 50mcg/metered spray 200 metered doses",
+      "label": "Fluticasone proprionate 50mcg/metered spray 200 metered doses"
+    },
+    {
+      "id": "Gentamicin 0.3% + Dexamethasone 0.1% eye drops,",
+      "label": "Gentamicin 0.3% + Dexamethasone 0.1% eye drops,"
+    },
+    {
+      "id": "Gentamicin 0.3% eye drops, 5ml",
+      "label": "Gentamicin 0.3% eye drops, 5ml"
+    },
+    {
+      "id": "Gentamicin Eye Drops 0.3%",
+      "label": "Gentamicin Eye Drops 0.3%"
+    },
+    {
+      "id": "Gentian violet paint, aqueous 1%,",
+      "label": "Gentian violet paint, aqueous 1%,"
+    },
+    {
+      "id": "Glycerine suppositories",
+      "label": "Glycerine suppositories"
+    },
+    {
+      "id": "Halothane",
+      "label": "Halothane"
+    },
+    {
+      "id": "Hydrocortisone eye ointment 1%,",
+      "label": "Hydrocortisone eye ointment 1%,"
+    },
+    {
+      "id": "Hydrocortisone skin ointment 1%,",
+      "label": "Hydrocortisone skin ointment 1%,"
+    },
+    {
+      "id": "Hypertonic Saline ( Sodium Chloride 5%) Eye drops,",
+      "label": "Hypertonic Saline ( Sodium Chloride 5%) Eye drops,"
+    },
+    {
+      "id": "Iodine 1.8% and Potassium iodide 3% aqueous solution (LUGOL'S), 50ml",
+      "label": "Iodine 1.8% and Potassium iodide 3% aqueous solution (LUGOL'S), 50ml"
+    },
+    {
+      "id": "Iodine solution, weak (iodine tincture) 0.5%",
+      "label": "Iodine solution, weak (iodine tincture) 0.5%"
+    },
+    {
+      "id": "Iodine strong 10% solution",
+      "label": "Iodine strong 10% solution"
+    },
+    {
+      "id": "Ipratropium bromide 0.02% solution for nebulising, 2.5ml",
+      "label": "Ipratropium bromide 0.02% solution for nebulising, 2.5ml"
+    },
+    {
+      "id": "Isoflurane",
+      "label": "Isoflurane"
+    },
+    {
+      "id": "Ketoconazole suspension",
+      "label": "Ketoconazole suspension"
+    },
+    {
+      "id": "Lactulose",
+      "label": "Lactulose"
+    },
+    {
+      "id": "Latanoprost  eye drops 0.005%",
+      "label": "Latanoprost  eye drops 0.005%"
+    },
+    {
+      "id": "Latanoprost 0.005% + Timolol mealate 0.5% eye drops,",
+      "label": "Latanoprost 0.005% + Timolol mealate 0.5% eye drops,"
+    },
+    {
+      "id": "Lignocaine gel 2%",
+      "label": "Lignocaine gel 2%"
+    },
+    {
+      "id": "Lindane 1 %",
+      "label": "Lindane 1 %"
+    },
+    {
+      "id": "Methylated spirit (70% in Water)",
+      "label": "Methylated spirit (70% in Water)"
+    },
+    {
+      "id": "Metronidazole oral suspension 200mg /5ml",
+      "label": "Metronidazole oral suspension 200mg /5ml"
+    },
+    {
+      "id": "Miconazole cream 2%",
+      "label": "Miconazole cream 2%"
+    },
+    {
+      "id": "Miconazole ear drop",
+      "label": "Miconazole ear drop"
+    },
+    {
+      "id": "Miconazole eye drops 1%",
+      "label": "Miconazole eye drops 1%"
+    },
+    {
+      "id": "Mitomycin C eye drops",
+      "label": "Mitomycin C eye drops"
+    },
+    {
+      "id": "Morphine sulphate suspension 50mg/5ml (strong)",
+      "label": "Morphine sulphate suspension 50mg/5ml (strong)"
+    },
+    {
+      "id": "Morphine sulphate suspension 5mg/5ml, ",
+      "label": "Morphine sulphate suspension 5mg/5ml, "
+    },
+    {
+      "id": "Natamycin 1% Eye Ointment",
+      "label": "Natamycin 1% Eye Ointment"
+    },
+    {
+      "id": "Natamycin Eye Drops 5%,",
+      "label": "Natamycin Eye Drops 5%,"
+    },
+    {
+      "id": "Neomycin 5mg + Bacitracin 400IU skin ointment, 15g",
+      "label": "Neomycin 5mg + Bacitracin 400IU skin ointment, 15g"
+    },
+    {
+      "id": "Nitrous oxide, 24cu.ft",
+      "label": "Nitrous oxide, 24cu.ft"
+    },
+    {
+      "id": "Nitrous oxide, 31.3kg",
+      "label": "Nitrous oxide, 31.3kg"
+    },
+    {
+      "id": "Nystatin oral suspension",
+      "label": "Nystatin oral suspension"
+    },
+    {
+      "id": "Nystatin pessaries",
+      "label": "Nystatin pessaries"
+    },
+    {
+      "id": "Ofloxacin 0.3% + Prednisolone sodium Phosphate 0.5% eye drops, 5ml",
+      "label": "Ofloxacin 0.3% + Prednisolone sodium Phosphate 0.5% eye drops, 5ml"
+    },
+    {
+      "id": "Ofloxacin eye/ear drop 0.3%, 5ml",
+      "label": "Ofloxacin eye/ear drop 0.3%, 5ml"
+    },
+    {
+      "id": "Oral rehydration salt, 20.5g satchet (WHO formula) for 1L solution (with orange flavour)",
+      "label": "Oral rehydration salt, 20.5g satchet (WHO formula) for 1L solution (with orange flavour)"
+    },
+    {
+      "id": "Paracetamol Suppositories 125mg",
+      "label": "Paracetamol Suppositories 125mg"
+    },
+    {
+      "id": "Paracetamol Suppositories 250mg",
+      "label": "Paracetamol Suppositories 250mg"
+    },
+    {
+      "id": "Paracetamol syrup 120mg/5ml, 100ml",
+      "label": "Paracetamol syrup 120mg/5ml, 100ml"
+    },
+    {
+      "id": "Paraffin liquid, 500ml",
+      "label": "Paraffin liquid, 500ml"
+    },
+    {
+      "id": "Perasafe 81g (Sterilizing solution for out reach) for 5 litres, (24 sachets per pack)",
+      "label": "Perasafe 81g (Sterilizing solution for out reach) for 5 litres, (24 sachets per pack)"
+    },
+    {
+      "id": "Pilocarpine hydrochloride eye drops 4%, 5ml",
+      "label": "Pilocarpine hydrochloride eye drops 4%, 5ml"
+    },
+    {
+      "id": "Podophyllum paint 20% in compound benzoic tincture, 20ml",
+      "label": "Podophyllum paint 20% in compound benzoic tincture, 20ml"
+    },
+    {
+      "id": "Podophyllum paint 10% in compound benzoin tincture, 20ml",
+      "label": "Podophyllum paint 10% in compound benzoin tincture, 20ml"
+    },
+    {
+      "id": "Podophyllum paint 5% in compound benzoic tincture, 20ml",
+      "label": "Podophyllum paint 5% in compound benzoic tincture, 20ml"
+    },
+    {
+      "id": "Povidone eye drop 5%, 5ml",
+      "label": "Povidone eye drop 5%, 5ml"
+    },
+    {
+      "id": "Povidone iodine 1%, 250ml",
+      "label": "Povidone iodine 1%, 250ml"
+    },
+    {
+      "id": "Povidone Iodine 10% Aqueous Solution",
+      "label": "Povidone Iodine 10% Aqueous Solution"
+    },
+    {
+      "id": "Povidone iodine 10% in alcoholic solution",
+      "label": "Povidone iodine 10% in alcoholic solution"
+    },
+    {
+      "id": "Prednisolone Acetate eye drops 1%",
+      "label": "Prednisolone Acetate eye drops 1%"
+    },
+    {
+      "id": "Prednisolone sodium phosphate eye drops 0.5%",
+      "label": "Prednisolone sodium phosphate eye drops 0.5%"
+    },
+    {
+      "id": "Promethazine hydrochloride elixir",
+      "label": "Promethazine hydrochloride elixir"
+    },
+    {
+      "id": "Proparacaine hydrochloride 0.5% eye drops, 5ml",
+      "label": "Proparacaine hydrochloride 0.5% eye drops, 5ml"
+    },
+    {
+      "id": "Ready To Use Therapeutic(RUTF)15.1kg(Net)",
+      "label": "Ready To Use Therapeutic(RUTF)15.1kg(Net)"
+    },
+    {
+      "id": "Resomal,10.92 kg(Net)",
+      "label": "Resomal,10.92 kg(Net)"
+    },
+    {
+      "id": "Retin A Cream",
+      "label": "Retin A Cream"
+    },
+    {
+      "id": "Salbutamol solution for nebulising 5mg/ml",
+      "label": "Salbutamol solution for nebulising 5mg/ml"
+    },
+    {
+      "id": "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses",
+      "label": "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses"
+    },
+    {
+      "id": "Salicylic acid 10% + coal tar 5%",
+      "label": "Salicylic acid 10% + coal tar 5%"
+    },
+    {
+      "id": "Salicylic acid 10% ointment (in YSP)",
+      "label": "Salicylic acid 10% ointment (in YSP)"
+    },
+    {
+      "id": "Salicylic acid 2% + coal tar solution 15% + sulphur 2% shampoo",
+      "label": "Salicylic acid 2% + coal tar solution 15% + sulphur 2% shampoo"
+    },
+    {
+      "id": "Salicylic acid 20%, ointment",
+      "label": "Salicylic acid 20%, ointment"
+    },
+    {
+      "id": "Salicylic acid 5% + Coal tar 2%",
+      "label": "Salicylic acid 5% + Coal tar 2%"
+    },
+    {
+      "id": "Salicylic acid 5% + crude coal tar 5% oint (in YSP base)",
+      "label": "Salicylic acid 5% + crude coal tar 5% oint (in YSP base)"
+    },
+    {
+      "id": "Salicylic acid 5% + sulphur 5% ointment (in EO base)",
+      "label": "Salicylic acid 5% + sulphur 5% ointment (in EO base)"
+    },
+    {
+      "id": "Salicylic acid 5% + sulphur 5% ointment (in YSP base)",
+      "label": "Salicylic acid 5% + sulphur 5% ointment (in YSP base)"
+    },
+    {
+      "id": "Salicylic acid 5% lotion (in alcohol 70%)",
+      "label": "Salicylic acid 5% lotion (in alcohol 70%)"
+    },
+    {
+      "id": "Salicylic acid collodion 12%",
+      "label": "Salicylic acid collodion 12%"
+    },
+    {
+      "id": "Salicylic acid ointment 5% (in YSP base)",
+      "label": "Salicylic acid ointment 5% (in YSP base)"
+    },
+    {
+      "id": "Salmeterol 13g with 120 inhalations/canister",
+      "label": "Salmeterol 13g with 120 inhalations/canister"
+    },
+    {
+      "id": "Sodium bicarbonate ear drops 5%",
+      "label": "Sodium bicarbonate ear drops 5%"
+    },
+    {
+      "id": "Silver nitrate rhino pencil orange stick",
+      "label": "Silver nitrate rhino pencil orange stick"
+    },
+    {
+      "id": "Silver nitrate stick pencil (toughened)",
+      "label": "Silver nitrate stick pencil (toughened)"
+    },
+    {
+      "id": "Silver sulphadiazine cream 1%",
+      "label": "Silver sulphadiazine cream 1%"
+    },
+    {
+      "id": "Sodium Chromoglycate",
+      "label": "Sodium Chromoglycate"
+    },
+    {
+      "id": "Sodium chromoglycate spincap",
+      "label": "Sodium chromoglycate spincap"
+    },
+    {
+      "id": "Sodium hypochlorite concentrated solution",
+      "label": "Sodium hypochlorite concentrated solution"
+    },
+    {
+      "id": "Sodium Polystyrene Sulfonate(Kayexalate)",
+      "label": "Sodium Polystyrene Sulfonate(Kayexalate)"
+    },
+    {
+      "id": "Sunscreen ,SPF 30",
+      "label": "Sunscreen ,SPF 30"
+    },
+    {
+      "id": "Sunscreen,SPF 50",
+      "label": "Sunscreen,SPF 50"
+    },
+    {
+      "id": "Terbinafin",
+      "label": "Terbinafin"
+    },
+    {
+      "id": "Tetracycline eye ointment 1%",
+      "label": "Tetracycline eye ointment 1%"
+    },
+    {
+      "id": "Tetracycline Eye Ointment 1% ",
+      "label": "Tetracycline Eye Ointment 1% "
+    },
+    {
+      "id": "Timolol 0.5% + Dorzolamide 2% eye drops",
+      "label": "Timolol 0.5% + Dorzolamide 2% eye drops"
+    },
+    {
+      "id": "Timolol maleate eye drops 0.25%",
+      "label": "Timolol maleate eye drops 0.25%"
+    },
+    {
+      "id": "Timolol maleate eye drops 0.5%",
+      "label": "Timolol maleate eye drops 0.5%"
+    },
+    {
+      "id": "Tropicamide 0.8% and Phenylephrine 5%, 5ml",
+      "label": "Tropicamide 0.8% and Phenylephrine 5%, 5ml"
+    },
+    {
+      "id": "Tropicamide eye drops 0.5%",
+      "label": "Tropicamide eye drops 0.5%"
+    },
+    {
+      "id": "Tropicamide Eye Drops 1% ",
+      "label": "Tropicamide Eye Drops 1% "
+    },
+    {
+      "id": "Xylometazoline hydrochloride 0.1%,",
+      "label": "Xylometazoline hydrochloride 0.1%,"
+    },
+    {
+      "id": "Zinc oxide 24% and salicylic acid 2% paste BP (Lassar's)",
+      "label": "Zinc oxide 24% and salicylic acid 2% paste BP (Lassar's)"
+    },
+    {
+      "id": "Zinc oxide 15% ointment (in EO base)",
+      "label": "Zinc oxide 15% ointment (in EO base)"
+    },
+    {
+      "id": "Zinc oxide 15% ointment +sulphur 5%",
+      "label": "Zinc oxide 15% ointment +sulphur 5%"
+    },
+    {
+      "id": "Zinc paste compound + crude coal tar 5%",
+      "label": "Zinc paste compound + crude coal tar 5%"
+    },
+    {
+      "id": "Zinc paste compound + sulphur 5%",
+      "label": "Zinc paste compound + sulphur 5%"
+    },
+    {
+      "id": "Zinc Sulphate Eye drops 0.25%",
+      "label": "Zinc Sulphate Eye drops 0.25%"
+    }
+  ]
+  

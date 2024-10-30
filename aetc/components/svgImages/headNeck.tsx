@@ -13,54 +13,40 @@ import {
   OtherPartsOfTheHeadForm,
   OtherTemporalCrownForm,
 } from "./forms/headNeck";
-import { OtherAbnormalityForm } from "./forms";
+import { DataBox, OtherAbnormalityForm } from "./forms";
+import { FormValueLabel } from "@/interfaces";
+import { useImageFormTransform } from "@/hooks";
 
 export function HeadNeckImage() {
   const {
     handleClose,
-    handleFormSubmit,
     containerRef,
     section,
     anchorEl,
-    setAnchorEl,
-    highlightSection,
     selectedSection,
-    setSelectedSection,
-    highlightAllSelectedSections,
-    setIds,
+    handleFormSubmit,
   } = useImage();
   const idSelected = selectedSection.id;
+  const labelSelected = selectedSection.label as string;
 
-  const data = [
-    {
-      id: "",
-      label: "",
-      values: [{ value: [{ value: "", label: "" }], label: "" }],
-    },
-  ];
+  const { setData, submittedValues } = useImageFormTransform();
 
   const handleDataSubmission = (
     section: string,
-    data: any,
-    formConceptsLabels: any
+    formData: any,
+    formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
-    const nameLabels = Object.keys(formConceptsLabels).map(
-      (key) => formConceptsLabels[key]
-    );
-    const formData = Object.keys(data).map((key) => {
-      const label = nameLabels.find(({ name }) => name == key)?.label;
-      return { label, value: data[key] };
-    });
-
-    console.log({ formData });
+    setData({ section, formData, formConceptsLabels });
+    handleFormSubmit(formData);
   };
 
   return (
     <>
       <HeadNeck ref={containerRef} />
-      <Box display="flex">
-        <DataBox />
-        <DataBox />
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+        {submittedValues.map((value) => (
+          <DataBox key={value.section} labelValue={value} />
+        ))}
       </Box>
       <SVGPopover
         width="50ch"
@@ -72,47 +58,66 @@ export function HeadNeckImage() {
         {idSelected == "right_eye" && (
           <EyeForm
             onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission("Right Eye", values, formConceptsLabels)
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
-        {idSelected == "left_eye" && <EyeForm onSubmit={() => {}} />}
-        {idSelected == "mouth" && (
-          <MouthForm onSubmit={(value) => console.log({ value })} />
+        {idSelected == "left_eye" && (
+          <EyeForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
+            }
+          />
         )}
-        {idSelected == "nose" && <NoseForm onSubmit={() => {}} />}
-        {idSelected == "neck" && <NeckForm onSubmit={() => {}} />}
+        {idSelected == "mouth" && (
+          <MouthForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
+            }
+          />
+        )}
+        {idSelected == "nose" && (
+          <NoseForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
+            }
+          />
+        )}
+        {idSelected == "neck" && (
+          <NeckForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
+            }
+          />
+        )}
+
         {(idSelected == "left_temporal" ||
           idSelected == "right_temporal" ||
           idSelected == "crown") && (
-          <OtherTemporalCrownForm onSubmit={() => {}} />
+          <OtherTemporalCrownForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
+            }
+          />
         )}
         {(idSelected == "chin" ||
           idSelected == "left_cheek" ||
           idSelected == "right_cheek" ||
           idSelected == "forehead") && (
-          <OtherPartsOfTheHeadForm onSubmit={() => {}} />
+          <OtherPartsOfTheHeadForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
+            }
+          />
         )}
         {(idSelected == "right_ear" || idSelected == "left_ear") && (
-          <EarForm onSubmit={() => {}} />
+          <EarForm
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(labelSelected, values, formConceptsLabels)
+            }
+          />
         )}
       </SVGPopover>
     </>
   );
 }
-
-const DataBox = () => {
-  return (
-    <Box border="solid black 1px" p="2ch" m="1px">
-      <Typography variant="h6">Right Eye</Typography>
-      <Box>
-        <Box display="flex" alignItems="center">
-          <Typography variant="body2">Abnormalities</Typography>:
-          <Typography ml={1} variant="body2">
-            Abnormalities
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
