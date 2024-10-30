@@ -110,7 +110,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [showExtraFields, setShowExtraFields] = useState<any>({});
   const [showTraumaFields, setShowTraumaFields] = useState(false);
   const [showAssaultOptions, setShowAssaultOptions] = useState(false);
-  const [selectedMechanism, setSelectedMechanism] = useState<string | null>(null); 
+  const [selectedMechanism, setSelectedMechanism] = useState<string | null>(null);
+  const [genitourinaryOther, setGenitourinaryOther] = useState(false); 
 
   const schema = yup.object().shape({
     pain: yup.boolean(),
@@ -126,6 +127,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     pain: false,
     duration: "",
     specifySite: "",
+    genitourinaryHistory:"",
   };
 
   const handleSymptomChange = (e: any, symptom: string) => {
@@ -324,12 +326,27 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         />
 </FormFieldContainer>
 <FormFieldContainer direction="row">
+{!genitourinaryOther ?(
 <SearchComboBox
-        name="Genitourinary history"
+        name="genitourinaryHistory"
         label="Genitourinary history"
         options={genitourinaryOptions}
         multiple={true}
-        />
+        getValue={(values) => {const other = values.some((value:any) => value.label === genitourinaryOptions[12].label);
+          if (other) {
+            setGenitourinaryOther(true);
+  
+          }
+        }}
+        />):
+        (
+          <TextInputField
+          id="Genitourinary history"
+          name="Genitourinary history"
+          label="Specify Genitourinary history"
+
+          />
+        )}
       </FormFieldContainer>
       <FormFieldContainer direction="row">
           <TextInputField
