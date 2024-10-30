@@ -54,7 +54,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
-      <Box position="relative" display="flex" alignItems="center" mt="2.5ch">
+      <Box position="relative" display="flex" alignItems="center" >
         {/* Input Field */}
         <TextField
           id={id}
