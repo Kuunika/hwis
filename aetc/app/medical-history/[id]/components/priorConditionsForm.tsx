@@ -105,7 +105,6 @@ import { FieldArray } from "formik";
       reloadDiagnoses();
       if (diagnoses) {
         const formatDiagnosisOptions = (diagnoses: any) => {
-          console.log(diagnoses)
           return diagnoses.map((diagnosis: { uuid: { toString: () => any; }; names: { name: any; }[]; }) => ({
             id: diagnosis.uuid.toString(),
             label: diagnosis.names[0].name,
