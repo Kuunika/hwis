@@ -252,7 +252,8 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
   });
 
   const handleSubmit = () => {
-
+    console.log(formValues);
+    return;
     onSubmit(formValues);
   };
 

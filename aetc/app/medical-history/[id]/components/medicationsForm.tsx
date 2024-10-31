@@ -1,8 +1,7 @@
 "use client";
 import { FormDatePicker, FormikInit, FormValuesListener, MainButton, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
 import React, { useEffect, useState } from "react";
-import medicationNames from "../../../../constants/medicationnames.json";
-import { Formik, FieldArray } from "formik";
+import { FieldArray } from "formik";
 import * as yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
@@ -129,6 +128,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   useEffect(() => {
+    
     if (data) {
       const formatMedicationOptions = (data: any) => {
         return data.map((drug: { uuid: string; name: string }) => ({
