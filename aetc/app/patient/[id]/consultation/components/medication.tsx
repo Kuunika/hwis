@@ -1,6 +1,5 @@
 import { FormDatePicker, MainButton, SearchComboBox, UnitInputField, WrapperBox } from "@/components";
 import React, { useState } from "react";
-import medicationNames from "../../../../../constants/medicationnames.json";
 import {
     FormValuesListener,
     FormikInit, TextInputField
@@ -236,16 +235,14 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     />
 
 <UnitInputField
-  id={medicationFormConfig.medication_dose(index).name}
-  label={medicationFormConfig.medication_dose(index).label}
-  initialValue=""  
-  initialUnit={medicationUnits[0]} 
-  unitOptions={medicationUnits} 
+  id={`medications[${index}].medication_dose`}
+  label="Dose"
+  name={`medications[${index}].medication_dose`}
+  unitName={`medications[${index}].medication_dose_unit`}
+  unitOptions={medicationUnits}
   placeholder="e.g., 500"
-  sx={{ width: '320px' }}  
-  onValueChange={(value) => console.log("Entered dose:", value)} 
-  onUnitChange={(unit) => console.log("Selected unit:", unit)}  
-  inputIcon={<GiMedicines />} 
+  sx={{ width: "320px" }}
+  inputIcon={<GiMedicines />}
 />
     {!otherFrequency[index] ? (
       <SearchComboBox
@@ -276,15 +273,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     />
 
 <UnitInputField
-  id={medicationFormConfig.medication_duration(index).name}
-  label={medicationFormConfig.medication_duration(index).label}
-  initialValue=""  // Replace with the appropriate initial value if needed
-  initialUnit={durationOptions[0]}   // Replace with the appropriate initial unit if needed
-  unitOptions={durationOptions}  // Pass the unit options
-  placeholder="e.g. 7"
-  onValueChange={(value) => console.log("Entered duration:", value)}
-  onUnitChange={(unit) => console.log("Selected unit:", unit)}
-  inputIcon={<IoTimeOutline/>}  // Optional icon, adjust as needed
+        id={`medications[${index}].medication_duration`}
+        name={`medications[${index}].medication_duration`}
+        unitName={`medications[${index}].medication_duration_unit`}
+        label="Duration"
+        unitOptions={durationOptions}
+        placeholder="e.g. 7"
+        inputIcon={<IoTimeOutline />}
 />
     <FormDatePicker
       name={medicationFormConfig.medication_date_last_taken(index).name}
