@@ -20,7 +20,6 @@ export const encounters = {
   PROCEDURES_DONE: "ba0656ec-8d80-11d8-abbb-0024217bb78e",
   NURSING_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   OUTPATIENT_DIAGNOSIS: "ba05c128-8d80-11d8-abbb-0024217bb78e",
-
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -49,7 +48,6 @@ export const concepts = {
   //Add 2 new diagnosis concepts
   DIFFERENTIAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
   FINAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
-
 
 
   //airway
@@ -183,7 +181,7 @@ export const concepts = {
   VISIT_NUMBER: "b948b111-ec31-47ea-826c-3f53bf2a1714",
 
   //screening
-  IS_PATIENT_REFERRED: "05016707-c82f-43d9-b9b6-451e5e155cc8",
+  IS_PATIENT_REFERRED: "618c7457-9442-43c4-93a0-80686b3bca5f",
   IS_SITUATION_URGENT: "77963352-aa31-484a-92fe-80afae720d34",
   PATIENT_REFERRED_TO: "b9a64022-8d80-11d8-abbb-0024217bb78e",
   //
@@ -673,3 +671,9 @@ export const roles = {
 };
 
 // username: registration, clinician, nurse
+export const durationOptions = [
+  "Day(s)",
+  "Week(s)",
+  "Month(s)",
+  "Year(s)",
+]
