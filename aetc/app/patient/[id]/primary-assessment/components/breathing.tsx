@@ -1,7 +1,6 @@
 import { NotificationContainer } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { ReactSVG } from "react-svg";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -200,20 +199,16 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const [percussionImage, setPercussionImage] = useState<Array<any>>([]);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
-    encounters.AIRWAY_ASSESSMENT,
+    encounters.BREATHING_ASSESSMENT,
     onSubmit
   );
 
   const handleSubmitForm = async (values: any) => {
-    await handleSubmit(
-      getObservations(values, getDateTime()),
-      chestAbnormalitiesImage
-    );
+    await handleSubmit(getObservations(values, getDateTime()), [
+      ...chestAbnormalitiesImage,
+      ...percussionImage,
+    ]);
   };
-
-  useEffect(() => {
-    console.log({ chestAbnormalitiesImage });
-  }, [chestAbnormalitiesImage]);
 
   return (
     <FormikInit

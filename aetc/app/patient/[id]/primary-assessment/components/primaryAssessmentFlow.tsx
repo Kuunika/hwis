@@ -15,7 +15,7 @@ import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 
 export const PrimaryAssessmentFlow = () => {
-  const [activeStep, setActiveStep] = useState<number>(1);
+  const [activeStep, setActiveStep] = useState<number>(2);
   const { mutate } = addEncounter();
   const { navigateTo, navigateBack } = useNavigation();
 
@@ -36,8 +36,7 @@ export const PrimaryAssessmentFlow = () => {
     setActiveStep(2);
   };
 
-  const handleCirculationSubmit = (values: any) => {
-    mutate({ encounter: encounters.CIRCULATION_ASSESSMENT, obs: values });
+  const handleCirculationSubmit = () => {
     setActiveStep(3);
   };
   const handleDisabilitySubmit = (values: any) => {

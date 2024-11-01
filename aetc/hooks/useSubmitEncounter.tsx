@@ -26,7 +26,6 @@ export const useSubmitEncounter = (
     });
 
     if (encounters) {
-      console.log({ encounters });
       for (let i = 0; i < encounters.length; i++) {
         await mutate(encounters[i].formData);
       }
