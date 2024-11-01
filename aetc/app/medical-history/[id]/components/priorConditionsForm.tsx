@@ -73,20 +73,6 @@ import { FieldArray } from "formik";
     ),
   });
   
-
-  const commonConditions=[
-    {id: 'HIV', label:'HIV'},
-    {id: 'Tuberculosis', label:'TB'},
-    {id: 'Chronic Obstructive Pulmonary Disease', label:'COPD'},
-    {id: 'Diabetes Mellitus', label:'Type 1/Type 2 Diabetes'},
-    {id: 'Epilepsy', label:'Epilepsy'},
-    {id: 'Cerebrovascular accident', label:'CVA'},
-    {id: 'Asthma', label:'Asthma'},
-    {id: 'Bleeding disorders', label:'Bleeding disorders'},
-    {id: 'Hypertension', label:'Hypertension'},
-    {id: 'Rheumatoid disorders', label:'Rheumatoid disorders'},
-    {id: 'Other', label:'Other'},
-  ];
   
   
   export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {

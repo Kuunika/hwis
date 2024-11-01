@@ -5,6 +5,7 @@ import {
     FormikInit, TextInputField
 } from "@/components";
 import * as yup from "yup";
+import { concepts } from "@/constants";
 
 
 type Prop = {
@@ -77,18 +78,18 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
       );
 
     const contraceptiveOptions = [
-        { id: 'Jadelle', label: 'Jadelle' },
-        { id: 'Implanon', label: 'Implanon' },
-        { id: 'Levoplant', label: 'Levoplant' },
-        { id: 'DepoProvera', label: 'Depo Provera' },
-        { id: 'IUCD', label: 'Intra Uterine Contraceptive Device (IUCD)' },
-        { id: 'ProgestinOnlyPills', label: 'Progestin only pills' },
-        { id: 'Vasectomy', label: 'Vasectomy' },
-        { id: 'TubalLigation', label: 'Tubal ligation' },
-        { id: 'CombinedOralPills', label: 'Combined oral contraceptive pills' },
-        { id: 'MaleFemaleCondoms', label: 'Condoms (Male and female)' },
-        { id: 'LactationAmenorrhea', label: 'Lactation amenorrhea' },
-        { id: 'Natural', label: 'Natural' },
+      { id: concepts.JADELLE, label: 'Jadelle' },
+      { id: concepts.IMPLANON, label: 'Implanon' },
+      { id: concepts.LEVOPLANT, label: 'Levoplant' },
+      { id: concepts.DEPO_PROVERA, label: 'Depo Provera' },
+      { id: concepts.IUCD, label: 'Intra Uterine Contraceptive Device (IUCD)' },
+      { id: concepts.PROGESTIN_ONLY_PILLS, label: 'Progestin only pills' },
+      { id: concepts.VASECTOMY, label: 'Vasectomy' },
+      { id: concepts.TUBAL_LIGATION, label: 'Tubal ligation' },
+      { id: concepts.COMBINED_ORAL_PILLS, label: 'Combined oral contraceptive pills' },
+      { id: concepts.MALE_FEMALE_CONDOMS, label: 'Condoms (Male and female)' },
+      { id: concepts.LACTATION_AMENORRHEA, label: 'Lactation amenorrhea' },
+      { id: concepts.NATURAL, label: 'Natural' },
       ];
 
       const pregnancyOutcomeOptions = [
