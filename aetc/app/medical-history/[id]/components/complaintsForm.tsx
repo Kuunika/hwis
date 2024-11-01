@@ -17,13 +17,20 @@ import {
   import * as Yup from "yup";
   import { IoTimeOutline } from "react-icons/io5";
   import { durationOptions } from "@/constants";
+import { FieldArray } from "formik";
 // Define the structure of a complaint
-interface Complaint {
+type Complaint ={
   complaint: string;
-  duration: string;
+  duration: number;
   duration_unit: string;
 }
 
+
+const complaintsTemplate: Complaint = {
+  complaint: "",
+  duration: 0,
+  duration_unit: ""
+}
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
@@ -220,9 +227,6 @@ const presentingComplaints = [
 
 export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
-  const [complaints, setComplaints] = useState<Complaint[]>([
-    { complaint: "", duration: "", duration_unit: "" }
-  ]);
   const [value, setValue] = useState<number | string>("");
  
 
@@ -231,6 +235,10 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     complaints_name: (index: number) => ({ name: `complaints[${index}].complaint`, label:'Name' }),
     complaints_duration: (index: number) => ({ name: `complaints[${index}].duration`, label:'Duration' }),
     complaints_duration_units: (index: number) => ({ name: `complaints[${index}].duration_unit`, label:'Unit' }),
+  };
+
+  const initialValues = {
+    complaints: [complaintsTemplate],
   };
 
   const schema = Yup.object().shape({
@@ -244,27 +252,33 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
   });
 
   const handleSubmit = () => {
-    formValues["complaints"] = complaints;
+    console.log(formValues);
+    return;
     onSubmit(formValues);
   };
 
   return (
     <FormikInit
         validationSchema={schema}
-        initialValues={{ complaints}}
+        initialValues={ initialValues }
         onSubmit={handleSubmit}
         enableReinitialize={true}
         submitButtonText="Submit"
         submitButton={false}
       >
-    <DynamicFormList
-      items={complaints}
-      setItems={setComplaints}
-      newItem={{ complaint: "", duration: "", duration_unit: "" }} // Template for a new complaint
-      renderFields={(item, index) => (
+        {({ values, setFieldValue }) => (
         <>
-       {/* Complaint Name Field */}
-       <SearchComboBox
+        <FormValuesListener getValues={setFormValues} />
+          <FieldArray name="complaints">
+            {({ push, remove }) => (
+              <DynamicFormList
+                items={values.complaints}
+                setItems={(newItems) => setFieldValue("complaints", newItems)}
+                newItem={complaintsTemplate}
+                renderFields={(item, index) => (
+                  <>
+            {/* Complaint Name Field */}
+            <SearchComboBox
               name={complaintsFormConfig.complaints_name(index).name}
               label={complaintsFormConfig.complaints_name(index).label}
               options={presentingComplaints}
@@ -274,24 +288,25 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
           
           {/* Duration and Unit Field */}
           <UnitInputField
-            id={`duration_${index}`}
+            id={complaintsFormConfig.complaints_duration(index).name}
+            name={complaintsFormConfig.complaints_duration(index).name}
+            unitName={complaintsFormConfig.complaints_duration_units(index).name}
             label={complaintsFormConfig.complaints_duration(index).label}
-            initialValue={complaints[index].duration}
-            onValueChange={(val) =>{console.log(val)}}
-            initialUnit={durationOptions[0]}
-            onUnitChange={(unit) => {console.log(unit)}}
             unitOptions={durationOptions}
             placeholder="e.g., 3"
             inputIcon={<IoTimeOutline/>} // Optional icon
           />
-        </>
-      )}
-
-    />
-    <WrapperBox sx={{mt:'2ch'}}>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
-        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
-      </WrapperBox>
+          </>
+          )}
+        />
+          )}
+      </FieldArray>
+          <WrapperBox sx={{mt:'2ch'}}>
+              <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
+            <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
+          </WrapperBox>
+          </>
+    )}
     </FormikInit>
   );
 };
