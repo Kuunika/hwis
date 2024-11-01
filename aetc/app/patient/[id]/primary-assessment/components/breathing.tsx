@@ -194,19 +194,26 @@ const radioOptions = [
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const [chestAbnormalitiesImage, setChestAbnormalitiesImage] = useState({});
+  const [chestAbnormalitiesImage, setChestAbnormalitiesImage] = useState<
+    Array<any>
+  >([]);
+  const [percussionImage, setPercussionImage] = useState<Array<any>>([]);
+
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.AIRWAY_ASSESSMENT,
     onSubmit
   );
 
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(
+      getObservations(values, getDateTime()),
+      chestAbnormalitiesImage
+    );
+  };
+
   useEffect(() => {
     console.log({ chestAbnormalitiesImage });
   }, [chestAbnormalitiesImage]);
-
-  const handleSubmitForm = async (values: any) => {
-    await handleSubmit(getObservations(values, getDateTime()));
-  };
 
   return (
     <FormikInit
@@ -337,7 +344,11 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               <>
                 <br />
                 <NotificationContainer message="Diagram to select area" />
-                <LungImage onValueChange={setChestAbnormalitiesImage} />
+                <LungImage
+                  imageEncounter={encounters.BREATHING_ASSESSMENT}
+                  imageSection={form.chestWallAbnormality.name}
+                  onValueChange={setChestAbnormalitiesImage}
+                />
                 <br />
                 <FieldsContainer>
                   <SearchComboBox
@@ -385,7 +396,11 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
             <br />
             {formValues[form.percussion.name] == concepts.ABNORMAL && (
               <FieldsContainer>
-                <LungBackImage />
+                <LungBackImage
+                  imageSection={form.percussion.name}
+                  imageEncounter={encounters.BREATHING_ASSESSMENT}
+                  onValueChange={setPercussionImage}
+                />
               </FieldsContainer>
             )}
             <FieldsContainer>

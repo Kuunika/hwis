@@ -1,8 +1,10 @@
 import { getDateTime } from "@/helpers/dateTime";
 import React from "react";
 import { useRef, useState, useEffect } from "react";
+import { getActivePatientDetails } from ".";
 
 export const useImage = () => {
+  const { activeVisit, patientId } = getActivePatientDetails();
   const containerRef = useRef<SVGSVGElement>(null);
   const [ids, setIds] = useState<
     Array<{
@@ -133,6 +135,8 @@ export const useImage = () => {
 
     formData = {
       encounterDateTime: dateTime,
+      visit: activeVisit,
+      patient: patientId,
       encounterType: selectedSection.id,
       obs,
     };

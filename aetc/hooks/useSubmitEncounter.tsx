@@ -3,8 +3,6 @@ import { addEncounter } from "./encounter";
 import { useParameters } from "./navigation";
 import { getPatientVisitTypes } from "./patientReg";
 import { getDateTime } from "@/helpers/dateTime";
-import { getObservations } from "@/helpers";
-import { Obs } from "@/interfaces";
 
 export const useSubmitEncounter = (
   encounterType: string,
@@ -17,7 +15,7 @@ export const useSubmitEncounter = (
   );
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
-  const handleSubmit = async (obs: Array<any>) => {
+  const handleSubmit = async (obs: Array<any>, encounters?: Array<any>) => {
     const dateTime = getDateTime();
     await mutate({
       encounterType,
@@ -26,6 +24,13 @@ export const useSubmitEncounter = (
       dateTime,
       obs,
     });
+
+    if (encounters) {
+      console.log({ encounters });
+      for (let i = 0; i < encounters.length; i++) {
+        await mutate(encounters[i].formData);
+      }
+    }
   };
 
   useEffect(() => {

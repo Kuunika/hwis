@@ -10,5 +10,10 @@ export const getActivePatientDetails = () => {
   } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
-  return { activeVisit: activeVisit?.uuid, patientId: params?.id };
+  return {
+    activeVisit: activeVisit?.uuid,
+    patientId: params?.id,
+    isLoading,
+    isSuccess,
+  };
 };

@@ -6,12 +6,19 @@ import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
+import { concepts } from "@/constants";
 
 interface Props {
   onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
 }
 
-export const LungImage = ({ onValueChange }: Props) => {
+export const LungImage = ({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) => {
   const {
     handleClose,
     handleFormSubmit,
@@ -33,6 +40,14 @@ export const LungImage = ({ onValueChange }: Props) => {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
+
+    if (imageEncounter && imageSection) {
+      formData = {
+        ...formData,
+        [concepts.IMAGE_ENCOUNTER]: imageEncounter,
+        [concepts.IMAGE_SECTION]: imageSection,
+      };
+    }
     handleFormSubmit(formData);
   };
 
