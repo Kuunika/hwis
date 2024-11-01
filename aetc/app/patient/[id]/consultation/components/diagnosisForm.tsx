@@ -5,7 +5,7 @@ import { DiagnosisTable } from "./DiagnosisTable";
 import * as Yup from "yup";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Typography } from "@mui/material";
-import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import { addEncounter, getPatientsEncounters, removeEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { toast } from "react-toastify";
 import { useParameters } from "@/hooks";
@@ -33,6 +33,8 @@ function DiagnosisForm() {
 
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { data: patientEncounters } = getPatientsEncounters(params.id as string);
+    const { mutate: deleteDiagnosis } = removeEncounter();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -116,8 +118,18 @@ function DiagnosisForm() {
     };
 
     const handleDeleteDiagnosis = (id: string) => {
-        setDiagnosisList(diagnosisList.filter(diagnosis => diagnosis.id !== id));
-        toast.success("Diagnosis deleted successfully!");
+        deleteDiagnosis(id, {
+            onSuccess: () => {
+                setDiagnosisList((prevList) => prevList.filter((diagnosis) => diagnosis.id !== id));
+                toast.success("Diagnosis deleted successfully!");
+            },
+            onError: () => {
+                console.error(isError); // Log the error for more details
+
+                toast.error("Failed to delete diagnosis.");
+            },
+        });
+
     };
 
 

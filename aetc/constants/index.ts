@@ -46,6 +46,11 @@ export const concepts = {
   URINE_DIPSTICK_KETONES: "b9cc6afe-8d80-11d8-abbb-0024217bb78e",
   PEAK_EXPIRATORY_FLOW_RATE: "f2adaf9e-63bf-4a2a-955f-5084d53affa6",
   CONDITION: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+  //Add 2 new diagnosis concepts
+  DIFFERENTIAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+  FINAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+
+
 
   //airway
   IS_AIRWAY_COMPROMISED: "e42e6502-860f-4465-854a-41aa1defd49f",
