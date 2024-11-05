@@ -15,7 +15,7 @@ import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 
 export const PrimaryAssessmentFlow = () => {
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(4);
   const { mutate } = addEncounter();
   const { navigateTo, navigateBack } = useNavigation();
 
@@ -27,17 +27,16 @@ export const PrimaryAssessmentFlow = () => {
     { id: 4, label: "Exposure Assessment" },
   ];
 
-  const handleAirwaySubmit = (values: any) => {
-    mutate({ encounter: encounters.AIRWAY_ASSESSMENT, obs: values });
+  const handleAirwaySubmit = () => {
+    // mutate({ encounter: encounters.AIRWAY_ASSESSMENT, obs: values });
     setActiveStep(1);
   };
-  const handleBreathingSubmit = (values: any) => {
-    mutate({ encounter: encounters.BREATHING_ASSESSMENT, obs: values });
+  const handleBreathingSubmit = () => {
+    // mutate({ encounter: encounters.BREATHING_ASSESSMENT, obs: values });
     setActiveStep(2);
   };
 
-  const handleCirculationSubmit = (values: any) => {
-    mutate({ encounter: encounters.CIRCULATION_ASSESSMENT, obs: values });
+  const handleCirculationSubmit = () => {
     setActiveStep(3);
   };
   const handleDisabilitySubmit = (values: any) => {

@@ -123,7 +123,6 @@ export default function TriageWorkFlow() {
     { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
-  const patient = triageList?.find((d) => d.uuid == params.id);
   const {
     data: patientVisits,
     isLoading,

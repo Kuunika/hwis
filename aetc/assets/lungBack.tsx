@@ -1,38 +1,50 @@
-import React, { forwardRef } from 'react';
+import { encounters } from "@/constants";
+import React, { forwardRef } from "react";
 
-const LungBack = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>((props, ref) => {
+const LungBack = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
+  (props, ref) => {
     return (
-        <svg
-            ref={ref}
-            version="1.1"
-            id="lungback"
-            width="409"
-            height="610"
-            viewBox="0 0 409 610"
-            {...props}
-        >
-            <defs id="defs1054">
-                <clipPath clipPathUnits="userSpaceOnUse" id="clipPath1467">
-                    <path
-                        id="path1469"
-                        style={{ fill: '#ff0000', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' }}
-                        d="m 194.54688,361.30273 v 58.5625 h 97.91992 c 0.0873,-0.30422 0.16602,-0.61076 0.25781,-0.91406 0.25318,-0.90766 0.45905,-1.82619 0.71094,-2.73437 0.27717,-0.91995 0.47413,-1.86333 0.65234,-2.80664 0.21965,-1.20075 0.50635,-2.38808 0.75977,-3.58204 0.23683,-1.17876 0.42871,-2.36456 0.66796,-3.54296 0.24856,-1.22337 0.46035,-2.45246 0.6543,-3.68555 0.16686,-1.33577 0.43085,-2.65522 0.6836,-3.97656 0.21964,-1.15616 0.3971,-2.31976 0.55078,-3.48633 0.15126,-1.21691 0.28326,-2.43778 0.40234,-3.6582 0.11346,-1.15256 0.2048,-2.30552 0.2832,-3.46094 0.0832,-1.25987 0.14452,-2.52184 0.19922,-3.7832 0.0304,-1.49887 0.13398,-2.99219 0.27344,-4.48438 0.12501,-1.46968 0.25038,-2.93671 0.44922,-4.39844 0.18586,-1.32194 0.35882,-2.64584 0.50586,-3.97265 0.13004,-1.4697 0.35036,-2.92999 0.55469,-4.39063 0.12584,-0.87846 0.23996,-1.75806 0.34961,-2.63867 0.14628,-1.17483 0.4187,-2.18664 0.78124,-3.04688 z"
-                    />
-                </clipPath>
-                <clipPath clipPathUnits="userSpaceOnUse" id="clipPath1479">
-                    <path
-                        id="path1481"
-                        style={{ fill: '#ff0000', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' }}
-                        d="m 92.578125,421.84961 c 0.08597,0.55169 0.138738,1.14241 0.148437,1.77734 0.03734,2.44401 0.08639,4.88958 0.06836,7.33399 -0.06738,3.05883 -0.134905,6.11776 -0.234375,9.17578 -0.06258,1.62919 -0.168277,3.25574 -0.265625,4.88281 0.0564,0.76189 0.106362,1.52425 0.171875,2.28516 0.133515,1.50022 0.283071,2.9996 0.470703,4.49414 0.17546,1.33468 0.374371,2.66634 0.640625,3.98633 0.256826,1.23292 0.540023,2.45915 0.902344,3.66601 0.391415,1.33156 0.865781,2.63656 1.267578,3.96485 0.403778,1.3017 0.826771,2.59664 1.236328,3.89648 0.510433,1.49953 1.032498,3.00499 1.304687,4.57031 0.221865,1.12324 0.463193,2.24075 0.636719,3.37305 0.20392,1.15326 0.384273,2.30864 0.5,3.47461 0.147058,1.21888 0.300284,2.4392 0.332031,3.66797 h 94.789068 v -60.54883 z"
-                    />
-                </clipPath>
-            </defs>
-            <g transform="translate(-3.6362276,-9.324378)">
-                <image
-                    width="358"
-                    height="698"
-                    preserveAspectRatio="none"
-                    xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWYAAAK6CAYAAAAKMvbfAAAAAXNSR0IArs4c6QAAIABJREFUeF7s
+      <svg
+        ref={ref}
+        version="1.1"
+        id="lungback"
+        width="409"
+        height="610"
+        viewBox="0 0 409 610"
+        {...props}
+      >
+        <defs id="defs1054">
+          <clipPath clipPathUnits="userSpaceOnUse" id="clipPath1467">
+            <path
+              id="path1469"
+              style={{
+                fill: "#ff0000",
+                fillOpacity: 1,
+                fillRule: "nonzero",
+                stroke: "none",
+              }}
+              d="m 194.54688,361.30273 v 58.5625 h 97.91992 c 0.0873,-0.30422 0.16602,-0.61076 0.25781,-0.91406 0.25318,-0.90766 0.45905,-1.82619 0.71094,-2.73437 0.27717,-0.91995 0.47413,-1.86333 0.65234,-2.80664 0.21965,-1.20075 0.50635,-2.38808 0.75977,-3.58204 0.23683,-1.17876 0.42871,-2.36456 0.66796,-3.54296 0.24856,-1.22337 0.46035,-2.45246 0.6543,-3.68555 0.16686,-1.33577 0.43085,-2.65522 0.6836,-3.97656 0.21964,-1.15616 0.3971,-2.31976 0.55078,-3.48633 0.15126,-1.21691 0.28326,-2.43778 0.40234,-3.6582 0.11346,-1.15256 0.2048,-2.30552 0.2832,-3.46094 0.0832,-1.25987 0.14452,-2.52184 0.19922,-3.7832 0.0304,-1.49887 0.13398,-2.99219 0.27344,-4.48438 0.12501,-1.46968 0.25038,-2.93671 0.44922,-4.39844 0.18586,-1.32194 0.35882,-2.64584 0.50586,-3.97265 0.13004,-1.4697 0.35036,-2.92999 0.55469,-4.39063 0.12584,-0.87846 0.23996,-1.75806 0.34961,-2.63867 0.14628,-1.17483 0.4187,-2.18664 0.78124,-3.04688 z"
+            />
+          </clipPath>
+          <clipPath clipPathUnits="userSpaceOnUse" id="clipPath1479">
+            <path
+              id="path1481"
+              style={{
+                fill: "#ff0000",
+                fillOpacity: 1,
+                fillRule: "nonzero",
+                stroke: "none",
+              }}
+              d="m 92.578125,421.84961 c 0.08597,0.55169 0.138738,1.14241 0.148437,1.77734 0.03734,2.44401 0.08639,4.88958 0.06836,7.33399 -0.06738,3.05883 -0.134905,6.11776 -0.234375,9.17578 -0.06258,1.62919 -0.168277,3.25574 -0.265625,4.88281 0.0564,0.76189 0.106362,1.52425 0.171875,2.28516 0.133515,1.50022 0.283071,2.9996 0.470703,4.49414 0.17546,1.33468 0.374371,2.66634 0.640625,3.98633 0.256826,1.23292 0.540023,2.45915 0.902344,3.66601 0.391415,1.33156 0.865781,2.63656 1.267578,3.96485 0.403778,1.3017 0.826771,2.59664 1.236328,3.89648 0.510433,1.49953 1.032498,3.00499 1.304687,4.57031 0.221865,1.12324 0.463193,2.24075 0.636719,3.37305 0.20392,1.15326 0.384273,2.30864 0.5,3.47461 0.147058,1.21888 0.300284,2.4392 0.332031,3.66797 h 94.789068 v -60.54883 z"
+            />
+          </clipPath>
+        </defs>
+        <g transform="translate(-3.6362276,-9.324378)">
+          <image
+            width="358"
+            height="698"
+            preserveAspectRatio="none"
+            xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWYAAAK6CAYAAAAKMvbfAAAAAXNSR0IArs4c6QAAIABJREFUeF7s
 fQeYY1d59r1qo65Rl6ZqZnZ21l7vsrFpMTgUm2LA2Nj8BkzAtB8SYgO/TQ0lhBICmGpIICE2BINN
 cwFsbIoxCYQAxsZt11una6RR77qqv98jffJZMWXXu6uRZs59Hj0qt+r7znnPe752ZElsQgJCAkIC
 QgJdJQG5q55GPIyQgJCAkICQgCSAWTQCIQEhASGBLpOAAOYuU4h4HCEBIQEhAQHMog0ICQgJCAl0
@@ -2746,71 +2758,71 @@ l1LtU85Va51++j2FjrzSe/5pC5qWr/UFWIs5/t+XBaWcoSNsBOjpBuknLI7a29s/0dfX9/lyft9r
 /Zi6lFHlHjz98sQHr16d+Z3ri4t31cHsHGtJk4AGd63ADIDC4uLA1846GfBKygA8qUkDLIAEvjuS
 UbrXdMQWM8tSspCRvqeUYX93HcwOsNSYbwDMF9asWfPp3t7ev6zykF2Rp/s/kQEclNHy3QAAAAAA
 SUVORK5CYII="
-                    x="3.6362276"
-                    y="9.324378"
-                />
-                <rect
-                    id="right_upper_zone"
-                    data-label="Right Upper Zone"
-                    width="110.1773"
-                    height="29.777649"
-                    x="195.53989"
-                    y="329.53931"
-                    clipPath="url(#clipPath1599)"
-                />
-                <rect
-                    id="left_upper_zone"
-                    data-label="Left Upper Zone"
-                    width="110.1773"
-                    height="29.777649"
-                    x="195.53989"
-                    y="329.53931"
-                    clipPath="url(#clipPath1575)"
-                    transform="matrix(-1,0,0,1,388.07198,1.0074117)"
-                />
-                <rect
-                    id="right_middle_zone"
-                    data-label="Right Middle Zone"
-                    width="110.17731"
-                    height="58.562721"
-                    x="194.5473"
-                    y="361.30215"
-                    clipPath="url(#clipPath1467)"
-                />
-                <rect
-                    id="left_middle_zone"
-                    data-label="Left Middle Zone"
-                    width="110.17731"
-                    height="58.562721"
-                    x="194.5473"
-                    y="361.30215"
-                    clipPath="url(#clipPath1503)"
-                    transform="matrix(-1,0,0,1,387.83046,0)"
-                />
-                <rect
-                    id="left_lower_zone"
-                    data-label="Left Lower Zone"
-                    width="109.18472"
-                    height="60.547863"
-                    x="85.362595"
-                    y="421.85004"
-                    clipPath="url(#clipPath1479)"
-                    transform="translate(-2)"
-                />
-                <rect
-                    id="right_lower_zone"
-                    data-label="Right Lower Zone"
-                    width="109.18472"
-                    height="60.547863"
-                    x="85.362595"
-                    y="421.85004"
-                    clipPath="url(#clipPath1658)"
-                    transform="matrix(-1,0,0,1,388.12443,0)"
-                />
-
-            </g>
-        </svg>
+            x="3.6362276"
+            y="9.324378"
+          />
+          <rect
+            id={encounters.LUNG_BACK_RIGHT_UPPER_ZONE}
+            data-label="Right Upper Zone"
+            width="110.1773"
+            height="29.777649"
+            x="195.53989"
+            y="329.53931"
+            clipPath="url(#clipPath1599)"
+          />
+          <rect
+            id={encounters.LUNG_BACK_LEFT_UPPER_ZONE}
+            data-label="Left Upper Zone"
+            width="110.1773"
+            height="29.777649"
+            x="195.53989"
+            y="329.53931"
+            clipPath="url(#clipPath1575)"
+            transform="matrix(-1,0,0,1,388.07198,1.0074117)"
+          />
+          <rect
+            id={encounters.LUNG_BACK_RIGHT_MIDDLE_ZONE}
+            data-label="Right Middle Zone"
+            width="110.17731"
+            height="58.562721"
+            x="194.5473"
+            y="361.30215"
+            clipPath="url(#clipPath1467)"
+          />
+          <rect
+            id={encounters.LUNG_LEFT_MIDDLE_ZONE}
+            data-label="Left Middle Zone"
+            width="110.17731"
+            height="58.562721"
+            x="194.5473"
+            y="361.30215"
+            clipPath="url(#clipPath1503)"
+            transform="matrix(-1,0,0,1,387.83046,0)"
+          />
+          <rect
+            id={encounters.LUNG_BACK_LEFT_LOWER_ZONE}
+            data-label="Left Lower Zone"
+            width="109.18472"
+            height="60.547863"
+            x="85.362595"
+            y="421.85004"
+            clipPath="url(#clipPath1479)"
+            transform="translate(-2)"
+          />
+          <rect
+            id={encounters.LUNG_BACK_RIGHT_LOWER_ZONE}
+            data-label="Right Lower Zone"
+            width="109.18472"
+            height="60.547863"
+            x="85.362595"
+            y="421.85004"
+            clipPath="url(#clipPath1658)"
+            transform="matrix(-1,0,0,1,388.12443,0)"
+          />
+        </g>
+      </svg>
     );
-});
+  }
+);
 
 export default LungBack;

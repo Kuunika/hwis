@@ -32,11 +32,11 @@ type Props = {
   onCancel: () => void;
 };
 const options = [
-  { id: "Wound", label: "Wound" },
-  { id: "Surgical Emphyema", label: "Surgical Emphyema" },
-  { id: "Rib Deformity", label: "Rib Deformity" },
-  { id: "Frail chest", label: "Frail chest" },
-  { id: "Other", label: "Other" },
+  { id: concepts.WOUND, label: "Wound" },
+  { id: concepts.SURGICAL_EMPHAYEMA, label: "Surgical Emphyema" },
+  { id: concepts.RIB_DEFORMITY, label: "Rib Deformity" },
+  { id: concepts.FAIL_CHEST, label: "Frail chest" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 export const BreathingLungForm = (props: Props) => {
@@ -64,7 +64,7 @@ export const BreathingLungForm = (props: Props) => {
         getValue={(values) => {
           if (values)
             setShowInputTextDisplay(
-              Boolean(values.find((v: any) => v.id == "Other"))
+              Boolean(values.find((v: any) => v.id == concepts.OTHER))
             );
         }}
         name={form.description.name}
