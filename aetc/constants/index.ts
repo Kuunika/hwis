@@ -831,11 +831,4 @@ export const roles = {
 
 // username: registration, clinician, nurse
 
-export const durationOptions = [
-  "Day(s)",
-  "Week(s)",
-  "Month(s)",
-  "Year(s)",
-]
-
 export const durationOptions = ["Day(s)", "Week(s)", "Month(s)", "Year(s)"];
