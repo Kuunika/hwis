@@ -1,44 +1,29 @@
 import React from "react";
-import { BaseTable } from "@/components"; // Import BaseTable
+import { BaseTable } from "@/components";
 
 interface Diagnosis {
-    id: number;
+    id: string;
     condition: string;
+    obsDatetime: string; // Ensure consistency with obsDatetime
 }
 
-export const DiagnosisTable = ({
-    diagnoses,
-    onDelete,
-}: {
-    diagnoses: Diagnosis[];
-    onDelete: (id: number) => void;
-}) => {
+export const DiagnosisTable = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
     const columns = [
         { field: "condition", headerName: "Diagnosis", flex: 1 },
         {
             field: "label",
-            headerName: " ",
+            headerName: "Diagnosis Type ",
             flex: 1,
             renderCell: () => <span>Differential Diagnosis</span>,
         },
         {
-            field: "action",
-            headerName: "Action",
+            field: "obsDatetime",
+            headerName: "Date Recorded",
             flex: 1,
-            renderCell: (params: any) => (
-                <button
-                    onClick={() => onDelete(params.row.id)}
-                    style={{
-                        color: "white",
-                        backgroundColor: "red",
-                        border: "none",
-                        padding: "5px 10px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Delete
-                </button>
-            ),
+            renderCell: (params: any) => {
+                const date = params.row.obsDatetime;
+                return <span>{date ? new Date(date).toLocaleDateString() : "N/A"}</span>;
+            },
         },
     ];
 
@@ -48,8 +33,7 @@ export const DiagnosisTable = ({
             columns={columns}
             height="400px"
             width="100%"
-            showTopBar={false} // Pass false to hide the search bar and toggle
-
+            showTopBar={false}
         />
     );
 };

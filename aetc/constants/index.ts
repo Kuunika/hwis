@@ -20,6 +20,7 @@ export const encounters = {
   CLINICAL_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   PROCEDURES_DONE: "ba0656ec-8d80-11d8-abbb-0024217bb78e",
   NURSING_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
+  OUTPATIENT_DIAGNOSIS: "ba05c128-8d80-11d8-abbb-0024217bb78e",
   LUNG_LEFT_UPPER_ZONE:'LEFT_UPPER_ZONE',
   LUNG_LEFT_MIDDLE_ZONE:'LEFT_MIDDLE_ZONE',
   LUNG_LEFT_LOWER_ZONE:'LEFT_LOWER_ZONE',
@@ -127,6 +128,7 @@ export const encounters = {
  FULLBODY_RIGHT_TARSAL:"FULLBODY_RIGHT_TARSAL",
 }
 
+
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
 export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
@@ -149,6 +151,11 @@ export const concepts = {
   PULSE_RATE: "b9afedfc-8d80-11d8-abbb-0024217bb78e",
   URINE_DIPSTICK_KETONES: "b9cc6afe-8d80-11d8-abbb-0024217bb78e",
   PEAK_EXPIRATORY_FLOW_RATE: "f2adaf9e-63bf-4a2a-955f-5084d53affa6",
+  CONDITION: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+  //Add 2 new diagnosis concepts
+  DIFFERENTIAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+  FINAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+
 
   //airway
   IS_AIRWAY_COMPROMISED: "e42e6502-860f-4465-854a-41aa1defd49f",
@@ -823,4 +830,5 @@ export const roles = {
 };
 
 // username: registration, clinician, nurse
+
 export const durationOptions = ["Day(s)", "Week(s)", "Month(s)", "Year(s)"];
