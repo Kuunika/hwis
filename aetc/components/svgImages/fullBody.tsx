@@ -39,15 +39,16 @@ export function FullBodyImage({
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    if (imageEncounter && imageSection) {
-      formData = {
-        ...formData,
-        [concepts.IMAGE_ENCOUNTER]: imageEncounter,
-        [concepts.IMAGE_SECTION]: imageSection,
-      };
-    }
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
+
   return (
     <div>
       <FullBody ref={containerRef} />

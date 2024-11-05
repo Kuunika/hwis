@@ -1,3 +1,4 @@
+import { encounters } from "@/constants";
 import React, { forwardRef } from "react";
 export const HeadNeck = forwardRef<
   SVGSVGElement,
@@ -42,7 +43,7 @@ export const HeadNeck = forwardRef<
 
     <g>
       <rect
-        id="right_temporal"
+        id={encounters.HEAD_RIGHT_TEMPORAL}
         data-label="Right Temporal"
         transform="matrix(1 0 0 1.0591 -.051321 -27.322)"
         x="147.13"
@@ -54,8 +55,8 @@ export const HeadNeck = forwardRef<
         opacity=".52"
       />
       <rect
-        id="left_temporal"
-           data-label="Left Temporal"
+        id={encounters.HEAD_LEFT_TEMPORAL}
+        data-label="Left Temporal"
         transform="matrix(1 0 0 1.0476 0 -25.621)"
         x="339.07"
         y="147.13"
@@ -66,7 +67,7 @@ export const HeadNeck = forwardRef<
         opacity=".52"
       />
       <rect
-        id="crown"
+        id={encounters.HEAD_CROWN}
         data-label="Crown"
         transform="translate(-4)"
         x="168.56"
@@ -78,63 +79,63 @@ export const HeadNeck = forwardRef<
         opacity=".52"
       />
       <path
-        id="right_eye"
+        id={encounters.HEAD_RIGHT_EYE}
         d="m223.12 274.76 14.615 8.7691 17.538 1.9487 26.307-4.8717 13.641-3.8974-16.564-11.692-20.461-3.8974h-19.487l-10.718 6.8204z"
         fill="#56291e"
         opacity=".52"
         data-label="Right Eye"
       />
       <path
-        id="left_eye"
+        id={encounters.HEAD_LEFT_EYE}
         d="m388.76 275.74 8.769-8.769 12.666-3.8974 19.487-2.923 17.538 6.8204 14.615 6.8204-16.564 8.7691-14.615 1.9487-21.435-4.8717-12.666-1.9487z"
         fill="#56291e"
         opacity=".52"
         data-label="Left Eye"
       />
       <path
-        id="nose"
+        id={encounters.HEAD_NOSE}
         data-label="Nose"
         d="m328.35 272.82-9.7434 45.794-7.7947 14.615-15.589 5.846-5.846 16.564v14.615l11.692 14.615 11.692 0.97434 25.333 0.97434 47.743-0.97434 8.769-9.7434 1.9487-24.358-3.8974-13.641-15.589-12.666-30.205-53.589z"
         fill="#c17d63"
         opacity=".52"
       />
       <path
-        id="mouth"
+        id={encounters.HEAD_MOUTH}
         data-label="Mouth"
         d="m257.23 435.53v31.179l33.128 13.641 90.614 1.9487 40.922-20.461 0.97434-23.384-46.768-17.538-57.486 1.9487z"
         fill="#be7960"
         opacity=".52"
       />
       <path
-        id="neck"
-           data-label="Neck"
+        id={encounters.HEAD_NECK}
+        data-label="Neck"
         d="m199.33 484.33-3.3928 59.375-11.875 25.446 35.625 60.223 49.196 50.893 138.26-10.179 89.91-96.696-16.964-27.143-10.179-54.286-20.357 43.259-20.357 30.536-36.473 26.295-85.669 2.5446-21.205-5.9375-30.536-19.509z"
         fill="#9a5848"
         opacity=".52"
       />
       <path
-        id="forehead"
-           data-label="Forehead"
+        id={encounters.HEAD_FOREHEAD}
+        data-label="Forehead"
         d="m208.66 122.14-11.875 91.607 27.143-17.812 57.678 5.0893 33.08 26.295 46.652-2.5446 31.384-21.205 61.071-4.241 27.143 10.179-5.9375-82.277z"
         fill="#be7760"
         opacity=".52"
       />
       <path
-        id="chin"
-         data-label="Chin"
+        id={encounters.HEAD_CHIN}
+        data-label="Chin"
         d="m271.43 535.22 44.107-23.75 35.625-6.7857 39.866 9.3303 26.295 11.027 3.3928 35.625-20.357 20.357-19.509 9.3303-72.098 0.84821-44.107-22.054z"
         fill="#c27a63"
         opacity=".52"
       />
       <path
-        id="right_cheek"
+        id={encounters.HEAD_RIGHT_CHEEK}
         data-label="Right Cheek"
         d="m227.32 486.03 0.84821-69.553-22.902-65.312-38.17-4.2411 31.384 130.62z"
         fill="#c17961"
         opacity=".52"
       />
       <path
-        id="left_cheek"
+        id={encounters.HEAD_LEFT_CHEEK}
         data-label="Left Cheek"
         d="m452.95 464.82-5.0893-79.732 32.232-39.866 26.295 7.6339-32.232 136.56-25.446-12.723z"
         fill="#794834"
@@ -144,7 +145,7 @@ export const HeadNeck = forwardRef<
     <path d="m501.78 379.02 10.718-47.743" fill="#f3f3f3" opacity=".52" />
     <g>
       <path
-        id="left_ear"
+        id={encounters.HEAD_LEFT_EAR}
         data-label="Left Ear"
         d="m500.81 380.97 14.615-61.383v-45.794l7.7947-2.923 2.923 6.8204-7.7947 43.845-3.8974 38.974-2.923 13.641z"
         fill="#99614c"
@@ -152,7 +153,7 @@ export const HeadNeck = forwardRef<
       />
       <path d="m153.95 319.58v-43.845" fill="#9a5848" opacity=".52" />
       <path
-        id="right_ear"
+        id={encounters.HEAD_RIGHT_EAR}
         data-label="Right Ear"
         d="m152.97 276.71-6.8204-8.7691-5.846 13.641 10.718 40.922 5.846 49.691 13.641 11.692-3.8974-25.333z"
         fill="#9a5848"

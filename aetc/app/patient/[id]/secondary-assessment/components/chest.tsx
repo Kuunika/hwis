@@ -1,5 +1,5 @@
 "use client";
-import { NO, YES, concepts } from "@/constants";
+import { NO, YES, concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
@@ -197,6 +197,24 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showSpecify, setShowSpecify] = useState(false);
   const [showAbnormalities, setShowAbnormalities] = useState(false);
+  const [localizedChestImagesEnc, setLocalizedChestImagesEnc] = useState<
+    Array<any>
+  >([]);
+  const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
+    Array<any>
+  >([]);
+  const [tactileFremitusImagesEnc, setTactileFremitusImagesEnc] = useState<
+    Array<any>
+  >([]);
+  const [percussionImagesEnc, setPercussionImagesEnc] = useState<Array<any>>(
+    []
+  );
+  const [breathingSoundsImagesEnc, setBreathingSoundsImagesEnc] = useState<
+    Array<any>
+  >([]);
+  const [vocalFremitusImagesEnc, setVocalFremitusImagesEnc] = useState<
+    Array<any>
+  >([]);
 
   const handleValueChange = (values: Array<any>) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
@@ -250,7 +268,11 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           options={radioOptions}
         />
         {formValues[form.localizedChestAbnormality.name] == YES && (
-          <ChestLung />
+          <ChestLung
+            onValueChange={setLocalizedChestImagesEnc}
+            imageEncounter={encounters.CHEST_ASSESSMENT}
+            imageSection={form.localizedChestAbnormality.name}
+          />
         )}
         <RadioGroupInput
           row={true}
@@ -260,7 +282,11 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         />
         {(formValues[form.chestExpansion.name] == concepts.REDUCED ||
           formValues[form.chestExpansion.name] == concepts.INCREASED) && (
-          <ChestLung />
+          <ChestLung
+            onValueChange={setChestExpansionImagesEnc}
+            imageEncounter={encounters.CHEST_ASSESSMENT}
+            imageSection={form.chestExpansion.name}
+          />
         )}
         <RadioGroupInput
           row={true}
@@ -270,7 +296,11 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         />
         {(formValues[form.tactileFremitus.name] == concepts.REDUCED ||
           formValues[form.tactileFremitus.name] == concepts.INCREASED) && (
-          <ChestLung />
+          <ChestLung
+            onValueChange={setTactileFremitusImagesEnc}
+            imageEncounter={encounters.CHEST_ASSESSMENT}
+            imageSection={form.tactileFremitus.name}
+          />
         )}
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Palpation (Heart)">
@@ -324,7 +354,11 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           label={form.percussion.label}
         />
         {formValues[form.percussion.name] == concepts.ABNORMAL && (
-          <PercussionChestLung />
+          <PercussionChestLung
+            onValueChange={setPercussionImagesEnc}
+            imageSection={form.percussion.name}
+            imageEncounter={encounters.CHEST_ASSESSMENT}
+          />
         )}
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Auscultation (Lungs)">
@@ -335,7 +369,11 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           options={percussionOptions}
         />
         {formValues[form.breathingSounds.name] == concepts.ABNORMAL && (
-          <BreathingSoundsChestLung />
+          <BreathingSoundsChestLung
+            imageEncounter={encounters.CHEST_ASSESSMENT}
+            imageSection={form.breathingSounds.name}
+            onValueChange={setBreathingSoundsImagesEnc}
+          />
         )}
         <RadioGroupInput
           row
@@ -345,7 +383,11 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         />
         {formValues[form.vocalFremitus.name] == concepts.REDUCED ||
           (formValues[form.vocalFremitus.name] == concepts.INCREASED && (
-            <BreathingSoundsChestLung />
+            <BreathingSoundsChestLung
+              imageSection={form.vocalFremitus.name}
+              imageEncounter={encounters.CHEST_ASSESSMENT}
+              onValueChange={setVocalFremitusImagesEnc}
+            />
           ))}
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Auscultation (Chest)">

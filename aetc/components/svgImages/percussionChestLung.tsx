@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Lung from "../../assets/lung";
 import { DataBox, PercussionChestLungForm } from "./forms";
 
@@ -6,8 +6,19 @@ import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
+import { concepts } from "@/constants";
 
-export const PercussionChestLung = () => {
+interface Props {
+  onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
+}
+
+export const PercussionChestLung = ({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) => {
   const {
     handleFormSubmit,
     handleClose,
@@ -15,18 +26,28 @@ export const PercussionChestLung = () => {
     section,
     anchorEl,
     selectedSection,
-    setAnchorEl,
+    ids,
   } = useImage();
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,
     formData: any,
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
-    console.log({ formData });
     setData({ section, formData, formConceptsLabels });
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (
