@@ -69,6 +69,12 @@ const radioOptions = [
 export const Exposure = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
   const [skinRashInfoImage, setSkinRashInfoImage] = useState<Array<any>>([]);
+  const [skinRashInfoBackImage, setSkinRashInfoBackImage] = useState<
+    Array<any>
+  >([]);
+  const [abnormalitiesBackImage, setAbnormalitiesBackImage] = useState<
+    Array<any>
+  >([]);
   const [abnormalitiesImage, setAbnormalitiesImage] = useState<Array<any>>([]);
   const [injuriesImage, setInjuriesImage] = useState<Array<any>>([]);
   const [injuriesBackImage, setInjuriesBackImage] = useState<Array<any>>([]);
@@ -102,11 +108,15 @@ export const Exposure = ({ onSubmit }: Props) => {
             <FullBodyImage
               imageEncounter={encounters.EXPOSURE_ASSESSMENT}
               imageSection={form.skinRashInfo.name}
-              onValueChange={setSkinRashInfoImage}
+              onValueChange={setSkinRashInfoBackImage}
             />
           </Box>
           <Box>
-            <FullBodyBackImage />
+            <FullBodyBackImage
+              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
+              imageSection={form.skinRashInfo.name}
+              onValueChange={setSkinRashInfoImage}
+            />
           </Box>
         </Box>
       )}
@@ -128,7 +138,11 @@ export const Exposure = ({ onSubmit }: Props) => {
             />
           </Box>
           <Box>
-            <FullBodyBackImage />
+            <FullBodyBackImage
+              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
+              imageSection={form.abnormalities.name}
+              onValueChange={setAbnormalitiesBackImage}
+            />
           </Box>
         </Box>
       )}
