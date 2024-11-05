@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox } from "@/components";
 import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
+import { concepts } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -69,14 +70,14 @@ const GastrointenstinalOptions = [
 
 const cardiacRespiratoryOptions = [
   { id: 'Cough', label: 'Cough' },
-  { id: 'ChestPain', label: 'Chest pain' },
+  { id: concepts.PAIN_CHEST, label: 'Chest pain' },
   { id: 'ShortnessOfBreath', label: 'Shortness of breath' },
   { id: 'HeartPalpitations', label: 'Heart palpitations' },
   { id: 'Wheezing', label: 'Wheezing' }
 ];
 
 const nervousSystemOptions = [
-  { id: 'Headache', label: 'Headache' },
+  { id: concepts.HEADACHE, label: 'Headache' },
   { id: 'Convulsions', label: 'Convulsions' },
   { id: 'Confusions', label: 'Confusions' },
   { id: 'Hallucinations', label: 'Hallucinations' },

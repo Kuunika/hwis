@@ -17,7 +17,9 @@ import { encounters } from "@/constants";
 import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
-import { getOnePatient } from "@/hooks/patientReg";
+import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
+import { getObservations } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
 
 
 export const MedicalHistoryFlow = () => {
@@ -26,11 +28,15 @@ export const MedicalHistoryFlow = () => {
   const { navigateBack } = useNavigation();
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
+  const dateTime = getDateTime();
 
+  const { data: patientVisits, isSuccess } = getPatientVisitTypes(params?.id as string);
+  const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
   // Wait for patient data to load
   if (isLoading) {
     return <div>Loading patient data...</div>; // Loading state or spinner
   }
+
 
   // Construct steps based on patient gender
   const steps = [
@@ -47,7 +53,20 @@ export const MedicalHistoryFlow = () => {
   ];
 
   const handlePresentingComplaintsSubmission = (values: any) => {
-    mutate({ encounter: encounters.AIRWAY_ASSESSMENT, obs: values });
+   
+    const modifiedValues = {
+      ...values,
+      "b9a9e1c8-8d80-11d8-abbb-0024217bb78e": values.complaints,
+    };
+    
+    delete modifiedValues.complaints;
+    console.log(modifiedValues, values);
+    mutate({ encounterType: encounters.PRESENTING_COMPLAINTS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime, 
+      obs: getObservations(modifiedValues, dateTime) });
+      
     setActiveStep(1);
   };
   const handleSurgeriesSubmission = (values: any) => {

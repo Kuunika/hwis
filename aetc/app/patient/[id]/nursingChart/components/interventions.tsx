@@ -265,11 +265,9 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
                   </WrapperBox>
 
                   <WrapperBox>
-                    <GroupedSearchComboBox
+                    <SearchComboBox
                       name={`fluidEntries[${index}].outputFluidType`}
                       label="Output Fluid Type"
-                      //TODO: clear the typescript error
-                      //@ts-ignore
                       options={outputFluidList}
                       multiple={false}
                       getValue={(value) =>

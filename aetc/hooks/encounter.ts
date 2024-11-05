@@ -5,11 +5,11 @@ export const addEncounter = () => {
   const queryClient = useQueryClient();
   
   const addData = (encounter: any) => {
-    console.log(encounter);
     const filteredEncounter = {
       ...encounter,
       obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
     };
+
     return createEncounter(filteredEncounter).then((response) => response.data);
   };
 
