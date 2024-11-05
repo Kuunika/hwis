@@ -4,8 +4,20 @@ import { SVGPopover } from "./svgPopover";
 import { DataBox, SecondaryAbdomenPelvicForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
+import { useEffect } from "react";
+import { concepts } from "@/constants";
 
-export function SecondaryAbdomenImage() {
+interface Props {
+  onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
+}
+
+export function SecondaryAbdomenImage({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) {
   const {
     handleClose,
     containerRef,
@@ -13,11 +25,14 @@ export function SecondaryAbdomenImage() {
     anchorEl,
     selectedSection,
     handleFormSubmit,
+    ids,
   } = useImage();
-  const idSelected = selectedSection.id;
-  const labelSelected = selectedSection.label;
 
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,
@@ -25,7 +40,14 @@ export function SecondaryAbdomenImage() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (

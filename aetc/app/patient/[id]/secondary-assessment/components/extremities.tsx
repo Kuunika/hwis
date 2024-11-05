@@ -1,5 +1,5 @@
 "use client";
-import { NO, YES, concepts } from "@/constants";
+import { NO, YES, concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
@@ -9,7 +9,6 @@ import {
   FormikInit,
   RadioGroupInput,
   SearchComboBox,
-  TextInputField,
 } from "@/components";
 import * as Yup from "yup";
 import { LowerLimbPosterior } from "@/components/svgImages";
@@ -71,6 +70,8 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showSpecify, setShowSpecify] = useState(false);
   const [showAbnormalities, setShowAbnormalities] = useState(false);
+  const [abnormalitiesUpperLimbImageEnc, setAbnormalitiesUpperLimbImageEnc] =
+    useState<Array<any>>();
 
   const handleValueChange = (values: Array<any>) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
@@ -114,7 +115,11 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
           label={form.abnormalitiesUpperLimb.label}
         />
         {formValues[form.abnormalitiesUpperLimb.name] == YES && (
-          <LowerLimbPosterior />
+          <LowerLimbPosterior
+            onValueChange={setAbnormalitiesUpperLimbImageEnc}
+            imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+            imageSection={form.abnormalitiesUpperLimb.name}
+          />
         )}
         <RadioGroupInput
           row
@@ -123,7 +128,11 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
           label={form.abnormalitiesLowerLimb.label}
         />
         {formValues[form.abnormalitiesLowerLimb.name] == YES && (
-          <LowerLimbPosterior />
+          <LowerLimbPosterior
+            onValueChange={setAbnormalitiesUpperLimbImageEnc}
+            imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+            imageSection={form.abnormalitiesLowerLimb.name}
+          />
         )}
       </FormFieldContainerLayout>
     </FormikInit>
