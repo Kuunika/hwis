@@ -211,11 +211,6 @@ export const NewRegistrationFlow = () => {
 
       const diagnosis = formData.referral[concepts.DIAGNOSIS];
 
-      // console.log({ diagnosis });
-      // console.log(Array.isArray(diagnosis));
-
-      // return;
-
       const diagnosisObs = Array.isArray(diagnosis)
         ? diagnosis.map((p: any) => {
             return {

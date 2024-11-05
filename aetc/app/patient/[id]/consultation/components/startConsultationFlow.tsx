@@ -11,8 +11,8 @@ import { LabRequestForm } from "./labRequestForm";
 import { LabRequest } from "@/interfaces";
 import DiagnosisForm from "./diagnosisForm";
 import { Button } from "@mui/material";
-import { MedicationsForm } from "./medication";  
-     
+import { MedicationsForm } from "./medication";
+
 export const StartConsultationFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addEncounter();
