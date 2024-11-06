@@ -153,8 +153,8 @@ export const concepts = {
   PEAK_EXPIRATORY_FLOW_RATE: "f2adaf9e-63bf-4a2a-955f-5084d53affa6",
   CONDITION: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
   //Add 2 new diagnosis concepts
-  DIFFERENTIAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
-  FINAL_DIAGNOSIS: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+  DIFFERENTIAL_DIAGNOSIS: "50a75c44-d69b-4316-bf74-12856d8c5c0c",
+  FINAL_DIAGNOSIS: "0a54ccb9-c650-4fc6-a26f-cc1a502f3b80",
 
 
   //airway
