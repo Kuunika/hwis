@@ -30,6 +30,8 @@ type IProp = {
   showTopBar?: boolean;
   paginationMode?: "client" | "server";
   getSelectedItems?: (items: any) => void;
+  searchPlaceHolder?: string;
+  showSearchSwitchButton?: boolean;
 };
 
 const Table: React.FC<IProp> = ({
@@ -42,9 +44,10 @@ const Table: React.FC<IProp> = ({
   style,
   rowHeight,
   checkboxSelection = false,
-  getSelectedItems = (items: any) => { },
+  getSelectedItems = (items: any) => {},
   showTopBar = true, // New prop to control visibility of the top bar
-
+  searchPlaceHolder,
+  showSearchSwitchButton,
 }) => {
   const [searchText, setSearchText] = React.useState("");
   const [filteredRows, setFilteredRows] = React.useState(rows);
@@ -111,6 +114,8 @@ const Table: React.FC<IProp> = ({
     <div style={{ height, width, ...style }}>
       {showTopBar && ( // Conditionally render TopBarComponents based on the new prop
         <TopBarComponents
+          placeHolder={searchPlaceHolder}
+          showSwitch={showSearchSwitchButton}
           searchText={searchText}
           handleSwitchChange={handleSwitchChange}
           requestSearch={requestSearch}
@@ -146,7 +151,7 @@ interface ServerPaginationTableProp {
   setPaginationModel: (values: any) => void;
   rowCount: number;
   searchText?: string;
-  setSearchString: (values: any) => void
+  setSearchString: (values: any) => void;
 }
 
 export const ServerPaginationTable = ({
@@ -157,12 +162,14 @@ export const ServerPaginationTable = ({
   paginationModel,
   rowCount,
   searchText,
-  setSearchString
+  setSearchString,
 }: ServerPaginationTableProp) => {
-
   return (
     <>
-      <TopBarComponents searchText={searchText ?? ""} requestSearch={setSearchString} />
+      <TopBarComponents
+        searchText={searchText ?? ""}
+        requestSearch={setSearchString}
+      />
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
         initialState={{
@@ -185,17 +192,21 @@ const TopBarComponents = ({
   searchText,
   requestSearch,
   handleSwitchChange,
+  showSwitch = true,
+  placeHolder = "Search Patient",
 }: {
   searchText: string;
   requestSearch: (value: any) => void;
   handleSwitchChange?: (values: any) => void;
+  showSwitch?: boolean;
+  placeHolder?: string;
 }) => {
   return (
     <Box>
       <TextField
         sx={{ m: 1, width: "30%" }}
         variant="outlined"
-        placeholder="Search Patient"
+        placeholder={placeHolder}
         value={searchText}
         onChange={(e) => requestSearch(e.target.value)}
         InputProps={{
@@ -207,10 +218,14 @@ const TopBarComponents = ({
         }}
       />
 
-      {handleSwitchChange && <FormControlLabel
-        control={<Switch onChange={handleSwitchChange} name="" size="medium" />}
-        label="Show only patients registered today"
-      />}
+      {handleSwitchChange && showSwitch && (
+        <FormControlLabel
+          control={
+            <Switch onChange={handleSwitchChange} name="" size="medium" />
+          }
+          label="Show only patients registered today"
+        />
+      )}
     </Box>
   );
 };

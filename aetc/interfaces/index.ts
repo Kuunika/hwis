@@ -347,3 +347,10 @@ export interface FormValueLabel {
     value:string|undefined
   }>
 }
+
+
+export interface Printer {
+  id:number;
+  name:string;
+  ip_address:string
+}
