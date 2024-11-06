@@ -5,7 +5,7 @@ import { DiagnosisTable } from "./DiagnosisTable";
 import * as Yup from "yup";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Typography } from "@mui/material";
-import { addEncounter, getPatientsEncounters, removeEncounter } from "@/hooks/encounter";
+import { addEncounter, getPatientsEncounters, removeObservation } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { toast } from "react-toastify";
 import { useParameters } from "@/hooks";
@@ -33,10 +33,11 @@ function DiagnosisForm() {
 
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { data: patientEncounters } = getPatientsEncounters(params.id as string);
-    const { mutate: deleteDiagnosis } = removeEncounter();
+    const { mutate: deleteDiagnosis } = removeObservation();
 
 
     useEffect(() => {
+        // Finds the active visit for the patient from their visit history
         if (patientVisits) {
             const active = patientVisits.find((visit) => !visit.date_stopped);
             if (active) {
@@ -47,18 +48,20 @@ function DiagnosisForm() {
 
     useEffect(() => {
         reloadBedSideTests();
-
+        // Loads and filters patient encounters to get diagnosis records only
         if (patientEncounters) {
             const diagnosisRecords = patientEncounters
                 .filter(encounter => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
                 .flatMap(encounter => {
-                    return encounter.obs.map(obs => ({
-                        id: obs.uuid,
-                        condition: obs.value,
-                        obsDatetime: obs.obs_datetime || "",
-                    }));
+                    return encounter.obs.map(obs => {
+                        return {
+                            id: obs.obs_id.toString(),
+                            condition: obs.value,
+                            obsDatetime: obs.obs_datetime || "",
+                        }
+                    }
+                    );
                 });
-
             setDiagnosisList(diagnosisRecords);
         }
     }, [patientEncounters]);
@@ -74,18 +77,21 @@ function DiagnosisForm() {
     });
 
     const handleAddDiagnosis = (values: any, resetForm: any) => {
+
         const selectedCondition = conditionOptions.find(option => option.id === values.condition);
         const currentDateTime = getDateTime();
 
+
         if (selectedCondition && activeVisit?.uuid) {
+            // Calls API to create a new diagnosis encounter for the patient
             createDiagnosis({
                 encounterType: encounters.OUTPATIENT_DIAGNOSIS,
                 visit: activeVisit?.uuid,
                 patient: params.id,
                 encounterDatetime: currentDateTime,
                 obs: [{
-                    concept: selectedCondition.id,
-                    value: selectedCondition.label,
+                    concept: concepts.DIFFERENTIAL_DIAGNOSIS,
+                    value: values.condition,
                     obsDatetime: currentDateTime,
                 }],
             });
@@ -117,19 +123,21 @@ function DiagnosisForm() {
         setShowComboBox(!showComboBox);
     };
 
-    const handleDeleteDiagnosis = (id: string) => {
-        deleteDiagnosis(id, {
+    const handleDeleteDiagnosis = (obs_id: string) => {
+
+
+        console.log("Deleted Diagnosis with obs_id:", obs_id);
+
+        deleteDiagnosis(obs_id, {
             onSuccess: () => {
-                setDiagnosisList((prevList) => prevList.filter((diagnosis) => diagnosis.id !== id));
+                setDiagnosisList((prevList) => prevList.filter((diagnosis) => diagnosis.id !== obs_id));
                 toast.success("Diagnosis deleted successfully!");
             },
             onError: () => {
-                console.error(isError); // Log the error for more details
-
+                console.error("Error deleting diagnosis");
                 toast.error("Failed to delete diagnosis.");
             },
         });
-
     };
 
 
@@ -196,14 +204,6 @@ function DiagnosisForm() {
                         ))
                     )}
 
-
-                    {/* </MainPaper>
-            </MainGrid>
-
-
-
-            <MainGrid item xs={12}>
-                <MainPaper> */}
                     <Typography
                         variant="h6"
                         style={{ color: "green", cursor: "pointer", marginTop: "30px" }}  // Added margin-top

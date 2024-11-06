@@ -4,7 +4,7 @@ import { BaseTable } from "@/components";
 interface Diagnosis {
     id: string;
     condition: string;
-    obsDatetime: string; // Ensure consistency with obsDatetime
+    obsDatetime: string;
 }
 
 export const DiagnosisTable = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
