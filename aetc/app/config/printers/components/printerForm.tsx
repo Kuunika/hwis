@@ -21,6 +21,7 @@ export const PrinterForm = ({
 }) => {
   return (
     <FormikInit
+      enableReinitialize={true}
       initialValues={initialValues}
       validationSchema={schema}
       onSubmit={onSubmit}
