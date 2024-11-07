@@ -49,32 +49,7 @@ const convertObservations = (input: InputObservation[]): OutputObservation[] => 
   );
 };
 
-const transformAllergyData = (arr:any[]) => {
-  // Set the observation date-time here (e.g., the current date-time)
-  const obsDatetime = new Date().toISOString();
 
-  // Check if `arr` is an array of objects
-  if (Array.isArray(arr)) {
-      return arr.map(item => ({
-          // Rename `group` to `concept`
-          concept: "b9c81a9e-8d80-11d8-abbb-0024217bb78e",
-          // Keep `value` as is
-          value: item.value,
-          // Add `obsDatetime` key
-          obsDatetime: obsDatetime
-      }));
-  } 
-  // Check if `arr` is a single string
-  else if (typeof arr === 'string') {
-      return {
-          concept: "b9b6d27a-8d80-11d8-abbb-0024217bb78e",
-          value: arr,
-          obsDatetime: obsDatetime
-      };
-  }
-  // Return null or handle unexpected data types
-  return null;
-};
 
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -127,7 +102,6 @@ export const MedicalHistoryFlow = () => {
     delete modifiedValues.complaints;
 
     const myobs = convertObservations(getObservations(modifiedValues, dateTime));
-    console.log(myobs);
     mutate({ encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
@@ -146,6 +120,7 @@ export const MedicalHistoryFlow = () => {
         concept: concepts.ALLERGY_COMMENT, // Use the concept UUID or name specific to your setup
         obsDatetime: dateTime,      // Set the observation date-time
         value: complexObsData, // Store JSON as complex obs
+        conceptDataType: 'Complex',
     };
     // Submit complex obs
     mutate({
@@ -164,7 +139,25 @@ export const MedicalHistoryFlow = () => {
 
   function handleMedicationsSubmission(values: any): void {
     const observations =  getObservations(values, dateTime);
-    console.log(observations);
+    const myobs = convertObservations(observations);
+    const modifiedobs  = myobs.map(item => {
+      if (item.concept === "medications") {
+          return {
+              ...item,
+              concept: concepts.MEDICATION_HISTORY // replace with the constant
+          };
+      }
+      return item;
+      });
+
+    mutate({
+      encounterType: encounters.PRESCRIPTIONS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime, 
+      obs: modifiedobs              
+      });
+      setActiveStep(3);
   }
 
   function handleConditionsSubmission(values: any): void {

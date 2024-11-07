@@ -20,7 +20,8 @@ export const encounters = {
   PROCEDURES_DONE: "ba0656ec-8d80-11d8-abbb-0024217bb78e",
   NURSING_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   MEDICAL_HISTORY: "ba05f13e-8d80-11d8-abbb-0024217bb78e",
-  OBSTETRIC_HISTORY: 'ba063da6-8d80-11d8-abbb-0024217bb78e'
+  OBSTETRIC_HISTORY: 'ba063da6-8d80-11d8-abbb-0024217bb78e',
+  PRESCRIPTIONS: '88564b30-abaf-4744-8ea6-6e1c15465d9e',
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -606,6 +607,8 @@ EGGS_ALLERGY: "EGGS",
 PEANUT_ALLERGY: "PEANUT ALLERGY",
 
 //medications
+
+MEDICATION_HISTORY:'b9a217cc-8d80-11d8-abbb-0024217bb78e',
 //frequency options
 ONCE_A_DAY:'b9c6a7e0-8d80-11d8-abbb-0024217bb78e',
 TWICE_A_DAY:'b9c6ab00-8d80-11d8-abbb-0024217bb78e',
