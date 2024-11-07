@@ -43,7 +43,7 @@ const convertObservations = (input: InputObservation[]): OutputObservation[] => 
   return input.flatMap((observation) =>
       observation.value.map((complaint) => ({
           concept: observation.concept,
-          value: `complaint: ${complaint.complaint}, duration: ${complaint.duration} ${complaint.duration_unit}`,
+          value: JSON.stringify(complaint),
           obsDatetime: observation.obsDatetime,
       }))
   );
@@ -138,17 +138,26 @@ export const MedicalHistoryFlow = () => {
   };
 
   const handleAllergiesSubmission = (values: any) => {
-    
-    const myobs = (getObservations(values, dateTime));
-    const transformedAllergyDataArray = myobs.map(item => transformAllergyData(item.value));
-    console.log(transformedAllergyDataArray);
-    mutate({  encounterType: encounters.SOCIAL_HISTORY,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime, 
-      obs: transformedAllergyDataArray.flat() }); 
+    // Convert the allergies data to JSON format
+    const complexObsData = JSON.stringify(values);
+
+    // Prepare complex obs structure
+    const complexObs = {
+        concept: concepts.ALLERGY_COMMENT, // Use the concept UUID or name specific to your setup
+        obsDatetime: dateTime,      // Set the observation date-time
+        value: complexObsData, // Store JSON as complex obs
+    };
+    // Submit complex obs
+    mutate({
+        encounterType: encounters.SOCIAL_HISTORY,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs: [complexObs]                  
+    });
+
     setActiveStep(2);
-  };
+};
 
 
 
