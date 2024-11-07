@@ -21,7 +21,7 @@ allergy: {
     label: "Allergies",
   },
   allergyDetails:{
-    name:'AllergyDetails',
+    name:concepts.ALLERGY_COMMENT,
     label:'Allergy Details'
   }
 }
@@ -90,8 +90,7 @@ const initialValues = {
   };
 
   const handleSubmit = () => {
-    console.log(formValues);
-    //onSubmit(formValues);
+    onSubmit(formValues);
   };
 
 return (

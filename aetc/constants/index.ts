@@ -19,6 +19,8 @@ export const encounters = {
   CLINICAL_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   PROCEDURES_DONE: "ba0656ec-8d80-11d8-abbb-0024217bb78e",
   NURSING_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
+  MEDICAL_HISTORY: "ba05f13e-8d80-11d8-abbb-0024217bb78e",
+  OBSTETRIC_HISTORY: 'ba063da6-8d80-11d8-abbb-0024217bb78e'
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -214,11 +216,13 @@ export const concepts = {
   ELECTIVE: "2d7d1b0c-1867-4dbd-8b49-4335548a42bf",
 
   //medical history
+  CURRENT_COMPLAINTS_OR_SYMPTOMS: "b9a9e1c8-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_DAYS: "b9a22488-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_WEEKS: "b9a8dfc6-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_MONTHS: "b9a8e0f2-8d80-11d8-abbb-0024217bb78e",
   DURATION_OF_SYMPTONS_YEARS: "b9a962ac-8d80-11d8-abbb-0024217bb78e",
   ALLERGY:"b8ce61de-8d80-11d8-abbb-0024217bb78e",
+  ALLERGY_COMMENT: "b9b6d27a-8d80-11d8-abbb-0024217bb78e",
   INVESTIGATIONS: "76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
   // Secondary survey
   PUPIL_SIZE: "pupil_size",
@@ -641,6 +645,12 @@ ORIF: 'ORIF (Open reduction and internal fixation)',
 EXTERNAL_FIXATION: 'External fixation',
 THYROIDECTOMY: 'Thyroidectomy',
 SKIN_GRAFT: 'Skin graft',
+
+//obs and gynae
+
+DATE_OF_LAST_MENSTRUAL: 'b9a04668-8d80-11d8-abbb-0024217bb78e',
+GESTATION_WEEKS: 'b9d29cd0-8d80-11d8-abbb-0024217bb78e',
+PREVIOUS_PREGNANCIES: 'b9c41408-8d80-11d8-abbb-0024217bb78e',
 
 //contraceptives
 JADELLE: 'Jadelle',

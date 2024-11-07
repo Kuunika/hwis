@@ -113,8 +113,7 @@ const schema = yup.object().shape({
 
 
   const handleSubmit = () => {
-    console.log(formValues);
-    //onSubmit(formValues);
+    onSubmit(formValues);
   };
 
   const handleOutcomeChange = (index: number, value: string) => {

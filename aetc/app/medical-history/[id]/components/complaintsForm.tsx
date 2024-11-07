@@ -228,7 +228,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
 
   // Function to access field names dynamically
   const complaintsFormConfig = {
-    complaints_name: (index: number) => ({ name: `complaints[${index}].complaint`, label:'Name' }),
+    complaints_name: (index: number) => ({ name: `complaints[${index}].complaint`, label:'Symptom' }),
     complaints_duration: (index: number) => ({ name: `complaints[${index}].duration`, label:'Duration' }),
     complaints_duration_units: (index: number) => ({ name: `complaints[${index}].duration_unit`, label:'Unit' }),
   };

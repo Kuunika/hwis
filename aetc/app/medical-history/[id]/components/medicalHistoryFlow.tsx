@@ -13,7 +13,7 @@ import {
   ReviewOfSystemsForm
 } from ".";
 
-import { encounters } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
@@ -21,6 +21,60 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 
+type Complaint = {
+  complaint: string;
+  duration: string;
+  duration_unit: string;
+};
+
+type InputObservation = {
+  concept: string;
+  value: Complaint[];
+  obsDatetime: string;
+};
+
+type OutputObservation = {
+  concept: string;
+  value: string;
+  obsDatetime: string;
+};
+
+const convertObservations = (input: InputObservation[]): OutputObservation[] => {
+  return input.flatMap((observation) =>
+      observation.value.map((complaint) => ({
+          concept: observation.concept,
+          value: `complaint: ${complaint.complaint}, duration: ${complaint.duration} ${complaint.duration_unit}`,
+          obsDatetime: observation.obsDatetime,
+      }))
+  );
+};
+
+const transformAllergyData = (arr:any[]) => {
+  // Set the observation date-time here (e.g., the current date-time)
+  const obsDatetime = new Date().toISOString();
+
+  // Check if `arr` is an array of objects
+  if (Array.isArray(arr)) {
+      return arr.map(item => ({
+          // Rename `group` to `concept`
+          concept: "b9c81a9e-8d80-11d8-abbb-0024217bb78e",
+          // Keep `value` as is
+          value: item.value,
+          // Add `obsDatetime` key
+          obsDatetime: obsDatetime
+      }));
+  } 
+  // Check if `arr` is a single string
+  else if (typeof arr === 'string') {
+      return {
+          concept: "b9b6d27a-8d80-11d8-abbb-0024217bb78e",
+          value: arr,
+          obsDatetime: obsDatetime
+      };
+  }
+  // Return null or handle unexpected data types
+  return null;
+};
 
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -52,36 +106,6 @@ export const MedicalHistoryFlow = () => {
     
   ];
 
-  const handlePresentingComplaintsSubmission = (values: any) => {
-   
-    const modifiedValues = {
-      ...values,
-      "b9a9e1c8-8d80-11d8-abbb-0024217bb78e": values.complaints,
-    };
-    
-    delete modifiedValues.complaints;
-    console.log(modifiedValues, values);
-    mutate({ encounterType: encounters.PRESENTING_COMPLAINTS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime, 
-      obs: getObservations(modifiedValues, dateTime) });
-      
-    setActiveStep(1);
-  };
-  const handleSurgeriesSubmission = (values: any) => {
-    mutate({ encounter: encounters.BREATHING_ASSESSMENT, obs: values });
-    setActiveStep(2);
-  };
-
-  const handleCirculationSubmit = (values: any) => {
-    mutate({ encounter: encounters.CIRCULATION_ASSESSMENT, obs: values });
-    setActiveStep(3);
-  };
-  const handleDisabilitySubmit = (values: any) => {
-    mutate({ encounter: encounters.DISABILITY_ASSESSMENT, obs: values });
-    setActiveStep(4);
-  };
 
   const handleSkip = () => {
     const nextStep = activeStep + 1;
@@ -93,6 +117,77 @@ export const MedicalHistoryFlow = () => {
     }
   };
 
+  const handlePresentingComplaintsSubmission = (values: any) => {
+   
+    const modifiedValues = {
+      ...values,
+      [concepts.COMPLAINTS] : values.complaints,
+    };
+    
+    delete modifiedValues.complaints;
+
+    const myobs = convertObservations(getObservations(modifiedValues, dateTime));
+    console.log(myobs);
+    mutate({ encounterType: encounters.PRESENTING_COMPLAINTS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime, 
+      obs:  myobs});
+      
+    setActiveStep(1);
+  };
+
+  const handleAllergiesSubmission = (values: any) => {
+    
+    const myobs = (getObservations(values, dateTime));
+    const transformedAllergyDataArray = myobs.map(item => transformAllergyData(item.value));
+    console.log(transformedAllergyDataArray);
+    mutate({  encounterType: encounters.SOCIAL_HISTORY,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime, 
+      obs: transformedAllergyDataArray.flat() }); 
+    setActiveStep(2);
+  };
+
+
+
+
+  function handleMedicationsSubmission(values: any): void {
+    const observations =  getObservations(values, dateTime);
+    console.log(observations);
+  }
+
+  function handleConditionsSubmission(values: any): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleSurgeriesSubmission(values: any): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleObstetricsSubmission(values: any): void {
+    console.log(values.obstetrics);
+    mutate({  encounterType: encounters.OBSTETRIC_HISTORY,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime, 
+      obs: getObservations(values.obstetrics, dateTime) }); 
+    setActiveStep(7);
+  }
+
+  function handleAdmissionsSubmission(values: any): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleReviewSubmission(values: any): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleFamilyHistorySubmission(values: any): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <>
       <NewStepperContainer
@@ -103,16 +198,16 @@ export const MedicalHistoryFlow = () => {
         onBack={() => navigateBack()}
       >
         <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip} />
-        <AllergiesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
-        <MedicationsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
-        <PriorConditionsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <AllergiesForm onSubmit={handleAllergiesSubmission} onSkip={handleSkip} />
+        <MedicationsForm onSubmit={handleMedicationsSubmission} onSkip={handleSkip} />
+        <PriorConditionsForm onSubmit={handleConditionsSubmission} onSkip={handleSkip} />
         <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
         {patient?.gender === "Female" && (
-          <ObstetricsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+          <ObstetricsForm onSubmit={handleObstetricsSubmission} onSkip={handleSkip} />
         )}
-        <AdmissionsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
-        <ReviewOfSystemsForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip}/>
-        <FamilyHistoryForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <AdmissionsForm onSubmit={handleAdmissionsSubmission} onSkip={handleSkip}/>
+        <ReviewOfSystemsForm onSubmit={handleReviewSubmission} onSkip={handleSkip}/>
+        <FamilyHistoryForm onSubmit={handleFamilyHistorySubmission} onSkip={handleSkip} />
         
 
       </NewStepperContainer>
