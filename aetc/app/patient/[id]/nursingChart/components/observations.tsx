@@ -9,12 +9,14 @@ import {
   SearchComboBox,
   SelectInputField,
   TextInputField,
+  UnitInputField,
   WrapperBox,
 } from "@/components";
 import * as Yup from "yup";
 import { getInitialValues } from "@/helpers";
 import { concepts } from "@/constants";
 import { KeyValueContext, KeyValueContextType } from "@/contexts/keyValueContext";
+import { LiaSyringeSolid } from "react-icons/lia";
 
 
 type Prop = {
@@ -454,23 +456,19 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
           />
           
           <FieldsContainer>
-          <SelectInputField
-            sx={{ mt: '2ch' }}
-            width="20%"
-            name={ObservationFormConfig.units.name}
-            selectItems={[
-              { name: "mmol/l", value: "mmol/l" },
-              { name: "mg/dl", value: "mg/dl" },
+   
+          <UnitInputField unitOptions={[
+               "mmol/l", 
+              "mg/dl"
             ]}
-            label={ObservationFormConfig.units.label}
-            id={ObservationFormConfig.units.name}
-          />
-          <TextInputField
-            name={ObservationFormConfig.randomBloodGlucose.name}
-            label={ObservationFormConfig.randomBloodGlucose.label}
             id={ObservationFormConfig.randomBloodGlucose.name}
-            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.randomBloodGlucose.name]: value })}
-          />
+            label={ObservationFormConfig.randomBloodGlucose.label}
+            name={ObservationFormConfig.randomBloodGlucose.name}
+            unitName={ObservationFormConfig.units.name}
+            placeholder="e.g., 50"
+            sx={{ width: "320px" }}
+            inputIcon={<LiaSyringeSolid />}
+            />
           </FieldsContainer>
           <TextInputField
             name={ObservationFormConfig.urineDipstickKetones.name}
