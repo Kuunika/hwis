@@ -125,10 +125,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   });
 
   const initialValues = {
-    pain: false,
-    duration: "",
-    specifySite: "",
-    genitourinaryHistory:"",
+
   };
 
   const handleSymptomChange = (e: any, symptom: string) => {
