@@ -55,7 +55,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
   };
 
   return (
-    <WrapperBox sx={{ mb: "1ch", ...sx }}>
+    <WrapperBox sx={{ mb: "1ch", marginTop: "1ch", ...sx }}>
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
@@ -68,7 +68,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           onChange={handleChange}
           placeholder={placeholder}
           variant="outlined"
-          sx={{ flexGrow: 1, background: "white" }}
+          sx={{ flexGrow: 1, background: "white"}}
           error={hasError}
           helperText={hasError ? errorMessage : ""}
           InputProps={{

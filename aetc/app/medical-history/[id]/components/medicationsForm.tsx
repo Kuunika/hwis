@@ -213,12 +213,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                     <FormDatePicker
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
-                      sx={{ width: "150px", backgroundColor:'white' }}
+                      sx={{ width: "150px" }}
                     />
                     <FormDatePicker
                       name={`medications[${index}].medication_date_of_last_prescription`}
                       label="Last Prescribed"
-                      sx={{ width: "150px", backgroundColor:'white' }}
+                      sx={{ width: "150px" }}
                     />
                   </>
                 )}
