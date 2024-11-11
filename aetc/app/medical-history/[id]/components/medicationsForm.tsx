@@ -8,6 +8,7 @@ import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
 import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -135,6 +136,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   }
 
   return (
+    <>
     <FormikInit
       initialValues={initialValues}
       validationSchema={schema}
@@ -211,12 +213,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                     <FormDatePicker
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
-                      sx={{ width: "150px" }}
+                      sx={{ width: "150px", backgroundColor:'white' }}
                     />
                     <FormDatePicker
                       name={`medications[${index}].medication_date_of_last_prescription`}
                       label="Last Prescribed"
-                      sx={{ width: "150px" }}
+                      sx={{ width: "150px", backgroundColor:'white' }}
                     />
                   </>
                 )}
@@ -230,5 +232,15 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         </>
       )}
     </FormikInit>
+    <div style={{marginTop:'20px'}}>
+      <Accordion>
+        <AccordionSummary sx={{ fontSize:'18px', fontWeight:'bold'}}>Medication History</AccordionSummary>
+        <AccordionDetails>
+        <p>Aspirin</p>
+        </AccordionDetails>
+        
+      </Accordion>
+      </div>
+    </>
   );
 };

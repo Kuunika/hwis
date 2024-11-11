@@ -93,7 +93,10 @@ const initialValues = {
     onSubmit(formValues);
   };
 
-return (
+return (<>
+  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h4 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies</h4>
+  <p style={{color:'rgba(0, 0, 0, 0.6)'}}>Aspirin, Seafood</p>
+  </div>
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
@@ -119,6 +122,7 @@ return (
         <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
  </WrapperBox>
 </FormikInit>
+</>
 );
 
 }
