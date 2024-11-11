@@ -19,9 +19,14 @@ interface Diagnosis {
     id: string;
     condition: string;
     obsDatetime: string;
+
 }
 
-function DiagnosisForm() {
+interface DiagnosisFormProps {
+    conceptType: string;  // Add conceptType to prop types
+}
+
+function DiagnosisForm({ conceptType }: DiagnosisFormProps) {  // Use destructuring to access conceptType
     const { data: bedsideTests, refetch: reloadBedSideTests } = getConceptSetMembers(concepts.CONDITION);
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
     const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
@@ -52,19 +57,17 @@ function DiagnosisForm() {
         if (patientEncounters) {
             const diagnosisRecords = patientEncounters
                 .filter(encounter => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
-                .flatMap(encounter => {
-                    return encounter.obs.map(obs => {
-                        return {
-                            id: obs.obs_id.toString(),
-                            condition: obs.value,
-                            obsDatetime: obs.obs_datetime || "",
-                        }
-                    }
-                    );
-                });
+                .flatMap(encounter => encounter.obs
+                    .filter(obs => obs.names[0]?.uuid === conceptType)  // Filter by conceptType
+                    .map(obs => ({
+                        id: obs.obs_id.toString(),
+                        condition: obs.value,
+                        obsDatetime: obs.obs_datetime || "",
+                    }))
+                );
             setDiagnosisList(diagnosisRecords);
         }
-    }, [patientEncounters]);
+    }, [patientEncounters, conceptType]);
 
     const conditionOptions = bedsideTests?.map((test) => ({
         id: test.names[0]?.uuid,
@@ -90,7 +93,7 @@ function DiagnosisForm() {
                 patient: params.id,
                 encounterDatetime: currentDateTime,
                 obs: [{
-                    concept: concepts.DIFFERENTIAL_DIAGNOSIS,
+                    concept: conceptType,  // Use the conceptType prop here
                     value: values.condition,
                     obsDatetime: currentDateTime,
                 }],
@@ -127,6 +130,10 @@ function DiagnosisForm() {
 
 
         console.log("Deleted Diagnosis with obs_id:", obs_id);
+        console.log("Concept type is :", conceptType);
+
+
+
 
         deleteDiagnosis(obs_id, {
             onSuccess: () => {
@@ -178,7 +185,7 @@ function DiagnosisForm() {
                                     {diagnosis.condition}
                                 </Typography>
                                 <Typography variant="body2" style={{ width: "25%", fontStyle: "italic" }}>
-                                    Differential Diagnosis
+                                    {conceptType === concepts.DIFFERENTIAL_DIAGNOSIS ? "Differential Diagnosis" : "Final Diagnosis"}
                                 </Typography>
                                 <Typography variant="body2" style={{ width: "25%" }}>
                                     {new Date(diagnosis.obsDatetime).toLocaleDateString("en-GB")}
