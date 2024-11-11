@@ -380,7 +380,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
           width: "100%",
           height: "20px",
           marginTop: "20px",
-          marginBottom: "20px",
+          marginBottom: "30px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -405,7 +405,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
         {caseType.charAt(0).toUpperCase() + caseType.slice(1)}
       </div>
       </div>
-      <FormFieldContainerLayout title="Observations">
+
         <FieldsContainer >
           <TextInputField
             name={ObservationFormConfig.oxygenSaturation.name}
@@ -493,7 +493,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
             unitOfMeasure="L/min"
           />
         
-      </FormFieldContainerLayout>
+  
 
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
