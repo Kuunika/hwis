@@ -1,5 +1,5 @@
 "use client";;
-import { PatientInfoTab } from "@/components";
+import { FormContainer, PatientInfoTab } from "@/components";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
 import { MonitoringChart } from "./components/monitoringChart";
@@ -8,7 +8,9 @@ function NursingChart() {
   return (
     <>
       <PatientInfoTab />
+      <FormContainer>
       <MonitoringChart/>
+      </FormContainer>
     </>
   );
 }
