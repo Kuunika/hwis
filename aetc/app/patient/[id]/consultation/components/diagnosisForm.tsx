@@ -23,11 +23,11 @@ interface Diagnosis {
 }
 
 interface DiagnosisFormProps {
-    conceptType: string;  // Add conceptType to prop types
+    conceptType: string;
 }
 
-function DiagnosisForm({ conceptType }: DiagnosisFormProps) {  // Use destructuring to access conceptType
-    const { data: bedsideTests, refetch: reloadBedSideTests } = getConceptSetMembers(concepts.CONDITION);
+function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
+    const { data: diagnosisOptions, refetch: reloadDiagnosisOptions } = getConceptSetMembers(concepts.CONDITION);
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
     const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
     const { params } = useParameters();
@@ -52,7 +52,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {  // Use destructur
     }, [patientVisits]);
 
     useEffect(() => {
-        reloadBedSideTests();
+        reloadDiagnosisOptions();
         // Loads and filters patient encounters to get diagnosis records only
         if (patientEncounters) {
             const diagnosisRecords = patientEncounters
@@ -69,9 +69,9 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {  // Use destructur
         }
     }, [patientEncounters, conceptType]);
 
-    const conditionOptions = bedsideTests?.map((test) => ({
-        id: test.names[0]?.uuid,
-        label: test.names[0]?.name,
+    const conditionOptions = diagnosisOptions?.map((diagnosisOption) => ({
+        id: diagnosisOption.names[0]?.uuid,
+        label: diagnosisOption.names[0]?.name,
     })) || [];
 
     const initialValues = { condition: "" };
@@ -127,13 +127,6 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {  // Use destructur
     };
 
     const handleDeleteDiagnosis = (obs_id: string) => {
-
-
-        console.log("Deleted Diagnosis with obs_id:", obs_id);
-        console.log("Concept type is :", conceptType);
-
-
-
 
         deleteDiagnosis(obs_id, {
             onSuccess: () => {
