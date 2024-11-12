@@ -393,7 +393,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
           backgroundColor: getBackgroundColor(caseType),
           width: "100%",
           height: "50px",
-          marginLeft: "300px",
+          marginLeft: "280px",
           marginRight: "100px",
           display: "flex",
           alignItems: "center",

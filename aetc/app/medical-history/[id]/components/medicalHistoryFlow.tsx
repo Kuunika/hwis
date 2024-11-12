@@ -13,13 +13,15 @@ import {
   ReviewOfSystemsForm
 } from ".";
 
-import { concepts, encounters } from "@/constants";
+import { concepts, encounters, durationOptions } from "@/constants";
 import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
+import { addObsChildren } from "@/hooks/obs";
+import { useMutation } from "@tanstack/react-query";
 
 type Complaint = {
   complaint: string;
@@ -36,16 +38,30 @@ type InputObservation = {
 type OutputObservation = {
   concept: string;
   value: string;
-  obsDatetime: string;
 };
 
+
+
 const convertObservations = (input: InputObservation[]): OutputObservation[] => {
+
+  console.log(input)
   return input.flatMap((observation) =>
-      observation.value.map((complaint) => ({
-          concept: observation.concept,
-          value: JSON.stringify(complaint),
-          obsDatetime: observation.obsDatetime,
-      }))
+    observation.value.flatMap((complaint) => [
+      {
+        concept: concepts.COMPLAINTS,
+        value: complaint.complaint,
+      },
+      {
+        concept: complaint.duration_unit === durationOptions[0]
+          ? concepts.DURATION_OF_SYMPTOMS_DAYS
+          : complaint.duration_unit === durationOptions[1]
+          ? concepts.DURATION_OF_SYMPTOMS_WEEKS
+          : complaint.duration_unit === durationOptions[2]
+          ? concepts.DURATION_OF_SYMPTOMS_MONTHS
+          : concepts.DURATION_OF_SYMPTOMS_YEARS,
+        value: complaint.duration,
+      }
+    ])
   );
 };
 
@@ -58,7 +74,12 @@ export const MedicalHistoryFlow = () => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
-
+  const {
+    mutate: createObsChildren,
+    isSuccess: obsChildrenCreated,
+    isPending: creatingObsChildren,
+    isError: obsChildrenError, 
+  } = addObsChildren();
   const { data: patientVisits, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
   // Wait for patient data to load
@@ -101,14 +122,42 @@ export const MedicalHistoryFlow = () => {
     
     delete modifiedValues.complaints;
 
-    const myobs = convertObservations(getObservations(modifiedValues, dateTime));
+    const myobs = convertObservations(getObservations(values, dateTime));
     mutate({ encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
-      obs:  myobs});
+      obs:  []}, {
+      onSuccess: (data) => {
+          console.log("Encounter submitted successfully:", data);
+          submitChildren(data, myobs);
+          //setActiveStep(1); // Move to the next step
+        },
+        onError: (error) => {
+          console.error("Error submitting encounter:", error);
+        },
+      });
       
-    setActiveStep(1);
+  };
+
+  function submitChildren(data: any, myobs: any) {
+  // Loop through myobs in steps of 2
+  for (let i = 0; i < myobs.length; i += 2) {
+    const chunk = myobs.slice(i, i + 2);
+
+    // Create a new observations payload for each chunk
+    const observationsPayload = {
+      encounter: data.uuid,
+      person: params.id,
+      concept: "b9a217cc-8d80-11d8-abbb-0024217bb78e",
+      obsDatetime: dateTime,
+      value: true,
+      group_members: chunk, // Assign the current chunk of observations
+    };
+
+    // Submit the current chunk
+    createObsChildren(observationsPayload);
+  }
   };
 
   const handleAllergiesSubmission = (values: any) => {
@@ -129,9 +178,16 @@ export const MedicalHistoryFlow = () => {
         patient: params.id,
         encounterDatetime: dateTime, 
         obs: [complexObs]                  
+    }, {
+      onSuccess: (data) => {
+        console.log("Complaints submitted successfully:", data);
+        setActiveStep(2);
+      },
+      onError: (error) => {
+        console.error("Error submitting medications:", error);
+      },
     });
 
-    setActiveStep(2);
 };
 
 
@@ -226,3 +282,5 @@ export const MedicalHistoryFlow = () => {
     </>
   );
 };
+
+
