@@ -150,13 +150,22 @@ export const MedicalHistoryFlow = () => {
       return item;
       });
 
-    mutate({
-      encounterType: encounters.PRESCRIPTIONS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime, 
-      obs: modifiedobs              
+      mutate({
+        encounterType: encounters.PRESCRIPTIONS,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: modifiedobs,
+      }, {
+        onSuccess: (data) => {
+          console.log("Medications submitted successfully:", data);
+          setActiveStep(3); // Move to the next step
+        },
+        onError: (error) => {
+          console.error("Error submitting medications:", error);
+        },
       });
+      
       setActiveStep(3);
   }
 
@@ -175,6 +184,7 @@ export const MedicalHistoryFlow = () => {
       patient: params.id,
       encounterDatetime: dateTime, 
       obs: getObservations(values.obstetrics, dateTime) }); 
+      
     setActiveStep(7);
   }
 

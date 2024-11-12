@@ -16,6 +16,7 @@ type UnitInputFieldProps = {
   unitOptions: string[];
   sx?: SxProps;
   inputIcon?: React.ReactNode;
+  handleBlurEvent?: (value: any) => void
   
 };
 
@@ -28,7 +29,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
   unitOptions,
   sx,
   inputIcon,
-  
+  handleBlurEvent
 }) => {
   // Use Formik hooks for both value and unit fields
   const {
@@ -37,6 +38,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
     errorMessage,
     handleChange,
     setFieldValue,
+    handleBlur
   } = useFormikField(name);
 
   const { value: unitValue, setFieldValue: setUnitFieldValue } = useFormikField(unitName);
@@ -71,6 +73,12 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           sx={{ flexGrow: 1, background: "white"}}
           error={hasError}
           helperText={hasError ? errorMessage : ""}
+          onBlur={(event: any) => {
+            handleBlur(event);
+            if (handleBlurEvent)
+              handleBlurEvent(event.target.value)
+  
+          }}
           InputProps={{
             startAdornment: inputIcon && (
               <InputAdornment position="start">{inputIcon}</InputAdornment>

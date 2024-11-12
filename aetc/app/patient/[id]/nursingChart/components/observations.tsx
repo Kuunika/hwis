@@ -189,7 +189,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
   
   const calculateTriageScore = (value: any, type: string) => {
     let score = traigeScores[2];
-  
+    console.log(value)
     // Parse numerical value
     const numericalValue = parseFloat(value) || 0;
     switch (type) {
@@ -468,6 +468,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
             placeholder="e.g., 50"
             sx={{ width: "320px" }}
             inputIcon={<LiaSyringeSolid />}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.oxygenSaturation.name]: value })}
             />
           </FieldsContainer>
           <TextInputField
