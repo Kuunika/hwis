@@ -15,7 +15,7 @@ import { useNavigation } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 
 export const PrimaryAssessmentFlow = () => {
-  const [activeStep, setActiveStep] = useState<number>(4);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addEncounter();
   const { navigateTo, navigateBack } = useNavigation();
 

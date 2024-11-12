@@ -3,16 +3,25 @@ import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import { ReactNode } from "react";
 
 const theme = createTheme({
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "1px",
+        },
+      },
+    },
+  },
   typography: {
     fontFamily: [
-      'Segoe UI',
-      'Roboto',
-      'Noto Sans',
-      'Ubuntu',
-      'Droid Sans',
-      'Helvetica Neue',
-      'sans-serif'
-    ].join(','),
+      "Segoe UI",
+      "Roboto",
+      "Noto Sans",
+      "Ubuntu",
+      "Droid Sans",
+      "Helvetica Neue",
+      "sans-serif",
+    ].join(","),
   },
   palette: {
     primary: {

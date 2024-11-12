@@ -204,7 +204,7 @@ const TopBarComponents = ({
   return (
     <Box>
       <TextField
-        sx={{ m: 1, width: "30%" }}
+        sx={{ my: 1, width: "30%" }}
         variant="outlined"
         placeholder={placeHolder}
         value={searchText}

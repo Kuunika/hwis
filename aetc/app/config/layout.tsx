@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { MainGrid, MainTypography, WrapperBox } from "@/components";
 import { FaUsers, FaCodeMerge, FaPrint } from "react-icons/fa6";
 import { useNavigation } from "@/hooks";
+import { Paper } from "@mui/material";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const { navigateTo } = useNavigation();
@@ -39,7 +40,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     }}
                   >
                     {opt.icon}
-                    {/* <MainTypography variant="caption" textAlign={"center"}>{opt.icon}</MainTypography> */}
                     <MainTypography ml={"2ch"} variant="body2">
                       {opt.label}
                     </MainTypography>
