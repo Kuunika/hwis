@@ -14,28 +14,47 @@ import {
   import { useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
+import { FieldArray } from "formik";
   
   type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
   };
+
+  type Surgery = {
+    procedure: string;
+    indication: string;
+    date: string;
+    complication: string;
+  };
+  
+  const surgeryTemplate: Surgery = {
+    procedure: "",
+    date:"",
+    complication:"",
+    indication:""
+  };
+  
+  const initialValues = {
+    surgeries: [surgeryTemplate],
+  };
   
   const surgeryFormConfig = {
     surgical_procedure_name: (index: number) => ({
-        name:'surgical_procedure_name',
+        name:`surgeries[${index}].procedure`,
         label:'Procedure'
       }),
       surgical_procedure_date: (index: number) => ({
-        name:'surgical_procedure_date',
+        name:`surgeries[${index}].date`,
         label:'Date'
       }),
     
       surgical_procedure_indication:(index: number) => ({
-        name:'surgical_procedure_indication',
+        name:`surgeries[${index}].indication`,
         label:'Indication'
       }),
       surgical_procedure_complications:(index: number) => ({
-        name:'surgical_procedure_complications',
+        name:`surgeries[${index}].complication`,
         label:'Complications'
       }),
   };
@@ -67,78 +86,81 @@ import DynamicFormList from "@/components/form/dynamicFormList";
   
   export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
-    const [surgeries, setSurgeries] = useState([
-        { name: "", indication: "", date:"", complications: "" },
-      ]);
 
 
-    
-  
-    // const handleInputChange = (index: number, field: string, value: string) => {
-    //   const updatedMedications = medications.map((medication, i) =>
-    //     i === index ? { ...medication, [field]: value } : medication
-    //   );
-    //   setMedications(updatedMedications);
-    // };
-  
+
   
   
     const handleSubmit = () => {
-      formValues["surgeries"] = surgeries
-      onSubmit(formValues);
+      console.log(formValues);
+      return;
+      //onSubmit(formValues);
     };
   
     return (
       <FormikInit
         validationSchema={schema}
-        initialValues={{ surgeries}}
-        onSubmit={handleSubmit}
+        initialValues={initialValues} // Directly pass initialValues, not { initialValues }
+        onSubmit={onSubmit}
         enableReinitialize={true}
-        submitButtonText="Submit"
         submitButton={false}
       >
-        <FormValuesListener getValues={setFormValues} />
-  
-        <WrapperBox sx={{mb:'2ch'}}>
-        <DynamicFormList
-        items={surgeries}
-        setItems={setSurgeries}
-        newItem={{ name: "", indication: "", date:"", complications: "" }}
-        renderFields={(surgery, index) => (
-        <>
-            <SearchComboBox
-              name={surgeryFormConfig.surgical_procedure_name(index).name}
-              label={surgeryFormConfig.surgical_procedure_name(index).label}
-              options={surgicalProcedures}
-              multiple={false}
-              sx={{ width: '100%' }} // Adjust width to fit the cell
-            />
-          <SearchComboBox
-              name={surgeryFormConfig.surgical_procedure_indication(index).name}
-              label={surgeryFormConfig.surgical_procedure_indication(index).label}
-              options={[{id: 'Bowel obstruction on appendicitis', label: 'Bowel obstruction on appendicitis'},{id: 'Obstetrics to populate', label: 'Obstetrics to populate'}]}
-              multiple={false}
-              sx={{ width: '100%' }} 
-            />
-          <FormDatePicker 
-              name={surgeryFormConfig.surgical_procedure_date(index).name}  
-              label={surgeryFormConfig.surgical_procedure_date(index).label}  
-              sx={{ background: 'white', width: '150px' }}
-            />
-
-            <TextInputField
-              id={surgeryFormConfig.surgical_procedure_complications(index).name}
-              name={surgeryFormConfig.surgical_procedure_complications(index).name}
-              label={surgeryFormConfig.surgical_procedure_complications(index).label}
-              sx={{ width: '100%' }}
-              multiline={true}
-              rows={3}
-            />
-        </>)}
-        />
-        </WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
+        {({ values, setFieldValue }) => (
+          <>
+            <FormValuesListener getValues={setFormValues} />
+            
+            <WrapperBox sx={{ mb: '2ch' }}>
+              <FieldArray name="surgeries">
+                {({ push, remove }) => (
+                  <DynamicFormList
+                    items={values.surgeries}
+                    setItems={(newItems) => setFieldValue("surgeries", newItems)}
+                    newItem={surgeryTemplate}
+                    renderFields={(item, index) => (
+                      <>
+                        <SearchComboBox
+                          name={surgeryFormConfig.surgical_procedure_name(index).name}
+                          label={surgeryFormConfig.surgical_procedure_name(index).label}
+                          options={surgicalProcedures}
+                          multiple={false}
+                          sx={{ width: '100%' }}
+                        />
+                        <SearchComboBox
+                          name={surgeryFormConfig.surgical_procedure_indication(index).name}
+                          label={surgeryFormConfig.surgical_procedure_indication(index).label}
+                          options={[
+                            { id: 'Bowel obstruction on appendicitis', label: 'Bowel obstruction on appendicitis' },
+                            { id: 'Obstetrics to populate', label: 'Obstetrics to populate' },
+                          ]}
+                          multiple={false}
+                          sx={{ width: '100%' }}
+                        />
+                        <FormDatePicker 
+                          name={surgeryFormConfig.surgical_procedure_date(index).name}  
+                          label={surgeryFormConfig.surgical_procedure_date(index).label}  
+                          sx={{ background: 'white', width: '150px' }}
+                        />
+                        <TextInputField
+                          id={surgeryFormConfig.surgical_procedure_complications(index).name}
+                          name={surgeryFormConfig.surgical_procedure_complications(index).name}
+                          label={surgeryFormConfig.surgical_procedure_complications(index).label}
+                          sx={{ width: '100%' }}
+                          multiline={true}
+                          rows={3}
+                        />
+                      </>
+                    )}
+                  />
+                )}
+              </FieldArray>
+            </WrapperBox>
+    
+            <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
+            <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
+          </>
+        )}
       </FormikInit>
     );
+
+
   };

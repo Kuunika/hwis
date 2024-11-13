@@ -13,28 +13,61 @@ type Prop = {
   };
 
 
-const obstetricsFormConfig = {
-age_at_menarche: {
-    name: "age_at_menarche",
-    label: "Age at Menarche",
-  },
-  last_menstral: {
-    name: "last_menstral",
-    label: "Last normal menstral period",
-  },
-  gestational_age: {
-    name: "gestational_age",
-    label: "Gestational age(weeks)",
-  },
-  previous_pregnancy_outcomes:(index: number) => ( {
-    name: `previous_pregnancy_outcome_${index}`,
+  type Obstetrics = {
+    age_at_menarche: number;
+    last_menstral: string;
+    gestational_age: number;
+    number_of_previous_pregnancies: number;
+    previous_pregnancy_outcomes: string[]; // Array for pregnancy outcomes
+    number_of_births: string[]; // Array for the number of births per pregnancy
+    contraceptive_history: { id: string; label: string }[]; // Array for contraceptive history
+  };
+  
+  // Define the obstetricsTemplate with initial values
+  const obstetricsTemplate: Obstetrics = {
+    age_at_menarche: 0,
+    last_menstral: "",
+    gestational_age: 0,
+    number_of_previous_pregnancies: 0,
+    previous_pregnancy_outcomes: [],
+    number_of_births: [],
+    contraceptive_history: [],
+  };
+  
+  const initialValues = {
+    obstetrics: obstetricsTemplate,
+  };
+
+  const obstetricsFormConfig = {
+    age_at_menarche: {
+      name: "obstetrics.age_at_menarche",
+      label: "Age at Menarche",
+    },
+    last_menstral: {
+      name: "obstetrics.last_menstral",
+      label: "Last normal menstrual period",
+    },
+    gestational_age: {
+      name: "obstetrics.gestational_age",
+      label: "Gestational age (weeks)",
+    },
+    number_of_previous_pregnancies: {
+      name: "obstetrics.number_of_previous_pregnancies",
+      label: "Number of previous pregnancies",
+    },
+    previous_pregnancy_outcomes: (index: number) => ({
+      name: `obstetrics.previous_pregnancy_outcomes[${index}]`,
       label: `Outcome of Pregnancy ${index + 1}`,
-  }),
-  contraceptive_history: {
-    name: "contraceptive_history",
-    label: "Contraceptive history",
-  }
-}
+    }),
+    number_of_births: (index: number) => ({
+      name: `obstetrics.number_of_births[${index}]`,
+      label: `Number of births (Pregnancy ${index + 1})`,
+    }),
+    contraceptive_history: {
+      name: "obstetrics.contraceptive_history",
+      label: "Contraceptive history",
+    },
+  };
 
 export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
@@ -77,9 +110,6 @@ const schema = yup.object().shape({
       .required("At least one allergy must be selected"),
   });
 
-const initialValues = {
-    [obstetricsFormConfig.previous_pregnancy_outcomes.name]: [],
-  };
 
   const handleSubmit = () => {
     console.log(formValues);
@@ -118,17 +148,17 @@ return (
               sx={{ marginRight: '2ch'}}
             />
 <TextInputField
-              id="number_of_previous_pregnancies"
-              name="number_of_previous_pregnancies"
-              label="Previous pregnancies"
-              getValue={(e) => {
-                   setPregnancies(e)
+              id={obstetricsFormConfig.number_of_previous_pregnancies.name}
+              name={obstetricsFormConfig.number_of_previous_pregnancies.name}
+              label={obstetricsFormConfig.number_of_previous_pregnancies.label}
+              handleBlurEvent={(value) => {
+                   setPregnancies(Number(value))
                 }}
               sx={{ marginRight: '2ch'}}
             />
             </FormFieldContainer>
             <FormFieldContainer direction="column">
-      {pregnancies &&
+      {pregnancies!=0 &&
         Array.from({ length: pregnancies }).map((_, index) => (
           <React.Fragment key={`pregnancy_outcome_${index}`}>
             <SearchComboBox
@@ -141,16 +171,16 @@ return (
             
             {liveBirthSelections[index] && (
               <TextInputField
-                id={`number_of_births_${index}`}
-                name={`number_of_births_${index}`}
-                label= {`Number of births(Pregnancy ${index+1})`}
+                id={obstetricsFormConfig.number_of_births(index).name}
+                name={obstetricsFormConfig.number_of_births(index).name}
+                label= {obstetricsFormConfig.number_of_births(index).label}
                 sx={{ marginRight: '2ch', mt:'1ch' }}
               />
             )}
           </React.Fragment>
         ))}
     </FormFieldContainer>
-        <SearchComboBox options={contraceptiveOptions} getValue={(value) => console.log(value)}  multiple={true} name={obstetricsFormConfig.age_at_menarche.name}label={obstetricsFormConfig.contraceptive_history.label} />
+        <SearchComboBox options={contraceptiveOptions} getValue={(value) => console.log(value)}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
 
     <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />

@@ -2,14 +2,12 @@
 import React from "react";
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
-
+import { concepts } from "@/constants";
 import { useNavigation } from "@/hooks";
-import { addEncounter } from "@/hooks/encounter";
 
 import DiagnosisForm from "./diagnosisForm";
 import { Button } from "@mui/material";
 import { MedicationsForm } from "./medication";
-import { BedsideTestForm } from "./bedsideTestForm";
 import { TestAccordion } from "./testAccordion";
 
 export const StartConsultationFlow = () => {
@@ -18,8 +16,9 @@ export const StartConsultationFlow = () => {
 
   const steps = [
     { id: 1, label: "Investigations" },
-    { id: 12, label: "Diagnosis" },
-    { id: 13, label: "Medication" },
+    { id: 12, label: "Differential Diagnosis" }, // Step for Differential Diagnosis
+    { id: 13, label: "Final Diagnosis" }, // Step for Final Diagnosis
+    { id: 14, label: "Medication" },
   ];
 
   return (
@@ -36,8 +35,14 @@ export const StartConsultationFlow = () => {
           <Button onClick={() => setActiveStep(1)}>Next</Button>
         </>
         <>
-          <DiagnosisForm />
+          <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />{" "}
+          {/* Differential Diagnosis */}
           <Button onClick={() => setActiveStep(2)}>Next</Button>
+        </>
+        <>
+          <DiagnosisForm conceptType={concepts.FINAL_DIAGNOSIS} />{" "}
+          {/* Final Diagnosis */}
+          <Button onClick={() => setActiveStep(3)}>Next</Button>
         </>
         <MedicationsForm onSkip={() => {}} onSubmit={() => {}} />
       </NewStepperContainer>

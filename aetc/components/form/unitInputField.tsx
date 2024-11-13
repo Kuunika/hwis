@@ -1,75 +1,80 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { TextField, FormControl, InputLabel, MenuItem, Select, Box, InputAdornment } from "@mui/material";
 import { SxProps } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
+import { useFormikField } from "./hooks"; // Import your custom hook
+import { WrapperBox } from "..";
 
 type UnitInputFieldProps = {
   id: string;
   label: string;
-  initialValue: string | number;
-  initialUnit: string;
-  unitOptions: string[];
+  name: string; // Formik field name
+  unitName: string; // Formik field name for the unit
   placeholder?: string;
+  unitOptions: string[];
   sx?: SxProps;
   inputIcon?: React.ReactNode;
-  onValueChange?: (value: string | number) => void;
-  onUnitChange?: (unit: string) => void;
 };
 
 export const UnitInputField: FC<UnitInputFieldProps> = ({
   id,
   label,
-  initialValue,
-  initialUnit,
-  unitOptions,
+  name,
+  unitName,
   placeholder = "",
+  unitOptions,
   sx,
   inputIcon,
-  onValueChange,
-  onUnitChange,
 }) => {
-  const [value, setValue] = useState<string | number>(initialValue);
-  const [unit, setUnit] = useState<string>(initialUnit);
+  // Use Formik hooks for both value and unit fields
+  const {
+    value,
+    hasError,
+    errorMessage,
+    handleChange,
+    setFieldValue,
+  } = useFormikField(name);
 
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setValue(newValue);
-    onValueChange && onValueChange(newValue);
-  };
+  const { value: unitValue } = useFormikField(unitName);
 
-  const handleUnitChange = (event: SelectChangeEvent<string>, child: React.ReactNode) => {
-    const newUnit = event.target.value; // Access value from event
-    setUnit(newUnit);
-    onUnitChange && onUnitChange(newUnit);
+  useEffect(() => {
+    if (!unitValue) {
+      setFieldValue(unitName, unitOptions[0]);
+    }
+  }, [unitValue, unitOptions, setFieldValue, unitName]);
+  // Handle unit change with Formik's setFieldValue
+  const handleUnitChange = (event: SelectChangeEvent<string>) => {
+    setFieldValue(unitName, event.target.value);
   };
 
   return (
-    <FormControl variant="standard" sx={{ mb: "1ch", ...sx }}>
+    <WrapperBox sx={{ mb: "1ch", ...sx }}>
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
-      <Box position="relative" display="flex" alignItems="center" mt="2.5ch">
+      <Box position="relative" display="flex" alignItems="center" >
         {/* Input Field */}
         <TextField
           id={id}
+          name={name}
           value={value}
-          onChange={handleValueChange}
+          onChange={handleChange}
           placeholder={placeholder}
           variant="outlined"
           sx={{ flexGrow: 1, background: "white" }}
+          error={hasError}
+          helperText={hasError ? errorMessage : ""}
           InputProps={{
             startAdornment: inputIcon && (
-              <InputAdornment position="start">
-                {inputIcon}
-              </InputAdornment>
+              <InputAdornment position="start">{inputIcon}</InputAdornment>
             ),
           }}
         />
         {/* Unit Selector with Absolute Positioning and Custom Border Radius */}
         <Select
-          value={unit}
+          value={unitValue|| unitOptions[0]}
           onChange={handleUnitChange}
           variant="outlined"
           sx={{
@@ -80,7 +85,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
             borderTopLeftRadius: 0,
             borderBottomLeftRadius: 0,
           }}
-          MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
+          MenuProps={{ PaperProps: { style: { maxHeight: 200 } }, disableScrollLock: true, }}
         >
           {unitOptions.map((option) => (
             <MenuItem key={option} value={option}>
@@ -89,6 +94,6 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           ))}
         </Select>
       </Box>
-    </FormControl>
+    </WrapperBox>
   );
 };

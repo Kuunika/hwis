@@ -1,9 +1,9 @@
-import { createEncounter, getPatientEncounters } from "@/services/encounter";
+import { createEncounter, getPatientEncounters, deleteObservation } from "@/services/encounter";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 export const addEncounter = () => {
   const queryClient = useQueryClient();
-  
+
   const addData = (encounter: any) => {
     const filteredEncounter = {
       ...encounter,
@@ -30,5 +30,16 @@ export const getPatientsEncounters = (patientId: string) => {
     queryKey: ["encounters", patientId],
     queryFn: () => getall(patientId),
     enabled: true,
+  });
+};
+
+export const removeObservation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteObservation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["observations"] });
+    },
   });
 };
