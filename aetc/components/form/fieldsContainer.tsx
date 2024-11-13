@@ -87,3 +87,26 @@ export const DashedContainer = ({
 
   return <Box sx={{ ...borderStyles, my, py: "0.5ch" }}>{children}</Box>;
 };
+
+export const FormFieldContainerMultiple = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        gap: 2,
+        width: "100%",
+        "& > *": {
+          width: { xs: "100%", sm: "auto" },
+          flex: 1,
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+};

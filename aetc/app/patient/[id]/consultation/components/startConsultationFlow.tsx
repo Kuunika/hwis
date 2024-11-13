@@ -12,6 +12,7 @@ import { LabRequest } from "@/interfaces";
 import DiagnosisForm from "./diagnosisForm";
 import { Button } from "@mui/material";
 import { MedicationsForm } from "./medication";
+import { BedsideTestForm } from "./bedsideTestForm";
 
 export const StartConsultationFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -34,14 +35,15 @@ export const StartConsultationFlow = () => {
         onBack={() => navigateBack()}
       >
         <>
-          <LabRequestForm
+          <BedsideTestForm />
+          {/* <LabRequestForm
             onClose={function (): void {
               throw new Error("Function not implemented.");
             }}
             addRequest={function (value: LabRequest): void {
               throw new Error("Function not implemented.");
             }}
-          />
+          /> */}
           <LabOrderTable />
           <Button onClick={() => setActiveStep(1)}>Next</Button>
         </>
