@@ -58,7 +58,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
 
 const allergyOptions = [
   {
-    label: 'Medications',
+    label: concepts.MEDICATION_ALLERGY,
     options: [
       { value: concepts.ASPIRIN_ALLERGY, label: "Aspirin" },
       { value: concepts.IBUPROFEN_ALLERGY, label: "Ibuprofen" },
@@ -74,7 +74,7 @@ const allergyOptions = [
     ],
   },
   {
-    label: 'Medical Substances',
+    label: concepts.MEDICAL_SUBSTANCE_ALLERGY,
     options: [
       { value: concepts.RADIOCONTRAST_ALLERGY, label: "Radiocontrast" },
       { value: concepts.LATEX_ALLERGY, label: "Latex" },
@@ -82,7 +82,7 @@ const allergyOptions = [
     ],
   },
   {
-    label: 'Other Substances',
+    label: concepts.SUBSTANCE_ALLERGY,
     options: [
       { value: concepts.POLLEN_ALLERGY, label: "Pollen" },
       { value: concepts.BEES_ALLERGY, label: "Bees" },
@@ -91,7 +91,7 @@ const allergyOptions = [
     ],
   },
   {
-    label: 'Food',
+    label: concepts.FOOD_ALLERGY,
     options: [
       { value: concepts.SEAFOOD_ALLERGY, label: "Seafood: Shellfish, prawns, calamari" },
       { value: concepts.OTHER_FISH_ALLERGY, label: "Other fish" },
@@ -151,6 +151,32 @@ const initialValues = {
   };
 
   const handleSubmit = () => {
+
+    const allergyListKey = concepts.ALLERGY;
+
+// Loop through each key in `data`
+Object.keys(formValues).forEach((key) => {
+  // Check if the key matches the pattern "OTHER_*_ALLERGY"
+  if (key.startsWith("OTHER_") && key.endsWith("_ALLERGY")) {
+    const replacementValue = formValues[key];
+
+    if (replacementValue) {
+      // Replace entries in the allergy list array
+      formValues[allergyListKey] = formValues[allergyListKey].map((allergy: { value: string; }) => {
+        if (allergy.value === key) {
+          return {
+            ...allergy,
+            value: replacementValue
+          };
+        }
+        return allergy;
+      });
+
+      // Remove the key from the main object
+      delete formValues[key];
+    }
+  }
+});
     onSubmit(formValues);
   };
 

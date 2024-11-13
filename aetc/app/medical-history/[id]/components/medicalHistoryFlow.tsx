@@ -141,47 +141,109 @@ export const MedicalHistoryFlow = () => {
   };
 
   function submitChildren(data: any, myobs: any) {
-  // Loop through myobs in steps of 2
   for (let i = 0; i < myobs.length; i += 2) {
     const chunk = myobs.slice(i, i + 2);
 
-    // Create a new observations payload for each chunk
+
     const observationsPayload = {
       encounter: data.uuid,
       person: params.id,
       concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
       obsDatetime: dateTime,
       value: true,
-      group_members: chunk, // Assign the current chunk of observations
+      group_members: chunk, 
     };
 
-    // Submit the current chunk
+ 
     createObsChildren(observationsPayload);
-    setActiveStep(1); // Move to the next step
+    setActiveStep(1); 
   }
   };
 
   const handleAllergiesSubmission = (values: any) => {
 
     console.log(values);
-    // mutate({
-    //     encounterType: encounters.SOCIAL_HISTORY,
-    //     visit: activeVisit?.uuid,
-    //     patient: params.id,
-    //     encounterDatetime: dateTime, 
-    //     obs: values                 
-    // }, {
-    //   onSuccess: (data) => {
-    //     console.log("Complaints submitted successfully:", data);
-    //     setActiveStep(2);
-    //   },
-    //   onError: (error) => {
-    //     console.error("Error submitting medications:", error);
-    //   },
-    // });
+    mutate({
+        encounterType: encounters.ALLERGIES,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs: [{concept:concepts.ALLERGY_COMMENT, value:values[concepts.ALLERGY_COMMENT]}]             
+    }, {
+      onSuccess: (data) => {
+        console.log("Allergy encounter submitted successfully:", data);
+        submitChildAllergies(data, values);
+        
+      },
+      onError: (error) => {
+        console.error("Error submitting medications:", error);
+      },
+    });
 
 };
 
+function submitChildAllergies(data: any, myobs: any) {
+
+
+  const groupedAllergies = myobs[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
+    if (!acc[allergy.group]) {
+      acc[allergy.group] = [];
+    }
+    acc[allergy.group].push(allergy);
+    return acc;
+  }, {});
+  
+  const observationsPayload = Object.keys(groupedAllergies).map(groupKey => {
+    const groupConcept = groupKey; 
+    
+    const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
+      let conceptValue = allergy.value; 
+      let value = allergy.value; 
+  
+      if (allergy.label.includes("Other medical substance allergy")) {
+        conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
+        value = allergy.value; 
+      } 
+      
+      if (allergy.label.includes("Other substance allergy")) {
+        conceptValue = concepts.OTHER_SUBSTANCE_ALLERGY; 
+        value = allergy.value; 
+      }
+      
+      if (allergy.label.includes("Other medication allergy")) {
+        conceptValue = concepts.OTHER_MEDICATION_ALLERGY; 
+        value = allergy.value; 
+      }
+
+      if (allergy.label.includes("Other food allergy")) {
+        conceptValue = concepts.OTHER_FOOD_ALLERGY; 
+        value = allergy.value; 
+      }
+  
+      return {
+        concept: conceptValue, 
+        value: value, 
+      };
+    });
+  
+    return {
+      encounter: data.uuid,
+      person: params.id,
+      concept: groupConcept, 
+      obsDatetime: dateTime,
+      value: true,
+      group_members: chunk, 
+    };
+  });
+  
+  observationsPayload.forEach(observation => {
+    createObsChildren(observation);
+  });
+
+  setActiveStep(2);
+
+  
+  };
 
 
 
