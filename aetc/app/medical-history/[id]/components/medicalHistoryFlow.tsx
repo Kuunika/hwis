@@ -131,7 +131,7 @@ export const MedicalHistoryFlow = () => {
       onSuccess: (data) => {
           console.log("Encounter submitted successfully:", data);
           submitChildren(data, myobs);
-          //setActiveStep(1); // Move to the next step
+          
         },
         onError: (error) => {
           console.error("Error submitting encounter:", error);
@@ -149,7 +149,7 @@ export const MedicalHistoryFlow = () => {
     const observationsPayload = {
       encounter: data.uuid,
       person: params.id,
-      concept: "b9a217cc-8d80-11d8-abbb-0024217bb78e",
+      concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
       obsDatetime: dateTime,
       value: true,
       group_members: chunk, // Assign the current chunk of observations
@@ -157,36 +157,28 @@ export const MedicalHistoryFlow = () => {
 
     // Submit the current chunk
     createObsChildren(observationsPayload);
+    setActiveStep(1); // Move to the next step
   }
   };
 
   const handleAllergiesSubmission = (values: any) => {
-    // Convert the allergies data to JSON format
-    const complexObsData = JSON.stringify(values);
 
-    // Prepare complex obs structure
-    const complexObs = {
-        concept: concepts.ALLERGY_COMMENT, // Use the concept UUID or name specific to your setup
-        obsDatetime: dateTime,      // Set the observation date-time
-        value: complexObsData, // Store JSON as complex obs
-        conceptDataType: 'Complex',
-    };
-    // Submit complex obs
-    mutate({
-        encounterType: encounters.SOCIAL_HISTORY,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime, 
-        obs: [complexObs]                  
-    }, {
-      onSuccess: (data) => {
-        console.log("Complaints submitted successfully:", data);
-        setActiveStep(2);
-      },
-      onError: (error) => {
-        console.error("Error submitting medications:", error);
-      },
-    });
+    console.log(values);
+    // mutate({
+    //     encounterType: encounters.SOCIAL_HISTORY,
+    //     visit: activeVisit?.uuid,
+    //     patient: params.id,
+    //     encounterDatetime: dateTime, 
+    //     obs: values                 
+    // }, {
+    //   onSuccess: (data) => {
+    //     console.log("Complaints submitted successfully:", data);
+    //     setActiveStep(2);
+    //   },
+    //   onError: (error) => {
+    //     console.error("Error submitting medications:", error);
+    //   },
+    // });
 
 };
 
