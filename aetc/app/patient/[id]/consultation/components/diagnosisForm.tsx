@@ -19,10 +19,15 @@ interface Diagnosis {
     id: string;
     condition: string;
     obsDatetime: string;
+
 }
 
-function DiagnosisForm() {
-    const { data: bedsideTests, refetch: reloadBedSideTests } = getConceptSetMembers(concepts.CONDITION);
+interface DiagnosisFormProps {
+    conceptType: string;
+}
+
+function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
+    const { data: diagnosisOptions, refetch: reloadDiagnosisOptions } = getConceptSetMembers(concepts.CONDITION);
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
     const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
     const { params } = useParameters();
@@ -47,28 +52,26 @@ function DiagnosisForm() {
     }, [patientVisits]);
 
     useEffect(() => {
-        reloadBedSideTests();
+        reloadDiagnosisOptions();
         // Loads and filters patient encounters to get diagnosis records only
         if (patientEncounters) {
             const diagnosisRecords = patientEncounters
                 .filter(encounter => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
-                .flatMap(encounter => {
-                    return encounter.obs.map(obs => {
-                        return {
-                            id: obs.obs_id.toString(),
-                            condition: obs.value,
-                            obsDatetime: obs.obs_datetime || "",
-                        }
-                    }
-                    );
-                });
+                .flatMap(encounter => encounter.obs
+                    .filter(obs => obs.names[0]?.uuid === conceptType)  // Filter by conceptType
+                    .map(obs => ({
+                        id: obs.obs_id.toString(),
+                        condition: obs.value,
+                        obsDatetime: obs.obs_datetime || "",
+                    }))
+                );
             setDiagnosisList(diagnosisRecords);
         }
-    }, [patientEncounters]);
+    }, [patientEncounters, conceptType]);
 
-    const conditionOptions = bedsideTests?.map((test) => ({
-        id: test.names[0]?.uuid,
-        label: test.names[0]?.name,
+    const conditionOptions = diagnosisOptions?.map((diagnosisOption) => ({
+        id: diagnosisOption.names[0]?.uuid,
+        label: diagnosisOption.names[0]?.name,
     })) || [];
 
     const initialValues = { condition: "" };
@@ -90,7 +93,7 @@ function DiagnosisForm() {
                 patient: params.id,
                 encounterDatetime: currentDateTime,
                 obs: [{
-                    concept: concepts.DIFFERENTIAL_DIAGNOSIS,
+                    concept: conceptType,  // Use the conceptType prop here
                     value: values.condition,
                     obsDatetime: currentDateTime,
                 }],
@@ -124,9 +127,6 @@ function DiagnosisForm() {
     };
 
     const handleDeleteDiagnosis = (obs_id: string) => {
-
-
-        console.log("Deleted Diagnosis with obs_id:", obs_id);
 
         deleteDiagnosis(obs_id, {
             onSuccess: () => {
@@ -178,7 +178,7 @@ function DiagnosisForm() {
                                     {diagnosis.condition}
                                 </Typography>
                                 <Typography variant="body2" style={{ width: "25%", fontStyle: "italic" }}>
-                                    Differential Diagnosis
+                                    {conceptType === concepts.DIFFERENTIAL_DIAGNOSIS ? "Differential Diagnosis" : "Final Diagnosis"}
                                 </Typography>
                                 <Typography variant="body2" style={{ width: "25%" }}>
                                     {new Date(diagnosis.obsDatetime).toLocaleDateString("en-GB")}
