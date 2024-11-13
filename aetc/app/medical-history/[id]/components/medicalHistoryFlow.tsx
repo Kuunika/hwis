@@ -22,6 +22,7 @@ import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { addObsChildren } from "@/hooks/obs";
 import { useMutation } from "@tanstack/react-query";
+import { isErrored } from "stream";
 
 type Complaint = {
   complaint: string;
@@ -240,6 +241,7 @@ function submitChildAllergies(data: any, myobs: any) {
     createObsChildren(observation);
   });
 
+  if(obsChildrenCreated)
   setActiveStep(2);
 
   

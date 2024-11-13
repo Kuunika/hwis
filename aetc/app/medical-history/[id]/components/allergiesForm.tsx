@@ -58,7 +58,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
 
 const allergyOptions = [
   {
-    label: concepts.MEDICATION_ALLERGY,
+    label:'MEDICATIONS' , value:concepts.MEDICATION_ALLERGY,
     options: [
       { value: concepts.ASPIRIN_ALLERGY, label: "Aspirin" },
       { value: concepts.IBUPROFEN_ALLERGY, label: "Ibuprofen" },
@@ -74,7 +74,7 @@ const allergyOptions = [
     ],
   },
   {
-    label: concepts.MEDICAL_SUBSTANCE_ALLERGY,
+    label:'MEDICAL SUBSTANCE' ,value:concepts.MEDICAL_SUBSTANCE_ALLERGY,
     options: [
       { value: concepts.RADIOCONTRAST_ALLERGY, label: "Radiocontrast" },
       { value: concepts.LATEX_ALLERGY, label: "Latex" },
@@ -82,7 +82,7 @@ const allergyOptions = [
     ],
   },
   {
-    label: concepts.SUBSTANCE_ALLERGY,
+    label: 'SUBSTANCE', value: concepts.SUBSTANCE_ALLERGY,
     options: [
       { value: concepts.POLLEN_ALLERGY, label: "Pollen" },
       { value: concepts.BEES_ALLERGY, label: "Bees" },
@@ -91,7 +91,7 @@ const allergyOptions = [
     ],
   },
   {
-    label: concepts.FOOD_ALLERGY,
+    label: 'FOOD', value: concepts.FOOD_ALLERGY,
     options: [
       { value: concepts.SEAFOOD_ALLERGY, label: "Seafood: Shellfish, prawns, calamari" },
       { value: concepts.OTHER_FISH_ALLERGY, label: "Other fish" },
