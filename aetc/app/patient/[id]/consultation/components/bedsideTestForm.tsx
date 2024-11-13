@@ -265,7 +265,6 @@ const testStatusOptions = [
   { value: concepts.NEGATIVE, label: "Negative" },
   { value: concepts.INDETERMINATE, label: "Indeterminate" },
 ];
-
 const formValues = getInitialValues(formConfig);
 export const BedsideTestForm = () => {
   return (
