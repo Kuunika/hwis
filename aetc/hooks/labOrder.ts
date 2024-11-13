@@ -13,7 +13,7 @@ export const getLabTestTypes = (name: string) => {
                 })).sort((a: any, b: any) => a.name.localeCompare(b.name));
         });
     };
-    return useQuery({
+    return useQuery({   
         queryKey: ["testTypes", name],
         queryFn: findAll,
         enabled: true,

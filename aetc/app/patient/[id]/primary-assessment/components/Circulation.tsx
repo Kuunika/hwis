@@ -360,8 +360,9 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   <Box>
                     <Typography variant="subtitle1">
                       Mean Arterial Pressure:{" "}
-                      {(formValues[form.bloodPressureDiastolic.name] * 2 +
-                        formValues[form.bloodPressureSystolic.name]) /
+                      {(Number(formValues[form.bloodPressureDiastolic.name]) *
+                        2 +
+                        Number(formValues[form.bloodPressureSystolic.name])) /
                         3}{" "}
                       mmHg
                     </Typography>

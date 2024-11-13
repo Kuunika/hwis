@@ -118,6 +118,7 @@ export const useImage = () => {
     const dateTime = getDateTime();
     const obs = Object.keys(formData).flatMap((key) => {
       const conceptData = formData[key];
+
       return Array.isArray(conceptData)
         ? conceptData.map((p: any) => {
             return {

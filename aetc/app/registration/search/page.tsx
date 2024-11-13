@@ -35,9 +35,7 @@ export default function RegistrationSearch() {
   }, [patientData])
 
 
-  const searchPatient = (searchData: any) => {
-    setPatientData(searchData)
-  }
+
 
   return (
     <>

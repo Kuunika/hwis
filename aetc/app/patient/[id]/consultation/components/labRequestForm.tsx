@@ -65,14 +65,14 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
     refetch();
   }, [sampleName]);
 
-  useEffect(() => {
-    if (testType === "bedside") {
-      setSampleId("beed8ce9-fd0f-4606-9911-dbb0ef9df055");
-      setSamples(transformedBedsideSamples());
-    } else {
-      refetchLabSpecimen();
-    }
-  }, [testType]);
+  // useEffect(() => {
+  //   if (testType === "bedside") {
+  //     setSampleId("beed8ce9-fd0f-4606-9911-dbb0ef9df055");
+  //     setSamples(transformedBedsideSamples());
+  //   } else {
+  //     refetchLabSpecimen();
+  //   }
+  // }, [testType]);
 
   useEffect(() => {
     reloadSamples();
@@ -140,19 +140,6 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
       .filter((bed) => bedSideTestTypes.includes(bed.name?.toLowerCase()));
   };
 
-  const handleSampleChange = (uuid: string) => {
-    const specimen = samples?.find(
-      (specimen) => specimen.names[0]?.uuid === uuid
-    );
-    if (testType === "bedside") {
-      setBedsideTestId(uuid);
-      setTests(transformBedsideTests());
-      return;
-    }
-
-    setSampleName(uuid);
-  };
-
   const handleLabSend = (values: any) => {
     const mappedTests = values?.tests.map((test: any) => {
       return {
@@ -192,38 +179,8 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
       })}
     >
       <Typography variant="h6">Lab Order</Typography>
-      <WrapperBox sx={{ display: "flex", width: "50ch" }}>
-        <RadioGroupInput
-          getValue={(test) => setTestType(test)}
-          name="testType"
-          options={[
-            { value: "bedside", label: "Bed Side" },
-            { value: "laboratory", label: "Laboratory" },
-          ]}
-          label="Test Type"
-        />
-        <RadioGroupInput
-          getValue={(test) => setTestType(test)}
-          name="emergency"
-          options={[
-            { value: "Yes", label: "Yes" },
-            { value: "No", label: "No" },
-          ]}
-          label="Emergency"
-        />
-        <RadioGroupInput
-          getValue={(test) => setTestType(test)}
-          name="urgentSample"
-          options={[
-            { value: "Yes", label: "Yes" },
-            { value: "No", label: "No" },
-          ]}
-          label="Urgent Sample"
-        />
-      </WrapperBox>
-
       <SearchComboBox
-        getValue={handleSampleChange}
+        getValue={setSampleName}
         multiple={false}
         label="Sample Type"
         name="sampleType"
@@ -246,6 +203,38 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
             : []
         }
       />
+      <br />
+      <WrapperBox sx={{ display: "flex", width: "50ch" }}>
+        {/* <RadioGroupInput
+          getValue={(test) => setTestType(test)}
+          name="testType"
+          options={[
+            { value: "bedside", label: "Bed Side" },
+            { value: "laboratory", label: "Laboratory" },
+          ]}
+          label="Test Type"
+        /> */}
+        <RadioGroupInput
+          getValue={(test) => setTestType(test)}
+          row
+          name="emergency"
+          options={[
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" },
+          ]}
+          label="Emergency"
+        />
+        <RadioGroupInput
+          getValue={(test) => setTestType(test)}
+          row
+          name="urgentSample"
+          options={[
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" },
+          ]}
+          label="Urgent Sample"
+        />
+      </WrapperBox>
     </FormikInit>
   );
 };

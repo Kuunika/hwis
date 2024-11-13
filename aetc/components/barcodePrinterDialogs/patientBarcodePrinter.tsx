@@ -24,7 +24,7 @@ export const PatientBarcodePrinter = ({
   addresses,
 }: Props) => {
   const [printer, setPrinter] = useState("http://localhost:3000");
-  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => { });
+  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
   const { data, isLoading } = getPrinters();
 
   return (
@@ -50,9 +50,13 @@ export const PatientBarcodePrinter = ({
           setPrinter(value);
         }}
         label="Select Printer"
-        options={!data ? [] : data?.map(d => {
-          return { value: d.ipAddress, label: d.name }
-        })}
+        options={
+          !data
+            ? []
+            : data?.map((d) => {
+                return { value: d.ip_address, label: d.name };
+              })
+        }
       />
       <br />
       <MainButton
@@ -70,7 +74,21 @@ export const PatientBarcodePrinter = ({
   );
 };
 
-export const PrinterBarcodeButton = ({ patient, sx, onClose, variant = "secondary", title = "Print", icon }: { patient: Person, sx?: SxProps, onClose?: () => void, variant?: "secondary" | "text" | "primary", title?: string, icon?: any }) => {
+export const PrinterBarcodeButton = ({
+  patient,
+  sx,
+  onClose,
+  variant = "secondary",
+  title = "Print",
+  icon,
+}: {
+  patient: Person;
+  sx?: SxProps;
+  onClose?: () => void;
+  variant?: "secondary" | "text" | "primary";
+  title?: string;
+  icon?: any;
+}) => {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -87,7 +105,7 @@ export const PrinterBarcodeButton = ({ patient, sx, onClose, variant = "secondar
         onClose={() => {
           setOpen(false);
           if (onClose) {
-            onClose()
+            onClose();
           }
         }}
         title="Print Patient Barcode"

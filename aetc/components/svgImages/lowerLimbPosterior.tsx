@@ -4,7 +4,20 @@ import { LegAbnormality } from "@/assets/legAbnormality";
 import { DataBox, ExtremitiesLegForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
-export function LowerLimbPosterior() {
+import { useEffect } from "react";
+import { concepts } from "@/constants";
+
+interface Props {
+  onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
+}
+
+export function LowerLimbPosterior({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) {
   const {
     handleClose,
     containerRef,
@@ -13,11 +26,14 @@ export function LowerLimbPosterior() {
     selectedSection,
     setAnchorEl,
     handleFormSubmit,
+    ids,
   } = useImage();
-  const idSelected = selectedSection.id;
-  const labelSelected = selectedSection.label;
 
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,
@@ -25,7 +41,14 @@ export function LowerLimbPosterior() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (

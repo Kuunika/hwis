@@ -1,6 +1,6 @@
 "use client";
 import { addUser } from "@/hooks/users";
-import { UserForm } from "../components";
+
 import { OverlayLoader } from "@/components/backdrop";
 import { useEffect } from "react";
 import { useNavigation } from "@/hooks";
@@ -8,26 +8,28 @@ import { MainTypography } from "@/components";
 import { BackButton } from "@/components/buttons";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
+import { PrinterForm } from "../components/printerForm";
+import { addPrinter } from "@/hooks/printers";
 
 function Page() {
-  const { mutate, isPending, isSuccess } = addUser();
+  const { mutate, isPending, isSuccess } = addPrinter();
   const { navigateTo } = useNavigation();
 
   useEffect(() => {
     if (isSuccess) {
-      navigateTo("/config");
+      navigateTo("/config/printers");
     }
   }, [isSuccess]);
 
-  const handleSubmit = (values: any) => {
-    mutate(values);
-  };
   return (
     <>
       <BackButton />
-      <MainTypography variant="h5">Create User</MainTypography>
+      <MainTypography variant="h5">Add Printer</MainTypography>
       <br />
-      <UserForm initialValues={{}} onSubmit={handleSubmit} />
+      <PrinterForm
+        initialValues={{ name: "", ip_address: "" }}
+        onSubmit={mutate}
+      />
       <OverlayLoader open={isPending} />
     </>
   );

@@ -63,10 +63,7 @@ export function SearchTab({
       <br />
       <br />
       <CustomTabPanel value={value} index={0}>
-
-
         {demographics}
-
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         {npid}
