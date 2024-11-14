@@ -23,6 +23,8 @@ import { getDateTime } from "@/helpers/dateTime";
 import { addObsChildren } from "@/hooks/obs";
 import { useMutation } from "@tanstack/react-query";
 import { isErrored } from "stream";
+import { Encounter } from "@/interfaces";
+import { boolean } from "yup";
 
 type Complaint = {
   complaint: string;
@@ -38,7 +40,7 @@ type InputObservation = {
 
 type OutputObservation = {
   concept: string;
-  value: string;
+  value: string | boolean;
 };
 
 
@@ -162,14 +164,12 @@ export const MedicalHistoryFlow = () => {
   };
 
   const handleAllergiesSubmission = (values: any) => {
-
-    console.log(values);
     mutate({
         encounterType: encounters.ALLERGIES,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
-        obs: [{concept:concepts.ALLERGY_COMMENT, value:values[concepts.ALLERGY_COMMENT]}]             
+        obs: [],            
     }, {
       onSuccess: (data) => {
         console.log("Allergy encounter submitted successfully:", data);
@@ -196,10 +196,9 @@ function submitChildAllergies(data: any, myobs: any) {
   
   const observationsPayload = Object.keys(groupedAllergies).map(groupKey => {
     const groupConcept = groupKey; 
-    
     const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
       let conceptValue = allergy.value; 
-      let value = allergy.value; 
+      let value = true; 
   
       if (allergy.label.includes("Other medical substance allergy")) {
         conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
@@ -237,48 +236,106 @@ function submitChildAllergies(data: any, myobs: any) {
     };
   });
   
-  observationsPayload.forEach(observation => {
+  observationsPayload.forEach((observation) => {
+      observation.group_members.push({
+        concept: concepts.ALLERGY_COMMENT,
+        value: myobs[concepts.ALLERGY_COMMENT]
+      });
+  
     createObsChildren(observation);
   });
 
   if(obsChildrenCreated)
   setActiveStep(2);
 
-  
   };
 
 
 
   function handleMedicationsSubmission(values: any): void {
     const observations =  getObservations(values, dateTime);
-    const myobs = convertObservations(observations);
-    const modifiedobs  = myobs.map(item => {
-      if (item.concept === "medications") {
-          return {
-              ...item,
-              concept: concepts.MEDICATION_HISTORY // replace with the constant
-          };
-      }
-      return item;
-      });
+    console.log(observations)
 
       mutate({
         encounterType: encounters.PRESCRIPTIONS,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: modifiedobs,
+        obs: [],
       }, {
         onSuccess: (data) => {
           console.log("Medications submitted successfully:", data);
-          setActiveStep(3); // Move to the next step
+          submitMedicationObservations(data, observations[0].value);
         },
         onError: (error) => {
           console.error("Error submitting medications:", error);
         },
       });
       
-      setActiveStep(3);
+  }
+
+  function submitMedicationObservations(data: Encounter, value: any) {
+    const conceptMap: { 
+      name: string;
+      formulation: string;
+      medication_dose: string;
+      medication_dose_unit: string;
+      medication_frequency: string;
+      medication_route: string;
+      medication_duration: string;
+      medication_duration_unit: string;
+      medication_date_last_taken: string;
+      medication_date_of_last_prescription: string;
+    } = {
+      name: '',
+      formulation: 'concept_uuid_for_formulation',
+      medication_dose: 'concept_uuid_for_dose',
+      medication_dose_unit: 'concept_uuid_for_dose_unit',
+      medication_frequency: 'concept_uuid_for_frequency',
+      medication_route: 'concept_uuid_for_route',
+      medication_duration: 'concept_uuid_for_duration',
+      medication_duration_unit: 'concept_uuid_for_duration_unit',
+      medication_date_last_taken: 'concept_uuid_for_date_last_taken',
+      medication_date_of_last_prescription: 'concept_uuid_for_date_of_last_prescription'
+    };
+    
+
+    const observationsPayload = value.map((medication: any) => {
+      const observation = {
+        encounter: data.uuid,
+        person: params.id,
+        concept: medication.name, 
+        obsDatetime: dateTime,
+        value: true,
+        group_members: [] as OutputObservation[], 
+      };
+    
+      (Object.keys(medication) as Array<keyof typeof conceptMap>).forEach((key) => {
+        if (key !== 'name' && conceptMap[key] && key !=='medication_frequency') {
+          observation.group_members.push({
+            concept: conceptMap[key],   
+            value: medication[key]     
+          } as OutputObservation);
+        }
+
+        if(key == 'medication_frequency' ){
+          observation.group_members.push({
+            concept: medication[key],   
+            value: true     
+          } as OutputObservation);
+        }
+      });
+    
+      return observation;
+    });
+
+    observationsPayload.forEach((observation: any) => {
+  
+    createObsChildren(observation);
+  });
+
+  if(obsChildrenCreated)
+  setActiveStep(3);
   }
 
   function handleConditionsSubmission(values: any): void {
@@ -338,5 +395,7 @@ function submitChildAllergies(data: any, myobs: any) {
     </>
   );
 };
+
+
 
 
