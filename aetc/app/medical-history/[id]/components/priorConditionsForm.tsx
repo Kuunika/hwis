@@ -101,9 +101,7 @@ import { FieldArray } from "formik";
     }, [diagnoses]);
   
     const handleSubmit = () => {
-      console.log(formValues);
-      return;
-      //onSubmit(formValues);
+     onSubmit(formValues);
     };
   
     return (

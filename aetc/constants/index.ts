@@ -23,6 +23,7 @@ export const encounters = {
   OBSTETRIC_HISTORY: 'ba063da6-8d80-11d8-abbb-0024217bb78e',
   PRESCRIPTIONS: '88564b30-abaf-4744-8ea6-6e1c15465d9e',
   ALLERGIES: '0ff4b560-ee72-4186-a759-2fe3fd93df74',
+  DIAGNOSIS: 'ba05fbfc-8d80-11d8-abbb-0024217bb78e',
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -624,8 +625,8 @@ TWICE_A_DAY:'b9c6ab00-8d80-11d8-abbb-0024217bb78e',
 THREE_TIMES_A_DAY:'Three times a day',
 FOUR_TIMES_A_DAY:'Four times a day',
 SIX_TIMES_A_DAY:'Six times a day',
-ONCE_A_WEEK:'Once a week',
-ONCE_A_MONTH:'Once a month',
+ONCE_A_WEEK:'b9c6bcf8-8d80-11d8-abbb-0024217bb78e',
+ONCE_A_MONTH:'b9b6012e-8d80-11d8-abbb-0024217bb78e',
 
 //formulation
 TABLET: "Tablet",
@@ -644,6 +645,11 @@ SUSPENSION: "Suspension",
 SHAMPOO: "Shampoo",
 EAR_DROPS: "Ear Drops",
 EYE_PASTE: "Eye Paste",
+
+//conditions
+DIAGNOSIS_DATE: 'b9cd291c-8d80-11d8-abbb-0024217bb78e',
+ADDITIONAL_DIAGNOSIS_DETAILS: 'additional diagnosis details',
+ON_TREATMENT:'b9b6c7c6-8d80-11d8-abbb-0024217bb78e',
 
 //surgery procedures
 EXPLORATORY_LAPAROTOMY: 'Exploratory laparotomy',

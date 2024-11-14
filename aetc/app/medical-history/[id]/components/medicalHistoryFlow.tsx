@@ -254,7 +254,6 @@ function submitChildAllergies(data: any, myobs: any) {
 
   function handleMedicationsSubmission(values: any): void {
     const observations =  getObservations(values, dateTime);
-    console.log(observations)
 
       mutate({
         encounterType: encounters.PRESCRIPTIONS,
@@ -339,7 +338,43 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleConditionsSubmission(values: any): void {
-    throw new Error("Function not implemented.");
+    mutate({
+      encounterType: encounters.DIAGNOSIS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: [],
+    }, {
+      onSuccess: (data) => {
+        console.log("Diagnosis encounter submitted successfully:", data);
+        submitDiagnosisObservations(data, values);
+      },
+      onError: (error) => {
+        console.error("Error submitting Diagnosis encounter:", error);
+      },
+    });
+  }
+
+  function submitDiagnosisObservations(data: Encounter, values: any) {
+    const observationsPayload = values.conditions.map((condition: any) => {
+    return  {
+      encounter: data.uuid,
+      person: params.id,
+      concept: condition.name, // Setting `name` as the main concept for this observation
+      obsDatetime: dateTime,
+      value: true,
+      group_members: [
+        { concept: concepts.DIAGNOSIS_DATE, value: condition.date },
+        { concept: concepts.ON_TREATMENT, value: condition.onTreatment },
+        { concept: concepts.ADDITIONAL_DIAGNOSIS_DETAILS, value: condition.additionalDetails },
+      ] as OutputObservation[],
+    }
+  });
+
+  observationsPayload.forEach((observation: any) => {
+    createObsChildren(observation)
+  });
+
   }
 
   function handleSurgeriesSubmission(values: any): void {
@@ -395,6 +430,8 @@ function submitChildAllergies(data: any, myobs: any) {
     </>
   );
 };
+
+
 
 
 
