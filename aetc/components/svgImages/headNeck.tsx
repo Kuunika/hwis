@@ -1,8 +1,8 @@
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { Box, Button, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { HeadNeck } from "@/assets/headNeck";
 import {
   EarForm,
@@ -13,11 +13,22 @@ import {
   OtherPartsOfTheHeadForm,
   OtherTemporalCrownForm,
 } from "./forms/headNeck";
-import { DataBox, OtherAbnormalityForm } from "./forms";
-import { FormValueLabel } from "@/interfaces";
-import { useImageFormTransform } from "@/hooks";
+import { DataBox } from "./forms";
 
-export function HeadNeckImage() {
+import { useImageFormTransform } from "@/hooks";
+import { concepts, encounters } from "@/constants";
+
+interface Props {
+  onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
+}
+
+export function HeadNeckImage({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) {
   const {
     handleClose,
     containerRef,
@@ -25,11 +36,16 @@ export function HeadNeckImage() {
     anchorEl,
     selectedSection,
     handleFormSubmit,
+    ids,
   } = useImage();
   const idSelected = selectedSection.id;
   const labelSelected = selectedSection.label as string;
 
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,
@@ -37,7 +53,14 @@ export function HeadNeckImage() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (
@@ -55,35 +78,35 @@ export function HeadNeckImage() {
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        {idSelected == "right_eye" && (
+        {idSelected == encounters.HEAD_RIGHT_EYE && (
           <EyeForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
-        {idSelected == "left_eye" && (
+        {idSelected == encounters.HEAD_LEFT_EYE && (
           <EyeForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
-        {idSelected == "mouth" && (
+        {idSelected == encounters.HEAD_MOUTH && (
           <MouthForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
-        {idSelected == "nose" && (
+        {idSelected == encounters.HEAD_NOSE && (
           <NoseForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
-        {idSelected == "neck" && (
+        {idSelected == encounters.HEAD_NECK && (
           <NeckForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)
@@ -91,26 +114,27 @@ export function HeadNeckImage() {
           />
         )}
 
-        {(idSelected == "left_temporal" ||
-          idSelected == "right_temporal" ||
-          idSelected == "crown") && (
+        {(idSelected == encounters.HEAD_LEFT_TEMPORAL ||
+          idSelected == encounters.HEAD_RIGHT_TEMPORAL ||
+          idSelected == encounters.HEAD_CROWN) && (
           <OtherTemporalCrownForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
-        {(idSelected == "chin" ||
-          idSelected == "left_cheek" ||
-          idSelected == "right_cheek" ||
-          idSelected == "forehead") && (
+        {(idSelected == encounters.HEAD_CHIN ||
+          idSelected == encounters.HEAD_LEFT_CHEEK ||
+          idSelected == encounters.HEAD_RIGHT_CHEEK ||
+          idSelected == encounters.HEAD_FOREHEAD) && (
           <OtherPartsOfTheHeadForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)
             }
           />
         )}
-        {(idSelected == "right_ear" || idSelected == "left_ear") && (
+        {(idSelected == encounters.HEAD_RIGHT_EAR ||
+          idSelected == encounters.HEAD_LEFT_EAR) && (
           <EarForm
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(labelSelected, values, formConceptsLabels)

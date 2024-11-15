@@ -1,6 +1,6 @@
 "use client";
 import { NotificationContainer } from "@/components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainer,
@@ -37,6 +37,13 @@ const initialValues = {
 };
 export const HeadAndNeck = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
+  const [headNeckImageEncounter, setHeadNeckImageEncounter] = useState<
+    Array<any>
+  >([]);
+
+  useEffect(() => {
+    console.log({ headNeckImageEncounter });
+  }, [headNeckImageEncounter]);
 
   return (
     <FormikInit
@@ -46,7 +53,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       submitButtonText="Next"
     >
       <FormValuesListener getValues={setFormValues} />
-      <HeadNeckImage />
+      <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />
     </FormikInit>
   );
 };

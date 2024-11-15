@@ -1,102 +1,248 @@
 "use client";
-import { FormikInit, SearchComboBox } from "@/components";
-
+import { FormikInit, SearchComboBox, MainGrid, MainPaper } from "@/components";
 import { useEffect, useState } from "react";
 import { DiagnosisTable } from "./DiagnosisTable";
 import * as Yup from "yup";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Typography } from "@mui/material";
+import { addEncounter, getPatientsEncounters, removeObservation } from "@/hooks/encounter";
+import { getDateTime } from "@/helpers/dateTime";
+import { toast } from "react-toastify";
+import { useParameters } from "@/hooks";
+import { getOnePatient } from "@/hooks/patientReg";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
+import { concepts, encounters } from "@/constants";
+import Tooltip from "@mui/material/Tooltip";
 
-
-// Define the Diagnosis interface
 interface Diagnosis {
-    id: number;
+    id: string;
     condition: string;
+    obsDatetime: string;
+
 }
 
-function DiagnosisForm() {
-    const {
-        data: bedsideTests,
-        isLoading: bedsideTestsLoading,
-        refetch: reloadBedSideTests,
-        isRefetching: reloadingBedsideTest,
-    } = getConceptSetMembers("b9af45fa-8d80-11d8-abbb-0024217bb78e");
-    // Define the type of diagnosisList explicitly
+interface DiagnosisFormProps {
+    conceptType: string;
+}
+
+function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
+    const { data: diagnosisOptions, refetch: reloadDiagnosisOptions } = getConceptSetMembers(concepts.CONDITION);
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
+    const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
+    const { params } = useParameters();
+    const { data: patient } = getOnePatient(params.id as string);
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const [showTable, setShowTable] = useState(false);
+    const [showComboBox, setShowComboBox] = useState(false);
+
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { data: patientEncounters } = getPatientsEncounters(params.id as string);
+    const { mutate: deleteDiagnosis } = removeObservation();
+
 
     useEffect(() => {
-        reloadBedSideTests();
-    }, []);
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
 
+    useEffect(() => {
+        reloadDiagnosisOptions();
+        // Loads and filters patient encounters to get diagnosis records only
+        if (patientEncounters) {
+            const diagnosisRecords = patientEncounters
+                .filter(encounter => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
+                .flatMap(encounter => encounter.obs
+                    .filter(obs => obs.names[0]?.uuid === conceptType)  // Filter by conceptType
+                    .map(obs => ({
+                        id: obs.obs_id.toString(),
+                        condition: obs.value,
+                        obsDatetime: obs.obs_datetime || "",
+                    }))
+                );
+            setDiagnosisList(diagnosisRecords);
+        }
+    }, [patientEncounters, conceptType]);
 
+    const conditionOptions = diagnosisOptions?.map((diagnosisOption) => ({
+        id: diagnosisOption.names[0]?.uuid,
+        label: diagnosisOption.names[0]?.name,
+    })) || [];
 
-
-    // Modify the condition options to use data from the API
-    const conditionOptions =
-        bedsideTests?.map((test) => ({
-            id: test.uuid, // UUID as the identifier
-            label: test.names[0]?.name, // Get the name attribute
-        })) || [];
-
-
-
-    // Initial values for Formik
-    const initialValues = {
-        condition: "",
-    };
-
-    // Validation Schema
+    const initialValues = { condition: "" };
     const validationSchema = Yup.object().shape({
         condition: Yup.string().required("Condition is required"),
     });
 
-    // Function to add a diagnosis to the list
     const handleAddDiagnosis = (values: any, resetForm: any) => {
+
         const selectedCondition = conditionOptions.find(option => option.id === values.condition);
-        if (selectedCondition) {
-            setDiagnosisList([
-                ...diagnosisList,
-                { id: diagnosisList.length + 1, condition: selectedCondition.label },
-            ]);
+        const currentDateTime = getDateTime();
+
+
+        if (selectedCondition && activeVisit?.uuid) {
+            // Calls API to create a new diagnosis encounter for the patient
+            createDiagnosis({
+                encounterType: encounters.OUTPATIENT_DIAGNOSIS,
+                visit: activeVisit?.uuid,
+                patient: params.id,
+                encounterDatetime: currentDateTime,
+                obs: [{
+                    concept: conceptType,  // Use the conceptType prop here
+                    value: values.condition,
+                    obsDatetime: currentDateTime,
+                }],
+            });
+
+            if (isSuccess) {
+                setDiagnosisList(prev => [
+                    ...prev,
+                    {
+                        id: Date.now().toString(),
+                        condition: selectedCondition.label,
+                        obsDatetime: currentDateTime
+                    },
+                ]);
+                toast.success("Diagnosis submitted successfully!");
+            } else if (isError) {
+                toast.error("Failed to submit diagnosis.");
+            }
+
             resetForm();
+        } else {
+            toast.error("Visit information is missing, cannot add diagnosis.");
         }
     };
 
-    // Function to delete a diagnosis
-    const handleDeleteDiagnosis = (id: number) => {
-        const updatedList = diagnosisList.filter((item) => item.id !== id);
-        setDiagnosisList(updatedList);
+    const toggleTableVisibility = () => {
+        setShowTable(!showTable);
+    };
+    const toggleComboBox = () => {
+        setShowComboBox(!showComboBox);
     };
 
+    const handleDeleteDiagnosis = (obs_id: string) => {
+
+        deleteDiagnosis(obs_id, {
+            onSuccess: () => {
+                setDiagnosisList((prevList) => prevList.filter((diagnosis) => diagnosis.id !== obs_id));
+                toast.success("Diagnosis deleted successfully!");
+            },
+            onError: () => {
+                console.error("Error deleting diagnosis");
+                toast.error("Failed to delete diagnosis.");
+            },
+        });
+    };
+
+
     return (
-        <>
-            <Typography variant="h6">Differential Diagnosis</Typography>
+        <MainGrid container spacing={2}>
+            {/* Recent Diagnosis Section */}
+            <MainGrid item xs={12}>
+                <MainPaper style={{ padding: "20px" }}>
+                    <Typography variant="h6" style={{ marginBottom: "10px" }}>
+                        Current Diagnosis
+                    </Typography>
 
-            <FormikInit
-                initialValues={initialValues}
-                onSubmit={handleAddDiagnosis}
-                validationSchema={validationSchema}
-                submitButtonText="Add"
-            >
-                <SearchComboBox
-                    label="Condition"
-                    name="condition"
-                    options={conditionOptions}
-                    sx={{ width: "100%" }}
-                    multiple={false}
-                />
+                    {/* Header */}
+                    <div style={{ display: "flex", paddingBottom: "8px", borderBottom: "1px solid #ddd" }}>
+                        <Typography variant="subtitle1" style={{ width: "25%", fontWeight: "bold" }}>
+                            Condition
+                        </Typography>
+                        <Typography variant="subtitle1" style={{ width: "25%", fontWeight: "bold" }}>
+                            Diagnosis Type
+                        </Typography>
+                        <Typography variant="subtitle1" style={{ width: "25%", fontWeight: "bold" }}>
+                            Date
+                        </Typography>
+                        <Typography variant="subtitle1" style={{ width: "25%", fontWeight: "bold" }}>
+                            Action
+                        </Typography>
+                    </div>
 
-            </FormikInit>
+                    {/* Diagnosis entries */}
+                    {diagnosisList.length === 0 ? (
+                        <Typography variant="body2" style={{ padding: "16px", textAlign: "center", color: "gray" }}>
+                            No Diagnosis Added
+                        </Typography>
+                    ) : (
+                        diagnosisList.slice(-3).map((diagnosis) => (
+                            <div key={diagnosis.id} style={{ display: "flex", padding: "8px 0", borderBottom: "1px solid #f0f0f0" }}>
+                                <Typography variant="body1" style={{ width: "25%" }}>
+                                    {diagnosis.condition}
+                                </Typography>
+                                <Typography variant="body2" style={{ width: "25%", fontStyle: "italic" }}>
+                                    {conceptType === concepts.DIFFERENTIAL_DIAGNOSIS ? "Differential Diagnosis" : "Final Diagnosis"}
+                                </Typography>
+                                <Typography variant="body2" style={{ width: "25%" }}>
+                                    {new Date(diagnosis.obsDatetime).toLocaleDateString("en-GB")}
+                                </Typography>
+                                <Typography variant="body2" style={{ width: "25%" }}>
+                                    <button
+                                        onClick={() => handleDeleteDiagnosis(diagnosis.id)}
+                                        style={{
+                                            cursor: "pointer",
+                                            backgroundColor: "red",
+                                            color: "white",
+                                            border: "none",
+                                            padding: "5px 10px",
+                                            borderRadius: "4px",
+                                        }}
+                                        title="Delete Diagnosis"
+                                    >
+                                        Delete
+                                    </button>
+                                </Typography>
 
-            {/* Diagnosis Table */}
-            <h3>List of Diagnosis</h3>
-            <DiagnosisTable
-                diagnoses={diagnosisList}
-                onDelete={handleDeleteDiagnosis}
-            />
+                            </div>
+                        ))
+                    )}
 
-        </>
+                    <Typography
+                        variant="h6"
+                        style={{ color: "green", cursor: "pointer", marginTop: "30px" }}  // Added margin-top
+                        onClick={toggleComboBox}
+                    >
+                        {showComboBox ? "- Cancel New Diagnosis" : "+ Add New Diagnosis"}
+                    </Typography>
+                    {showComboBox && (
+                        <FormikInit
+                            initialValues={initialValues}
+                            onSubmit={handleAddDiagnosis}
+                            validationSchema={validationSchema}
+                            submitButtonText="Add"
+                        >
+                            <SearchComboBox
+                                label="Condition"
+                                name="condition"
+                                options={conditionOptions}
+                                sx={{ width: "100%" }}
+                                multiple={false}
+                            />
+                        </FormikInit>
+                    )}
+                </MainPaper>
+            </MainGrid>
 
+            <MainGrid item xs={12}>
+                <MainPaper>
+                    <Typography variant="h6" onClick={toggleTableVisibility}
+                        style={{ cursor: "pointer", padding: "16px 0" }} // Added padding
+                    >
+                        {showTable ? " Hide Previous Diagnosis" : " Show Previous Diagnosis"}
+                    </Typography>
+                    {showTable && (
+                        <DiagnosisTable diagnoses={diagnosisList} />
+                    )}
+                </MainPaper>
+            </MainGrid>
+        </MainGrid>
     );
 }
 

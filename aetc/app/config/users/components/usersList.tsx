@@ -54,6 +54,12 @@ export const UsersList = () => {
   ];
 
   return (
-    <BaseTable loading={isLoading} columns={columns} rows={rows ? rows : []} />
+    <BaseTable
+      searchPlaceHolder="search user"
+      showSearchSwitchButton={false}
+      loading={isLoading}
+      columns={columns}
+      rows={rows ? rows : []}
+    />
   );
 };

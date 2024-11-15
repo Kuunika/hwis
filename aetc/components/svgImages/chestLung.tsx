@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Lung from "../../assets/lung";
 import { ChestLungForm, DataBox } from "./forms";
 
@@ -6,8 +6,19 @@ import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
+import { concepts } from "@/constants";
 
-export const ChestLung = () => {
+interface Props {
+  onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
+}
+
+export const ChestLung = ({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) => {
   const {
     handleFormSubmit,
     handleClose,
@@ -15,9 +26,13 @@ export const ChestLung = () => {
     section,
     anchorEl,
     selectedSection,
-    setAnchorEl,
+    ids,
   } = useImage();
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,
@@ -25,7 +40,14 @@ export const ChestLung = () => {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (

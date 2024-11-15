@@ -1,5 +1,5 @@
 "use client";
-import { NO, YES, concepts } from "@/constants";
+import { NO, YES, concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
@@ -343,6 +343,8 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
   const [showSpecify, setShowSpecify] = useState(false);
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
+  const [abnormalitiesPresentImageEnc, setAbnormalitiesPresentImageEnc] =
+    useState<Array<any>>();
 
   const handleValueChange = (values: Array<any>) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
@@ -371,7 +373,11 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           />
         </FieldsContainer>
         {formValues[form.abnormalitiesPresent.name] == concepts.YES && (
-          <SecondaryAbdomenImage />
+          <SecondaryAbdomenImage
+            imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+            imageSection={form.abnormalitiesPresent.name}
+            onValueChange={setAbnormalitiesPresentImageEnc}
+          />
         )}
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Palpation">

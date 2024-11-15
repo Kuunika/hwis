@@ -43,6 +43,17 @@ export async function edit<T>(
 ) {
   return apiClient.put(`${endPoint}/${id}`, data);
 }
+//remove function to delete diagnosis
+export async function remove<T>(
+  endPoint: string,
+  data: Partial<T>,
+  apiClient: AxiosInstance = emrApiClient()
+) {
+  return apiClient.delete(endPoint, { data });
+}
+
+
+
 export async function login(
   credentials: any,
   apiClient: AxiosInstance = emrApiClient()

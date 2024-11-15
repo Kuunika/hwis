@@ -1,7 +1,7 @@
 "use client";
 import { NotificationContainer } from "@/components";
-import { NO, YES, concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { NO, YES, concepts, encounters } from "@/constants";
+import { getInitialValues, getObservations } from "@/helpers";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -19,9 +19,11 @@ import {
   AbdomenImageWithOtherForm,
 } from "@/components/svgImages";
 import { Box, Typography } from "@mui/material";
+import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
+import { getDateTime } from "@/helpers/dateTime";
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 const form = {
   bleedingInfo: {
@@ -61,14 +63,6 @@ const form = {
     name: concepts.CAPILLARY_REFILL_TIME,
     label: "Capillary refill time",
   },
-  // diastolicInfo: {
-  //   name: "diastolicInfo",
-  //   label: "Diastolic value",
-  // },
-  // interavenousInfo: {
-  //   name: "interavenousInfo",
-  //   label: "Size of interavenous catheter",
-  // },
   pelvisInfo: {
     name: concepts.IS_PELVIS_STABLE,
     label: "Is the pelvis stable?",
@@ -95,10 +89,7 @@ const form = {
     name: concepts.ACTION_DONE,
     label: "Action done",
   },
-  // sizeOfIntravenousCatheter: {
-  //   name: "sizeOfIntravenousCatheter",
-  //   label: "Size of intravenous catheter",
-  // },
+
   anyOtherAbnormalities: {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is There Any Other Abnormalites",
@@ -167,15 +158,6 @@ const schema = yup.object({
     .string()
 
     .label(form.abdnomenDistention.label),
-  // [form.diastolicInfo.name]: yup
-  //   .string()
-  //   .required()
-  //   .label(form.diastolicInfo.label),
-
-  // [form.interavenousInfo.name]: yup
-  //   .string()
-  //   .required()
-  //   .label(form.interavenousInfo.label),
   [form.pelvisInfo.name]: yup.string().label(form.pelvisInfo.label),
   [form.mucousMembranesInfo.name]: yup
     .string()
@@ -189,9 +171,7 @@ const schema = yup.object({
     .string()
 
     .label(form.femurAndTibiaNormalInfo.label),
-  // [form.sizeOfIntravenousCatheter.name]: yup
-  //   .string()
-  //   .label(form.sizeOfIntravenousCatheter.label),
+
   [form.anyOtherAbnormalities.name]: yup
     .string()
     .label(form.anyOtherAbnormalities.label),
@@ -218,21 +198,21 @@ const sizeOfCapillary = [
   { label: "3 Seconds", value: "3 Seconds" },
 ];
 const sizeOfMucous = [
-  { label: "Normal", value: "Normal" },
-  { label: "Pale", value: "Pale" },
-  { label: "Cyanosis", value: "Cyanosis" },
+  { label: "Normal", value: concepts.NORMAL },
+  { label: "Pale", value: concepts.PALE },
+  { label: "Cyanosis", value: concepts.CYANOSIS },
 ];
 
 const pulseRates = [
-  { label: "Weak", value: "weak" },
-  { label: "Strong, Regular", value: "strong, Regular" },
-  { label: "Irregular", value: "irregular" },
+  { label: "Weak", value: concepts.WEAK },
+  { label: "Strong, Regular", value: concepts.STRONG_REGULAR },
+  { label: "Irregular", value: concepts.IRREGULAR },
 ];
 
 const capillaryRefillTimes = [
-  { label: "Less than 3 seconds", value: "Less than 3 seconds" },
-  { label: "3 seconds", value: "3 seconds" },
-  { label: "More than 3 seconds", value: "More than 3 seconds" },
+  { label: "Less than 3 seconds", value: concepts.LESS_THAN_3_SECONDS },
+  { label: "3 seconds", value: concepts.THREE_SECONDS },
+  { label: "More than 3 seconds", value: concepts.MORE_THAN_THREE_SECONDS },
 ];
 
 const radioOptions = [
@@ -242,11 +222,24 @@ const radioOptions = [
 
 export const Circulation = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
+  const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
+  const [legImage, setLegImage] = useState<Array<any>>([]);
+
+  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
+    encounters.CIRCULATION_ASSESSMENT,
+    onSubmit
+  );
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(getObservations(values, getDateTime()), [
+      ...abdomenOtherImage,
+      ...legImage,
+    ]);
+  };
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
       submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
@@ -267,7 +260,6 @@ export const Circulation = ({ onSubmit }: Prop) => {
           <>
             <br />
             <NotificationContainer message="Apply pressure" />
-
             <br />
             <TextInputField
               sx={{ width: "100%" }}
@@ -368,8 +360,9 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   <Box>
                     <Typography variant="subtitle1">
                       Mean Arterial Pressure:{" "}
-                      {(formValues[form.bloodPressureDiastolic.name] * 2 +
-                        formValues[form.bloodPressureSystolic.name]) /
+                      {(Number(formValues[form.bloodPressureDiastolic.name]) *
+                        2 +
+                        Number(formValues[form.bloodPressureSystolic.name])) /
                         3}{" "}
                       mmHg
                     </Typography>
@@ -410,7 +403,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
             {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
               <>
                 <br />
-                <LegAbnormalityImage />
+                <LegAbnormalityImage
+                  imageSection={form.femurAndTibiaNormalInfo.name}
+                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                  onValueChange={setLegImage}
+                />
                 <br />
               </>
             )}
@@ -468,13 +465,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
         {formValues[form.abnormalitiesInfo.name] == YES && (
           <>
             <br />
-
-            {/* <NotificationContainer
-              message=" (Picture Comes Up and indicate the following) Tenderness (Multiple
-            Selection) Wound (Multiple Selection) Laceration Stab/Puncture
-            Bruise Burns Wound"
-            /> */}
-            <AbdomenImageWithOtherForm />
+            <AbdomenImageWithOtherForm
+              imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+              imageSection={form.abnormalitiesInfo.name}
+              onValueChange={setAbdomenOtherImage}
+            />
             <br />
           </>
         )}

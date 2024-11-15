@@ -4,21 +4,34 @@ import { Box, Button } from "@mui/material";
 import { FullBody } from "@/assets/fullBody";
 import { DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
-export function FullBodyImage() {
+import { concepts } from "@/constants";
+import { useEffect } from "react";
+
+interface Props {
+  onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
+}
+
+export function FullBodyImage({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) {
   const {
     handleClose,
     handleFormSubmit,
     containerRef,
     section,
     anchorEl,
-    setAnchorEl,
-    highlightSection,
     selectedSection,
-    setSelectedSection,
-    highlightAllSelectedSections,
-    setIds,
+    ids,
   } = useImage();
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,
@@ -26,7 +39,14 @@ export function FullBodyImage() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (

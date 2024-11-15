@@ -1,7 +1,10 @@
+import { getDateTime } from "@/helpers/dateTime";
 import React from "react";
 import { useRef, useState, useEffect } from "react";
+import { getActivePatientDetails } from ".";
 
 export const useImage = () => {
+  const { activeVisit, patientId } = getActivePatientDetails();
   const containerRef = useRef<SVGSVGElement>(null);
   const [ids, setIds] = useState<
     Array<{
@@ -111,8 +114,35 @@ export const useImage = () => {
     highlightAllSelectedSections();
   };
 
-  const handleFormSubmit = (values: any) => {
-    setIds((ids) => [...ids, { ...selectedSection, ...values }]);
+  const handleFormSubmit = (formData: any) => {
+    const dateTime = getDateTime();
+    const obs = Object.keys(formData).flatMap((key) => {
+      const conceptData = formData[key];
+
+      return Array.isArray(conceptData)
+        ? conceptData.map((p: any) => {
+            return {
+              concept: key,
+              value: p.id,
+              obsDatetime: dateTime,
+            };
+          })
+        : {
+            concept: key,
+            value: conceptData,
+            obsDatetime: dateTime,
+          };
+    });
+
+    formData = {
+      encounterDateTime: dateTime,
+      visit: activeVisit,
+      patient: patientId,
+      encounterType: selectedSection.id,
+      obs,
+    };
+
+    setIds((ids) => [...ids, { ...selectedSection, formData }]);
     handleClose();
   };
 
@@ -130,5 +160,6 @@ export const useImage = () => {
     highlightSection,
     highlightAllSelectedSections,
     setIds,
+    ids,
   };
 };

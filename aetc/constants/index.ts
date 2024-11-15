@@ -10,6 +10,7 @@ export const encounters = {
   BREATHING_ASSESSMENT: "08d4b4e5-dfa7-436b-9062-aee1b076c3ea",
   CIRCULATION_ASSESSMENT: "bb16ef97-6ef7-414f-880c-dfc67e1601df",
   EXPOSURE_ASSESSMENT: "EXPOSURE_ASSESSMENT",
+  EXPOSURE_ASSESSMENT: "EXPOSURE_ASSESSMENT",
   DISABILITY_ASSESSMENT: "0ef8f652-7852-49a5-a9dd-c1ca74fe098c",
   INITIAL_REGISTRATION: "4186b2dd-0254-4226-965a-e77fcaa70bcf",
   SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
@@ -173,6 +174,11 @@ export const concepts = {
   PULSE_RATE: "b9afedfc-8d80-11d8-abbb-0024217bb78e",
   URINE_DIPSTICK_KETONES: "b9cc6afe-8d80-11d8-abbb-0024217bb78e",
   PEAK_EXPIRATORY_FLOW_RATE: "f2adaf9e-63bf-4a2a-955f-5084d53affa6",
+  CONDITION: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
+  //Add 2 new diagnosis concepts
+  DIFFERENTIAL_DIAGNOSIS: "50a75c44-d69b-4316-bf74-12856d8c5c0c",
+  FINAL_DIAGNOSIS: "0a54ccb9-c650-4fc6-a26f-cc1a502f3b80",
+
   CONDITION: "b9af45fa-8d80-11d8-abbb-0024217bb78e",
   //Add 2 new diagnosis concepts
   DIFFERENTIAL_DIAGNOSIS: "50a75c44-d69b-4316-bf74-12856d8c5c0c",
@@ -357,6 +363,7 @@ export const concepts = {
   ALLERGY:"b8ce61de-8d80-11d8-abbb-0024217bb78e",
   ALLERGY_COMMENT: "b9b6d27a-8d80-11d8-abbb-0024217bb78e",
   INVESTIGATIONS: "76dcafcb-2148-4919-9b3b-cd7f3f77d19e",
+
 
   // Secondary survey
   PUPIL_SIZE: "3151f6e5-d476-4ac5-8513-bfa4c8796620",

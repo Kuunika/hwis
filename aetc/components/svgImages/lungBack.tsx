@@ -4,21 +4,34 @@ import { SVGPopover } from "./svgPopover";
 import { BreathingLungForm, DataBox } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
-export function LungBackImage() {
+import { useEffect } from "react";
+import { concepts } from "@/constants";
+
+interface Props {
+  onValueChange: (values: any) => void;
+  imageEncounter?: string;
+  imageSection?: string;
+}
+
+export function LungBackImage({
+  onValueChange,
+  imageEncounter,
+  imageSection,
+}: Props) {
   const {
     handleClose,
     handleFormSubmit,
     containerRef,
     section,
     anchorEl,
-    setAnchorEl,
-    highlightSection,
     selectedSection,
-    setSelectedSection,
-    highlightAllSelectedSections,
-    setIds,
+    ids,
   } = useImage();
   const { setData, submittedValues } = useImageFormTransform();
+
+  useEffect(() => {
+    onValueChange(ids);
+  }, [ids]);
 
   const handleDataSubmission = (
     section: string,
@@ -26,6 +39,13 @@ export function LungBackImage() {
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
+    if (imageEncounter && imageSection) {
+      formData = {
+        ...formData,
+        [concepts.IMAGE_ENCOUNTER]: imageEncounter,
+        [concepts.IMAGE_SECTION]: imageSection,
+      };
+    }
     handleFormSubmit(formData);
   };
 
