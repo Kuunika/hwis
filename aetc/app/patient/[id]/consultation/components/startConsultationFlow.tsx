@@ -35,16 +35,16 @@ export const StartConsultationFlow = () => {
           <Button onClick={() => setActiveStep(1)}>Next</Button>
         </>
         <>
-          {/* <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />{" "} */}
+          <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />
           {/* Differential Diagnosis */}
           <Button onClick={() => setActiveStep(2)}>Next</Button>
         </>
         <>
-          {/* <DiagnosisForm conceptType={concepts.FINAL_DIAGNOSIS} />{" "} */}
+          <DiagnosisForm conceptType={concepts.FINAL_DIAGNOSIS} />
           {/* Final Diagnosis */}
           <Button onClick={() => setActiveStep(3)}>Next</Button>
         </>
-        <MedicationsForm onSkip={() => {}} onSubmit={() => {}} />
+        <MedicationsForm onSkip={() => { }} onSubmit={() => { }} />
       </NewStepperContainer>
     </>
   );
