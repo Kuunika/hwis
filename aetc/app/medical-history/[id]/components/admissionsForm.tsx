@@ -103,7 +103,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     reloadDiagnoses();
     if (diagnoses) {
       const formatDiagnosisOptions = (diagnoses: any) => {
-        return diagnoses.map((diagnosis: { uuid: { toString: () => any; }; names: { name: any; }[]; }) => ({
+        return diagnoses.map((diagnosis: { uuid: { uuid: string}; names: { name: any; }[]; }) => ({
           id: diagnosis.uuid.toString(),
           label: diagnosis.names[0].name,
         }));
