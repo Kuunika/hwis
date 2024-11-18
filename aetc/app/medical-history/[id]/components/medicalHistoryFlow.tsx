@@ -378,7 +378,6 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleSurgeriesSubmission(values: any): void {
-    console.log(values)
     mutate({
       encounterType: 'ba063e50-8d80-11d8-abbb-0024217bb78e',//encounters.SURGICAL_HISTORY,
       visit: activeVisit?.uuid,
@@ -403,7 +402,7 @@ function submitChildAllergies(data: any, myobs: any) {
       person: params.id,
       concept: surgery.procedure,
       obsDatetime: dateTime,
-      value: true,
+      value: surgery.other,
       group_members: [
         { concept: concepts.DATE_OF_SURGERY, value: surgery.date },
         { concept: surgery.indication, value: true },

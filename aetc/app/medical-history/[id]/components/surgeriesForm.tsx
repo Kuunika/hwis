@@ -24,6 +24,7 @@ import { concepts } from "@/constants";
 
   type Surgery = {
     procedure: string;
+    other: string;
     indication: string;
     date: string;
     complication: string;
@@ -31,6 +32,7 @@ import { concepts } from "@/constants";
   
   const surgeryTemplate: Surgery = {
     procedure: "",
+    other:'',
     date:"",
     complication:"",
     indication:""
@@ -43,6 +45,10 @@ import { concepts } from "@/constants";
   const surgeryFormConfig = {
     surgical_procedure_name: (index: number) => ({
         name:`surgeries[${index}].procedure`,
+        label:'Procedure'
+      }),
+      surgical_procedure_other: (index: number) => ({
+        name:`surgeries[${index}].other`,
         label:'Procedure'
       }),
       surgical_procedure_date: (index: number) => ({
@@ -83,10 +89,12 @@ import { concepts } from "@/constants";
     {id: concepts.EXTERNAL_FIXATION, label: 'External fixation'},
     {id: concepts.THYROIDECTOMY, label: 'Thyroidectomy'},
     {id: concepts.SKIN_GRAFT, label: 'Skin graft'},
+    {id: concepts.OTHER_SURGICAL_PROCEDURE, label: 'Other procedure specify'}
   ];
   
   export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
+    const [showOther, setShowOther] = useState<{ [key: number]: boolean }>({});
   
     const handleSubmit = () => {
       onSubmit(formValues);
@@ -95,7 +103,7 @@ import { concepts } from "@/constants";
     return (
       <FormikInit
         validationSchema={schema}
-        initialValues={initialValues} // Directly pass initialValues, not { initialValues }
+        initialValues={initialValues} 
         onSubmit={onSubmit}
         enableReinitialize={true}
         submitButton={false}
@@ -116,10 +124,23 @@ import { concepts } from "@/constants";
                         <SearchComboBox
                           name={surgeryFormConfig.surgical_procedure_name(index).name}
                           label={surgeryFormConfig.surgical_procedure_name(index).label}
+                          getValue={(value)=>{
+                            if(value === concepts.OTHER_SURGICAL_PROCEDURE){
+                              setShowOther((prev) => ({
+                            ...prev,
+                            [index]: true,
+                          }));
+                          }}}
                           options={surgicalProcedures}
                           multiple={false}
                           sx={{ width: '100%' }}
                         />
+                        {showOther[index] &&(<TextInputField
+                        id={surgeryFormConfig.surgical_procedure_other(index).name}
+                        name={surgeryFormConfig.surgical_procedure_other(index).name}
+                        label={surgeryFormConfig.surgical_procedure_name(index).label}
+                        />)}
+                        
                         <SearchComboBox
                           name={surgeryFormConfig.surgical_procedure_indication(index).name}
                           label={surgeryFormConfig.surgical_procedure_indication(index).label}

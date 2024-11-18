@@ -878,6 +878,7 @@ ORIF: 'ORIF (Open reduction and internal fixation)',
 EXTERNAL_FIXATION: 'External fixation',
 THYROIDECTOMY: 'Thyroidectomy',
 SKIN_GRAFT: 'Skin graft',
+OTHER_SURGICAL_PROCEDURE: 'other_surgical_procedure',
 
 //surgery form concepts
 DATE_OF_SURGERY: 'b9b580e6-8d80-11d8-abbb-0024217bb78e',
