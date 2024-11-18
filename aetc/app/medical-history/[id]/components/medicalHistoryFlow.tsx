@@ -429,7 +429,6 @@ function submitChildAllergies(data: any, myobs: any) {
       value: true
     }));
 
- 
 
     const myObs = [
       { concept: concepts.AGE_AT_MENARCHE, value: obstetricsObs.age_at_menarche},
@@ -451,8 +450,62 @@ function submitChildAllergies(data: any, myobs: any) {
       return;
     };
   
+    mutate({
+      encounterType: encounters.OBSTETRIC_HISTORY,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: myObs,
+    }, {
+      onSuccess: (data) => {
+        console.log("Obstetric encounter submitted successfully:", data);
+        submitPregnancyOutcomeObs(data, obstetricsObs.previous_pregnancy_outcomes, obstetricsObs.number_of_births);
+      },
+      onError: (error) => {
+        console.error("Error submitting obstetric encounter:", error);
+      },
+    });
 
     
+  }
+
+  function submitPregnancyOutcomeObs(data: any, outcomes: any, births: any ): void {
+    console.log(outcomes, births);
+
+    const observationsPayload = outcomes.map((outcome: any, index: any) => {
+      if(outcome == concepts.LIVE_BIRTH){
+      return  {
+        encounter: data.uuid,
+        person: params.id,
+        concept: concepts.PREGENANCY_OUTCOME,
+        obsDatetime: dateTime,
+        value: true,
+        group_members: [
+          { concept: outcome, value: true },
+          { concept: concepts.NUMBER_OF_BIRTHS, value: births[index] },
+        ] as OutputObservation[],
+      }
+     }
+
+      return  {
+        encounter: data.uuid,
+        person: params.id,
+        concept: concepts.PREGENANCY_OUTCOME,
+        obsDatetime: dateTime,
+        value: true,
+        group_members: [
+          { concept: outcome, value: true },
+        ] as OutputObservation[],
+      }
+
+    });
+  
+    observationsPayload.forEach((observation: any) => {
+      createObsChildren(observation)
+    });
+  
+    if(obsChildrenCreated)
+    setActiveStep(5);
   }
 
   function handleAdmissionsSubmission(values: any): void {

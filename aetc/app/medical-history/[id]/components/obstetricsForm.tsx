@@ -93,10 +93,10 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
       ];
 
       const pregnancyOutcomeOptions = [
-        { id: 'first_trimester_miscarriage', label: 'First trimester miscarriage' },
-        { id: 'second_trimester_miscarriage', label: 'Second trimester miscarriage' },
-        { id: 'stillbirth', label: 'Stillbirth' },
-        { id: 'live_birth', label: 'Live birth' },
+        { id: concepts.FIRST_TRIMESTER_MISCARRIAGE, label: 'First trimester miscarriage' },
+        { id: concepts.SECOND_TRIMESTER_MISCARRIAGE, label: 'Second trimester miscarriage' },
+        { id: concepts.STILL_BIRTH, label: 'Stillbirth' },
+        { id: concepts.LIVE_BIRTH, label: 'Live birth' },
       ];
   
 
