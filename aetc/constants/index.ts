@@ -148,7 +148,8 @@ export const encounters = {
  PRESCRIPTIONS: '88564b30-abaf-4744-8ea6-6e1c15465d9e',
  ALLERGIES: '0ff4b560-ee72-4186-a759-2fe3fd93df74',
  DIAGNOSIS: 'ba05fbfc-8d80-11d8-abbb-0024217bb78e',
- SURGICAL_HISTORY: 'SURGICAL_HISTORY' //Encounter exists for for ante-natal clinic but not for adults
+ SURGICAL_HISTORY: 'SURGICAL_HISTORY', //Encounter exists for for ante-natal clinic but not for adults
+ HOSPITAL_ADMISSIONS: 'HOSPITAL_ADMISSION'
 };
 
 
@@ -891,6 +892,7 @@ COMPLICATIONS: 'b9caa728-8d80-11d8-abbb-0024217bb78e',
 DATE_OF_LAST_MENSTRUAL: 'b9a04668-8d80-11d8-abbb-0024217bb78e',
 GESTATION_WEEKS: 'b9d29cd0-8d80-11d8-abbb-0024217bb78e',
 PREVIOUS_PREGNANCIES: 'b9c41408-8d80-11d8-abbb-0024217bb78e',
+AGE_AT_MENARCHE: 'AGE_AT_MENARCHE',
 
 //contraceptives
 JADELLE: 'Jadelle',

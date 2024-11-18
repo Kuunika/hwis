@@ -139,7 +139,7 @@ return (
     <FormDatePicker
       name={obstetricsFormConfig.last_menstral.name}
       label={obstetricsFormConfig.last_menstral.label}
-      sx={{ background: 'white', margin: '2ch'}}
+      sx={{ background: 'white', marginRight:'2ch', marginLeft:'2ch', width:'150px'}}
     />
     <TextInputField
               id={obstetricsFormConfig.gestational_age.name}
@@ -180,7 +180,7 @@ return (
           </React.Fragment>
         ))}
     </FormFieldContainer>
-        <SearchComboBox options={contraceptiveOptions} getValue={(value) => console.log(value)}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
+        <SearchComboBox options={contraceptiveOptions}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
 
     <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
