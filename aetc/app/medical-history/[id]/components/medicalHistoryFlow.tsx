@@ -378,7 +378,44 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleSurgeriesSubmission(values: any): void {
-    throw new Error("Function not implemented.");
+    console.log(values)
+    mutate({
+      encounterType: 'ba063e50-8d80-11d8-abbb-0024217bb78e',//encounters.SURGICAL_HISTORY,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: [],
+    }, {
+      onSuccess: (data) => {
+        console.log("Surgical encounter submitted successfully:", data);
+        submitSurgicalObservations(data, values);
+      },
+      onError: (error) => {
+        console.error("Error submitting surgical encounter:", error);
+      },
+    });
+  }
+
+  function submitSurgicalObservations(data: Encounter, values: any) {
+    const observationsPayload = values.surgeries.map((surgery: any) => {
+    return  {
+      encounter: data.uuid,
+      person: params.id,
+      concept: surgery.procedure,
+      obsDatetime: dateTime,
+      value: true,
+      group_members: [
+        { concept: concepts.DATE_OF_SURGERY, value: surgery.date },
+        { concept: surgery.indication, value: true },
+        { concept: concepts.COMPLICATIONS, value: surgery.complication },
+      ] as OutputObservation[],
+    }
+  });
+
+  observationsPayload.forEach((observation: any) => {
+    createObsChildren(observation)
+  });
+
   }
 
   function handleObstetricsSubmission(values: any): void {

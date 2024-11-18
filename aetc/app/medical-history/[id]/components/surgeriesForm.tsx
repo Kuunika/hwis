@@ -89,9 +89,7 @@ import { concepts } from "@/constants";
     const [formValues, setFormValues] = useState<any>({});
   
     const handleSubmit = () => {
-      console.log(formValues);
-      return;
-      //onSubmit(formValues);
+      onSubmit(formValues);
     };
   
     return (

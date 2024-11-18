@@ -148,6 +148,7 @@ export const encounters = {
  PRESCRIPTIONS: '88564b30-abaf-4744-8ea6-6e1c15465d9e',
  ALLERGIES: '0ff4b560-ee72-4186-a759-2fe3fd93df74',
  DIAGNOSIS: 'ba05fbfc-8d80-11d8-abbb-0024217bb78e',
+ SURGICAL_HISTORY: 'SURGICAL_HISTORY' //Encounter exists for for ante-natal clinic but not for adults
 };
 
 
@@ -877,6 +878,12 @@ ORIF: 'ORIF (Open reduction and internal fixation)',
 EXTERNAL_FIXATION: 'External fixation',
 THYROIDECTOMY: 'Thyroidectomy',
 SKIN_GRAFT: 'Skin graft',
+
+//surgery form concepts
+DATE_OF_SURGERY: 'b9b580e6-8d80-11d8-abbb-0024217bb78e',
+COMPLICATIONS: 'b9caa728-8d80-11d8-abbb-0024217bb78e',
+
+
 
 //obs and gynae
 
