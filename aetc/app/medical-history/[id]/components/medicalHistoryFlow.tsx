@@ -23,7 +23,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { addObsChildren } from "@/hooks/obs";
 import { useMutation } from "@tanstack/react-query";
 import { isErrored } from "stream";
-import { Encounter } from "@/interfaces";
+import { Encounter, Obs } from "@/interfaces";
 import { boolean } from "yup";
 
 type Complaint = {
@@ -568,7 +568,52 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleAdmissionsSubmission(values: any): void {
-    console.log(values)
+    const admissions = values.admissions;
+  
+    // Ensure admissions is defined and iterable
+    if (!Array.isArray(admissions)) {
+      console.error("Admissions data is invalid or not an array:", admissions);
+      return;
+    }
+  
+    const encounterPayload = admissions.map((admission: any) => ({
+      encounterType: encounters.PATIENT_ADMISSIONS, // Ensure `encounters.PATIENT_ADMISSIONS` exists
+      visit: activeVisit?.uuid, // Ensure `activeVisit` and `uuid` are valid
+      patient: params.id, // Ensure `params.id` is defined
+      encounterDatetime: dateTime, // Ensure `dateTime` is valid
+      obs: [
+        {
+          concept: concepts.ADMISSION_DATE, // Ensure `concepts.ADMISSION_DATE` exists
+          value: admission.date, // Check if `admission.date` is valid
+          obsDatetime: dateTime,
+          group_members: [
+            { concept: admission.hospital, value: true }, // Update concept mapping
+            { concept: concepts.ADMISSION_SECTION, value: admission.ward },
+            { concept: concepts.SURGICAL_INTERVENTIONS, value: admission.interventions },
+            { concept: concepts.DISCHARGE_INSTRUCTIONS, value: admission.discharge_instructions },
+            { concept: concepts.FOLLOW_UP, value: admission.follow_up_plans },
+          ]as OutputObservation[],
+        },
+      ]
+    }));
+  
+    // Debugging: Log the generated payload
+    console.log("Encounter Payload:", encounterPayload);
+  
+    // Submit each encounter payload
+    encounterPayload.forEach((encounter) => {
+      mutate(
+        encounter ,
+        {
+          onSuccess: (data) => {
+            console.log("Admission encounter submitted successfully:", data);
+          },
+          onError: (error) => {
+            console.error("Error submitting admission encounter:", error);
+          },
+        }
+      );
+    });
   }
 
   function handleReviewSubmission(values: any): void {
