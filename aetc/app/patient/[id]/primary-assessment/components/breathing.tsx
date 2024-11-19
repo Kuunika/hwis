@@ -105,10 +105,19 @@ const schema = Yup.object().shape({
   [form.deviceForIntervention.name]: Yup.string().label(
     form.deviceForIntervention.label
   ),
-  [form.respiratoryRate.name]: Yup.number().label(form.respiratoryRate.label),
-  [form.oxygenSaturation.name]: Yup.number().label(form.oxygenSaturation.label),
+  [form.respiratoryRate.name]: Yup.number()
+    .label(form.respiratoryRate.label)
+    .min(1)
+    .max(70),
+  [form.oxygenSaturation.name]: Yup.number()
+    .label(form.oxygenSaturation.label)
+    .min(10)
+    .max(100),
   [form.oxygenNeeded.name]: Yup.string().label(form.oxygenNeeded.label),
-  [form.oxygenGiven.name]: Yup.string().label(form.oxygenGiven.label),
+  [form.oxygenGiven.name]: Yup.number()
+    .min(1)
+    .max(15)
+    .label(form.oxygenGiven.label),
   [form.oxygenSource.name]: Yup.string().label(form.oxygenSource.label),
   [form.deviceUsed.name]: Yup.string().label(form.deviceUsed.label),
   [form.isTracheaCentral.name]: Yup.string().label(form.isTracheaCentral.label),
