@@ -577,17 +577,17 @@ function submitChildAllergies(data: any, myobs: any) {
     }
   
     const encounterPayload = admissions.map((admission: any) => ({
-      encounterType: encounters.PATIENT_ADMISSIONS, // Ensure `encounters.PATIENT_ADMISSIONS` exists
-      visit: activeVisit?.uuid, // Ensure `activeVisit` and `uuid` are valid
-      patient: params.id, // Ensure `params.id` is defined
-      encounterDatetime: dateTime, // Ensure `dateTime` is valid
+      encounterType: encounters.PATIENT_ADMISSIONS, 
+      visit: activeVisit?.uuid, 
+      patient: params.id, 
+      encounterDatetime: dateTime,
       obs: [
         {
-          concept: concepts.ADMISSION_DATE, // Ensure `concepts.ADMISSION_DATE` exists
-          value: admission.date, // Check if `admission.date` is valid
+          concept: concepts.ADMISSION_DATE, 
+          value: admission.date,
           obsDatetime: dateTime,
           group_members: [
-            { concept: admission.hospital, value: true }, // Update concept mapping
+            { concept: admission.hospital, value: true }, 
             { concept: concepts.ADMISSION_SECTION, value: admission.ward },
             { concept: concepts.SURGICAL_INTERVENTIONS, value: admission.interventions },
             { concept: concepts.DISCHARGE_INSTRUCTIONS, value: admission.discharge_instructions },
@@ -597,10 +597,6 @@ function submitChildAllergies(data: any, myobs: any) {
       ]
     }));
   
-    // Debugging: Log the generated payload
-    console.log("Encounter Payload:", encounterPayload);
-  
-    // Submit each encounter payload
     encounterPayload.forEach((encounter) => {
       mutate(
         encounter ,
