@@ -564,7 +564,7 @@ function submitChildAllergies(data: any, myobs: any) {
     });
   
     if(obsChildrenCreated)
-    setActiveStep(5);
+    setActiveStep(6);
   }
 
   function handleAdmissionsSubmission(values: any): void {
@@ -596,13 +596,15 @@ function submitChildAllergies(data: any, myobs: any) {
         },
       ]
     }));
-  
-    encounterPayload.forEach((encounter) => {
+
+    encounterPayload.forEach((encounter, index) => {
       mutate(
-        encounter ,
+        encounter,
         {
           onSuccess: (data) => {
-            console.log("Admission encounter submitted successfully:", data);
+            console.log("Admission encounter submitted successfully:", data, index, encounterPayload.length-1);
+            if(index == (encounterPayload.length-1))
+              setActiveStep(7)
           },
           onError: (error) => {
             console.error("Error submitting admission encounter:", error);
@@ -610,6 +612,8 @@ function submitChildAllergies(data: any, myobs: any) {
         }
       );
     });
+
+
   }
 
   function handleReviewSubmission(values: any): void {
