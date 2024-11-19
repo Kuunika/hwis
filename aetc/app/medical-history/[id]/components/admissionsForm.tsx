@@ -94,17 +94,15 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
 
   
   const handleSubmit = () => {
-    console.log(formValues);
-    return;
-    //onSubmit(formValues);
+    onSubmit(formValues);
   };
 
   useEffect(() => {
     reloadDiagnoses();
     if (diagnoses) {
       const formatDiagnosisOptions = (diagnoses: any) => {
-        return diagnoses.map((diagnosis: { uuid: { uuid: string}; names: { name: any; }[]; }) => ({
-          id: diagnosis.uuid.toString(),
+        return diagnoses.map((diagnosis: { uuid: string; names: { name: any; }[]; }) => ({
+          id: diagnosis.uuid,
           label: diagnosis.names[0].name,
         }));
       };
@@ -136,7 +134,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                       <FormDatePicker
                         name={admissionsFormConfig.admission_date(index).name}
                         label={admissionsFormConfig.admission_date(index).label}
-                        sx={{ background: "white", width: "150px" }}
+                        sx={{ background: "white", width: "220px" }}
                       />
                       <SearchComboBox
                         name={admissionsFormConfig.hospitals(index).name}

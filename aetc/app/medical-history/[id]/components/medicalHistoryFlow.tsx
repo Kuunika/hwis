@@ -286,18 +286,53 @@ function submitChildAllergies(data: any, myobs: any) {
       medication_date_last_taken: string;
       medication_date_of_last_prescription: string;
     } = {
-      name: '',
-      formulation: 'concept_uuid_for_formulation',
-      medication_dose: 'concept_uuid_for_dose',
-      medication_dose_unit: 'concept_uuid_for_dose_unit',
-      medication_frequency: 'concept_uuid_for_frequency',
-      medication_route: 'concept_uuid_for_route',
-      medication_duration: 'concept_uuid_for_duration',
-      medication_duration_unit: 'concept_uuid_for_duration_unit',
-      medication_date_last_taken: 'concept_uuid_for_date_last_taken',
-      medication_date_of_last_prescription: 'concept_uuid_for_date_of_last_prescription'
+      name: '', //not used
+      formulation: 'concept_uuid_for_formulation',//not used
+      medication_dose: concepts.MEDICATION_DOSE,
+      medication_dose_unit: 'concept_uuid_for_dose_unit', //not used
+      medication_frequency: 'concept_uuid_for_frequency',//not used
+      medication_route: 'concept_uuid_for_route',//not used
+      medication_duration: concepts.MEDICATION_DURATION,
+      medication_duration_unit: 'concept_uuid_for_duration_unit', //not used
+      medication_date_last_taken: concepts.MEDICATION_LAST_TAKEN,
+      medication_date_of_last_prescription: concepts.MEDICATION_LAST_PRESCRIBED,
     };
     
+
+    const doseUnits: Record<string, string>  ={
+      "Milligrams (mg)": concepts.DOSE_IN_MILLIGRAMS,
+      "Micrograms (µg)": concepts.DOSE_IN_MICROGRAMS,
+     "Grams (g)": concepts.DOSE_IN_GRAMS,
+     "International Units (IU)": concepts.DOSE_IN_IU,
+     "Milliliters (ml)": concepts.DOSE_IN_MILLIMETERS,
+     "Millimoles (mmol)": concepts.DOSE_IN_MILLIMOLES,	
+    }
+
+    const formulation_uuid: Record<string, string>  ={
+      "Tablet": concepts.TABLET,
+      "Vial": concepts.VIAL,
+      "Intravenous":concepts.INTRAVENOUS,
+      "Powder": concepts.POWDER,
+      "Solution":concepts.SOLUTION,
+      "Eye Ointment": concepts.EYE_OINTMENT,
+      "Cream": concepts.CREAM,
+      "Eye Drops": concepts.EYE_DROPS,
+      "Ointment": concepts.OINTMENT,
+      "Inhaler": concepts.INHALER,
+      "Suppository": concepts.SUPPOSITORY,
+      "Pessary": concepts.PESSARY,
+      "Suspension": concepts.SUSPENSION,
+      "Shampoo": concepts.SHAMPOO,
+      "Ear Drops": concepts.EAR_DROPS,
+      "Eye Paste": concepts.EYE_PASTE,
+    }
+
+    const durationUnits: Record<string, string>  ={
+      [durationOptions[0].toString()]: concepts.DURATION_ON_MEDICATION_DAYS,
+      [durationOptions[1].toString()]: concepts.DURATION_ON_MEDICATION_WEEKS,
+      [durationOptions[2].toString()]: concepts.DURATION_ON_MEDICATION_MONTHS,
+      [durationOptions[3].toString()]: concepts.DURATION_ON_MEDICATION_YEARS,
+    }
 
     const observationsPayload = value.map((medication: any) => {
       const observation = {
@@ -310,7 +345,7 @@ function submitChildAllergies(data: any, myobs: any) {
       };
     
       (Object.keys(medication) as Array<keyof typeof conceptMap>).forEach((key) => {
-        if (key !== 'name' && conceptMap[key] && key !=='medication_frequency') {
+        if (key !== 'name' && conceptMap[key] && key !=='medication_frequency' && key !== 'medication_dose_unit' && key !== 'medication_duration_unit' && key !== 'formulation' ) {
           observation.group_members.push({
             concept: conceptMap[key],   
             value: medication[key]     
@@ -323,6 +358,32 @@ function submitChildAllergies(data: any, myobs: any) {
             value: true     
           } as OutputObservation);
         }
+
+        if(key == 'medication_dose_unit'){
+          const unitconcept = doseUnits[medication[key]];
+          observation.group_members.push({
+            concept: unitconcept,   
+            value: true     
+          } as OutputObservation);
+        }
+
+        
+        if(key == 'medication_duration_unit'){
+          const unitconcept = durationUnits[medication[key]];
+          observation.group_members.push({
+            concept: unitconcept,   
+            value: true     
+          } as OutputObservation);
+        }
+
+        if(key == 'formulation'){
+          const formulationConcept = formulation_uuid[medication[key]];
+          observation.group_members.push({
+            concept: formulationConcept,   
+            value: true     
+          } as OutputObservation);
+        }
+        
       });
     
       return observation;
@@ -437,7 +498,7 @@ function submitChildAllergies(data: any, myobs: any) {
       { concept: concepts.PREVIOUS_PREGNANCIES, value: obstetricsObs.number_of_previous_pregnancies },
     ]
 
-    myObs.push(...contraceptives);
+   myObs.push(...contraceptives);
 
     if(obstetricsObs.number_of_previous_pregnancies == 0){
     mutate({  encounterType: encounters.OBSTETRIC_HISTORY,
@@ -470,8 +531,6 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function submitPregnancyOutcomeObs(data: any, outcomes: any, births: any ): void {
-    console.log(outcomes, births);
-
     const observationsPayload = outcomes.map((outcome: any, index: any) => {
       if(outcome == concepts.LIVE_BIRTH){
       return  {
@@ -509,7 +568,7 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleAdmissionsSubmission(values: any): void {
-    throw new Error("Function not implemented.");
+    console.log(values)
   }
 
   function handleReviewSubmission(values: any): void {

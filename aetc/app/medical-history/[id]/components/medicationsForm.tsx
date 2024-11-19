@@ -21,7 +21,6 @@ type Medication = {
   medication_dose: number;
   medication_dose_unit: string;
   medication_frequency: string;
-  medication_route: string;
   medication_duration: number;
   medication_duration_unit: string;
   medication_date_last_taken: string;
@@ -34,7 +33,6 @@ const medicationTemplate: Medication = {
   medication_dose: 0,
   medication_dose_unit: "",
   medication_frequency: "",
-  medication_route: "",
   medication_duration: 0,
   medication_duration_unit: "",
   medication_date_last_taken: "",
@@ -94,7 +92,6 @@ const schema = yup.object().shape({
       medication_dose: yup.number().required("Dose is required").positive("Dose must be greater than 0"),
       medication_dose_unit: yup.string().required("Dose unit is required"),
       medication_frequency: yup.string().required("Frequency is required"),
-      medication_route: yup.string().required("Route is required"),
       medication_duration: yup.number().required("Duration is required").positive("Duration must be greater than 0"),
       medication_duration_unit: yup.string().required("Duration unit is required"),
       medication_date_last_taken: yup.date().nullable().required("Date of last taken is required"),
