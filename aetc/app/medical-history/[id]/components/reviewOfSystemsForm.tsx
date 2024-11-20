@@ -90,19 +90,19 @@ const nervousSystemOptions = [
 ];
 
 const genitourinaryOptions = [
-  { id: 'FrequentUrination', label: 'Frequent urination' },
-  { id: 'PainfulUrination', label: 'Painful urination' },
-  { id: 'BloodyUrine', label: 'Bloody urine' },
-  { id: 'AbnormalVaginalDischarge', label: 'Abnormal vaginal discharge' },
-  { id: 'VaginalBleeding', label: 'Vaginal bleeding' },
-  { id: 'ScrotalSwelling', label: 'Scrotal swelling' },
-  { id: 'GenitalUlcer', label: 'Genital ulcer' },
-  { id: 'UrinaryRetention', label: 'Urinary retention' },
-  { id: 'UrineIncontinence', label: 'Urine incontinence' },
-  { id: 'ErectileDysfunction', label: 'Erectile dysfunction' },
-  { id: 'Infertility', label: 'Infertility' },
-  { id: 'Prolapse', label: 'Prolapse' },
-  { id: 'Other', label: 'Other' }
+  { id: concepts.FREQUENT_URINATION, label: 'Frequent urination' },
+  { id: concepts.PAINFUL_URINATION, label: 'Painful urination' },
+  { id: concepts.BLOODY_URINE, label: 'Bloody urine' },
+  { id: concepts.ABNORMAL_VAGINAL_DISCHARGE, label: 'Abnormal vaginal discharge' },
+  { id: concepts.VAGINAL_BLEEDING, label: 'Vaginal bleeding' },
+  { id: concepts.SCROTAL_SWELLING, label: 'Scrotal swelling' },
+  { id: concepts.GENITAL_ULCER, label: 'Genital ulcer' },
+  { id: concepts.URINARY_RETENTION, label: 'Urinary retention' },
+  { id: concepts.URINARY_INCONTINENCE, label: 'Urine incontinence' },
+  { id: concepts.ERECTILE_DYSFUNCTION, label: 'Erectile dysfunction' },
+  { id: concepts.INFERTILITY, label: 'Infertility' },
+  { id: concepts.PROLAPSE, label: 'Prolapse' },
+  { id: concepts.OTHER_GENITOURINARY_CONDITION, label: 'Other' }
 ];
 
 export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
@@ -327,7 +327,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         />
 </FormFieldContainer>
 <FormFieldContainer direction="row">
-{!genitourinaryOther ?(
+
 <SearchComboBox
         name="genitourinaryHistory"
         label="Genitourinary history"
@@ -338,14 +338,14 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
             setGenitourinaryOther(true);
   
           }
-        }}
-        />):
-        (
+        }}/>
+        
+        {genitourinaryOther &&(
           <TextInputField
-          id="Genitourinary_history"
-          name="Genitourinary history"
-          label="Specify Genitourinary history"
-
+          id="Other_Genitourinary_condition"
+          name="Other_Genitourinary_condition"
+          label="Specify condition"
+           sx={{marginLeft:'2ch'}}
           />
         )}
       </FormFieldContainer>

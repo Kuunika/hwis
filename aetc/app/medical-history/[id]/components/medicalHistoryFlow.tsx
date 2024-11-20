@@ -706,7 +706,41 @@ function submitChildAllergies(data: any, myobs: any) {
     }
 
     if(genitoHistory){
-      console.log(genitoHistory)
+      const otherConditons = values['Other_Genitourinary_condition']
+      const genitoObs =  genitoHistory.map((obs: any) => {
+        return{
+          concept: obs.id,
+          value: true
+        }
+      });
+      
+      if(otherConditons)
+      {
+        genitoObs.push({
+          concept: concepts.OTHER_GENITOURINARY_CONDITION,
+          value: otherConditons
+        })
+      };
+
+      
+      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs:  [{
+          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: genitoObs,
+        },]}, {
+        onSuccess: (data) => {
+            console.log("Encounter submitted successfully:", data);
+            
+          },
+          onError: (error) => {
+            console.error("Error submitting encounter:", error);
+          },
+        });
     }
 
 
