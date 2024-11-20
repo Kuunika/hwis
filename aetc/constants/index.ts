@@ -144,6 +144,9 @@ export const encounters = {
   CHEST_ASSESSMENT: "CHEST_ASSESSMENT",
   ABDOMEN_AND_PELVIS_ASSESSMENT: "ABDOMEN_AND_PELVIS_ASSESSMENT",
   EXTREMITIES_ASSESSMENT: "EXTREMITIES_ASSESSMENT",
+
+  //TODO: replace this UUID with a bedside test 
+  BED_SIDE_TEST:"27e4890f-1677-4098-aa85-c65cfe32359c"
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -608,6 +611,8 @@ export const concepts = {
   LEUKOCYTES: "5ef14459-043a-4376-a50a-e4d3675d2aa1",
   POINT_OF_CARE_ULTRASOUND: "5be23f0b-9baf-4f32-9e91-263a97d570ac",
   ECG: "b8ff9d62-8d80-11d8-abbb-0024217bb78e",
+
+
 };
 
 export const triageResult = {

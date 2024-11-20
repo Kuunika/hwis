@@ -7,8 +7,11 @@ import {
   SearchComboBox,
   TextInputField,
 } from "@/components";
-import { concepts } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
+import { getActivePatientDetails } from "@/hooks";
+import { addEncounter } from "@/hooks/encounter";
 import { Typography } from "@mui/material";
 import * as yup from "yup";
 
@@ -37,7 +40,7 @@ const formConfig = {
     name: concepts.LACTATE,
     label: "Lactate",
   },
-  GLUCOSE: {
+  glucose: {
     name: concepts.GLUCOSE,
     label: "Glucose",
   },
@@ -149,17 +152,20 @@ const validationSchema = yup.object({
     .number()
     .min(7.35)
     .max(7.45)
-    .required(formConfig.PH.label),
+    .required()
+    .label(formConfig.PH.label),
   [formConfig.PCO2.name]: yup
     .number()
     .min(35)
     .max(45)
-    .required(formConfig.PCO2.label),
+    .required()
+    .label(formConfig.PCO2.label),
   [formConfig.PO2.name]: yup
     .number()
     .min(75)
     .max(100)
-    .required(formConfig.PO2.label),
+    .required()
+    .label(formConfig.PO2.label),
   [formConfig.BASE_EXCESS.name]: yup
     .number()
     .min(-4)
@@ -170,11 +176,11 @@ const validationSchema = yup.object({
     .min(0)
     .max(2)
     .label(formConfig.LACTATE.label),
-  [formConfig.GLUCOSE.name]: yup
+  [formConfig.glucose.name]: yup
     .number()
     .min(3)
     .max(7)
-    .label(formConfig.GLUCOSE.label),
+    .label(formConfig.glucose.label),
   [formConfig.HCO3.name]: yup
     .number()
     .min(3)
@@ -225,9 +231,9 @@ const validationSchema = yup.object({
     .string()
     .label(formConfig.bilirubin.label)
     .required(),
-  [formConfig.GLUCOSE.name]: yup
+  [formConfig.glucose.name]: yup
     .string()
-    .label(formConfig.GLUCOSE.label)
+    .label(formConfig.glucose.label)
     .required(),
   [formConfig.specificGravity.name]: yup
     .string()
@@ -266,11 +272,263 @@ const testStatusOptions = [
   { value: concepts.INDETERMINATE, label: "Indeterminate" },
 ];
 const formValues = getInitialValues(formConfig);
+
 export const BedsideTestForm = () => {
+  const { activeVisit, patientId } = getActivePatientDetails();
+
+  const { mutate } = addEncounter();
+  const handleSubmit = (values: any) => {
+    const dateTime = getDateTime();
+
+    const obs = [
+      {
+        concept: concepts.DESCRIPTION,
+        obsDatetime: dateTime,
+        value: "Arterial Gas",
+        group_members: [
+          {
+            concept: formConfig.PH.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.PH.name],
+          },
+          {
+            concept: formConfig.PCO2.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.PCO2.name],
+          },
+          {
+            concept: formConfig.PO2.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.PO2.name],
+          },
+          {
+            concept: formConfig.BASE_EXCESS.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.BASE_EXCESS.name],
+          },
+        ],
+      },
+      {
+        concept: concepts.DESCRIPTION,
+        obsDatetime: dateTime,
+        value: "Metabolic Values",
+        group_members: [
+          {
+            concept: formConfig.LACTATE.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.LACTATE.name],
+          },
+          {
+            concept: formConfig.glucose.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.glucose.name],
+          },
+        ],
+      },
+      {
+        concept: concepts.DESCRIPTION,
+        obsDatetime: dateTime,
+        value: "Acid base status",
+        group_members: [
+          {
+            concept: formConfig.HCO3.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.HCO3.name],
+          },
+          {
+            concept: formConfig.ANION_GAPC.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.ANION_GAPC.name],
+          },
+          {
+            concept: formConfig.MOSMC.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.MOSMC.name],
+          },
+        ],
+      },
+      {
+        concept: concepts.DESCRIPTION,
+        obsDatetime: dateTime,
+        value: "Oximetry values",
+        group_members: [
+          {
+            concept: formConfig.SO2E.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.SO2E.name],
+          },
+          {
+            concept: formConfig.FO2HBE.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.FO2HBE.name],
+          },
+          {
+            concept: formConfig.FO2HBE.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.FO2HBE.name],
+          },
+        ],
+      },
+      {
+        concept: concepts.DESCRIPTION,
+        obsDatetime: dateTime,
+        value: "Electolyte values",
+        group_members: [
+          {
+            concept: formConfig.CK.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.CK.name],
+          },
+          {
+            concept: formConfig.CNA.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.CNA.name],
+          },
+          {
+            concept: formConfig.CA2.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.CA2.name],
+          },
+          {
+            concept: formConfig.CCL.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.CCL.name],
+          },
+        ],
+      },
+      {
+        concept: concepts.DESCRIPTION,
+        obsDatetime: dateTime,
+        value: "Temperature Corrected Values",
+        group_members: [
+          {
+            concept: formConfig.PH.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.PH.name],
+          },
+          {
+            concept: formConfig.PCO2.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.PCO2.name],
+          },
+          {
+            concept: formConfig.PO2.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.PO2.name],
+          },
+          {
+            concept: formConfig.P50E.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.P50E.name],
+          },
+        ],
+      },
+      {
+        concept: formConfig.pregnancyTest.name,
+        obsDatetime: dateTime,
+        value: values[formConfig.pregnancyTest.name],
+      },
+      {
+        concept: formConfig.hiv.name,
+        obsDatetime: dateTime,
+        value: values[formConfig.hiv.name],
+      },
+      {
+        concept: formConfig.vdrl.name,
+        obsDatetime: dateTime,
+        value: values[formConfig.vdrl.name],
+      },
+      {
+        concepts: concepts.DESCRIPTION,
+        obsDatetime: dateTime,
+        value: "Dipstick",
+        group_members: [
+          {
+            concept: formConfig.urobilinogen.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.urobilinogen.name],
+          },
+          {
+            concept: formConfig.PH.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.PH.name],
+          },
+          {
+            concept: formConfig.leukocytes.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.leukocytes.name],
+          },
+          {
+            concept: formConfig.glucose.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.glucose.name],
+          },
+          {
+            concept: formConfig.specificGravity.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.specificGravity.name],
+          },
+          {
+            concept: formConfig.specificGravity.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.specificGravity.name],
+          },
+          {
+            concept: formConfig.protein.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.protein.name],
+          },
+          {
+            concept: formConfig.nitrite.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.nitrite.name],
+          },
+          {
+            concept: formConfig.ketones.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.ketones.name],
+          },
+          {
+            concept: formConfig.bilirubin.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.bilirubin.name],
+          },
+          {
+            concept: formConfig.blood.name,
+            obsDatetime: dateTime,
+            value: values[formConfig.blood.name],
+          },
+        ],
+      },
+      {
+        concept: formConfig.pocus.name,
+        obsDatetime: dateTime,
+        value: values[formConfig.pocus.name],
+      },
+      {
+        concept: formConfig.other.name,
+        obsDatetime: dateTime,
+        value: values[formConfig.other.name],
+      },
+      {
+        concept: formConfig.ecg.name,
+        obsDatetime: dateTime,
+        value: values[formConfig.ecg.name],
+      },
+    ];
+    mutate({
+      encounterType: encounters.BED_SIDE_TEST,
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: dateTime,
+      obs,
+    });
+  };
+
   return (
     <FormikInit
       validationSchema={validationSchema}
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
       initialValues={formValues}
     >
       <RadioGroupInput
@@ -324,9 +582,9 @@ export const BedsideTestForm = () => {
         />
         <TextInputField
           sx={{ width: "100%" }}
-          name={formConfig.GLUCOSE.name}
-          label={formConfig.GLUCOSE.label}
-          id={formConfig.GLUCOSE.name}
+          name={formConfig.glucose.name}
+          label={formConfig.glucose.label}
+          id={formConfig.glucose.name}
         />
       </FormFieldContainerMultiple>
 
@@ -484,9 +742,9 @@ export const BedsideTestForm = () => {
         />
         <TextInputField
           sx={{ width: "100%" }}
-          name={formConfig.GLUCOSE.name}
-          label={formConfig.GLUCOSE.label}
-          id={formConfig.GLUCOSE.name}
+          name={formConfig.glucose.name}
+          label={formConfig.glucose.label}
+          id={formConfig.glucose.name}
         />
       </FormFieldContainerMultiple>
       <FormFieldContainerMultiple>
@@ -515,12 +773,20 @@ export const BedsideTestForm = () => {
           id={formConfig.ketones.name}
         />
       </FormFieldContainerMultiple>
-      <TextInputField
-        sx={{ width: "100%" }}
-        name={formConfig.blood.name}
-        label={formConfig.blood.label}
-        id={formConfig.blood.name}
-      />
+      <FormFieldContainerMultiple>
+        <TextInputField
+          sx={{ width: "100%" }}
+          name={formConfig.bilirubin.name}
+          label={formConfig.bilirubin.label}
+          id={formConfig.bilirubin.name}
+        />
+        <TextInputField
+          sx={{ width: "100%" }}
+          name={formConfig.blood.name}
+          label={formConfig.blood.label}
+          id={formConfig.blood.name}
+        />
+      </FormFieldContainerMultiple>
       <br />
       <br />
       <br />
