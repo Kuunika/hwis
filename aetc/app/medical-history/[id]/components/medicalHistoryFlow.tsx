@@ -617,6 +617,9 @@ function submitChildAllergies(data: any, myobs: any) {
 
   function handleReviewSubmission(values: any): void {
     const gastroHistory = values["Gastrointenstinal_history"];
+    const cardiacHistory = values['Cardiac/Respiratory history'];
+    const nervousHistory = values['Nervous system history'];
+    const genitoHistory = values['genitourinaryHistory'];
 
     if(gastroHistory){
      const gastroObs =  gastroHistory.map((obs: any) => {
@@ -644,7 +647,68 @@ function submitChildAllergies(data: any, myobs: any) {
             console.error("Error submitting encounter:", error);
           },
         });
+    };
+
+    if(cardiacHistory){
+      const cardiacObs =  cardiacHistory.map((obs: any) => {
+        return{
+          concept: obs.id,
+          value: true
+        }
+      });
+
+      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs:  [{
+          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: cardiacObs,
+        },]}, {
+        onSuccess: (data) => {
+            console.log("Encounter submitted successfully:", data);
+            
+          },
+          onError: (error) => {
+            console.error("Error submitting encounter:", error);
+          },
+        });
+    };
+
+    if(nervousHistory){
+      const nervousObs =  nervousHistory.map((obs: any) => {
+        return{
+          concept: obs.id,
+          value: true
+        }
+      });
+
+      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs:  [{
+          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: nervousObs,
+        },]}, {
+        onSuccess: (data) => {
+            console.log("Encounter submitted successfully:", data);
+            
+          },
+          onError: (error) => {
+            console.error("Error submitting encounter:", error);
+          },
+        });
     }
+
+    if(genitoHistory){
+      console.log(genitoHistory)
+    }
+
 
   }
 

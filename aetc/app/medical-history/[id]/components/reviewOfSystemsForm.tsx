@@ -69,25 +69,24 @@ const GastrointenstinalOptions = [
 ];
 
 const cardiacRespiratoryOptions = [
-  { id: 'Cough', label: 'Cough' },
-  { id: concepts.PAIN_CHEST, label: 'Chest pain' },
-  { id: 'ShortnessOfBreath', label: 'Shortness of breath' },
-  { id: 'HeartPalpitations', label: 'Heart palpitations' },
-  { id: 'Wheezing', label: 'Wheezing' }
+  { id: concepts.COUGH, label: 'Cough' },
+  { id: concepts.SHORTNESS_OF_BREATH, label: 'Shortness of breath' },
+  { id: concepts.HEART_PALPITATIONS, label: 'Heart palpitations' },
+  { id: concepts.WHEEZES, label: 'Wheezing' }
 ];
 
 const nervousSystemOptions = [
   { id: concepts.HEADACHE, label: 'Headache' },
-  { id: 'Convulsions', label: 'Convulsions' },
-  { id: 'Confusions', label: 'Confusions' },
-  { id: 'Hallucinations', label: 'Hallucinations' },
-  { id: 'AbnormalBehaviour', label: 'Abnormal behaviour' },
-  { id: 'Tremor', label: 'Tremor' },
-  { id: 'AbnormalGait', label: 'Abnormal gait' },
-  { id: 'Numbness', label: 'Numbness' },
-  { id: 'NeckPain', label: 'Neck pain' },
-  { id: 'NeckStiffness', label: 'Neck stiffness' },
-  { id: 'Weakness', label: 'Weakness' }
+  { id: concepts.CONVULSIONS, label: 'Convulsions' },
+  { id: concepts.CONFUSION, label: 'Confusions' },
+  { id: concepts.HALLUCINATIONS, label: 'Hallucinations' },
+  { id: concepts.ABNORMAL_BEHAVIOUR, label: 'Abnormal behaviour' },
+  { id: concepts.TREMOR, label: 'Tremor' },
+  { id: concepts.ABNORMAL_GAIT, label: 'Abnormal gait' },
+  { id: concepts.NUMBNESS, label: 'Numbness' },
+  { id: concepts.NECK_PAINS, label: 'Neck pain' },
+  { id: concepts.NECK_STIFFNESS, label: 'Neck stiffness' },
+  { id: concepts.WEAKNESS, label: 'Weakness' }
 ];
 
 const genitourinaryOptions = [
