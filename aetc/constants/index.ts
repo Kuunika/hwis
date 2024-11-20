@@ -149,7 +149,8 @@ export const encounters = {
  ALLERGIES: '0ff4b560-ee72-4186-a759-2fe3fd93df74',
  DIAGNOSIS: 'ba05fbfc-8d80-11d8-abbb-0024217bb78e',
  SURGICAL_HISTORY: 'SURGICAL_HISTORY', //Encounter exists for for ante-natal clinic but not for adults
- PATIENT_ADMISSIONS: 'ba0651ec-8d80-11d8-abbb-0024217bb78e'
+ PATIENT_ADMISSIONS: 'ba0651ec-8d80-11d8-abbb-0024217bb78e',
+ SUMMARY_ASSESSMENT: 'e5fec87c-9bea-42bb-a276-0469addccf99',
 };
 
 
@@ -936,6 +937,25 @@ ADMISSION_SECTION: 'b9d2a98c-8d80-11d8-abbb-0024217bb78e',
 SURGICAL_INTERVENTIONS: 'b9c5a44e-8d80-11d8-abbb-0024217bb78e',
 DISCHARGE_INSTRUCTIONS: 'DISCHARGE_INSTRUCTIONS',
 FOLLOW_UP: 'b9abdfd2-8d80-11d8-abbb-0024217bb78e',
+
+
+//review of systems
+
+GASTROINTESTINAL: 'b9d3f6b6-8d80-11d8-abbb-0024217bb78e',
+
+YellowingOfEyesOrSkin: 'b9974d9c-8d80-11d8-abbb-0024217bb78e',
+Nausea:'b9b441e0-8d80-11d8-abbb-0024217bb78e',
+Dyspepsia:'b9967b24-8d80-11d8-abbb-0024217bb78e',
+AbdominalPains: 'b996c994-8d80-11d8-abbb-0024217bb78e',
+Vomiting:'b9b44366-8d80-11d8-abbb-0024217bb78e',
+Diarrhoea:'b9960eaa-8d80-11d8-abbb-0024217bb78e',
+DifficultyInSwallowing: 'b9b42b42-8d80-11d8-abbb-0024217bb78e',
+PainfulSwallowing: 'b9c444c8-8d80-11d8-abbb-0024217bb78e',
+AbdominalDistension:'b9db0276-8d80-11d8-abbb-0024217bb78e',
+BloodyStool: 'b9d7e456-8d80-11d8-abbb-0024217bb78e',
+StoolIncontinence:'StoolIncontinence',
+AnalSwelling:'Anal swelling',
+AnalDischarge:'Anal discharge',
 };
 
 

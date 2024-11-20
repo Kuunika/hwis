@@ -53,19 +53,19 @@ const injuryMechanismList = {
 };
 
 const GastrointenstinalOptions = [
-  { id: 'YellowingOfEyesOrSkin', label: 'Yellowing of eyes or skin' },
-  { id: 'Nausea', label: 'Nausea' },
-  { id: 'Dyspepsia', label: 'Dyspepsia' },
-  { id: 'AbdominalPains', label: 'Abdominal pains' },
-  { id: 'Vomiting', label: 'Vomiting' },
-  { id: 'Diarrhoea', label: 'Diarrhoea' },
-  { id: 'DifficultyInSwallowing', label: 'Difficulty in swallowing' },
-  { id: 'PainfulSwallowing', label: 'Painful in swallowing' },
-  { id: 'AbdominalDistension', label: 'Abdominal distension' },
-  { id: 'BloodyStool', label: 'Bloody stool' },
-  { id: 'StoolIncontinence', label: 'Stool incontinence' },
-  { id: 'AnalSwelling', label: 'Anal swelling' },
-  { id: 'AnalDischarge', label: 'Anal discharge' }
+  { id: concepts.YellowingOfEyesOrSkin, label: 'Yellowing of eyes or skin' },
+  { id: concepts.Nausea, label: 'Nausea' },
+  { id: concepts.Dyspepsia, label: 'Dyspepsia' },
+  { id: concepts.AbdominalPains, label: 'Abdominal pains' },
+  { id: concepts.Vomiting, label: 'Vomiting' },
+  { id: concepts.Diarrhoea, label: 'Diarrhoea' },
+  { id: concepts.DifficultyInSwallowing, label: 'Difficulty in swallowing' },
+  { id: concepts.PainfulSwallowing, label: 'Painful in swallowing' },
+  { id: concepts.AbdominalDistension, label: 'Abdominal distension' },
+  { id: concepts.BloodyStool, label: 'Bloody stool' },
+  { id: concepts.StoolIncontinence, label: 'Stool incontinence' },
+  { id: concepts.AnalSwelling, label: 'Anal swelling' },
+  { id: concepts.AnalDischarge, label: 'Anal discharge' }
 ];
 
 const cardiacRespiratoryOptions = [
@@ -163,6 +163,10 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     }));
   };
 
+
+  const handleSubmit = () => {
+    onSubmit(formValues);
+   };
 
   return (
     <FormikInit
@@ -301,7 +305,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       </FormFieldContainer>
       <FormFieldContainer direction="row">
         <SearchComboBox
-        name="Gastrointenstinal history"
+        name="Gastrointenstinal_history"
         label="Gastrointestinal history"
         options={GastrointenstinalOptions}
         multiple={true}
@@ -339,7 +343,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         />):
         (
           <TextInputField
-          id="Genitourinary history"
+          id="Genitourinary_history"
           name="Genitourinary history"
           label="Specify Genitourinary history"
 
@@ -356,7 +360,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
           />
       </FormFieldContainer>
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={() => {console.log(formValues)}} />
+        <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
         <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
       </WrapperBox>
     </FormikInit>

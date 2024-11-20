@@ -570,7 +570,6 @@ function submitChildAllergies(data: any, myobs: any) {
   function handleAdmissionsSubmission(values: any): void {
     const admissions = values.admissions;
   
-    // Ensure admissions is defined and iterable
     if (!Array.isArray(admissions)) {
       console.error("Admissions data is invalid or not an array:", admissions);
       return;
@@ -617,7 +616,36 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleReviewSubmission(values: any): void {
-    throw new Error("Function not implemented.");
+    const gastroHistory = values["Gastrointenstinal_history"];
+
+    if(gastroHistory){
+     const gastroObs =  gastroHistory.map((obs: any) => {
+        return{
+          concept: obs.id,
+          value: true
+        }
+      });
+
+      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs:  [{
+          concept: concepts.GASTROINTESTINAL, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: gastroObs,
+        },]}, {
+        onSuccess: (data) => {
+            console.log("Encounter submitted successfully:", data);
+            
+          },
+          onError: (error) => {
+            console.error("Error submitting encounter:", error);
+          },
+        });
+    }
+
   }
 
   function handleFamilyHistorySubmission(values: any): void {
