@@ -19,6 +19,7 @@ export const encounters = {
   CLINICAL_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   PROCEDURES_DONE: "ba0656ec-8d80-11d8-abbb-0024217bb78e",
   NURSING_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
+  PRESCRIPTION: "88564b30-abaf-4744-8ea6-6e1c15465d9e",  
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -390,7 +391,41 @@ export const concepts = {
   VAGINA_NOTES: "VAGINA_NOTES",
   URETHRAL_NOTES: "URETHRAL_NOTES",
   SCROTUM_NOTES: "SCROTUM_NOTES",
-  DIAGNOSIS:'b8e32cd6-8d80-11d8-abbb-0024217bb78e'
+  DIAGNOSIS:'b8e32cd6-8d80-11d8-abbb-0024217bb78e',
+
+  //medications
+
+  TABLET: "tablet",
+  VIAL:"vial",
+  INTRAVENOUS:"intravenous",
+  POWDER:"powder",
+  SOLUTION:"solution",
+  EYE_OINTMENT:"eye_ointment",
+  CREAM:"cream",
+  EYE_DROPS:"eye_drops",
+  OINTMENT:"ointment",
+  INHALER:"inhaler",
+  SUPPOSITORY:"suppository",
+  PESSARY:"pessary",
+  SUSPENSION:"suspension",
+  SHAMPOO:"shampoo",
+  EAR_DROPS:"ear_drops",
+  EYE_PASTE:"eye_paste",
+  ORAL:"oral",
+  DERMAL:"dermal",
+  INHALED:"inhaled",
+  INTRAMUSCULAR:"intramuscular",
+  SUBCUTANEOUS:"subcutaneous",
+  INFILTRATION:"infiltration",
+  INTRATHECAL:"intrathecal",
+  ONCE_A_DAY:"once_a_day",
+  TWICE_A_DAY:"twice_a_day",
+  THREE_TIMES_A_DAY:"three_times_a_day",
+  FOUR_TIMES_A_DAY:"four_times_a_day",
+  SIX_TIMES_A_DAY:"six_times_a_day",
+  ONCE_A_WEEK:"once_a_week",
+  ONCE_A_MONTH:"once_a_month", 
+
 };
 
 export const triageResult = {
