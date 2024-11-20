@@ -46,8 +46,6 @@ type OutputObservation = {
 
 
 const convertObservations = (input: InputObservation[]): OutputObservation[] => {
-
-  console.log(input)
   return input.flatMap((observation) =>
     observation.value.flatMap((complaint) => [
       {
