@@ -6,7 +6,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { FC, useEffect } from "react";
 import { useFormikField } from "./hooks";
-import { SxProps } from "@mui/material";
+import { Box, InputLabel, SxProps } from "@mui/material";
 
 type Prop = {
   name: string;
@@ -46,24 +46,25 @@ export const FormDatePicker: FC<Prop> = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ display: "flex", flexDirection: "column", width }}>
+      <InputLabel sx={{mb:'1ch', fontSize: "0.76rem", color: "text.secondary" }}>
+        {label}
+      </InputLabel>
       <DatePicker
         slotProps={{ textField: { size, helperText: errorMessage } }}
         sx={{
-          width,
-          my: "2.5ch",
+          backgroundColor:'white',
           "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}
-
         defaultValue={dayjs(initialDate)}
-        label={label}
-        // value={value}
+        label=""  // Keep label empty to avoid internal label rendering
         onChange={(dateValue: any) =>
           setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
         }
-
         disabled={disabled}
       />
+    </Box>
     </LocalizationProvider>
   );
 };

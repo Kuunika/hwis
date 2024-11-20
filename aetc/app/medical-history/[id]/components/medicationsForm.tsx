@@ -6,8 +6,9 @@ import * as yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
-import { durationOptions } from "@/constants";
+import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -20,7 +21,6 @@ type Medication = {
   medication_dose: number;
   medication_dose_unit: string;
   medication_frequency: string;
-  medication_route: string;
   medication_duration: number;
   medication_duration_unit: string;
   medication_date_last_taken: string;
@@ -33,7 +33,6 @@ const medicationTemplate: Medication = {
   medication_dose: 0,
   medication_dose_unit: "",
   medication_frequency: "",
-  medication_route: "",
   medication_duration: 0,
   medication_duration_unit: "",
   medication_date_last_taken: "",
@@ -52,45 +51,35 @@ const medicationUnits = [
 "Milliliters (ml)" ,
 "Millimoles (mmol)",	
 ];
-const routeOptions = [
-  { label: "Oral", id: "Oral" },
-  { label: "Suppository", id: "Suppository" },
-  { label: "Intravenous", id: "Intravenous" },
-  { label: "Intramuscular", id: "Intramuscular" },
-  { label: "Subcutaneous", id: "Subcutaneous" },
-  { label: "Infiltration", id: "Infiltration" },
-  {label: "Intrathecal", id: "Intrathecal"},
-  {label: "Dermal", id: "Dermal"},
-  {label: "Inhaled", id: "Inhaled"},
-];
+
 
 const formulationOptions =   [
-  { id: "Tablet", label: "Tablet" },
-  { id: "Vial", label: "Vial" },
-  { id: "Intravenous", label: "Intravenous" },
-  { id: "Powder", label: "Powder" },
-  { id: "Solution", label: "Solution" },
-  { id: "Eye Ointment", label: "Eye Ointment" },
-  { id: "Cream", label: "Cream" },
-  { id: "Eye Drops", label: "Eye Drops" },
-  { id: "Ointment", label: "Ointment" },
-  { id: "Inhaler", label: "Inhaler" },
-  { id: "Suppository", label: "Suppository" },
-  { id: "Pessary", label: "Pessary" },
-  { id: "Suspension", label: "Suspension" },
-  { id: "Shampoo", label: "Shampoo" },
-  { id: "Ear Drops", label: "Ear Drops" },
-  { id: "Eye Paste", label: "Eye Paste" },
+  { id: concepts.TABLET, label: "Tablet" },
+  { id: concepts.VIAL, label: "Vial" },
+  { id: concepts.INTRAVENOUS, label: "Intravenous" },
+  { id: concepts.POWDER, label: "Powder" },
+  { id: concepts.SOLUTION, label: "Solution" },
+  { id: concepts.EYE_OINTMENT, label: "Eye Ointment" },
+  { id: concepts.CREAM, label: "Cream" },
+  { id: concepts.EYE_DROPS, label: "Eye Drops" },
+  { id: concepts.OINTMENT, label: "Ointment" },
+  { id: concepts.INHALER, label: "Inhaler" },
+  { id: concepts.SUPPOSITORY, label: "Suppository" },
+  { id: concepts.PESSARY, label: "Pessary" },
+  { id: concepts.SUSPENSION, label: "Suspension" },
+  { id: concepts.SHAMPOO, label: "Shampoo" },
+  { id: concepts.EAR_DROPS, label: "Ear Drops" },
+  { id: concepts.EYE_PASTE, label: "Eye Paste" },
   ];
 
   const frequencyOptions = [
-      {id:'Once a day', label:'24 Hourly (OD) - Once a day '},
-      {id:'Twice a day', label:'12 Hourly (BID) - Twice a day'},
-      {id:'Three times a day', label:'8 Hourly (TID) - Three times a day'},
-      {id:'Four times a day', label:'6 Hourly (QID) - Four times a day'},
-      {id:'Six times a day', label:'4 Hourly (OD) - Six times a day '},
-      {id:'Once a week', label:'Once a week'},
-      {id:'Once a month', label:'Once a month'},
+      {id:concepts.ONCE_A_DAY, label:'24 Hourly (OD) - Once a day '},
+      {id:concepts.TWICE_A_DAY, label:'12 Hourly (BID) - Twice a day'},
+      {id:concepts.THREE_TIMES_A_DAY, label:'8 Hourly (TID) - Three times a day'},
+      {id:concepts.FOUR_TIMES_A_DAY, label:'6 Hourly (QID) - Four times a day'},
+      {id:concepts.SIX_TIMES_A_DAY, label:'4 Hourly (OD) - Six times a day '},
+      {id:concepts.ONCE_A_WEEK, label:'Once a week'},
+      {id:concepts.ONCE_A_MONTH, label:'Once a month'},
       {id:'Other', label:'Other'},
     ];
 
@@ -103,7 +92,6 @@ const schema = yup.object().shape({
       medication_dose: yup.number().required("Dose is required").positive("Dose must be greater than 0"),
       medication_dose_unit: yup.string().required("Dose unit is required"),
       medication_frequency: yup.string().required("Frequency is required"),
-      medication_route: yup.string().required("Route is required"),
       medication_duration: yup.number().required("Duration is required").positive("Duration must be greater than 0"),
       medication_duration_unit: yup.string().required("Duration unit is required"),
       medication_date_last_taken: yup.date().nullable().required("Date of last taken is required"),
@@ -140,7 +128,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     }
   }, [data]);
 
+  const handleSubmit=()=> {
+    onSubmit(formValues);
+  }
+
   return (
+    <>
     <FormikInit
       initialValues={initialValues}
       validationSchema={schema}
@@ -230,13 +223,21 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             )}
           </FieldArray>
           <WrapperBox sx={{ mt: "2ch" }}>
-            <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={function (params?: any): void {
-              console.log(formValues)
-            } } />
+            <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
             <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
           </WrapperBox>
         </>
       )}
     </FormikInit>
+    <div style={{marginTop:'20px'}}>
+      <Accordion>
+        <AccordionSummary sx={{ fontSize:'18px', fontWeight:'bold'}}>Medication History</AccordionSummary>
+        <AccordionDetails>
+        <p>Aspirin</p>
+        </AccordionDetails>
+        
+      </Accordion>
+      </div>
+    </>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { TextField, FormControl, InputLabel, MenuItem, Select, Box, InputAdornment } from "@mui/material";
 import { SxProps } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
@@ -16,6 +16,8 @@ type UnitInputFieldProps = {
   unitOptions: string[];
   sx?: SxProps;
   inputIcon?: React.ReactNode;
+  handleBlurEvent?: (value: any) => void
+  
 };
 
 export const UnitInputField: FC<UnitInputFieldProps> = ({
@@ -27,6 +29,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
   unitOptions,
   sx,
   inputIcon,
+  handleBlurEvent
 }) => {
   // Use Formik hooks for both value and unit fields
   const {
@@ -35,22 +38,26 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
     errorMessage,
     handleChange,
     setFieldValue,
+    handleBlur
   } = useFormikField(name);
 
-  const { value: unitValue } = useFormikField(unitName);
+  const { value: unitValue, setFieldValue: setUnitFieldValue } = useFormikField(unitName);
+  const [localUnitValue, setLocalUnitValue] = useState(unitValue || unitOptions[0]);
 
   useEffect(() => {
     if (!unitValue) {
-      setFieldValue(unitName, unitOptions[0]);
+      setUnitFieldValue(unitName, unitOptions[0]);
     }
-  }, [unitValue, unitOptions, setFieldValue, unitName]);
+  }, [unitValue, unitOptions, unitName, setUnitFieldValue]);
   // Handle unit change with Formik's setFieldValue
   const handleUnitChange = (event: SelectChangeEvent<string>) => {
-    setFieldValue(unitName, event.target.value);
+    const newUnitValue = event.target.value;
+    setUnitFieldValue(unitName, event.target.value);
+    setLocalUnitValue(newUnitValue);
   };
 
   return (
-    <WrapperBox sx={{ mb: "1ch", ...sx }}>
+    <WrapperBox sx={{ mb: "1ch", marginTop: "1ch", ...sx }}>
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
@@ -63,9 +70,15 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           onChange={handleChange}
           placeholder={placeholder}
           variant="outlined"
-          sx={{ flexGrow: 1, background: "white" }}
+          sx={{ flexGrow: 1, background: "white"}}
           error={hasError}
           helperText={hasError ? errorMessage : ""}
+          onBlur={(event: any) => {
+            handleBlur(event);
+            if (handleBlurEvent)
+              handleBlurEvent(event.target.value)
+  
+          }}
           InputProps={{
             startAdornment: inputIcon && (
               <InputAdornment position="start">{inputIcon}</InputAdornment>
@@ -74,7 +87,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
         />
         {/* Unit Selector with Absolute Positioning and Custom Border Radius */}
         <Select
-          value={unitValue|| unitOptions[0]}
+          value={localUnitValue}
           onChange={handleUnitChange}
           variant="outlined"
           sx={{
