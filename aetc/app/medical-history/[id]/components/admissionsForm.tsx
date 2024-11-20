@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormDatePicker, MainButton, SearchComboBox, TextInputField, WrapperBox, FormFieldContainer, FormValuesListener, FormikInit } from "@/components";
 import * as yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { TableCell } from "@mui/material";
 import { FieldArray } from "formik";
+import { getConceptSetMembers } from "@/hooks/labOrder";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -67,14 +68,21 @@ const admissionsFormConfig = {
 
 export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
+  const [diagnosisOptions, setDiagnosisOptions] = useState<{ id: string; label: string }[]>([]);
+  const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
+  const {
+    data: diagnoses,
+    isLoading: diagnosesLoading,
+    refetch: reloadDiagnoses,
+    isRefetching: reloadingDiagnoses,
+  } = getConceptSetMembers(diagnosesConceptId);
 
 
   const hospitalOptions = [
     { id: "QECH", label: "Queen Elizabeth" }];
   const wardOptions = [
     { id: "Chatinkha", label: "Chatinkha" }];
-  const diagnosisOptions = [
-    { id: "TB", label: "Tuberculosis" }];
+
 
   const schema = yup.object().shape({
     // Validation schema
@@ -86,10 +94,21 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
 
   
   const handleSubmit = () => {
-    console.log(formValues);
-    return;
-    //onSubmit(formValues);
+    onSubmit(formValues);
   };
+
+  useEffect(() => {
+    reloadDiagnoses();
+    if (diagnoses) {
+      const formatDiagnosisOptions = (diagnoses: any) => {
+        return diagnoses.map((diagnosis: { uuid: string; names: { name: any; }[]; }) => ({
+          id: diagnosis.uuid,
+          label: diagnosis.names[0].name,
+        }));
+      };
+      setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
+    }
+  }, [diagnoses]);
 
   return (
     <FormikInit
@@ -115,7 +134,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                       <FormDatePicker
                         name={admissionsFormConfig.admission_date(index).name}
                         label={admissionsFormConfig.admission_date(index).label}
-                        sx={{ background: "white", width: "150px" }}
+                        sx={{ background: "white", width: "220px" }}
                       />
                       <SearchComboBox
                         name={admissionsFormConfig.hospitals(index).name}

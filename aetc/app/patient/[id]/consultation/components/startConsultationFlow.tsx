@@ -44,7 +44,7 @@ export const StartConsultationFlow = () => {
           {/* Final Diagnosis */}
           <Button onClick={() => setActiveStep(3)}>Next</Button>
         </>
-        <MedicationsForm onSkip={() => {}} onSubmit={() => {}} />
+        <MedicationsForm onSkip={() => { }} onSubmit={() => { }} />
       </NewStepperContainer>
     </>
   );

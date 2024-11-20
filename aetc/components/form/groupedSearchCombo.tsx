@@ -7,6 +7,7 @@ import { MainTypography, WrapperBox, defaultTheme } from '..';
 
 export interface GroupedOption {
   readonly label: string;
+  readonly value: string;
   readonly options: readonly Option[];
 }
 
@@ -54,7 +55,7 @@ export const GroupedSearchComboBox: FC<Props> = ({
         );
 
         return {
-          group: group?.label || 'Unknown', // Include the group label
+          group: group?.value || 'Unknown', // Include the group label
           value: selectedOption.value,
           label: selectedOption.label,
         };
@@ -71,7 +72,7 @@ export const GroupedSearchComboBox: FC<Props> = ({
       );
 
       const selectedWithGroup = {
-        group: group?.label || 'Unknown', // Include the group label
+        group: group?.value || 'Unknown', // Include the group label
         value: selectedOptions.value,
         label: selectedOptions.label,
       };

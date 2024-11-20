@@ -5,6 +5,7 @@ import {
     FormikInit, TextInputField
 } from "@/components";
 import * as yup from "yup";
+import { concepts } from "@/constants";
 
 
 type Prop = {
@@ -77,25 +78,25 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
       );
 
     const contraceptiveOptions = [
-        { id: 'Jadelle', label: 'Jadelle' },
-        { id: 'Implanon', label: 'Implanon' },
-        { id: 'Levoplant', label: 'Levoplant' },
-        { id: 'DepoProvera', label: 'Depo Provera' },
-        { id: 'IUCD', label: 'Intra Uterine Contraceptive Device (IUCD)' },
-        { id: 'ProgestinOnlyPills', label: 'Progestin only pills' },
-        { id: 'Vasectomy', label: 'Vasectomy' },
-        { id: 'TubalLigation', label: 'Tubal ligation' },
-        { id: 'CombinedOralPills', label: 'Combined oral contraceptive pills' },
-        { id: 'MaleFemaleCondoms', label: 'Condoms (Male and female)' },
-        { id: 'LactationAmenorrhea', label: 'Lactation amenorrhea' },
-        { id: 'Natural', label: 'Natural' },
+      { id: concepts.JADELLE, label: 'Jadelle' },
+      { id: concepts.IMPLANON, label: 'Implanon' },
+      { id: concepts.LEVOPLANT, label: 'Levoplant' },
+      { id: concepts.DEPO_PROVERA, label: 'Depo Provera' },
+      { id: concepts.IUCD, label: 'Intra Uterine Contraceptive Device (IUCD)' },
+      { id: concepts.PROGESTIN_ONLY_PILLS, label: 'Progestin only pills' },
+      { id: concepts.VASECTOMY, label: 'Vasectomy' },
+      { id: concepts.TUBAL_LIGATION, label: 'Tubal ligation' },
+      { id: concepts.COMBINED_ORAL_PILLS, label: 'Combined oral contraceptive pills' },
+      { id: concepts.MALE_FEMALE_CONDOMS, label: 'Condoms (Male and female)' },
+      { id: concepts.LACTATION_AMENORRHEA, label: 'Lactation amenorrhea' },
+      { id: concepts.NATURAL, label: 'Natural' },
       ];
 
       const pregnancyOutcomeOptions = [
-        { id: 'first_trimester_miscarriage', label: 'First trimester miscarriage' },
-        { id: 'second_trimester_miscarriage', label: 'Second trimester miscarriage' },
-        { id: 'stillbirth', label: 'Stillbirth' },
-        { id: 'live_birth', label: 'Live birth' },
+        { id: concepts.FIRST_TRIMESTER_MISCARRIAGE, label: 'First trimester miscarriage' },
+        { id: concepts.SECOND_TRIMESTER_MISCARRIAGE, label: 'Second trimester miscarriage' },
+        { id: concepts.STILL_BIRTH, label: 'Stillbirth' },
+        { id: concepts.LIVE_BIRTH, label: 'Live birth' },
       ];
   
 
@@ -112,8 +113,7 @@ const schema = yup.object().shape({
 
 
   const handleSubmit = () => {
-    console.log(formValues);
-    //onSubmit(formValues);
+    onSubmit(formValues);
   };
 
   const handleOutcomeChange = (index: number, value: string) => {
@@ -139,7 +139,7 @@ return (
     <FormDatePicker
       name={obstetricsFormConfig.last_menstral.name}
       label={obstetricsFormConfig.last_menstral.label}
-      sx={{ background: 'white', margin: '2ch'}}
+      sx={{ background: 'white', marginRight:'2ch', marginLeft:'2ch', width:'150px'}}
     />
     <TextInputField
               id={obstetricsFormConfig.gestational_age.name}
@@ -180,7 +180,7 @@ return (
           </React.Fragment>
         ))}
     </FormFieldContainer>
-        <SearchComboBox options={contraceptiveOptions} getValue={(value) => console.log(value)}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
+        <SearchComboBox options={contraceptiveOptions}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
 
     <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />

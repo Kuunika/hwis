@@ -77,13 +77,7 @@ import {
       });
       
     const initialValues = {
-      asthma: false,
-      hypertension: false,
-      diabetes_mellitus: false,
-      epilepsy: false,
-      cancer: false,
-      tuberculosis: false,
-      other: false,
+
     };
   
     const handleCheckboxChange = (e: any, field: string) => {
