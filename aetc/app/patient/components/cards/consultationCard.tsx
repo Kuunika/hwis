@@ -1,5 +1,11 @@
-import { MainTypography, WrapperBox } from "@/components";
-import { FaPlus, FaMinus, FaWpforms } from "react-icons/fa6"; // Import FaMinus for collapse state
+import { MainTypography } from "@/components";
+import {
+  FaPlus,
+  FaMinus,
+  FaWpforms,
+  FaAngleDown,
+  FaAngleUp,
+} from "react-icons/fa6"; // Import FaMinus for collapse state
 import { useNavigation } from "@/hooks";
 import { Box, Typography, Collapse } from "@mui/material";
 import { useState } from "react";
@@ -8,14 +14,14 @@ export const ConsultationCard = ({
   title,
   links,
   disabled,
+  onClick,
 }: {
   title: string;
   disabled?: boolean;
-  links: Array<{ title: string; link: string }>;
+  links: Array<{ title: string; link: string; id?: any }>;
+  onClick?: (params: any) => void;
 }) => {
   const [display, setDisplay] = useState(false);
-
-  const { navigateTo } = useNavigation();
   const disabledStyles = disabled
     ? {
         color: "gray", // Custom color for text
@@ -49,10 +55,10 @@ export const ConsultationCard = ({
         <Box
           sx={{
             transition: "transform 0.3s ease",
-            transform: display ? "rotate(180deg)" : "rotate(0deg)",
+            transform: display ? "rotate(360deg)" : "rotate(0deg)",
           }}
         >
-          {display ? <FaMinus /> : <FaPlus />}
+          {display ? <FaAngleUp /> : <FaAngleDown />}
         </Box>
         <MainTypography
           sx={{
@@ -70,19 +76,38 @@ export const ConsultationCard = ({
       </Box>
 
       <Collapse in={display} timeout={300}>
-        {links.map(({ title, link }) => (
-          <Row title={title} link={link} key={link} />
+        {links.map(({ title, link, id }) => (
+          <Row
+            id={id}
+            title={title}
+            link={link}
+            key={link + title}
+            onClick={onClick}
+          />
         ))}
       </Collapse>
     </Box>
   );
 };
 
-const Row = ({ title, link }: { title: string; link: string }) => {
+const Row = ({
+  title,
+  link,
+  onClick,
+  id,
+}: {
+  id?: any;
+  title: string;
+  link: string;
+  onClick?: (params: any) => void;
+}) => {
   const { navigateTo } = useNavigation();
   return (
     <Box
-      onClick={() => navigateTo(link)}
+      onClick={() => {
+        navigateTo(link);
+        if (onClick) onClick(id);
+      }}
       sx={{
         padding: "1ch",
         cursor: "pointer",

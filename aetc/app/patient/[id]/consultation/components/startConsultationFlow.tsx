@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { concepts } from "@/constants";
@@ -9,10 +9,18 @@ import DiagnosisForm from "./diagnosisForm";
 import { Button } from "@mui/material";
 import { MedicationsForm } from "./medication";
 import { TestAccordion } from "./testAccordion";
+import { ConsultationContext, ConsultationContextType } from "@/contexts";
 
 export const StartConsultationFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { navigateBack } = useNavigation();
+  const { activeStep: step } = useContext(
+    ConsultationContext
+  ) as ConsultationContextType;
+
+  useEffect(() => {
+    setActiveStep(step);
+  }, [step]);
 
   const steps = [
     { id: 1, label: "Investigations" },
@@ -44,7 +52,7 @@ export const StartConsultationFlow = () => {
           {/* Final Diagnosis */}
           <Button onClick={() => setActiveStep(3)}>Next</Button>
         </>
-        <MedicationsForm onSkip={() => { }} onSubmit={() => { }} />
+        <MedicationsForm onSkip={() => {}} onSubmit={() => {}} />
       </NewStepperContainer>
     </>
   );
