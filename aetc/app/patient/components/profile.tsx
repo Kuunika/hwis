@@ -30,7 +30,12 @@ import { Box, Button } from "@mui/material";
 import LineChartComponent from "./lineChart";
 import FlowStarter from "./flowStarter";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
+import {
+  ConsultationContext,
+  ConsultationContextType,
+  PatientProfileContext,
+  PatientProfileContextType,
+} from "@/contexts";
 import { formatAllVitalsToObject } from "@/helpers/emr";
 import { encounters } from "@/constants";
 import { OverlayLoader } from "@/components/backdrop";
@@ -75,9 +80,14 @@ export const DesktopView = () => {
   });
   const [selectedChartTop, setSelectedChartTop] = useState("bp"); // State for top chart container
   const [selectedChartBottom, setSelectedChartBottom] = useState("glu"); // State for bottom chart container
-  const { setActiveVisit, activeVisit, setOpenVisit } = React.useContext(
+  const { activeVisit } = React.useContext(
     PatientProfileContext
   ) as PatientProfileContextType;
+
+  const { setActiveStep } = React.useContext(
+    ConsultationContext
+  ) as ConsultationContextType;
+
   const [formattedVitals, setFormattedVitals] = useState<any>({});
   const [chartLoading, setChartLoading] = useState(true);
   const handleButtonClickTop = (selectedChartType: string) => {
@@ -251,13 +261,26 @@ export const DesktopView = () => {
           />
           <ConsultationCard
             disabled={!isOnList}
+            onClick={setActiveStep}
             links={[
               {
-                title: "Consultation 1",
+                id: 0,
+                title: "Investigations",
                 link: `/patient/${params.id}/consultation`,
               },
               {
-                title: "Consultation 2",
+                id: 1,
+                title: "Differential Diagnosis",
+                link: `/patient/${params.id}/consultation`,
+              },
+              {
+                id: 2,
+                title: "Final Diagnosis",
+                link: `/patient/${params.id}/consultation`,
+              },
+              {
+                id: 3,
+                title: "Medication",
                 link: `/patient/${params.id}/consultation`,
               },
             ]}
@@ -592,7 +615,7 @@ const ActionMenu = () => {
                   // Yc7flfzx
                 >
                   {icon && (
-                    <Image src={icon ? icon : ""} alt="AETC Form icon" />
+                    <Image src={icon ? icon : "/test"} alt="AETC Form icon" />
                   )}
                   <MainTypography
                     sx={{

@@ -17,6 +17,7 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
+import { OverlayLoader } from "@/components/backdrop";
 
 const form = {
   isAirwayPatent: {
@@ -113,7 +114,7 @@ const radioOptions = [
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
+  const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.AIRWAY_ASSESSMENT,
     onSubmit
   );
@@ -129,7 +130,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
-
+      <OverlayLoader open={isLoading} />
       <FormFieldContainerLayout title="Airway Patent">
         <FieldsContainer sx={{ alignItems: "flex-start" }}>
           <RadioGroupInput

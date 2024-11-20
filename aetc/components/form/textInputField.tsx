@@ -1,5 +1,5 @@
-'use client'
-import { FC, useEffect } from "react";
+"use client";
+import React, { FC, useEffect } from "react";
 import { TextField, InputLabel, FormControl } from "@mui/material/";
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
@@ -22,7 +22,7 @@ type Prop = {
   unitOfMeasure?: string;
   inputIcon?: any;
   helperTextWidth?: string;
-  handleBlurEvent?: (value: any) => void
+  handleBlurEvent?: (value: any) => void;
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -41,38 +41,34 @@ export const TextInputField: FC<Prop> = ({
   inputIcon,
   unitOfMeasure,
   helperTextWidth = "25ch",
-  handleBlurEvent
+  handleBlurEvent,
 }) => {
-  const { value, handleChange, hasError, errorMessage, handleBlur, } =
+  const { value, handleChange, hasError, errorMessage, handleBlur } =
     useFormikField(name);
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
 
-
-
-
   return (
-    <FormControl variant="standard" sx={{ mb: "1ch", ...sx,  }}>
+    <FormControl variant="standard" sx={{ mb: "1ch", ...sx }}>
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
       <TextField
         sx={{
-          backgroundColor:'white',
+          backgroundColor: "white",
           "label + &": {
             marginTop: "2.3ch",
           },
           "& .MuiInputBase-input": {
-            width: "25ch",
-          
+            width: "100%",
+            borderRadius: "5px",
           },
           "& .MuiFormHelperText-root": {
             width: helperTextWidth,
           },
-
-          "& fieldset": { borderRadius: "5px"},
+          "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}
         id={id}
@@ -81,9 +77,7 @@ export const TextInputField: FC<Prop> = ({
         type={type}
         onBlur={(event: any) => {
           handleBlur(event);
-          if (handleBlurEvent)
-            handleBlurEvent(event.target.value)
-
+          if (handleBlurEvent) handleBlurEvent(event.target.value);
         }}
         onChange={handleChange}
         error={hasError}
