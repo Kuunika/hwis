@@ -16,5 +16,9 @@ function Consultation() {
   );
 }
 
-export default Consultation;
-// export default AuthGuard(PrimaryAssessment, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);
+// export default Consultation;
+export default AuthGuard(Consultation, [
+  roles.CLINICIAN,
+  roles.NURSE,
+  roles.ADMIN,
+]);

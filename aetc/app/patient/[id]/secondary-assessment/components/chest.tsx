@@ -77,7 +77,7 @@ const form = {
   },
   breathingSounds: {
     name: concepts.BREATHING_SOUNDS,
-    label: "Breathing sounds",
+    label: "Breath sounds",
   },
   vocalFremitus: {
     name: concepts.VOCAL_FREMITUS,
@@ -102,6 +102,10 @@ const form = {
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
+  },
+  abnormalityOther: {
+    name: concepts.DESCRIPTION,
+    label: "Other",
   },
 };
 
@@ -155,6 +159,7 @@ const schema = Yup.object().shape({
   [form.location.name]: Yup.string().label(form.location.label),
   [form.type.name]: Yup.string().label(form.type.label),
   [form.additionalNotes.name]: Yup.string().label(form.additionalNotes.label),
+  [form.abnormalityOther.name]: Yup.string().label(form.abnormalityOther.label),
 });
 
 const chestWallAbnormalities = [
@@ -192,11 +197,13 @@ const abnormalities = [
   { id: concepts.SPLITTING_P2, label: "Splitting P2" },
   { id: concepts.GALLOP_RHYTHM, label: "Gallop rhythm" },
   { id: concepts.MURMUR, label: "Murmur" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 export const ChestForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showSpecify, setShowSpecify] = useState(false);
   const [showAbnormalities, setShowAbnormalities] = useState(false);
+  const [showAbnormalitiesOther, setShowAbnormalitiesOther] = useState(false);
   const [localizedChestImagesEnc, setLocalizedChestImagesEnc] = useState<
     Array<any>
   >([]);
@@ -286,6 +293,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             onValueChange={setChestExpansionImagesEnc}
             imageEncounter={encounters.CHEST_ASSESSMENT}
             imageSection={form.chestExpansion.name}
+            selectable={true}
           />
         )}
         <RadioGroupInput
@@ -297,6 +305,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         {(formValues[form.tactileFremitus.name] == concepts.REDUCED ||
           formValues[form.tactileFremitus.name] == concepts.INCREASED) && (
           <ChestLung
+            selectable={true}
             onValueChange={setTactileFremitusImagesEnc}
             imageEncounter={encounters.CHEST_ASSESSMENT}
             imageSection={form.tactileFremitus.name}
@@ -381,14 +390,15 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           label={form.vocalFremitus.label}
           options={chestExpansionOptions}
         />
-        {formValues[form.vocalFremitus.name] == concepts.REDUCED ||
-          (formValues[form.vocalFremitus.name] == concepts.INCREASED && (
-            <BreathingSoundsChestLung
-              imageSection={form.vocalFremitus.name}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-              onValueChange={setVocalFremitusImagesEnc}
-            />
-          ))}
+        {(formValues[form.vocalFremitus.name] == concepts.REDUCED ||
+          formValues[form.vocalFremitus.name] == concepts.INCREASED) && (
+          <ChestLung
+            imageSection={form.vocalFremitus.name}
+            imageEncounter={encounters.CHEST_ASSESSMENT}
+            onValueChange={setVocalFremitusImagesEnc}
+            selectable
+          />
+        )}
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Auscultation (Chest)">
         <RadioGroupInput
@@ -401,10 +411,13 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           <>
             <SearchComboBox
               getValue={(values) => {
-                if (values)
-                  setShowAbnormalities(
-                    Boolean(values.find((v: any) => v.id == concepts.MURMUR))
-                  );
+                if (!values) return;
+                setShowAbnormalities(
+                  Boolean(values.find((v: any) => v.id == concepts.MURMUR))
+                );
+                setShowAbnormalitiesOther(
+                  Boolean(values.find((v: any) => v.id == concepts.OTHER))
+                );
               }}
               name={form.abnormalities.name}
               label={form.abnormalities.label}
@@ -425,6 +438,19 @@ export const ChestForm = ({ onSubmit }: Prop) => {
                     id={form.type.name}
                   />
                 </FieldsContainer>
+              </>
+            )}
+            {showAbnormalitiesOther && (
+              <>
+                <br />
+                <TextInputField
+                  multiline
+                  rows={2}
+                  sx={{ width: "100%" }}
+                  name={form.abnormalityOther.name}
+                  label={form.abnormalityOther.label}
+                  id={form.abnormalityOther.name}
+                />
               </>
             )}
           </>

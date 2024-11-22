@@ -124,9 +124,9 @@ const schema = Yup.object().shape({
   [form.deviationSide.name]: Yup.string().label(form.deviationSide.label),
   // [form.otherAbnormality.name]: Yup.string().label(form.otherAbnormality.label),
   [form.percussion.name]: Yup.string().label(form.percussion.label),
-  [form.descriptionAbnormality.name]: Yup.string().label(
-    form.descriptionAbnormality.label
-  ),
+  // [form.descriptionAbnormality.name]: Yup.string().label(
+  //   form.descriptionAbnormality.label
+  // ),
   [form.chestWallAbnormality.name]: Yup.string().label(
     form.chestWallAbnormality.label
   ),
@@ -355,11 +355,11 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 />
                 <br />
                 <FieldsContainer>
-                  <SearchComboBox
+                  {/* <SearchComboBox
                     name={form.descriptionAbnormality.name}
                     label={form.descriptionAbnormality.label}
                     options={descriptionOfAbnormality}
-                  />
+                  /> */}
                   {formValues[form.descriptionAbnormality.name] ==
                     concepts.OTHER && (
                     <FieldsContainer>

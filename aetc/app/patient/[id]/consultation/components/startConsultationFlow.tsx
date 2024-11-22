@@ -6,7 +6,7 @@ import { concepts } from "@/constants";
 import { useNavigation } from "@/hooks";
 
 import DiagnosisForm from "./diagnosisForm";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { MedicationsForm } from "./medication";
 import { TestAccordion } from "./testAccordion";
 import { ConsultationContext, ConsultationContextType } from "@/contexts";
@@ -23,8 +23,8 @@ export const StartConsultationFlow = () => {
   }, [step]);
 
   const steps = [
-    { id: 1, label: "Investigations" },
     { id: 12, label: "Differential Diagnosis" }, // Step for Differential Diagnosis
+    { id: 1, label: "Investigations" },
     { id: 13, label: "Final Diagnosis" }, // Step for Final Diagnosis
     { id: 14, label: "Medication" },
   ];
@@ -39,21 +39,55 @@ export const StartConsultationFlow = () => {
         onBack={() => navigateBack()}
       >
         <>
-          <TestAccordion />
-          <Button onClick={() => setActiveStep(1)}>Next</Button>
+          <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />
+          <Buttons onNext={() => setActiveStep(1)} />
         </>
         <>
-          <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />
-          {/* Differential Diagnosis */}
-          <Button onClick={() => setActiveStep(2)}>Next</Button>
+          <TestAccordion />
+          <Buttons
+            onNext={() => setActiveStep(2)}
+            onPrevious={() => setActiveStep(0)}
+          />
         </>
         <>
           <DiagnosisForm conceptType={concepts.FINAL_DIAGNOSIS} />
           {/* Final Diagnosis */}
-          <Button onClick={() => setActiveStep(3)}>Next</Button>
+          <Buttons
+            onNext={() => setActiveStep(3)}
+            onPrevious={() => setActiveStep(1)}
+          />
         </>
         <MedicationsForm onSkip={() => {}} onSubmit={() => {}} />
       </NewStepperContainer>
     </>
+  );
+};
+
+const Buttons = ({
+  onPrevious,
+  onNext,
+}: {
+  onNext?: () => void;
+  onPrevious?: () => void;
+}) => {
+  return (
+    <Box sx={{ mt: "1ch" }}>
+      {onPrevious && (
+        <Button
+          sx={{ mr: "0.5ch" }}
+          size="small"
+          variant="contained"
+          color="inherit"
+          onClick={onPrevious}
+        >
+          Previous
+        </Button>
+      )}
+      {onNext && (
+        <Button size="small" variant="contained" onClick={onNext}>
+          Next
+        </Button>
+      )}
+    </Box>
   );
 };

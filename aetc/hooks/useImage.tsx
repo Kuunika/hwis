@@ -141,12 +141,18 @@ export const useImage = () => {
       encounterType: selectedSection.id,
       obs,
     };
-
     setIds((ids) => [...ids, { ...selectedSection, formData }]);
     handleClose();
   };
 
   const section = ids.find((id) => id.id == selectedSection.id);
+
+  const deselectSection = () => {
+    let clonedIds = [...ids];
+    clonedIds = clonedIds.filter((clone) => clone.id != selectedSection.id);
+    setIds(clonedIds);
+    handleClose();
+  };
 
   return {
     handleClose,
@@ -161,5 +167,6 @@ export const useImage = () => {
     highlightAllSelectedSections,
     setIds,
     ids,
+    deselectSection,
   };
 };
