@@ -15,6 +15,10 @@ const form = {
     name: concepts.SPECIFY,
     label: "Specify",
   },
+  added: {
+    name: concepts.ADDED,
+    label: "Added Sounds",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -22,6 +26,7 @@ const schema = Yup.object().shape({
     .required()
     .label(form.abnormalities.label),
   [form.specify.name]: Yup.string().label(form.specify.label),
+  [form.added.name]: Yup.array().label(form.added.label),
 });
 
 type Props = {
@@ -30,16 +35,21 @@ type Props = {
 };
 const options = [
   { id: concepts.ABSENT, label: "Absent" },
-  { id: concepts.REDUCED, label: "Reduced" },
-  { id: concepts.ADDED, label: "Added" },
+  { id: concepts.REDUCED, label: "Reduced Sounds" },
+  { id: concepts.ADDED, label: "Added Sounds" },
+  // { id: concepts.BRONCHIAL, label: "Bronchial" },
+  { id: concepts.OTHER, label: "Others" },
+];
+
+const addedOptions = [
   { id: concepts.CRACKLES, label: "Crackles" },
   { id: concepts.WHEEZES, label: "Wheezes" },
-  { id: concepts.BRONCHIAL, label: "Bronchial" },
-  { id: concepts.OTHER, label: "Others" },
 ];
 
 export const BreathingSoundsChestLungForm = (props: Props) => {
   const [showOther, setOther] = useState(false);
+  const [showAdded, setAdded] = useState(false);
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -55,14 +65,31 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
         multiple={false}
         name={form.abnormalities.name}
         getValue={(values) => {
-          if (values) setOther(Boolean(values == concepts.OTHER));
+          if (!values) return;
+          setOther(Boolean(values == concepts.OTHER));
+          setAdded(Boolean(values == concepts.ADDED));
         }}
         label={form.abnormalities.label}
         options={options}
       />
+
+      {showAdded && (
+        <>
+          <br />
+          <SearchComboBox
+            name={form.added.name}
+            label={form.added.label}
+            options={addedOptions}
+          />
+        </>
+      )}
+
       <br />
       {showOther && (
         <TextInputField
+          multiline
+          rows={2}
+          sx={{ width: "100%" }}
           name={form.specify.name}
           label={form.specify.label}
           id={form.specify.name}

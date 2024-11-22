@@ -77,7 +77,7 @@ const form = {
   },
   breathingSounds: {
     name: concepts.BREATHING_SOUNDS,
-    label: "Breathing sounds",
+    label: "Breath sounds",
   },
   vocalFremitus: {
     name: concepts.VOCAL_FREMITUS,

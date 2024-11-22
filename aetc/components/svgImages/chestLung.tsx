@@ -105,6 +105,7 @@ export const ChestLung = ({
                 onClick={deselectSection}
                 sx={{ borderRadius: "1px" }}
                 variant="contained"
+                color="inherit"
                 fullWidth
               >
                 deselect
