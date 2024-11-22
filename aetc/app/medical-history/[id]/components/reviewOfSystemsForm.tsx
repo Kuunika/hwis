@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox } from "@/components";
+import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox, UnitInputField } from "@/components";
 import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
-import { concepts } from "@/constants";
+import { concepts, durationOptions } from "@/constants";
+import { IoTimeOutline } from "react-icons/io5";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -10,8 +11,8 @@ type Prop = {
 };
 
 const symptomList = {
-    lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
-    events: { name: "events", label: "Events(History of presenting complaints)", requiresSite: true },
+  lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
+  events: { name: "events", label: "Events(History of presenting complaints)", requiresSite: true },
   pain: { name: "pain", label: "Pain", requiresSite: true },
   rash: { name: "rash", label: "Rash", requiresSite: true },
   itching: { name: "itching", label: "Itching", requiresSite: true },
@@ -115,9 +116,9 @@ const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectS
     shape[key] = yup.boolean();
 
 
-    shape[`${key}Date`] = yup.string().when(key, (value, schema)  =>
+    shape[`${key}Duration`] = yup.string().when(key, (value, schema)  =>
       value
-        ? schema.required(`${symptom.label} Date is required`)
+        ? schema.required(`Duration of ${symptom.label} is required`)
         : schema.notRequired()
     );
 
@@ -148,67 +149,67 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     lastMeal: "",
     events: "",
     pain: false,
-    painDate: "",
+    painDuration: "",
     pain_site: "",
     rash: false,
-    rashDate: "",
+    rashDuration: "",
     rash_site: "",
     itching: false,
-    itchingDate: "",
+    itchingDuration: "",
     itching_site: "",
     earDischarge: false,
-    earDischargeDate: "",
+    earDischargeDuration: "",
     earDischarge_site: "",
     redEye: false,
-    redEyeDate: "",
+    redEyeDuration: "",
     redEye_site: "",
     dizziness: false,
-    dizzinessDate: "",
+    dizzinessDuration: "",
     excessiveThirst: false,
-    excessiveThirstDate: "",
+    excessiveThirstDuration: "",
     painfulEar: false,
-    painfulEarDate: "",
+    painfulEarDuration: "",
     painfulEar_site: "",
     poorVision: false,
-    poorVisionDate: "",
+    poorVisionDuration: "",
     poorVision_site: "",
     toothache: false,
-    toothacheDate: "",
+    toothacheDuration: "",
     toothache_site: "",
     runnyNose: false,
-    runnyNoseDate: "",
+    runnyNoseDuration: "",
     noseBleeding: false,
-    noseBleedingDate: "",
+    noseBleedingDuration: "",
     jointSwelling: false,
-    jointSwellingDate: "",
+    jointSwellingDuration: "",
     jointSwelling_site: "",
     jointPain: false,
-    jointPainDate: "",
+    jointPainDuration: "",
     jointPain_site: "",
     deformity: false,
-    deformityDate: "",
+    deformityDuration: "",
     deformity_site: "",
     fever: false,
-    feverDate: "",
+    feverDuration: "",
     nightSweats: false,
-    nightSweatsDate: "",
+    nightSweatsDuration: "",
     weightLoss: false,
-    weightLossDate: "",
+    weightLossDuration: "",
     heatIntolerance: false,
-    heatIntoleranceDate: "",
+    heatIntoleranceDuration: "",
     coldIntolerance: false,
-    coldIntoleranceDate: "",
+    coldIntoleranceDuration: "",
     bodySwelling: false,
-    bodySwellingDate: "",
+    bodySwellingDuration: "",
     bodySwelling_site: "",
     fatigue: false,
-    fatigueDate: "",
+    fatigueDuration: "",
     poisoning: false,
-    poisoningDate: "",
+    poisoningDuration: "",
     poisoningIntentional: false,
-    poisoningIntentionalDate: "",
+    poisoningIntentionalDuration: "",
     ulcerWound: false,
-    ulcerWoundDate: "",
+    ulcerWoundDuration: "",
     ulcerWound_site: "",
   }
 
@@ -299,10 +300,15 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                   <>
                
                       <>
-                        <FormDatePicker
-                        label={`${symptom.label}Date`}
-                        name={`${typedKey}Date`}
-                      />
+                      <UnitInputField
+                      id={`${typedKey}Duration`}
+                      name={`${typedKey}Duration`}
+                      unitName={`${typedKey}DurationUnit`}
+                      label="Duration"
+                      unitOptions={durationOptions}
+                      placeholder="e.g. 7"
+                      inputIcon={<IoTimeOutline />}
+                    />
              
                       </>
                

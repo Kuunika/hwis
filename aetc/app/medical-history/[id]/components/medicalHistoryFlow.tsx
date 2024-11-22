@@ -66,6 +66,12 @@ const convertObservations = (input: InputObservation[]): OutputObservation[] => 
   );
 };
 
+const symptomDurationUnits: Record<string, string>  ={
+  [durationOptions[0].toString()]: concepts.DURATION_OF_SYMPTOMS_DAYS,
+  [durationOptions[1].toString()]: concepts.DURATION_OF_SYMPTOMS_WEEKS,
+  [durationOptions[2].toString()]: concepts.DURATION_OF_SYMPTOMS_MONTHS,
+  [durationOptions[3].toString()]: concepts.DURATION_OF_SYMPTOMS_YEARS,
+}
 
 
 export const MedicalHistoryFlow = () => {
@@ -296,6 +302,12 @@ function submitChildAllergies(data: any, myobs: any) {
       medication_date_of_last_prescription: concepts.MEDICATION_LAST_PRESCRIBED,
     };
     
+    const durationUnits: Record<string, string>  ={
+      [durationOptions[0].toString()]: concepts.DURATION_ON_MEDICATION_DAYS,
+      [durationOptions[1].toString()]: concepts.DURATION_ON_MEDICATION_WEEKS,
+      [durationOptions[2].toString()]: concepts.DURATION_ON_MEDICATION_MONTHS,
+      [durationOptions[3].toString()]: concepts.DURATION_ON_MEDICATION_YEARS,
+    }
 
     const doseUnits: Record<string, string>  ={
       "Milligrams (mg)": concepts.DOSE_IN_MILLIGRAMS,
@@ -325,12 +337,7 @@ function submitChildAllergies(data: any, myobs: any) {
       "Eye Paste": concepts.EYE_PASTE,
     }
 
-    const durationUnits: Record<string, string>  ={
-      [durationOptions[0].toString()]: concepts.DURATION_ON_MEDICATION_DAYS,
-      [durationOptions[1].toString()]: concepts.DURATION_ON_MEDICATION_WEEKS,
-      [durationOptions[2].toString()]: concepts.DURATION_ON_MEDICATION_MONTHS,
-      [durationOptions[3].toString()]: concepts.DURATION_ON_MEDICATION_YEARS,
-    }
+
 
     const observationsPayload = value.map((medication: any) => {
       const observation = {
@@ -616,6 +623,39 @@ function submitChildAllergies(data: any, myobs: any) {
   function handleReviewSubmission(values: any): void {
 
     console.log(values);
+
+    const symptom_uuid: Record<string, string>  ={
+      "lastMeal":concepts.LAST_MEAL, 
+      "events":concepts.ABDOMINAL_DISTENSION,  
+      "pain":concepts.PAIN, 
+      "rash":concepts.RASH,  
+      "itching":concepts.ITCHING,  
+      "earDischarge":concepts.EAR_DISCHARGE,  
+      "redEye":concepts.RED_EYE,  
+      "dizziness":concepts.DIZZINESS,  
+      "excessiveThirst":concepts.EXCESSIVE_THIRST, 
+      "painfulEar":concepts.PAINFUL_EAR,  
+      "poorVision":concepts.POOR_VISION,  
+      "toothache":concepts.TOOTHACHE, 
+      "runnyNose":concepts.RUNNY_NOSE,  
+      "noseBleeding":concepts.NOSE_BLEED, 
+      "jointSwelling":concepts.SWOLLEN_JOINT, 
+      "jointPain":concepts.JOINT_PAIN, 
+      "deformity":concepts.DEFORMITY, 
+      "fever":concepts.FEVER, 
+      "nightSweats":concepts.NIGHT_SWEATS, 
+      "weightLoss":concepts.WEIGHT_LOSS, 
+      "heatIntolerance":concepts.HEAT_INTOLERANCE, 
+      "coldIntolerance":concepts.COLD_INTOLERANCE, 
+      "bodySwelling":concepts.SWELLING, 
+      "fatigue":concepts.FATIGUE, 
+      "poisoning":concepts.POISONING, 
+      "poisoningIntentional":concepts.INTENTIONAL_POISONING, 
+      "ulcerWound":concepts.ULCER_OR_WOUND 
+    };
+
+    const symptomKeys = Object.keys(symptom_uuid);
+
     const gastroHistory = values["Gastrointenstinal_history"];
     const cardiacHistory = values['Cardiac/Respiratory history'];
     const nervousHistory = values['Nervous system history'];
@@ -742,6 +782,52 @@ function submitChildAllergies(data: any, myobs: any) {
           },
         });
     }
+    
+    for(let key of symptomKeys){
+    const durationUnit = values[`${key}DurationUnit`];
+    const duration = values[`${key}Duration`];
+    const site = values[`${key}_site`];
+    if (durationUnit) {
+
+      const symptomConcept={
+        concept: symptom_uuid[key],
+        value: true,
+      }
+
+   
+    const symptomDurationConcept = {
+      concept: symptomDurationUnits[durationUnit],
+      value: duration,
+    };
+
+    const symptomSiteConcept = {
+      concept: concepts.ANATOMIC_LOCATIONS,
+      value: site,
+    };
+
+    const obsGroup = site ? [symptomConcept, symptomDurationConcept, symptomSiteConcept] : [symptomConcept, symptomDurationConcept];
+
+        mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+          visit: activeVisit?.uuid,
+          patient: params.id,
+          encounterDatetime: dateTime, 
+          obs:  [{
+            concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+            value: true,
+            obsDatetime: dateTime,
+            group_members: obsGroup,
+          },]}, {
+          onSuccess: (data) => {
+              console.log("Encounter submitted successfully:", data);
+              
+            },
+            onError: (error) => {
+              console.error("Error submitting encounter:", error);
+            },
+          });
+      }
+    }
+      
 
 
   }
