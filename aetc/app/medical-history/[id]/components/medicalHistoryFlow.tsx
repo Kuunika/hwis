@@ -614,6 +614,8 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleReviewSubmission(values: any): void {
+
+    console.log(values);
     const gastroHistory = values["Gastrointenstinal_history"];
     const cardiacHistory = values['Cardiac/Respiratory history'];
     const nervousHistory = values['Nervous system history'];

@@ -963,7 +963,7 @@ REVIEW_OF_SYSTEMS_NERVOUS: 'b9a0cd90-8d80-11d8-abbb-0024217bb78e',//concept exis
 REVIEW_OF_SYSTEMS_GENITOURINARY: 'b9a0cb38-8d80-11d8-abbb-0024217bb78e',//concept exists but api but returns error
 REVIEW_OF_SYSTEMS_GASTROINTESTINAL:'b9a0c8ea-8d80-11d8-abbb-0024217bb78e',//concept exists but api but returns error
 
-CONVULSIONS: 'b9974338-8d80-11d8-abbb-0024217bb78e', //concept exists but api but returns error
+CONVULSIONS: 'b9d7e82a-8d80-11d8-abbb-0024217bb78e', //concept exists but api returns error
 HALLUCINATIONS: 'HALLUCINATIONS',
 ABNORMAL_BEHAVIOUR: 'ABNORMAL_BEHAVIOUR',
 ABNORMAL_GAIT:'b9b002e2-8d80-11d8-abbb-0024217bb78e',

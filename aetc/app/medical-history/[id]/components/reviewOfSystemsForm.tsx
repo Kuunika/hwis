@@ -36,7 +36,7 @@ const symptomList = {
   fatigue: { name: "fatigue", label: "Fatigue", requiresSite: false },
   poisoning: { name: "poisoning", label: "Poisoning", requiresSite: false },
   poisoningIntentional: { name: "intentionalPoisoning", label: "Intentional Poisoning", requiresSite: false },
-  ulcerWound: { name: "ulcerOrWound", label: "Ulcer/Wound", requiresSite: true },
+  ulcerWound: { name: "ulcerWound", label: "Ulcer/Wound", requiresSite: true },
 };
 
 const injuryMechanismList = {
@@ -105,6 +105,35 @@ const genitourinaryOptions = [
   { id: concepts.OTHER_GENITOURINARY_CONDITION, label: 'Other' }
 ];
 
+const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectSchema<any> => {
+  const shape: Record<string, yup.Schema<any>> = {};
+
+  Object.keys(symptomList).forEach((key) => {
+    const symptom = symptomList[key];
+
+  
+    shape[key] = yup.boolean();
+
+
+    shape[`${key}Date`] = yup.string().when(key, (value, schema)  =>
+      value
+        ? schema.required(`${symptom.label} Date is required`)
+        : schema.notRequired()
+    );
+
+ 
+    if (symptom.requiresSite) {
+      shape[`${symptom.name}_site`] = yup.string().when(key, (value, schema) =>
+        value
+          ? schema.required(`Please specify the site of ${symptom.label}`)
+          : schema.notRequired()
+      );
+    }
+  });
+
+  return yup.object().shape(shape);
+};
+
 export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showExtraFields, setShowExtraFields] = useState<any>({});
@@ -113,19 +142,75 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [selectedMechanism, setSelectedMechanism] = useState<string | null>(null);
   const [genitourinaryOther, setGenitourinaryOther] = useState(false); 
 
-  const schema = yup.object().shape({
-    pain: yup.boolean(),
-    duration: yup.string().when("pain", (pain, schema) =>
-      pain ? schema.required("Please specify the duration of pain") : schema
-    ),
-    specifySite: yup.string().when("pain", (pain, schema) =>
-      pain ? schema.required("Please specify the site of pain") : schema
-    ),
-  });
+  const schema = generateValidationSchema(symptomList);
 
   const initialValues = {
-
-  };
+    lastMeal: "",
+    events: "",
+    pain: false,
+    painDate: "",
+    pain_site: "",
+    rash: false,
+    rashDate: "",
+    rash_site: "",
+    itching: false,
+    itchingDate: "",
+    itching_site: "",
+    earDischarge: false,
+    earDischargeDate: "",
+    earDischarge_site: "",
+    redEye: false,
+    redEyeDate: "",
+    redEye_site: "",
+    dizziness: false,
+    dizzinessDate: "",
+    excessiveThirst: false,
+    excessiveThirstDate: "",
+    painfulEar: false,
+    painfulEarDate: "",
+    painfulEar_site: "",
+    poorVision: false,
+    poorVisionDate: "",
+    poorVision_site: "",
+    toothache: false,
+    toothacheDate: "",
+    toothache_site: "",
+    runnyNose: false,
+    runnyNoseDate: "",
+    noseBleeding: false,
+    noseBleedingDate: "",
+    jointSwelling: false,
+    jointSwellingDate: "",
+    jointSwelling_site: "",
+    jointPain: false,
+    jointPainDate: "",
+    jointPain_site: "",
+    deformity: false,
+    deformityDate: "",
+    deformity_site: "",
+    fever: false,
+    feverDate: "",
+    nightSweats: false,
+    nightSweatsDate: "",
+    weightLoss: false,
+    weightLossDate: "",
+    heatIntolerance: false,
+    heatIntoleranceDate: "",
+    coldIntolerance: false,
+    coldIntoleranceDate: "",
+    bodySwelling: false,
+    bodySwellingDate: "",
+    bodySwelling_site: "",
+    fatigue: false,
+    fatigueDate: "",
+    poisoning: false,
+    poisoningDate: "",
+    poisoningIntentional: false,
+    poisoningIntentionalDate: "",
+    ulcerWound: false,
+    ulcerWoundDate: "",
+    ulcerWound_site: "",
+  }
 
   const handleSymptomChange = (e: any, symptom: string) => {
     const isChecked = e.target.checked;
@@ -204,7 +289,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                 {typedKey !== "poisoningIntentional" && typedKey !== "lastMeal" && typedKey !== "events" &&(
                 <LabelledCheckbox
                     label={symptomList[typedKey].label}
-                    checked={formValues[typedKey] || false}
+                    checked={formValues[typedKey]}
                     onChange={(e) => handleSymptomChange(e, typedKey)}
                   />
            
@@ -215,7 +300,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                
                       <>
                         <FormDatePicker
-                        label={`${symptom.label} Date`}
+                        label={`${symptom.label}Date`}
                         name={`${typedKey}Date`}
                       />
              
