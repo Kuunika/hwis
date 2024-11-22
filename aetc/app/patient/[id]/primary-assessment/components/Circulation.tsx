@@ -1,5 +1,5 @@
 "use client";
-import { NotificationContainer } from "@/components";
+import { NotificationContainer, SearchComboBox } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
 import { getInitialValues, getObservations } from "@/helpers";
 import React, { useState } from "react";
@@ -114,6 +114,10 @@ const form = {
     name: concepts.REASON_NOT_RECORDED,
     label: "Reason BP Is unrecordable",
   },
+  reasonNotDone: {
+    name: concepts.DESCRIPTION,
+    label: "Reason Not Done",
+  },
 };
 
 const schema = yup.object({
@@ -129,13 +133,13 @@ const schema = yup.object({
     .label(form.bleedingActionDone.label),
   [form.bloodPressureSystolic.name]: yup
     .number()
-    .min(90)
-    .max(180)
+    .min(30)
+    .max(300)
     .label(form.bloodPressureSystolic.label),
   [form.bloodPressureDiastolic.name]: yup
     .number()
-    .min(60)
-    .max(120)
+    .min(10)
+    .max(200)
     .label(form.bloodPressureDiastolic.label),
   [form.intravenousAccess.name]: yup
     .string()
@@ -182,6 +186,7 @@ const schema = yup.object({
   [form.assessPeripheries.name]: yup
     .string()
     .label(form.assessPeripheries.label),
+  [form.reasonNotDone.name]: yup.string().label(form.reasonNotDone.label),
 });
 
 const initialValues = getInitialValues(form);
@@ -218,6 +223,18 @@ const capillaryRefillTimes = [
 const radioOptions = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
+];
+
+const notDoneReasons = [
+  { label: "Patient uncooperative", id: concepts.PATIENT_UNCOOPERATIVE },
+  { label: "Machine not available", id: concepts.MACHINE_NOT_AVAILABLE },
+  { label: "Batteries not available", id: concepts.BATTERIES_NOT_AVAILABLE },
+  {
+    label: "No inappropriately sized cuff",
+    id: concepts.INAPPROPRIATELY_SIZED_CUFF,
+  },
+  { label: "No power supply", id: concepts.NO_POWER_SUPPLY },
+  { label: "Other", id: concepts.OTHER },
 ];
 
 export const Circulation = ({ onSubmit }: Prop) => {
@@ -262,6 +279,8 @@ export const Circulation = ({ onSubmit }: Prop) => {
             <NotificationContainer message="Apply pressure" />
             <br />
             <TextInputField
+              multiline
+              rows={3}
               sx={{ width: "100%" }}
               name={form.bleedingActionDone.name}
               id={form.bleedingActionDone.name}
@@ -319,13 +338,22 @@ export const Circulation = ({ onSubmit }: Prop) => {
             name={form.bloodPressureMeasured.name}
             label={form.bloodPressureMeasured.label}
             options={[
-              { label: "Done", value: "Done" },
-              { label: "Not Done", value: "not Done" },
-              { label: "BP Unrecordable", value: "BP Unrecordable" },
+              { label: "Done", value: concepts.DONE },
+              { label: "Not Done", value: concepts.NOT_DONE },
+              { label: "BP Unrecordable", value: concepts.BP_NOT_RECORDABLE },
             ]}
           />
         </FieldsContainer>
-        {formValues[form.bloodPressureMeasured.name] == "BP Unrecordable" && (
+        {formValues[form.bloodPressureMeasured.name] == concepts.NOT_DONE && (
+          <SearchComboBox
+            multiple={false}
+            name={form.reasonNotDone.name}
+            label={form.reasonNotDone.label}
+            options={notDoneReasons}
+          />
+        )}
+        {formValues[form.bloodPressureMeasured.name] ==
+          concepts.BP_NOT_RECORDABLE && (
           <>
             <TextInputField
               sx={{ m: 0, width: "100%" }}
@@ -335,7 +363,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
             />
           </>
         )}
-        {formValues[form.bloodPressureMeasured.name] == "Done" && (
+        {formValues[form.bloodPressureMeasured.name] == concepts.DONE && (
           <>
             <br />
             <FieldsContainer mr="1ch">

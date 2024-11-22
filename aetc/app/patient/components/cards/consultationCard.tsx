@@ -120,7 +120,7 @@ const Row = ({
         my: "0.2ch",
         backgroundColor: "#fff",
         ml: "4ch",
-        borderRadius: "0.5ch",
+        borderRadius: "1px",
         border: "1px solid #ccc",
         transition: "background-color 0.3s, transform 0.3s", // Smooth hover effect
         "&:hover": {
