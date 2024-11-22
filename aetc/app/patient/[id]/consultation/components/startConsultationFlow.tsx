@@ -23,8 +23,8 @@ export const StartConsultationFlow = () => {
   }, [step]);
 
   const steps = [
-    { id: 1, label: "Investigations" },
     { id: 12, label: "Differential Diagnosis" }, // Step for Differential Diagnosis
+    { id: 1, label: "Investigations" },
     { id: 13, label: "Final Diagnosis" }, // Step for Final Diagnosis
     { id: 14, label: "Medication" },
   ];
@@ -39,12 +39,14 @@ export const StartConsultationFlow = () => {
         onBack={() => navigateBack()}
       >
         <>
-          <TestAccordion />
-          <Button onClick={() => setActiveStep(1)}>Next</Button>
-        </>
-        <>
           <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />
           {/* Differential Diagnosis */}
+          <Button variant="contained" onClick={() => setActiveStep(1)}>
+            Next
+          </Button>
+        </>
+        <>
+          <TestAccordion />
           <Button onClick={() => setActiveStep(2)}>Next</Button>
         </>
         <>

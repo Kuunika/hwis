@@ -237,6 +237,16 @@ export const DesktopView = () => {
         <WrapperBox sx={{ my: "1ch" }}>
           <ConsultationCard
             disabled={!isOnList}
+            title="Assessments"
+            links={[
+              {
+                title: "Primary Assessment",
+                link: `/patient/${params.id}/primary-assessment`,
+              },
+            ]}
+          />
+          <ConsultationCard
+            disabled={!isOnList}
             title="Sample History"
             links={[
               {
@@ -250,10 +260,6 @@ export const DesktopView = () => {
             title="Assessments"
             links={[
               {
-                title: "Primary Assessment",
-                link: `/patient/${params.id}/primary-assessment`,
-              },
-              {
                 title: "Secondary Assessment",
                 link: `/patient/${params.id}/secondary-assessment`,
               },
@@ -265,12 +271,12 @@ export const DesktopView = () => {
             links={[
               {
                 id: 0,
-                title: "Investigations",
+                title: "Differential Diagnosis",
                 link: `/patient/${params.id}/consultation`,
               },
               {
                 id: 1,
-                title: "Differential Diagnosis",
+                title: "Investigations",
                 link: `/patient/${params.id}/consultation`,
               },
               {
