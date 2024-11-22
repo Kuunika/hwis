@@ -286,6 +286,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             onValueChange={setChestExpansionImagesEnc}
             imageEncounter={encounters.CHEST_ASSESSMENT}
             imageSection={form.chestExpansion.name}
+            selectable={true}
           />
         )}
         <RadioGroupInput
@@ -297,6 +298,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         {(formValues[form.tactileFremitus.name] == concepts.REDUCED ||
           formValues[form.tactileFremitus.name] == concepts.INCREASED) && (
           <ChestLung
+            selectable={true}
             onValueChange={setTactileFremitusImagesEnc}
             imageEncounter={encounters.CHEST_ASSESSMENT}
             imageSection={form.tactileFremitus.name}
