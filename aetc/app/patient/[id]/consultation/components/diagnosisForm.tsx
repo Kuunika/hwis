@@ -278,9 +278,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
             variant="subtitle1"
             style={{ cursor: "pointer", padding: "1ch", fontWeight: "500" }} // Added padding
           >
-            {showTable
-              ? " Hide Previous Diagnosis"
-              : " Show Previous Diagnosis"}
+            {showTable ? "Hide Previous Diagnosis" : "Show Previous Diagnosis"}
           </Typography>
           {showTable && <DiagnosisTable diagnoses={diagnosisList} />}
         </MainPaper>
