@@ -292,6 +292,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
       case ObservationFormConfig.randomBloodGlucose.name:
         const m = 18.018; //multiplicationFactor
         const units = formValues[ObservationFormConfig.units.name];
+        console.log(numericalValue, units)
         if(units)
         {
         if (units == "mg/dl") {
@@ -468,7 +469,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
             placeholder="e.g., 50"
             sx={{ width: "320px" }}
             inputIcon={<LiaSyringeSolid />}
-            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.oxygenSaturation.name]: value })}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.randomBloodGlucose.name]: value })}
             />
           </FieldsContainer>
           <TextInputField

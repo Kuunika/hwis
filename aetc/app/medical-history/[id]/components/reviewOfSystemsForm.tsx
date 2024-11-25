@@ -109,7 +109,10 @@ const genitourinaryOptions = [
 const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectSchema<any> => {
   const shape: Record<string, yup.Schema<any>> = {};
 
+  
   Object.keys(symptomList).forEach((key) => {
+
+    if(!(key == 'lastMeal')){
     const symptom = symptomList[key];
 
   
@@ -130,8 +133,9 @@ const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectS
           : schema.notRequired()
       );
     }
+  }
   });
-
+  
   return yup.object().shape(shape);
 };
 

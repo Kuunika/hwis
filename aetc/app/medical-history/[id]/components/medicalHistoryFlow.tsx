@@ -624,6 +624,27 @@ function submitChildAllergies(data: any, myobs: any) {
 
     console.log(values);
 
+    const lastMeal = values['lastMeal'];
+
+
+    mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime, 
+      obs:  [{
+        concept: concepts.LAST_MEAL, 
+        value: lastMeal,
+        obsDatetime: dateTime,
+      },]}, {
+      onSuccess: (data) => {
+          console.log("last meal Encounter submitted successfully:", data);
+          
+        },
+        onError: (error) => {
+          console.error("Error submitting last meal encounter:", error);
+        },
+      });
+
     const symptom_uuid: Record<string, string>  ={
       "lastMeal":concepts.LAST_MEAL, 
       "events":concepts.ABDOMINAL_DISTENSION,  
@@ -787,14 +808,16 @@ function submitChildAllergies(data: any, myobs: any) {
     const durationUnit = values[`${key}DurationUnit`];
     const duration = values[`${key}Duration`];
     const site = values[`${key}_site`];
+    
+
+    console.log(lastMeal);
     if (durationUnit) {
 
-      const symptomConcept={
+    const symptomConcept={
         concept: symptom_uuid[key],
         value: true,
       }
 
-   
     const symptomDurationConcept = {
       concept: symptomDurationUnits[durationUnit],
       value: duration,
@@ -818,19 +841,21 @@ function submitChildAllergies(data: any, myobs: any) {
             group_members: obsGroup,
           },]}, {
           onSuccess: (data) => {
-              console.log("Encounter submitted successfully:", data);
+              console.log("ROS symptoms Encounter submitted successfully:", data);
               
             },
             onError: (error) => {
-              console.error("Error submitting encounter:", error);
+              console.error("Error submitting ROS symptoms encounter:", error);
             },
           });
       }
+
+
     }
       
 
 
-  }
+  };
 
   function handleFamilyHistorySubmission(values: any): void {
     throw new Error("Function not implemented.");
