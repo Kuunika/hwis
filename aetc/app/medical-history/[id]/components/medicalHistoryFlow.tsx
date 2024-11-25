@@ -839,6 +839,16 @@ function submitChildAllergies(data: any, myobs: any) {
 
     const obsGroup = site ? [symptomConcept, symptomDurationConcept, symptomSiteConcept] : [symptomConcept, symptomDurationConcept];
 
+    if(key == 'poisoning')
+    {
+      const intentionalPoisoningObs = {
+        concept: concepts.INTENTIONAL_POISONING,
+        value: values['poisoningIntentional']
+      }
+      
+      obsGroup.push(intentionalPoisoningObs)
+    }
+
         mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
           visit: activeVisit?.uuid,
           patient: params.id,
@@ -859,6 +869,77 @@ function submitChildAllergies(data: any, myobs: any) {
           });
       }
 
+
+    }
+
+    
+
+    if(values['wasInjured']||values['assaultType']){
+
+      type InjuryMechanismList = {
+        [key: string]: string;
+      };
+      const injuryMechanismList: InjuryMechanismList = {
+        assault: concepts.ASSAULT,
+        roadTraffic: concepts.ROAD_TRAFFIC_ACCIDENT,
+        fall: concepts.FALL,
+        bite: concepts.BITE,
+        gunshot: concepts.GUNSHOT,
+        collapse: concepts.FAINTING_SYNCOPE_COLLAPSE,
+        selfInflicted: concepts.SELF_HARM,
+        burns: concepts.BURN_INJURY,
+        drowning: concepts.DROWNING,
+        occupationalInjury: concepts.OCCUPATIONAL_INJURY
+      };
+
+      const mechanism = Object.keys(injuryMechanismList).filter((key) => values[key]);
+      const timeOfInjury = (values['timeOfInjury'].$d).toLocaleString()
+
+      const traumaObs = [{
+        concept: injuryMechanismList[mechanism[0]],
+        value: true
+      }]
+
+      const timeOfInjuryObs = {
+        concept: concepts.TIME_OF_INJURY,
+        value: timeOfInjury
+      }
+
+      const consciousnessObs = {
+        concept: concepts.LOSS_OF_CONSCIOUSNESS,
+        value: values['lostConsciousness']
+      }
+
+      traumaObs.push(timeOfInjuryObs,consciousnessObs)
+
+      if(values['assaultType']){
+        traumaObs[0].concept = injuryMechanismList['assault']
+        const assaultType = values['assaultType'];
+        const assaultTypeObs = {
+          concept: assaultType == 'sexual'?concepts.SEXUAL_ASSAULT:concepts.PHYSICAL_ASSAULT,
+          value: true
+        }
+        traumaObs.push(assaultTypeObs)
+      }
+
+      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs:  [{
+          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: traumaObs,
+        },]}, {
+        onSuccess: (data) => {
+            console.log("trauma Encounter submitted successfully:", data);
+            
+          },
+          onError: (error) => {
+            console.error("Error submitting trauma encounter:", error);
+          },
+        });
 
     }
 

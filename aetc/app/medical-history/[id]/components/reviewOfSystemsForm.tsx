@@ -4,6 +4,11 @@ import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
 import { concepts, durationOptions } from "@/constants";
 import { IoTimeOutline } from "react-icons/io5";
+import { DateTimePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { getDateTime } from "@/helpers/dateTime";
+import dayjs, { Dayjs } from 'dayjs';
+
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -106,6 +111,7 @@ const genitourinaryOptions = [
   { id: concepts.OTHER_GENITOURINARY_CONDITION, label: 'Other' }
 ];
 
+const dateTime = getDateTime();
 const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectSchema<any> => {
   const shape: Record<string, yup.Schema<any>> = {};
 
@@ -146,7 +152,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [showAssaultOptions, setShowAssaultOptions] = useState(false);
   const [selectedMechanism, setSelectedMechanism] = useState<string | null>(null);
   const [genitourinaryOther, setGenitourinaryOther] = useState(false); 
-
+  
   const schema = generateValidationSchema(symptomList);
 
   const initialValues = {
@@ -215,6 +221,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     ulcerWound: false,
     ulcerWoundDuration: "",
     ulcerWound_site: "",
+    timeOfInjury: dayjs(dateTime)
   }
 
   const handleSymptomChange = (e: any, symptom: string) => {
@@ -241,7 +248,9 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     const isChecked = e.target.checked;
     if (isChecked) {
       setSelectedMechanism(mechanism); // Set the selected mechanism
-      setShowAssaultOptions(mechanism === "assault"); // Show assault options if "assault" is selected
+      if(mechanism === "assault"){
+      setShowAssaultOptions(true);
+      } // Show assault options if "assault" is selected
     } else {
       setSelectedMechanism(null); // Clear if unchecked
       setShowAssaultOptions(false); // Hide assault options if deselected
@@ -254,7 +263,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
   const handleSubmit = () => {
-    console.log()
     onSubmit(formValues);
    };
 
@@ -346,14 +354,24 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 <h3>Trauma/Injury History</h3>
           <LabelledCheckbox
             label="Was the patient injured?"
-            checked={formValues.wasInjured || false}
+            checked={formValues.wasInjured}
             onChange={(e) => handleSymptomChange(e, "wasInjured")}
           />
           {showTraumaFields && (
             <>
-              <TextInputField id="timeOfInjury" label="Time of Injury" name="timeOfInjury" placeholder="e.g., 10:30 AM" />
-              <FormDatePicker label="Date of Injury" name="dateOfInjury" />
-
+            <FormFieldContainer direction="row">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker
+              label="Select Date and Time of Injury"
+              value={formValues['timeOfInjury']}
+              onChange={(newValue: any) =>  setFormValues((prev: any) => ({
+                ...prev,
+                'timeOfInjury': newValue,
+              }))}
+              sx={{mb:'1ch', mt:'1ch'}}
+            />
+            </LocalizationProvider>
+            </FormFieldContainer>
               <div>
                 <h4>Mechanism of Injury</h4>
                 {Object.keys(injuryMechanismList).map((key) => {
@@ -365,7 +383,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                       <LabelledCheckbox
                         key={key}
                         label={mechanism.label}
-                        checked={formValues[mechanism.name] || false}
+                        checked={formValues[mechanism.name]}
                         onChange={(e) => handleTraumaMechanismChange(e, key)}
                       />
                     );
@@ -374,7 +392,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                 })}
 
                 {/* Show assault sub-options if "assault" is selected */}
-                {selectedMechanism === "assault" && showAssaultOptions && (
+                {showAssaultOptions && (
                   <div style={{ marginLeft: "1em" }}>
                      <RadioGroupInput
                       name="assaultType"
