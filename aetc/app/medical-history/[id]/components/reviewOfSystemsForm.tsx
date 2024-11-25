@@ -112,7 +112,7 @@ const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectS
   
   Object.keys(symptomList).forEach((key) => {
 
-    if(!(key == 'lastMeal')){
+    if(!(key == 'lastMeal' || key == 'events')){
     const symptom = symptomList[key];
 
   
@@ -254,6 +254,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
   const handleSubmit = () => {
+    console.log()
     onSubmit(formValues);
    };
 

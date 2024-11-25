@@ -625,16 +625,29 @@ function submitChildAllergies(data: any, myobs: any) {
     console.log(values);
 
     const lastMeal = values['lastMeal'];
+    const historyOfComplaints = values['events'];
 
+    const historyOfComplaintsConcept = {
+      concept:concepts.PRESENTING_HISTORY,
+      value: historyOfComplaints
+    };
 
+    const lastMealConcept = {
+      concept:concepts.DATE_OF_LAST_MEAL,
+      value: lastMeal
+    };
+    
+    const initialObs = historyOfComplaints?[historyOfComplaintsConcept,lastMealConcept]:null;
+    
     mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
       obs:  [{
-        concept: concepts.LAST_MEAL, 
-        value: lastMeal,
+        concept: initialObs?concepts.PRESENTING_HISTORY:concepts.DATE_OF_LAST_MEAL, 
+        value: initialObs?true:lastMeal,
         obsDatetime: dateTime,
+        group_members:initialObs?initialObs:null,
       },]}, {
       onSuccess: (data) => {
           console.log("last meal Encounter submitted successfully:", data);
@@ -646,8 +659,6 @@ function submitChildAllergies(data: any, myobs: any) {
       });
 
     const symptom_uuid: Record<string, string>  ={
-      "lastMeal":concepts.LAST_MEAL, 
-      "events":concepts.ABDOMINAL_DISTENSION,  
       "pain":concepts.PAIN, 
       "rash":concepts.RASH,  
       "itching":concepts.ITCHING,  
@@ -809,8 +820,6 @@ function submitChildAllergies(data: any, myobs: any) {
     const duration = values[`${key}Duration`];
     const site = values[`${key}_site`];
     
-
-    console.log(lastMeal);
     if (durationUnit) {
 
     const symptomConcept={
