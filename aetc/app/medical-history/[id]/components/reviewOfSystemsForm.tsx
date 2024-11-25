@@ -446,8 +446,9 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         )}
       </FormFieldContainer>
       
-        <FormFieldContainerLayout title='Social history'>
+
         <FormFieldContainer direction="column">
+        <h3 style={{marginTop:'2ch', marginBottom:'1ch'}}>Social History</h3>
         <RadioGroupInput
             row={true}
             name='occupation'
@@ -495,8 +496,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
            rows={4}
           />
                 </FormFieldContainer>
-                
-          </FormFieldContainerLayout>
+      
 
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />

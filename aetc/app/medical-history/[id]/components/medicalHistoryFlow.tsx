@@ -627,17 +627,17 @@ function submitChildAllergies(data: any, myobs: any) {
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
-    const historyOfComplaintsConcept = {
+    const historyOfComplaintsObs = {
       concept:concepts.PRESENTING_HISTORY,
       value: historyOfComplaints
     };
 
-    const lastMealConcept = {
+    const lastMealObs = {
       concept:concepts.DATE_OF_LAST_MEAL,
       value: lastMeal
     };
     
-    const initialObs = historyOfComplaints?[historyOfComplaintsConcept,lastMealConcept]:null;
+    const initialObs = historyOfComplaints?[historyOfComplaintsObs,lastMealObs]:null;
     
     mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
@@ -861,8 +861,56 @@ function submitChildAllergies(data: any, myobs: any) {
 
 
     }
-      
 
+    const occuption = values['occupation'];
+    const socialDetails = values['socialDetails'];
+    const marital = values['maritalStatus'];
+    const travelDetails = values['travelDetails'];
+
+    const occupationObs = {
+      concept: concepts.OCCUPATION,
+      value: occuption
+    };
+
+    const socialDetailsObs = [{
+      concept: concepts.PATIENT_SMOKES,
+      value: socialDetails[0]?.value
+    },{
+      concept: concepts.PATIENT_DRINKS_ALCOHOL,
+      value: socialDetails[1]?.value
+    }] ;
+      
+    const maritalObs = {
+      concept: concepts.MARITAL_STATUS,
+      value: marital
+    };
+
+    const travelObs = {
+      concept:concepts.TRAVEL_HISTORY,
+      value: travelDetails
+    }
+
+    socialDetailsObs.push(occupationObs,maritalObs,travelObs)
+    
+    
+    mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime, 
+      obs:  [{
+        concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+        value: true,
+        obsDatetime: dateTime,
+        group_members: socialDetailsObs,
+      },]}, {
+      onSuccess: (data) => {
+          console.log("social history Encounter submitted successfully:", data);
+          
+        },
+        onError: (error) => {
+          console.error("Error submitting social history encounter:", error);
+        },
+      });
 
   };
 
