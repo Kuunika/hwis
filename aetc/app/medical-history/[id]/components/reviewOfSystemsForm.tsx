@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox, UnitInputField } from "@/components";
+import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox, UnitInputField, FormFieldContainerLayout, CheckboxesGroup } from "@/components";
 import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
 import { concepts, durationOptions } from "@/constants";
@@ -445,15 +445,59 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
           />
         )}
       </FormFieldContainer>
-      <FormFieldContainer direction="row">
-          <TextInputField
-           id="socialHistory"
-           name="socialHistory"
-           label="Social History"
+      
+        <FormFieldContainerLayout title='Social history'>
+        <FormFieldContainer direction="column">
+        <RadioGroupInput
+            row={true}
+            name='occupation'
+            label='Occupation'
+            options={[
+                { label: "Working", value: "working" },
+                { label: "Business", value: "business" },
+                { label: "Unemployed", value: "unemployed" },
+                { label: "Self Employed", value: "selfemployed" },
+                { label: "Student", value: "student" },
+                { label: "House Wife", value: "housewife" },
+                { label: "Unknown", value: "unknown" },
+            ]}
+            sx={{mb:'1ch'}}
+        />
+          <CheckboxesGroup getValue={
+            (value: Array<any>) => {
+              
+            }
+          } name='socialDetails' options={[
+            { label: "Smoker", value: "smoking" },
+            { label: "Drinker", value: "alcohol" },
+          ]}
+          />
+               <RadioGroupInput
+               sx={{mt:'1ch'}}
+            row={true}
+            name='maritalStatus'
+            label='Marital Status'
+            options={[
+                { label: "Single", value: "single" },
+                { label: "Married", value: "married" },
+                { label: "Separated", value: "separated" },
+                { label: "Widowed", value: "widow/widower" },
+                { label: "Divorced", value: "divorced" },
+                { label: "Unknown", value: "unknown" },
+
+            ]}
+        />
+        <TextInputField
+           id="travelDetails"
+           name="travelDetails"
+           label="Travel Details"
            multiline
            rows={4}
           />
-      </FormFieldContainer>
+                </FormFieldContainer>
+                
+          </FormFieldContainerLayout>
+
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
         <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
