@@ -289,17 +289,23 @@ export const DesktopView = () => {
                 title: "Medication",
                 link: `/patient/${params.id}/consultation`,
               },
-              {
-                id: 4,
-                title: "Disposition",
-                link: `/patient/${params.id}/disposition`,
-              },
+
 
 
             ]}
             title="Consultation"
           />
           {/* New Button */}
+          <ConsultationCard
+            disabled={!isOnList}
+            title="Disposition"
+            links={[
+              {
+                title: "Disposition",
+                link: `/patient/${params.id}/disposition`,
+              },
+            ]}
+          />
 
         </WrapperBox>
         <BasicAccordion />
