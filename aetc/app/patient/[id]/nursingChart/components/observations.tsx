@@ -9,12 +9,14 @@ import {
   SearchComboBox,
   SelectInputField,
   TextInputField,
+  UnitInputField,
   WrapperBox,
 } from "@/components";
 import * as Yup from "yup";
 import { getInitialValues } from "@/helpers";
 import { concepts } from "@/constants";
 import { KeyValueContext, KeyValueContextType } from "@/contexts/keyValueContext";
+import { LiaSyringeSolid } from "react-icons/lia";
 
 
 type Prop = {
@@ -187,7 +189,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
   
   const calculateTriageScore = (value: any, type: string) => {
     let score = traigeScores[2];
-  
+    console.log(value)
     // Parse numerical value
     const numericalValue = parseFloat(value) || 0;
     switch (type) {
@@ -378,7 +380,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
           width: "100%",
           height: "20px",
           marginTop: "20px",
-          marginBottom: "20px",
+          marginBottom: "30px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -391,7 +393,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
           backgroundColor: getBackgroundColor(caseType),
           width: "100%",
           height: "50px",
-          marginLeft: "300px",
+          marginLeft: "280px",
           marginRight: "100px",
           display: "flex",
           alignItems: "center",
@@ -403,7 +405,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
         {caseType.charAt(0).toUpperCase() + caseType.slice(1)}
       </div>
       </div>
-      <FormFieldContainerLayout title="Observations">
+
         <FieldsContainer >
           <TextInputField
             name={ObservationFormConfig.oxygenSaturation.name}
@@ -454,23 +456,20 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
           />
           
           <FieldsContainer>
-          <SelectInputField
-            sx={{ mt: '2ch' }}
-            width="20%"
-            name={ObservationFormConfig.units.name}
-            selectItems={[
-              { name: "mmol/l", value: "mmol/l" },
-              { name: "mg/dl", value: "mg/dl" },
+   
+          <UnitInputField unitOptions={[
+               "mmol/l", 
+              "mg/dl"
             ]}
-            label={ObservationFormConfig.units.label}
-            id={ObservationFormConfig.units.name}
-          />
-          <TextInputField
-            name={ObservationFormConfig.randomBloodGlucose.name}
-            label={ObservationFormConfig.randomBloodGlucose.label}
             id={ObservationFormConfig.randomBloodGlucose.name}
-            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.randomBloodGlucose.name]: value })}
-          />
+            label={ObservationFormConfig.randomBloodGlucose.label}
+            name={ObservationFormConfig.randomBloodGlucose.name}
+            unitName={ObservationFormConfig.units.name}
+            placeholder="e.g., 50"
+            sx={{ width: "320px" }}
+            inputIcon={<LiaSyringeSolid />}
+            handleBlurEvent={(value) => addKeyToFlow({ [ObservationFormConfig.oxygenSaturation.name]: value })}
+            />
           </FieldsContainer>
           <TextInputField
             name={ObservationFormConfig.urineDipstickKetones.name}
@@ -495,7 +494,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
             unitOfMeasure="L/min"
           />
         
-      </FormFieldContainerLayout>
+  
 
       <WrapperBox>
         <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>

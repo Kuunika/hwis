@@ -9,6 +9,7 @@ export const addEncounter = () => {
       ...encounter,
       obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
     };
+
     return createEncounter(filteredEncounter).then((response) => response.data);
   };
 

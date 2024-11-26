@@ -2,10 +2,7 @@ import { NO, YES, concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
-  DashedContainer,
   FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   RadioGroupInput,
@@ -124,8 +121,8 @@ const initialsValues = getInitialValues(form);
 
 const abnormalities = [
   { id: concepts.JUGULAR_VENOUS_PRESSURE, label: "Jugular Venous Pressure" },
-  { id: concepts.RAISED, label: "Raised" },
-  { id: concepts.RHINORRHOEA, label: "Rhinorrhea" },
+  { id: concepts.RAISED, label: "Raised jugular venous pressure" },
+  // { id: concepts.RHINORRHOEA, label: "Rhinorrhea" },
   { id: concepts.ENLARGED_THYROID, label: "Enlarged Thyroid" },
   { id: concepts.LYMPH_NODES, label: "Lymph Nodes" },
   { id: concepts.LACERATION, label: "Laceration" },
@@ -141,6 +138,7 @@ const deviatedSide = [
   { label: "Right", value: "Right" },
 ];
 
+// Inside your NeckForm component
 export const NeckForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showOtherAbnormalities, setShowOtherAbnormalities] =
@@ -162,6 +160,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
     );
     setShowLymph(Boolean(values.find((v) => v.id == concepts.LYMPH_NODES)));
   };
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -176,26 +175,35 @@ export const NeckForm = ({ onSubmit }: Prop) => {
         )
       }
     >
-      <Box>
+      <Box
+        sx={{
+          maxHeight: "50vh",
+          overflow: "auto",
+          padding: "1rem",
+          backgroundColor: "white",
+        }}
+      >
         <FormValuesListener getValues={setFormValues} />
-        <DashedContainer border="bottom">
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.trachea.name}
-              options={tracheaOptions}
-              label={form.trachea.label}
-            />
-            {formValues[form.trachea.name] == "Deviated" && (
-              <>
-                <RadioGroupInput
-                  name={form.tracheaDeviated.name}
-                  options={deviatedSide}
-                  label={form.tracheaDeviated.label}
-                />
-              </>
-            )}
-          </FieldsContainer>
-        </DashedContainer>
+
+        <FieldsContainer>
+          <RadioGroupInput
+            row
+            name={form.trachea.name}
+            options={tracheaOptions}
+            label={form.trachea.label}
+          />
+          {formValues[form.trachea.name] == "Deviated" && (
+            <>
+              <RadioGroupInput
+                row
+                name={form.tracheaDeviated.name}
+                options={deviatedSide}
+                label={form.tracheaDeviated.label}
+              />
+            </>
+          )}
+        </FieldsContainer>
+
         <SearchComboBox
           getValue={handleValueChange}
           name={form.abnormalities.name}
@@ -204,7 +212,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
         />
         <br />
         {showRaised && (
-          <DashedContainer>
+          <>
             <Typography mt={"0.5ch"} variant="subtitle2">
               Raised Abnormality
             </Typography>
@@ -214,14 +222,14 @@ export const NeckForm = ({ onSubmit }: Prop) => {
               name={form.raisedHeight.name}
               label={form.raisedHeight.label}
             />
-          </DashedContainer>
+          </>
         )}
         {showLymph && (
-          <DashedContainer>
+          <>
             <Typography mt={"0.5ch"} variant="subtitle2">
               Lymph Node Abnormality
             </Typography>
-            <FieldsContainer sx={{ mt: "0.5ch" }}>
+            <FieldsContainer mr="0.5ch" sx={{ mt: "0.5ch" }}>
               <TextInputField
                 sx={{ width: "100%" }}
                 id={form.lymphNodeLocation.name}
@@ -235,7 +243,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
                 label={form.lymphNodesSize.label}
               />
             </FieldsContainer>
-            <FieldsContainer>
+            <FieldsContainer mr="0.5ch">
               <TextInputField
                 sx={{ width: "100%" }}
                 id={form.lymphNodeMobility.name}
@@ -249,10 +257,10 @@ export const NeckForm = ({ onSubmit }: Prop) => {
                 label={form.lymphNodeTenderness.label}
               />
             </FieldsContainer>
-          </DashedContainer>
+          </>
         )}
         {showEnlargedThyroid && (
-          <DashedContainer>
+          <>
             <Typography variant="subtitle2">Enlarged Thyroid</Typography>
             <TextInputField
               sx={{ my: "1ch", width: "100%" }}
@@ -260,7 +268,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
               name={form.enlargedThyroidDescription.name}
               label={form.enlargedThyroidDescription.label}
             />
-          </DashedContainer>
+          </>
         )}
 
         {showOtherAbnormalities && (
@@ -275,9 +283,9 @@ export const NeckForm = ({ onSubmit }: Prop) => {
         )}
 
         {showLaceration && (
-          <DashedContainer>
+          <>
             <Typography variant="subtitle2">Laceration</Typography>
-            <FieldsContainer>
+            <FieldsContainer mr="0.5ch">
               <TextInputField
                 sx={{ width: "100%" }}
                 id={form.lacerationLength.name}
@@ -293,14 +301,16 @@ export const NeckForm = ({ onSubmit }: Prop) => {
             </FieldsContainer>
             <TextInputField
               sx={{ width: "100%" }}
+              multiline
+              rows={2}
               id={form.lacerationOther.name}
               name={form.lacerationOther.name}
               label={form.lacerationOther.label}
             />
-          </DashedContainer>
+          </>
         )}
 
-        <DashedContainer>
+        <>
           <TextInputField
             sx={{ width: "100%" }}
             id={form.haemotoma.name}
@@ -313,7 +323,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
             name={form.additionalNotes.name}
             label={form.additionalNotes.label}
           />
-        </DashedContainer>
+        </>
       </Box>
     </FormikInit>
   );

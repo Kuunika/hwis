@@ -4,7 +4,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
-import { FaCaretUp } from "react-icons/fa6";
+import { FaAngleUp, FaCaretUp } from "react-icons/fa6";
 import { BedsideTestForm } from "./bedsideTestForm";
 import { LabRequestForm } from "./labRequestForm";
 import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
@@ -24,7 +24,7 @@ export function TestAccordion() {
         onChange={handleChange("bedside")}
       >
         <AccordionSummary
-          expandIcon={<FaCaretUp />}
+          expandIcon={<FaAngleUp />}
           aria-controls="bedsidebh-content"
           id="bedsidebh-header"
         >
@@ -40,7 +40,7 @@ export function TestAccordion() {
         onChange={handleChange("labForm")}
       >
         <AccordionSummary
-          expandIcon={<FaCaretUp />}
+          expandIcon={<FaAngleUp />}
           aria-controls="labFormbh-content"
           id="labFormbh-header"
         >

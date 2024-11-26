@@ -15,6 +15,7 @@ import {
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { FieldArray } from "formik";
+import { concepts } from "@/constants";
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -23,6 +24,7 @@ import { FieldArray } from "formik";
 
   type Surgery = {
     procedure: string;
+    other: string;
     indication: string;
     date: string;
     complication: string;
@@ -30,6 +32,7 @@ import { FieldArray } from "formik";
   
   const surgeryTemplate: Surgery = {
     procedure: "",
+    other:'',
     date:"",
     complication:"",
     indication:""
@@ -42,6 +45,10 @@ import { FieldArray } from "formik";
   const surgeryFormConfig = {
     surgical_procedure_name: (index: number) => ({
         name:`surgeries[${index}].procedure`,
+        label:'Procedure'
+      }),
+      surgical_procedure_other: (index: number) => ({
+        name:`surgeries[${index}].other`,
         label:'Procedure'
       }),
       surgical_procedure_date: (index: number) => ({
@@ -71,36 +78,32 @@ import { FieldArray } from "formik";
   });
 
   const surgicalProcedures = [
-    {id: 'Exploratory laparotomy', label: 'Exploratory laparotomy'},
-    {id: 'Caesarian section', label: 'Caesarian section'},
-    {id: 'Incision and drainage', label: 'Incision and drainage'},
-    {id: 'Thoracotomy', label: 'Thoracotomy'},
-    {id: 'Circumcision', label: 'Circumcision'},
-    {id: 'Debridement', label: 'Debridement'},
-    {id: 'Hysterectomy', label: 'Hysterectomy'},
-    {id: 'ORIF (Open reduction and internal fixation)', label: 'ORIF (Open reduction and internal fixation)'},
-    {id: 'External fixation', label: 'External fixation'},
-    {id: 'Thyroidectomy', label: 'Thyroidectomy'},
-    {id: 'Skin graft', label: 'Skin graft'},
+    {id: concepts.EXPLORATORY_LAPAROTOMY, label: 'Exploratory laparotomy'},
+    {id: concepts.CAESARIAN_SECTION, label: 'Caesarian section'},
+    {id: concepts.INCISION_AND_DRAINAGE, label: 'Incision and drainage'},
+    {id: concepts.THORACOTOMY, label: 'Thoracotomy'},
+    {id: concepts.CIRCUMCISION, label: 'Circumcision'},
+    {id: concepts.DEBRIDEMENT, label: 'Debridement'},
+    {id: concepts.HYSTERECTOMY, label: 'Hysterectomy'},
+    {id: concepts.ORIF, label: 'ORIF (Open reduction and internal fixation)'},
+    {id: concepts.EXTERNAL_FIXATION, label: 'External fixation'},
+    {id: concepts.THYROIDECTOMY, label: 'Thyroidectomy'},
+    {id: concepts.SKIN_GRAFT, label: 'Skin graft'},
+    {id: concepts.OTHER_SURGICAL_PROCEDURE, label: 'Other procedure specify'}
   ];
   
   export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
-
-
-
-  
+    const [showOther, setShowOther] = useState<{ [key: number]: boolean }>({});
   
     const handleSubmit = () => {
-      console.log(formValues);
-      return;
-      //onSubmit(formValues);
+      onSubmit(formValues);
     };
   
     return (
       <FormikInit
         validationSchema={schema}
-        initialValues={initialValues} // Directly pass initialValues, not { initialValues }
+        initialValues={initialValues} 
         onSubmit={onSubmit}
         enableReinitialize={true}
         submitButton={false}
@@ -121,10 +124,23 @@ import { FieldArray } from "formik";
                         <SearchComboBox
                           name={surgeryFormConfig.surgical_procedure_name(index).name}
                           label={surgeryFormConfig.surgical_procedure_name(index).label}
+                          getValue={(value)=>{
+                            if(value === concepts.OTHER_SURGICAL_PROCEDURE){
+                              setShowOther((prev) => ({
+                            ...prev,
+                            [index]: true,
+                          }));
+                          }}}
                           options={surgicalProcedures}
                           multiple={false}
                           sx={{ width: '100%' }}
                         />
+                        {showOther[index] &&(<TextInputField
+                        id={surgeryFormConfig.surgical_procedure_other(index).name}
+                        name={surgeryFormConfig.surgical_procedure_other(index).name}
+                        label={surgeryFormConfig.surgical_procedure_name(index).label}
+                        />)}
+                        
                         <SearchComboBox
                           name={surgeryFormConfig.surgical_procedure_indication(index).name}
                           label={surgeryFormConfig.surgical_procedure_indication(index).label}
