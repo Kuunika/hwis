@@ -289,27 +289,18 @@ export const DesktopView = () => {
                 title: "Medication",
                 link: `/patient/${params.id}/consultation`,
               },
+              {
+                id: 4,
+                title: "Disposition",
+                link: `/patient/${params.id}/disposition`,
+              },
+
+
             ]}
             title="Consultation"
           />
           {/* New Button */}
-          <WrapperBox sx={{ mt: "2ch" }}>
-            <button
-              onClick={() => {
-                window.location.href = `/patient/${params.id}/disposition`;
-              }}
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Go to Disposition
-            </button>
-          </WrapperBox>
+
         </WrapperBox>
         <BasicAccordion />
       </MainGrid>
