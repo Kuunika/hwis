@@ -163,7 +163,7 @@ export const MedicalHistoryFlow = () => {
 
  
     createObsChildren(observationsPayload);
-    setActiveStep(1); 
+    handleSkip(); 
   }
   };
 
@@ -250,7 +250,7 @@ function submitChildAllergies(data: any, myobs: any) {
   });
 
   if(obsChildrenCreated)
-  setActiveStep(2);
+  handleSkip();
 
   };
 
@@ -400,7 +400,7 @@ function submitChildAllergies(data: any, myobs: any) {
   });
 
   if(obsChildrenCreated)
-  setActiveStep(3);
+  handleSkip();
   }
 
   function handleConditionsSubmission(values: any): void {
@@ -442,7 +442,7 @@ function submitChildAllergies(data: any, myobs: any) {
   });
 
   if(obsChildrenCreated)
-  setActiveStep(4);
+  handleSkip();
   }
 
   function handleSurgeriesSubmission(values: any): void {
@@ -484,7 +484,7 @@ function submitChildAllergies(data: any, myobs: any) {
   });
 
   if(obsChildrenCreated)
-  setActiveStep(5);
+  handleSkip();
   }
 
   function handleObstetricsSubmission(values: any): void {
@@ -512,7 +512,7 @@ function submitChildAllergies(data: any, myobs: any) {
       encounterDatetime: dateTime, 
       obs: myObs });
 
-      setActiveStep(6);
+      handleSkip();
       return;
     };
   
@@ -569,7 +569,7 @@ function submitChildAllergies(data: any, myobs: any) {
     });
   
     if(obsChildrenCreated)
-    setActiveStep(6);
+    handleSkip();
   }
 
   function handleAdmissionsSubmission(values: any): void {
@@ -608,7 +608,7 @@ function submitChildAllergies(data: any, myobs: any) {
           onSuccess: (data) => {
             console.log("Admission encounter submitted successfully:", data, index, encounterPayload.length-1);
             if(index == (encounterPayload.length-1))
-              setActiveStep(7)
+              handleSkip()
           },
           onError: (error) => {
             console.error("Error submitting admission encounter:", error);
@@ -1003,7 +1003,7 @@ function submitChildAllergies(data: any, myobs: any) {
         },
       });
 
-      setActiveStep(8)
+      handleSkip()
 
   };
 
@@ -1090,6 +1090,8 @@ function submitChildAllergies(data: any, myobs: any) {
       }, {
         onSuccess: (data) => {
           console.log(`Encounter #${index + 1} submitted successfully:`, data);
+          if(index == (groupedObservations.length-1))
+            handleSkip()
         },
         onError: (error) => {
           console.error(`Error submitting encounter #${index + 1}:`, error);
