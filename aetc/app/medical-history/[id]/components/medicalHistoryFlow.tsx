@@ -21,7 +21,7 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { addObsChildren } from "@/hooks/obs";
-import { useMutation } from "@tanstack/react-query";
+import { Mutation, useMutation } from "@tanstack/react-query";
 import { isErrored } from "stream";
 import { Encounter, Obs } from "@/interfaces";
 import { boolean } from "yup";
@@ -621,9 +621,7 @@ function submitChildAllergies(data: any, myobs: any) {
   }
 
   function handleReviewSubmission(values: any): void {
-
-    console.log(values);
-
+    let errorOccurred = false;
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
@@ -638,7 +636,7 @@ function submitChildAllergies(data: any, myobs: any) {
     };
     
     const initialObs = historyOfComplaints?[historyOfComplaintsObs,lastMealObs]:null;
-    
+ 
     mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
@@ -654,6 +652,7 @@ function submitChildAllergies(data: any, myobs: any) {
           
         },
         onError: (error) => {
+          errorOccurred = true;
           console.error("Error submitting last meal encounter:", error);
         },
       });
@@ -716,6 +715,7 @@ function submitChildAllergies(data: any, myobs: any) {
             
           },
           onError: (error) => {
+            errorOccurred = true;
             console.error("Error submitting encounter:", error);
           },
         });
@@ -740,10 +740,12 @@ function submitChildAllergies(data: any, myobs: any) {
           group_members: cardiacObs,
         },]}, {
         onSuccess: (data) => {
+          
             console.log("Encounter submitted successfully:", data);
             
           },
           onError: (error) => {
+            errorOccurred = true;
             console.error("Error submitting encounter:", error);
           },
         });
@@ -772,6 +774,7 @@ function submitChildAllergies(data: any, myobs: any) {
             
           },
           onError: (error) => {
+            errorOccurred = true;
             console.error("Error submitting encounter:", error);
           },
         });
@@ -810,6 +813,7 @@ function submitChildAllergies(data: any, myobs: any) {
             
           },
           onError: (error) => {
+            errorOccurred = true;
             console.error("Error submitting encounter:", error);
           },
         });
@@ -864,6 +868,7 @@ function submitChildAllergies(data: any, myobs: any) {
               
             },
             onError: (error) => {
+              errorOccurred = true;
               console.error("Error submitting ROS symptoms encounter:", error);
             },
           });
@@ -937,9 +942,11 @@ function submitChildAllergies(data: any, myobs: any) {
             
           },
           onError: (error) => {
+            errorOccurred = true;
             console.error("Error submitting trauma encounter:", error);
           },
         });
+      
 
     }
 
@@ -953,13 +960,15 @@ function submitChildAllergies(data: any, myobs: any) {
       value: occuption
     };
 
-    const socialDetailsObs = [{
+    const socialDetailsObs = [
+      {
       concept: concepts.PATIENT_SMOKES,
       value: socialDetails[0]?.value
     },{
       concept: concepts.PATIENT_DRINKS_ALCOHOL,
       value: socialDetails[1]?.value
-    }] ;
+    }
+  ] ;
       
     const maritalObs = {
       concept: concepts.MARITAL_STATUS,
@@ -989,15 +998,108 @@ function submitChildAllergies(data: any, myobs: any) {
           
         },
         onError: (error) => {
+          errorOccurred = true;
           console.error("Error submitting social history encounter:", error);
         },
       });
 
+      setActiveStep(8)
+
   };
 
   function handleFamilyHistorySubmission(values: any): void {
-    throw new Error("Function not implemented.");
+    const conditionConcepts: { [key: string]: string }  = {
+      asthma: concepts.FAMILY_HISTORY_ASTHMA,
+      hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
+      diabetes_mellitus: concepts.FAMILY_HISTORY_DIABETES_MELLITUS,
+      epilepsy: concepts.FAMILY_HISTORY_EPILEPSY,
+      cancer: concepts.FAMILY_HISTORY_CANCER,
+      tuberculosis: concepts.FAMILY_HISTORY_TUBERCULOSIS,
+      other: concepts.FAMILY_HISTORY_OTHER_CONDITION,
+    }
+
+    const observations: { concept: string; value: any; }[] = [];
+  
+    Object.keys(values).forEach((key) => {
+      const value = values[key];
+
+      if (key.includes("Relationship")) {
+        const conditionKey = key.replace("Relationship", ""); 
+        const relationship = value;
+  
+        if (values[conditionKey + "Type"]) {
+          const conditionType = values[conditionKey + "Type"];  
+  
+
+          observations.push({
+            concept: conditionConcepts[conditionKey],  
+            value: conditionType,   
+          });
+        } else if (key === "otherRelationship" && values["otherSpecify"]) {
+
+          observations.push({
+            concept: conditionConcepts["other"],  
+            value: values["otherSpecify"],  
+          });
+        } else {
+
+          observations.push({
+            concept: conditionConcepts[conditionKey], 
+            value: true, 
+          });
+        }
+  
+
+        observations.push({
+          concept: concepts.RELATIONSHIP_TO_PATIENT, 
+          value: relationship,  
+        });
+      }
+ 
+      if (key.includes("Type") && !values[key.replace("Type", "Relationship")]) {
+        const conditionKey = key.replace("Type", "");  
+        const conditionType = value;
+  
+        observations.push({
+          concept: conditionConcepts[conditionKey],  
+          value: conditionType,   
+        });
+      }
+    });
+  
+
+    const groupedObservations = [];
+    for (let i = 0; i < observations.length; i += 2) {
+      groupedObservations.push([observations[i], observations[i + 1]]);
+    };
+
+    groupedObservations.forEach((group, index) => {
+      mutate({
+        encounterType: encounters.SUMMARY_ASSESSMENT, 
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: [
+          {
+            concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+            value: true,
+            obsDatetime: dateTime,
+            group_members: group,  
+          },
+        ],
+      }, {
+        onSuccess: (data) => {
+          console.log(`Encounter #${index + 1} submitted successfully:`, data);
+        },
+        onError: (error) => {
+          console.error(`Error submitting encounter #${index + 1}:`, error);
+        },
+      });
+    });
+
+
   }
+  
 
   return (
     <>

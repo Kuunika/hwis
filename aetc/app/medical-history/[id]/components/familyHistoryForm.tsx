@@ -93,7 +93,6 @@ import {
     };
   
     const handleSubmit = () => {
-      console.log(formValues);
       onSubmit(formValues);
     };
   
@@ -115,7 +114,7 @@ import {
       <div key={typedKey}>
         <LabelledCheckbox
           label={familyHistoryFormConfig[typedKey].label}
-          checked={formValues[typedKey] || false}
+          checked={formValues[typedKey]}
           onChange={(e) => handleCheckboxChange(e, typedKey)}
         />
         {showRelationshipFields[typedKey] && (

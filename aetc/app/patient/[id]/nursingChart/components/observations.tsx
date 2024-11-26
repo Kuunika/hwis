@@ -292,7 +292,6 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
       case ObservationFormConfig.randomBloodGlucose.name:
         const m = 18.018; //multiplicationFactor
         const units = formValues[ObservationFormConfig.units.name];
-        console.log(numericalValue, units)
         if(units)
         {
         if (units == "mg/dl") {
