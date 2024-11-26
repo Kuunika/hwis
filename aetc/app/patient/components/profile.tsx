@@ -263,6 +263,24 @@ export const DesktopView = () => {
             ]}
             title="Consultation"
           />
+          {/* New Button */}
+          <WrapperBox sx={{ mt: "2ch" }}>
+            <button
+              onClick={() => {
+                window.location.href = `/patient/${params.id}/disposition`;
+              }}
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Go to Disposition
+            </button>
+          </WrapperBox>
         </WrapperBox>
         <BasicAccordion />
       </MainGrid>
@@ -588,8 +606,8 @@ const ActionMenu = () => {
                     py: "1ch",
                     px: "2ch",
                   }}
-                  // 0tnxas
-                  // Yc7flfzx
+                // 0tnxas
+                // Yc7flfzx
                 >
                   {icon && (
                     <Image src={icon ? icon : ""} alt="AETC Form icon" />
