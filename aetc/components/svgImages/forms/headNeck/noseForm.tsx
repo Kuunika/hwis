@@ -53,7 +53,7 @@ const schema = Yup.object().shape({
 const initialsValues = getInitialValues(form);
 
 const abnormalities = [
-  { id: concepts.BLEEDING_FROM_EAR, label: "Bleeding From The Ear" },
+  { id: concepts.BLEEDING_FROM_INSIDE_NOSE, label: "Bleeding from the nose" },
   { id: concepts.RHINORRHOEA, label: "Rhinorrhea" },
   { id: concepts.LACERATION, label: "Laceration" },
   { id: concepts.OTHER, label: "Other" },

@@ -35,6 +35,10 @@ const form = {
     name: concepts.OTHER,
     label: "Other Abnormalities",
   },
+  bruiseDescription: {
+    name: concepts.DESCRIPTION,
+    label: "Bruise Description",
+  },
 };
 
 type Prop = {
@@ -48,6 +52,9 @@ const schema = Yup.object().shape({
   [form.lacerationDepth.name]: Yup.string().label(form.lacerationDepth.label),
   [form.lacerationOther.name]: Yup.string().label(form.lacerationOther.label),
   [form.lacerationLength.name]: Yup.string().label(form.lacerationLength.label),
+  [form.bruiseDescription.name]: Yup.string().label(
+    form.bruiseDescription.label
+  ),
 });
 
 const initialsValues = getInitialValues(form);
@@ -65,12 +72,14 @@ export const OtherTemporalCrownForm = ({ onSubmit }: Prop) => {
   const [showOtherAbnormalities, setShowOtherAbnormalities] =
     useState<boolean>(false);
   const [showLaceration, setShowLaceration] = useState<boolean>(false);
+  const [showBruise, setShowBruise] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
     setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
     setShowOtherAbnormalities(
       Boolean(values.find((v) => v.id == concepts.OTHER))
     );
+    setShowBruise(Boolean(values.find((v) => v.id == concepts.BRUISE)));
   };
   return (
     <FormikInit
@@ -92,9 +101,24 @@ export const OtherTemporalCrownForm = ({ onSubmit }: Prop) => {
           <>
             <TextInputField
               sx={{ my: "1ch", width: "100%" }}
+              multiline
+              rows={2}
               id={form.abnormalities.name}
               name={form.otherAbnormalities.name}
               label={form.otherAbnormalities.label}
+            />
+          </>
+        )}
+
+        {showBruise && (
+          <>
+            <TextInputField
+              multiline
+              rows={2}
+              sx={{ my: "1ch", width: "100%" }}
+              id={form.bruiseDescription.name}
+              name={form.bruiseDescription.name}
+              label={form.bruiseDescription.label}
             />
           </>
         )}
@@ -115,6 +139,8 @@ export const OtherTemporalCrownForm = ({ onSubmit }: Prop) => {
             />
             <TextInputField
               sx={{ my: "1ch", width: "100%" }}
+              multiline
+              rows={2}
               id={form.lacerationOther.name}
               name={form.lacerationOther.name}
               label={form.lacerationOther.label}

@@ -95,6 +95,8 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
         {showBruiseDescription && (
           <>
             <TextInputField
+              multiline
+              rows={2}
               sx={{ my: "1ch", width: "100%" }}
               id={form.descriptionOfBruises.name}
               name={form.descriptionOfBruises.name}
@@ -119,6 +121,8 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
             />
             <TextInputField
               sx={{ my: "1ch", width: "100%" }}
+              multiline
+              rows={2}
               id={form.lacerationOther.name}
               name={form.lacerationOther.name}
               label={form.lacerationOther.label}
