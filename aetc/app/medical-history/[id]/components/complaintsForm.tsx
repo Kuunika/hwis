@@ -210,7 +210,7 @@ const presentingComplaints = [
   { id: concepts.VOMITING, label: "vomiting" },
   { id: concepts.VOMITING_BLOOD, label: "Vomiting blood" },
   { id: concepts.WALKING_DIFFICULTY, label: "Walking difficulty (Gait disturbance or ataxia)" },
-  { id: concepts.WHEEZING, label: "Wheezing" },
+  { id: concepts.WHEEZES, label: "Wheezing" },
   { id: concepts.WOUND_REVIEW, label: "Wound review" },
   { id: concepts.PAIN_SHOULDER, label: "Pain shoulder" },
   { id: concepts.PAIN_LOWER_ABDOMEN, label: "Pain lower abdomen (suprapubic)" },
