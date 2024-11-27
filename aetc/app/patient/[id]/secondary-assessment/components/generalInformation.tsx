@@ -1,5 +1,4 @@
 "use client";
-import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -8,12 +7,16 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
+import { concepts, encounters } from "@/constants";
+import { useSubmitEncounter } from "@/hooks";
+import { getObservations } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 const form = {
   generalInformation: {
-    name: "generalInformation",
+    name: concepts.ADDITIONAL_NOTES,
     label: "General Information",
   },
 };
@@ -32,12 +35,20 @@ const initialValues = {
 };
 export const GeneralInformation = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
+  const { handleSubmit, isLoading } = useSubmitEncounter(
+    encounters.GENERAL_INFORMATION_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(getObservations(values, getDateTime()));
+  };
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
       submitButtonText="Next"
     >
       <FormValuesListener getValues={setFormValues} />

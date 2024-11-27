@@ -156,8 +156,6 @@ export const encounters = {
   PATIENT_ADMISSIONS: "ba0651ec-8d80-11d8-abbb-0024217bb78e",
   //TODO: replace this UUID with a bedside test
   BED_SIDE_TEST: "27e4890f-1677-4098-aa85-c65cfe32359c",
-  GENERAL_INFORMATION:'GENERAL_INFORMATION',
-  HEAD_AND_NECK:'HEAD_AND_NECK',
 
 };
 
