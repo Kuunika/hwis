@@ -21,15 +21,15 @@ export const useSubmitEncounter = (
       encounterType,
       visit: activeVisit?.uuid,
       patient: params.id,
-      dateTime,
+      encounterDatetime: dateTime,
       obs,
     });
 
-    if (encounters) {
-      for (let i = 0; i < encounters.length; i++) {
-        await mutate(encounters[i].formData);
-      }
-    }
+    // if (encounters) {
+    //   for (let i = 0; i < encounters.length; i++) {
+    //     await mutate(encounters[i].formData);
+    //   }
+    // }
   };
 
   useEffect(() => {

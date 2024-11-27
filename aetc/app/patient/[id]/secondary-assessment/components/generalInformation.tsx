@@ -1,14 +1,10 @@
-'use client'
+"use client";
 import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
 import {
   FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
-  MainTypography,
-  RadioGroupInput,
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
@@ -20,8 +16,6 @@ const form = {
     name: "generalInformation",
     label: "General Information",
   },
-
-
 };
 
 const schema = yup.object({
@@ -29,7 +23,6 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.generalInformation.label),
-  
 });
 
 const initialValues = {
@@ -49,16 +42,14 @@ export const GeneralInformation = ({ onSubmit }: Props) => {
     >
       <FormValuesListener getValues={setFormValues} />
 
-     
-        <FieldsContainer>
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.generalInformation.name}
-            label={form.generalInformation.label}
-            id={form.generalInformation.name}
-          />
-          </FieldsContainer>
-    
+      <FieldsContainer>
+        <TextInputField
+          sx={{ width: "100%" }}
+          name={form.generalInformation.name}
+          label={form.generalInformation.label}
+          id={form.generalInformation.name}
+        />
+      </FieldsContainer>
     </FormikInit>
   );
 };

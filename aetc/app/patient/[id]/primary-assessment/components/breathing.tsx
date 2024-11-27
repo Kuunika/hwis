@@ -13,7 +13,7 @@ import {
 import * as Yup from "yup";
 
 import { LungImage, LungBackImage } from "@/components/svgImages";
-import { getInitialValues, getObservations } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 
@@ -245,11 +245,32 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   );
 
   const handleSubmitForm = async (values: any) => {
-    await handleSubmit(getObservations(values, getDateTime()), [
-      ...chestAbnormalitiesImage,
-      ...percussionImage,
-    ]);
+    const formValues = { ...values };
+
+    const obs = [
+      {
+        concept: form.chestWallAbnormality.name,
+        value: formValues[form.chestWallAbnormality.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(chestAbnormalitiesImage),
+      },
+      {
+        concept: form.percussion.name,
+        value: formValues[form.percussion.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(percussionImage),
+      },
+    ];
+    delete formValues[form.chestWallAbnormality.name];
+    delete formValues[form.percussion.name];
+
+    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
+
+  useEffect(() => {
+    console.log({ percussionImage });
+    console.log({ chestAbnormalitiesImage });
+  }, [percussionImage, chestAbnormalitiesImage]);
 
   return (
     <FormikInit

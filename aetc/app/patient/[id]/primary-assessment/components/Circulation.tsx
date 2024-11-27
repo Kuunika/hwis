@@ -1,7 +1,7 @@
 "use client";
 import { NotificationContainer, SearchComboBox } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { getInitialValues, getObservations } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -241,16 +241,39 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
   const [legImage, setLegImage] = useState<Array<any>>([]);
+  const [abdomenImage, setAbdomenImage] = useState<Array<any>>([]);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.CIRCULATION_ASSESSMENT,
     onSubmit
   );
   const handleSubmitForm = async (values: any) => {
-    await handleSubmit(getObservations(values, getDateTime()), [
-      ...abdomenOtherImage,
-      ...legImage,
-    ]);
+    const formValues = { ...values };
+
+    const obs = [
+      {
+        concept: form.abnormalitiesInfo.name,
+        value: formValues[form.abnormalitiesInfo.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(abdomenOtherImage),
+      },
+      {
+        concept: form.femurAndTibiaNormalInfo.name,
+        value: formValues[form.femurAndTibiaNormalInfo.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(legImage),
+      },
+      {
+        concept: form.anyOtherAbnormalitiesOnAbdomen.name,
+        value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(abdomenImage),
+      },
+    ];
+    delete formValues[form.abnormalitiesInfo.name];
+    delete formValues[form.femurAndTibiaNormalInfo.name];
+
+    await handleSubmit([...getObservations(values, getDateTime()), ...obs]);
   };
   return (
     <FormikInit
@@ -480,7 +503,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
         </FieldsContainer>
         {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
           <>
-            <AbdomenImage />
+            <AbdomenImage onValueChange={setAbdomenImage} />
           </>
         )}
         <FieldsContainer>
