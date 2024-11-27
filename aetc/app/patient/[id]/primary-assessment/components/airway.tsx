@@ -199,7 +199,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
                   label={form.neckCollar.label}
                   options={[
                     ...radioOptions,
-                    { label: "No Indicated", value: "notIndicated" },
+                    { label: "Not Indicated", value: concepts.NOT_INDICATED },
                   ]}
                 />
                 <RadioGroupInput
