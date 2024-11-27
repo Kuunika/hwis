@@ -69,9 +69,9 @@ const GastrointenstinalOptions = [
   { id: concepts.PainfulSwallowing, label: 'Painful in swallowing' },
   { id: concepts.AbdominalDistension, label: 'Abdominal distension' },
   { id: concepts.BloodyStool, label: 'Bloody stool' },
-  { id: concepts.StoolIncontinence, label: 'Stool incontinence' },
-  { id: concepts.AnalSwelling, label: 'Anal swelling' },
-  { id: concepts.AnalDischarge, label: 'Anal discharge' }
+  { id: concepts.STOOL_INCONTINENCE, label: 'Stool incontinence' },
+  { id: concepts.ANAL_SWELLING, label: 'Anal swelling' },
+  { id: concepts.ANAL_DISCHARGE, label: 'Anal discharge' }
 ];
 
 const cardiacRespiratoryOptions = [

@@ -21,10 +21,8 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { addObsChildren } from "@/hooks/obs";
-import { Mutation, useMutation } from "@tanstack/react-query";
-import { isErrored } from "stream";
 import { Encounter, Obs } from "@/interfaces";
-import { boolean } from "yup";
+
 
 type Complaint = {
   complaint: string;
