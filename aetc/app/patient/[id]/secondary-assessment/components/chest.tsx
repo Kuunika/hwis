@@ -277,7 +277,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     delete formValues[form.tactileFremitus.name];
     delete formValues[form.vocalFremitus.name];
 
-    await handleSubmit([...getObservations(formValues, getDateTime), ...obs]);
+    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
 
   const handleValueChange = (values: Array<any>) => {

@@ -8,10 +8,12 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import { getInitialValues } from "@/helpers";
-import { concepts } from "@/constants";
+import { getInitialValues, getObservations } from "@/helpers";
+import { concepts, encounters } from "@/constants";
+import { useSubmitEncounter } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 const form = {
   generalInformation: {
@@ -30,15 +32,21 @@ const schema = yup.object({
 const initialValues = getInitialValues(form);
 
 export const NeurologicalExamination = ({ onSubmit }: Props) => {
-  const [formValues, setFormValues] = useState<any>({});
+  const { handleSubmit, isLoading } = useSubmitEncounter(
+    encounters.EXTREMITIES_ASSESSMENT,
+    onSubmit
+  );
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(getObservations(values, getDateTime()));
+  };
+
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
       submitButtonText="Next"
     >
-      <FormValuesListener getValues={setFormValues} />
       <FieldsContainer>
         <TextInputField
           multiline
