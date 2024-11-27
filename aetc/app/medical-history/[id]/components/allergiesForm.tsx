@@ -151,7 +151,6 @@ const initialValues = {
   };
 
   const handleSubmit = () => {
-
     const allergyListKey = concepts.ALLERGY;
 
 // Loop through each key in `data`

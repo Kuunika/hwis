@@ -189,7 +189,7 @@ export const MedicalHistoryFlow = () => {
 
 function submitChildAllergies(data: any, myobs: any) {
 
-
+  console.log(myobs)
   const groupedAllergies = myobs[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
     if (!acc[allergy.group]) {
       acc[allergy.group] = [];
@@ -203,25 +203,26 @@ function submitChildAllergies(data: any, myobs: any) {
     const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
       let conceptValue = allergy.value; 
       let value = true; 
-  
+      console.log(allergy)
       if (allergy.label.includes("Other medical substance allergy")) {
+        
         conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
-        value = allergy.value; 
+        value = myobs[concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]; 
       } 
       
       if (allergy.label.includes("Other substance allergy")) {
         conceptValue = concepts.OTHER_SUBSTANCE_ALLERGY; 
-        value = allergy.value; 
+        value = myobs[concepts.OTHER_SUBSTANCE_ALLERGY]; 
       }
       
       if (allergy.label.includes("Other medication allergy")) {
         conceptValue = concepts.OTHER_MEDICATION_ALLERGY; 
-        value = allergy.value; 
+        value = myobs[concepts.OTHER_MEDICATION_ALLERGY]; 
       }
 
       if (allergy.label.includes("Other food allergy")) {
         conceptValue = concepts.OTHER_FOOD_ALLERGY; 
-        value = allergy.value; 
+        value = myobs[concepts.OTHER_FOOD_ALLERGY]; 
       }
   
       return {
@@ -298,8 +299,8 @@ function submitChildAllergies(data: any, myobs: any) {
       medication_route: 'concept_uuid_for_route',//not used
       medication_duration: concepts.MEDICATION_DURATION,
       medication_duration_unit: 'concept_uuid_for_duration_unit', //not used
-      medication_date_last_taken: concepts.MEDICATION_LAST_TAKEN,
-      medication_date_of_last_prescription: concepts.MEDICATION_LAST_PRESCRIBED,
+      medication_date_last_taken: concepts.MEDICATION_DATE_LAST_TAKEN,
+      medication_date_of_last_prescription: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,
     };
     
     const durationUnits: Record<string, string>  ={
