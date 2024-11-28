@@ -47,8 +47,8 @@ const convertObservations = (input: InputObservation[]): OutputObservation[] => 
   return input.flatMap((observation) =>
     observation.value.flatMap((complaint) => [
       {
-        concept: concepts.COMPLAINTS,
-        value: complaint.complaint,
+        concept: complaint.complaint,
+        value: true,
       },
       {
         concept: complaint.duration_unit === durationOptions[0]
@@ -149,7 +149,7 @@ export const MedicalHistoryFlow = () => {
   for (let i = 0; i < myobs.length; i += 2) {
     const chunk = myobs.slice(i, i + 2);
 
-
+    console.log(chunk)
     const observationsPayload = {
       encounter: data.uuid,
       person: params.id,
