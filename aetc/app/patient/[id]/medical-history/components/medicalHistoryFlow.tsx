@@ -85,6 +85,15 @@ export const MedicalHistoryFlow = () => {
     isPending: creatingObsChildren,
     isError: obsChildrenError, 
   } = addObsChildren();
+
+  const {
+    data: encounterResponse,
+    mutate: createEncounter,
+    isPending: creatingEncounter,
+    isSuccess: encounterCreated,
+    isError: encounterError,
+} = addEncounter();
+
   const { data: patientVisits, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
   // Wait for patient data to load
@@ -128,21 +137,14 @@ export const MedicalHistoryFlow = () => {
     delete modifiedValues.complaints;
 
     const myobs = convertObservations(getObservations(values, dateTime));
-    mutate({ encounterType: encounters.PRESENTING_COMPLAINTS,
+    createEncounter({ encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
-      obs:  []}, {
-      onSuccess: (data) => {
-          console.log("Encounter submitted successfully:", data);
-          submitChildren(data, myobs);
-          
-        },
-        onError: (error) => {
-          console.error("Error submitting encounter:", error);
-        },
-      });
+      obs:  []});
       
+      if(encounterCreated)
+      submitChildren(encounterResponse, myobs);
   };
 
   function submitChildren(data: any, myobs: any) {
@@ -313,7 +315,7 @@ function submitChildAllergies(data: any, myobs: any) {
       "Micrograms (µg)": concepts.DOSE_IN_MICROGRAMS,
      "Grams (g)": concepts.DOSE_IN_GRAMS,
      "International Units (IU)": concepts.DOSE_IN_IU,
-     "Milliliters (ml)": concepts.DOSE_IN_MILLIMETERS,
+     "Milliliters (ml)": concepts.DOSE_IN_MILLIMETER,
      "Millimoles (mmol)": concepts.DOSE_IN_MILLIMOLES,	
     }
 
@@ -325,7 +327,6 @@ function submitChildAllergies(data: any, myobs: any) {
       "Solution":concepts.SOLUTION,
       "Eye Ointment": concepts.EYE_OINTMENT,
       "Cream": concepts.CREAM,
-      "Eye Drops": concepts.EYE_DROPS,
       "Ointment": concepts.OINTMENT,
       "Inhaler": concepts.INHALER,
       "Suppository": concepts.SUPPOSITORY,
