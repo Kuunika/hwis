@@ -2,6 +2,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import React from "react";
 import { useRef, useState, useEffect } from "react";
 import { getActivePatientDetails } from ".";
+import { concepts } from "@/constants";
 
 export const useImage = () => {
   const { activeVisit, patientId } = getActivePatientDetails();
@@ -115,31 +116,41 @@ export const useImage = () => {
   };
 
   const handleFormSubmit = (formData: any) => {
+    console.log({ formData });
     const dateTime = getDateTime();
-    const obs = Object.keys(formData).flatMap((key) => {
-      const conceptData = formData[key];
+    const obs = Object.keys(formData)
+      .flatMap((key) => {
+        const conceptData = formData[key];
 
-      return Array.isArray(conceptData)
-        ? conceptData.map((p: any) => {
-            return {
+        return Array.isArray(conceptData)
+          ? conceptData.map((p: any) => {
+              return {
+                concept: key,
+                value: p.id,
+                obsDatetime: dateTime,
+              };
+            })
+          : {
               concept: key,
-              value: p.id,
+              value: conceptData,
               obsDatetime: dateTime,
             };
-          })
-        : {
-            concept: key,
-            value: conceptData,
-            obsDatetime: dateTime,
-          };
-    });
+      })
+      .filter((concept) => concept.value != "");
 
     formData = {
       encounterDateTime: dateTime,
       visit: activeVisit,
       patient: patientId,
       encounterType: selectedSection.id,
-      obs,
+      obs: [
+        ...obs,
+        {
+          concept: concepts.IMAGE_PART_NAME,
+          value: selectedSection.label,
+          obsDatetime: dateTime,
+        },
+      ],
     };
     setIds((ids) => [...ids, { ...selectedSection, formData }]);
     handleClose();

@@ -42,3 +42,11 @@ export const getFormLabels = (formConceptLabels:any, selectOptionsFormLabels:Arr
 
 return [...form, ...radios, ...selects]
 }
+
+export const flattenImagesObs = (formImageEncounters: Array<{formData: {obs:any}}>)=>{
+
+return formImageEncounters.flatMap((enc)=>{
+  return enc.formData.obs
+})
+
+}

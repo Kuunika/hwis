@@ -14,8 +14,12 @@ import {
 import * as yup from "yup";
 
 import { HeadNeckImage } from "@/components/svgImages";
+import { useSubmitEncounter } from "@/hooks";
+import { encounters } from "@/constants";
+import { flattenImagesObs, getObservations } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 const form = {
   generalInformation: {
@@ -40,16 +44,20 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   const [headNeckImageEncounter, setHeadNeckImageEncounter] = useState<
     Array<any>
   >([]);
+  const { handleSubmit, isLoading } = useSubmitEncounter(
+    encounters.HEAD_AND_NECK_ASSESSMENT,
+    onSubmit
+  );
 
-  useEffect(() => {
-    console.log({ headNeckImageEncounter });
-  }, [headNeckImageEncounter]);
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(flattenImagesObs(headNeckImageEncounter));
+  };
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
       submitButtonText="Next"
     >
       <FormValuesListener getValues={setFormValues} />

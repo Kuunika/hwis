@@ -1,10 +1,7 @@
 import {
-  FieldsContainer,
-  FormFieldContainer,
   FormFieldContainerMultiple,
   FormikInit,
   RadioGroupInput,
-  SearchComboBox,
   TextInputField,
 } from "@/components";
 import { concepts, encounters } from "@/constants";

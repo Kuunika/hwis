@@ -8,12 +8,14 @@ export const useSubmitEncounter = (
   encounterType: string,
   onDataSubmitComplete: () => void
 ) => {
-  const { mutate, isSuccess, isPending } = addEncounter();
+  const { mutate, isSuccess, isPending, data } = addEncounter();
   const { params } = useParameters();
   const { data: patientVisits, isLoading } = getPatientVisitTypes(
     params?.id as string
   );
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
+
+  console.log({ data });
 
   const handleSubmit = async (obs: Array<any>, encounters?: Array<any>) => {
     const dateTime = getDateTime();
@@ -21,15 +23,15 @@ export const useSubmitEncounter = (
       encounterType,
       visit: activeVisit?.uuid,
       patient: params.id,
-      dateTime,
+      encounterDatetime: dateTime,
       obs,
     });
 
-    if (encounters) {
-      for (let i = 0; i < encounters.length; i++) {
-        await mutate(encounters[i].formData);
-      }
-    }
+    // if (encounters) {
+    //   for (let i = 0; i < encounters.length; i++) {
+    //     await mutate(encounters[i].formData);
+    //   }
+    // }
   };
 
   useEffect(() => {

@@ -10,10 +10,12 @@ import {
 } from "@/components";
 import * as yup from "yup";
 import { Box } from "@mui/material";
-import { NO, YES, concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { NO, YES, concepts, encounters } from "@/constants";
+import { getInitialValues, getObservations } from "@/helpers";
+import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
+import { getDateTime } from "@/helpers/dateTime";
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 const form = {
   eyeOpening: {
@@ -131,6 +133,14 @@ export const Disability = ({ onSubmit }: Props) => {
   const [eyeOpeningValue, setEyeOpeningValue] = useState();
   const [verbalResponseValue, setVerbalResponseValue] = useState();
   const [motorResponseValue, setMotorResponseValue] = useState();
+  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
+    encounters.DISABILITY_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleFormSubmit = (values: any) => {
+    handleSubmit(getObservations(values, getDateTime()));
+  };
 
   const totalSum =
     Number(eyeOpeningValue || 0) +
@@ -141,7 +151,7 @@ export const Disability = ({ onSubmit }: Props) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleFormSubmit}
       submitButtonText="next"
     >
       <FormFieldContainerLayout title="AVPU">
