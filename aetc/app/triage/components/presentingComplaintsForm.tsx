@@ -11,7 +11,7 @@ type Prop = {
   onSubmit: (values: any) => void;
   setTriageResult: (triage: any, name: string) => void;
   triageResult: string;
-  getFormValues: (values: any) => void
+  getFormValues: (values: any) => void;
 };
 const form = {
   complaints: {
@@ -43,7 +43,10 @@ const presentingComplaints = [
   { id: "Anxiety", label: "Anxiety" },
   { id: "Aphasia", label: "Aphasia (Unable to talk)" },
   { id: "Bleeding Problem", label: "Bleeding problem" },
-  { id: "Blood And Body Fluid Exposure", label: "Blood and body fluid exposure" },
+  {
+    id: "Blood And Body Fluid Exposure",
+    label: "Blood and body fluid exposure",
+  },
   { id: "Blood In Stool", label: "Blood in stool" },
   { id: "Burn Injury", label: "Burn injury" },
   { id: "Carbon Monoxide Poisoning", label: "Carbon monoxide poisoning" },
@@ -70,7 +73,10 @@ const presentingComplaints = [
   { id: "Earache", label: "Earache" },
   { id: "Electric Shock", label: "Electric shock" },
   { id: "Epistaxis", label: "Epistaxis (Nose bleed)" },
-  { id: "Exposure To Communicable Diseases", label: "Exposure to communicable diseases" },
+  {
+    id: "Exposure To Communicable Diseases",
+    label: "Exposure to communicable diseases",
+  },
   { id: "Exposure To Gas", label: "Exposure to gas" },
   { id: "Eye Discharge", label: "Eye discharge" },
   { id: "Fainting Syncope Collapse", label: "Fainting/syncope/collapse" },
@@ -81,7 +87,10 @@ const presentingComplaints = [
   { id: "Foreign Body Ear", label: "Foreign body ear" },
   { id: "Foreign Body Eye", label: "Foreign body eye" },
   { id: "Foreign Body Nose", label: "Foreign body nose" },
-  { id: "Foreign Body Oesophageal Or Oral", label: "Foreign body oesophageal or oral" },
+  {
+    id: "Foreign Body Oesophageal Or Oral",
+    label: "Foreign body oesophageal or oral",
+  },
   { id: "Foreign Body Rectum", label: "Foreign body rectum" },
   { id: "Foreign Body Respiratory", label: "Foreign body respiratory" },
   { id: "Foreign Body Throat", label: "Foreign body throat" },
@@ -90,7 +99,10 @@ const presentingComplaints = [
   { id: "Genital Discharge", label: "Genital discharge" },
   { id: "Genital Lesion", label: "Genital lesion" },
   { id: "Haematuria (bloody urine)", label: "Haematuria (bloody urine)" },
-  { id: "Haemoptysis (Coughing blood)``", label: "Haemoptysis (Coughing blood)" },
+  {
+    id: "Haemoptysis (Coughing blood)``",
+    label: "Haemoptysis (Coughing blood)",
+  },
   { id: "Haemorrhoid", label: "Haemorrhoid" },
   { id: "Headache", label: "Headache" },
   { id: "Heart Palpitations", label: "Heart palpitations" },
@@ -118,7 +130,10 @@ const presentingComplaints = [
   { id: "Injury Head", label: "Injury head" },
   { id: "Injury Lower Extremity", label: "Injury lower extremity" },
   { id: "Injury Major Trauma Blunt", label: "Injury major trauma blunt" },
-  { id: "Injury Major Trauma Penetrating", label: "Injury Major trauma penetrating" },
+  {
+    id: "Injury Major Trauma Penetrating",
+    label: "Injury Major trauma penetrating",
+  },
   { id: "Injury Neck", label: "Injury neck" },
   { id: "Injury Nose", label: "Injury nose" },
   { id: "Injury Spine", label: "Injury spine" },
@@ -138,7 +153,10 @@ const presentingComplaints = [
   { id: "Numbness Parasthesias", label: "Numbness/Parasthesias" },
   { id: "Odynophagia", label: "Odynophagia (Painful swallowing)" },
   { id: "Oedema Bilateral Leg", label: "Oedema bilateral leg (Leg swelling)" },
-  { id: "Oedema Generalised", label: "Oedema generalised (General body swelling)" },
+  {
+    id: "Oedema Generalised",
+    label: "Oedema generalised (General body swelling)",
+  },
   { id: "Oliguria", label: "Oliguria (Reduced urine output" },
   { id: "Other", label: "Other" },
   // { id: "Other Specify", label: "Specify" },
@@ -158,7 +176,10 @@ const presentingComplaints = [
   { id: "Painful Urination", label: "Painful urination (Dysuria)" },
   { id: "Patient Safety Concern", label: "Patient safety concern" },
   { id: "Per Vaginal Bleeding", label: "Per vaginal bleeding" },
-  { id: "Per Vaginal Bleeding With Amenorrhoea", label: "Per vaginal bleeding with amenorrhoea" },
+  {
+    id: "Per Vaginal Bleeding With Amenorrhoea",
+    label: "Per vaginal bleeding with amenorrhoea",
+  },
   { id: "Photophobia", label: "Photophobia" },
   { id: "Poisoning", label: "Poisoning" },
   { id: "Polyuria", label: "Polyuria" },
@@ -182,9 +203,15 @@ const presentingComplaints = [
   { id: "Stridor", label: "Stridor" },
   { id: "Substance Withdrawal Alcohol", label: "Substance Withdrawal Alcohol" },
   { id: "Substance Withdrawal Opioid", label: "Substance Withdrawal Opioid" },
-  { id: "Substance Withdrawal Benzodiazepine", label: "Substance Withdrawal benzodiazepine" },
+  {
+    id: "Substance Withdrawal Benzodiazepine",
+    label: "Substance Withdrawal benzodiazepine",
+  },
   // { id: "Substance Withdrawal Other Specify", label: "Other specify" },
-  { id: "Surgical Admission For Elective Surgery", label: "Surgical admission for elective surgery" },
+  {
+    id: "Surgical Admission For Elective Surgery",
+    label: "Surgical admission for elective surgery",
+  },
   { id: "Suspected Bowel Obstruction", label: "Suspected bowel obstruction" },
   { id: "Suture Removal", label: "Suture removal" },
   { id: "Swelling Groin", label: "Swelling groin" },
@@ -203,47 +230,54 @@ const presentingComplaints = [
   { id: "Visual Disturbance", label: "Visual disturbance" },
   { id: "Vomiting", label: "vomiting" },
   { id: "Vomiting Blood", label: "Vomiting blood" },
-  { id: "Walking Difficulty", label: "Walking difficulty (Gait disturbance or ataxia)" },
+  {
+    id: "Walking Difficulty",
+    label: "Walking difficulty (Gait disturbance or ataxia)",
+  },
   { id: "Wheezing", label: "Wheezing" },
   { id: "Wound Review", label: "Wound review" },
   { id: "Pain Shoulder", label: "Pain shoulder" },
   { id: "Pain Lower Abdomen", label: "Pain lower abdomen (suprapubic)" },
   { id: "Wound Discharge", label: "Wound discharge" },
   { id: "Not Passing Stools", label: "Not passing stools" },
-  { id: "Food Poisoning", label: "Food poisoning" }
+  { id: "Food Poisoning", label: "Food poisoning" },
 ];
 
-
-
-export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormValues }: Prop) => {
-
+export const PresentingComplaintsForm = ({
+  onSubmit,
+  setTriageResult,
+  getFormValues,
+}: Prop) => {
   const [otherPresenting, setOtherPresenting] = useState([]);
-  const [showInputTextDisplay, setShowInputTextDisplay] = useState(false)
+  const [showInputTextDisplay, setShowInputTextDisplay] = useState(false);
 
   const handleValueChange = (values: Array<any>) => {
-    const triage = ['Carbon Monoxide Poisoning', 'Injury Major Trauma Penetrating', 'Poisoning', 'Vomiting Blood']
-    setShowInputTextDisplay(Boolean(values.find(v => v.id == "Other")))
+    const triage = [
+      "Carbon Monoxide Poisoning",
+      "Injury Major Trauma Penetrating",
+      "Poisoning",
+      "Vomiting Blood",
+    ];
+    setShowInputTextDisplay(Boolean(values.find((v) => v.id == "Other")));
 
-    triage.forEach(triage => {
-      const found = values.find(v => {
-        return v.id == triage
+    triage.forEach((triage) => {
+      const found = values.find((v) => {
+        return v.id == triage;
       });
 
       if (found) {
-        setTriageResult("red", triage)
+        setTriageResult("red", triage);
       } else {
-        setTriageResult("", triage)
+        setTriageResult("", triage);
       }
-    })
-  }
-
+    });
+  };
 
   const handleSubmit = (values: any) => {
-    const other = otherPresenting.map(value => ({ id: value, label: value }))
-    values[form.complaints.name] = [...values[form.complaints.name], ...other]
-    onSubmit(values)
-  }
-
+    const other = otherPresenting.map((value) => ({ id: value, label: value }));
+    values[form.complaints.name] = [...values[form.complaints.name], ...other];
+    onSubmit(values);
+  };
 
   return (
     <FormikInit
@@ -262,10 +296,12 @@ export const PresentingComplaintsForm = ({ onSubmit, setTriageResult, getFormVal
       />
       <br />
 
-      {showInputTextDisplay && <TextInputDisplay getValues={setOtherPresenting} />}
+      {showInputTextDisplay && (
+        <TextInputDisplay getValues={setOtherPresenting} />
+      )}
       <br />
 
-      <MainButton title={"next"} type="submit" onClick={() => { }} />
+      <MainButton title={"next"} type="submit" onClick={() => {}} />
     </FormikInit>
   );
-}; 
+};

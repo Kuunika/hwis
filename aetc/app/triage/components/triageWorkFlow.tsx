@@ -23,16 +23,12 @@ import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
-import {
-  getPatientsWaitingForTriage,
-  getPatientVisitTypes,
-} from "@/hooks/patientReg";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { ServiceAreaForm } from "./serviceAreaForm";
 import { Encounter, TriageResult } from "@/interfaces";
 import { Bounce, toast } from "react-toastify";
 import { DisplayNone } from "@/components/displayNoneWrapper";
 import { closeCurrentVisit } from "@/hooks/visit";
-
 import { getObservationValue } from "@/helpers/emr";
 import { PatientTriageBarcodePrinter } from "@/components/barcodePrinterDialogs";
 
@@ -42,7 +38,6 @@ export default function TriageWorkFlow() {
   const { params } = useParameters();
   const [triageResult, setTriageResult] = useState<TriageResult>("");
   const [continueTriage, setContinueTriage] = useState(false);
-  const { data: triageList } = getPatientsWaitingForTriage();
   const [conceptTriageResult, setConceptTriageResult] = useState<any>({});
   const [submittedSteps, setSubmittedSteps] = useState<Array<number>>([]);
 
