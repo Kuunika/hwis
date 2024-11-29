@@ -289,9 +289,24 @@ export const DesktopView = () => {
                 title: "Medication",
                 link: `/patient/${params.id}/consultation`,
               },
+
+
+
             ]}
             title="Consultation"
           />
+          {/* New Button */}
+          <ConsultationCard
+            disabled={!isOnList}
+            title="Disposition"
+            links={[
+              {
+                title: "Disposition",
+                link: `/patient/${params.id}/disposition`,
+              },
+            ]}
+          />
+
         </WrapperBox>
         <BasicAccordion />
       </MainGrid>
@@ -617,8 +632,8 @@ const ActionMenu = () => {
                     py: "1ch",
                     px: "2ch",
                   }}
-                  // 0tnxas
-                  // Yc7flfzx
+                // 0tnxas
+                // Yc7flfzx
                 >
                   {icon && (
                     <Image src={icon ? icon : "/test"} alt="AETC Form icon" />
