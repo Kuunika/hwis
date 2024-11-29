@@ -61,7 +61,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
-      <Box position="relative" display="flex" alignItems="center" >
+      <Box position="relative" display="flex" alignItems="center" marginBottom={'2ch'} >
         {/* Input Field */}
         <TextField
           id={id}
@@ -70,7 +70,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           onChange={handleChange}
           placeholder={placeholder}
           variant="outlined"
-          sx={{ flexGrow: 1, background: "white"}}
+          sx={{ flexGrow: 1, background: "white", height: 56}}
           error={hasError}
           helperText={hasError ? errorMessage : ""}
           onBlur={(event: any) => {
@@ -94,9 +94,11 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
             position: "absolute",
             right: 0,
             minWidth: 80,
+            height: "100%",
             background: "white",
             borderTopLeftRadius: 0,
             borderBottomLeftRadius: 0,
+            alignItems: "center",
           }}
           MenuProps={{ PaperProps: { style: { maxHeight: 200 } }, disableScrollLock: true, }}
         >

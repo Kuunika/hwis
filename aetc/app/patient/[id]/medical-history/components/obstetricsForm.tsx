@@ -82,7 +82,7 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
       { id: concepts.IMPLANON, label: 'Implanon' },
       { id: concepts.LEVOPLANT, label: 'Levoplant' },
       { id: concepts.DEPO_PROVERA, label: 'Depo Provera' },
-      { id: concepts.IUCD, label: 'Intra Uterine Contraceptive Device (IUCD)' },
+      { id: concepts.INTRAUTERINE_CONTRACEPTIVE_DEVICE, label: 'Intra Uterine Contraceptive Device (IUCD)' },
       { id: concepts.PROGESTIN_ONLY_PILLS, label: 'Progestin only pills' },
       { id: concepts.VASECTOMY, label: 'Vasectomy' },
       { id: concepts.TUBAL_LIGATION, label: 'Tubal ligation' },

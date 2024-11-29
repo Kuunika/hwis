@@ -1,8 +1,14 @@
 import React, { useState } from "react";
-import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox } from "@/components";
+import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox, UnitInputField, FormFieldContainerLayout, CheckboxesGroup } from "@/components";
 import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
-import { concepts } from "@/constants";
+import { concepts, durationOptions } from "@/constants";
+import { IoTimeOutline } from "react-icons/io5";
+import { DateTimePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { getDateTime } from "@/helpers/dateTime";
+import dayjs, { Dayjs } from 'dayjs';
+
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -10,8 +16,8 @@ type Prop = {
 };
 
 const symptomList = {
-    lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
-    events: { name: "events", label: "Events(History of presenting complaints)", requiresSite: true },
+  lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
+  events: { name: "events", label: "Events(History of presenting complaints)", requiresSite: true },
   pain: { name: "pain", label: "Pain", requiresSite: true },
   rash: { name: "rash", label: "Rash", requiresSite: true },
   itching: { name: "itching", label: "Itching", requiresSite: true },
@@ -36,7 +42,7 @@ const symptomList = {
   fatigue: { name: "fatigue", label: "Fatigue", requiresSite: false },
   poisoning: { name: "poisoning", label: "Poisoning", requiresSite: false },
   poisoningIntentional: { name: "intentionalPoisoning", label: "Intentional Poisoning", requiresSite: false },
-  ulcerWound: { name: "ulcerOrWound", label: "Ulcer/Wound", requiresSite: true },
+  ulcerWound: { name: "ulcerWound", label: "Ulcer/Wound", requiresSite: true },
 };
 
 const injuryMechanismList = {
@@ -53,58 +59,91 @@ const injuryMechanismList = {
 };
 
 const GastrointenstinalOptions = [
-  { id: 'YellowingOfEyesOrSkin', label: 'Yellowing of eyes or skin' },
-  { id: 'Nausea', label: 'Nausea' },
-  { id: 'Dyspepsia', label: 'Dyspepsia' },
-  { id: 'AbdominalPains', label: 'Abdominal pains' },
-  { id: 'Vomiting', label: 'Vomiting' },
-  { id: 'Diarrhoea', label: 'Diarrhoea' },
-  { id: 'DifficultyInSwallowing', label: 'Difficulty in swallowing' },
-  { id: 'PainfulSwallowing', label: 'Painful in swallowing' },
-  { id: 'AbdominalDistension', label: 'Abdominal distension' },
-  { id: 'BloodyStool', label: 'Bloody stool' },
-  { id: 'StoolIncontinence', label: 'Stool incontinence' },
-  { id: 'AnalSwelling', label: 'Anal swelling' },
-  { id: 'AnalDischarge', label: 'Anal discharge' }
+  { id: concepts.YellowingOfEyesOrSkin, label: 'Yellowing of eyes or skin' },
+  { id: concepts.Nausea, label: 'Nausea' },
+  { id: concepts.Dyspepsia, label: 'Dyspepsia' },
+  { id: concepts.AbdominalPains, label: 'Abdominal pains' },
+  { id: concepts.Vomiting, label: 'Vomiting' },
+  { id: concepts.Diarrhoea, label: 'Diarrhoea' },
+  { id: concepts.DifficultyInSwallowing, label: 'Difficulty in swallowing' },
+  { id: concepts.PainfulSwallowing, label: 'Painful in swallowing' },
+  { id: concepts.AbdominalDistension, label: 'Abdominal distension' },
+  { id: concepts.BloodyStool, label: 'Bloody stool' },
+  { id: concepts.STOOL_INCONTINENCE, label: 'Stool incontinence' },
+  { id: concepts.ANAL_SWELLING, label: 'Anal swelling' },
+  { id: concepts.ANAL_DISCHARGE, label: 'Anal discharge' }
 ];
 
 const cardiacRespiratoryOptions = [
-  { id: 'Cough', label: 'Cough' },
-  { id: concepts.PAIN_CHEST, label: 'Chest pain' },
-  { id: 'ShortnessOfBreath', label: 'Shortness of breath' },
-  { id: 'HeartPalpitations', label: 'Heart palpitations' },
-  { id: 'Wheezing', label: 'Wheezing' }
+  { id: concepts.COUGH, label: 'Cough' },
+  { id: concepts.SHORTNESS_OF_BREATH, label: 'Shortness of breath' },
+  { id: concepts.HEART_PALPITATIONS, label: 'Heart palpitations' },
+  { id: concepts.WHEEZES, label: 'Wheezing' }
 ];
 
 const nervousSystemOptions = [
   { id: concepts.HEADACHE, label: 'Headache' },
-  { id: 'Convulsions', label: 'Convulsions' },
-  { id: 'Confusions', label: 'Confusions' },
-  { id: 'Hallucinations', label: 'Hallucinations' },
-  { id: 'AbnormalBehaviour', label: 'Abnormal behaviour' },
-  { id: 'Tremor', label: 'Tremor' },
-  { id: 'AbnormalGait', label: 'Abnormal gait' },
-  { id: 'Numbness', label: 'Numbness' },
-  { id: 'NeckPain', label: 'Neck pain' },
-  { id: 'NeckStiffness', label: 'Neck stiffness' },
-  { id: 'Weakness', label: 'Weakness' }
+  { id: concepts.CONVULSIONS, label: 'Convulsions' },
+  { id: concepts.CONFUSION, label: 'Confusions' },
+  { id: concepts.HALLUCINATIONS, label: 'Hallucinations' },
+  { id: concepts.ABNORMAL_BEHAVIOUR, label: 'Abnormal behaviour' },
+  { id: concepts.TREMOR, label: 'Tremor' },
+  { id: concepts.ABNORMAL_GAIT, label: 'Abnormal gait' },
+  { id: concepts.NUMBNESS, label: 'Numbness' },
+  { id: concepts.NECK_PAINS, label: 'Neck pain' },
+  { id: concepts.NECK_STIFFNESS, label: 'Neck stiffness' },
+  { id: concepts.WEAKNESS, label: 'Weakness' }
 ];
 
 const genitourinaryOptions = [
-  { id: 'FrequentUrination', label: 'Frequent urination' },
-  { id: 'PainfulUrination', label: 'Painful urination' },
-  { id: 'BloodyUrine', label: 'Bloody urine' },
-  { id: 'AbnormalVaginalDischarge', label: 'Abnormal vaginal discharge' },
-  { id: 'VaginalBleeding', label: 'Vaginal bleeding' },
-  { id: 'ScrotalSwelling', label: 'Scrotal swelling' },
-  { id: 'GenitalUlcer', label: 'Genital ulcer' },
-  { id: 'UrinaryRetention', label: 'Urinary retention' },
-  { id: 'UrineIncontinence', label: 'Urine incontinence' },
-  { id: 'ErectileDysfunction', label: 'Erectile dysfunction' },
-  { id: 'Infertility', label: 'Infertility' },
-  { id: 'Prolapse', label: 'Prolapse' },
-  { id: 'Other', label: 'Other' }
+  { id: concepts.FREQUENT_URINATION, label: 'Frequent urination' },
+  { id: concepts.PAINFUL_URINATION, label: 'Painful urination' },
+  { id: concepts.BLOODY_URINE, label: 'Bloody urine' },
+  { id: concepts.ABNORMAL_VAGINAL_DISCHARGE, label: 'Abnormal vaginal discharge' },
+  { id: concepts.VAGINAL_BLEEDING, label: 'Vaginal bleeding' },
+  { id: concepts.SCROTAL_SWELLING, label: 'Scrotal swelling' },
+  { id: concepts.GENITAL_ULCER, label: 'Genital ulcer' },
+  { id: concepts.URINARY_RETENTION, label: 'Urinary retention' },
+  { id: concepts.URINARY_INCONTINENCE, label: 'Urine incontinence' },
+  { id: concepts.ERECTILE_DYSFUNCTION, label: 'Erectile dysfunction' },
+  { id: concepts.INFERTILITY, label: 'Infertility' },
+  { id: concepts.PROLAPSE, label: 'Prolapse' },
+  { id: concepts.OTHER_GENITOURINARY_CONDITION, label: 'Other' }
 ];
+
+const dateTime = getDateTime();
+const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectSchema<any> => {
+  const shape: Record<string, yup.Schema<any>> = {};
+
+  
+  Object.keys(symptomList).forEach((key) => {
+
+    if(!(key == 'lastMeal' || key == 'events')){
+    const symptom = symptomList[key];
+
+  
+    shape[key] = yup.boolean();
+
+
+    shape[`${key}Duration`] = yup.string().when(key, (value, schema)  =>
+      value
+        ? schema.required(`Duration of ${symptom.label} is required`)
+        : schema.notRequired()
+    );
+
+ 
+    if (symptom.requiresSite) {
+      shape[`${symptom.name}_site`] = yup.string().when(key, (value, schema) =>
+        value
+          ? schema.required(`Please specify the site of ${symptom.label}`)
+          : schema.notRequired()
+      );
+    }
+  }
+  });
+  
+  return yup.object().shape(shape);
+};
 
 export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
@@ -113,20 +152,77 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [showAssaultOptions, setShowAssaultOptions] = useState(false);
   const [selectedMechanism, setSelectedMechanism] = useState<string | null>(null);
   const [genitourinaryOther, setGenitourinaryOther] = useState(false); 
-
-  const schema = yup.object().shape({
-    pain: yup.boolean(),
-    duration: yup.string().when("pain", (pain, schema) =>
-      pain ? schema.required("Please specify the duration of pain") : schema
-    ),
-    specifySite: yup.string().when("pain", (pain, schema) =>
-      pain ? schema.required("Please specify the site of pain") : schema
-    ),
-  });
+  
+  const schema = generateValidationSchema(symptomList);
 
   const initialValues = {
-
-  };
+    lastMeal: "",
+    events: "",
+    pain: false,
+    painDuration: "",
+    pain_site: "",
+    rash: false,
+    rashDuration: "",
+    rash_site: "",
+    itching: false,
+    itchingDuration: "",
+    itching_site: "",
+    earDischarge: false,
+    earDischargeDuration: "",
+    earDischarge_site: "",
+    redEye: false,
+    redEyeDuration: "",
+    redEye_site: "",
+    dizziness: false,
+    dizzinessDuration: "",
+    excessiveThirst: false,
+    excessiveThirstDuration: "",
+    painfulEar: false,
+    painfulEarDuration: "",
+    painfulEar_site: "",
+    poorVision: false,
+    poorVisionDuration: "",
+    poorVision_site: "",
+    toothache: false,
+    toothacheDuration: "",
+    toothache_site: "",
+    runnyNose: false,
+    runnyNoseDuration: "",
+    noseBleeding: false,
+    noseBleedingDuration: "",
+    jointSwelling: false,
+    jointSwellingDuration: "",
+    jointSwelling_site: "",
+    jointPain: false,
+    jointPainDuration: "",
+    jointPain_site: "",
+    deformity: false,
+    deformityDuration: "",
+    deformity_site: "",
+    fever: false,
+    feverDuration: "",
+    nightSweats: false,
+    nightSweatsDuration: "",
+    weightLoss: false,
+    weightLossDuration: "",
+    heatIntolerance: false,
+    heatIntoleranceDuration: "",
+    coldIntolerance: false,
+    coldIntoleranceDuration: "",
+    bodySwelling: false,
+    bodySwellingDuration: "",
+    bodySwelling_site: "",
+    fatigue: false,
+    fatigueDuration: "",
+    poisoning: false,
+    poisoningDuration: "",
+    poisoningIntentional: false,
+    poisoningIntentionalDuration: "",
+    ulcerWound: false,
+    ulcerWoundDuration: "",
+    ulcerWound_site: "",
+    timeOfInjury: dayjs(dateTime)
+  }
 
   const handleSymptomChange = (e: any, symptom: string) => {
     const isChecked = e.target.checked;
@@ -152,7 +248,9 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     const isChecked = e.target.checked;
     if (isChecked) {
       setSelectedMechanism(mechanism); // Set the selected mechanism
-      setShowAssaultOptions(mechanism === "assault"); // Show assault options if "assault" is selected
+      if(mechanism === "assault"){
+      setShowAssaultOptions(true);
+      } // Show assault options if "assault" is selected
     } else {
       setSelectedMechanism(null); // Clear if unchecked
       setShowAssaultOptions(false); // Hide assault options if deselected
@@ -163,6 +261,10 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     }));
   };
 
+
+  const handleSubmit = () => {
+    onSubmit(formValues);
+   };
 
   return (
     <FormikInit
@@ -201,7 +303,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                 {typedKey !== "poisoningIntentional" && typedKey !== "lastMeal" && typedKey !== "events" &&(
                 <LabelledCheckbox
                     label={symptomList[typedKey].label}
-                    checked={formValues[typedKey] || false}
+                    checked={formValues[typedKey]}
                     onChange={(e) => handleSymptomChange(e, typedKey)}
                   />
            
@@ -211,10 +313,15 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                   <>
                
                       <>
-                        <FormDatePicker
-                        label={`${symptom.label} Date`}
-                        name={`${typedKey}Date`}
-                      />
+                      <UnitInputField
+                      id={`${typedKey}Duration`}
+                      name={`${typedKey}Duration`}
+                      unitName={`${typedKey}DurationUnit`}
+                      label="Duration"
+                      unitOptions={durationOptions}
+                      placeholder="e.g. 7"
+                      inputIcon={<IoTimeOutline />}
+                    />
              
                       </>
                
@@ -247,14 +354,24 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 <h3>Trauma/Injury History</h3>
           <LabelledCheckbox
             label="Was the patient injured?"
-            checked={formValues.wasInjured || false}
+            checked={formValues.wasInjured}
             onChange={(e) => handleSymptomChange(e, "wasInjured")}
           />
           {showTraumaFields && (
             <>
-              <TextInputField id="timeOfInjury" label="Time of Injury" name="timeOfInjury" placeholder="e.g., 10:30 AM" />
-              <FormDatePicker label="Date of Injury" name="dateOfInjury" />
-
+            <FormFieldContainer direction="row">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker
+              label="Select Date and Time of Injury"
+              value={formValues['timeOfInjury']}
+              onChange={(newValue: any) =>  setFormValues((prev: any) => ({
+                ...prev,
+                'timeOfInjury': newValue,
+              }))}
+              sx={{mb:'1ch', mt:'1ch'}}
+            />
+            </LocalizationProvider>
+            </FormFieldContainer>
               <div>
                 <h4>Mechanism of Injury</h4>
                 {Object.keys(injuryMechanismList).map((key) => {
@@ -266,7 +383,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                       <LabelledCheckbox
                         key={key}
                         label={mechanism.label}
-                        checked={formValues[mechanism.name] || false}
+                        checked={formValues[mechanism.name]}
                         onChange={(e) => handleTraumaMechanismChange(e, key)}
                       />
                     );
@@ -275,7 +392,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                 })}
 
                 {/* Show assault sub-options if "assault" is selected */}
-                {selectedMechanism === "assault" && showAssaultOptions && (
+                {showAssaultOptions && (
                   <div style={{ marginLeft: "1em" }}>
                      <RadioGroupInput
                       name="assaultType"
@@ -301,7 +418,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       </FormFieldContainer>
       <FormFieldContainer direction="row">
         <SearchComboBox
-        name="Gastrointenstinal history"
+        name="Gastrointenstinal_history"
         label="Gastrointestinal history"
         options={GastrointenstinalOptions}
         multiple={true}
@@ -324,7 +441,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         />
 </FormFieldContainer>
 <FormFieldContainer direction="row">
-{!genitourinaryOther ?(
+
 <SearchComboBox
         name="genitourinaryHistory"
         label="Genitourinary history"
@@ -335,28 +452,72 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
             setGenitourinaryOther(true);
   
           }
-        }}
-        />):
-        (
+        }}/>
+        
+        {genitourinaryOther &&(
           <TextInputField
-          id="Genitourinary history"
-          name="Genitourinary history"
-          label="Specify Genitourinary history"
-
+          id="Other_Genitourinary_condition"
+          name="Other_Genitourinary_condition"
+          label="Specify condition"
+           sx={{marginLeft:'2ch'}}
           />
         )}
       </FormFieldContainer>
-      <FormFieldContainer direction="row">
-          <TextInputField
-           id="socialHistory"
-           name="socialHistory"
-           label="Social History"
+      
+
+        <FormFieldContainer direction="column">
+        <h3 style={{marginTop:'2ch', marginBottom:'1ch'}}>Social History</h3>
+        <RadioGroupInput
+            row={true}
+            name='occupation'
+            label='Occupation'
+            options={[
+                { label: "Working", value: "working" },
+                { label: "Business", value: "business" },
+                { label: "Unemployed", value: "unemployed" },
+                { label: "Self Employed", value: "selfemployed" },
+                { label: "Student", value: "student" },
+                { label: "House Wife", value: "housewife" },
+                { label: "Unknown", value: "unknown" },
+            ]}
+            sx={{mb:'1ch'}}
+        />
+          <CheckboxesGroup getValue={
+            (value: Array<any>) => {
+              
+            }
+          } name='socialDetails' options={[
+            { label: "Smoker", value: "smoking" },
+            { label: "Drinker", value: "alcohol" },
+          ]}
+          />
+               <RadioGroupInput
+               sx={{mt:'1ch'}}
+            row={true}
+            name='maritalStatus'
+            label='Marital Status'
+            options={[
+                { label: "Single", value: "single" },
+                { label: "Married", value: "married" },
+                { label: "Separated", value: "separated" },
+                { label: "Widowed", value: "widow/widower" },
+                { label: "Divorced", value: "divorced" },
+                { label: "Unknown", value: "unknown" },
+
+            ]}
+        />
+        <TextInputField
+           id="travelDetails"
+           name="travelDetails"
+           label="Travel Details"
            multiline
            rows={4}
           />
-      </FormFieldContainer>
+                </FormFieldContainer>
+      
+
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={() => {console.log(formValues)}} />
+        <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
         <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
       </WrapperBox>
     </FormikInit>
