@@ -399,7 +399,8 @@ export const concepts = {
   FRACTURE: "b8bbc2f4-8d80-11d8-abbb-0024217bb78e",
   OTHER: "b9caa8b8-8d80-11d8-abbb-0024217bb78e",
   TRACHEA: "17c1ef54-63d2-4692-a0b5-444c7724c253",
-  TRACHEA_DEVIATED: "c938cb31-b198-4e69-ad1c-fb48048ebbcb",
+  TRACHEA_DEVIATED: "b99934d6-8d80-11d8-abbb-0024217bb78e",
+
   JUGULAR_VENOUS_PRESSURE: "b8e4c1ae-8d80-11d8-abbb-0024217bb78e",
   RAISED: "b909a92e-8d80-11d8-abbb-0024217bb78e",
   RAISED_HEIGHT: "30ed9065-d586-4050-b318-a09ac3dcacc1",
@@ -635,6 +636,7 @@ export const concepts = {
   NO_POWER_SUPPLY: "55aa93f4-8e6f-4c60-af46-b67f4f153590",
   IMAGE_PART_NAME: "49e65fa7-9eda-4377-828f-82c3aaab753e",
   SELECTED_SECTION:"47a064d6-32cc-4805-9e9c-4792d62393d6",
+  
   
 
   //complaints

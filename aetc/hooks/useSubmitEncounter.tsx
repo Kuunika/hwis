@@ -8,12 +8,14 @@ export const useSubmitEncounter = (
   encounterType: string,
   onDataSubmitComplete: () => void
 ) => {
-  const { mutate, isSuccess, isPending } = addEncounter();
+  const { mutate, isSuccess, isPending, data } = addEncounter();
   const { params } = useParameters();
   const { data: patientVisits, isLoading } = getPatientVisitTypes(
     params?.id as string
   );
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
+
+  console.log({ data });
 
   const handleSubmit = async (obs: Array<any>, encounters?: Array<any>) => {
     const dateTime = getDateTime();

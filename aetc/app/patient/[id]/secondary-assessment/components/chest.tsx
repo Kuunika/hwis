@@ -288,7 +288,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Palpation (Lungs)">
