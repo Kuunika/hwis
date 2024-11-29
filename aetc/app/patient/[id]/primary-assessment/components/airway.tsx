@@ -1,7 +1,7 @@
 import { GenericDialog, NotificationContainer } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
 import { getInitialValues, getObservations } from "@/helpers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
