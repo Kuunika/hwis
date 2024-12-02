@@ -152,29 +152,11 @@ export const MedicalHistoryFlow = () => {
 
 
   const handleAllergiesSubmission = (values: any) => {
-    mutate({
-        encounterType: encounters.ALLERGIES,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime, 
-        obs: [],            
-    }, {
-      onSuccess: (data) => {
-        console.log("Allergy encounter submitted successfully:", data);
-        submitChildAllergies(data, values);
-        
-      },
-      onError: (error) => {
-        console.error("Error submitting medications:", error);
-      },
-    });
 
-};
 
-function submitChildAllergies(data: any, myobs: any) {
 
-  console.log(myobs)
-  const groupedAllergies = myobs[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
+ 
+  const groupedAllergies = values[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
     if (!acc[allergy.group]) {
       acc[allergy.group] = [];
     }
@@ -191,22 +173,22 @@ function submitChildAllergies(data: any, myobs: any) {
       if (allergy.label.includes("Other medical substance allergy")) {
         
         conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
-        value = myobs[concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]; 
+        value = values[concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]; 
       } 
       
       if (allergy.label.includes("Other substance allergy")) {
         conceptValue = concepts.OTHER_SUBSTANCE_ALLERGY; 
-        value = myobs[concepts.OTHER_SUBSTANCE_ALLERGY]; 
+        value = values[concepts.OTHER_SUBSTANCE_ALLERGY]; 
       }
       
       if (allergy.label.includes("Other medication allergy")) {
         conceptValue = concepts.OTHER_MEDICATION_ALLERGY; 
-        value = myobs[concepts.OTHER_MEDICATION_ALLERGY]; 
+        value = values[concepts.OTHER_MEDICATION_ALLERGY]; 
       }
 
       if (allergy.label.includes("Other food allergy")) {
         conceptValue = concepts.OTHER_FOOD_ALLERGY; 
-        value = myobs[concepts.OTHER_FOOD_ALLERGY]; 
+        value = values[concepts.OTHER_FOOD_ALLERGY]; 
       }
   
       return {
@@ -216,7 +198,6 @@ function submitChildAllergies(data: any, myobs: any) {
     });
   
     return {
-      encounter: data.uuid,
       person: params.id,
       concept: groupConcept, 
       obsDatetime: dateTime,
@@ -228,13 +209,25 @@ function submitChildAllergies(data: any, myobs: any) {
   observationsPayload.forEach((observation) => {
       observation.group_members.push({
         concept: concepts.ALLERGY_COMMENT,
-        value: myobs[concepts.ALLERGY_COMMENT]
+        value: values[concepts.ALLERGY_COMMENT]
       });
   
-    createObsChildren(observation);
+      createEncounter({
+        encounterType: encounters.ALLERGIES,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs: [{
+          concept: observation.concept, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: observation.group_members,
+        },],            
+    },);
+
   });
 
-  if(obsChildrenCreated)
+  if(encounterCreated)
   handleSkip();
 
   };
