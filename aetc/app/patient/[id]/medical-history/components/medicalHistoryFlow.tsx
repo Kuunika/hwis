@@ -129,43 +129,27 @@ export const MedicalHistoryFlow = () => {
 
   const handlePresentingComplaintsSubmission = (values: any) => {
    
-    const modifiedValues = {
-      ...values,
-      [concepts.COMPLAINTS] : values.complaints,
-    };
-    
-    delete modifiedValues.complaints;
-
     const myobs = convertObservations(getObservations(values, dateTime));
+
+    for (let i = 0; i < myobs.length; i += 2) {
+      const chunk = myobs.slice(i, i + 2);
+   
     createEncounter({ encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
-      obs:  []});
-      
+      obs:  [{
+        concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS, 
+        value: true,
+        obsDatetime: dateTime,
+        group_members: chunk,
+      },]});
+    }
       if(encounterCreated)
-      submitChildren(encounterResponse, myobs);
+        handleSkip(); 
   };
 
-  function submitChildren(data: any, myobs: any) {
-  for (let i = 0; i < myobs.length; i += 2) {
-    const chunk = myobs.slice(i, i + 2);
 
-    console.log(chunk)
-    const observationsPayload = {
-      encounter: data.uuid,
-      person: params.id,
-      concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
-      obsDatetime: dateTime,
-      value: true,
-      group_members: chunk, 
-    };
-
- 
-    createObsChildren(observationsPayload);
-    handleSkip(); 
-  }
-  };
 
   const handleAllergiesSubmission = (values: any) => {
     mutate({
