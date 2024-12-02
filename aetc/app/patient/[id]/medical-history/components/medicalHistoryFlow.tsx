@@ -21,7 +21,7 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { addObsChildren } from "@/hooks/obs";
-import { Encounter, Obs } from "@/interfaces";
+
 
 
 type Complaint = {
@@ -413,41 +413,22 @@ export const MedicalHistoryFlow = () => {
 
    myObs.push(...contraceptives);
 
-    if(obstetricsObs.number_of_previous_pregnancies == 0){
-    mutate({  encounterType: encounters.OBSTETRIC_HISTORY,
+    
+    createEncounter({  encounterType: encounters.OBSTETRIC_HISTORY,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
       obs: myObs });
 
-      handleSkip();
-      return;
-    };
-  
-    mutate({
-      encounterType: encounters.OBSTETRIC_HISTORY,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: myObs,
-    }, {
-      onSuccess: (data) => {
-        console.log("Obstetric encounter submitted successfully:", data);
-        submitPregnancyOutcomeObs(data, obstetricsObs.previous_pregnancy_outcomes, obstetricsObs.number_of_births);
-      },
-      onError: (error) => {
-        console.error("Error submitting obstetric encounter:", error);
-      },
-    });
-
+    if(obstetricsObs.number_of_previous_pregnancies > 0){
     
-  }
-
-  function submitPregnancyOutcomeObs(data: any, outcomes: any, births: any ): void {
+    const outcomes = obstetricsObs.previous_pregnancy_outcomes;
+    const births =  obstetricsObs.number_of_births;
+    
+    
     const observationsPayload = outcomes.map((outcome: any, index: any) => {
       if(outcome == concepts.LIVE_BIRTH){
       return  {
-        encounter: data.uuid,
         person: params.id,
         concept: concepts.PREGENANCY_OUTCOME,
         obsDatetime: dateTime,
@@ -460,7 +441,6 @@ export const MedicalHistoryFlow = () => {
      }
 
       return  {
-        encounter: data.uuid,
         person: params.id,
         concept: concepts.PREGENANCY_OUTCOME,
         obsDatetime: dateTime,
@@ -473,10 +453,17 @@ export const MedicalHistoryFlow = () => {
     });
   
     observationsPayload.forEach((observation: any) => {
-      createObsChildren(observation)
+
+      createEncounter({
+        encounterType: encounters.OBSTETRIC_HISTORY,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: [observation]
+      });
     });
-  
-    if(obsChildrenCreated)
+  };
+    if(encounterCreated)
     handleSkip();
   }
 
@@ -510,26 +497,15 @@ export const MedicalHistoryFlow = () => {
     }));
 
     encounterPayload.forEach((encounter, index) => {
-      mutate(
-        encounter,
-        {
-          onSuccess: (data) => {
-            console.log("Admission encounter submitted successfully:", data, index, encounterPayload.length-1);
-            if(index == (encounterPayload.length-1))
-              handleSkip()
-          },
-          onError: (error) => {
-            console.error("Error submitting admission encounter:", error);
-          },
-        }
-      );
+      createEncounter(encounter);  
     });
 
+    if(encounterCreated)
+      handleSkip()
 
   }
 
   function handleReviewSubmission(values: any): void {
-    let errorOccurred = false;
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
