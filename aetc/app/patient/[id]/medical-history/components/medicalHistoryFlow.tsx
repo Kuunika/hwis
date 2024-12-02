@@ -337,32 +337,15 @@ export const MedicalHistoryFlow = () => {
   };
 
   function handleConditionsSubmission(values: any): void {
-    mutate({
-      encounterType: encounters.DIAGNOSIS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: [],
-    }, {
-      onSuccess: (data) => {
-        console.log("Diagnosis encounter submitted successfully:", data);
-        submitDiagnosisObservations(data, values);
-      },
-      onError: (error) => {
-        console.error("Error submitting Diagnosis encounter:", error);
-      },
-    });
-  }
 
-  function submitDiagnosisObservations(data: Encounter, values: any) {
+
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
-      encounter: data.uuid,
-      person: params.id,
-      concept: condition.name, // Setting `name` as the main concept for this observation
+      concept: concepts.PRESENTING_HISTORY,
       obsDatetime: dateTime,
-      value: true,
+      value: condition.name,
       group_members: [
+        //{ concept: concepts.CONDITION, value: condition.name },
         { concept: concepts.DIAGNOSIS_DATE, value: condition.date },
         { concept: concepts.ON_TREATMENT, value: condition.onTreatment },
         { concept: concepts.ADDITIONAL_DIAGNOSIS_DETAILS, value: condition.additionalDetails },
@@ -371,36 +354,22 @@ export const MedicalHistoryFlow = () => {
   });
 
   observationsPayload.forEach((observation: any) => {
-    createObsChildren(observation)
+    createEncounter({
+      encounterType: encounters.DIAGNOSIS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: [observation],
+    });
   });
 
-  if(obsChildrenCreated)
+  if(encounterCreated)
   handleSkip();
   }
 
   function handleSurgeriesSubmission(values: any): void {
-    mutate({
-      encounterType: encounters.SURGICAL_HISTORY,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: [],
-    }, {
-      onSuccess: (data) => {
-        console.log("Surgical encounter submitted successfully:", data);
-        submitSurgicalObservations(data, values);
-      },
-      onError: (error) => {
-        console.error("Error submitting surgical encounter:", error);
-      },
-    });
-  }
-
-  function submitSurgicalObservations(data: Encounter, values: any) {
     const observationsPayload = values.surgeries.map((surgery: any) => {
     return  {
-      encounter: data.uuid,
-      person: params.id,
       concept: surgery.procedure,
       obsDatetime: dateTime,
       value: surgery.other?surgery.other:true,
@@ -413,10 +382,16 @@ export const MedicalHistoryFlow = () => {
   });
 
   observationsPayload.forEach((observation: any) => {
-    createObsChildren(observation)
+    createEncounter({
+      encounterType: encounters.SURGICAL_HISTORY,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: [observation],
+    });
   });
 
-  if(obsChildrenCreated)
+  if(encounterCreated)
   handleSkip();
   }
 
