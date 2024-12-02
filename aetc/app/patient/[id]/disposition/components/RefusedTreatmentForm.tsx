@@ -10,6 +10,9 @@ import {
     RadioGroupInput,
     MainButton
 } from "@/components";
+import {
+    concepts
+} from "@/constants";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
@@ -63,16 +66,15 @@ export default function RefusedTreatmentForm() {
                                     name="plansToReturn"
                                     label="Plans to Return for Treatment"
                                     options={[
-                                        { value: "yes", label: "Yes" },
-                                        { value: "no", label: "No" },
-                                        { value: "unsure", label: "Unsure" },
+                                        { value: concepts.YES, label: "Yes" },
+                                        { value: concepts.NO, label: "No" },
                                     ]}
                                     sx={{ width: "100%" }}
                                 />
                             </MainGrid>
 
                             {/* Date of Refusal */}
-                            <MainGrid item xs={4}>
+                            <MainGrid item xs={6}>
                                 <FormDatePicker
                                     name="dateOfRefusal"
                                     label="Date of Refusal"
@@ -81,7 +83,7 @@ export default function RefusedTreatmentForm() {
                             </MainGrid>
 
                             {/* Witness Name */}
-                            <MainGrid item xs={4}>
+                            <MainGrid item xs={6}>
                                 <TextInputField
                                     id="3"
 

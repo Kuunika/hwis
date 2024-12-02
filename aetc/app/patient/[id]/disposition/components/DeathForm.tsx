@@ -6,10 +6,14 @@ import {
     FormikInit,
     TextInputField,
     SearchComboBox,
+    SelectInputField,
     FormDatePicker,
     RadioGroupInput,
     MainButton,
 } from "@/components";
+import {
+    concepts
+} from "@/constants";
 import * as Yup from "yup";
 
 const mortuaryOptions = [
@@ -20,13 +24,16 @@ const mortuaryOptions = [
 ];
 
 const relationshipOptions = [
-    { id: "spouse", label: "Spouse" },
-    { id: "parent", label: "Parent" },
-    { id: "sibling", label: "Sibling" },
-    { id: "uncle", label: "Uncle" },
+    { id: concepts.SPOUSE, label: "Spouse" },
+    { id: concepts.PARENT, label: "Parent" },
+    { id: concepts.SIBLING, label: "Sibling" },
+    { id: concepts.UNCLE_AUNTIE, label: "Uncle" },
     { id: "cousin", label: "Cousin" },
     { id: "other", label: "Other" },
 ];
+
+
+
 
 const validationSchema = Yup.object({
     dateOfDeath: Yup.date().required("Date of Death is required"),
@@ -54,6 +61,10 @@ const initialValues = {
     healthWorkerName: "",
     lastOfficeDateTime: "",
 };
+
+
+
+
 
 export default function DeathForm() {
     const handleSubmit = (values: any) => {
@@ -101,8 +112,8 @@ export default function DeathForm() {
                                             name="familyInformed"
                                             label="Has the family been informed?"
                                             options={[
-                                                { value: "yes", label: "Yes" },
-                                                { value: "no", label: "No" },
+                                                { value: concepts.YES, label: "Yes" },
+                                                { value: concepts.NO, label: "No" },
                                             ]}
                                         />
 
@@ -118,6 +129,9 @@ export default function DeathForm() {
                                             sx={{ width: "100%" }}
                                             multiple={false}
                                         />
+
+
+
                                     </MainGrid>
                                 </MainGrid>
                             </MainGrid>
@@ -142,8 +156,8 @@ export default function DeathForm() {
                                             name="lastOfficeConducted"
                                             label="Was the last office conducted?"
                                             options={[
-                                                { value: "yes", label: "Yes" },
-                                                { value: "no", label: "No" },
+                                                { value: concepts.YES, label: "Yes" },
+                                                { value: concepts.NO, label: "No" },
                                             ]}
                                         />
 

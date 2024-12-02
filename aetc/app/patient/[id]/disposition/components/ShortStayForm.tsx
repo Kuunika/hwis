@@ -7,11 +7,14 @@ import {
     TextInputField,
     RadioGroupInput,
 } from "@/components";
+import {
+    concepts
+} from "@/constants";
 import * as Yup from "yup";
 
 const vitalSignsOptions = [
-    { value: "yes", label: "Yes" },
-    { value: "no", label: "No" },
+    { value: concepts.YES, label: "Yes" },
+    { value: concepts.NO, label: "No" },
 ];
 
 const validationSchema = Yup.object({
