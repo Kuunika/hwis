@@ -233,52 +233,9 @@ export const MedicalHistoryFlow = () => {
   };
 
 
-
   function handleMedicationsSubmission(values: any): void {
     const observations =  getObservations(values, dateTime);
-
-      mutate({
-        encounterType: encounters.PRESCRIPTIONS,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: [],
-      }, {
-        onSuccess: (data) => {
-          console.log("Medications submitted successfully:", data);
-          submitMedicationObservations(data, observations[0].value);
-        },
-        onError: (error) => {
-          console.error("Error submitting medications:", error);
-        },
-      });
-      
-  }
-
-  function submitMedicationObservations(data: Encounter, value: any) {
-    const conceptMap: { 
-      name: string;
-      formulation: string;
-      medication_dose: string;
-      medication_dose_unit: string;
-      medication_frequency: string;
-      medication_route: string;
-      medication_duration: string;
-      medication_duration_unit: string;
-      medication_date_last_taken: string;
-      medication_date_of_last_prescription: string;
-    } = {
-      name: '', //not used
-      formulation: 'concept_uuid_for_formulation',//not used
-      medication_dose: concepts.MEDICATION_DOSE,
-      medication_dose_unit: 'concept_uuid_for_dose_unit', //not used
-      medication_frequency: 'concept_uuid_for_frequency',//not used
-      medication_route: 'concept_uuid_for_route',//not used
-      medication_duration: concepts.MEDICATION_DURATION,
-      medication_duration_unit: 'concept_uuid_for_duration_unit', //not used
-      medication_date_last_taken: concepts.MEDICATION_DATE_LAST_TAKEN,
-      medication_date_of_last_prescription: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,
-    };
+    const medicationObs = observations[0]?.value || [];
     
     const durationUnits: Record<string, string>  ={
       [durationOptions[0].toString()]: concepts.DURATION_ON_MEDICATION_DAYS,
@@ -296,89 +253,88 @@ export const MedicalHistoryFlow = () => {
      "Millimoles (mmol)": concepts.DOSE_IN_MILLIMOLES,	
     }
 
-    const formulation_uuid: Record<string, string>  ={
-      "Tablet": concepts.TABLET,
-      "Vial": concepts.VIAL,
-      "Intravenous":concepts.INTRAVENOUS,
-      "Powder": concepts.POWDER,
-      "Solution":concepts.SOLUTION,
-      "Eye Ointment": concepts.EYE_OINTMENT,
-      "Cream": concepts.CREAM,
-      "Ointment": concepts.OINTMENT,
-      "Inhaler": concepts.INHALER,
-      "Suppository": concepts.SUPPOSITORY,
-      "Pessary": concepts.PESSARY,
-      "Suspension": concepts.SUSPENSION,
-      "Shampoo": concepts.SHAMPOO,
-      "Ear Drops": concepts.EAR_DROPS,
-      "Eye Paste": concepts.EYE_PASTE,
-    }
 
 
-
-    const observationsPayload = value.map((medication: any) => {
+    const observationsPayload = medicationObs.map((medication: any) => {
       const observation = {
-        encounter: data.uuid,
         person: params.id,
-        concept: medication.name, 
+        concept: concepts.MEDICATION_HISTORY, 
         obsDatetime: dateTime,
         value: true,
         group_members: [] as OutputObservation[], 
       };
     
-      (Object.keys(medication) as Array<keyof typeof conceptMap>).forEach((key) => {
-        if (key !== 'name' && conceptMap[key] && key !=='medication_frequency' && key !== 'medication_dose_unit' && key !== 'medication_duration_unit' && key !== 'formulation' ) {
+     
+        if (medication.medication_date_last_taken) {
           observation.group_members.push({
-            concept: conceptMap[key],   
-            value: medication[key]     
+            concept: concepts.MEDICATION_DATE_LAST_TAKEN,
+            value: medication.medication_date_last_taken,    
           } as OutputObservation);
         }
 
-        if(key == 'medication_frequency' ){
+        if (medication.medication_date_of_last_prescription) {
           observation.group_members.push({
-            concept: medication[key],   
+            concept: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,   
+            value: medication.medication_date_of_last_prescription  
+          } as OutputObservation);
+        }
+
+        if(medication.name ){
+          observation.group_members.push({
+            concept: concepts.DRUG_UUID,   
+            value: medication.name     
+          } as OutputObservation);
+        }
+
+        if(medication.medication_frequency){
+          observation.group_members.push({
+            concept: medication.medication_frequency,   
             value: true     
           } as OutputObservation);
         }
 
-        if(key == 'medication_dose_unit'){
-          const unitconcept = doseUnits[medication[key]];
+        if(medication.medication_dose_unit){
+          const unitconcept = doseUnits[medication.medication_dose_unit];
           observation.group_members.push({
             concept: unitconcept,   
-            value: true     
+            value: medication.medication_dose  
           } as OutputObservation);
         }
 
         
-        if(key == 'medication_duration_unit'){
-          const unitconcept = durationUnits[medication[key]];
+        if(medication.medication_duration_unit){
+          const unitconcept = durationUnits[medication.medication_duration_unit];
           observation.group_members.push({
             concept: unitconcept,   
-            value: true     
+            value: medication.medication_duration    
           } as OutputObservation);
         }
 
-        if(key == 'formulation'){
-          const formulationConcept = formulation_uuid[medication[key]];
+        if(medication.formulation){
           observation.group_members.push({
-            concept: formulationConcept,   
+            concept: medication.formulation,   
             value: true     
           } as OutputObservation);
         }
         
-      });
     
       return observation;
     });
 
     observationsPayload.forEach((observation: any) => {
-  
-    createObsChildren(observation);
+        createEncounter({
+        encounterType: encounters.PRESCRIPTIONS,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: [observation],
+      });
+    
   });
 
-  if(obsChildrenCreated)
+  if(encounterCreated)
   handleSkip();
-  }
+  };
 
   function handleConditionsSubmission(values: any): void {
     mutate({
