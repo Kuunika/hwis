@@ -1,12 +1,14 @@
 import { MainButton, TextInputField, WrapperBox } from "@/components";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    FormValuesListener,
-    FormikInit
+  FormValuesListener,
+  FormikInit
 } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { useParameters } from "@/hooks";
 
 
 type Prop = {
@@ -19,6 +21,11 @@ type Prop = {
     value: string;
     label: string;
   };
+
+  interface DisplayAllergy {
+    name: string;
+    value: string;
+  }
 
 
 const allergiesFormConfig = {
@@ -49,12 +56,19 @@ allergy: {
 }
 
 export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
+  const { params } = useParameters();
     const [formValues, setFormValues] = useState<any>({});
     const [allergySelected,  setAllergySelected] = useState<Allergy[]>([]);
     const [showFoodOther, setShowFoodOther] = useState<boolean | null>(null);
     const [showMedicalSubstanceOther, setShowMedicalSubstanceOther] = useState<boolean | null>(null);
     const [showMedicationOther, setShowMedicationOther] = useState<boolean | null>(null);
     const [showSubstanceOther, setShowSubstanceOther] = useState<boolean | null>(null);
+    const { data, isLoading } = getPatientsEncounters(params?.id as string);
+    const[existingHistory, setExistingHistory] = useState<string[]>();
+    const allergiesEncounters = data?.filter(
+      (item) => item.encounter_type.name === "Allergies"
+    );
+
 
 const allergyOptions = [
   {
@@ -101,6 +115,7 @@ const allergyOptions = [
     ],
   },
 ];
+
 
 const schema = yup.object().shape({
   [allergiesFormConfig.allergy.name]: yup
@@ -193,11 +208,46 @@ Object.keys(formValues).forEach((key) => {
       setShowMedicationOther(null);
       setShowSubstanceOther(null);
     }
-  }, [allergySelected]);
+
+    if (!isLoading) {
+      const allergyCommentsUUID = 'Allergy comment'; // Correct UUID for testing
+    
+      const matchedObservations = allergiesEncounters?.flatMap((encounter) => {
+        return encounter.obs.filter((observation) => {
+          const observationUUID = observation.names?.[0]?.name;
+          return observationUUID !== allergyCommentsUUID;
+        });
+      });
+    
+      const allergyDetails = matchedObservations?.map((obs) => ({
+        name: obs.names[0]?.name,
+        value: obs.value,
+      }));
+
+      const uniqueAllergies = allergyDetails?.filter((value, index, self) => {
+        // Check if the current uuid has already been seen
+        return index === self.findIndex((t) => (
+            t.name === value.name
+        ));
+    });
+    
+
+    const allergyHistory = uniqueAllergies?.map(allergy => 
+      allergy.value === "true" ? allergy.name : allergy.value
+    );
+
+    setExistingHistory(allergyHistory)
+      
+ 
+    }
+
+  }, [allergySelected,data]);
 
 return (<>
   <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h4 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies</h4>
-  <p style={{color:'rgba(0, 0, 0, 0.6)'}}>Aspirin, Seafood</p>
+   <p style={{ color: 'rgba(0, 0, 0, 0.6)' }}>
+        {existingHistory?.join(", ")}
+      </p>
   </div>
     <FormikInit
       validationSchema={schema}

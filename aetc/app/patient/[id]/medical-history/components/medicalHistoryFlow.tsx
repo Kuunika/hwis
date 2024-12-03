@@ -156,9 +156,6 @@ export const MedicalHistoryFlow = () => {
 
   const handleAllergiesSubmission = (values: any) => {
 
-
-
- 
   const groupedAllergies = values[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
     if (!acc[allergy.group]) {
       acc[allergy.group] = [];
@@ -172,7 +169,6 @@ export const MedicalHistoryFlow = () => {
     const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
       let conceptValue = allergy.value; 
       let value = true; 
-      console.log(allergy)
       if (allergy.label.includes("Other medical substance allergy")) {
         
         conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
@@ -284,8 +280,8 @@ export const MedicalHistoryFlow = () => {
 
         if(medication.name ){
           observation.group_members.push({
-            concept: concepts.DRUG_UUID,   
-            value: medication.name     
+            concept: medication.name,   
+            value: true   
           } as OutputObservation);
         }
 
