@@ -485,7 +485,7 @@ export const MedicalHistoryFlow = () => {
           value: admission.date,
           obsDatetime: dateTime,
           group_members: [
-            { concept: admission.hospital, value: true }, 
+            { concept: concepts.HEALTH_CENTER_HOSPITALS, value: admission.hospital }, 
             { concept: concepts.ADMISSION_SECTION, value: admission.ward },
             { concept: concepts.SURGICAL_INTERVENTIONS, value: admission.interventions },
             { concept: concepts.DISCHARGE_INSTRUCTIONS, value: admission.discharge_instructions },

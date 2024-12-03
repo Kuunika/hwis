@@ -10,6 +10,7 @@ import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 
+
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
@@ -105,7 +106,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
   const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
   const [formValues, setFormValues] = useState<any>({});
-
+  
 
   
   const handleUpdateFrequency = (index: number, value: boolean) => {
@@ -116,7 +117,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   useEffect(() => {
-    
+
     if (data) {
       const formatMedicationOptions = (data: any) => {
         return data.map((drug: { concept_uuid: string; name: string }) => ({

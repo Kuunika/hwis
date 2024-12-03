@@ -5,6 +5,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
 import { TableCell } from "@mui/material";
 import { FieldArray } from "formik";
 import { getConceptSetMembers } from "@/hooks/labOrder";
+import { getFacilities } from "@/hooks";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -69,6 +70,8 @@ const admissionsFormConfig = {
 export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [diagnosisOptions, setDiagnosisOptions] = useState<{ id: string; label: string }[]>([]);
+  const [hospitalOptions, setHospitalOptions] = useState<[]>();
+  const { data: facilitiesData, isLoading } = getFacilities();
   const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
   const {
     data: diagnoses,
@@ -77,9 +80,6 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     isRefetching: reloadingDiagnoses,
   } = getConceptSetMembers(diagnosesConceptId);
 
-
-  const hospitalOptions = [
-    { id: "QECH", label: "Queen Elizabeth" }];
   const wardOptions = [
     { id: "Chatinkha", label: "Chatinkha" }];
 
@@ -108,6 +108,14 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
       };
       setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
     }
+
+    const hospitalOptions = facilitiesData.map((facility:any) => ({
+      id: facility.facility_code,
+      label: facility.facility_name
+    }));
+
+    setHospitalOptions(hospitalOptions)
+    
   }, [diagnoses]);
 
   return (
@@ -139,15 +147,15 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                       <SearchComboBox
                         name={admissionsFormConfig.hospitals(index).name}
                         label={admissionsFormConfig.hospitals(index).label}
-                        options={hospitalOptions}
+                        options={hospitalOptions?hospitalOptions:[]}
                         multiple={false}
                         sx={{ width: "150px" }}
                       />
-                      <SearchComboBox
+                      <TextInputField
+                        id={admissionsFormConfig.wards(index).name}
                         name={admissionsFormConfig.wards(index).name}
                         label={admissionsFormConfig.wards(index).label}
-                        options={wardOptions}
-                        multiple={false}
+                        multiline={false}
                         sx={{ width: "150px" }}
                       />
                       <SearchComboBox
