@@ -21,6 +21,7 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { addObsChildren } from "@/hooks/obs";
+import { OverlayLoader } from "@/components/backdrop";
 
 
 
@@ -134,7 +135,7 @@ export const MedicalHistoryFlow = () => {
     for (let i = 0; i < myobs.length; i += 2) {
       const chunk = myobs.slice(i, i + 2);
    
-    createEncounter({ encounterType: encounters.PRESENTING_COMPLAINTS,
+      createEncounter({ encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
@@ -143,9 +144,11 @@ export const MedicalHistoryFlow = () => {
         value: true,
         obsDatetime: dateTime,
         group_members: chunk,
-      },]});
+      }]
+    });
     }
-      if(encounterCreated)
+
+     if(encounterCreated)
         handleSkip(); 
   };
 
@@ -521,7 +524,8 @@ export const MedicalHistoryFlow = () => {
     
     const initialObs = historyOfComplaints?[historyOfComplaintsObs,lastMealObs]:null;
  
-    mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+    if(initialObs){
+    createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
@@ -530,17 +534,8 @@ export const MedicalHistoryFlow = () => {
         value: initialObs?true:lastMeal,
         obsDatetime: dateTime,
         group_members:initialObs?initialObs:null,
-      },]}, {
-      onSuccess: (data) => {
-          console.log("last meal Encounter submitted successfully:", data);
-          
-        },
-        onError: (error) => {
-          errorOccurred = true;
-          console.error("Error submitting last meal encounter:", error);
-        },
-      });
-
+      },]});
+    };
     const symptom_uuid: Record<string, string>  ={
       "pain":concepts.PAIN, 
       "rash":concepts.RASH,  
@@ -584,7 +579,7 @@ export const MedicalHistoryFlow = () => {
         }
       });
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -593,16 +588,7 @@ export const MedicalHistoryFlow = () => {
           value: true,
           obsDatetime: dateTime,
           group_members: gastroObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     };
 
     if(cardiacHistory){
@@ -613,7 +599,7 @@ export const MedicalHistoryFlow = () => {
         }
       });
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -622,17 +608,7 @@ export const MedicalHistoryFlow = () => {
           value: true,
           obsDatetime: dateTime,
           group_members: cardiacObs,
-        },]}, {
-        onSuccess: (data) => {
-          
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     };
 
     if(nervousHistory){
@@ -643,7 +619,7 @@ export const MedicalHistoryFlow = () => {
         }
       });
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -652,16 +628,7 @@ export const MedicalHistoryFlow = () => {
           value: true,
           obsDatetime: dateTime,
           group_members: nervousObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     }
 
     if(genitoHistory){
@@ -682,7 +649,7 @@ export const MedicalHistoryFlow = () => {
       };
 
       
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -691,16 +658,7 @@ export const MedicalHistoryFlow = () => {
           value: true,
           obsDatetime: dateTime,
           group_members: genitoObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     }
     
     for(let key of symptomKeys){
@@ -737,7 +695,7 @@ export const MedicalHistoryFlow = () => {
       obsGroup.push(intentionalPoisoningObs)
     }
 
-        mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime, 
@@ -746,16 +704,7 @@ export const MedicalHistoryFlow = () => {
             value: true,
             obsDatetime: dateTime,
             group_members: obsGroup,
-          },]}, {
-          onSuccess: (data) => {
-              console.log("ROS symptoms Encounter submitted successfully:", data);
-              
-            },
-            onError: (error) => {
-              errorOccurred = true;
-              console.error("Error submitting ROS symptoms encounter:", error);
-            },
-          });
+          },]});
       }
 
 
@@ -811,7 +760,7 @@ export const MedicalHistoryFlow = () => {
         traumaObs.push(assaultTypeObs)
       }
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -820,16 +769,7 @@ export const MedicalHistoryFlow = () => {
           value: true,
           obsDatetime: dateTime,
           group_members: traumaObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("trauma Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting trauma encounter:", error);
-          },
-        });
+        },]});
       
 
     }
@@ -867,7 +807,7 @@ export const MedicalHistoryFlow = () => {
     socialDetailsObs.push(occupationObs,maritalObs,travelObs)
     
     
-    mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+    createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
@@ -876,16 +816,7 @@ export const MedicalHistoryFlow = () => {
         value: true,
         obsDatetime: dateTime,
         group_members: socialDetailsObs,
-      },]}, {
-      onSuccess: (data) => {
-          console.log("social history Encounter submitted successfully:", data);
-          
-        },
-        onError: (error) => {
-          errorOccurred = true;
-          console.error("Error submitting social history encounter:", error);
-        },
-      });
+      },]});
 
       handleSkip()
 
@@ -989,6 +920,7 @@ export const MedicalHistoryFlow = () => {
 
   return (
     <>
+    <OverlayLoader open={isLoading} />
       <NewStepperContainer
         setActive={setActiveStep}
         title="Medical History"
