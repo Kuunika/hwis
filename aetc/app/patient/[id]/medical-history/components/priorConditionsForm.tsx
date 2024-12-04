@@ -91,15 +91,16 @@ import { FieldArray } from "formik";
       reloadDiagnoses();
       if (diagnoses) {
         const formatDiagnosisOptions = (diagnoses: any) => {
-          return diagnoses.map((diagnosis: { uuid: string; names: { name: any; }[]; }) => ({
-            id: diagnosis.uuid,
+          return diagnoses.map((diagnosis: {names: { uuid: string, name: any; }[]; }) => ({
+            id: diagnosis.names[0].uuid,
             label: diagnosis.names[0].name,
           }));
         };
         setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
+        
       }
     }, [diagnoses]);
-  
+
     const handleSubmit = () => {
      onSubmit(formValues);
     };

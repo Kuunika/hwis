@@ -230,15 +230,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         </>
       )}
     </FormikInit>
-    <div style={{marginTop:'20px'}}>
-      <Accordion>
-        <AccordionSummary sx={{ fontSize:'18px', fontWeight:'bold'}}>Medication History</AccordionSummary>
-        <AccordionDetails>
-        <p>Aspirin</p>
-        </AccordionDetails>
-        
-      </Accordion>
-      </div>
+
     </>
   );
 };

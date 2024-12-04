@@ -257,7 +257,7 @@ export const MedicalHistoryFlow = () => {
     const observationsPayload = medicationObs.map((medication: any) => {
       const observation = {
         person: params.id,
-        concept: concepts.MEDICATION_HISTORY, 
+        concept: medication.name, 
         obsDatetime: dateTime,
         value: true,
         group_members: [] as OutputObservation[], 
@@ -275,13 +275,6 @@ export const MedicalHistoryFlow = () => {
           observation.group_members.push({
             concept: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,   
             value: medication.medication_date_of_last_prescription  
-          } as OutputObservation);
-        }
-
-        if(medication.name ){
-          observation.group_members.push({
-            concept: medication.name,   
-            value: true   
           } as OutputObservation);
         }
 
@@ -340,9 +333,9 @@ export const MedicalHistoryFlow = () => {
 
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
-      concept: concepts.PRESENTING_HISTORY,
+      concept: condition.name,
       obsDatetime: dateTime,
-      value: condition.name,
+      value: true,
       group_members: [
         //{ concept: concepts.CONDITION, value: condition.name },
         { concept: concepts.DIAGNOSIS_DATE, value: condition.date },
@@ -475,6 +468,7 @@ export const MedicalHistoryFlow = () => {
     }
   
     const encounterPayload = admissions.map((admission: any) => ({
+      
       encounterType: encounters.PATIENT_ADMISSIONS, 
       visit: activeVisit?.uuid, 
       patient: params.id, 
@@ -496,11 +490,15 @@ export const MedicalHistoryFlow = () => {
     }));
 
     encounterPayload.forEach((encounter, index) => {
-      createEncounter(encounter);  
+      console.log(encounter)
+      createEncounter(encounter);
+
+      if(index == encounterPayload.length-1)
+        handleSkip();
     });
 
-    if(encounterCreated)
-      handleSkip()
+  
+      
 
   }
 

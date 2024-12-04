@@ -65,6 +65,8 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
     const [showSubstanceOther, setShowSubstanceOther] = useState<boolean | null>(null);
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const[existingHistory, setExistingHistory] = useState<string[]>();
+
+
     const allergiesEncounters = data?.filter(
       (item) => item.encounter_type.name === "Allergies"
     );
