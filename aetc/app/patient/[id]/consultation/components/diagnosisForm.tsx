@@ -70,7 +70,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
             .filter((obs) => obs.names[0]?.uuid === conceptType) // Filter by conceptType
             .map((obs) => ({
               id: obs.obs_id.toString(),
-              condition: obs.value,
+              condition: obs.value.name,
               obsDatetime: obs.obs_datetime || "",
             }))
         );

@@ -1,6 +1,6 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -14,7 +14,8 @@ import {
 import * as Yup from "yup";
 import { AbdomenImage, SecondaryAbdomenImage } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
-import { useParameters } from "@/hooks";
+import { useParameters, useSubmitEncounter } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
 
 const form = {
   abdominalDistention: {
@@ -176,7 +177,7 @@ const form = {
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 
 const schema = Yup.object().shape({
@@ -344,7 +345,34 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const [abnormalitiesPresentImageEnc, setAbnormalitiesPresentImageEnc] =
-    useState<Array<any>>();
+    useState<Array<any>>([]);
+  const [tendernessImageEnc, setTendernessImageEnc] = useState<Array<any>>([]);
+  const { handleSubmit, isLoading: creatingEncounter } = useSubmitEncounter(
+    encounters.CHEST_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleSubmitForm = async (values: any) => {
+    const formValues = { ...values };
+    const obs = [
+      {
+        concept: form.abnormalitiesPresent.name,
+        value: formValues[form.abnormalitiesPresent.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(abnormalitiesPresentImageEnc),
+      },
+      {
+        concept: form.tenderness.name,
+        value: formValues[form.tenderness.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(tendernessImageEnc),
+      },
+    ];
+    delete formValues[form.abnormalitiesPresent.name];
+    delete formValues[form.tenderness.name];
+
+    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+  };
 
   const handleValueChange = (values: Array<any>) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
@@ -356,7 +384,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Inspection">
@@ -460,7 +488,9 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           />
         )}
         <FieldsContainer>
-          {formValues[form.tenderness.name] == YES && <AbdomenImage />}
+          {formValues[form.tenderness.name] == YES && (
+            <AbdomenImage onValueChange={setTendernessImageEnc} />
+          )}
         </FieldsContainer>
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Percussion">

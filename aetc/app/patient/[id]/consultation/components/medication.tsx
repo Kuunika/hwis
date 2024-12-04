@@ -2,7 +2,6 @@ import { FormDatePicker, FormikInit, FormValuesListener, MainButton, SearchCombo
 
 import React, { useEffect, useState } from "react";
 import { FieldArray } from "formik";
-
 import * as yup from "yup";
 import { TableCell } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
@@ -94,28 +93,25 @@ const schema = yup.object().shape({
   ),
 });
 
-
-const medicationUnits = [
-  "Milligrams (mg)",
-  "Micrograms (µg)",
-  "Grams (g)",
+      const medicationUnits = [
+        "Milligrams (mg)" ,
+       "Micrograms (µg)" ,
+    "Grams (g)" ,
   "International Units (IU)",
-  "Milliliters (ml)",
-  "Millimoles (mmol)",
-];
-const routeOptions = [
-  { label: "Oral", id: "Oral" },
-  { label: "Suppository", id: "Suppository" },
-  { label: "Intravenous", id: "Intravenous" },
-  { label: "Intramuscular", id: "Intramuscular" },
-  { label: "Subcutaneous", id: "Subcutaneous" },
-  { label: "Infiltration", id: "Infiltration" },
-  { label: "Intrathecal", id: "Intrathecal" },
-  { label: "Dermal", id: "Dermal" },
-  { label: "Inhaled", id: "Inhaled" },
-];
-
-
+"Milliliters (ml)" ,
+"Millimoles (mmol)",	
+      ];
+      const routeOptions = [
+        { label: "Oral", id: "Oral" },
+        { label: "Suppository", id: "Suppository" },
+        { label: "Intravenous", id: "Intravenous" },
+        { label: "Intramuscular", id: "Intramuscular" },
+        { label: "Subcutaneous", id: "Subcutaneous" },
+        { label: "Infiltration", id: "Infiltration" },
+        {label: "Intrathecal", id: "Intrathecal"},
+        {label: "Dermal", id: "Dermal"},
+        {label: "Inhaled", id: "Inhaled"},
+      ];
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const { data } = getAllDrugs();
@@ -139,13 +135,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     },
   ]);
 
-
-  const handleUpdateFrequency = (index: number, value: boolean) => {
-    setOtherFrequency((prevState) => ({
-      ...prevState,
-      [index]: value,
-    }));
-  };
+        const handleUpdateFrequency = (index: number, value: boolean) => {
+            setOtherFrequency(prevState => ({
+              ...prevState,   
+              [index]: value      
+            }));
+          };
 
   useEffect(() => {
 
@@ -159,9 +154,6 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       setMedicationOptions(formatMedicationOptions(data));
     }
   }, [data]);
-
-
-
 
   const handleSubmit = () => {
     console.log(formValues);
