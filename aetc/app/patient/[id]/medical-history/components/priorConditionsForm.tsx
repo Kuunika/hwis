@@ -19,6 +19,9 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { FieldArray } from "formik";
+import { useParameters } from "@/hooks";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { Obs } from "@/interfaces";
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -76,17 +79,21 @@ import { FieldArray } from "formik";
   
   
   export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
+    const { params } = useParameters();
+    const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const [formValues, setFormValues] = useState<any>({});
     const [diagnosisOptions, setDiagnosisOptions] = useState<{ id: string; label: string }[]>([]);
-      const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
-      const {
+    const[existingHistory, setExistingHistory] = useState<string[]>();
+    const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
+    const {
         data: diagnoses,
         isLoading: diagnosesLoading,
         refetch: reloadDiagnoses,
         isRefetching: reloadingDiagnoses,
       } = getConceptSetMembers(diagnosesConceptId);
 
-
+      
+ 
     useEffect(() => {
       reloadDiagnoses();
       if (diagnoses) {
@@ -98,14 +105,49 @@ import { FieldArray } from "formik";
         };
         setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
         
+      };
+
+
+      if(!isLoading){
+        const conditionsEncounters = data?.filter(
+          (item) => item.encounter_type.name === "DIAGNOSIS"
+          &&
+          item.obs?.length !== 4
+        )
+
+        const obsWithChildren =
+         conditionsEncounters?.[0]?.obs?.filter(
+          (obsItem) =>
+           (obsItem as Obs).children.length == 3 
+        );
+        
+        const obsWithValueTrue = obsWithChildren?.filter(
+          (obsItem) => obsItem.value === true || obsItem.value === 'true'
+        );
+        
+        const uniqueNamesArray = obsWithValueTrue?.reduce((acc, obs) => {
+          const primaryName = obs.names?.[0]?.name; // Safely access the first name
+          if (primaryName && !acc.includes(primaryName)) {
+              acc.push(primaryName); // Add unique name to the array
+          }
+          return acc;
+      }, [] as string[]);
+      
+      setExistingHistory(uniqueNamesArray);
+
       }
-    }, [diagnoses]);
+    }, [diagnoses, data]);
 
     const handleSubmit = () => {
      onSubmit(formValues);
     };
   
-    return (
+    return (<>
+      <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h4 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Conditions</h4>
+      <p style={{ color: 'rgba(0, 0, 0, 0.6)' }}>
+           {existingHistory?.join(", ")}
+         </p>
+     </div>
       <FormikInit
       initialValues={initialValues}
       validationSchema={schema}
@@ -175,5 +217,6 @@ import { FieldArray } from "formik";
           </>
         )}
       </FormikInit>
+      </>
     );
   };

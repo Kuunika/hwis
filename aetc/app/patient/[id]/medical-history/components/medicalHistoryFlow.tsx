@@ -337,7 +337,7 @@ export const MedicalHistoryFlow = () => {
       obsDatetime: dateTime,
       value: true,
       group_members: [
-        //{ concept: concepts.CONDITION, value: condition.name },
+  
         { concept: concepts.DIAGNOSIS_DATE, value: condition.date },
         { concept: concepts.ON_TREATMENT, value: condition.onTreatment },
         { concept: concepts.ADDITIONAL_DIAGNOSIS_DETAILS, value: condition.additionalDetails },

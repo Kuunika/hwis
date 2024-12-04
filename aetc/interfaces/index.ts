@@ -103,6 +103,7 @@ interface EncounterType {
 
 export interface Obs {
   obs_id: number;
+  children:Obs[];
   person_id: number;
   concept_id: number;
   encounter_id: number;
