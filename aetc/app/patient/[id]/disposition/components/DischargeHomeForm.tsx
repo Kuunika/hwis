@@ -8,6 +8,12 @@ import {
     SearchComboBox,
     RadioGroupInput,
 } from "@/components";
+import {
+    concepts
+} from "@/constants";
+import { getConceptSetMembers } from "@/hooks/labOrder"; // Hook for fetching concept set members
+import { useEffect, useState } from "react";
+
 import * as Yup from "yup";
 
 const followUpOptions = [
@@ -15,6 +21,7 @@ const followUpOptions = [
     { id: "specialistClinic", label: "Specialist Clinic" },
     { id: "districtHospital", label: "District Hospital" },
 ];
+
 
 const specialistClinicOptions = [
     { id: "cardiology", label: "Cardiology" },
@@ -42,6 +49,23 @@ const initialValues = {
 };
 
 export default function DischargeHomeForm() {
+    // const [followUpOptions, setFollowUpOptions] = useState<{ id: string; label: string }[]>([]);
+    // const { data: followUpData, isLoading, refetch } = getConceptSetMembers(concepts.FOLLOW_UP);
+
+    // useEffect(() => {
+    //     refetch(); // Fetch options when the component mounts
+    //     if (followUpData) {
+    //         const formattedOptions = followUpData.map((option: any) => ({
+    //             id: option.names[0]?.uuid,
+    //             label: option.names[0]?.name || "Unknown",
+    //         }));
+    //         setFollowUpOptions(formattedOptions);
+    //     }
+    // }, [followUpData]);
+
+    // console.log("Follow up:", followUpOptions);
+
+
     const handleSubmit = (values: any) => {
         console.log("Form Values: ", values);
         alert("Form Submitted!");
@@ -81,8 +105,8 @@ export default function DischargeHomeForm() {
                                             name="followUpPlan"
                                             label="Follow-Up Plan"
                                             options={[
-                                                { value: "yes", label: "Yes" },
-                                                { value: "no", label: "No" },
+                                                { value: concepts.YES, label: "Yes" },
+                                                { value: concepts.NO, label: "No" },
                                             ]}
                                         />
                                     </MainGrid>
@@ -118,10 +142,6 @@ export default function DischargeHomeForm() {
                                 </MainGrid>
                             </MainGrid>
 
-
-
-
-
                             <MainGrid item xs={12}>
                                 <MainGrid container spacing={2} sx={{ display: "flex", alignItems: "flex-start" }}>
 
@@ -146,8 +166,6 @@ export default function DischargeHomeForm() {
                                             options={specialistClinicOptions}
                                         />
                                     </MainGrid>
-
-
 
                                 </MainGrid>
                             </MainGrid>

@@ -54,7 +54,7 @@ export default function AbscondedForm() {
                             </MainGrid>
 
                             {/* Date of Absconding */}
-                            <MainGrid item xs={4}>
+                            <MainGrid item xs={6}>
                                 <FormDatePicker
 
                                     name="dateAbsconded"
@@ -64,7 +64,7 @@ export default function AbscondedForm() {
                             </MainGrid>
 
                             {/* Time of Absconding */}
-                            <MainGrid item xs={4}>
+                            <MainGrid item xs={6}>
                                 <FormTimePicker
 
                                     name="timeAbsconded"
