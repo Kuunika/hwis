@@ -1,6 +1,11 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -368,10 +373,59 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(tendernessImageEnc),
       },
     ];
+
+    const datetime = getDateTime();
+
+    const generalInspectionObs = mapSearchComboOptionsToConcepts(
+      formValues[form.generalInspection.name],
+      form.generalInspection.name,
+      datetime
+    );
+    const urethralMeatusObs = mapSearchComboOptionsToConcepts(
+      formValues[form.urethralMeatus.name],
+      form.urethralMeatus.name,
+      datetime
+    );
+    const scrotumObs = mapSearchComboOptionsToConcepts(
+      formValues[form.scrotum.name],
+      form.scrotum.name,
+      datetime
+    );
+    const periymenObs = mapSearchComboOptionsToConcepts(
+      formValues[form.periymen.name],
+      form.periymen.name,
+      datetime
+    );
+    const vaginaObs = mapSearchComboOptionsToConcepts(
+      formValues[form.vagina.name],
+      form.vagina.name,
+      datetime
+    );
+    const digitalVaginalExaminationObs = mapSearchComboOptionsToConcepts(
+      formValues[form.digitalVaginalExamination.name],
+      form.digitalVaginalExamination.name,
+      datetime
+    );
+
+    delete formValues[form.generalInspection.name];
+    delete formValues[form.scrotum.name];
+    delete formValues[form.vagina.name];
+    delete formValues[form.periymen.name];
+    delete formValues[form.urethralMeatus.name];
     delete formValues[form.abnormalitiesPresent.name];
     delete formValues[form.tenderness.name];
+    delete formValues[form.digitalVaginalExamination.name];
 
-    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+    await handleSubmit([
+      ...getObservations(formValues, getDateTime()),
+      ...obs,
+      ...generalInspectionObs,
+      ...urethralMeatusObs,
+      ...scrotumObs,
+      ...periymenObs,
+      ...vaginaObs,
+      ...digitalVaginalExaminationObs,
+    ]);
   };
 
   const handleValueChange = (values: Array<any>) => {
