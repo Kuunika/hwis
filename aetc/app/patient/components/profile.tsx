@@ -106,6 +106,7 @@ export const DesktopView = () => {
 
   useEffect(() => {
     if (data && activeVisit !== 0) {
+      console.log({ data });
       const encounter = data
         .filter((d) => d?.encounter_type.uuid === encounters.VITALS)
         .find((d) => d.visit_id === activeVisit);
@@ -194,6 +195,7 @@ export const DesktopView = () => {
     };
 
     // Extract chart data from formattedVitals
+
     if (
       formattedVitals &&
       typeof formattedVitals === "object" &&
@@ -207,6 +209,7 @@ export const DesktopView = () => {
       console.warn(
         "Formatted vitals data is empty, undefined, or not in expected format."
       );
+      setChartLoading(false);
     }
   }, [formattedVitals]);
 
@@ -289,9 +292,6 @@ export const DesktopView = () => {
                 title: "Medication",
                 link: `/patient/${params.id}/consultation`,
               },
-
-
-
             ]}
             title="Consultation"
           />
@@ -306,7 +306,6 @@ export const DesktopView = () => {
               },
             ]}
           />
-
         </WrapperBox>
         <BasicAccordion />
       </MainGrid>
@@ -632,8 +631,8 @@ const ActionMenu = () => {
                     py: "1ch",
                     px: "2ch",
                   }}
-                // 0tnxas
-                // Yc7flfzx
+                  // 0tnxas
+                  // Yc7flfzx
                 >
                   {icon && (
                     <Image src={icon ? icon : "/test"} alt="AETC Form icon" />

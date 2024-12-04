@@ -91,7 +91,7 @@ export const ChestLung = ({
             {!isSelected && (
               <Button
                 type="submit"
-                onClick={handleFormSubmit}
+                onClick={() => handleFormSubmit({})}
                 sx={{ borderRadius: "1px" }}
                 variant="contained"
                 fullWidth

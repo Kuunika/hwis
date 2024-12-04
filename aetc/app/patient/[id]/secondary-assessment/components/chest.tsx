@@ -270,6 +270,30 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(vocalFremitusImagesEnc),
       },
     ];
+
+    const datetime = getDateTime();
+
+    const abnormalitiesObs = formValues[form.abnormalities.name].map(
+      (opt: any) => {
+        return {
+          concept: form.abnormalities.name,
+          value: opt.id,
+          obsDatetime: datetime,
+        };
+      }
+    );
+    const chestWallAbnormalitiesObs = formValues[
+      form.chestWallAbnormalities.name
+    ].map((opt: any) => {
+      return {
+        concept: form.chestWallAbnormalities.name,
+        value: opt.id,
+        obsDatetime: datetime,
+      };
+    });
+
+    delete formValues[form.abnormalities.name];
+    delete formValues[form.chestWallAbnormalities.name];
     delete formValues[form.chestExpansion.name];
     delete formValues[form.localizedChestAbnormality.name];
     delete formValues[form.percussion.name];
@@ -277,7 +301,12 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     delete formValues[form.tactileFremitus.name];
     delete formValues[form.vocalFremitus.name];
 
-    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+    await handleSubmit([
+      ...getObservations(formValues, getDateTime()),
+      ...obs,
+      ...abnormalitiesObs,
+      ...chestWallAbnormalitiesObs,
+    ]);
   };
 
   const handleValueChange = (values: Array<any>) => {
