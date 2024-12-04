@@ -12,16 +12,11 @@ import { GiMedicines } from "react-icons/gi";
 import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
 
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
-
-
-
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
 };
-//new here
 type Medication = {
   name: string;
   formulation: string;
@@ -100,56 +95,6 @@ const schema = yup.object().shape({
 });
 
 
-
-
-//new end here
-
-
-const medicationFormConfig = {
-  // medication_name: (index: number) => ({
-  //     name: `medications[${index}].MedicationName`,
-  //     label: "Name",
-  //   }),
-  medication_formulation: (index: number) => ({
-    name: `medications[${index}].medication_formulation`,
-    label: "Formulation",
-  }),
-  medication_dose: (index: number) => ({
-    name: `medications[${index}].Medication_dose`,
-    label: "Dose",
-  }),
-  //   medication_dose_unit: (index: number) => ({
-  //     name: `medications[${index}].medication_dose_unit`,
-  //     label: "Unit",
-  //   }),
-  medication_frequency: (index: number) => ({
-    name: `medications[${index}].medication_frequency`,
-    label: "Frequency",
-  }),
-  medication_route: (index: number) => ({
-    name: `medications[${index}].medication_route`,
-    label: "Route",
-  }),
-  medication_duration: (index: number) => ({
-    name: `medications[${index}].medication_duration`,
-    label: "Duration",
-  }),
-  medication_duration_unit: (index: number) => ({
-    name: `medications[${index}].medication_duration_unit`,
-    label: "Unit",
-  }),
-  medication_date_last_taken: (index: number) => ({
-    name: `medications[${index}].medication_date_last_taken`,
-    label: "Last Taken",
-  }),
-  medication_date_of_last_prescription: (index: number) => ({
-    name: `medications[${index}].medication_date_of_last_prescription`,
-    label: "Last Prescribed",
-  }),
-};
-
-// const durationOptions = ["Days", "Weeks", "Months", "Years"];
-
 const medicationUnits = [
   "Milligrams (mg)",
   "Micrograms (µg)",
@@ -170,46 +115,15 @@ const routeOptions = [
   { label: "Inhaled", id: "Inhaled" },
 ];
 
-// const formulationOptions = [
-//   { id: "Tablet", label: "Tablet" },
-//   { id: "Vial", label: "Vial" },
-//   { id: "Intravenous", label: "Intravenous" },
-//   { id: "Powder", label: "Powder" },
-//   { id: "Solution", label: "Solution" },
-//   { id: "Eye Ointment", label: "Eye Ointment" },
-//   { id: "Cream", label: "Cream" },
-//   { id: "Eye Drops", label: "Eye Drops" },
-//   { id: "Ointment", label: "Ointment" },
-//   { id: "Inhaler", label: "Inhaler" },
-//   { id: "Suppository", label: "Suppository" },
-//   { id: "Pessary", label: "Pessary" },
-//   { id: "Suspension", label: "Suspension" },
-//   { id: "Shampoo", label: "Shampoo" },
-//   { id: "Ear Drops", label: "Ear Drops" },
-//   { id: "Eye Paste", label: "Eye Paste" },
-// ];
 
-// const frequencyOptions = [
-//   { id: "Once a day", label: "24 Hourly (OD) - Once a day " },
-//   { id: "Twice a day", label: "12 Hourly (BID) - Twice a day" },
-//   { id: "Three times a day", label: "8 Hourly (TID) - Three times a day" },
-//   { id: "Four times a day", label: "6 Hourly (QID) - Four times a day" },
-//   { id: "Six times a day", label: "4 Hourly (OD) - Six times a day " },
-//   { id: "Once a week", label: "Once a week" },
-//   { id: "Once a month", label: "Once a month" },
-//   { id: "Other", label: "Other" },
-// ];
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
-  //new here
   const { data } = getAllDrugs();
   const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
   const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
   const [formValues, setFormValues] = useState<any>({});
 
-  //end new here
-  // const [formValues, setFormValues] = useState<any>({});
-  // const [value, setValue] = useState<number | string>("");
+
   const [medications, setMedications] = React.useState([
     {
       name: "",
@@ -224,9 +138,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       medication_date_of_last_prescription: "",
     },
   ]);
-  // const [otherFrequency, setOtherFrequency] = useState<{
-  //   [key: number]: boolean;
-  // }>({});
+
 
   const handleUpdateFrequency = (index: number, value: boolean) => {
     setOtherFrequency((prevState) => ({
@@ -250,61 +162,6 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
 
-  // const schema = yup.object().shape({
-  //   medications: yup.array().of(
-  //     yup.object().shape({
-  //       name: yup.string().required("Medication name is required"),
-  //       formulation: yup.string().required("Formulation is required"),
-  //       medication_dose: yup
-  //         .number()
-  //         .required("Dose is required")
-  //         .positive("Dose must be greater than 0"),
-  //       medication_dose_unit: yup.string().required("Dose unit is required"),
-  //       medication_frequency: yup.string().required("Frequency is required"),
-  //       medication_route: yup.string().required("Route is required"),
-  //       medication_duration: yup
-  //         .number()
-  //         .required("Duration is required")
-  //         .positive("Duration must be greater than 0"),
-  //       medication_duration_unit: yup
-  //         .string()
-  //         .required("Duration unit is required"),
-  //       medication_date_last_taken: yup
-  //         .date()
-  //         .nullable()
-  //         .typeError("Invalid date format")
-  //         .required("Date of last taken is required"),
-  //       medication_date_of_last_prescription: yup
-  //         .date()
-  //         .nullable()
-  //         .typeError("Invalid date format")
-  //         .required("Date of last prescription is required"),
-  //     })
-  //   ),
-  // });
-
-  // const handleAddMedication = () => {
-  //   setMedications([
-  //     ...medications,
-  //     {
-  //       name: "",
-  //       formulation: "",
-  //       medication_dose: 0,
-  //       medication_dose_unit: "",
-  //       medication_frequency: "",
-  //       medication_route: "",
-  //       medication_duration: 0,
-  //       medication_duration_unit: "",
-  //       medication_date_last_taken: "",
-  //       medication_date_of_last_prescription: "",
-  //     },
-  //   ]);
-  // };
-
-  // const handleRemoveMedication = (index: number) => {
-  //   const updatedMedications = medications.filter((_, i) => i !== index);
-  //   setMedications(updatedMedications);
-  // };
 
   const handleSubmit = () => {
     console.log(formValues);
@@ -314,20 +171,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
 
   return (
     <FormikInit
-      //new here
       initialValues={initialValues}
       validationSchema={schema}
       onSubmit={onSubmit}
       enableReinitialize
       submitButton={false}
 
-    //end new
-    // validationSchema={schema}
-    // initialValues={{ medications }}
-    // onSubmit={handleSubmit}
-    // enableReinitialize={true}
-    // submitButtonText="Submit"
-    // submitButton={false}
+
     >
       {({ values, setFieldValue }) => (
         <>
