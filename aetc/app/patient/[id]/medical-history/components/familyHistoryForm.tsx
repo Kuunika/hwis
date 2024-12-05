@@ -8,10 +8,27 @@ import {
     TextInputField,
     
   } from "@/components";
-  import { useState } from "react";
+  import React, { useEffect, useState } from "react";
   import * as yup from "yup";
   import LabelledCheckbox from "@/components/form/labelledCheckBox";
+  import { useParameters } from "@/hooks";
+  import { getPatientsEncounters } from "@/hooks/encounter";
   
+  interface Observation {
+    obs_id: number | null;
+    obs_group_id: number | null;
+    value: any;
+    names: { name: string }[];
+    children?: Observation[]; // To support nested children
+  }
+  
+  interface ProcessedObservation {
+    obs_id: number | null;
+    name: string | undefined;
+    value: any;
+    children: ProcessedObservation[];
+  }
+
   type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
@@ -28,6 +45,8 @@ import {
   };
   
   export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
+    const { params } = useParameters();
+    const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const [formValues, setFormValues] = useState<any>({});
     const [showRelationshipFields, setShowRelationshipFields] = useState({
       asthma: false,
@@ -38,6 +57,7 @@ import {
       tuberculosis: false,
       other: false,
     });
+    const [familyHistory, setFamilyHistory] = useState<ProcessedObservation[]>([]);
   
     const schema = yup.object().shape({
         asthma: yup.boolean(),
@@ -95,8 +115,66 @@ import {
     const handleSubmit = () => {
       onSubmit(formValues);
     };
+
+    useEffect(() => {
+      if(!isLoading){
+        const familyHistoryEncounters = data?.filter(
+          (item) => item.encounter_type.name === "FAMILY MEDICAL HISTORY"
+        )
+        
+        
+        const observations: ProcessedObservation[] = [];
+      
+        familyHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
+          encounter.obs.forEach((observation) => {
+            const value = observation.value;
+        
+            // Format the observation data
+            const obsData: ProcessedObservation = {
+              obs_id: observation.obs_id,
+              name: observation.names?.[0]?.name,
+              value,
+              children: [],
+            };
+        
+            if (observation.obs_group_id) {
+              // Find the parent observation and group it
+              const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
+              if (parent) {
+                parent.children.push(obsData);
+              }
+            } else {
+              // Add it to the top-level observations
+              observations.push(obsData);
+            }
+          });
+        });
+
+        setFamilyHistory(observations)
+      }
+      
+      
+    }, [ data]);
+  
   
     return (
+      <>
+      <div style={{ background: 'white', padding: '20px', borderRadius: '5px', marginBottom: '20px' }}>
+      
+  <h4 style={{ color: 'rgba(0, 0, 0, 0.6)', marginBottom: '10px' }}>Known Conditions</h4>
+  {familyHistory.map((obs) => (
+    <div key={obs.obs_id} style={{ marginBottom: "10px", color: 'rgba(0, 0, 0, 0.6)' }}>
+        <div>
+          {obs.children.map((child) => (
+            <div key={child.obs_id} style={{ paddingLeft: "20px" }}>
+              <strong>{child.name}:</strong> ({child.value})
+            </div>
+          ))}
+        </div>
+   
+    </div>
+  ))}
+</div>
       <FormikInit
         validationSchema={schema}
         initialValues={initialValues}
@@ -172,5 +250,6 @@ import {
           <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
         </WrapperBox>
       </FormikInit>
+      </>
     );
   };

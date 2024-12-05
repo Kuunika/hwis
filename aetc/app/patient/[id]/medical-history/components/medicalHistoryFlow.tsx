@@ -884,7 +884,7 @@ export const MedicalHistoryFlow = () => {
 
     groupedObservations.forEach((group, index) => {
       mutate({
-        encounterType: encounters.SUMMARY_ASSESSMENT, 
+        encounterType: encounters.FAMILY_MEDICAL_HISTORY, 
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,

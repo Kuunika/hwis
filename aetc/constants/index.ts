@@ -154,6 +154,7 @@ export const encounters = {
   SUMMARY_ASSESSMENT: 'e5fec87c-9bea-42bb-a276-0469addccf99',
   //TODO: replace this UUID with a bedside test
   BED_SIDE_TEST: "27e4890f-1677-4098-aa85-c65cfe32359c",
+  FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e'
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";

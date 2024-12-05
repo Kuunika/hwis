@@ -146,8 +146,6 @@ const schema = yup.object().shape({
     if(!isLoading){
       const obstetricsEncounters = data?.filter(
         (item) => item.encounter_type.name === "OBSTETRIC HISTORY"
-        &&
-        item.obs?.length !== 4
       )
       
       
@@ -155,7 +153,6 @@ const schema = yup.object().shape({
       
       obstetricsEncounters?.forEach((encounter: { obs: Observation[] }) => {
         encounter.obs.forEach((observation) => {
-          console.log(observation)
           const value = observation.value;
       
           // Format the observation data
