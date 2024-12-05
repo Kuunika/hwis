@@ -10,6 +10,20 @@ import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 
+interface Observation {
+  obs_id: number | null;
+  obs_group_id: number | null;
+  value: any;
+  names: { name: string }[];
+  children?: Observation[]; // To support nested children
+}
+
+interface ProcessedObservation {
+  obs_id: number | null;
+  name: string | undefined;
+  value: any;
+  children: ProcessedObservation[];
+}
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -64,7 +78,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
     const [showMedicationOther, setShowMedicationOther] = useState<boolean | null>(null);
     const [showSubstanceOther, setShowSubstanceOther] = useState<boolean | null>(null);
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
-    const[existingHistory, setExistingHistory] = useState<string[]>();
+    const [observations, setObservations] = useState<ProcessedObservation[]>([]);
 
 
     const allergiesEncounters = data?.filter(
@@ -212,33 +226,62 @@ Object.keys(formValues).forEach((key) => {
     }
 
     if (!isLoading) {
-      const allergyCommentsUUID = 'Allergy comment'; // Correct UUID for testing
-    
-      const matchedObservations = allergiesEncounters?.flatMap((encounter) => {
-        return encounter.obs.filter((observation) => {
-          const observationUUID = observation.names?.[0]?.name;
-          return observationUUID !== allergyCommentsUUID;
+      const observations: ProcessedObservation[] = [];
+
+      allergiesEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        encounter.obs.forEach((observation) => {
+          const value = observation.value;
+      
+          // Format the observation data
+          const obsData: ProcessedObservation = {
+            obs_id: observation.obs_id,
+            name: observation.names?.[0]?.name,
+            value,
+            children: [],
+          };
+      
+          if (observation.obs_group_id) {
+            // Find the parent observation and group it
+            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
+            if (parent) {
+              parent.children.push(obsData);
+            }
+          } else {
+            // Add it to the top-level observations
+            observations.push(obsData);
+          }
         });
       });
+
+      const mergeObservations = (data: any[] | undefined) => {
+        const merged: any[] = [];
+        
+        data?.forEach(item => {
+            // Check if the name already exists in the merged array
+            if(item.name !=='Allergy comment'){
+            let existing = merged.find(mergedItem => mergedItem.name === item.name);
+            
+            if (!existing) {
+                // Add new item if it doesn't exist
+                merged.push({ ...item, children: [...item.children] });
+            } else {
+                // Merge children and remove duplicates based on `name` and `value`
+                const childMap = new Map();
+                [...existing.children, ...item.children].forEach(child => {
+                    const key = `${child.name}_${child.value}`;
+                    childMap.set(key, child);
+                });
+                existing.children = Array.from(childMap.values());
+            }
+          }
+        });
     
-      const allergyDetails = matchedObservations?.map((obs) => ({
-        name: obs.names[0]?.name,
-        value: obs.value,
-      }));
-
-      const uniqueAllergies = allergyDetails?.filter((value, index, self) => {
-        // Check if the current uuid has already been seen
-        return index === self.findIndex((t) => (
-            t.name === value.name
-        ));
-    });
+        return merged;
+    };
     
+    const mergedData = mergeObservations(observations);
+    setObservations(mergedData);
 
-    const allergyHistory = uniqueAllergies?.map(allergy => 
-      allergy.value === "true" ? allergy.name : allergy.value
-    );
-
-    setExistingHistory(allergyHistory)
       
  
     }
@@ -246,12 +289,26 @@ Object.keys(formValues).forEach((key) => {
   }, [allergySelected,data]);
 
 return (<>
-  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h4 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies</h4>
-  {existingHistory?.map((condition, index) => (
-    <p key={index} style={{ color: 'rgba(0, 0, 0, 0.6)', margin: 0 }}>
-      {condition}
-    </p>
-  ))}
+  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies:</h3>
+  <div>
+            {observations.map(item => (
+                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
+                    {/* Display title */}
+                    <h4>{item.name}</h4>
+                    
+                    {/* Display children if they exist */}
+                    {item.children && item.children.length > 0 && (
+                        <ul>
+                            {item.children.map(child => (
+                                <li key={child.obs_id}>
+                                    {child.name}: {child.value}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
   </div>
     <FormikInit
       validationSchema={schema}
