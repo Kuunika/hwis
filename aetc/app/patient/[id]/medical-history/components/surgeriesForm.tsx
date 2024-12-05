@@ -97,7 +97,8 @@ import { concepts } from "@/constants";
     const [showOther, setShowOther] = useState<{ [key: number]: boolean }>({});
   
     const handleSubmit = () => {
-      onSubmit(formValues);
+      console.log(formValues)
+      //onSubmit(formValues);
     };
   
     return (
@@ -141,14 +142,11 @@ import { concepts } from "@/constants";
                         label={surgeryFormConfig.surgical_procedure_name(index).label}
                         />)}
                         
-                        <SearchComboBox
+                        <TextInputField
+                          id={surgeryFormConfig.surgical_procedure_indication(index).name}
                           name={surgeryFormConfig.surgical_procedure_indication(index).name}
                           label={surgeryFormConfig.surgical_procedure_indication(index).label}
-                          options={[
-                            { id: 'Bowel obstruction on appendicitis', label: 'Bowel obstruction on appendicitis' },
-                            { id: 'Obstetrics to populate', label: 'Obstetrics to populate' },
-                          ]}
-                          multiple={false}
+                          multiline={false}
                           sx={{ width: '100%' }}
                         />
                         <FormDatePicker 
