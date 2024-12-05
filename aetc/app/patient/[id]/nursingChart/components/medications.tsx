@@ -4,10 +4,11 @@ import {
   FormikInit,
   FormValuesListener,
   MainButton,
+  SearchComboBox,
   TextInputField,
   WrapperBox,
 } from "@/components";
-import { IconButton } from "@mui/material";
+import { IconButton, Paper } from "@mui/material";
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -90,7 +91,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       <FormValuesListener getValues={setFormValues} />
       <PrescribedMedication />
       <br />
-      <WrapperBox>
+      {/* <WrapperBox>
         {medications.map((medication, index) => (
           <FieldsContainer key={index}>
             <TextInputField
@@ -102,7 +103,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
               }
               sx={{ mb: "2ch" }}
             />
-            <TextInputField
+            <SearchComboBox
               id={`dose-${index}`}
               name={medicationFormConfig.dose(index).name}
               label={medicationFormConfig.dose(index).label}
@@ -146,7 +147,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             </IconButton>
           </FieldsContainer>
         ))}
-      </WrapperBox>
+      </WrapperBox> */}
       <MainButton
         sx={{ m: 0.5 }}
         title={"Submit"}
