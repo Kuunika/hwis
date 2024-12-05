@@ -247,9 +247,11 @@ Object.keys(formValues).forEach((key) => {
 
 return (<>
   <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h4 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies</h4>
-   <p style={{ color: 'rgba(0, 0, 0, 0.6)' }}>
-        {existingHistory?.join(", ")}
-      </p>
+  {existingHistory?.map((condition, index) => (
+    <p key={index} style={{ color: 'rgba(0, 0, 0, 0.6)', margin: 0 }}>
+      {condition}
+    </p>
+  ))}
   </div>
     <FormikInit
       validationSchema={schema}

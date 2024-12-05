@@ -149,7 +149,7 @@ export const encounters = {
   PRESCRIPTIONS: "88564b30-abaf-4744-8ea6-6e1c15465d9e",
   ALLERGIES: "477f8110-ae4b-4caa-b608-c05b0f967b9e",
   DIAGNOSIS: "ba05fbfc-8d80-11d8-abbb-0024217bb78e",
-  SURGICAL_HISTORY: "SURGICAL_HISTORY", //Encounter exists for for ante-natal clinic but not for adults
+  SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
   PATIENT_ADMISSIONS: "ba0651ec-8d80-11d8-abbb-0024217bb78e",
   SUMMARY_ASSESSMENT: 'e5fec87c-9bea-42bb-a276-0469addccf99',
   //TODO: replace this UUID with a bedside test
