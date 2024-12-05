@@ -9,7 +9,7 @@ export const encounters = {
   AIRWAY_ASSESSMENT: "28fb4592-abc3-4b53-b13c-733595e2e504",
   BREATHING_ASSESSMENT: "08d4b4e5-dfa7-436b-9062-aee1b076c3ea",
   CIRCULATION_ASSESSMENT: "bb16ef97-6ef7-414f-880c-dfc67e1601df",
-  EXPOSURE_ASSESSMENT: '00101c16-8441-43c6-a7f8-4bd20cf15cad',
+  EXPOSURE_ASSESSMENT: "00101c16-8441-43c6-a7f8-4bd20cf15cad",
   DISABILITY_ASSESSMENT: "0ef8f652-7852-49a5-a9dd-c1ca74fe098c",
   INITIAL_REGISTRATION: "4186b2dd-0254-4226-965a-e77fcaa70bcf",
   SCREENING_ENCOUNTER: "6878ece0-a61b-4e49-83b9-0468dd9eacfc",
@@ -181,8 +181,6 @@ export const concepts = {
   DOSE_IN_MILLIMETERS: "DOSE_IN_MILLIMETERS",
   MEDICATION_LAST_TAKEN: "MEDICATION_LAST_TAKEN",
   MEDICATION_LAST_PRESCRIBED: "MEDICATION_LAST_PRESCRIBED",
-
-
 
   //Admissions
   TEMPERATURE: "b9afeec4-8d80-11d8-abbb-0024217bb78e",
@@ -958,9 +956,23 @@ export const concepts = {
   DOSE_IN_MILLIMETER: "9def36bf-abca-4bbd-ba55-e1e326cbcaf4",
   DOSE_IN_MILLIMOLES: "16c5fba5-bcf3-4424-874d-30ed882b1ffa",
   RELATIONSHIP_TO_PATIENT: "7ee02862-fbf1-4976-8fde-af26e0e50768",
-  PRESCRIPTION:'PRESCRIPTION',
-  MEDICATION_TYPE:'MEDICATION_TYPE'
+  DRUG_GIVEN: "b9dd62d2-8d80-11d8-abbb-0024217bb78e",
+
 };
+
+export const conceptNames= {
+  DRUG_GIVEN:'Given drugs',
+  PRESCRIBED_DOSE:'Prescribed dose',
+  MEDICATION_DOSE_UNIT:'Medication Dose Unit',
+  MEDICATION_FREQUENCY:'Medication Frequency',
+  MEDICATION_DURATION:'Medication Duration',
+  MEDICATION_DURATION_UNIT:'Medication Duration Unit',
+  MEDICATION_FORMULATION:'Medication Formulation',
+  DESCRIPTION:'Description',
+
+}
+
+
 
 export const triageResult = {
   RED: "red",

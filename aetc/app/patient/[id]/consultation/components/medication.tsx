@@ -146,10 +146,11 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const [medicationOptions, setMedicationOptions] = useState<
     { id: string; label: string }[]
   >([]);
+
   const [otherFrequency, setOtherFrequency] = useState<{
     [key: number]: boolean;
   }>({});
-  const [formValues, setFormValues] = useState<any>({});
+  const [formValues, setFormValues] = useState<any>({ medications: [] });
   const { activeVisit, patientId } = getActivePatientDetails();
 
   const handleUpdateFrequency = (index: number, value: boolean) => {
@@ -162,8 +163,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   useEffect(() => {
     if (data) {
       const formatMedicationOptions = (data: any) => {
-        return data.map((drug: { uuid: string; name: string }) => ({
-          id: drug.uuid.toString(),
+        return data.map((drug: { concept_uuid: string; name: string }) => ({
+          id: drug.concept_uuid,
           label: drug.name,
         }));
       };
@@ -175,7 +176,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     const obsDateTime = getDateTime();
     const obs = formValues.medications.map((medication: any) => {
       return {
-        concept: concepts.PRESCRIPTION,
+        concept: concepts.DRUG_GIVEN,
         value: medication.name,
         obsDateTime,
         group_members: [
@@ -205,12 +206,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             obsDateTime,
           },
           {
-            concept: concepts.MEDICATION_DOSE_UNIT,
+            concept: concepts.MEDICATION_DURATION_UNIT,
             value: medication.medication_duration_unit,
             obsDateTime,
           },
           {
-            concept: concepts.MEDICATION_TYPE,
+            concept: concepts.DESCRIPTION,
             value: "current",
             obsDateTime,
           },
@@ -309,16 +310,19 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                         sx={{ flex: 1 }}
                       />
                     )}
-                    <UnitInputField
-                      id={`medications[${index}].medication_duration`}
-                      name={`medications[${index}].medication_duration`}
-                      unitName={`medications[${index}].medication_duration_unit`}
-                      label="Duration"
-                      unitOptions={durationOptions}
-                      placeholder="e.g. 7"
-                      inputIcon={<IoTimeOutline />}
-                      sx={{ flex: 1 }}
-                    />
+                    {formValues?.medications[index]?.medication_frequency !=
+                      "STAT" && (
+                      <UnitInputField
+                        id={`medications[${index}].medication_duration`}
+                        name={`medications[${index}].medication_duration`}
+                        unitName={`medications[${index}].medication_duration_unit`}
+                        label="Duration"
+                        unitOptions={durationOptions}
+                        placeholder="e.g. 7"
+                        inputIcon={<IoTimeOutline />}
+                        sx={{ flex: 1 }}
+                      />
+                    )}
                     {/* <FormDatePicker
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
