@@ -970,6 +970,7 @@ export const conceptNames= {
   MEDICATION_DURATION_UNIT:'Medication Duration Unit',
   MEDICATION_FORMULATION:'Medication Formulation',
   DESCRIPTION:'Description',
+  MEDICATION_ROUTE:'Medication Route',
 
 }
 
