@@ -497,9 +497,6 @@ export const MedicalHistoryFlow = () => {
         handleSkip();
     });
 
-  
-      
-
   }
 
   function handleReviewSubmission(values: any): void {

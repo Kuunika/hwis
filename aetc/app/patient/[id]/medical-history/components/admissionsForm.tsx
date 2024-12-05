@@ -5,7 +5,23 @@ import DynamicFormList from "@/components/form/dynamicFormList";
 import { TableCell } from "@mui/material";
 import { FieldArray } from "formik";
 import { getConceptSetMembers } from "@/hooks/labOrder";
-import { getFacilities } from "@/hooks";
+import { getFacilities, useParameters } from "@/hooks";
+import { getPatientsEncounters } from "@/hooks/encounter";
+
+interface Observation {
+  obs_id: number | null;
+  obs_group_id: number | null;
+  value: any;
+  names: { name: string }[];
+  children?: Observation[]; // To support nested children
+}
+
+interface ProcessedObservation {
+  obs_id: number | null;
+  name: string | undefined;
+  value: any;
+  children: ProcessedObservation[];
+}
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -68,10 +84,13 @@ const admissionsFormConfig = {
 };
 
 export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
+  const { params } = useParameters();
   const [formValues, setFormValues] = useState<any>({});
   const [diagnosisOptions, setDiagnosisOptions] = useState<{ id: string; label: string }[]>([]);
   const [hospitalOptions, setHospitalOptions] = useState<[]>();
   const { data: facilitiesData, isLoading } = getFacilities();
+  const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
+    const [observations, setObservations] = useState<ProcessedObservation[]>([]);
   const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
   const {
     data: diagnoses,
@@ -80,8 +99,9 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     isRefetching: reloadingDiagnoses,
   } = getConceptSetMembers(diagnosesConceptId);
 
-  const wardOptions = [
-    { id: "Chatinkha", label: "Chatinkha" }];
+  const admissionsEncounters = patientHistory?.filter(
+    (item) => item.encounter_type.name === "PATIENT ADMISSIONS"
+  );
 
 
   const schema = yup.object().shape({
@@ -115,10 +135,63 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     }));
 
     setHospitalOptions(hospitalOptions)
+
+    if (!historyLoading) {
+      const observations: ProcessedObservation[] = [];
+
+      admissionsEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        encounter.obs.forEach((observation) => {
+          const value = observation.value;
+      
+          // Format the observation data
+          const obsData: ProcessedObservation = {
+            obs_id: observation.obs_id,
+            name: observation.names?.[0]?.name,
+            value,
+            children: [],
+          };
+      
+          if (observation.obs_group_id) {
+            // Find the parent observation and group it
+            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
+            if (parent) {
+              parent.children.push(obsData);
+            }
+          } else {
+            // Add it to the top-level observations
+            observations.push(obsData);
+          }
+        });
+        
+
+        setObservations(observations)
+      });}
     
-  }, [diagnoses]);
+  }, [diagnoses, patientHistory]);
 
   return (
+    <>
+  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Previous Admissions:</h3>
+  <div>
+            {observations.map(item => (
+                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
+                    {/* Display title */}
+                    <h4>{item.value}</h4>
+                    
+                    {/* Display children if they exist */}
+                    {item.children && item.children.length > 0 && (
+                        <ul>
+                            {item.children.map(child => (
+                                <li key={child.obs_id}>
+                                    {child.name}: {child.value}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
+  </div>
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
@@ -198,6 +271,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
         </>
       )}
     </FormikInit>
+    </>
   );
 }
 export default AdmissionsForm;
