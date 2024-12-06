@@ -19,8 +19,8 @@ import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Encounter } from "@/interfaces";
 
 const formatDispensed = (data: Encounter, givenMedication: string) => {
-  return data.obs
-    .filter((ob) => ob.value_coded_uuid == givenMedication)
+  return data?.obs
+    ?.filter((ob) => ob.value_coded_uuid == givenMedication)
     .map((ob) => {
       return {
         route: ob.children.find(
@@ -93,6 +93,7 @@ export const PrescribedMedication = () => {
         description: ob.children.find(
           (b) => b.names[0].name == conceptNames.DESCRIPTION
         )?.value,
+        prescribedBy: ob.created_by,
 
         action: <Button>Order drug</Button>,
       };
@@ -134,11 +135,14 @@ export const PrescribedMedication = () => {
           },
         ],
       });
+
+      setFormData({ dose: "", route: "" });
+      return;
     }
 
     setFormError({
-      route: { state: Boolean(formData.route), message: "can't be blank" },
-      dose: { state: Boolean(formData.dose), message: "can't be blank" },
+      route: { state: formData.route == "", message: "can't be blank" },
+      dose: { state: formData.dose == "", message: "can't be blank" },
     });
   };
 
@@ -147,7 +151,7 @@ export const PrescribedMedication = () => {
     row?.medicationUUID
   );
 
-  const totalDispensed = medicationDispensed.reduce((previous, current) => {
+  const totalDispensed = medicationDispensed?.reduce((previous, current) => {
     return previous + Number(current.dose);
   }, 0);
 
@@ -165,6 +169,7 @@ export const PrescribedMedication = () => {
             { label: "Frequency", field: "frequency" },
             { label: "Duration", field: "duration" },
             { label: "Formulation", field: "formulation" },
+            { label: "Prescriber", field: "prescribedBy" },
           ]}
           data={med}
         />
@@ -190,6 +195,12 @@ export const PrescribedMedication = () => {
                         label="Dose"
                         type="number"
                         required
+                        value={formData.dose}
+                        onChange={(value) => {
+                          setFormData((data) => {
+                            return { ...data, dose: value.target.value };
+                          });
+                        }}
                         onBlur={(value) => {
                           setFormData((current) => ({
                             ...current,
@@ -228,7 +239,24 @@ export const PrescribedMedication = () => {
                         name="route"
                         label="Route"
                         required
+                        value={formData.route}
+                        onChange={(value) => {
+                          setFormData((data) => {
+                            return { ...data, route: value.target.value };
+                          });
+                        }}
                         onBlur={(value) => {
+                          if (value.target.value) {
+                            setFormError((error: any) => {
+                              return {
+                                ...error,
+                                route: {
+                                  message: "",
+                                  state: false,
+                                },
+                              };
+                            });
+                          }
                           setFormData((current) => ({
                             ...current,
                             route: value.target.value,
@@ -292,7 +320,7 @@ const DrugDispensedList = ({
         { label: "Dispensed Time", field: "createdTime" },
         { label: "Dispenser", field: "createdBy" },
       ]}
-      data={rows}
+      data={rows ? rows : []}
     />
   );
 };
@@ -325,8 +353,8 @@ const LoaderOverlay: React.FC<LoaderOverlayProps> = ({ loading, children }) => {
       )}
       <Box
         sx={{
-          opacity: loading ? 0.5 : 1, // Dim the content when loading
-          pointerEvents: loading ? "none" : "auto", // Prevent interaction while loading
+          opacity: loading ? 0.5 : 1,
+          pointerEvents: loading ? "none" : "auto",
         }}
       >
         {children}
