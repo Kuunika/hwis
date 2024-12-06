@@ -124,6 +124,7 @@ export interface Obs {
   value_coded_uuid: any;
   names: Name[];
   created_by: string;
+  children: Obs[]
 }
 
 export interface Encounter {

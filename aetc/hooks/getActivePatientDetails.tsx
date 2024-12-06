@@ -13,6 +13,7 @@ export const getActivePatientDetails = () => {
   return {
     activeVisit: activeVisit?.uuid,
     patientId: params?.id,
+    activeVisitId: activeVisit?.visit_id,
     isLoading,
     isSuccess,
   };

@@ -4,13 +4,15 @@ import {
   FormikInit,
   FormValuesListener,
   MainButton,
+  SearchComboBox,
   TextInputField,
   WrapperBox,
 } from "@/components";
-import { IconButton } from "@mui/material";
+import { IconButton, Paper } from "@mui/material";
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import { useState } from "react";
 import * as Yup from "yup";
+import { PrescribedMedication } from "./prescribedMedications";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -73,7 +75,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   const handleSubmit = () => {
-    formValues["medications"] = medications
+    formValues["medications"] = medications;
     onSubmit(formValues);
   };
 
@@ -87,54 +89,77 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
-
-      <WrapperBox>
+      <PrescribedMedication />
+      <br />
+      {/* <WrapperBox>
         {medications.map((medication, index) => (
           <FieldsContainer key={index}>
             <TextInputField
               id={`drugName-${index}`}
               name={medicationFormConfig.drugName(index).name}
               label={medicationFormConfig.drugName(index).label}
-              handleBlurEvent={(value) => handleInputChange(index, "drugName", value)}
+              handleBlurEvent={(value) =>
+                handleInputChange(index, "drugName", value)
+              }
               sx={{ mb: "2ch" }}
             />
-            <TextInputField
+            <SearchComboBox
               id={`dose-${index}`}
               name={medicationFormConfig.dose(index).name}
               label={medicationFormConfig.dose(index).label}
-              handleBlurEvent={(value) => handleInputChange(index, "dose", value)}
-              sx={{ mb: "2ch", ml:"0.2ch" }}
+              handleBlurEvent={(value) =>
+                handleInputChange(index, "dose", value)
+              }
+              sx={{ mb: "2ch", ml: "0.2ch" }}
             />
             <TextInputField
               id={`route-${index}`}
               name={medicationFormConfig.route(index).name}
               label={medicationFormConfig.route(index).label}
-              handleBlurEvent={(value) => handleInputChange(index, "route", value)}
-              sx={{ mb: "2ch", ml:"0.5ch" }}
+              handleBlurEvent={(value) =>
+                handleInputChange(index, "route", value)
+              }
+              sx={{ mb: "2ch", ml: "0.5ch" }}
             />
             <TextInputField
               id={`prescriber-${index}`}
               name={medicationFormConfig.prescriber(index).name}
               label={medicationFormConfig.prescriber(index).label}
-              handleBlurEvent={(value) => handleInputChange(index, "prescriber", value)}
-              sx={{ mb: "2ch", ml:"0.5ch" }}
+              handleBlurEvent={(value) =>
+                handleInputChange(index, "prescriber", value)
+              }
+              sx={{ mb: "2ch", ml: "0.5ch" }}
             />
             <IconButton
               disabled={index === 0}
               onClick={() => handleRemoveMedication(index)}
               color="error"
-              style={{marginBottom:"2ch", marginLeft:"2ch"}}
+              style={{ marginBottom: "2ch", marginLeft: "2ch" }}
             >
               <FaMinus />
             </IconButton>
-            <IconButton onClick={handleAddMedication} color="primary" style={{marginBottom:"2ch"}}>
+            <IconButton
+              onClick={handleAddMedication}
+              color="primary"
+              style={{ marginBottom: "2ch" }}
+            >
               <FaPlus />
             </IconButton>
           </FieldsContainer>
         ))}
-      </WrapperBox>
-      <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-      <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
+      </WrapperBox> */}
+      <MainButton
+        sx={{ m: 0.5 }}
+        title={"Submit"}
+        type="submit"
+        onClick={handleSubmit}
+      />
+      <MainButton
+        variant={"secondary"}
+        title="Skip"
+        type="button"
+        onClick={onSkip}
+      />
     </FormikInit>
   );
 };

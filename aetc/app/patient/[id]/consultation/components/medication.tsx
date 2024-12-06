@@ -1,16 +1,27 @@
-import { FormDatePicker, FormikInit, FormValuesListener, MainButton, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
+import {
+  FormDatePicker,
+  FormikInit,
+  FormValuesListener,
+  MainButton,
+  SearchComboBox,
+  TextInputField,
+  UnitInputField,
+  WrapperBox,
+} from "@/components";
 
 import React, { useEffect, useState } from "react";
 import { FieldArray } from "formik";
 import * as yup from "yup";
-import { TableCell } from "@mui/material";
+import { Box, TableCell } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
 
-import { concepts, durationOptions } from "@/constants";
+import { concepts, durationOptions, encounters } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
-
+import { addEncounter } from "@/hooks/encounter";
+import { getDateTime } from "@/helpers/dateTime";
+import { getActivePatientDetails } from "@/hooks";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -24,8 +35,8 @@ type Medication = {
   medication_frequency: string;
   medication_duration: number;
   medication_duration_unit: string;
-  medication_date_last_taken: string;
-  medication_date_of_last_prescription: string;
+  // medication_date_last_taken: string;
+  // medication_date_of_last_prescription: string;
 };
 
 const medicationTemplate: Medication = {
@@ -36,10 +47,9 @@ const medicationTemplate: Medication = {
   medication_frequency: "",
   medication_duration: 0,
   medication_duration_unit: "",
-  medication_date_last_taken: "",
-  medication_date_of_last_prescription: "",
+  // medication_date_last_taken: "",
+  // medication_date_of_last_prescription: "",
 };
-
 
 const initialValues = {
   medications: [medicationTemplate],
@@ -65,15 +75,18 @@ const formulationOptions = [
 ];
 
 const frequencyOptions = [
-  { id: 'STAT', label: 'STAT' },
-  { id: concepts.ONCE_A_DAY, label: '24 Hourly (OD) - Once a day ' },
-  { id: concepts.TWICE_A_DAY, label: '12 Hourly (BID) - Twice a day' },
-  { id: concepts.THREE_TIMES_A_DAY, label: '8 Hourly (TID) - Three times a day' },
-  { id: concepts.FOUR_TIMES_A_DAY, label: '6 Hourly (QID) - Four times a day' },
-  { id: concepts.SIX_TIMES_A_DAY, label: '4 Hourly (OD) - Six times a day ' },
-  { id: concepts.ONCE_A_WEEK, label: 'Once a week' },
-  { id: concepts.ONCE_A_MONTH, label: 'Once a month' },
-  { id: 'Other', label: 'Other' },
+  { id: "STAT", label: "STAT" },
+  { id: concepts.ONCE_A_DAY, label: "24 Hourly (OD) - Once a day " },
+  { id: concepts.TWICE_A_DAY, label: "12 Hourly (BID) - Twice a day" },
+  {
+    id: concepts.THREE_TIMES_A_DAY,
+    label: "8 Hourly (TID) - Three times a day",
+  },
+  { id: concepts.FOUR_TIMES_A_DAY, label: "6 Hourly (QID) - Four times a day" },
+  { id: concepts.SIX_TIMES_A_DAY, label: "4 Hourly (OD) - Six times a day " },
+  { id: concepts.ONCE_A_WEEK, label: "Once a week" },
+  { id: concepts.ONCE_A_MONTH, label: "Once a month" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 // Validation schema
@@ -82,72 +95,76 @@ const schema = yup.object().shape({
     yup.object().shape({
       name: yup.string().required("Medication name is required"),
       formulation: yup.string().required("Formulation is required"),
-      medication_dose: yup.number().required("Dose is required").positive("Dose must be greater than 0"),
+      medication_dose: yup
+        .number()
+        .required("Dose is required")
+        .positive("Dose must be greater than 0"),
       medication_dose_unit: yup.string().required("Dose unit is required"),
       medication_frequency: yup.string().required("Frequency is required"),
-      medication_duration: yup.number().required("Duration is required").positive("Duration must be greater than 0"),
-      medication_duration_unit: yup.string().required("Duration unit is required"),
-      medication_date_last_taken: yup.date().nullable().required("Date of last taken is required"),
-      medication_date_of_last_prescription: yup.date().nullable().required("Date of last prescription is required"),
+      medication_duration: yup
+        .number()
+        .required("Duration is required")
+        .positive("Duration must be greater than 0"),
+      medication_duration_unit: yup
+        .string()
+        .required("Duration unit is required"),
+      medication_date_last_taken: yup
+        .date()
+        .nullable()
+        .required("Date of last taken is required"),
+      medication_date_of_last_prescription: yup
+        .date()
+        .nullable()
+        .required("Date of last prescription is required"),
     })
   ),
 });
 
-      const medicationUnits = [
-        "Milligrams (mg)" ,
-       "Micrograms (µg)" ,
-    "Grams (g)" ,
+const medicationUnits = [
+  "Milligrams (mg)",
+  "Micrograms (µg)",
+  "Grams (g)",
   "International Units (IU)",
-"Milliliters (ml)" ,
-"Millimoles (mmol)",	
-      ];
-      const routeOptions = [
-        { label: "Oral", id: "Oral" },
-        { label: "Suppository", id: "Suppository" },
-        { label: "Intravenous", id: "Intravenous" },
-        { label: "Intramuscular", id: "Intramuscular" },
-        { label: "Subcutaneous", id: "Subcutaneous" },
-        { label: "Infiltration", id: "Infiltration" },
-        {label: "Intrathecal", id: "Intrathecal"},
-        {label: "Dermal", id: "Dermal"},
-        {label: "Inhaled", id: "Inhaled"},
-      ];
+  "Milliliters (ml)",
+  "Millimoles (mmol)",
+];
+// const routeOptions = [
+//   { label: "Oral", id: "Oral" },
+//   { label: "Suppository", id: "Suppository" },
+//   { label: "Intravenous", id: "Intravenous" },
+//   { label: "Intramuscular", id: "Intramuscular" },
+//   { label: "Subcutaneous", id: "Subcutaneous" },
+//   { label: "Infiltration", id: "Infiltration" },
+//   { label: "Intrathecal", id: "Intrathecal" },
+//   { label: "Dermal", id: "Dermal" },
+//   { label: "Inhaled", id: "Inhaled" },
+// ];
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
+  const { mutate, isPending, isSuccess } = addEncounter();
   const { data } = getAllDrugs();
-  const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
-  const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
-  const [formValues, setFormValues] = useState<any>({});
+  const [medicationOptions, setMedicationOptions] = useState<
+    { id: string; label: string }[]
+  >([]);
 
+  const [otherFrequency, setOtherFrequency] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [formValues, setFormValues] = useState<any>({ medications: [] });
+  const { activeVisit, patientId } = getActivePatientDetails();
 
-  const [medications, setMedications] = React.useState([
-    {
-      name: "",
-      formulation: "",
-      medication_dose: 0,
-      medication_dose_unit: "",
-      medication_frequency: "",
-      medication_route: "",
-      medication_duration: 0,
-      medication_duration_unit: "",
-      medication_date_last_taken: "",
-      medication_date_of_last_prescription: "",
-    },
-  ]);
-
-        const handleUpdateFrequency = (index: number, value: boolean) => {
-            setOtherFrequency(prevState => ({
-              ...prevState,   
-              [index]: value      
-            }));
-          };
+  const handleUpdateFrequency = (index: number, value: boolean) => {
+    setOtherFrequency((prevState) => ({
+      ...prevState,
+      [index]: value,
+    }));
+  };
 
   useEffect(() => {
-
     if (data) {
       const formatMedicationOptions = (data: any) => {
-        return data.map((drug: { uuid: string; name: string }) => ({
-          id: drug.uuid.toString(),
+        return data.map((drug: { concept_uuid: string; name: string }) => ({
+          id: drug.concept_uuid,
           label: drug.name,
         }));
       };
@@ -156,9 +173,59 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   }, [data]);
 
   const handleSubmit = () => {
-    console.log(formValues);
-    console.log(medications);
-    onSubmit(formValues);
+    const obsDateTime = getDateTime();
+    const obs = formValues.medications.map((medication: any) => {
+      return {
+        concept: concepts.DRUG_GIVEN,
+        value: medication.name,
+        obsDateTime,
+        group_members: [
+          {
+            concept: concepts.MEDICATION_FORMULATION,
+            value: medication.formulation,
+            obsDateTime,
+          },
+          {
+            concept: concepts.MEDICATION_DOSE,
+            value: medication.medication_dose,
+            obsDateTime,
+          },
+          {
+            concept: concepts.MEDICATION_DOSE_UNIT,
+            value: medication.medication_dose_unit,
+            obsDateTime,
+          },
+          {
+            concept: concepts.MEDICATION_FREQUENCY,
+            value: medication.medication_frequency,
+            obsDateTime,
+          },
+          {
+            concept: concepts.MEDICATION_DURATION,
+            value: medication.medication_duration,
+            obsDateTime,
+          },
+          {
+            concept: concepts.MEDICATION_DURATION_UNIT,
+            value: medication.medication_duration_unit,
+            obsDateTime,
+          },
+          {
+            concept: concepts.DESCRIPTION,
+            value: "current",
+            obsDateTime,
+          },
+        ],
+      };
+    });
+
+    mutate({
+      encounterType: encounters.PRESCRIPTIONS,
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: obsDateTime,
+      obs,
+    });
   };
 
   return (
@@ -168,8 +235,6 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       onSubmit={onSubmit}
       enableReinitialize
       submitButton={false}
-
-
     >
       {({ values, setFieldValue }) => (
         <>
@@ -181,21 +246,34 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                 setItems={(newItems) => setFieldValue("medications", newItems)}
                 newItem={medicationTemplate}
                 renderFields={(item, index) => (
-                  <>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      flexWrap: "wrap",
+                    }}
+                  >
                     <SearchComboBox
                       name={`medications[${index}].name`}
                       label="Medication Name"
                       options={medicationOptions}
-                      getValue={(value) => setFieldValue(`medications[${index}].name`, value)}
-                      sx={{ width: "200px" }}
+                      getValue={(value) =>
+                        setFieldValue(`medications[${index}].name`, value)
+                      }
                       multiple={false}
                     />
                     <SearchComboBox
                       name={`medications[${index}].formulation`}
                       label="Formulation"
                       options={formulationOptions}
-                      getValue={(value) => setFieldValue(`medications[${index}].formulation`, value)}
-                      sx={{ width: "200px" }}
+                      getValue={(value) =>
+                        setFieldValue(
+                          `medications[${index}].formulation`,
+                          value
+                        )
+                      }
+                      sx={{ flex: 1 }}
                       multiple={false}
                     />
                     <UnitInputField
@@ -205,7 +283,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       unitName={`medications[${index}].medication_dose_unit`}
                       unitOptions={medicationUnits}
                       placeholder="e.g., 500"
-                      sx={{ width: "320px" }}
+                      sx={{ flex: 1 }}
                       inputIcon={<GiMedicines />}
                     />
                     {!otherFrequency[index] ? (
@@ -214,10 +292,14 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                         label="Frequency"
                         options={frequencyOptions}
                         getValue={(value) => {
-                          if (value === "Other") handleUpdateFrequency(index, true);
-                          setFieldValue(`medications[${index}].medication_frequency`, value);
+                          if (value === "Other")
+                            handleUpdateFrequency(index, true);
+                          setFieldValue(
+                            `medications[${index}].medication_frequency`,
+                            value
+                          );
                         }}
-                        sx={{ width: "180px" }}
+                        sx={{ flex: 1 }}
                         multiple={false}
                       />
                     ) : (
@@ -225,36 +307,50 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                         id={`medications[${index}].medication_frequency`}
                         name={`medications[${index}].medication_frequency`}
                         label="Specify frequency"
-                        sx={{ width: "180px" }}
+                        sx={{ flex: 1 }}
                       />
                     )}
-                    <UnitInputField
-                      id={`medications[${index}].medication_duration`}
-                      name={`medications[${index}].medication_duration`}
-                      unitName={`medications[${index}].medication_duration_unit`}
-                      label="Duration"
-                      unitOptions={durationOptions}
-                      placeholder="e.g. 7"
-                      inputIcon={<IoTimeOutline />}
-                    />
-                    <FormDatePicker
+                    {formValues?.medications[index]?.medication_frequency !=
+                      "STAT" && (
+                      <UnitInputField
+                        id={`medications[${index}].medication_duration`}
+                        name={`medications[${index}].medication_duration`}
+                        unitName={`medications[${index}].medication_duration_unit`}
+                        label="Duration"
+                        unitOptions={durationOptions}
+                        placeholder="e.g. 7"
+                        inputIcon={<IoTimeOutline />}
+                        sx={{ flex: 1 }}
+                      />
+                    )}
+                    {/* <FormDatePicker
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
-                      sx={{ width: "150px" }}
+                      // sx={{ width: "150px" }}
                     />
                     <FormDatePicker
                       name={`medications[${index}].medication_date_of_last_prescription`}
                       label="Last Prescribed"
                       sx={{ width: "150px" }}
-                    />
-                  </>
+                    /> */}
+                  </Box>
                 )}
               />
             )}
           </FieldArray>
           <WrapperBox sx={{ mt: "2ch" }}>
-            <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
-            <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
+            <MainButton
+              sx={{ m: 0.5 }}
+              title="Submit"
+              type="submit"
+              onClick={handleSubmit}
+            />
+            <MainButton
+              variant="secondary"
+              title="Skip"
+              type="button"
+              onClick={onSkip}
+            />
           </WrapperBox>
         </>
       )}
