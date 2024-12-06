@@ -1,7 +1,7 @@
 import { conceptNames, concepts, encounters } from "@/constants";
 import { getActivePatientDetails } from "@/hooks";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-import MinimalTable from "./minimalTable";
+
 import {
   Button,
   Card,
@@ -10,30 +10,15 @@ import {
   Typography,
   Fade,
   Box,
-  CircularProgress,
   TextField,
 } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
+import { useState } from "react";
 
-import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
+import { getDateTime } from "@/helpers/dateTime";
 import { Encounter } from "@/interfaces";
-
-const formatDispensed = (data: Encounter, givenMedication: string) => {
-  return data?.obs
-    ?.filter((ob) => ob.value_coded_uuid == givenMedication)
-    .map((ob) => {
-      return {
-        route: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_ROUTE
-        )?.value,
-        dose: ob.children.find(
-          (b) => b.names[0].name == conceptNames.PRESCRIBED_DOSE
-        )?.value,
-        createdBy: ob.created_by,
-        createdTime: getHumanReadableDateTime(ob.obs_datetime),
-      };
-    });
-};
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { MinimalTable } from "@/components/tables/minimalTable";
+import { DrugDispensedList, formatDispensed } from "./drugDispensedList";
 
 export const PrescribedMedication = () => {
   const { patientId, activeVisitId, activeVisit } = getActivePatientDetails();
@@ -56,12 +41,6 @@ export const PrescribedMedication = () => {
   });
 
   if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
-
-  //   useEffect(() => {
-  //     if (isSuccess) {
-  //       refetch();
-  //     }
-  //   }, [isSuccess]);
 
   const med = prescriptionEncounter[0].obs
     .filter((ob) => ob.names[0].name == conceptNames.DRUG_GIVEN)
@@ -179,7 +158,7 @@ export const PrescribedMedication = () => {
             {row && (
               <Card sx={{ marginTop: 2, padding: 2 }}>
                 <Typography variant="h6">{row?.medicationName}</Typography>
-                <LoaderOverlay
+                <ContainerLoaderOverlay
                   loading={isPending || fetchingEncounters || isRefetching}
                 >
                   <CardContent>
@@ -287,7 +266,7 @@ export const PrescribedMedication = () => {
                       givenMedication={row.medicationUUID}
                     />
                   </CardContent>
-                </LoaderOverlay>
+                </ContainerLoaderOverlay>
                 <Button
                   variant="text"
                   onClick={() => setRow(null)}
@@ -301,64 +280,5 @@ export const PrescribedMedication = () => {
         </Fade>
       </Paper>
     </>
-  );
-};
-
-const DrugDispensedList = ({
-  data,
-  givenMedication,
-}: {
-  data: Encounter;
-  givenMedication: string;
-}) => {
-  const rows = formatDispensed(data, givenMedication);
-  return (
-    <MinimalTable
-      columns={[
-        { label: "Dose", field: "dose" },
-        { label: "Route", field: "route" },
-        { label: "Dispensed Time", field: "createdTime" },
-        { label: "Dispenser", field: "createdBy" },
-      ]}
-      data={rows ? rows : []}
-    />
-  );
-};
-
-interface LoaderOverlayProps {
-  loading: boolean;
-  children: ReactNode;
-}
-
-const LoaderOverlay: React.FC<LoaderOverlayProps> = ({ loading, children }) => {
-  return (
-    <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-      {loading && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.8)", // Semi-transparent overlay
-            zIndex: 1,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      )}
-      <Box
-        sx={{
-          opacity: loading ? 0.5 : 1,
-          pointerEvents: loading ? "none" : "auto",
-        }}
-      >
-        {children}
-      </Box>
-    </Box>
   );
 };
