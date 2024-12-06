@@ -97,8 +97,7 @@ import { concepts } from "@/constants";
     const [showOther, setShowOther] = useState<{ [key: number]: boolean }>({});
   
     const handleSubmit = () => {
-      console.log(formValues)
-      //onSubmit(formValues);
+        onSubmit(formValues);
     };
   
     return (

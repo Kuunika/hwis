@@ -936,6 +936,7 @@ DOSE_IN_IU: "7cde6d03-8406-4cd7-87ed-a4e03971d59b",
 DOSE_IN_MILLIMETER: "9def36bf-abca-4bbd-ba55-e1e326cbcaf4",
 DOSE_IN_MILLIMOLES: "16c5fba5-bcf3-4424-874d-30ed882b1ffa",
 RELATIONSHIP_TO_PATIENT: "7ee02862-fbf1-4976-8fde-af26e0e50768",
+INDICATION_FOR_SURGERY: "b1d31030-f5f3-492b-8c94-bf31728ddc83",
 };
 
 export const triageResult = {

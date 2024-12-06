@@ -367,7 +367,7 @@ export const MedicalHistoryFlow = () => {
       value: surgery.other?surgery.other:true,
       group_members: [
         { concept: concepts.DATE_OF_SURGERY, value: surgery.date },
-        { concept: surgery.indication, value: true },
+        { concept: concepts.INDICATION_FOR_SURGERY, value: surgery.indication },
         { concept: concepts.COMPLICATIONS, value: surgery.complication },
       ] as OutputObservation[],
     }
