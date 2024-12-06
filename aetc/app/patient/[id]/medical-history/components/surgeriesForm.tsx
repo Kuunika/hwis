@@ -11,12 +11,30 @@ import {
   } from "@/components";
   import { IconButton, TableCell } from "@mui/material";
   import { FaPlus, FaMinus } from "react-icons/fa6";
-  import { useState } from "react";
+  import React, { useEffect, useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { FieldArray } from "formik";
 import { concepts } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getPatientsEncounters } from "@/hooks/encounter";
   
+
+interface Observation {
+  obs_id: number | null;
+  obs_group_id: number | null;
+  value: any;
+  names: { name: string }[];
+  children?: Observation[]; // To support nested children
+}
+
+interface ProcessedObservation {
+  obs_id: number | null;
+  name: string | undefined;
+  value: any;
+  children: ProcessedObservation[];
+}
+
   type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
@@ -93,14 +111,76 @@ import { concepts } from "@/constants";
   ];
   
   export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
+    const { params } = useParameters();
     const [formValues, setFormValues] = useState<any>({});
     const [showOther, setShowOther] = useState<{ [key: number]: boolean }>({});
-  
+    const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
+    const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+    const surgicalEncounters = patientHistory?.filter(
+      (item) => item.encounter_type.name === "SURGICAL HISTORY"
+    );
     const handleSubmit = () => {
         onSubmit(formValues);
     };
+
+    useEffect(() => {
+  
+      if (!historyLoading) {
+        const observations: ProcessedObservation[] = [];
+  
+      surgicalEncounters?.forEach((encounter: { obs: Observation[] }) => {
+          encounter.obs.forEach((observation) => {
+            const value = observation.value;
+        
+            // Format the observation data
+            const obsData: ProcessedObservation = {
+              obs_id: observation.obs_id,
+              name: observation.names?.[0]?.name,
+              value,
+              children: [],
+            };
+        
+            if (observation.obs_group_id) {
+              // Find the parent observation and group it
+              const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
+              if (parent) {
+                parent.children.push(obsData);
+              }
+            } else {
+              // Add it to the top-level observations
+              observations.push(obsData);
+            }
+          })
+  
+          setObservations(observations)
+          console.log(observations)
+        });}
+      
+    }, [patientHistory]);
   
     return (
+      <>
+      <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
+        <div>
+            {observations.map(item => (
+                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
+                    {/* Display title */}
+                    <h4>{item.name}</h4>
+                    
+                    {/* Display children if they exist */}
+                    {item.children && item.children.length > 0 && (
+                        <ul>
+                            {item.children.map(child => (
+                                <li key={child.obs_id}>
+                                    {child.name}: {child.value}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
+        </div>
       <FormikInit
         validationSchema={schema}
         initialValues={initialValues} 
@@ -173,6 +253,7 @@ import { concepts } from "@/constants";
           </>
         )}
       </FormikInit>
+      </>
     );
 
 

@@ -90,7 +90,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   const [hospitalOptions, setHospitalOptions] = useState<[]>();
   const { data: facilitiesData, isLoading } = getFacilities();
   const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
-    const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+  const [observations, setObservations] = useState<ProcessedObservation[]>([]);
   const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
   const {
     data: diagnoses,
