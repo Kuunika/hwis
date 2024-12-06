@@ -306,8 +306,75 @@ export const DesktopView = () => {
               },
             ]}
           />
+
+          <ConsultationCard
+            disabled={!isOnList}
+            title="Template Forms"
+            links={[
+              {
+                title: "Medical Inpatient",
+                link: `/patient/${params.id}/medicalInpatient`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src={"/icons/medicalInpatient.svg"}
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
+              {
+                title: "Surgical Notes",
+                link: `/patient/${params.id}/surgicalNotes`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src="/icons/surgicalnotes.svg"
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
+              {
+                title: "Gynacological",
+                link: `/patient/${params.id}/gynacological`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src="/icons/gynacology.svg"
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
+              {
+                title: "Monitoring Chart",
+                link: `/patient/${params.id}/nursingChart`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src="/icons/monitoring.svg"
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
+              {
+                title: "Referral",
+                link: `/patient/${params.id}/referral`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src="/icons/referral.svg"
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
+            ]}
+          />
         </WrapperBox>
-        <BasicAccordion />
+        {/* <BasicAccordion /> */}
       </MainGrid>
       <MainGrid item lg={9}>
         <VitalsPanel />
