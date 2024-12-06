@@ -12,7 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { FieldArray } from "formik";
 import * as yup from "yup";
-import { Box, TableCell } from "@mui/material";
+import { Box, Paper, TableCell, Typography } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
@@ -21,7 +21,10 @@ import { concepts, durationOptions, encounters } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
 import { addEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
-import { getActivePatientDetails } from "@/hooks";
+import { getActivePatientDetails, useNavigation } from "@/hooks";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
+import { AccordionComponent } from "@/components/accordion";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -141,11 +144,12 @@ const medicationUnits = [
 // ];
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
-  const { mutate, isPending, isSuccess } = addEncounter();
-  const { data } = getAllDrugs();
+  const { mutate, isPending: addingDrugs, isSuccess } = addEncounter();
+  const { data, isPending: loadingDrugs } = getAllDrugs();
   const [medicationOptions, setMedicationOptions] = useState<
     { id: string; label: string }[]
   >([]);
+  const { navigateBack } = useNavigation();
 
   const [otherFrequency, setOtherFrequency] = useState<{
     [key: number]: boolean;
@@ -159,6 +163,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       [index]: value,
     }));
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigateBack();
+    }
+  }, [isSuccess]);
 
   useEffect(() => {
     if (data) {
@@ -228,102 +238,114 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     });
   };
 
+  const sections = [
+    {
+      id: "prescribed",
+      title: "Prescribed Medication",
+      content: <PrescribedMedicationList />,
+    },
+  ];
   return (
-    <FormikInit
-      initialValues={initialValues}
-      validationSchema={schema}
-      onSubmit={onSubmit}
-      enableReinitialize
-      submitButton={false}
-    >
-      {({ values, setFieldValue }) => (
-        <>
-          <FormValuesListener getValues={setFormValues} />
-          <FieldArray name="medications">
-            {({ push, remove }) => (
-              <DynamicFormList
-                items={values.medications}
-                setItems={(newItems) => setFieldValue("medications", newItems)}
-                newItem={medicationTemplate}
-                renderFields={(item, index) => (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <SearchComboBox
-                      name={`medications[${index}].name`}
-                      label="Medication Name"
-                      options={medicationOptions}
-                      getValue={(value) =>
-                        setFieldValue(`medications[${index}].name`, value)
-                      }
-                      multiple={false}
-                    />
-                    <SearchComboBox
-                      name={`medications[${index}].formulation`}
-                      label="Formulation"
-                      options={formulationOptions}
-                      getValue={(value) =>
-                        setFieldValue(
-                          `medications[${index}].formulation`,
-                          value
-                        )
-                      }
-                      sx={{ flex: 1 }}
-                      multiple={false}
-                    />
-                    <UnitInputField
-                      id={`medications[${index}].medication_dose`}
-                      label="Dose"
-                      name={`medications[${index}].medication_dose`}
-                      unitName={`medications[${index}].medication_dose_unit`}
-                      unitOptions={medicationUnits}
-                      placeholder="e.g., 500"
-                      sx={{ flex: 1 }}
-                      inputIcon={<GiMedicines />}
-                    />
-                    {!otherFrequency[index] ? (
+    <ContainerLoaderOverlay loading={addingDrugs || loadingDrugs}>
+      <AccordionComponent sections={sections} />
+      <br />
+      <FormikInit
+        initialValues={initialValues}
+        validationSchema={schema}
+        onSubmit={onSubmit}
+        enableReinitialize
+        submitButton={false}
+      >
+        {({ values, setFieldValue }) => (
+          <>
+            <FormValuesListener getValues={setFormValues} />
+            <FieldArray name="medications">
+              {({ push, remove }) => (
+                <DynamicFormList
+                  items={values.medications}
+                  setItems={(newItems) =>
+                    setFieldValue("medications", newItems)
+                  }
+                  newItem={medicationTemplate}
+                  renderFields={(item, index) => (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        flexWrap: "wrap",
+                      }}
+                    >
                       <SearchComboBox
-                        name={`medications[${index}].medication_frequency`}
-                        label="Frequency"
-                        options={frequencyOptions}
-                        getValue={(value) => {
-                          if (value === "Other")
-                            handleUpdateFrequency(index, true);
+                        name={`medications[${index}].name`}
+                        label="Medication Name"
+                        options={medicationOptions}
+                        getValue={(value) =>
+                          setFieldValue(`medications[${index}].name`, value)
+                        }
+                        multiple={false}
+                      />
+                      <SearchComboBox
+                        name={`medications[${index}].formulation`}
+                        label="Formulation"
+                        options={formulationOptions}
+                        getValue={(value) =>
                           setFieldValue(
-                            `medications[${index}].medication_frequency`,
+                            `medications[${index}].formulation`,
                             value
-                          );
-                        }}
+                          )
+                        }
                         sx={{ flex: 1 }}
                         multiple={false}
                       />
-                    ) : (
-                      <TextInputField
-                        id={`medications[${index}].medication_frequency`}
-                        name={`medications[${index}].medication_frequency`}
-                        label="Specify frequency"
-                        sx={{ flex: 1 }}
-                      />
-                    )}
-                    {formValues?.medications[index]?.medication_frequency !=
-                      "STAT" && (
                       <UnitInputField
-                        id={`medications[${index}].medication_duration`}
-                        name={`medications[${index}].medication_duration`}
-                        unitName={`medications[${index}].medication_duration_unit`}
-                        label="Duration"
-                        unitOptions={durationOptions}
-                        placeholder="e.g. 7"
-                        inputIcon={<IoTimeOutline />}
+                        id={`medications[${index}].medication_dose`}
+                        label="Dose"
+                        name={`medications[${index}].medication_dose`}
+                        unitName={`medications[${index}].medication_dose_unit`}
+                        unitOptions={medicationUnits}
+                        placeholder="e.g., 500"
                         sx={{ flex: 1 }}
+                        inputIcon={<GiMedicines />}
                       />
-                    )}
-                    {/* <FormDatePicker
+                      {!otherFrequency[index] ? (
+                        <SearchComboBox
+                          name={`medications[${index}].medication_frequency`}
+                          label="Frequency"
+                          options={frequencyOptions}
+                          getValue={(value) => {
+                            if (value === "Other")
+                              handleUpdateFrequency(index, true);
+                            setFieldValue(
+                              `medications[${index}].medication_frequency`,
+                              value
+                            );
+                          }}
+                          sx={{ flex: 1 }}
+                          multiple={false}
+                        />
+                      ) : (
+                        <TextInputField
+                          id={`medications[${index}].medication_frequency`}
+                          name={`medications[${index}].medication_frequency`}
+                          label="Specify frequency"
+                          sx={{ flex: 1 }}
+                        />
+                      )}
+                      {formValues?.medications[index]?.medication_frequency !=
+                        "STAT" && (
+                        <UnitInputField
+                          id={`medications[${index}].medication_duration`}
+                          name={`medications[${index}].medication_duration`}
+                          unitName={`medications[${index}].medication_duration_unit`}
+                          label="Duration"
+                          unitOptions={durationOptions}
+                          placeholder="e.g. 7"
+                          inputIcon={<IoTimeOutline />}
+                          sx={{ flex: 1 }}
+                        />
+                      )}
+                      {/* <FormDatePicker
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
                       // sx={{ width: "150px" }}
@@ -333,27 +355,22 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       label="Last Prescribed"
                       sx={{ width: "150px" }}
                     /> */}
-                  </Box>
-                )}
+                    </Box>
+                  )}
+                />
+              )}
+            </FieldArray>
+            <WrapperBox sx={{ mt: "2ch" }}>
+              <MainButton
+                sx={{ m: 0.5 }}
+                title="Submit"
+                type="submit"
+                onClick={handleSubmit}
               />
-            )}
-          </FieldArray>
-          <WrapperBox sx={{ mt: "2ch" }}>
-            <MainButton
-              sx={{ m: 0.5 }}
-              title="Submit"
-              type="submit"
-              onClick={handleSubmit}
-            />
-            <MainButton
-              variant="secondary"
-              title="Skip"
-              type="button"
-              onClick={onSkip}
-            />
-          </WrapperBox>
-        </>
-      )}
-    </FormikInit>
+            </WrapperBox>
+          </>
+        )}
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };

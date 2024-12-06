@@ -1,41 +1,16 @@
-import { MainButton, MainTypography, WrapperBox } from "@/components";
+import { MainTypography, WrapperBox } from "@/components";
 import { Panel } from ".";
-import { useNavigation } from "@/hooks";
-import { FaPlus } from "react-icons/fa";
-import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
-import { useState, useEffect } from "react";
-import { Typography } from "@mui/material";
+
+import { PrescribedMedicationList } from "../../[id]/nursingChart/components/prescribedMedicationList";
 
 export const Medications = () => {
-  const { navigateTo } = useNavigation();
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-  });
-
-  if (isLoading) {
-    return <ProfilePanelSkeletonLoader />;
-  }
   return (
-    <Panel
-      title="Medications"
-      icon={
-        <MainButton
-          variant="text"
-          icon={<FaPlus />}
-          onClick={() => navigateTo("/medications")}
-        />
-      }
-    >
-      <Typography>No medications added</Typography>
-      {/* <br />
-      <MedicationRow medicine="Metformin Extended" />
+    <Panel title="Medications">
+      <br />
+      {/* <MedicationRow medicine="Metformin Extended" />
       <MedicationRow medicine="Metformin Extended" />
       <MedicationRow medicine="Metformin Extended" /> */}
+      <PrescribedMedicationList />
     </Panel>
   );
 };

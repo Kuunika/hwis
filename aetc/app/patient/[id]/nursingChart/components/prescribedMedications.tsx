@@ -17,8 +17,8 @@ import { useState } from "react";
 import { getDateTime } from "@/helpers/dateTime";
 import { Encounter } from "@/interfaces";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { MinimalTable } from "@/components/tables/minimalTable";
 import { DrugDispensedList, formatDispensed } from "./drugDispensedList";
+import { PrescribedMedicationList } from "./prescribedMedicationList";
 
 export const PrescribedMedication = () => {
   const { patientId, activeVisitId, activeVisit } = getActivePatientDetails();
@@ -32,51 +32,6 @@ export const PrescribedMedication = () => {
   const [formData, setFormData] = useState({ route: "", dose: "" });
   const { mutate, isPending, isSuccess } = addEncounter();
   const [formError, setFormError] = useState<any>({});
-
-  const prescriptionEncounter = data?.filter((d) => {
-    return (
-      d.encounter_type.uuid == encounters.PRESCRIPTIONS &&
-      d.visit_id == activeVisitId
-    );
-  });
-
-  if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
-
-  const med = prescriptionEncounter[0].obs
-    .filter((ob) => ob.names[0].name == conceptNames.DRUG_GIVEN)
-    .map((ob) => {
-      const durationUnit = ob.children.find(
-        (b) => b.names[0].name == conceptNames.MEDICATION_DURATION_UNIT
-      )?.value;
-      return {
-        medicationName: ob.value,
-        medicationUUID: ob.value_coded_uuid,
-        dose: ob.children.find(
-          (b) => b.names[0].name == conceptNames.PRESCRIBED_DOSE
-        )?.value,
-        doseUnits: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_DOSE_UNIT
-        )?.value,
-        frequency: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_FREQUENCY
-        )?.value,
-        duration: `${
-          ob.children.find(
-            (b) => b.names[0].name == conceptNames.MEDICATION_DURATION
-          )?.value
-        } ${durationUnit}`,
-
-        formulation: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_FORMULATION
-        )?.value,
-        description: ob.children.find(
-          (b) => b.names[0].name == conceptNames.DESCRIPTION
-        )?.value,
-        prescribedBy: ob.created_by,
-
-        action: <Button>Order drug</Button>,
-      };
-    });
 
   const dispensationEncounter = data?.filter((d) => {
     return (
@@ -140,18 +95,7 @@ export const PrescribedMedication = () => {
         <Typography variant="subtitle1" component="h2" gutterBottom>
           Prescribed Medication
         </Typography>
-        <MinimalTable
-          getSelectedRow={setRow}
-          columns={[
-            { label: "Medication Name", field: "medicationName" },
-            { label: "Dose", field: "dose" },
-            { label: "Frequency", field: "frequency" },
-            { label: "Duration", field: "duration" },
-            { label: "Formulation", field: "formulation" },
-            { label: "Prescriber", field: "prescribedBy" },
-          ]}
-          data={med}
-        />
+        <PrescribedMedicationList setRow={setRow} />
 
         <Fade in={!!row} timeout={500}>
           <div>
