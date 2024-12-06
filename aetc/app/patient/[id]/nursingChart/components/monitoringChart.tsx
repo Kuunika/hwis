@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { ObservationsForm } from "./observations";
@@ -34,13 +34,17 @@ export const MonitoringChart = () => {
   const { navigateTo, navigateBack } = useNavigation();
   const dateTime = getDateTime();
 
-  const { data: patientVisits, isLoading, isSuccess } = getPatientVisitTypes(params?.id as string);
+  const {
+    data: patientVisits,
+    isLoading,
+    isSuccess,
+  } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
   const steps = [
     { id: 0, label: "Observations" },
     { id: 1, label: "Interventions" },
-    { id: 2, label: "Medications" }, 
+    { id: 2, label: "Medications" },
     { id: 3, label: "Nursing Notes" },
   ];
 
@@ -55,14 +59,14 @@ export const MonitoringChart = () => {
     mutate: createInterventions,
     isSuccess: InterventionsCreated,
     isPending: creatingInterventions,
-    isError: InterventionError, 
+    isError: InterventionError,
   } = addEncounter();
 
   const {
     mutate: createNursingNotes,
     isSuccess: NursingNotesCreated,
     isPending: creatingNursingNotes,
-    isError: NursingNotesError, 
+    isError: NursingNotesError,
   } = addEncounter();
 
   const handleObservationsSubmit = (values: any) => {
@@ -80,56 +84,54 @@ export const MonitoringChart = () => {
     const airwayKey = concepts.AIRWAY_OPENING_INTERVENTIONS;
     const otherKey = `${airwayKey}_Other`;
 
-    if(values[airwayKey]){
+    if (values[airwayKey]) {
       values[airwayKey] = values[airwayKey]?.map((item: any) => {
         if (item.id === concepts.OTHER_AIRWAY_INTERVENTION) {
           const newLabel = values[otherKey];
           delete values[otherKey];
           return {
             id: concepts.OTHER_AIRWAY_INTERVENTION,
-            label: newLabel
+            label: newLabel,
           };
         }
         return item;
       });
-    };
+    }
 
     if (values.fluidEntries) {
       values[concepts.INTAKE_FLUIDS] = values.fluidEntries;
-      delete values.fluidEntries;   
-      }
+      delete values.fluidEntries;
+    }
 
     createInterventions({
-        encounterType: encounters.PROCEDURES_DONE,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: getObservations(values, dateTime),
-      });
+      encounterType: encounters.PROCEDURES_DONE,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: getObservations(values, dateTime),
+    });
 
-    setActiveStep(2); 
+    setActiveStep(2);
   };
 
   const handleMedicationsSubmit = (values: any) => {
-    console.log("Medications:", values); 
-    setActiveStep(3); 
+    console.log("Medications:", values);
+    setActiveStep(3);
   };
-
 
   const handleNursingNotesSubmit = (values: any) => {
     const objectiveKey = concepts.OBJECTIVE_DATA;
-    const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS; 
+    const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS;
 
-      if (values.objective) {
-        values[objectiveKey] = values.objective;
-        delete values.objective; 
-      }
+    if (values.objective) {
+      values[objectiveKey] = values.objective;
+      delete values.objective;
+    }
 
-      if (values.investigations){
-        values[investigationsKey] = values.investigations;
-        delete values.investigations; 
-      }
-
+    if (values.investigations) {
+      values[investigationsKey] = values.investigations;
+      delete values.investigations;
+    }
 
     createNursingNotes({
       encounterType: encounters.NURSING_NOTES,
@@ -141,25 +143,24 @@ export const MonitoringChart = () => {
     navigateBack();
   };
 
-  const handleSkip =()=>{
-    switch(activeStep){
-     case 0:
-      setActiveStep(1);
-      return;
-     case 1:
+  const handleSkip = () => {
+    switch (activeStep) {
+      case 0:
+        setActiveStep(1);
+        return;
+      case 1:
         setActiveStep(2);
         return;
-     case 2:
+      case 2:
         setActiveStep(3);
         return;
-     case 3:
+      case 3:
         navigateBack();
         return;
-     default:
+      default:
         return;
     }
-  }
-
+  };
 
   return (
     <>
@@ -170,10 +171,22 @@ export const MonitoringChart = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <ObservationsForm onSubmit={handleObservationsSubmit} onSkip={handleSkip}/>
-       <InterventionsForm onSubmit={handleInterventionsSubmit} onSkip={handleSkip}/>
-        <MedicationsForm onSubmit={handleMedicationsSubmit} onSkip={handleSkip}/>
-        <NursingNotesForm onSubmit={handleNursingNotesSubmit} onSkip={handleSkip}/>
+        <ObservationsForm
+          onSubmit={handleObservationsSubmit}
+          onSkip={handleSkip}
+        />
+        <InterventionsForm
+          onSubmit={handleInterventionsSubmit}
+          onSkip={handleSkip}
+        />
+        <MedicationsForm
+          onSubmit={handleMedicationsSubmit}
+          onSkip={handleSkip}
+        />
+        <NursingNotesForm
+          onSubmit={handleNursingNotesSubmit}
+          onSkip={handleSkip}
+        />
       </NewStepperContainer>
     </>
   );

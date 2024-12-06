@@ -1,6 +1,6 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -17,6 +17,8 @@ import {
   ChestLung,
   PercussionChestLung,
 } from "@/components/svgImages";
+import { useSubmitEncounter } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
 
 const form = {
   respiratoryRate: {
@@ -110,7 +112,7 @@ const form = {
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 
 const schema = Yup.object().shape({
@@ -223,6 +225,90 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     Array<any>
   >([]);
 
+  const { handleSubmit, isLoading } = useSubmitEncounter(
+    encounters.CHEST_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleSubmitForm = async (values: any) => {
+    const formValues = { ...values };
+    const obs = [
+      {
+        concept: form.chestExpansion.name,
+        value: formValues[form.chestExpansion.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(chestExpansionImagesEnc),
+      },
+      {
+        concept: form.tactileFremitus.name,
+        value: formValues[form.tactileFremitus.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(tactileFremitusImagesEnc),
+      },
+      {
+        concept: form.breathingSounds.name,
+        value: formValues[form.breathingSounds.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(breathingSoundsImagesEnc),
+      },
+      {
+        concept: form.percussion.name,
+        value: formValues[form.percussion.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(percussionImagesEnc),
+      },
+      {
+        concept: form.localizedChestAbnormality.name,
+        value: formValues[form.localizedChestAbnormality.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(localizedChestImagesEnc),
+      },
+      {
+        concept: form.vocalFremitus.name,
+        value: formValues[form.vocalFremitus.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(vocalFremitusImagesEnc),
+      },
+    ];
+
+    const datetime = getDateTime();
+
+    const abnormalitiesObs = formValues[form.abnormalities.name].map(
+      (opt: any) => {
+        return {
+          concept: form.abnormalities.name,
+          value: opt.id,
+          obsDatetime: datetime,
+        };
+      }
+    );
+    const chestWallAbnormalitiesObs = formValues[
+      form.chestWallAbnormalities.name
+    ].map((opt: any) => {
+      return {
+        concept: form.chestWallAbnormalities.name,
+        value: opt.id,
+        obsDatetime: datetime,
+      };
+    });
+
+    delete formValues[form.abnormalities.name];
+    delete formValues[form.chestWallAbnormalities.name];
+    delete formValues[form.chestExpansion.name];
+    delete formValues[form.localizedChestAbnormality.name];
+    delete formValues[form.percussion.name];
+    delete formValues[form.breathingSounds.name];
+    delete formValues[form.tactileFremitus.name];
+    delete formValues[form.vocalFremitus.name];
+
+    await handleSubmit([
+      ...getObservations(formValues, getDateTime()),
+      ...obs,
+      ...abnormalitiesObs,
+      ...chestWallAbnormalitiesObs,
+    ]);
+  };
+
   const handleValueChange = (values: Array<any>) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
   };
@@ -231,7 +317,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Palpation (Lungs)">

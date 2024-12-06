@@ -1,27 +1,24 @@
-'use client'
-import { NotificationContainer } from "@/components";
+"use client";
 import React, { useState } from "react";
 import {
   FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
-  MainTypography,
-  RadioGroupInput,
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
+import { concepts, encounters } from "@/constants";
+import { useSubmitEncounter } from "@/hooks";
+import { getObservations } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 const form = {
   generalInformation: {
-    name: "generalInformation",
+    name: concepts.ADDITIONAL_NOTES,
     label: "General Information",
   },
-
-
 };
 
 const schema = yup.object({
@@ -29,7 +26,6 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.generalInformation.label),
-  
 });
 
 const initialValues = {
@@ -39,26 +35,32 @@ const initialValues = {
 };
 export const GeneralInformation = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
+  const { handleSubmit, isLoading } = useSubmitEncounter(
+    encounters.GENERAL_INFORMATION_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleSubmitForm = async (values: any) => {
+    await handleSubmit(getObservations(values, getDateTime()));
+  };
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
       submitButtonText="Next"
     >
       <FormValuesListener getValues={setFormValues} />
 
-     
-        <FieldsContainer>
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.generalInformation.name}
-            label={form.generalInformation.label}
-            id={form.generalInformation.name}
-          />
-          </FieldsContainer>
-    
+      <FieldsContainer>
+        <TextInputField
+          sx={{ width: "100%" }}
+          name={form.generalInformation.name}
+          label={form.generalInformation.label}
+          id={form.generalInformation.name}
+        />
+      </FieldsContainer>
     </FormikInit>
   );
 };

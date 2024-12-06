@@ -40,7 +40,7 @@
     "schema-to-yup": "^1.12.15",
     "sweetalert2": "^11.10.3",
     "sweetalert2-react-content": "^5.0.7",
-    "yup": "^1.2.0"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

@@ -42,3 +42,21 @@ export const getFormLabels = (formConceptLabels:any, selectOptionsFormLabels:Arr
 
 return [...form, ...radios, ...selects]
 }
+
+export const flattenImagesObs = (formImageEncounters: Array<{formData: {obs:any}}>)=>{
+
+return formImageEncounters.flatMap((enc)=>{
+  return enc.formData.obs
+})
+
+}
+
+export const mapSearchComboOptionsToConcepts = (options: Array<any>, concept:string, obsDatetime:any)=>{
+return Array.isArray(options)
+? options.map((opt: any) => ({
+    concept,
+    value: opt.id,
+    obsDatetime
+  }))
+: [];
+}

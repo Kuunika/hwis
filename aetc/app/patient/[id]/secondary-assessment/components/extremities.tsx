@@ -1,6 +1,6 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -12,6 +12,8 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 import { LowerLimbPosterior } from "@/components/svgImages";
+import { useSubmitEncounter } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
 
 const form = {
   oedama: {
@@ -37,7 +39,7 @@ const form = {
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 
 const schema = Yup.object().shape({
@@ -68,20 +70,34 @@ const radioOptions = [
 
 export const ExtremitiesForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-  const [showSpecify, setShowSpecify] = useState(false);
-  const [showAbnormalities, setShowAbnormalities] = useState(false);
-  const [abnormalitiesUpperLimbImageEnc, setAbnormalitiesUpperLimbImageEnc] =
-    useState<Array<any>>();
 
-  const handleValueChange = (values: Array<any>) => {
-    setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
+  const [abnormalitiesUpperLimbImageEnc, setAbnormalitiesUpperLimbImageEnc] =
+    useState<Array<any>>([]);
+
+  const { handleSubmit, isLoading } = useSubmitEncounter(
+    encounters.EXTREMITIES_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleSubmitForm = async (values: any) => {
+    const formValues = { ...values };
+    const obs = [
+      {
+        concept: form.abnormalitiesUpperLimb.name,
+        value: formValues[form.abnormalitiesUpperLimb.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(abnormalitiesUpperLimbImageEnc),
+      },
+    ];
+    delete formValues[form.abnormalitiesLowerLimb.name];
+    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="">

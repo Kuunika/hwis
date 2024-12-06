@@ -39,8 +39,8 @@ export const PrimaryAssessmentFlow = () => {
   const handleCirculationSubmit = () => {
     setActiveStep(3);
   };
-  const handleDisabilitySubmit = (values: any) => {
-    mutate({ encounter: encounters.DISABILITY_ASSESSMENT, obs: values });
+  const handleDisabilitySubmit = () => {
+    // mutate({ encounter: encounters.DISABILITY_ASSESSMENT, obs: values });
     setActiveStep(4);
   };
 

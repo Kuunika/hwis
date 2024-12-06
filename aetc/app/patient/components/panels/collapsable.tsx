@@ -115,7 +115,7 @@ const ListItem = ({
   return (
     <Link href={link}>
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
-        {icon && <Image src={icon ? icon : "/test"} alt="AETC Form icon" />}
+        {/* {icon && <Image src={icon ? icon : "/test"} alt="AETC Form icon" />} */}
         <MainTypography
           sx={{
             fontFamily: "Inter",

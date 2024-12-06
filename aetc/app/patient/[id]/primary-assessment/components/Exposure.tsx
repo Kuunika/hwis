@@ -13,10 +13,12 @@ import {
 import * as yup from "yup";
 import { FullBodyBackImage, FullBodyImage } from "@/components/svgImages";
 import { concepts, encounters } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { Box } from "@mui/material";
+import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
+import { getDateTime } from "@/helpers/dateTime";
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 const form = {
   temperatureInfo: {
@@ -79,11 +81,56 @@ export const Exposure = ({ onSubmit }: Props) => {
   const [injuriesImage, setInjuriesImage] = useState<Array<any>>([]);
   const [injuriesBackImage, setInjuriesBackImage] = useState<Array<any>>([]);
 
+  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
+    encounters.DISABILITY_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleFormSubmit = (values: any) => {
+    const formValues = { ...values };
+
+    const obs = [
+      {
+        concept: form.skinRashInfo.name,
+        value: formValues[form.skinRashInfo.name],
+        obsDatetime: getDateTime(),
+        group_members: [
+          ...flattenImagesObs(skinRashInfoImage),
+          ...flattenImagesObs(skinRashInfoBackImage),
+        ],
+      },
+      {
+        concept: form.abnormalities.name,
+        value: formValues[form.abnormalities.name],
+        obsDatetime: getDateTime(),
+        group_members: [
+          ...flattenImagesObs(abnormalitiesBackImage),
+          ...flattenImagesObs(abnormalitiesImage),
+        ],
+      },
+      {
+        concept: form.injuries.name,
+        value: formValues[form.injuries.name],
+        obsDatetime: getDateTime(),
+        group_members: [
+          ...flattenImagesObs(injuriesBackImage),
+          ...flattenImagesObs(injuriesImage),
+        ],
+      },
+    ];
+
+    delete formValues[form.abnormalities.name];
+    delete formValues[form.injuries.name];
+    delete formValues[form.skinRashInfo.name];
+
+    handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+  };
+
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleFormSubmit}
       submitButtonText="submit"
     >
       <FormValuesListener getValues={setFormValues} />
@@ -105,18 +152,10 @@ export const Exposure = ({ onSubmit }: Props) => {
       {formValues[form.skinRashInfo.name] == concepts.YES && (
         <Box sx={{ display: "flex", alignItems: "flex-start" }}>
           <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-            <FullBodyImage
-              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
-              imageSection={form.skinRashInfo.name}
-              onValueChange={setSkinRashInfoBackImage}
-            />
+            <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
           </Box>
           <Box>
-            <FullBodyBackImage
-              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
-              imageSection={form.skinRashInfo.name}
-              onValueChange={setSkinRashInfoImage}
-            />
+            <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
           </Box>
         </Box>
       )}
@@ -131,18 +170,10 @@ export const Exposure = ({ onSubmit }: Props) => {
       {formValues[form.abnormalities.name] == concepts.YES && (
         <Box sx={{ display: "flex", alignItems: "flex-start" }}>
           <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-            <FullBodyImage
-              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
-              imageSection={form.abnormalities.name}
-              onValueChange={setAbnormalitiesImage}
-            />
+            <FullBodyImage onValueChange={setAbnormalitiesImage} />
           </Box>
           <Box>
-            <FullBodyBackImage
-              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
-              imageSection={form.abnormalities.name}
-              onValueChange={setAbnormalitiesBackImage}
-            />
+            <FullBodyBackImage onValueChange={setAbnormalitiesBackImage} />
           </Box>
         </Box>
       )}
@@ -157,18 +188,10 @@ export const Exposure = ({ onSubmit }: Props) => {
       {formValues[form.injuries.name] == concepts.YES && (
         <Box sx={{ display: "flex", alignItems: "flex-start" }}>
           <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-            <FullBodyImage
-              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
-              imageSection={form.injuries.name}
-              onValueChange={setInjuriesImage}
-            />
+            <FullBodyImage onValueChange={setInjuriesImage} />
           </Box>
           <Box>
-            <FullBodyBackImage
-              imageEncounter={encounters.EXPOSURE_ASSESSMENT}
-              imageSection={form.injuries.name}
-              onValueChange={setInjuriesBackImage}
-            />
+            <FullBodyBackImage onValueChange={setInjuriesBackImage} />
           </Box>
         </Box>
       )}

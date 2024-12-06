@@ -1,6 +1,11 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -14,7 +19,8 @@ import {
 import * as Yup from "yup";
 import { AbdomenImage, SecondaryAbdomenImage } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
-import { useParameters } from "@/hooks";
+import { useParameters, useSubmitEncounter } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
 
 const form = {
   abdominalDistention: {
@@ -176,7 +182,7 @@ const form = {
 };
 
 type Prop = {
-  onSubmit: (values: any) => void;
+  onSubmit: () => void;
 };
 
 const schema = Yup.object().shape({
@@ -344,7 +350,83 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const [abnormalitiesPresentImageEnc, setAbnormalitiesPresentImageEnc] =
-    useState<Array<any>>();
+    useState<Array<any>>([]);
+  const [tendernessImageEnc, setTendernessImageEnc] = useState<Array<any>>([]);
+  const { handleSubmit, isLoading: creatingEncounter } = useSubmitEncounter(
+    encounters.CHEST_ASSESSMENT,
+    onSubmit
+  );
+
+  const handleSubmitForm = async (values: any) => {
+    const formValues = { ...values };
+    const obs = [
+      {
+        concept: form.abnormalitiesPresent.name,
+        value: formValues[form.abnormalitiesPresent.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(abnormalitiesPresentImageEnc),
+      },
+      {
+        concept: form.tenderness.name,
+        value: formValues[form.tenderness.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(tendernessImageEnc),
+      },
+    ];
+
+    const datetime = getDateTime();
+
+    const generalInspectionObs = mapSearchComboOptionsToConcepts(
+      formValues[form.generalInspection.name],
+      form.generalInspection.name,
+      datetime
+    );
+    const urethralMeatusObs = mapSearchComboOptionsToConcepts(
+      formValues[form.urethralMeatus.name],
+      form.urethralMeatus.name,
+      datetime
+    );
+    const scrotumObs = mapSearchComboOptionsToConcepts(
+      formValues[form.scrotum.name],
+      form.scrotum.name,
+      datetime
+    );
+    const periymenObs = mapSearchComboOptionsToConcepts(
+      formValues[form.periymen.name],
+      form.periymen.name,
+      datetime
+    );
+    const vaginaObs = mapSearchComboOptionsToConcepts(
+      formValues[form.vagina.name],
+      form.vagina.name,
+      datetime
+    );
+    const digitalVaginalExaminationObs = mapSearchComboOptionsToConcepts(
+      formValues[form.digitalVaginalExamination.name],
+      form.digitalVaginalExamination.name,
+      datetime
+    );
+
+    delete formValues[form.generalInspection.name];
+    delete formValues[form.scrotum.name];
+    delete formValues[form.vagina.name];
+    delete formValues[form.periymen.name];
+    delete formValues[form.urethralMeatus.name];
+    delete formValues[form.abnormalitiesPresent.name];
+    delete formValues[form.tenderness.name];
+    delete formValues[form.digitalVaginalExamination.name];
+
+    await handleSubmit([
+      ...getObservations(formValues, getDateTime()),
+      ...obs,
+      ...generalInspectionObs,
+      ...urethralMeatusObs,
+      ...scrotumObs,
+      ...periymenObs,
+      ...vaginaObs,
+      ...digitalVaginalExaminationObs,
+    ]);
+  };
 
   const handleValueChange = (values: Array<any>) => {
     setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
@@ -356,7 +438,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialsValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Inspection">
@@ -460,7 +542,9 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           />
         )}
         <FieldsContainer>
-          {formValues[form.tenderness.name] == YES && <AbdomenImage />}
+          {formValues[form.tenderness.name] == YES && (
+            <AbdomenImage onValueChange={setTendernessImageEnc} />
+          )}
         </FieldsContainer>
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Percussion">

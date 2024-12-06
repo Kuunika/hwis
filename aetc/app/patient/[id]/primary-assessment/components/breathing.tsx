@@ -13,7 +13,7 @@ import {
 import * as Yup from "yup";
 
 import { LungImage, LungBackImage } from "@/components/svgImages";
-import { getInitialValues, getObservations } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 
@@ -106,20 +106,52 @@ const schema = Yup.object().shape({
     form.deviceForIntervention.label
   ),
   [form.respiratoryRate.name]: Yup.number()
+    .when(form.isPatientBreathing.name, (values: any, schema: any) => {
+      if (values[0] == concepts.YES) {
+        return schema.required();
+      }
+      return schema;
+    })
     .label(form.respiratoryRate.label)
     .min(1)
     .max(70),
   [form.oxygenSaturation.name]: Yup.number()
+    .when(form.isPatientBreathing.name, (values: any, schema: any) => {
+      if (values[0] == concepts.YES) {
+        return schema.required();
+      }
+      return schema;
+    })
     .label(form.oxygenSaturation.label)
     .min(10)
     .max(100),
   [form.oxygenNeeded.name]: Yup.string().label(form.oxygenNeeded.label),
   [form.oxygenGiven.name]: Yup.number()
+    .when(form.oxygenNeeded.name, (values: any, schema: any) => {
+      if (values[0] == concepts.YES) {
+        return schema.required();
+      }
+      return schema;
+    })
     .min(1)
     .max(15)
     .label(form.oxygenGiven.label),
-  [form.oxygenSource.name]: Yup.string().label(form.oxygenSource.label),
-  [form.deviceUsed.name]: Yup.string().label(form.deviceUsed.label),
+  [form.oxygenSource.name]: Yup.string()
+    .when(form.oxygenNeeded.name, (values: any, schema: any) => {
+      if (values[0] == concepts.YES) {
+        return schema.required();
+      }
+      return schema;
+    })
+    .label(form.oxygenSource.label),
+  [form.deviceUsed.name]: Yup.string()
+    .when(form.oxygenNeeded.name, (values: any, schema: any) => {
+      if (values[0] == concepts.YES) {
+        return schema.required();
+      }
+      return schema;
+    })
+    .label(form.deviceUsed.label),
   [form.isTracheaCentral.name]: Yup.string().label(form.isTracheaCentral.label),
   [form.deviationSide.name]: Yup.string().label(form.deviationSide.label),
   // [form.otherAbnormality.name]: Yup.string().label(form.otherAbnormality.label),
@@ -213,11 +245,32 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   );
 
   const handleSubmitForm = async (values: any) => {
-    await handleSubmit(getObservations(values, getDateTime()), [
-      ...chestAbnormalitiesImage,
-      ...percussionImage,
-    ]);
+    const formValues = { ...values };
+
+    const obs = [
+      {
+        concept: form.chestWallAbnormality.name,
+        value: formValues[form.chestWallAbnormality.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(chestAbnormalitiesImage),
+      },
+      {
+        concept: form.percussion.name,
+        value: formValues[form.percussion.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(percussionImage),
+      },
+    ];
+    delete formValues[form.chestWallAbnormality.name];
+    delete formValues[form.percussion.name];
+
+    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
+
+  useEffect(() => {
+    console.log({ percussionImage });
+    console.log({ chestAbnormalitiesImage });
+  }, [percussionImage, chestAbnormalitiesImage]);
 
   return (
     <FormikInit
@@ -237,17 +290,20 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
+
       {formValues[form.isPatientBreathing.name] == NO && (
-        <>
+        <FormFieldContainerLayout title="">
           <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
 
-          <FieldsContainer>
+          <FieldsContainer mr="1ch">
             <TextInputField
+              sx={{ width: "100%" }}
               name={form.startTimeIntervention.name}
               label={form.startTimeIntervention.label}
               id={form.startTimeIntervention.name}
             />
             <TextInputField
+              sx={{ width: "100%" }}
               name={form.finishTimeIntervention.name}
               label={form.finishTimeIntervention.label}
               id={form.finishTimeIntervention.name}
@@ -266,8 +322,9 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               ]}
             />
           </FieldsContainer>
-        </>
+        </FormFieldContainerLayout>
       )}
+
       {formValues[form.isPatientBreathing.name] == YES && (
         <>
           <FormFieldContainerLayout title="Respiratory and Oxygen">
@@ -294,27 +351,35 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 label={form.oxygenNeeded.label}
                 options={radioOptions}
               />
-              <RadioGroupInput
-                name={form.oxygenSource.name}
-                label={form.oxygenSource.label}
-                options={sourceOxygen}
-              />
+              {formValues[form.oxygenNeeded.name] == YES && (
+                <RadioGroupInput
+                  name={form.oxygenSource.name}
+                  label={form.oxygenSource.label}
+                  options={sourceOxygen}
+                />
+              )}
             </FieldsContainer>
-            <TextInputField
-              name={form.oxygenGiven.name}
-              label={form.oxygenGiven.label}
-              id={form.oxygenGiven.name}
-              sx={{ width: "100%", m: 0 }}
-            />
-            <br />
-            <br />
-            <SearchComboBox
-              name={form.deviceUsed.name}
-              label={form.deviceUsed.label}
-              options={deviceUsed}
-              multiple={false}
-            />
-            <br />
+
+            {formValues[form.oxygenNeeded.name] == YES && (
+              <>
+                <TextInputField
+                  name={form.oxygenGiven.name}
+                  label={form.oxygenGiven.label}
+                  id={form.oxygenGiven.name}
+                  sx={{ width: "100%", m: 0 }}
+                  unitOfMeasure="L/min"
+                />
+                <br />
+                <br />
+                <SearchComboBox
+                  name={form.deviceUsed.name}
+                  label={form.deviceUsed.label}
+                  options={deviceUsed}
+                  multiple={false}
+                />
+                <br />
+              </>
+            )}
           </FormFieldContainerLayout>
 
           <FormFieldContainerLayout last={true} title="Trachea and Chest">
@@ -364,6 +429,8 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                     concepts.OTHER && (
                     <FieldsContainer>
                       <TextInputField
+                        multiline
+                        rows={3}
                         name={form.descriptionAbnormality.name}
                         label={form.descriptionAbnormality.label}
                         id={form.descriptionAbnormality.name}
@@ -409,6 +476,8 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
             )}
             <FieldsContainer>
               <TextInputField
+                multiline
+                rows={3}
                 sx={{ m: 0, width: "100%" }}
                 name={form.additionalNotes.name}
                 label={form.additionalNotes.label}

@@ -1,7 +1,7 @@
 import { GenericDialog, NotificationContainer } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
 import { getInitialValues, getObservations } from "@/helpers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -12,9 +12,7 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import { addEncounter } from "@/hooks/encounter";
-import { getPatientVisitTypes } from "@/hooks/patientReg";
-import { useParameters } from "@/hooks";
+
 import { getDateTime } from "@/helpers/dateTime";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { OverlayLoader } from "@/components/backdrop";
@@ -83,6 +81,14 @@ const schema = Yup.object().shape({
   [form.oropharyngealSize.name]: Yup.string().label(
     form.oropharyngealSize.label
   ),
+  [form.otherReason.name]: Yup.string()
+    .when(form.airWayThreatenedReason.name, (values: any, schema: any) => {
+      if (values[0] == concepts.OTHER) {
+        return schema.required();
+      }
+      return schema;
+    })
+    .label(form.otherReason.label),
 });
 
 const airwayThreatenedReasons = [
@@ -150,27 +156,28 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
           )}
         </FieldsContainer>
         {formValues[form.isAirwayPatent.name] === concepts.THREATENED && (
-          <FieldsContainer sx={{ my: "1ch" }}>
-            <SearchComboBox
-              name={form.airWayThreatenedReason.name}
-              label={form.airWayThreatenedReason.label}
-              options={airwayThreatenedReasons}
-              multiple={false}
-            />
-          </FieldsContainer>
-        )}
-
-        {formValues[form.airWayThreatenedReason.name] == concepts.OTHER && (
           <>
-            <br />
-            <FieldsContainer>
-              <TextInputField
-                sx={{ m: 0, width: "100%" }}
-                name={form.otherReason.name}
-                label={form.otherReason.label}
-                id={form.otherReason.name}
+            <FieldsContainer sx={{ my: "1ch" }}>
+              <SearchComboBox
+                name={form.airWayThreatenedReason.name}
+                label={form.airWayThreatenedReason.label}
+                options={airwayThreatenedReasons}
+                multiple={false}
               />
             </FieldsContainer>
+            {formValues[form.airWayThreatenedReason.name] == concepts.OTHER && (
+              <>
+                <br />
+                <FieldsContainer>
+                  <TextInputField
+                    sx={{ m: 0, width: "100%" }}
+                    name={form.otherReason.name}
+                    label={form.otherReason.label}
+                    id={form.otherReason.name}
+                  />
+                </FieldsContainer>
+              </>
+            )}
           </>
         )}
       </FormFieldContainerLayout>
@@ -192,7 +199,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
                   label={form.neckCollar.label}
                   options={[
                     ...radioOptions,
-                    { label: "No Indicated", value: "notIndicated" },
+                    { label: "Not Indicated", value: concepts.NOT_INDICATED },
                   ]}
                 />
                 <RadioGroupInput
@@ -223,11 +230,13 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
                 <FieldsContainer sx={{ alignItems: "flex-start" }}>
                   <RadioGroupInput
                     name={form.nasopharyngealSize.name}
-                    label={form.nasopharyngealSize.label}
+                    label={form.nasopharyngealSize.label + "(CM)"}
                     options={[
                       { value: "5", label: "5" },
                       { value: "6", label: "6" },
                       { value: "7", label: "7" },
+                      { value: "8", label: "8" },
+                      { value: "9", label: "9" },
                     ]}
                   />
                   <RadioGroupInput
