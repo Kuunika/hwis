@@ -152,12 +152,13 @@ export const encounters = {
   PRESCRIPTIONS: "88564b30-abaf-4744-8ea6-6e1c15465d9e",
   ALLERGIES: "477f8110-ae4b-4caa-b608-c05b0f967b9e",
   DIAGNOSIS: "ba05fbfc-8d80-11d8-abbb-0024217bb78e",
-  SURGICAL_HISTORY: "SURGICAL_HISTORY", //Encounter exists for for ante-natal clinic but not for adults
+  SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
   PATIENT_ADMISSIONS: "ba0651ec-8d80-11d8-abbb-0024217bb78e",
   SUMMARY_ASSESSMENT: "e5fec87c-9bea-42bb-a276-0469addccf99",
   //TODO: replace this UUID with a bedside test
   BED_SIDE_TEST: "27e4890f-1677-4098-aa85-c65cfe32359c",
-  DISPENSING:"ba0612c2-8d80-11d8-abbb-0024217bb78e"
+  DISPENSING:"ba0612c2-8d80-11d8-abbb-0024217bb78e",
+  FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e'
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -847,7 +848,8 @@ export const concepts = {
   MALE_FEMALE_CONDOMS: "db3d9234-8ca3-4cfe-a3a3-fd34a4893392",
   LACTATION_AMENORRHEA: "62147559-c123-4657-b4b1-8ef1d30eea26",
   NATURAL: "10f0fc3c-6b7a-449a-a6ce-5340bdba004e",
-  ADMISSION_DATE: "b9d49472-8d80-11d8-abbb-0024217bb78e",
+  HEALTH_CENTER_HOSPITALS: 'b9a20ff2-8d80-11d8-abbb-0024217bb78e',
+ADMISSION_DATE: "b9d49472-8d80-11d8-abbb-0024217bb78e",
   ADMISSION_DIAGNOSIS: "b9d2c282-8d80-11d8-abbb-0024217bb78e",
   ADMISSION_SECTION: "b9d2a98c-8d80-11d8-abbb-0024217bb78e",
   SURGICAL_INTERVENTIONS: "b9c5a44e-8d80-11d8-abbb-0024217bb78e",
@@ -957,6 +959,7 @@ export const concepts = {
   DOSE_IN_MILLIMETER: "9def36bf-abca-4bbd-ba55-e1e326cbcaf4",
   DOSE_IN_MILLIMOLES: "16c5fba5-bcf3-4424-874d-30ed882b1ffa",
   RELATIONSHIP_TO_PATIENT: "7ee02862-fbf1-4976-8fde-af26e0e50768",
+INDICATION_FOR_SURGERY: "b1d31030-f5f3-492b-8c94-bf31728ddc83",
   DRUG_GIVEN: "b9dd62d2-8d80-11d8-abbb-0024217bb78e",
 
 };

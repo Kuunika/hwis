@@ -1,13 +1,30 @@
 import { FormDatePicker, MainButton, SearchComboBox, WrapperBox } from "@/components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     FormFieldContainer, FormValuesListener,
     FormikInit, TextInputField
 } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary } from "@mui/material";
 
 
+interface Observation {
+  obs_id: number | null;
+  obs_group_id: number | null;
+  value: any;
+  names: { name: string }[];
+  children?: Observation[]; // To support nested children
+}
+
+interface ProcessedObservation {
+  obs_id: number | null;
+  name: string | undefined;
+  value: any;
+  children: ProcessedObservation[];
+}
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
@@ -71,11 +88,14 @@ type Prop = {
   };
 
 export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
-    const [formValues, setFormValues] = useState<any>({});
-    const [pregnancies, setPregnancies] = useState<number>(0);
-    const [liveBirthSelections, setLiveBirthSelections] = useState<boolean[]>(
+  const { params } = useParameters();
+  const { data, isLoading } = getPatientsEncounters(params?.id as string);
+  const [formValues, setFormValues] = useState<any>({});
+  const [pregnancies, setPregnancies] = useState<number>(0);
+  const [liveBirthSelections, setLiveBirthSelections] = useState<boolean[]>(
         Array.from({ length: pregnancies }, () => false) // Initialize based on number of pregnancies
       );
+  const [observations, setObservations] = useState<ProcessedObservation[]>([]);
 
     const contraceptiveOptions = [
       { id: concepts.JADELLE, label: 'Jadelle' },
@@ -122,13 +142,85 @@ const schema = yup.object().shape({
     setLiveBirthSelections(updatedSelections);
   };
 
+  useEffect(() => {
+    if(!isLoading){
+      const obstetricsEncounters = data?.filter(
+        (item) => item.encounter_type.name === "OBSTETRIC HISTORY"
+      )
+      
+      
+      const observations: ProcessedObservation[] = [];
+      
+      obstetricsEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        encounter.obs.forEach((observation) => {
+          const value = observation.value;
+      
+          // Format the observation data
+          const obsData: ProcessedObservation = {
+            obs_id: observation.obs_id,
+            name: observation.names?.[0]?.name,
+            value,
+            children: [],
+          };
+      
+          if (observation.obs_group_id) {
+            // Find the parent observation and group it
+            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
+            if (parent) {
+              parent.children.push(obsData);
+            }
+          } else {
+            // Add it to the top-level observations
+            observations.push(obsData);
+          }
+        });
+      });
+      
+
+      setObservations(observations);
+    }
+  }, [ data]);
+
+
+
+
+
+
 return (
+  <>
+  <Accordion sx={{mb:'2ch'}}>
+    <AccordionSummary><h4>Existing Obstetrics History</h4></AccordionSummary>
+    <AccordionDetails >
+  <div>
+  {observations.map((obs) => (
+    <div key={obs.obs_id} style={{ marginBottom: "10px", color: 'rgba(0, 0, 0, 0.6)' }}>
+      {obs.children.length === 0 ? (
+        // Display items with no children
+        <div>
+          <strong>{obs.name}:</strong> {obs.value}
+        </div>
+      ) : (
+        // Display parent item and its children
+        <div>
+          <h4 style={{ marginBottom: "10px" }}>{obs.name}</h4>
+          {obs.children.map((child) => (
+            <div key={child.obs_id} style={{ paddingLeft: "20px" }}>
+              <strong>{child.name}:</strong> {child.value}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+</AccordionDetails>
+</Accordion>
+<div style={{marginBottom:'4ch'}}></div>
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={onSubmit}
-      submitButton={false}
-    >
+      submitButton={false} >
     <FormValuesListener getValues={setFormValues} />
     <FormFieldContainer direction="row">
     <TextInputField
@@ -187,6 +279,7 @@ return (
         <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
  </WrapperBox>
 </FormikInit>
+</>
 );
 
 }
