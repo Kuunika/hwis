@@ -39,36 +39,14 @@ import {
 import { formatAllVitalsToObject } from "@/helpers/emr";
 import { encounters } from "@/constants";
 import { OverlayLoader } from "@/components/backdrop";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3, borderRadius: "5px" }}>{children}</Box>
-      )}
-    </div>
-  );
-}
+import { TabsContainer } from "./tabsContainer";
 
 export const DesktopView = () => {
   const { params } = useParameters();
   const { navigateTo } = useNavigation();
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
-  const [value, setValue] = React.useState(0);
+
   const [chartData, setChartData] = useState<any>({
     xAxisData: [],
     systolicbpData: [],
@@ -221,10 +199,6 @@ export const DesktopView = () => {
       prevBottom === selectedChartBottom ? prevBottom : selectedChartBottom
     );
   }, [selectedChartBottom, selectedChartTop]);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
 
   return (
     <MainGrid
@@ -536,194 +510,9 @@ export const DesktopView = () => {
             )}
           </div>
         </WrapperBox>
-
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          style={{ marginTop: "1ch", marginLeft: "5px" }}
-        >
-          <Tab
-            style={{
-              borderTopLeftRadius: "4px",
-              padding: "10px 20px",
-              minWidth: "120px",
-              background: value === 0 ? "#ffffff" : "transparent",
-              fontWeight: value === 0 ? "bold" : "normal",
-              border: "1px solid #ccc",
-              borderBottom: "none",
-              borderRight: "none",
-            }}
-            label="Investigations"
-          ></Tab>
-          <Tab
-            label="Clinical Notes"
-            style={{
-              padding: "10px 20px",
-              minWidth: "120px",
-              background: value === 1 ? "#ffffff" : "transparent",
-              fontWeight: value === 1 ? "bold" : "normal",
-              border: "1px solid #ccc",
-              borderBottom: "none",
-              borderRight: "none",
-            }}
-          ></Tab>
-          <Tab
-            label="Results"
-            style={{
-              padding: "10px 20px",
-              minWidth: "120px",
-              background: value === 2 ? "#ffffff" : "transparent",
-              fontWeight: value === 2 ? "bold" : "normal",
-              border: "1px solid #ccc",
-              borderBottom: "none",
-              borderRight: "none",
-            }}
-          ></Tab>
-          <Tab
-            label="Medications"
-            style={{
-              borderBottomRightRadius: "4px",
-              borderTopRightRadius: "4px",
-              padding: "10px 20px",
-              minWidth: "120px",
-              background: value === 3 ? "#ffffff" : "transparent",
-              fontWeight: value === 3 ? "bold" : "normal",
-              border: "1px solid #ccc",
-              borderBottom: "none",
-            }}
-          ></Tab>
-        </Tabs>
-        <Box
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-            marginLeft: "5px",
-          }}
-        >
-          <CustomTabPanel value={value} index={0}>
-            <Investigations />
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
-            <ClinicalNotes />
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={2}>
-            <Results />
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={3}>
-            <Medications />
-          </CustomTabPanel>
-        </Box>
+        <TabsContainer />
       </MainGrid>
       <FlowStarter patient={params} />
     </MainGrid>
-  );
-};
-
-export const TabletView = () => {
-  const visits = [
-    { value: "1", label: "Current" },
-    { value: "2", label: "12 January 2024" },
-    { value: "3", label: "15 December 2023" },
-  ];
-  return (
-    <MainGrid display={{ xs: "block", lg: "none" }} container>
-      <MainGrid item xs={12} sx={{ ml: "0.5ch", mt: "2ch", p: "1ch" }}>
-        <WrapperBox display="flex">
-          <ActionMenu />{" "}
-          <WrapperBox sx={{ width: "15ch", mx: "1ch" }}>
-            <BasicSelect label="Visits" options={visits} />
-          </WrapperBox>
-        </WrapperBox>
-      </MainGrid>
-      <MainGrid item xs={12} sx={{ p: "1ch" }}>
-        <WrapperBox sx={{ display: "flex" }}>
-          <PersonalDetailsTabletView />
-          <VitalsPanel />
-        </WrapperBox>
-        <WrapperBox sx={{ display: "flex" }}>
-          <ClinicalNotes />
-          <Investigations />
-        </WrapperBox>
-        <WrapperBox sx={{ display: "flex" }}>
-          <Medications />
-          <Results />
-        </WrapperBox>
-      </MainGrid>
-    </MainGrid>
-  );
-};
-
-const ActionMenu = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const forms = [...aetcClecking, ...templateForms];
-
-  return (
-    <>
-      <MainButton
-        icon={<FaFileAlt />}
-        aria-controls={open ? "basic-menu" : undefined}
-        sx={{ borderRadius: "1px" }}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        variant="secondary"
-        onClick={handleClick}
-        title={"forms"}
-      />
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-      >
-        {forms.map(({ link, icon, label }) => {
-          return (
-            <MenuItem key={label} onClick={handleClose}>
-              <Link href={link}>
-                <WrapperBox
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    py: "1ch",
-                    px: "2ch",
-                  }}
-                  // 0tnxas
-                  // Yc7flfzx
-                >
-                  {icon && (
-                    <Image src={icon ? icon : "/test"} alt="AETC Form icon" />
-                  )}
-                  <MainTypography
-                    sx={{
-                      fontFamily: "Inter",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      lineHeight: "17px",
-                      letterSpacing: "0em",
-                      textAlign: "left",
-                      my: "0.5ch",
-                      ml: "5px",
-                    }}
-                  >
-                    {label}
-                  </MainTypography>
-                </WrapperBox>
-              </Link>
-            </MenuItem>
-          );
-        })}
-      </Menu>
-    </>
   );
 };

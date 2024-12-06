@@ -2,7 +2,8 @@
 
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
-import { DesktopView, TabletView } from "../../components/profile";
+import { DesktopView } from "../../components/profile";
+import { TabletView } from "../../components/tabletView";
 function PatientProfile() {
   return (
     <>
