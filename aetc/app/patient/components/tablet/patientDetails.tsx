@@ -9,13 +9,14 @@ import {
   Typography,
 } from "@mui/material";
 import { FaVoicemail, FaPhone } from "react-icons/fa";
-import { getActivePatientDetails } from "@/hooks";
+import { getActivePatientDetails, useVitals } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { calculateAge } from "@/helpers/dateTime";
 
 export const PatientDetailsTablet = () => {
   const { patientId } = getActivePatientDetails();
   const { data: patient, isLoading } = getOnePatient(patientId as string);
+  const { vitals } = useVitals();
 
   return (
     <Box
@@ -78,16 +79,8 @@ export const PatientDetailsTablet = () => {
 
       {/* Health Stats Section */}
       <Grid container spacing={1}>
-        {[
-          { label: "BMI", value: "22.4", trend: "▼10" },
-          { label: "Weight", value: "92 kg", trend: "▼10 kg" },
-          { label: "Height", value: "175 cm" },
-          { label: "Blood Pressure", value: "124/80", trend: "▲10" },
-          { label: "Blood Pressure", value: "124/80", trend: "▲10" },
-          { label: "Blood Pressure", value: "124/80", trend: "▲10" },
-          { label: "Blood Pressure", value: "124/80", trend: "▲10" },
-        ].map((stat) => (
-          <Grid item xs={6} sm={3} key={stat.label}>
+        {vitals.map((vital: any) => (
+          <Grid item xs={6} sm={3} key={vital.label}>
             <Box
               sx={{
                 p: 1,
@@ -101,17 +94,14 @@ export const PatientDetailsTablet = () => {
                 justifyContent: "center",
               }}
             >
-              <Typography
-                variant="body2"
-                sx={{ fontWeight: "bold", color: "#555" }}
-              >
-                {stat.label}
+              <Typography variant="body2" sx={{ color: "#555" }}>
+                {vital.name}
               </Typography>
               <Typography
                 variant="h6"
                 sx={{ fontWeight: "bold", color: "#333" }}
               >
-                {stat.value}
+                {vital.value}
               </Typography>
             </Box>
           </Grid>
