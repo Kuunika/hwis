@@ -3,6 +3,7 @@ import { Fab, Box, ListItemText, ListItemButton } from "@mui/material";
 import { FiPlus, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import Collapse from "@mui/material/Collapse";
 import Link from "next/link"; // Use Link for routing (Next.js)
+import zIndex from "@mui/material/styles/zIndex";
 
 interface MenuItem {
   label: string;
@@ -138,6 +139,7 @@ const menuItemStyle = {
   alignItems: "center",
   justifyContent: "space-between",
   borderBottom: "1px solid #ddd",
+  zIndex: 1000,
 };
 
 export default FloatingMenu;

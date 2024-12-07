@@ -4,9 +4,12 @@ import FloatingButtonWithMenu from "./floatButton";
 import { FiHome, FiSettings, FiUser } from "react-icons/fi";
 import { getActivePatientDetails } from "@/hooks";
 import Image from "next/image";
+import { PatientDetailsTablet } from "./tablet/patientDetails";
+import { getOnePatient } from "@/hooks/patientReg";
 
 export const TabletView = () => {
   const { patientId } = getActivePatientDetails();
+
   const menuItems = [
     {
       label: "Primary Assessment",
@@ -113,6 +116,8 @@ export const TabletView = () => {
 
   return (
     <Box display={{ xs: "flex", lg: "none" }} flexDirection={"column"} px={4}>
+      <PatientDetailsTablet />
+
       <TabsContainer />
       <FloatingButtonWithMenu menuItems={menuItems} />
     </Box>
