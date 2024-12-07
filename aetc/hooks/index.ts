@@ -1,5 +1,4 @@
 export * from "./navigation";
-
 export * from "./useCondition";
 export * from "./facilities";
 export * from "./checkPatientIfOnList"
@@ -9,3 +8,4 @@ export * from "./getActivePatientDetails"
 export * from "./auth"
 export * from "./useSubmitEncounter"
 export * from "./useVitals"
+export * from "./useVitalsGraphData"

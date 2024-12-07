@@ -3,14 +3,12 @@ import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 import { formatAllVitalsToObject, getObservationValue } from "@/helpers/emr";
 import { useContext, useEffect, useState } from "react";
 import { getPatientsEncounters } from "./encounter";
-import { useNavigation, useParameters } from "./navigation";
+import { getActivePatientDetails } from "./getActivePatientDetails";
 
 export const useVitals = () => {
-  const { activeVisit } = useContext(
-    PatientProfileContext
-  ) as PatientProfileContextType;
-  const { params } = useParameters();
-  const { data, isLoading } = getPatientsEncounters(params?.id as string);
+  const { patientId, activeVisitId } = getActivePatientDetails();
+
+  const { data, isLoading } = getPatientsEncounters(patientId as string);
   const [vitals, setVitals] = useState<any>([]);
   const [formattedVitals, setFormattedVitals] = useState<any>({});
   const [options, setOptions] = useState<Array<any>>([]);
@@ -35,16 +33,16 @@ export const useVitals = () => {
   }, [formattedVitals]);
 
   useEffect(() => {
-    if (data && activeVisit !== 0) {
+    if (data && activeVisitId !== 0) {
       const encounter = data
         .filter((d) => d?.encounter_type.uuid == encounters.VITALS)
-        .find((d) => d.visit_id == activeVisit);
+        .find((d) => d.visit_id == activeVisitId);
       const obs = encounter?.obs ?? [];
 
       setFormattedVitals(formatAllVitalsToObject(obs));
       // updateVitals(obs);
     }
-  }, [activeVisit, data]);
+  }, [activeVisitId, data]);
 
   const updateVitals = (obs: any) => {
     const initialVitals = [

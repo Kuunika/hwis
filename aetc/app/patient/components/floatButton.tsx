@@ -2,31 +2,32 @@ import React, { useState, useEffect, useRef } from "react";
 import { Fab, Box, ListItemText, ListItemButton } from "@mui/material";
 import { FiPlus, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import Collapse from "@mui/material/Collapse";
-import Link from "next/link"; // Use Link for routing (Next.js)
-import zIndex from "@mui/material/styles/zIndex";
+import Link from "next/link";
 
 interface MenuItem {
   label: string;
   link?: string;
   icon?: React.ReactNode;
-  submenu?: MenuItem[]; // Submenu items, if any
+  id?: any;
+  submenu?: MenuItem[];
 }
 
 interface FloatingMenuProps {
-  menuItems: MenuItem[]; // Array of menu items with optional submenus
-  position?: { bottom?: number; right?: number }; // Position of the button and menu
+  menuItems: MenuItem[];
+  position?: { bottom?: number; right?: number };
+  onClickAction: (arg: any) => void;
 }
 
 const FloatingMenu: React.FC<FloatingMenuProps> = ({
   menuItems,
   position = { bottom: 16, right: 16 },
+  onClickAction,
 }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
-  const menuRef = useRef<HTMLElement | null>(null); // Ref for the menu container
+  const menuRef = useRef<HTMLElement | null>(null);
 
-  // Open and close handlers for the main menu
   const openMenu = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchorEl(event.currentTarget);
   };
@@ -42,7 +43,6 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({
 
   const isMenuOpen = Boolean(menuAnchorEl);
 
-  // Close the menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -57,17 +57,18 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({
     };
   }, []);
 
-  // Render menu items recursively
   const renderMenuItems = (items: MenuItem[], parentKey: string = "") => {
     return items.map((item, index) => {
       const key = `${parentKey}-${index}`;
       const isExpanded = expandedItem === key;
 
-      // If no submenu, render a direct link
       if (!item.submenu) {
         return item.link ? (
           <Link href={item.link} key={key} passHref>
-            <ListItemButton style={menuItemStyle}>
+            <ListItemButton
+              onClick={() => item.id && onClickAction(item.id)}
+              style={menuItemStyle}
+            >
               {item.icon && <span style={{ marginRight: 8 }}>{item.icon}</span>}
               <ListItemText primary={item.label} />
             </ListItemButton>
@@ -75,7 +76,6 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({
         ) : null;
       }
 
-      // If submenu exists, render with expandable functionality
       return (
         <Box key={key}>
           <ListItemButton
@@ -98,7 +98,6 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({
   };
   return (
     <>
-      {/* Floating Action Button */}
       <Fab
         color="primary"
         onClick={openMenu}
@@ -111,22 +110,21 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({
         <FiPlus size={24} />
       </Fab>
 
-      {/* Custom Menu */}
       <Box
-        ref={menuRef} // Attach ref here
+        ref={menuRef}
         sx={{
           display: isMenuOpen ? "block" : "none",
           position: "absolute",
-          bottom: 80, // Adjusted position relative to the button
+          bottom: 80,
           right: 16,
           backgroundColor: "white",
           borderRadius: 2,
           boxShadow: 3,
           transition: "width 0.3s ease-in-out",
-          width: expandedItem ? "300px" : "200px", // Dynamic width
+          width: expandedItem ? "300px" : "200px",
         }}
       >
-        {renderMenuItems(menuItems)} {/* Render the menu items */}
+        {renderMenuItems(menuItems)}
       </Box>
     </>
   );

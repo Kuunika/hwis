@@ -5,9 +5,15 @@ import { FiHome, FiSettings, FiUser } from "react-icons/fi";
 import { getActivePatientDetails } from "@/hooks";
 import Image from "next/image";
 import { PatientDetailsTablet } from "./tablet/patientDetails";
-import { getOnePatient } from "@/hooks/patientReg";
+
+import { Charts } from "./charts";
+import { ConsultationContext, ConsultationContextType } from "@/contexts";
+import { useContext } from "react";
 
 export const TabletView = () => {
+  const { setActiveStep } = useContext(
+    ConsultationContext
+  ) as ConsultationContextType;
   const { patientId } = getActivePatientDetails();
 
   const menuItems = [
@@ -27,21 +33,25 @@ export const TabletView = () => {
           label: "Differential Diagnosis",
           link: `/patient/${patientId}/consultation`,
           icon: <FiUser />,
+          id: 0,
         },
         {
           label: "Investigation",
           link: `/patient/${patientId}/consultation`,
           icon: <FiSettings />,
+          id: 1,
         },
         {
           label: "Final Diagnosis",
           link: `/patient/${patientId}/consultation`,
           icon: <FiSettings />,
+          id: 2,
         },
         {
           label: "Medication",
           link: `/patient/${patientId}/consultation`,
           icon: <FiSettings />,
+          id: 3,
         },
       ],
     },
@@ -117,9 +127,12 @@ export const TabletView = () => {
   return (
     <Box display={{ xs: "flex", lg: "none" }} flexDirection={"column"} px={4}>
       <PatientDetailsTablet />
-
+      <Charts />
       <TabsContainer />
-      <FloatingButtonWithMenu menuItems={menuItems} />
+      <FloatingButtonWithMenu
+        onClickAction={setActiveStep}
+        menuItems={menuItems}
+      />
     </Box>
   );
 };

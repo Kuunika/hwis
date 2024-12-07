@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import { FaVoicemail, FaPhone } from "react-icons/fa";
+import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import { getActivePatientDetails, useVitals } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { calculateAge } from "@/helpers/dateTime";
@@ -26,7 +17,7 @@ export const PatientDetailsTablet = () => {
         gap: 3,
         p: 3,
         borderRadius: 2,
-        boxShadow: 3,
+        boxShadow: 1,
         bgcolor: "#f9fbfc",
       }}
     >
@@ -38,7 +29,6 @@ export const PatientDetailsTablet = () => {
           justifyContent: "space-between",
         }}
       >
-        {/* Avatar and Details */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Avatar
             src="https://via.placeholder.com/150"
@@ -62,19 +52,17 @@ export const PatientDetailsTablet = () => {
           </Box>
         </Box>
 
-        {/* Edit Button */}
-        <Button
+        {/* <Button
           variant="contained"
           size="small"
           sx={{
-            bgcolor: "#1976d2",
             color: "#fff",
             textTransform: "capitalize",
             boxShadow: 1,
           }}
         >
           Edit
-        </Button>
+        </Button> */}
       </Box>
 
       {/* Health Stats Section */}
