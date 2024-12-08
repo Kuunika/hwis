@@ -1,12 +1,12 @@
-'use client'
+"use client";
 import { calculateAge } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
 import { getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
-import * as React from 'react';
+import * as React from "react";
 
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 import {
   CalculateWaitingTime,
@@ -15,38 +15,38 @@ import {
   WrapperBox,
 } from "../../../components";
 
-
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
-import { encounters, } from "@/constants";
+import { encounters } from "@/constants";
 import { Box } from "@mui/material";
-import { FetchAndDisplayTriageBarcode, PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
-
-
+import {
+  FetchAndDisplayTriageBarcode,
+  PrinterBarcodeButton,
+} from "@/components/barcodePrinterDialogs";
 
 export const ClientWaitingForAssessment = () => {
   const [deleted, setDeleted] = useState("");
-  const [paginationModel, setPaginationModel]=useState({page:1,pageSize:10})
+  const [paginationModel, setPaginationModel] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const { navigateTo } = useNavigation();
 
-  const [searchText, setSearchText]=useState('');
-   const {
-    data,
-    refetch,
-    isPending,
-  } = getPatientsWaitingForAssessmentPaginated(paginationModel,searchText);
+  const [searchText, setSearchText] = useState("");
+  const { data, refetch, isPending } = getPatientsWaitingForAssessmentPaginated(
+    paginationModel,
+    searchText
+  );
 
-
-  useEffect(()=>{
+  useEffect(() => {
     refetch();
-  },[paginationModel])
-
+  }, [paginationModel]);
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "birthdate", headerName: "Date Of Birth", },
+    { field: "birthdate", headerName: "Date Of Birth" },
     { field: "gender", headerName: "Gender" },
     {
       field: "waiting",
@@ -54,9 +54,7 @@ export const ClientWaitingForAssessment = () => {
       flex: 1,
       renderCell: (cell: any) => {
         return (
-          <CalculateWaitingTime
-            arrival_time={cell.row.latest_encounter_time}
-          />
+          <CalculateWaitingTime arrival_time={cell.row.latest_encounter_time} />
         );
       },
     },
@@ -65,11 +63,7 @@ export const ClientWaitingForAssessment = () => {
       headerName: "Aggregate",
       flex: 1,
       renderCell: (cell: any) => {
-        return (
-          <CalculateWaitingTime
-            arrival_time={cell.row.arrival_time}
-          />
-        );
+        return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
     { field: "last_encounter_creator", headerName: "Triaged By", flex: 1 },
@@ -88,11 +82,11 @@ export const ClientWaitingForAssessment = () => {
                 cell.value == "red"
                   ? "#B42318"
                   : cell.value == "yellow"
-                    ? "#ede207"
-                    : // : "#B54708",
-                    cell.value == "green"
-                      ? "#016302"
-                      : "",
+                  ? "#ede207"
+                  : // : "#B54708",
+                  cell.value == "green"
+                  ? "#016302"
+                  : "",
               marginY: 1,
             }}
           ></WrapperBox>
@@ -125,8 +119,8 @@ export const ClientWaitingForAssessment = () => {
     },
   ];
 
-
   const formatForMobileView = data?.data?.map((row: any) => {
+    console.log({ row });
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -141,16 +135,9 @@ export const ClientWaitingForAssessment = () => {
           patientId={row.id}
         />
       ),
-      aggregate: (
-        <CalculateWaitingTime
-          arrival_time={row.arrival_time}
-
-        />
-      ),
+      aggregate: <CalculateWaitingTime arrival_time={row.arrival_time} />,
       waitingTime: (
-        <CalculateWaitingTime
-          arrival_time={row?.latest_encounter_time}
-        />
+        <CalculateWaitingTime arrival_time={row?.latest_encounter_time} />
       ),
       actionName: "Triaged By",
       action: (
@@ -159,7 +146,7 @@ export const ClientWaitingForAssessment = () => {
           setDeleted={(id: any) => setDeleted(id)}
           triage={row.triage_result}
           visitId={row.visit_uuid}
-          id={row.id}
+          id={row.uuid}
         />
       ),
       age: `${calculateAge(row.birthdate)}yrs`,
@@ -167,11 +154,20 @@ export const ClientWaitingForAssessment = () => {
     };
   });
 
-
-  return <PatientTableListServer  columns={columns} data={data?.data ? data : {data:[], page:1,per_page:10, total_pages:0}} searchText={searchText} setSearchString={setSearchText} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={isPending} formatForMobileView={formatForMobileView? formatForMobileView: []} />
-
-
-
+  return (
+    <PatientTableListServer
+      columns={columns}
+      data={
+        data?.data ? data : { data: [], page: 1, per_page: 10, total_pages: 0 }
+      }
+      searchText={searchText}
+      setSearchString={setSearchText}
+      setPaginationModel={setPaginationModel}
+      paginationModel={paginationModel}
+      loading={isPending}
+      formatForMobileView={formatForMobileView ? formatForMobileView : []}
+    />
+  );
 };
 
 const CardAction = ({
@@ -179,13 +175,13 @@ const CardAction = ({
   visitId,
   triage,
   setDeleted,
-  patient
+  patient,
 }: {
   id: string;
   visitId: string;
   triage: string;
-  setDeleted: (id: any) => void,
-  patient: any
+  setDeleted: (id: any) => void;
+  patient: any;
 }) => {
   const { navigateTo } = useNavigation();
 
@@ -200,11 +196,11 @@ const CardAction = ({
             triage == "red"
               ? "#B42318"
               : triage == "yellow"
-                ? "#ede207"
-                : // : "#B54708",
-                triage == "green"
-                  ? "#016302"
-                  : "",
+              ? "#ede207"
+              : // : "#B54708",
+              triage == "green"
+              ? "#016302"
+              : "",
           marginY: 1,
         }}
       ></WrapperBox>
@@ -219,14 +215,12 @@ const CardAction = ({
           onDelete={() => setDeleted(id)}
           visitId={visitId}
           patientId={id}
-
         />
         <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
       </Box>
     </Box>
   );
 };
-
 
 export function BasicMenu({ patient }: { patient: any }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -237,7 +231,6 @@ export function BasicMenu({ patient }: { patient: any }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
 
   return (
     <div>
@@ -252,16 +245,26 @@ export function BasicMenu({ patient }: { patient: any }) {
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
-
         open={open}
         onClose={handleClose}
-
       >
-        <MenuItem sx={{ justifyContent: "flex-start" }}><PrinterBarcodeButton title="Demographics" sx={{ color: "ButtonText" }} variant="text" onClose={handleClose} patient={patient} /> </MenuItem>
-        <MenuItem sx={{ justifyContent: "flex-start" }}><FetchAndDisplayTriageBarcode arrivalDateTime={patient.arrival_time} patientId={patient.id} activeVisitId={patient?.active_visit?.visit_id} /></MenuItem>
+        <MenuItem sx={{ justifyContent: "flex-start" }}>
+          <PrinterBarcodeButton
+            title="Demographics"
+            sx={{ color: "ButtonText" }}
+            variant="text"
+            onClose={handleClose}
+            patient={patient}
+          />{" "}
+        </MenuItem>
+        <MenuItem sx={{ justifyContent: "flex-start" }}>
+          <FetchAndDisplayTriageBarcode
+            arrivalDateTime={patient.arrival_time}
+            patientId={patient.id}
+            activeVisitId={patient?.active_visit?.visit_id}
+          />
+        </MenuItem>
       </Menu>
     </div>
   );
 }
-
-

@@ -164,7 +164,7 @@ interface PatientListProp {
   rowCount: number;
   setPaginationModel: (pagination: any) => void;
   pagination: PaginationModel;
-  totalPages:number
+  totalPages: number;
 }
 
 export const PatientCardListServer = ({
@@ -175,10 +175,8 @@ export const PatientCardListServer = ({
   rowCount,
   setPaginationModel,
   pagination,
-  totalPages
+  totalPages,
 }: PatientListProp) => {
-  
-
   const SkeletonLoader = () => (
     <Stack sx={{ m: "1ch" }} spacing={1}>
       <Skeleton variant="rounded" width={"100%"} height={200} />
@@ -195,11 +193,11 @@ export const PatientCardListServer = ({
     </Stack>
   );
 
-  const handlePaginationClick = (page:number)=>{
-    setPaginationModel((pagination:PaginationModel)=>{
-      return {page:pagination.page+page, pageSize:pagination.pageSize }
-    })
-  }
+  const handlePaginationClick = (page: number) => {
+    setPaginationModel((pagination: PaginationModel) => {
+      return { page: pagination.page + page, pageSize: pagination.pageSize };
+    });
+  };
 
   return (
     <>
@@ -212,12 +210,26 @@ export const PatientCardListServer = ({
           onChange={(e) => setSearchString(e.target.value)}
         />
       </Box>
-      {loading? <SkeletonLoader /> : dataList.length>0 ?dataList.map((data) => (
-        <PatientCard key={data.id} {...data} />
-      )): <Typography variant="body1">No patients on this list</Typography>}
+      {loading ? (
+        <SkeletonLoader />
+      ) : dataList.length > 0 ? (
+        dataList.map((data) => <PatientCard key={data.id} {...data} />)
+      ) : (
+        <Typography variant="body1">No patients on this list</Typography>
+      )}
       <Box>
-        <Button disabled={pagination.page-1==0} onClick={()=>handlePaginationClick(-1)}>Previous</Button>
-        <Button disabled={pagination.page+1>totalPages} onClick={()=>handlePaginationClick(1)}>Next</Button>
+        <Button
+          disabled={pagination.page - 1 == 0}
+          onClick={() => handlePaginationClick(-1)}
+        >
+          Previous
+        </Button>
+        <Button
+          disabled={pagination.page + 1 > totalPages}
+          onClick={() => handlePaginationClick(1)}
+        >
+          Next
+        </Button>
       </Box>
     </>
   );
