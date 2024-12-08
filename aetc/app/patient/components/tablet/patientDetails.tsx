@@ -9,6 +9,8 @@ export const PatientDetailsTablet = () => {
   const { data: patient, isLoading } = getOnePatient(patientId as string);
   const { vitals } = useVitals();
 
+  // console.log({ patientId });
+
   return (
     <Box
       sx={{
@@ -21,7 +23,6 @@ export const PatientDetailsTablet = () => {
         bgcolor: "#f9fbfc",
       }}
     >
-      {/* Top Section: Avatar and Patient Details */}
       <Box
         sx={{
           display: "flex",
