@@ -17,7 +17,7 @@ import { getOnePatient } from "@/hooks/patientReg";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { concepts, encounters } from "@/constants";
-import { FaTrash } from "react-icons/fa6";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 interface Diagnosis {
   id: string;
@@ -30,21 +30,24 @@ interface DiagnosisFormProps {
 }
 
 function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
-  const { data: diagnosisOptions, refetch: reloadDiagnosisOptions } =
-    getConceptSetMembers(concepts.CONDITION);
+  const {
+    data: diagnosisOptions,
+    refetch: reloadDiagnosisOptions,
+    isFetching: gettingConditions,
+  } = getConceptSetMembers(concepts.CONDITION);
+
   const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
   const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
   const { params } = useParameters();
-  const { data: patient } = getOnePatient(params.id as string);
+
   const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
   const [showTable, setShowTable] = useState(false);
   const [showComboBox, setShowComboBox] = useState(false);
 
   const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-  const { data: patientEncounters } = getPatientsEncounters(
-    params.id as string
-  );
-  const { mutate: deleteDiagnosis } = removeObservation();
+  const { data: patientEncounters, isFetching: gettingEncounters } =
+    getPatientsEncounters(params.id as string);
+  const { mutate: deleteDiagnosis, isPending: removing } = removeObservation();
 
   useEffect(() => {
     // Finds the active visit for the patient from their visit history
@@ -70,7 +73,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
             .filter((obs) => obs.names[0]?.uuid === conceptType) // Filter by conceptType
             .map((obs) => ({
               id: obs.obs_id.toString(),
-              condition: obs.value.name,
+              condition: obs.value,
               obsDatetime: obs.obs_datetime || "",
             }))
         );
@@ -154,136 +157,144 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
   };
 
   return (
-    <MainGrid container spacing={2}>
-      <MainGrid item xs={12}>
-        <MainPaper style={{ padding: "20px" }}>
-          <Typography
-            variant="subtitle1"
-            style={{ marginBottom: "10px", fontWeight: "500" }}
-          >
-            Current Diagnosis
-          </Typography>
-          <br />
+    <ContainerLoaderOverlay
+      loading={removing || gettingConditions || gettingEncounters}
+    >
+      <MainGrid container spacing={2}>
+        <MainGrid item xs={12}>
+          <MainPaper style={{ padding: "20px" }}>
+            <Typography
+              variant="subtitle1"
+              style={{ marginBottom: "10px", fontWeight: "500" }}
+            >
+              Current Diagnosis
+            </Typography>
+            <br />
 
-          {/* Header */}
-          <div
-            style={{
-              display: "flex",
-              paddingBottom: "8px",
-              borderBottom: "1px solid #ddd",
-            }}
-          >
-            <Typography
-              variant="body2"
-              style={{ width: "25%", fontWeight: "500" }}
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #ddd",
+              }}
             >
-              Condition
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ width: "25%", fontWeight: "500" }}
-            >
-              Diagnosis Type
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ width: "25%", fontWeight: "500" }}
-            >
-              Date
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ width: "25%", fontWeight: "500" }}
-            >
-              Action
-            </Typography>
-          </div>
-
-          {/* Diagnosis entries */}
-          {diagnosisList.length === 0 ? (
-            <Typography
-              variant="body2"
-              style={{ padding: "16px", textAlign: "center", color: "gray" }}
-            >
-              No Diagnosis Added
-            </Typography>
-          ) : (
-            diagnosisList.slice(-3).map((diagnosis) => (
-              <div
-                key={diagnosis.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  borderBottom: "1px solid #f0f0f0",
-                }}
+              <Typography
+                variant="body2"
+                style={{ width: "25%", fontWeight: "500" }}
               >
-                <Typography variant="body2" style={{ width: "25%" }}>
-                  {diagnosis.condition}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  style={{ width: "25%", fontStyle: "italic" }}
+                Condition
+              </Typography>
+              <Typography
+                variant="body2"
+                style={{ width: "25%", fontWeight: "500" }}
+              >
+                Diagnosis Type
+              </Typography>
+              <Typography
+                variant="body2"
+                style={{ width: "25%", fontWeight: "500" }}
+              >
+                Date
+              </Typography>
+              <Typography
+                variant="body2"
+                style={{ width: "25%", fontWeight: "500" }}
+              >
+                Action
+              </Typography>
+            </div>
+
+            {/* Diagnosis entries */}
+            {diagnosisList.length === 0 ? (
+              <Typography
+                variant="body2"
+                style={{ padding: "16px", textAlign: "center", color: "gray" }}
+              >
+                No Diagnosis Added
+              </Typography>
+            ) : (
+              diagnosisList.slice(-3).map((diagnosis) => (
+                <div
+                  key={diagnosis.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    borderBottom: "1px solid #f0f0f0",
+                  }}
                 >
-                  {conceptType === concepts.DIFFERENTIAL_DIAGNOSIS
-                    ? "Differential Diagnosis"
-                    : "Final Diagnosis"}
-                </Typography>
-                <Typography variant="body2" style={{ width: "25%" }}>
-                  {new Date(diagnosis.obsDatetime).toLocaleDateString("en-GB")}
-                </Typography>
-                <Typography variant="body2" style={{ width: "25%" }}>
-                  <Button
-                    onClick={() => handleDeleteDiagnosis(diagnosis.id)}
-                    size="small"
-                    color="error"
-                    variant="text"
+                  <Typography variant="body2" style={{ width: "25%" }}>
+                    {diagnosis.condition}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{ width: "25%", fontStyle: "italic" }}
                   >
-                    Delete
-                  </Button>
-                </Typography>
-              </div>
-            ))
-          )}
+                    {conceptType === concepts.DIFFERENTIAL_DIAGNOSIS
+                      ? "Differential Diagnosis"
+                      : "Final Diagnosis"}
+                  </Typography>
+                  <Typography variant="body2" style={{ width: "25%" }}>
+                    {new Date(diagnosis.obsDatetime).toLocaleDateString(
+                      "en-GB"
+                    )}
+                  </Typography>
+                  <Typography variant="body2" style={{ width: "25%" }}>
+                    <Button
+                      onClick={() => handleDeleteDiagnosis(diagnosis.id)}
+                      size="small"
+                      color="error"
+                      variant="text"
+                    >
+                      Delete
+                    </Button>
+                  </Typography>
+                </div>
+              ))
+            )}
 
-          <Typography
-            variant="subtitle2"
-            style={{ color: "green", cursor: "pointer", marginTop: "30px" }} // Added margin-top
-            onClick={toggleComboBox}
-          >
-            {showComboBox ? "- Cancel New Diagnosis" : "+ Add New Diagnosis"}
-          </Typography>
-          {showComboBox && (
-            <FormikInit
-              initialValues={initialValues}
-              onSubmit={handleAddDiagnosis}
-              validationSchema={validationSchema}
-              submitButtonText="Add"
+            <Typography
+              variant="subtitle2"
+              style={{ color: "green", cursor: "pointer", marginTop: "30px" }} // Added margin-top
+              onClick={toggleComboBox}
             >
-              <SearchComboBox
-                label="Condition"
-                name="condition"
-                options={conditionOptions}
-                sx={{ width: "100%" }}
-                multiple={false}
-              />
-            </FormikInit>
-          )}
-        </MainPaper>
-      </MainGrid>
+              {showComboBox ? "- Cancel New Diagnosis" : "+ Add New Diagnosis"}
+            </Typography>
+            {showComboBox && (
+              <FormikInit
+                initialValues={initialValues}
+                onSubmit={handleAddDiagnosis}
+                validationSchema={validationSchema}
+                submitButtonText="Add"
+              >
+                <SearchComboBox
+                  label="Condition"
+                  name="condition"
+                  options={conditionOptions}
+                  sx={{ width: "100%" }}
+                  multiple={false}
+                />
+              </FormikInit>
+            )}
+          </MainPaper>
+        </MainGrid>
 
-      <MainGrid item xs={12}>
-        <MainPaper>
-          <Typography
-            onClick={toggleTableVisibility}
-            variant="subtitle1"
-            style={{ cursor: "pointer", padding: "1ch", fontWeight: "500" }} // Added padding
-          >
-            {showTable ? "Hide Previous Diagnosis" : "Show Previous Diagnosis"}
-          </Typography>
-          {showTable && <DiagnosisTable diagnoses={diagnosisList} />}
-        </MainPaper>
+        <MainGrid item xs={12}>
+          <MainPaper>
+            <Typography
+              onClick={toggleTableVisibility}
+              variant="subtitle1"
+              style={{ cursor: "pointer", padding: "1ch", fontWeight: "500" }} // Added padding
+            >
+              {showTable
+                ? "Hide Previous Diagnosis"
+                : "Show Previous Diagnosis"}
+            </Typography>
+            {showTable && <DiagnosisTable diagnoses={diagnosisList} />}
+          </MainPaper>
+        </MainGrid>
       </MainGrid>
-    </MainGrid>
+    </ContainerLoaderOverlay>
   );
 }
 
