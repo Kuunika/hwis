@@ -14,7 +14,11 @@ export const VitalsPanel = () => {
     return <ProfilePanelSkeletonLoader />;
   }
   return (
-    <Panel title={"Vitals"} icon={<VisitDates />}>
+    <Panel
+      title={"Vitals"}
+      sx={{ border: "1px solid #ccc" }}
+      icon={<VisitDates />}
+    >
       <WrapperBox
         sx={{
           display: "flex",

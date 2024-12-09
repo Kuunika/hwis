@@ -34,7 +34,6 @@ export const Charts = () => {
           display: "flex",
           gap: "1ch",
           marginTop: "1ch",
-          marginLeft: "5px",
         }}
       >
         <div

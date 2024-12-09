@@ -1,12 +1,14 @@
 import { ReactNode } from "react";
 import { MainPaper, MainTypography, WrapperBox } from "@/components";
+import { SxProps } from "@mui/material";
 
 type Props = {
   title: string;
   children: ReactNode;
   icon?: any;
+  sx?: SxProps;
 };
-export const Panel = ({ children, title, icon }: Props) => {
+export const Panel = ({ children, title, icon, sx }: Props) => {
   return (
     <MainPaper
       sx={{
@@ -14,7 +16,7 @@ export const Panel = ({ children, title, icon }: Props) => {
         p: "1ch",
         backgroundColor: "#fff",
         boxShadow: "none",
-        ml: "0.5ch",
+        ...sx,
       }}
     >
       <WrapperBox

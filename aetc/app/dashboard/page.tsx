@@ -162,10 +162,22 @@ const Card = ({
         },
       }}
     >
-      <MainTypography variant="h2" sx={{ color: theme.palette.primary.main }}>
+      <MainTypography
+        variant="h2"
+        sx={{
+          color: theme.palette.primary.main,
+          fontSize: { xs: "2rem", sm: "3rem" }, // Adjust font size for responsiveness
+        }}
+      >
         {icon}
       </MainTypography>
-      <MainTypography variant="h6" textAlign={"center"}>
+      <MainTypography
+        variant="h6"
+        textAlign={"center"}
+        sx={{
+          fontSize: { xs: "0.9rem", sm: "1rem" }, // Adjust font size for title
+        }}
+      >
         {title}
       </MainTypography>
     </MainPaper>
