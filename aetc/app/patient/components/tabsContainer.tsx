@@ -32,63 +32,101 @@ export const TabsContainer = () => {
   };
 
   return (
-    <>
-      <Tabs value={value} onChange={handleChange} style={{ marginTop: "1ch" }}>
-        <Tab
-          style={{
-            borderTopLeftRadius: "4px",
-            padding: "10px 20px",
-            minWidth: "120px",
-            background: value === 0 ? "#ffffff" : "transparent",
-            fontWeight: value === 0 ? "bold" : "normal",
-            border: "1px solid #ccc",
-            borderBottom: "none",
-            borderRight: "none",
-          }}
-          label="Investigations"
-        ></Tab>
-        <Tab
-          label="Clinical Notes"
-          style={{
-            padding: "10px 20px",
-            minWidth: "120px",
-            background: value === 1 ? "#ffffff" : "transparent",
-            fontWeight: value === 1 ? "bold" : "normal",
-            border: "1px solid #ccc",
-            borderBottom: "none",
-            borderRight: "none",
-          }}
-        ></Tab>
-        <Tab
-          label="Results"
-          style={{
-            padding: "10px 20px",
-            minWidth: "120px",
-            background: value === 2 ? "#ffffff" : "transparent",
-            fontWeight: value === 2 ? "bold" : "normal",
-            border: "1px solid #ccc",
-            borderBottom: "none",
-            borderRight: "none",
-          }}
-        ></Tab>
-        <Tab
-          label="Medications"
-          style={{
-            borderBottomRightRadius: "4px",
-            borderTopRightRadius: "4px",
-            padding: "10px 20px",
-            minWidth: "120px",
-            background: value === 3 ? "#ffffff" : "transparent",
-            fontWeight: value === 3 ? "bold" : "normal",
-            border: "1px solid #ccc",
-            borderBottom: "none",
-          }}
-        ></Tab>
-      </Tabs>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        mt: 2,
+      }}
+    >
       <Box
-        style={{
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f4f4f4",
+          borderRadius: "4px 4px 0 0",
+          // border: "1px solid #ccc",
+          borderBottom: "none",
+        }}
+      >
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          sx={{
+            width: "100%", // Ensure tabs fill the entire container width
+            "& .MuiTabs-flexContainer": {
+              justifyContent: "space-evenly", // Ensure tabs are spaced evenly
+            },
+          }}
+        >
+          <Tab
+            label="Investigations"
+            sx={{
+              flexGrow: 1,
+              textTransform: "none",
+              padding: "12px",
+              background: value === 0 ? "#ffffff" : "transparent",
+              fontWeight: value === 0 ? "bold" : "normal",
+              borderBottom: "none",
+              border: "1px solid #ccc",
+              borderRight: "none",
+              "&:last-child": {
+                borderRight: "1px solid #ccc",
+              },
+            }}
+          />
+          <Tab
+            label="Clinical Notes"
+            sx={{
+              flexGrow: 1,
+              textTransform: "none",
+              padding: "12px",
+              background: value === 1 ? "#ffffff" : "transparent",
+              fontWeight: value === 1 ? "bold" : "normal",
+              borderBottom: "none",
+              border: "1px solid #ccc",
+              borderRight: "none",
+              "&:last-child": {
+                borderRight: "1px solid #ccc",
+              },
+            }}
+          />
+          <Tab
+            label="Results"
+            sx={{
+              flexGrow: 1,
+              textTransform: "none",
+              padding: "12px",
+              background: value === 2 ? "#ffffff" : "transparent",
+              fontWeight: value === 2 ? "bold" : "normal",
+              borderBottom: "none",
+              border: "1px solid #ccc",
+              borderRight: "none",
+              "&:last-child": {
+                borderRight: "1px solid #ccc",
+              },
+            }}
+          />
+          <Tab
+            label="Medications"
+            sx={{
+              flexGrow: 1,
+              textTransform: "none",
+              padding: "12px",
+              background: value === 3 ? "#ffffff" : "transparent",
+              fontWeight: value === 3 ? "bold" : "normal",
+              borderBottom: "none",
+              border: "1px solid #ccc",
+            }}
+          />
+        </Tabs>
+      </Box>
+      <Box
+        sx={{
           backgroundColor: "#ffffff",
-          borderRadius: "4px",
+          borderRadius: "0 0 4px 4px",
           border: "1px solid #ccc",
         }}
       >
@@ -105,6 +143,6 @@ export const TabsContainer = () => {
           <Medications />
         </CustomTabPanel>
       </Box>
-    </>
+    </Box>
   );
 };
