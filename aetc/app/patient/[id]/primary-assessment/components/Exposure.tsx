@@ -17,6 +17,7 @@ import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { Box } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 type Props = {
   onSubmit: () => void;
 };
@@ -127,81 +128,83 @@ export const Exposure = ({ onSubmit }: Props) => {
   };
 
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={handleFormSubmit}
-      submitButtonText="submit"
-    >
-      <FormValuesListener getValues={setFormValues} />
+    <ContainerLoaderOverlay loading={isLoading}>
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={handleFormSubmit}
+        submitButtonText="submit"
+      >
+        <FormValuesListener getValues={setFormValues} />
 
-      <TextInputField
-        sx={{ width: "100%" }}
-        name={form.temperatureInfo.name}
-        label={form.temperatureInfo.label}
-        id={form.temperatureInfo.name}
-      />
+        <TextInputField
+          sx={{ width: "100%" }}
+          name={form.temperatureInfo.name}
+          label={form.temperatureInfo.label}
+          id={form.temperatureInfo.name}
+        />
 
-      <RadioGroupInput
-        name={form.skinRashInfo.name}
-        row
-        label={form.skinRashInfo.label}
-        options={radioOptions}
-      />
+        <RadioGroupInput
+          name={form.skinRashInfo.name}
+          row
+          label={form.skinRashInfo.label}
+          options={radioOptions}
+        />
 
-      {formValues[form.skinRashInfo.name] == concepts.YES && (
-        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-            <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
+        {formValues[form.skinRashInfo.name] == concepts.YES && (
+          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+              <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
+            </Box>
+            <Box>
+              <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
+            </Box>
           </Box>
-          <Box>
-            <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
-          </Box>
-        </Box>
-      )}
+        )}
 
-      <RadioGroupInput
-        name={form.abnormalities.name}
-        row
-        label={form.abnormalities.label}
-        options={radioOptions}
-      />
+        <RadioGroupInput
+          name={form.abnormalities.name}
+          row
+          label={form.abnormalities.label}
+          options={radioOptions}
+        />
 
-      {formValues[form.abnormalities.name] == concepts.YES && (
-        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-            <FullBodyImage onValueChange={setAbnormalitiesImage} />
+        {formValues[form.abnormalities.name] == concepts.YES && (
+          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+              <FullBodyImage onValueChange={setAbnormalitiesImage} />
+            </Box>
+            <Box>
+              <FullBodyBackImage onValueChange={setAbnormalitiesBackImage} />
+            </Box>
           </Box>
-          <Box>
-            <FullBodyBackImage onValueChange={setAbnormalitiesBackImage} />
-          </Box>
-        </Box>
-      )}
+        )}
 
-      <RadioGroupInput
-        name={form.injuries.name}
-        row
-        label={form.injuries.label}
-        options={radioOptions}
-      />
+        <RadioGroupInput
+          name={form.injuries.name}
+          row
+          label={form.injuries.label}
+          options={radioOptions}
+        />
 
-      {formValues[form.injuries.name] == concepts.YES && (
-        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-            <FullBodyImage onValueChange={setInjuriesImage} />
+        {formValues[form.injuries.name] == concepts.YES && (
+          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+              <FullBodyImage onValueChange={setInjuriesImage} />
+            </Box>
+            <Box>
+              <FullBodyBackImage onValueChange={setInjuriesBackImage} />
+            </Box>
           </Box>
-          <Box>
-            <FullBodyBackImage onValueChange={setInjuriesBackImage} />
-          </Box>
-        </Box>
-      )}
+        )}
 
-      <TextInputField
-        sx={{ width: "100%" }}
-        name={form.additionalNotes.name}
-        label={form.additionalNotes.label}
-        id={form.additionalNotes.name}
-      />
-    </FormikInit>
+        <TextInputField
+          sx={{ width: "100%" }}
+          name={form.additionalNotes.name}
+          label={form.additionalNotes.label}
+          id={form.additionalNotes.name}
+        />
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };
