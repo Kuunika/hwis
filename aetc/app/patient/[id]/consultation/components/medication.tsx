@@ -305,7 +305,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                         unitName={`medications[${index}].medication_dose_unit`}
                         unitOptions={medicationUnits}
                         placeholder="e.g., 500"
-                        sx={{ flex: 1 }}
+                        // sx={{ flex: 1 }}
                         inputIcon={<GiMedicines />}
                       />
                       {!otherFrequency[index] ? (
@@ -321,7 +321,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                               value
                             );
                           }}
-                          sx={{ flex: 1 }}
+                          // sx={{ flex: 1 }}
                           multiple={false}
                         />
                       ) : (

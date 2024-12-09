@@ -59,7 +59,8 @@ export const PrescribedMedicationList = ({
         )?.value,
         prescribedBy: ob.created_by,
       };
-    });
+    })
+    .filter((medication) => medication.description == "current");
 
   return (
     <ContainerLoaderOverlay loading={fetchingEncounters}>
