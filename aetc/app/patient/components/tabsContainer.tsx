@@ -33,11 +33,7 @@ export const TabsContainer = () => {
 
   return (
     <>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        style={{ marginTop: "1ch", marginLeft: "5px" }}
-      >
+      <Tabs value={value} onChange={handleChange} style={{ marginTop: "1ch" }}>
         <Tab
           style={{
             borderTopLeftRadius: "4px",
@@ -94,7 +90,6 @@ export const TabsContainer = () => {
           backgroundColor: "#ffffff",
           borderRadius: "4px",
           border: "1px solid #ccc",
-          marginLeft: "5px",
         }}
       >
         <CustomTabPanel value={value} index={0}>
