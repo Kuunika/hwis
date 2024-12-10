@@ -1,23 +1,15 @@
 "use client";
-import { NotificationContainer } from "@/components";
-import React, { useEffect, useState } from "react";
-import {
-  FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
-  FormValuesListener,
-  FormikInit,
-  MainTypography,
-  RadioGroupInput,
-  TextInputField,
-} from "@/components";
+
+import React, { useState } from "react";
+import { FormValuesListener, FormikInit } from "@/components";
 import * as yup from "yup";
 
 import { HeadNeckImage } from "@/components/svgImages";
 import { useSubmitEncounter } from "@/hooks";
 import { encounters } from "@/constants";
 import { flattenImagesObs, getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+
 type Props = {
   onSubmit: () => void;
 };
@@ -40,7 +32,6 @@ const initialValues = {
   rashDescription: "",
 };
 export const HeadAndNeck = ({ onSubmit }: Props) => {
-  const [formValues, setFormValues] = useState<any>({});
   const [headNeckImageEncounter, setHeadNeckImageEncounter] = useState<
     Array<any>
   >([]);
@@ -54,14 +45,15 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   };
 
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={handleSubmitForm}
-      submitButtonText="Next"
-    >
-      <FormValuesListener getValues={setFormValues} />
-      <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />
-    </FormikInit>
+    <ContainerLoaderOverlay loading={isLoading}>
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={handleSubmitForm}
+        submitButtonText="Next"
+      >
+        <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };

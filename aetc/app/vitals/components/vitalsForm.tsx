@@ -33,17 +33,17 @@ export const VitalFormConfig = {
   pulseRate: {
     name: concepts.PULSE_RATE,
     label: "Pulse Rate",
-    short: "PR"
+    short: "PR",
   },
   respiratoryRate: {
     name: concepts.RESPIRATORY_RATE,
     label: "Respiratory rate",
-    short:"RR"
+    short: "RR",
   },
   saturationRate: {
     name: concepts.SATURATION_RATE,
     label: "Oxygen Saturation",
-    short: "SPO2"
+    short: "SPO2",
   },
   heartRate: {
     name: concepts.HEART_RATE,
@@ -53,7 +53,7 @@ export const VitalFormConfig = {
   bloodPressure: {
     name: concepts.BLOOD_PRESSURE_SYSTOLIC,
     label: "Systolic",
-    short:"BP"
+    short: "BP",
   },
   bloodPressureDiastolic: {
     name: concepts.BLOOD_PRESSURE_DIASTOLIC,
@@ -92,7 +92,7 @@ export const VitalFormConfig = {
   pulseOximetry: {
     name: concepts.PULSE_OXIMETRY,
     label: "Pulse Oximetry",
-    short: "SPO"
+    short: "SPO",
   },
 };
 type props = {
@@ -102,8 +102,8 @@ type props = {
   setTriageResult: (rre: any, name: string) => void;
   continueTriage: boolean;
   previous: () => void;
-  getFormValues: (values:any)=>void
-}; 
+  getFormValues: (values: any) => void;
+};
 const schema = yup.object({
   [VitalFormConfig.respiratoryRate.name]: yup
     .number()
@@ -153,9 +153,19 @@ const schema = yup.object({
     .string()
     .required()
     .label(VitalFormConfig.verbalResponse.label),
-  [VitalFormConfig.glucose.name]: yup.number().min(0).max(1000).label(VitalFormConfig.glucose.label),
-  [VitalFormConfig.avpu.name]: yup.string().required().label(VitalFormConfig.avpu.label),
-  [VitalFormConfig.units.name]: yup.string().required().label(VitalFormConfig.units.label)
+  [VitalFormConfig.glucose.name]: yup
+    .number()
+    .min(0)
+    .max(1000)
+    .label(VitalFormConfig.glucose.label),
+  [VitalFormConfig.avpu.name]: yup
+    .string()
+    .required()
+    .label(VitalFormConfig.avpu.label),
+  [VitalFormConfig.units.name]: yup
+    .string()
+    .required()
+    .label(VitalFormConfig.units.label),
 });
 
 const eyeOpeningResponses = [
@@ -176,7 +186,11 @@ const verbalResponses = [
   { label: "Oriented", value: "Oriented", weight: 5 },
   { label: "Confused", value: "Confused", weight: 4 },
   { label: "Inappropriate Words", value: "Inappropriate Words", weight: 3 },
-  { label: "Incomprehensible sounds", value: "Incomprehensible sounds", weight: 2 },
+  {
+    label: "Incomprehensible sounds",
+    value: "Incomprehensible sounds",
+    weight: 2,
+  },
   { label: "None", value: "None", weight: 1 },
 ];
 const avpuLists = [
@@ -312,14 +326,13 @@ export function VitalsForm({
   setTriageResult,
   continueTriage,
   previous,
-  getFormValues
+  getFormValues,
 }: props) {
-  const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType
+  const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType;
   const [formValues, setFormValues] = useState<any>({});
   const [systolic, setSystolic] = useState(0);
   const [diastolic, setDiastolic] = useState(0);
   const [total, setTotal] = useState(0);
-
 
   const checkTriage = (name: string, formValue: string) => {
     if (formValue == "") {
@@ -360,77 +373,91 @@ export function VitalsForm({
     });
   };
 
-
-
   const disableField = (formField: string) => {
-    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
+    return (
+      triageResult === "red" &&
+      !Boolean(formValues[formField]) &&
+      !continueTriage
+    );
   };
-
 
   const getWeight = (value: string, lists: any) => {
     const found = lists.find((l: any) => l.value == value);
-    return found ? found.weight : 0
-  }
+    return found ? found.weight : 0;
+  };
   useEffect(() => {
     let _total: number = 0;
 
-    if (Boolean(formValues[VitalFormConfig.eyeOpeningResponse.name]) &&
+    if (
+      Boolean(formValues[VitalFormConfig.eyeOpeningResponse.name]) &&
       Boolean(formValues[VitalFormConfig.motorResponse.name]) &&
       Boolean(formValues[VitalFormConfig.verbalResponse.name])
     ) {
+      _total =
+        getWeight(
+          formValues[VitalFormConfig.eyeOpeningResponse.name],
+          eyeOpeningResponses
+        ) +
+        getWeight(
+          formValues[VitalFormConfig.motorResponse.name],
+          motorResponses
+        ) +
+        getWeight(
+          formValues[VitalFormConfig.verbalResponse.name],
+          verbalResponses
+        );
 
-      _total = getWeight(formValues[VitalFormConfig.eyeOpeningResponse.name], eyeOpeningResponses)
-        + getWeight(formValues[VitalFormConfig.motorResponse.name], motorResponses)
-        + getWeight(formValues[VitalFormConfig.verbalResponse.name], verbalResponses)
-
-      addKeyToFlow({ 'gsc': _total });
-
+      addKeyToFlow({ gsc: _total });
 
       setTotal(_total);
       if (_total < 11) {
-        setTriageResult("red", "gcs")
+        setTriageResult("red", "gcs");
       } else if (_total >= 11 && _total <= 14) {
-        setTriageResult("yellow", "gcs")
+        setTriageResult("yellow", "gcs");
       } else {
-        setTriageResult('green', 'gcs')
+        setTriageResult("green", "gcs");
       }
     }
-  }, [formValues])
+  }, [formValues]);
 
   return (
     <FormikInit
       onSubmit={onSubmit}
       validationSchema={schema}
-      initialValues={{ ...initialValues, [VitalFormConfig.units.name]: "mmol/l" }}
+      initialValues={{
+        ...initialValues,
+        [VitalFormConfig.units.name]: "mmol/l",
+      }}
       submitButtonText="next"
       submitButton={false}
       getFormValues={getFormValues}
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="Oxygen Saturation and Heart Rate">
-        <FieldsContainer>
+        <FieldsContainer mr="1ch">
           <TextInputField
             id={VitalFormConfig.saturationRate.name}
             name={VitalFormConfig.saturationRate.name}
             label={VitalFormConfig.saturationRate.label}
             disabled={disableField(VitalFormConfig.saturationRate.name)}
             handleBlurEvent={(value: string) => {
-              if (value == '') return;
+              if (value == "") return;
 
               const saturationRateValue = Number(value);
               if (saturationRateValue < 90) {
-                setTriageResult('red', VitalFormConfig.saturationRate.name)
+                setTriageResult("red", VitalFormConfig.saturationRate.name);
               }
               if (saturationRateValue >= 94) {
-                setTriageResult('green', VitalFormConfig.saturationRate.name)
+                setTriageResult("green", VitalFormConfig.saturationRate.name);
               }
               if (saturationRateValue >= 90 && saturationRateValue < 94) {
-                setTriageResult('yellow', VitalFormConfig.saturationRate.name)
+                setTriageResult("yellow", VitalFormConfig.saturationRate.name);
               }
 
               // checkTriage(VitalFormConfig.saturationRate.name, value);
             }}
             unitOfMeasure="%"
+            sx={{ width: "100%", m: 0 }}
           />
           <TextInputField
             id={VitalFormConfig.heartRate.name}
@@ -439,35 +466,37 @@ export function VitalsForm({
             disabled={disableField(VitalFormConfig.heartRate.name)}
             unitOfMeasure="bpm"
             handleBlurEvent={(value: string) => {
-              if (value == '') return;
-
-              const heartRateValue = Number(value)
+              if (value == "") return;
+              const heartRateValue = Number(value);
 
               if (heartRateValue > 129 || heartRateValue < 40) {
-
-                addKeyToFlow({ heart: 'red' });
-                setTriageResult('red', VitalFormConfig.heartRate.name)
+                addKeyToFlow({ heart: "red" });
+                setTriageResult("red", VitalFormConfig.heartRate.name);
               }
-              if ((heartRateValue >= 101 && heartRateValue <= 129) || (heartRateValue >= 40 && heartRateValue <= 59)) {
-                addKeyToFlow({ heart: 'yellow' });
-                setTriageResult('yellow', VitalFormConfig.heartRate.name)
+              if (
+                (heartRateValue >= 101 && heartRateValue <= 129) ||
+                (heartRateValue >= 40 && heartRateValue <= 59)
+              ) {
+                addKeyToFlow({ heart: "yellow" });
+                setTriageResult("yellow", VitalFormConfig.heartRate.name);
               }
               // if (heartRateValue > 129 || heartRateValue < 40) {
               //   addKeyToFlow({ heart: 'red' });
               //   setTriageResult('red', VitalFormConfig.heartRate.name)
-              // } 
+              // }
               if (heartRateValue >= 60 && heartRateValue <= 100) {
-                addKeyToFlow({ heart: 'green' });
-                setTriageResult('green', VitalFormConfig.heartRate.name)
+                addKeyToFlow({ heart: "green" });
+                setTriageResult("green", VitalFormConfig.heartRate.name);
               }
               // checkTriage(VitalFormConfig.heartRate.name, value);
             }}
+            sx={{ width: "100%", m: 0 }}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
 
       <FormFieldContainerLayout title="Blood Pressure (mmHg))">
-        <FieldsContainer>
+        <FieldsContainer mr="1ch">
           <TextInputField
             id={VitalFormConfig.bloodPressure.name}
             name={VitalFormConfig.bloodPressure.name}
@@ -478,23 +507,29 @@ export function VitalsForm({
               width: "10ch",
             }}
             handleBlurEvent={(value) => {
-              if (value == '') return;
+              if (value == "") return;
               const systolicValue = Number(value);
               if (systolicValue > 200 || systolicValue < 80) {
-                addKeyToFlow({ systolic: 'red' });
-                setTriageResult('red', VitalFormConfig.bloodPressure.name)
-                return
+                addKeyToFlow({ systolic: "red" });
+                setTriageResult("red", VitalFormConfig.bloodPressure.name);
+                return;
               }
 
-              if ((systolicValue >= 81 && systolicValue <= 89) || (systolicValue >= 150 && systolicValue <= 200)) {
-                setTriageResult('yellow', VitalFormConfig.bloodPressure.name)
-                addKeyToFlow({ systolic: 'yellow' });
-                return
+              if (
+                (systolicValue >= 81 && systolicValue <= 89) ||
+                (systolicValue >= 150 && systolicValue <= 200)
+              ) {
+                setTriageResult("yellow", VitalFormConfig.bloodPressure.name);
+                addKeyToFlow({ systolic: "yellow" });
+                return;
               }
-              if (systolicValue >= 90 || (systolicValue > 89 && systolicValue <= 149)) {
-                setTriageResult('green', VitalFormConfig.bloodPressure.name)
-                addKeyToFlow({ systolic: 'green' });
-                return
+              if (
+                systolicValue >= 90 ||
+                (systolicValue > 89 && systolicValue <= 149)
+              ) {
+                setTriageResult("green", VitalFormConfig.bloodPressure.name);
+                addKeyToFlow({ systolic: "green" });
+                return;
               }
             }}
           />
@@ -506,36 +541,46 @@ export function VitalsForm({
             helperTextWidth="10ch"
             disabled={disableField(VitalFormConfig.bloodPressureDiastolic.name)}
             handleBlurEvent={(value) => {
-              if (value == '') return;
+              if (value == "") return;
               const diastolicValue = Number(value);
               if (diastolicValue > 119) {
-                addKeyToFlow({ diastolic: 'red' });
-                setTriageResult('red', VitalFormConfig.bloodPressureDiastolic.name)
+                addKeyToFlow({ diastolic: "red" });
+                setTriageResult(
+                  "red",
+                  VitalFormConfig.bloodPressureDiastolic.name
+                );
               }
               if (diastolicValue >= 100 && diastolicValue <= 119) {
-                addKeyToFlow({ diastolic: 'yellow' });
-                setTriageResult('yellow', VitalFormConfig.bloodPressureDiastolic.name)
+                addKeyToFlow({ diastolic: "yellow" });
+                setTriageResult(
+                  "yellow",
+                  VitalFormConfig.bloodPressureDiastolic.name
+                );
               }
               if (diastolicValue < 100) {
-                addKeyToFlow({ diastolic: 'green' });
-                setTriageResult('green', VitalFormConfig.bloodPressureDiastolic.name)
+                addKeyToFlow({ diastolic: "green" });
+                setTriageResult(
+                  "green",
+                  VitalFormConfig.bloodPressureDiastolic.name
+                );
               }
             }}
           />
         </FieldsContainer>
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Respiratory and Temperature">
-        <FieldsContainer>
+        <FieldsContainer mr="1ch">
           <TextInputField
             id={VitalFormConfig.respiratoryRate.name}
             name={VitalFormConfig.respiratoryRate.name}
             label={VitalFormConfig.respiratoryRate.label}
             handleBlurEvent={(value: string) => {
-              if (value == '') return;
+              if (value == "") return;
               checkTriage(VitalFormConfig.respiratoryRate.name, value);
             }}
             disabled={disableField(VitalFormConfig.respiratoryRate.name)}
             unitOfMeasure="bs/m"
+            sx={{ width: "100%", m: 0 }}
           />
           <TextInputField
             id={VitalFormConfig.temperature.name}
@@ -543,48 +588,50 @@ export function VitalsForm({
             label={VitalFormConfig.temperature.label}
             disabled={disableField(VitalFormConfig.temperature.name)}
             handleBlurEvent={(value: string) => {
-              if (value == '') return;
+              if (value == "") return;
               checkTriage(VitalFormConfig.temperature.name, value);
             }}
             unitOfMeasure="°C"
+            sx={{ width: "100%", m: 0 }}
           />
         </FieldsContainer>
 
-        <FieldsContainer sx={{ display: "flex", alignItems: "center" }}>
-          <SelectInputField
-            sx={{ mt: 1 }}
-            width="20%"
+        <FieldsContainer sx={{ mt: "1ch" }} mr="2px">
+          <SearchComboBox
+            width="40%"
+            multiple={false}
             name={VitalFormConfig.units.name}
-            selectItems={[
-              { name: "mmol/l", value: "mmol/l" },
-              { name: "mg/dl", value: "mg/dl" },
+            options={[
+              { id: "mmol/l", label: "mmol/l" },
+              { id: "mg/dl", label: "mg/dl" },
             ]}
             label={VitalFormConfig.units.label}
-            id={VitalFormConfig.units.name}
           />
           <TextInputField
             id={VitalFormConfig.glucose.name}
             name={VitalFormConfig.glucose.name}
             label={VitalFormConfig.glucose.label}
+            sx={{ width: "100%", m: 0 }}
             disabled={disableField(VitalFormConfig.glucose.name)}
-            sx={{ m: 0, my: "1ch" }}
-
             handleBlurEvent={(value: string) => {
-              if (value == '') return;
+              if (value == "") return;
               const glucoseValue = Number(value);
 
               const units = formValues[VitalFormConfig.units.name];
-              addKeyToFlow({glucose: `${glucoseValue} ${units}`})
+              addKeyToFlow({ glucose: `${glucoseValue} ${units}` });
 
               if (units == "mmol/l") {
                 if (glucoseValue < 3 || glucoseValue > 30) {
-                  setTriageResult("red", VitalFormConfig.glucose.name)
+                  setTriageResult("red", VitalFormConfig.glucose.name);
                 }
-                if ((glucoseValue >= 3.1 && glucoseValue <= 3.8) || (glucoseValue > 11.1 && glucoseValue <= 29.9)) {
-                  setTriageResult("yellow", VitalFormConfig.glucose.name)
+                if (
+                  (glucoseValue >= 3.1 && glucoseValue <= 3.8) ||
+                  (glucoseValue > 11.1 && glucoseValue <= 29.9)
+                ) {
+                  setTriageResult("yellow", VitalFormConfig.glucose.name);
                 }
                 if (glucoseValue >= 3.9 && glucoseValue <= 11.1) {
-                  setTriageResult("green", VitalFormConfig.glucose.name)
+                  setTriageResult("green", VitalFormConfig.glucose.name);
                 }
               }
 
@@ -593,13 +640,16 @@ export function VitalsForm({
 
               if (units == "mg/dl") {
                 if (glucoseValue < 3 * m || glucoseValue > 30 * m) {
-                  setTriageResult("red", VitalFormConfig.glucose.name)
+                  setTriageResult("red", VitalFormConfig.glucose.name);
                 }
-                if ((glucoseValue >= 3.1 * m && glucoseValue <= 3.8 * m) || (glucoseValue > 11.1 * m && glucoseValue <= 29.9 * m)) {
-                  setTriageResult("yellow", VitalFormConfig.glucose.name)
+                if (
+                  (glucoseValue >= 3.1 * m && glucoseValue <= 3.8 * m) ||
+                  (glucoseValue > 11.1 * m && glucoseValue <= 29.9 * m)
+                ) {
+                  setTriageResult("yellow", VitalFormConfig.glucose.name);
                 }
                 if (glucoseValue >= 3.9 * m && glucoseValue <= 11.1 * m) {
-                  setTriageResult("green", VitalFormConfig.glucose.name)
+                  setTriageResult("green", VitalFormConfig.glucose.name);
                 }
               }
               // checkTriage(VitalFormConfig.glucose.name, value);
@@ -635,7 +685,22 @@ export function VitalsForm({
         </FieldsContainer>
         <br />
         <MainTypography fontWeight={"800"} variant="body2">
-          (M{getWeight(formValues[VitalFormConfig.motorResponse.name], motorResponses)} V{getWeight(formValues[VitalFormConfig.verbalResponse.name], verbalResponses)} E{getWeight(formValues[VitalFormConfig.eyeOpeningResponse.name], eyeOpeningResponses)})   {total}/15
+          (M
+          {getWeight(
+            formValues[VitalFormConfig.motorResponse.name],
+            motorResponses
+          )}{" "}
+          V
+          {getWeight(
+            formValues[VitalFormConfig.verbalResponse.name],
+            verbalResponses
+          )}{" "}
+          E
+          {getWeight(
+            formValues[VitalFormConfig.eyeOpeningResponse.name],
+            eyeOpeningResponses
+          )}
+          ) {total}/15
         </MainTypography>
         <SearchComboBox
           name={VitalFormConfig.avpu.name}
@@ -648,8 +713,19 @@ export function VitalsForm({
       </FormFieldContainerLayout>
       <br />
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
-        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+        <MainButton
+          sx={{ m: 0.5 }}
+          title={"previous"}
+          variant="secondary"
+          type="button"
+          onClick={previous}
+        />
+        <MainButton
+          sx={{ m: 0.5 }}
+          title={"next"}
+          type="submit"
+          onClick={() => {}}
+        />
       </WrapperBox>
     </FormikInit>
   );

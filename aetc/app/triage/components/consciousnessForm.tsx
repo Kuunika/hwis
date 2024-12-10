@@ -18,11 +18,11 @@ import { TriageContext, TriageContextType } from "@/contexts";
 
 type Prop = {
   onSubmit: (values: any) => void;
-  setTriageResult: (triage: any, name: string) => void
-  triageResult: string,
-  continueTriage: boolean,
-  previous: () => void,
-    getFormValues: (values:any)=>void
+  setTriageResult: (triage: any, name: string) => void;
+  triageResult: string;
+  continueTriage: boolean;
+  previous: () => void;
+  getFormValues: (values: any) => void;
 };
 export const ConsciousnessFormConfig = {
   consciousness: {
@@ -44,8 +44,12 @@ const schema = Yup.object().shape({
   [ConsciousnessFormConfig.consciousness.name]: Yup.string()
     .required()
     .label(ConsciousnessFormConfig.consciousness.label),
-  [ConsciousnessFormConfig.bloodGlucose.name]: Yup.string().label(ConsciousnessFormConfig.bloodGlucose.label),
-  [ConsciousnessFormConfig.gcs.name]: Yup.string().label(ConsciousnessFormConfig.gcs.label),
+  [ConsciousnessFormConfig.bloodGlucose.name]: Yup.string().label(
+    ConsciousnessFormConfig.bloodGlucose.label
+  ),
+  [ConsciousnessFormConfig.gcs.name]: Yup.string().label(
+    ConsciousnessFormConfig.gcs.label
+  ),
 });
 
 const options = [
@@ -55,8 +59,15 @@ const options = [
 
 const initialValues = getInitialValues(ConsciousnessFormConfig);
 
-export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous, getFormValues }: Prop) => {
-  const { flow } = useContext(TriageContext) as TriageContextType
+export const ConsciousnessForm = ({
+  onSubmit,
+  triageResult,
+  setTriageResult,
+  continueTriage,
+  previous,
+  getFormValues,
+}: Prop) => {
+  const { flow } = useContext(TriageContext) as TriageContextType;
   const [consciousness, setConsciousness] = useState();
   const [formValues, setFormValues] = useState<any>({});
 
@@ -76,23 +87,29 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
   };
 
   const disableField = (formField: string) => {
-    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
+    return (
+      triageResult === "red" &&
+      !Boolean(formValues[formField]) &&
+      !continueTriage
+    );
   };
-
-
-
 
   return (
     <FormikInit
       validationSchema={schema}
       getFormValues={getFormValues}
-      initialValues={{ ...initialValues, [ConsciousnessFormConfig.consciousness.name]: flow['gsc'] < 15 ? YES : NO, [ConsciousnessFormConfig.gcs.name]:flow['gsc'], [ConsciousnessFormConfig.bloodGlucose.name]:flow['glucose']  }}
+      initialValues={{
+        ...initialValues,
+        [ConsciousnessFormConfig.consciousness.name]:
+          flow["gsc"] < 15 ? YES : NO,
+        [ConsciousnessFormConfig.gcs.name]: flow["gsc"],
+        [ConsciousnessFormConfig.bloodGlucose.name]: flow["glucose"],
+      }}
       enableReinitialize={true}
       onSubmit={onSubmit}
       submitButtonText="next"
       submitButton={false}
     >
-
       <FormValuesListener getValues={setFormValues} />
 
       <FormFieldContainerLayout
@@ -108,36 +125,47 @@ export const ConsciousnessForm = ({ onSubmit, triageResult, setTriageResult, con
         />
       </FormFieldContainerLayout>
 
-      {
-        consciousness == YES && (
-          <>
-            <FormFieldContainerLayout last={true} title="Blood Glucose and GCS">
-              <FieldsContainer>
-                <TextInputField
-                  name={ConsciousnessFormConfig.bloodGlucose.name}
-                  label={ConsciousnessFormConfig.bloodGlucose.label}
-                  id={ConsciousnessFormConfig.bloodGlucose.name}
-                  disabled={true}
-                  // disabled={disableField(ConsciousnessFormConfig.bloodGlucose.name)}
-                />
-                <TextInputField
-                  name={ConsciousnessFormConfig.gcs.name}
-                  label={ConsciousnessFormConfig.gcs.label}
-                  id={ConsciousnessFormConfig.gcs.name}
-                  getValue={checkGcs}
-                  disabled={true}
-                  // disabled={disableField(ConsciousnessFormConfig.gcs.name)}
-                />
-              </FieldsContainer>
-            </FormFieldContainerLayout>
-          </>
-        )
-      }
+      {consciousness == YES && (
+        <>
+          <FormFieldContainerLayout last={true} title="Blood Glucose and GCS">
+            <FieldsContainer mr="1ch">
+              <TextInputField
+                sx={{ width: "100%" }}
+                name={ConsciousnessFormConfig.bloodGlucose.name}
+                label={ConsciousnessFormConfig.bloodGlucose.label}
+                id={ConsciousnessFormConfig.bloodGlucose.name}
+                disabled={true}
+                // disabled={disableField(ConsciousnessFormConfig.bloodGlucose.name)}
+              />
+              <TextInputField
+                sx={{ width: "100%" }}
+                name={ConsciousnessFormConfig.gcs.name}
+                label={ConsciousnessFormConfig.gcs.label}
+                id={ConsciousnessFormConfig.gcs.name}
+                getValue={checkGcs}
+                disabled={true}
+                // disabled={disableField(ConsciousnessFormConfig.gcs.name)}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
+        </>
+      )}
 
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
-        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+        <MainButton
+          sx={{ m: 0.5 }}
+          title={"previous"}
+          variant="secondary"
+          type="button"
+          onClick={previous}
+        />
+        <MainButton
+          sx={{ m: 0.5 }}
+          title={"next"}
+          type="submit"
+          onClick={() => {}}
+        />
       </WrapperBox>
-    </FormikInit >
+    </FormikInit>
   );
 };
