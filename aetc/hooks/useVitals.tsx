@@ -35,7 +35,7 @@ export const useVitals = () => {
   useEffect(() => {
     if (data && activeVisitId !== 0) {
       const encounter = data
-        .filter((d) => d?.encounter_type.uuid == encounters.VITALS)
+        .filter((d) => d?.encounter_type?.uuid == encounters.VITALS)
         .find((d) => d.visit_id == activeVisitId);
       const obs = encounter?.obs ?? [];
 
