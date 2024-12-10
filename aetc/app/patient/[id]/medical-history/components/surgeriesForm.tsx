@@ -153,7 +153,6 @@ interface ProcessedObservation {
           })
   
           setObservations(observations)
-          console.log(observations)
         });}
       
     }, [patientHistory]);
