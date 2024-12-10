@@ -76,7 +76,7 @@ const form = {
   },
   rash: {
     name: concepts.RASH,
-    label: "rash",
+    label: "Rash",
   },
 };
 
