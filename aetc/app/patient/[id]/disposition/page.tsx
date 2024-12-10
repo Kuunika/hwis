@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import {
     MainGrid,
@@ -7,11 +6,8 @@ import {
     SearchComboBox,
     BackButton,
     WrapperBox,
-
 } from "@/components";
 import { ConsultationCard, PersonalDetailsCard } from "@/app/patient/components";
-
-
 import TransferForm from "./components/TransferForm";
 import DischargeHomeForm from "./components/DischargeHomeForm";
 import AbscondedForm from "./components/AbscondedForm";
@@ -34,10 +30,6 @@ import {
     PatientProfileContext,
     PatientProfileContextType,
 } from "@/contexts";
-
-
-
-
 const dispositionOptions = [
     { value: "dischargeHome", label: "Discharge home" },
     { value: "awaitingSpecialtyReview", label: "Awaiting specialty review" },
@@ -56,16 +48,12 @@ function DispositionFeature() {
         null
     );
     const { params } = useParameters();
-
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
     const [chartLoading, setChartLoading] = useState(true);
     const { setActiveStep } = React.useContext(
         ConsultationContext
     ) as ConsultationContextType;
-
-
-
 
     const renderForm = () => {
         switch (selectedDisposition) {
@@ -93,7 +81,6 @@ function DispositionFeature() {
                 return null;
         }
     };
-
     return (
         <MainGrid container spacing={2} mt={"2ch"}>
             {/* Left Panel */}
@@ -155,8 +142,6 @@ function DispositionFeature() {
                                 link: `/patient/${params.id}/consultation`,
                             },
 
-
-
                         ]}
                         title="Consultation"
                     />
@@ -171,20 +156,13 @@ function DispositionFeature() {
                             },
                         ]}
                     />
-
                 </WrapperBox>
-
-
-
-                {/* End here */}
             </MainGrid>
-
             {/* Main Content */}
             <MainGrid item xs={12} lg={9}>
                 <MainPaper elevation={0} sx={{ p: "1ch" }}>
                     <BackButton />
                     <h2>Disposition</h2>
-
                     {/* Dropdown */}
                     <select
                         value={selectedDisposition || ""}
@@ -205,8 +183,6 @@ function DispositionFeature() {
                             </option>
                         ))}
                     </select>
-
-
 
                     {/* Dynamic Form */}
                     <div style={{ marginTop: "20px" }}>{renderForm()}</div>

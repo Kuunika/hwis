@@ -81,6 +81,8 @@ export default function AdmissionForm() {
                                     name="wardName"
                                     label="Ward Name"
                                     options={wardOptions}
+                                    multiple={false}
+
                                 />
                             </MainGrid>
 
@@ -115,6 +117,8 @@ export default function AdmissionForm() {
                                     name="specialtyInvolved"
                                     label="Specialty Involved"
                                     options={specialtyOptions}
+                                    multiple={false}
+
                                 />
                             </MainGrid>
                         </MainGrid>

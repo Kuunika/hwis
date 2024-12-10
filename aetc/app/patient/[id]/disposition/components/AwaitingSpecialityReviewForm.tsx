@@ -64,9 +64,10 @@ export default function AwaitingSpecialityReviewForm() {
                                             name="specialtyDepartment"
                                             label="Specialty Department"
                                             options={specialtyOptions}
+                                            multiple={false}
+
                                         />
                                     </MainGrid>
-
 
                                     {/* Reason for Review */}
                                     <MainGrid item xs={12}>
@@ -81,16 +82,8 @@ export default function AwaitingSpecialityReviewForm() {
                                         />
                                     </MainGrid>
 
-
-
                                 </MainGrid>
                             </MainGrid>
-
-
-
-
-
-
 
                             {/* Date Scheduled for Review */}
                             <MainGrid item xs={12}>

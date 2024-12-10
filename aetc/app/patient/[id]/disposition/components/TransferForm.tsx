@@ -80,7 +80,7 @@ export default function TransferForm() {
                                     name="transferNotes"
                                     label="Notes to Include"
                                     options={transferNotesOptions}
-                                    multiple={true}
+                                    multiple={false}
                                     sx={{ width: "100%" }}
                                 />
                             </MainGrid>
