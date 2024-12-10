@@ -35,7 +35,7 @@ export const PrescribedMedication = () => {
 
   const dispensationEncounter = data?.filter((d) => {
     return (
-      d.encounter_type.uuid == encounters.DISPENSING &&
+      d?.encounter_type?.uuid == encounters.DISPENSING &&
       d.visit_id == activeVisitId
     );
   });

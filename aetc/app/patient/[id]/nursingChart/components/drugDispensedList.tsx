@@ -9,10 +9,16 @@ export const formatDispensed = (data: Encounter, givenMedication: string) => {
     .map((ob) => {
       return {
         route: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_ROUTE
+          (b) =>
+            ob &&
+            ob.names?.length > 0 &&
+            ob.names[0]?.name == conceptNames.MEDICATION_ROUTE
         )?.value,
         dose: ob.children.find(
-          (b) => b.names[0].name == conceptNames.PRESCRIBED_DOSE
+          (b) =>
+            ob &&
+            ob.names?.length > 0 &&
+            ob.names[0]?.name == conceptNames.PRESCRIBED_DOSE
         )?.value,
         createdBy: ob.created_by,
         createdTime: getHumanReadableDateTime(ob.obs_datetime),
@@ -28,6 +34,7 @@ export const DrugDispensedList = ({
   givenMedication: string;
 }) => {
   const rows = formatDispensed(data, givenMedication);
+
   return (
     <MinimalTable
       columns={[

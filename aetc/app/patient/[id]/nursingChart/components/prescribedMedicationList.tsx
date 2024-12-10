@@ -4,7 +4,8 @@ import { MinimalTable } from "@/components/tables/minimalTable";
 import { conceptNames, encounters } from "@/constants";
 import { getActivePatientDetails } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { Encounter } from "@/interfaces";
+import { Obs } from "@/interfaces";
+import { useEffect, useState } from "react";
 
 export const PrescribedMedicationList = ({
   setRow,
@@ -17,50 +18,73 @@ export const PrescribedMedicationList = ({
     isPending: fetchingEncounters,
     isRefetching,
   } = getPatientsEncounters(patientId as string);
+  const [rows, setRows] = useState<Array<any>>([]);
 
-  const prescriptionEncounter = data?.filter((d) => {
-    return (
-      d.encounter_type.uuid == encounters.PRESCRIPTIONS &&
-      d.visit_id == activeVisitId
-    );
-  });
+  const getValue = (ob: Obs, name: string) => {
+    const value = ob?.children?.find(
+      (b) => b.names && b.names[0].name == name
+    )?.value;
 
-  if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
+    return value;
+  };
 
-  const rows = prescriptionEncounter[0].obs
-    .filter((ob) => ob.names[0].name == conceptNames.DRUG_GIVEN)
-    .map((ob) => {
-      const durationUnit = ob.children.find(
-        (b) => b.names[0].name == conceptNames.MEDICATION_DURATION_UNIT
-      )?.value;
-      return {
-        medicationName: ob.value,
-        medicationUUID: ob.value_coded_uuid,
-        dose: ob.children.find(
-          (b) => b.names[0].name == conceptNames.PRESCRIBED_DOSE
-        )?.value,
-        doseUnits: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_DOSE_UNIT
-        )?.value,
-        frequency: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_FREQUENCY
-        )?.value,
-        duration: `${
-          ob.children.find(
-            (b) => b.names[0].name == conceptNames.MEDICATION_DURATION
-          )?.value
-        } ${durationUnit}`,
+  useEffect(() => {
+    const prescriptionEncounter = data?.filter((d) => {
+      return (
+        d?.encounter_type?.uuid == encounters.PRESCRIPTIONS &&
+        d.visit_id == activeVisitId
+      );
+    });
 
-        formulation: ob.children.find(
-          (b) => b.names[0].name == conceptNames.MEDICATION_FORMULATION
-        )?.value,
-        description: ob.children.find(
-          (b) => b.names[0].name == conceptNames.DESCRIPTION
-        )?.value,
-        prescribedBy: ob.created_by,
-      };
-    })
-    .filter((medication) => medication.description == "current");
+    if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
+
+    const formattedRows = prescriptionEncounter[0].obs
+      .filter((ob) => ob?.names && ob?.names[0].name == conceptNames.DRUG_GIVEN)
+      .map((childObs) => {
+        const durationUnit = getValue(childObs, conceptNames.DESCRIPTION);
+        const dose = getValue(childObs, conceptNames.PRESCRIBED_DOSE);
+        const description = getValue(childObs, conceptNames.DESCRIPTION);
+        const formulation = getValue(
+          childObs,
+          conceptNames.MEDICATION_FORMULATION
+        );
+        const doseUnits = getValue(childObs, conceptNames.MEDICATION_DOSE_UNIT);
+        const frequency = getValue(childObs, conceptNames.MEDICATION_FREQUENCY);
+        const duration =
+          getValue(childObs, conceptNames.MEDICATION_DURATION) +
+          " " +
+          durationUnit;
+
+        console.log({
+          medicationName: childObs.value,
+          durationUnit,
+          dose,
+          doseUnits,
+          frequency,
+          duration,
+          formulation,
+          description,
+          prescribedBy: childObs.created_by,
+        });
+
+        return {
+          medicationName: childObs.value,
+          durationUnit,
+          dose,
+          doseUnits,
+          frequency,
+          duration,
+          formulation,
+          description,
+          prescribedBy: childObs.created_by,
+        };
+      })
+      .filter((medication) => medication.description == "current");
+
+    console.log({ formattedRows });
+
+    setRows(formattedRows);
+  }, [data]);
 
   return (
     <ContainerLoaderOverlay loading={fetchingEncounters}>
