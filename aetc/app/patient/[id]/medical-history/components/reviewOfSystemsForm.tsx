@@ -223,20 +223,11 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     ulcerWoundDuration: "",
     ulcerWound_site: "",
     timeOfInjury: dayjs(dateTime),
-    socialHistory: false,
   }
 
-  const handleToggleSocial = (e: any, name: string)=>{
+  const handleToggleSocial = (e: any)=>{
     const isChecked = e.target.checked;
-    
-    setFormValues((prev: any) => ({
-      ...prev,
-      [name]: isChecked,
-    }));
-
     setUpdateSocial(isChecked);
-    console.log(updateSocial)
-
   }
 
   const handleSymptomChange = (e: any, symptom: string) => {
@@ -483,8 +474,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         <FormFieldContainer direction="column">
         <LabelledCheckbox
                         label='Update social history?'
-                        checked ={formValues.socialHistory }
-                        onChange={(e) => handleToggleSocial(e, "socialHistory")}
+                        checked ={updateSocial || false}
+                        onChange={(e) => handleToggleSocial(e)}
                       />
         {updateSocial && (<>
         <h3 style={{marginTop:'2ch', marginBottom:'1ch'}}>Social History</h3>
