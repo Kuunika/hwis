@@ -527,6 +527,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                   <LungBackImage
                     imageSection={form.percussion.name}
                     imageEncounter={encounters.BREATHING_ASSESSMENT}
+                    percussion={true}
                     onValueChange={setPercussionImage}
                   />
                 </FieldsContainer>

@@ -7,12 +7,14 @@ import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { concepts } from "@/constants";
 import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
+import { PercussionForm } from "./forms/chest/percussionForm";
 
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
   breathSounds?: boolean;
+  percussion?: boolean;
 }
 
 export function LungBackImage({
@@ -20,6 +22,7 @@ export function LungBackImage({
   imageEncounter,
   imageSection,
   breathSounds = false,
+  percussion = false,
 }: Props) {
   const {
     handleClose,
@@ -68,6 +71,17 @@ export function LungBackImage({
       >
         {breathSounds ? (
           <BreathingSoundsForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        ) : percussion ? (
+          <PercussionForm
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(
