@@ -544,6 +544,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               </FieldsContainer>
               {formValues[form.breathSounds.name] == concepts.ABNORMAL && (
                 <>
+                  <br />
                   <ComponentSlider slides={breathSoundsSlides} />
                 </>
               )}
