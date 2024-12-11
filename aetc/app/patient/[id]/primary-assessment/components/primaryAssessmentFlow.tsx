@@ -10,14 +10,11 @@ import {
   Exposure,
 } from ".";
 
-import { encounters } from "@/constants";
 import { useNavigation } from "@/hooks";
-import { addEncounter } from "@/hooks/encounter";
 
 export const PrimaryAssessmentFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { mutate } = addEncounter();
-  const { navigateTo, navigateBack } = useNavigation();
+  const { navigateBack } = useNavigation();
 
   const steps = [
     { id: 1, label: "Airway Assessment" },
@@ -57,7 +54,7 @@ export const PrimaryAssessmentFlow = () => {
         <BreathingForm onSubmit={handleBreathingSubmit} />
         <Circulation onSubmit={handleCirculationSubmit} />
         <Disability onSubmit={handleDisabilitySubmit} />
-        <Exposure onSubmit={() => setActiveStep(5)} />
+        <Exposure onSubmit={navigateBack} />
       </NewStepperContainer>
     </>
   );

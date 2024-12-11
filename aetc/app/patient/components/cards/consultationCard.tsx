@@ -18,7 +18,7 @@ export const ConsultationCard = ({
 }: {
   title: string;
   disabled?: boolean;
-  links: Array<{ title: string; link: string; id?: any }>;
+  links: Array<{ title: string; link: string; id?: any; icon?: any }>;
   onClick?: (params: any) => void;
 }) => {
   const { navigateTo } = useNavigation();
@@ -82,13 +82,14 @@ export const ConsultationCard = ({
       </Box>
 
       <Collapse in={display} timeout={300}>
-        {links.map(({ title, link, id }) => (
+        {links.map(({ title, link, id, icon }) => (
           <Row
             id={id}
             title={title}
             link={link}
             key={link + title}
             onClick={onClick}
+            icon={icon}
           />
         ))}
       </Collapse>
@@ -101,10 +102,12 @@ const Row = ({
   link,
   onClick,
   id,
+  icon,
 }: {
   id?: any;
   title: string;
   link: string;
+  icon?: any;
   onClick?: (params: any) => void;
 }) => {
   const { navigateTo } = useNavigation();
@@ -135,7 +138,7 @@ const Row = ({
           alignItems: "center",
         }}
       >
-        <FaWpforms style={{ marginRight: "8px" }} />
+        {icon ? icon : <FaWpforms style={{ marginRight: "8px" }} />}
         {title}
       </Typography>
     </Box>

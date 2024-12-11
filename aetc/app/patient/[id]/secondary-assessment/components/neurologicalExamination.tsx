@@ -12,6 +12,7 @@ import { getInitialValues, getObservations } from "@/helpers";
 import { concepts, encounters } from "@/constants";
 import { useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 type Props = {
   onSubmit: () => void;
 };
@@ -41,13 +42,13 @@ export const NeurologicalExamination = ({ onSubmit }: Props) => {
   };
 
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={handleSubmitForm}
-      submitButtonText="Next"
-    >
-      <FieldsContainer>
+    <ContainerLoaderOverlay loading={isLoading}>
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={handleSubmitForm}
+        submitButtonText="submit"
+      >
         <TextInputField
           multiline
           rows={5}
@@ -56,7 +57,7 @@ export const NeurologicalExamination = ({ onSubmit }: Props) => {
           label={form.generalInformation.label}
           id={form.generalInformation.name}
         />
-      </FieldsContainer>
-    </FormikInit>
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };

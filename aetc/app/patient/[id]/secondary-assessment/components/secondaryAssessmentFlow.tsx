@@ -40,7 +40,6 @@ export function SecondaryAssessmentFlow() {
   const handleExtremitiesSubmit = () => {
     setActiveStep(5);
   };
-  const handleNeurologicalSubmit = () => {};
 
   return (
     <NewStepperContainer
@@ -55,7 +54,7 @@ export function SecondaryAssessmentFlow() {
       <ChestForm onSubmit={handleChestSubmit} />
       <AbdomenPelvisForm onSubmit={handleAbdomenSubmit} />
       <ExtremitiesForm onSubmit={handleExtremitiesSubmit} />
-      <NeurologicalExamination onSubmit={handleNeurologicalSubmit} />
+      <NeurologicalExamination onSubmit={navigateBack} />
     </NewStepperContainer>
   );
 }

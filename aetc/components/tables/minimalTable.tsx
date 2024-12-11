@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -6,12 +6,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   IconButton,
-  Typography,
-  Card,
-  CardContent,
-  Button,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -50,7 +45,7 @@ interface TableProps {
   getSelectedRow?: (row: any) => void;
 }
 
-const MinimalTable: React.FC<TableProps> = ({
+export const MinimalTable: React.FC<TableProps> = ({
   columns,
   data,
   actions = false,
@@ -101,5 +96,3 @@ const MinimalTable: React.FC<TableProps> = ({
     </>
   );
 };
-
-export default MinimalTable;
