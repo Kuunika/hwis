@@ -152,6 +152,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [showAssaultOptions, setShowAssaultOptions] = useState(false);
   const [selectedMechanism, setSelectedMechanism] = useState<string | null>(null);
   const [genitourinaryOther, setGenitourinaryOther] = useState(false); 
+  const [updateSocial, setUpdateSocial]= useState(false); 
   
   const schema = generateValidationSchema(symptomList);
 
@@ -221,7 +222,12 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     ulcerWound: false,
     ulcerWoundDuration: "",
     ulcerWound_site: "",
-    timeOfInjury: dayjs(dateTime)
+    timeOfInjury: dayjs(dateTime),
+  }
+
+  const handleToggleSocial = (e: any)=>{
+    const isChecked = e.target.checked;
+    setUpdateSocial(isChecked);
   }
 
   const handleSymptomChange = (e: any, symptom: string) => {
@@ -466,6 +472,12 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       
 
         <FormFieldContainer direction="column">
+        <LabelledCheckbox
+                        label='Update social history?'
+                        checked ={updateSocial || false}
+                        onChange={(e) => handleToggleSocial(e)}
+                      />
+        {updateSocial && (<>
         <h3 style={{marginTop:'2ch', marginBottom:'1ch'}}>Social History</h3>
         <RadioGroupInput
             row={true}
@@ -512,7 +524,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
            label="Travel Details"
            multiline
            rows={4}
-          />
+          /></>)}
                 </FormFieldContainer>
       
 

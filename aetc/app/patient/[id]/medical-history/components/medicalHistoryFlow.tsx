@@ -769,7 +769,7 @@ export const MedicalHistoryFlow = () => {
     const socialDetails = values['socialDetails'];
     const marital = values['maritalStatus'];
     const travelDetails = values['travelDetails'];
-
+    if(socialDetails){
     const occupationObs = {
       concept: concepts.OCCUPATION,
       value: occuption
@@ -778,10 +778,10 @@ export const MedicalHistoryFlow = () => {
     const socialDetailsObs = [
       {
       concept: concepts.PATIENT_SMOKES,
-      value: socialDetails[0]?.value
+      value: socialDetails?.[0]?.value
     },{
       concept: concepts.PATIENT_DRINKS_ALCOHOL,
-      value: socialDetails[1]?.value
+      value: socialDetails?.[1]?.value
     }
   ] ;
       
@@ -808,7 +808,7 @@ export const MedicalHistoryFlow = () => {
         obsDatetime: dateTime,
         group_members: socialDetailsObs,
       },]});
-
+    }
       handleSkip()
 
   };
