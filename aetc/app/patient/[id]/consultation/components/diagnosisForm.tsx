@@ -66,11 +66,16 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
       const diagnosisRecords = patientEncounters
         .filter(
           (encounter) =>
-            encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS
+            encounter?.encounter_type?.uuid === encounters.OUTPATIENT_DIAGNOSIS
         )
         .flatMap((encounter) =>
           encounter.obs
-            .filter((obs) => obs.names[0]?.uuid === conceptType) // Filter by conceptType
+            .filter(
+              (obs) =>
+                obs &&
+                obs.names?.length > 0 &&
+                obs.names[0]?.name === conceptType
+            ) // Filter by conceptType
             .map((obs) => ({
               id: obs.obs_id.toString(),
               condition: obs.value,

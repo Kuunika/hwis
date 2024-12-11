@@ -17,6 +17,11 @@ export const useSubmitEncounter = (
 
   const handleSubmit = async (obs: Array<any>) => {
     const dateTime = getDateTime();
+
+    console.log({ obs });
+
+    return;
+
     await mutate({
       encounterType,
       visit: activeVisit?.uuid,

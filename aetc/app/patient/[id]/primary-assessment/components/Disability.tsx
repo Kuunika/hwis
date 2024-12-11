@@ -156,7 +156,7 @@ export const Disability = ({ onSubmit }: Props) => {
         onSubmit={handleFormSubmit}
         submitButtonText="next"
       >
-        <FormFieldContainerLayout title="AVPU">
+        <FormFieldContainerLayout title="GCS">
           <FieldsContainer sx={{ alignItems: "start" }}>
             <RadioGroupInput
               name={form.eyeOpening.name}
