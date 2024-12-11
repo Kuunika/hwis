@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button } from "@mui/material";
 import { CSSTransition } from "react-transition-group";
-import "./Slider.css";
+import "./slider.css";
 
 interface Slide {
   id: string | number;
