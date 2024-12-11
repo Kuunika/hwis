@@ -110,6 +110,22 @@ const airwayInterventionsList = [
     label:
       "Airway adjunct (Oropharyngeal airway and size / nasopharyngeal airway)",
   },
+  {
+    id: "Laryngeal mask airway (LMA) insertion",
+    label: "Laryngeal mask airway (LMA) insertion",
+  },
+  {
+    id: "Endotracheal intubation",
+    label: "Endotracheal intubation",
+  },
+  {
+    id: "Performed Cricothyroidotomy(Surgical Airway)",
+    label: "Performed Cricothyroidotomy(Surgical Airway)",
+  },
+  {
+    id: "Performed tracheostomy",
+    label: "Performed tracheostomy",
+  },
 ];
 
 const initialsValues = getInitialValues(form);
@@ -129,7 +145,8 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
   const [showNasopharyngealSize, setShowNasopharyngealSize] = useState(false);
 
   const handleSubmitForm = async (values: any) => {
-    const interventions = values[form.intervention.name];
+    const formValues = { ...values };
+    const interventions = formValues[form.intervention.name];
     let interventionsObs: any = [];
     if (Array.isArray(interventions)) {
       interventionsObs = interventions.map((intervention) => {
@@ -141,7 +158,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       });
     }
 
-    const reasons = values[form.airWayThreatenedReason.name];
+    const reasons = formValues[form.airWayThreatenedReason.name];
     let reasonsObs: any = [];
     if (Array.isArray(reasons)) {
       reasonsObs = reasons.map((reasons) => {
@@ -153,11 +170,11 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
       });
     }
 
-    delete values[form.airWayThreatenedReason.name];
-    delete values[form.intervention.name];
+    delete formValues[form.airWayThreatenedReason.name];
+    delete formValues[form.intervention.name];
 
     await handleSubmit([
-      ...getObservations(values, getDateTime()),
+      ...getObservations(formValues, getDateTime()),
       ...interventionsObs,
       ...reasonsObs,
     ]);

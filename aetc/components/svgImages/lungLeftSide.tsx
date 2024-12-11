@@ -1,35 +1,38 @@
-import LungBack from "@/assets/lungBack";
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { BreathingLungForm, DataBox } from "./forms";
+import {
+  BreathingSoundsChestLungForm,
+  DataBox,
+  SecondaryAbdomenPelvicForm,
+} from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { concepts } from "@/constants";
+import LungLeftSide from "@/assets/lungLeftSide";
 import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
 
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
-  breathSounds?: boolean;
 }
 
-export function LungBackImage({
+export function LungLeftSideImage({
   onValueChange,
   imageEncounter,
   imageSection,
-  breathSounds = false,
 }: Props) {
   const {
     handleClose,
-    handleFormSubmit,
     containerRef,
     section,
     anchorEl,
     selectedSection,
+    handleFormSubmit,
     ids,
   } = useImage();
+
   const { setData, submittedValues } = useImageFormTransform();
 
   useEffect(() => {
@@ -42,22 +45,22 @@ export function LungBackImage({
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    if (imageEncounter && imageSection) {
-      formData = {
-        ...formData,
-        [concepts.IMAGE_ENCOUNTER]: imageEncounter,
-        [concepts.IMAGE_SECTION]: imageSection,
-      };
-    }
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (
     <div>
-      <LungBack ref={containerRef} />
+      <LungLeftSide ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
-          <DataBox key={value.section} labelValue={value} />
+          <DataBox maxWidth="230px" key={value.section} labelValue={value} />
         ))}
       </Box>
       <SVGPopover
@@ -66,29 +69,16 @@ export function LungBackImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        {breathSounds ? (
-          <BreathingSoundsForm
-            onCancel={handleClose}
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(
-                selectedSection.label as string,
-                values,
-                formConceptsLabels
-              )
-            }
-          />
-        ) : (
-          <BreathingLungForm
-            onCancel={handleClose}
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(
-                selectedSection.label as string,
-                values,
-                formConceptsLabels
-              )
-            }
-          />
-        )}
+        <BreathingSoundsForm
+          onCancel={handleClose}
+          onSubmit={(values, formConceptsLabels) =>
+            handleDataSubmission(
+              selectedSection.label as string,
+              values,
+              formConceptsLabels
+            )
+          }
+        />
       </SVGPopover>
     </div>
   );

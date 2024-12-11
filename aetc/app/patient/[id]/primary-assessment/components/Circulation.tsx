@@ -1,7 +1,12 @@
 "use client";
 import { NotificationContainer, SearchComboBox } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import React, { useState } from "react";
 import {
   FieldsContainer,
@@ -33,7 +38,7 @@ const form = {
   },
   pulseInfo: {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
-    label: "Is the patient have a pulse",
+    label: "Does the patient have a pulse",
   },
   pulseRate: {
     name: concepts.PULSE_RATE_WEAK,
@@ -119,6 +124,14 @@ const form = {
     name: concepts.DESCRIPTION,
     label: "Reason Not Done",
   },
+  mucousAbnormal: {
+    name: concepts.MUCOUS_ABNORMAL,
+    label: "Reason Not Done",
+  },
+  bloodPressureNotDoneOther: {
+    name: concepts.SPECIFY,
+    label: "Specify",
+  },
 };
 
 const schema = yup.object({
@@ -188,16 +201,20 @@ const schema = yup.object({
     .string()
     .label(form.assessPeripheries.label),
   [form.reasonNotDone.name]: yup.string().label(form.reasonNotDone.label),
+  [form.mucousAbnormal.name]: yup.string().label(form.mucousAbnormal.label),
+  [form.bloodPressureNotDoneOther.name]: yup
+    .string()
+    .label(form.bloodPressureNotDoneOther.label),
 });
 
 const initialValues = getInitialValues(form);
 
 const sizeOfCatheter = [
-  { label: "14G", value: "14G" },
-  { label: "16G", value: "16G" },
-  { label: "18G", value: "18G" },
-  { label: "20G", value: "20G" },
-  { label: "22G", value: "22G" },
+  { label: "14G", id: "14G" },
+  { label: "16G", id: "16G" },
+  { label: "18G", id: "18G" },
+  { label: "20G", id: "20G" },
+  { label: "22G", id: "22G" },
 ];
 const sizeOfCapillary = [
   { label: "Less than 3 seconds", value: "Less than 3 seconds" },
@@ -205,10 +222,16 @@ const sizeOfCapillary = [
 ];
 const sizeOfMucous = [
   { label: "Normal", value: concepts.NORMAL },
-  { label: "Pale", value: concepts.PALE },
-  { label: "Cyanosis", value: concepts.CYANOSIS },
+  { label: "Abnormal", value: concepts.ABNORMAL },
+  // { label: "Pale", value: concepts.PALE },
+  // { label: "Cyanosis", value: concepts.CYANOSIS },
 ];
-
+const mucousAbnormal = [
+  { label: "Pale", id: concepts.PALE },
+  { label: "Dry", id: concepts.DRY },
+  { label: "Cyanosis", id: concepts.CYANOSIS },
+  { label: "Jaundice", id: concepts.JAUNDICE },
+];
 const pulseRates = [
   { label: "Weak", value: concepts.WEAK },
   { label: "Strong, Regular", value: concepts.STRONG_REGULAR },
@@ -243,6 +266,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
   const [legImage, setLegImage] = useState<Array<any>>([]);
   const [abdomenImage, setAbdomenImage] = useState<Array<any>>([]);
+  // const [bloodNotDoneOther, setBloodNotDoneOther] = useState(false);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.CIRCULATION_ASSESSMENT,
@@ -271,10 +295,28 @@ export const Circulation = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(abdomenImage),
       },
     ];
+    const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
+      formValues[form.mucousAbnormal.name],
+      form.mucousAbnormal.name,
+      getDateTime()
+    );
+    const sizeOfCatheterObs = mapSearchComboOptionsToConcepts(
+      formValues[form.mucousAbnormal.name],
+      form.mucousAbnormal.name,
+      getDateTime()
+    );
+
     delete formValues[form.abnormalitiesInfo.name];
     delete formValues[form.femurAndTibiaNormalInfo.name];
+    delete formValues[form.mucousAbnormal.name];
+    delete formValues[form.catheterInfo.name];
 
-    await handleSubmit([...getObservations(values, getDateTime()), ...obs]);
+    await handleSubmit([
+      ...getObservations(values, getDateTime()),
+      ...obs,
+      ...mucusAbnormalitiesObs,
+      ...sizeOfCatheterObs,
+    ]);
   };
   return (
     <ContainerLoaderOverlay loading={isLoading}>
@@ -355,6 +397,13 @@ export const Circulation = ({ onSubmit }: Prop) => {
               ]}
             />
           </FieldsContainer>
+          {formValues[form.mucousMembranesInfo.name] == concepts.ABNORMAL && (
+            <SearchComboBox
+              label="Mucus Abnormal"
+              name={form.mucousAbnormal.name}
+              options={mucousAbnormal}
+            />
+          )}
         </FormFieldContainerLayout>
 
         <FormFieldContainerLayout title="Blood Pressure">
@@ -370,12 +419,24 @@ export const Circulation = ({ onSubmit }: Prop) => {
             />
           </FieldsContainer>
           {formValues[form.bloodPressureMeasured.name] == concepts.NOT_DONE && (
-            <SearchComboBox
-              multiple={false}
-              name={form.reasonNotDone.name}
-              label={form.reasonNotDone.label}
-              options={notDoneReasons}
-            />
+            <>
+              <SearchComboBox
+                multiple={false}
+                name={form.reasonNotDone.name}
+                label={form.reasonNotDone.label}
+                options={notDoneReasons}
+              />
+              {formValues[form.reasonNotDone.name] == concepts.OTHER && (
+                <TextInputField
+                  multiline
+                  rows={3}
+                  name={form.bloodPressureNotDoneOther.name}
+                  id={form.bloodPressureNotDoneOther.name}
+                  label={form.bloodPressureNotDoneOther.label}
+                  sx={{ width: "100%", mt: "1ch" }}
+                />
+              )}
+            </>
           )}
           {formValues[form.bloodPressureMeasured.name] ==
             concepts.BP_NOT_RECORDABLE && (
@@ -409,24 +470,42 @@ export const Circulation = ({ onSubmit }: Prop) => {
               </FieldsContainer>
               {formValues[form.bloodPressureSystolic.name] &&
                 formValues[form.bloodPressureDiastolic.name] && (
-                  <>
-                    <Box>
-                      <Typography variant="subtitle1">
-                        Mean Arterial Pressure:{" "}
-                        {(Number(formValues[form.bloodPressureDiastolic.name]) *
+                  <Box>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        color:
+                          Math.round(
+                            (Number(
+                              formValues[form.bloodPressureDiastolic.name]
+                            ) *
+                              2 +
+                              Number(
+                                formValues[form.bloodPressureSystolic.name]
+                              )) /
+                              3
+                          ) < 65
+                            ? "red"
+                            : "inherit", // Use default text color if MAP is 65 or above
+                      }}
+                    >
+                      Mean Arterial Pressure:{" "}
+                      {Math.round(
+                        (Number(formValues[form.bloodPressureDiastolic.name]) *
                           2 +
                           Number(formValues[form.bloodPressureSystolic.name])) /
-                          3}{" "}
-                        mmHg
-                      </Typography>
-                    </Box>
-                  </>
+                          3
+                      )}{" "}
+                      mmHg
+                    </Typography>
+                  </Box>
                 )}
+
               <br />
             </>
           )}
         </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Trauma">
+        <FormFieldContainerLayout title="Circulation Specific Trauma">
           <RadioGroupInput
             row
             name={form.traumatizedInfo.name}
@@ -479,7 +558,8 @@ export const Circulation = ({ onSubmit }: Prop) => {
             <>
               <br />
               <FieldsContainer>
-                <RadioGroupInput
+                <SearchComboBox
+                  multiple
                   name={form.catheterInfo.name}
                   label={form.catheterInfo.label}
                   options={sizeOfCatheter}
@@ -490,7 +570,10 @@ export const Circulation = ({ onSubmit }: Prop) => {
             </>
           )}
         </FormFieldContainerLayout>
-        <FormFieldContainerLayout last={true} title="Abdominal">
+        <FormFieldContainerLayout
+          last={true}
+          title="Circulation Specific Abdominal Findings"
+        >
           <FieldsContainer sx={{ alignItems: "flex-start" }}>
             <RadioGroupInput
               name={form.abdnomenDistention.name}
