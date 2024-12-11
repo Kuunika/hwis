@@ -64,7 +64,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         }}
       >
         <MenuItem
-          onClick={() => startFlow(`/patient/${patient?.id}/medical-history`)}
+          onClick={() => startFlow(`/patient/${patient?.id}/medicalHistory`)}
           sx={{
             display: 'flex',
             alignItems: 'center',
