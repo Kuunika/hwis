@@ -5,6 +5,8 @@ import { PatientInfoTab } from "@/components";
 import { FaAngleLeft } from "react-icons/fa6";
 import PresentingComplaintsPanel from "./components/pastPresentingComplaints";
 import { useNavigation } from "@/hooks";
+import DrugHistoryPanel from "./components/drugHistory";
+import { Box } from "@mui/material";
 
 
 function InPatientAdmission() {
@@ -42,7 +44,14 @@ function InPatientAdmission() {
               Back
             </MainTypography>
           </WrapperBox>
-          <PresentingComplaintsPanel/>
+          <Box sx={{ display: 'flex', gap: '2ch' }}>
+          <WrapperBox sx={{ pl: '2ch', mb: '2ch', width: '50%' }}>
+            <PresentingComplaintsPanel />
+          </WrapperBox>
+          <WrapperBox sx={{ pl: '2ch', mb: '2ch', width: '50%', mr:'2ch' }}>
+            <DrugHistoryPanel />
+          </WrapperBox>
+        </Box>
     </>
   );
 }

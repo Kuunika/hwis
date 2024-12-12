@@ -21,20 +21,20 @@ interface ProcessedObservation {
   children: ProcessedObservation[];
 }
 
-function PresentingComplaintsPanel() {
+function DrugHistoryPanel() {
     const { params } = useParameters();
-    const { data: complaintsData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
+    const { data: medicationData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
 
-    const complaintsEncounters = Array.isArray(complaintsData)
-    ? complaintsData.filter((item) => item.encounter_type?.name === 'PRESENTING COMPLAINTS')
+    const meidicationEncounters = Array.isArray(medicationData)
+    ? medicationData.filter((item) => item.encounter_type?.name === 'PRESCRIPTION')
     : [];
 
   useEffect(() => {
     if (!historyLoading) {
-      const observations: ProcessedObservation[] = [];
+        const observations: ProcessedObservation[] = [];
 
-        complaintsEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        meidicationEncounters?.forEach((encounter: { obs: Observation[] }) => {
         encounter.obs.forEach((observation) => {
           const value = observation.value;
       
@@ -57,29 +57,28 @@ function PresentingComplaintsPanel() {
             observations.push(obsData);
           }
         })
-
-        setObservations(observations)
-      });}
-    
-  },[complaintsData])
+            setObservations(observations)
+        });
+        }
+  },[medicationData])
 
 return (
     <>
     
-        <Panel title="Presenting Complaints">
+        <Panel title="Drug History">
             <WrapperBox>
             <div>
               {observations.map(item => (
-                  <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                      {(item.name == 'Presenting complaint') && <p>{item.value}</p>}
+                  <div key={item.obs_id} style={{  marginTop:'20px', color:'rgba(0, 0, 0, 0.6)' }}>
+                    <b>{item.name}</b>
                       {item.children && item.children.length > 0 && (
-                       <>
+                          <>
                               {item.children.map(child => (
                                   <p key={child.obs_id}>
                                       {child.name}{(child.value === "true")?null:`:${child.value}`}
                                   </p>
                               ))}
-                         </>
+                          </>
                       )}
                   </div>
               ))}
@@ -94,4 +93,4 @@ return (
 }
 
 
-export default PresentingComplaintsPanel;
+export default DrugHistoryPanel;
