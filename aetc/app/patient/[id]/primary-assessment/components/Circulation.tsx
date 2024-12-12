@@ -279,7 +279,7 @@ const notDoneReasons = [
 const sitesOfCannulation = [
   { label: "Left", id: concepts.LEFT },
   { label: "Right", id: concepts.RIGHT },
-  { label: "Central Line", id: concepts.CENTRAL_LINE },
+  // { label: "Central Line", id: concepts.CENTRAL_LINE },
 ];
 const diagramSitesOfCannulation = [
   { label: "Antecubital fossa", id: concepts.ANTECUBITAL_FOSSA },
@@ -620,7 +620,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                     options={[
                       ...diagramSitesOfCannulation,
                       ...(checkCanulationSite(
-                        formValues[form.siteOfCannulation.name],
+                        formValues[form.catheterInfo.name],
                         concepts.CENTRAL_LINE
                       )
                         ? [
@@ -651,7 +651,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                     options={[
                       ...diagramSitesOfCannulation,
                       ...(checkCanulationSite(
-                        formValues[form.siteOfCannulation.name],
+                        formValues[form.catheterInfo.name],
                         concepts.CENTRAL_LINE
                       )
                         ? [
