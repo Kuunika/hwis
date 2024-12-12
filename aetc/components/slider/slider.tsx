@@ -18,11 +18,11 @@ const ComponentSlider = ({ slides }: Props) => {
   const [inProp, setInProp] = useState(true);
 
   const handleSlideChange = (index: number) => {
-    setInProp(false); // Trigger exit animation
+    setInProp(false);
     setTimeout(() => {
       setActiveIndex(index);
-      setInProp(true); // Trigger enter animation
-    }, 300); // Match animation duration in CSS
+      setInProp(true);
+    }, 300);
   };
 
   return (
