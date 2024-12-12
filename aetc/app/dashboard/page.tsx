@@ -58,6 +58,7 @@ function Home() {
               roles.REGISTRATION_CLERK,
               roles.ADMIN,
               roles.INITIAL_REGISTRATION_CLERK,
+              roles.CLINICIAN,
             ]}
           >
             <Card
@@ -94,7 +95,9 @@ function Home() {
               title="Screening List"
             />
           </AuthGuardComp>
-          <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN]}>
+          <AuthGuardComp
+            roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN]}
+          >
             <Card
               icon={<FcTodoList />}
               link="/registration/list"
