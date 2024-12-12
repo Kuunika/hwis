@@ -4,26 +4,26 @@ import { getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Encounter } from "@/interfaces";
 
 export const formatDispensed = (data: Encounter, givenMedication: string) => {
-  return data?.obs
+  const row = data?.obs
     ?.filter((ob) => ob.value_coded_uuid == givenMedication)
     .map((ob) => {
       return {
         route: ob.children.find(
           (b) =>
-            ob &&
-            ob.names?.length > 0 &&
-            ob.names[0]?.name == conceptNames.MEDICATION_ROUTE
+            b.names?.length > 0 &&
+            b.names[0]?.name == conceptNames.MEDICATION_ROUTE
         )?.value,
         dose: ob.children.find(
           (b) =>
-            ob &&
-            ob.names?.length > 0 &&
-            ob.names[0]?.name == conceptNames.PRESCRIBED_DOSE
+            b.names?.length > 0 &&
+            b.names[0]?.name == conceptNames.PRESCRIBED_DOSE
         )?.value,
         createdBy: ob.created_by,
         createdTime: getHumanReadableDateTime(ob.obs_datetime),
       };
     });
+
+  return row;
 };
 
 export const DrugDispensedList = ({
