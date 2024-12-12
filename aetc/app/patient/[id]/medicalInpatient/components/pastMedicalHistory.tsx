@@ -21,20 +21,30 @@ interface ProcessedObservation {
   children: ProcessedObservation[];
 }
 
-function DrugHistoryPanel() {
+function PastMedicalHistoryPanel() {
     const { params } = useParameters();
-    const { data: medicationData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
+    const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+    const [HIVStatus, setHIVStatus] = useState('Unknown');
 
-    const medicationEncounters = Array.isArray(medicationData)
-    ? medicationData.filter((item) => item.encounter_type?.name === 'PRESCRIPTION')
+    const sampleHistoryEncounters = Array.isArray(historicData)
+    ? historicData.filter((item) => item.encounter_type?.name === 'DIAGNOSIS' || item.encounter_type.name === "SURGICAL HISTORY")
     : [];
 
   useEffect(() => {
     if (!historyLoading) {
         const observations: ProcessedObservation[] = [];
+        console.log(sampleHistoryEncounters)
 
-        medicationEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        //Check HIV status
+        const hasAIDS = sampleHistoryEncounters.some(encounters =>
+                encounters.obs.some(observation => 
+                    observation.names.some(name => name.name === "Acquired immunodeficiency syndrome")
+        ));
+
+        if(hasAIDS) setHIVStatus('Positive'); 
+                
+        sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
         encounter.obs.forEach((observation) => {
           const value = observation.value;
       
@@ -60,28 +70,19 @@ function DrugHistoryPanel() {
             setObservations(observations)
         });
         }
-  },[medicationData])
+  },[historicData])
 
 return (
     <>
     
-        <Panel title="Drug History">
+        <Panel title="Past Medical History">
             <WrapperBox>
             <div>
-              {observations.map(item => (
-                  <div key={item.obs_id} style={{  marginTop:'20px', color:'rgba(0, 0, 0, 0.6)' }}>
-                    <b>{item.name}</b>
-                      {item.children && item.children.length > 0 && (
-                          <>
-                              {item.children.map(child => (
-                                  <p key={child.obs_id}>
-                                      {child.name}{(child.value === "true")?null:`:${child.value}`}
-                                  </p>
-                              ))}
-                          </>
-                      )}
-                  </div>
-              ))}
+            <p>
+            <b>
+                HIV Status:
+            </b>
+            {HIVStatus}</p>
             </div>
             </WrapperBox>
         </Panel>
@@ -93,4 +94,4 @@ return (
 }
 
 
-export default DrugHistoryPanel;
+export default PastMedicalHistoryPanel;

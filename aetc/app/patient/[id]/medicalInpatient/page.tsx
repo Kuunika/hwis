@@ -7,6 +7,7 @@ import PresentingComplaintsPanel from "./components/pastPresentingComplaints";
 import { useNavigation } from "@/hooks";
 import DrugHistoryPanel from "./components/drugHistory";
 import { Box } from "@mui/material";
+import PastMedicalHistoryPanel from "./components/pastMedicalHistory";
 
 
 function InPatientAdmission() {
@@ -50,6 +51,9 @@ function InPatientAdmission() {
           </WrapperBox>
           <WrapperBox sx={{ pl: '2ch', mb: '2ch', width: '50%', mr:'2ch' }}>
             <DrugHistoryPanel />
+          </WrapperBox>
+          <WrapperBox sx={{ pl: '2ch', mb: '2ch', width: '50%', mr:'2ch' }}>
+            <PastMedicalHistoryPanel />
           </WrapperBox>
         </Box>
     </>
