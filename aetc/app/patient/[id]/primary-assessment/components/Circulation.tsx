@@ -132,6 +132,14 @@ const form = {
     name: concepts.SPECIFY,
     label: "Specify",
   },
+  siteOfCannulation: {
+    name: concepts.CANNULATION_SITE,
+    label: "Cannulation Site",
+  },
+  diagramCannulationSite: {
+    name: concepts.DIAGRAM_CANNULATION_SITE,
+    label: "Cannulation Site",
+  },
 };
 
 const schema = yup.object({
@@ -205,16 +213,23 @@ const schema = yup.object({
   [form.bloodPressureNotDoneOther.name]: yup
     .string()
     .label(form.bloodPressureNotDoneOther.label),
+  [form.siteOfCannulation.name]: yup
+    .string()
+    .label(form.siteOfCannulation.label),
+  [form.diagramCannulationSite.name]: yup
+    .string()
+    .label(form.diagramCannulationSite.label),
 });
 
 const initialValues = getInitialValues(form);
 
 const sizeOfCatheter = [
-  { label: "14G", id: "14G" },
-  { label: "16G", id: "16G" },
-  { label: "18G", id: "18G" },
-  { label: "20G", id: "20G" },
-  { label: "22G", id: "22G" },
+  { label: "14G", id: concepts.G14 },
+  { label: "16G", id: concepts.G16 },
+  { label: "18G", id: concepts.G18 },
+  { label: "20G", id: concepts.G20 },
+  { label: "22G", id: concepts.G22 },
+  { label: "Central Line", id: concepts.CENTRAL_LINE },
 ];
 const sizeOfCapillary = [
   { label: "Less than 3 seconds", value: "Less than 3 seconds" },
@@ -259,6 +274,20 @@ const notDoneReasons = [
   },
   { label: "No power supply", id: concepts.NO_POWER_SUPPLY },
   { label: "Other", id: concepts.OTHER },
+];
+
+const sitesOfCannulation = [
+  { label: "Left", id: concepts.LEFT },
+  { label: "Right", id: concepts.RIGHT },
+  { label: "Central Line", id: concepts.CENTRAL_LINE },
+];
+const diagramSitesOfCannulation = [
+  { label: "Antecubital fossa", id: concepts.ANTECUBITAL_FOSSA },
+  { label: "Hand", id: concepts.HAND },
+  { label: "Wrist", id: concepts.WRIST },
+  { label: "Forearm", id: concepts.WRIST },
+  { label: "Foot", id: concepts.FOOT },
+  { label: "External Jugular", id: concepts.EXTERNAL_JUGULAR },
 ];
 
 export const Circulation = ({ onSubmit }: Prop) => {
@@ -317,6 +346,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,
     ]);
+  };
+  const checkCanulationSite = (valueArray: any, value: any) => {
+    if (Array.isArray(valueArray)) {
+      return valueArray.find((item) => item.id == value);
+    }
+    return false;
   };
   return (
     <ContainerLoaderOverlay loading={isLoading}>
@@ -557,15 +592,82 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.intravenousAccess.name] == YES && (
             <>
               <br />
-              <FieldsContainer>
-                <SearchComboBox
-                  multiple
-                  name={form.catheterInfo.name}
-                  label={form.catheterInfo.label}
-                  options={sizeOfCatheter}
-                />
-                <MainTypography>Diagram</MainTypography>
-              </FieldsContainer>
+
+              <SearchComboBox
+                multiple
+                name={form.catheterInfo.name}
+                label={form.catheterInfo.label}
+                options={sizeOfCatheter}
+              />
+              <br />
+              <SearchComboBox
+                multiple
+                name={form.siteOfCannulation.name}
+                label={form.siteOfCannulation.label}
+                options={sitesOfCannulation}
+              />
+              {checkCanulationSite(
+                formValues[form.siteOfCannulation.name],
+                concepts.LEFT
+              ) && (
+                <>
+                  <Typography my={2} variant="h6">
+                    Left
+                  </Typography>
+                  <SearchComboBox
+                    name={form.diagramCannulationSite.name}
+                    label={form.diagramCannulationSite.label}
+                    options={[
+                      ...diagramSitesOfCannulation,
+                      ...(checkCanulationSite(
+                        formValues[form.siteOfCannulation.name],
+                        concepts.CENTRAL_LINE
+                      )
+                        ? [
+                            { id: concepts.FEMORAL, label: "Femoral" },
+                            { id: concepts.SUBCLAVIAN, label: "Subclavian" },
+                            {
+                              id: concepts.INTERNAL_JUGULAR,
+                              label: "Internal Jugular",
+                            },
+                          ]
+                        : []),
+                    ]}
+                  />
+                </>
+              )}
+
+              {checkCanulationSite(
+                formValues[form.siteOfCannulation.name],
+                concepts.RIGHT
+              ) && (
+                <>
+                  <Typography my={2} variant="h6">
+                    Right
+                  </Typography>
+                  <SearchComboBox
+                    name={form.diagramCannulationSite.name}
+                    label={form.diagramCannulationSite.label}
+                    options={[
+                      ...diagramSitesOfCannulation,
+                      ...(checkCanulationSite(
+                        formValues[form.siteOfCannulation.name],
+                        concepts.CENTRAL_LINE
+                      )
+                        ? [
+                            { id: concepts.FEMORAL, label: "Femoral" },
+                            { id: concepts.SUBCLAVIAN, label: "Subclavian" },
+                            {
+                              id: concepts.INTERNAL_JUGULAR,
+                              label: "Internal Jugular",
+                            },
+                          ]
+                        : []),
+                    ]}
+                  />
+                </>
+              )}
+
               <br />
             </>
           )}
