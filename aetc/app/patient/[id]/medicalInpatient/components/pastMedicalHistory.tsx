@@ -34,20 +34,21 @@ function PastMedicalHistoryPanel() {
   useEffect(() => {
     if (!historyLoading) {
         const observations: ProcessedObservation[] = [];
-        console.log(sampleHistoryEncounters)
 
         //Check HIV status
-        const hasAIDS = sampleHistoryEncounters.some(encounters =>
-                encounters.obs.some(observation => 
-                    observation.names.some(name => name.name === "Acquired immunodeficiency syndrome")
+        const hasAIDS = sampleHistoryEncounters.filter(encounters =>
+            encounters.obs.filter(observation => 
+            observation.names.filter(name => name.name === "Acquired immunodeficiency syndrome")
         ));
 
-        if(hasAIDS) setHIVStatus('Positive'); 
+        if(hasAIDS.length > 0) setHIVStatus('Positive');
+
                 
         sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
         encounter.obs.forEach((observation) => {
           const value = observation.value;
-      
+        
+          
           // Format the observation data
           const obsData: ProcessedObservation = {
             obs_id: observation.obs_id,
@@ -74,15 +75,14 @@ function PastMedicalHistoryPanel() {
 
 return (
     <>
-    
         <Panel title="Past Medical History">
             <WrapperBox>
             <div>
-            <p>
-            <b>
+            <p><b>
                 HIV Status:
-            </b>
-            {HIVStatus}</p>
+                </b>
+            {HIVStatus}
+            </p>
             </div>
             </WrapperBox>
         </Panel>

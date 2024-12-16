@@ -52,7 +52,7 @@ function InPatientAdmission() {
           <WrapperBox sx={{ pl: '2ch', mb: '2ch', width: '50%', mr:'2ch' }}>
             <DrugHistoryPanel />
           </WrapperBox>
-          <WrapperBox sx={{ pl: '2ch', mb: '2ch', width: '50%', mr:'2ch' }}>
+          <WrapperBox sx={{  mb: '2ch', width: '50%', mr:'2ch' }}>
             <PastMedicalHistoryPanel />
           </WrapperBox>
         </Box>
