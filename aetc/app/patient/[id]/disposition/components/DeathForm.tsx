@@ -68,7 +68,7 @@ const initialValues = {
 
 export default function DeathForm() {
     const handleSubmit = (values: any) => {
-        console.log("Form Values: ", values);
+     
         alert("Form Submitted!");
     };
 
