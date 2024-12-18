@@ -27,25 +27,26 @@ function PastMedicalHistoryPanel() {
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const [HIVStatus, setHIVStatus] = useState('Unknown');
 
-    const sampleHistoryEncounters = Array.isArray(historicData)
-    ? historicData.filter((item) => item.encounter_type?.name === 'DIAGNOSIS' || item.encounter_type.name === "SURGICAL HISTORY")
-    : [];
+    const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type?.name === 'DIAGNOSIS' || item.encounter_type.name === "SURGICAL HISTORY");
+ 
 
   useEffect(() => {
     if (!historyLoading) {
         const observations: ProcessedObservation[] = [];
 
-        //Check HIV status
-        const hasAIDS = sampleHistoryEncounters.filter(encounters =>
+        const hasAIDS = sampleHistoryEncounters?.filter(encounters =>
             encounters.obs.filter(observation => 
             observation.names.filter(name => name.name === "Acquired immunodeficiency syndrome")
         ));
 
-        if(hasAIDS.length > 0) setHIVStatus('Positive');
+        if(hasAIDS && hasAIDS.length > 0) setHIVStatus('Positive');
 
-                
+       
         sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-        encounter.obs.forEach((observation) => {
+          console.log('Patient history:',encounter);
+          
+        
+          encounter.obs.forEach((observation) => {
           const value = observation.value;
         
           
