@@ -80,11 +80,12 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
 
-
     const allergiesEncounters = data?.filter(
-      (item) => item.encounter_type.name === "Allergies"
+      (item) => {
+        item.encounter_type?.name === "Allergies"
+      }
     );
-
+  
 
 const allergyOptions = [
   {

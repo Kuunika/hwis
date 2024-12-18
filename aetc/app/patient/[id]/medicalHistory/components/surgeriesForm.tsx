@@ -117,7 +117,7 @@ interface ProcessedObservation {
     const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const surgicalEncounters = patientHistory?.filter(
-      (item) => item.encounter_type.name === "SURGICAL HISTORY"
+      (item) => item.encounter_type?.name === "SURGICAL HISTORY"
     );
     const handleSubmit = () => {
         onSubmit(formValues);

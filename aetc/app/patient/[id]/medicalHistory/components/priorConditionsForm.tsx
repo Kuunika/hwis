@@ -110,7 +110,7 @@ import { Obs } from "@/interfaces";
 
       if(!isLoading){
         const conditionsEncounters = data?.filter(
-          (item) => item.encounter_type.name === "DIAGNOSIS"
+          (item) => item.encounter_type?.name === "DIAGNOSIS"
           &&
           item.obs?.length !== 4
         )

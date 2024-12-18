@@ -21,7 +21,7 @@ export const TabletView = () => {
       label: "Primary Assessment",
       link: `/patient/${patientId}/primary-assessment`,
     },
-    { label: "Sample History", link: `/patient/${patientId}/medical-history` },
+    { label: "Sample History", link: `/patient/${patientId}/medicalHistory` },
     {
       label: "Secondary Assessment",
       link: `/patient/${patientId}/secondary-assessment`,

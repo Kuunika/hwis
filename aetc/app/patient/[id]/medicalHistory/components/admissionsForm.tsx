@@ -100,7 +100,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   } = getConceptSetMembers(diagnosesConceptId);
 
   const admissionsEncounters = patientHistory?.filter(
-    (item) => item.encounter_type.name === "PATIENT ADMISSIONS"
+    (item) => item.encounter_type?.name === "PATIENT ADMISSIONS"
   );
 
 

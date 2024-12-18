@@ -145,7 +145,7 @@ const schema = yup.object().shape({
   useEffect(() => {
     if(!isLoading){
       const obstetricsEncounters = data?.filter(
-        (item) => item.encounter_type.name === "OBSTETRIC HISTORY"
+        (item) => item.encounter_type?.name === "OBSTETRIC HISTORY"
       )
       
       

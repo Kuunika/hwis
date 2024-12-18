@@ -119,7 +119,7 @@ import {
     useEffect(() => {
       if(!isLoading){
         const familyHistoryEncounters = data?.filter(
-          (item) => item.encounter_type.name === "FAMILY MEDICAL HISTORY"
+          (item) => item.encounter_type?.name === "FAMILY MEDICAL HISTORY"
         )
         
         
