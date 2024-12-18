@@ -1,6 +1,6 @@
 import { encounters } from "@/constants";
 import React, { forwardRef } from "react";
-export const HeadBack = forwardRef<
+export const HeadLeft = forwardRef<
   SVGSVGElement,
   React.SVGProps<SVGSVGElement>
 >((props, ref) => (

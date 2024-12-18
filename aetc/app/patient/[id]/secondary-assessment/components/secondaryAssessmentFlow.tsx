@@ -13,7 +13,7 @@ import {
 
 export function SecondaryAssessmentFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { navigateTo, navigateBack } = useNavigation();
+  const { navigateBack } = useNavigation();
 
   const steps = [
     { id: 1, label: "General Information" },

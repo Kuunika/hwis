@@ -9,6 +9,10 @@ import { useSubmitEncounter } from "@/hooks";
 import { encounters } from "@/constants";
 import { flattenImagesObs, getObservations } from "@/helpers";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import ComponentSlider from "@/components/slider/slider";
+import { HeadLeftImage } from "@/components/svgImages/headLeft";
+import { HeadRightImage } from "@/components/svgImages/headRight";
+import { HeadBackImage } from "@/components/svgImages/headBack";
 
 type Props = {
   onSubmit: () => void;
@@ -44,6 +48,29 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     await handleSubmit(flattenImagesObs(headNeckImageEncounter));
   };
 
+  const slides = [
+    {
+      id: 1,
+      label: "Left",
+      content: <HeadLeftImage onValueChange={setHeadNeckImageEncounter} />,
+    },
+    {
+      id: 2,
+      label: "Front",
+      content: <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />,
+    },
+    {
+      id: 3,
+      label: "Right",
+      content: <HeadRightImage onValueChange={setHeadNeckImageEncounter} />,
+    },
+    {
+      id: 4,
+      label: "Back",
+      content: <HeadBackImage onValueChange={setHeadNeckImageEncounter} />,
+    },
+  ];
+
   return (
     <ContainerLoaderOverlay loading={isLoading}>
       <FormikInit
@@ -52,7 +79,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
         onSubmit={handleSubmitForm}
         submitButtonText="Next"
       >
-        <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />
+        <ComponentSlider slides={slides} />
       </FormikInit>
     </ContainerLoaderOverlay>
   );
