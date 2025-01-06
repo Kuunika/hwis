@@ -13,7 +13,6 @@ import {
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
-  MainTypography,
   RadioGroupInput,
   TextInputField,
 } from "@/components";
@@ -27,6 +26,7 @@ import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { CPRDialogForm } from "./cprDialogForm";
 
 type Prop = {
   onSubmit: () => void;
@@ -140,6 +140,10 @@ const form = {
     name: concepts.DIAGRAM_CANNULATION_SITE,
     label: "Cannulation Site",
   },
+  pulse: {
+    name: concepts.PULSE_RATE,
+    label: "Pulse",
+  },
 };
 
 const schema = yup.object({
@@ -219,6 +223,7 @@ const schema = yup.object({
   [form.diagramCannulationSite.name]: yup
     .string()
     .label(form.diagramCannulationSite.label),
+  [form.pulse.name]: yup.number().label(form.pulse.label),
 });
 
 const initialValues = getInitialValues(form);
@@ -394,12 +399,19 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.pulseInfo.name] == NO && (
             <>
               <NotificationContainer message="Start cardiopulmonary resuscitation" />
+              <CPRDialogForm />
             </>
           )}
 
           {formValues[form.pulseInfo.name] == YES && (
             <>
               <br />
+              <TextInputField
+                name={form.pulse.name}
+                id={form.pulse.name}
+                label={form.pulse.label}
+                sx={{ width: "100%" }}
+              />
               <FieldsContainer>
                 <RadioGroupInput
                   name={form.pulseRate.name}

@@ -979,6 +979,15 @@ export const concepts = {
   FEMORAL:'FEMORAL',
   SUBCLAVIAN:'SUBCLVIAN',
   INTERNAL_JUGULAR:'INTERNAL_JUGULAR',
+  CARDIAC_ARREST:'CARDIAC_ARREST',
+  SITE:'SITE',
+  RESCITATION:"RESCITATION",
+  SSW:"SSW",
+  PRIORITY:"PRIORITY",
+  PEA:"PEA",
+  VF:"VF",
+  VT:"VT",
+  ASYS:"ASYS",
 };
 
 export const conceptNames= {
