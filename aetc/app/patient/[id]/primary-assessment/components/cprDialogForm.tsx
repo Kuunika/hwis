@@ -6,12 +6,15 @@ import {
   RadioGroupInput,
   SearchComboBox,
   TextInputField,
+  UnitInputField,
 } from "@/components";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { concepts, NO, YES } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import useFetchMedications from "@/hooks/useFetchMedications";
+import { Box, Typography } from "@mui/material";
 import { FieldArray } from "formik";
+import { GiMedicines } from "react-icons/gi";
 import * as Yup from "yup";
 
 const form = {
@@ -63,6 +66,20 @@ const emptyRecord = {
   Interventions: "",
   occurrences: "",
 };
+const medicationUnits = [
+  "Milligrams (mg)",
+  "Micrograms (µg)",
+  "Grams (g)",
+  "International Units (IU)",
+  "Milliliters (ml)",
+  "Millimoles (mmol)",
+];
+const interventions = [
+  { label: "IV Access", id: concepts.IV_ACCESS },
+  { label: "Intubation", id: concepts.INTUBATION },
+  { label: "POCUS", id: concepts.POCUS },
+  { label: "ABG", id: concepts.ABG },
+];
 
 const CPRForm = () => {
   const { medicationOptions } = useFetchMedications();
@@ -92,6 +109,7 @@ const CPRForm = () => {
           </FormFieldContainerMultiple>
           {values[form.site.name] == concepts.OTHER && (
             <TextInputField
+              size="small"
               name={form.specify.name}
               label={form.specify.label}
               id={form.specify.name}
@@ -108,14 +126,22 @@ const CPRForm = () => {
                   flexDirection: "column",
                   gap: 0,
                   alignItems: "start",
+                  borderBottom: "1px solid #ccc",
+                  pb: "1ch",
                 }}
                 renderFields={(item, index) => (
                   <>
+                    <br />
+                    <Typography color={"#333"} variant="h6">
+                      Record {index + 1}
+                    </Typography>
+                    <br />
                     <FieldsContainer sx={{ width: "100%" }} mr="1ch">
                       <SearchComboBox
                         name={`records.${index}.rhythm`}
                         label="Rhythm"
                         options={rhythmOptions}
+                        size="small"
                         sx={{ width: "100%" }}
                       />
                       <TextInputField
@@ -125,6 +151,7 @@ const CPRForm = () => {
                         sx={{ width: "100%" }}
                       />
                     </FieldsContainer>
+                    <br />
                     <FormFieldContainerMultiple>
                       <SearchComboBox
                         name={`records[${index}].medication`}
@@ -134,6 +161,39 @@ const CPRForm = () => {
                           setFieldValue(`records[${index}].medication`, value)
                         }
                         multiple={false}
+                      />
+                      <UnitInputField
+                        id={`medications[${index}].medication_dose`}
+                        label="Dose"
+                        name={`medications[${index}].medication_dose`}
+                        unitName={`medications[${index}].medication_dose_unit`}
+                        unitOptions={medicationUnits}
+                        placeholder="e.g., 500"
+                        sx={{ m: 0 }}
+                        inputIcon={<GiMedicines />}
+                      />
+                      <TextInputField
+                        name={`records[${index}].route`}
+                        label="Route"
+                        id={`records[${index}].route`}
+                        sx={{ width: "100%" }}
+                      />
+                    </FormFieldContainerMultiple>
+                    <br />
+                    <FormFieldContainerMultiple>
+                      <Box>
+                        <SearchComboBox
+                          name={`records[${index}].Interventions`}
+                          label="Interventions"
+                          options={interventions}
+                          sx={{ width: "100%" }}
+                        />
+                      </Box>
+                      <TextInputField
+                        name={`records[${index}].occurrences`}
+                        label="Occurrences"
+                        id={`records[${index}].occurrences`}
+                        sx={{ width: "100%" }}
                       />
                     </FormFieldContainerMultiple>
                   </>
@@ -149,7 +209,7 @@ const CPRForm = () => {
 
 export const CPRDialogForm = () => {
   return (
-    <GenericDialog open={true} title="CPR" onClose={() => {}}>
+    <GenericDialog maxWidth="md" open={true} title="CPR" onClose={() => {}}>
       <CPRForm />
     </GenericDialog>
   );

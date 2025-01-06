@@ -988,6 +988,10 @@ export const concepts = {
   VF:"VF",
   VT:"VT",
   ASYS:"ASYS",
+  IV_ACCESS:"IV_ACCESS",
+  INTUBATION:"INTUBATION",
+  POCUS:"POCUS",
+  ABG:"ABG",
 };
 
 export const conceptNames= {
