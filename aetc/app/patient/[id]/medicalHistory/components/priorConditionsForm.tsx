@@ -97,6 +97,7 @@ import { Obs } from "@/interfaces";
     useEffect(() => {
       reloadDiagnoses();
       if (diagnoses) {
+        console.log(diagnoses)
         const formatDiagnosisOptions = (diagnoses: any) => {
           return diagnoses.map((diagnosis: {names: { uuid: string, name: any; }[]; }) => ({
             id: diagnosis.names[0].uuid,
@@ -104,6 +105,7 @@ import { Obs } from "@/interfaces";
           }));
         };
         setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
+        console.log(diagnosisOptions)
         
       };
 
