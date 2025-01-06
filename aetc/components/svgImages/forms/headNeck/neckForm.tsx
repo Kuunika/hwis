@@ -120,7 +120,10 @@ const schema = Yup.object().shape({
 const initialsValues = getInitialValues(form);
 
 const abnormalities = [
-  { id: concepts.JUGULAR_VENOUS_PRESSURE, label: "Jugular Venous Pressure" },
+  {
+    id: concepts.JUGULAR_VENOUS_PRESSURE,
+    label: "Jugular Venous Pressure (JVP)",
+  },
   { id: concepts.RAISED, label: "Raised jugular venous pressure" },
   // { id: concepts.RHINORRHOEA, label: "Rhinorrhea" },
   { id: concepts.ENLARGED_THYROID, label: "Enlarged Thyroid" },
@@ -221,6 +224,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
               id={form.raisedHeight.name}
               name={form.raisedHeight.name}
               label={form.raisedHeight.label}
+              unitOfMeasure="CM"
             />
           </>
         )}
