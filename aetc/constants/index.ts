@@ -1014,6 +1014,8 @@ export const concepts = {
   GENERAL_WARD_SPECIFY:"GENERAL_WARD_SPECIFY",
   MORTUARY:"MORTUARY",
   SPO2:"SPO2",
+  TEAM_LEADER:"TEAM_LEADER",
+  TEAM_MEMBERS:"TEAM_MEMBERS",
 };
 
 export const conceptNames= {

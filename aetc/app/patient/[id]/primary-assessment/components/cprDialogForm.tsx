@@ -12,6 +12,7 @@ import DynamicFormList from "@/components/form/dynamicFormList";
 import { concepts, NO, YES } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import useFetchMedications from "@/hooks/useFetchMedications";
+import { getAllUsers } from "@/hooks/users";
 import { Box, Typography } from "@mui/material";
 import { FieldArray } from "formik";
 import { useState } from "react";
@@ -90,6 +91,14 @@ const form = {
   verbalResponse: {
     name: concepts.VERBAL_RESPONSE,
     label: "Verbal Response",
+  },
+  teamLeader: {
+    name: concepts.TEAM_LEADER,
+    label: "Team Leader",
+  },
+  teamMembers: {
+    name: concepts.TEAM_MEMBERS,
+    label: "Team Members",
   },
 };
 
@@ -269,7 +278,18 @@ const verbalResponses = [
 
 const CPRForm = () => {
   const { medicationOptions } = useFetchMedications();
-  // const [total, setTotal] = useState(0);
+  const { data: users, isLoading } = getAllUsers();
+
+  const userOptions = users?.map((user) => {
+    return {
+      label:
+        user.person.names[0].family_name +
+        " " +
+        user.person.names[0].given_name,
+      value: user.uuid,
+    };
+  });
+
   const getWeight = (value: string, lists: any) => {
     const found = lists.find((l: any) => l.value == value);
     return found ? found.weight : 0;
@@ -514,6 +534,7 @@ const CPRForm = () => {
           </Typography>
           <br />
           <Typography variant="h6">Resuscitation Team</Typography>
+
           <br />
         </>
       )}
