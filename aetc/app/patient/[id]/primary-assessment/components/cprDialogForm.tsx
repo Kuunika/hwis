@@ -179,6 +179,8 @@ const validationSchema = Yup.object().shape({
   [form.verbalResponse.name]: Yup.string()
     .required()
     .label(form.verbalResponse.label),
+  [form.teamLeader.name]: Yup.string().required().label(form.teamLeader.label),
+  [form.teamMembers.name]: Yup.array().required().label(form.teamMembers.label),
 });
 
 const sites = [
@@ -286,7 +288,7 @@ const CPRForm = () => {
         user.person.names[0].family_name +
         " " +
         user.person.names[0].given_name,
-      value: user.uuid,
+      id: user.uuid,
     };
   });
 
@@ -534,8 +536,19 @@ const CPRForm = () => {
           </Typography>
           <br />
           <Typography variant="h6">Resuscitation Team</Typography>
-
           <br />
+          <SearchComboBox
+            name={form.teamLeader.name}
+            label={form.teamLeader.label}
+            options={userOptions ?? []}
+            multiple={false}
+          />
+          <br />
+          <SearchComboBox
+            name={form.teamMembers.name}
+            label={form.teamMembers.label}
+            options={userOptions ?? []}
+          />
         </>
       )}
     </FormikInit>
