@@ -76,6 +76,7 @@ const symptomDurationUnits: Record<string, string>  ={
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addEncounter();
+  const [formData, setFormData] = useState<any>({});
   const { navigateBack } = useNavigation();
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
@@ -127,6 +128,12 @@ export const MedicalHistoryFlow = () => {
       navigateBack();
     }
   };
+
+  const handlePresentingComplaintsNext = (values: any)=>{
+    formData["presentingComplaints"] = values;
+    console.log(formData);
+    handleSkip();
+  }
 
   const handlePresentingComplaintsSubmission = (values: any) => {
    
@@ -919,7 +926,7 @@ export const MedicalHistoryFlow = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip} />
+        <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
         <AllergiesForm onSubmit={handleAllergiesSubmission} onSkip={handleSkip} />
         <MedicationsForm onSubmit={handleMedicationsSubmission} onSkip={handleSkip} />
         <PriorConditionsForm onSubmit={handleConditionsSubmission} onSkip={handleSkip} />
