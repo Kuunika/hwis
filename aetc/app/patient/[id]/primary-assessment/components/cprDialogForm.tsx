@@ -555,9 +555,15 @@ const CPRForm = () => {
   );
 };
 
-export const CPRDialogForm = () => {
+export const CPRDialogForm = ({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: () => void;
+}) => {
   return (
-    <GenericDialog maxWidth="md" open={true} title="CPR" onClose={() => {}}>
+    <GenericDialog maxWidth="md" open={open} title="CPR" onClose={setOpen}>
       <CPRForm />
     </GenericDialog>
   );
