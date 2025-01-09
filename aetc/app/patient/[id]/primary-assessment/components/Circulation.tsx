@@ -300,6 +300,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
   const [legImage, setLegImage] = useState<Array<any>>([]);
   const [abdomenImage, setAbdomenImage] = useState<Array<any>>([]);
+  const [cprDialog, setCprDialog] = useState(false);
   // const [bloodNotDoneOther, setBloodNotDoneOther] = useState(false);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
@@ -378,6 +379,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
               name={form.pulseInfo.name}
               label={form.pulseInfo.label}
               options={radioOptions}
+              getValue={(value) => {
+                if (value == NO) {
+                  setCprDialog(true);
+                }
+              }}
             />
           </FieldsContainer>
           {formValues[form.bleedingInfo.name] == YES && (
@@ -399,7 +405,10 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.pulseInfo.name] == NO && (
             <>
               <NotificationContainer message="Start cardiopulmonary resuscitation" />
-              <CPRDialogForm />
+              <CPRDialogForm
+                open={cprDialog}
+                onClose={() => setCprDialog(false)}
+              />
             </>
           )}
 
