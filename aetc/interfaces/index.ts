@@ -102,6 +102,7 @@ interface EncounterType {
 }
 
 export interface Obs {
+  group_members: any;
   obs_id: number;
   person_id: number;
   concept_id: number;

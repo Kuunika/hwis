@@ -23,6 +23,8 @@ import {
     useNavigation,
     useParameters,
 } from "@/hooks";
+import { concepts } from "@/constants";
+
 
 import {
     ConsultationContext,
@@ -31,16 +33,16 @@ import {
     PatientProfileContextType,
 } from "@/contexts";
 const dispositionOptions = [
-    { value: "dischargeHome", label: "Discharge home" },
-    { value: "awaitingSpecialtyReview", label: "Awaiting specialty review" },
-    { value: "admission", label: "Admission" },
-    { value: "theatre", label: "Theatre" },
-    { value: "interventionSuite", label: "Other intervention suite" },
-    { value: "shortStay", label: "Short stay" },
-    { value: "transfer", label: "Transfer to another facility" },
-    { value: "death", label: "Death" },
-    { value: "absconded", label: "Absconded" },
-    { value: "refusedTreatment", label: "Refused hospital treatment" },
+    { id: concepts.DISCHARGE_HOME, label: "Discharge home" },
+    { id: concepts.AWAITING_SPECIALITY_REVIEW, label: "Awaiting specialty review" },
+    { id: concepts.ADMISSION, label: "Admission" },
+    { id: concepts.THEATRE, label: "Theatre" },
+    { id: concepts.OTHER_INTERVENTION_SUITE, label: "Other intervention suite" },
+    { id: concepts.SHORT_STAY, label: "Short stay" },
+    { id: concepts.TRANSFER_TO_ANOTHER_FACILITY, label: "Transfer to another facility" },
+    { id: concepts.DEATH, label: "Death" },
+    { id: concepts.ABSCONDED, label: "Absconded" },
+    { id: concepts.REFUSED_HOSPITAL_TREATMENT, label: "Refused hospital treatment" },
 ];
 
 function DispositionFeature() {
@@ -57,30 +59,31 @@ function DispositionFeature() {
 
     const renderForm = () => {
         switch (selectedDisposition) {
-            case "dischargeHome":
+            case concepts.DISCHARGE_HOME:
                 return <DischargeHomeForm />;
-            case "awaitingSpecialtyReview":
+            case concepts.AWAITING_SPECIALITY_REVIEW:
                 return <AwaitingSpecialityReviewForm />;
-            case "admission":
+            case concepts.ADMISSION:
                 return <AdmissionForm />;
-            case "theatre":
+            case concepts.THEATRE:
                 return <div>Theatre form coming soon!</div>;
-            case "interventionSuite":
+            case concepts.OTHER_INTERVENTION_SUITE:
                 return <div>Intervention Suite form coming soon!</div>;
-            case "shortStay":
+            case concepts.SHORT_STAY:
                 return <ShortStayForm />;
-            case "transfer":
+            case concepts.TRANSFER_TO_ANOTHER_FACILITY:
                 return <TransferForm />;
-            case "death":
+            case concepts.DEATH:
                 return <DeathForm />;
-            case "absconded":
+            case concepts.ABSCONDED:
                 return <AbscondedForm />;
-            case "refusedTreatment":
+            case concepts.REFUSED_HOSPITAL_TREATMENT:
                 return <RefusedTreatmentForm />;
             default:
                 return null;
         }
     };
+
     return (
         <MainGrid container spacing={2} mt={"2ch"}>
             {/* Left Panel */}
@@ -178,7 +181,7 @@ function DispositionFeature() {
                             Select a Disposition
                         </option>
                         {dispositionOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
+                            <option key={option.id} value={option.id}>
                                 {option.label}
                             </option>
                         ))}

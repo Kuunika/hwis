@@ -7,40 +7,49 @@ import {
     TextInputField,
     SearchComboBox,
 } from "@/components";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
 
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { Visit } from "@/interfaces";
+
 const wardOptions = [
-    { id: "2A", label: "2A Oncology Ward (General ward/High Dependency Unit)" },
-    { id: "2B", label: "2B Renal and Dermatology Ward" },
-    { id: "6A", label: "6A Female Orthopaedic Ward" },
-    { id: "4A", label: "4A Female Medical Ward (General ward/High Dependency Unit)" },
-    { id: "gynecology", label: "Gynecology Ward (General ward/High Dependency Unit)" },
-    { id: "labour", label: "Labour Ward (General ward/High Dependency Unit)" },
-    { id: "3B", label: "3B Female Medical Ward (General ward/High Dependency Unit)" },
-    { id: "3A", label: "3A TB Ward" },
-    { id: "hdr", label: "3A HDRU (High Dependency Respiratory Unit)" },
-    { id: "5A", label: "5A Male Surgical Ward (General ward/High Dependency Unit)" },
-    { id: "5B-female", label: "5B Female Surgical Ward (General ward/High Dependency Unit)" },
-    { id: "5B-ortho", label: "5B Orthopaedic Ward" },
-    { id: "5B-neuro", label: "5B Neurosurgical Ward (General ward/High Dependency Unit)" },
-    { id: "icu", label: "Intensive Care Unit (ICU)" },
-    { id: "theatre", label: "Theatre" },
-    { id: "ent", label: "ENT" },
-    { id: "ophthalmology", label: "Ophthalmology" },
+    { id: concepts.TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "2A Oncology Ward (General ward/High Dependency Unit)" },
+    { id: concepts.TWO_B_RENAL_AND_DERMATOLOGY_WARD, label: "2B Renal and Dermatology Ward" },
+    { id: concepts.SIX_A_FEMALE_ORTHOPAEDIC_WARD, label: "6A Female Orthopaedic Ward" },
+    { id: concepts.FOUR_A_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "4A Female Medical Ward (General ward/High Dependency Unit)" },
+    { id: concepts.GYNECOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "Gynecology Ward (General ward/High Dependency Unit)" },
+    { id: concepts.LABOUR_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "Labour Ward (General ward/High Dependency Unit)" },
+    { id: concepts.THREE_B_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "3B Female Medical Ward (General ward/High Dependency Unit)" },
+    { id: concepts.THREE_A_TB_WARD, label: "3A TB Ward" },
+    { id: concepts.THREE_A_HDRU_HIGH_DEPENDENCY_RESPIRATORY_UNIT, label: "3A HDRU (High Dependency Respiratory Unit)" },
+    { id: concepts.FIVE_A_MALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "5A Male Surgical Ward (General ward/High Dependency Unit)" },
+    { id: concepts.FIVE_B_FEMALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "5B Female Surgical Ward (General ward/High Dependency Unit)" },
+    { id: concepts.FIVE_B_ORTHOPAEDIC_WARD, label: "5B Orthopaedic Ward" },
+    { id: concepts.FIVE_B_NEUROSURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "5B Neurosurgical Ward (General ward/High Dependency Unit)" },
+    { id: concepts.INTENSIVE_CARE_UNIT_ICU, label: "Intensive Care Unit (ICU)" },
+    { id: concepts.THEATRE, label: "Theatre" },
+    { id: concepts.ENT, label: "ENT" },
+    { id: concepts.OPHTHALMOLOGY, label: "Ophthalmology" },
 ];
 
 const specialtyOptions = [
-    { id: "medicine", label: "Medicine" },
-    { id: "generalSurgery", label: "General Surgery" },
-    { id: "orthopedics", label: "Orthopedics" },
-    { id: "neurosurgery", label: "Neurosurgery" },
-    { id: "ent", label: "Ear, Nose, and Throat (ENT)" },
-    { id: "dental", label: "Dental and Maxillofacial Surgery" },
-    { id: "ophthalmology", label: "Ophthalmology" },
-    { id: "psychiatry", label: "Psychiatry" },
-    { id: "gynecology", label: "Gynecology and Obstetrics" },
-    { id: "criticalCare", label: "Critical Care" },
-    { id: "oncology", label: "Oncology" },
+    { id: concepts.MEDICINE, label: "Medicine" },
+    { id: concepts.GENERAL_SURGERY, label: "General Surgery" },
+    { id: concepts.ORTHOPEDICS, label: "Orthopedics" },
+    { id: concepts.NEUROSURGERY, label: "Neurosurgery" },
+    { id: concepts.EAR_NOSE_AND_THROAT_ENT, label: "Ear, Nose, and Throat (ENT)" },
+    { id: concepts.DENTAL_AND_MAXILLOFACIAL_SURGERY, label: "Dental and Maxillofacial Surgery" },
+    { id: concepts.OPHTHALMOLOGY, label: "Ophthalmology" },
+    { id: concepts.PSYCHIATRY, label: "Psychiatry" },
+    { id: concepts.GYNAECOLOGY_AND_OBSTETRICS, label: "Gynecology and Obstetrics" },
+    { id: concepts.CRITICAL_CARE, label: "Critical Care" },
+    { id: concepts.ONCOLOGY, label: "Oncology" },
 ];
 
 const validationSchema = Yup.object({
@@ -58,9 +67,52 @@ const initialValues = {
 };
 
 export default function AdmissionForm() {
-    const handleSubmit = (values: any) => {
-        console.log("Form Values: ", values);
-        alert("Form Submitted!");
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = addEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        const obs = [
+            {
+                concept: concepts.ADMISSION,
+                value: concepts.ADMISSION,
+                obsDatetime: currentDateTime,
+                group_members: [
+                    { concept: concepts.WARD, value: values.wardName, obsDatetime: currentDateTime },
+                    { concept: concepts.BED_NUMBER, value: values.bedNumber, obsDatetime: currentDateTime },
+
+                ],
+            },
+        ];
+
+        const payload = {
+            encounterType: encounters.DISCHARGE_PATIENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            toast.success("Admission information submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Admission information: ", error);
+            toast.error("Failed to submit Admission information.");
+        }
     };
 
     return (

@@ -306,6 +306,17 @@ export const DesktopView = () => {
               },
             ]}
           />
+          {/* New Button */}
+          <ConsultationCard
+            disabled={!isOnList}
+            title="Surgical Notes"
+            links={[
+              {
+                title: "Surgical Notes",
+                link: `/patient/${params.id}/template-forms`,
+              },
+            ]}
+          />
 
         </WrapperBox>
         <BasicAccordion />

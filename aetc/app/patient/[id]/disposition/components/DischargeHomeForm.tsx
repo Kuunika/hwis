@@ -16,11 +16,13 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 
 import * as Yup from "yup";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { Visit } from "@/interfaces";
 
 const followUpOptions = [
-    { id: "healthCenter", label: "Health Center" },
-    { id: "specialistClinic", label: "Specialist Clinic" },
-    { id: "districtHospital", label: "District Hospital" },
+    { id: concepts.HEALTH_CENTER, label: "Health Center" },
+    { id: concepts.SPECIALIST_CLINIC, label: "Specialist Clinic" },
+    { id: concepts.DISTRICT_HOSPITAL, label: "District Hospital" },
 ];
 
 const specialistClinicOptions = [
@@ -52,46 +54,54 @@ const initialValues = {
 export default function DischargeHomeForm() {
     const { params } = useParameters();
     const { mutate: submitEncounter } = addEncounter();
-    // const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
-    // const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
 
 
-
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
         const currentDateTime = getDateTime();
 
-        // const obs = [
-        //     {
-        //         concept: concepts.DISPOSITION_OUTCOME,
-        //         value: concepts.DISCHARGE_HOME,
-        //         obsDatetime: currentDateTime,
-        //         group_members: [
-        //             { concept: concepts.DISCHARGE_PLAN, value: values.dischargePlan, obsDatetime: currentDateTime },
-        //             { concept: concepts.FOLLOW_UP_PLAN, value: values.followUpPlan, obsDatetime: currentDateTime },
-        //             { concept: concepts.HOME_INSTRUCTIONS, value: values.homeCareInstructions, obsDatetime: currentDateTime },
-        //             { concept: concepts.FOLLOW_UP_DETAILS, value: values.followUpDetails, obsDatetime: currentDateTime },
-        //             { concept: concepts.DISCHARGE_NOTES, value: values.dischargeNotes, obsDatetime: currentDateTime },
-        //             { concept: concepts.SPECIALIST_CLINIC, value: values.specialistClinic || "", obsDatetime: currentDateTime },
-        //         ],
-        //     },
-        // ];
+        const obs = [
+            {
+                concept: concepts.DISCHARGE_HOME,
+                value: concepts.DISCHARGE_HOME,
+                obsDatetime: currentDateTime,
+                group_members: [
+                    { concept: concepts.DISCHARGE_PLAN, value: values.dischargePlan, obsDatetime: currentDateTime },
+                    { concept: concepts.FOLLOWUP_PLAN, value: values.followUpPlan, obsDatetime: currentDateTime },
+                    { concept: concepts.HOME_CARE_INSTRUCTIONS, value: values.homeCareInstructions, obsDatetime: currentDateTime },
+                    { concept: concepts.FOLLOWUP_DETAILS, value: values.followUpDetails, obsDatetime: currentDateTime },
+                    { concept: concepts.DISCHARGE_NOTES, value: values.dischargeNotes, obsDatetime: currentDateTime },
+                    { concept: concepts.SPECIALIST_CLINIC, value: values.specialistClinic || "", obsDatetime: currentDateTime },
+                ],
+            },
+        ];
 
-        // const payload = {
-        //     encounterType: encounters.OUTPATIENT_DIAGNOSIS,
-        //     visit: activeVisit?.uuid,
-        //     patient: params.id,
-        //     encounterDatetime: currentDateTime,
-        //     obs,
-        // };
+        const payload = {
+            encounterType: encounters.DISCHARGE_PATIENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
 
-        // try {
-        //     await submitEncounter(payload);
-        //     toast.success("Discharge Home information submitted successfully!");
-        // } catch (error) {
-        //     console.error("Error submitting Discharge Home information: ", error);
-        //     toast.error("Failed to submit Discharge Home information.");
-        // }
+        try {
+            await submitEncounter(payload);
+            toast.success("Discharge Home information submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Discharge Home information: ", error);
+            toast.error("Failed to submit Discharge Home information.");
+        }
     };
 
     return (
