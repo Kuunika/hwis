@@ -1,4 +1,8 @@
-import { NotificationContainer } from "@/components";
+import {
+  FormDatePicker,
+  FormTimePicker,
+  NotificationContainer,
+} from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
 import React, { useEffect, useState } from "react";
 import {
@@ -348,37 +352,38 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
             <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
 
             <FieldsContainer mr="1ch">
-              <TextInputField
-                sx={{ width: "100%" }}
+              {/* <FormDatePicker  /> */}
+              <FormTimePicker
+                sx={{ width: "100%", my: "1ch" }}
                 name={form.startTimeIntervention.name}
                 label={form.startTimeIntervention.label}
-                id={form.startTimeIntervention.name}
+                // id={form.startTimeIntervention.name}
               />
-              <TextInputField
-                sx={{ width: "100%" }}
+              <FormTimePicker
+                sx={{ width: "100%", my: "1ch" }}
                 name={form.finishTimeIntervention.name}
                 label={form.finishTimeIntervention.label}
-                id={form.finishTimeIntervention.name}
+                // id={form.finishTimeIntervention.name}
               />
             </FieldsContainer>
-            <FieldsContainer>
-              <SearchComboBox
-                name={form.deviceForIntervention.name}
-                label={form.deviceForIntervention.label}
-                multiple
-                options={[
-                  { label: "Bag and mask", id: concepts.BAG_AND_MASK },
-                  {
-                    label: "Laryngeal Mask Airway and bag",
-                    id: concepts.LARYNGEAL_MASK_AIRWAY_AND_BAG,
-                  },
-                  {
-                    label: "Endotracheal tube (ETT)",
-                    id: concepts.ENDOTRACHEAL,
-                  },
-                ]}
-              />
-            </FieldsContainer>
+
+            <SearchComboBox
+              name={form.deviceForIntervention.name}
+              label={form.deviceForIntervention.label}
+              sx={{ width: "100%" }}
+              multiple
+              options={[
+                { label: "Bag and mask", id: concepts.BAG_AND_MASK },
+                {
+                  label: "Laryngeal Mask Airway and bag",
+                  id: concepts.LARYNGEAL_MASK_AIRWAY_AND_BAG,
+                },
+                {
+                  label: "Endotracheal tube (ETT)",
+                  id: concepts.ENDOTRACHEAL,
+                },
+              ]}
+            />
           </FormFieldContainerLayout>
         )}
 
