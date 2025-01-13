@@ -9,6 +9,7 @@ import { concepts } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary } from "@mui/material";
+import { Field, getIn } from "formik";
 
 
 interface Observation {
@@ -33,7 +34,7 @@ type Prop = {
 
   type Obstetrics = {
     age_at_menarche: number;
-    last_menstral: string;
+    last_menstrual: string;
     gestational_age: number;
     number_of_previous_pregnancies: number;
     previous_pregnancy_outcomes: string[]; // Array for pregnancy outcomes
@@ -44,7 +45,7 @@ type Prop = {
   // Define the obstetricsTemplate with initial values
   const obstetricsTemplate: Obstetrics = {
     age_at_menarche: 0,
-    last_menstral: "",
+    last_menstrual: "",
     gestational_age: 0,
     number_of_previous_pregnancies: 0,
     previous_pregnancy_outcomes: [],
@@ -58,34 +59,45 @@ type Prop = {
 
   const obstetricsFormConfig = {
     age_at_menarche: {
-      name: "obstetrics.age_at_menarche",
+      name: "age_at_menarche",
       label: "Age at Menarche",
     },
-    last_menstral: {
-      name: "obstetrics.last_menstral",
+    last_menstrual: {
+      name: "last_menstrual",
       label: "Last normal menstrual period",
     },
     gestational_age: {
-      name: "obstetrics.gestational_age",
+      name: "gestational_age",
       label: "Gestational age (weeks)",
     },
     number_of_previous_pregnancies: {
-      name: "obstetrics.number_of_previous_pregnancies",
+      name: "number_of_previous_pregnancies",
       label: "Number of previous pregnancies",
     },
     previous_pregnancy_outcomes: (index: number) => ({
-      name: `obstetrics.previous_pregnancy_outcomes[${index}]`,
+      name: `previous_pregnancy_outcomes[${index}]`,
       label: `Outcome of Pregnancy ${index + 1}`,
     }),
     number_of_births: (index: number) => ({
-      name: `obstetrics.number_of_births[${index}]`,
+      name: `number_of_births[${index}]`,
       label: `Number of births (Pregnancy ${index + 1})`,
     }),
     contraceptive_history: {
-      name: "obstetrics.contraceptive_history",
+      name: "contraceptive_history",
       label: "Contraceptive history",
     },
   };
+
+  const ErrorMessage = ({ name }: { name: string }) => (
+   <Field
+     name={name}
+     render={({ form }: { form: any }) => {
+       const error = getIn(form.errors, name);
+       const touch = getIn(form.touched, name);
+       return touch && error ? error : null;
+     }}
+   />
+  );
 
 export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
   const { params } = useParameters();
@@ -118,21 +130,64 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
         { id: concepts.STILL_BIRTH, label: 'Stillbirth' },
         { id: concepts.LIVE_BIRTH, label: 'Live birth' },
       ];
-  
 
-const schema = yup.object().shape({
-    [obstetricsFormConfig.previous_pregnancy_outcomes.name]: yup
-      .array()
-      .of(
-        yup.object().shape({
-          value: yup.string().required(),
-        })
-      )
-      .required("At least one allergy must be selected"),
-  });
+      const schema = yup.object().shape({
+        number_of_previous_pregnancies: yup
+        .number()
+        .required("Number of previous pregnancies is required")
+        .min(0, "Number of previous pregnancies cannot be negative")
+        .integer("Number of pregnancies must be an integer"),
+    
+        [obstetricsFormConfig.previous_pregnancy_outcomes.name]: yup
+        .array()
+        .of(
+          yup
+            .string()
+            .required("Pregnancy outcomes are required")
+        )
+        .test("pregnancy-outcomes", "Pregnancy outcomes must match the number of pregnancies", function (outcomes) {
+          const numPregnancies = this.parent[obstetricsFormConfig.number_of_previous_pregnancies.name];
+          return outcomes?.length === numPregnancies;
+        }),
+    
+        [obstetricsFormConfig.number_of_births.name]: yup.array().of(
+          yup.number().when(obstetricsFormConfig.previous_pregnancy_outcomes(0).name, (previous_pregnancy_outcomes, schema) => {
+            return previous_pregnancy_outcomes && previous_pregnancy_outcomes.some((outcome) => outcome === "Live Birth")
+              ? schema.required("Number of births is required for live birth outcomes").positive("Number of births must be greater than 0")
+              : schema.nullable();  
+          })
+        ),
+            
+        obstetrics: yup.object().shape({
+          [obstetricsFormConfig.age_at_menarche.name]: yup.number()
+            .required("Age at menarche is required")
+            .positive("Age at menarche must be a positive number")
+            .integer("Age must be an integer"),
+      
+          [obstetricsFormConfig.last_menstrual.name]: yup.date()
+            .required("Last menstrual date is required")
+            .nullable()
+            .max(new Date(), "Date cannot be in the future"),
+      
+            [obstetricsFormConfig.gestational_age.name]: yup.number()
+                .positive("Gestational age must be a positive number"),
+              otherwise: yup.number().nullable(),
+     
+              [obstetricsFormConfig.number_of_previous_pregnancies.name]: yup.number()
+            .required("Number of previous pregnancies is required")
+            .min(0, "Number of previous pregnancies cannot be negative")
+            .integer("Number of pregnancies must be an integer"),
+          
+    
+    
+
+    
+        }),
+      });
 
 
   const handleSubmit = () => {
+    console.log(formValues)
     onSubmit(formValues);
   };
 
@@ -219,8 +274,9 @@ return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
-      submitButton={false} >
+      onSubmit={handleSubmit}
+      submitButton={false} 
+      enableReinitialize={true}>
     <FormValuesListener getValues={setFormValues} />
     <FormFieldContainer direction="row">
     <TextInputField
@@ -228,17 +284,30 @@ return (
               name={obstetricsFormConfig.age_at_menarche.name}
               label={obstetricsFormConfig.age_at_menarche.label}
             />
+                               <div style={{ color: "red", fontSize: "0.875rem" }}>
+                               <ErrorMessage
+                     name={`obstetrics.age_at_menarche`}
+                   />
+                   </div>
     <FormDatePicker
-      name={obstetricsFormConfig.last_menstral.name}
-      label={obstetricsFormConfig.last_menstral.label}
+      name={obstetricsFormConfig.last_menstrual.name}
+      label={obstetricsFormConfig.last_menstrual.label}
       sx={{ background: 'white', marginRight:'2ch', marginLeft:'2ch', width:'150px'}}
-    />
+    />                               <div style={{ color: "red", fontSize: "0.875rem" }}>
+    <ErrorMessage
+name={`obstetrics.last_menstrual`}
+/>
+</div>
     <TextInputField
               id={obstetricsFormConfig.gestational_age.name}
               name={obstetricsFormConfig.gestational_age.name}
               label={obstetricsFormConfig.gestational_age.label}
               sx={{ marginRight: '2ch'}}
             />
+            <div style={{ color: "red", fontSize: "0.875rem" }}>
+    <ErrorMessage
+name={`obstetrics.gestational_age`}
+/></div>
 <TextInputField
               id={obstetricsFormConfig.number_of_previous_pregnancies.name}
               name={obstetricsFormConfig.number_of_previous_pregnancies.name}
@@ -252,13 +321,13 @@ return (
             <FormFieldContainer direction="column">
       {pregnancies!=0 &&
         Array.from({ length: pregnancies }).map((_, index) => (
-          <React.Fragment key={`pregnancy_outcome_${index}`}>
+          <>
             <SearchComboBox
               options={pregnancyOutcomeOptions}
               name={obstetricsFormConfig.previous_pregnancy_outcomes(index).name}
               label={obstetricsFormConfig.previous_pregnancy_outcomes(index).label}
               multiple={false}
-              getValue={(value) => handleOutcomeChange(index, value)} // Handle change with index
+              getValue={(value) => handleOutcomeChange(index, value)} 
             />
             
             {liveBirthSelections[index] && (
@@ -269,15 +338,23 @@ return (
                 sx={{ marginRight: '2ch', mt:'1ch' }}
               />
             )}
-          </React.Fragment>
+                        <div style={{ color: "red", fontSize: "0.875rem" }}>
+    <ErrorMessage
+name={obstetricsFormConfig.previous_pregnancy_outcomes(index).name}
+/></div>
+          </>
         ))}
     </FormFieldContainer>
         <SearchComboBox options={contraceptiveOptions}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
-
-    <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
- </WrapperBox>
+        <div style={{ color: "red", fontSize: "0.875rem" }}>
+                               <ErrorMessage
+                     name={`obstetrics.contraceptive_history`}
+                   />
+                   </div>
+                   <WrapperBox sx={{mt: '2ch' }}>
+    <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+  </WrapperBox>
 </FormikInit>
 </>
 );

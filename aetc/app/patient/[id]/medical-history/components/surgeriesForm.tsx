@@ -14,7 +14,7 @@ import {
   import React, { useEffect, useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
-import { FieldArray } from "formik";
+import { Field, FieldArray, getIn } from "formik";
 import { concepts } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
@@ -87,10 +87,14 @@ interface ProcessedObservation {
   const schema = Yup.object().shape({
     surgeries: Yup.array().of(
       Yup.object().shape({
-        surgical_procedure_name: Yup.string().required("Drug name is required"),
-        surgical_procedure_date: Yup.string().required("Dose is required"),
-        surgical_procedure_indication: Yup.string().required("Route is required"),
-        surgical_procedure_complications: Yup.string().required("Prescriber is required"),
+        procedure: Yup.string().required("Surgical procedure is required"),
+        other: Yup.string().optional(), // Optional field
+        date: Yup.date()
+          .required("Date of surgery is required")
+          .nullable()
+          .max(new Date(), "Date cannot be in the future"), // Ensure date is not in the future
+        complication: Yup.string().optional(), // Optional field
+        indication: Yup.string().required("Indication is required"),
       })
     ),
   });
@@ -109,6 +113,16 @@ interface ProcessedObservation {
     {id: concepts.SKIN_GRAFT, label: 'Skin graft'},
     {id: concepts.OTHER_SURGICAL_PROCEDURE, label: 'Other procedure specify'}
   ];
+    const ErrorMessage = ({ name }: { name: string }) => (
+     <Field
+       name={name}
+       render={({ form }: { form: any }) => {
+         const error = getIn(form.errors, name);
+         const touch = getIn(form.touched, name);
+         return touch && error ? error : null;
+       }}
+     />
+    );
   
   export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
     const { params } = useParameters();
@@ -180,78 +194,80 @@ interface ProcessedObservation {
             ))}
         </div>
         </div>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialValues} 
-        onSubmit={onSubmit}
-        enableReinitialize={true}
-        submitButton={false}
-      >
-        {({ values, setFieldValue }) => (
+        <FormikInit
+  initialValues={initialValues}
+  validationSchema={schema}
+  onSubmit={onSubmit}
+  enableReinitialize
+  submitButton={false}
+>
+  {({ values, setFieldValue }) => (
+    <>
+      <FieldArray name="surgeries">
+        {({ push, remove }) => (
           <>
-            <FormValuesListener getValues={setFormValues} />
-            
-            <WrapperBox sx={{ mb: '2ch' }}>
-              <FieldArray name="surgeries">
-                {({ push, remove }) => (
-                  <DynamicFormList
-                    items={values.surgeries}
-                    setItems={(newItems) => setFieldValue("surgeries", newItems)}
-                    newItem={surgeryTemplate}
-                    renderFields={(item, index) => (
-                      <>
-                        <SearchComboBox
-                          name={surgeryFormConfig.surgical_procedure_name(index).name}
-                          label={surgeryFormConfig.surgical_procedure_name(index).label}
-                          getValue={(value)=>{
-                            if(value === concepts.OTHER_SURGICAL_PROCEDURE){
-                              setShowOther((prev) => ({
-                            ...prev,
-                            [index]: true,
-                          }));
-                          }}}
-                          options={surgicalProcedures}
-                          multiple={false}
-                          sx={{ width: '100%' }}
-                        />
-                        {showOther[index] &&(<TextInputField
-                        id={surgeryFormConfig.surgical_procedure_other(index).name}
-                        name={surgeryFormConfig.surgical_procedure_other(index).name}
-                        label={surgeryFormConfig.surgical_procedure_name(index).label}
-                        />)}
-                        
-                        <TextInputField
-                          id={surgeryFormConfig.surgical_procedure_indication(index).name}
-                          name={surgeryFormConfig.surgical_procedure_indication(index).name}
-                          label={surgeryFormConfig.surgical_procedure_indication(index).label}
-                          multiline={false}
-                          sx={{ width: '100%' }}
-                        />
-                        <FormDatePicker 
-                          name={surgeryFormConfig.surgical_procedure_date(index).name}  
-                          label={surgeryFormConfig.surgical_procedure_date(index).label}  
-                          sx={{ background: 'white', width: '150px' }}
-                        />
-                        <TextInputField
-                          id={surgeryFormConfig.surgical_procedure_complications(index).name}
-                          name={surgeryFormConfig.surgical_procedure_complications(index).name}
-                          label={surgeryFormConfig.surgical_procedure_complications(index).label}
-                          sx={{ width: '100%' }}
-                          multiline={true}
-                          rows={3}
-                        />
-                      </>
-                    )}
+            <DynamicFormList
+              items={values.surgeries}
+              setItems={(newItems) => setFieldValue("surgeries", newItems)}
+              newItem={surgeryTemplate} // Make sure you have this template defined
+              renderFields={(item, index) => (
+                <>
+                  <TextInputField
+                    id={`surgeries[${index}].procedure`}
+                    name={`surgeries[${index}].procedure`}
+                    label="Surgical Procedure"
+                    sx={{ width: '100%' }}
                   />
-                )}
-              </FieldArray>
-            </WrapperBox>
-    
-            <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
-            <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
+                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage name={`surgeries[${index}].procedure`} />
+                  </div>
+
+                  <TextInputField
+                    id={`surgeries[${index}].other`}
+                    name={`surgeries[${index}].other`}
+                    label="Other Details (optional)"
+                    sx={{ width: '100%' }}
+                  />
+
+                  <FormDatePicker
+                    name={`surgeries[${index}].date`}
+                    label="Date of Surgery"
+                    sx={{ background: 'white', width: '150px' }}
+                  />
+                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage name={`surgeries[${index}].date`} />
+                  </div>
+
+                  <TextInputField
+                    id={`surgeries[${index}].complication`}
+                    name={`surgeries[${index}].complication`}
+                    label="Complications (optional)"
+                    sx={{ width: '100%' }}
+                  />
+
+                  <TextInputField
+                    id={`surgeries[${index}].indication`}
+                    name={`surgeries[${index}].indication`}
+                    label="Indication"
+                    sx={{ width: '100%' }}
+                  />
+                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage name={`surgeries[${index}].indication`} />
+                  </div>
+                </>
+              )}
+            />
+
+<WrapperBox sx={{mt: '2ch' }}>
+    <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+  </WrapperBox>
           </>
         )}
-      </FormikInit>
+      </FieldArray>
+    </>
+  )}
+</FormikInit>
       </>
     );
 
