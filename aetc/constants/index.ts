@@ -1016,6 +1016,8 @@ export const concepts = {
   SPO2:"SPO2",
   TEAM_LEADER:"TEAM_LEADER",
   TEAM_MEMBERS:"TEAM_MEMBERS",
+  TIME:"TIME",
+  DATE:"DATE",
 };
 
 export const conceptNames= {

@@ -1,7 +1,9 @@
 import {
   FieldsContainer,
+  FormDatePicker,
   FormFieldContainerMultiple,
   FormikInit,
+  FormTimePicker,
   GenericDialog,
   RadioGroupInput,
   SearchComboBox,
@@ -14,7 +16,7 @@ import { getInitialValues } from "@/helpers";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { getAllUsers } from "@/hooks/users";
 import { Box, Typography } from "@mui/material";
-import { FieldArray } from "formik";
+import { Field, FieldArray } from "formik";
 import { useState } from "react";
 import { GiMedicines } from "react-icons/gi";
 import * as Yup from "yup";
@@ -100,6 +102,15 @@ const form = {
     name: concepts.TEAM_MEMBERS,
     label: "Team Members",
   },
+  time: {
+    name: concepts.TIME,
+    label: "Time of Call",
+  },
+
+  date: {
+    name: concepts.DATE,
+    label: "Date of Call",
+  },
 };
 
 const initialValues = getInitialValues(form);
@@ -181,6 +192,8 @@ const validationSchema = Yup.object().shape({
     .label(form.verbalResponse.label),
   [form.teamLeader.name]: Yup.string().required().label(form.teamLeader.label),
   [form.teamMembers.name]: Yup.array().required().label(form.teamMembers.label),
+  [form.date.name]: Yup.date().required().label(form.date.label),
+  [form.time.name]: Yup.string().required().label(form.time.label),
 });
 
 const sites = [
@@ -305,12 +318,22 @@ const CPRForm = () => {
     >
       {({ values, setFieldValue }) => (
         <>
+          <FormDatePicker
+            width={"100%"}
+            name={form.date.name}
+            label={form.date.label}
+          />
+          <FormTimePicker
+            sx={{ my: "1ch" }}
+            name={form.time.name}
+            label={form.time.label}
+          />
+          {/* <FieldsContainer></FieldsContainer> */}
           <FormFieldContainerMultiple>
             <RadioGroupInput
               options={radioOptions}
               label={form.cardiacArrest.label}
               name={form.cardiacArrest.name}
-              //   sx={{ width: "1ch", backgroundColor: "red" }}
               row
             />
             <RadioGroupInput
@@ -350,6 +373,11 @@ const CPRForm = () => {
                       Record {index + 1}
                     </Typography>
                     <br />
+                    <FormTimePicker
+                      sx={{ my: "1ch" }}
+                      name="time"
+                      label="Time"
+                    />
                     <FieldsContainer sx={{ width: "100%" }} mr="1ch">
                       <SearchComboBox
                         name={`records.${index}.rhythm`}

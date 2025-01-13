@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -39,16 +39,24 @@ export const FormTimePicker: FC<Prop> = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <TimePicker
         sx={{
-          width,
-          my: "1ch",
-          mr: "1ch",
-          "& fieldset": { borderRadius: "10px" },
+          width: width,
+          backgroundColor: "white",
+          // "label + &": {
+          //   marginTop: "2.3ch",
+          // },
+          // "& .MuiInputBase-input": {
+          //   width: "100%",
+          //   borderRadius: "5px",
+          // },
+          // "& .MuiFormHelperText-root": {
+          //   // width: helperTextWidth,
+          // },
+          // "& fieldset": { borderRadius: "5px" },
           ...sx,
         }}
         label={label}
         // value={value}
         onChange={(dateValue: any) => {
-          //   console.log(dayjs(dateValue).format("HH:mm:ss"));
           setFieldValue(name, dayjs(dateValue).format("HH:mm:ss"));
         }}
         disabled={disabled}
