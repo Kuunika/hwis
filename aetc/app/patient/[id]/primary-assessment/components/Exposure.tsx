@@ -28,7 +28,7 @@ const form = {
   },
   skinRashInfo: {
     name: concepts.SKIN_RASH,
-    label: "Does the patient have skin rash",
+    label: "Does the patient have a rash?",
   },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,

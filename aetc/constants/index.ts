@@ -1018,6 +1018,8 @@ export const concepts = {
   TEAM_MEMBERS:"TEAM_MEMBERS",
   TIME:"TIME",
   DATE:"DATE",
+  ABNORMALITY_DESCRIPTION:"ABNORMALITY_DESCRIPTION",
+ 
 };
 
 export const conceptNames= {
