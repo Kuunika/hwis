@@ -703,18 +703,18 @@ export const Circulation = ({ onSubmit }: Prop) => {
               label={form.abdnomenDistention.label}
               options={radioOptions}
             />
-            <RadioGroupInput
+            {/* <RadioGroupInput
               name={form.anyOtherAbnormalitiesOnAbdomen.name}
               label={form.anyOtherAbnormalitiesOnAbdomen.label}
               options={radioOptions}
-            />
-          </FieldsContainer>
-          {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
+            /> */}
+            {/* </FieldsContainer> */}
+            {/* {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
             <>
               <AbdomenImage onValueChange={setAbdomenImage} />
             </>
-          )}
-          <FieldsContainer>
+          )} */}
+            {/* <FieldsContainer> */}
             <RadioGroupInput
               name={form.abnormalitiesInfo.name}
               label={form.abnormalitiesInfo.label}
