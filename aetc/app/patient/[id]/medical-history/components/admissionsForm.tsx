@@ -3,7 +3,7 @@ import { FormDatePicker, MainButton, SearchComboBox, TextInputField, WrapperBox,
 import * as yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { TableCell } from "@mui/material";
-import { FieldArray } from "formik";
+import { Field, FieldArray, getIn } from "formik";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { getFacilities, useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
@@ -83,6 +83,18 @@ const admissionsFormConfig = {
   }),
 };
 
+
+  const ErrorMessage = ({ name }: { name: string }) => (
+   <Field
+     name={name}
+     render={({ form }: { form: any }) => {
+       const error = getIn(form.errors, name);
+       const touch = getIn(form.touched, name);
+       return touch && error ? error : null;
+     }}
+   />
+  );
+  
 export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   const { params } = useParameters();
   const [formValues, setFormValues] = useState<any>({});
@@ -105,15 +117,32 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
   const schema = yup.object().shape({
-    // Validation schema
-    [admissionsFormConfig.admission_date(0).name]: yup.date().nullable(),
-    [admissionsFormConfig.hospitals(0).name]: yup.string().nullable(),
-    [admissionsFormConfig.wards(0).name]: yup.string().nullable(),
-    [admissionsFormConfig.diagnoses(0).name]: yup.string().nullable(),
+    admissions: yup.array().of(
+      yup.object().shape({
+        date: yup
+          .date()
+          .nullable()
+          .required("Admission date is required")
+          .typeError("Invalid date format")
+          .max(new Date(), "Admission date cannot be in the future"),
+        hospital: yup.string().nullable().required("Hospital name is required"),
+        ward: yup.string().nullable().required("Ward is required"),
+        diagnoses: yup.string().nullable().required("Diagnosis is required"),
+        interventions: yup.string().nullable().required("Interventions are required"),
+        discharge_instructions: yup
+          .string()
+          .nullable()
+          .required("Discharge instructions are required"),
+        follow_up_plans: yup
+          .string()
+          .nullable()
+          .required("Follow-up plans are required"),
+      })
+    ),
   });
-
   
   const handleSubmit = () => {
+    console.log(formValues);
     onSubmit(formValues);
   };
 
@@ -205,7 +234,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
           
           <WrapperBox sx={{ mb: '2ch' }}>
             <FieldArray name="admissions">
-              {({ push, remove }) => (
+              {({  }) => (
                 <DynamicFormList
                   items={values.admissions}
                   setItems={(newItems) => setFieldValue("admissions", newItems)}
@@ -217,6 +246,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         label={admissionsFormConfig.admission_date(index).label}
                         sx={{ background: "white", width: "220px" }}
                       />
+                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={admissionsFormConfig.admission_date(index).name}
+                    />
+                  </div>
                       <SearchComboBox
                         name={admissionsFormConfig.hospitals(index).name}
                         label={admissionsFormConfig.hospitals(index).label}
@@ -224,6 +258,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiple={false}
                         sx={{ width: "150px" }}
                       />
+                                        <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={admissionsFormConfig.hospitals(index).name}
+                    />
+                  </div>
                       <TextInputField
                         id={admissionsFormConfig.wards(index).name}
                         name={admissionsFormConfig.wards(index).name}
@@ -231,6 +270,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiline={false}
                         sx={{ width: "150px" }}
                       />
+                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={admissionsFormConfig.wards(index).name}
+                    />
+                  </div>
                       <SearchComboBox
                         name={admissionsFormConfig.diagnoses(index).name}
                         label={admissionsFormConfig.diagnoses(index).label}
@@ -238,6 +282,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiple={false}
                         sx={{ width: "150px" }}
                       />
+                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={admissionsFormConfig.diagnoses(index).name}
+                    />
+                  </div>
                       <TextInputField
                         id={admissionsFormConfig.interventions(index).name}
                         name={admissionsFormConfig.interventions(index).name}
@@ -245,6 +294,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiline
                         rows={4}
                       />
+                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={admissionsFormConfig.interventions(index).name}
+                    />
+                  </div>
                       <TextInputField
                         id={admissionsFormConfig.discharge_instructions(index).name}
                         name={admissionsFormConfig.discharge_instructions(index).name}
@@ -252,6 +306,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiline
                         rows={4}
                       />
+                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={admissionsFormConfig.discharge_instructions(index).name}
+                    />
+                  </div>
                       <TextInputField
                         id={admissionsFormConfig.follow_up_plans(index).name}
                         name={admissionsFormConfig.follow_up_plans(index).name}
@@ -259,6 +318,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiline
                         rows={4}
                       />
+                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={admissionsFormConfig.follow_up_plans(index).name}
+                    />
+                  </div>
                     </>
                   )}
                 />
@@ -266,8 +330,8 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
             </FieldArray>
           </WrapperBox>
   
-          <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
-          <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
+          <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+          <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
         </>
       )}
     </FormikInit>

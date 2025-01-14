@@ -150,12 +150,12 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
           return outcomes?.length === numPregnancies;
         }),
     
-        [obstetricsFormConfig.number_of_births.name]: yup.array().of(
-          yup.number().when(obstetricsFormConfig.previous_pregnancy_outcomes(0).name, (previous_pregnancy_outcomes, schema) => {
-            return previous_pregnancy_outcomes && previous_pregnancy_outcomes.some((outcome) => outcome === "Live Birth")
-              ? schema.required("Number of births is required for live birth outcomes").positive("Number of births must be greater than 0")
-              : schema.nullable();  
-          })
+        [obstetricsFormConfig.number_of_births.name]: yup
+        .array()
+        .of(
+          yup
+            .number()
+            .required("Pregnancy outcomes are required")
         ),
             
         obstetrics: yup.object().shape({

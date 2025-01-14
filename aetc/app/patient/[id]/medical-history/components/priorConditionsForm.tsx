@@ -156,6 +156,7 @@ import { Obs } from "@/interfaces";
     }, [diagnoses, data]);
 
     const handleSubmit = () => {
+
      onSubmit(formValues);
     };
   
