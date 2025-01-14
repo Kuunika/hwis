@@ -22,7 +22,7 @@ const form = {
   },
   abnormality: {
     name: concepts.ABNORMALITIES,
-    label: "Are there abnormalities on this Region?",
+    label: "Are there abnormalities on this Region",
   },
 };
 
@@ -58,7 +58,7 @@ export const OtherAbnormalityForm = (props: Props) => {
       validationSchema={schema}
       initialValues={getInitialValues(form)}
       onSubmit={(values: any) =>
-        props.onSubmit(values, getFormLabels(form, options, []))
+        props.onSubmit(values, getFormLabels(form, options, yesNoOptions))
       }
       submitButton={false}
       submitButtonText="next"

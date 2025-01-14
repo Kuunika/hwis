@@ -100,10 +100,10 @@ const form = {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is There Any Other Abnormalites",
   },
-  anyOtherAbnormalitiesOnAbdomen: {
-    name: concepts.IS_THERE_OTHER_OBDONORMALITIES,
-    label: "Is There Any Other Abnormalities on the Abdomen",
-  },
+  // anyOtherAbnormalitiesOnAbdomen: {
+  //   name: concepts.IS_THERE_OTHER_OBDONORMALITIES,
+  //   label: "Is There Any Other Abnormalities on the Abdomen",
+  // },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
@@ -205,9 +205,9 @@ const schema = yup.object({
   [form.anyOtherAbnormalities.name]: yup
     .string()
     .label(form.anyOtherAbnormalities.label),
-  [form.anyOtherAbnormalitiesOnAbdomen.name]: yup
-    .string()
-    .label(form.anyOtherAbnormalitiesOnAbdomen.label),
+  // [form.anyOtherAbnormalitiesOnAbdomen.name]: yup
+  //   .string()
+  //   .label(form.anyOtherAbnormalitiesOnAbdomen.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
   [form.assessPeripheries.name]: yup
     .string()
@@ -323,12 +323,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(legImage),
       },
-      {
-        concept: form.anyOtherAbnormalitiesOnAbdomen.name,
-        value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
-        obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abdomenImage),
-      },
+      // {
+      //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
+      //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
+      //   obsDatetime: getDateTime(),
+      //   group_members: flattenImagesObs(abdomenImage),
+      // },
     ];
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
