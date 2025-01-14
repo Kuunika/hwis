@@ -32,7 +32,15 @@ const form = {
   },
   abnormalityDescription: {
     name: concepts.ABNORMALITY_DESCRIPTION,
-    label: "Description of Rush",
+    label: "Description of Other Skin Abnormalities",
+  },
+  injury: {
+    name: concepts.INJURY,
+    label: "is there an injury on this region?",
+  },
+  descriptionOfInjury: {
+    name: concepts.DESCRIPTION_OF_INJURY,
+    label: "Description of Injury",
   },
 };
 
@@ -45,6 +53,10 @@ const schema = Yup.object().shape({
     .label(form.skinAbnormalities.label),
   [form.abnormalityDescription.name]: Yup.string().label(
     form.abnormalityDescription.label
+  ),
+  [form.injury.name]: Yup.string().required().label(form.injury.label),
+  [form.descriptionOfInjury.name]: Yup.string().label(
+    form.descriptionOfInjury.label
   ),
 });
 
@@ -74,6 +86,7 @@ const yesNoOptions = [
 export const RushForm = (props: Props) => {
   const [showRush, setShowRush] = useState(false);
   const [showAbnormality, setShowAbnormality] = useState(false);
+  const [showInjury, setShowInjury] = useState(false);
 
   return (
     <FormikInit
@@ -127,6 +140,26 @@ export const RushForm = (props: Props) => {
             sx={{ width: "100%" }}
             name={form.abnormalityDescription.name}
             label={form.abnormalityDescription.label}
+            id={""}
+          />
+        </>
+      )}
+      <RadioGroupInput
+        options={yesNoOptions}
+        name={form.injury.name}
+        label={form.injury.label}
+        getValue={(value) => setShowInjury(value === concepts.YES)}
+        row
+      />
+
+      {showInjury && (
+        <>
+          <TextInputField
+            rows={3}
+            multiline
+            sx={{ width: "100%" }}
+            name={form.descriptionOfInjury.name}
+            label={form.descriptionOfInjury.label}
             id={""}
           />
         </>
