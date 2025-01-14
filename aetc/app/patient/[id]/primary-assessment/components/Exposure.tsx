@@ -14,7 +14,7 @@ import * as yup from "yup";
 import { FullBodyBackImage, FullBodyImage } from "@/components/svgImages";
 import { concepts, encounters } from "@/constants";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -51,15 +51,15 @@ const schema = yup.object({
     .min(25)
     .max(45)
     .label(form.temperatureInfo.label),
-  [form.skinRashInfo.name]: yup
-    .string()
-    .required()
-    .label(form.skinRashInfo.label),
-  [form.abnormalities.name]: yup
-    .string()
-    .required()
-    .label(form.abnormalities.label),
-  [form.injuries.name]: yup.string().required().label(form.injuries.label),
+  // [form.skinRashInfo.name]: yup
+  //   .string()
+  //   .required()
+  //   .label(form.skinRashInfo.label),
+  // [form.abnormalities.name]: yup
+  //   .string()
+  //   .required()
+  //   .label(form.abnormalities.label),
+  // [form.injuries.name]: yup.string().required().label(form.injuries.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
 });
 
@@ -91,24 +91,24 @@ export const Exposure = ({ onSubmit }: Props) => {
     const formValues = { ...values };
 
     const obs = [
-      {
-        concept: form.skinRashInfo.name,
-        value: formValues[form.skinRashInfo.name],
-        obsDatetime: getDateTime(),
-        group_members: [
-          ...flattenImagesObs(skinRashInfoImage),
-          ...flattenImagesObs(skinRashInfoBackImage),
-        ],
-      },
-      {
-        concept: form.abnormalities.name,
-        value: formValues[form.abnormalities.name],
-        obsDatetime: getDateTime(),
-        group_members: [
-          ...flattenImagesObs(abnormalitiesBackImage),
-          ...flattenImagesObs(abnormalitiesImage),
-        ],
-      },
+      // {
+      //   concept: form.skinRashInfo.name,
+      //   value: formValues[form.skinRashInfo.name],
+      //   obsDatetime: getDateTime(),
+      //   group_members: [
+      //     ...flattenImagesObs(skinRashInfoImage),
+      //     ...flattenImagesObs(skinRashInfoBackImage),
+      //   ],
+      // },
+      // {
+      //   concept: form.abnormalities.name,
+      //   value: formValues[form.abnormalities.name],
+      //   obsDatetime: getDateTime(),
+      //   group_members: [
+      //     ...flattenImagesObs(abnormalitiesBackImage),
+      //     ...flattenImagesObs(abnormalitiesImage),
+      //   ],
+      // },
       {
         concept: form.injuries.name,
         value: formValues[form.injuries.name],
@@ -120,9 +120,9 @@ export const Exposure = ({ onSubmit }: Props) => {
       },
     ];
 
-    delete formValues[form.abnormalities.name];
-    delete formValues[form.injuries.name];
-    delete formValues[form.skinRashInfo.name];
+    // delete formValues[form.abnormalities.name];
+    // delete formValues[form.injuries.name];
+    // delete formValues[form.skinRashInfo.name];
 
     handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
@@ -144,43 +144,54 @@ export const Exposure = ({ onSubmit }: Props) => {
           id={form.temperatureInfo.name}
         />
 
-        <RadioGroupInput
+        {/* <RadioGroupInput
           name={form.skinRashInfo.name}
           row
           label={form.skinRashInfo.label}
           options={radioOptions}
-        />
-
-        {formValues[form.skinRashInfo.name] == concepts.YES && (
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-              <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
-            </Box>
-            <Box>
-              <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
-            </Box>
+        /> */}
+        <br />
+        <br />
+        <Typography color={"grey"} variant="h5">
+          Select areas with rash, injuries and other abnormalities
+        </Typography>
+        <br />
+        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+            <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
           </Box>
-        )}
+          <Box>
+            <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
+          </Box>
+        </Box>
 
-        <RadioGroupInput
+        {/* {formValues[form.skinRashInfo.name] == concepts.YES && (
+        )} */}
+
+        {/* <RadioGroupInput
           name={form.abnormalities.name}
           row
           label={form.abnormalities.label}
           options={radioOptions}
-        />
+        /> */}
 
-        {formValues[form.abnormalities.name] == concepts.YES && (
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-              <FullBodyImage onValueChange={setAbnormalitiesImage} />
+        {/* {formValues[form.abnormalities.name] == concepts.YES && (
+          <>
+            <Typography color={"grey"} variant="h6">
+              Rash
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+              <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+                <FullBodyImage onValueChange={setAbnormalitiesImage} />
+              </Box>
+              <Box>
+                <FullBodyBackImage onValueChange={setAbnormalitiesBackImage} />
+              </Box>
             </Box>
-            <Box>
-              <FullBodyBackImage onValueChange={setAbnormalitiesBackImage} />
-            </Box>
-          </Box>
-        )}
+          </>
+        )} */}
 
-        <RadioGroupInput
+        {/* <RadioGroupInput
           name={form.injuries.name}
           row
           label={form.injuries.label}
@@ -196,7 +207,7 @@ export const Exposure = ({ onSubmit }: Props) => {
               <FullBodyBackImage onValueChange={setInjuriesBackImage} />
             </Box>
           </Box>
-        )}
+        )} */}
 
         <TextInputField
           sx={{ width: "100%" }}
