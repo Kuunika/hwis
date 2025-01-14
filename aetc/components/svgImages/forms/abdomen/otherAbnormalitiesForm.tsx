@@ -6,7 +6,8 @@ import {
 } from "@/components";
 import { concepts, NO, YES } from "@/constants";
 import { getInitialValues, getFormLabels } from "@/helpers";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import { useState } from "react";
 
 import * as Yup from "yup";
 
@@ -21,7 +22,7 @@ const form = {
   },
   abnormality: {
     name: concepts.ABNORMALITIES,
-    label: "Are there abnormalities?",
+    label: "Are there abnormalities on this Region?",
   },
 };
 
@@ -51,6 +52,7 @@ const yesNoOptions = [
 ];
 
 export const OtherAbnormalityForm = (props: Props) => {
+  const [show, setShow] = useState(false);
   return (
     <FormikInit
       validationSchema={schema}
@@ -65,17 +67,28 @@ export const OtherAbnormalityForm = (props: Props) => {
         options={yesNoOptions}
         name={form.abnormality.name}
         label={form.abnormality.label}
+        row
+        getValue={(value) => setShow(value === YES)}
       />
-      <SearchComboBox
-        name={form.tenderness.name}
-        label={form.tenderness.label}
-        options={options}
-      />
-      <SearchComboBox
-        name={form.wound.name}
-        label={form.wound.label}
-        options={options}
-      />
+      {show && (
+        <>
+          <br />
+          <Typography color={"grey"} variant="h6">
+            Select Descriptions if applicable
+          </Typography>
+          <br />
+          <SearchComboBox
+            name={form.tenderness.name}
+            label={form.tenderness.label}
+            options={options}
+          />
+          <SearchComboBox
+            name={form.wound.name}
+            label={form.wound.label}
+            options={options}
+          />
+        </>
+      )}
       <br />
       <Box sx={{ display: "flex", gap: "0.2ch" }}>
         <Button
