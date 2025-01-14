@@ -1,5 +1,10 @@
-import { FormikInit, SearchComboBox, TextInputField } from "@/components";
-import { concepts } from "@/constants";
+import {
+  FormikInit,
+  RadioGroupInput,
+  SearchComboBox,
+  TextInputField,
+} from "@/components";
+import { concepts, NO, YES } from "@/constants";
 import { getInitialValues, getFormLabels } from "@/helpers";
 import { Box, Button } from "@mui/material";
 
@@ -14,11 +19,18 @@ const form = {
     name: concepts.TENDERNESS,
     label: "Tenderness",
   },
+  abnormality: {
+    name: concepts.ABNORMALITIES,
+    label: "Are there abnormalities?",
+  },
 };
 
 const schema = Yup.object().shape({
-  [form.wound.name]: Yup.array().required().label(form.wound.label),
-  [form.tenderness.name]: Yup.array().required().label(form.tenderness.label),
+  [form.abnormality.name]: Yup.string()
+    .required()
+    .label(form.abnormality.label),
+  [form.wound.name]: Yup.array().label(form.wound.label),
+  [form.tenderness.name]: Yup.array().label(form.tenderness.label),
 });
 
 type Props = {
@@ -33,6 +45,11 @@ const options = [
   { id: concepts.WOUND, label: "Wound" },
 ];
 
+const yesNoOptions = [
+  { value: YES, label: "Yes" },
+  { value: NO, label: "No" },
+];
+
 export const OtherAbnormalityForm = (props: Props) => {
   return (
     <FormikInit
@@ -44,6 +61,11 @@ export const OtherAbnormalityForm = (props: Props) => {
       submitButton={false}
       submitButtonText="next"
     >
+      <RadioGroupInput
+        options={yesNoOptions}
+        name={form.abnormality.name}
+        label={form.abnormality.label}
+      />
       <SearchComboBox
         name={form.tenderness.name}
         label={form.tenderness.label}
