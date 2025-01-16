@@ -80,69 +80,11 @@ export function HeadLeftImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        {idSelected == encounters.HEAD_RIGHT_EYE && (
-          <EyeForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
-        {idSelected == encounters.HEAD_LEFT_EYE && (
-          <EyeForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
-        {idSelected == encounters.HEAD_MOUTH && (
-          <MouthForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
-        {idSelected == encounters.HEAD_NOSE && (
-          <NoseForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
-        {idSelected == encounters.HEAD_NECK && (
-          <NeckForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
-
-        {(idSelected == encounters.HEAD_LEFT_TEMPORAL ||
-          idSelected == encounters.HEAD_RIGHT_TEMPORAL ||
-          idSelected == encounters.HEAD_CROWN) && (
-          <OtherTemporalCrownForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
-        {(idSelected == encounters.HEAD_CHIN ||
-          idSelected == encounters.HEAD_LEFT_CHEEK ||
-          idSelected == encounters.HEAD_RIGHT_CHEEK ||
-          idSelected == encounters.HEAD_FOREHEAD) && (
-          <OtherPartsOfTheHeadForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
-        {(idSelected == encounters.HEAD_RIGHT_EAR ||
-          idSelected == encounters.HEAD_LEFT_EAR) && (
-          <EarForm
-            onSubmit={(values, formConceptsLabels) =>
-              handleDataSubmission(labelSelected, values, formConceptsLabels)
-            }
-          />
-        )}
+        <OtherPartsOfTheHeadForm
+          onSubmit={(values, formConceptsLabels) =>
+            handleDataSubmission(labelSelected, values, formConceptsLabels)
+          }
+        />
       </SVGPopover>
     </>
   );
