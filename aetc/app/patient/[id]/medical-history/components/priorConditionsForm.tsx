@@ -226,11 +226,9 @@ import { Obs } from "@/interfaces";
                   </div>
 
                   <LabelledCheckbox
+                    name={priorConditionsFormConfig.conditions_on_treatment(index).name}
                     label={priorConditionsFormConfig.conditions_on_treatment(index).label}
-                    checked={values.conditions[index].onTreatment || false}
-                    onChange={(e) =>
-                      setFieldValue(priorConditionsFormConfig.conditions_on_treatment(index).name, e.target.checked)
-                    }
+                    checked={values.conditions[index].onTreatment}
                   />
                   <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage

@@ -159,7 +159,11 @@ export const MedicalHistoryFlow = () => {
         handleSkip(); 
   };
 
-
+  const handleAllergiesNext = (values: any)=>{
+    formData["allergies"] = values;
+    console.log(formData);
+    handleSkip();
+  }
 
   const handleAllergiesSubmission = (values: any) => {
 
@@ -927,7 +931,7 @@ export const MedicalHistoryFlow = () => {
         onBack={() => navigateBack()}
       >
         <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
-        <AllergiesForm onSubmit={handleAllergiesSubmission} onSkip={handleSkip} />
+        <AllergiesForm onSubmit={handleAllergiesNext} onSkip={handleSkip} />
         <MedicationsForm onSubmit={handleMedicationsSubmission} onSkip={handleSkip} />
         <PriorConditionsForm onSubmit={handleConditionsSubmission} onSkip={handleSkip} />
         <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />

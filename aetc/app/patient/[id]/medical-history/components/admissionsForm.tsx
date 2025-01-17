@@ -142,7 +142,6 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   });
   
   const handleSubmit = () => {
-    console.log(formValues);
     onSubmit(formValues);
   };
 
@@ -204,10 +203,8 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   <div>
             {observations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                    {/* Display title */}
                     <h4>{item.value}</h4>
-                    
-                    {/* Display children if they exist */}
+
                     {item.children && item.children.length > 0 && (
                         <ul>
                             {item.children.map(child => (

@@ -222,7 +222,6 @@ const initialValues = {
 };
 
   const handleSubmit = () => {
-    console.log('values',formValues);
     const allergyListKey = concepts.ALLERGY;
 
       Object.keys(formValues).forEach((key) => {
