@@ -28,8 +28,8 @@ const ErrorMessage = ({ name }: { name: string }) => (
   );
 
 const symptomList = {
-  lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: false },
-  events: { name: "events", label: "Events(History of presenting complaints)", requiresSite: false },
+  lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
+  events: { name: "events", label: "Events(History of presenting complaints)", requiresSite: true },
   pain: { name: "pain", label: "Pain", requiresSite: true },
   rash: { name: "rash", label: "Rash", requiresSite: true },
   itching: { name: "itching", label: "Itching", requiresSite: true },
@@ -318,7 +318,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         />
           <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage
-                      name={symptomList.lastMeal.name}
+                      name='lastMeal'
                     />
                   </div>
       </FormFieldContainer>

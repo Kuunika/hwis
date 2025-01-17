@@ -201,15 +201,6 @@ const schema = yup.object().shape({
     }),
 
 
-  [allergiesFormConfig.allergyDetails.name]: yup
-    .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
-      const flatAllergies = allergies?.flat() || [];
-
-      return flatAllergies.length > 0
-        ? schema.required("Please provide additional details for the selected allergies")
-        : schema.notRequired();
-    }),
 });
 
 const initialValues = {
@@ -221,7 +212,10 @@ const initialValues = {
   [allergiesFormConfig.allergyDetails.name]: "",
 };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
+    await schema.validate(formValues);
+    
     const allergyListKey = concepts.ALLERGY;
 
       Object.keys(formValues).forEach((key) => {
