@@ -20,8 +20,6 @@ export const useSubmitEncounter = (
 
     console.log({ obs });
 
-    return;
-
     await mutate({
       encounterType,
       visit: activeVisit?.uuid,

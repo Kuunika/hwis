@@ -120,7 +120,6 @@ export const ClientWaitingForAssessment = () => {
   ];
 
   const formatForMobileView = data?.data?.map((row: any) => {
-    console.log({ row });
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,

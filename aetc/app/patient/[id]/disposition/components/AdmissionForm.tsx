@@ -59,7 +59,7 @@ const initialValues = {
 
 export default function AdmissionForm() {
     const handleSubmit = (values: any) => {
-        console.log("Form Values: ", values);
+       
         alert("Form Submitted!");
     };
 

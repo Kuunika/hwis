@@ -64,7 +64,7 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
       />
       <g fill="#5e3e40" fill-opacity=".40933">
         <rect
-          id={encounters.ABDOMEN_RIGHT_LUMBAR}
+          id={"aoksjdfhbvkojahsbdfnkj"}
           data-label="Right Hypochondrium"
           x="185.4"
           width="54.058"

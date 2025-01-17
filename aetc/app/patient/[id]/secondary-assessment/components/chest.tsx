@@ -118,9 +118,12 @@ type Prop = {
 
 const schema = Yup.object().shape({
   [form.respiratoryRate.name]: Yup.number()
-    .required()
-    .min(1)
-    .max(70)
+    .required("This field is required.")
+    .test(
+      "not-between",
+      `${form.respiratoryRate.label} must be below 10 or above 40`,
+      (value) => value < 10 || value > 40
+    )
     .label(form.respiratoryRate.label),
   [form.chestWallAbnormality.name]: Yup.string().label(
     form.chestWallAbnormality.label

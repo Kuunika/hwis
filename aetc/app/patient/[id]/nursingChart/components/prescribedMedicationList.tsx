@@ -55,6 +55,7 @@ export const PrescribedMedicationList = ({
           " " +
           durationUnit;
 
+        const medicationUUID = childObs.value_coded_uuid;
         console.log({
           medicationName: childObs.value,
           durationUnit,
@@ -77,11 +78,10 @@ export const PrescribedMedicationList = ({
           formulation,
           description,
           prescribedBy: childObs.created_by,
+          medicationUUID,
         };
       })
       .filter((medication) => medication.description == "current");
-
-    console.log({ formattedRows });
 
     setRows(formattedRows);
   }, [data]);

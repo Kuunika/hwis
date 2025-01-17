@@ -57,7 +57,7 @@ const form = {
   },
   oropharyngealSize: {
     name: concepts.OROPHARYNGEAL_AIRWAY,
-    label: "oropharyngeal Airway Size",
+    label: "Oropharyngeal Airway Size",
   },
 };
 

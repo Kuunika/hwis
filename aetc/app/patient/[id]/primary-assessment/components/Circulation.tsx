@@ -13,7 +13,6 @@ import {
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
-  MainTypography,
   RadioGroupInput,
   TextInputField,
 } from "@/components";
@@ -27,6 +26,7 @@ import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { CPRDialogForm } from "./cprDialogForm";
 
 type Prop = {
   onSubmit: () => void;
@@ -100,10 +100,10 @@ const form = {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is There Any Other Abnormalites",
   },
-  anyOtherAbnormalitiesOnAbdomen: {
-    name: concepts.IS_THERE_OTHER_OBDONORMALITIES,
-    label: "Is There Any Other Abnormalities on the Abdomen",
-  },
+  // anyOtherAbnormalitiesOnAbdomen: {
+  //   name: concepts.IS_THERE_OTHER_OBDONORMALITIES,
+  //   label: "Is There Any Other Abnormalities on the Abdomen",
+  // },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
@@ -139,6 +139,10 @@ const form = {
   diagramCannulationSite: {
     name: concepts.DIAGRAM_CANNULATION_SITE,
     label: "Cannulation Site",
+  },
+  pulse: {
+    name: concepts.PULSE_RATE,
+    label: "Pulse",
   },
 };
 
@@ -201,9 +205,9 @@ const schema = yup.object({
   [form.anyOtherAbnormalities.name]: yup
     .string()
     .label(form.anyOtherAbnormalities.label),
-  [form.anyOtherAbnormalitiesOnAbdomen.name]: yup
-    .string()
-    .label(form.anyOtherAbnormalitiesOnAbdomen.label),
+  // [form.anyOtherAbnormalitiesOnAbdomen.name]: yup
+  //   .string()
+  //   .label(form.anyOtherAbnormalitiesOnAbdomen.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
   [form.assessPeripheries.name]: yup
     .string()
@@ -219,6 +223,7 @@ const schema = yup.object({
   [form.diagramCannulationSite.name]: yup
     .string()
     .label(form.diagramCannulationSite.label),
+  [form.pulse.name]: yup.number().label(form.pulse.label),
 });
 
 const initialValues = getInitialValues(form);
@@ -295,6 +300,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
   const [legImage, setLegImage] = useState<Array<any>>([]);
   const [abdomenImage, setAbdomenImage] = useState<Array<any>>([]);
+  const [cprDialog, setCprDialog] = useState(false);
   // const [bloodNotDoneOther, setBloodNotDoneOther] = useState(false);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
@@ -317,12 +323,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(legImage),
       },
-      {
-        concept: form.anyOtherAbnormalitiesOnAbdomen.name,
-        value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
-        obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abdomenImage),
-      },
+      // {
+      //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
+      //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
+      //   obsDatetime: getDateTime(),
+      //   group_members: flattenImagesObs(abdomenImage),
+      // },
     ];
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
@@ -373,6 +379,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
               name={form.pulseInfo.name}
               label={form.pulseInfo.label}
               options={radioOptions}
+              getValue={(value) => {
+                if (value == NO) {
+                  setCprDialog(true);
+                }
+              }}
             />
           </FieldsContainer>
           {formValues[form.bleedingInfo.name] == YES && (
@@ -394,12 +405,22 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.pulseInfo.name] == NO && (
             <>
               <NotificationContainer message="Start cardiopulmonary resuscitation" />
+              <CPRDialogForm
+                open={cprDialog}
+                onClose={() => setCprDialog(false)}
+              />
             </>
           )}
 
           {formValues[form.pulseInfo.name] == YES && (
             <>
               <br />
+              <TextInputField
+                name={form.pulse.name}
+                id={form.pulse.name}
+                label={form.pulse.label}
+                sx={{ width: "100%" }}
+              />
               <FieldsContainer>
                 <RadioGroupInput
                   name={form.pulseRate.name}
@@ -682,18 +703,18 @@ export const Circulation = ({ onSubmit }: Prop) => {
               label={form.abdnomenDistention.label}
               options={radioOptions}
             />
-            <RadioGroupInput
+            {/* <RadioGroupInput
               name={form.anyOtherAbnormalitiesOnAbdomen.name}
               label={form.anyOtherAbnormalitiesOnAbdomen.label}
               options={radioOptions}
-            />
-          </FieldsContainer>
-          {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
+            /> */}
+            {/* </FieldsContainer> */}
+            {/* {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
             <>
               <AbdomenImage onValueChange={setAbdomenImage} />
             </>
-          )}
-          <FieldsContainer>
+          )} */}
+            {/* <FieldsContainer> */}
             <RadioGroupInput
               name={form.abnormalitiesInfo.name}
               label={form.abnormalitiesInfo.label}
