@@ -133,8 +133,9 @@ interface ProcessedObservation {
     const surgicalEncounters = patientHistory?.filter(
       (item) => item.encounter_type.name === "SURGICAL HISTORY"
     );
-    const handleSubmit = () => {
-        onSubmit(formValues);
+    const handleSubmit = async () => {
+      await schema.validate(formValues);  
+      onSubmit(formValues);
     };
 
     useEffect(() => {

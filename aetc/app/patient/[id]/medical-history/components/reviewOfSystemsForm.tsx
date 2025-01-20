@@ -8,7 +8,6 @@ import { DateTimePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pi
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getDateTime } from "@/helpers/dateTime";
 import dayjs, { Dayjs } from 'dayjs';
-import { Field, getIn } from "formik";
 
 
 type Prop = {
@@ -16,16 +15,6 @@ type Prop = {
   onSkip: () => void;
 };
 
-const ErrorMessage = ({ name }: { name: string }) => (
-   <Field
-     name={name}
-     render={({ form }: { form: any }) => {
-       const error = getIn(form.errors, name);
-       const touch = getIn(form.touched, name);
-       return touch && error ? error : null;
-     }}
-   />
-  );
 
 const symptomList = {
   lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
@@ -297,7 +286,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
     const handleSubmit = async () => {
-    await schema.validate(formValues)
+    const validation =await schema.validate(formValues)
 
     onSubmit(formValues);
    };
@@ -306,22 +295,19 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       submitButton={false}
+      enableReinitialize
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainer direction="row">
         <FormDatePicker
+
           label={symptomList.lastMeal.label}
           name={symptomList.lastMeal.name}
-          sx={{ background: 'white' }}
+          sx={{ background: 'white', marginRight:2 }}
         />
-          <div style={{ color: "red", fontSize: "0.875rem" }}>
-                    <ErrorMessage
-                      name='lastMeal'
-                    />
-                  </div>
-      </FormFieldContainer>
+     
 
       <TextInputField
         id={symptomList.events.name}
@@ -331,11 +317,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         multiline
         rows={4}
       />
-                  <div style={{ color: "red", fontSize: "0.875rem" }}>
-                    <ErrorMessage
-                      name={symptomList.events.name}
-                    />
-                  </div>
+ </FormFieldContainer>
 
       <FormFieldContainer direction="row">
         <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: '100%' }}>

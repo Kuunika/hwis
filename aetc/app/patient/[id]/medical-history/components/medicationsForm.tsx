@@ -156,7 +156,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     }
   }, [data]);
 
-  const handleSubmit=()=> {
+  const handleSubmit= async()=> {
+    await schema.validate(formValues);
     onSubmit(formValues);
   }
 

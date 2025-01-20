@@ -155,8 +155,8 @@ import { Obs } from "@/interfaces";
       }
     }, [diagnoses, data]);
 
-    const handleSubmit = () => {
-
+    const handleSubmit = async () => {
+    await schema.validate(formValues);
      onSubmit(formValues);
     };
   

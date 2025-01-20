@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import {
   ComplaintsForm,
@@ -21,6 +21,7 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { OverlayLoader } from "@/components/backdrop";
+import { CustomizedProgressBars } from "@/components/loader";
 
 
 
@@ -80,6 +81,9 @@ export const MedicalHistoryFlow = () => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
+  const [message,  setMessage] = useState<string>("");
+  const [completed, setCompleted] = useState<number>(0);
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   const {
     data: encounterResponse,
@@ -93,8 +97,12 @@ export const MedicalHistoryFlow = () => {
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
   if (isLoading) {
-    return <div>Loading patient data...</div>; 
+    return <div>Loading patient data...</div>;
+
   }
+
+
+
 
 
   // Construct steps based on patient gender
@@ -129,7 +137,6 @@ export const MedicalHistoryFlow = () => {
 
   const handlePresentingComplaintsNext = (values: any)=>{
     formData["presentingComplaints"] = values;
-    console.log(formData);
     handleSkip();
   }
 
@@ -159,7 +166,6 @@ export const MedicalHistoryFlow = () => {
 
   const handleAllergiesNext = (values: any)=>{
     formData["allergies"] = values;
-    console.log(formData);
     handleSkip();
   }
 
@@ -236,13 +242,12 @@ export const MedicalHistoryFlow = () => {
   });
 
   if(encounterCreated)
-  handleSkip();
+    handleSkip();
 
   };
 
   function handleMedicationsNext(values: any): void {
       formData["medications"] = values;
-      console.log(formData);
       handleSkip();
   }
 
@@ -345,13 +350,10 @@ export const MedicalHistoryFlow = () => {
 
   function handleConditionsNext(values: any): void {
     formData["conditions"] = values;
-    console.log(formData);
     handleSkip();
   }
 
   function handleConditionsSubmission(values: any): void {
-
-
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
       concept: condition.name,
@@ -382,7 +384,6 @@ export const MedicalHistoryFlow = () => {
 
   function handleSurgeriesNext(values: any): void {
     formData["surgeries"] = values;
-    console.log(formData);
     handleSkip();
   }
 
@@ -416,7 +417,6 @@ export const MedicalHistoryFlow = () => {
 
   function handleObstetricsNext(values: any): void {
     formData["obstetrics"] = values;
-    console.log(formData);
     handleSkip();
   }
 
@@ -496,7 +496,6 @@ export const MedicalHistoryFlow = () => {
 
   function handleAdmissionsNext(values: any): void {
     formData["admissions"] = values;
-    console.log(formData);
     handleSkip();
   }
 
@@ -542,7 +541,6 @@ export const MedicalHistoryFlow = () => {
   
   function handleReviewNext(values: any): void {
   formData["review"] = values;
-  console.log(formData);
   handleSkip();
   }
   
@@ -862,10 +860,71 @@ export const MedicalHistoryFlow = () => {
 
   function handleSubmitAll(values: any): void{
     formData["family"] = values;
-    console.log(formData);
-    handleSkip(); 
 
-    //handle submitall logic here
+    setSubmitting(true);
+
+    if(formData["presentingComplaints"]){
+      setMessage('submitting presenting complaints');
+      handlePresentingComplaintsSubmission(formData["presentingComplaints"]);
+      setCompleted(1)
+    };
+
+    if(formData["allergies"]){
+      setMessage('submitting allergies');
+      handleAllergiesSubmission(formData["allergies"]);
+      setCompleted(2)
+    };
+
+    if(formData["medications"]){
+      setMessage('submitting medications');
+      handleMedicationsSubmission(formData["medications"]);
+      setCompleted(3)
+    };
+
+    
+    if(formData["conditions"]){
+      setMessage('submitting conditions');
+      handleConditionsSubmission(formData["conditions"]);
+      setCompleted(4)
+    };
+
+    
+    if(formData["surgeries"]){
+      setMessage('submitting surgeries');
+      handleSurgeriesSubmission(formData["surgeries"]);
+      setCompleted(5)
+    };
+
+    if(formData["obstetrics"]){
+      setMessage('submitting obstetrics');
+      handleObstetricsSubmission(formData["obstetrics"]);
+      setCompleted(6)
+    };
+    
+    if(formData["admissions"]){
+      setMessage('submitting admissions');
+      handleAdmissionsSubmission(formData["admissions"]);
+      setCompleted(7)
+    };
+
+    
+    if(formData["review"]){
+      setMessage('submitting review of systems');
+      handleReviewSubmission(formData["review"]);
+      setCompleted(8)
+    };
+
+    Object.entries(formData["family"]).forEach(([key, value]) => {
+      if (value) {
+        setMessage('submitting family history form')
+        handleFamilyHistorySubmission(formData["family"])
+        setCompleted(9)
+        return;
+      }
+    });
+
+    setSubmitting(false);
+    handleSkip(); 
   }
 
   function handleFamilyHistorySubmission(values: any): void {
@@ -966,7 +1025,7 @@ export const MedicalHistoryFlow = () => {
 
   return (
     <>
-    <OverlayLoader open={isLoading} />
+    <OverlayLoader open={isLoading || submitting} />
       <NewStepperContainer
         setActive={setActiveStep}
         title="Medical History"
@@ -985,9 +1044,17 @@ export const MedicalHistoryFlow = () => {
         <AdmissionsForm onSubmit={handleAdmissionsNext} onSkip={handlePrevious}/>
         <ReviewOfSystemsForm onSubmit={handleReviewNext} onSkip={handlePrevious}/>
         <FamilyHistoryForm onSubmit={handleSubmitAll} onSkip={handlePrevious} />
-        
-
+        {submitting &&
+        <>
+        <div>Loading patient data...</div>
+                 <CustomizedProgressBars
+                    message={message}
+                    progress={(completed / (patient?.gender === "Female" ? 9 : 8)) * 100}
+                  />
+          </>
+        }
       </NewStepperContainer>
+     
     </>
   );
 };
