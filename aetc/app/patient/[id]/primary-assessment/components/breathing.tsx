@@ -21,6 +21,7 @@ import {
   LungBackImage,
   LungRightSideImage,
   LungLeftSideImage,
+  ChestLung,
 } from "@/components/svgImages";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
@@ -251,6 +252,9 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
+  const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
+    Array<any>
+  >([]);
   const [formValues, setFormValues] = useState<any>({});
   const [chestAbnormalitiesImage, setChestAbnormalitiesImage] = useState<
     Array<any>
@@ -278,6 +282,12 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(percussionImage),
       },
+      {
+        concept: form.chestExpansion.name,
+        value: formValues[form.chestExpansion.name],
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(chestExpansionImagesEnc),
+      },
     ];
 
     const devices = formValues[form.deviceForIntervention.name];
@@ -296,6 +306,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.chestWallAbnormality.name];
     delete formValues[form.percussion.name];
     delete formValues[form.deviceUsed.name];
+    delete formValues[form.chestExpansion.name];
 
     await handleSubmit([
       ...getObservations(formValues, getDateTime()),
@@ -523,7 +534,12 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               </FieldsContainer>
               {formValues[form.chestExpansion.name] == concepts.REDUCED && (
                 <FieldsContainer>
-                  <>Diagram</>
+                  <ChestLung
+                    onValueChange={setChestExpansionImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.chestExpansion.name}
+                    selectable={true}
+                  />
                 </FieldsContainer>
               )}
               <br />
