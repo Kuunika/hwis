@@ -127,7 +127,6 @@ interface ProcessedObservation {
   export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
     const { params } = useParameters();
     const [formValues, setFormValues] = useState<any>({});
-    const [showOther, setShowOther] = useState<{ [key: number]: boolean }>({});
     const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const surgicalEncounters = patientHistory?.filter(
@@ -207,6 +206,7 @@ interface ProcessedObservation {
       <FieldArray name="surgeries">
         {({ push, remove }) => (
           <>
+          <FormValuesListener getValues={setFormValues} />
             <DynamicFormList
               items={values.surgeries}
               setItems={(newItems) => setFieldValue("surgeries", newItems)}

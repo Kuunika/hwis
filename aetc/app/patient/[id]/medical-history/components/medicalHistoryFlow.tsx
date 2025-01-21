@@ -22,6 +22,8 @@ import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { OverlayLoader } from "@/components/backdrop";
 import { CustomizedProgressBars } from "@/components/loader";
+import { useFormLoading } from "@/hooks/formLoading";
+import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
 
 
 
@@ -40,6 +42,32 @@ type InputObservation = {
 type OutputObservation = {
   concept: string;
   value: string | boolean;
+};
+
+interface OverlayWithMessageProps {
+  open: boolean;
+  message: string;
+}
+
+const OverlayWithMessage: React.FC<OverlayWithMessageProps> = ({ open, message }) => {
+  return (
+    <Backdrop
+      open={open}
+      sx={{
+        color: "#fff",
+        zIndex: (theme: any) => theme.zIndex.drawer + 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress color="inherit" />
+      <Box mt={2}>
+        <Typography variant="h6">{message}</Typography>
+      </Box>
+    </Backdrop>
+  );
 };
 
 
@@ -73,6 +101,8 @@ const symptomDurationUnits: Record<string, string>  ={
 }
 
 
+
+
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addEncounter();
@@ -81,9 +111,31 @@ export const MedicalHistoryFlow = () => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
-  const [message,  setMessage] = useState<string>("");
-  const [completed, setCompleted] = useState<number>(0);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [submissionStatus, setSubmissionStatus] = useState<Record<string, string>>({
+    presentingComplaints: 'pending',
+    allergies: 'pending',
+    medications: 'pending',
+    conditions: 'pending',
+    surgeries: 'pending',
+    obstetrics: 'pending',
+    admissions: 'pending',
+    review: 'pending',
+    family: 'pending',
+  });
+
+  const {
+    loading,
+    setLoading,
+    completed,
+    setCompleted,
+    message,
+    setMessage,
+    showForm,
+    setShowForm,
+    error,
+    setError,
+  } = useFormLoading();
 
   const {
     data: encounterResponse,
@@ -140,7 +192,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  const handlePresentingComplaintsSubmission = (values: any) => {
+  const handlePresentingComplaintsSubmission = async (values: any): Promise<void> => {
    
     const myobs = convertObservations(getObservations(values, dateTime));
 
@@ -169,7 +221,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  const handleAllergiesSubmission = (values: any) => {
+  const handleAllergiesSubmission = async (values: any): Promise<void> => {
 
   const groupedAllergies = values[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
     if (!acc[allergy.group]) {
@@ -241,8 +293,6 @@ export const MedicalHistoryFlow = () => {
 
   });
 
-  if(encounterCreated)
-    handleSkip();
 
   };
 
@@ -251,7 +301,7 @@ export const MedicalHistoryFlow = () => {
       handleSkip();
   }
 
-  function handleMedicationsSubmission(values: any): void {
+  async function handleMedicationsSubmission(values: any): Promise<void> {
     const observations =  getObservations(values, dateTime);
     const medicationObs = observations[0]?.value || [];
     
@@ -343,8 +393,6 @@ export const MedicalHistoryFlow = () => {
     
   });
 
-  if(encounterCreated)
-  handleSkip();
   };
 
 
@@ -353,7 +401,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  function handleConditionsSubmission(values: any): void {
+  async function handleConditionsSubmission(values: any): Promise<void> {
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
       concept: condition.name,
@@ -387,7 +435,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  function handleSurgeriesSubmission(values: any): void {
+  async function handleSurgeriesSubmission(values: any): Promise<void> {
     const observationsPayload = values.surgeries.map((surgery: any) => {
     return  {
       concept: surgery.procedure,
@@ -411,8 +459,6 @@ export const MedicalHistoryFlow = () => {
     });
   });
 
-  if(encounterCreated)
-  handleSkip();
   }
 
   function handleObstetricsNext(values: any): void {
@@ -422,7 +468,7 @@ export const MedicalHistoryFlow = () => {
 
 
 
-  function handleObstetricsSubmission(values: any): void {
+  async function handleObstetricsSubmission(values: any): Promise<void> {
     const obstetricsObs = (values.obstetrics);
 
     const contraceptives = obstetricsObs.contraceptive_history.map((item: { id: any; }) => ({
@@ -490,8 +536,7 @@ export const MedicalHistoryFlow = () => {
       });
     });
   };
-    if(encounterCreated)
-    handleSkip();
+
   }
 
   function handleAdmissionsNext(values: any): void {
@@ -499,7 +544,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  function handleAdmissionsSubmission(values: any): void {
+  async function handleAdmissionsSubmission(values: any): Promise<void> {
     const admissions = values.admissions;
   
     if (!Array.isArray(admissions)) {
@@ -530,21 +575,17 @@ export const MedicalHistoryFlow = () => {
     }));
 
     encounterPayload.forEach((encounter, index) => {
-      console.log(encounter)
       createEncounter(encounter);
-
-      if(index == encounterPayload.length-1)
-        handleSkip();
     });
 
   }
   
   function handleReviewNext(values: any): void {
-  formData["review"] = values;
-  handleSkip();
+      formData["review"] = values;
+      handleSkip();
   }
   
-  function handleReviewSubmission(values: any): void {
+  async function handleReviewSubmission(values: any): Promise<void> {
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
@@ -854,80 +895,60 @@ export const MedicalHistoryFlow = () => {
         group_members: socialDetailsObs,
       },]});
     }
-      handleSkip()
 
   };
 
-  function handleSubmitAll(values: any): void{
+  function handleSubmitAll(values: any): void {
+    console.log(values);
     formData["family"] = values;
-
     setSubmitting(true);
 
-    if(formData["presentingComplaints"]){
-      setMessage('submitting presenting complaints');
-      handlePresentingComplaintsSubmission(formData["presentingComplaints"]);
-      setCompleted(1)
-    };
 
-    if(formData["allergies"]){
-      setMessage('submitting allergies');
-      handleAllergiesSubmission(formData["allergies"]);
-      setCompleted(2)
+    const submissionHandlers: Record<string, (value: any) => Promise<void>> = {
+      presentingComplaints: handlePresentingComplaintsSubmission,
+      allergies: handleAllergiesSubmission,
+      medications: handleMedicationsSubmission,
+      conditions: handleConditionsSubmission,
+      surgeries: handleSurgeriesSubmission,
+      obstetrics: handleObstetricsSubmission,
+      admissions: handleAdmissionsSubmission,
+      review: handleReviewSubmission,
+      family: handleFamilyHistorySubmission,
     };
+  
 
-    if(formData["medications"]){
-      setMessage('submitting medications');
-      handleMedicationsSubmission(formData["medications"]);
-      setCompleted(3)
-    };
+    Object.entries(formData).forEach(async ([key, value]) => {
+      if (submissionHandlers[key]) {
+        setSubmissionStatus((prev) => ({
+          ...prev,
+          [key]: "submitting",
+        }));
+  
+        try {
+          await submissionHandlers[key](value);
+  
+          setSubmissionStatus((prev) => ({
+            ...prev,
+            [key]: "success",
+          }));
+        } catch (error) {
+          setSubmissionStatus((prev) => ({
+            ...prev,
+            [key]: "error",
+          }));
+        }
 
-    
-    if(formData["conditions"]){
-      setMessage('submitting conditions');
-      handleConditionsSubmission(formData["conditions"]);
-      setCompleted(4)
-    };
-
-    
-    if(formData["surgeries"]){
-      setMessage('submitting surgeries');
-      handleSurgeriesSubmission(formData["surgeries"]);
-      setCompleted(5)
-    };
-
-    if(formData["obstetrics"]){
-      setMessage('submitting obstetrics');
-      handleObstetricsSubmission(formData["obstetrics"]);
-      setCompleted(6)
-    };
-    
-    if(formData["admissions"]){
-      setMessage('submitting admissions');
-      handleAdmissionsSubmission(formData["admissions"]);
-      setCompleted(7)
-    };
-
-    
-    if(formData["review"]){
-      setMessage('submitting review of systems');
-      handleReviewSubmission(formData["review"]);
-      setCompleted(8)
-    };
-
-    Object.entries(formData["family"]).forEach(([key, value]) => {
-      if (value) {
-        setMessage('submitting family history form')
-        handleFamilyHistorySubmission(formData["family"])
-        setCompleted(9)
-        return;
+        console.log(submissionStatus);
       }
     });
-
+  
     setSubmitting(false);
-    handleSkip(); 
+    handleSkip();
   }
 
-  function handleFamilyHistorySubmission(values: any): void {
+
+
+  async function handleFamilyHistorySubmission(values: any): Promise<void> {
     const conditionConcepts: { [key: string]: string }  = {
       asthma: concepts.FAMILY_HISTORY_ASTHMA,
       hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
@@ -1010,8 +1031,6 @@ export const MedicalHistoryFlow = () => {
       }, {
         onSuccess: (data) => {
           console.log(`Encounter #${index + 1} submitted successfully:`, data);
-          if(index == (groupedObservations.length-1))
-            handleSkip()
         },
         onError: (error) => {
           console.error(`Error submitting encounter #${index + 1}:`, error);
@@ -1025,7 +1044,16 @@ export const MedicalHistoryFlow = () => {
 
   return (
     <>
+
     <OverlayLoader open={isLoading || submitting} />
+    <OverlayWithMessage
+      open={submitting}
+      message={Object.entries(submissionStatus).some(([_, status]) => status === "submitting")
+        ? "Submitting your data, please wait..."
+        : "Processing submissions..."}
+    />
+ 
+  
       <NewStepperContainer
         setActive={setActiveStep}
         title="Medical History"
@@ -1044,17 +1072,8 @@ export const MedicalHistoryFlow = () => {
         <AdmissionsForm onSubmit={handleAdmissionsNext} onSkip={handlePrevious}/>
         <ReviewOfSystemsForm onSubmit={handleReviewNext} onSkip={handlePrevious}/>
         <FamilyHistoryForm onSubmit={handleSubmitAll} onSkip={handlePrevious} />
-        {submitting &&
-        <>
-        <div>Loading patient data...</div>
-                 <CustomizedProgressBars
-                    message={message}
-                    progress={(completed / (patient?.gender === "Female" ? 9 : 8)) * 100}
-                  />
-          </>
-        }
-      </NewStepperContainer>
-     
+    
+      </NewStepperContainer>  
     </>
   );
 };

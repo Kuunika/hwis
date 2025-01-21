@@ -88,7 +88,7 @@ import { Field, getIn } from "formik";
         otherwise: (schema) => schema.notRequired(),
       }),
       diabetes_mellitus: yup.boolean(),
-      diabetesMellitusRelationship: yup.string().when("diabetes_mellitus", {
+      diabetes_mellitusRelationship: yup.string().when("diabetes_mellitus", {
         is: true,
         then: (schema) => schema.required("Please specify relationship for diabetes mellitus"),
         otherwise: (schema) => schema.notRequired(),
@@ -153,7 +153,6 @@ import { Field, getIn } from "formik";
   
     const handleSubmit = async () => {
       await schema.validate(formValues)
-
       onSubmit(formValues);
     };
 
@@ -281,19 +280,14 @@ import { Field, getIn } from "formik";
                   placeholder="e.g., Mother"
                 />
               </>
-            ) : (<>
+            ) : (
               <TextInputField
                 id={`${typedKey}Relationship`}
                 label="Relationship to family member"
                 name={`${typedKey}Relationship`}
                 placeholder="e.g., Mother"
               />
-                  <div style={{ color: "red", fontSize: "0.875rem" }}>
-                    <ErrorMessage
-                      name={`${typedKey}Relationship`}
-                    />
-                  </div>
-                </>
+
             )}
           </>
         )}

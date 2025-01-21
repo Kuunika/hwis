@@ -285,9 +285,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   }, [formValues, symptomList, formValues['showSocialHistory']]);
 
 
-    const handleSubmit = async () => {
-    const validation =await schema.validate(formValues)
-
+  const handleSubmit = async () => {
+    await schema.validate(formValues);
     onSubmit(formValues);
    };
 

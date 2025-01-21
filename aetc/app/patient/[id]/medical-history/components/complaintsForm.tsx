@@ -286,7 +286,7 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
      <>
        <FormValuesListener getValues={setFormValues} />
        <FieldArray name="complaints">
-         {({ push, remove }) => (
+         {({  }) => (
            <DynamicFormList
              items={values.complaints}
              setItems={(newItems) => setFieldValue("complaints", newItems)}

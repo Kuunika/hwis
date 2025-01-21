@@ -32,18 +32,9 @@ type Prop = {
   };
 
 
-  type Obstetrics = {
-    age_at_menarche: number;
-    last_menstrual: string;
-    gestational_age: number;
-    number_of_previous_pregnancies: number;
-    previous_pregnancy_outcomes: string[]; // Array for pregnancy outcomes
-    number_of_births: string[]; // Array for the number of births per pregnancy
-    contraceptive_history: { id: string; label: string }[]; // Array for contraceptive history
-  };
   
-  // Define the obstetricsTemplate with initial values
-  const obstetricsTemplate: Obstetrics = {
+  
+  const initialValues = {
     age_at_menarche: 0,
     last_menstrual: "",
     gestational_age: 0,
@@ -51,10 +42,6 @@ type Prop = {
     previous_pregnancy_outcomes: [],
     number_of_births: [],
     contraceptive_history: [],
-  };
-  
-  const initialValues = {
-    obstetrics: obstetricsTemplate,
   };
 
   const obstetricsFormConfig = {
@@ -132,45 +119,72 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
       ];
 
       const schema = yup.object().shape({
-        number_of_previous_pregnancies: yup
-        .number()
-        .required("Number of previous pregnancies is required")
-        .min(0, "Number of previous pregnancies cannot be negative")
-        .integer("Number of pregnancies must be an integer"),
-    
-        [obstetricsFormConfig.previous_pregnancy_outcomes.name]: yup
-        .array()
-        .of(
-          yup
-            .string()
-            .required("Pregnancy outcomes are required")
-        )
-        .test("pregnancy-outcomes", "Pregnancy outcomes must match the number of pregnancies", function (outcomes) {
-          const numPregnancies = this.parent[obstetricsFormConfig.number_of_previous_pregnancies.name];
-          return outcomes?.length === numPregnancies;
-        }),
-    
-        [obstetricsFormConfig.number_of_births.name]: yup
-        .array()
-        .of(
-          yup
+
+        [obstetricsFormConfig.age_at_menarche.name]: yup.number()
+        .required("Age at menarche is required")
+        .positive("Age at menarche  must be a positive number"),
+
+          number_of_previous_pregnancies: yup
             .number()
-            .required("Pregnancy outcomes are required")
-        ),
-            
-        obstetrics: yup.object().shape({
-          [obstetricsFormConfig.age_at_menarche.name]: yup.number()
-            .required("Age at menarche is required")
-            .positive("Age at menarche must be a positive number")
-            .integer("Age must be an integer"),
-      
+            .required("Number of previous pregnancies is required")
+            .min(0, "Number of pregnancies cannot be negative"),
+        
+            [obstetricsFormConfig.previous_pregnancy_outcomes.name]: yup
+            .array()
+            .of(yup.string().required("Each pregnancy outcome is required"))
+            .when("number_of_previous_pregnancies", {
+              is: (val: number) => val > 0,
+              then: (schema) =>
+                schema.test(
+                  "length-match",
+                  "The number of outcomes must match the number of previous pregnancies",
+                  (value, context) => {
+                    const numberOfPregnancies = context.parent.number_of_previous_pregnancies;
+                    return Array.isArray(value) && value.length === numberOfPregnancies;
+                  }
+                ),
+              otherwise: (schema) => schema.notRequired(),
+            }),
+        
+    
+            [obstetricsFormConfig.number_of_births.name]: yup
+            .array()
+            .of(yup.number().nullable().notRequired()) 
+            .when([obstetricsFormConfig.previous_pregnancy_outcomes.name, "number_of_previous_pregnancies"], {
+              is: (outcomes: string[], pregnancies: number) =>
+                pregnancies > 0 && Array.isArray(outcomes),
+              then: (schema) =>
+                schema.test(
+                  "match-live-births",
+                  "Each live birth outcome must have a corresponding number of births specified",
+                  (value, context) => {
+                    const outcomes = context.parent[obstetricsFormConfig.previous_pregnancy_outcomes.name];
+                    const numberOfPregnancies = context.parent.number_of_previous_pregnancies;
+          
+                    if (!Array.isArray(value) || !Array.isArray(outcomes)) {
+                      return false; // Ensure both are arrays
+                    }
+          
+                    // Check if every live birth has a number of births specified
+                    return outcomes.every((outcome, index) => {
+
+                      if (outcome === "Live Birth" && value[index]) {
+                        return value && value[index] !== undefined && value[index] > 0;
+                      }
+                      return true; // Non-live-birth outcomes are not required to have a value
+                    });
+                  }
+                ),
+              otherwise: (schema) => schema.notRequired(),
+            }),
+
           [obstetricsFormConfig.last_menstrual.name]: yup.date()
             .required("Last menstrual date is required")
             .nullable()
             .max(new Date(), "Date cannot be in the future"),
       
             [obstetricsFormConfig.gestational_age.name]: yup.number()
-                .positive("Gestational age must be a positive number"),
+                .min(0, "Number of pregnancies cannot be negative"),
               otherwise: yup.number().nullable(),
      
               [obstetricsFormConfig.number_of_previous_pregnancies.name]: yup.number()
@@ -179,15 +193,13 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
             .integer("Number of pregnancies must be an integer"),
           
     
-    
 
-    
-        }),
       });
 
 
-  const handleSubmit = () => {
-    console.log(formValues)
+  const handleSubmit = async () => {
+    console.log(formValues);
+    await schema.validate(formValues);
     onSubmit(formValues);
   };
 
@@ -278,21 +290,17 @@ return (
       submitButton={false} 
       enableReinitialize={true}>
     <FormValuesListener getValues={setFormValues} />
-    <FormFieldContainer direction="row">
+    <FormFieldContainer direction="column">
     <TextInputField
               id={obstetricsFormConfig.age_at_menarche.name}
               name={obstetricsFormConfig.age_at_menarche.name}
               label={obstetricsFormConfig.age_at_menarche.label}
             />
-                               <div style={{ color: "red", fontSize: "0.875rem" }}>
-                               <ErrorMessage
-                     name={`obstetrics.age_at_menarche`}
-                   />
-                   </div>
+
     <FormDatePicker
       name={obstetricsFormConfig.last_menstrual.name}
       label={obstetricsFormConfig.last_menstrual.label}
-      sx={{ background: 'white', marginRight:'2ch', marginLeft:'2ch', width:'150px'}}
+      sx={{ background: 'white', marginRight:'2ch', width:'150px'}}
     />                               <div style={{ color: "red", fontSize: "0.875rem" }}>
     <ErrorMessage
 name={`obstetrics.last_menstrual`}
@@ -304,10 +312,6 @@ name={`obstetrics.last_menstrual`}
               label={obstetricsFormConfig.gestational_age.label}
               sx={{ marginRight: '2ch'}}
             />
-            <div style={{ color: "red", fontSize: "0.875rem" }}>
-    <ErrorMessage
-name={`obstetrics.gestational_age`}
-/></div>
 <TextInputField
               id={obstetricsFormConfig.number_of_previous_pregnancies.name}
               name={obstetricsFormConfig.number_of_previous_pregnancies.name}
@@ -317,6 +321,7 @@ name={`obstetrics.gestational_age`}
                 }}
               sx={{ marginRight: '2ch'}}
             />
+
             </FormFieldContainer>
             <FormFieldContainer direction="column">
       {pregnancies!=0 &&
@@ -340,17 +345,12 @@ name={`obstetrics.gestational_age`}
             )}
                         <div style={{ color: "red", fontSize: "0.875rem" }}>
     <ErrorMessage
-name={obstetricsFormConfig.previous_pregnancy_outcomes(index).name}
+name={'previous_pregnancy_outcomes'}
 /></div>
           </>
         ))}
     </FormFieldContainer>
         <SearchComboBox options={contraceptiveOptions}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
-        <div style={{ color: "red", fontSize: "0.875rem" }}>
-                               <ErrorMessage
-                     name={`obstetrics.contraceptive_history`}
-                   />
-                   </div>
                    <WrapperBox sx={{mt: '2ch' }}>
     <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
     <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
