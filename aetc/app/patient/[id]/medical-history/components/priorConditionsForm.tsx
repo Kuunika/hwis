@@ -22,6 +22,7 @@ import { Field, FieldArray, getIn } from "formik";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
+import ECTReactComponent from "@/components/form/ECTReactComponent"
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -159,6 +160,10 @@ import { Obs } from "@/interfaces";
     await schema.validate(formValues);
      onSubmit(formValues);
     };
+
+    const handleICD11Selection = (selectedEntity: any) => {
+      console.log(selectedEntity);
+    };
   
     return (<>
       <div style={{ background: 'white', padding: '20px', borderRadius: '5px', marginBottom: '20px' }}>
@@ -183,31 +188,13 @@ import { Obs } from "@/interfaces";
       <FieldArray name="conditions">
         {({ push, remove }) => (
           <>
-            <a
-              href="https://icd.who.int/browse/2024-01/mms/en"
-              style={{
-                color: 'primary',
-                textDecorationLine: 'underline',
-                paddingRight: '1ch',
-                fontSize: 'small',
-              }}
-            >
-              ICD11 List of diagnoses <FaExternalLinkAlt />
-            </a>
-
             <DynamicFormList
               items={values.conditions}
               setItems={(newItems) => setFieldValue("conditions", newItems)}
               newItem={conditionTemplate}
               renderFields={(item, index) => (
                 <>
-                  <SearchComboBox
-                    name={priorConditionsFormConfig.conditions_name(index).name}
-                    label={priorConditionsFormConfig.conditions_name(index).label}
-                    options={diagnosisOptions}
-                    multiple={false}
-                    sx={{ width: '100%' }}
-                  />
+                  <ECTReactComponent onICD11Selection={handleICD11Selection} name={priorConditionsFormConfig.conditions_name(index).name} />
                   <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage
                       name={priorConditionsFormConfig.conditions_name(index).name}
