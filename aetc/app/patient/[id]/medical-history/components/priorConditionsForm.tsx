@@ -2,6 +2,7 @@
 import {
     FieldsContainer,
     FormDatePicker,
+    FormFieldContainer,
     FormFieldContainerLayout,
     FormikInit,
     FormValuesListener,
@@ -23,6 +24,7 @@ import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
 import ECTReactComponent from "@/components/form/ECTReactComponent"
+import { MdOutlineClose } from "react-icons/md";
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -109,10 +111,15 @@ import ECTReactComponent from "@/components/form/ECTReactComponent"
         refetch: reloadDiagnoses,
         isRefetching: reloadingDiagnoses,
       } = getConceptSetMembers(diagnosesConceptId);
+    const [selectedCondition, setSelectedCondition] = useState<string | null>(null);
+    interface ShowSelectionState {
+      [key: number]: boolean;
+    }
 
-      
+    const [showSelection, setShowSelection] = useState<ShowSelectionState>({});
  
     useEffect(() => {
+      console.log(showSelection)
       reloadDiagnoses();
       if (diagnoses) {
         const formatDiagnosisOptions = (diagnoses: any) => {
@@ -161,8 +168,9 @@ import ECTReactComponent from "@/components/form/ECTReactComponent"
      onSubmit(formValues);
     };
 
-    const handleICD11Selection = (selectedEntity: any) => {
-      console.log(selectedEntity);
+    const handleICD11Selection = (selectedEntity: any, index: number) => {
+          setShowSelection((prev) => ({ ...prev, [index]: true }));
+          formValues.conditions[index]["name"] = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`
     };
   
     return (<>
@@ -194,25 +202,42 @@ import ECTReactComponent from "@/components/form/ECTReactComponent"
               newItem={conditionTemplate}
               renderFields={(item, index) => (
                 <>
-                  <ECTReactComponent onICD11Selection={handleICD11Selection} name={priorConditionsFormConfig.conditions_name(index).name} />
-                  <div style={{ color: "red", fontSize: "0.875rem" }}>
-                    <ErrorMessage
-                      name={priorConditionsFormConfig.conditions_name(index).name}
-                    />
-                  </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch" }}>
+                        <label style={{fontWeight: "bold" }}>
+                        {formValues.conditions[index]["name"]}
+                      </label>
+                      <MdOutlineClose 
+                            color={"red"} 
+                            onClick={() => {
+                              setShowSelection((prev) => ({ ...prev, [index]: false }));
+                            }} 
+                            style={{ cursor: "pointer" }} // Adds a pointer cursor for better UX
+                          />
+                      </div>
+                        ) : (
+                          <ECTReactComponent
+                          onICD11Selection={(selectedEntity: any) => handleICD11Selection(selectedEntity, index)}
+                          label={'Condition'}
+                          name={'icd11_input'}
+                          iNo={index}
+                        />
+                        )}
+                    <div style={{ color: "red", fontSize: "0.875rem"}}>
+                        <ErrorMessage name={priorConditionsFormConfig.conditions_name(index).name} />
+                      </div>
+                    {/* Diagnosis Date Picker */}
+                    <div>
+                      <FormDatePicker
+                        name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}
+                        label={priorConditionsFormConfig.conditions_diagnosis_date(index).label}
+                        sx={{ background: 'white', width: '100%' }}
+                      />
+                      <div style={{ color: "red", fontSize: "0.875rem", marginTop: '0.5rem' }}>
+                        <ErrorMessage name={priorConditionsFormConfig.conditions_diagnosis_date(index).name} />
+                      </div>
 
-                  <FormDatePicker
-                    name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}
-                    label={priorConditionsFormConfig.conditions_diagnosis_date(index).label}
-                    sx={{ background: 'white', width: '150px' }}
-                  />
-                  <div style={{ color: "red", fontSize: "0.875rem" }}>
-                    <ErrorMessage
-                      name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}
-                    />
-                  </div>
-
-                  <LabelledCheckbox
+                      <LabelledCheckbox
                     name={priorConditionsFormConfig.conditions_on_treatment(index).name}
                     label={priorConditionsFormConfig.conditions_on_treatment(index).label}
                     checked={values.conditions[index].onTreatment}
@@ -222,6 +247,10 @@ import ECTReactComponent from "@/components/form/ECTReactComponent"
                       name={priorConditionsFormConfig.conditions_on_treatment(index).name}
                     />
                   </div>
+                    </div>
+                  </div>
+
+                 
 
                   <TextInputField
                     id={priorConditionsFormConfig.conditions_additional_details(index).name}

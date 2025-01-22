@@ -900,6 +900,7 @@ export const MedicalHistoryFlow = () => {
   };
 
   function handleSubmitAll(values: any): void {
+    console.log(formData["conditions"]);
     formData["family"] = values;
     setSubmitting(true);
 

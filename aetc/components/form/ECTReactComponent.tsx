@@ -4,18 +4,24 @@ import * as ECT from '@whoicd/icd11ect';
 import '@whoicd/icd11ect/style.css';
 import { MainTypography } from '..';
 import { useFormikField } from './hooks/useFormikField';
+import { InputLabel } from '@mui/material';
 
 interface ECTReactComponentProps {
+  iNo: number;
   name: string;
+  label: string;
   onICD11Selection?: (selectedEntity: any) => void;
 }
 
-const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection, name }) => {
-  const iNo = 1;
+const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection, name, iNo, label }) => {
+  const apiServerUrl =
+      process.env.NODE_ENV === 'production'
+        ? process.env.REACT_APP_API_SERVER_URL
+        : 'https://icd11restapi-developer-test.azurewebsites.net';
 
   useEffect(() => {
     const settings = {
-      apiServerUrl: 'https://icd11restapi-developer-test.azurewebsites.net',
+      apiServerUrl,
       autoBind: false,
     };
 
@@ -37,16 +43,20 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
 
   return (
     <div>
+    <InputLabel sx={{mb:'1ch', fontSize: "0.76rem", color: "text.secondary" }}>
+        {label}
+      </InputLabel>
       <input
         type="text"
         className="ctw-input"
         autoComplete="off"
         data-ctw-ino={iNo}
+        style={{marginBottom:'1ch', fontSize: "0.76rem", color: "text.secondary", height: "48px", width:"320px"}}
       />
       <MainTypography color={"red"} variant="subtitle2">
           {errorMessage}
       </MainTypography>
-      <div className="ctw-window" data-ctw-ino={iNo}></div>
+      <div className="ctw-window" style={{color:"white"}} data-ctw-ino={iNo}></div>
     </div>
   );
 };
