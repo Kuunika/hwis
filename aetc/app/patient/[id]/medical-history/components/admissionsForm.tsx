@@ -141,7 +141,8 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     ),
   });
   
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    await schema.validate(formValues);
     onSubmit(formValues);
   };
 

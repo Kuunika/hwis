@@ -7,13 +7,26 @@ import { IoTimeOutline } from "react-icons/io5";
 import { DateTimePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getDateTime } from "@/helpers/dateTime";
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import { Field, getIn } from "formik";
+import { useFormikField } from "@/components/form/hooks";
 
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
 };
+
+  const ErrorMessage = ({ name }: { name: string }) => (
+   <Field
+     name={name}
+     render={({ form }: { form: any }) => {
+       const error = getIn(form.errors, name);
+       const touch = getIn(form.touched, name);
+       return touch && error ? error : null;
+     }}
+   />
+  );
 
 
 const symptomList = {
@@ -194,7 +207,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const schema = generateValidationSchema(symptomList);
 
   const initialValues = {
-
+    lastMeal:"",
+    events:"",
     pain: false,
     painDuration: "",
     pain_site: "",
@@ -286,27 +300,29 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
   const handleSubmit = async () => {
+
     await schema.validate(formValues);
     onSubmit(formValues);
    };
+
+
+
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       submitButton={false}
-      enableReinitialize
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainer direction="row">
         <FormDatePicker
-
           label={symptomList.lastMeal.label}
           name={symptomList.lastMeal.name}
           sx={{ background: 'white', marginRight:2 }}
         />
-     
+
 
       <TextInputField
         id={symptomList.events.name}
@@ -398,6 +414,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
               sx={{mb:'1ch', mt:'1ch'}}
             />
             </LocalizationProvider>
+
             </FormFieldContainer>
               <div>
                 <h4>Mechanism of Injury</h4>
@@ -544,12 +561,12 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
            multiline
            rows={4}
           /></>)}
-                </FormFieldContainer>
+        </FormFieldContainer>
       
 
       <WrapperBox>
           <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
-          <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+          <MainButton onClick={() => {handleSubmit }} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
       </WrapperBox>
     </FormikInit>
   );

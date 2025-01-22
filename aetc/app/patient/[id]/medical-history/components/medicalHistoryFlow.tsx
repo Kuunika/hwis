@@ -582,6 +582,7 @@ export const MedicalHistoryFlow = () => {
   
   function handleReviewNext(values: any): void {
       formData["review"] = values;
+      console.log(activeStep);
       handleSkip();
   }
   
@@ -918,6 +919,18 @@ export const MedicalHistoryFlow = () => {
   
 
     Object.entries(formData).forEach(async ([key, value]) => {
+      if (
+        key === "family" &&
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.keys(value).every(
+          (subKey) => typeof (value as Record<string, unknown>)[subKey] !== "boolean" || !(value as Record<string, boolean>)[subKey]
+        )
+      ) {
+        return;
+      }
+      
       if (submissionHandlers[key]) {
         setSubmissionStatus((prev) => ({
           ...prev,
@@ -938,7 +951,6 @@ export const MedicalHistoryFlow = () => {
           }));
         }
 
-        console.log(submissionStatus);
       }
     });
   
