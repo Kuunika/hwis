@@ -4,6 +4,7 @@ import { TextField, InputLabel, FormControl } from "@mui/material/";
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
+import { MainTypography } from "..";
 
 type Prop = {
   id: string;
@@ -51,7 +52,7 @@ export const TextInputField: FC<Prop> = ({
   }, [value]);
 
   return (
-    <FormControl variant="standard" sx={{ mb: "1ch", ...sx }}>
+    <FormControl variant="standard" sx={{ mb: "1ch", fontSize: "0.76rem", ...sx }}>
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
@@ -82,7 +83,6 @@ export const TextInputField: FC<Prop> = ({
         onChange={handleChange}
         error={hasError}
         size={size}
-        helperText={showHelperText && errorMessage}
         placeholder={placeholder}
         rows={rows}
         disabled={disabled}
@@ -96,6 +96,9 @@ export const TextInputField: FC<Prop> = ({
           ),
         }}
       />
+                <MainTypography color={"red"} variant="subtitle2">
+            {errorMessage}
+          </MainTypography>
     </FormControl>
   );
 };

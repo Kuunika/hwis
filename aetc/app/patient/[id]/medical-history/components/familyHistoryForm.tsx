@@ -13,6 +13,8 @@ import {
   import LabelledCheckbox from "@/components/form/labelledCheckBox";
   import { useParameters } from "@/hooks";
   import { getPatientsEncounters } from "@/hooks/encounter";
+import { getInitialValues } from "@/helpers";
+import { Field, getIn } from "formik";
   
   interface Observation {
     obs_id: number | null;
@@ -43,6 +45,19 @@ import {
     tuberculosis: { name: "tuberculosis", label: "Tuberculosis" },
     other: { name: "other", label: "Other (Specify)" },
   };
+
+  const ErrorMessage = ({ name }: { name: string }) => (
+    <Field
+      name={name}
+      render={({ form }: { form: any }) => {
+        const error = getIn(form.errors, name);
+        const touch = getIn(form.touched, name);
+        return touch && error ? error : null;
+      }}
+    />
+   );
+
+
   
   export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { params } = useParameters();
@@ -60,44 +75,68 @@ import {
     const [familyHistory, setFamilyHistory] = useState<ProcessedObservation[]>([]);
   
     const schema = yup.object().shape({
-        asthma: yup.boolean(),
-        asthmaRelationship: yup.string().when("asthma", (asthma, schema) => 
-          asthma ? schema.required("Please specify relationship for asthma") : schema
-        ),
-        hypertension: yup.boolean(),
-        hypertensionRelationship: yup.string().when("hypertension", (hypertension, schema) => 
-          hypertension ? schema.required("Please specify relationship for hypertension") : schema
-        ),
-        diabetes_mellitus: yup.boolean(),
-        diabetesMellitusRelationship: yup.string().when("diabetes_mellitus", (diabetes_mellitus, schema) => 
-          diabetes_mellitus ? schema.required("Please specify relationship for diabetes mellitus") : schema
-        ),
-        epilepsy: yup.boolean(),
-        epilepsyRelationship: yup.string().when("epilepsy", (epilepsy, schema) => 
-          epilepsy ? schema.required("Please specify relationship for epilepsy") : schema
-        ),
-        cancer: yup.boolean(),
-        cancerType: yup.string().when("cancer", (cancer, schema) => 
-          cancer ? schema.required("Please specify the type of cancer") : schema
-        ),
-        cancerRelationship: yup.string().when("cancer", (cancer, schema) => 
-          cancer ? schema.required("Please specify relationship for cancer") : schema
-        ),
-        tuberculosis: yup.boolean(),
-        tuberculosisRelationship: yup.string().when("tuberculosis", (tuberculosis, schema) => 
-          tuberculosis ? schema.required("Please specify relationship for tuberculosis") : schema
-        ),
-        other: yup.boolean(),
-        otherSpecify: yup.string().when("other", (other, schema) => 
-          other ? schema.required("Please specify the other condition") : schema
-        ),
-        otherRelationship: yup.string().when("other", (other, schema) => 
-          other ? schema.required("Please specify relationship for the other condition") : schema
-        ),
-      });
+      asthma: yup.boolean(),
+      asthmaRelationship: yup.string().when("asthma", {
+        is: true,
+        then: (schema) => schema.required("Please specify relationship for asthma"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      hypertension: yup.boolean(),
+      hypertensionRelationship: yup.string().when("hypertension", {
+        is: true,
+        then: (schema) => schema.required("Please specify relationship for hypertension"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      diabetes_mellitus: yup.boolean(),
+      diabetes_mellitusRelationship: yup.string().when("diabetes_mellitus", {
+        is: true,
+        then: (schema) => schema.required("Please specify relationship for diabetes mellitus"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      epilepsy: yup.boolean(),
+      epilepsyRelationship: yup.string().when("epilepsy", {
+        is: true,
+        then: (schema) => schema.required("Please specify relationship for epilepsy"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      cancer: yup.boolean(),
+      cancerType: yup.string().when("cancer", {
+        is: true,
+        then: (schema) => schema.required("Please specify the type of cancer"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      cancerRelationship: yup.string().when("cancer", {
+        is: true,
+        then: (schema) => schema.required("Please specify relationship for cancer"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      tuberculosis: yup.boolean(),
+      tuberculosisRelationship: yup.string().when("tuberculosis", {
+        is: true,
+        then: (schema) => schema.required("Please specify relationship for tuberculosis"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      other: yup.boolean(),
+      otherSpecify: yup.string().when("other", {
+        is: true,
+        then: (schema) => schema.required("Please specify the other condition"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      otherRelationship: yup.string().when("other", {
+        is: true,
+        then: (schema) => schema.required("Please specify relationship for the other condition"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+    });
       
     const initialValues = {
-
+      asthma: false,
+      hypertension: false,
+      diabetes_mellitus: false,
+      epilepsy: false,
+      cancer: false,
+      tuberculosis: false,
+      other: false,
     };
   
     const handleCheckboxChange = (e: any, field: string) => {
@@ -112,7 +151,8 @@ import {
       }));
     };
   
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+      await schema.validate(formValues)
       onSubmit(formValues);
     };
 
@@ -129,7 +169,6 @@ import {
           encounter.obs.forEach((observation) => {
             const value = observation.value;
         
-            // Format the observation data
             const obsData: ProcessedObservation = {
               obs_id: observation.obs_id,
               name: observation.names?.[0]?.name,
@@ -138,13 +177,11 @@ import {
             };
         
             if (observation.obs_group_id) {
-              // Find the parent observation and group it
               const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
               if (parent) {
                 parent.children.push(obsData);
               }
             } else {
-              // Add it to the top-level observations
               observations.push(obsData);
             }
           });
@@ -155,6 +192,19 @@ import {
       
       
     }, [ data]);
+
+    useEffect(() => {
+      setShowRelationshipFields((prev) => {
+        const updatedFields: Record<string, boolean> = { ...prev };
+    
+        Object.keys(familyHistoryFormConfig).forEach((key) => {
+          updatedFields[key] = !!formValues[key]; 
+        });
+    
+        return updatedFields;
+      });
+
+    }, [formValues, familyHistoryFormConfig]); 
   
   
     return (
@@ -178,7 +228,7 @@ import {
       <FormikInit
         validationSchema={schema}
         initialValues={initialValues}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         submitButton={false}
       >
         <FormValuesListener getValues={setFormValues} />
@@ -191,9 +241,10 @@ import {
     return (
       <div key={typedKey}>
         <LabelledCheckbox
+          name={familyHistoryFormConfig[typedKey].name}
           label={familyHistoryFormConfig[typedKey].label}
           checked={formValues[typedKey]}
-          onChange={(e) => handleCheckboxChange(e, typedKey)}
+
         />
         {showRelationshipFields[typedKey] && (
           <>
@@ -236,6 +287,7 @@ import {
                 name={`${typedKey}Relationship`}
                 placeholder="e.g., Mother"
               />
+
             )}
           </>
         )}
@@ -246,8 +298,8 @@ import {
         </FormFieldContainer>
   
         <WrapperBox>
-          <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-          <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
+          <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+          <MainButton onClick={handleSubmit} variant="primary" title="Submit" type="submit" sx={{ flex: 1 }} />
         </WrapperBox>
       </FormikInit>
       </>

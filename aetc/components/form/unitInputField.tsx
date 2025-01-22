@@ -13,7 +13,7 @@ import {
 import { SxProps } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useFormikField } from "./hooks"; // Import your custom hook
-import { WrapperBox } from "..";
+import { MainTypography, WrapperBox } from "..";
 
 type UnitInputFieldProps = {
   id: string;
@@ -87,7 +87,6 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           variant="outlined"
           sx={{ flexGrow: 1, background: "white", height: 56 }}
           error={hasError}
-          helperText={hasError ? errorMessage : ""}
           onBlur={(event: any) => {
             handleBlur(event);
             if (handleBlurEvent) handleBlurEvent(event.target.value);
@@ -125,7 +124,11 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
             </MenuItem>
           ))}
         </Select>
+                        
       </Box>
+      <MainTypography color={"red"} variant="subtitle2">
+          {errorMessage}
+      </MainTypography>
     </WrapperBox>
   );
 };

@@ -15,7 +15,7 @@ interface Observation {
   obs_group_id: number | null;
   value: any;
   names: { name: string }[];
-  children?: Observation[]; // To support nested children
+  children?: Observation[]; 
 }
 
 interface ProcessedObservation {
@@ -36,10 +36,6 @@ type Prop = {
     label: string;
   };
 
-  interface DisplayAllergy {
-    name: string;
-    value: string;
-  }
 
 
 const allergiesFormConfig = {
@@ -134,79 +130,114 @@ const allergyOptions = [
 
 
 const schema = yup.object().shape({
+
   [allergiesFormConfig.allergy.name]: yup
     .array()
+    .min(1, "At least one allergy must be selected")
     .of(
       yup.object().shape({
-        group: yup.string().required(),
-        value: yup.string().required(),
-        label: yup.string().required(),
+        group: yup.string().required("Group is required"),
+        value: yup.string().required("Value is required"),
+        label: yup.string().required("Label is required"),
       })
     )
-    .required("At least one allergy must be selected"),
+    .required("Allergy field is required"),
+
 
   [allergiesFormConfig.otherFood.name]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_FOOD_ALLERGY)
-        ? schema.required("Please specify the other food allergy")
-        : schema
-    ),
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherFoodAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === allergiesFormConfig.otherFood.name
+      );
 
-  [allergiesFormConfig.otherMedication.name]: yup
+      return hasOtherFoodAllergy
+        ? schema
+            .required("Please specify the other food allergy")
+            .min(1, "The other food allergy must not be empty")
+        : schema.notRequired();
+    }),
+
+
+  [concepts.OTHER_MEDICATION_ALLERGY]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY)
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherMedicationAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY
+      );
+
+      return hasOtherMedicationAllergy
         ? schema.required("Please specify the other medication allergy")
-        : schema
-    ),
+        : schema.notRequired();
+    }),
 
-  [allergiesFormConfig.otherMedicalSubstance.name]: yup
+  [concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY)
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherMedicalSubstanceAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY
+      );
+
+      return hasOtherMedicalSubstanceAllergy
         ? schema.required("Please specify the other medical substance allergy")
-        : schema
-    ),
+        : schema.notRequired();
+    }),
 
-  [allergiesFormConfig.otherSubstance.name]: yup
+ 
+  [concepts.OTHER_SUBSTANCE_ALLERGY]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY)
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherSubstanceAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY
+      );
+
+      return hasOtherSubstanceAllergy
         ? schema.required("Please specify the other substance allergy")
-        : schema
-    ),
+        : schema.notRequired();
+    }),
+
+
 });
 
 const initialValues = {
-  };
+  [allergiesFormConfig.allergy.name]: [], 
+  [allergiesFormConfig.otherFood.name]: "",
+  [allergiesFormConfig.otherMedication.name]: "",
+  [allergiesFormConfig.otherMedicalSubstance.name]: "",
+  [allergiesFormConfig.otherSubstance.name]: "",
+  [allergiesFormConfig.allergyDetails.name]: "",
+};
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
+    await schema.validate(formValues);
+    
     const allergyListKey = concepts.ALLERGY;
 
-// Loop through each key in `data`
-Object.keys(formValues).forEach((key) => {
-  // Check if the key matches the pattern "OTHER_*_ALLERGY"
-  if (key.startsWith("OTHER_") && key.endsWith("_ALLERGY")) {
-    const replacementValue = formValues[key];
+      Object.keys(formValues).forEach((key) => {
+        if (key.startsWith("OTHER_") && key.endsWith("_ALLERGY")) {
+          const replacementValue = formValues[key];
 
-    if (replacementValue) {
-      // Replace entries in the allergy list array
-      formValues[allergyListKey] = formValues[allergyListKey].map((allergy: { value: string; }) => {
-        if (allergy.value === key) {
-          return {
-            ...allergy,
-            value: replacementValue
-          };
+          if (replacementValue) {
+            formValues[allergyListKey] = formValues[allergyListKey].map((allergy: { value: string; }) => {
+              if (allergy.value === key) {
+                return {
+                  ...allergy,
+                  value: replacementValue
+                };
+              }
+              return allergy;
+            });
+
+            delete formValues[key];
+          }
         }
-        return allergy;
       });
 
-      // Remove the key from the main object
-      delete formValues[key];
-    }
-  }
-});
     onSubmit(formValues);
   };
 
@@ -313,12 +344,14 @@ return (<>
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
+      enableReinitialize={true}
       submitButton={false}
     >
     <FormValuesListener getValues={setFormValues} />
 
         <GroupedSearchComboBox options={allergyOptions} getValue={(value) => { setAllergySelected(value);}}  multiple={true} name={allergiesFormConfig.allergy.name}label={allergiesFormConfig.allergy.label} />
+
         {showFoodOther &&(
   <TextInputField 
   id={allergiesFormConfig.otherFood.name}
@@ -367,12 +400,10 @@ return (<>
  
 )}
 
-
-
-    <WrapperBox sx={{mt:'2ch'}}>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
- </WrapperBox>
+<WrapperBox sx={{mt: '2ch' }}>
+    <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+  </WrapperBox>
 </FormikInit>
 </>
 );
