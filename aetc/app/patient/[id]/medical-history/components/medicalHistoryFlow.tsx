@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import {
   ComplaintsForm,
@@ -20,8 +20,9 @@ import { useParameters } from "@/hooks";
 import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
-import { addObsChildren } from "@/hooks/obs";
 import { OverlayLoader } from "@/components/backdrop";
+import { useFormLoading } from "@/hooks/formLoading";
+import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
 
 
 
@@ -40,6 +41,32 @@ type InputObservation = {
 type OutputObservation = {
   concept: string;
   value: string | boolean;
+};
+
+interface OverlayWithMessageProps {
+  open: boolean;
+  message: string;
+}
+
+const OverlayWithMessage: React.FC<OverlayWithMessageProps> = ({ open, message }) => {
+  return (
+    <Backdrop
+      open={open}
+      sx={{
+        color: "#fff",
+        zIndex: (theme: any) => theme.zIndex.drawer + 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress color="inherit" />
+      <Box mt={2}>
+        <Typography variant="h6">{message}</Typography>
+      </Box>
+    </Backdrop>
+  );
 };
 
 
@@ -73,19 +100,41 @@ const symptomDurationUnits: Record<string, string>  ={
 }
 
 
+
+
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addEncounter();
+  const [formData, setFormData] = useState<any>({});
   const { navigateBack } = useNavigation();
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [submissionStatus, setSubmissionStatus] = useState<Record<string, string>>({
+    presentingComplaints: 'pending',
+    allergies: 'pending',
+    medications: 'pending',
+    conditions: 'pending',
+    surgeries: 'pending',
+    obstetrics: 'pending',
+    admissions: 'pending',
+    review: 'pending',
+    family: 'pending',
+  });
+
   const {
-    mutate: createObsChildren,
-    isSuccess: obsChildrenCreated,
-    isPending: creatingObsChildren,
-    isError: obsChildrenError, 
-  } = addObsChildren();
+    loading,
+    setLoading,
+    completed,
+    setCompleted,
+    message,
+    setMessage,
+    showForm,
+    setShowForm,
+    error,
+    setError,
+  } = useFormLoading();
 
   const {
     data: encounterResponse,
@@ -97,10 +146,14 @@ export const MedicalHistoryFlow = () => {
 
   const { data: patientVisits, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
-  // Wait for patient data to load
+
   if (isLoading) {
-    return <div>Loading patient data...</div>; // Loading state or spinner
+    return <div>Loading patient data...</div>;
+
   }
+
+
+
 
 
   // Construct steps based on patient gender
@@ -128,7 +181,17 @@ export const MedicalHistoryFlow = () => {
     }
   };
 
-  const handlePresentingComplaintsSubmission = (values: any) => {
+  const handlePrevious = () =>{
+    const previousStep = activeStep -1;
+    setActiveStep(previousStep)
+  }
+
+  const handlePresentingComplaintsNext = (values: any)=>{
+    formData["presentingComplaints"] = values;
+    handleSkip();
+  }
+
+  const handlePresentingComplaintsSubmission = async (values: any): Promise<void> => {
    
     const myobs = convertObservations(getObservations(values, dateTime));
 
@@ -152,9 +215,12 @@ export const MedicalHistoryFlow = () => {
         handleSkip(); 
   };
 
+  const handleAllergiesNext = (values: any)=>{
+    formData["allergies"] = values;
+    handleSkip();
+  }
 
-
-  const handleAllergiesSubmission = (values: any) => {
+  const handleAllergiesSubmission = async (values: any): Promise<void> => {
 
   const groupedAllergies = values[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
     if (!acc[allergy.group]) {
@@ -226,13 +292,15 @@ export const MedicalHistoryFlow = () => {
 
   });
 
-  if(encounterCreated)
-  handleSkip();
 
   };
 
+  function handleMedicationsNext(values: any): void {
+      formData["medications"] = values;
+      handleSkip();
+  }
 
-  function handleMedicationsSubmission(values: any): void {
+  async function handleMedicationsSubmission(values: any): Promise<void> {
     const observations =  getObservations(values, dateTime);
     const medicationObs = observations[0]?.value || [];
     
@@ -324,21 +392,23 @@ export const MedicalHistoryFlow = () => {
     
   });
 
-  if(encounterCreated)
-  handleSkip();
   };
 
-  function handleConditionsSubmission(values: any): void {
 
+  function handleConditionsNext(values: any): void {
+    formData["conditions"] = values;
+    handleSkip();
+  }
 
+  async function handleConditionsSubmission(values: any): Promise<void> {
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
-      concept: condition.name,
+      concept: concepts.DIAGNOSIS_DATE,
       obsDatetime: dateTime,
-      value: true,
+      value: condition.date,
       group_members: [
   
-        { concept: concepts.DIAGNOSIS_DATE, value: condition.date },
+        { concept: concepts.ICD11_DIAGNOSIS, value: condition.name },
         { concept: concepts.ON_TREATMENT, value: condition.onTreatment },
         { concept: concepts.ADDITIONAL_DIAGNOSIS_DETAILS, value: condition.additionalDetails },
       ] as OutputObservation[],
@@ -359,7 +429,12 @@ export const MedicalHistoryFlow = () => {
   handleSkip();
   }
 
-  function handleSurgeriesSubmission(values: any): void {
+  function handleSurgeriesNext(values: any): void {
+    formData["surgeries"] = values;
+    handleSkip();
+  }
+
+  async function handleSurgeriesSubmission(values: any): Promise<void> {
     const observationsPayload = values.surgeries.map((surgery: any) => {
     return  {
       concept: surgery.procedure,
@@ -383,11 +458,16 @@ export const MedicalHistoryFlow = () => {
     });
   });
 
-  if(encounterCreated)
-  handleSkip();
   }
 
-  function handleObstetricsSubmission(values: any): void {
+  function handleObstetricsNext(values: any): void {
+    formData["obstetrics"] = values;
+    handleSkip();
+  }
+
+
+
+  async function handleObstetricsSubmission(values: any): Promise<void> {
     const obstetricsObs = (values.obstetrics);
 
     const contraceptives = obstetricsObs.contraceptive_history.map((item: { id: any; }) => ({
@@ -455,20 +535,23 @@ export const MedicalHistoryFlow = () => {
       });
     });
   };
-    if(encounterCreated)
+
+  }
+
+  function handleAdmissionsNext(values: any): void {
+    formData["admissions"] = values;
     handleSkip();
   }
 
-  function handleAdmissionsSubmission(values: any): void {
+  async function handleAdmissionsSubmission(values: any): Promise<void> {
     const admissions = values.admissions;
   
     if (!Array.isArray(admissions)) {
       console.error("Admissions data is invalid or not an array:", admissions);
       return;
     }
-  
+
     const encounterPayload = admissions.map((admission: any) => ({
-      
       encounterType: encounters.PATIENT_ADMISSIONS, 
       visit: activeVisit?.uuid, 
       patient: params.id, 
@@ -481,6 +564,7 @@ export const MedicalHistoryFlow = () => {
           group_members: [
             { concept: concepts.HEALTH_CENTER_HOSPITALS, value: admission.hospital }, 
             { concept: concepts.ADMISSION_SECTION, value: admission.ward },
+            {concept: concepts.ICD11_DIAGNOSIS, value: admission.diagnosis},
             { concept: concepts.SURGICAL_INTERVENTIONS, value: admission.interventions },
             { concept: concepts.DISCHARGE_INSTRUCTIONS, value: admission.discharge_instructions },
             { concept: concepts.FOLLOW_UP, value: admission.follow_up_plans },
@@ -490,16 +574,18 @@ export const MedicalHistoryFlow = () => {
     }));
 
     encounterPayload.forEach((encounter, index) => {
-      console.log(encounter)
       createEncounter(encounter);
-
-      if(index == encounterPayload.length-1)
-        handleSkip();
     });
 
   }
-
-  function handleReviewSubmission(values: any): void {
+  
+  function handleReviewNext(values: any): void {
+      formData["review"] = values;
+      console.log(activeStep);
+      handleSkip();
+  }
+  
+  async function handleReviewSubmission(values: any): Promise<void> {
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
@@ -809,11 +895,71 @@ export const MedicalHistoryFlow = () => {
         group_members: socialDetailsObs,
       },]});
     }
-      handleSkip()
 
   };
 
-  function handleFamilyHistorySubmission(values: any): void {
+  function handleSubmitAll(values: any): void {
+    console.log(formData["conditions"]);
+    formData["family"] = values;
+    setSubmitting(true);
+
+
+    const submissionHandlers: Record<string, (value: any) => Promise<void>> = {
+      presentingComplaints: handlePresentingComplaintsSubmission,
+      allergies: handleAllergiesSubmission,
+      medications: handleMedicationsSubmission,
+      conditions: handleConditionsSubmission,
+      surgeries: handleSurgeriesSubmission,
+      obstetrics: handleObstetricsSubmission,
+      admissions: handleAdmissionsSubmission,
+      review: handleReviewSubmission,
+      family: handleFamilyHistorySubmission,
+    };
+  
+
+    Object.entries(formData).forEach(async ([key, value]) => {
+      if (
+        key === "family" &&
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.keys(value).every(
+          (subKey) => typeof (value as Record<string, unknown>)[subKey] !== "boolean" || !(value as Record<string, boolean>)[subKey]
+        )
+      ) {
+        return;
+      }
+      
+      if (submissionHandlers[key]) {
+        setSubmissionStatus((prev) => ({
+          ...prev,
+          [key]: "submitting",
+        }));
+  
+        try {
+          await submissionHandlers[key](value);
+  
+          setSubmissionStatus((prev) => ({
+            ...prev,
+            [key]: "success",
+          }));
+        } catch (error) {
+          setSubmissionStatus((prev) => ({
+            ...prev,
+            [key]: "error",
+          }));
+        }
+
+      }
+    });
+  
+    setSubmitting(false);
+    handleSkip();
+  }
+
+
+
+  async function handleFamilyHistorySubmission(values: any): Promise<void> {
     const conditionConcepts: { [key: string]: string }  = {
       asthma: concepts.FAMILY_HISTORY_ASTHMA,
       hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
@@ -896,8 +1042,6 @@ export const MedicalHistoryFlow = () => {
       }, {
         onSuccess: (data) => {
           console.log(`Encounter #${index + 1} submitted successfully:`, data);
-          if(index == (groupedObservations.length-1))
-            handleSkip()
         },
         onError: (error) => {
           console.error(`Error submitting encounter #${index + 1}:`, error);
@@ -911,7 +1055,16 @@ export const MedicalHistoryFlow = () => {
 
   return (
     <>
-    <OverlayLoader open={isLoading} />
+
+    <OverlayLoader open={isLoading || submitting} />
+    <OverlayWithMessage
+      open={submitting}
+      message={Object.entries(submissionStatus).some(([_, status]) => status === "submitting")
+        ? "Submitting your data, please wait..."
+        : "Processing submissions..."}
+    />
+ 
+  
       <NewStepperContainer
         setActive={setActiveStep}
         title="Medical History"
@@ -919,20 +1072,19 @@ export const MedicalHistoryFlow = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip} />
-        <AllergiesForm onSubmit={handleAllergiesSubmission} onSkip={handleSkip} />
-        <MedicationsForm onSubmit={handleMedicationsSubmission} onSkip={handleSkip} />
-        <PriorConditionsForm onSubmit={handleConditionsSubmission} onSkip={handleSkip} />
-        <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
+        <AllergiesForm onSubmit={handleAllergiesNext} onSkip={handlePrevious} />
+        <MedicationsForm onSubmit={handleMedicationsNext} onSkip={handlePrevious} />
+        <PriorConditionsForm onSubmit={handleConditionsNext} onSkip={handlePrevious} />
+        <SurgeriesForm onSubmit={handleSurgeriesNext} onSkip={handlePrevious} />
         {patient?.gender === "Female" && (
-          <ObstetricsForm onSubmit={handleObstetricsSubmission} onSkip={handleSkip} />
+          <ObstetricsForm onSubmit={handleObstetricsNext} onSkip={handlePrevious} />
         )}
-        <AdmissionsForm onSubmit={handleAdmissionsSubmission} onSkip={handleSkip}/>
-        <ReviewOfSystemsForm onSubmit={handleReviewSubmission} onSkip={handleSkip}/>
-        <FamilyHistoryForm onSubmit={handleFamilyHistorySubmission} onSkip={handleSkip} />
-        
-
-      </NewStepperContainer>
+        <AdmissionsForm onSubmit={handleAdmissionsNext} onSkip={handlePrevious}/>
+        <ReviewOfSystemsForm onSubmit={handleReviewNext} onSkip={handlePrevious}/>
+        <FamilyHistoryForm onSubmit={handleSubmitAll} onSkip={handlePrevious} />
+    
+      </NewStepperContainer>  
     </>
   );
 };

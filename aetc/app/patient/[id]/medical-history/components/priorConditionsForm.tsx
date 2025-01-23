@@ -2,6 +2,7 @@
 import {
     FieldsContainer,
     FormDatePicker,
+    FormFieldContainer,
     FormFieldContainerLayout,
     FormikInit,
     FormValuesListener,
@@ -18,10 +19,13 @@ import DynamicFormList from "@/components/form/dynamicFormList";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
 import { getConceptSetMembers } from "@/hooks/labOrder";
-import { FieldArray } from "formik";
+import { Field, FieldArray, getIn } from "formik";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
+import ECTReactComponent from "@/components/form/ECTReactComponent"
+import { MdOutlineClose } from "react-icons/md";
+
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -66,47 +70,47 @@ import { Obs } from "@/interfaces";
   };
   
   const schema = Yup.object().shape({
-    surgeries: Yup.array().of(
+    conditions: Yup.array().of(
       Yup.object().shape({
-        surgical_procedure_name: Yup.string().required("Drug name is required"),
-        surgical_procedure_date: Yup.string().required("Dose is required"),
-        surgical_procedure_indication: Yup.string().required("Route is required"),
-        surgical_procedure_complications: Yup.string().required("Prescriber is required"),
+        name: Yup.string().required("Condition name is required"),
+  
+        date: Yup.date()
+          .nullable()
+          .required("Date of diagnosis is required")
+          .typeError("Invalid date format")
+          .max(new Date(), "Date of diagnosis cannot be in the future"),
+  
+        onTreatment: Yup.boolean().required("Treatment status is required"),
+
+        additionalDetails: Yup.string().optional(),
       })
     ),
   });
   
   
+  const ErrorMessage = ({ name }: { name: string }) => (
+   <Field
+     name={name}
+     render={({ form }: { form: any }) => {
+       const error = getIn(form.errors, name);
+       const touch = getIn(form.touched, name);
+       return touch && error ? error : null;
+     }}
+   />
+  );
   
   export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
     const { params } = useParameters();
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const [formValues, setFormValues] = useState<any>({});
-    const [diagnosisOptions, setDiagnosisOptions] = useState<{ id: string; label: string }[]>([]);
     const[existingHistory, setExistingHistory] = useState<string[]>();
-    const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
-    const {
-        data: diagnoses,
-        isLoading: diagnosesLoading,
-        refetch: reloadDiagnoses,
-        isRefetching: reloadingDiagnoses,
-      } = getConceptSetMembers(diagnosesConceptId);
+    interface ShowSelectionState {
+      [key: number]: boolean;
+    }
 
-      
+    const [showSelection, setShowSelection] = useState<ShowSelectionState>({});
  
     useEffect(() => {
-      reloadDiagnoses();
-      if (diagnoses) {
-        const formatDiagnosisOptions = (diagnoses: any) => {
-          return diagnoses.map((diagnosis: {names: { uuid: string, name: any; }[]; }) => ({
-            id: diagnosis.names[0].uuid,
-            label: diagnosis.names[0].name,
-          }));
-        };
-        setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
-        
-      };
-
 
       if(!isLoading){
         const conditionsEncounters = data?.filter(
@@ -136,10 +140,16 @@ import { Obs } from "@/interfaces";
       setExistingHistory(uniqueNamesArray);
 
       }
-    }, [diagnoses, data]);
+    }, [data]);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+    await schema.validate(formValues);
      onSubmit(formValues);
+    };
+
+    const handleICD11Selection = (selectedEntity: any, index: number) => {
+          setShowSelection((prev) => ({ ...prev, [index]: true }));
+          formValues.conditions[index]["name"] = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`
     };
   
     return (<>
@@ -152,75 +162,102 @@ import { Obs } from "@/interfaces";
   ))}
 </div>
     
-      <FormikInit
-      initialValues={initialValues}
-      validationSchema={schema}
-      onSubmit={onSubmit}
-      enableReinitialize
-      submitButton={false}
-    >
-        {({ values, setFieldValue }) => (
+<FormikInit
+  initialValues={initialValues}
+  validationSchema={schema}
+  onSubmit={onSubmit}
+  enableReinitialize
+  submitButton={false}
+>
+  {({ values, setFieldValue }) => (
+    <>
+      <FormValuesListener getValues={setFormValues} />
+      <FieldArray name="conditions">
+        {({ push, remove }) => (
           <>
-            <FormValuesListener getValues={setFormValues} />
-            <FieldArray name="conditions">
-              {({ push, remove }) => (
+            <DynamicFormList
+              items={values.conditions}
+              setItems={(newItems) => setFieldValue("conditions", newItems)}
+              newItem={conditionTemplate}
+              renderFields={(item, index) => (
                 <>
-                  <a
-                    href="https://icd.who.int/browse/2024-01/mms/en"
-                    style={{
-                      color: 'primary',
-                      textDecorationLine: 'underline',
-                      paddingRight: '1ch',
-                      fontSize: 'small',
-                    }}
-                  >
-                    ICD11 List of diagnoses <FaExternalLinkAlt />
-                  </a>
-                  
-                  <DynamicFormList
-                    items={values.conditions}
-                    setItems={(newItems) => setFieldValue("conditions", newItems)}
-                    newItem={conditionTemplate}
-                    renderFields={(item, index) => (
-                      <>
-                        <SearchComboBox
-                          name={priorConditionsFormConfig.conditions_name(index).name}
-                          label={priorConditionsFormConfig.conditions_name(index).label}
-                          options={diagnosisOptions}
-                          multiple={false}
-                          sx={{ width: '100%' }}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch" }}>
+                        <label style={{fontWeight: "bold" }}>
+                        {formValues.conditions[index]["name"]}
+                      </label>
+                      <MdOutlineClose 
+                            color={"red"} 
+                            onClick={() => {
+                              setShowSelection((prev) => ({ ...prev, [index]: false }));
+                              formValues.conditions[index]["name"] ="";
+                            }} 
+                            style={{ cursor: "pointer" }} 
+                          />
+                      </div>
+                        ) : (
+                          <ECTReactComponent
+                          onICD11Selection={(selectedEntity: any) => handleICD11Selection(selectedEntity, index)}
+                          label={'Condition'}
+                          name={'icd11_input'}
+                          iNo={index}
                         />
-                        <FormDatePicker
-                          name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}
-                          label={priorConditionsFormConfig.conditions_diagnosis_date(index).label}
-                          sx={{ background: 'white', width: '150px' }}
-                        />
-                        <LabelledCheckbox
-                          label={priorConditionsFormConfig.conditions_on_treatment(index).label}
-                          checked={values.conditions[index].onTreatment || false}
-                          onChange={(e) =>
-                            setFieldValue(priorConditionsFormConfig.conditions_on_treatment(index).name, e.target.checked)
-                          }
-                        />
-                        <TextInputField
-                          id={priorConditionsFormConfig.conditions_additional_details(index).name}
-                          name={priorConditionsFormConfig.conditions_additional_details(index).name}
-                          label={priorConditionsFormConfig.conditions_additional_details(index).label}
-                          sx={{ width: '100%' }}
-                          multiline={true}
-                          rows={3}
-                        />
-                      </>
-                    )}
+                        )}
+                    <div style={{ color: "red", fontSize: "0.875rem"}}>
+                        <ErrorMessage name={priorConditionsFormConfig.conditions_name(index).name} />
+                      </div>
+                    <div>
+                      <FormDatePicker
+                        name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}
+                        label={priorConditionsFormConfig.conditions_diagnosis_date(index).label}
+                        sx={{ background: 'white', width: '100%' }}
+                      />
+                      <div style={{ color: "red", fontSize: "0.875rem", marginTop: '0.5rem' }}>
+                        <ErrorMessage name={priorConditionsFormConfig.conditions_diagnosis_date(index).name} />
+                      </div>
+
+                      <LabelledCheckbox
+                    name={priorConditionsFormConfig.conditions_on_treatment(index).name}
+                    label={priorConditionsFormConfig.conditions_on_treatment(index).label}
+                    checked={values.conditions[index].onTreatment}
                   />
+                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={priorConditionsFormConfig.conditions_on_treatment(index).name}
+                    />
+                  </div>
+                    </div>
+                  </div>
+
+                 
+
+                  <TextInputField
+                    id={priorConditionsFormConfig.conditions_additional_details(index).name}
+                    name={priorConditionsFormConfig.conditions_additional_details(index).name}
+                    label={priorConditionsFormConfig.conditions_additional_details(index).label}
+                    sx={{ width: '100%' }}
+                    multiline={true}
+                    rows={3}
+                  />
+                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={priorConditionsFormConfig.conditions_additional_details(index).name}
+                    />
+                  </div>
                 </>
               )}
-            </FieldArray>
-            <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-            <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
+            />
+<WrapperBox sx={{mt: '2ch' }}>
+    <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+  </WrapperBox>
+
           </>
         )}
-      </FormikInit>
+      </FieldArray>
+    </>
+  )}
+</FormikInit>
       </>
     );
   };
