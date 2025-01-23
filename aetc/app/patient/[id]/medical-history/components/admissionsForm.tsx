@@ -68,7 +68,7 @@ const admissionsFormConfig = {
     label: `Ward`,
   }),
   diagnosis: (index: number) => ({
-    name: `admissions[${index}].diagnoses`,
+    name: `admissions[${index}].diagnosis`,
     label: `Diagnosis`,
   }),
   interventions: (index: number) => ({
@@ -291,6 +291,9 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                           iNo={100+index}
                         />
                         )}
+                      <div style={{ color: "red", fontSize: "0.875rem"}}>
+                        <ErrorMessage name={admissionsFormConfig.diagnosis(index).name} />
+                      </div>
                   </FormFieldContainer>
                   <FormFieldContainer direction="column">
                       <TextInputField
