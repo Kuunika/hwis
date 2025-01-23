@@ -2,10 +2,9 @@
 import React, { useEffect } from 'react';
 import * as ECT from '@whoicd/icd11ect';
 import '@whoicd/icd11ect/style.css';
-import { MainTypography } from '..';
 import { useFormikField } from './hooks/useFormikField';
 import { InputLabel } from '@mui/material';
-
+import { IoSearch } from "react-icons/io5";
 interface ECTReactComponentProps {
   iNo: number;
   name: string;
@@ -38,26 +37,43 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
     ECT.Handler.bind(iNo);
   }, [onICD11Selection]);
 
-  const { value, handleChange, hasError, errorMessage, handleBlur } =
-      useFormikField(name);
-
   return (
     <div>
-    <InputLabel sx={{mb:'1ch', fontSize: "0.76rem", color: "text.secondary" }}>
-        {label}
-      </InputLabel>
-      <input
-        type="text"
-        className="ctw-input"
-        autoComplete="off"
-        data-ctw-ino={iNo}
-        style={{marginBottom:'1ch', fontSize: "0.76rem", color: "text.secondary", height: "48px", width:"320px"}}
-      />
-      <MainTypography color={"red"} variant="subtitle2">
-          {errorMessage}
-      </MainTypography>
-      <div className="ctw-window" style={{color:"white"}} data-ctw-ino={iNo}></div>
-    </div>
+<div style={{ position: "relative", width: "320px" }}>
+  <InputLabel sx={{ mb: "1ch", fontSize: "0.76rem", color: "text.secondary" }}>
+    {label}
+  </InputLabel>
+  <input
+    type="text"
+    className="ctw-input"
+    autoComplete="off"
+    data-ctw-ino={iNo}
+    style={{
+      marginBottom: "1ch",
+      fontSize: "1.2rem",
+      color: "text.secondary",
+      height: "48px",
+      width: "100%",
+    }}
+  />
+  <IoSearch
+    style={{
+      position: "absolute",
+      right: "10px",
+      top: "60%",
+      transform: "translateY(-50%)",
+      cursor: "pointer",
+      color: "gray", 
+    }}
+  />
+
+</div>
+<div
+    className="ctw-window"
+    style={{ color: "white" }}
+    data-ctw-ino={iNo}
+  ></div>
+</div>
   );
 };
 

@@ -25,6 +25,7 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
 import ECTReactComponent from "@/components/form/ECTReactComponent"
 import { MdOutlineClose } from "react-icons/md";
+
   
   type Prop = {
     onSubmit: (values: any) => void;
@@ -211,8 +212,9 @@ import { MdOutlineClose } from "react-icons/md";
                             color={"red"} 
                             onClick={() => {
                               setShowSelection((prev) => ({ ...prev, [index]: false }));
+                              formValues.conditions[index]["name"] ="";
                             }} 
-                            style={{ cursor: "pointer" }} // Adds a pointer cursor for better UX
+                            style={{ cursor: "pointer" }} 
                           />
                       </div>
                         ) : (
