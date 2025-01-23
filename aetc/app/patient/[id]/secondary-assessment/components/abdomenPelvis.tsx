@@ -17,7 +17,11 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import { AbdomenImage, SecondaryAbdomenImage } from "@/components/svgImages";
+import {
+  AbdomenImage,
+  AbdomenImageWithOtherForm,
+  SecondaryAbdomenImage,
+} from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
@@ -465,89 +469,10 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation">
-          <FieldsContainer>
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.hepatomegaly.name}
-              label={form.hepatomegaly.label}
-            />
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.splenomegaly.name}
-              label={form.splenomegaly.label}
-            />
-          </FieldsContainer>
-          <FieldsContainer mr="5px">
-            <>
-              {formValues[form.hepatomegaly.name] == YES && (
-                <TextInputField
-                  multiline
-                  rows={5}
-                  sx={{ width: "100%" }}
-                  id={form.hepatomegalyDescription.name}
-                  name={form.hepatomegalyDescription.name}
-                  label={form.hepatomegalyDescription.label}
-                />
-              )}
-            </>
-            <>
-              {formValues[form.splenomegaly.name] == YES && (
-                <TextInputField
-                  multiline
-                  rows={5}
-                  sx={{ width: "100%" }}
-                  id={form.splenomegalyDescription.name}
-                  name={form.splenomegalyDescription.name}
-                  label={form.splenomegalyDescription.label}
-                />
-              )}
-            </>
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.kidneyBallotable.name}
-              label={form.kidneyBallotable.label}
-            />
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.fullBladder.name}
-              label={form.fullBladder.label}
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.tenderness.name}
-              label={form.tenderness.label}
-            />
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.otherMasses.name}
-              label={form.otherMasses.label}
-            />
-          </FieldsContainer>
-          {formValues[form.otherMasses.name] == YES && (
-            <TextInputField
-              multiline
-              rows={5}
-              sx={{ width: "100%" }}
-              id={form.otherMassesDescription.name}
-              name={form.otherMassesDescription.name}
-              label={form.otherMassesDescription.label}
-            />
-          )}
-          <FieldsContainer>
-            {formValues[form.tenderness.name] == YES && (
-              <AbdomenImage onValueChange={setTendernessImageEnc} />
-            )}
-          </FieldsContainer>
+          <AbdomenImageWithOtherForm
+            formNameSection="palpation"
+            onValueChange={setTendernessImageEnc}
+          />
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Percussion">
           <FieldsContainer>
