@@ -100,18 +100,10 @@ const admissionsFormConfig = {
 export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   const { params } = useParameters();
   const [formValues, setFormValues] = useState<any>({});
-  const [diagnosisOptions, setDiagnosisOptions] = useState<{ id: string; label: string }[]>([]);
   const [hospitalOptions, setHospitalOptions] = useState<[]>();
   const { data: facilitiesData, isLoading } = getFacilities();
   const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
   const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-  const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
-  const {
-    data: diagnoses,
-    isLoading: diagnosesLoading,
-    refetch: reloadDiagnoses,
-    isRefetching: reloadingDiagnoses,
-  } = getConceptSetMembers(diagnosesConceptId);
 
   const admissionsEncounters = patientHistory?.filter(
     (item) => item.encounter_type.name === "PATIENT ADMISSIONS"
@@ -148,22 +140,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   });
   
   const handleSubmit = async () => {
-    console.log(formValues)
     await schema.validate(formValues);
     onSubmit(formValues);
   };
 
   useEffect(() => {
-    reloadDiagnoses();
-    if (diagnoses) {
-      const formatDiagnosisOptions = (diagnoses: any) => {
-        return diagnoses.map((diagnosis: { uuid: string; names: { name: any; }[]; }) => ({
-          id: diagnosis.uuid,
-          label: diagnosis.names[0].name,
-        }));
-      };
-      setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
-    }
 
     const hospitalOptions = facilitiesData.map((facility:any) => ({
       id: facility.facility_code,
@@ -203,7 +184,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
         setObservations(observations)
       });}
     
-  }, [diagnoses, patientHistory]);
+  }, [patientHistory]);
 
   const handleICD11Selection = (selectedEntity: any, index: number) => {
     setShowSelection((prev) => ({ ...prev, [index]: true }));
@@ -267,7 +248,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         label={admissionsFormConfig.hospitals(index).label}
                         options={hospitalOptions?hospitalOptions:[]}
                         multiple={false}
-                        sx={{ width: "220px" }}
+                        sx={{ width: "320px" }}
                       />
                     <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage
@@ -289,7 +270,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                     />
                   </div>
                   
-                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch", marginTop: "2ch" }}>
+                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch", marginTop: "" }}>
                         <label style={{fontWeight: "bold" }}>
                         {formValues.admissions[index]["diagnosis"]}
                       </label>

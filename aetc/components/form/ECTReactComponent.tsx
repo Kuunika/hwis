@@ -39,7 +39,7 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
 
   return (
     <div>
-<div style={{ position: "relative", width: "320px" }}>
+<div style={{ position: "relative", width: "full" }}>
   <InputLabel sx={{ mb: "1ch", fontSize: "0.76rem", color: "text.secondary" }}>
     {label}
   </InputLabel>

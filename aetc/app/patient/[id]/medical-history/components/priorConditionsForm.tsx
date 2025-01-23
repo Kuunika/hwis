@@ -103,16 +103,7 @@ import { MdOutlineClose } from "react-icons/md";
     const { params } = useParameters();
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const [formValues, setFormValues] = useState<any>({});
-    const [diagnosisOptions, setDiagnosisOptions] = useState<{ id: string; label: string }[]>([]);
     const[existingHistory, setExistingHistory] = useState<string[]>();
-    const diagnosesConceptId = "b8e32cd6-8d80-11d8-abbb-0024217bb78e"
-    const {
-        data: diagnoses,
-        isLoading: diagnosesLoading,
-        refetch: reloadDiagnoses,
-        isRefetching: reloadingDiagnoses,
-      } = getConceptSetMembers(diagnosesConceptId);
-    const [selectedCondition, setSelectedCondition] = useState<string | null>(null);
     interface ShowSelectionState {
       [key: number]: boolean;
     }
@@ -120,19 +111,6 @@ import { MdOutlineClose } from "react-icons/md";
     const [showSelection, setShowSelection] = useState<ShowSelectionState>({});
  
     useEffect(() => {
-      console.log(showSelection)
-      reloadDiagnoses();
-      if (diagnoses) {
-        const formatDiagnosisOptions = (diagnoses: any) => {
-          return diagnoses.map((diagnosis: {names: { uuid: string, name: any; }[]; }) => ({
-            id: diagnosis.names[0].uuid,
-            label: diagnosis.names[0].name,
-          }));
-        };
-        setDiagnosisOptions(formatDiagnosisOptions(diagnoses));
-        
-      };
-
 
       if(!isLoading){
         const conditionsEncounters = data?.filter(
@@ -162,7 +140,7 @@ import { MdOutlineClose } from "react-icons/md";
       setExistingHistory(uniqueNamesArray);
 
       }
-    }, [diagnoses, data]);
+    }, [data]);
 
     const handleSubmit = async () => {
     await schema.validate(formValues);

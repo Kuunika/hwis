@@ -21,7 +21,6 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { OverlayLoader } from "@/components/backdrop";
-import { CustomizedProgressBars } from "@/components/loader";
 import { useFormLoading } from "@/hooks/formLoading";
 import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
 
@@ -404,12 +403,12 @@ export const MedicalHistoryFlow = () => {
   async function handleConditionsSubmission(values: any): Promise<void> {
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
-      concept: condition.name,
+      concept: concepts.DIAGNOSIS_DATE,
       obsDatetime: dateTime,
-      value: true,
+      value: condition.date,
       group_members: [
   
-        { concept: concepts.DIAGNOSIS_DATE, value: condition.date },
+        { concept: concepts.ICD11_DIAGNOSIS, value: condition.name },
         { concept: concepts.ON_TREATMENT, value: condition.onTreatment },
         { concept: concepts.ADDITIONAL_DIAGNOSIS_DETAILS, value: condition.additionalDetails },
       ] as OutputObservation[],
@@ -551,9 +550,8 @@ export const MedicalHistoryFlow = () => {
       console.error("Admissions data is invalid or not an array:", admissions);
       return;
     }
-  
+
     const encounterPayload = admissions.map((admission: any) => ({
-      
       encounterType: encounters.PATIENT_ADMISSIONS, 
       visit: activeVisit?.uuid, 
       patient: params.id, 
@@ -566,6 +564,7 @@ export const MedicalHistoryFlow = () => {
           group_members: [
             { concept: concepts.HEALTH_CENTER_HOSPITALS, value: admission.hospital }, 
             { concept: concepts.ADMISSION_SECTION, value: admission.ward },
+            {concept: concepts.ICD11_DIAGNOSIS, value: admission.diagnosis},
             { concept: concepts.SURGICAL_INTERVENTIONS, value: admission.interventions },
             { concept: concepts.DISCHARGE_INSTRUCTIONS, value: admission.discharge_instructions },
             { concept: concepts.FOLLOW_UP, value: admission.follow_up_plans },
