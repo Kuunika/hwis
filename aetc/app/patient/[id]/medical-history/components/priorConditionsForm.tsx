@@ -228,7 +228,6 @@ import { MdOutlineClose } from "react-icons/md";
                     <div style={{ color: "red", fontSize: "0.875rem"}}>
                         <ErrorMessage name={priorConditionsFormConfig.conditions_name(index).name} />
                       </div>
-                    {/* Diagnosis Date Picker */}
                     <div>
                       <FormDatePicker
                         name={priorConditionsFormConfig.conditions_diagnosis_date(index).name}

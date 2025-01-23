@@ -7,6 +7,8 @@ import { Field, FieldArray, getIn } from "formik";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { getFacilities, useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import { MdOutlineClose } from "react-icons/md";
+import ECTReactComponent from "@/components/form/ECTReactComponent";
 
 interface Observation {
   obs_id: number | null;
@@ -32,7 +34,7 @@ type Admission = {
   date: string;
   hospital: string;
   ward: string;
-  diagnoses: string;
+  diagnosis: string;
   interventions: string;
   discharge_instructions: string;
   follow_up_plans: string;
@@ -42,7 +44,7 @@ const admissionTemplate: Admission = {
   date: "",
   hospital: "",
   ward: "",
-  diagnoses: "",
+  diagnosis: "",
   interventions: "",
   discharge_instructions: "",
   follow_up_plans: ""
@@ -65,7 +67,7 @@ const admissionsFormConfig = {
     name: `admissions[${index}].ward`,
     label: `Ward`,
   }),
-  diagnoses: (index: number) => ({
+  diagnosis: (index: number) => ({
     name: `admissions[${index}].diagnoses`,
     label: `Diagnosis`,
   }),
@@ -115,7 +117,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     (item) => item.encounter_type.name === "PATIENT ADMISSIONS"
   );
 
+  interface ShowSelectionState {
+    [key: number]: boolean;
+  }
 
+  const [showSelection, setShowSelection] = useState<ShowSelectionState>({});
   const schema = yup.object().shape({
     admissions: yup.array().of(
       yup.object().shape({
@@ -127,7 +133,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
           .max(new Date(), "Admission date cannot be in the future"),
         hospital: yup.string().nullable().required("Hospital name is required"),
         ward: yup.string().nullable().required("Ward is required"),
-        diagnoses: yup.string().nullable().required("Diagnosis is required"),
+        diagnosis: yup.string().nullable().required("Diagnosis is required"),
         interventions: yup.string().nullable().required("Interventions are required"),
         discharge_instructions: yup
           .string()
@@ -142,6 +148,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   });
   
   const handleSubmit = async () => {
+    console.log(formValues)
     await schema.validate(formValues);
     onSubmit(formValues);
   };
@@ -198,6 +205,11 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     
   }, [diagnoses, patientHistory]);
 
+  const handleICD11Selection = (selectedEntity: any, index: number) => {
+    setShowSelection((prev) => ({ ...prev, [index]: true }));
+    formValues.admissions[index]["diagnosis"] = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`
+};
+
   return (
     <>
   <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
@@ -239,6 +251,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                   newItem={admissionTemplate}
                   renderFields={(item, index) => (
                     <>
+                    <FormFieldContainer direction="row">
                       <FormDatePicker
                         name={admissionsFormConfig.admission_date(index).name}
                         label={admissionsFormConfig.admission_date(index).label}
@@ -254,37 +267,51 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         label={admissionsFormConfig.hospitals(index).label}
                         options={hospitalOptions?hospitalOptions:[]}
                         multiple={false}
-                        sx={{ width: "150px" }}
+                        sx={{ width: "220px" }}
                       />
-                                        <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage
                       name={admissionsFormConfig.hospitals(index).name}
                     />
                   </div>
+                  </FormFieldContainer>
+                  <FormFieldContainer direction="column">
                       <TextInputField
                         id={admissionsFormConfig.wards(index).name}
                         name={admissionsFormConfig.wards(index).name}
                         label={admissionsFormConfig.wards(index).label}
                         multiline={false}
-                        sx={{ width: "150px" }}
+                        sx={{ width: "420px", marginRight: "2ch" }}
                       />
                        <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage
                       name={admissionsFormConfig.wards(index).name}
                     />
                   </div>
-                      <SearchComboBox
-                        name={admissionsFormConfig.diagnoses(index).name}
-                        label={admissionsFormConfig.diagnoses(index).label}
-                        options={diagnosisOptions}
-                        multiple={false}
-                        sx={{ width: "150px" }}
-                      />
-                       <div style={{ color: "red", fontSize: "0.875rem" }}>
-                    <ErrorMessage
-                      name={admissionsFormConfig.diagnoses(index).name}
-                    />
-                  </div>
+                  
+                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch", marginTop: "2ch" }}>
+                        <label style={{fontWeight: "bold" }}>
+                        {formValues.admissions[index]["diagnosis"]}
+                      </label>
+                      <MdOutlineClose 
+                            color={"red"} 
+                            onClick={() => {
+                              setShowSelection((prev) => ({ ...prev, [index]: false }));
+                              formValues.admissions[index]["diagnosis"] ="";
+                            }} 
+                            style={{ cursor: "pointer" }} 
+                          />
+                      </div>
+                        ) : (
+                          <ECTReactComponent
+                          onICD11Selection={(selectedEntity: any) => handleICD11Selection(selectedEntity, index)}
+                          label={'Condition'}
+                          name={'icd11_input'}
+                          iNo={100+index}
+                        />
+                        )}
+                  </FormFieldContainer>
+                  <FormFieldContainer direction="column">
                       <TextInputField
                         id={admissionsFormConfig.interventions(index).name}
                         name={admissionsFormConfig.interventions(index).name}
@@ -297,6 +324,8 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                       name={admissionsFormConfig.interventions(index).name}
                     />
                   </div>
+                  </FormFieldContainer>
+                  <FormFieldContainer direction="row">
                       <TextInputField
                         id={admissionsFormConfig.discharge_instructions(index).name}
                         name={admissionsFormConfig.discharge_instructions(index).name}
@@ -309,6 +338,8 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                       name={admissionsFormConfig.discharge_instructions(index).name}
                     />
                   </div>
+                  </FormFieldContainer>
+                  <FormFieldContainer direction="row">
                       <TextInputField
                         id={admissionsFormConfig.follow_up_plans(index).name}
                         name={admissionsFormConfig.follow_up_plans(index).name}
@@ -321,6 +352,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                       name={admissionsFormConfig.follow_up_plans(index).name}
                     />
                   </div>
+                    </FormFieldContainer>
                     </>
                   )}
                 />

@@ -43,29 +43,32 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
   <InputLabel sx={{ mb: "1ch", fontSize: "0.76rem", color: "text.secondary" }}>
     {label}
   </InputLabel>
-  <input
-    type="text"
-    className="ctw-input"
-    autoComplete="off"
-    data-ctw-ino={iNo}
-    style={{
-      marginBottom: "1ch",
-      fontSize: "1.2rem",
-      color: "text.secondary",
-      height: "48px",
-      width: "100%",
-    }}
-  />
   <IoSearch
     style={{
       position: "absolute",
-      right: "10px",
+      left: "10px",
       top: "60%",
       transform: "translateY(-50%)",
       cursor: "pointer",
       color: "gray", 
     }}
   />
+  <input
+    type="text"
+    className="ctw-input"
+    autoComplete="on"
+    data-ctw-ino={iNo}
+    style={{
+      marginBottom: "1ch",
+      paddingInline:"3ch",
+      fontSize: ".96rem",
+      color: "text.secondary",
+      height: "48px",
+      width: "100%",
+      borderRadius:"5px",
+    }}
+  />
+
 
 </div>
 <div
