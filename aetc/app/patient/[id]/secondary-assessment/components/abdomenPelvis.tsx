@@ -18,7 +18,6 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 import {
-  AbdomenImage,
   AbdomenImageWithOtherForm,
   SecondaryAbdomenImage,
 } from "@/components/svgImages";
@@ -36,42 +35,7 @@ const form = {
     name: concepts.ABNORMALITIES_PRESENT,
     label: "Are there abnormalities",
   },
-  tenderness: {
-    name: concepts.TENDERNESS,
-    label: "Tenderness",
-  },
-  hepatomegaly: {
-    name: concepts.HEPATOMEGALY,
-    label: "Hepatomegaly",
-  },
-  hepatomegalyDescription: {
-    name: concepts.HEPATOMEGALY_DESCRIPTION,
-    label: "Hepatomegaly Description",
-  },
-  splenomegaly: {
-    name: concepts.SPLENOMEGALY,
-    label: "Splenomegaly",
-  },
-  splenomegalyDescription: {
-    name: concepts.SPLENOMEGALY_DESCRIPTION,
-    label: "Splenomegaly Description",
-  },
-  kidneyBallotable: {
-    name: concepts.KIDNEYS_BALLOTABLE,
-    label: "Kidney Ballotable",
-  },
-  fullBladder: {
-    name: concepts.FULL_BLADDER,
-    label: "Full Bladder",
-  },
-  otherMasses: {
-    name: concepts.OTHER_MASSES,
-    label: "Other Masses",
-  },
-  otherMassesDescription: {
-    name: concepts.OTHER_MASSES_DESCRIPTION,
-    label: "Other Masses Description",
-  },
+
   shiftingDullness: {
     name: concepts.SHIFTING_DULLNESS,
     label: "Shifting Dullness",
@@ -197,31 +161,6 @@ const schema = Yup.object().shape({
   [form.abnormalitiesPresent.name]: Yup.string()
     .required()
     .label(form.abnormalitiesPresent.label),
-  [form.tenderness.name]: Yup.string().required().label(form.tenderness.label),
-  [form.hepatomegaly.name]: Yup.string()
-    .required()
-    .label(form.hepatomegaly.label),
-  [form.hepatomegalyDescription.name]: Yup.string().label(
-    form.hepatomegalyDescription.label
-  ),
-  [form.splenomegaly.name]: Yup.string()
-    .required()
-    .label(form.splenomegaly.label),
-  [form.splenomegalyDescription.name]: Yup.string().label(
-    form.splenomegalyDescription.label
-  ),
-  [form.kidneyBallotable.name]: Yup.string()
-    .required()
-    .label(form.kidneyBallotable.label),
-  [form.fullBladder.name]: Yup.string()
-    .required()
-    .label(form.fullBladder.label),
-  [form.otherMasses.name]: Yup.string()
-    .required()
-    .label(form.otherMasses.label),
-  [form.otherMassesDescription.name]: Yup.string().label(
-    form.otherMassesDescription.label
-  ),
   [form.shiftingDullness.name]: Yup.string()
     .required()
     .label(form.shiftingDullness.label),
@@ -297,16 +236,6 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 
-const apexBeatOptions = [
-  { label: "Displaced", value: concepts.DISPLACED },
-  { label: "Not Displaced", value: concepts.NOT_DISPLACED },
-];
-
-const percussionOptions = [
-  { label: "Normal", value: concepts.NORMAL },
-  { label: "Abnormal", value: concepts.ABNORMAL },
-];
-
 const generalInspectionOptions = [
   { id: concepts.ULCERATIONS, label: "Ulceration/Lacerations" },
   { id: concepts.BITE_MARKS, label: "Bite marks" },
@@ -372,8 +301,8 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(abnormalitiesPresentImageEnc),
       },
       {
-        concept: form.tenderness.name,
-        value: formValues[form.tenderness.name],
+        concept: concepts.PALPATION,
+        value: concepts.PALPATION,
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(tendernessImageEnc),
       },
@@ -418,7 +347,6 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     delete formValues[form.periymen.name];
     delete formValues[form.urethralMeatus.name];
     delete formValues[form.abnormalitiesPresent.name];
-    delete formValues[form.tenderness.name];
     delete formValues[form.digitalVaginalExamination.name];
 
     await handleSubmit([

@@ -127,6 +127,7 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         name={form.palpation.name}
         label={form.palpation.label}
       />
+      <br />
 
       {palpationCheck(concepts.LIGHT_PALPATION) && (
         <>
