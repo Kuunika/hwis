@@ -148,6 +148,14 @@ const form = {
     name: concepts.SCROTUM_NOTES,
     label: "Scrotum Notes",
   },
+  otherDigitalGeneral: {
+    name: concepts.OTHER_RECTAL_GENERAL,
+    label: "Other",
+  },
+  prostateOther: {
+    name: concepts.PROSTRATE_DESCRIPTION,
+    label: "Description",
+  },
 };
 
 type Prop = {
@@ -172,7 +180,7 @@ const schema = Yup.object().shape({
     .label(form.bowelSounds.label)
     .required(),
   [form.general.name]: Yup.string().label(form.general.label).required(),
-  [form.prostate.name]: Yup.string().label(form.prostate.label).required(),
+  [form.prostate.name]: Yup.array().label(form.prostate.label).required(),
   [form.mass.name]: Yup.string().label(form.mass.label).required(),
   [form.massDescription.name]: Yup.string().label(form.massDescription.label),
   [form.sphincterTone.name]: Yup.string()
@@ -210,18 +218,26 @@ const schema = Yup.object().shape({
     form.urethralMeatusNotes.label
   ),
   [form.scrotumNotes.name]: Yup.string().label(form.scrotumNotes.label),
+  [form.otherDigitalGeneral.name]: Yup.string().label(
+    form.otherDigitalGeneral.label
+  ),
+  [form.prostateOther.name]: Yup.string().label(form.prostateOther.label),
 });
 
 const prostateOptions = [
   { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.ENLARGED, label: "Enlarged" },
   { id: concepts.HIGH_RIDING, label: "High Riding" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 const generalOptions = [
   { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.EMPTY_RECTUM, label: "Empty rectum" },
   { id: concepts.MALAENA, label: "Malaena" },
   { id: concepts.FRESH_BLOOD, label: "Fresh blood (Haematochezia)" },
+  { id: concepts.HEMORROID, label: "Hermorrhoid" },
+  { id: concepts.FISSURE, label: "Fissure" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 const sphincterOptions = [
   { id: concepts.NORMAL, label: "Normal" },
@@ -290,6 +306,13 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     encounters.CHEST_ASSESSMENT,
     onSubmit
   );
+
+  const checkIfExist = (formArrayInput: any, value: string) => {
+    console.log({ formArrayInput });
+    if (!Array.isArray(formArrayInput)) return;
+
+    return formArrayInput?.find((op: any) => op.id == value);
+  };
 
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
@@ -434,18 +457,48 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Digital Rectal Examination">
           <SearchComboBox
-            multiple={false}
+            multiple
             options={generalOptions}
             label={form.general.label}
             name={form.general.name}
           />
-          <SearchComboBox
-            sx={{ mt: "1ch" }}
-            multiple={false}
-            options={prostateOptions}
-            label={form.prostate.label}
-            name={form.prostate.name}
-          />
+          {checkIfExist(formValues[form.general.name], concepts.OTHER) && (
+            <>
+              <br />
+              <TextInputField
+                id={form.otherDigitalGeneral.name}
+                name={form.otherDigitalGeneral.name}
+                label={form.otherDigitalGeneral.label}
+                multiline={true}
+                rows={4}
+                sx={{ width: "100%" }}
+              />
+            </>
+          )}
+          {gender == "Male" && (
+            <>
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                multiple={true}
+                options={prostateOptions}
+                label={form.prostate.label}
+                name={form.prostate.name}
+              />
+              {checkIfExist(formValues[form.prostate.name], concepts.OTHER) && (
+                <>
+                  <br />
+                  <TextInputField
+                    multiline
+                    rows={4}
+                    sx={{ width: "100%" }}
+                    name={form.prostateOther.name}
+                    label={form.prostateOther.label}
+                    id={form.prostateOther.name}
+                  />
+                </>
+              )}
+            </>
+          )}
           <RadioGroupInput
             row
             sx={{ mt: "1ch" }}
@@ -476,6 +529,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             <>
               <SearchComboBox
                 options={generalInspectionOptions}
+                multiple
                 name={form.generalInspection.name}
                 label={form.generalInspection.label}
               />
