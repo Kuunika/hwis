@@ -586,6 +586,7 @@ export const MedicalHistoryFlow = () => {
   }
   
   async function handleReviewSubmission(values: any): Promise<void> {
+
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
@@ -789,7 +790,7 @@ export const MedicalHistoryFlow = () => {
 
     
 
-    if(values['wasInjured']||values['assaultType']){
+    if(values['wasInjured']==="Yes"||values['assaultType']){
 
       type InjuryMechanismList = {
         [key: string]: string;
@@ -807,12 +808,15 @@ export const MedicalHistoryFlow = () => {
         occupationalInjury: concepts.OCCUPATIONAL_INJURY
       };
 
-      const mechanism = Object.keys(injuryMechanismList).filter((key) => values[key]);
+      const mechanism = Object.keys(injuryMechanismList).filter((key) => values['injuryMechanism'] === key);
+      const commentKey = `${values['injuryMechanism']}Comment`
+      const injuryComment= values[commentKey];
+
       const timeOfInjury = (values['timeOfInjury'].$d).toLocaleString()
 
       const traumaObs = [{
         concept: injuryMechanismList[mechanism[0]],
-        value: true
+        value: injuryComment
       }]
 
       const timeOfInjuryObs = {
@@ -831,7 +835,7 @@ export const MedicalHistoryFlow = () => {
         traumaObs[0].concept = injuryMechanismList['assault']
         const assaultType = values['assaultType'];
         const assaultTypeObs = {
-          concept: assaultType == 'sexual'?concepts.SEXUAL_ASSAULT:concepts.PHYSICAL_ASSAULT,
+          concept: assaultType == 'Sexual'?concepts.SEXUAL_ASSAULT:concepts.PHYSICAL_ASSAULT,
           value: true
         }
         traumaObs.push(assaultTypeObs)
