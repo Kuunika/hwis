@@ -154,7 +154,15 @@ const form = {
   },
   prostateOther: {
     name: concepts.PROSTRATE_DESCRIPTION,
-    label: "Description",
+    label: "Prostrate Description",
+  },
+  sphincterOther: {
+    name: concepts.SPHINCTER_OTHER,
+    label: "Sphincter Description",
+  },
+  tenderness: {
+    name: concepts.TENDERNESS,
+    label: "Tenderness",
   },
 };
 
@@ -222,6 +230,8 @@ const schema = Yup.object().shape({
     form.otherDigitalGeneral.label
   ),
   [form.prostateOther.name]: Yup.string().label(form.prostateOther.label),
+  [form.sphincterOther.name]: Yup.string().label(form.sphincterOther.label),
+  [form.tenderness.name]: Yup.string().label(form.tenderness.label),
 });
 
 const prostateOptions = [
@@ -243,6 +253,7 @@ const sphincterOptions = [
   { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.REDUCED, label: "Reduced" },
   { id: concepts.ABSENT, label: "Absent" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const initialsValues = getInitialValues(form);
@@ -440,6 +451,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               label={form.fluidThrill.label}
             />
           </FieldsContainer>
+          <RadioGroupInput
+            row
+            options={radioOptions}
+            name={form.tenderness.name}
+            label={form.tenderness.label}
+          />
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Auscultation">
           <RadioGroupInput
@@ -523,6 +540,15 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             label={form.sphincterTone.label}
             name={form.sphincterTone.name}
           />
+          {formValues[form.sphincterTone.name] == concepts.OTHER && (
+            <TextInputField
+              multiline
+              rows={4}
+              name={form.sphincterOther.name}
+              label={form.sphincterOther.label}
+              id={form.sphincterOther.name}
+            />
+          )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Examination of Genitalia (inspection)">
           {gender == "Male" && (
