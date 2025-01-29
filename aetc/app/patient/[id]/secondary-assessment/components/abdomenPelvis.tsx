@@ -90,7 +90,7 @@ const form = {
   },
   vagina: {
     name: concepts.VAGINA,
-    label: "Vagina",
+    label: "Does the vagina have visible bleeding, discharge, lacerations)",
   },
   scrotum: {
     name: concepts.SCROTUM,
@@ -200,6 +200,14 @@ const form = {
     name: concepts.URETHRAL_NOTES,
     label: "Urethral Notes",
   },
+  perihymen: {
+    name: concepts.PERIHYMEN,
+    label: "Does the perihymen have abrasions, lacerations scarring",
+  },
+  perihymenNotes: {
+    name: concepts.PERIHYMEN_NOTES,
+    label: "Notes",
+  },
 };
 
 type Prop = {
@@ -268,22 +276,20 @@ const schema = Yup.object().shape({
   [form.prostateOther.name]: Yup.string().label(form.prostateOther.label),
   [form.sphincterOther.name]: Yup.string().label(form.sphincterOther.label),
   [form.tenderness.name]: Yup.string().label(form.tenderness.label),
-  [form.laceration.name]: Yup.string().label(form.laceration.label).required(),
-  [form.hematomas.name]: Yup.string().label(form.hematomas.label).required(),
-  [form.urethraMeatus.name]: Yup.string()
-    .label(form.urethraMeatus.label)
-    .required(),
+  [form.laceration.name]: Yup.string().label(form.laceration.label),
+  [form.hematomas.name]: Yup.string().label(form.hematomas.label),
+  [form.urethraMeatus.name]: Yup.string().label(form.urethraMeatus.label),
   [form.descriptionUrethral.name]: Yup.string().label(
     form.descriptionUrethral.label
   ),
   [form.lacerationNotes.name]: Yup.string().label(form.lacerationNotes.label),
   [form.hematomasNotes.name]: Yup.string().label(form.hematomasNotes.label),
-  [form.inflammation.name]: Yup.string()
-    .label(form.inflammation.label)
-    .required(),
+  [form.inflammation.name]: Yup.string().label(form.inflammation.label),
   [form.inflammationNotes.name]: Yup.string().label(
     form.inflammationNotes.label
   ),
+  [form.perihymen.name]: Yup.string().label(form.perihymen.label),
+  [form.perihymenNotes.name]: Yup.string().label(form.perihymenNotes.label),
 });
 
 const prostateOptions = [
@@ -775,13 +781,14 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                   label={form.unusualAppearanceNotes.label}
                 />
               )}
-              <SearchComboBox
-                sx={{ mt: "1ch" }}
-                options={perihymenOptions}
-                name={form.periymen.name}
-                label={form.periymen.label}
+
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.perihymen.name}
+                label={form.perihymen.label}
               />
-              {formValues[form.periymen.name]?.length > 0 && (
+              {formValues[form.periymen.name] == YES && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -791,13 +798,22 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                   label={form.periymenNotes.label}
                 />
               )}
-              <SearchComboBox
+
+              {/* <SearchComboBox
                 sx={{ mt: "1ch" }}
-                options={vaginaOptions}
+                options={perihymenOptions}
+                name={form.periymen.name}
+                label={form.periymen.label}
+              /> */}
+
+              <RadioGroupInput
+                row
+                options={radioOptions}
                 name={form.vagina.name}
                 label={form.vagina.label}
               />
-              {formValues[form.vagina.name]?.length > 0 && (
+
+              {formValues[form.vagina.name] == YES && (
                 <TextInputField
                   multiline
                   rows={5}
