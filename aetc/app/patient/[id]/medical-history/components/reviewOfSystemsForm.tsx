@@ -16,16 +16,6 @@ type Prop = {
   onSkip: () => void;
 };
 
-  const ErrorMessage = ({ name }: { name: string }) => (
-   <Field
-     name={name}
-     render={({ form }: { form: any }) => {
-       const error = getIn(form.errors, name);
-       const touch = getIn(form.touched, name);
-       return touch && error ? error : null;
-     }}
-   />
-  );
 
 
 const symptomList = {
@@ -165,12 +155,31 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         }
       }
     });
+
+
   
     shape['lastMeal'] = yup.date().required('Last meal is required.').max(new Date(), 'Last meal cannot be in the future.');
     shape['events'] = yup.string().required('Events field is required.');
     shape['timeOfInjury'] = yup.date().required('Time of injury is required.');
+
+    shape['wasInjured'] = yup.string().required('Please specify whether the patient was injured') 
+    shape['injuryMechanism'] = yup.string().when('wasInjured', (wasInjured, schema) => {
+      return wasInjured[0] === "Yes" ? schema.required('Mechanism is required when the patient is injured') : schema.nullable();
+    });
+    shape['assaultType'] = yup.string().when('injuryMechanism', (mechanism, schema) => {
+      return mechanism[0] ==="assault" ? schema.required('Assault type is required when the patient is injured') : schema.nullable();
+    });
   
-    // Update for object validation
+    // Object.keys(injuryMechanismList).map((key) => {
+    //   const mechanism = injuryMechanismList[key as keyof typeof injuryMechanismList];
+    //   const label = `${mechanism.name}Comment`;
+    //   shape[`${mechanism.name}Comment`] = yup.string().when('injuryMechanism', (mechanism, schema) => {
+    //   if (formValues[label] === "") {
+    //       return  schema.required(`Comment for ${mechanism} is required`);
+    //     }
+    //     return schema.notRequired();
+    // })});
+
     shape['Gastrointenstinal_history'] = yup.array().of(
       yup.object({
         id: yup.string().required('ID is required for Gastrointestinal history.'),
@@ -203,9 +212,11 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     return yup.object().shape(shape);
   };
 
+
   const schema = generateValidationSchema(symptomList);
 
   const initialValues = {
+    wasInjured:"",
     lastMeal:"",
     events:"",
     pain: false,
@@ -271,17 +282,17 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     ulcerWound: false,
     ulcerWoundDuration: "",
     ulcerWound_site: "",
-    wasInjured: false,
     timeOfInjury: dayjs(dateTime),
+    injuryMechanism:"",
     showSocialHistory: false,
-    lostConsciousness: "Unknown"
+    lostConsciousness: "Unknown",
+    assaultType:"",
   }
 
 
 
   useEffect(() => {
     const updatedShowExtraFields: Record<string, boolean> = {};
-    console.log(formValues)
     Object.keys(symptomList).forEach((key) => {
       if(key!='lastMeal' && key!='events')
       updatedShowExtraFields[key] = !!formValues[key];
@@ -303,7 +314,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
   const handleSubmit = async () => {
-
     await schema.validate(formValues);
     onSubmit(formValues);
    };
@@ -354,7 +364,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                   />
            
           )}
-                {/* Show extra fields if the smptom is selected */}
+
                 {showExtraFields[typedKey]&& typedKey !== "poisoningIntentional" && (
                   <>
                
@@ -372,7 +382,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                       </>
                
     
-                    {/* Show 'Specify site' for symptoms that require it */}
+
                     {symptom.requiresSite  && typedKey !== "poisoning" && (
                       <TextInputField
                         id={`${symptom.name}_site`}
@@ -443,7 +453,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                     label="Select the mechanism of injury"
                   />
 
-
                 {showAssaultOptions && (
                   <div style={{ marginLeft: "1em" }}>
                      <RadioGroupInput
@@ -454,7 +463,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                       />
                     <TextInputField
                         id='assaultComment'
-                        label="Assault omments"
+                        label="Assault comments"
                         name='assaultComment'
                         placeholder="add details about the assault"
                         multiline
@@ -477,10 +486,10 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
             multiline
             rows={3}
           />
-        )
-      );
-    })}
-              </div>
+                )
+              );
+            })}
+        </div>
 
             </>
           )}
@@ -496,33 +505,32 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         multiple={true}
         />
         </FormFieldContainer>
-<FormFieldContainer direction="row">
-      <SearchComboBox
-        name="Cardiac/Respiratory history"
-        label="Cardiac/Respiratory history"
-        options={cardiacRespiratoryOptions}
-        multiple={true}
-        />
-</FormFieldContainer>
-<FormFieldContainer direction="row">
-<SearchComboBox
-        name="Nervous system history"
-        label="Nervous system history"
-        options={nervousSystemOptions}
-        multiple={true}
-        />
-</FormFieldContainer>
-<FormFieldContainer direction="row">
+        <FormFieldContainer direction="row">
+              <SearchComboBox
+                name="Cardiac/Respiratory history"
+                label="Cardiac/Respiratory history"
+                options={cardiacRespiratoryOptions}
+                multiple={true}
+                />
+        </FormFieldContainer>
+        <FormFieldContainer direction="row">
+        <SearchComboBox
+                name="Nervous system history"
+                label="Nervous system history"
+                options={nervousSystemOptions}
+                multiple={true}
+                />
+        </FormFieldContainer>
+        <FormFieldContainer direction="row">
 
-<SearchComboBox
-        name="genitourinaryHistory"
-        label="Genitourinary history"
-        options={genitourinaryOptions}
-        multiple={true}
-        getValue={(values) => {const other = values.some((value:any) => value.label === genitourinaryOptions[12].label);
-          if (other) {
-            setGenitourinaryOther(true);
-  
+        <SearchComboBox
+                name="genitourinaryHistory"
+                label="Genitourinary history"
+                options={genitourinaryOptions}
+                multiple={true}
+                getValue={(values) => {const other = values.some((value:any) => value.label === genitourinaryOptions[12].label);
+                  if (other) {
+                    setGenitourinaryOther(true);
           }
         }}/>
         
@@ -596,7 +604,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
       <WrapperBox>
           <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
-          <MainButton onClick={() => {handleSubmit }} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+          <MainButton onClick={() => {}} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
       </WrapperBox>
     </FormikInit>
   );
