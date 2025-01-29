@@ -301,8 +301,9 @@ const scrotumOptions = [
 ];
 
 const bowelSounds = [
+  { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.HYPERACTIVE, label: "Hyperactive" },
-  { id: concepts.REDUCED_BOWEL_SOUNDS, label: "Reduced" },
+  { id: concepts.REDUCED_BOWEL_SOUNDS, label: "Reduced Bowel Sounds" },
   { id: concepts.ABSENT, label: "Absent" },
 ];
 export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
