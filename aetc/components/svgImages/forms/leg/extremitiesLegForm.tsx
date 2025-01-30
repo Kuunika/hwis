@@ -3,6 +3,8 @@ import * as Yup from "yup";
 import {
   DashedContainer,
   FieldsContainer,
+  FormFieldContainer,
+  FormFieldContainerMultiple,
   FormikInit,
   FormValuesListener,
   RadioGroupInput,
@@ -78,6 +80,22 @@ const form = {
     name: concepts.RASH,
     label: "Rash",
   },
+  wound: {
+    name: concepts.WOUND,
+    label: "Wound",
+  },
+  swelling: {
+    name: concepts.SWELLING,
+    label: "Swelling",
+  },
+  other: {
+    name: concepts.OTHER,
+    label: "Other",
+  },
+  rashDescription: {
+    name: concepts.DESCRIPTION,
+    label: "Rash Description",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -98,11 +116,14 @@ const schema = Yup.object().shape({
   [form.lacerationOther.name]: Yup.string().label(form.lacerationOther.label),
   [form.scars.name]: Yup.string().required().label(form.scars.label),
   [form.rash.name]: Yup.string().required().label(form.rash.label),
+  [form.wound.name]: Yup.string().required().label(form.wound.label),
+  [form.swelling.name]: Yup.string().required().label(form.swelling.label),
+  [form.other.name]: Yup.string().label(form.other.label),
+  [form.rashDescription.name]: Yup.string().label(form.rashDescription.label),
 });
 const burnsOptions = [
   { value: concepts.SUPERFICIAL, label: "Superficial" },
-  { value: concepts.PARTIAL, label: "Partial" },
-  { value: concepts.THICKNESS, label: "Thickness" },
+  { value: concepts.PARTIAL, label: "Partial Thickness" },
   { value: concepts.FULL_THICKNESS, label: "Full Thickness" },
 ];
 
@@ -131,66 +152,97 @@ export const ExtremitiesLegForm = (props: Props) => {
       submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.deformity.name}
-        label={form.deformity.label}
-      />
+      <FormFieldContainerMultiple>
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.deformity.name}
+          label={form.deformity.label}
+        />
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.fracture.name}
+          label={form.fracture.label}
+        />
+      </FormFieldContainerMultiple>
+
       {formValues[form.deformity.name] == YES && (
         <TextInputField
+          multiline
+          rows={4}
+          sx={{ width: "100%" }}
           id={form.deformityDescription.name}
           label={form.deformityDescription.label}
           name={form.deformityDescription.name}
         />
       )}
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.fracture.name}
-        label={form.fracture.label}
-      />
 
       {formValues[form.fracture.name] == YES && (
         <TextInputField
+          multiline
+          rows={4}
+          sx={{ width: "100%" }}
           id={form.fractureDescription.name}
           label={form.fractureDescription.label}
-          name={form.deformityDescription.name}
+          name={form.fractureDescription.name}
+        />
+      )}
+      <FormFieldContainerMultiple>
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.crepitus.name}
+          label={form.crepitus.label}
+        />
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.tenderness.name}
+          label={form.tenderness.label}
+        />
+      </FormFieldContainerMultiple>
+      <FormFieldContainerMultiple>
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.rash.name}
+          label={form.rash.label}
+        />
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.scars.name}
+          label={form.scars.label}
+        />
+      </FormFieldContainerMultiple>
+
+      {formValues[form.rash.name] == YES && (
+        <TextInputField
+          multiline
+          rows={4}
+          sx={{ width: "100%" }}
+          id={form.rashDescription.name}
+          label={form.rashDescription.label}
+          name={form.rashDescription.name}
         />
       )}
 
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.crepitus.name}
-        label={form.crepitus.label}
-      />
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.tenderness.name}
-        label={form.tenderness.label}
-      />
+      <FormFieldContainerMultiple>
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.burns.name}
+          label={form.burns.label}
+        />
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.mass.name}
+          label={form.mass.label}
+        />
+      </FormFieldContainerMultiple>
 
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.rash.name}
-        label={form.rash.label}
-      />
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.scars.name}
-        label={form.scars.label}
-      />
-
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.burns.name}
-        label={form.burns.label}
-      />
       {formValues[form.burns.name] == YES && (
         <RadioGroupInput
           row
@@ -199,21 +251,31 @@ export const ExtremitiesLegForm = (props: Props) => {
           name={form.burnsDescription.name}
         />
       )}
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.mass.name}
-        label={form.mass.label}
-      />
 
       {formValues[form.mass.name] == YES && (
         <TextInputField
+          multiline
+          rows={4}
           sx={{ width: "100%" }}
           id={form.massDescription.name}
           name={form.massDescription.name}
           label={form.massDescription.label}
         />
       )}
+      <FormFieldContainerMultiple>
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.wound.name}
+          label={form.wound.label}
+        />
+        <RadioGroupInput
+          row
+          options={radioOptions}
+          name={form.swelling.name}
+          label={form.swelling.label}
+        />
+      </FormFieldContainerMultiple>
 
       <RadioGroupInput
         row
@@ -243,6 +305,15 @@ export const ExtremitiesLegForm = (props: Props) => {
           />
         </>
       )}
+
+      <TextInputField
+        multiline
+        rows={4}
+        sx={{ width: "100%" }}
+        id={form.other.name}
+        label={form.other.label}
+        name={form.other.name}
+      />
       <Box sx={{ display: "flex", gap: "0.2ch" }}>
         <Button
           type="submit"

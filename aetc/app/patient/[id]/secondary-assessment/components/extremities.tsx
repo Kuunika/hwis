@@ -59,7 +59,7 @@ const oedamaOptions = [
   { id: concepts.FEET_ONLY, label: "Feet Only" },
   { id: concepts.UP_TO_KNEE, label: "Up To knee" },
   { id: concepts.UP_TO_THIGH, label: "Up to Thighs" },
-  { id: concepts.WHOLE_BODY, label: "Whole Body" },
+  // { id: concepts.WHOLE_BODY, label: "Whole Body" },
 ];
 
 const initialsValues = getInitialValues(form);

@@ -60,6 +60,7 @@ export function LowerLimbPosterior({
         ))}
       </Box>
       <SVGPopover
+        width="40ch"
         section={section}
         selectedSection={selectedSection}
         anchorEl={anchorEl}
