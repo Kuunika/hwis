@@ -1,4 +1,4 @@
-import { FormDatePicker, MainButton, SearchComboBox, WrapperBox } from "@/components";
+import { FormDatePicker, MainButton, RadioGroupInput, SearchComboBox, WrapperBox } from "@/components";
 import React, { useEffect, useState } from "react";
 import {
     FormFieldContainer, FormValuesListener,
@@ -37,6 +37,7 @@ type Prop = {
   const initialValues = {
     age_at_menarche: 0,
     last_menstrual: "",
+    pregnant:"No",
     gestational_age: 0,
     number_of_previous_pregnancies: 0,
     previous_pregnancy_outcomes: [],
@@ -53,13 +54,17 @@ type Prop = {
       name: "last_menstrual",
       label: "Last normal menstrual period",
     },
+    pregnant: {
+      name: "pregnant",
+      label: "Is the patient pregnant?",
+    },
     gestational_age: {
       name: "gestational_age",
       label: "Gestational age (weeks)",
     },
     number_of_previous_pregnancies: {
       name: "number_of_previous_pregnancies",
-      label: "Number of previous pregnancies",
+      label: "Parity",
     },
     previous_pregnancy_outcomes: (index: number) => ({
       name: `previous_pregnancy_outcomes[${index}]`,
@@ -95,6 +100,7 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
         Array.from({ length: pregnancies }, () => false) // Initialize based on number of pregnancies
       );
   const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+  const [showGestation, setShowGestation] = useState(false);
 
     const contraceptiveOptions = [
       { id: concepts.JADELLE, label: 'Jadelle' },
@@ -123,6 +129,15 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
         [obstetricsFormConfig.age_at_menarche.name]: yup.number()
         .required("Age at menarche is required")
         .positive("Age at menarche  must be a positive number"),
+
+        [obstetricsFormConfig.gestational_age.name]: yup
+        .number()
+        .when(obstetricsFormConfig.pregnant.name, (pregnant: any, schema) => {
+          if (pregnant === "Yes") {
+            return schema.required("Gestational age is required").positive("Gestational age must be a positive number");
+          }
+          return schema;
+        }),
 
           number_of_previous_pregnancies: yup
             .number()
@@ -162,16 +177,16 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
                     const numberOfPregnancies = context.parent.number_of_previous_pregnancies;
           
                     if (!Array.isArray(value) || !Array.isArray(outcomes)) {
-                      return false; // Ensure both are arrays
+                      return false; 
                     }
           
-                    // Check if every live birth has a number of births specified
+  
                     return outcomes.every((outcome, index) => {
 
                       if (outcome === "Live Birth" && value[index]) {
                         return value && value[index] !== undefined && value[index] > 0;
                       }
-                      return true; // Non-live-birth outcomes are not required to have a value
+                      return true; 
                     });
                   }
                 ),
@@ -198,7 +213,6 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
   const handleSubmit = async () => {
-    console.log(formValues);
     await schema.validate(formValues);
     onSubmit(formValues);
   };
@@ -246,7 +260,9 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
 
       setObservations(observations);
     }
-  }, [ data]);
+
+    formValues["pregnant"]=="Yes"? setShowGestation(true): setShowGestation(false);
+  }, [ data, formValues]);
 
 
 
@@ -301,17 +317,32 @@ return (
       name={obstetricsFormConfig.last_menstrual.name}
       label={obstetricsFormConfig.last_menstrual.label}
       sx={{ background: 'white', marginRight:'2ch', width:'150px'}}
-    />                               <div style={{ color: "red", fontSize: "0.875rem" }}>
+    />                               
+    <div style={{ color: "red", fontSize: "0.875rem" }}>
     <ErrorMessage
-name={`obstetrics.last_menstrual`}
-/>
-</div>
-    <TextInputField
+          name={`obstetrics.last_menstrual`}
+      />
+    </div>
+        <RadioGroupInput
+          row
+          name={obstetricsFormConfig.pregnant.name}
+          options={[
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" },
+          ]}
+          label={obstetricsFormConfig.pregnant.label}
+          sx={{marginTop:"2ch", marginBottom:"2ch"}}
+        />
+{showGestation&&(
+   <TextInputField
               id={obstetricsFormConfig.gestational_age.name}
               name={obstetricsFormConfig.gestational_age.name}
               label={obstetricsFormConfig.gestational_age.label}
               sx={{ marginRight: '2ch'}}
             />
+
+            )}
+
 <TextInputField
               id={obstetricsFormConfig.number_of_previous_pregnancies.name}
               name={obstetricsFormConfig.number_of_previous_pregnancies.name}

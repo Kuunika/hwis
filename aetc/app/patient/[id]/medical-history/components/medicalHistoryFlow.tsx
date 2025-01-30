@@ -468,18 +468,23 @@ export const MedicalHistoryFlow = () => {
 
 
   async function handleObstetricsSubmission(values: any): Promise<void> {
-    const obstetricsObs = (values.obstetrics);
-
+    
+    const obstetricsObs = values;
+    console.log('submitting obs encounters', obstetricsObs)
     const contraceptives = obstetricsObs.contraceptive_history.map((item: { id: any; }) => ({
       concept: item.id,
       value: true
     }));
 
 
-    const myObs = [
+    const myObs =  obstetricsObs.pregnant === "Yes"? [
       { concept: concepts.AGE_AT_MENARCHE, value: obstetricsObs.age_at_menarche},
       { concept: concepts.DATE_OF_LAST_MENSTRUAL, value: obstetricsObs.last_menstral},
       { concept: concepts.GESTATION_WEEKS, value: obstetricsObs.gestational_age },
+      { concept: concepts.PREVIOUS_PREGNANCIES, value: obstetricsObs.number_of_previous_pregnancies },
+    ] : [
+      { concept: concepts.AGE_AT_MENARCHE, value: obstetricsObs.age_at_menarche},
+      { concept: concepts.DATE_OF_LAST_MENSTRUAL, value: obstetricsObs.last_menstral},
       { concept: concepts.PREVIOUS_PREGNANCIES, value: obstetricsObs.number_of_previous_pregnancies },
     ]
 
