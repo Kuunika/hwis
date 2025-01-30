@@ -119,25 +119,24 @@ import { MdOutlineClose } from "react-icons/md";
           item.obs?.length !== 4
         )
 
-        const obsWithChildren =
+        const ICD11Obs =
          conditionsEncounters?.[0]?.obs?.filter(
           (obsItem) =>
-           (obsItem as Obs).children.length == 3 
+           (obsItem as Obs).names[0].name === 'ICD11 Diagnosis'
         );
-        
-        const obsWithValueTrue = obsWithChildren?.filter(
-          (obsItem) => obsItem.value === true || obsItem.value === 'true'
-        );
-        
-        const uniqueNamesArray = obsWithValueTrue?.reduce((acc, obs) => {
-          const primaryName = obs.names?.[0]?.name; // Safely access the first name
-          if (primaryName && !acc.includes(primaryName)) {
-              acc.push(primaryName); // Add unique name to the array
+
+        const uniqueObs = new Map();
+       
+        ICD11Obs?.forEach(obs => {
+          const uniqueKey = obs.value;
+          if (!uniqueObs.has(uniqueKey)) {
+            uniqueObs.set(uniqueKey, obs);
           }
-          return acc;
-      }, [] as string[]);
+        });
+
+      const uniqueDiagnoses = Array.from(uniqueObs.keys());
       
-      setExistingHistory(uniqueNamesArray);
+      setExistingHistory(uniqueDiagnoses);
 
       }
     }, [data]);
@@ -152,7 +151,7 @@ import { MdOutlineClose } from "react-icons/md";
           formValues.conditions[index]["name"] = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`
     };
   
-    return (<>
+    return (<>{ (existingHistory && existingHistory.length > 0) &&
       <div style={{ background: 'white', padding: '20px', borderRadius: '5px', marginBottom: '20px' }}>
   <h4 style={{ color: 'rgba(0, 0, 0, 0.6)', marginBottom: '10px' }}>Known Conditions</h4>
   {existingHistory?.map((condition, index) => (
@@ -161,7 +160,7 @@ import { MdOutlineClose } from "react-icons/md";
     </p>
   ))}
 </div>
-    
+    }
 <FormikInit
   initialValues={initialValues}
   validationSchema={schema}
