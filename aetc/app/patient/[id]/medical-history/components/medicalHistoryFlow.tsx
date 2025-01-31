@@ -138,10 +138,11 @@ export const MedicalHistoryFlow = () => {
 
   const {
     data: encounterResponse,
-    mutate: createEncounter,
+    mutateAsync: createEncounter,
     isPending: creatingEncounter,
     isSuccess: encounterCreated,
     isError: encounterError,
+    error: errorMessage,
 } = addEncounter();
 
   const { data: patientVisits, isSuccess } = getPatientVisitTypes(params?.id as string);
@@ -197,22 +198,30 @@ export const MedicalHistoryFlow = () => {
 
     for (let i = 0; i < myobs.length; i += 2) {
       const chunk = myobs.slice(i, i + 2);
-   
-      createEncounter({ encounterType: encounters.PRESENTING_COMPLAINTS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime, 
-      obs:  [{
-        concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS, 
-        value: true,
-        obsDatetime: dateTime,
-        group_members: chunk,
-      }]
-    });
+      
+      try {
+        const response = await createEncounter({
+          encounterType: encounters.PRESENTING_COMPLAINTS,
+          visit: activeVisit?.uuid,
+          patient: params.id,
+          encounterDatetime: dateTime,
+          obs: [
+            {
+              concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
+              value: true,
+              obsDatetime: dateTime,
+              group_members: chunk,
+            },
+          ],
+        });
+  
+        console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
+
     }
 
-     if(encounterCreated)
-        handleSkip(); 
   };
 
   const handleAllergiesNext = (values: any)=>{
@@ -908,7 +917,6 @@ export const MedicalHistoryFlow = () => {
   };
 
   function handleSubmitAll(values: any): void {
-    console.log(formData["conditions"]);
     formData["family"] = values;
     setSubmitting(true);
 
@@ -939,29 +947,27 @@ export const MedicalHistoryFlow = () => {
         return;
       }
       
-      if (submissionHandlers[key]) {
-        setSubmissionStatus((prev) => ({
-          ...prev,
-          [key]: "submitting",
-        }));
+      // if (submissionHandlers[key]) {
+      //   setSubmissionStatus((prev) => ({
+      //     ...prev,
+      //     [key]: "submitting",
+      //   }));
   
-        try {
+      //   try {
           await submissionHandlers[key](value);
   
-          setSubmissionStatus((prev) => ({
-            ...prev,
-            [key]: "success",
-          }));
-        } catch (error) {
-          setSubmissionStatus((prev) => ({
-            ...prev,
-            [key]: "error",
-          }));
-        }
+        //   setSubmissionStatus((prev) => ({
+        //     ...prev,
+        //     [key]: "success",
+        //   }));
+        // } catch (error) {
+        //   setSubmissionStatus((prev) => ({
+        //     ...prev,
+        //     [key]: "error",
+        //   }));
+        // }
 
-      }
-    });
-  
+      });
     setSubmitting(false);
     handleSkip();
   }
