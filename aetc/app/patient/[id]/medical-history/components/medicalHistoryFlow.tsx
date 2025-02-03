@@ -280,13 +280,14 @@ export const MedicalHistoryFlow = () => {
     };
   });
   
-  observationsPayload.forEach((observation) => {
+  observationsPayload.forEach(async (observation) => {
       observation.group_members.push({
         concept: concepts.ALLERGY_COMMENT,
         value: values[concepts.ALLERGY_COMMENT]
       });
   
-      createEncounter({
+      try {
+        const response = await createEncounter({
         encounterType: encounters.ALLERGIES,
         visit: activeVisit?.uuid,
         patient: params.id,
@@ -298,7 +299,10 @@ export const MedicalHistoryFlow = () => {
           group_members: observation.group_members,
         },],            
     },);
-
+    console.log("Encounter successfully created:", response);
+  } catch (error: any) {
+    console.error("Encounter creation failed:", error.response.config.data, error.message);
+  }
   });
 
 
@@ -390,14 +394,21 @@ export const MedicalHistoryFlow = () => {
       return observation;
     });
 
-    observationsPayload.forEach((observation: any) => {
+    observationsPayload.forEach(async (observation: any) => {
+
+      try {
+        const response = await
         createEncounter({
         encounterType: encounters.PRESCRIPTIONS,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: [observation],
-      });
+      })  
+      console.log("Encounter successfully created:", response);
+    } catch (error: any) {
+      console.error("Encounter creation failed:", error.response.config.data, error.message);
+    }
     
   });
 
@@ -424,18 +435,22 @@ export const MedicalHistoryFlow = () => {
     }
   });
 
-  observationsPayload.forEach((observation: any) => {
-    createEncounter({
+  observationsPayload.forEach(async (observation: any) => {
+    try {
+      const response = await createEncounter({
       encounterType: encounters.DIAGNOSIS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
       obs: [observation],
-    });
+    })  
+    console.log("Encounter successfully created:", response);
+  } catch (error: any) {
+    console.error("Encounter creation failed:", error.response.config.data, error.message);
+  }
   });
 
-  if(encounterCreated)
-  handleSkip();
+
   }
 
   function handleSurgeriesNext(values: any): void {
@@ -446,25 +461,30 @@ export const MedicalHistoryFlow = () => {
   async function handleSurgeriesSubmission(values: any): Promise<void> {
     const observationsPayload = values.surgeries.map((surgery: any) => {
     return  {
-      concept: surgery.procedure,
+      concept: concepts.DATE_OF_SURGERY,
       obsDatetime: dateTime,
-      value: surgery.other?surgery.other:true,
+      value: surgery.date,
       group_members: [
-        { concept: concepts.DATE_OF_SURGERY, value: surgery.date },
+        { concept: concepts.SURGICAL_PROCEDURE, value: surgery.procedure },
         { concept: concepts.INDICATION_FOR_SURGERY, value: surgery.indication },
         { concept: concepts.COMPLICATIONS, value: surgery.complication },
       ] as OutputObservation[],
     }
   });
 
-  observationsPayload.forEach((observation: any) => {
-    createEncounter({
+  observationsPayload.forEach(async (observation: any) => {
+    try {
+      const response = await createEncounter({
       encounterType: encounters.SURGICAL_HISTORY,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
       obs: [observation],
-    });
+    })
+    console.log("Encounter successfully created:", response);
+  } catch (error: any) {
+    console.error("Encounter creation failed:", error.response.config.data, error.message);
+  }
   });
 
   }
@@ -479,7 +499,6 @@ export const MedicalHistoryFlow = () => {
   async function handleObstetricsSubmission(values: any): Promise<void> {
     
     const obstetricsObs = values;
-    console.log('submitting obs encounters', obstetricsObs)
     const contraceptives = obstetricsObs.contraceptive_history.map((item: { id: any; }) => ({
       concept: item.id,
       value: true
@@ -499,12 +518,17 @@ export const MedicalHistoryFlow = () => {
 
    myObs.push(...contraceptives);
 
-    
-    createEncounter({  encounterType: encounters.OBSTETRIC_HISTORY,
+   try {
+    const response =  await createEncounter({  encounterType: encounters.OBSTETRIC_HISTORY,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
       obs: myObs });
+      console.log("Encounter successfully created:", response);
+    } catch (error: any) {
+      console.error("Encounter creation failed:", error.response.config.data, error.message);
+    }
+
 
     if(obstetricsObs.number_of_previous_pregnancies > 0){
     
@@ -538,15 +562,19 @@ export const MedicalHistoryFlow = () => {
 
     });
   
-    observationsPayload.forEach((observation: any) => {
-
-      createEncounter({
+    observationsPayload.forEach(async (observation: any) => {
+      try{
+      const response = await createEncounter({
         encounterType: encounters.OBSTETRIC_HISTORY,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: [observation]
       });
+      console.log("Encounter successfully created:", response);
+        } catch (error: any) {
+      console.error("Encounter creation failed:", error.response.config.data, error.message);
+    }
     });
   };
 
@@ -587,15 +615,19 @@ export const MedicalHistoryFlow = () => {
       ]
     }));
 
-    encounterPayload.forEach((encounter, index) => {
-      createEncounter(encounter);
+    encounterPayload.forEach(async (encounter, index) => {
+      try {
+        const response = await createEncounter(encounter);
+        console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
     });
 
   }
   
   function handleReviewNext(values: any): void {
       formData["review"] = values;
-      console.log(activeStep);
       handleSkip();
   }
   
@@ -671,7 +703,8 @@ export const MedicalHistoryFlow = () => {
         }
       });
 
-      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      try{
+      const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -681,6 +714,10 @@ export const MedicalHistoryFlow = () => {
           obsDatetime: dateTime,
           group_members: gastroObs,
         },]});
+        console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
     };
 
     if(cardiacHistory){
@@ -691,7 +728,8 @@ export const MedicalHistoryFlow = () => {
         }
       });
 
-      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      try{
+        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -701,6 +739,10 @@ export const MedicalHistoryFlow = () => {
           obsDatetime: dateTime,
           group_members: cardiacObs,
         },]});
+        console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
     };
 
     if(nervousHistory){
@@ -711,7 +753,8 @@ export const MedicalHistoryFlow = () => {
         }
       });
 
-      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      try{
+        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -721,6 +764,10 @@ export const MedicalHistoryFlow = () => {
           obsDatetime: dateTime,
           group_members: nervousObs,
         },]});
+        console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
     }
 
     if(genitoHistory){
@@ -741,7 +788,8 @@ export const MedicalHistoryFlow = () => {
       };
 
       
-      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      try{
+        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -751,6 +799,10 @@ export const MedicalHistoryFlow = () => {
           obsDatetime: dateTime,
           group_members: genitoObs,
         },]});
+        console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
     }
     
     for(let key of symptomKeys){
@@ -786,8 +838,8 @@ export const MedicalHistoryFlow = () => {
       
       obsGroup.push(intentionalPoisoningObs)
     }
-
-        createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+    try{
+      const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime, 
@@ -797,6 +849,10 @@ export const MedicalHistoryFlow = () => {
             obsDatetime: dateTime,
             group_members: obsGroup,
           },]});
+          console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
       }
 
 
@@ -855,7 +911,8 @@ export const MedicalHistoryFlow = () => {
         traumaObs.push(assaultTypeObs)
       }
 
-      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      try{
+        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -865,7 +922,10 @@ export const MedicalHistoryFlow = () => {
           obsDatetime: dateTime,
           group_members: traumaObs,
         },]});
-      
+        console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
 
     }
 
@@ -901,8 +961,8 @@ export const MedicalHistoryFlow = () => {
 
     socialDetailsObs.push(occupationObs,maritalObs,travelObs)
     
-    
-    createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+    try{
+      const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
@@ -912,6 +972,10 @@ export const MedicalHistoryFlow = () => {
         obsDatetime: dateTime,
         group_members: socialDetailsObs,
       },]});
+      console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
     }
 
   };
@@ -946,26 +1010,8 @@ export const MedicalHistoryFlow = () => {
       ) {
         return;
       }
-      
-      // if (submissionHandlers[key]) {
-      //   setSubmissionStatus((prev) => ({
-      //     ...prev,
-      //     [key]: "submitting",
-      //   }));
-  
-      //   try {
+
           await submissionHandlers[key](value);
-  
-        //   setSubmissionStatus((prev) => ({
-        //     ...prev,
-        //     [key]: "success",
-        //   }));
-        // } catch (error) {
-        //   setSubmissionStatus((prev) => ({
-        //     ...prev,
-        //     [key]: "error",
-        //   }));
-        // }
 
       });
     setSubmitting(false);
@@ -1040,8 +1086,9 @@ export const MedicalHistoryFlow = () => {
       groupedObservations.push([observations[i], observations[i + 1]]);
     };
 
-    groupedObservations.forEach((group, index) => {
-      mutate({
+    groupedObservations.forEach(async (group, index) => {
+      try{
+      const response = await createEncounter({
         encounterType: encounters.FAMILY_MEDICAL_HISTORY, 
         visit: activeVisit?.uuid,
         patient: params.id,
@@ -1054,14 +1101,11 @@ export const MedicalHistoryFlow = () => {
             group_members: group,  
           },
         ],
-      }, {
-        onSuccess: (data) => {
-          console.log(`Encounter #${index + 1} submitted successfully:`, data);
-        },
-        onError: (error) => {
-          console.error(`Error submitting encounter #${index + 1}:`, error);
-        },
       });
+      console.log("Encounter successfully created:", response);
+      } catch (error: any) {
+        console.error("Encounter creation failed:", error.response.config.data, error.message);
+      }
     });
 
 

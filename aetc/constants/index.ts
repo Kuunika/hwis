@@ -827,6 +827,7 @@ export const concepts = {
   EXTERNAL_FIXATION: "ce77a4fe-9330-4693-8dad-7f1a548815ea",
   THYROIDECTOMY: "73be06c7-cde1-4400-bbe3-ae55c8652340",
   SKIN_GRAFT: "13b0d48b-f4a8-45cb-927f-d62a94f50f12",
+  SURGICAL_PROCEDURE: 'Surgical procedure',
   OTHER_SURGICAL_PROCEDURE: "other_surgical_procedure",
   DATE_OF_SURGERY: "b9b580e6-8d80-11d8-abbb-0024217bb78e",
   COMPLICATIONS: "b9caa728-8d80-11d8-abbb-0024217bb78e",
