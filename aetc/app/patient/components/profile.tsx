@@ -298,6 +298,19 @@ export const DesktopView = () => {
           {/* New Button */}
           <ConsultationCard
             disabled={!isOnList}
+            title="Patient Management Plan"
+            links={[
+              {
+                title: "Patient Management Plan",
+                link: `/patient/${params.id}/patient-management-plan`,
+              },
+            ]}
+          />
+
+
+          {/* New Button */}
+          <ConsultationCard
+            disabled={!isOnList}
             title="Disposition"
             links={[
               {
@@ -306,8 +319,11 @@ export const DesktopView = () => {
               },
             ]}
           />
+
+
+
           {/* New Button */}
-          <ConsultationCard
+          {/* <ConsultationCard
             disabled={!isOnList}
             title="Surgical Notes"
             links={[
@@ -316,7 +332,7 @@ export const DesktopView = () => {
                 link: `/patient/${params.id}/template-forms`,
               },
             ]}
-          />
+          /> */}
 
         </WrapperBox>
         <BasicAccordion />

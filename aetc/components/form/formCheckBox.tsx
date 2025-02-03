@@ -13,14 +13,17 @@ type Props = {
     name: string,
     options: Array<{ value: string, label: string }>
     getValue?: (value: any) => void;
+    allowFilter?: boolean
 }
-export function CheckboxesGroup({ options, name, getValue }: Props) {
+export function CheckboxesGroup({ options, name, getValue, allowFilter = true }: Props) {
     const [checkBoxValue, setCheckBoxValue] = useState<{ [key: string]: any }>({});
     const [disabled, setDisabled] = useState(false);
     const { setFieldValue, hasError, errorMessage, value } =
         useFormikField(name);
 
     useEffect(() => {
+        if (!allowFilter) return;
+
         if (value && Array.isArray(value)) {
             if (value?.filter((v: any) => v?.value).length == 2) {
                 setDisabled(true)
