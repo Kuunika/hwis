@@ -88,18 +88,7 @@ export const MedicalHistoryFlow = () => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [submissionStatus, setSubmissionStatus] = useState<Record<string, string>>({
-    presentingComplaints: 'pending',
-    allergies: 'pending',
-    medications: 'pending',
-    conditions: 'pending',
-    surgeries: 'pending',
-    obstetrics: 'pending',
-    admissions: 'pending',
-    review: 'pending',
-    family: 'pending',
-  });
+
 
   const {
     loading,
