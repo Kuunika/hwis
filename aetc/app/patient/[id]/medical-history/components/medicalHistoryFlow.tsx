@@ -155,7 +155,7 @@ export const MedicalHistoryFlow = () => {
   }
 
   const handlePresentingComplaintsNext = (values: any)=>{
-    formData["presentingComplaints"] = values;
+    setFormData((prev: any) => ({ ...prev, presentingComplaints: values }));
     handleSkip();
   }
 
@@ -192,7 +192,7 @@ export const MedicalHistoryFlow = () => {
   };
 
   const handleAllergiesNext = (values: any)=>{
-    formData["allergies"] = values;
+    setFormData((prev: any) => ({ ...prev, allergies: values }));
     handleSkip();
   }
 
@@ -276,7 +276,7 @@ export const MedicalHistoryFlow = () => {
   };
 
   function handleMedicationsNext(values: any): void {
-      formData["medications"] = values;
+    setFormData((prev: any) => ({ ...prev, medications: values }));
       handleSkip();
   }
 
@@ -383,7 +383,7 @@ export const MedicalHistoryFlow = () => {
 
 
   function handleConditionsNext(values: any): void {
-    formData["conditions"] = values;
+    setFormData((prev: any) => ({ ...prev, conditions: values }));
     handleSkip();
   }
 
@@ -421,7 +421,7 @@ export const MedicalHistoryFlow = () => {
   }
 
   function handleSurgeriesNext(values: any): void {
-    formData["surgeries"] = values;
+    setFormData((prev: any) => ({ ...prev, surgeries: values }));
     handleSkip();
   }
 
@@ -457,7 +457,7 @@ export const MedicalHistoryFlow = () => {
   }
 
   function handleObstetricsNext(values: any): void {
-    formData["obstetrics"] = values;
+    setFormData((prev: any) => ({ ...prev, obstetrics: values }));
     handleSkip();
   }
 
@@ -548,7 +548,7 @@ export const MedicalHistoryFlow = () => {
   }
 
   function handleAdmissionsNext(values: any): void {
-    formData["admissions"] = values;
+    setFormData((prev: any) => ({ ...prev, admissions: values }));
     handleSkip();
   }
 
@@ -594,7 +594,7 @@ export const MedicalHistoryFlow = () => {
   }
   
   function handleReviewNext(values: any): void {
-      formData["review"] = values;
+      setFormData((prev: any) => ({ ...prev, review: values }));
       handleSkip();
   }
   
@@ -955,7 +955,7 @@ export const MedicalHistoryFlow = () => {
 
 
   function handleFamilyNext(values: any): void {
-    formData["family"] = values;
+    setFormData((prev: any) => ({ ...prev, family: values }));
     handleSubmitAll(0);
 }
 
