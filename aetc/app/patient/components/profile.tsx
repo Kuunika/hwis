@@ -284,11 +284,11 @@ export const DesktopView = () => {
                 title: "Final Diagnosis",
                 link: `/patient/${params.id}/consultation`,
               },
-              {
-                id: 3,
-                title: "Medication",
-                link: `/patient/${params.id}/consultation`,
-              },
+              // {
+              //   id: 3,
+              //   title: "Medication",
+              //   link: `/patient/${params.id}/consultation`,
+              // },
 
 
 

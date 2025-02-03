@@ -76,7 +76,8 @@ const StepButtons = ({
                 </Button>
             )}
             {onNext && (
-                <Button size="small" variant="contained" onClick={onNext}>
+                <Button size="small" variant="contained" color="inherit"
+                    onClick={onNext}>
                     Next
                 </Button>
             )}

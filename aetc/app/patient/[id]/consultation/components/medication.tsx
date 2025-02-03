@@ -93,25 +93,25 @@ const schema = yup.object().shape({
   ),
 });
 
-      const medicationUnits = [
-        "Milligrams (mg)" ,
-       "Micrograms (µg)" ,
-    "Grams (g)" ,
+const medicationUnits = [
+  "Milligrams (mg)",
+  "Micrograms (µg)",
+  "Grams (g)",
   "International Units (IU)",
-"Milliliters (ml)" ,
-"Millimoles (mmol)",	
-      ];
-      const routeOptions = [
-        { label: "Oral", id: "Oral" },
-        { label: "Suppository", id: "Suppository" },
-        { label: "Intravenous", id: "Intravenous" },
-        { label: "Intramuscular", id: "Intramuscular" },
-        { label: "Subcutaneous", id: "Subcutaneous" },
-        { label: "Infiltration", id: "Infiltration" },
-        {label: "Intrathecal", id: "Intrathecal"},
-        {label: "Dermal", id: "Dermal"},
-        {label: "Inhaled", id: "Inhaled"},
-      ];
+  "Milliliters (ml)",
+  "Millimoles (mmol)",
+];
+const routeOptions = [
+  { label: "Oral", id: "Oral" },
+  { label: "Suppository", id: "Suppository" },
+  { label: "Intravenous", id: "Intravenous" },
+  { label: "Intramuscular", id: "Intramuscular" },
+  { label: "Subcutaneous", id: "Subcutaneous" },
+  { label: "Infiltration", id: "Infiltration" },
+  { label: "Intrathecal", id: "Intrathecal" },
+  { label: "Dermal", id: "Dermal" },
+  { label: "Inhaled", id: "Inhaled" },
+];
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const { data } = getAllDrugs();
@@ -135,12 +135,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     },
   ]);
 
-        const handleUpdateFrequency = (index: number, value: boolean) => {
-            setOtherFrequency(prevState => ({
-              ...prevState,   
-              [index]: value      
-            }));
-          };
+  const handleUpdateFrequency = (index: number, value: boolean) => {
+    setOtherFrequency(prevState => ({
+      ...prevState,
+      [index]: value
+    }));
+  };
 
   useEffect(() => {
 
@@ -254,7 +254,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
           </FieldArray>
           <WrapperBox sx={{ mt: "2ch" }}>
             <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
-            <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
+            {/* <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} /> */}
           </WrapperBox>
         </>
       )}
