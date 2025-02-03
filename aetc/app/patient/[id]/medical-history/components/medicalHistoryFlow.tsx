@@ -1,4 +1,4 @@
-"use client";
+"use client";;
 import React, { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import {
@@ -20,9 +20,9 @@ import { useParameters } from "@/hooks";
 import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
-import { OverlayLoader } from "@/components/backdrop";
 import { useFormLoading } from "@/hooks/formLoading";
 import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
+import { CustomizedProgressBars } from "@/components/loader";
 
 
 
@@ -47,27 +47,6 @@ interface OverlayWithMessageProps {
   open: boolean;
   message: string;
 }
-
-const OverlayWithMessage: React.FC<OverlayWithMessageProps> = ({ open, message }) => {
-  return (
-    <Backdrop
-      open={open}
-      sx={{
-        color: "#fff",
-        zIndex: (theme: any) => theme.zIndex.drawer + 1,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <CircularProgress color="inherit" />
-      <Box mt={2}>
-        <Typography variant="h6">{message}</Typography>
-      </Box>
-    </Backdrop>
-  );
-};
 
 
 
@@ -104,7 +83,6 @@ const symptomDurationUnits: Record<string, string>  ={
 
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { mutate } = addEncounter();
   const [formData, setFormData] = useState<any>({});
   const { navigateBack } = useNavigation();
   const { params } = useParameters();
@@ -192,7 +170,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  const handlePresentingComplaintsSubmission = async (values: any): Promise<void> => {
+  const handlePresentingComplaintsSubmission = async (values: any): Promise<any> => {
    
     const myobs = convertObservations(getObservations(values, dateTime));
 
@@ -200,6 +178,7 @@ export const MedicalHistoryFlow = () => {
       const chunk = myobs.slice(i, i + 2);
       
       try {
+        
         const response = await createEncounter({
           encounterType: encounters.PRESENTING_COMPLAINTS,
           visit: activeVisit?.uuid,
@@ -214,12 +193,11 @@ export const MedicalHistoryFlow = () => {
             },
           ],
         });
-  
-        console.log("Encounter successfully created:", response);
+      
+    
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
-
     }
 
   };
@@ -403,7 +381,7 @@ export const MedicalHistoryFlow = () => {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: [observation],
+        obs: [observation, observation],
       })  
       console.log("Encounter successfully created:", response);
     } catch (error: any) {
@@ -974,49 +952,64 @@ export const MedicalHistoryFlow = () => {
       },]});
       console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error
       }
     }
 
   };
 
-  function handleSubmitAll(values: any): void {
+
+
+  function handleFamilyNext(values: any): void {
     formData["family"] = values;
-    setSubmitting(true);
+    handleSubmitAll(0);
+}
 
+async function handleSubmitAll(index: number){
+  setLoading(true);
 
-    const submissionHandlers: Record<string, (value: any) => Promise<void>> = {
-      presentingComplaints: handlePresentingComplaintsSubmission,
-      allergies: handleAllergiesSubmission,
-      medications: handleMedicationsSubmission,
-      conditions: handleConditionsSubmission,
-      surgeries: handleSurgeriesSubmission,
-      obstetrics: handleObstetricsSubmission,
-      admissions: handleAdmissionsSubmission,
-      review: handleReviewSubmission,
-      family: handleFamilyHistorySubmission,
-    };
-  
-
-    Object.entries(formData).forEach(async ([key, value]) => {
-      if (
-        key === "family" &&
-        value &&
-        typeof value === "object" &&
-        !Array.isArray(value) &&
-        Object.keys(value).every(
-          (subKey) => typeof (value as Record<string, unknown>)[subKey] !== "boolean" || !(value as Record<string, boolean>)[subKey]
-        )
-      ) {
-        return;
-      }
-
-          await submissionHandlers[key](value);
-
-      });
-    setSubmitting(false);
+  if(index > Object.keys(formData).length-1) {
+    setLoading(false);
     handleSkip();
+    return;
   }
+
+  const submissionHandlers: Record<string, (value: any) => Promise<void>> = {
+    presentingComplaints: handlePresentingComplaintsSubmission,
+    allergies: handleAllergiesSubmission,
+    medications: handleMedicationsSubmission,
+    conditions: handleConditionsSubmission,
+    surgeries: handleSurgeriesSubmission,
+    obstetrics: handleObstetricsSubmission,
+    admissions: handleAdmissionsSubmission,
+    review: handleReviewSubmission,
+    family: handleFamilyHistorySubmission,
+  };
+
+
+ const key = Object.keys(formData)[index];
+ const encounter = formData[key];
+
+
+ try {
+  await submissionHandlers[key](encounter);
+  
+  setTimeout(()=>{
+    setMessage(`${key} submitted`)
+    handleSubmitAll(index+1)
+    setCompleted(index+1);
+  },2000)
+
+ } catch (error) {
+  console.log({error})
+  setError(true);
+  setMessage(`error occurred when submitting ${key}`)
+  
+  
+ }
+
+
+}
 
 
 
@@ -1104,27 +1097,31 @@ export const MedicalHistoryFlow = () => {
       });
       console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        alert(`Encounter creation failed: ${error.response.config.data} ${error.message}`);
       }
     });
 
 
   }
-  
+
+  // useEffect(()=>{
+  //   console.log(submissionStatus)
+  // },[submissionStatus])
 
   return (
     <>
 
-    <OverlayLoader open={isLoading || submitting} />
-    <OverlayWithMessage
-      open={submitting}
-      message={Object.entries(submissionStatus).some(([_, status]) => status === "submitting")
-        ? "Submitting your data, please wait..."
-        : "Processing submissions..."}
-    />
+     { (loading) && 
+     <>
+     <CustomizedProgressBars
+                message={message}
+                progress={(completed / Object.keys(formData).length) * 100}
+              />
+              </>}
+
  
   
-      <NewStepperContainer
+    {  !loading &&<NewStepperContainer
         setActive={setActiveStep}
         title="Medical History"
         steps={steps}
@@ -1141,9 +1138,9 @@ export const MedicalHistoryFlow = () => {
         )}
         <AdmissionsForm onSubmit={handleAdmissionsNext} onSkip={handlePrevious}/>
         <ReviewOfSystemsForm onSubmit={handleReviewNext} onSkip={handlePrevious}/>
-        <FamilyHistoryForm onSubmit={handleSubmitAll} onSkip={handlePrevious} />
+        <FamilyHistoryForm onSubmit={handleFamilyNext} onSkip={handlePrevious} />
     
-      </NewStepperContainer>  
+      </NewStepperContainer>  }
     </>
   );
 };
