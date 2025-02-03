@@ -279,7 +279,7 @@ export const MedicalHistoryFlow = () => {
     },);
     console.log("Encounter successfully created:", response);
   } catch (error: any) {
-    console.error("Encounter creation failed:", error.response.config.data, error.message);
+    throw error;
   }
   });
 
@@ -385,7 +385,7 @@ export const MedicalHistoryFlow = () => {
       })  
       console.log("Encounter successfully created:", response);
     } catch (error: any) {
-      console.error("Encounter creation failed:", error.response.config.data, error.message);
+      throw error;
     }
     
   });
@@ -424,7 +424,7 @@ export const MedicalHistoryFlow = () => {
     })  
     console.log("Encounter successfully created:", response);
   } catch (error: any) {
-    console.error("Encounter creation failed:", error.response.config.data, error.message);
+    throw error;
   }
   });
 
@@ -461,7 +461,7 @@ export const MedicalHistoryFlow = () => {
     })
     console.log("Encounter successfully created:", response);
   } catch (error: any) {
-    console.error("Encounter creation failed:", error.response.config.data, error.message);
+    throw error;
   }
   });
 
@@ -504,7 +504,7 @@ export const MedicalHistoryFlow = () => {
       obs: myObs });
       console.log("Encounter successfully created:", response);
     } catch (error: any) {
-      console.error("Encounter creation failed:", error.response.config.data, error.message);
+      throw error;
     }
 
 
@@ -551,7 +551,7 @@ export const MedicalHistoryFlow = () => {
       });
       console.log("Encounter successfully created:", response);
         } catch (error: any) {
-      console.error("Encounter creation failed:", error.response.config.data, error.message);
+          throw error;
     }
     });
   };
@@ -598,7 +598,7 @@ export const MedicalHistoryFlow = () => {
         const response = await createEncounter(encounter);
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
     });
 
@@ -627,6 +627,8 @@ export const MedicalHistoryFlow = () => {
     const initialObs = historyOfComplaints?[historyOfComplaintsObs,lastMealObs]:null;
  
     if(initialObs){
+
+      try{
     createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
@@ -637,6 +639,9 @@ export const MedicalHistoryFlow = () => {
         obsDatetime: dateTime,
         group_members:initialObs?initialObs:null,
       },]});
+    }catch(error: any){
+        throw error;
+    }
     };
     const symptom_uuid: Record<string, string>  ={
       "pain":concepts.PAIN, 
@@ -694,7 +699,7 @@ export const MedicalHistoryFlow = () => {
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
     };
 
@@ -719,7 +724,7 @@ export const MedicalHistoryFlow = () => {
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
     };
 
@@ -744,7 +749,7 @@ export const MedicalHistoryFlow = () => {
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
     }
 
@@ -779,7 +784,7 @@ export const MedicalHistoryFlow = () => {
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
     }
     
@@ -829,7 +834,7 @@ export const MedicalHistoryFlow = () => {
           },]});
           console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
       }
 
@@ -902,7 +907,7 @@ export const MedicalHistoryFlow = () => {
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        console.error("Encounter creation failed:", error.response.config.data, error.message);
+        throw error;
       }
 
     }
@@ -1097,7 +1102,7 @@ async function handleSubmitAll(index: number){
       });
       console.log("Encounter successfully created:", response);
       } catch (error: any) {
-        alert(`Encounter creation failed: ${error.response.config.data} ${error.message}`);
+        throw error;
       }
     });
 
