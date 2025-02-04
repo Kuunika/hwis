@@ -599,7 +599,6 @@ export const MedicalHistoryFlow = () => {
   }
   
   async function handleReviewSubmission(values: any): Promise<void> {
-
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
@@ -832,7 +831,7 @@ export const MedicalHistoryFlow = () => {
 
     
 
-    if(values['wasInjured']==="Yes"||values['assaultType']){
+    if(values['wasInjured']==="Yes"){
 
       type InjuryMechanismList = {
         [key: string]: string;
@@ -847,7 +846,6 @@ export const MedicalHistoryFlow = () => {
         selfInflicted: concepts.SELF_HARM,
         burns: concepts.BURN_INJURY,
         drowning: concepts.DROWNING,
-        occupationalInjury: concepts.OCCUPATIONAL_INJURY
       };
 
       const mechanism = Object.keys(injuryMechanismList).filter((key) => values['injuryMechanism'] === key);
@@ -871,7 +869,12 @@ export const MedicalHistoryFlow = () => {
         value: values['lostConsciousness']
       }
 
-      traumaObs.push(timeOfInjuryObs,consciousnessObs)
+      const occupationalObs = {
+        concept: concepts.OCCUPATIONAL_INJURY,
+        value: values['occupationalInjury']
+      }
+
+      traumaObs.push(timeOfInjuryObs,consciousnessObs,occupationalObs)
 
       if(values['assaultType']){
         traumaObs[0].concept = injuryMechanismList['assault']
@@ -1098,9 +1101,7 @@ async function handleSubmitAll(index: number){
 
   }
 
-  // useEffect(()=>{
-  //   console.log(submissionStatus)
-  // },[submissionStatus])
+
 
   return (
     <>
