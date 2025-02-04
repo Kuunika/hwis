@@ -84,7 +84,11 @@ interface ProcessedObservation {
     surgeries: Yup.array().of(
       Yup.object().shape({
         procedure: Yup.string().required("Surgical procedure is required"),
-        other: Yup.string().optional(),
+        other: Yup.string().when("procedure", {
+          is: (procedure: string) => procedure === "other_surgical_procedure",
+          then: (schema) => schema.required("Other surgical procedure is required"),
+          otherwise: (schema) => schema.optional(),
+        }),
         date: Yup.date()
           .required("Date of surgery is required")
           .nullable()
@@ -227,13 +231,17 @@ interface ProcessedObservation {
                   <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage name={`surgeries[${index}].procedure`} />
                   </div>
-                  {showOther[index] &&
+                  {showOther[index] &&<>
                       <TextInputField
                         id={`surgeries[${index}].other`}
                         name={`surgeries[${index}].other`}
                         label="Other procedure"
                         sx={{ width: '100%' }}
                       />
+
+                      <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage name={`surgeries[${index}].other`} />
+                  </div></>
                     }
                   <FormDatePicker
                     name={`surgeries[${index}].date`}
