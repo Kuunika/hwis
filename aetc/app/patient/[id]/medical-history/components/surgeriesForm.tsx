@@ -21,7 +21,7 @@ interface Observation {
   obs_group_id: number | null;
   value: any;
   names: { name: string }[];
-  children?: Observation[]; // To support nested children
+  children?: Observation[]; 
 }
 
 interface ProcessedObservation {
@@ -130,7 +130,6 @@ interface ProcessedObservation {
       (item) => item.encounter_type.name === "SURGICAL HISTORY"
     );
     const handleSubmit = async () => {
-      console.log(formValues);
       await schema.validate(formValues);  
       onSubmit(formValues);
     };
