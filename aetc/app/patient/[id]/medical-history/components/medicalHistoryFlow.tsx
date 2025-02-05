@@ -196,7 +196,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  const handleAllergiesSubmission = async (values: any): Promise<void> => {
+  const handleAllergiesSubmission = async (values: any): Promise<any> => {
 
   const groupedAllergies = values[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
     if (!acc[allergy.group]) {
@@ -280,7 +280,7 @@ export const MedicalHistoryFlow = () => {
       handleSkip();
   }
 
-  async function handleMedicationsSubmission(values: any): Promise<void> {
+  async function handleMedicationsSubmission(values: any): Promise<any> {
     const observations =  getObservations(values, dateTime);
     const medicationObs = observations[0]?.value || [];
     
@@ -387,7 +387,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  async function handleConditionsSubmission(values: any): Promise<void> {
+  async function handleConditionsSubmission(values: any): Promise<any> {
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
       concept: concepts.DIAGNOSIS_DATE,
@@ -425,7 +425,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  async function handleSurgeriesSubmission(values: any): Promise<void> {
+  async function handleSurgeriesSubmission(values: any): Promise<any> {
     const observationsPayload = values.surgeries.map((surgery: any) => {
     return  {
       concept: concepts.DATE_OF_SURGERY,
@@ -463,7 +463,7 @@ export const MedicalHistoryFlow = () => {
 
 
 
-  async function handleObstetricsSubmission(values: any): Promise<void> {
+  async function handleObstetricsSubmission(values: any): Promise<any> {
     
     const obstetricsObs = values;
     const contraceptives = obstetricsObs.contraceptive_history.map((item: { id: any; }) => ({
@@ -552,7 +552,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip();
   }
 
-  async function handleAdmissionsSubmission(values: any): Promise<void> {
+  async function handleAdmissionsSubmission(values: any): Promise<any> {
     const admissions = values.admissions;
   
     if (!Array.isArray(admissions)) {
@@ -598,7 +598,7 @@ export const MedicalHistoryFlow = () => {
       handleSkip();
   }
   
-  async function handleReviewSubmission(values: any): Promise<void> {
+  async function handleReviewSubmission(values: any): Promise<any> {
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
@@ -958,20 +958,114 @@ export const MedicalHistoryFlow = () => {
 
 
   function handleFamilyNext(values: any): void {
-    setFormData((prev: any) => ({ ...prev, family: values }));
+    if (Object.values(values).some((value) => value === true)) {
+      setFormData((prev: any) => ({ ...prev, family: values }));
+    }
+    
     handleSubmitAll(0);
 }
 
-async function handleSubmitAll(index: number){
-  setLoading(true);
+async function handleFamilyHistorySubmission(values: any): Promise<any> {
+  const conditionConcepts: { [key: string]: string }  = {
+    asthma: concepts.FAMILY_HISTORY_ASTHMA,
+    hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
+    diabetes_mellitus: concepts.FAMILY_HISTORY_DIABETES_MELLITUS,
+    epilepsy: concepts.FAMILY_HISTORY_EPILEPSY,
+    cancer: concepts.FAMILY_HISTORY_CANCER,
+    tuberculosis: concepts.FAMILY_HISTORY_TUBERCULOSIS,
+    other: concepts.FAMILY_HISTORY_OTHER_CONDITION,
+  }
 
-  if(index > Object.keys(formData).length-1) {
+  const observations: { concept: string; value: any; }[] = [];
+
+  Object.keys(values).forEach((key) => {
+    const value = values[key];
+
+    if (key.includes("Relationship")) {
+      const conditionKey = key.replace("Relationship", ""); 
+      const relationship = value;
+
+      if (values[conditionKey + "Type"]) {
+        const conditionType = values[conditionKey + "Type"];  
+
+
+        observations.push({
+          concept: conditionConcepts[conditionKey],  
+          value: conditionType,   
+        });
+      } else if (key === "otherRelationship" && values["otherSpecify"]) {
+
+        observations.push({
+          concept: conditionConcepts["other"],  
+          value: values["otherSpecify"],  
+        });
+      } else {
+
+        observations.push({
+          concept: conditionConcepts[conditionKey], 
+          value: true, 
+        });
+      }
+
+
+      observations.push({
+        concept: concepts.RELATIONSHIP_TO_PATIENT, 
+        value: relationship,  
+      });
+    }
+
+    if (key.includes("Type") && !values[key.replace("Type", "Relationship")]) {
+      const conditionKey = key.replace("Type", "");  
+      const conditionType = value;
+
+      observations.push({
+        concept: conditionConcepts[conditionKey],  
+        value: conditionType,   
+      });
+    }
+  });
+
+
+  const groupedObservations = [];
+  for (let i = 0; i < observations.length; i += 2) {
+    groupedObservations.push([observations[i], observations[i + 1]]);
+  };
+
+  groupedObservations.forEach(async (group) => {
+    try{
+    const response = await createEncounter({
+      encounterType: encounters.FAMILY_MEDICAL_HISTORY, 
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: [
+        {
+          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: group,  
+        },
+      ],
+    });
+    console.log("Encounter successfully created:", response);
+    } catch (error: any) {
+      throw error;
+    }
+  });
+
+
+}
+
+
+async function handleSubmitAll(index: number){
+
+  if(index > Object.keys(formData).length -1) {
     setLoading(false);
     handleSkip();
     return;
   }
 
-  const submissionHandlers: Record<string, (value: any) => Promise<void>> = {
+  const submissionHandlers: Record<string, (value: any) => Promise<any>> = {
     presentingComplaints: handlePresentingComplaintsSubmission,
     allergies: handleAllergiesSubmission,
     medications: handleMedicationsSubmission,
@@ -986,9 +1080,10 @@ async function handleSubmitAll(index: number){
 
  const key = Object.keys(formData)[index];
  const encounter = formData[key];
-
+console.log(key, encounter );
 
  try {
+  setLoading(true);
   await submissionHandlers[key](encounter);
   
   setTimeout(()=>{
@@ -998,10 +1093,11 @@ async function handleSubmitAll(index: number){
   },2000)
 
  } catch (error) {
-  console.log({error})
+
+  setTimeout(()=>{
   setError(true);
   setMessage(`error occurred when submitting ${key}`)
-  
+  },2000)
   
  }
 
@@ -1010,97 +1106,7 @@ async function handleSubmitAll(index: number){
 
 
 
-  async function handleFamilyHistorySubmission(values: any): Promise<void> {
-    const conditionConcepts: { [key: string]: string }  = {
-      asthma: concepts.FAMILY_HISTORY_ASTHMA,
-      hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
-      diabetes_mellitus: concepts.FAMILY_HISTORY_DIABETES_MELLITUS,
-      epilepsy: concepts.FAMILY_HISTORY_EPILEPSY,
-      cancer: concepts.FAMILY_HISTORY_CANCER,
-      tuberculosis: concepts.FAMILY_HISTORY_TUBERCULOSIS,
-      other: concepts.FAMILY_HISTORY_OTHER_CONDITION,
-    }
-
-    const observations: { concept: string; value: any; }[] = [];
-  
-    Object.keys(values).forEach((key) => {
-      const value = values[key];
-
-      if (key.includes("Relationship")) {
-        const conditionKey = key.replace("Relationship", ""); 
-        const relationship = value;
-  
-        if (values[conditionKey + "Type"]) {
-          const conditionType = values[conditionKey + "Type"];  
-  
-
-          observations.push({
-            concept: conditionConcepts[conditionKey],  
-            value: conditionType,   
-          });
-        } else if (key === "otherRelationship" && values["otherSpecify"]) {
-
-          observations.push({
-            concept: conditionConcepts["other"],  
-            value: values["otherSpecify"],  
-          });
-        } else {
-
-          observations.push({
-            concept: conditionConcepts[conditionKey], 
-            value: true, 
-          });
-        }
-  
-
-        observations.push({
-          concept: concepts.RELATIONSHIP_TO_PATIENT, 
-          value: relationship,  
-        });
-      }
  
-      if (key.includes("Type") && !values[key.replace("Type", "Relationship")]) {
-        const conditionKey = key.replace("Type", "");  
-        const conditionType = value;
-  
-        observations.push({
-          concept: conditionConcepts[conditionKey],  
-          value: conditionType,   
-        });
-      }
-    });
-  
-
-    const groupedObservations = [];
-    for (let i = 0; i < observations.length; i += 2) {
-      groupedObservations.push([observations[i], observations[i + 1]]);
-    };
-
-    groupedObservations.forEach(async (group, index) => {
-      try{
-      const response = await createEncounter({
-        encounterType: encounters.FAMILY_MEDICAL_HISTORY, 
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: [
-          {
-            concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
-            value: true,
-            obsDatetime: dateTime,
-            group_members: group,  
-          },
-        ],
-      });
-      console.log("Encounter successfully created:", response);
-      } catch (error: any) {
-        throw error;
-      }
-    });
-
-
-  }
-
 
 
   return (
@@ -1112,10 +1118,7 @@ async function handleSubmitAll(index: number){
                 message={message}
                 progress={(completed / Object.keys(formData).length) * 100}
               />
-              </>}
-
- 
-  
+      </>}
     {  !loading &&<NewStepperContainer
         setActive={setActiveStep}
         title="Medical History"

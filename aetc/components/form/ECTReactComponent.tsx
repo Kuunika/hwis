@@ -7,12 +7,11 @@ import { InputLabel } from '@mui/material';
 import { IoSearch } from "react-icons/io5";
 interface ECTReactComponentProps {
   iNo: number;
-  name: string;
   label: string;
   onICD11Selection?: (selectedEntity: any) => void;
 }
 
-const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection, name, iNo, label }) => {
+const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection, iNo, label }) => {
   const apiServerUrl =
       process.env.NODE_ENV === 'production'
         ? process.env.REACT_APP_API_SERVER_URL
