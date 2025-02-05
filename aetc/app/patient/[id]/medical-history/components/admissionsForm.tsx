@@ -303,7 +303,6 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                           <ECTReactComponent
                           onICD11Selection={(selectedEntity: any) => handleICD11Selection(selectedEntity, index)}
                           label={'Condition'}
-                          name={'icd11_input'}
                           iNo={100+index}
                         />
                         )}
