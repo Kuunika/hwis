@@ -104,6 +104,8 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   const { data: facilitiesData, isLoading } = getFacilities();
   const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
   const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+  const [showAll, setShowAll] = useState(false);
+  const displayedObservations = showAll ? observations : observations.slice(0, 3);
 
   const admissionsEncounters = patientHistory?.filter(
     (item) => item.encounter_type.name === "PATIENT ADMISSIONS"
@@ -180,7 +182,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
           }
         });
         
-
+        observations.sort((a, b) => new Date(b.value).getTime() - new Date(a.value).getTime());
         setObservations(observations)
       });}
     
@@ -194,9 +196,9 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   return (
     <>
   <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
-  <div>
-            {observations.map(item => (
-                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
+<div>
+            {displayedObservations.map(item => (
+                <div key={item.obs_id} style={{ marginBottom: "20px", color: "rgba(0, 0, 0, 0.6)" }}>
                     <h4>{item.value}</h4>
 
                     {item.children && item.children.length > 0 && (
@@ -210,6 +212,20 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                     )}
                 </div>
             ))}
+            {!showAll && observations.length > 3 && (
+                <button 
+                    onClick={() => setShowAll(true)} 
+                    style={{ color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
+                >
+                    View More ...
+                </button>
+            )}
+            {showAll && (                <button 
+                    onClick={() => setShowAll(false)} 
+                    style={{color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
+                >
+                    View Less
+                </button>)}
         </div>
   </div>
     <FormikInit
