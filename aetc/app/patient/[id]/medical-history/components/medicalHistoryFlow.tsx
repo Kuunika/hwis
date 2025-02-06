@@ -1057,13 +1057,14 @@ async function handleFamilyHistorySubmission(values: any): Promise<any> {
 }
 
 
-async function handleSubmitAll(index: number){
-
-  if(index > Object.keys(formData).length -1) {
+async function handleSubmitAll(index: number) {
+  if (index >= Object.keys(formData).length) {
     setLoading(false);
     handleSkip();
     return;
   }
+
+  setLoading(true);
 
   const submissionHandlers: Record<string, (value: any) => Promise<any>> = {
     presentingComplaints: handlePresentingComplaintsSubmission,
@@ -1077,36 +1078,26 @@ async function handleSubmitAll(index: number){
     family: handleFamilyHistorySubmission,
   };
 
-
- const key = Object.keys(formData)[index];
- const encounter = formData[key];
-console.log(key, encounter );
-
- try {
-  setLoading(true);
-  await submissionHandlers[key](encounter);
-  
-  setTimeout(()=>{
-    setMessage(`${key} submitted`)
-    handleSubmitAll(index+1)
-    setCompleted(index+1);
-  },2000)
-
- } catch (error) {
-
-  setTimeout(()=>{
-  setError(true);
-  setMessage(`error occurred when submitting ${key}`)
-  },2000)
-  
- }
+  const key = Object.keys(formData)[index];
+  const encounter = formData[key];
 
 
+  try {
+    await submissionHandlers[key](encounter);
+
+    setMessage(`${key} submitted`);
+    setCompleted(index + 1);
+  } catch (error) {
+    console.error(`Error submitting ${key}:`, error);
+    setError(true);
+    setMessage(`Error occurred when submitting ${key}`);
+  }
+
+  setTimeout(() => {
+    handleSubmitAll(index + 1);
+  }, 2000);
 }
 
-
-
- 
 
 
   return (
@@ -1116,7 +1107,7 @@ console.log(key, encounter );
      <>
      <CustomizedProgressBars
                 message={message}
-                progress={(completed / Object.keys(formData).length) * 100}
+                progress={(completed / (Object.keys(formData).length)) * 100}
               />
       </>}
     {  !loading &&<NewStepperContainer
