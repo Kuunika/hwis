@@ -32,13 +32,13 @@ type Props = {
   onCancel: () => void;
 };
 const options = [
-  { id: "Wound", label: "Wound" },
-  { id: "Surgical Emphyema", label: "Surgical Emphyema" },
-  { id: "Rib Deformity", label: "Rib Deformity" },
-  { id: "Scar", label: "Scar" },
-  { id: "Frail chest", label: "Frail chest" },
-  { id: "Intercostal drain situ", label: "Intercostal drain situ" },
-  { id: "Other", label: "Other" },
+  { id: concepts.WOUND, label: "Wound" },
+  { id: concepts.SURGICAL_EMPHYSEMA, label: "Surgical Emphysema" },
+  { id: concepts.RIB_DEFORMITY, label: "Rib Deformity" },
+  { id: concepts.SCAR, label: "Scar" },
+  { id: concepts.FAIL_CHEST, label: "Flail chest" },
+  { id: concepts.INTERCOSTAL_DRAINAGE, label: "Intercostal drain situ" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 export const ChestLungForm = (props: Props) => {
@@ -54,19 +54,11 @@ export const ChestLungForm = (props: Props) => {
       submitButton={false}
       submitButtonText="next"
     >
-      <TextInputField
-        multiline
-        rows={2}
-        sx={{ width: "100%" }}
-        id={form.notes.name}
-        name={form.notes.name}
-        label={form.notes.label}
-      />
       <SearchComboBox
         getValue={(values) => {
           if (values)
             setShowInputTextDisplay(
-              Boolean(values.find((v: any) => v.id == "Other"))
+              Boolean(values.find((v: any) => v.id == concepts.OTHER))
             );
         }}
         name={form.description.name}
@@ -81,6 +73,14 @@ export const ChestLungForm = (props: Props) => {
           label={form.specify.label}
         />
       )}
+      <TextInputField
+        multiline
+        rows={2}
+        sx={{ width: "100%" }}
+        id={form.notes.name}
+        name={form.notes.name}
+        label={form.notes.label}
+      />
       <br />
       <Box sx={{ display: "flex", gap: "0.2ch" }}>
         <Button

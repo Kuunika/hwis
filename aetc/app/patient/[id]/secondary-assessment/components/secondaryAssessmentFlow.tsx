@@ -13,7 +13,7 @@ import {
 
 export function SecondaryAssessmentFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { navigateTo, navigateBack } = useNavigation();
+  const { navigateBack } = useNavigation();
 
   const steps = [
     { id: 1, label: "General Information" },
@@ -40,7 +40,6 @@ export function SecondaryAssessmentFlow() {
   const handleExtremitiesSubmit = () => {
     setActiveStep(5);
   };
-  const handleNeurologicalSubmit = () => {};
 
   return (
     <NewStepperContainer
@@ -55,7 +54,7 @@ export function SecondaryAssessmentFlow() {
       <ChestForm onSubmit={handleChestSubmit} />
       <AbdomenPelvisForm onSubmit={handleAbdomenSubmit} />
       <ExtremitiesForm onSubmit={handleExtremitiesSubmit} />
-      <NeurologicalExamination onSubmit={handleNeurologicalSubmit} />
+      <NeurologicalExamination onSubmit={navigateBack} />
     </NewStepperContainer>
   );
 }

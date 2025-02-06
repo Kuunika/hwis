@@ -35,6 +35,10 @@ const form = {
     name: concepts.DESCRIPTION,
     label: "Description Of Bruise",
   },
+  specify: {
+    name: concepts.SPECIFY,
+    label: "Specify",
+  },
 };
 
 type Prop = {
@@ -51,6 +55,7 @@ const schema = Yup.object().shape({
   [form.descriptionOfBruises.name]: Yup.string().label(
     form.descriptionOfBruises.label
   ),
+  [form.specify.name]: Yup.string().label(form.specify.label),
 });
 
 const initialsValues = getInitialValues(form);
@@ -60,7 +65,7 @@ const abnormalities = [
   { id: concepts.BRUISE, label: "Bruise" },
   { id: concepts.HAEMATOMA, label: "Haematoma" },
   { id: concepts.FRACTURE, label: "Fracture" },
-  //   { id: concepts.OTHER, label: "Other" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
@@ -68,13 +73,14 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
   const [showBruiseDescription, setShowBruiseDescription] =
     useState<boolean>(false);
   const [showLaceration, setShowLaceration] = useState<boolean>(false);
+  const [showOther, setShowOther] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    console.log(Boolean(values.find((v) => v.id == concepts.BRUISE)));
     setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
     setShowBruiseDescription(
       Boolean(values.find((v) => v.id == concepts.BRUISE))
     );
+    setShowOther(Boolean(values.find((v) => v.id == concepts.OTHER)));
   };
   return (
     <FormikInit
@@ -122,12 +128,22 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
             <TextInputField
               sx={{ my: "1ch", width: "100%" }}
               multiline
-              rows={2}
+              rows={3}
               id={form.lacerationOther.name}
               name={form.lacerationOther.name}
               label={form.lacerationOther.label}
             />
           </>
+        )}
+        {showOther && (
+          <TextInputField
+            sx={{ my: "1ch", width: "100%" }}
+            multiline
+            rows={3}
+            id={form.specify.name}
+            name={form.specify.name}
+            label={form.specify.label}
+          />
         )}
       </Box>
     </FormikInit>

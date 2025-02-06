@@ -1,13 +1,29 @@
 import { MainButton, TextInputField, WrapperBox } from "@/components";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    FormValuesListener,
-    FormikInit
+  FormValuesListener,
+  FormikInit
 } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { useParameters } from "@/hooks";
 
+interface Observation {
+  obs_id: number | null;
+  obs_group_id: number | null;
+  value: any;
+  names: { name: string }[];
+  children?: Observation[]; 
+}
+
+interface ProcessedObservation {
+  obs_id: number | null;
+  name: string | undefined;
+  value: any;
+  children: ProcessedObservation[];
+}
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -19,6 +35,7 @@ type Prop = {
     value: string;
     label: string;
   };
+
 
 
 const allergiesFormConfig = {
@@ -49,12 +66,21 @@ allergy: {
 }
 
 export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
+  const { params } = useParameters();
     const [formValues, setFormValues] = useState<any>({});
     const [allergySelected,  setAllergySelected] = useState<Allergy[]>([]);
     const [showFoodOther, setShowFoodOther] = useState<boolean | null>(null);
     const [showMedicalSubstanceOther, setShowMedicalSubstanceOther] = useState<boolean | null>(null);
     const [showMedicationOther, setShowMedicationOther] = useState<boolean | null>(null);
     const [showSubstanceOther, setShowSubstanceOther] = useState<boolean | null>(null);
+    const { data, isLoading } = getPatientsEncounters(params?.id as string);
+    const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+
+
+    const allergiesEncounters = data?.filter(
+      (item) => item.encounter_type.name === "Allergies"
+    );
+
 
 const allergyOptions = [
   {
@@ -102,80 +128,116 @@ const allergyOptions = [
   },
 ];
 
+
 const schema = yup.object().shape({
+
   [allergiesFormConfig.allergy.name]: yup
     .array()
+    .min(1, "At least one allergy must be selected")
     .of(
       yup.object().shape({
-        group: yup.string().required(),
-        value: yup.string().required(),
-        label: yup.string().required(),
+        group: yup.string().required("Group is required"),
+        value: yup.string().required("Value is required"),
+        label: yup.string().required("Label is required"),
       })
     )
-    .required("At least one allergy must be selected"),
+    .required("Allergy field is required"),
+
 
   [allergiesFormConfig.otherFood.name]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_FOOD_ALLERGY)
-        ? schema.required("Please specify the other food allergy")
-        : schema
-    ),
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherFoodAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === allergiesFormConfig.otherFood.name
+      );
 
-  [allergiesFormConfig.otherMedication.name]: yup
+      return hasOtherFoodAllergy
+        ? schema
+            .required("Please specify the other food allergy")
+            .min(1, "The other food allergy must not be empty")
+        : schema.notRequired();
+    }),
+
+
+  [concepts.OTHER_MEDICATION_ALLERGY]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY)
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherMedicationAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY
+      );
+
+      return hasOtherMedicationAllergy
         ? schema.required("Please specify the other medication allergy")
-        : schema
-    ),
+        : schema.notRequired();
+    }),
 
-  [allergiesFormConfig.otherMedicalSubstance.name]: yup
+  [concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY)
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherMedicalSubstanceAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY
+      );
+
+      return hasOtherMedicalSubstanceAllergy
         ? schema.required("Please specify the other medical substance allergy")
-        : schema
-    ),
+        : schema.notRequired();
+    }),
 
-  [allergiesFormConfig.otherSubstance.name]: yup
+ 
+  [concepts.OTHER_SUBSTANCE_ALLERGY]: yup
     .string()
-    .when(allergiesFormConfig.allergy.name, (allergies, schema) =>
-      allergies?.some((allergy: any) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY)
+    .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
+      const flatAllergies = allergies?.flat() || [];
+      const hasOtherSubstanceAllergy = flatAllergies.some(
+        (allergy: any) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY
+      );
+
+      return hasOtherSubstanceAllergy
         ? schema.required("Please specify the other substance allergy")
-        : schema
-    ),
+        : schema.notRequired();
+    }),
+
+
 });
 
 const initialValues = {
-  };
+  [allergiesFormConfig.allergy.name]: [], 
+  [allergiesFormConfig.otherFood.name]: "",
+  [allergiesFormConfig.otherMedication.name]: "",
+  [allergiesFormConfig.otherMedicalSubstance.name]: "",
+  [allergiesFormConfig.otherSubstance.name]: "",
+  [allergiesFormConfig.allergyDetails.name]: "",
+};
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
+    await schema.validate(formValues);
+    
     const allergyListKey = concepts.ALLERGY;
 
-// Loop through each key in `data`
-Object.keys(formValues).forEach((key) => {
-  // Check if the key matches the pattern "OTHER_*_ALLERGY"
-  if (key.startsWith("OTHER_") && key.endsWith("_ALLERGY")) {
-    const replacementValue = formValues[key];
+      Object.keys(formValues).forEach((key) => {
+        if (key.startsWith("OTHER_") && key.endsWith("_ALLERGY")) {
+          const replacementValue = formValues[key];
 
-    if (replacementValue) {
-      // Replace entries in the allergy list array
-      formValues[allergyListKey] = formValues[allergyListKey].map((allergy: { value: string; }) => {
-        if (allergy.value === key) {
-          return {
-            ...allergy,
-            value: replacementValue
-          };
+          if (replacementValue) {
+            formValues[allergyListKey] = formValues[allergyListKey].map((allergy: { value: string; }) => {
+              if (allergy.value === key) {
+                return {
+                  ...allergy,
+                  value: replacementValue
+                };
+              }
+              return allergy;
+            });
+
+            delete formValues[key];
+          }
         }
-        return allergy;
       });
 
-      // Remove the key from the main object
-      delete formValues[key];
-    }
-  }
-});
     onSubmit(formValues);
   };
 
@@ -193,21 +255,103 @@ Object.keys(formValues).forEach((key) => {
       setShowMedicationOther(null);
       setShowSubstanceOther(null);
     }
-  }, [allergySelected]);
+
+    if (!isLoading) {
+      const observations: ProcessedObservation[] = [];
+
+      allergiesEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        encounter.obs.forEach((observation) => {
+          const value = observation.value;
+      
+          // Format the observation data
+          const obsData: ProcessedObservation = {
+            obs_id: observation.obs_id,
+            name: observation.names?.[0]?.name,
+            value,
+            children: [],
+          };
+      
+          if (observation.obs_group_id) {
+            // Find the parent observation and group it
+            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
+            if (parent) {
+              parent.children.push(obsData);
+            }
+          } else {
+            // Add it to the top-level observations
+            observations.push(obsData);
+          }
+        });
+      });
+
+      const mergeObservations = (data: any[] | undefined) => {
+        const merged: any[] = [];
+        
+        data?.forEach(item => {
+            // Check if the name already exists in the merged array
+            if(item.name !=='Allergy comment'){
+            let existing = merged.find(mergedItem => mergedItem.name === item.name);
+            
+            if (!existing) {
+                // Add new item if it doesn't exist
+                merged.push({ ...item, children: [...item.children] });
+            } else {
+                // Merge children and remove duplicates based on `name` and `value`
+                const childMap = new Map();
+                [...existing.children, ...item.children].forEach(child => {
+                    const key = `${child.name}_${child.value}`;
+                    childMap.set(key, child);
+                });
+                existing.children = Array.from(childMap.values());
+            }
+          }
+        });
+    
+        return merged;
+    };
+    
+    const mergedData = mergeObservations(observations);
+    setObservations(mergedData);
+
+      
+ 
+    }
+
+  }, [allergySelected,data]);
 
 return (<>
-  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h4 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies</h4>
-  <p style={{color:'rgba(0, 0, 0, 0.6)'}}>Aspirin, Seafood</p>
+  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies:</h3>
+  <div>
+            {observations.map(item => (
+                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
+                    {/* Display title */}
+                    <h4>{item.name}</h4>
+                    
+                    {/* Display children if they exist */}
+                    {item.children && item.children.length > 0 && (
+                        <ul>
+                            {item.children.map(child => (
+                                <li key={child.obs_id}>
+                                    {child.name}: {child.value}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
   </div>
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
+      enableReinitialize={true}
       submitButton={false}
     >
     <FormValuesListener getValues={setFormValues} />
 
         <GroupedSearchComboBox options={allergyOptions} getValue={(value) => { setAllergySelected(value);}}  multiple={true} name={allergiesFormConfig.allergy.name}label={allergiesFormConfig.allergy.label} />
+
         {showFoodOther &&(
   <TextInputField 
   id={allergiesFormConfig.otherFood.name}
@@ -256,12 +400,10 @@ return (<>
  
 )}
 
-
-
-    <WrapperBox sx={{mt:'2ch'}}>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} />
-        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
- </WrapperBox>
+<WrapperBox sx={{mt: '2ch' }}>
+    <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+  </WrapperBox>
 </FormikInit>
 </>
 );

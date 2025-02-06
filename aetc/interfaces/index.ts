@@ -103,7 +103,6 @@ interface EncounterType {
 
 export interface Obs {
   concept(concept: any): unknown;
-  children: boolean;
   group_members: any;
   obs_id: number;
   person_id: number;
@@ -127,6 +126,7 @@ export interface Obs {
   value_coded_uuid: any;
   names: Name[];
   created_by: string;
+  children: Obs[]
 }
 
 export interface Encounter {
@@ -191,9 +191,9 @@ export type TriageResult = "" | "yellow" | "red" | "green";
 export type DDESearch = {
   locals: Person[] | Patient[];
   remotes:
-    | Person[]
-    | Patient[]
-    | Array<{ patient_identifiers: Array<any>; person: Person }>;
+  | Person[]
+  | Patient[]
+  | Array<{ patient_identifiers: Array<any>; person: Person }>;
 };
 
 export type DDEScore = {
@@ -344,16 +344,16 @@ export interface LabFormProps {
 }
 
 export interface FormValueLabel {
-  section:string,
+  section: string,
   formValues: Array<{
-    label:string|undefined,
-    value:string|undefined
+    label: string | undefined,
+    value: string | undefined
   }>
 }
 
 
 export interface Printer {
-  id:number;
-  name:string;
-  ip_address:string
+  id: number;
+  name: string;
+  ip_address: string
 }

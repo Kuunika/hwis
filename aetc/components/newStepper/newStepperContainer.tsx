@@ -139,13 +139,6 @@ export function NewStepperContainer({
                     flexDirection: "row",
                     borderBottom: "solid 0.2ch #B3B3B3",
                   },
-                  "& .css-1betqn-MuiAccordionSummary-content p": {
-                    fontSize: "24px",
-                    fontWeight: 700,
-                    lineHeight: "29px",
-                    letterSpacing: "0em",
-                    textAlign: "left",
-                  },
                 }}
                 onChange={() => {
                   if (setActive) {
@@ -159,7 +152,18 @@ export function NewStepperContainer({
                   aria-controls={`panel${key + 1}-content`}
                   id={`panel${key + 1}-header`}
                 >
-                  <Typography>{steps[key]?.label}</Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontSize: "24px",
+                      fontWeight: 700,
+                      lineHeight: "29px",
+                      letterSpacing: "0em",
+                      textAlign: "left",
+                    }}
+                  >
+                    {steps[key]?.label}
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails>{child}</AccordionDetails>
               </Accordion>

@@ -9,8 +9,9 @@ import {
 import * as yup from "yup";
 import { concepts, encounters } from "@/constants";
 import { useSubmitEncounter } from "@/hooks";
-import { getObservations } from "@/helpers";
+import { getInitialValues, getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 type Props = {
   onSubmit: () => void;
 };
@@ -28,13 +29,10 @@ const schema = yup.object({
     .label(form.generalInformation.label),
 });
 
-const initialValues = {
-  temperatureInfo: "",
-  skinRashInfo: "",
-  rashDescription: "",
-};
+const initialValues = getInitialValues(form);
+
 export const GeneralInformation = ({ onSubmit }: Props) => {
-  const [formValues, setFormValues] = useState<any>({});
+  // const [formValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.GENERAL_INFORMATION_ASSESSMENT,
     onSubmit
@@ -45,22 +43,24 @@ export const GeneralInformation = ({ onSubmit }: Props) => {
   };
 
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={handleSubmitForm}
-      submitButtonText="Next"
-    >
-      <FormValuesListener getValues={setFormValues} />
+    <ContainerLoaderOverlay loading={isLoading}>
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={handleSubmitForm}
+        submitButtonText="Next"
+      >
+        {/* <FormValuesListener getValues={setFormValues} /> */}
 
-      <FieldsContainer>
         <TextInputField
           sx={{ width: "100%" }}
+          multiline
+          rows={5}
           name={form.generalInformation.name}
           label={form.generalInformation.label}
           id={form.generalInformation.name}
         />
-      </FieldsContainer>
-    </FormikInit>
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };

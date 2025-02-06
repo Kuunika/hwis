@@ -5,7 +5,10 @@ import { NewRegistrationFlow } from "../../components/newRegistration";
 import { roles } from "@/constants";
 
 function Page() {
-
   return <NewRegistrationFlow />;
 }
-export default AuthGuard(Page, [roles.ADMIN, roles.REGISTRATION_CLERK])
+export default AuthGuard(Page, [
+  roles.ADMIN,
+  roles.REGISTRATION_CLERK,
+  roles.CLINICIAN,
+]);

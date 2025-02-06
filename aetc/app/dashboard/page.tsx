@@ -14,7 +14,7 @@ import { roles } from "@/constants";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
 import { useContext } from "react";
 import { LocationContext, LocationContextType } from "@/contexts/location";
-import { useTheme } from "@mui/material/styles"; // Import MUI theme
+import { useTheme } from "@mui/material/styles";
 
 function Home() {
   useContext(LocationContext) as LocationContextType;
@@ -58,6 +58,7 @@ function Home() {
               roles.REGISTRATION_CLERK,
               roles.ADMIN,
               roles.INITIAL_REGISTRATION_CLERK,
+              roles.CLINICIAN,
             ]}
           >
             <Card
@@ -91,28 +92,26 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/initial-registration/list"
-              title="Patients Waiting for Screening"
+              title="Screening List"
             />
           </AuthGuardComp>
-          <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN]}>
+          <AuthGuardComp
+            roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN]}
+          >
             <Card
               icon={<FcTodoList />}
               link="/registration/list"
-              title="Patients Waiting for Registration"
+              title="Registration List"
             />
           </AuthGuardComp>
           <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
-            <Card
-              icon={<FcTodoList />}
-              link="/triage"
-              title="Patients Waiting for Triage"
-            />
+            <Card icon={<FcTodoList />} link="/triage" title="Triage List" />
           </AuthGuardComp>
           <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN]}>
             <Card
               icon={<FcTodoList />}
               link="/assessments"
-              title="Patients Waiting for Assessment "
+              title="Assessment List"
             />
           </AuthGuardComp>
           <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
@@ -162,10 +161,22 @@ const Card = ({
         },
       }}
     >
-      <MainTypography variant="h2" sx={{ color: theme.palette.primary.main }}>
+      <MainTypography
+        variant="h2"
+        sx={{
+          color: theme.palette.primary.main,
+          fontSize: { xs: "2rem", sm: "3rem" }, // Adjust font size for responsiveness
+        }}
+      >
         {icon}
       </MainTypography>
-      <MainTypography variant="h6" textAlign={"center"}>
+      <MainTypography
+        variant="h6"
+        textAlign={"center"}
+        sx={{
+          fontSize: { xs: "0.9rem", sm: "1rem" }, // Adjust font size for title
+        }}
+      >
         {title}
       </MainTypography>
     </MainPaper>

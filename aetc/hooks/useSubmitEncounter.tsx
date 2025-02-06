@@ -15,10 +15,11 @@ export const useSubmitEncounter = (
   );
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
-  console.log({ data });
-
-  const handleSubmit = async (obs: Array<any>, encounters?: Array<any>) => {
+  const handleSubmit = async (obs: Array<any>) => {
     const dateTime = getDateTime();
+
+    console.log({ obs });
+
     await mutate({
       encounterType,
       visit: activeVisit?.uuid,
@@ -26,12 +27,6 @@ export const useSubmitEncounter = (
       encounterDatetime: dateTime,
       obs,
     });
-
-    // if (encounters) {
-    //   for (let i = 0; i < encounters.length; i++) {
-    //     await mutate(encounters[i].formData);
-    //   }
-    // }
   };
 
   useEffect(() => {
@@ -40,5 +35,5 @@ export const useSubmitEncounter = (
     }
   }, [isSuccess]);
 
-  return { isLoading, isSuccess, handleSubmit };
+  return { isLoading: isLoading || isPending, isSuccess, handleSubmit };
 };

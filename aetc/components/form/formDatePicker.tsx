@@ -7,6 +7,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { FC, useEffect } from "react";
 import { useFormikField } from "./hooks";
 import { Box, InputLabel, SxProps } from "@mui/material";
+import { MainTypography } from "..";
 
 type Prop = {
   name: string;
@@ -51,7 +52,6 @@ export const FormDatePicker: FC<Prop> = ({
         {label}
       </InputLabel>
       <DatePicker
-        slotProps={{ textField: { size, helperText: errorMessage } }}
         sx={{
           backgroundColor:'white',
           "& fieldset": { borderRadius: "5px" },
@@ -64,7 +64,11 @@ export const FormDatePicker: FC<Prop> = ({
         }
         disabled={disabled}
       />
+                <MainTypography color={"red"} variant="subtitle2">
+            {errorMessage}
+          </MainTypography>
     </Box>
     </LocalizationProvider>
+
   );
 };

@@ -15,7 +15,6 @@ import * as Yup from "yup";
 import { useConditions } from "@/hooks";
 import { getInitialValues } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
-import { CanvasImage } from "@/components/canvasImage/canvasImage";
 
 export const AirwayBreathingForm = {
   airway: {
@@ -45,12 +44,18 @@ export const AirwayBreathingForm = {
 };
 
 const schema = Yup.object().shape({
-  [AirwayBreathingForm.airway.name]: Yup.string().required().label(AirwayBreathingForm.airway.label),
-  [AirwayBreathingForm.breathing.name]: Yup.string().required().label(AirwayBreathingForm.breathing.label),
+  [AirwayBreathingForm.airway.name]: Yup.string()
+    .required()
+    .label(AirwayBreathingForm.airway.label),
+  [AirwayBreathingForm.breathing.name]: Yup.string()
+    .required()
+    .label(AirwayBreathingForm.breathing.label),
   [AirwayBreathingForm.respiratoryDysfunction.name]: Yup.string().label(
     AirwayBreathingForm.respiratoryDysfunction.label
   ),
-  [AirwayBreathingForm.stridor.name]: Yup.string().label(AirwayBreathingForm.stridor.label),
+  [AirwayBreathingForm.stridor.name]: Yup.string().label(
+    AirwayBreathingForm.stridor.label
+  ),
   [AirwayBreathingForm.reducedLevelOfConsciousness.name]: Yup.string().label(
     AirwayBreathingForm.reducedLevelOfConsciousness.label
   ),
@@ -62,8 +67,8 @@ type Prop = {
   setTriageResult: (triage: any, name: string) => void;
   triageResult: string;
   continueTriage: boolean;
-  previous: () => void,
-  getFormValues: (values:any)=>void
+  previous: () => void;
+  getFormValues: (values: any) => void;
 };
 
 const radioOptions = [
@@ -71,16 +76,20 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 
-export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult, continueTriage, previous, getFormValues }: Prop) => {
+export const AirwayAndBreathingForm = ({
+  onSubmit,
+  triageResult,
+  setTriageResult,
+  continueTriage,
+  previous,
+  getFormValues,
+}: Prop) => {
   const [isBreathingAbnormal, setIsBreathingAbnormal] = useState("false");
 
   const [formValues, setFormValues] = useState<any>({});
 
-  const {
-    conditions,
-    updateConditions,
-    aggregateOrCondition,
-  } = useConditions();
+  const { conditions, updateConditions, aggregateOrCondition } =
+    useConditions();
 
   const [finalCondition, setFinalCondition] = useState(false);
 
@@ -88,8 +97,6 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
     const cond = !aggregateOrCondition && Object.keys(conditions).length == 4;
 
     setFinalCondition(cond);
-
-
   }, [conditions]);
 
   const handleIsAirWayCompromised = (value: string) => {
@@ -101,13 +108,16 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
   };
 
   const disableField = (formField: string) => {
-    return (triageResult === "red" && !Boolean(formValues[formField])) && !continueTriage;
+    return (
+      triageResult === "red" &&
+      !Boolean(formValues[formField]) &&
+      !continueTriage
+    );
   };
 
-
-  const  handleTriage =(name:string, value:string)=>{
+  const handleTriage = (name: string, value: string) => {
     // setTriageResult(value==YES? "red": "",name);
-  }
+  };
 
   return (
     <FormikInit
@@ -118,9 +128,7 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
       submitButton={false}
       getFormValues={getFormValues}
     >
-
       <FormValuesListener getValues={setFormValues} />
-  
 
       <FormFieldContainerLayout
         last={isBreathingAbnormal != YES}
@@ -176,22 +184,38 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
             <FieldsContainer>
               <RadioGroupInput
                 name={AirwayBreathingForm.respiratoryDysfunction.name}
-                disabled={disableField(AirwayBreathingForm.respiratoryDysfunction.name)}
+                disabled={disableField(
+                  AirwayBreathingForm.respiratoryDysfunction.name
+                )}
                 label={AirwayBreathingForm.respiratoryDysfunction.label}
                 getValue={(value) => {
-                  updateConditions(AirwayBreathingForm.respiratoryDysfunction.name, value);
-                  handleTriage(AirwayBreathingForm.respiratoryDysfunction.name, value);
+                  updateConditions(
+                    AirwayBreathingForm.respiratoryDysfunction.name,
+                    value
+                  );
+                  handleTriage(
+                    AirwayBreathingForm.respiratoryDysfunction.name,
+                    value
+                  );
                 }}
                 options={radioOptions}
               />
               <RadioGroupInput
                 name={AirwayBreathingForm.inabilityToSpeak.name}
                 label={AirwayBreathingForm.inabilityToSpeak.label}
-                disabled={disableField(AirwayBreathingForm.inabilityToSpeak.name)}
+                disabled={disableField(
+                  AirwayBreathingForm.inabilityToSpeak.name
+                )}
                 options={radioOptions}
                 getValue={(value) => {
-                  updateConditions(AirwayBreathingForm.inabilityToSpeak.name, value);
-                  handleTriage(AirwayBreathingForm.inabilityToSpeak.name, value);
+                  updateConditions(
+                    AirwayBreathingForm.inabilityToSpeak.name,
+                    value
+                  );
+                  handleTriage(
+                    AirwayBreathingForm.inabilityToSpeak.name,
+                    value
+                  );
                 }}
               />
             </FieldsContainer>
@@ -212,7 +236,9 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
               <RadioGroupInput
                 name={AirwayBreathingForm.reducedLevelOfConsciousness.name}
                 label={AirwayBreathingForm.reducedLevelOfConsciousness.label}
-                disabled={disableField(AirwayBreathingForm.reducedLevelOfConsciousness.name)}
+                disabled={disableField(
+                  AirwayBreathingForm.reducedLevelOfConsciousness.name
+                )}
                 getValue={(value) => {
                   updateConditions(
                     AirwayBreathingForm.reducedLevelOfConsciousness.name,
@@ -252,8 +278,19 @@ export const AirwayAndBreathingForm = ({ onSubmit, triageResult, setTriageResult
         </FormFieldContainerLayout>
       )} */}
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"previous"} variant="secondary" type="button" onClick={previous} />
-        <MainButton sx={{ m: 0.5 }} title={"next"} type="submit" onClick={() => { }} />
+        <MainButton
+          sx={{ m: 0.5 }}
+          title={"previous"}
+          variant="secondary"
+          type="button"
+          onClick={previous}
+        />
+        <MainButton
+          sx={{ m: 0.5 }}
+          title={"next"}
+          type="submit"
+          onClick={() => {}}
+        />
       </WrapperBox>
     </FormikInit>
   );

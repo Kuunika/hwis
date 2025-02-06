@@ -17,7 +17,7 @@ import { getOnePatient } from "@/hooks/patientReg";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { concepts, encounters } from "@/constants";
-import { FaTrash } from "react-icons/fa6";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 interface Diagnosis {
     id: string;

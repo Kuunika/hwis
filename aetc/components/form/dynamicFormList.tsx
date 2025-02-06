@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, SxProps } from "@mui/material";
 import { FaPlus, FaMinus } from "react-icons/fa";
 
 interface DynamicFormListProps<T> {
@@ -7,6 +7,7 @@ interface DynamicFormListProps<T> {
   setItems: React.Dispatch<React.SetStateAction<T[]>>; // New prop to set the items list
   newItem: T; // A template for a new item
   renderFields: (item: T, index: number) => JSX.Element;
+  itemsProps?: SxProps;
 }
 
 function DynamicFormList<T>({
@@ -14,9 +15,8 @@ function DynamicFormList<T>({
   setItems,
   newItem,
   renderFields,
-
+  itemsProps,
 }: DynamicFormListProps<T>) {
-
   // Add a new item to the list
   function handleAddItem(): void {
     setItems([...items, newItem]);
@@ -29,23 +29,33 @@ function DynamicFormList<T>({
   }
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column', // Arrange each item vertically
-      gap: 2, // Space between items
-      '@media (max-width: 1000px)': {
-        flexDirection: 'column', // Stack items vertically on small screens
-      }
-    }}>
-
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column", // Arrange each item vertically
+        gap: 2, // Space between items
+        "@media (max-width: 1000px)": {
+          flexDirection: "column", // Stack items vertically on small screens
+        },
+      }}
+    >
       {/* Render Dynamic Form Items */}
       {items.map((item, index) => (
-        <Box key={index} sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+        <Box
+          key={index}
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            flexWrap: "wrap",
+            ...itemsProps,
+          }}
+        >
           {/* Render Dynamic Fields */}
           {renderFields(item, index)}
 
           {/* Action Buttons */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <IconButton
               disabled={index === 0}
               onClick={() => handleRemoveItem(index)}

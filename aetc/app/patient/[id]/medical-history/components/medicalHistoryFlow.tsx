@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import {
   ComplaintsForm,
@@ -20,8 +20,10 @@ import { useParameters } from "@/hooks";
 import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
-import { addObsChildren } from "@/hooks/obs";
-import { Encounter, Obs } from "@/interfaces";
+import { OverlayLoader } from "@/components/backdrop";
+import { useFormLoading } from "@/hooks/formLoading";
+import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
+
 
 
 type Complaint = {
@@ -39,6 +41,32 @@ type InputObservation = {
 type OutputObservation = {
   concept: string;
   value: string | boolean;
+};
+
+interface OverlayWithMessageProps {
+  open: boolean;
+  message: string;
+}
+
+const OverlayWithMessage: React.FC<OverlayWithMessageProps> = ({ open, message }) => {
+  return (
+    <Backdrop
+      open={open}
+      sx={{
+        color: "#fff",
+        zIndex: (theme: any) => theme.zIndex.drawer + 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress color="inherit" />
+      <Box mt={2}>
+        <Typography variant="h6">{message}</Typography>
+      </Box>
+    </Backdrop>
+  );
 };
 
 
@@ -72,19 +100,41 @@ const symptomDurationUnits: Record<string, string>  ={
 }
 
 
+
+
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { mutate } = addEncounter();
+  const [formData, setFormData] = useState<any>({});
   const { navigateBack } = useNavigation();
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [submissionStatus, setSubmissionStatus] = useState<Record<string, string>>({
+    presentingComplaints: 'pending',
+    allergies: 'pending',
+    medications: 'pending',
+    conditions: 'pending',
+    surgeries: 'pending',
+    obstetrics: 'pending',
+    admissions: 'pending',
+    review: 'pending',
+    family: 'pending',
+  });
+
   const {
-    mutate: createObsChildren,
-    isSuccess: obsChildrenCreated,
-    isPending: creatingObsChildren,
-    isError: obsChildrenError, 
-  } = addObsChildren();
+    loading,
+    setLoading,
+    completed,
+    setCompleted,
+    message,
+    setMessage,
+    showForm,
+    setShowForm,
+    error,
+    setError,
+  } = useFormLoading();
 
   const {
     data: encounterResponse,
@@ -96,10 +146,14 @@ export const MedicalHistoryFlow = () => {
 
   const { data: patientVisits, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
-  // Wait for patient data to load
+
   if (isLoading) {
-    return <div>Loading patient data...</div>; // Loading state or spinner
+    return <div>Loading patient data...</div>;
+
   }
+
+
+
 
 
   // Construct steps based on patient gender
@@ -127,70 +181,48 @@ export const MedicalHistoryFlow = () => {
     }
   };
 
-  const handlePresentingComplaintsSubmission = (values: any) => {
-   
-    const modifiedValues = {
-      ...values,
-      [concepts.COMPLAINTS] : values.complaints,
-    };
-    
-    delete modifiedValues.complaints;
+  const handlePrevious = () =>{
+    const previousStep = activeStep -1;
+    setActiveStep(previousStep)
+  }
 
+  const handlePresentingComplaintsNext = (values: any)=>{
+    formData["presentingComplaints"] = values;
+    handleSkip();
+  }
+
+  const handlePresentingComplaintsSubmission = async (values: any): Promise<void> => {
+   
     const myobs = convertObservations(getObservations(values, dateTime));
-    createEncounter({ encounterType: encounters.PRESENTING_COMPLAINTS,
+
+    for (let i = 0; i < myobs.length; i += 2) {
+      const chunk = myobs.slice(i, i + 2);
+   
+      createEncounter({ encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
-      obs:  []});
-      
-      if(encounterCreated)
-      submitChildren(encounterResponse, myobs);
-  };
-
-  function submitChildren(data: any, myobs: any) {
-  for (let i = 0; i < myobs.length; i += 2) {
-    const chunk = myobs.slice(i, i + 2);
-
-    console.log(chunk)
-    const observationsPayload = {
-      encounter: data.uuid,
-      person: params.id,
-      concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
-      obsDatetime: dateTime,
-      value: true,
-      group_members: chunk, 
-    };
-
- 
-    createObsChildren(observationsPayload);
-    handleSkip(); 
-  }
-  };
-
-  const handleAllergiesSubmission = (values: any) => {
-    mutate({
-        encounterType: encounters.ALLERGIES,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime, 
-        obs: [],            
-    }, {
-      onSuccess: (data) => {
-        console.log("Allergy encounter submitted successfully:", data);
-        submitChildAllergies(data, values);
-        
-      },
-      onError: (error) => {
-        console.error("Error submitting medications:", error);
-      },
+      obs:  [{
+        concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS, 
+        value: true,
+        obsDatetime: dateTime,
+        group_members: chunk,
+      }]
     });
+    }
 
-};
+     if(encounterCreated)
+        handleSkip(); 
+  };
 
-function submitChildAllergies(data: any, myobs: any) {
+  const handleAllergiesNext = (values: any)=>{
+    formData["allergies"] = values;
+    handleSkip();
+  }
 
-  console.log(myobs)
-  const groupedAllergies = myobs[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
+  const handleAllergiesSubmission = async (values: any): Promise<void> => {
+
+  const groupedAllergies = values[concepts.ALLERGY].reduce((acc:any, allergy:any) => {
     if (!acc[allergy.group]) {
       acc[allergy.group] = [];
     }
@@ -203,26 +235,25 @@ function submitChildAllergies(data: any, myobs: any) {
     const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
       let conceptValue = allergy.value; 
       let value = true; 
-      console.log(allergy)
       if (allergy.label.includes("Other medical substance allergy")) {
         
         conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
-        value = myobs[concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]; 
+        value = values[concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]; 
       } 
       
       if (allergy.label.includes("Other substance allergy")) {
         conceptValue = concepts.OTHER_SUBSTANCE_ALLERGY; 
-        value = myobs[concepts.OTHER_SUBSTANCE_ALLERGY]; 
+        value = values[concepts.OTHER_SUBSTANCE_ALLERGY]; 
       }
       
       if (allergy.label.includes("Other medication allergy")) {
         conceptValue = concepts.OTHER_MEDICATION_ALLERGY; 
-        value = myobs[concepts.OTHER_MEDICATION_ALLERGY]; 
+        value = values[concepts.OTHER_MEDICATION_ALLERGY]; 
       }
 
       if (allergy.label.includes("Other food allergy")) {
         conceptValue = concepts.OTHER_FOOD_ALLERGY; 
-        value = myobs[concepts.OTHER_FOOD_ALLERGY]; 
+        value = values[concepts.OTHER_FOOD_ALLERGY]; 
       }
   
       return {
@@ -232,7 +263,6 @@ function submitChildAllergies(data: any, myobs: any) {
     });
   
     return {
-      encounter: data.uuid,
       person: params.id,
       concept: groupConcept, 
       obsDatetime: dateTime,
@@ -244,64 +274,35 @@ function submitChildAllergies(data: any, myobs: any) {
   observationsPayload.forEach((observation) => {
       observation.group_members.push({
         concept: concepts.ALLERGY_COMMENT,
-        value: myobs[concepts.ALLERGY_COMMENT]
+        value: values[concepts.ALLERGY_COMMENT]
       });
   
-    createObsChildren(observation);
+      createEncounter({
+        encounterType: encounters.ALLERGIES,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime, 
+        obs: [{
+          concept: observation.concept, 
+          value: true,
+          obsDatetime: dateTime,
+          group_members: observation.group_members,
+        },],            
+    },);
+
   });
 
-  if(obsChildrenCreated)
-  handleSkip();
 
   };
 
-
-
-  function handleMedicationsSubmission(values: any): void {
-    const observations =  getObservations(values, dateTime);
-
-      mutate({
-        encounterType: encounters.PRESCRIPTIONS,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: [],
-      }, {
-        onSuccess: (data) => {
-          console.log("Medications submitted successfully:", data);
-          submitMedicationObservations(data, observations[0].value);
-        },
-        onError: (error) => {
-          console.error("Error submitting medications:", error);
-        },
-      });
-      
+  function handleMedicationsNext(values: any): void {
+      formData["medications"] = values;
+      handleSkip();
   }
 
-  function submitMedicationObservations(data: Encounter, value: any) {
-    const conceptMap: { 
-      name: string;
-      formulation: string;
-      medication_dose: string;
-      medication_dose_unit: string;
-      medication_frequency: string;
-      medication_route: string;
-      medication_duration: string;
-      medication_duration_unit: string;
-      medication_date_last_taken: string;
-      medication_date_of_last_prescription: string;
-    } = {
-      name: '', //not used
-      formulation: 'concept_uuid_for_formulation',//not used
-      medication_dose: concepts.MEDICATION_DOSE,
-      medication_dose_unit: 'concept_uuid_for_dose_unit', //not used
-      medication_frequency: 'concept_uuid_for_frequency',//not used
-      medication_route: 'concept_uuid_for_route',//not used
-      medication_duration: concepts.MEDICATION_DURATION,
-      medication_duration_unit: 'concept_uuid_for_duration_unit', //not used
-      medication_date_last_taken: concepts.MEDICATION_DATE_LAST_TAKEN,
-      medication_date_of_last_prescription: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,
-    };
+  async function handleMedicationsSubmission(values: any): Promise<void> {
+    const observations =  getObservations(values, dateTime);
+    const medicationObs = observations[0]?.value || [];
     
     const durationUnits: Record<string, string>  ={
       [durationOptions[0].toString()]: concepts.DURATION_ON_MEDICATION_DAYS,
@@ -319,29 +320,10 @@ function submitChildAllergies(data: any, myobs: any) {
      "Millimoles (mmol)": concepts.DOSE_IN_MILLIMOLES,	
     }
 
-    const formulation_uuid: Record<string, string>  ={
-      "Tablet": concepts.TABLET,
-      "Vial": concepts.VIAL,
-      "Intravenous":concepts.INTRAVENOUS,
-      "Powder": concepts.POWDER,
-      "Solution":concepts.SOLUTION,
-      "Eye Ointment": concepts.EYE_OINTMENT,
-      "Cream": concepts.CREAM,
-      "Ointment": concepts.OINTMENT,
-      "Inhaler": concepts.INHALER,
-      "Suppository": concepts.SUPPOSITORY,
-      "Pessary": concepts.PESSARY,
-      "Suspension": concepts.SUSPENSION,
-      "Shampoo": concepts.SHAMPOO,
-      "Ear Drops": concepts.EAR_DROPS,
-      "Eye Paste": concepts.EYE_PASTE,
-    }
 
 
-
-    const observationsPayload = value.map((medication: any) => {
+    const observationsPayload = medicationObs.map((medication: any) => {
       const observation = {
-        encounter: data.uuid,
         person: params.id,
         concept: medication.name, 
         obsDatetime: dateTime,
@@ -349,88 +331,84 @@ function submitChildAllergies(data: any, myobs: any) {
         group_members: [] as OutputObservation[], 
       };
     
-      (Object.keys(medication) as Array<keyof typeof conceptMap>).forEach((key) => {
-        if (key !== 'name' && conceptMap[key] && key !=='medication_frequency' && key !== 'medication_dose_unit' && key !== 'medication_duration_unit' && key !== 'formulation' ) {
+     
+        if (medication.medication_date_last_taken) {
           observation.group_members.push({
-            concept: conceptMap[key],   
-            value: medication[key]     
+            concept: concepts.MEDICATION_DATE_LAST_TAKEN,
+            value: medication.medication_date_last_taken,    
           } as OutputObservation);
         }
 
-        if(key == 'medication_frequency' ){
+        if (medication.medication_date_of_last_prescription) {
           observation.group_members.push({
-            concept: medication[key],   
+            concept: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,   
+            value: medication.medication_date_of_last_prescription  
+          } as OutputObservation);
+        }
+
+        if(medication.medication_frequency){
+          observation.group_members.push({
+            concept: medication.medication_frequency,   
             value: true     
           } as OutputObservation);
         }
 
-        if(key == 'medication_dose_unit'){
-          const unitconcept = doseUnits[medication[key]];
+        if(medication.medication_dose_unit){
+          const unitconcept = doseUnits[medication.medication_dose_unit];
           observation.group_members.push({
             concept: unitconcept,   
-            value: true     
+            value: medication.medication_dose  
           } as OutputObservation);
         }
 
         
-        if(key == 'medication_duration_unit'){
-          const unitconcept = durationUnits[medication[key]];
+        if(medication.medication_duration_unit){
+          const unitconcept = durationUnits[medication.medication_duration_unit];
           observation.group_members.push({
             concept: unitconcept,   
-            value: true     
+            value: medication.medication_duration    
           } as OutputObservation);
         }
 
-        if(key == 'formulation'){
-          const formulationConcept = formulation_uuid[medication[key]];
+        if(medication.formulation){
           observation.group_members.push({
-            concept: formulationConcept,   
+            concept: medication.formulation,   
             value: true     
           } as OutputObservation);
         }
         
-      });
     
       return observation;
     });
 
     observationsPayload.forEach((observation: any) => {
-  
-    createObsChildren(observation);
+        createEncounter({
+        encounterType: encounters.PRESCRIPTIONS,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: [observation],
+      });
+    
   });
 
-  if(obsChildrenCreated)
-  handleSkip();
+  };
+
+
+  function handleConditionsNext(values: any): void {
+    formData["conditions"] = values;
+    handleSkip();
   }
 
-  function handleConditionsSubmission(values: any): void {
-    mutate({
-      encounterType: encounters.DIAGNOSIS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: [],
-    }, {
-      onSuccess: (data) => {
-        console.log("Diagnosis encounter submitted successfully:", data);
-        submitDiagnosisObservations(data, values);
-      },
-      onError: (error) => {
-        console.error("Error submitting Diagnosis encounter:", error);
-      },
-    });
-  }
-
-  function submitDiagnosisObservations(data: Encounter, values: any) {
+  async function handleConditionsSubmission(values: any): Promise<void> {
     const observationsPayload = values.conditions.map((condition: any) => {
     return  {
-      encounter: data.uuid,
-      person: params.id,
-      concept: condition.name, // Setting `name` as the main concept for this observation
+      concept: concepts.DIAGNOSIS_DATE,
       obsDatetime: dateTime,
-      value: true,
+      value: condition.date,
       group_members: [
-        { concept: concepts.DIAGNOSIS_DATE, value: condition.date },
+  
+        { concept: concepts.ICD11_DIAGNOSIS, value: condition.name },
         { concept: concepts.ON_TREATMENT, value: condition.onTreatment },
         { concept: concepts.ADDITIONAL_DIAGNOSIS_DETAILS, value: condition.additionalDetails },
       ] as OutputObservation[],
@@ -438,108 +416,96 @@ function submitChildAllergies(data: any, myobs: any) {
   });
 
   observationsPayload.forEach((observation: any) => {
-    createObsChildren(observation)
-  });
-
-  if(obsChildrenCreated)
-  handleSkip();
-  }
-
-  function handleSurgeriesSubmission(values: any): void {
-    mutate({
-      encounterType: encounters.SURGICAL_HISTORY,
+    createEncounter({
+      encounterType: encounters.DIAGNOSIS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
-      obs: [],
-    }, {
-      onSuccess: (data) => {
-        console.log("Surgical encounter submitted successfully:", data);
-        submitSurgicalObservations(data, values);
-      },
-      onError: (error) => {
-        console.error("Error submitting surgical encounter:", error);
-      },
+      obs: [observation],
     });
+  });
+
+  if(encounterCreated)
+  handleSkip();
   }
 
-  function submitSurgicalObservations(data: Encounter, values: any) {
+  function handleSurgeriesNext(values: any): void {
+    formData["surgeries"] = values;
+    handleSkip();
+  }
+
+  async function handleSurgeriesSubmission(values: any): Promise<void> {
     const observationsPayload = values.surgeries.map((surgery: any) => {
     return  {
-      encounter: data.uuid,
-      person: params.id,
       concept: surgery.procedure,
       obsDatetime: dateTime,
       value: surgery.other?surgery.other:true,
       group_members: [
         { concept: concepts.DATE_OF_SURGERY, value: surgery.date },
-        { concept: surgery.indication, value: true },
+        { concept: concepts.INDICATION_FOR_SURGERY, value: surgery.indication },
         { concept: concepts.COMPLICATIONS, value: surgery.complication },
       ] as OutputObservation[],
     }
   });
 
   observationsPayload.forEach((observation: any) => {
-    createObsChildren(observation)
+    createEncounter({
+      encounterType: encounters.SURGICAL_HISTORY,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: [observation],
+    });
   });
 
-  if(obsChildrenCreated)
-  handleSkip();
   }
 
-  function handleObstetricsSubmission(values: any): void {
-    const obstetricsObs = (values.obstetrics);
+  function handleObstetricsNext(values: any): void {
+    formData["obstetrics"] = values;
+    handleSkip();
+  }
 
+
+
+  async function handleObstetricsSubmission(values: any): Promise<void> {
+    
+    const obstetricsObs = values;
+    console.log('submitting obs encounters', obstetricsObs)
     const contraceptives = obstetricsObs.contraceptive_history.map((item: { id: any; }) => ({
       concept: item.id,
       value: true
     }));
 
 
-    const myObs = [
+    const myObs =  obstetricsObs.pregnant === "Yes"? [
       { concept: concepts.AGE_AT_MENARCHE, value: obstetricsObs.age_at_menarche},
       { concept: concepts.DATE_OF_LAST_MENSTRUAL, value: obstetricsObs.last_menstral},
       { concept: concepts.GESTATION_WEEKS, value: obstetricsObs.gestational_age },
+      { concept: concepts.PREVIOUS_PREGNANCIES, value: obstetricsObs.number_of_previous_pregnancies },
+    ] : [
+      { concept: concepts.AGE_AT_MENARCHE, value: obstetricsObs.age_at_menarche},
+      { concept: concepts.DATE_OF_LAST_MENSTRUAL, value: obstetricsObs.last_menstral},
       { concept: concepts.PREVIOUS_PREGNANCIES, value: obstetricsObs.number_of_previous_pregnancies },
     ]
 
    myObs.push(...contraceptives);
 
-    if(obstetricsObs.number_of_previous_pregnancies == 0){
-    mutate({  encounterType: encounters.OBSTETRIC_HISTORY,
+    
+    createEncounter({  encounterType: encounters.OBSTETRIC_HISTORY,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
       obs: myObs });
 
-      handleSkip();
-      return;
-    };
-  
-    mutate({
-      encounterType: encounters.OBSTETRIC_HISTORY,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: myObs,
-    }, {
-      onSuccess: (data) => {
-        console.log("Obstetric encounter submitted successfully:", data);
-        submitPregnancyOutcomeObs(data, obstetricsObs.previous_pregnancy_outcomes, obstetricsObs.number_of_births);
-      },
-      onError: (error) => {
-        console.error("Error submitting obstetric encounter:", error);
-      },
-    });
-
+    if(obstetricsObs.number_of_previous_pregnancies > 0){
     
-  }
-
-  function submitPregnancyOutcomeObs(data: any, outcomes: any, births: any ): void {
+    const outcomes = obstetricsObs.previous_pregnancy_outcomes;
+    const births =  obstetricsObs.number_of_births;
+    
+    
     const observationsPayload = outcomes.map((outcome: any, index: any) => {
       if(outcome == concepts.LIVE_BIRTH){
       return  {
-        encounter: data.uuid,
         person: params.id,
         concept: concepts.PREGENANCY_OUTCOME,
         obsDatetime: dateTime,
@@ -552,7 +518,6 @@ function submitChildAllergies(data: any, myobs: any) {
      }
 
       return  {
-        encounter: data.uuid,
         person: params.id,
         concept: concepts.PREGENANCY_OUTCOME,
         obsDatetime: dateTime,
@@ -565,21 +530,32 @@ function submitChildAllergies(data: any, myobs: any) {
     });
   
     observationsPayload.forEach((observation: any) => {
-      createObsChildren(observation)
+
+      createEncounter({
+        encounterType: encounters.OBSTETRIC_HISTORY,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: [observation]
+      });
     });
-  
-    if(obsChildrenCreated)
+  };
+
+  }
+
+  function handleAdmissionsNext(values: any): void {
+    formData["admissions"] = values;
     handleSkip();
   }
 
-  function handleAdmissionsSubmission(values: any): void {
+  async function handleAdmissionsSubmission(values: any): Promise<void> {
     const admissions = values.admissions;
   
     if (!Array.isArray(admissions)) {
       console.error("Admissions data is invalid or not an array:", admissions);
       return;
     }
-  
+
     const encounterPayload = admissions.map((admission: any) => ({
       encounterType: encounters.PATIENT_ADMISSIONS, 
       visit: activeVisit?.uuid, 
@@ -591,8 +567,9 @@ function submitChildAllergies(data: any, myobs: any) {
           value: admission.date,
           obsDatetime: dateTime,
           group_members: [
-            { concept: admission.hospital, value: true }, 
+            { concept: concepts.HEALTH_CENTER_HOSPITALS, value: admission.hospital }, 
             { concept: concepts.ADMISSION_SECTION, value: admission.ward },
+            {concept: concepts.ICD11_DIAGNOSIS, value: admission.diagnosis},
             { concept: concepts.SURGICAL_INTERVENTIONS, value: admission.interventions },
             { concept: concepts.DISCHARGE_INSTRUCTIONS, value: admission.discharge_instructions },
             { concept: concepts.FOLLOW_UP, value: admission.follow_up_plans },
@@ -602,26 +579,19 @@ function submitChildAllergies(data: any, myobs: any) {
     }));
 
     encounterPayload.forEach((encounter, index) => {
-      mutate(
-        encounter,
-        {
-          onSuccess: (data) => {
-            console.log("Admission encounter submitted successfully:", data, index, encounterPayload.length-1);
-            if(index == (encounterPayload.length-1))
-              handleSkip()
-          },
-          onError: (error) => {
-            console.error("Error submitting admission encounter:", error);
-          },
-        }
-      );
+      createEncounter(encounter);
     });
 
-
   }
+  
+  function handleReviewNext(values: any): void {
+      formData["review"] = values;
+      console.log(activeStep);
+      handleSkip();
+  }
+  
+  async function handleReviewSubmission(values: any): Promise<void> {
 
-  function handleReviewSubmission(values: any): void {
-    let errorOccurred = false;
     const lastMeal = values['lastMeal'];
     const historyOfComplaints = values['events'];
 
@@ -637,7 +607,8 @@ function submitChildAllergies(data: any, myobs: any) {
     
     const initialObs = historyOfComplaints?[historyOfComplaintsObs,lastMealObs]:null;
  
-    mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+    if(initialObs){
+    createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
@@ -646,17 +617,8 @@ function submitChildAllergies(data: any, myobs: any) {
         value: initialObs?true:lastMeal,
         obsDatetime: dateTime,
         group_members:initialObs?initialObs:null,
-      },]}, {
-      onSuccess: (data) => {
-          console.log("last meal Encounter submitted successfully:", data);
-          
-        },
-        onError: (error) => {
-          errorOccurred = true;
-          console.error("Error submitting last meal encounter:", error);
-        },
-      });
-
+      },]});
+    };
     const symptom_uuid: Record<string, string>  ={
       "pain":concepts.PAIN, 
       "rash":concepts.RASH,  
@@ -700,7 +662,7 @@ function submitChildAllergies(data: any, myobs: any) {
         }
       });
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -709,16 +671,7 @@ function submitChildAllergies(data: any, myobs: any) {
           value: true,
           obsDatetime: dateTime,
           group_members: gastroObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     };
 
     if(cardiacHistory){
@@ -729,7 +682,7 @@ function submitChildAllergies(data: any, myobs: any) {
         }
       });
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -738,17 +691,7 @@ function submitChildAllergies(data: any, myobs: any) {
           value: true,
           obsDatetime: dateTime,
           group_members: cardiacObs,
-        },]}, {
-        onSuccess: (data) => {
-          
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     };
 
     if(nervousHistory){
@@ -759,7 +702,7 @@ function submitChildAllergies(data: any, myobs: any) {
         }
       });
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -768,16 +711,7 @@ function submitChildAllergies(data: any, myobs: any) {
           value: true,
           obsDatetime: dateTime,
           group_members: nervousObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     }
 
     if(genitoHistory){
@@ -798,7 +732,7 @@ function submitChildAllergies(data: any, myobs: any) {
       };
 
       
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -807,16 +741,7 @@ function submitChildAllergies(data: any, myobs: any) {
           value: true,
           obsDatetime: dateTime,
           group_members: genitoObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting encounter:", error);
-          },
-        });
+        },]});
     }
     
     for(let key of symptomKeys){
@@ -853,7 +778,7 @@ function submitChildAllergies(data: any, myobs: any) {
       obsGroup.push(intentionalPoisoningObs)
     }
 
-        mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime, 
@@ -862,16 +787,7 @@ function submitChildAllergies(data: any, myobs: any) {
             value: true,
             obsDatetime: dateTime,
             group_members: obsGroup,
-          },]}, {
-          onSuccess: (data) => {
-              console.log("ROS symptoms Encounter submitted successfully:", data);
-              
-            },
-            onError: (error) => {
-              errorOccurred = true;
-              console.error("Error submitting ROS symptoms encounter:", error);
-            },
-          });
+          },]});
       }
 
 
@@ -879,7 +795,7 @@ function submitChildAllergies(data: any, myobs: any) {
 
     
 
-    if(values['wasInjured']||values['assaultType']){
+    if(values['wasInjured']==="Yes"||values['assaultType']){
 
       type InjuryMechanismList = {
         [key: string]: string;
@@ -897,12 +813,15 @@ function submitChildAllergies(data: any, myobs: any) {
         occupationalInjury: concepts.OCCUPATIONAL_INJURY
       };
 
-      const mechanism = Object.keys(injuryMechanismList).filter((key) => values[key]);
+      const mechanism = Object.keys(injuryMechanismList).filter((key) => values['injuryMechanism'] === key);
+      const commentKey = `${values['injuryMechanism']}Comment`
+      const injuryComment= values[commentKey];
+
       const timeOfInjury = (values['timeOfInjury'].$d).toLocaleString()
 
       const traumaObs = [{
         concept: injuryMechanismList[mechanism[0]],
-        value: true
+        value: injuryComment
       }]
 
       const timeOfInjuryObs = {
@@ -921,13 +840,13 @@ function submitChildAllergies(data: any, myobs: any) {
         traumaObs[0].concept = injuryMechanismList['assault']
         const assaultType = values['assaultType'];
         const assaultTypeObs = {
-          concept: assaultType == 'sexual'?concepts.SEXUAL_ASSAULT:concepts.PHYSICAL_ASSAULT,
+          concept: assaultType == 'Sexual'?concepts.SEXUAL_ASSAULT:concepts.PHYSICAL_ASSAULT,
           value: true
         }
         traumaObs.push(assaultTypeObs)
       }
 
-      mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -936,16 +855,7 @@ function submitChildAllergies(data: any, myobs: any) {
           value: true,
           obsDatetime: dateTime,
           group_members: traumaObs,
-        },]}, {
-        onSuccess: (data) => {
-            console.log("trauma Encounter submitted successfully:", data);
-            
-          },
-          onError: (error) => {
-            errorOccurred = true;
-            console.error("Error submitting trauma encounter:", error);
-          },
-        });
+        },]});
       
 
     }
@@ -954,7 +864,7 @@ function submitChildAllergies(data: any, myobs: any) {
     const socialDetails = values['socialDetails'];
     const marital = values['maritalStatus'];
     const travelDetails = values['travelDetails'];
-
+    if(socialDetails){
     const occupationObs = {
       concept: concepts.OCCUPATION,
       value: occuption
@@ -963,10 +873,10 @@ function submitChildAllergies(data: any, myobs: any) {
     const socialDetailsObs = [
       {
       concept: concepts.PATIENT_SMOKES,
-      value: socialDetails[0]?.value
+      value: socialDetails?.[0]?.value
     },{
       concept: concepts.PATIENT_DRINKS_ALCOHOL,
-      value: socialDetails[1]?.value
+      value: socialDetails?.[1]?.value
     }
   ] ;
       
@@ -983,7 +893,7 @@ function submitChildAllergies(data: any, myobs: any) {
     socialDetailsObs.push(occupationObs,maritalObs,travelObs)
     
     
-    mutate({ encounterType: encounters.SUMMARY_ASSESSMENT,
+    createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
@@ -992,22 +902,73 @@ function submitChildAllergies(data: any, myobs: any) {
         value: true,
         obsDatetime: dateTime,
         group_members: socialDetailsObs,
-      },]}, {
-      onSuccess: (data) => {
-          console.log("social history Encounter submitted successfully:", data);
-          
-        },
-        onError: (error) => {
-          errorOccurred = true;
-          console.error("Error submitting social history encounter:", error);
-        },
-      });
-
-      handleSkip()
+      },]});
+    }
 
   };
 
-  function handleFamilyHistorySubmission(values: any): void {
+  function handleSubmitAll(values: any): void {
+    console.log(formData["conditions"]);
+    formData["family"] = values;
+    setSubmitting(true);
+
+
+    const submissionHandlers: Record<string, (value: any) => Promise<void>> = {
+      presentingComplaints: handlePresentingComplaintsSubmission,
+      allergies: handleAllergiesSubmission,
+      medications: handleMedicationsSubmission,
+      conditions: handleConditionsSubmission,
+      surgeries: handleSurgeriesSubmission,
+      obstetrics: handleObstetricsSubmission,
+      admissions: handleAdmissionsSubmission,
+      review: handleReviewSubmission,
+      family: handleFamilyHistorySubmission,
+    };
+  
+
+    Object.entries(formData).forEach(async ([key, value]) => {
+      if (
+        key === "family" &&
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.keys(value).every(
+          (subKey) => typeof (value as Record<string, unknown>)[subKey] !== "boolean" || !(value as Record<string, boolean>)[subKey]
+        )
+      ) {
+        return;
+      }
+      
+      if (submissionHandlers[key]) {
+        setSubmissionStatus((prev) => ({
+          ...prev,
+          [key]: "submitting",
+        }));
+  
+        try {
+          await submissionHandlers[key](value);
+  
+          setSubmissionStatus((prev) => ({
+            ...prev,
+            [key]: "success",
+          }));
+        } catch (error) {
+          setSubmissionStatus((prev) => ({
+            ...prev,
+            [key]: "error",
+          }));
+        }
+
+      }
+    });
+  
+    setSubmitting(false);
+    handleSkip();
+  }
+
+
+
+  async function handleFamilyHistorySubmission(values: any): Promise<void> {
     const conditionConcepts: { [key: string]: string }  = {
       asthma: concepts.FAMILY_HISTORY_ASTHMA,
       hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
@@ -1075,7 +1036,7 @@ function submitChildAllergies(data: any, myobs: any) {
 
     groupedObservations.forEach((group, index) => {
       mutate({
-        encounterType: encounters.SUMMARY_ASSESSMENT, 
+        encounterType: encounters.FAMILY_MEDICAL_HISTORY, 
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
@@ -1090,8 +1051,6 @@ function submitChildAllergies(data: any, myobs: any) {
       }, {
         onSuccess: (data) => {
           console.log(`Encounter #${index + 1} submitted successfully:`, data);
-          if(index == (groupedObservations.length-1))
-            handleSkip()
         },
         onError: (error) => {
           console.error(`Error submitting encounter #${index + 1}:`, error);
@@ -1105,6 +1064,16 @@ function submitChildAllergies(data: any, myobs: any) {
 
   return (
     <>
+
+    <OverlayLoader open={isLoading || submitting} />
+    <OverlayWithMessage
+      open={submitting}
+      message={Object.entries(submissionStatus).some(([_, status]) => status === "submitting")
+        ? "Submitting your data, please wait..."
+        : "Processing submissions..."}
+    />
+ 
+  
       <NewStepperContainer
         setActive={setActiveStep}
         title="Medical History"
@@ -1112,20 +1081,19 @@ function submitChildAllergies(data: any, myobs: any) {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <ComplaintsForm onSubmit={handlePresentingComplaintsSubmission} onSkip={handleSkip} />
-        <AllergiesForm onSubmit={handleAllergiesSubmission} onSkip={handleSkip} />
-        <MedicationsForm onSubmit={handleMedicationsSubmission} onSkip={handleSkip} />
-        <PriorConditionsForm onSubmit={handleConditionsSubmission} onSkip={handleSkip} />
-        <SurgeriesForm onSubmit={handleSurgeriesSubmission} onSkip={handleSkip} />
+        <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
+        <AllergiesForm onSubmit={handleAllergiesNext} onSkip={handlePrevious} />
+        <MedicationsForm onSubmit={handleMedicationsNext} onSkip={handlePrevious} />
+        <PriorConditionsForm onSubmit={handleConditionsNext} onSkip={handlePrevious} />
+        <SurgeriesForm onSubmit={handleSurgeriesNext} onSkip={handlePrevious} />
         {patient?.gender === "Female" && (
-          <ObstetricsForm onSubmit={handleObstetricsSubmission} onSkip={handleSkip} />
+          <ObstetricsForm onSubmit={handleObstetricsNext} onSkip={handlePrevious} />
         )}
-        <AdmissionsForm onSubmit={handleAdmissionsSubmission} onSkip={handleSkip}/>
-        <ReviewOfSystemsForm onSubmit={handleReviewSubmission} onSkip={handleSkip}/>
-        <FamilyHistoryForm onSubmit={handleFamilyHistorySubmission} onSkip={handleSkip} />
-        
-
-      </NewStepperContainer>
+        <AdmissionsForm onSubmit={handleAdmissionsNext} onSkip={handlePrevious}/>
+        <ReviewOfSystemsForm onSubmit={handleReviewNext} onSkip={handlePrevious}/>
+        <FamilyHistoryForm onSubmit={handleSubmitAll} onSkip={handlePrevious} />
+    
+      </NewStepperContainer>  
     </>
   );
 };

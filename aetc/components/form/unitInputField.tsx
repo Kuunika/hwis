@@ -1,11 +1,19 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import { TextField, FormControl, InputLabel, MenuItem, Select, Box, InputAdornment } from "@mui/material";
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Box,
+  InputAdornment,
+} from "@mui/material";
 import { SxProps } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useFormikField } from "./hooks"; // Import your custom hook
-import { WrapperBox } from "..";
+import { MainTypography, WrapperBox } from "..";
 
 type UnitInputFieldProps = {
   id: string;
@@ -16,8 +24,7 @@ type UnitInputFieldProps = {
   unitOptions: string[];
   sx?: SxProps;
   inputIcon?: React.ReactNode;
-  handleBlurEvent?: (value: any) => void
-  
+  handleBlurEvent?: (value: any) => void;
 };
 
 export const UnitInputField: FC<UnitInputFieldProps> = ({
@@ -29,7 +36,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
   unitOptions,
   sx,
   inputIcon,
-  handleBlurEvent
+  handleBlurEvent,
 }) => {
   // Use Formik hooks for both value and unit fields
   const {
@@ -38,11 +45,14 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
     errorMessage,
     handleChange,
     setFieldValue,
-    handleBlur
+    handleBlur,
   } = useFormikField(name);
 
-  const { value: unitValue, setFieldValue: setUnitFieldValue } = useFormikField(unitName);
-  const [localUnitValue, setLocalUnitValue] = useState(unitValue || unitOptions[0]);
+  const { value: unitValue, setFieldValue: setUnitFieldValue } =
+    useFormikField(unitName);
+  const [localUnitValue, setLocalUnitValue] = useState(
+    unitValue || unitOptions[0]
+  );
 
   useEffect(() => {
     if (!unitValue) {
@@ -61,7 +71,12 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
-      <Box position="relative" display="flex" alignItems="center" marginBottom={'2ch'} >
+      <Box
+        position="relative"
+        display="flex"
+        alignItems="center"
+        // marginBottom={"2ch"}
+      >
         {/* Input Field */}
         <TextField
           id={id}
@@ -70,14 +85,11 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           onChange={handleChange}
           placeholder={placeholder}
           variant="outlined"
-          sx={{ flexGrow: 1, background: "white", height: 56}}
+          sx={{ flexGrow: 1, background: "white", height: 56 }}
           error={hasError}
-          helperText={hasError ? errorMessage : ""}
           onBlur={(event: any) => {
             handleBlur(event);
-            if (handleBlurEvent)
-              handleBlurEvent(event.target.value)
-  
+            if (handleBlurEvent) handleBlurEvent(event.target.value);
           }}
           InputProps={{
             startAdornment: inputIcon && (
@@ -93,14 +105,18 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
           sx={{
             position: "absolute",
             right: 0,
-            minWidth: 80,
+
+            width: 100,
             height: "100%",
             background: "white",
             borderTopLeftRadius: 0,
             borderBottomLeftRadius: 0,
             alignItems: "center",
           }}
-          MenuProps={{ PaperProps: { style: { maxHeight: 200 } }, disableScrollLock: true, }}
+          MenuProps={{
+            PaperProps: { style: { maxHeight: 200 } },
+            disableScrollLock: true,
+          }}
         >
           {unitOptions.map((option) => (
             <MenuItem key={option} value={option}>
@@ -108,7 +124,11 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
             </MenuItem>
           ))}
         </Select>
+                        
       </Box>
+      <MainTypography color={"red"} variant="subtitle2">
+          {errorMessage}
+      </MainTypography>
     </WrapperBox>
   );
 };

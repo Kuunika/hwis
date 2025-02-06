@@ -100,6 +100,7 @@ export const FormFieldContainerMultiple = ({
         flexDirection: { xs: "column", sm: "row" },
         gap: 2,
         width: "100%",
+
         "& > *": {
           width: { xs: "100%", sm: "auto" },
           flex: 1,

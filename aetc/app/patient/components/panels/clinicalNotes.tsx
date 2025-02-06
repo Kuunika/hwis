@@ -18,7 +18,7 @@ import { Obs } from "@/interfaces";
 
 export const ClinicalNotes = () => {
   const [clinicalNotes, setClinicalNotes] = useState<
-    Array<{ note: string | null; creator: string; time:any }>
+    Array<{ note: string | null; creator: string; time: any }>
   >([]);
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
@@ -30,17 +30,16 @@ export const ClinicalNotes = () => {
     isSuccess: encountersFetched,
   } = getPatientsEncounters(params.id as string);
 
+  useEffect(() => {
+    if (encountersFetched) {
+      const noteEncounter = patientEncounters.find(
+        (encounter) =>
+          encounter?.encounter_type?.uuid == encounters.CLINICAL_NOTES
+      );
 
-  useEffect(()=>{
-
-    if(encountersFetched){
-     const noteEncounter= patientEncounters.find(encounter=>encounter.encounter_type.uuid==encounters.CLINICAL_NOTES)
-
-     if(noteEncounter)
-      formatNotes(noteEncounter.obs)
+      if (noteEncounter) formatNotes(noteEncounter.obs);
     }
-
-  },[patientEncounters])
+  }, [patientEncounters]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -52,7 +51,7 @@ export const ClinicalNotes = () => {
     const notes = obs.map((ob) => ({
       note: ob.value_text,
       creator: ob.created_by,
-      time: getHumanReadableDateTime(ob.obs_datetime)
+      time: getHumanReadableDateTime(ob.obs_datetime),
     }));
 
     setClinicalNotes(notes);
@@ -74,8 +73,6 @@ export const ClinicalNotes = () => {
       ],
     });
   };
-
-
 
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;
@@ -115,9 +112,15 @@ export const ClinicalNotes = () => {
               >
                 <ReactMarkdown>{note.note}</ReactMarkdown>
                 <br />
-                <Box sx={{display:"flex", justifyContent:"space-between", alignItems:"center"}}> 
-                <Typography>~ {note.creator}</Typography>
-                <Typography variant="caption">{note.time}</Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography>~ {note.creator}</Typography>
+                  <Typography variant="caption">{note.time}</Typography>
                 </Box>
               </Box>
             );

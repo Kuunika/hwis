@@ -1,6 +1,11 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -16,6 +21,7 @@ import { AbdomenImage, SecondaryAbdomenImage } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 const form = {
   abdominalDistention: {
@@ -368,10 +374,59 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(tendernessImageEnc),
       },
     ];
+
+    const datetime = getDateTime();
+
+    const generalInspectionObs = mapSearchComboOptionsToConcepts(
+      formValues[form.generalInspection.name],
+      form.generalInspection.name,
+      datetime
+    );
+    const urethralMeatusObs = mapSearchComboOptionsToConcepts(
+      formValues[form.urethralMeatus.name],
+      form.urethralMeatus.name,
+      datetime
+    );
+    const scrotumObs = mapSearchComboOptionsToConcepts(
+      formValues[form.scrotum.name],
+      form.scrotum.name,
+      datetime
+    );
+    const periymenObs = mapSearchComboOptionsToConcepts(
+      formValues[form.periymen.name],
+      form.periymen.name,
+      datetime
+    );
+    const vaginaObs = mapSearchComboOptionsToConcepts(
+      formValues[form.vagina.name],
+      form.vagina.name,
+      datetime
+    );
+    const digitalVaginalExaminationObs = mapSearchComboOptionsToConcepts(
+      formValues[form.digitalVaginalExamination.name],
+      form.digitalVaginalExamination.name,
+      datetime
+    );
+
+    delete formValues[form.generalInspection.name];
+    delete formValues[form.scrotum.name];
+    delete formValues[form.vagina.name];
+    delete formValues[form.periymen.name];
+    delete formValues[form.urethralMeatus.name];
     delete formValues[form.abnormalitiesPresent.name];
     delete formValues[form.tenderness.name];
+    delete formValues[form.digitalVaginalExamination.name];
 
-    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+    await handleSubmit([
+      ...getObservations(formValues, getDateTime()),
+      ...obs,
+      ...generalInspectionObs,
+      ...urethralMeatusObs,
+      ...scrotumObs,
+      ...periymenObs,
+      ...vaginaObs,
+      ...digitalVaginalExaminationObs,
+    ]);
   };
 
   const handleValueChange = (values: Array<any>) => {
@@ -381,359 +436,361 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
   const gender = patient && patient?.gender;
 
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialsValues}
-      onSubmit={handleSubmitForm}
-    >
-      <FormValuesListener getValues={setFormValues} />
-      <FormFieldContainerLayout title="Inspection">
-        <FieldsContainer>
-          <RadioGroupInput
-            options={radioOptions}
-            name={form.abdominalDistention.name}
-            label={form.abdominalDistention.label}
-          />
-          <RadioGroupInput
-            options={radioOptions}
-            name={form.abnormalitiesPresent.name}
-            label={form.abnormalitiesPresent.label}
-          />
-        </FieldsContainer>
-        {formValues[form.abnormalitiesPresent.name] == concepts.YES && (
-          <SecondaryAbdomenImage
-            imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
-            imageSection={form.abnormalitiesPresent.name}
-            onValueChange={setAbnormalitiesPresentImageEnc}
-          />
-        )}
-      </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Palpation">
-        <FieldsContainer>
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.hepatomegaly.name}
-            label={form.hepatomegaly.label}
-          />
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.splenomegaly.name}
-            label={form.splenomegaly.label}
-          />
-        </FieldsContainer>
-        <FieldsContainer mr="5px">
-          <>
-            {formValues[form.hepatomegaly.name] == YES && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%" }}
-                id={form.hepatomegalyDescription.name}
-                name={form.hepatomegalyDescription.name}
-                label={form.hepatomegalyDescription.label}
-              />
-            )}
-          </>
-          <>
-            {formValues[form.splenomegaly.name] == YES && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%" }}
-                id={form.splenomegalyDescription.name}
-                name={form.splenomegalyDescription.name}
-                label={form.splenomegalyDescription.label}
-              />
-            )}
-          </>
-        </FieldsContainer>
-        <FieldsContainer>
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.kidneyBallotable.name}
-            label={form.kidneyBallotable.label}
-          />
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.fullBladder.name}
-            label={form.fullBladder.label}
-          />
-        </FieldsContainer>
-        <FieldsContainer>
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.tenderness.name}
-            label={form.tenderness.label}
-          />
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.otherMasses.name}
-            label={form.otherMasses.label}
-          />
-        </FieldsContainer>
-        {formValues[form.otherMasses.name] == YES && (
-          <TextInputField
-            multiline
-            rows={5}
-            sx={{ width: "100%" }}
-            id={form.otherMassesDescription.name}
-            name={form.otherMassesDescription.name}
-            label={form.otherMassesDescription.label}
-          />
-        )}
-        <FieldsContainer>
-          {formValues[form.tenderness.name] == YES && (
-            <AbdomenImage onValueChange={setTendernessImageEnc} />
+    <ContainerLoaderOverlay loading={isLoading || creatingEncounter}>
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialsValues}
+        onSubmit={handleSubmitForm}
+      >
+        <FormValuesListener getValues={setFormValues} />
+        <FormFieldContainerLayout title="Inspection">
+          <FieldsContainer>
+            <RadioGroupInput
+              options={radioOptions}
+              name={form.abdominalDistention.name}
+              label={form.abdominalDistention.label}
+            />
+            <RadioGroupInput
+              options={radioOptions}
+              name={form.abnormalitiesPresent.name}
+              label={form.abnormalitiesPresent.label}
+            />
+          </FieldsContainer>
+          {formValues[form.abnormalitiesPresent.name] == concepts.YES && (
+            <SecondaryAbdomenImage
+              imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+              imageSection={form.abnormalitiesPresent.name}
+              onValueChange={setAbnormalitiesPresentImageEnc}
+            />
           )}
-        </FieldsContainer>
-      </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Percussion">
-        <FieldsContainer>
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Palpation">
+          <FieldsContainer>
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.hepatomegaly.name}
+              label={form.hepatomegaly.label}
+            />
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.splenomegaly.name}
+              label={form.splenomegaly.label}
+            />
+          </FieldsContainer>
+          <FieldsContainer mr="5px">
+            <>
+              {formValues[form.hepatomegaly.name] == YES && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%" }}
+                  id={form.hepatomegalyDescription.name}
+                  name={form.hepatomegalyDescription.name}
+                  label={form.hepatomegalyDescription.label}
+                />
+              )}
+            </>
+            <>
+              {formValues[form.splenomegaly.name] == YES && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%" }}
+                  id={form.splenomegalyDescription.name}
+                  name={form.splenomegalyDescription.name}
+                  label={form.splenomegalyDescription.label}
+                />
+              )}
+            </>
+          </FieldsContainer>
+          <FieldsContainer>
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.kidneyBallotable.name}
+              label={form.kidneyBallotable.label}
+            />
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.fullBladder.name}
+              label={form.fullBladder.label}
+            />
+          </FieldsContainer>
+          <FieldsContainer>
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.tenderness.name}
+              label={form.tenderness.label}
+            />
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.otherMasses.name}
+              label={form.otherMasses.label}
+            />
+          </FieldsContainer>
+          {formValues[form.otherMasses.name] == YES && (
+            <TextInputField
+              multiline
+              rows={5}
+              sx={{ width: "100%" }}
+              id={form.otherMassesDescription.name}
+              name={form.otherMassesDescription.name}
+              label={form.otherMassesDescription.label}
+            />
+          )}
+          <FieldsContainer>
+            {formValues[form.tenderness.name] == YES && (
+              <AbdomenImage onValueChange={setTendernessImageEnc} />
+            )}
+          </FieldsContainer>
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Percussion">
+          <FieldsContainer>
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.shiftingDullness.name}
+              label={form.shiftingDullness.label}
+            />
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.fluidThrill.name}
+              label={form.fluidThrill.label}
+            />
+          </FieldsContainer>
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Auscultation">
           <RadioGroupInput
             row
             options={radioOptions}
-            name={form.shiftingDullness.name}
-            label={form.shiftingDullness.label}
+            name={form.bruit.name}
+            label={form.bruit.label}
           />
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.fluidThrill.name}
-            label={form.fluidThrill.label}
-          />
-        </FieldsContainer>
-      </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Auscultation">
-        <RadioGroupInput
-          row
-          options={radioOptions}
-          name={form.bruit.name}
-          label={form.bruit.label}
-        />
-        <SearchComboBox
-          multiple={false}
-          options={bowelSounds}
-          name={form.bowelSounds.name}
-          label={form.bowelSounds.label}
-        />
-      </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Digital Rectal Examination">
-        <SearchComboBox
-          multiple={false}
-          options={generalOptions}
-          label={form.general.label}
-          name={form.general.name}
-        />
-        <SearchComboBox
-          sx={{ mt: "1ch" }}
-          multiple={false}
-          options={prostateOptions}
-          label={form.prostate.label}
-          name={form.prostate.name}
-        />
-        <RadioGroupInput
-          row
-          sx={{ mt: "1ch" }}
-          name={form.mass.name}
-          label={form.mass.label}
-          options={radioOptions}
-        />
-        {formValues[form.mass.name] == YES && (
-          <TextInputField
-            multiline
-            rows={5}
-            sx={{ width: "100%" }}
-            id={form.massDescription.name}
-            name={form.massDescription.name}
-            label={form.massDescription.label}
-          />
-        )}
-        <SearchComboBox
-          sx={{ mt: "1ch" }}
-          multiple={false}
-          options={sphincterOptions}
-          label={form.sphincterTone.label}
-          name={form.sphincterTone.name}
-        />
-      </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Examination of Genitalia (inspection)">
-        {gender == "Male" && (
-          <>
-            <SearchComboBox
-              options={generalInspectionOptions}
-              name={form.generalInspection.name}
-              label={form.generalInspection.label}
-            />
-            {formValues[form.generalInspection.name]?.length > 0 && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "1ch" }}
-                name={form.generalNotes.name}
-                id={form.generalNotes.name}
-                label={form.generalNotes.label}
-              />
-            )}
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.circumcisionStatus.name}
-              label={form.circumcisionStatus.label}
-            />
-            <SearchComboBox
-              sx={{ mt: "1ch" }}
-              options={urethralOptions}
-              name={form.urethralMeatus.name}
-              label={form.urethralMeatus.label}
-            />
-            {formValues[form.urethralMeatus.name]?.length > 0 && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "1ch" }}
-                name={form.urethralMeatusNotes.name}
-                id={form.urethralMeatusNotes.name}
-                label={form.urethralMeatusNotes.label}
-              />
-            )}
-            <SearchComboBox
-              sx={{ mt: "1ch" }}
-              options={scrotumOptions}
-              name={form.scrotum.name}
-              label={form.scrotum.label}
-            />
-            {formValues[form.scrotum.name]?.length > 0 && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "1ch" }}
-                name={form.scrotumNotes.name}
-                id={form.scrotumNotes.name}
-                label={form.scrotumNotes.label}
-              />
-            )}
-          </>
-        )}
-        {gender == "Female" && (
-          <>
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.unusualAppearance.name}
-              label={form.unusualAppearance.label}
-            />
-            {formValues[form.unusualAppearance.name] == YES && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "1ch" }}
-                name={form.unusualAppearanceNotes.name}
-                id={form.unusualAppearanceNotes.name}
-                label={form.unusualAppearanceNotes.label}
-              />
-            )}
-            <SearchComboBox
-              sx={{ mt: "1ch" }}
-              options={perihymenOptions}
-              name={form.periymen.name}
-              label={form.periymen.label}
-            />
-            {formValues[form.periymen.name]?.length > 0 && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "1ch" }}
-                name={form.periymenNotes.name}
-                id={form.periymenNotes.name}
-                label={form.periymenNotes.label}
-              />
-            )}
-            <SearchComboBox
-              sx={{ mt: "1ch" }}
-              options={vaginaOptions}
-              name={form.vagina.name}
-              label={form.vagina.label}
-            />
-            {formValues[form.vagina.name]?.length > 0 && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "1ch" }}
-                name={form.vaginaNotes.name}
-                id={form.vaginaNotes.name}
-                label={form.vaginaNotes.label}
-              />
-            )}
-          </>
-        )}
-      </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Examination of Genitalia (Palpation)">
-        {gender == "Female" && (
-          <>
-            <SearchComboBox
-              sx={{ mt: "1ch" }}
-              label={form.digitalVaginalExamination.label}
-              name={form.digitalVaginalExamination.name}
-              options={digitalVaginalOptions}
-            />
-            {formValues[form.digitalVaginalExamination.name]?.length > 0 && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "1ch" }}
-                name={form.digitalVaginalExaminationNotes.name}
-                id={form.digitalVaginalExaminationNotes.name}
-                label={form.digitalVaginalExaminationNotes.label}
-              />
-            )}
-          </>
-        )}
-        {gender == "Male" && (
-          <>
-            <RadioGroupInput
-              name={form.testicles.name}
-              label={form.testicles.label}
-              row
-              options={radioOptions}
-            />
-
-            {formValues[form.testicles.name] == NO && (
-              <TextInputField
-                multiline
-                rows={5}
-                sx={{ width: "100%", mt: "2ch" }}
-                name={form.testiclesNotes.name}
-                id={form.testiclesNotes.name}
-                label={form.testiclesNotes.label}
-              />
-            )}
-          </>
-        )}
-      </FormFieldContainerLayout>
-      {gender == "Female" && (
-        <FormFieldContainerLayout title="Pelvic Examination">
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.pelvicExamination.name}
-            label={form.pelvicExamination.label}
-            id={form.pelvicExamination.name}
+          <SearchComboBox
+            multiple={false}
+            options={bowelSounds}
+            name={form.bowelSounds.name}
+            label={form.bowelSounds.label}
           />
         </FormFieldContainerLayout>
-      )}
-      <FormFieldContainerLayout title="Additional Notes">
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={form.additionalNotes.name}
-          label={form.additionalNotes.label}
-          id={form.additionalNotes.name}
-        />
-      </FormFieldContainerLayout>
-    </FormikInit>
+        <FormFieldContainerLayout title="Digital Rectal Examination">
+          <SearchComboBox
+            multiple={false}
+            options={generalOptions}
+            label={form.general.label}
+            name={form.general.name}
+          />
+          <SearchComboBox
+            sx={{ mt: "1ch" }}
+            multiple={false}
+            options={prostateOptions}
+            label={form.prostate.label}
+            name={form.prostate.name}
+          />
+          <RadioGroupInput
+            row
+            sx={{ mt: "1ch" }}
+            name={form.mass.name}
+            label={form.mass.label}
+            options={radioOptions}
+          />
+          {formValues[form.mass.name] == YES && (
+            <TextInputField
+              multiline
+              rows={5}
+              sx={{ width: "100%" }}
+              id={form.massDescription.name}
+              name={form.massDescription.name}
+              label={form.massDescription.label}
+            />
+          )}
+          <SearchComboBox
+            sx={{ mt: "1ch" }}
+            multiple={false}
+            options={sphincterOptions}
+            label={form.sphincterTone.label}
+            name={form.sphincterTone.name}
+          />
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Examination of Genitalia (inspection)">
+          {gender == "Male" && (
+            <>
+              <SearchComboBox
+                options={generalInspectionOptions}
+                name={form.generalInspection.name}
+                label={form.generalInspection.label}
+              />
+              {formValues[form.generalInspection.name]?.length > 0 && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "1ch" }}
+                  name={form.generalNotes.name}
+                  id={form.generalNotes.name}
+                  label={form.generalNotes.label}
+                />
+              )}
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.circumcisionStatus.name}
+                label={form.circumcisionStatus.label}
+              />
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                options={urethralOptions}
+                name={form.urethralMeatus.name}
+                label={form.urethralMeatus.label}
+              />
+              {formValues[form.urethralMeatus.name]?.length > 0 && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "1ch" }}
+                  name={form.urethralMeatusNotes.name}
+                  id={form.urethralMeatusNotes.name}
+                  label={form.urethralMeatusNotes.label}
+                />
+              )}
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                options={scrotumOptions}
+                name={form.scrotum.name}
+                label={form.scrotum.label}
+              />
+              {formValues[form.scrotum.name]?.length > 0 && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "1ch" }}
+                  name={form.scrotumNotes.name}
+                  id={form.scrotumNotes.name}
+                  label={form.scrotumNotes.label}
+                />
+              )}
+            </>
+          )}
+          {gender == "Female" && (
+            <>
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.unusualAppearance.name}
+                label={form.unusualAppearance.label}
+              />
+              {formValues[form.unusualAppearance.name] == YES && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "1ch" }}
+                  name={form.unusualAppearanceNotes.name}
+                  id={form.unusualAppearanceNotes.name}
+                  label={form.unusualAppearanceNotes.label}
+                />
+              )}
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                options={perihymenOptions}
+                name={form.periymen.name}
+                label={form.periymen.label}
+              />
+              {formValues[form.periymen.name]?.length > 0 && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "1ch" }}
+                  name={form.periymenNotes.name}
+                  id={form.periymenNotes.name}
+                  label={form.periymenNotes.label}
+                />
+              )}
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                options={vaginaOptions}
+                name={form.vagina.name}
+                label={form.vagina.label}
+              />
+              {formValues[form.vagina.name]?.length > 0 && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "1ch" }}
+                  name={form.vaginaNotes.name}
+                  id={form.vaginaNotes.name}
+                  label={form.vaginaNotes.label}
+                />
+              )}
+            </>
+          )}
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Examination of Genitalia (Palpation)">
+          {gender == "Female" && (
+            <>
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                label={form.digitalVaginalExamination.label}
+                name={form.digitalVaginalExamination.name}
+                options={digitalVaginalOptions}
+              />
+              {formValues[form.digitalVaginalExamination.name]?.length > 0 && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "1ch" }}
+                  name={form.digitalVaginalExaminationNotes.name}
+                  id={form.digitalVaginalExaminationNotes.name}
+                  label={form.digitalVaginalExaminationNotes.label}
+                />
+              )}
+            </>
+          )}
+          {gender == "Male" && (
+            <>
+              <RadioGroupInput
+                name={form.testicles.name}
+                label={form.testicles.label}
+                row
+                options={radioOptions}
+              />
+
+              {formValues[form.testicles.name] == NO && (
+                <TextInputField
+                  multiline
+                  rows={5}
+                  sx={{ width: "100%", mt: "2ch" }}
+                  name={form.testiclesNotes.name}
+                  id={form.testiclesNotes.name}
+                  label={form.testiclesNotes.label}
+                />
+              )}
+            </>
+          )}
+        </FormFieldContainerLayout>
+        {gender == "Female" && (
+          <FormFieldContainerLayout title="Pelvic Examination">
+            <TextInputField
+              sx={{ width: "100%" }}
+              name={form.pelvicExamination.name}
+              label={form.pelvicExamination.label}
+              id={form.pelvicExamination.name}
+            />
+          </FormFieldContainerLayout>
+        )}
+        <FormFieldContainerLayout title="Additional Notes">
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={form.additionalNotes.name}
+            label={form.additionalNotes.label}
+            id={form.additionalNotes.name}
+          />
+        </FormFieldContainerLayout>
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };

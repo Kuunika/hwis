@@ -1,7 +1,10 @@
 "use client";
 
 import { InitialRegistrationForm } from "./components";
-import { initialPatientRegistration, searchDDEPatientByNpid } from "@/hooks/patientReg";
+import {
+  initialPatientRegistration,
+  searchDDEPatientByNpid,
+} from "@/hooks/patientReg";
 
 import { MainGrid, MainTypography, WrapperBox } from "@/components";
 import {
@@ -27,14 +30,14 @@ import { FaBarcode } from "react-icons/fa6";
 import { PatientSearchResultsDialog } from "./components/patientsSearch";
 import { DDESearch } from "@/interfaces";
 
-
-
 function InitialRegistration() {
-  const [showDialog, setShowDialog] = useState(false)
-  const [npid, setNpid] = useState('')
+  const [showDialog, setShowDialog] = useState(false);
+  const [npid, setNpid] = useState("");
   const { refresh, navigateTo } = useNavigation();
-  const [initialValues, setInitialValues] = useState({ firstName: '', lastName: '' });
-
+  const [initialValues, setInitialValues] = useState({
+    firstName: "",
+    lastName: "",
+  });
 
   const {
     loading,
@@ -81,8 +84,13 @@ function InitialRegistration() {
     isError: visitNumberError,
   } = getVisitNum();
 
-  const { refetch, isRefetching, data: foundPatients, isSuccess: patientSearchSuccess } = searchDDEPatientByNpid(npid);
-  const [showSearchResultDialog, setShowSearchResultDialog] = useState(false)
+  const {
+    refetch,
+    isRefetching,
+    data: foundPatients,
+    isSuccess: patientSearchSuccess,
+  } = searchDDEPatientByNpid(npid);
+  const [showSearchResultDialog, setShowSearchResultDialog] = useState(false);
 
   // useEffect(() => {
   //   setNpid('8UN1U3')
@@ -90,18 +98,15 @@ function InitialRegistration() {
 
   //handle scan data
   useEffect(() => {
-    if (npid == '') return
-    refetch()
-  }, [npid])
-
+    if (npid == "") return;
+    refetch();
+  }, [npid]);
 
   useEffect(() => {
     if (patientSearchSuccess) {
       setShowSearchResultDialog(true);
     }
-
-  }, [patientSearchSuccess])
-
+  }, [patientSearchSuccess]);
 
   // after patient registration create a visit
   useEffect(() => {
@@ -126,7 +131,7 @@ function InitialRegistration() {
 
   // after creating a visit create an encounter
   useEffect(() => {
-    if (!visit) return
+    if (!visit) return;
     if (!visitNumberGenerated) return;
 
     setCompleted(3);
@@ -164,7 +169,9 @@ function InitialRegistration() {
     setError(error);
   }, [patientError, visitError, visitNumberError, encounterError]);
 
-  const secureLink = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+  const secureLink =
+    window.location.protocol === "https:" ||
+    window.location.hostname === "localhost";
 
   const handleSubmit = async (values: any, options: any) => {
     // options.resetForm();
@@ -193,7 +200,6 @@ function InitialRegistration() {
       },
     });
   };
-
 
   return (
     <>
@@ -228,28 +234,59 @@ function InitialRegistration() {
                 refresh();
               }}
               onSecondaryAction={() => {
-                navigateTo("/dashboard")
+                navigateTo("/dashboard");
               }}
             />
           )}
           {showForm && (
             <>
-              <RegistrationCard >
+              <RegistrationCard>
                 {/* <MainButton variant="secondary" title={"Scan Barcode"} onClick={() => { }} /> */}
                 <br />
-                <PatientSearchResultsDialog open={showSearchResultDialog} onClose={() => setShowSearchResultDialog(false)} patientResults={foundPatients ? foundPatients : { locals: [], remotes: [] } as DDESearch} />
-                <BarcodeDialog isLoading={isRefetching} onBarcodeScan={(value: any) => setNpid(value)} open={showDialog} onClose={() => setShowDialog(false)} />
-                <WrapperBox onClick={() => secureLink && setShowDialog(true)} sx={{ display: "flex", py: "1ch", alignItems: "center", justifyContent: "center", cursor: "pointer", backgroundColor: "#F5F5F5" }}>
-                  {
-                    secureLink ? <> <FaBarcode />
-                      <MainTypography variant="body1" sx={{ ml: "1ch" }}>Scan Barcode</MainTypography>
-                    </> : <MainTypography variant="subtitle2">Barcode scanning not available.</MainTypography>}
+                <PatientSearchResultsDialog
+                  open={showSearchResultDialog}
+                  onClose={() => setShowSearchResultDialog(false)}
+                  patientResults={
+                    foundPatients
+                      ? foundPatients
+                      : ({ locals: [], remotes: [] } as DDESearch)
+                  }
+                />
+                <BarcodeDialog
+                  isLoading={isRefetching}
+                  onBarcodeScan={(value: any) => setNpid(value)}
+                  open={showDialog}
+                  onClose={() => setShowDialog(false)}
+                />
+                <WrapperBox
+                  onClick={() => secureLink && setShowDialog(true)}
+                  sx={{
+                    display: "flex",
+                    py: "1ch",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    backgroundColor: "#F5F5F5",
+                  }}
+                >
+                  {secureLink ? (
+                    <>
+                      {" "}
+                      <FaBarcode />
+                      <MainTypography variant="body1" sx={{ ml: "1ch" }}>
+                        Scan Barcode
+                      </MainTypography>
+                    </>
+                  ) : (
+                    <MainTypography variant="subtitle2">
+                      Barcode scanning not available.
+                    </MainTypography>
+                  )}
                 </WrapperBox>
                 <br />
                 <InitialRegistrationForm
                   initialValues={initialValues}
                   onSubmit={handleSubmit}
-
                 />
               </RegistrationCard>
             </>
@@ -289,8 +326,8 @@ function InitialRegistration() {
   );
 }
 
-
-
-
-
-export default AuthGuard(InitialRegistration, [roles.ADMIN, roles.INITIAL_REGISTRATION_CLERK])
+export default AuthGuard(InitialRegistration, [
+  roles.ADMIN,
+  roles.INITIAL_REGISTRATION_CLERK,
+  roles.CLINICIAN,
+]);

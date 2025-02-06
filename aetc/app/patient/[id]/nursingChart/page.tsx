@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { FormContainer, PatientInfoTab } from "@/components";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
@@ -9,11 +9,14 @@ function NursingChart() {
     <>
       <PatientInfoTab />
       <FormContainer>
-      <MonitoringChart/>
+        <MonitoringChart />
       </FormContainer>
     </>
   );
 }
 
-
-export default AuthGuard(NursingChart, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);
+export default AuthGuard(NursingChart, [
+  roles.CLINICIAN,
+  roles.NURSE,
+  roles.ADMIN,
+]);

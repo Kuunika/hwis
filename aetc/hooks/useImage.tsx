@@ -15,8 +15,8 @@ export const useImage = () => {
       description?: any;
       other?: any;
     }>
-  >([]); // array of sections with data added
-  const [counter, setCounter] = useState(0); // state used just to persist an click color highlight after mouseleave event
+  >([]);
+  const [counter, setCounter] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedSection, setSelectedSection] = useState<{
     id: string | null;
