@@ -848,16 +848,23 @@ export const MedicalHistoryFlow = () => {
         drowning: concepts.DROWNING,
       };
 
-      const mechanism = Object.keys(injuryMechanismList).filter((key) => values['injuryMechanism'] === key);
-      const commentKey = `${values['injuryMechanism']}Comment`
-      const injuryComment= values[commentKey];
+      const mechanism = Object.keys(injuryMechanismList).filter((key) => values[key] === true);
+      console.log("mechanism", mechanism);
+      
 
       const timeOfInjury = (values['timeOfInjury'].$d).toLocaleString()
 
-      const traumaObs = [{
-        concept: injuryMechanismList[mechanism[0]],
-        value: injuryComment
-      }]
+      const traumaObs = [];
+
+      for(let key of mechanism){
+        const commentKey = `${key}Comment`
+        const injuryComment= values[commentKey];
+        const injuryMechanismObs = {
+          concept: injuryMechanismList[key],
+          value: injuryComment
+        }
+        traumaObs.push(injuryMechanismObs)
+      }
 
       const timeOfInjuryObs = {
         concept: concepts.TIME_OF_INJURY,
