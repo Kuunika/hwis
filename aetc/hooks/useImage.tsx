@@ -1,10 +1,12 @@
 import { getDateTime } from "@/helpers/dateTime";
 import React from "react";
 import { useRef, useState, useEffect } from "react";
-import { getActivePatientDetails } from ".";
+import { getActivePatientDetails, useImageFormTransform } from ".";
 import { concepts } from "@/constants";
 
 export const useImage = () => {
+  const { submittedValues, setData, setSubmittedValues } =
+    useImageFormTransform();
   const { activeVisit, patientId } = getActivePatientDetails();
   const containerRef = useRef<SVGSVGElement>(null);
   const [ids, setIds] = useState<
@@ -165,6 +167,17 @@ export const useImage = () => {
     handleClose();
   };
 
+  const deleteSection = (id: any) => {
+    let clonedIds = [...ids];
+    clonedIds = clonedIds.filter((clone) => clone.label != id);
+    setIds(clonedIds);
+
+    setSubmittedValues((values) => {
+      return values.filter((v) => v.section != id);
+    });
+    highlightAllSelectedSections();
+  };
+
   return {
     handleClose,
     handleFormSubmit,
@@ -179,5 +192,8 @@ export const useImage = () => {
     setIds,
     ids,
     deselectSection,
+    deleteSection,
+    setData,
+    submittedValues,
   };
 };

@@ -28,8 +28,10 @@ export function AbdomenImageWithOtherForm({
     anchorEl,
     selectedSection,
     ids,
+    deleteSection,
+    setData,
+    submittedValues,
   } = useImage();
-  const { setData, submittedValues } = useImageFormTransform();
 
   useEffect(() => {
     onValueChange(ids);
@@ -56,7 +58,13 @@ export function AbdomenImageWithOtherForm({
       <Abdomen ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
-          <DataBox key={value.section} labelValue={value} />
+          <>
+            <DataBox
+              onDelete={() => deleteSection(value.section)}
+              key={value.section}
+              labelValue={value}
+            />
+          </>
         ))}
       </Box>
       <SVGPopover

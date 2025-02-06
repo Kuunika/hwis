@@ -291,6 +291,18 @@ const verbalResponses = [
   { label: "None", value: "None", weight: 1 },
 ];
 
+const routeOptions = [
+  { label: "Oral", id: concepts.ORAL },
+  { label: "Suppository", id: concepts.SUPPOSITORY },
+  { label: "Intravenous", id: concepts.INTRAVENOUS },
+  { label: "Intramuscular", id: concepts.INTRAMUSCULAR },
+  { label: "Subcutaneous", id: concepts.SUBCUTANEOUS },
+  { label: "Infiltration", id: concepts.INFILTRATION },
+  { label: "Intrathecal", id: concepts.INTRATHECAL },
+  { label: "Dermal", id: concepts.DERMAL },
+  { label: "Inhaled", id: "Inh  aled" },
+];
+
 const CPRForm = () => {
   const { medicationOptions } = useFetchMedications();
   const { data: users, isLoading } = getAllUsers();
@@ -414,10 +426,12 @@ const CPRForm = () => {
                         sx={{ m: 0 }}
                         inputIcon={<GiMedicines />}
                       />
-                      <TextInputField
+                      <SearchComboBox
+                        multiple={false}
                         name={`records[${index}].route`}
                         label="Route"
-                        id={`records[${index}].route`}
+                        options={routeOptions}
+                        // id={`records[${index}].route`}
                         sx={{ width: "100%" }}
                       />
                     </FormFieldContainerMultiple>
