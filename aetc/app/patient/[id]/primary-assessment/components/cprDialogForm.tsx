@@ -16,8 +16,8 @@ import { getInitialValues } from "@/helpers";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { getAllUsers } from "@/hooks/users";
 import { Box, Typography } from "@mui/material";
-import { Field, FieldArray } from "formik";
-import { useState } from "react";
+import { FieldArray } from "formik";
+
 import { GiMedicines } from "react-icons/gi";
 import * as Yup from "yup";
 
@@ -111,6 +111,14 @@ const form = {
     name: concepts.DATE,
     label: "Date of Call",
   },
+  cause: {
+    name: concepts.CAUSE,
+    label: "Likely or known cause of cardiac arrest",
+  },
+  timeStopped: {
+    name: concepts.CPR_TIME_STOPPED,
+    label: "CPR Time Stopped",
+  },
 };
 
 const initialValues = getInitialValues(form);
@@ -194,10 +202,14 @@ const validationSchema = Yup.object().shape({
   [form.teamMembers.name]: Yup.array().required().label(form.teamMembers.label),
   [form.date.name]: Yup.date().required().label(form.date.label),
   [form.time.name]: Yup.string().required().label(form.time.label),
+  [form.cause.name]: Yup.string().required().label(form.cause.label),
+  [form.timeStopped.name]: Yup.string()
+    .required()
+    .label(form.timeStopped.label),
 });
 
 const sites = [
-  { label: "Rescitation", value: concepts.RESCITATION },
+  { label: "Rescitation", value: concepts.RESUSCITATION },
   { label: "SSW", value: concepts.SSW },
   { label: "Priority", value: concepts.PRIORITY },
   { label: "Other", value: concepts.OTHER },
@@ -216,7 +228,7 @@ const reversibleCauses = [
   { label: "Hypokalaemia", id: concepts.HYPOKALAEMIA },
   { label: "Hypothermia", id: concepts.HYPOTHERMIA },
   { label: "Tension Pneumothorax", id: concepts.TENSION_PNEUMOTHORAX },
-  { label: "Tamponade, Cadiac", id: concepts.TAMPONADE_CADIAC },
+  { label: "Tamponade, Cadiac", id: concepts.TAMPONADE_CARDIAC },
   { label: "Toxins", id: concepts.TOXINS },
   { label: "Thrombosis, Pulmonary", id: concepts.THROMBOSIS_PULMONARY },
   { label: "Thrombosis, Coronary", id: concepts.THROMBOSIS_CORONARY },
@@ -259,11 +271,38 @@ const medicationUnits = [
   "Milliliters (ml)",
   "Millimoles (mmol)",
 ];
+
+const circulationList = [
+  { id: "Intake fluids", label: "Intake fluids" },
+  { id: "Hemorrhage control", label: "Hemorrhage control" },
+  { id: "Blood sample", label: "Blood sample" },
+  { id: "Catheter", label: "Catheter" },
+  { id: "Transfusion", label: "Transfusion" },
+  { id: "NG Insertion", label: "NG Insertion" },
+  { id: "Suturing", label: "Suturing" },
+  { id: "Keep warm", label: "Keep warm" },
+];
 const interventions = [
   { label: "IV Access", id: concepts.IV_ACCESS },
   { label: "Intubation", id: concepts.INTUBATION },
   { label: "POCUS", id: concepts.POCUS },
   { label: "ABG", id: concepts.ABG },
+  { id: concepts.POSITIONING, label: "Positioning" },
+  { id: concepts.C_SPINE_STABILIZATION, label: "C-Spine Stabilization" },
+  { id: concepts.SUCTIONING, label: "Suctioning" },
+  { id: concepts.FOREIGN_BODY_REMOVAL, label: "Foreign body removal" },
+  { id: concepts.INSERTION_OF_GUEDEL, label: 'Insertion of airway "Guedel"' },
+  { id: concepts.OXYGEN_GIVEN, label: "Oxygen therapy" },
+  { id: concepts.BAG_AND_MASK, label: "Bag and mask" },
+  { id: concepts.INTERCOSTAL_DRAINAGE, label: "Intercostal drainage" },
+  { id: concepts.INTAKE_FLUIDS, label: "Intake Fluids" },
+  { id: concepts.HEMORRHAGE_CONTROL, label: "Hemorrhage control" },
+  { id: concepts.BLOOD_SAMPLE, label: "Blood sample" },
+  { id: concepts.CATHETER, label: "Catheter" },
+  { id: concepts.TRANSFUSION, label: "Transfusion" },
+  { id: concepts.NG_INSERTION, label: "NG Insertion" },
+  { id: concepts.SUTURING, label: "Suturing" },
+  { id: concepts.KEEP_WARM, label: "Keep warm" },
 ];
 const eyeOpeningResponses = [
   { label: "Spontaneous", value: "Spontaneous", weight: 4 },
@@ -459,27 +498,24 @@ const CPRForm = () => {
           </FieldArray>
           <br />
           <br />
-          <FormFieldContainerMultiple>
-            <SearchComboBox
-              name={form.reversibleCauses.name}
-              label={form.reversibleCauses.label}
-              options={reversibleCauses}
-              multiple
-            />
-            <SearchComboBox
-              name={form.reasonsCprStopped.name}
-              label={form.reasonsCprStopped.label}
-              options={reasonsCprStopped}
-              multiple={false}
-            />
-            <SearchComboBox
-              name={form.dispositionAfterCpr.name}
-              label={form.dispositionAfterCpr.label}
-              options={dispositionAfterCpr}
-              multiple={false}
-            />
-          </FormFieldContainerMultiple>
+          <SearchComboBox
+            name={form.reversibleCauses.name}
+            label={form.reversibleCauses.label}
+            options={reversibleCauses}
+            multiple
+            width="100%"
+          />
           <br />
+
+          <TextInputField
+            name={form.cause.name}
+            label={form.cause.label}
+            id={form.cause.name}
+            multiline
+            rows={4}
+            sx={{ width: "100%" }}
+          />
+
           <Typography variant="h6">Vital signs after ROSC</Typography>
           <br />
 
@@ -576,6 +612,28 @@ const CPRForm = () => {
               )}
             /15
           </Typography>
+          <br />
+
+          <FormTimePicker
+            name={form.timeStopped.name}
+            label={form.timeStopped.label}
+          />
+          <br />
+          <br />
+          <FormFieldContainerMultiple>
+            <SearchComboBox
+              name={form.reasonsCprStopped.name}
+              label={form.reasonsCprStopped.label}
+              options={reasonsCprStopped}
+              multiple={false}
+            />
+            <SearchComboBox
+              name={form.dispositionAfterCpr.name}
+              label={form.dispositionAfterCpr.label}
+              options={dispositionAfterCpr}
+              multiple={false}
+            />
+          </FormFieldContainerMultiple>
           <br />
           <Typography variant="h6">Resuscitation Team</Typography>
           <br />
