@@ -181,7 +181,15 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     
       if(formValues[key]){
       shape[label] = yup.string().required(`Please provide details about the ${mechanism.label} injury`);
-    }});
+    }
+  
+      if(key === 'assault'){
+        shape['assaultType'] = yup.string().when('assault', (assault, schema) => {
+          return assault ? schema.required('Please specify the type of assault') : schema.nullable();
+        });
+        
+      }
+  });
 
     shape['Gastrointenstinal_history'] = yup.array().of(
       yup.object({
@@ -508,6 +516,11 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiline
                         rows={3}
                       />
+              <div style={{ color: "red", fontSize: "0.875rem" }}>
+              <ErrorMessage
+                name={'assaultComment'}
+              />
+            </div>
                   </div>
                 )}
 
