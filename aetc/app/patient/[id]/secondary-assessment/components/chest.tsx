@@ -78,14 +78,14 @@ const form = {
     name: concepts.PERCUSSION,
     label: "Percussion",
   },
-  breathingSounds: {
-    name: concepts.BREATHING_SOUNDS,
-    label: "Breath sounds",
-  },
-  vocalFremitus: {
-    name: concepts.VOCAL_FREMITUS,
-    label: "Vocal Fremitus",
-  },
+  // breathingSounds: {
+  //   name: concepts.BREATHING_SOUNDS,
+  //   label: "Breath sounds",
+  // },
+  // vocalFremitus: {
+  //   name: concepts.VOCAL_FREMITUS,
+  //   label: "Vocal Fremitus",
+  // },
   heartSounds: {
     name: concepts.HEART_SOUNDS,
     label: "Heart Sounds",
@@ -152,12 +152,12 @@ const schema = Yup.object().shape({
     form.heavesDescription.label
   ),
   [form.percussion.name]: Yup.string().required().label(form.percussion.label),
-  [form.breathingSounds.name]: Yup.string()
-    .required()
-    .label(form.breathingSounds.label),
-  [form.vocalFremitus.name]: Yup.string()
-    .required()
-    .label(form.vocalFremitus.label),
+  // [form.breathingSounds.name]: Yup.string()
+  //   .required()
+  //   .label(form.breathingSounds.label),
+  // [form.vocalFremitus.name]: Yup.string()
+  //   .required()
+  //   .label(form.vocalFremitus.label),
   [form.heartSounds.name]: Yup.string()
     .required()
     .label(form.heartSounds.label),
@@ -250,8 +250,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(tactileFremitusImagesEnc),
       },
       {
-        concept: form.breathingSounds.name,
-        value: formValues[form.breathingSounds.name],
+        concept: concepts.AUSCULTATION_LUNG,
+        value: concepts.AUSCULTATION_LUNG,
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(breathingSoundsImagesEnc),
       },
@@ -267,12 +267,12 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(localizedChestImagesEnc),
       },
-      {
-        concept: form.vocalFremitus.name,
-        value: formValues[form.vocalFremitus.name],
-        obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(vocalFremitusImagesEnc),
-      },
+      // {
+      //   concept: form.vocalFremitus.name,
+      //   value: formValues[form.vocalFremitus.name],
+      //   obsDatetime: getDateTime(),
+      //   group_members: flattenImagesObs(vocalFremitusImagesEnc),
+      // },
     ];
 
     const datetime = getDateTime();
@@ -301,9 +301,9 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     delete formValues[form.chestExpansion.name];
     delete formValues[form.localizedChestAbnormality.name];
     delete formValues[form.percussion.name];
-    delete formValues[form.breathingSounds.name];
+    // delete formValues[form.breathingSounds.name];
     delete formValues[form.tactileFremitus.name];
-    delete formValues[form.vocalFremitus.name];
+    // delete formValues[form.vocalFremitus.name];
 
     await handleSubmit([
       ...getObservations(formValues, getDateTime()),
@@ -463,20 +463,20 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Auscultation (Lungs)">
-          <RadioGroupInput
-            row
-            name={form.breathingSounds.name}
-            label={form.breathingSounds.label}
-            options={percussionOptions}
+          <BreathingSoundsChestLung
+            imageEncounter={encounters.CHEST_ASSESSMENT}
+            // imageSection={form.breathingSounds.name}
+            onValueChange={setBreathingSoundsImagesEnc}
           />
-          {formValues[form.breathingSounds.name] == concepts.ABNORMAL && (
+
+          {/* {formValues[form.breathingSounds.name] == concepts.ABNORMAL && (
             <BreathingSoundsChestLung
               imageEncounter={encounters.CHEST_ASSESSMENT}
               imageSection={form.breathingSounds.name}
               onValueChange={setBreathingSoundsImagesEnc}
             />
-          )}
-          <RadioGroupInput
+          )} */}
+          {/* <RadioGroupInput
             row
             name={form.vocalFremitus.name}
             label={form.vocalFremitus.label}
@@ -490,7 +490,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               onValueChange={setVocalFremitusImagesEnc}
               selectable
             />
-          )}
+          )} */}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Auscultation (Chest)">
           <RadioGroupInput
