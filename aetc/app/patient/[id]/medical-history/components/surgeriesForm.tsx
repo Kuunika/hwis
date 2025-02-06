@@ -1,7 +1,5 @@
 import {
-    FieldsContainer,
     FormDatePicker,
-    FormFieldContainerLayout,
     FormikInit,
     FormValuesListener,
     MainButton,
@@ -9,9 +7,7 @@ import {
     TextInputField,
     WrapperBox,
   } from "@/components";
-  import { IconButton, TableCell } from "@mui/material";
-  import { FaPlus, FaMinus } from "react-icons/fa6";
-  import React, { useEffect, useState } from "react";
+  import React, { use, useEffect, useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { Field, FieldArray, getIn } from "formik";
@@ -25,7 +21,7 @@ interface Observation {
   obs_group_id: number | null;
   value: any;
   names: { name: string }[];
-  children?: Observation[]; // To support nested children
+  children?: Observation[]; 
 }
 
 interface ProcessedObservation {
@@ -50,7 +46,7 @@ interface ProcessedObservation {
   
   const surgeryTemplate: Surgery = {
     procedure: "",
-    other:'',
+    other: "",
     date:"",
     complication:"",
     indication:""
@@ -88,12 +84,16 @@ interface ProcessedObservation {
     surgeries: Yup.array().of(
       Yup.object().shape({
         procedure: Yup.string().required("Surgical procedure is required"),
-        other: Yup.string().optional(), // Optional field
+        other: Yup.string().when("procedure", {
+          is: (procedure: string) => procedure === "other_surgical_procedure",
+          then: (schema) => schema.required("Other surgical procedure is required"),
+          otherwise: (schema) => schema.optional(),
+        }),
         date: Yup.date()
           .required("Date of surgery is required")
           .nullable()
-          .max(new Date(), "Date cannot be in the future"), // Ensure date is not in the future
-        complication: Yup.string().optional(), // Optional field
+          .max(new Date(), "Date cannot be in the future"),
+        complication: Yup.string().optional(),
         indication: Yup.string().required("Indication is required"),
       })
     ),
@@ -129,6 +129,7 @@ interface ProcessedObservation {
     const [formValues, setFormValues] = useState<any>({});
     const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+    const [showOther, setShowOther] = useState<boolean[]>([]);
     const surgicalEncounters = patientHistory?.filter(
       (item) => item.encounter_type.name === "SURGICAL HISTORY"
     );
@@ -146,7 +147,6 @@ interface ProcessedObservation {
           encounter.obs.forEach((observation) => {
             const value = observation.value;
         
-            // Format the observation data
             const obsData: ProcessedObservation = {
               obs_id: observation.obs_id,
               name: observation.names?.[0]?.name,
@@ -155,32 +155,40 @@ interface ProcessedObservation {
             };
         
             if (observation.obs_group_id) {
-              // Find the parent observation and group it
               const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
               if (parent) {
                 parent.children.push(obsData);
               }
             } else {
-              // Add it to the top-level observations
               observations.push(obsData);
             }
           })
   
           setObservations(observations)
         });}
+
+        
       
     }, [patientHistory]);
-  
+
+
+    useEffect(() => {
+      if (!formValues.surgeries) return;
+    
+      const updatedShowOther = formValues.surgeries.map((surgery: any) =>
+        surgery.procedure === concepts.OTHER_SURGICAL_PROCEDURE
+      );
+    
+      setShowOther(updatedShowOther);
+    }, [formValues]);
+
     return (
       <>
       <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
         <div>
             {observations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                    {/* Display title */}
                     <h4>{item.name}</h4>
-                    
-                    {/* Display children if they exist */}
                     {item.children && item.children.length > 0 && (
                         <ul>
                             {item.children.map(child => (
@@ -210,30 +218,35 @@ interface ProcessedObservation {
             <DynamicFormList
               items={values.surgeries}
               setItems={(newItems) => setFieldValue("surgeries", newItems)}
-              newItem={surgeryTemplate} // Make sure you have this template defined
+              newItem={surgeryTemplate} 
               renderFields={(item, index) => (
                 <>
-                  <TextInputField
-                    id={`surgeries[${index}].procedure`}
+                  <SearchComboBox
+                  options={surgicalProcedures}
                     name={`surgeries[${index}].procedure`}
                     label="Surgical Procedure"
                     sx={{ width: '100%' }}
+                    multiple={false}
                   />
                   <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage name={`surgeries[${index}].procedure`} />
                   </div>
+                  {showOther[index] &&<>
+                      <TextInputField
+                        id={`surgeries[${index}].other`}
+                        name={`surgeries[${index}].other`}
+                        label="Other procedure"
+                        sx={{ width: '100%' }}
+                      />
 
-                  <TextInputField
-                    id={`surgeries[${index}].other`}
-                    name={`surgeries[${index}].other`}
-                    label="Other Details (optional)"
-                    sx={{ width: '100%' }}
-                  />
-
+                      <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage name={`surgeries[${index}].other`} />
+                  </div></>
+                    }
                   <FormDatePicker
                     name={`surgeries[${index}].date`}
                     label="Date of Surgery"
-                    sx={{ background: 'white', width: '150px' }}
+                    sx={{ background: 'white', width: '150px', margin: '0px' }}
                   />
                   <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage name={`surgeries[${index}].date`} />

@@ -58,7 +58,6 @@ const injuryMechanismList = {
   selfInflicted: { name: "selfInflicted", label: "Self-inflicted" },
   burns: { name: "burns", label: "Burns" },
   drowning: { name: "drowning", label: "Drowning" },
-  occupationalInjury: { name: "occupationalInjury", label: "Occupational injury" },
 };
 
 const GastrointenstinalOptions = [
@@ -286,6 +285,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     injuryMechanism:"",
     showSocialHistory: false,
     lostConsciousness: "Unknown",
+    occupationalInjury: "Unknown",
     assaultType:"",
   }
 
@@ -423,7 +423,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
               name='timeOfInjury'
-              label="Select Date and Time of Injury"
+              label="Select Date/Time of Injury"
               onChange={(newValue: any) =>  {formValues['timeOfInjury']= newValue}}
               sx={{mb:'1ch', mt:'1ch'}}
             />
@@ -440,6 +440,16 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
             { value: "Unknown", label: "Unknown" },
           ]}
           label="Did the patient lose consciouness on the scene?"
+        />
+        <RadioGroupInput
+          row
+          name="occupationalInjury"
+          options={[
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" },
+            { value: "Unknown", label: "Unknown" },
+          ]}
+          label="Was this injury work-related?"
         />
               <div>
                 <h4 style={{marginBottom:"1ch"}}>Mechanism of Injury</h4>
@@ -489,6 +499,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                 )
               );
             })}
+
+
         </div>
 
             </>

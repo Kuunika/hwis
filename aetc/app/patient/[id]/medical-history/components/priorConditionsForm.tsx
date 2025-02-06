@@ -198,8 +198,7 @@ import { MdOutlineClose } from "react-icons/md";
                           <ECTReactComponent
                           onICD11Selection={(selectedEntity: any) => handleICD11Selection(selectedEntity, index)}
                           label={'Condition'}
-                          name={'icd11_input'}
-                          iNo={index}
+                          iNo={index+1}
                         />
                         )}
                     <div style={{ color: "red", fontSize: "0.875rem"}}>
