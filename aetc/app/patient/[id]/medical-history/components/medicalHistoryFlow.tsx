@@ -21,7 +21,6 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { useFormLoading } from "@/hooks/formLoading";
-import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
 import { CustomizedProgressBars } from "@/components/loader";
 
 
@@ -432,7 +431,7 @@ export const MedicalHistoryFlow = () => {
       obsDatetime: dateTime,
       value: surgery.date,
       group_members: [
-        { concept: surgery.procedure === 'other_surgical_procedure'? concepts.SURGICAL_PROCEDURE : surgery.procedure, value: surgery.procedure === 'other_surgical_procedure'? surgery.other : true },
+        { concept: surgery.procedure === 'other_surgical_procedure'? concepts.OTHER : surgery.procedure, value: surgery.procedure === 'other_surgical_procedure'? surgery.other : true },
         { concept: concepts.INDICATION_FOR_SURGERY, value: surgery.indication },
         { concept: concepts.COMPLICATIONS, value: surgery.complication },
       ] as OutputObservation[],
