@@ -190,7 +190,7 @@ interface ProcessedObservation {
             {observations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
  <h4>{
- isValid(new Date(item.value)) ? format(new Date(item.value), "dd/MM/yyyy") : "Invalid Date"}
+ isValid(new Date(item.value)) ? format(new Date(item.value), "yyyy-MM-dd") : "Invalid Date"}
 </h4>
                     {item.children && item.children.length > 0 && (
                         <ul>
