@@ -7,6 +7,7 @@ import {
     TextInputField,
     WrapperBox,
   } from "@/components";
+import { format, isValid } from "date-fns";
   import React, { use, useEffect, useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
@@ -144,7 +145,6 @@ interface ProcessedObservation {
         const observations: ProcessedObservation[] = [];
   
       surgicalEncounters?.forEach((encounter: { obs: Observation[] }) => {
-        console.log(encounter)
           encounter.obs.forEach((observation) => {
             const value = observation.value;
         
@@ -164,7 +164,6 @@ interface ProcessedObservation {
               observations.push(obsData);
             }
           })
-          console.log(observations)
           observations.sort((a, b) => new Date(b.value).getTime() - new Date(a.value).getTime());
           setObservations(observations)
         });}
@@ -190,7 +189,9 @@ interface ProcessedObservation {
         <div>
             {observations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                    <h4>{item.value}</h4>
+ <h4>{
+ isValid(new Date(item.value)) ? format(new Date(item.value), "dd/MM/yyyy") : "Invalid Date"}
+</h4>
                     {item.children && item.children.length > 0 && (
                         <ul>
                             {item.children.map(child => (
