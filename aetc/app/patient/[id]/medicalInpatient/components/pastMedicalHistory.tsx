@@ -25,7 +25,22 @@ function PastMedicalHistoryPanel() {
     const { params } = useParameters();
     const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-    const [HIVStatus, setHIVStatus] = useState('Unknown');
+    const [HIVInfo, setHIVInfo] = useState({
+      status: 'Unknown',
+      onTreatment: 'Unknown'
+    });
+    
+
+    const updateHIVStatus = (status: string) => {
+      setHIVInfo(prev => ({ ...prev, status }));
+    };
+    
+    const updateOnHIVTreatment = (onTreatment: string) => {
+      setHIVInfo(prev => ({ ...prev, onTreatment }));
+    };
+    
+
+    
 
     const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type?.name === 'DIAGNOSIS' || item.encounter_type.name === "SURGICAL HISTORY");
  
@@ -33,13 +48,37 @@ function PastMedicalHistoryPanel() {
   useEffect(() => {
     if (!historyLoading) {
         const observations: ProcessedObservation[] = [];
-        const hasAIDS = sampleHistoryEncounters?.filter(encounters =>
-            encounters.obs.some(observation => 
-            observation.value === "1C62.Z, Human immunodeficiency virus disease without mention of associated disease or condition, clinical stage unspecified")
-        );
+        const hasAIDS = sampleHistoryEncounters?.filter(encounter =>
+          encounter.obs.some(observation => 
+              observation.value?.includes("1C62.Z") 
+          )
+      );
 
-        if(hasAIDS && hasAIDS.length > 0) setHIVStatus('Positive');
+        if(hasAIDS && hasAIDS.length > 0) updateHIVStatus("Positive");
         
+        
+
+        const hasAIDSObservations = sampleHistoryEncounters
+  ?.flatMap(encounter => 
+      encounter.obs.filter(observation => 
+          observation.value?.includes("1C62.Z")
+      )
+  );
+
+const latestObsGroupId = hasAIDSObservations ? Math.max(...hasAIDSObservations.map(obs => obs.obs_group_id).filter(id => id !== null)) : null;
+
+const onTreatmentObservation = sampleHistoryEncounters
+  ?.flatMap(encounter => 
+      encounter.obs.filter(observation => 
+          observation.obs_group_id === latestObsGroupId && 
+          observation.names?.[0]?.uuid === concepts.ON_TREATMENT
+      )
+  )?.[0]; 
+
+const onTreatmentValue = onTreatmentObservation?.value || null;
+
+if(onTreatmentValue) updateOnHIVTreatment(onTreatmentValue);
+
        
         sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
           console.log('Patient history:',encounter);
@@ -82,7 +121,12 @@ return (
             <p><b>
                 HIV Status:
                 </b>
-            {HIVStatus}
+            {HIVInfo.status}
+            </p>
+            <p><b>
+                On antiretroviral treatment:
+                </b>
+            {HIVInfo.onTreatment}
             </p>
             </div>
             </WrapperBox>
