@@ -194,7 +194,16 @@ interface ProcessedObservation {
                         <ul>
                             {item.children.map(child => (
                                 <li key={child.obs_id}>
-                                    {child.name}: {child.value}
+                                    {(() => {
+  let parsedValue = child.value;
+  if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
+    parsedValue = child.value === "true";
+  }
+
+  return typeof parsedValue === "boolean"
+    ? String(child.name)
+    : `${String(child.name)}: ${String(parsedValue)}`;
+})()}
                                 </li>
                             ))}
                         </ul>
