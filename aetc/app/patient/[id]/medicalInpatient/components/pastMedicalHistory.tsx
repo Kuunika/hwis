@@ -33,14 +33,13 @@ function PastMedicalHistoryPanel() {
   useEffect(() => {
     if (!historyLoading) {
         const observations: ProcessedObservation[] = [];
-
         const hasAIDS = sampleHistoryEncounters?.filter(encounters =>
-            encounters.obs.filter(observation => 
-            observation.names.filter(name => name.name === "Acquired immunodeficiency syndrome")
-        ));
+            encounters.obs.some(observation => 
+            observation.value === "1C62.Z, Human immunodeficiency virus disease without mention of associated disease or condition, clinical stage unspecified")
+        );
 
         if(hasAIDS && hasAIDS.length > 0) setHIVStatus('Positive');
-
+        
        
         sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
           console.log('Patient history:',encounter);
@@ -50,7 +49,6 @@ function PastMedicalHistoryPanel() {
           const value = observation.value;
         
           
-          // Format the observation data
           const obsData: ProcessedObservation = {
             obs_id: observation.obs_id,
             name: observation.names?.[0]?.name,
@@ -59,19 +57,21 @@ function PastMedicalHistoryPanel() {
           };
       
           if (observation.obs_group_id) {
-            // Find the parent observation and group it
             const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
             if (parent) {
               parent.children.push(obsData);
             }
           } else {
-            // Add it to the top-level observations
             observations.push(obsData);
           }
         })
             setObservations(observations)
         });
+
+
+        console.log(hasAIDS);
         }
+
   },[historicData])
 
 return (
