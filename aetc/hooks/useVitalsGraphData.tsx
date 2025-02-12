@@ -140,16 +140,6 @@ export const useVitalsGraphData = () => {
     );
   }, [selectedChartBottom, selectedChartTop]);
 
-  console.log({
-    setSelectedChartTop,
-    setSelectedChartBottom,
-    chartLoading,
-    isLoading,
-    selectedChartTop,
-    chartData,
-    selectedChartBottom,
-  });
-
   return {
     setSelectedChartTop,
     setSelectedChartBottom,

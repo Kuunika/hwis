@@ -35,7 +35,7 @@ export const PrescribedMedication = () => {
 
   const dispensationEncounter = data?.filter((d) => {
     return (
-      d.encounter_type.uuid == encounters.DISPENSING &&
+      d?.encounter_type?.uuid == encounters.DISPENSING &&
       d.visit_id == activeVisitId
     );
   });
@@ -43,33 +43,34 @@ export const PrescribedMedication = () => {
   const handleDispenseSubmission = () => {
     setFormError({});
 
-    if (Boolean(formData.dose) && Boolean(formData.route)) {
-      mutate({
-        encounterType: encounters.DISPENSING,
-        visit: activeVisit,
-        patient: patientId,
-        encounterDatetime: getDateTime(),
-        obs: [
-          {
-            concept: concepts.DRUG_GIVEN,
-            value: row.medicationUUID,
-            obsDatetime: getDateTime(),
-            group_members: [
-              {
-                concept: concepts.MEDICATION_DOSE,
-                value: formData.dose,
-                obsDatetime: getDateTime(),
-              },
-              {
-                concept: concepts.MEDICATION_ROUTE,
-                value: formData.route,
-                obsDatetime: getDateTime(),
-              },
-            ],
-          },
-        ],
-      });
+    const payload = {
+      encounterType: encounters.DISPENSING,
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: getDateTime(),
+      obs: [
+        {
+          concept: concepts.DRUG_GIVEN,
+          value: row.medicationUUID,
+          obsDatetime: getDateTime(),
+          group_members: [
+            {
+              concept: concepts.MEDICATION_DOSE,
+              value: formData.dose,
+              obsDatetime: getDateTime(),
+            },
+            {
+              concept: concepts.MEDICATION_ROUTE,
+              value: formData.route,
+              obsDatetime: getDateTime(),
+            },
+          ],
+        },
+      ],
+    };
 
+    if (Boolean(formData.dose) && Boolean(formData.route)) {
+      mutate(payload);
       setFormData({ dose: "", route: "" });
       return;
     }
@@ -84,6 +85,8 @@ export const PrescribedMedication = () => {
     (dispensationEncounter && dispensationEncounter[0]) ?? ({} as Encounter),
     row?.medicationUUID
   );
+
+  console.log({ medicationDispensed });
 
   const totalDispensed = medicationDispensed?.reduce((previous, current) => {
     return previous + Number(current.dose);

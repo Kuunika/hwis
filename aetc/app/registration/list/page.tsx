@@ -46,4 +46,8 @@ function List() {
   );
 }
 
-export default AuthGuard(List, [roles.ADMIN, roles.REGISTRATION_CLERK])
+export default AuthGuard(List, [
+  roles.ADMIN,
+  roles.REGISTRATION_CLERK,
+  roles.CLINICIAN,
+]);

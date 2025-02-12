@@ -12,17 +12,19 @@ export const useImageFormTransform = () => {
   }>({ section: "", formConceptsLabels: [], formData: {} });
 
   useEffect(() => {
-    const formData = Object.keys(data.formData).map((key) => {
-      const label = data.formConceptsLabels.find(
-        ({ concept }: any) => concept == key
-      )?.label;
+    const formData = Object.keys(data.formData)
+      .map((key) => {
+        const label = data.formConceptsLabels.find(
+          ({ concept }: any) => concept == key
+        )?.label;
 
-      const labelValue = data.formConceptsLabels.find(
-        (label) => label.concept == data.formData[key]
-      )?.label;
+        const labelValue = data.formConceptsLabels.find(
+          (label) => label.concept == data.formData[key]
+        )?.label;
 
-      return { label, value: labelValue ?? data.formData[key] };
-    });
+        return { label, value: labelValue ?? data.formData[key] };
+      })
+      .filter((d) => Boolean(d.value));
 
     const section = data.section;
 

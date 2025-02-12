@@ -50,7 +50,7 @@ export const HeadNeck = forwardRef<
         y="148.1"
         width="189.02"
         height="181.23"
-        clip-path="url(#clipPath24960)"
+        clipPath="url(#clipPath24960)"
         fill="#c07c65"
         opacity=".52"
       />
@@ -62,7 +62,7 @@ export const HeadNeck = forwardRef<
         y="147.13"
         width="180.25"
         height="184.15"
-        clip-path="url(#clipPath607)"
+        clipPath="url(#clipPath607)"
         fill="#975f48"
         opacity=".52"
       />
@@ -74,7 +74,7 @@ export const HeadNeck = forwardRef<
         y="10.718"
         width="334.2"
         height="109.13"
-        clip-path="url(#clipPath19532)"
+        clipPath="url(#clipPath19532)"
         fill="#bd7760"
         opacity=".52"
       />

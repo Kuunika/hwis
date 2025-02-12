@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormikInit, MainButton, WrapperBox, FormFieldContainer, TextInputField, FormDatePicker, FormValuesListener, RadioGroupInput, SearchComboBox, UnitInputField, FormFieldContainerLayout, CheckboxesGroup } from "@/components";
 import * as yup from "yup";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
@@ -7,13 +7,24 @@ import { IoTimeOutline } from "react-icons/io5";
 import { DateTimePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getDateTime } from "@/helpers/dateTime";
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import { Field, getIn } from "formik";
 
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
 };
+
+  const ErrorMessage = ({ name }: { name: string }) => (
+   <Field
+     name={name}
+     render={({ form }: { form: any }) => {
+       const error = getIn(form.errors, name);
+        return error ? error : null;
+     }}
+   />
+  );
 
 const symptomList = {
   lastMeal: { name: "lastMeal", label: "Date of Last Meal", requiresSite: true },
@@ -51,11 +62,10 @@ const injuryMechanismList = {
   fall: { name: "fall", label: "Fall" },
   bite: { name: "bite", label: "Bite" },
   gunshot: { name: "gunshot", label: "Gunshot" },
-  collapse: { name: "collapse", label: "Collapse of Building" },
+  collapse: { name: "collapse", label: "Collapse of building" },
   selfInflicted: { name: "selfInflicted", label: "Self-inflicted" },
   burns: { name: "burns", label: "Burns" },
   drowning: { name: "drowning", label: "Drowning" },
-  occupationalInjury: { name: "occupationalInjury", label: "Occupational Injury" },
 };
 
 const GastrointenstinalOptions = [
@@ -112,52 +122,114 @@ const genitourinaryOptions = [
 ];
 
 const dateTime = getDateTime();
-const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectSchema<any> => {
-  const shape: Record<string, yup.Schema<any>> = {};
-
-  
-  Object.keys(symptomList).forEach((key) => {
-
-    if(!(key == 'lastMeal' || key == 'events')){
-    const symptom = symptomList[key];
-
-  
-    shape[key] = yup.boolean();
 
 
-    shape[`${key}Duration`] = yup.string().when(key, (value, schema)  =>
-      value
-        ? schema.required(`Duration of ${symptom.label} is required`)
-        : schema.notRequired()
-    );
-
- 
-    if (symptom.requiresSite) {
-      shape[`${symptom.name}_site`] = yup.string().when(key, (value, schema) =>
-        value
-          ? schema.required(`Please specify the site of ${symptom.label}`)
-          : schema.notRequired()
-      );
-    }
-  }
-  });
-  
-  return yup.object().shape(shape);
-};
 
 export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showExtraFields, setShowExtraFields] = useState<any>({});
   const [showTraumaFields, setShowTraumaFields] = useState(false);
   const [showAssaultOptions, setShowAssaultOptions] = useState(false);
-  const [selectedMechanism, setSelectedMechanism] = useState<string | null>(null);
+  const [selectedMechanism, setSelectedMechanism] = useState<{ [key: string]: boolean}>({});
   const [genitourinaryOther, setGenitourinaryOther] = useState(false); 
+  const [updateSocial, setUpdateSocial]= useState(false); 
   
+  const generateValidationSchema = (symptomList: Record<string, any>): yup.ObjectSchema<any> => {
+    const shape: Record<string, yup.Schema<any>> = {};
+  
+    Object.keys(symptomList).forEach((key) => {
+      const symptom = symptomList[key];
+  
+      if (!(key === 'lastMeal' || key === 'events')) {
+        if (typeof symptom === 'object') {
+          const symptomName = symptom.name;
+  
+          shape[`${symptomName}Duration`] = yup.string().when(symptomName, (value, schema) => {
+            if (formValues[key]) {
+              return schema.required(`Duration of ${symptom.label} is required`);
+            }
+            return schema.notRequired();
+          });
+  
+          if (symptom.requiresSite) {
+            shape[`${symptomName}_site`] = yup.string().when(symptomName, (value, schema) => {
+              if (formValues[key]) {
+                return schema.required(`Please specify the site of ${symptom.label}`);
+              }
+              return schema.notRequired();
+            });
+          }
+        }
+      }
+    });
+
+
+  
+    shape['lastMeal'] = yup.date().required('Last meal is required.').max(new Date(), 'Last meal cannot be in the future.');
+    shape['events'] = yup.string().required('Events field is required.');
+    shape['timeOfInjury'] = yup.date().required('Time of injury is required.');
+
+    shape['wasInjured'] = yup.string().required('Please specify whether the patient was injured') 
+    shape['injuryMechanism'] = yup.boolean().when('wasInjured', (wasInjured, schema) => {
+      return wasInjured ? schema.oneOf([true], 'Injury mechanism is required') : schema.nullable();
+    });
+
+  
+    Object.keys(injuryMechanismList).forEach((key) => {
+      const mechanism = injuryMechanismList[key as keyof typeof injuryMechanismList];
+      const label = `${mechanism.name}Comment`;
+    
+      if(formValues[key]){
+      shape[label] = yup.string().required(`Please provide details about the ${mechanism.label} injury`);
+    }
+  
+      if(key === 'assault'){
+        shape['assaultType'] = yup.string().when('assault', (assault, schema) => {
+          return assault ? schema.required('Please specify the type of assault') : schema.nullable();
+        });
+        
+      }
+  });
+
+    shape['Gastrointenstinal_history'] = yup.array().of(
+      yup.object({
+        id: yup.string().required('ID is required for Gastrointestinal history.'),
+        label: yup.string().required('Label is required for Gastrointestinal history.'),
+      })
+    );
+  
+    shape['Cardiac/Respiratory history'] = yup.array().of(
+      yup.object({
+        id: yup.string().required('ID is required for Cardiac/Respiratory history.'),
+        label: yup.string().required('Label is required for Cardiac/Respiratory history.'),
+      })
+    );
+  
+    shape['Nervous system history'] = yup.array().of(
+      yup.object({
+        id: yup.string().required('ID is required for Nervous system history.'),
+        label: yup.string().required('Label is required for Nervous system history history.'),
+      })
+    );
+  
+    shape['genitourinaryHistory'] = yup
+      .array()
+      .of(    yup.object({
+        id: yup.string().required('ID is required for genitourinary history.'),
+        label: yup.string().required('Label is required for genitourinary history.'),
+      })
+    );
+  
+    return yup.object().shape(shape);
+  };
+
+
   const schema = generateValidationSchema(symptomList);
 
   const initialValues = {
-    lastMeal: "",
-    events: "",
+    wasInjured:"",
+    lastMeal:"",
+    events:"",
     pain: false,
     painDuration: "",
     pain_site: "",
@@ -221,56 +293,72 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     ulcerWound: false,
     ulcerWoundDuration: "",
     ulcerWound_site: "",
-    timeOfInjury: dayjs(dateTime)
+    timeOfInjury: dayjs(dateTime),
+    injuryMechanism:[],
+    showSocialHistory: false,
+    lostConsciousness: "Unknown",
+    occupationalInjury: "Unknown",
+    assaultType:"",
+    assault: false,
+    roadTraffic: false,
+    fall: false,
+    bite: false,
+    gunshot: false,
+    collapse: false,
+    selfInflicted: false,
+    burns: false,
+    drowning:false,
   }
 
-  const handleSymptomChange = (e: any, symptom: string) => {
-    const isChecked = e.target.checked;
+
+
+  useEffect(() => {
+    const updatedShowExtraFields: Record<string, boolean> = {};
+    Object.keys(symptomList).forEach((key) => {
+      if(key!='lastMeal' && key!='events')
+      updatedShowExtraFields[key] = !!formValues[key];
+    });
+  
+    setShowExtraFields(updatedShowExtraFields);
+
+    setShowTraumaFields(!!(formValues['wasInjured']=== "Yes"));
+
+    setShowAssaultOptions(formValues['assault']);
+
+    const updatedMechanism: Record<string, boolean> = {};
+
+    Object.keys(injuryMechanismList).forEach((key) => {
+      updatedMechanism[key] = !!formValues[key]; 
+    });
+
+    setSelectedMechanism(updatedMechanism);
+
+    const hasInjuryMechanism = Object.values(updatedMechanism).some(Boolean);
+    hasInjuryMechanism ? formValues['injuryMechanism'] = true: formValues['injuryMechanism'] = false;
+  
+    const socialHistory = formValues['showSocialHistory'];
+    setUpdateSocial(!!socialHistory);
+
+    console.log(formValues);
     
-    // Update visibility for extra fields based on checkbox state
-    setShowExtraFields((prev: any) => ({
-      ...prev,
-      [symptom]: isChecked,
-    }));
-  
-    // Update form values only for the checkbox state, preserving other fields
-    setFormValues((prev: any) => ({
-      ...prev,
-      [symptom]: isChecked,
-      ...(isChecked ? {} : { [`${symptom}Date`]: "", [`${symptom}_site`]: "" }) // Clear extra fields if unchecked
-    }));
-  
-    // Special handling for trauma section
-    if (symptom === 'wasInjured') setShowTraumaFields(isChecked);
-  };
-
-  const handleTraumaMechanismChange = (e: React.ChangeEvent<HTMLInputElement>, mechanism: string) => {
-    const isChecked = e.target.checked;
-    if (isChecked) {
-      setSelectedMechanism(mechanism); // Set the selected mechanism
-      if(mechanism === "assault"){
-      setShowAssaultOptions(true);
-      } // Show assault options if "assault" is selected
-    } else {
-      setSelectedMechanism(null); // Clear if unchecked
-      setShowAssaultOptions(false); // Hide assault options if deselected
-    }
-    setFormValues((prev: any) => ({
-      ...prev,
-      [mechanism]: isChecked,
-    }));
-  };
+  }, [formValues, symptomList, formValues['showSocialHistory']]);
 
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
+    
+    await schema.validate(formValues);
     onSubmit(formValues);
    };
+
+
+
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
@@ -278,9 +366,9 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         <FormDatePicker
           label={symptomList.lastMeal.label}
           name={symptomList.lastMeal.name}
-          sx={{ background: 'white' }}
+          sx={{ background: 'white', marginRight:2 }}
         />
-      </FormFieldContainer>
+
 
       <TextInputField
         id={symptomList.events.name}
@@ -290,6 +378,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         multiline
         rows={4}
       />
+ </FormFieldContainer>
 
       <FormFieldContainer direction="row">
         <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: '100%' }}>
@@ -302,13 +391,12 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
               <div key={typedKey}>
                 {typedKey !== "poisoningIntentional" && typedKey !== "lastMeal" && typedKey !== "events" &&(
                 <LabelledCheckbox
+                    name={symptomList[typedKey].name}
                     label={symptomList[typedKey].label}
-                    checked={formValues[typedKey]}
-                    onChange={(e) => handleSymptomChange(e, typedKey)}
                   />
            
           )}
-                {/* Show extra fields if the smptom is selected */}
+
                 {showExtraFields[typedKey]&& typedKey !== "poisoningIntentional" && (
                   <>
                
@@ -326,7 +414,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                       </>
                
     
-                    {/* Show 'Specify site' for symptoms that require it */}
+
                     {symptom.requiresSite  && typedKey !== "poisoning" && (
                       <TextInputField
                         id={`${symptom.name}_site`}
@@ -338,9 +426,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
                     {typedKey == "poisoning" && (
                      <LabelledCheckbox
+                     name="poisoningIntentional"
                      label={symptomList["poisoningIntentional"].label}
-                     checked={formValues["poisoningIntentional"] || false}
-                     onChange={(e) => handleSymptomChange(e, "poisoningIntentional")}
                    />
                     )}
                   </>
@@ -352,46 +439,67 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
           })}
 
 <h3>Trauma/Injury History</h3>
-          <LabelledCheckbox
-            label="Was the patient injured?"
-            checked={formValues.wasInjured}
-            onChange={(e) => handleSymptomChange(e, "wasInjured")}
-          />
+<RadioGroupInput
+          row
+          name="wasInjured"
+          options={[
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" },
+          ]}
+          label="Was the patient injured?"
+        />
           {showTraumaFields && (
             <>
             <FormFieldContainer direction="row">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
-              label="Select Date and Time of Injury"
-              value={formValues['timeOfInjury']}
-              onChange={(newValue: any) =>  setFormValues((prev: any) => ({
-                ...prev,
-                'timeOfInjury': newValue,
-              }))}
+              name='timeOfInjury'
+              label="Select Date/Time of Injury"
+              onChange={(newValue: any) =>  {formValues['timeOfInjury']= newValue}}
               sx={{mb:'1ch', mt:'1ch'}}
             />
             </LocalizationProvider>
+
             </FormFieldContainer>
+
+            <RadioGroupInput
+          row
+          name="lostConsciousness"
+          options={[
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" },
+            { value: "Unknown", label: "Unknown" },
+          ]}
+          label="Did the patient lose consciouness on the scene?"
+        />
+        <RadioGroupInput
+          row
+          name="occupationalInjury"
+          options={[
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" },
+            { value: "Unknown", label: "Unknown" },
+          ]}
+          label="Was this injury work-related?"
+        />
               <div>
-                <h4>Mechanism of Injury</h4>
+                <h4 style={{marginBottom:"1ch"}}>Mechanism of Injury</h4>
                 {Object.keys(injuryMechanismList).map((key) => {
                   const mechanism = injuryMechanismList[key as keyof typeof injuryMechanismList];
-                  
-                  // Conditionally display only the selected mechanism or all if none is selected
-                  if (!selectedMechanism || selectedMechanism === key) {
                     return (
                       <LabelledCheckbox
                         key={key}
+                        name={mechanism.name}
                         label={mechanism.label}
-                        checked={formValues[mechanism.name]}
-                        onChange={(e) => handleTraumaMechanismChange(e, key)}
                       />
                     );
-                  }
-                  return null;
+         
                 })}
-
-                {/* Show assault sub-options if "assault" is selected */}
+                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <ErrorMessage
+                      name={'injuryMechanism'}
+                    />
+                  </div>
                 {showAssaultOptions && (
                   <div style={{ marginLeft: "1em" }}>
                      <RadioGroupInput
@@ -400,16 +508,46 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                       options={injuryMechanismList.assault.subOptions}
                       row={true}
                       />
+                    <TextInputField
+                        id='assaultComment'
+                        label="Assault comments"
+                        name='assaultComment'
+                        placeholder="add details about the assault"
+                        multiline
+                        rows={3}
+                      />
+              <div style={{ color: "red", fontSize: "0.875rem" }}>
+              <ErrorMessage
+                name={'assaultComment'}
+              />
+            </div>
                   </div>
                 )}
-              </div>
 
-              {/* Show additional fields regardless of mechanism selection */}
-              <LabelledCheckbox
-                label="Did the patient lose consciousness on the scene?"
-                checked={formValues.lostConsciousness || false}
-                onChange={(e) => handleSymptomChange(e, "lostConsciousness")}
+
+          {Object.keys(selectedMechanism).map((mechanism: string) => (
+            selectedMechanism[mechanism] && mechanism !== "assault" ? (<>
+              <TextInputField
+                key={`comment-${mechanism}`}
+                id={`${mechanism}-comment`}
+                label={`${mechanism} comments`}
+                name={`${mechanism}Comment`}
+                placeholder={`Add details about the ${mechanism.toLowerCase()}`}
+                multiline
+                rows={3}
               />
+              <div style={{ color: "red", fontSize: "0.875rem" }}>
+              <ErrorMessage
+                name={`${mechanism}Comment`}
+              />
+            </div>
+            </>
+            ) : null
+          ))}
+       
+    
+
+        </div>
             </>
           )}
 
@@ -424,33 +562,32 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         multiple={true}
         />
         </FormFieldContainer>
-<FormFieldContainer direction="row">
-      <SearchComboBox
-        name="Cardiac/Respiratory history"
-        label="Cardiac/Respiratory history"
-        options={cardiacRespiratoryOptions}
-        multiple={true}
-        />
-</FormFieldContainer>
-<FormFieldContainer direction="row">
-<SearchComboBox
-        name="Nervous system history"
-        label="Nervous system history"
-        options={nervousSystemOptions}
-        multiple={true}
-        />
-</FormFieldContainer>
-<FormFieldContainer direction="row">
+        <FormFieldContainer direction="row">
+              <SearchComboBox
+                name="Cardiac/Respiratory history"
+                label="Cardiac/Respiratory history"
+                options={cardiacRespiratoryOptions}
+                multiple={true}
+                />
+        </FormFieldContainer>
+        <FormFieldContainer direction="row">
+        <SearchComboBox
+                name="Nervous system history"
+                label="Nervous system history"
+                options={nervousSystemOptions}
+                multiple={true}
+                />
+        </FormFieldContainer>
+        <FormFieldContainer direction="row">
 
-<SearchComboBox
-        name="genitourinaryHistory"
-        label="Genitourinary history"
-        options={genitourinaryOptions}
-        multiple={true}
-        getValue={(values) => {const other = values.some((value:any) => value.label === genitourinaryOptions[12].label);
-          if (other) {
-            setGenitourinaryOther(true);
-  
+        <SearchComboBox
+                name="genitourinaryHistory"
+                label="Genitourinary history"
+                options={genitourinaryOptions}
+                multiple={true}
+                getValue={(values) => {const other = values.some((value:any) => value.label === genitourinaryOptions[12].label);
+                  if (other) {
+                    setGenitourinaryOther(true);
           }
         }}/>
         
@@ -466,6 +603,11 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       
 
         <FormFieldContainer direction="column">
+        <LabelledCheckbox
+                        name= "showSocialHistory"
+                        label='Update social history?'
+                      />
+        {updateSocial && (<>
         <h3 style={{marginTop:'2ch', marginBottom:'1ch'}}>Social History</h3>
         <RadioGroupInput
             row={true}
@@ -512,13 +654,13 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
            label="Travel Details"
            multiline
            rows={4}
-          />
-                </FormFieldContainer>
+          /></>)}
+        </FormFieldContainer>
       
 
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
-        <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
+          <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+          <MainButton onClick={() => {}} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
       </WrapperBox>
     </FormikInit>
   );

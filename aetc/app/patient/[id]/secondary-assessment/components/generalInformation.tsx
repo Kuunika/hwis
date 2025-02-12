@@ -9,7 +9,7 @@ import {
 import * as yup from "yup";
 import { concepts, encounters } from "@/constants";
 import { useSubmitEncounter } from "@/hooks";
-import { getObservations } from "@/helpers";
+import { getInitialValues, getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 type Props = {
@@ -29,11 +29,8 @@ const schema = yup.object({
     .label(form.generalInformation.label),
 });
 
-const initialValues = {
-  temperatureInfo: "",
-  skinRashInfo: "",
-  rashDescription: "",
-};
+const initialValues = getInitialValues(form);
+
 export const GeneralInformation = ({ onSubmit }: Props) => {
   // const [formValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(

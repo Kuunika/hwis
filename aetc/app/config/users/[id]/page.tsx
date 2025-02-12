@@ -54,7 +54,6 @@ const EditUserPage = () => {
       userId,
     };
 
-    console.log({ updatedValues });
     mutate(updatedValues);
   };
 

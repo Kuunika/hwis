@@ -25,6 +25,7 @@ import { getActivePatientDetails, useNavigation } from "@/hooks";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { AccordionComponent } from "@/components/accordion";
+import useFetchMedications from "@/hooks/useFetchMedications";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -145,10 +146,7 @@ const medicationUnits = [
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const { mutate, isPending: addingDrugs, isSuccess } = addEncounter();
-  const { data, isPending: loadingDrugs } = getAllDrugs();
-  const [medicationOptions, setMedicationOptions] = useState<
-    { id: string; label: string }[]
-  >([]);
+  const { medicationOptions, loadingDrugs } = useFetchMedications();
   const { navigateBack } = useNavigation();
 
   const [otherFrequency, setOtherFrequency] = useState<{
@@ -169,18 +167,6 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       navigateBack();
     }
   }, [isSuccess]);
-
-  useEffect(() => {
-    if (data) {
-      const formatMedicationOptions = (data: any) => {
-        return data.map((drug: { concept_uuid: string; name: string }) => ({
-          id: drug.concept_uuid,
-          label: drug.name,
-        }));
-      };
-      setMedicationOptions(formatMedicationOptions(data));
-    }
-  }, [data]);
 
   const handleSubmit = () => {
     const obsDateTime = getDateTime();

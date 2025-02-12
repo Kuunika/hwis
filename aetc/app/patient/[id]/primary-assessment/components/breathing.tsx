@@ -1,4 +1,8 @@
-import { NotificationContainer } from "@/components";
+import {
+  FormDatePicker,
+  FormTimePicker,
+  NotificationContainer,
+} from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,11 +16,17 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 
-import { LungImage, LungBackImage } from "@/components/svgImages";
+import {
+  LungImage,
+  LungBackImage,
+  LungRightSideImage,
+  LungLeftSideImage,
+} from "@/components/svgImages";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import ComponentSlider from "@/components/slider/slider";
 
 const form = {
   isPatientBreathing: {
@@ -91,6 +101,10 @@ const form = {
     name: concepts.PERCUSSION,
     label: "Percussion",
   },
+  breathSounds: {
+    name: concepts.BREATHING_SOUNDS,
+    label: "Breath Sounds",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -163,6 +177,9 @@ const schema = Yup.object().shape({
   [form.chestWallAbnormality.name]: Yup.string().label(
     form.chestWallAbnormality.label
   ),
+  [form.breathSounds.name]: Yup.string()
+    .required()
+    .label(form.breathSounds.label),
 });
 
 const initialsValues = getInitialValues(form);
@@ -262,11 +279,53 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(percussionImage),
       },
     ];
+
+    const devices = formValues[form.deviceForIntervention.name];
+    let devicesObs: any = [];
+
+    if (Array.isArray(devices)) {
+      devicesObs = devices.map((device) => {
+        return {
+          concept: form.deviceForIntervention.name,
+          value: device.id,
+          obsDateTime: getDateTime(),
+        };
+      });
+    }
+
     delete formValues[form.chestWallAbnormality.name];
     delete formValues[form.percussion.name];
+    delete formValues[form.deviceUsed.name];
 
-    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+    await handleSubmit([
+      ...getObservations(formValues, getDateTime()),
+      ...obs,
+      ...devicesObs,
+    ]);
   };
+
+  const breathSoundsSlides = [
+    {
+      id: 1,
+      label: "Lung Left",
+      content: <LungRightSideImage onValueChange={() => {}} />,
+    },
+    {
+      id: 2,
+      label: "Lung Right",
+      content: <LungLeftSideImage onValueChange={() => {}} />,
+    },
+    {
+      id: 3,
+      label: "Lung Front",
+      content: <LungImage breathSounds={true} onValueChange={() => {}} />,
+    },
+    {
+      id: 4,
+      label: "Lung Back",
+      content: <LungBackImage breathSounds={true} onValueChange={() => {}} />,
+    },
+  ];
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
@@ -293,32 +352,38 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
             <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
 
             <FieldsContainer mr="1ch">
-              <TextInputField
-                sx={{ width: "100%" }}
+              {/* <FormDatePicker  /> */}
+              <FormTimePicker
+                sx={{ width: "100%", my: "1ch" }}
                 name={form.startTimeIntervention.name}
                 label={form.startTimeIntervention.label}
-                id={form.startTimeIntervention.name}
+                // id={form.startTimeIntervention.name}
               />
-              <TextInputField
-                sx={{ width: "100%" }}
+              <FormTimePicker
+                sx={{ width: "100%", my: "1ch" }}
                 name={form.finishTimeIntervention.name}
                 label={form.finishTimeIntervention.label}
-                id={form.finishTimeIntervention.name}
+                // id={form.finishTimeIntervention.name}
               />
             </FieldsContainer>
-            <FieldsContainer>
-              <RadioGroupInput
-                name={form.deviceForIntervention.name}
-                label={form.deviceForIntervention.label}
-                options={[
-                  { label: "Bag and mask", value: concepts.BAG_AND_MASK },
-                  {
-                    label: "Laryngeal Mask Airway and bag",
-                    value: concepts.LARYNGEAL_MASK_AIRWAY_AND_BAG,
-                  },
-                ]}
-              />
-            </FieldsContainer>
+
+            <SearchComboBox
+              name={form.deviceForIntervention.name}
+              label={form.deviceForIntervention.label}
+              sx={{ width: "100%" }}
+              multiple
+              options={[
+                { label: "Bag and mask", id: concepts.BAG_AND_MASK },
+                {
+                  label: "Laryngeal Mask Airway and bag",
+                  id: concepts.LARYNGEAL_MASK_AIRWAY_AND_BAG,
+                },
+                {
+                  label: "Endotracheal tube (ETT)",
+                  id: concepts.ENDOTRACHEAL,
+                },
+              ]}
+            />
           </FormFieldContainerLayout>
         )}
 
@@ -467,9 +532,26 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                   <LungBackImage
                     imageSection={form.percussion.name}
                     imageEncounter={encounters.BREATHING_ASSESSMENT}
+                    percussion={true}
                     onValueChange={setPercussionImage}
                   />
                 </FieldsContainer>
+              )}
+              <FieldsContainer>
+                <RadioGroupInput
+                  name={form.breathSounds.name}
+                  label={form.breathSounds.label}
+                  options={[
+                    { label: "Normal", value: concepts.NORMAL },
+                    { label: "Abnormal", value: concepts.ABNORMAL },
+                  ]}
+                />
+              </FieldsContainer>
+              {formValues[form.breathSounds.name] == concepts.ABNORMAL && (
+                <>
+                  <br />
+                  <ComponentSlider slides={breathSoundsSlides} />
+                </>
               )}
               <FieldsContainer>
                 <TextInputField

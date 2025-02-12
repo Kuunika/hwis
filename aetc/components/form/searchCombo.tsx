@@ -48,6 +48,7 @@ export const SearchComboBox: FC<Props> = ({
   });
 
   const handleChange = (values: any) => {
+    console.log(values);
     const inputValue = multiple
       ? values.map((v: any) => ({
           id: v.value,
@@ -82,6 +83,7 @@ export const SearchComboBox: FC<Props> = ({
               ...padding,
             }),
           }}
+          // value={() => mappedOptions.find((op) => op.value == value)}
           //@ts-ignore
           defaultValue={manualInitialValues}
           //@ts-ignore

@@ -53,7 +53,6 @@ export const GroupedSearchComboBox: FC<Props> = ({
         const group = options.find(group =>
           group.options.some(option => option.value === selectedOption.value)
         );
-
         return {
           group: group?.value || 'Unknown', // Include the group label
           value: selectedOption.value,

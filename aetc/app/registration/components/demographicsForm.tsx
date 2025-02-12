@@ -1,5 +1,4 @@
 import { FC, useContext, useEffect, useState } from "react";
-;
 import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
@@ -22,9 +21,7 @@ import {
   RegistrationDescriptionText,
   RegistrationMainHeader,
 } from "./common";
-import {
-  concepts
-} from "@/constants";
+import { concepts } from "@/constants";
 import { countries } from "@/constants/contries";
 import { getInitialValues } from "@/helpers";
 import { useParameters } from "@/hooks";
@@ -32,7 +29,11 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import { getDistricts, getTraditionalAuthorities, getVillages } from "@/hooks/loadStatic";
+import {
+  getDistricts,
+  getTraditionalAuthorities,
+  getVillages,
+} from "@/hooks/loadStatic";
 import { LocationContext, LocationContextType } from "@/contexts/location";
 import { getPatientRelationships } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
@@ -140,9 +141,9 @@ const form = {
     name: "age",
     label: "Estimated Age",
   },
-
 };
-const phoneRegex = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+const phoneRegex =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const schema = Yup.object().shape({
   [form.identificationNumber.name]: Yup.string().label(
     form.identificationNumber.label
@@ -155,24 +156,28 @@ const schema = Yup.object().shape({
   [form.lastName.name]: Yup.string().required().label(form.lastName.label),
   [form.dob.name]: Yup.date()
     .when(form.birthDateEstimated.name, {
-      is: (value: any) => value == 'true',
+      is: (value: any) => value == "true",
       then: () => Yup.date().required(),
     })
-    .test('valid-age', 'Age must be at least 14 years and not in the future', function (value) {
+    .test(
+      "valid-age",
+      "Age must be at least 14 years and not in the future",
+      function (value) {
+        if (!value) return true;
 
-      if (!value) return true;
-
-      const selectedDate = new Date(value);
-      const today = new Date();
-      let age = today.getFullYear() - selectedDate.getFullYear();
-      const monthDiff = today.getMonth() - selectedDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < selectedDate.getDate())) {
-        age--;
+        const selectedDate = new Date(value);
+        const today = new Date();
+        let age = today.getFullYear() - selectedDate.getFullYear();
+        const monthDiff = today.getMonth() - selectedDate.getMonth();
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < selectedDate.getDate())
+        ) {
+          age--;
+        }
+        return age >= 14 && age >= 0;
       }
-      return age >= 14 && age >= 0;
-    }),
-
-
+    ),
 
   [form.gender.name]: Yup.string().required().label(form.gender.label),
   [form.currentDistrict.name]: Yup.string()
@@ -180,18 +185,17 @@ const schema = Yup.object().shape({
     .label(form.currentDistrict.label),
   [form.currentTraditionalAuthority.name]: Yup.string()
     .when(form.nationality.name, {
-      is: (value: string) => value == 'Malawian',
-      then: () => Yup.string().required()
+      is: (value: string) => value == "Malawian",
+      then: () => Yup.string().required(),
     })
     .label(form.currentTraditionalAuthority.label),
   [form.currentVillage.name]: Yup.string()
     .when(form.nationality.name, {
-      is: (value: string) => value == 'Malawian',
-      then: () => Yup.string().required()
+      is: (value: string) => value == "Malawian",
+      then: () => Yup.string().required(),
     })
     .label(form.currentDistrict.label),
-  [form.closeLandMark.name]: Yup.string()
-    .label(form.closeLandMark.label),
+  [form.closeLandMark.name]: Yup.string().label(form.closeLandMark.label),
   [form.nextOfKinFirstName.name]: Yup.string()
     .required()
     .label(form.nextOfKinFirstName.label),
@@ -205,18 +209,19 @@ const schema = Yup.object().shape({
     form.nextOfKinRelationship.label
   ),
 
-  [form.homeDistrict.name]: Yup.string().required()
+  [form.homeDistrict.name]: Yup.string()
+    .required()
     .label(form.homeDistrict.label),
   [form.homeTraditionalAuthority.name]: Yup.string()
     .when(form.nationality.name, {
-      is: (value: string) => value == 'Malawian',
-      then: () => Yup.string().required()
+      is: (value: string) => value == "Malawian",
+      then: () => Yup.string().required(),
     })
     .label(form.homeTraditionalAuthority.label),
   [form.homeVillage.name]: Yup.string()
     .when(form.nationality.name, {
-      is: (value: string) => value == 'Malawian',
-      then: () => Yup.string().required()
+      is: (value: string) => value == "Malawian",
+      then: () => Yup.string().required(),
     })
     .label(form.homeVillage.label),
 
@@ -225,23 +230,25 @@ const schema = Yup.object().shape({
     .min(10)
     .label(form.guardianPhoneNumber.label),
 
-
-  [form.guardianFirstName.name]: Yup.string()
-    .label(form.guardianFirstName.label),
-  [form.guardianLastName.name]: Yup.string()
-    .label(form.guardianLastName.label),
+  [form.guardianFirstName.name]: Yup.string().label(
+    form.guardianFirstName.label
+  ),
+  [form.guardianLastName.name]: Yup.string().label(form.guardianLastName.label),
   [form.guardianNumber.name]: Yup.string()
     .matches(phoneRegex, "Phone Number valid")
     .min(10)
     .label(form.guardianNumber.label),
-  [form.guardianPresent.name]: Yup.string().required()
+  [form.guardianPresent.name]: Yup.string()
+    .required()
     .label(form.guardianPresent.label),
-  [form.birthDateEstimated.name]: Yup.boolean().required()
+  [form.birthDateEstimated.name]: Yup.boolean()
+    .required()
     .label(form.birthDateEstimated.label),
-  [form.age.name]: Yup.number().when(form.birthDateEstimated.name, {
-    is: (value: any) => (value == true) || value == 'true',
-    then: () => Yup.number().required(),
-  })
+  [form.age.name]: Yup.number()
+    .when(form.birthDateEstimated.name, {
+      is: (value: any) => value == true || value == "true",
+      then: () => Yup.number().required(),
+    })
     .label(form.age.label),
 });
 
@@ -277,45 +284,65 @@ const relationships = [
 ];
 
 export type LocationType = {
-  village: number | string | undefined,
-  traditionalAuthority: number | string | undefined,
-  district: number | string | undefined,
-}
+  village: number | string | undefined;
+  traditionalAuthority: number | string | undefined;
+  district: number | string | undefined;
+};
 
 export const DemographicsForm: FC<Prop> = ({
   onSubmit,
   initialValues = init,
   setContext,
 }) => {
-  const [guardianAvailable, setGuardianAvailable] = useState('')
-  const { initialRegisteredPatient, patient, registrationType, searchedPatient } = useContext(
-    SearchRegistrationContext
-  ) as SearchRegistrationContextType;
+  const [guardianAvailable, setGuardianAvailable] = useState("");
+  const {
+    initialRegisteredPatient,
+    patient,
+    registrationType,
+    searchedPatient,
+  } = useContext(SearchRegistrationContext) as SearchRegistrationContextType;
 
-  const [selectedLocation, setSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
-  const [currentSelectedLocation, setCurrentSelectedLocation] = useState<LocationType>({ village: "", traditionalAuthority: "", district: "" })
+  const [selectedLocation, setSelectedLocation] = useState<LocationType>({
+    village: "",
+    traditionalAuthority: "",
+    district: "",
+  });
+  const [currentSelectedLocation, setCurrentSelectedLocation] =
+    useState<LocationType>({
+      village: "",
+      traditionalAuthority: "",
+      district: "",
+    });
 
-  const { villages, districts, traditionalAuthorities } = useContext(LocationContext) as LocationContextType
+  const { villages, districts, traditionalAuthorities } = useContext(
+    LocationContext
+  ) as LocationContextType;
 
   const [gender, setGender] = useState();
   const [checked, setChecked] = useState(false);
   const [guardianChecked, setGuardianChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [fieldFunction, setFieldFunction] = useState<any>();
-  const [_init, setInit] = useState({})
-  const [nextOfKinInitialValues, setNextOfKinInitialValue] = useState({})
-  const [nationality, setNationality] = useState('')
+  const [_init, setInit] = useState({});
+  const [nextOfKinInitialValues, setNextOfKinInitialValue] = useState({});
+  const [nationality, setNationality] = useState("");
 
   const { params } = useParameters();
-  const { refetch, isRefetching, data: patientRelationships, isSuccess } = getPatientRelationships(params.id as string)
+  const {
+    refetch,
+    isRefetching,
+    data: patientRelationships,
+    isSuccess,
+  } = getPatientRelationships(params.id as string);
 
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
-  const handleGuardianChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGuardianChecked = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setGuardianChecked(event.target.checked);
   };
-
 
   useEffect(() => {
     if (isSuccess && patientRelationships?.length > 0) {
@@ -323,38 +350,33 @@ export const DemographicsForm: FC<Prop> = ({
       setNextOfKinInitialValue({
         [form.nextOfKinFirstName.name]: nextOfKin.names[0].given_name,
         [form.nextOfKinLastName.name]: nextOfKin.names[0].family_name,
-      })
-
+      });
     }
-  }, [isSuccess])
-
+  }, [isSuccess]);
 
   useEffect(() => {
-
     if (fieldFunction) {
       const { setFieldValue } = fieldFunction;
       const date = estimateBirthdate(formValues[form.age.name])?.iso;
       setFieldValue(form.dob.name, date);
     }
-
-
-  }, [formValues[form.age.name]])
+  }, [formValues[form.age.name]]);
 
   useEffect(() => {
     // const found = patients?.find((p) => p.uuid == params.id);
     if (fieldFunction) {
       const { setFieldValue } = fieldFunction;
       setFieldValue(form.firstName.name, searchedPatient.firstName);
-      setFieldValue(form.lastName.name, searchedPatient.lastName)
-      setFieldValue(form.gender.name, searchedPatient.gender)
-      setFieldValue(form.birthDateEstimated.name, false)
+      setFieldValue(form.lastName.name, searchedPatient.lastName);
+      setFieldValue(form.gender.name, searchedPatient.gender);
+      setFieldValue(form.birthDateEstimated.name, false);
     }
   }, [initialRegisteredPatient]);
 
   useEffect(() => {
+    console.log(fieldFunction, checked);
     if (fieldFunction && checked) {
       const { setFieldValue } = fieldFunction;
-
       setCurrentSelectedLocation(selectedLocation);
       setFieldValue(
         form.currentDistrict.name,
@@ -371,7 +393,11 @@ export const DemographicsForm: FC<Prop> = ({
     }
   }, [checked, formValues]);
 
-
+  // useEffect(() => {
+  //   console.log("district", formValues[form.currentDistrict.name]);
+  //   console.log("TA", formValues[form.currentTraditionalAuthority.name]);
+  //   console.log("village", formValues[form.currentVillage.name]);
+  // }, [formValues]);
 
   useEffect(() => {
     if (fieldFunction && guardianChecked) {
@@ -391,24 +417,22 @@ export const DemographicsForm: FC<Prop> = ({
     }
   }, [guardianChecked]);
 
-
   useEffect(() => {
-    let init = {
-
-    }
+    let init = {};
 
     if (registrationType == "local" || registrationType == "remote") {
-
       // search for relations
-      refetch()
+      refetch();
 
-      const homeDistrict = patient?.addresses[0]?.address1
-      const homeTraditionalAuthority = patient?.addresses[0]?.home_traditional_authority
+      const homeDistrict = patient?.addresses[0]?.address1;
+      const homeTraditionalAuthority =
+        patient?.addresses[0]?.home_traditional_authority;
       const homeVillage = patient?.addresses[0]?.address2;
 
       const currentDistrict = patient?.addresses[0]?.current_district;
-      const currentTraditionalAuthority = patient?.addresses[0]?.current_traditional_authority;
-      const currentVillage = patient?.addresses[0]?.current_village
+      const currentTraditionalAuthority =
+        patient?.addresses[0]?.current_traditional_authority;
+      const currentVillage = patient?.addresses[0]?.current_village;
 
       init = {
         [form.dob.name]: patient.birthdate,
@@ -418,26 +442,43 @@ export const DemographicsForm: FC<Prop> = ({
         [form.homeVillage.name]: homeVillage,
         [form.currentDistrict.name]: currentDistrict,
         [form.currentTraditionalAuthority.name]: currentTraditionalAuthority,
-        [form.currentVillage.name]: currentVillage
-      }
+        [form.currentVillage.name]: currentVillage,
+      };
 
-      setInit(init)
+      setInit(init);
 
-      const homeDistrictId = districts.find(d => d.name == homeDistrict)?.district_id;
-      const homeTraditionalAuthorityId = traditionalAuthorities.find(d => d.name == homeTraditionalAuthority)?.traditional_authority_id;
-      const homeVillageId = villages.find(d => d.name == homeVillage)?.village_id;
+      const homeDistrictId = districts.find(
+        (d) => d.name == homeDistrict
+      )?.district_id;
+      const homeTraditionalAuthorityId = traditionalAuthorities.find(
+        (d) => d.name == homeTraditionalAuthority
+      )?.traditional_authority_id;
+      const homeVillageId = villages.find(
+        (d) => d.name == homeVillage
+      )?.village_id;
 
-      const currentDistrictId = districts.find(d => d.name == currentDistrict)?.district_id;
-      const currentTraditionalAuthorityId = traditionalAuthorities.find(d => d.name == currentTraditionalAuthority)?.traditional_authority_id;
-      const currentVillageId = villages.find(d => d.name == currentVillage)?.village_id;
+      const currentDistrictId = districts.find(
+        (d) => d.name == currentDistrict
+      )?.district_id;
+      const currentTraditionalAuthorityId = traditionalAuthorities.find(
+        (d) => d.name == currentTraditionalAuthority
+      )?.traditional_authority_id;
+      const currentVillageId = villages.find(
+        (d) => d.name == currentVillage
+      )?.village_id;
 
-      setCurrentSelectedLocation({ village: homeVillageId, traditionalAuthority: homeTraditionalAuthorityId, district: homeDistrictId });
-      setSelectedLocation({ village: currentVillageId, traditionalAuthority: currentTraditionalAuthorityId, district: currentDistrictId })
-
+      setCurrentSelectedLocation({
+        village: homeVillageId,
+        traditionalAuthority: homeTraditionalAuthorityId,
+        district: homeDistrictId,
+      });
+      setSelectedLocation({
+        village: currentVillageId,
+        traditionalAuthority: currentTraditionalAuthorityId,
+        district: currentDistrictId,
+      });
     }
-
-  }, [])
-
+  }, []);
 
   return (
     <>
@@ -449,11 +490,13 @@ export const DemographicsForm: FC<Prop> = ({
       <FormikInit
         validationSchema={schema}
         initialValues={{
-          ...initialValues, ..._init, [form.firstName.name]: searchedPatient.firstName,
+          ...initialValues,
+          ..._init,
+          [form.firstName.name]: searchedPatient.firstName,
           [form.lastName.name]: searchedPatient.lastName,
-          [form.gender.name]: searchedPatient.gender == 'M' ? 'Male' : "Female",
+          [form.gender.name]: searchedPatient.gender == "M" ? "Male" : "Female",
           ...nextOfKinInitialValues,
-          [form.birthDateEstimated.name]: false
+          [form.birthDateEstimated.name]: false,
         }}
         onSubmit={onSubmit}
         submitButtonText="next"
@@ -504,36 +547,43 @@ export const DemographicsForm: FC<Prop> = ({
 
           <TextInputField
             sx={{
-              display: formValues[form.birthDateEstimated.name] == 'true' ? 'flex' : 'none'
+              display:
+                formValues[form.birthDateEstimated.name] == "true"
+                  ? "flex"
+                  : "none",
             }}
             name={form.age.name}
             id={form.age.name}
             label={form.age.label}
           />
 
-          {formValues[form.age.name] > 0 && formValues[form.birthDateEstimated.name] == 'true' && <>
-            <br />
-            <MainTypography variant="body1">
-              Estimated birth date  <b>{estimateBirthdate(formValues[form.age.name])?.readable}</b>
-            </MainTypography>
-            <br />
-
-          </>}
+          {formValues[form.age.name] > 0 &&
+            formValues[form.birthDateEstimated.name] == "true" && (
+              <>
+                <br />
+                <MainTypography variant="body1">
+                  Estimated birth date{" "}
+                  <b>
+                    {estimateBirthdate(formValues[form.age.name])?.readable}
+                  </b>
+                </MainTypography>
+                <br />
+              </>
+            )}
 
           <FormDatePicker
             sx={{
-              display: (formValues[form.birthDateEstimated.name] == false || formValues[form.birthDateEstimated.name] == 'false') ? 'flex' : 'none',
+              display:
+                formValues[form.birthDateEstimated.name] == false ||
+                formValues[form.birthDateEstimated.name] == "false"
+                  ? "flex"
+                  : "none",
               width: "100%",
-
             }}
             width={"100%"}
             label={form.dob.label}
             name={form.dob.name}
-    
           />
-
-
-
 
           {/* <ErrorMessage
             name={form.dob.name}
@@ -555,7 +605,7 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.nationality.name}
             label={form.nationality.label}
             getValue={(value) => {
-              setNationality(value)
+              setNationality(value);
             }}
             multiple={false}
             options={countries.map((c) => ({
@@ -568,43 +618,79 @@ export const DemographicsForm: FC<Prop> = ({
             label={form.homeDistrict.label}
             multiple={false}
             getValue={(value) => {
-              const district = districts.find(d => d.name == value);
+              const district = districts.find((d) => d.name == value);
               if (district) {
-                setSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+                setSelectedLocation((selection) => ({
+                  ...selection,
+                  district: district.district_id.toString(),
+                }));
               }
-
             }}
-            options={districts ? districts.map((d) => ({
-              id: d.name,
-              label: d.name,
-            })) : []}
+            options={
+              districts
+                ? districts.map((d) => ({
+                    id: d.name,
+                    label: d.name,
+                  }))
+                : []
+            }
           />
           <SearchComboBox
-            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
+            sx={{
+              display:
+                nationality.toLowerCase() == "malawian" ? "block" : "none",
+            }}
             name={form.homeTraditionalAuthority.name}
             label={form.homeTraditionalAuthority.label}
             multiple={false}
             getValue={(value) => {
-              const traditionalAuthority = traditionalAuthorities.find(d => d.name == value);
+              const traditionalAuthority = traditionalAuthorities.find(
+                (d) => d.name == value
+              );
 
               if (traditionalAuthority)
-                setSelectedLocation(selection => ({ ...selection, traditionalAuthority: traditionalAuthority.traditional_authority_id.toString() }))
+                setSelectedLocation((selection) => ({
+                  ...selection,
+                  traditionalAuthority:
+                    traditionalAuthority.traditional_authority_id.toString(),
+                }));
             }}
-
-            options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == selectedLocation.district).map(t => ({
-              id: t.name,
-              label: t.name
-            })) : []}
+            options={
+              traditionalAuthorities
+                ? traditionalAuthorities
+                    .filter(
+                      (t) =>
+                        t.district_id.toString() == selectedLocation.district
+                    )
+                    .map((t) => ({
+                      id: t.name,
+                      label: t.name,
+                    }))
+                : []
+            }
           />
           <SearchComboBox
-            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
+            sx={{
+              display:
+                nationality.toLowerCase() == "malawian" ? "block" : "none",
+            }}
             name={form.homeVillage.name}
             label={form.homeVillage.label}
             multiple={false}
-            options={villages ? villages.filter(v => v.traditional_authority_id.toString() == selectedLocation.traditionalAuthority).map((v: any) => ({
-              id: v.name,
-              label: v.name
-            })) : []}
+            options={
+              villages
+                ? villages
+                    .filter(
+                      (v) =>
+                        v.traditional_authority_id.toString() ==
+                        selectedLocation.traditionalAuthority
+                    )
+                    .map((v: any) => ({
+                      id: v.name,
+                      label: v.name,
+                    }))
+                : []
+            }
           />
         </RegistrationCard>
 
@@ -612,7 +698,6 @@ export const DemographicsForm: FC<Prop> = ({
           <RegistrationCardTitle>Current Location</RegistrationCardTitle>
           <WrapperBox>
             <FormControlLabel
-
               control={<Checkbox checked={checked} onChange={handleChecked} />}
               label="same as home location"
             />
@@ -623,43 +708,81 @@ export const DemographicsForm: FC<Prop> = ({
             // disabled={checked}
             multiple={false}
             getValue={(value) => {
-              const district = districts.find(d => d.name == value);
+              const district = districts.find((d) => d.name == value);
               if (district)
-                setCurrentSelectedLocation(selection => ({ ...selection, district: district.district_id.toString() }))
+                setCurrentSelectedLocation((selection) => ({
+                  ...selection,
+                  district: district.district_id.toString(),
+                }));
             }}
-            options={districts ? districts.map((d: any) => ({
-              id: d.name,
-              label: d.name,
-            })) : []}
+            options={
+              districts
+                ? districts.map((d: any) => ({
+                    id: d.name,
+                    label: d.name,
+                  }))
+                : []
+            }
           />
           <SearchComboBox
-            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
+            sx={{
+              display:
+                nationality.toLowerCase() == "malawian" ? "block" : "none",
+            }}
             name={form.currentTraditionalAuthority.name}
             label={form.currentTraditionalAuthority.label}
             getValue={(value) => {
-              const district = traditionalAuthorities.find(d => d.name == value);
+              const district = traditionalAuthorities.find(
+                (d) => d.name == value
+              );
               if (district)
-                setCurrentSelectedLocation(selection => ({ ...selection, traditionalAuthority: district.traditional_authority_id.toString() }))
+                setCurrentSelectedLocation((selection) => ({
+                  ...selection,
+                  traditionalAuthority:
+                    district.traditional_authority_id.toString(),
+                }));
             }}
             // disabled={checked}
             multiple={false}
-            options={traditionalAuthorities ? traditionalAuthorities.filter(t => t.district_id.toString() == currentSelectedLocation.district).map(t => ({
-              id: t.name,
-              label: t.name
-            })) : []}
+            options={
+              traditionalAuthorities
+                ? traditionalAuthorities
+                    .filter(
+                      (t) =>
+                        t.district_id.toString() ==
+                        currentSelectedLocation.district
+                    )
+                    .map((t) => ({
+                      id: t.name,
+                      label: t.name,
+                    }))
+                : []
+            }
           />
 
           <SearchComboBox
-            sx={{ display: nationality.toLowerCase() == 'malawian' ? "block" : 'none' }}
+            sx={{
+              display:
+                nationality.toLowerCase() == "malawian" ? "block" : "none",
+            }}
             name={form.currentVillage.name}
             label={form.currentVillage.label}
             // disabled={checked}
             multiple={false}
-            options={villages ? villages.filter(v => v.traditional_authority_id.toString() == currentSelectedLocation.traditionalAuthority).map((v: any) => ({
-              id: v.name,
-              label: v.name
-            })) : []}
-
+            options={
+              villages
+                ? villages
+                    .filter(
+                      (v) =>
+                        v.traditional_authority_id.toString() ==
+                        currentSelectedLocation.traditionalAuthority
+                    )
+                    .map((v: any) => ({
+                      id: v.name,
+                      label: v.name,
+                    }))
+                : []
+            }
           />
           <TextInputField
             name={form.closeLandMark.name}
@@ -706,29 +829,36 @@ export const DemographicsForm: FC<Prop> = ({
             ]}
           />
 
-          {guardianAvailable == "yes" && <>
-            <WrapperBox>
-              <FormControlLabel
-                control={<Checkbox checked={guardianChecked} onChange={handleGuardianChecked} />}
-                label="same as next of kin"
+          {guardianAvailable == "yes" && (
+            <>
+              <WrapperBox>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={guardianChecked}
+                      onChange={handleGuardianChecked}
+                    />
+                  }
+                  label="same as next of kin"
+                />
+              </WrapperBox>
+              <TextInputField
+                name={form.guardianFirstName.name}
+                id={form.guardianFirstName.name}
+                label={form.guardianFirstName.label}
               />
-            </WrapperBox>
-            <TextInputField
-              name={form.guardianFirstName.name}
-              id={form.guardianFirstName.name}
-              label={form.guardianFirstName.label}
-            />
-            <TextInputField
-              name={form.guardianLastName.name}
-              id={form.guardianLastName.name}
-              label={form.guardianLastName.label}
-            />
-            <TextInputField
-              name={form.guardianNumber.name}
-              id={form.guardianNumber.name}
-              label={form.guardianNumber.label}
-            />
-          </>}
+              <TextInputField
+                name={form.guardianLastName.name}
+                id={form.guardianLastName.name}
+                label={form.guardianLastName.label}
+              />
+              <TextInputField
+                name={form.guardianNumber.name}
+                id={form.guardianNumber.name}
+                label={form.guardianNumber.label}
+              />
+            </>
+          )}
           <OverlayLoader open={isRefetching} />
         </RegistrationCard>
       </FormikInit>

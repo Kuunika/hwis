@@ -1,14 +1,18 @@
 "use client";
 import { NotificationContainer, SearchComboBox } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import React, { useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
-  MainTypography,
   RadioGroupInput,
   TextInputField,
 } from "@/components";
@@ -22,6 +26,7 @@ import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { CPRDialogForm } from "./cprDialogForm";
 
 type Prop = {
   onSubmit: () => void;
@@ -33,7 +38,7 @@ const form = {
   },
   pulseInfo: {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
-    label: "Is the patient have a pulse",
+    label: "Does the patient have a pulse",
   },
   pulseRate: {
     name: concepts.PULSE_RATE_WEAK,
@@ -95,10 +100,10 @@ const form = {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is There Any Other Abnormalites",
   },
-  anyOtherAbnormalitiesOnAbdomen: {
-    name: concepts.IS_THERE_OTHER_OBDONORMALITIES,
-    label: "Is There Any Other Abnormalities on the Abdomen",
-  },
+  // anyOtherAbnormalitiesOnAbdomen: {
+  //   name: concepts.IS_THERE_OTHER_OBDONORMALITIES,
+  //   label: "Is There Any Other Abnormalities on the Abdomen",
+  // },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
@@ -118,6 +123,26 @@ const form = {
   reasonNotDone: {
     name: concepts.DESCRIPTION,
     label: "Reason Not Done",
+  },
+  mucousAbnormal: {
+    name: concepts.MUCOUS_ABNORMAL,
+    label: "Reason Not Done",
+  },
+  bloodPressureNotDoneOther: {
+    name: concepts.SPECIFY,
+    label: "Specify",
+  },
+  siteOfCannulation: {
+    name: concepts.CANNULATION_SITE,
+    label: "Cannulation Site",
+  },
+  diagramCannulationSite: {
+    name: concepts.DIAGRAM_CANNULATION_SITE,
+    label: "Cannulation Site",
+  },
+  pulse: {
+    name: concepts.PULSE_RATE,
+    label: "Pulse",
   },
 };
 
@@ -180,24 +205,36 @@ const schema = yup.object({
   [form.anyOtherAbnormalities.name]: yup
     .string()
     .label(form.anyOtherAbnormalities.label),
-  [form.anyOtherAbnormalitiesOnAbdomen.name]: yup
-    .string()
-    .label(form.anyOtherAbnormalitiesOnAbdomen.label),
+  // [form.anyOtherAbnormalitiesOnAbdomen.name]: yup
+  //   .string()
+  //   .label(form.anyOtherAbnormalitiesOnAbdomen.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
   [form.assessPeripheries.name]: yup
     .string()
     .label(form.assessPeripheries.label),
   [form.reasonNotDone.name]: yup.string().label(form.reasonNotDone.label),
+  [form.mucousAbnormal.name]: yup.string().label(form.mucousAbnormal.label),
+  [form.bloodPressureNotDoneOther.name]: yup
+    .string()
+    .label(form.bloodPressureNotDoneOther.label),
+  [form.siteOfCannulation.name]: yup
+    .string()
+    .label(form.siteOfCannulation.label),
+  [form.diagramCannulationSite.name]: yup
+    .string()
+    .label(form.diagramCannulationSite.label),
+  [form.pulse.name]: yup.number().label(form.pulse.label),
 });
 
 const initialValues = getInitialValues(form);
 
 const sizeOfCatheter = [
-  { label: "14G", value: "14G" },
-  { label: "16G", value: "16G" },
-  { label: "18G", value: "18G" },
-  { label: "20G", value: "20G" },
-  { label: "22G", value: "22G" },
+  { label: "14G", id: concepts.G14 },
+  { label: "16G", id: concepts.G16 },
+  { label: "18G", id: concepts.G18 },
+  { label: "20G", id: concepts.G20 },
+  { label: "22G", id: concepts.G22 },
+  { label: "Central Line", id: concepts.CENTRAL_LINE },
 ];
 const sizeOfCapillary = [
   { label: "Less than 3 seconds", value: "Less than 3 seconds" },
@@ -205,10 +242,16 @@ const sizeOfCapillary = [
 ];
 const sizeOfMucous = [
   { label: "Normal", value: concepts.NORMAL },
-  { label: "Pale", value: concepts.PALE },
-  { label: "Cyanosis", value: concepts.CYANOSIS },
+  { label: "Abnormal", value: concepts.ABNORMAL },
+  // { label: "Pale", value: concepts.PALE },
+  // { label: "Cyanosis", value: concepts.CYANOSIS },
 ];
-
+const mucousAbnormal = [
+  { label: "Pale", id: concepts.PALE },
+  { label: "Dry", id: concepts.DRY },
+  { label: "Cyanosis", id: concepts.CYANOSIS },
+  { label: "Jaundice", id: concepts.JAUNDICE },
+];
 const pulseRates = [
   { label: "Weak", value: concepts.WEAK },
   { label: "Strong, Regular", value: concepts.STRONG_REGULAR },
@@ -238,11 +281,27 @@ const notDoneReasons = [
   { label: "Other", id: concepts.OTHER },
 ];
 
+const sitesOfCannulation = [
+  { label: "Left", id: concepts.LEFT },
+  { label: "Right", id: concepts.RIGHT },
+  // { label: "Central Line", id: concepts.CENTRAL_LINE },
+];
+const diagramSitesOfCannulation = [
+  { label: "Antecubital fossa", id: concepts.ANTECUBITAL_FOSSA },
+  { label: "Hand", id: concepts.HAND },
+  { label: "Wrist", id: concepts.WRIST },
+  { label: "Forearm", id: concepts.WRIST },
+  { label: "Foot", id: concepts.FOOT },
+  { label: "External Jugular", id: concepts.EXTERNAL_JUGULAR },
+];
+
 export const Circulation = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
   const [legImage, setLegImage] = useState<Array<any>>([]);
   const [abdomenImage, setAbdomenImage] = useState<Array<any>>([]);
+  const [cprDialog, setCprDialog] = useState(false);
+  // const [bloodNotDoneOther, setBloodNotDoneOther] = useState(false);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.CIRCULATION_ASSESSMENT,
@@ -264,17 +323,41 @@ export const Circulation = ({ onSubmit }: Prop) => {
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(legImage),
       },
-      {
-        concept: form.anyOtherAbnormalitiesOnAbdomen.name,
-        value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
-        obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abdomenImage),
-      },
+      // {
+      //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
+      //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
+      //   obsDatetime: getDateTime(),
+      //   group_members: flattenImagesObs(abdomenImage),
+      // },
     ];
+    const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
+      formValues[form.mucousAbnormal.name],
+      form.mucousAbnormal.name,
+      getDateTime()
+    );
+    const sizeOfCatheterObs = mapSearchComboOptionsToConcepts(
+      formValues[form.mucousAbnormal.name],
+      form.mucousAbnormal.name,
+      getDateTime()
+    );
+
     delete formValues[form.abnormalitiesInfo.name];
     delete formValues[form.femurAndTibiaNormalInfo.name];
+    delete formValues[form.mucousAbnormal.name];
+    delete formValues[form.catheterInfo.name];
 
-    await handleSubmit([...getObservations(values, getDateTime()), ...obs]);
+    await handleSubmit([
+      ...getObservations(values, getDateTime()),
+      ...obs,
+      ...mucusAbnormalitiesObs,
+      ...sizeOfCatheterObs,
+    ]);
+  };
+  const checkCanulationSite = (valueArray: any, value: any) => {
+    if (Array.isArray(valueArray)) {
+      return valueArray.find((item) => item.id == value);
+    }
+    return false;
   };
   return (
     <ContainerLoaderOverlay loading={isLoading}>
@@ -296,6 +379,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
               name={form.pulseInfo.name}
               label={form.pulseInfo.label}
               options={radioOptions}
+              getValue={(value) => {
+                if (value == NO) {
+                  setCprDialog(true);
+                }
+              }}
             />
           </FieldsContainer>
           {formValues[form.bleedingInfo.name] == YES && (
@@ -317,12 +405,22 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.pulseInfo.name] == NO && (
             <>
               <NotificationContainer message="Start cardiopulmonary resuscitation" />
+              <CPRDialogForm
+                open={cprDialog}
+                onClose={() => setCprDialog(false)}
+              />
             </>
           )}
 
           {formValues[form.pulseInfo.name] == YES && (
             <>
               <br />
+              <TextInputField
+                name={form.pulse.name}
+                id={form.pulse.name}
+                label={form.pulse.label}
+                sx={{ width: "100%" }}
+              />
               <FieldsContainer>
                 <RadioGroupInput
                   name={form.pulseRate.name}
@@ -355,6 +453,13 @@ export const Circulation = ({ onSubmit }: Prop) => {
               ]}
             />
           </FieldsContainer>
+          {formValues[form.mucousMembranesInfo.name] == concepts.ABNORMAL && (
+            <SearchComboBox
+              label="Mucus Abnormal"
+              name={form.mucousAbnormal.name}
+              options={mucousAbnormal}
+            />
+          )}
         </FormFieldContainerLayout>
 
         <FormFieldContainerLayout title="Blood Pressure">
@@ -370,12 +475,24 @@ export const Circulation = ({ onSubmit }: Prop) => {
             />
           </FieldsContainer>
           {formValues[form.bloodPressureMeasured.name] == concepts.NOT_DONE && (
-            <SearchComboBox
-              multiple={false}
-              name={form.reasonNotDone.name}
-              label={form.reasonNotDone.label}
-              options={notDoneReasons}
-            />
+            <>
+              <SearchComboBox
+                multiple={false}
+                name={form.reasonNotDone.name}
+                label={form.reasonNotDone.label}
+                options={notDoneReasons}
+              />
+              {formValues[form.reasonNotDone.name] == concepts.OTHER && (
+                <TextInputField
+                  multiline
+                  rows={3}
+                  name={form.bloodPressureNotDoneOther.name}
+                  id={form.bloodPressureNotDoneOther.name}
+                  label={form.bloodPressureNotDoneOther.label}
+                  sx={{ width: "100%", mt: "1ch" }}
+                />
+              )}
+            </>
           )}
           {formValues[form.bloodPressureMeasured.name] ==
             concepts.BP_NOT_RECORDABLE && (
@@ -409,24 +526,42 @@ export const Circulation = ({ onSubmit }: Prop) => {
               </FieldsContainer>
               {formValues[form.bloodPressureSystolic.name] &&
                 formValues[form.bloodPressureDiastolic.name] && (
-                  <>
-                    <Box>
-                      <Typography variant="subtitle1">
-                        Mean Arterial Pressure:{" "}
-                        {(Number(formValues[form.bloodPressureDiastolic.name]) *
+                  <Box>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        color:
+                          Math.round(
+                            (Number(
+                              formValues[form.bloodPressureDiastolic.name]
+                            ) *
+                              2 +
+                              Number(
+                                formValues[form.bloodPressureSystolic.name]
+                              )) /
+                              3
+                          ) < 65
+                            ? "red"
+                            : "inherit", // Use default text color if MAP is 65 or above
+                      }}
+                    >
+                      Mean Arterial Pressure:{" "}
+                      {Math.round(
+                        (Number(formValues[form.bloodPressureDiastolic.name]) *
                           2 +
                           Number(formValues[form.bloodPressureSystolic.name])) /
-                          3}{" "}
-                        mmHg
-                      </Typography>
-                    </Box>
-                  </>
+                          3
+                      )}{" "}
+                      mmHg
+                    </Typography>
+                  </Box>
                 )}
+
               <br />
             </>
           )}
         </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Trauma">
+        <FormFieldContainerLayout title="Circulation Specific Trauma">
           <RadioGroupInput
             row
             name={form.traumatizedInfo.name}
@@ -478,37 +613,108 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.intravenousAccess.name] == YES && (
             <>
               <br />
-              <FieldsContainer>
-                <RadioGroupInput
-                  name={form.catheterInfo.name}
-                  label={form.catheterInfo.label}
-                  options={sizeOfCatheter}
-                />
-                <MainTypography>Diagram</MainTypography>
-              </FieldsContainer>
+
+              <SearchComboBox
+                multiple
+                name={form.catheterInfo.name}
+                label={form.catheterInfo.label}
+                options={sizeOfCatheter}
+              />
+              <br />
+              <SearchComboBox
+                multiple
+                name={form.siteOfCannulation.name}
+                label={form.siteOfCannulation.label}
+                options={sitesOfCannulation}
+              />
+              {checkCanulationSite(
+                formValues[form.siteOfCannulation.name],
+                concepts.LEFT
+              ) && (
+                <>
+                  <Typography my={2} variant="h6">
+                    Left
+                  </Typography>
+                  <SearchComboBox
+                    name={form.diagramCannulationSite.name}
+                    label={form.diagramCannulationSite.label}
+                    options={[
+                      ...diagramSitesOfCannulation,
+                      ...(checkCanulationSite(
+                        formValues[form.catheterInfo.name],
+                        concepts.CENTRAL_LINE
+                      )
+                        ? [
+                            { id: concepts.FEMORAL, label: "Femoral" },
+                            { id: concepts.SUBCLAVIAN, label: "Subclavian" },
+                            {
+                              id: concepts.INTERNAL_JUGULAR,
+                              label: "Internal Jugular",
+                            },
+                          ]
+                        : []),
+                    ]}
+                  />
+                </>
+              )}
+
+              {checkCanulationSite(
+                formValues[form.siteOfCannulation.name],
+                concepts.RIGHT
+              ) && (
+                <>
+                  <Typography my={2} variant="h6">
+                    Right
+                  </Typography>
+                  <SearchComboBox
+                    name={form.diagramCannulationSite.name}
+                    label={form.diagramCannulationSite.label}
+                    options={[
+                      ...diagramSitesOfCannulation,
+                      ...(checkCanulationSite(
+                        formValues[form.catheterInfo.name],
+                        concepts.CENTRAL_LINE
+                      )
+                        ? [
+                            { id: concepts.FEMORAL, label: "Femoral" },
+                            { id: concepts.SUBCLAVIAN, label: "Subclavian" },
+                            {
+                              id: concepts.INTERNAL_JUGULAR,
+                              label: "Internal Jugular",
+                            },
+                          ]
+                        : []),
+                    ]}
+                  />
+                </>
+              )}
+
               <br />
             </>
           )}
         </FormFieldContainerLayout>
-        <FormFieldContainerLayout last={true} title="Abdominal">
+        <FormFieldContainerLayout
+          last={true}
+          title="Circulation Specific Abdominal Findings"
+        >
           <FieldsContainer sx={{ alignItems: "flex-start" }}>
             <RadioGroupInput
               name={form.abdnomenDistention.name}
               label={form.abdnomenDistention.label}
               options={radioOptions}
             />
-            <RadioGroupInput
+            {/* <RadioGroupInput
               name={form.anyOtherAbnormalitiesOnAbdomen.name}
               label={form.anyOtherAbnormalitiesOnAbdomen.label}
               options={radioOptions}
-            />
-          </FieldsContainer>
-          {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
+            /> */}
+            {/* </FieldsContainer> */}
+            {/* {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
             <>
               <AbdomenImage onValueChange={setAbdomenImage} />
             </>
-          )}
-          <FieldsContainer>
+          )} */}
+            {/* <FieldsContainer> */}
             <RadioGroupInput
               name={form.abnormalitiesInfo.name}
               label={form.abnormalitiesInfo.label}

@@ -26,7 +26,7 @@ const initialValues = {
 
 export default function AbscondedForm() {
     const handleSubmit = (values: any) => {
-        console.log("Form Values: ", values);
+   
         alert("Form Submitted!");
     };
 

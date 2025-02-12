@@ -57,7 +57,7 @@ const form = {
   },
   oropharyngealSize: {
     name: concepts.OROPHARYNGEAL_AIRWAY,
-    label: "oropharyngeal Airway Size",
+    label: "Oropharyngeal Airway Size",
   },
 };
 
@@ -71,10 +71,10 @@ const schema = Yup.object().shape({
     .label(form.isAirwayPatent.label),
   [form.headBlocks.name]: Yup.string().label(form.headBlocks.label),
   [form.neckCollar.name]: Yup.string().label(form.neckCollar.label),
-  [form.airWayThreatenedReason.name]: Yup.string().label(
+  [form.airWayThreatenedReason.name]: Yup.array().label(
     form.airWayThreatenedReason.label
   ),
-  [form.intervention.name]: Yup.string().label(form.intervention.label),
+  [form.intervention.name]: Yup.array().label(form.intervention.label),
   [form.weakness.name]: Yup.string().label(form.weakness.label),
   [form.nasopharyngealSize.name]: Yup.string().label(
     form.nasopharyngealSize.label
@@ -110,6 +110,22 @@ const airwayInterventionsList = [
     label:
       "Airway adjunct (Oropharyngeal airway and size / nasopharyngeal airway)",
   },
+  {
+    id: "Laryngeal mask airway (LMA) insertion",
+    label: "Laryngeal mask airway (LMA) insertion",
+  },
+  {
+    id: "Endotracheal intubation",
+    label: "Endotracheal intubation",
+  },
+  {
+    id: "Performed Cricothyroidotomy(Surgical Airway)",
+    label: "Performed Cricothyroidotomy(Surgical Airway)",
+  },
+  {
+    id: "Performed tracheostomy",
+    label: "Performed tracheostomy",
+  },
 ];
 
 const initialsValues = getInitialValues(form);
@@ -125,11 +141,43 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     encounters.AIRWAY_ASSESSMENT,
     onSubmit
   );
-
-  console.log({ isLoading });
+  const [specify, setSpecify] = useState(false);
+  const [showNasopharyngealSize, setShowNasopharyngealSize] = useState(false);
 
   const handleSubmitForm = async (values: any) => {
-    await handleSubmit(getObservations(values, getDateTime()));
+    const formValues = { ...values };
+    const interventions = formValues[form.intervention.name];
+    let interventionsObs: any = [];
+    if (Array.isArray(interventions)) {
+      interventionsObs = interventions.map((intervention) => {
+        return {
+          concept: form.intervention.name,
+          value: intervention.id,
+          obsDateTime: getDateTime(),
+        };
+      });
+    }
+
+    const reasons = formValues[form.airWayThreatenedReason.name];
+    let reasonsObs: any = [];
+    if (Array.isArray(reasons)) {
+      reasonsObs = reasons.map((reasons) => {
+        return {
+          concept: form.airWayThreatenedReason.name,
+          value: reasons.id,
+          obsDateTime: getDateTime(),
+        };
+      });
+    }
+
+    delete formValues[form.airWayThreatenedReason.name];
+    delete formValues[form.intervention.name];
+
+    await handleSubmit([
+      ...getObservations(formValues, getDateTime()),
+      ...interventionsObs,
+      ...reasonsObs,
+    ]);
   };
 
   return (
@@ -141,7 +189,6 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         submitButtonText="Next"
       >
         <FormValuesListener getValues={setFormValues} />
-        {/* <OverlayLoader open={isLoading} /> */}
         <FormFieldContainerLayout title="Airway Patent">
           <FieldsContainer sx={{ alignItems: "flex-start" }}>
             <RadioGroupInput
@@ -152,26 +199,31 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
                 { label: "Threatened", value: concepts.THREATENED },
               ]}
             />
-            {formValues[form.isAirwayPatent.name] == YES && (
-              <RadioGroupInput
-                name={form.isPatientInjured.name}
-                label={form.isPatientInjured.label}
-                options={radioOptions}
-              />
-            )}
+            {/* {formValues[form.isAirwayPatent.name] == YES && ( */}
+            <RadioGroupInput
+              name={form.isPatientInjured.name}
+              label={form.isPatientInjured.label}
+              options={radioOptions}
+            />
+            {/* )} */}
           </FieldsContainer>
-          {formValues[form.isAirwayPatent.name] === concepts.THREATENED && (
+          {(formValues[form.isAirwayPatent.name] === concepts.THREATENED ||
+            formValues[form.isAirwayPatent.name] === concepts.NO) && (
             <>
               <FieldsContainer sx={{ my: "1ch" }}>
                 <SearchComboBox
                   name={form.airWayThreatenedReason.name}
                   label={form.airWayThreatenedReason.label}
                   options={airwayThreatenedReasons}
-                  multiple={false}
+                  getValue={(values: Array<any>) => {
+                    setSpecify(
+                      Boolean(values.find((v) => v.id == concepts.OTHER))
+                    );
+                  }}
+                  multiple={true}
                 />
               </FieldsContainer>
-              {formValues[form.airWayThreatenedReason.name] ==
-                concepts.OTHER && (
+              {specify && (
                 <>
                   <br />
                   <FieldsContainer>
@@ -189,37 +241,38 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         </FormFieldContainerLayout>
 
         <br />
-        {formValues[form.isPatientInjured.name] == YES &&
-          formValues[form.isAirwayPatent.name] == YES && (
-            <>
-              <NotificationContainer message="Please stabilize the C-Spine" />
-              <br />
+        {formValues[form.isPatientInjured.name] == YES && (
+          // formValues[form.isAirwayPatent.name] == YES &&
+          <>
+            <NotificationContainer message="Please stabilize the C-Spine" />
+            <br />
 
-              <FormFieldContainerLayout
-                last={true}
-                title="Neck Collar and Head Blocks"
-              >
-                <FieldsContainer sx={{ alignItems: "flex-start" }}>
-                  <RadioGroupInput
-                    name={form.neckCollar.name}
-                    label={form.neckCollar.label}
-                    options={[
-                      ...radioOptions,
-                      { label: "Not Indicated", value: concepts.NOT_INDICATED },
-                    ]}
-                  />
-                  <RadioGroupInput
-                    name={form.headBlocks.name}
-                    label={form.headBlocks.label}
-                    options={radioOptions}
-                  />
-                </FieldsContainer>
-              </FormFieldContainerLayout>
-              <br />
-            </>
-          )}
+            <FormFieldContainerLayout
+              last={true}
+              title="Neck Collar and Head Blocks"
+            >
+              <FieldsContainer sx={{ alignItems: "flex-start" }}>
+                <RadioGroupInput
+                  name={form.neckCollar.name}
+                  label={form.neckCollar.label}
+                  options={[
+                    ...radioOptions,
+                    { label: "Not Indicated", value: concepts.NOT_INDICATED },
+                  ]}
+                />
+                <RadioGroupInput
+                  name={form.headBlocks.name}
+                  label={form.headBlocks.label}
+                  options={radioOptions}
+                />
+              </FieldsContainer>
+            </FormFieldContainerLayout>
+            <br />
+          </>
+        )}
 
-        {formValues[form.isAirwayPatent.name] === NO && (
+        {(formValues[form.isAirwayPatent.name] === NO ||
+          formValues[form.isAirwayPatent.name] === concepts.THREATENED) && (
           <>
             <FormFieldContainerLayout last={true} title="Interventions">
               <FieldsContainer>
@@ -227,11 +280,18 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
                   name={form.intervention.name}
                   label={form.intervention.label}
                   options={airwayInterventionsList}
-                  multiple={false}
+                  multiple={true}
+                  getValue={(values: Array<any>) => {
+                    setShowNasopharyngealSize(
+                      Boolean(
+                        values.find((v) => v.id == concepts.OROPHARYNGEAL)
+                      )
+                    );
+                  }}
                 />
               </FieldsContainer>
               <br />
-              {formValues[form.intervention.name] == concepts.OROPHARYNGEAL && (
+              {showNasopharyngealSize && (
                 <>
                   <FieldsContainer sx={{ alignItems: "flex-start" }}>
                     <RadioGroupInput
