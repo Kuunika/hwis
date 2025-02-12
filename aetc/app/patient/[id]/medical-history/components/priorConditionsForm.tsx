@@ -7,18 +7,16 @@ import {
     FormikInit,
     FormValuesListener,
     MainButton,
+    RadioGroupInput,
     SearchComboBox,
     TextInputField,
     WrapperBox,
   } from "@/components";
-  import { Checkbox, IconButton, TableCell } from "@mui/material";
+  import { Checkbox, IconButton, RadioGroup, TableCell } from "@mui/material";
   import { FaPlus, FaMinus } from "react-icons/fa6";
   import { useEffect, useState } from "react";
   import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import LabelledCheckbox from "@/components/form/labelledCheckBox";
-import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Field, FieldArray, getIn } from "formik";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
@@ -35,14 +33,14 @@ import { MdOutlineClose } from "react-icons/md";
   type Condition = {
     name: string;
     date: string;
-    onTreatment: boolean;
+    onTreatment: string;
     additionalDetails: string;
   };
   
   const conditionTemplate: Condition = {
     name: "",
     date:"",
-    onTreatment:false,
+    onTreatment:"",
     additionalDetails:""
   };
   
@@ -80,7 +78,7 @@ import { MdOutlineClose } from "react-icons/md";
           .typeError("Invalid date format")
           .max(new Date(), "Date of diagnosis cannot be in the future"),
   
-        onTreatment: Yup.boolean().required("Treatment status is required"),
+        onTreatment: Yup.string().required("Treatment status is required"),
 
         additionalDetails: Yup.string().optional(),
       })
@@ -214,9 +212,14 @@ import { MdOutlineClose } from "react-icons/md";
                         <ErrorMessage name={priorConditionsFormConfig.conditions_diagnosis_date(index).name} />
                       </div>
 
-                      <LabelledCheckbox
+                      <RadioGroupInput
                     name={priorConditionsFormConfig.conditions_on_treatment(index).name}
-                    label={priorConditionsFormConfig.conditions_on_treatment(index).label}
+                    options={[
+                      { value: "Yes", label: "Yes" },
+                      { value: "No", label: "No" },
+                      { value: "Unknown", label: "Unknown" },
+                    ]}
+                    label= {priorConditionsFormConfig.conditions_on_treatment(index).label}
                   />
                   <div style={{ color: "red", fontSize: "0.875rem" }}>
                     <ErrorMessage
