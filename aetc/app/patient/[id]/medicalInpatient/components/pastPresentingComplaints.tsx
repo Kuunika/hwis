@@ -29,6 +29,8 @@ function PresentingComplaintsPanel() {
     const complaintsEncounters = Array.isArray(complaintsData)
     ? complaintsData.filter((item) => item.encounter_type?.name === 'PRESENTING COMPLAINTS')
     : [];
+      const [showAll, setShowAll] = useState(false);
+      const displayedObservations = showAll ? observations : observations.slice(0, 3);
 
   useEffect(() => {
     if (!historyLoading) {
@@ -69,7 +71,7 @@ return (
         <Panel title="Presenting Complaints">
             <WrapperBox>
             <div>
-              {observations.map(item => (
+              {displayedObservations.map(item => (
                   <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
                       {(item.name == 'Presenting complaint') && <p>{item.value}</p>}
                       {item.children && item.children.length > 0 && (
@@ -83,6 +85,20 @@ return (
                       )}
                   </div>
               ))}
+                          {!showAll && observations.length > 3 && (
+                <button 
+                    onClick={() => setShowAll(true)} 
+                    style={{ color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
+                >
+                    View More ...
+                </button>
+            )}
+            {showAll && (                <button 
+                    onClick={() => setShowAll(false)} 
+                    style={{color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
+                >
+                    View Less
+                </button>)}
             </div>
             </WrapperBox>
         </Panel>

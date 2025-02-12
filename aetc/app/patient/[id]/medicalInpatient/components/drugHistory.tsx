@@ -25,7 +25,8 @@ function DrugHistoryPanel() {
     const { params } = useParameters();
     const { data: medicationData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-
+    const [showAll, setShowAll] = useState(false);
+    const displayedObservations = showAll ? observations : observations.slice(0, 3);
     const medicationEncounters = Array.isArray(medicationData)
     ? medicationData.filter((item) => item.encounter_type?.name === 'PRESCRIPTION')
     : [];
@@ -68,7 +69,7 @@ return (
         <Panel title="Drug History">
             <WrapperBox>
             <div>
-              {observations.map(item => (
+              {displayedObservations.map(item => (
                   <div key={item.obs_id} style={{  marginTop:'20px', color:'rgba(0, 0, 0, 0.6)' }}>
                     <b>{item.name}</b>
                       {item.children && item.children.length > 0 && (
@@ -82,6 +83,20 @@ return (
                       )}
                   </div>
               ))}
+              {!showAll && observations.length > 3 && (
+                <button 
+                    onClick={() => setShowAll(true)} 
+                    style={{ color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
+                >
+                    View More ...
+                </button>
+            )}
+            {showAll && (                <button 
+                    onClick={() => setShowAll(false)} 
+                    style={{color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
+                >
+                    View Less
+                </button>)}
             </div>
             </WrapperBox>
         </Panel>
