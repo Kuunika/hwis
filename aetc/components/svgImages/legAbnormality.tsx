@@ -1,6 +1,6 @@
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { LegAbnormality } from "@/assets/lowerLimbAnterior";
+import { LowerLimbAnterior } from "@/assets/lowerLimbAnterior";
 import { DataBox, LegDeformityForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
@@ -50,7 +50,7 @@ export function LegAbnormalityImage({
 
   return (
     <>
-      <LegAbnormality ref={containerRef} />
+      <LowerLimbAnterior ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />
