@@ -17,7 +17,10 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import { AbdomenImage, SecondaryAbdomenImage } from "@/components/svgImages";
+import {
+  AbdomenImageWithOtherForm,
+  SecondaryAbdomenImage,
+} from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
@@ -32,42 +35,7 @@ const form = {
     name: concepts.ABNORMALITIES_PRESENT,
     label: "Are there abnormalities",
   },
-  tenderness: {
-    name: concepts.TENDERNESS,
-    label: "Tenderness",
-  },
-  hepatomegaly: {
-    name: concepts.HEPATOMEGALY,
-    label: "Hepatomegaly",
-  },
-  hepatomegalyDescription: {
-    name: concepts.HEPATOMEGALY_DESCRIPTION,
-    label: "Hepatomegaly Description",
-  },
-  splenomegaly: {
-    name: concepts.SPLENOMEGALY,
-    label: "Splenomegaly",
-  },
-  splenomegalyDescription: {
-    name: concepts.SPLENOMEGALY_DESCRIPTION,
-    label: "Splenomegaly Description",
-  },
-  kidneyBallotable: {
-    name: concepts.KIDNEYS_BALLOTABLE,
-    label: "Kidney Ballotable",
-  },
-  fullBladder: {
-    name: concepts.FULL_BLADDER,
-    label: "Full Bladder",
-  },
-  otherMasses: {
-    name: concepts.OTHER_MASSES,
-    label: "Other Masses",
-  },
-  otherMassesDescription: {
-    name: concepts.OTHER_MASSES_DESCRIPTION,
-    label: "Other Masses Description",
-  },
+
   shiftingDullness: {
     name: concepts.SHIFTING_DULLNESS,
     label: "Shifting Dullness",
@@ -114,19 +82,20 @@ const form = {
   },
   unusualAppearance: {
     name: concepts.UNUSUAL_SIZE_APPEARANCE_OF_CLITORIS,
-    label: "is there unusual appearance of clitoris",
+    label: "Is the clitoris of unusual size/appearance",
   },
   urethralMeatus: {
     name: concepts.URETHRAL_MEATUS,
-    label: "Urethral Meatus",
+    label: "Are there any signs discharge from the urethra meatus",
   },
   vagina: {
     name: concepts.VAGINA,
-    label: "Vagina",
+    label: "Does the vagina have visible bleeding, discharge, lacerations)",
   },
   scrotum: {
     name: concepts.SCROTUM,
-    label: "Scrotum",
+    label:
+      "Does the scrotum have any erythema, ecchymoses, abrasions, swelling ",
   },
   periymen: {
     name: concepts.PERIHYMEN,
@@ -180,6 +149,65 @@ const form = {
     name: concepts.SCROTUM_NOTES,
     label: "Scrotum Notes",
   },
+  otherDigitalGeneral: {
+    name: concepts.OTHER_RECTAL_GENERAL,
+    label: "Other",
+  },
+  prostateOther: {
+    name: concepts.PROSTRATE_DESCRIPTION,
+    label: "Prostrate Description",
+  },
+  sphincterOther: {
+    name: concepts.SPHINCTER_OTHER,
+    label: "Sphincter Description",
+  },
+  tenderness: {
+    name: concepts.TENDERNESS,
+    label: "Tenderness",
+  },
+  laceration: {
+    name: concepts.LACERATION,
+    label:
+      "Are there any ulcerations/lacerations, bite marks of any kind present ",
+  },
+  lacerationNotes: {
+    name: concepts.LACERATION_NOTES,
+    label: "Notes",
+  },
+  hematomas: {
+    name: concepts.HEMATOMAS,
+    label: "Are there any signs of  oedema, hematomas, discolourations",
+  },
+  hematomasNotes: {
+    name: concepts.HEMATOMAS_NOTES,
+    label: "Notes",
+  },
+  inflammation: {
+    name: concepts.INFLAMMATION,
+    label:
+      "Are there any signs of inflammation, edema, lesions around periurethral tissue, bleeding",
+  },
+  inflammationNotes: {
+    name: concepts.INFLAMMATION_NOTES,
+    label: "Notes",
+  },
+
+  urethraMeatus: {
+    name: concepts.URETHRAL_MEATUS,
+    label: "Are there any signs discharge from the urethra meatus",
+  },
+  descriptionUrethral: {
+    name: concepts.URETHRAL_NOTES,
+    label: "Urethral Notes",
+  },
+  perihymen: {
+    name: concepts.PERIHYMEN,
+    label: "Does the perihymen have abrasions, lacerations scarring",
+  },
+  perihymenNotes: {
+    name: concepts.PERIHYMEN_NOTES,
+    label: "Notes",
+  },
 };
 
 type Prop = {
@@ -193,31 +221,6 @@ const schema = Yup.object().shape({
   [form.abnormalitiesPresent.name]: Yup.string()
     .required()
     .label(form.abnormalitiesPresent.label),
-  [form.tenderness.name]: Yup.string().required().label(form.tenderness.label),
-  [form.hepatomegaly.name]: Yup.string()
-    .required()
-    .label(form.hepatomegaly.label),
-  [form.hepatomegalyDescription.name]: Yup.string().label(
-    form.hepatomegalyDescription.label
-  ),
-  [form.splenomegaly.name]: Yup.string()
-    .required()
-    .label(form.splenomegaly.label),
-  [form.splenomegalyDescription.name]: Yup.string().label(
-    form.splenomegalyDescription.label
-  ),
-  [form.kidneyBallotable.name]: Yup.string()
-    .required()
-    .label(form.kidneyBallotable.label),
-  [form.fullBladder.name]: Yup.string()
-    .required()
-    .label(form.fullBladder.label),
-  [form.otherMasses.name]: Yup.string()
-    .required()
-    .label(form.otherMasses.label),
-  [form.otherMassesDescription.name]: Yup.string().label(
-    form.otherMassesDescription.label
-  ),
   [form.shiftingDullness.name]: Yup.string()
     .required()
     .label(form.shiftingDullness.label),
@@ -229,7 +232,7 @@ const schema = Yup.object().shape({
     .label(form.bowelSounds.label)
     .required(),
   [form.general.name]: Yup.string().label(form.general.label).required(),
-  [form.prostate.name]: Yup.string().label(form.prostate.label).required(),
+  [form.prostate.name]: Yup.array().label(form.prostate.label).required(),
   [form.mass.name]: Yup.string().label(form.mass.label).required(),
   [form.massDescription.name]: Yup.string().label(form.massDescription.label),
   [form.sphincterTone.name]: Yup.string()
@@ -267,23 +270,48 @@ const schema = Yup.object().shape({
     form.urethralMeatusNotes.label
   ),
   [form.scrotumNotes.name]: Yup.string().label(form.scrotumNotes.label),
+  [form.otherDigitalGeneral.name]: Yup.string().label(
+    form.otherDigitalGeneral.label
+  ),
+  [form.prostateOther.name]: Yup.string().label(form.prostateOther.label),
+  [form.sphincterOther.name]: Yup.string().label(form.sphincterOther.label),
+  [form.tenderness.name]: Yup.string().label(form.tenderness.label),
+  [form.laceration.name]: Yup.string().label(form.laceration.label),
+  [form.hematomas.name]: Yup.string().label(form.hematomas.label),
+  [form.urethraMeatus.name]: Yup.string().label(form.urethraMeatus.label),
+  [form.descriptionUrethral.name]: Yup.string().label(
+    form.descriptionUrethral.label
+  ),
+  [form.lacerationNotes.name]: Yup.string().label(form.lacerationNotes.label),
+  [form.hematomasNotes.name]: Yup.string().label(form.hematomasNotes.label),
+  [form.inflammation.name]: Yup.string().label(form.inflammation.label),
+  [form.inflammationNotes.name]: Yup.string().label(
+    form.inflammationNotes.label
+  ),
+  [form.perihymen.name]: Yup.string().label(form.perihymen.label),
+  [form.perihymenNotes.name]: Yup.string().label(form.perihymenNotes.label),
 });
 
 const prostateOptions = [
   { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.ENLARGED, label: "Enlarged" },
   { id: concepts.HIGH_RIDING, label: "High Riding" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 const generalOptions = [
   { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.EMPTY_RECTUM, label: "Empty rectum" },
   { id: concepts.MALAENA, label: "Malaena" },
   { id: concepts.FRESH_BLOOD, label: "Fresh blood (Haematochezia)" },
+  { id: concepts.HEMORROID, label: "Hermorrhoid" },
+  { id: concepts.FISSURE, label: "Fissure" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 const sphincterOptions = [
   { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.REDUCED, label: "Reduced" },
   { id: concepts.ABSENT, label: "Absent" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const initialsValues = getInitialValues(form);
@@ -291,16 +319,6 @@ const initialsValues = getInitialValues(form);
 const radioOptions = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
-];
-
-const apexBeatOptions = [
-  { label: "Displaced", value: concepts.DISPLACED },
-  { label: "Not Displaced", value: concepts.NOT_DISPLACED },
-];
-
-const percussionOptions = [
-  { label: "Normal", value: concepts.NORMAL },
-  { label: "Abnormal", value: concepts.ABNORMAL },
 ];
 
 const generalInspectionOptions = [
@@ -320,8 +338,12 @@ const digitalVaginalOptions = [
   { id: concepts.FOREIGN_BODIES, label: "Foreign Bodies" },
   { id: concepts.LACERATION, label: "Laceration" },
   { id: concepts.PALPABLE_ABNORMALITIES, label: "Palpable Abnormalities" },
-  { id: concepts.BLEEDING, label: "On Withdrawal of fingers bleeding" },
-  { id: concepts.DISCHARGE, label: "Discharge" },
+  { id: concepts.TENDERNESS, label: "Tenderness" },
+  {
+    id: concepts.BLEEDING,
+    label: "On withdrawal of the fingers look for bleeding, discharge",
+  },
+  // { id: concepts.DISCHARGE, label: "Discharge" },
 ];
 const perihymenOptions = [
   { id: concepts.ABRASIONS, label: "Abrasions" },
@@ -341,8 +363,9 @@ const scrotumOptions = [
 ];
 
 const bowelSounds = [
+  { id: concepts.NORMAL, label: "Normal" },
   { id: concepts.HYPERACTIVE, label: "Hyperactive" },
-  { id: concepts.REDUCED_BOWEL_SOUNDS, label: "Reduced" },
+  { id: concepts.REDUCED_BOWEL_SOUNDS, label: "Reduced Bowel Sounds" },
   { id: concepts.ABSENT, label: "Absent" },
 ];
 export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
@@ -358,6 +381,13 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     onSubmit
   );
 
+  const checkIfExist = (formArrayInput: any, value: string) => {
+    console.log({ formArrayInput });
+    if (!Array.isArray(formArrayInput)) return;
+
+    return formArrayInput?.find((op: any) => op.id == value);
+  };
+
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
     const obs = [
@@ -368,8 +398,8 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         group_members: flattenImagesObs(abnormalitiesPresentImageEnc),
       },
       {
-        concept: form.tenderness.name,
-        value: formValues[form.tenderness.name],
+        concept: concepts.PALPATION,
+        value: concepts.PALPATION,
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(tendernessImageEnc),
       },
@@ -414,7 +444,6 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     delete formValues[form.periymen.name];
     delete formValues[form.urethralMeatus.name];
     delete formValues[form.abnormalitiesPresent.name];
-    delete formValues[form.tenderness.name];
     delete formValues[form.digitalVaginalExamination.name];
 
     await handleSubmit([
@@ -465,91 +494,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation">
-          <FieldsContainer>
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.hepatomegaly.name}
-              label={form.hepatomegaly.label}
-            />
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.splenomegaly.name}
-              label={form.splenomegaly.label}
-            />
-          </FieldsContainer>
-          <FieldsContainer mr="5px">
-            <>
-              {formValues[form.hepatomegaly.name] == YES && (
-                <TextInputField
-                  multiline
-                  rows={5}
-                  sx={{ width: "100%" }}
-                  id={form.hepatomegalyDescription.name}
-                  name={form.hepatomegalyDescription.name}
-                  label={form.hepatomegalyDescription.label}
-                />
-              )}
-            </>
-            <>
-              {formValues[form.splenomegaly.name] == YES && (
-                <TextInputField
-                  multiline
-                  rows={5}
-                  sx={{ width: "100%" }}
-                  id={form.splenomegalyDescription.name}
-                  name={form.splenomegalyDescription.name}
-                  label={form.splenomegalyDescription.label}
-                />
-              )}
-            </>
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.kidneyBallotable.name}
-              label={form.kidneyBallotable.label}
-            />
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.fullBladder.name}
-              label={form.fullBladder.label}
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.tenderness.name}
-              label={form.tenderness.label}
-            />
-            <RadioGroupInput
-              row
-              options={radioOptions}
-              name={form.otherMasses.name}
-              label={form.otherMasses.label}
-            />
-          </FieldsContainer>
-          {formValues[form.otherMasses.name] == YES && (
-            <TextInputField
-              multiline
-              rows={5}
-              sx={{ width: "100%" }}
-              id={form.otherMassesDescription.name}
-              name={form.otherMassesDescription.name}
-              label={form.otherMassesDescription.label}
-            />
-          )}
-          <FieldsContainer>
-            {formValues[form.tenderness.name] == YES && (
-              <AbdomenImage onValueChange={setTendernessImageEnc} />
-            )}
-          </FieldsContainer>
+          <AbdomenImageWithOtherForm
+            formNameSection="palpation"
+            onValueChange={setTendernessImageEnc}
+          />
         </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Percussion">
+        <FormFieldContainerLayout title="Percussion Tenderness">
           <FieldsContainer>
             <RadioGroupInput
               row
@@ -564,6 +514,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               label={form.fluidThrill.label}
             />
           </FieldsContainer>
+          <RadioGroupInput
+            row
+            options={radioOptions}
+            name={form.tenderness.name}
+            label={form.tenderness.label}
+          />
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Auscultation">
           <RadioGroupInput
@@ -581,18 +537,48 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Digital Rectal Examination">
           <SearchComboBox
-            multiple={false}
+            multiple
             options={generalOptions}
             label={form.general.label}
             name={form.general.name}
           />
-          <SearchComboBox
-            sx={{ mt: "1ch" }}
-            multiple={false}
-            options={prostateOptions}
-            label={form.prostate.label}
-            name={form.prostate.name}
-          />
+          {checkIfExist(formValues[form.general.name], concepts.OTHER) && (
+            <>
+              <br />
+              <TextInputField
+                id={form.otherDigitalGeneral.name}
+                name={form.otherDigitalGeneral.name}
+                label={form.otherDigitalGeneral.label}
+                multiline={true}
+                rows={4}
+                sx={{ width: "100%" }}
+              />
+            </>
+          )}
+          {gender == "Male" && (
+            <>
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                multiple={true}
+                options={prostateOptions}
+                label={form.prostate.label}
+                name={form.prostate.name}
+              />
+              {checkIfExist(formValues[form.prostate.name], concepts.OTHER) && (
+                <>
+                  <br />
+                  <TextInputField
+                    multiline
+                    rows={4}
+                    sx={{ width: "100%" }}
+                    name={form.prostateOther.name}
+                    label={form.prostateOther.label}
+                    id={form.prostateOther.name}
+                  />
+                </>
+              )}
+            </>
+          )}
           <RadioGroupInput
             row
             sx={{ mt: "1ch" }}
@@ -617,15 +603,117 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             label={form.sphincterTone.label}
             name={form.sphincterTone.name}
           />
+          {formValues[form.sphincterTone.name] == concepts.OTHER && (
+            <>
+              <br />
+              <TextInputField
+                multiline
+                rows={4}
+                sx={{ width: "100%" }}
+                name={form.sphincterOther.name}
+                label={form.sphincterOther.label}
+                id={form.sphincterOther.name}
+              />
+            </>
+          )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Examination of Genitalia (inspection)">
           {gender == "Male" && (
             <>
-              <SearchComboBox
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.circumcisionStatus.name}
+                label={form.circumcisionStatus.label}
+              />
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.laceration.name}
+                label={form.laceration.label}
+              />
+
+              {formValues[form.laceration.name] == YES && (
+                <>
+                  <br />
+                  <TextInputField
+                    rows={4}
+                    multiline
+                    sx={{ width: "100%" }}
+                    name={form.lacerationNotes.label}
+                    label={form.lacerationNotes.label}
+                    id={form.lacerationNotes.name}
+                  />
+                </>
+              )}
+
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.hematomas.name}
+                label={form.hematomas.label}
+              />
+              {formValues[form.hematomas.name] == YES && (
+                <>
+                  <br />
+                  <TextInputField
+                    rows={4}
+                    multiline
+                    sx={{ width: "100%" }}
+                    name={form.hematomasNotes.label}
+                    label={form.hematomasNotes.label}
+                    id={form.hematomasNotes.name}
+                  />
+                </>
+              )}
+
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.inflammation.name}
+                label={form.inflammation.label}
+              />
+              {formValues[form.inflammation.name] == YES && (
+                <>
+                  <br />
+                  <TextInputField
+                    rows={4}
+                    multiline
+                    sx={{ width: "100%" }}
+                    name={form.inflammationNotes.label}
+                    label={form.inflammationNotes.label}
+                    id={form.inflammationNotes.name}
+                  />
+                </>
+              )}
+
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.urethralMeatus.name}
+                label={form.urethralMeatus.label}
+              />
+              {formValues[form.urethralMeatus.name] == YES && (
+                <>
+                  <br />
+                  <TextInputField
+                    rows={4}
+                    multiline
+                    sx={{ width: "100%" }}
+                    name={form.urethralMeatusNotes.label}
+                    label={form.urethralMeatusNotes.label}
+                    id={form.urethralMeatusNotes.name}
+                  />
+                </>
+              )}
+
+              {/* <SearchComboBox
                 options={generalInspectionOptions}
+                multiple
                 name={form.generalInspection.name}
                 label={form.generalInspection.label}
-              />
+              /> */}
+
               {formValues[form.generalInspection.name]?.length > 0 && (
                 <TextInputField
                   multiline
@@ -636,19 +724,14 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                   label={form.generalNotes.label}
                 />
               )}
-              <RadioGroupInput
-                row
-                options={radioOptions}
-                name={form.circumcisionStatus.name}
-                label={form.circumcisionStatus.label}
-              />
-              <SearchComboBox
+
+              {/* <SearchComboBox
                 sx={{ mt: "1ch" }}
                 options={urethralOptions}
                 name={form.urethralMeatus.name}
                 label={form.urethralMeatus.label}
-              />
-              {formValues[form.urethralMeatus.name]?.length > 0 && (
+              /> */}
+              {/* {formValues[form.urethralMeatus.name]?.length > 0 && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -657,14 +740,22 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                   id={form.urethralMeatusNotes.name}
                   label={form.urethralMeatusNotes.label}
                 />
-              )}
-              <SearchComboBox
+              )} */}
+
+              <RadioGroupInput
+                row
+                name={form.scrotum.name}
+                label={form.scrotum.label}
+                options={radioOptions}
+              />
+
+              {/* <SearchComboBox
                 sx={{ mt: "1ch" }}
                 options={scrotumOptions}
                 name={form.scrotum.name}
                 label={form.scrotum.label}
-              />
-              {formValues[form.scrotum.name]?.length > 0 && (
+              /> */}
+              {formValues[form.scrotum.name] == YES && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -694,13 +785,14 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                   label={form.unusualAppearanceNotes.label}
                 />
               )}
-              <SearchComboBox
-                sx={{ mt: "1ch" }}
-                options={perihymenOptions}
-                name={form.periymen.name}
-                label={form.periymen.label}
+
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.perihymen.name}
+                label={form.perihymen.label}
               />
-              {formValues[form.periymen.name]?.length > 0 && (
+              {formValues[form.periymen.name] == YES && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -710,13 +802,22 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                   label={form.periymenNotes.label}
                 />
               )}
-              <SearchComboBox
+
+              {/* <SearchComboBox
                 sx={{ mt: "1ch" }}
-                options={vaginaOptions}
+                options={perihymenOptions}
+                name={form.periymen.name}
+                label={form.periymen.label}
+              /> */}
+
+              <RadioGroupInput
+                row
+                options={radioOptions}
                 name={form.vagina.name}
                 label={form.vagina.label}
               />
-              {formValues[form.vagina.name]?.length > 0 && (
+
+              {formValues[form.vagina.name] == YES && (
                 <TextInputField
                   multiline
                   rows={5}

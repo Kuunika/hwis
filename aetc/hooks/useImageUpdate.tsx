@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { getActivePatientDetails, useImageFormTransform } from ".";
 import { concepts } from "@/constants";
 
-export const useImage = () => {
+export const useImageUpdate = () => {
   const { submittedValues, setData, setSubmittedValues } =
     useImageFormTransform();
   const { activeVisit, patientId } = getActivePatientDetails();
@@ -34,14 +34,15 @@ export const useImage = () => {
     setHoverId(target.id);
     //@ts-ignore
     setAnchorElDisplay(e.target);
-    target.style.opacity = `0.4`;
+    target.style.opacity = `0.5`;
     target.style.fill = highlightcolor;
+
     target.style.cursor = "pointer";
   };
   const handleMouseLeave = (e: MouseEvent | Event) => {
     const target = e.currentTarget as SVGElement;
-    target.style.opacity = `0`;
-    target.style.fill = ``;
+    target.style.opacity = ``;
+    target.style.fill = "";
     setCounter((count) => count + 1);
   };
 
@@ -64,10 +65,11 @@ export const useImage = () => {
       );
 
       elements = [...rects, ...paths];
+
       for (let i = 0; i < elements.length; i++) {
         elements[i].style.fill = ``;
-        elements[i].style.opacity = `0`;
-        elements[i].style.stroke = `black`;
+        elements[i].style.opacity = ``;
+        elements[i].style.stroke = ``;
         elements[i].addEventListener("mouseleave", handleMouseLeave);
 
         //@ts-ignore
@@ -91,6 +93,7 @@ export const useImage = () => {
       }
     }
   };
+
   const highlightSection = (id: string, color: string, opacity: string) => {
     if (containerRef.current) {
       const rect = containerRef.current.getElementById(id) as SVGAElement;

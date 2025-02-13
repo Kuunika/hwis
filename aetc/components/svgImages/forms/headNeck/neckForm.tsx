@@ -82,6 +82,10 @@ const form = {
     name: concepts.ADDITIONAL_NOTES,
     label: "Notes",
   },
+  height: {
+    name: concepts.RAISED_HEIGHT,
+    label: "Height",
+  },
 };
 
 type Prop = {
@@ -115,6 +119,7 @@ const schema = Yup.object().shape({
   [form.lymphNodesSize.name]: Yup.string().label(form.lymphNodesSize.label),
   [form.heamatoma.name]: Yup.string().label(form.haemotoma.label),
   [form.additionalNotes.name]: Yup.string().label(form.additionalNotes.label),
+  // [form.height.name]: Yup.string().label(form.height.label),
 });
 
 const initialsValues = getInitialValues(form);
@@ -151,6 +156,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
   const [showEnlargedThyroid, setShowEnlargedThyroid] =
     useState<boolean>(false);
   const [showLymph, setShowLymph] = useState<boolean>(false);
+  // const [showJVP, setShowJVP] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
     setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
@@ -162,6 +168,9 @@ export const NeckForm = ({ onSubmit }: Prop) => {
       Boolean(values.find((v) => v.id == concepts.ENLARGED_THYROID))
     );
     setShowLymph(Boolean(values.find((v) => v.id == concepts.LYMPH_NODES)));
+    // setShowJVP(
+    //   Boolean(values.find((v) => v.id == concepts.JUGULAR_VENOUS_PRESSURE))
+    // );
   };
 
   return (

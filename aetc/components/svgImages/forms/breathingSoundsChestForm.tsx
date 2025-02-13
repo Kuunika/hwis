@@ -1,4 +1,10 @@
-import { FormikInit, SearchComboBox, TextInputField } from "@/components";
+import {
+  FormikInit,
+  FormValuesListener,
+  RadioGroupInput,
+  SearchComboBox,
+  TextInputField,
+} from "@/components";
 import { concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
 import { Box, Button } from "@mui/material";
@@ -7,6 +13,14 @@ import { useState } from "react";
 import * as Yup from "yup";
 
 const form = {
+  breathSounds: {
+    name: concepts.BREATHING_SOUNDS,
+    label: "Breath Sounds",
+  },
+  vocalFremitus: {
+    name: concepts.VOCAL_FREMITUS,
+    label: "Vocal Fremitus",
+  },
   abnormalities: {
     name: concepts.ABNORMALITIES,
     label: "Description of Abnormality",
@@ -22,11 +36,15 @@ const form = {
 };
 
 const schema = Yup.object().shape({
-  [form.abnormalities.name]: Yup.string()
-    .required()
-    .label(form.abnormalities.label),
+  [form.abnormalities.name]: Yup.string().label(form.abnormalities.label),
   [form.specify.name]: Yup.string().label(form.specify.label),
   [form.added.name]: Yup.array().label(form.added.label),
+  [form.breathSounds.name]: Yup.string()
+    .required()
+    .label(form.breathSounds.label),
+  [form.vocalFremitus.name]: Yup.string()
+    .required()
+    .label(form.vocalFremitus.label),
 });
 
 type Props = {
@@ -46,55 +64,91 @@ const addedOptions = [
   { id: concepts.WHEEZES, label: "Wheezes" },
 ];
 
+const radioOptions = [
+  { label: "Normal", value: concepts.NORMAL },
+  { label: "Abnormal", value: concepts.ABNORMAL },
+];
+
+const chestExpansionOptions = [
+  { value: concepts.NORMAL, label: "Normal" },
+  { value: concepts.REDUCED, label: "Reduced" },
+  { value: concepts.INCREASED, label: "Increased" },
+];
+
 export const BreathingSoundsChestLungForm = (props: Props) => {
   const [showOther, setOther] = useState(false);
   const [showAdded, setAdded] = useState(false);
+  const [formValues, setFormValues] = useState<any>({});
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={getInitialValues(form)}
       onSubmit={(values: any) =>
-        props.onSubmit(values, getFormLabels(form, options, []))
+        props.onSubmit(
+          values,
+          getFormLabels(form, options, [
+            ...chestExpansionOptions,
+            ...radioOptions,
+          ])
+        )
       }
       submitButton={false}
       submitButtonText="next"
     >
-      <br />
-      <SearchComboBox
-        multiple={false}
-        name={form.abnormalities.name}
-        getValue={(values) => {
-          if (!values) return;
-          setOther(Boolean(values == concepts.OTHER));
-          setAdded(Boolean(values == concepts.ADDED));
-        }}
-        label={form.abnormalities.label}
-        options={options}
+      <FormValuesListener getValues={setFormValues} />
+      <RadioGroupInput
+        row
+        name={form.breathSounds.name}
+        label={form.breathSounds.label}
+        options={radioOptions}
       />
-
-      {showAdded && (
+      {formValues[concepts.BREATHING_SOUNDS] == concepts.ABNORMAL && (
         <>
-          <br />
           <SearchComboBox
-            name={form.added.name}
-            label={form.added.label}
-            options={addedOptions}
+            multiple={false}
+            name={form.abnormalities.name}
+            getValue={(values) => {
+              if (!values) return;
+              setOther(Boolean(values == concepts.OTHER));
+              setAdded(Boolean(values == concepts.ADDED));
+            }}
+            label={form.abnormalities.label}
+            options={options}
           />
+
+          {showAdded && (
+            <>
+              <br />
+              <SearchComboBox
+                name={form.added.name}
+                label={form.added.label}
+                options={addedOptions}
+              />
+            </>
+          )}
+
+          <br />
+          {showOther && (
+            <TextInputField
+              multiline
+              rows={2}
+              sx={{ width: "100%" }}
+              name={form.specify.name}
+              label={form.specify.label}
+              id={form.specify.name}
+            />
+          )}
         </>
       )}
 
-      <br />
-      {showOther && (
-        <TextInputField
-          multiline
-          rows={2}
-          sx={{ width: "100%" }}
-          name={form.specify.name}
-          label={form.specify.label}
-          id={form.specify.name}
-        />
-      )}
+      <RadioGroupInput
+        row
+        name={form.vocalFremitus.name}
+        label={form.vocalFremitus.label}
+        options={chestExpansionOptions}
+      />
+
       <Box sx={{ display: "flex", gap: "0.2ch" }}>
         <Button
           type="submit"
