@@ -64,43 +64,79 @@ function DrugHistoryPanel() {
   },[medicationData])
 
 return (
-    <>
-    
-        <Panel title="Drug History">
-            <WrapperBox>
-            <div>
-              {displayedObservations.map(item => (
-                  <div key={item.obs_id} style={{  marginTop:'20px', color:'rgba(0, 0, 0, 0.6)' }}>
-                    <b>{item.name}</b>
-                      {item.children && item.children.length > 0 && (
-                          <>
-                              {item.children.map(child => (
-                                  <p key={child.obs_id}>
-                                      {child.name}{(child.value === "true")?null:`:${child.value}`}
-                                  </p>
-                              ))}
-                          </>
-                      )}
-                  </div>
-              ))}
-              {!showAll && observations.length > 3 && (
-                <button 
-                    onClick={() => setShowAll(true)} 
-                    style={{ color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
-                >
-                    View More ...
-                </button>
-            )}
-            {showAll && (                <button 
-                    onClick={() => setShowAll(false)} 
-                    style={{color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
-                >
-                    View Less
-                </button>)}
-            </div>
-            </WrapperBox>
-        </Panel>
-    </>
+  <>
+  <Panel title="Drug History">
+    <WrapperBox>
+    <div
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "20px",
+    justifyContent: "flex-start", // Ensures proper alignment
+  }}
+>
+  {displayedObservations.map((item) => (
+    <div
+      key={item.obs_id}
+      style={{
+        width: "300px", // Fixed width for uniformity
+        color: "rgba(0, 0, 0, 0.6)",
+      }}
+    >
+      <b>{item.name}</b>
+      {item.children && item.children.length > 0 && (
+        <>
+          {item.children.map((child) => (
+            <p key={child.obs_id}>
+              {child.name}
+              {child.value === "true" ? null : `: ${child.value}`}
+            </p>
+          ))}
+        </>
+      )}
+    </div>
+  ))}
+</div>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end", 
+          marginTop: "10px",
+        }}
+      >
+        {!showAll && observations.length > 3 && (
+          <button
+            onClick={() => setShowAll(true)}
+            style={{
+              color: "rgba(0, 0, 0, 0.6)",
+              cursor: "pointer",
+              border: "none",
+              background: "none",
+              padding: 0,
+            }}
+          >
+            View More ...
+          </button>
+        )}
+        {showAll && (
+          <button
+            onClick={() => setShowAll(false)}
+            style={{
+              color: "rgba(0, 0, 0, 0.6)",
+              cursor: "pointer",
+              border: "none",
+              background: "none",
+              padding: 0,
+            }}
+          >
+            View Less
+          </button>
+        )}
+      </div>
+    </WrapperBox>
+  </Panel>
+</>
   );
 
 

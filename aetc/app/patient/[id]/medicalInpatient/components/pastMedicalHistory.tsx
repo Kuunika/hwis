@@ -61,7 +61,7 @@ function PastMedicalHistoryPanel() {
         const hasAIDSObservations = sampleHistoryEncounters
   ?.flatMap(encounter => 
       encounter.obs.filter(observation => 
-          observation.value?.includes("1C62.Z")
+          observation.value?.includes("HIV")
       )
   );
 
@@ -116,7 +116,7 @@ if(onTreatmentValue) updateOnHIVTreatment(onTreatmentValue);
 return (
     <>
         <Panel title="Past Medical History">
-            <WrapperBox>
+            <WrapperBox sx={{ height: "180px" }}>
             <div>
             <p><b>
                 HIV Status:
@@ -127,6 +127,21 @@ return (
                 On antiretroviral treatment:
                 </b>
             {HIVInfo.onTreatment}
+            </p>
+            <p><b>
+              HIV Drug(s) used:
+                </b>
+                ??
+            </p>
+            <p><b>
+              Start of HIV Drug usage:
+                </b>
+                ??
+            </p>
+            <p><b>
+             HIV Clinic:
+                </b>
+??
             </p>
             </div>
             </WrapperBox>
