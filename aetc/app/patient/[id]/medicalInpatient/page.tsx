@@ -1,34 +1,50 @@
 "use client";
-import { PresentingComplaintsForm } from "@/app/triage/components";
-import { FormContainer, MainTypography, WrapperBox } from "@/components";
+import { MainTypography, WrapperBox } from "@/components";
 import { PatientInfoTab } from "@/components";
 import { FaAngleLeft } from "react-icons/fa6";
 import PresentingComplaintsPanel from "./components/pastPresentingComplaints";
 import { useNavigation } from "@/hooks";
 import DrugHistoryPanel from "./components/drugHistory";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import PastMedicalHistoryPanel from "./components/pastMedicalHistory";
 import PastSurgicalHistoryPanel from "./components/pastSurgicalHistory";
-
+import { useReactToPrint } from "react-to-print";
+import { useRef, useState } from "react";
 
 function InPatientAdmission() {
 
   const { navigateBack } = useNavigation();
+  const printRef = useRef(null);
+  const [showAll, setShowAll] = useState(false);
+
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+    documentTitle: "In-Patient Template Form",
+    onBeforeGetContent: () =>
+      new Promise((resolve) => {
+        setShowAll(true);
+        setTimeout(resolve, 100);
+      }),
+    onAfterPrint: () => setShowAll(false),
+  });
 
   
   return (
     <>
       <PatientInfoTab />
       <WrapperBox
-  onClick={() => navigateBack()}
+  
   sx={{
     display: { lg: "flex", xs: "none" },
+    alignItems: "center",
+    justifyContent: "space-between",
     cursor: "pointer",
     pt: "2ch",
     pl: "2ch",
     mb: "2ch",
   }}
 >
+  <div style={{display: "flex"}}>
   <MainTypography
     sx={{
       width: "24px",
@@ -46,10 +62,14 @@ function InPatientAdmission() {
       lineHeight: "21px",
       letterSpacing: "0em",
       textAlign: "left",
+      paddingTop: "1px",
     }}
+    onClick={() => navigateBack()}
   >
     Back
   </MainTypography>
+  </div>
+  <Button sx={{mr:'15px'}} onClick={handlePrint}>DOWNLOAD PDF</Button>
 </WrapperBox>
 <Box
   sx={{
@@ -61,22 +81,23 @@ function InPatientAdmission() {
     pr: "2ch",
     alignItems: "start",
   }}
+  ref={printRef}
 >
 
   <WrapperBox sx={{ width: "100%" }}>
-    <PresentingComplaintsPanel />
+    <PresentingComplaintsPanel showForPrinting={showAll} setShowAll={setShowAll}/>
   </WrapperBox>
   <WrapperBox sx={{ width: "100%"}}>
-    <PastMedicalHistoryPanel />
+    <PastMedicalHistoryPanel/>
   </WrapperBox>
 
 
   <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-    <DrugHistoryPanel />
+    <DrugHistoryPanel showForPrinting={showAll} setShowAll={setShowAll}/>
   </WrapperBox>
 
   <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-    <PastSurgicalHistoryPanel />
+    <PastSurgicalHistoryPanel showForPrinting={showAll} setShowAll={setShowAll}/>
   </WrapperBox>
 </Box>
     </>

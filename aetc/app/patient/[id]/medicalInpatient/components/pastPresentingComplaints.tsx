@@ -21,7 +21,16 @@ interface ProcessedObservation {
   children: ProcessedObservation[];
 }
 
-function PresentingComplaintsPanel() {
+interface PresentingComplaintsPanelProps {
+
+  showForPrinting: boolean;
+  setShowAll: (value: boolean) => void;
+
+}
+
+
+
+const PresentingComplaintsPanel: React.FC<PresentingComplaintsPanelProps> = ({ showForPrinting, setShowAll }: PresentingComplaintsPanelProps) => {
     const { params } = useParameters();
     const { data: complaintsData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
@@ -29,8 +38,8 @@ function PresentingComplaintsPanel() {
     const complaintsEncounters = Array.isArray(complaintsData)
     ? complaintsData.filter((item) => item.encounter_type?.name === 'PRESENTING COMPLAINTS')
     : [];
-      const [showAll, setShowAll] = useState(false);
-      const displayedObservations = showAll ? observations : observations.slice(0, 3);
+
+      const displayedObservations = showForPrinting ? observations : observations.slice(0, 3);
 
   useEffect(() => {
     if (!historyLoading) {
@@ -98,20 +107,15 @@ return (
                       )}
                   </div>
               ))}
-                          {!showAll && observations.length > 3 && (
-                <button 
-                    onClick={() => setShowAll(true)} 
-                    style={{ color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
-                >
-                    View More ...
-                </button>
-            )}
-            {showAll && (                <button 
-                    onClick={() => setShowAll(false)} 
-                    style={{color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
-                >
-                    View Less
-                </button>)}
+                {observations.length > 3 && (
+                  <button 
+                    onClick={() => setShowAll(!showForPrinting)} 
+                    style={{ color: 'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
+                  >
+                    {showForPrinting ? "View Less" : "View More..."}
+                  </button>
+                )}
+
             </div>
             </>)}
             </WrapperBox>

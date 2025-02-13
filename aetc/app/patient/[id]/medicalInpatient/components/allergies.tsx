@@ -20,21 +20,13 @@ interface ProcessedObservation {
   value: any;
   children: ProcessedObservation[];
 }
-interface PastSurgicalHistoryPanelProps {
 
-    showForPrinting: boolean;
-    setShowAll: (value: boolean) => void;
-  }
-  
-  
-  
-  const PastSurgicalHistoryPanel: React.FC<PastSurgicalHistoryPanelProps> = ({ showForPrinting , setShowAll}: PastSurgicalHistoryPanelProps) => {
-
+function AllergiesPanel() {
     const { params } = useParameters();
     const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-
-    const displayedObservations = showForPrinting ? observations : observations.slice(0, 4);
+    const [showAll, setShowAll] = useState(false);
+    const displayedObservations = showAll ? observations : observations.slice(0, 4);
 
 
     const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type.name === "SURGICAL HISTORY");
@@ -146,7 +138,7 @@ return (
             }}
           >
             <button
-              onClick={() => setShowAll(!showForPrinting)}
+              onClick={() => setShowAll(!showAll)}
               style={{
                 color: "rgba(0, 0, 0, 0.6)",
                 cursor: "pointer",
@@ -155,7 +147,7 @@ return (
                 padding: 0,
               }}
             >
-              {showForPrinting ? "View Less" : "View More ..."}
+              {showAll ? "View Less" : "View More ..."}
             </button>
           </div>
         )}
@@ -171,4 +163,4 @@ return (
 }
 
 
-export default PastSurgicalHistoryPanel;
+export default AllergiesPanel;

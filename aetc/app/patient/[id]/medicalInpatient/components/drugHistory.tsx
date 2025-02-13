@@ -22,12 +22,18 @@ interface ProcessedObservation {
   children: ProcessedObservation[];
 }
 
-function DrugHistoryPanel() {
+interface drugHistoryPanelProps {
+
+  showForPrinting: boolean;
+  setShowAll: (value: boolean) => void;
+
+}
+
+function DrugHistoryPanel({ showForPrinting , setShowAll}: drugHistoryPanelProps) {
     const { params } = useParameters();
     const { data: medicationData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-    const [showAll, setShowAll] = useState(false);
-    const displayedObservations = showAll ? observations : observations.slice(0, 4);
+    const displayedObservations = showForPrinting ? observations : observations.slice(0, 4);
     const medicationEncounters = Array.isArray(medicationData)
     ? medicationData.filter((item) => item.encounter_type?.name === 'PRESCRIPTION')
     : [];
@@ -118,7 +124,7 @@ return (
           marginTop: "10px",
         }}
       >
-        {!showAll && observations.length > 4 && (
+        {!showForPrinting && observations.length > 4 && (
           <button
             onClick={() => setShowAll(true)}
             style={{
@@ -132,7 +138,7 @@ return (
             View More ...
           </button>
         )}
-        {showAll && (
+        {showForPrinting && (
           <button
             onClick={() => setShowAll(false)}
             style={{
