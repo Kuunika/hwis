@@ -8,3 +8,86 @@ export const PatientManagementPlan = () => {
 
   return  <MedicationsForm onSkip={()=>{}} onSubmit={()=>{}} />
 };  
+
+// "use client";
+
+// import React, { useState, useEffect } from "react";
+// import { NewStepperContainer } from "@/components";
+// import { Box, Button } from "@mui/material";
+// import { MedicationForm } from "./forms/medicationForm";
+// // import { MedicationsForm } from "../../consultation/components/medication"; // Import the MedicationsForm
+
+// import { NonPharmacologicalForm } from "./forms/nonPharmacologicalForm";
+// import { SupportiveCareForm } from "./forms/supportiveCareForm";
+
+// export const PatientManagementFlow = () => {
+//   const [activeStep, setActiveStep] = useState<number>(0);
+
+//   const steps = [
+//     { id: 1, label: "Medication" },
+//     { id: 2, label: "Non-Pharmacological" },
+//     { id: 3, label: "Supportive Care" },
+//   ];
+
+//   useEffect(() => {
+//     console.log(`Active step is now: ${activeStep}`);
+//   }, [activeStep]);
+
+//   return (
+//     <NewStepperContainer
+//       title="Patient Management Plan"
+//       steps={steps}
+//       active={activeStep}
+//       setActive={setActiveStep}
+//     >
+//       <>
+//         <MedicationForm />
+//         <StepButtons
+//           onNext={() => setActiveStep(1)}
+//         />
+//       </>
+//       <>
+//         <NonPharmacologicalForm />
+//         <StepButtons
+//           onNext={() => setActiveStep(2)}
+//           onPrevious={() => setActiveStep(0)}
+//         />
+//       </>
+//       <>
+//         <SupportiveCareForm />
+//         <StepButtons
+//           onPrevious={() => setActiveStep(1)}
+//         />
+//       </>
+//     </NewStepperContainer>
+//   );
+// };
+
+// const StepButtons = ({
+//   onPrevious,
+//   onNext,
+// }: {
+//   onPrevious?: () => void;
+//   onNext?: () => void;
+// }) => {
+//   return (
+//     <Box sx={{ mt: "1ch" }}>
+//       {onPrevious && (
+//         <Button
+//           sx={{ mr: "0.5ch" }}
+//           size="small"
+//           variant="contained"
+//           color="inherit"
+//           onClick={onPrevious}
+//         >
+//           Previous
+//         </Button>
+//       )}
+//       {onNext && (
+//         <Button size="small" variant="contained" onClick={onNext}>
+//           Next
+//         </Button>
+//       )}
+//     </Box>
+//   );
+// };

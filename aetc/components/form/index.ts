@@ -14,3 +14,4 @@ export * from "./formCheckBox"
 export * from "./dynamicFormList";
 export * from "./labelledCheckBox"
 export * from "./unitInputField"
+export * from "./ECTReactComponent"

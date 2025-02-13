@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import {
     MainGrid,
@@ -7,11 +6,8 @@ import {
     SearchComboBox,
     BackButton,
     WrapperBox,
-
 } from "@/components";
 import { ConsultationCard, PersonalDetailsCard } from "@/app/patient/components";
-
-
 import TransferForm from "./components/TransferForm";
 import DischargeHomeForm from "./components/DischargeHomeForm";
 import AbscondedForm from "./components/AbscondedForm";
@@ -27,6 +23,8 @@ import {
     useNavigation,
     useParameters,
 } from "@/hooks";
+import { concepts } from "@/constants";
+
 
 import {
     ConsultationContext,
@@ -34,21 +32,17 @@ import {
     PatientProfileContext,
     PatientProfileContextType,
 } from "@/contexts";
-
-
-
-
 const dispositionOptions = [
-    { value: "dischargeHome", label: "Discharge home" },
-    { value: "awaitingSpecialtyReview", label: "Awaiting specialty review" },
-    { value: "admission", label: "Admission" },
-    { value: "theatre", label: "Theatre" },
-    { value: "interventionSuite", label: "Other intervention suite" },
-    { value: "shortStay", label: "Short stay" },
-    { value: "transfer", label: "Transfer to another facility" },
-    { value: "death", label: "Death" },
-    { value: "absconded", label: "Absconded" },
-    { value: "refusedTreatment", label: "Refused hospital treatment" },
+    { id: concepts.DISCHARGE_HOME, label: "Discharge home" },
+    { id: concepts.AWAITING_SPECIALITY_REVIEW, label: "Awaiting specialty review" },
+    { id: concepts.ADMISSION, label: "Admission" },
+    { id: concepts.THEATRE, label: "Theatre" },
+    { id: concepts.OTHER_INTERVENTION_SUITE, label: "Other intervention suite" },
+    { id: concepts.SHORT_STAY, label: "Short stay" },
+    { id: concepts.TRANSFER_TO_ANOTHER_FACILITY, label: "Transfer to another facility" },
+    { id: concepts.DEATH, label: "Death" },
+    { id: concepts.ABSCONDED, label: "Absconded" },
+    { id: concepts.REFUSED_HOSPITAL_TREATMENT, label: "Refused hospital treatment" },
 ];
 
 function DispositionFeature() {
@@ -56,7 +50,6 @@ function DispositionFeature() {
         null
     );
     const { params } = useParameters();
-
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
     const [chartLoading, setChartLoading] = useState(true);
@@ -64,30 +57,27 @@ function DispositionFeature() {
         ConsultationContext
     ) as ConsultationContextType;
 
-
-
-
     const renderForm = () => {
         switch (selectedDisposition) {
-            case "dischargeHome":
+            case concepts.DISCHARGE_HOME:
                 return <DischargeHomeForm />;
-            case "awaitingSpecialtyReview":
+            case concepts.AWAITING_SPECIALITY_REVIEW:
                 return <AwaitingSpecialityReviewForm />;
-            case "admission":
+            case concepts.ADMISSION:
                 return <AdmissionForm />;
-            case "theatre":
+            case concepts.THEATRE:
                 return <div>Theatre form coming soon!</div>;
-            case "interventionSuite":
+            case concepts.OTHER_INTERVENTION_SUITE:
                 return <div>Intervention Suite form coming soon!</div>;
-            case "shortStay":
+            case concepts.SHORT_STAY:
                 return <ShortStayForm />;
-            case "transfer":
+            case concepts.TRANSFER_TO_ANOTHER_FACILITY:
                 return <TransferForm />;
-            case "death":
+            case concepts.DEATH:
                 return <DeathForm />;
-            case "absconded":
+            case concepts.ABSCONDED:
                 return <AbscondedForm />;
-            case "refusedTreatment":
+            case concepts.REFUSED_HOSPITAL_TREATMENT:
                 return <RefusedTreatmentForm />;
             default:
                 return null;
@@ -155,8 +145,6 @@ function DispositionFeature() {
                                 link: `/patient/${params.id}/consultation`,
                             },
 
-
-
                         ]}
                         title="Consultation"
                     />
@@ -171,20 +159,13 @@ function DispositionFeature() {
                             },
                         ]}
                     />
-
                 </WrapperBox>
-
-
-
-                {/* End here */}
             </MainGrid>
-
             {/* Main Content */}
             <MainGrid item xs={12} lg={9}>
                 <MainPaper elevation={0} sx={{ p: "1ch" }}>
                     <BackButton />
                     <h2>Disposition</h2>
-
                     {/* Dropdown */}
                     <select
                         value={selectedDisposition || ""}
@@ -200,13 +181,11 @@ function DispositionFeature() {
                             Select a Disposition
                         </option>
                         {dispositionOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
+                            <option key={option.id} value={option.id}>
                                 {option.label}
                             </option>
                         ))}
                     </select>
-
-
 
                     {/* Dynamic Form */}
                     <div style={{ marginTop: "20px" }}>{renderForm()}</div>

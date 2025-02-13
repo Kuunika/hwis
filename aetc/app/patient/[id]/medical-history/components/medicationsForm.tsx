@@ -1,7 +1,7 @@
 "use client";
 import { FormDatePicker, FormikInit, FormValuesListener, MainButton, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
 import React, { useEffect, useState } from "react";
-import { FieldArray } from "formik";
+import { Field, FieldArray, getIn } from "formik";
 import * as yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
@@ -9,6 +9,7 @@ import { GiMedicines } from "react-icons/gi";
 import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -94,18 +95,45 @@ const schema = yup.object().shape({
       medication_frequency: yup.string().required("Frequency is required"),
       medication_duration: yup.number().required("Duration is required").positive("Duration must be greater than 0"),
       medication_duration_unit: yup.string().required("Duration unit is required"),
-      medication_date_last_taken: yup.date().nullable().required("Date of last taken is required"),
-      medication_date_of_last_prescription: yup.date().nullable().required("Date of last prescription is required"),
+      medication_date_last_taken: yup
+        .date()
+        .nullable()
+        .required("Date of last taken is required")
+        .test('is-in-the-past', 'Date of last taken must be in the past', (value) => {
+          return value && value <= new Date(); // Ensure the date is in the past
+        })
+        .test('last-taken-after-prescription', 'Date of last taken cannot be before the date of last prescription', function(value) {
+          const { medication_date_of_last_prescription } = this.parent;
+          return !value || !medication_date_of_last_prescription || value >= medication_date_of_last_prescription; // Ensure it's not before the prescription date
+        }),
+      medication_date_of_last_prescription: yup
+        .date()
+        .nullable()
+        .required("Date of last prescription is required")
+        .test('is-in-the-past', 'Date of last prescription must be in the past', (value) => {
+          return value && value <= new Date(); // Ensure the date is in the past
+        }),
     })
   ),
 });
+
+const ErrorMessage = ({ name }: { name: string }) => (
+ <Field
+   name={name}
+   render={({ form }: { form: any }) => {
+     const error = getIn(form.errors, name);
+     const touch = getIn(form.touched, name);
+     return touch && error ? error : null;
+   }}
+ />
+);
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const { data } = getAllDrugs();
   const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
   const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
   const [formValues, setFormValues] = useState<any>({});
-
+  
 
   
   const handleUpdateFrequency = (index: number, value: boolean) => {
@@ -116,11 +144,11 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   useEffect(() => {
-    
+
     if (data) {
       const formatMedicationOptions = (data: any) => {
-        return data.map((drug: { uuid: string; name: string }) => ({
-          id: drug.uuid.toString(),
+        return data.map((drug: { concept_uuid: string; name: string }) => ({
+          id: drug.concept_uuid.toString(),
           label: drug.name,
         }));
       };
@@ -128,7 +156,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     }
   }, [data]);
 
-  const handleSubmit=()=> {
+  const handleSubmit= async()=> {
+    await schema.validate(formValues);
     onSubmit(formValues);
   }
 
@@ -160,6 +189,11 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       sx={{ width: "200px" }}
                       multiple={false}
                     />
+                                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                   <ErrorMessage
+                     name={`medications[${index}].name`}
+                   />
+                   </div>
                     <SearchComboBox
                       name={`medications[${index}].formulation`}
                       label="Formulation"
@@ -168,6 +202,11 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       sx={{ width: "200px" }}
                       multiple={false}
                     />
+                   <div style={{ color: "red", fontSize: "0.875rem" }}>
+                   <ErrorMessage
+                     name={`medications[${index}].formulation`}
+                   />
+                   </div>
                     <UnitInputField
                       id={`medications[${index}].medication_dose`}
                       label="Dose"
@@ -178,7 +217,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       sx={{ width: "320px" }}
                       inputIcon={<GiMedicines />}
                     />
+                    <div style={{ color: "red", fontSize: "0.875rem" }}>
+                   <ErrorMessage
+                     name={`medications[${index}].medication_dose`}
+                   />
+                   </div>
                     {!otherFrequency[index] ? (
+                      <>
                       <SearchComboBox
                         name={`medications[${index}].medication_frequency`}
                         label="Frequency"
@@ -190,13 +235,26 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                         sx={{ width: "180px" }}
                         multiple={false}
                       />
+                      <div style={{ color: "red", fontSize: "0.875rem" }}>
+                      <ErrorMessage
+                        name={`medications[${index}].medication_frequency`}
+                      />
+                      </div>
+                      </>
                     ) : (
+                      <>
                       <TextInputField
                         id={`medications[${index}].medication_frequency`}
                         name={`medications[${index}].medication_frequency`}
                         label="Specify frequency"
                         sx={{ width: "180px" }}
                       />
+                      <div style={{ color: "red", fontSize: "0.875rem"}}>
+                      <ErrorMessage
+                        name={`medications[${index}].medication_frequency`}
+                      />
+                      </div>
+                      </>
                     )}
                     <UnitInputField
                       id={`medications[${index}].medication_duration`}
@@ -207,37 +265,44 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       placeholder="e.g. 7"
                       inputIcon={<IoTimeOutline />}
                     />
+                            <div style={{ color: "red", fontSize: "0.875rem"}}>
+                      <ErrorMessage
+                        name={`medications[${index}].medication_duration`}
+                      />
+                      </div>
                     <FormDatePicker
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
                       sx={{ width: "150px" }}
                     />
+                                                <div style={{ color: "red", fontSize: "0.875rem"}}>
+                      <ErrorMessage
+                        name={`medications[${index}].medication_date_last_taken`}
+                      />
+                      </div>
                     <FormDatePicker
                       name={`medications[${index}].medication_date_of_last_prescription`}
                       label="Last Prescribed"
                       sx={{ width: "150px" }}
                     />
+                                                <div style={{ color: "red", fontSize: "0.875rem"}}>
+                      <ErrorMessage
+                        name={`medications[${index}].medication_date_of_last_prescription`}
+                      />
+                      </div>
                   </>
                 )}
               />
             )}
           </FieldArray>
-          <WrapperBox sx={{ mt: "2ch" }}>
-            <MainButton sx={{ m: 0.5 }} title="Submit" type="submit" onClick={handleSubmit} />
-            <MainButton variant="secondary" title="Skip" type="button" onClick={onSkip} />
-          </WrapperBox>
+          <WrapperBox sx={{mt: '2ch' }}>
+    <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+  </WrapperBox>
         </>
       )}
     </FormikInit>
-    <div style={{marginTop:'20px'}}>
-      <Accordion>
-        <AccordionSummary sx={{ fontSize:'18px', fontWeight:'bold'}}>Medication History</AccordionSummary>
-        <AccordionDetails>
-        <p>Aspirin</p>
-        </AccordionDetails>
-        
-      </Accordion>
-      </div>
+
     </>
   );
 };

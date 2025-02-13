@@ -26,7 +26,7 @@ const medicationFormConfig = {
   }),
   dose: (index: number) => ({
     name: `medications[${index}].dose`,
-    label: "Dose",
+    label: "Dose Administered",
   }),
   route: (index: number) => ({
     name: `medications[${index}].route`,

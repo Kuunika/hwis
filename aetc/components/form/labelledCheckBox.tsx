@@ -1,26 +1,31 @@
 import React from "react";
 import { Checkbox, FormControlLabel, FormHelperText } from "@mui/material";
+import { useFormikField } from "./hooks";
 
 interface LabelledCheckboxProps {
+  name: string;
   label: string;
-  checked: boolean;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   helperText?: string; // Optional helper text
 }
 
 const LabelledCheckbox: React.FC<LabelledCheckboxProps> = ({
+  name,
   label,
-  checked,
-  onChange,
   helperText,
 }) => {
+
+
+    const { value, handleChange, hasError, errorMessage, handleBlur } = useFormikField(name);
+
+
   return (
     <>
       <FormControlLabel
         control={
           <Checkbox
-            checked={checked}
-            onChange={onChange}
+            name={name}
+            checked={Boolean(value)}
+            onChange={handleChange}
             color="primary" // Change color if needed
           />
         }

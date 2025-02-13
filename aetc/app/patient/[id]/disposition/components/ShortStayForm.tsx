@@ -7,10 +7,15 @@ import {
     TextInputField,
     RadioGroupInput,
 } from "@/components";
-import {
-    concepts
-} from "@/constants";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { Visit } from "@/interfaces";
 
 const vitalSignsOptions = [
     { value: concepts.YES, label: "Yes" },
@@ -34,9 +39,57 @@ const initialValues = {
 };
 
 export default function ShortStayForm() {
-    const handleSubmit = (values: any) => {
-        console.log("Form Values: ", values);
-        alert("Form Submitted!");
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = addEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+
+
+
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        const obs = [
+            {
+                concept: concepts.SHORT_STAY,
+                value: concepts.SHORT_STAY,
+                obsDatetime: currentDateTime,
+                group_members: [
+                    { concept: concepts.EXPECTED_DURATION, value: values.expectedDuration, obsDatetime: currentDateTime },
+                    { concept: concepts.VITAL_SIGNS, value: values.vitalSignsMonitoring, obsDatetime: currentDateTime },
+                    { concept: concepts.SOAP_NOTES, value: values.additionalNotes, obsDatetime: currentDateTime },
+                ],
+            },
+        ];
+
+        const payload = {
+            encounterType: encounters.DISCHARGE_PATIENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            toast.success("Short Stay information submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Short Stay information: ", error);
+            toast.error("Failed to submit Short Stay information.");
+        }
     };
 
     return (

@@ -1,20 +1,20 @@
 "use client";
+
 import { FormContainer } from "@/components";
 import { PatientInfoTab } from "@/components";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
-import { PatientManagementPlan } from "./components/patientmanagementplan";
+import { PatientManagementFlow } from "./components/patientManagementFlow";
 
-
-function Patientplan() {
+function PatientManagementPlan() {
   return (
     <>
-
-      { <PatientInfoTab /> }
-      <PatientManagementPlan />
+      <PatientInfoTab />
+      <FormContainer>
+        <PatientManagementFlow />
+      </FormContainer>
     </>
   );
 }
 
-
-export default AuthGuard(Patientplan, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);
+export default AuthGuard(PatientManagementPlan, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);

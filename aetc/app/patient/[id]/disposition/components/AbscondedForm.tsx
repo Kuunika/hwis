@@ -10,7 +10,15 @@ import {
     SearchComboBox,
     MainButton
 } from "@/components";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { Visit } from "@/interfaces";
 
 const validationSchema = Yup.object({
     lastSeenLocation: Yup.string().required("Last Seen Location is required"),
@@ -25,9 +33,55 @@ const initialValues = {
 };
 
 export default function AbscondedForm() {
-    const handleSubmit = (values: any) => {
-   
-        alert("Form Submitted!");
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = addEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        const obs = [
+            {
+                concept: concepts.ABSCONDED,
+                value: concepts.ABSCONDED,
+                obsDatetime: currentDateTime,
+                group_members: [
+                    { concept: concepts.LAST_SEEN_LOCATION, value: values.lastSeenLocation, obsDatetime: currentDateTime },
+                    { concept: concepts.DATE_OF_ABSCONDING, value: values.dateAbsconded, obsDatetime: currentDateTime },
+                    { concept: concepts.TIME_OF_ABSCONDING, value: values.timeAbsconded, obsDatetime: currentDateTime },
+
+                ],
+            },
+        ];
+
+        const payload = {
+            encounterType: encounters.DISCHARGE_PATIENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            toast.success("Absconded information submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Absconded information: ", error);
+            toast.error("Failed to submit Absconded information.");
+        }
     };
 
     return (
