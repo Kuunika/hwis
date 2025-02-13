@@ -1,6 +1,6 @@
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { LegAbnormality } from "@/assets/legAbnormality";
+import { LegAbnormality } from "@/assets/lowerLimbAnterior";
 import { DataBox, LegDeformityForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";

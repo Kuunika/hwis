@@ -7,6 +7,8 @@ import { useImageFormTransform } from "@/hooks";
 import { FullBodyBack } from "@/assets";
 import { concepts } from "@/constants";
 import { useEffect } from "react";
+import { FullBodyMaleBack } from "@/assets/fullBodyMaleBack";
+import { useImageUpdate } from "@/hooks/useImageUpdate";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
@@ -26,7 +28,7 @@ export function FullBodyBackImage({
     anchorEl,
     selectedSection,
     ids,
-  } = useImage();
+  } = useImageUpdate();
   const { setData, submittedValues } = useImageFormTransform();
   useEffect(() => {
     onValueChange(ids);
@@ -50,7 +52,7 @@ export function FullBodyBackImage({
 
   return (
     <div>
-      <FullBodyBack ref={containerRef} />
+      <FullBodyMaleBack ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />

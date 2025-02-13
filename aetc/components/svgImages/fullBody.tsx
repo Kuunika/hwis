@@ -6,6 +6,9 @@ import { DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { concepts } from "@/constants";
 import { useEffect } from "react";
+import { FullBodyMaleFront } from "@/assets/fullBodyMaleFront";
+import { useImageUpdate } from "@/hooks/useImageUpdate";
+import SVGComponent from "./TestImage";
 
 interface Props {
   onValueChange: (values: any) => void;
@@ -26,7 +29,7 @@ export function FullBodyImage({
     anchorEl,
     selectedSection,
     ids,
-  } = useImage();
+  } = useImageUpdate();
   const { setData, submittedValues } = useImageFormTransform();
 
   useEffect(() => {
@@ -51,7 +54,7 @@ export function FullBodyImage({
 
   return (
     <div>
-      <FullBody ref={containerRef} />
+      <FullBodyMaleFront ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />

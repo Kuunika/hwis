@@ -11,10 +11,12 @@ import {
   SearchComboBox,
 } from "@/components";
 import * as Yup from "yup";
-import { LowerLimbPosterior } from "@/components/svgImages";
+import { LowerLimbPosteriorImage } from "@/components/svgImages";
 import { useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { LowerLimbAnterior } from "@/assets";
+import { LowerLimbAnteriorImage } from "@/components/svgImages/lowerLimbAnterior";
 
 const form = {
   oedama: {
@@ -133,7 +135,7 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
             label={form.abnormalitiesUpperLimb.label}
           />
           {formValues[form.abnormalitiesUpperLimb.name] == YES && (
-            <LowerLimbPosterior
+            <LowerLimbAnteriorImage
               onValueChange={setAbnormalitiesUpperLimbImageEnc}
               imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
               imageSection={form.abnormalitiesUpperLimb.name}
@@ -146,7 +148,7 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
             label={form.abnormalitiesLowerLimb.label}
           />
           {formValues[form.abnormalitiesLowerLimb.name] == YES && (
-            <LowerLimbPosterior
+            <LowerLimbAnteriorImage
               onValueChange={setAbnormalitiesUpperLimbImageEnc}
               imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
               imageSection={form.abnormalitiesLowerLimb.name}

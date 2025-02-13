@@ -82,7 +82,7 @@ const form = {
   },
   unusualAppearance: {
     name: concepts.UNUSUAL_SIZE_APPEARANCE_OF_CLITORIS,
-    label: "is there unusual appearance of clitoris",
+    label: "Is the clitoris of unusual size/appearance",
   },
   urethralMeatus: {
     name: concepts.URETHRAL_MEATUS,
@@ -338,8 +338,12 @@ const digitalVaginalOptions = [
   { id: concepts.FOREIGN_BODIES, label: "Foreign Bodies" },
   { id: concepts.LACERATION, label: "Laceration" },
   { id: concepts.PALPABLE_ABNORMALITIES, label: "Palpable Abnormalities" },
-  { id: concepts.BLEEDING, label: "On Withdrawal of fingers bleeding" },
-  { id: concepts.DISCHARGE, label: "Discharge" },
+  { id: concepts.TENDERNESS, label: "Tenderness" },
+  {
+    id: concepts.BLEEDING,
+    label: "On withdrawal of the fingers look for bleeding, discharge",
+  },
+  // { id: concepts.DISCHARGE, label: "Discharge" },
 ];
 const perihymenOptions = [
   { id: concepts.ABRASIONS, label: "Abrasions" },
@@ -495,7 +499,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             onValueChange={setTendernessImageEnc}
           />
         </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Percussion">
+        <FormFieldContainerLayout title="Percussion Tenderness">
           <FieldsContainer>
             <RadioGroupInput
               row

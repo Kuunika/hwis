@@ -1,6 +1,7 @@
 import { concepts } from "@/constants";
 import React, { forwardRef } from "react";
-export const LegAbnormality = forwardRef<
+
+export const LowerLimbAnterior = forwardRef<
   SVGSVGElement,
   React.SVGProps<SVGSVGElement>
 >((props, ref) => (

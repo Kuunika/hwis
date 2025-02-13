@@ -18,6 +18,7 @@ import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import SVGComponent from "@/components/svgImages/TestImage";
 type Props = {
   onSubmit: () => void;
 };
@@ -156,11 +157,26 @@ export const Exposure = ({ onSubmit }: Props) => {
           Select areas with rash, injuries and other abnormalities
         </Typography>
         <br />
+        {/* <SVGComponent /> */}
+
+        {/* <Box>
+          <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
+          <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
+        </Box> */}
+
         <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-          <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
+          <Box
+            sx={{
+              width: "60ch",
+            }}
+          >
             <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
           </Box>
-          <Box>
+          <Box
+            sx={{
+              width: "60ch",
+            }}
+          >
             <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
           </Box>
         </Box>
