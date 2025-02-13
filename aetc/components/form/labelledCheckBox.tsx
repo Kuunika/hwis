@@ -5,14 +5,12 @@ import { useFormikField } from "./hooks";
 interface LabelledCheckboxProps {
   name: string;
   label: string;
-  checked: boolean;
   helperText?: string; // Optional helper text
 }
 
 const LabelledCheckbox: React.FC<LabelledCheckboxProps> = ({
   name,
   label,
-  checked,
   helperText,
 }) => {
 
@@ -26,7 +24,7 @@ const LabelledCheckbox: React.FC<LabelledCheckboxProps> = ({
         control={
           <Checkbox
             name={name}
-            checked={checked}
+            checked={Boolean(value)}
             onChange={handleChange}
             color="primary" // Change color if needed
           />

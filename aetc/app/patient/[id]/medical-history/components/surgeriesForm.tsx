@@ -163,7 +163,7 @@ interface ProcessedObservation {
               observations.push(obsData);
             }
           })
-  
+          observations.sort((a, b) => new Date(b.value).getTime() - new Date(a.value).getTime());
           setObservations(observations)
         });}
 
@@ -188,12 +188,22 @@ interface ProcessedObservation {
         <div>
             {observations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                    <h4>{item.name}</h4>
+ <h4>{(new Date(item.value)).toLocaleDateString()}
+</h4>
                     {item.children && item.children.length > 0 && (
                         <ul>
                             {item.children.map(child => (
                                 <li key={child.obs_id}>
-                                    {child.name}: {child.value}
+                                    {(() => {
+  let parsedValue = child.value;
+  if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
+    parsedValue = child.value === "true";
+  }
+
+  return typeof parsedValue === "boolean"
+    ? String(child.name)
+    : `${String(child.name)}: ${String(parsedValue)}`;
+})()}
                                 </li>
                             ))}
                         </ul>

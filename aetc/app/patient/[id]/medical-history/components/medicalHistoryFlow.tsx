@@ -21,7 +21,6 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { useFormLoading } from "@/hooks/formLoading";
-import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
 import { CustomizedProgressBars } from "@/components/loader";
 
 
@@ -432,7 +431,7 @@ export const MedicalHistoryFlow = () => {
       obsDatetime: dateTime,
       value: surgery.date,
       group_members: [
-        { concept: surgery.procedure === 'other_surgical_procedure'? concepts.SURGICAL_PROCEDURE : surgery.procedure, value: surgery.procedure === 'other_surgical_procedure'? surgery.other : true },
+        { concept: surgery.procedure === 'other_surgical_procedure'? concepts.OTHER : surgery.procedure, value: surgery.procedure === 'other_surgical_procedure'? surgery.other : true },
         { concept: concepts.INDICATION_FOR_SURGERY, value: surgery.indication },
         { concept: concepts.COMPLICATIONS, value: surgery.complication },
       ] as OutputObservation[],
@@ -848,16 +847,23 @@ export const MedicalHistoryFlow = () => {
         drowning: concepts.DROWNING,
       };
 
-      const mechanism = Object.keys(injuryMechanismList).filter((key) => values['injuryMechanism'] === key);
-      const commentKey = `${values['injuryMechanism']}Comment`
-      const injuryComment= values[commentKey];
+      const mechanism = Object.keys(injuryMechanismList).filter((key) => values[key] === true);
+      console.log("mechanism", mechanism);
+      
 
       const timeOfInjury = (values['timeOfInjury'].$d).toLocaleString()
 
-      const traumaObs = [{
-        concept: injuryMechanismList[mechanism[0]],
-        value: injuryComment
-      }]
+      const traumaObs = [];
+
+      for(let key of mechanism){
+        const commentKey = `${key}Comment`
+        const injuryComment= values[commentKey];
+        const injuryMechanismObs = {
+          concept: injuryMechanismList[key],
+          value: injuryComment
+        }
+        traumaObs.push(injuryMechanismObs)
+      }
 
       const timeOfInjuryObs = {
         concept: concepts.TIME_OF_INJURY,
@@ -1057,13 +1063,14 @@ async function handleFamilyHistorySubmission(values: any): Promise<any> {
 }
 
 
-async function handleSubmitAll(index: number){
-
-  if(index > Object.keys(formData).length -1) {
+async function handleSubmitAll(index: number) {
+  if (index >= Object.keys(formData).length) {
     setLoading(false);
     handleSkip();
     return;
   }
+
+  setLoading(true);
 
   const submissionHandlers: Record<string, (value: any) => Promise<any>> = {
     presentingComplaints: handlePresentingComplaintsSubmission,
@@ -1077,36 +1084,26 @@ async function handleSubmitAll(index: number){
     family: handleFamilyHistorySubmission,
   };
 
-
- const key = Object.keys(formData)[index];
- const encounter = formData[key];
-console.log(key, encounter );
-
- try {
-  setLoading(true);
-  await submissionHandlers[key](encounter);
-  
-  setTimeout(()=>{
-    setMessage(`${key} submitted`)
-    handleSubmitAll(index+1)
-    setCompleted(index+1);
-  },2000)
-
- } catch (error) {
-
-  setTimeout(()=>{
-  setError(true);
-  setMessage(`error occurred when submitting ${key}`)
-  },2000)
-  
- }
+  const key = Object.keys(formData)[index];
+  const encounter = formData[key];
 
 
+  try {
+    await submissionHandlers[key](encounter);
+
+    setMessage(`${key} submitted`);
+    setCompleted(index + 1);
+  } catch (error) {
+    console.error(`Error submitting ${key}:`, error);
+    setError(true);
+    setMessage(`Error occurred when submitting ${key}`);
+  }
+
+  setTimeout(() => {
+    handleSubmitAll(index + 1);
+  }, 2000);
 }
 
-
-
- 
 
 
   return (
@@ -1116,7 +1113,7 @@ console.log(key, encounter );
      <>
      <CustomizedProgressBars
                 message={message}
-                progress={(completed / Object.keys(formData).length) * 100}
+                progress={(completed / (Object.keys(formData).length)) * 100}
               />
       </>}
     {  !loading &&<NewStepperContainer
