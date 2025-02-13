@@ -26,7 +26,7 @@ export const StartConsultationFlow = () => {
     { id: 12, label: "Differential Diagnosis" }, // Step for Differential Diagnosis
     { id: 1, label: "Investigations" },
     { id: 13, label: "Final Diagnosis" }, // Step for Final Diagnosis
-    { id: 14, label: "Medication" },
+    // { id: 14, label: "Medication" },
   ];
 
   return (
@@ -57,7 +57,7 @@ export const StartConsultationFlow = () => {
             onPrevious={() => setActiveStep(1)}
           />
         </>
-        <MedicationsForm onSkip={() => {}} onSubmit={() => {}} />
+        {/* <MedicationsForm onSkip={() => { }} onSubmit={() => { }} /> */}
       </NewStepperContainer>
     </>
   );

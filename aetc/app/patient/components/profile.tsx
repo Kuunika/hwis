@@ -85,14 +85,30 @@ export const DesktopView = () => {
                 title: "Final Diagnosis",
                 link: `/patient/${params.id}/consultation`,
               },
-              {
-                id: 3,
-                title: "Medication",
-                link: `/patient/${params.id}/consultation`,
-              },
+              // {
+              //   id: 3,
+              //   title: "Medication",
+              //   link: `/patient/${params.id}/consultation`,
+              // },
+
+
+
             ]}
             title="Consultation"
           />
+          {/* New Button */}
+          <ConsultationCard
+            disabled={!isOnList}
+            title="Patient Management Plan"
+            links={[
+              {
+                title: "Patient Management Plan",
+                link: `/patient/${params.id}/patient-management-plan`,
+              },
+            ]}
+          />
+
+
           {/* New Button */}
           <ConsultationCard
             disabled={!isOnList}
