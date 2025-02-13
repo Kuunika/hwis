@@ -1,24 +1,21 @@
-import { NotificationContainer } from "@/components";
 import React, { useState } from "react";
-import {
-  FieldsContainer,
-  FormFieldContainer,
-  FormFieldContainerLayout,
-  FormValuesListener,
-  FormikInit,
-  MainTypography,
-  RadioGroupInput,
-  TextInputField,
-} from "@/components";
+import { FormValuesListener, FormikInit, TextInputField } from "@/components";
 import * as yup from "yup";
-import { FullBodyBackImage, FullBodyImage } from "@/components/svgImages";
+import {
+  FullBodyBackImage,
+  FullBodyFemaleBackImage,
+  FullBodyFemaleFrontImage,
+  FullBodyImage,
+} from "@/components/svgImages";
 import { concepts, encounters } from "@/constants";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import SVGComponent from "@/components/svgImages/TestImage";
+import { getOnePatient } from "@/hooks/patientReg";
+import { useParameters } from "@/hooks";
+
 type Props = {
   onSubmit: () => void;
 };
@@ -71,6 +68,10 @@ const radioOptions = [
   { label: "No", value: concepts.NO },
 ];
 export const Exposure = ({ onSubmit }: Props) => {
+  const { params } = useParameters();
+  const { data: patient, isLoading: patientLoading } = getOnePatient(
+    params?.id as string
+  );
   const [formValues, setFormValues] = useState<any>({});
   const [skinRashInfoImage, setSkinRashInfoImage] = useState<Array<any>>([]);
   const [skinRashInfoBackImage, setSkinRashInfoBackImage] = useState<
@@ -128,6 +129,8 @@ export const Exposure = ({ onSubmit }: Props) => {
     handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
 
+  const gender = patient && patient?.gender;
+
   return (
     <ContainerLoaderOverlay loading={isLoading}>
       <FormikInit
@@ -157,29 +160,45 @@ export const Exposure = ({ onSubmit }: Props) => {
           Select areas with rash, injuries and other abnormalities
         </Typography>
         <br />
-        {/* <SVGComponent /> */}
 
-        {/* <Box>
-          <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
-          <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
-        </Box> */}
-
-        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-          <Box
-            sx={{
-              width: "60ch",
-            }}
-          >
-            <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
+        {gender == "Male" && (
+          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                width: "60ch",
+              }}
+            >
+              <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
+            </Box>
+            <Box
+              sx={{
+                width: "60ch",
+              }}
+            >
+              <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
+            </Box>
           </Box>
-          <Box
-            sx={{
-              width: "60ch",
-            }}
-          >
-            <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
+        )}
+        {gender == "Female" && (
+          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                width: "60ch",
+              }}
+            >
+              <FullBodyFemaleFrontImage
+                onValueChange={setSkinRashInfoBackImage}
+              />
+            </Box>
+            <Box
+              sx={{
+                width: "60ch",
+              }}
+            >
+              <FullBodyFemaleBackImage onValueChange={setSkinRashInfoImage} />
+            </Box>
           </Box>
-        </Box>
+        )}
 
         {/* {formValues[form.skinRashInfo.name] == concepts.YES && (
         )} */}
