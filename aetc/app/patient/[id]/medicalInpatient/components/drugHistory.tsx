@@ -27,7 +27,7 @@ function DrugHistoryPanel() {
     const { data: medicationData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const [showAll, setShowAll] = useState(false);
-    const displayedObservations = showAll ? observations : observations.slice(0, 3);
+    const displayedObservations = showAll ? observations : observations.slice(0, 4);
     const medicationEncounters = Array.isArray(medicationData)
     ? medicationData.filter((item) => item.encounter_type?.name === 'PRESCRIPTION')
     : [];
@@ -40,7 +40,6 @@ function DrugHistoryPanel() {
         encounter.obs.forEach((observation) => {
           const value = observation.value;
       
-          // Format the observation data
           const obsData: ProcessedObservation = {
             obs_id: observation.obs_id,
             name: observation.names?.[0]?.name,
@@ -49,13 +48,13 @@ function DrugHistoryPanel() {
           };
       
           if (observation.obs_group_id) {
-            // Find the parent observation and group it
+  
             const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
             if (parent) {
               parent.children.push(obsData);
             }
           } else {
-            // Add it to the top-level observations
+
             observations.push(obsData);
           }
         })
@@ -119,7 +118,7 @@ return (
           marginTop: "10px",
         }}
       >
-        {!showAll && observations.length > 3 && (
+        {!showAll && observations.length > 4 && (
           <button
             onClick={() => setShowAll(true)}
             style={{

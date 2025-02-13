@@ -26,7 +26,7 @@ function PastSurgicalHistoryPanel() {
     const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const [showAll, setShowAll] = useState(false);
-    const displayedObservations = showAll ? observations : observations.slice(0, 3);
+    const displayedObservations = showAll ? observations : observations.slice(0, 4);
 
 
     const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type.name === "SURGICAL HISTORY");
@@ -93,7 +93,7 @@ return (
             alignItems: "flex-start",
           }}
         >
-          {observations.slice(0, showAll ? observations.length : 3).map((item) => (
+          {displayedObservations.map((item) => (
             <div
               key={item.obs_id}
               style={{
@@ -128,7 +128,7 @@ return (
         </div>
 
         {/* View More / View Less Button */}
-        {observations.length > 3 && (
+        {observations.length > 4 && (
           <div
             style={{
               display: "flex",

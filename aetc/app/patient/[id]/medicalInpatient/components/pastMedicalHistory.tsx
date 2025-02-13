@@ -132,27 +132,27 @@ return (
                               ) : (
                                 <>
             <div>
-            <p><b>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
                 HIV Status:
                 </b>
             {HIVInfo.status}
             </p>
-            <p><b>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
                 On antiretroviral treatment:
                 </b>
             {HIVInfo.onTreatment}
             </p>
-            <p><b>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
               HIV Drug(s) used:
                 </b>
                 ??
             </p>
-            <p><b>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
               Start of HIV Drug usage:
                 </b>
                 ??
             </p>
-            <p><b>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
              HIV Clinic:
                 </b>
 ??
