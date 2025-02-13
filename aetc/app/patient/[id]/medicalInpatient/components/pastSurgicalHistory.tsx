@@ -5,7 +5,7 @@ import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Key, useEffect, useState } from "react";
-
+import CircularProgress from "@mui/material/CircularProgress";
 interface Observation {
   obs_id: number | null;
   obs_group_id: number | null;
@@ -70,77 +70,91 @@ function PastSurgicalHistoryPanel() {
 
 return (
     <>
-  <Panel title="Past Surgical History">
-    <WrapperBox>
-      {/* Observations Grid */}
+<Panel title="Past Surgical History">
+  <WrapperBox>
+    {historyLoading ? (
       <div
         style={{
           display: "flex",
-          flexWrap: "wrap",
-          gap: "20px",
-          alignItems: "flex-start",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "150px",
         }}
       >
-        {observations.slice(0, showAll ? observations.length : 3).map((item) => (
-          <div
-            key={item.obs_id}
-            style={{
-              flex: "1 1 300px", // Fixed width while allowing responsiveness
-              minWidth: "250px",
-              maxWidth: "350px",
-              color: "rgba(0, 0, 0, 0.6)",
-              padding: "10px",
-              borderRadius: "5px",
-            }}
-          >
-            <h4>{new Date(item.value).toLocaleDateString()}</h4>
-            {item.children && item.children.length > 0 && (
-              <ul style={{ paddingLeft: "15px" }}>
-                {item.children.map((child: { obs_id: Key | null | undefined; value: string; name: any; }) => (
-                  <li key={child.obs_id}>
-                    {(() => {
-                      let parsedValue = child.value;
-                      if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
-                        parsedValue = (child.value === "true").toString();
-                      }
-
-                      return typeof parsedValue === "boolean"
-                        ? String(child.name)
-                        : `${String(child.name)}: ${String(parsedValue)}`;
-                    })()}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
+        <CircularProgress size={40} />
       </div>
-
-      {observations.length > 3 && (
+    ) : (
+      <>
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-end",
-            width: "100%",
-            marginTop: "10px",
+            flexWrap: "wrap",
+            gap: "20px",
+            alignItems: "flex-start",
           }}
         >
-          <button
-            onClick={() => setShowAll(!showAll)}
+          {observations.slice(0, showAll ? observations.length : 3).map((item) => (
+            <div
+              key={item.obs_id}
+              style={{
+                flex: "1 1 300px",
+                minWidth: "250px",
+                maxWidth: "350px",
+                color: "rgba(0, 0, 0, 0.6)",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              <h4>{new Date(item.value).toLocaleDateString()}</h4>
+              {item.children && item.children.length > 0 && (
+                <ul style={{ paddingLeft: "15px" }}>
+                  {item.children.map((child) => (
+                    <li key={child.obs_id}>
+                      {(() => {
+                        let parsedValue = child.value;
+                        if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
+                          parsedValue = (child.value === "true").toString();
+                        }
+                        return typeof parsedValue === "boolean"
+                          ? String(child.name)
+                          : `${String(child.name)}: ${String(parsedValue)}`;
+                      })()}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* View More / View Less Button */}
+        {observations.length > 3 && (
+          <div
             style={{
-              color: "rgba(0, 0, 0, 0.6)",
-              cursor: "pointer",
-              border: "none",
-              background: "none",
-              padding: 0,
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "100%",
+              marginTop: "10px",
             }}
           >
-            {showAll ? "View Less" : "View More ..."}
-          </button>
-        </div>
-      )}
-    </WrapperBox>
-  </Panel>
+            <button
+              onClick={() => setShowAll(!showAll)}
+              style={{
+                color: "rgba(0, 0, 0, 0.6)",
+                cursor: "pointer",
+                border: "none",
+                background: "none",
+                padding: 0,
+              }}
+            >
+              {showAll ? "View Less" : "View More ..."}
+            </button>
+          </div>
+        )}
+      </>
+    )}
+  </WrapperBox>
+</Panel>
 </>
   );
 

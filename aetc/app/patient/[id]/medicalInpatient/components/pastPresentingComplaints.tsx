@@ -5,7 +5,7 @@ import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useEffect, useState } from "react";
-
+import CircularProgress from "@mui/material/CircularProgress";
 interface Observation {
   obs_id: number | null;
   obs_group_id: number | null;
@@ -70,6 +70,19 @@ return (
     
         <Panel title="Presenting Complaints">
             <WrapperBox>
+                  {historyLoading ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "180px",
+                      }}
+                    >
+                      <CircularProgress size={40} />
+                    </div>
+                  ) : (
+                    <>
             <div>
               {displayedObservations.map(item => (
                   <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
@@ -100,6 +113,7 @@ return (
                     View Less
                 </button>)}
             </div>
+            </>)}
             </WrapperBox>
         </Panel>
     </>

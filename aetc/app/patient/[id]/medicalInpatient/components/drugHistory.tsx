@@ -4,6 +4,7 @@ import { WrapperBox } from "@/components";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 
 interface Observation {
@@ -67,19 +68,32 @@ return (
   <>
   <Panel title="Drug History">
     <WrapperBox>
+              {historyLoading ? (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      height: "150px",
+                                    }}
+                                  >
+                                    <CircularProgress size={40} />
+                                  </div>
+                                ) : (
+                                  <>
     <div
   style={{
     display: "flex",
     flexWrap: "wrap",
     gap: "20px",
-    justifyContent: "flex-start", // Ensures proper alignment
+    justifyContent: "flex-start", 
   }}
 >
   {displayedObservations.map((item) => (
     <div
       key={item.obs_id}
       style={{
-        width: "300px", // Fixed width for uniformity
+        width: "300px",
         color: "rgba(0, 0, 0, 0.6)",
       }}
     >
@@ -133,7 +147,7 @@ return (
             View Less
           </button>
         )}
-      </div>
+      </div></>  )}
     </WrapperBox>
   </Panel>
 </>

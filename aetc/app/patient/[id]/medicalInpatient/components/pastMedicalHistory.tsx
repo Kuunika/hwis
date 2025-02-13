@@ -4,6 +4,7 @@ import { WrapperBox } from "@/components";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 
 interface Observation {
@@ -117,6 +118,19 @@ return (
     <>
         <Panel title="Past Medical History">
             <WrapperBox sx={{ height: "180px" }}>
+            {historyLoading ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    height: "150px",
+                                  }}
+                                >
+                                  <CircularProgress size={40} />
+                                </div>
+                              ) : (
+                                <>
             <div>
             <p><b>
                 HIV Status:
@@ -144,6 +158,7 @@ return (
 ??
             </p>
             </div>
+            </>)}
             </WrapperBox>
         </Panel>
     </>
