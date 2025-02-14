@@ -18,10 +18,8 @@ function InPatientAdmission() {
   const printRef = useRef(null);
   const [showAllPanels, setShowAllPanels] = useState({
     presentingComplaints: false,
-    pastMedicalHistory: false,
     drugHistory: false,
     pastSurgicalHistory: false,
-    allergies: false,
   });
   
   const togglePanel = (panel: keyof typeof showAllPanels) => {
@@ -38,20 +36,16 @@ function InPatientAdmission() {
       new Promise((resolve) => {
         setShowAllPanels({
           presentingComplaints: true,
-          pastMedicalHistory: true,
           drugHistory: true,
           pastSurgicalHistory: true,
-          allergies: true,
         });
         setTimeout(resolve, 100);
       }),
     onAfterPrint: () =>
       setShowAllPanels({
         presentingComplaints: false,
-        pastMedicalHistory: false,
         drugHistory: false,
         pastSurgicalHistory: false,
-        allergies: false,
       }),
   });
 
