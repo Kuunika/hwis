@@ -23,12 +23,12 @@ interface ProcessedObservation {
 interface PastSurgicalHistoryPanelProps {
 
     showForPrinting: boolean | null;
-    setShowAll: (value: boolean) => void;
+    toggleShow: (value: boolean) => void;
   }
   
   
   
-  const PastSurgicalHistoryPanel: React.FC<PastSurgicalHistoryPanelProps> = ({ showForPrinting , setShowAll}: PastSurgicalHistoryPanelProps) => {
+  const PastSurgicalHistoryPanel: React.FC<PastSurgicalHistoryPanelProps> = ({ showForPrinting , toggleShow}: PastSurgicalHistoryPanelProps) => {
 
     const { params } = useParameters();
     const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
@@ -145,7 +145,7 @@ return (
             }}
           >
             <button
-              onClick={() => setShowAll(!showForPrinting)}
+              onClick={() => toggleShow(!showForPrinting)}
               style={{
                 color: "rgba(0, 0, 0, 0.6)",
                 cursor: "pointer",

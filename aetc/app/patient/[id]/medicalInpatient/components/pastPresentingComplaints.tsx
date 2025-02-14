@@ -24,13 +24,13 @@ interface ProcessedObservation {
 interface PresentingComplaintsPanelProps {
 
   showForPrinting: boolean;
-  setShowAll: (value: boolean) => void;
+  toggleShow: (value: boolean) => void;
 
 }
 
 
 
-const PresentingComplaintsPanel: React.FC<PresentingComplaintsPanelProps> = ({ showForPrinting, setShowAll }: PresentingComplaintsPanelProps) => {
+const PresentingComplaintsPanel: React.FC<PresentingComplaintsPanelProps> = ({ showForPrinting, toggleShow }: PresentingComplaintsPanelProps) => {
     const { params } = useParameters();
     const { data: complaintsData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
@@ -109,7 +109,7 @@ return (
               ))}
                 {observations.length > 3 && (
                   <button 
-                    onClick={() => setShowAll(!showForPrinting)} 
+                    onClick={() => toggleShow(!showForPrinting)} 
                     style={{ color: 'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
                   >
                     {showForPrinting ? "View Less" : "View More..."}

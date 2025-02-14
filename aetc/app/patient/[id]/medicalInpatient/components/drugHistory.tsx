@@ -25,11 +25,11 @@ interface ProcessedObservation {
 interface drugHistoryPanelProps {
 
   showForPrinting: boolean;
-  setShowAll: (value: boolean) => void;
+  toggleShow: (value: boolean) => void;
 
 }
 
-function DrugHistoryPanel({ showForPrinting , setShowAll}: drugHistoryPanelProps) {
+function DrugHistoryPanel({ showForPrinting , toggleShow}: drugHistoryPanelProps) {
     const { params } = useParameters();
     const { data: medicationData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
@@ -126,7 +126,7 @@ return (
       >
         {!showForPrinting && observations.length > 4 && (
           <button
-            onClick={() => setShowAll(true)}
+            onClick={() => toggleShow(true)}
             style={{
               color: "rgba(0, 0, 0, 0.6)",
               cursor: "pointer",
@@ -140,7 +140,7 @@ return (
         )}
         {showForPrinting && (
           <button
-            onClick={() => setShowAll(false)}
+            onClick={() => toggleShow(false)}
             style={{
               color: "rgba(0, 0, 0, 0.6)",
               cursor: "pointer",

@@ -16,17 +16,43 @@ function InPatientAdmission() {
 
   const { navigateBack } = useNavigation();
   const printRef = useRef(null);
-  const [showAll, setShowAll] = useState(false);
+  const [showAllPanels, setShowAllPanels] = useState({
+    presentingComplaints: false,
+    pastMedicalHistory: false,
+    drugHistory: false,
+    pastSurgicalHistory: false,
+    allergies: false,
+  });
+  
+  const togglePanel = (panel: keyof typeof showAllPanels) => {
+    setShowAllPanels((prev) => ({
+      ...prev,
+      [panel]: !prev[panel],
+    }));
+  };
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     documentTitle: "In-Patient Template Form",
     onBeforeGetContent: () =>
       new Promise((resolve) => {
-        setShowAll(true);
+        setShowAllPanels({
+          presentingComplaints: true,
+          pastMedicalHistory: true,
+          drugHistory: true,
+          pastSurgicalHistory: true,
+          allergies: true,
+        });
         setTimeout(resolve, 100);
       }),
-    onAfterPrint: () => setShowAll(false),
+    onAfterPrint: () =>
+      setShowAllPanels({
+        presentingComplaints: false,
+        pastMedicalHistory: false,
+        drugHistory: false,
+        pastSurgicalHistory: false,
+        allergies: false,
+      }),
   });
 
   
@@ -85,24 +111,36 @@ function InPatientAdmission() {
   ref={printRef}
 >
 
-  <WrapperBox sx={{ width: "100%" }}>
-    <PresentingComplaintsPanel showForPrinting={showAll} setShowAll={setShowAll}/>
-  </WrapperBox>
-  <WrapperBox sx={{ width: "100%"}}>
-    <PastMedicalHistoryPanel/>
-  </WrapperBox>
+<WrapperBox sx={{ width: "100%" }}>
+  <PresentingComplaintsPanel
+    showForPrinting={showAllPanels.presentingComplaints}
+    toggleShow={() => togglePanel("presentingComplaints")}
+  />
+</WrapperBox>
 
+<WrapperBox sx={{ width: "100%" }}>
+  <PastMedicalHistoryPanel
+  />
+</WrapperBox>
 
-  <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-    <DrugHistoryPanel showForPrinting={showAll} setShowAll={setShowAll}/>
-  </WrapperBox>
+<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+  <DrugHistoryPanel
+    showForPrinting={showAllPanels.drugHistory}
+    toggleShow={() => togglePanel("drugHistory")}
+  />
+</WrapperBox>
 
-  <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-    <PastSurgicalHistoryPanel showForPrinting={showAll} setShowAll={setShowAll}/>
-  </WrapperBox>
-  <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-    <AllergiesPanel /*showForPrinting={showAll} setShowAll={setShowAll}*//>
-  </WrapperBox>
+<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+  <PastSurgicalHistoryPanel
+    showForPrinting={showAllPanels.pastSurgicalHistory}
+    toggleShow={() => togglePanel("pastSurgicalHistory")}
+  />
+</WrapperBox>
+
+<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+  <AllergiesPanel
+  />
+</WrapperBox>
 </Box>
     </>
   );

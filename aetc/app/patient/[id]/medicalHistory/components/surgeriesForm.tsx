@@ -153,7 +153,7 @@ interface ProcessedObservation {
 
     return (
       <>
-    <PastSurgicalHistoryPanel showForPrinting={showAll} setShowAll={setShowAll} />
+    <PastSurgicalHistoryPanel showForPrinting={showAll} toggleShow={setShowAll} />
         <FormikInit
   initialValues={initialValues}
   validationSchema={schema}
