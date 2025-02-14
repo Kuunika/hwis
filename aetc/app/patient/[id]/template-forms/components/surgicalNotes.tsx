@@ -16,6 +16,7 @@ interface Diagnosis {
 interface Allergy {
   id: string;
   allergen: string;
+  comment: string;
   obsDatetime: string;
 }
 
@@ -133,16 +134,13 @@ interface DrugHistory {
   obsDatetime: string;
 }
 
+interface SkinAssessment {
+  id: string;
+  temperature: string;
+  additionalNotes: string;
+  obsDatetime: string;
+}
 
-
-
-
-
-// interface TriageComplaint {
-//   id: string;
-//   complaint: string;
-//   obsDatetime: string;
-// }
 
 
 
@@ -169,9 +167,7 @@ function SurgicalNotesTemplate() {
   const [familyHistory, setFamilyHistory] = useState<FamilyHistory[]>([]);
   const [reviewOfSystems, setReviewOfSystems] = useState<ReviewOfSystem[]>([]);
   const [drugHistory, setDrugHistory] = useState<DrugHistory[]>([]);
-
-
-
+  const [skinAssessment, setSkinAssessment] = useState<SkinAssessment[]>([]);
 
 
   const { data: patientEncounters, isLoading, error } = getPatientsEncounters(params.id as string);
@@ -240,6 +236,48 @@ function SurgicalNotesTemplate() {
 
       setSurgicalHistory(historyRecords);
 
+      //skin assessment
+      // Filter encounters with type "DISABILITY-ASSESSMENT"
+      const disabilityEncounters = patientEncounters.filter(
+        (encounter) => encounter.encounter_type.uuid === encounters.DISABILITY_ASSESSMENT
+      );
+
+      const groupedSkinAssessment: Record<string, SkinAssessment> = {};
+
+      // Iterate over each encounter and group observations by obs_datetime
+      disabilityEncounters.forEach((encounter) => {
+        encounter.obs.forEach((obs) => {
+          const obsDate = obs.obs_datetime || "No Date";
+          const obsId = obs.obs_id.toString();
+
+          if (!groupedSkinAssessment[obsDate]) {
+            groupedSkinAssessment[obsDate] = {
+              id: obsId,
+              temperature: "",
+              additionalNotes: "",
+              obsDatetime: obsDate,
+            };
+          }
+
+          if (obs.concept_id === 5088) {
+            groupedSkinAssessment[obsDate].temperature = `${obs.value_numeric || obs.value}°C`;
+          }
+
+          if (obs.concept_id === 2592) {
+            groupedSkinAssessment[obsDate].additionalNotes = obs.value_text || obs.value || "N/A";
+          }
+        });
+      });
+
+      // Convert object values to array and sort by date (latest first)
+      const sortedSkinAssessment = Object.values(groupedSkinAssessment).sort(
+        (a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime()
+      );
+
+      // Take the latest record
+      setSkinAssessment(sortedSkinAssessment.slice(0, 1));
+
+
 
 
       //family history
@@ -247,48 +285,47 @@ function SurgicalNotesTemplate() {
       const familyHistoryRecords = patientEncounters
         .filter(
           (encounter) =>
-            encounter.encounter_type.uuid === "ba06b178-8d80-11d8-abbb-0024217bb78e"
+            encounter.encounter_type.uuid === encounters.FAMILY_MEDICAL_HISTORY // Ensure correct encounter type
         )
         .flatMap((encounter) =>
           encounter.obs
-            .filter((obs) => obs.group_members?.length > 0) // Parent observations with group members
+            .filter((obs) => obs.children?.length > 0) // Check if the observation has children
             .map((parentObs) => {
-              const groupMembers = parentObs.group_members || [];
-              const condition = groupMembers.find((member: { concept: string; value: string }) =>
-                [
-                  concepts.FAMILY_HISTORY_ASTHMA,
-                  concepts.FAMILY_HISTORY_HYPERTENSION,
-                  concepts.FAMILY_HISTORY_DIABETES_MELLITUS,
-                  concepts.FAMILY_HISTORY_EPILEPSY,
-                  concepts.FAMILY_HISTORY_CANCER,
-                  concepts.FAMILY_HISTORY_TUBERCULOSIS,
-                  concepts.FAMILY_HISTORY_OTHER_CONDITION,
-                ].includes(member.concept)
-              )?.value || "Unknown Condition";
+              const children = parentObs.children || [];
 
-              const relationship = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  member.concept === "7ee02862-fbf1-4976-8fde-af26e0e50768" // Relationship
-              )?.value || "Unknown Relationship";
+              // Extract the condition (Concept Name)
+              const condition =
+                children.find((child) => child.names?.[0]?.name)?.names?.[0]
+                  ?.name || "Unknown Condition";
 
-              const additionalDetails = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  member.concept === "bed97543-4814-4daf-b959-1a6685b5802f" // Other Condition
-              )?.value || "No Additional Details";
+              // Extract the relationship
+              const relationship =
+                children.find((child) => child.concept_id === 11958)?.value ||
+                "Unknown Relationship";
 
+              // Extract observation date
               const obsDatetime = parentObs.obs_datetime || "No Date";
 
               return {
                 id: parentObs.obs_id.toString(),
                 condition,
                 relationship,
-                additionalDetails,
-                obsDatetime, // Updated field name to match the interface
+                obsDatetime,
               };
             })
         );
+      const latestFamilyHistoryRecords = familyHistoryRecords
+        .sort(
+          (a, b) =>
+            new Date(b.obsDatetime).getTime() -
+            new Date(a.obsDatetime).getTime()
+        )
+        .slice(0, 1); // Get the latest record
 
-      setFamilyHistory(familyHistoryRecords);
+      // setAllergies(latestAllergyRecords);
+
+      setFamilyHistory(latestFamilyHistoryRecords);
+
 
 
       //Review of systems
@@ -515,11 +552,6 @@ function SurgicalNotesTemplate() {
 
 
 
-
-
-
-
-
       // Differential Diagnoses
       const diagnoses = patientEncounters
         .filter(
@@ -547,6 +579,7 @@ function SurgicalNotesTemplate() {
       setDifferentialDiagnoses(latestDiagnoses);
 
       // Allergies
+      // Allergies
       const allergyRecords = patientEncounters
         .filter(
           (encounter) =>
@@ -556,17 +589,15 @@ function SurgicalNotesTemplate() {
           encounter.obs
             .filter((obs) => Array.isArray(obs.children) && obs.children.length > 0)
             .map((obs) => {
-              const allergen = Array.isArray(obs.children)
-                ? obs.children.find((child: any) =>
-                  child.names[0]?.name === "Aspirin Allergy"
-                )?.names[0]?.name
-                : null;
+              // Get the allergy name dynamically
+              const allergen = obs.children.find((child: any) =>
+                child.names.some((name: any) => name.name.includes("Allergy"))
+              )?.names[0]?.name || "Unknown Allergen";
 
-              const allergyComment = Array.isArray(obs.children)
-                ? obs.children.find((child: any) =>
-                  child.names[0]?.name === "Allergy comment"
-                )?.value_text
-                : null;
+              // Get the allergy comment
+              const allergyComment = obs.children.find((child: any) =>
+                child.names.some((name: any) => name.name === "Allergy comment")
+              )?.value_text || "No Comment";
 
               return {
                 id: obs.obs_id.toString(),
@@ -596,15 +627,15 @@ function SurgicalNotesTemplate() {
         )
         .flatMap((encounter) =>
           encounter.obs
-            .filter((obs) => obs.names[0]?.uuid === concepts.ADDITIONAL_NOTES)
+            .filter((obs) => obs.concept_id === 2592) // Correct way to filter Clinician Notes
             .map((obs) => ({
               id: obs.obs_id.toString(),
-              notes: obs.value || "No Notes",
+              notes: obs.value_text || obs.value || "No Notes", // Use value_text for text-based notes
               obsDatetime: obs.obs_datetime || "",
             }))
         );
 
-      // Sort by the latest observation date and select the most recent record
+      // Sort by latest observation date and select the most recent record
       const latestNeurologicalRecords = neurologicalRecords
         .sort(
           (a, b) =>
@@ -699,56 +730,63 @@ function SurgicalNotesTemplate() {
       setHeadAndNeckExaminations(latestHeadAndNeckRecords);
 
       // Chest Assessments
+      // Extract Chest Assessments
       const chestRecords = patientEncounters
         .filter(
-          (encounter) =>
-            encounter.encounter_type.uuid === encounters.CHEST_ASSESSMENT
+          (encounter) => encounter.encounter_type.uuid === encounters.CHEST_ASSESSMENT
         )
-        .flatMap((encounter) =>
-          encounter.obs
-            .filter(
-              (obs) => obs.names[0]?.uuid === concepts.HEART_SOUNDS // Filter for heart sounds
-            )
-            .map((parentObs) => {
-              const groupMembers = parentObs.group_members || [];
+        .flatMap((encounter) => {
+          const observations = encounter.obs;
 
-              // Determine the status based on the value of the parent observation
-              const status =
-                parentObs.value === concepts.NORMAL
-                  ? "Normal"
-                  : parentObs.value === concepts.ABNORMAL
-                    ? "Abnormal"
-                    : "Unknown";
+          // Find the Heart Sounds observation
+          const heartSoundsObs = observations.find(
+            (obs) => obs.names[0]?.name === "Heart sounds"
+          );
 
-              // Get the description for abnormal cases
-              const description =
-                status === "Abnormal"
-                  ? groupMembers.find((member: { concept: string; value: any }) =>
-                    [
-                      concepts.LOUD_P2,
-                      concepts.SPLITTING_P2,
-                      concepts.GALLOP_RHYTHM,
-                      concepts.MURMUR,
-                    ].includes(member.concept)
-                  )?.names?.[0]?.name || "No Description"
-                  : undefined;
+          if (!heartSoundsObs) return [];
 
-              return {
-                id: parentObs.obs_id.toString(),
-                status,
-                description,
-                obsDatetime: parentObs.obs_datetime || "",
-              };
-            })
-        );
+          // Determine the status based on the coded value
+          const status =
+            heartSoundsObs.value === concepts.NORMAL
+              ? "Normal"
+              : heartSoundsObs.value === concepts.ABNORMAL
+                ? "Abnormal"
+                : "Unknown";
 
-      // Sort by the latest observation date and select the most recent record
+          // Find the Abnormal Description (only if status is Abnormal)
+          let description;
+          if (status === "Abnormal") {
+            const abnormalObs = observations.find(
+              (obs) =>
+                [
+                  concepts.LOUD_P2,
+                  concepts.SPLITTING_P2,
+                  concepts.GALLOP_RHYTHM,
+                  concepts.MURMUR,
+                  concepts.OTHER,
+                ].includes(obs.value)
+            );
+
+            description = abnormalObs ? abnormalObs.names?.[0]?.name : "No Description";
+          }
+
+          return [
+            {
+              id: heartSoundsObs.obs_id.toString(),
+              status,
+              description,
+              obsDatetime: heartSoundsObs.obs_datetime || "",
+            },
+          ];
+        });
+
+      // Sort by date and keep the latest record
       const latestChestRecords = chestRecords
         .sort(
           (a, b) =>
             new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime()
         )
-        .slice(0, 1); // Get the latest record
+        .slice(0, 1);
 
       setChestAssessments(latestChestRecords);
 
@@ -851,23 +889,45 @@ function SurgicalNotesTemplate() {
             encounter.encounter_type.uuid === encounters.PRESENTING_COMPLAINTS
         )
         .flatMap((encounter) =>
-          encounter.obs.map((obs) => {
-            // Look for a related duration observation in the same encounter
-            const durationObs = encounter.obs.find(
-              (childObs) =>
-                childObs.obs_group_id === obs.obs_id &&
-                childObs.names?.some((name) =>
-                  name.name.includes("Duration of symptom")
-                )
-            );
+          encounter.obs
+            .filter((obs) => obs.concept_id === 2310) // Find parent observations
+            .flatMap((parentObs) => {
+              // Extract Symptoms (Child Observations under the same parent, EXCLUDE durations)
+              const symptomObs = encounter.obs.filter(
+                (obs) =>
+                  obs.obs_group_id === parentObs.obs_id &&
+                  !obs.names?.some((name) =>
+                    name.name.includes("Duration of symptom")
+                  ) // Exclude duration observations
+              );
 
-            return {
-              id: obs.obs_id.toString(),
-              complaint: obs.value || "No Complaint",
-              duration: durationObs?.value || "No Duration",
-              obsDatetime: obs.obs_datetime || "",
-            };
-          })
+              return symptomObs.map((symptom) => {
+                const complaintName = symptom.names?.[0]?.name || "Unknown Symptom";
+
+                // Look for associated Duration Observation
+                const durationObs = encounter.obs.find(
+                  (childObs) =>
+                    childObs.obs_group_id === parentObs.obs_id &&
+                    childObs.names?.some((name) =>
+                      name.name.includes("Duration of symptom")
+                    )
+                );
+
+                // Extract Duration Name & Value
+                const durationName =
+                  durationObs?.names?.[0]?.name || "Unknown Duration";
+                const durationValue =
+                  durationObs?.value_numeric || durationObs?.value || "No Value";
+                const formattedDuration = `${durationName}: ${durationValue}`;
+
+                return {
+                  id: symptom.obs_id.toString(),
+                  complaint: complaintName,
+                  duration: formattedDuration,
+                  obsDatetime: symptom.obs_datetime || "",
+                };
+              });
+            })
         );
 
       // Sort by most recent observation date and limit to the latest one
@@ -881,23 +941,8 @@ function SurgicalNotesTemplate() {
       setPresentingComplaints(latestPresentingComplaints);
 
 
+
       //End Here
-
-
-
-      // const triageComplaintsData = patientEncounters
-      //   .filter((encounter) => encounter.encounter_type.uuid === encounters.TRIAGE_RESULT)
-      //   .flatMap((encounter) =>
-      //     encounter.obs
-      //       .filter((obs) => obs.names[0]?.uuid === concepts.COMPLAINTS) // Filter by COMPLAINTS Concept
-      //       .map((obs) => ({
-      //         id: obs.obs_id.toString(),
-      //         complaint: obs.value || "No Complaint",
-      //         obsDatetime: obs.obs_datetime || "",
-      //       }))
-      //   );
-
-      // setTriageComplaints(triageComplaintsData);
 
 
 
@@ -950,7 +995,7 @@ function SurgicalNotesTemplate() {
                   {presentingComplaints.map((complaint) => (
                     <li key={complaint.id}>
                       <p><b>Symptom:</b> {complaint.complaint}</p>
-                      <p><b>Duration:</b> {complaint.duration || "No Duration"}</p>
+                      <p> {complaint.duration || "No Duration"}</p>
                       <p><b>Date:</b> {new Date(complaint.obsDatetime).toLocaleDateString()}</p>
                     </li>
                   ))}
@@ -1025,15 +1070,14 @@ function SurgicalNotesTemplate() {
             ) : (
               <Typography>No past surgical history recorded.</Typography>
             )}
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Allergy
-            </Typography>
+            <Typography variant="h6" sx={{ pl: 2 }}>- Allergy</Typography>
             {allergies.length > 0 ? (
               <ul style={{ paddingLeft: "2ch" }}>
                 {allergies.map((allergy) => (
                   <li key={allergy.id}>
-                    {allergy.allergen} -{" "}
-                    {new Date(allergy.obsDatetime).toLocaleDateString()}
+                    <strong>Allergy Name:</strong> {allergy.allergen} <br />
+                    <strong>Allergy Details:</strong> {allergy.comment} <br />
+                    <strong>Date:</strong> {new Date(allergy.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
@@ -1054,8 +1098,7 @@ function SurgicalNotesTemplate() {
                 {familyHistory.map((history) => (
                   <li key={history.id}>
                     <b>Condition:</b> {history.condition} | <b>Relationship:</b> {history.relationship}{" "}
-                    {history.otherDetails && `| Other Details: ${history.otherDetails}`} |{" "}
-                    <b>Date:</b> {new Date(history.obsDatetime).toLocaleDateString()}
+                    | <b>Date:</b> {new Date(history.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
@@ -1127,7 +1170,6 @@ function SurgicalNotesTemplate() {
             ) : (
               <Typography>No head and neck observations recorded.</Typography>
             )}
-
             <Typography variant="h6" sx={{ pl: 2 }}>
               - Chest (Secondary Assessment)
             </Typography>
@@ -1152,6 +1194,7 @@ function SurgicalNotesTemplate() {
             ) : (
               <Typography>No chest observations recorded.</Typography>
             )}
+
 
             <Typography variant="h6" sx={{ pl: 2 }}>
               - Lungs
@@ -1217,27 +1260,30 @@ function SurgicalNotesTemplate() {
             )}
 
             <Typography variant="h6" sx={{ pl: 2 }}>
-              - Skin Assessment</Typography>
-            {skinExaminations.length > 0 ? (
+              - Skin Assessment
+            </Typography>
+            {skinAssessment.length > 0 ? (
               <ul>
-                {skinExaminations.map((exam) => (
-                  <li key={exam.id}>
-                    {exam.observation} -{" "}
-                    {new Date(exam.obsDatetime).toLocaleDateString()}
+                {skinAssessment.map((assessment) => (
+                  <li key={assessment.id}>
+                    <b>Temperature:</b> {assessment.temperature || "N/A"} |
+                    <b> Additional Notes:</b> {assessment.additionalNotes || "N/A"} |
+                    <b> Date:</b> {new Date(assessment.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No skin observations recorded.</Typography>
+              <Typography sx={{ pl: 4 }}>No skin assessment recorded.</Typography>
             )}
 
             <Typography variant="h6" sx={{ pl: 2 }}>
-              - Neurological Examination</Typography>
+              - Neurological Examination
+            </Typography>
             {neurologicalExaminations.length > 0 ? (
               <ul>
                 {neurologicalExaminations.map((exam) => (
                   <li key={exam.id}>
-                    {exam.notes} -{" "}
+                    <b>Notes:</b> {exam.notes} | <b>Date:</b>{" "}
                     {new Date(exam.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
@@ -1264,23 +1310,6 @@ function SurgicalNotesTemplate() {
             )}
           </section>
 
-
-          {/* Death Observations Section */}
-          {/* <section>
-            <Typography variant="h5">2) Death Observations</Typography>
-            {deathObservations.length > 0 ? (
-              <ul>
-                {deathObservations.map((obs) => (
-                  <li key={obs.id}>
-                    {obs.concept}: {obs.value} -{" "}
-                    {new Date(obs.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography>No death observations recorded.</Typography>
-            )}
-          </section> */}
 
           <section>
             <Typography variant="h5">6) Investigations</Typography>

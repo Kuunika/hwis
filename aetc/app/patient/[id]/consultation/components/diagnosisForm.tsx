@@ -1,10 +1,10 @@
 "use client";
-import { FormikInit, SearchComboBox, MainGrid, MainPaper } from "@/components";
+import { FormikInit, MainGrid, MainPaper } from "@/components";
 import { useEffect, useState } from "react";
 import { DiagnosisTable } from "./DiagnosisTable";
 import * as Yup from "yup";
 import { getConceptSetMembers } from "@/hooks/labOrder";
-import { Button, IconButton, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import {
     addEncounter,
     getPatientsEncounters,
@@ -17,7 +17,7 @@ import { getOnePatient } from "@/hooks/patientReg";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { concepts, encounters } from "@/constants";
-import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import ECTReactComponent from "@/components/form/ECTReactComponent"; // Import ICD-11 component
 
 interface Diagnosis {
     id: string;
@@ -30,24 +30,21 @@ interface DiagnosisFormProps {
 }
 
 function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
-    const { data: diagnosisOptions, refetch: reloadDiagnosisOptions } =
-        getConceptSetMembers(concepts.CONDITION);
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
     const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
     const { params } = useParameters();
     const { data: patient } = getOnePatient(params.id as string);
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
-    const [showTable, setShowTable] = useState(false);
-    const [showComboBox, setShowComboBox] = useState(false);
 
+    const [showTable, setShowTable] = useState(false);
+    const [showSelection, setShowSelection] = useState<{ [key: number]: boolean }>({});
+
+    const [showICD11, setShowICD11] = useState(false);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { data: patientEncounters } = getPatientsEncounters(
-        params.id as string
-    );
+    const { data: patientEncounters } = getPatientsEncounters(params.id as string);
     const { mutate: deleteDiagnosis } = removeObservation();
 
     useEffect(() => {
-        // Finds the active visit for the patient from their visit history
         if (patientVisits) {
             const active = patientVisits.find((visit) => !visit.date_stopped);
             if (active) {
@@ -57,17 +54,12 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
     }, [patientVisits]);
 
     useEffect(() => {
-        reloadDiagnosisOptions();
-        // Loads and filters patient encounters to get diagnosis records only
         if (patientEncounters) {
             const diagnosisRecords = patientEncounters
-                .filter(
-                    (encounter) =>
-                        encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS
-                )
+                .filter((encounter) => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
                 .flatMap((encounter) =>
                     encounter.obs
-                        .filter((obs) => obs.names[0]?.uuid === conceptType) // Filter by conceptType
+                        .filter((obs) => obs.names[0]?.uuid === conceptType)
                         .map((obs) => ({
                             id: obs.obs_id.toString(),
                             condition: obs.value,
@@ -78,25 +70,21 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
         }
     }, [patientEncounters, conceptType]);
 
-    const conditionOptions =
-        diagnosisOptions?.map((diagnosisOption) => ({
-            id: diagnosisOption.names[0]?.uuid,
-            label: diagnosisOption.names[0]?.name,
-        })) || [];
-
     const initialValues = { condition: "" };
+
     const validationSchema = Yup.object().shape({
         condition: Yup.string().required("Condition is required"),
     });
 
-    const handleAddDiagnosis = (values: any, resetForm: any) => {
-        const selectedCondition = conditionOptions.find(
-            (option) => option.id === values.condition
-        );
+    const handleICD11Selection = (selectedEntity: any, index: number) => {
+        setShowSelection((prev) => ({ ...prev, [index]: true }));
+        initialValues.condition = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`;
+    };
+
+    const handleAddDiagnosis = (selectedCondition: any) => {
         const currentDateTime = getDateTime();
 
         if (selectedCondition && activeVisit?.uuid) {
-            // Calls API to create a new diagnosis encounter for the patient
             createDiagnosis({
                 encounterType: encounters.OUTPATIENT_DIAGNOSIS,
                 visit: activeVisit?.uuid,
@@ -104,8 +92,8 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                 encounterDatetime: currentDateTime,
                 obs: [
                     {
-                        concept: conceptType, // Use the conceptType prop here
-                        value: values.condition,
+                        concept: conceptType,
+                        value: `${selectedCondition.code} - ${selectedCondition.bestMatchText}`, // Use ICD-11 code
                         obsDatetime: currentDateTime,
                     },
                 ],
@@ -116,7 +104,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                     ...prev,
                     {
                         id: Date.now().toString(),
-                        condition: selectedCondition.label,
+                        condition: `${selectedCondition.code} - ${selectedCondition.label}`, // Display both code & label
                         obsDatetime: currentDateTime,
                     },
                 ]);
@@ -124,19 +112,13 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
             } else if (isError) {
                 toast.error("Failed to submit diagnosis.");
             }
-
-            resetForm();
         } else {
             toast.error("Visit information is missing, cannot add diagnosis.");
         }
     };
 
-    const toggleTableVisibility = () => {
-        setShowTable(!showTable);
-    };
-    const toggleComboBox = () => {
-        setShowComboBox(!showComboBox);
-    };
+    const toggleTableVisibility = () => setShowTable(!showTable);
+    const toggleICD11 = () => setShowICD11(!showICD11);
 
     const handleDeleteDiagnosis = (obs_id: string) => {
         deleteDiagnosis(obs_id, {
@@ -157,87 +139,34 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
         <MainGrid container spacing={2}>
             <MainGrid item xs={12}>
                 <MainPaper style={{ padding: "20px" }}>
-                    <Typography
-                        variant="subtitle1"
-                        style={{ marginBottom: "10px", fontWeight: "500" }}
-                    >
+                    <Typography variant="subtitle1" style={{ marginBottom: "10px", fontWeight: "500" }}>
                         Current Diagnosis
                     </Typography>
                     <br />
 
-                    {/* Header */}
-                    <div
-                        style={{
-                            display: "flex",
-                            paddingBottom: "8px",
-                            borderBottom: "1px solid #ddd",
-                        }}
-                    >
-                        <Typography
-                            variant="body2"
-                            style={{ width: "25%", fontWeight: "500" }}
-                        >
-                            Condition
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            style={{ width: "25%", fontWeight: "500" }}
-                        >
-                            Diagnosis Type
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            style={{ width: "25%", fontWeight: "500" }}
-                        >
-                            Date
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            style={{ width: "25%", fontWeight: "500" }}
-                        >
-                            Action
-                        </Typography>
+                    <div style={{ display: "flex", paddingBottom: "8px", borderBottom: "1px solid #ddd" }}>
+                        <Typography variant="body2" style={{ width: "40%", fontWeight: "500" }}>Condition</Typography>
+                        <Typography variant="body2" style={{ width: "25%", fontWeight: "500" }}>Diagnosis Type</Typography>
+                        <Typography variant="body2" style={{ width: "25%", fontWeight: "500" }}>Date</Typography>
+                        <Typography variant="body2" style={{ width: "10%", fontWeight: "500" }}>Action</Typography>
                     </div>
 
-                    {/* Diagnosis entries */}
                     {diagnosisList.length === 0 ? (
-                        <Typography
-                            variant="body2"
-                            style={{ padding: "16px", textAlign: "center", color: "gray" }}
-                        >
+                        <Typography variant="body2" style={{ padding: "16px", textAlign: "center", color: "gray" }}>
                             No Diagnosis Added
                         </Typography>
                     ) : (
                         diagnosisList.slice(-3).map((diagnosis) => (
-                            <div
-                                key={diagnosis.id}
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    borderBottom: "1px solid #f0f0f0",
-                                }}
-                            >
-                                <Typography variant="body2" style={{ width: "25%" }}>
-                                    {diagnosis.condition}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    style={{ width: "25%", fontStyle: "italic" }}
-                                >
-                                    {conceptType === concepts.DIFFERENTIAL_DIAGNOSIS
-                                        ? "Differential Diagnosis"
-                                        : "Final Diagnosis"}
+                            <div key={diagnosis.id} style={{ display: "flex", alignItems: "center", borderBottom: "1px solid #f0f0f0" }}>
+                                <Typography variant="body2" style={{ width: "40%" }}>{diagnosis.condition}</Typography>
+                                <Typography variant="body2" style={{ width: "25%", fontStyle: "italic" }}>
+                                    {conceptType === concepts.DIFFERENTIAL_DIAGNOSIS ? "Differential Diagnosis" : "Final Diagnosis"}
                                 </Typography>
                                 <Typography variant="body2" style={{ width: "25%" }}>
                                     {new Date(diagnosis.obsDatetime).toLocaleDateString("en-GB")}
                                 </Typography>
-                                <Typography variant="body2" style={{ width: "25%" }}>
-                                    <Button
-                                        onClick={() => handleDeleteDiagnosis(diagnosis.id)}
-                                        size="small"
-                                        color="error"
-                                        variant="text"
-                                    >
+                                <Typography variant="body2" style={{ width: "10%" }}>
+                                    <Button onClick={() => handleDeleteDiagnosis(diagnosis.id)} size="small" color="error" variant="text">
                                         Delete
                                     </Button>
                                 </Typography>
@@ -245,39 +174,25 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                         ))
                     )}
 
-                    <Typography
-                        variant="subtitle2"
-                        style={{ color: "green", cursor: "pointer", marginTop: "30px" }} // Added margin-top
-                        onClick={toggleComboBox}
-                    >
-                        {showComboBox ? "- Cancel New Diagnosis" : "+ Add New Diagnosis"}
+                    <Typography variant="subtitle2" style={{ color: "green", cursor: "pointer", marginTop: "30px" }} onClick={toggleICD11}>
+                        {showICD11 ? "- Cancel New Diagnosis" : "+ Add New Diagnosis"}
                     </Typography>
-                    {showComboBox && (
-                        <FormikInit
-                            initialValues={initialValues}
-                            onSubmit={handleAddDiagnosis}
-                            validationSchema={validationSchema}
-                            submitButtonText="Add"
-                        >
-                            <SearchComboBox
-                                label="Condition"
-                                name="condition"
-                                options={conditionOptions}
-                                sx={{ width: "100%" }}
-                                multiple={false}
-                            />
-                        </FormikInit>
+
+                    {showICD11 && (
+                        <ECTReactComponent
+                            iNo={1}  // Provide a unique number (adjust as needed)
+                            name="diagnosis" // Give an appropriate name
+                            label="Select Diagnosis" // Set a meaningful label
+                            onICD11Selection={(selectedCondition: any) => handleAddDiagnosis(selectedCondition)}
+                        />
                     )}
+
                 </MainPaper>
             </MainGrid>
 
             <MainGrid item xs={12}>
                 <MainPaper>
-                    <Typography
-                        onClick={toggleTableVisibility}
-                        variant="subtitle1"
-                        style={{ cursor: "pointer", padding: "1ch", fontWeight: "500" }} // Added padding
-                    >
+                    <Typography onClick={toggleTableVisibility} variant="subtitle1" style={{ cursor: "pointer", padding: "1ch", fontWeight: "500" }}>
                         {showTable ? "Hide Previous Diagnosis" : "Show Previous Diagnosis"}
                     </Typography>
                     {showTable && <DiagnosisTable diagnoses={diagnosisList} />}
