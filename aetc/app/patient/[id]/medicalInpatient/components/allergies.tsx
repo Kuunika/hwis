@@ -11,7 +11,7 @@ interface Observation {
   obs_group_id: number | null;
   value: any;
   names: { name: string }[];
-  children?: Observation[]; // To support nested children
+  children?: Observation[]; 
 }
 
 interface ProcessedObservation {
@@ -29,40 +29,61 @@ function AllergiesPanel() {
     const displayedObservations = showAll ? observations : observations.slice(0, 4);
 
 
-    const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type.name === "SURGICAL HISTORY");
+    const allergiesEncounters = historicData?.filter((item) => item.encounter_type.name === "Allergies");
  
 
   useEffect(() => {
     if (!historyLoading) {
-        const observations: ProcessedObservation[] = [];
-        
-       
-        sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-          console.log('Patient history:',encounter);
-          
-        
-          encounter.obs.forEach((observation) => {
-          const value = observation.value;
-        
-          
-          const obsData: ProcessedObservation = {
-            obs_id: observation.obs_id,
-            name: observation.names?.[0]?.name,
-            value,
-            children: [],
-          };
+
+            const observations: ProcessedObservation[] = [];
       
-          if (observation.obs_group_id) {
-            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-            if (parent) {
-              parent.children.push(obsData);
-            }
-          } else {
-            observations.push(obsData);
-          }
-        })
-            setObservations(observations)
-        });
+            allergiesEncounters?.forEach((encounter: { obs: Observation[] }) => {
+              encounter.obs.forEach((observation) => {
+                const value = observation.value;
+
+                const obsData: ProcessedObservation = {
+                  obs_id: observation.obs_id,
+                  name: observation.names?.[0]?.name,
+                  value,
+                  children: [],
+                };
+            
+                if (observation.obs_group_id) {
+                  const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
+                  if (parent) {
+                    parent.children.push(obsData);
+                  }
+                } else {
+                  observations.push(obsData);
+                }
+              });
+            });
+      
+            const mergeObservations = (data: any[] | undefined) => {
+              const merged: any[] = [];
+              
+              data?.forEach(item => {
+                  if(item.name !=='Allergy comment'){
+                  let existing = merged.find(mergedItem => mergedItem.name === item.name);
+                  
+                  if (!existing) {
+                      merged.push({ ...item, children: [...item.children] });
+                  } else {
+                      const childMap = new Map();
+                      [...existing.children, ...item.children].forEach(child => {
+                          const key = `${child.name}_${child.value}`;
+                          childMap.set(key, child);
+                      });
+                      existing.children = Array.from(childMap.values());
+                  }
+                }
+              });
+          
+              return merged;
+          };
+          
+          const mergedData = mergeObservations(observations);
+          setObservations(mergedData);
 
         }
 
@@ -70,7 +91,7 @@ function AllergiesPanel() {
 
 return (
     <>
-<Panel title="Past Surgical History">
+<Panel title="Allergies">
   <WrapperBox>
     {historyLoading ? (
       <div
@@ -85,73 +106,31 @@ return (
       </div>
     ) : (
       <>
-        <div
-          style={{
+          <div           style={{
             display: "flex",
             flexWrap: "wrap",
             gap: "20px",
             alignItems: "flex-start",
-          }}
-        >
-          {displayedObservations.map((item) => (
-            <div
-              key={item.obs_id}
-              style={{
-                flex: "1 1 300px",
-                minWidth: "250px",
-                maxWidth: "350px",
-                color: "rgba(0, 0, 0, 0.6)",
-                padding: "10px",
-                borderRadius: "5px",
-              }}
-            >
-              <h4>{new Date(item.value).toLocaleDateString()}</h4>
-              {item.children && item.children.length > 0 && (
-                <ul style={{ paddingLeft: "15px" }}>
-                  {item.children.map((child) => (
-                    <li key={child.obs_id}>
-                      {(() => {
-                        let parsedValue = child.value;
-                        if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
-                          parsedValue = (child.value === "true").toString();
-                        }
-                        return typeof parsedValue === "boolean"
-                          ? String(child.name)
-                          : `${String(child.name)}: ${String(parsedValue)}`;
-                      })()}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+          }}>
+            {observations.map(item => (
+                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
+                    {/* Display title */}
+                    <h4>{item.name}</h4>
+                    
+                    {/* Display children if they exist */}
+                    {item.children && item.children.length > 0 && (
+                        <ul>
+                            {item.children.map(child => (
+                                <li key={child.obs_id}>
+                                    {child.name}: {child.value}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
         </div>
-
-        {/* View More / View Less Button */}
-        {observations.length > 4 && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              width: "100%",
-              marginTop: "10px",
-            }}
-          >
-            <button
-              onClick={() => setShowAll(!showAll)}
-              style={{
-                color: "rgba(0, 0, 0, 0.6)",
-                cursor: "pointer",
-                border: "none",
-                background: "none",
-                padding: 0,
-              }}
-            >
-              {showAll ? "View Less" : "View More ..."}
-            </button>
-          </div>
-        )}
-      </>
+        </>
     )}
   </WrapperBox>
 </Panel>

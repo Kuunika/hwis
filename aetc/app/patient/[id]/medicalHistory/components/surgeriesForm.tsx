@@ -14,6 +14,7 @@ import { Field, FieldArray, getIn } from "formik";
 import { concepts } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import PastSurgicalHistoryPanel from "../../medicalInpatient/components/pastSurgicalHistory";
   
 
 interface Observation {
@@ -129,6 +130,7 @@ interface ProcessedObservation {
     const [formValues, setFormValues] = useState<any>({});
     const { data: patientHistory, isLoading: historyLoading  } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+    const [showAll, setShowAll] = useState(false);
     const [showOther, setShowOther] = useState<boolean[]>([]);
     const surgicalEncounters = patientHistory?.filter(
       (item) => item.encounter_type?.name === "SURGICAL HISTORY"
@@ -137,39 +139,6 @@ interface ProcessedObservation {
       await schema.validate(formValues);  
       onSubmit(formValues);
     };
-
-    useEffect(() => {
-  
-      if (!historyLoading) {
-        const observations: ProcessedObservation[] = [];
-  
-      surgicalEncounters?.forEach((encounter: { obs: Observation[] }) => {
-          encounter.obs.forEach((observation) => {
-            const value = observation.value;
-        
-            const obsData: ProcessedObservation = {
-              obs_id: observation.obs_id,
-              name: observation.names?.[0]?.name,
-              value,
-              children: [],
-            };
-        
-            if (observation.obs_group_id) {
-              const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-              if (parent) {
-                parent.children.push(obsData);
-              }
-            } else {
-              observations.push(obsData);
-            }
-          })
-          observations.sort((a, b) => new Date(b.value).getTime() - new Date(a.value).getTime());
-          setObservations(observations)
-        });}
-
-        
-      
-    }, [patientHistory]);
 
 
     useEffect(() => {
@@ -184,34 +153,7 @@ interface ProcessedObservation {
 
     return (
       <>
-      <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
-        <div>
-            {observations.map(item => (
-                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
- <h4>{(new Date(item.value)).toLocaleDateString()}
-</h4>
-                    {item.children && item.children.length > 0 && (
-                        <ul>
-                            {item.children.map(child => (
-                                <li key={child.obs_id}>
-                                    {(() => {
-  let parsedValue = child.value;
-  if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
-    parsedValue = child.value === "true";
-  }
-
-  return typeof parsedValue === "boolean"
-    ? String(child.name)
-    : `${String(child.name)}: ${String(parsedValue)}`;
-})()}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            ))}
-        </div>
-        </div>
+    <PastSurgicalHistoryPanel showForPrinting={showAll} setShowAll={setShowAll} />
         <FormikInit
   initialValues={initialValues}
   validationSchema={schema}

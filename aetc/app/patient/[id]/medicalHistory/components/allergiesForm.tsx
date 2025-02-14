@@ -9,6 +9,7 @@ import { concepts } from "@/constants";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
+import AllergiesPanel from "../../medicalInpatient/components/allergies";
 
 interface Observation {
   obs_id: number | null;
@@ -257,91 +258,13 @@ const initialValues = {
       setShowSubstanceOther(null);
     }
 
-    if (!isLoading) {
-      const observations: ProcessedObservation[] = [];
 
-      allergiesEncounters?.forEach((encounter: { obs: Observation[] }) => {
-        encounter.obs.forEach((observation) => {
-          const value = observation.value;
-      
-          // Format the observation data
-          const obsData: ProcessedObservation = {
-            obs_id: observation.obs_id,
-            name: observation.names?.[0]?.name,
-            value,
-            children: [],
-          };
-      
-          if (observation.obs_group_id) {
-            // Find the parent observation and group it
-            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-            if (parent) {
-              parent.children.push(obsData);
-            }
-          } else {
-            // Add it to the top-level observations
-            observations.push(obsData);
-          }
-        });
-      });
-
-      const mergeObservations = (data: any[] | undefined) => {
-        const merged: any[] = [];
-        
-        data?.forEach(item => {
-            // Check if the name already exists in the merged array
-            if(item.name !=='Allergy comment'){
-            let existing = merged.find(mergedItem => mergedItem.name === item.name);
-            
-            if (!existing) {
-                // Add new item if it doesn't exist
-                merged.push({ ...item, children: [...item.children] });
-            } else {
-                // Merge children and remove duplicates based on `name` and `value`
-                const childMap = new Map();
-                [...existing.children, ...item.children].forEach(child => {
-                    const key = `${child.name}_${child.value}`;
-                    childMap.set(key, child);
-                });
-                existing.children = Array.from(childMap.values());
-            }
-          }
-        });
-    
-        return merged;
-    };
-    
-    const mergedData = mergeObservations(observations);
-    setObservations(mergedData);
-
-      
- 
-    }
-
-  }, [allergySelected,data]);
+  }, [allergySelected]);
 
 return (<>
-  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Known Allergies:</h3>
-  <div>
-            {observations.map(item => (
-                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                    {/* Display title */}
-                    <h4>{item.name}</h4>
-                    
-                    {/* Display children if they exist */}
-                    {item.children && item.children.length > 0 && (
-                        <ul>
-                            {item.children.map(child => (
-                                <li key={child.obs_id}>
-                                    {child.name}: {child.value}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            ))}
-        </div>
-  </div>
+
+<AllergiesPanel/>
+
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}

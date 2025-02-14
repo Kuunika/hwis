@@ -10,6 +10,7 @@ import PastMedicalHistoryPanel from "./components/pastMedicalHistory";
 import PastSurgicalHistoryPanel from "./components/pastSurgicalHistory";
 import { useReactToPrint } from "react-to-print";
 import { useRef, useState } from "react";
+import AllergiesPanel from "./components/allergies";
 
 function InPatientAdmission() {
 
@@ -98,6 +99,9 @@ function InPatientAdmission() {
 
   <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
     <PastSurgicalHistoryPanel showForPrinting={showAll} setShowAll={setShowAll}/>
+  </WrapperBox>
+  <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+    <AllergiesPanel /*showForPrinting={showAll} setShowAll={setShowAll}*//>
   </WrapperBox>
 </Box>
     </>

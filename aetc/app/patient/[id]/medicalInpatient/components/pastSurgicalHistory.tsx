@@ -22,7 +22,7 @@ interface ProcessedObservation {
 }
 interface PastSurgicalHistoryPanelProps {
 
-    showForPrinting: boolean;
+    showForPrinting: boolean | null;
     setShowAll: (value: boolean) => void;
   }
   
@@ -39,7 +39,6 @@ interface PastSurgicalHistoryPanelProps {
 
     const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type.name === "SURGICAL HISTORY");
  
-
   useEffect(() => {
     if (!historyLoading) {
         const observations: ProcessedObservation[] = [];
