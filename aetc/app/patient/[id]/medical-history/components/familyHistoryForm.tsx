@@ -217,7 +217,18 @@ import { Field, getIn } from "formik";
         <div>
           {obs.children.map((child) => (
             <div key={child.obs_id} style={{ paddingLeft: "20px" }}>
-              <strong>{child.name}:</strong> ({child.value})
+                                                  {(() => {
+  let parsedValue = child.value;
+  if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
+    parsedValue = child.value === "true";
+  }
+  return typeof parsedValue === "boolean" ? (
+    <strong>{String(child.name)}</strong>
+  ) : (
+    `${String(child.name)}: ${String(parsedValue)}`
+  );
+
+})()}
             </div>
           ))}
         </div>

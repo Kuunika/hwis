@@ -515,6 +515,7 @@ export default function TriageWorkFlow() {
           />
         </NewStepperContainer>
       </DisplayNone>
+
       {completed == 7 && (
         <>
           <PatientTriageBarcodePrinter

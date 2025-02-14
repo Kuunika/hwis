@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { FormValueLabel } from "@/interfaces";
-import { Box, Typography, IconButton, Collapse } from "@mui/material";
+import { Box, Typography, IconButton, Collapse, Button } from "@mui/material";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 export const DataBox = ({
   labelValue,
   maxWidth = "250px",
+  onDelete,
 }: {
   labelValue: FormValueLabel;
   maxWidth?: string;
+  onDelete?: () => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -91,6 +93,11 @@ export const DataBox = ({
             </Box>
           ))}
         </Box>
+        {onDelete && (
+          <Button sx={{ color: "red" }} onClick={onDelete}>
+            Delete
+          </Button>
+        )}
       </Collapse>
     </Box>
   );

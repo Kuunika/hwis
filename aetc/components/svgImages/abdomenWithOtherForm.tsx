@@ -6,16 +6,19 @@ import { DataBox, OtherAbnormalityForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { useEffect } from "react";
 import { concepts } from "@/constants";
+import { PalpationForm } from "./forms/abdomen/palpationForm";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
+  formNameSection?: string;
 }
 
 export function AbdomenImageWithOtherForm({
   onValueChange,
   imageEncounter,
   imageSection,
+  formNameSection,
 }: Props) {
   const {
     handleClose,
@@ -25,8 +28,10 @@ export function AbdomenImageWithOtherForm({
     anchorEl,
     selectedSection,
     ids,
+    deleteSection,
+    setData,
+    submittedValues,
   } = useImage();
-  const { setData, submittedValues } = useImageFormTransform();
 
   useEffect(() => {
     onValueChange(ids);
@@ -53,7 +58,13 @@ export function AbdomenImageWithOtherForm({
       <Abdomen ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
-          <DataBox key={value.section} labelValue={value} />
+          <>
+            <DataBox
+              onDelete={() => deleteSection(value.section)}
+              key={value.section}
+              labelValue={value}
+            />
+          </>
         ))}
       </Box>
       <SVGPopover
@@ -62,16 +73,30 @@ export function AbdomenImageWithOtherForm({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <OtherAbnormalityForm
-          onCancel={handleClose}
-          onSubmit={(values, formConceptsLabels) =>
-            handleDataSubmission(
-              selectedSection.label as string,
-              values,
-              formConceptsLabels
-            )
-          }
-        />
+        {formNameSection != "palpation" && (
+          <OtherAbnormalityForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {formNameSection == "palpation" && (
+          <PalpationForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
       </SVGPopover>
     </>
   );

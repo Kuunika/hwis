@@ -1,6 +1,6 @@
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { LowerLimbPosterior } from "@/assets/lowerLimbPosterior";
+import { LowerLimbAnterior } from "@/assets/lowerLimbAnterior";
 import { DataBox, ExtremitiesLegForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { Box } from "@mui/material";
@@ -13,7 +13,7 @@ interface Props {
   imageSection?: string;
 }
 
-export function LowerLimbPosteriorImage({
+export function LowerLimbAnteriorImage({
   onValueChange,
   imageEncounter,
   imageSection,
@@ -53,7 +53,7 @@ export function LowerLimbPosteriorImage({
 
   return (
     <>
-      <LowerLimbPosterior ref={containerRef} />
+      <LowerLimbAnterior ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox maxWidth="230px" key={value.section} labelValue={value} />
