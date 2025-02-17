@@ -11,6 +11,7 @@ import PastSurgicalHistoryPanel from "./components/pastSurgicalHistory";
 import { useReactToPrint } from "react-to-print";
 import { useRef, useState } from "react";
 import AllergiesPanel from "./components/allergies";
+import SocialHistoryPanel from "./components/socialHistory";
 
 function InPatientAdmission() {
 
@@ -20,6 +21,7 @@ function InPatientAdmission() {
     presentingComplaints: false,
     drugHistory: false,
     pastSurgicalHistory: false,
+    socialHistory: false,
   });
   
   const togglePanel = (panel: keyof typeof showAllPanels) => {
@@ -38,6 +40,7 @@ function InPatientAdmission() {
           presentingComplaints: true,
           drugHistory: true,
           pastSurgicalHistory: true,
+          socialHistory: true,
         });
         setTimeout(resolve, 100);
       }),
@@ -46,6 +49,7 @@ function InPatientAdmission() {
         presentingComplaints: false,
         drugHistory: false,
         pastSurgicalHistory: false,
+        socialHistory: false,
       }),
   });
 
@@ -90,7 +94,7 @@ function InPatientAdmission() {
     Back
   </MainTypography>
   </div>
-  <Button sx={{mr:'15px'}} onClick={handlePrint}>DOWNLOAD PDF</Button>
+  <Button sx={{mr:'15px', background:'rgba(137, 129, 129, 0.5)', borderRadius: '1ch'}} onClick={handlePrint}>Download PDF</Button>
 </WrapperBox>
 <Box
   sx={{
@@ -104,7 +108,10 @@ function InPatientAdmission() {
   }}
   ref={printRef}
 >
-
+<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+  <SocialHistoryPanel showForPrinting={showAllPanels.socialHistory}
+    toggleShow={() => togglePanel("socialHistory")}/>
+</WrapperBox>
 <WrapperBox sx={{ width: "100%" }}>
   <PresentingComplaintsPanel
     showForPrinting={showAllPanels.presentingComplaints}
@@ -135,6 +142,7 @@ function InPatientAdmission() {
   <AllergiesPanel
   />
 </WrapperBox>
+
 </Box>
     </>
   );

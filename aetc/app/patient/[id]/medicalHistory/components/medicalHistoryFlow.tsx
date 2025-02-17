@@ -943,12 +943,12 @@ export const MedicalHistoryFlow = () => {
     socialDetailsObs.push(occupationObs,maritalObs,travelObs)
     
     try{
-      const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      const response = await createEncounter({ encounterType: encounters.SOCIAL_HISTORY,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime, 
       obs:  [{
-        concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+        concept: concepts.OTHER, 
         value: true,
         obsDatetime: dateTime,
         group_members: socialDetailsObs,

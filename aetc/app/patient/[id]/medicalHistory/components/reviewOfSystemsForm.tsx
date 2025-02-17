@@ -171,7 +171,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
     shape['wasInjured'] = yup.string().required('Please specify whether the patient was injured') 
     shape['injuryMechanism'] = yup.boolean().when('wasInjured', (wasInjured, schema) => {
-      return wasInjured ? schema.oneOf([true], 'Injury mechanism is required') : schema.nullable();
+      return wasInjured[0]==='Yes' ? schema.oneOf([true], 'Injury mechanism is required') : schema.nullable();
     });
 
   
@@ -185,11 +185,24 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   
       if(key === 'assault'){
         shape['assaultType'] = yup.string().when('assault', (assault, schema) => {
-          return assault ? schema.required('Please specify the type of assault') : schema.nullable();
+          return assault[0] ? schema.required('Please specify the type of assault') : schema.nullable();
         });
         
       }
   });
+
+  
+    shape['occupation'] = yup.string().when('showSocialHistory', (socialHistory, schema)=>{
+      return socialHistory[0]? schema.required('Occupation is required.'): schema.nullable()
+    });
+    shape['maritalStatus'] = yup.string().when('showSocialHistory', (socialHistory, schema)=>{
+      return socialHistory[0]? schema.required('Marital status is required.'): schema.nullable()
+    });
+
+    shape['travelDetails'] = yup.string().when('showSocialHistory', (socialHistory, schema)=>{
+      return socialHistory[0]? schema.required('Travel details are required.'): schema.nullable()
+    });
+
 
     shape['Gastrointenstinal_history'] = yup.array().of(
       yup.object({
@@ -297,6 +310,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     injuryMechanism:[],
     showSocialHistory: false,
     lostConsciousness: "Unknown",
+    occupation: "",
+    maritalStatus: "",
     occupationalInjury: "Unknown",
     assaultType:"",
     assault: false,
@@ -345,7 +360,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
 
   const handleSubmit = async () => {
-
+    console.log(formValues)
     
     await schema.validate(formValues);
     onSubmit(formValues);
@@ -612,7 +627,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         <RadioGroupInput
             row={true}
             name='occupation'
-            label='Occupation'
+            label='What is the patients occupation?'
             options={[
                 { label: "Working", value: "working" },
                 { label: "Business", value: "business" },
@@ -637,7 +652,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                sx={{mt:'1ch'}}
             row={true}
             name='maritalStatus'
-            label='Marital Status'
+            label='What is the patients marital status?'
             options={[
                 { label: "Single", value: "single" },
                 { label: "Married", value: "married" },
@@ -654,7 +669,13 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
            label="Travel Details"
            multiline
            rows={4}
-          /></>)}
+          />
+          <div style={{ color: "red", fontSize: "0.875rem" }}>
+                        <ErrorMessage
+                name={'travelDetails'}
+              />
+          </div>
+          </>)}
         </FormFieldContainer>
       
 
