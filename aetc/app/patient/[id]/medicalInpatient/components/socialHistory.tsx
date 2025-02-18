@@ -95,13 +95,18 @@ return (
                     borderRadius: "5px",
                   }}
                 >
-                  <h4>{item.names[0].name === "Contact marital status"? "Marital Status": item.names[0].name}</h4>
+                  <h4>
+                    {item.names[0].name === "Contact marital status"
+                        ? "Marital Status"
+                        : item.names[0].name === "Main activity"
+                        ? "Occupation"
+                        : item.names[0].name}
+                </h4>
                     <p>{item.value}</p>
                 </div>
               ))}
             </div>
     
-            {/* View More / View Less Button */}
             {observations.length > 4 && (
               <div
                 style={{

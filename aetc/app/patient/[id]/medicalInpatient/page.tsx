@@ -56,6 +56,7 @@ function InPatientAdmission() {
   
   return (
     <>
+    <div ref={printRef}>
       <PatientInfoTab />
       <WrapperBox
   
@@ -106,7 +107,7 @@ function InPatientAdmission() {
     pr: "2ch",
     alignItems: "start",
   }}
-  ref={printRef}
+  
 >
 <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
   <SocialHistoryPanel showForPrinting={showAllPanels.socialHistory}
@@ -144,8 +145,11 @@ function InPatientAdmission() {
 </WrapperBox>
 
 </Box>
+</div>
     </>
+    
   );
+  
 }
 
 

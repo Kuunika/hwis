@@ -25,8 +25,6 @@ function AllergiesPanel() {
     const { params } = useParameters();
     const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-    const [showAll, setShowAll] = useState(false);
-    const displayedObservations = showAll ? observations : observations.slice(0, 4);
 
 
     const allergiesEncounters = historicData?.filter((item) => item.encounter_type.name === "Allergies");
@@ -106,6 +104,7 @@ return (
       </div>
     ) : (
       <>
+      {observations.length === 0 ? ( <p>No allergy history available</p>):(<>
           <div           style={{
             display: "flex",
             flexWrap: "wrap",
@@ -113,13 +112,10 @@ return (
             alignItems: "flex-start",
           }}>
             {observations.map(item => (
-                <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                    {/* Display title */}
+                <div key={item.obs_id} style={{ marginBottom: "20px", marginLeft:"10px", color:'rgba(0, 0, 0, 0.6)' }}>
                     <h4>{item.name}</h4>
-                    
-                    {/* Display children if they exist */}
                     {item.children && item.children.length > 0 && (
-                        <ul>
+                        <ul style={{ paddingLeft: "15px" }}>
                             {item.children.map(child => (
                                 <li key={child.obs_id}>
                                     {child.name}: {child.value}
@@ -129,7 +125,7 @@ return (
                     )}
                 </div>
             ))}
-        </div>
+        </div></>)}
         </>
     )}
   </WrapperBox>

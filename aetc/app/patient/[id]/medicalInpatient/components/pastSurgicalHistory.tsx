@@ -92,6 +92,7 @@ return (
       </div>
     ) : (
       <>
+      {displayedObservations.length === 0 ? ( <p>No surgical history available</p>):(<>
         <div
           style={{
             display: "flex",
@@ -133,8 +134,6 @@ return (
             </div>
           ))}
         </div>
-
-        {/* View More / View Less Button */}
         {observations.length > 4 && (
           <div
             style={{
@@ -157,6 +156,8 @@ return (
               {showForPrinting ? "View Less" : "View More ..."}
             </button>
           </div>
+        )}
+        </>        
         )}
       </>
     )}

@@ -130,7 +130,7 @@ return (
                                   <CircularProgress size={40} />
                                 </div>
                               ) : (
-                                <>
+                                <> { observations.length === 0 ? ( <p>No past medical history available</p>):(<>
             <div>
             <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
                 HIV Status:
@@ -157,7 +157,7 @@ return (
                 </b>
 ??
             </p>
-            </div>
+            </div> </>)}
             </>)}
             </WrapperBox>
         </Panel>

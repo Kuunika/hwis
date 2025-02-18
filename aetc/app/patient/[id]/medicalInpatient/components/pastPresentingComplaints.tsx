@@ -92,6 +92,7 @@ return (
                     </div>
                   ) : (
                     <>
+                    {displayedObservations.length === 0 ? (<p>No presenting complaints available</p>):(<>
             <div>
               {displayedObservations.map(item => (
                   <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
@@ -116,7 +117,7 @@ return (
                   </button>
                 )}
 
-            </div>
+            </div></>)}
             </>)}
             </WrapperBox>
         </Panel>

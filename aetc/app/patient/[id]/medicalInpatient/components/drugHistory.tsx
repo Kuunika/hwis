@@ -86,6 +86,7 @@ return (
                                   </div>
                                 ) : (
                                   <>
+                                  {displayedObservations.length === 0 ? ( <p>No drug history available</p>):(<>
     <div
   style={{
     display: "flex",
@@ -152,8 +153,9 @@ return (
             View Less
           </button>
         )}
-      </div></>  )}
+      </div>    </>)}</>  )}
     </WrapperBox>
+
   </Panel>
 </>
   );
