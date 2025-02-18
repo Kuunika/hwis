@@ -8,20 +8,28 @@ import {
     SearchComboBox,
     FormDatePicker,
 } from "@/components";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { Visit } from "@/interfaces";
 
 const specialtyOptions = [
-    { id: "medicine", label: "Medicine" },
-    { id: "generalSurgery", label: "General Surgery" },
-    { id: "orthopedics", label: "Orthopedics" },
-    { id: "neurosurgery", label: "Neurosurgery" },
-    { id: "ent", label: "Ear, Nose, and Throat (ENT)" },
-    { id: "dental", label: "Dental and Maxillofacial Surgery" },
-    { id: "ophthalmology", label: "Ophthalmology" },
-    { id: "psychiatry", label: "Psychiatry" },
-    { id: "gynecology", label: "Gynecology and Obstetrics" },
-    { id: "criticalCare", label: "Critical Care" },
-    { id: "oncology", label: "Oncology" },
+    { id: concepts.MEDICINE, label: "Medicine" },
+    { id: concepts.GENERAL_SURGERY, label: "General Surgery" },
+    { id: concepts.ORTHOPEDICS, label: "Orthopedics" },
+    { id: concepts.NEUROSURGERY, label: "Neurosurgery" },
+    { id: concepts.EAR_NOSE_AND_THROAT_ENT, label: "Ear, Nose, and Throat (ENT)" },
+    { id: concepts.DENTAL_AND_MAXILLOFACIAL_SURGERY, label: "Dental and Maxillofacial Surgery" },
+    { id: concepts.OPHTHALMOLOGY, label: "Ophthalmology" },
+    { id: concepts.PSYCHIATRY, label: "Psychiatry" },
+    { id: concepts.GYNAECOLOGY_AND_OBSTETRICS, label: "Gynecology and Obstetrics" },
+    { id: concepts.CRITICAL_CARE, label: "Critical Care" },
+    { id: concepts.ONCOLOGY, label: "Oncology" },
 ];
 
 const validationSchema = Yup.object({
@@ -37,10 +45,54 @@ const initialValues = {
 };
 
 export default function AwaitingSpecialityReviewForm() {
-    const handleSubmit = (values: any) => {
-        console.log("Form Values: ", values);
-        alert("Form Submitted!");
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = addEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+        const obs = [
+            {
+                concept: concepts.AWAITING_SPECIALITY_REVIEW,
+                value: concepts.AWAITING_SPECIALITY_REVIEW,
+                obsDatetime: currentDateTime,
+                group_members: [
+                    { concept: concepts.SPECIALITY_DEPARTMENT, value: values.specialtyDepartment, obsDatetime: currentDateTime },
+                ],
+            },
+        ];
+
+        const payload = {
+            encounterType: encounters.DISCHARGE_PATIENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            toast.success("Awaiting Speciality Review information submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Awaiting Speciality Review information: ", error);
+            toast.error("Failed to submit Awaiting Speciality Review information.");
+        }
+
+
     };
+
+
 
     return (
         <MainGrid container spacing={2}>
@@ -64,9 +116,10 @@ export default function AwaitingSpecialityReviewForm() {
                                             name="specialtyDepartment"
                                             label="Specialty Department"
                                             options={specialtyOptions}
+                                            multiple={false}
+
                                         />
                                     </MainGrid>
-
 
                                     {/* Reason for Review */}
                                     <MainGrid item xs={12}>
@@ -81,16 +134,8 @@ export default function AwaitingSpecialityReviewForm() {
                                         />
                                     </MainGrid>
 
-
-
                                 </MainGrid>
                             </MainGrid>
-
-
-
-
-
-
 
                             {/* Date Scheduled for Review */}
                             <MainGrid item xs={12}>
@@ -100,6 +145,7 @@ export default function AwaitingSpecialityReviewForm() {
                                     sx={{ width: "100%" }}
                                 />
                             </MainGrid>
+
                         </MainGrid>
                     </FormikInit>
                 </MainPaper>

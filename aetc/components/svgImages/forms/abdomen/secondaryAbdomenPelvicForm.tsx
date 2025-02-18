@@ -35,6 +35,14 @@ const form = {
     name: concepts.LACERATION_OTHER,
     label: "Laceration Other Descriptors",
   },
+  scarDescription: {
+    name: concepts.OTHER_MASSES_DESCRIPTION,
+    label: "Scar description",
+  },
+  other: {
+    name: concepts.OTHER,
+    label: "Other",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -42,6 +50,8 @@ const schema = Yup.object().shape({
     .required()
     .label(form.abnormalities.label),
   [form.burnsDescription.name]: Yup.string().label(form.burnsDescription.label),
+  [form.scarDescription.name]: Yup.string().label(form.scarDescription.label),
+  [form.other.name]: Yup.string().label(form.other.label),
 });
 
 type Props = {
@@ -54,23 +64,27 @@ const options = [
   { id: concepts.BRUISE, label: "Bruise" },
   { id: concepts.BURNS, label: "Burns" },
   { id: concepts.SCAR, label: "Scar" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const radioOptions = [
   { value: concepts.SUPERFICIAL, label: "Superficial" },
-  { value: concepts.PARTIAL, label: "Partial" },
-  { value: concepts.THICKNESS, label: "Thickness" },
+  { value: concepts.PARTIAL, label: "Partial Thickness" },
   { value: concepts.FULL_THICKNESS, label: "Full Thickness" },
-  { value: concepts.SCAR, label: "Scar" },
 ];
 
 export const SecondaryAbdomenPelvicForm = (props: Props) => {
   const [showBurns, setShowBurns] = useState<boolean>(false);
   const [showLaceration, setShowLaceration] = useState<boolean>(false);
+  const [showScarDescription, setShowScarDescription] =
+    useState<boolean>(false);
+  const [showOther, setShowOther] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
     setShowBurns(Boolean(values.find((v) => v.id == concepts.BURNS)));
     setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
+    setShowScarDescription(Boolean(values.find((v) => v.id == concepts.SCAR)));
+    setShowOther(Boolean(values.find((v) => v.id == concepts.OTHER)));
   };
 
   return (
@@ -128,6 +142,34 @@ export const SecondaryAbdomenPelvicForm = (props: Props) => {
               options={radioOptions}
               name={form.burnsDescription.name}
               label={form.burnsDescription.label}
+            />
+          </DashedContainer>
+        </>
+      )}
+      {showScarDescription && (
+        <>
+          <br />
+          <DashedContainer>
+            <Typography variant="h6">Scar Description</Typography>
+            <TextInputField
+              sx={{ width: "100%" }}
+              id={form.scarDescription.name}
+              name={form.scarDescription.name}
+              label={form.scarDescription.label}
+            />
+          </DashedContainer>
+        </>
+      )}
+      {showOther && (
+        <>
+          <br />
+          <DashedContainer>
+            <Typography variant="h6">Other</Typography>
+            <TextInputField
+              sx={{ width: "100%" }}
+              id={form.other.name}
+              name={form.other.name}
+              label={form.other.label}
             />
           </DashedContainer>
         </>

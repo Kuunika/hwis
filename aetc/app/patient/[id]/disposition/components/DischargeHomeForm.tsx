@@ -8,20 +8,22 @@ import {
     SearchComboBox,
     RadioGroupInput,
 } from "@/components";
-import {
-    concepts
-} from "@/constants";
-import { getConceptSetMembers } from "@/hooks/labOrder"; // Hook for fetching concept set members
-import { useEffect, useState } from "react";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { Visit } from "@/interfaces";
 
 const followUpOptions = [
-    { id: "healthCenter", label: "Health Center" },
-    { id: "specialistClinic", label: "Specialist Clinic" },
-    { id: "districtHospital", label: "District Hospital" },
+    { id: concepts.HEALTH_CENTER, label: "Health Center" },
+    { id: concepts.SPECIALIST_CLINIC, label: "Specialist Clinic" },
+    { id: concepts.DISTRICT_HOSPITAL, label: "District Hospital" },
 ];
-
 
 const specialistClinicOptions = [
     { id: "cardiology", label: "Cardiology" },
@@ -37,6 +39,7 @@ const validationSchema = Yup.object({
     homeCareInstructions: Yup.string().required("Home Care Instructions are required"),
     followUpDetails: Yup.string().required("Follow-Up Details are required"),
     dischargeNotes: Yup.string().required("Discharge Notes are required"),
+    specialistClinic: Yup.string(),
 });
 
 const initialValues = {
@@ -44,31 +47,61 @@ const initialValues = {
     followUpPlan: "",
     homeCareInstructions: "",
     followUpDetails: "",
-    specialistClinic: "",
     dischargeNotes: "",
+    specialistClinic: "",
 };
 
 export default function DischargeHomeForm() {
-    // const [followUpOptions, setFollowUpOptions] = useState<{ id: string; label: string }[]>([]);
-    // const { data: followUpData, isLoading, refetch } = getConceptSetMembers(concepts.FOLLOW_UP);
-
-    // useEffect(() => {
-    //     refetch(); // Fetch options when the component mounts
-    //     if (followUpData) {
-    //         const formattedOptions = followUpData.map((option: any) => ({
-    //             id: option.names[0]?.uuid,
-    //             label: option.names[0]?.name || "Unknown",
-    //         }));
-    //         setFollowUpOptions(formattedOptions);
-    //     }
-    // }, [followUpData]);
-
-    // console.log("Follow up:", followUpOptions);
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = addEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
 
 
-    const handleSubmit = (values: any) => {
-        console.log("Form Values: ", values);
-        alert("Form Submitted!");
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        const obs = [
+            {
+                concept: concepts.DISCHARGE_HOME,
+                value: concepts.DISCHARGE_HOME,
+                obsDatetime: currentDateTime,
+                group_members: [
+                    { concept: concepts.DISCHARGE_PLAN, value: values.dischargePlan, obsDatetime: currentDateTime },
+                    { concept: concepts.FOLLOWUP_PLAN, value: values.followUpPlan, obsDatetime: currentDateTime },
+                    { concept: concepts.HOME_CARE_INSTRUCTIONS, value: values.homeCareInstructions, obsDatetime: currentDateTime },
+                    { concept: concepts.FOLLOWUP_DETAILS, value: values.followUpDetails, obsDatetime: currentDateTime },
+                    { concept: concepts.DISCHARGE_NOTES, value: values.dischargeNotes, obsDatetime: currentDateTime },
+                    { concept: concepts.SPECIALIST_CLINIC, value: values.specialistClinic || "", obsDatetime: currentDateTime },
+                ],
+            },
+        ];
+
+        const payload = {
+            encounterType: encounters.DISCHARGE_PATIENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            toast.success("Discharge Home information submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Discharge Home information: ", error);
+            toast.error("Failed to submit Discharge Home information.");
+        }
     };
 
     return (
@@ -83,109 +116,76 @@ export default function DischargeHomeForm() {
                         submitButtonText="Submit"
                     >
                         <MainGrid container spacing={2}>
-                            {/* Discharge Plan and Follow-Up Plan Inline */}
-                            <MainGrid item xs={12}>
-                                <MainGrid container spacing={2} sx={{ display: "flex", alignItems: "flex-start" }}>
-                                    {/* Discharge Plan */}
-                                    <MainGrid item xs={6}>
-                                        <TextInputField
-                                            id="dischargePlan"
-                                            name="dischargePlan"
-                                            label="Discharge Plan"
-                                            sx={{ width: "100%" }}
-                                            multiline={true}
-                                            rows={3}
-                                            placeholder="Write the discharge plan"
-                                        />
-                                    </MainGrid>
-
-                                    {/* Follow-Up Plan */}
-                                    <MainGrid item xs={6}>
-                                        <RadioGroupInput
-                                            name="followUpPlan"
-                                            label="Follow-Up Plan"
-                                            options={[
-                                                { value: concepts.YES, label: "Yes" },
-                                                { value: concepts.NO, label: "No" },
-                                            ]}
-                                        />
-                                    </MainGrid>
-                                </MainGrid>
+                            {/* Discharge Plan */}
+                            <MainGrid item xs={6}>
+                                <TextInputField
+                                    id="dischargePlan"
+                                    name="dischargePlan"
+                                    label="Discharge Plan"
+                                    sx={{ width: "100%" }}
+                                    multiline
+                                    rows={3}
+                                    placeholder="Write the discharge plan"
+                                />
                             </MainGrid>
 
-
-                            <MainGrid item xs={12}>
-                                <MainGrid container spacing={2} sx={{ display: "flex", alignItems: "flex-start" }}>
-                                    {/* Home Care Instructions */}
-                                    <MainGrid item xs={6}>
-                                        <TextInputField
-                                            id="homeCareInstructions"
-                                            name="homeCareInstructions"
-                                            label="Home Care Instructions"
-                                            sx={{ width: "100%" }}
-                                            multiline={true}
-                                            rows={3}
-                                            placeholder="Write specific home care instructions"
-                                        />
-                                    </MainGrid>
-
-                                    {/* Follow-Up Details */}
-                                    <MainGrid item xs={6}>
-                                        <SearchComboBox
-                                            name="followUpDetails"
-                                            label="Follow-Up Details"
-                                            options={followUpOptions}
-                                        />
-                                    </MainGrid>
-
-
-                                </MainGrid>
+                            {/* Follow-Up Plan */}
+                            <MainGrid item xs={6}>
+                                <RadioGroupInput
+                                    name="followUpPlan"
+                                    label="Follow-Up Plan"
+                                    options={[
+                                        { value: concepts.YES, label: "Yes" },
+                                        { value: concepts.NO, label: "No" },
+                                    ]}
+                                />
                             </MainGrid>
 
-                            <MainGrid item xs={12}>
-                                <MainGrid container spacing={2} sx={{ display: "flex", alignItems: "flex-start" }}>
-
-                                    {/* Discharge Notes */}
-                                    <MainGrid item xs={6}>
-                                        <TextInputField
-                                            id="dischargeNotes"
-                                            name="dischargeNotes"
-                                            label="Discharge Notes"
-                                            sx={{ width: "100%" }}
-                                            multiline={true}
-                                            rows={4}
-                                            placeholder="Write discharge notes"
-                                        />
-                                    </MainGrid>
-
-                                    {/* Specialist Clinics */}
-                                    <MainGrid item xs={6}>
-                                        <SearchComboBox
-                                            name="specialistClinic"
-                                            label="Specialist Clinic (if applicable)"
-                                            options={specialistClinicOptions}
-                                        />
-                                    </MainGrid>
-
-                                </MainGrid>
+                            {/* Home Care Instructions */}
+                            <MainGrid item xs={6}>
+                                <TextInputField
+                                    id="homeCareInstructions"
+                                    name="homeCareInstructions"
+                                    label="Home Care Instructions"
+                                    sx={{ width: "100%" }}
+                                    multiline
+                                    rows={3}
+                                    placeholder="Write specific home care instructions"
+                                />
                             </MainGrid>
 
+                            {/* Follow-Up Details */}
+                            <MainGrid item xs={6}>
+                                <SearchComboBox
+                                    name="followUpDetails"
+                                    label="Follow-Up Details"
+                                    options={followUpOptions}
+                                    multiple={false}
+                                />
+                            </MainGrid>
 
+                            {/* Discharge Notes */}
+                            <MainGrid item xs={6}>
+                                <TextInputField
+                                    id="dischargeNotes"
+                                    name="dischargeNotes"
+                                    label="Discharge Notes"
+                                    sx={{ width: "100%" }}
+                                    multiline
+                                    rows={4}
+                                    placeholder="Write discharge notes"
+                                />
+                            </MainGrid>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                            {/* Specialist Clinics */}
+                            <MainGrid item xs={6}>
+                                <SearchComboBox
+                                    name="specialistClinic"
+                                    label="Specialist Clinic (if applicable)"
+                                    options={specialistClinicOptions}
+                                    multiple={false}
+                                />
+                            </MainGrid>
                             {/* Submit & Print */}
                             <MainGrid item xs={12}>
                                 <button

@@ -43,5 +43,5 @@ export const useImageFormTransform = () => {
     });
   }, [data]);
 
-  return { submittedValues, setData };
+  return { submittedValues, setData, setSubmittedValues };
 };

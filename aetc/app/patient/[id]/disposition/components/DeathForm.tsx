@@ -11,65 +11,107 @@ import {
     RadioGroupInput,
     MainButton,
 } from "@/components";
-import {
-    concepts
-} from "@/constants";
+
 import * as Yup from "yup";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { Visit } from "@/interfaces";
 
 const mortuaryOptions = [
-    { id: "QECH", label: "QECH" },
-    { id: "COM", label: "COM" },
-    { id: "Mthunzi", label: "Mthunzi" },
-    { id: "other", label: "Other (Specify)" },
+    { id: concepts.QECH, label: "QECH" },
+    { id: concepts.COM, label: "COM" },
+    { id: concepts.MTHUNZI, label: "Mthunzi" },
+    { id: concepts.OTHER, label: "Other (Specify)" },
 ];
 
 const relationshipOptions = [
-    { id: concepts.SPOUSE, label: "Spouse" },
-    { id: concepts.PARENT, label: "Parent" },
-    { id: concepts.SIBLING, label: "Sibling" },
-    { id: concepts.UNCLE_AUNTIE, label: "Uncle" },
-    { id: "cousin", label: "Cousin" },
-    { id: "other", label: "Other" },
+    { id: concepts.RELATIONSHIP_SPOUSE, label: "Spouse" },
+    { id: concepts.RELATIONSHIP_PARENT, label: "Parent" },
+    { id: concepts.RELATIONSHIP_SIBLING, label: "Sibling" },
+    { id: concepts.RELATIONSHIP_UNCLE, label: "Uncle" },
+    { id: concepts.RELATIONSHIP_COUSIN, label: "Cousin" },
+    { id: concepts.RELATIONSHIP_OTHER, label: "Other" },
 ];
 
-
-
-
 const validationSchema = Yup.object({
-    dateOfDeath: Yup.date().required("Date of Death is required"),
     causeOfDeath: Yup.string().required("Cause of Death is required"),
     familyInformed: Yup.string().required("Please specify if family has been informed"),
     relationshipToDeceased: Yup.string().required("Relationship to Deceased is required"),
-
-    // relationshipToDeceased: Yup.string().when("familyInformed", {
-    //     is: "yes",
-    //     then: Yup.string().required("Relationship to Deceased is required"),
-    // }),
     mortuary: Yup.string().required("Mortuary is required"),
     lastOfficeConducted: Yup.string().required("Last office status is required"),
     healthWorkerName: Yup.string().required("Name of health worker is required"),
-    lastOfficeDateTime: Yup.date().required("Date and Time of Last Office is required"),
+    lastOfficeDate: Yup.date().required("Date and Time of Last Office is required"),
 });
 
 const initialValues = {
-    dateOfDeath: "",
     causeOfDeath: "",
     familyInformed: "",
     relationshipToDeceased: "",
     mortuary: "",
     lastOfficeConducted: "",
     healthWorkerName: "",
-    lastOfficeDateTime: "",
+    lastOfficeDate: "",
 };
 
 
-
-
-
 export default function DeathForm() {
-    const handleSubmit = (values: any) => {
-     
-        alert("Form Submitted!");
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = addEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+
+        const currentDateTime = getDateTime();
+
+        const obs = [
+            {
+                concept: concepts.DEATH,
+                value: "DISPOSITION TYPE DEATH",
+                obsDatetime: currentDateTime,
+                group_members: [
+                    // { concept: concepts.CAUSE_OF_DEATH, value: values.causeOfDeath, obsDatetime: currentDateTime },
+                    { concept: concepts.FAMILY_INFORMED, value: values.familyInformed, obsDatetime: currentDateTime },
+                    { concept: concepts.RELATIONSHIP_TO_DECEASED, value: values.relationshipToDeceased, obsDatetime: currentDateTime },
+                    { concept: concepts.MORTUARY, value: values.mortuary, obsDatetime: currentDateTime },
+                    { concept: concepts.LAST_OFFICE_CONDUCTED, value: values.lastOfficeConducted, obsDatetime: currentDateTime },
+                    { concept: concepts.NAME_OF_HEALTH_WORKER_WHO_CONDUCTED_LAST_OFFICE, value: values.healthWorkerName, obsDatetime: currentDateTime },
+                    { concept: concepts.DATE_OF_LAST_OFFICE, value: values.lastOfficeDate, obsDatetime: currentDateTime },
+
+                ],
+            },
+        ];
+
+        const payload = {
+            encounterType: encounters.DISCHARGE_PATIENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            toast.success("Death Form information submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Death form information: ", error);
+            toast.error("Failed to submit Death Form information.");
+        }
     };
 
     return (
@@ -91,7 +133,7 @@ export default function DeathForm() {
                                     {/* Cause of Death */}
                                     <MainGrid item xs={12}>
                                         <TextInputField
-                                            id="2"
+                                            id="causeOfDeath"
                                             name="causeOfDeath"
                                             label="Cause of Death"
                                             placeholder="Enter the cause of death"
@@ -160,9 +202,6 @@ export default function DeathForm() {
                                                 { value: concepts.NO, label: "No" },
                                             ]}
                                         />
-
-
-
                                     </MainGrid>
                                 </MainGrid>
                             </MainGrid>
@@ -172,7 +211,7 @@ export default function DeathForm() {
                                     {/* Health Worker Name */}
                                     <MainGrid item xs={6}>
                                         <TextInputField
-                                            id="4"
+                                            id="healthWorkerName"
                                             name="healthWorkerName"
                                             label="Name of Health Worker who conducted the last office"
                                             placeholder="Enter health worker's name"
@@ -183,7 +222,7 @@ export default function DeathForm() {
                                     {/* Date and Time of Last Office */}
                                     <MainGrid item xs={6}>
                                         <FormDatePicker
-                                            name="dateOfDeath"
+                                            name="lastOfficeDate"
                                             label="Date of Last Office"
                                             sx={{ width: "100%" }}
                                         />
