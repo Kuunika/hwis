@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { ObservationsForm } from "./observations";
 import { InterventionsForm } from "./interventions";
-import { MedicationsForm } from "./medications"; // Import the MedicationsForm
+import { MedicationsForm } from "./medications";
 
 import { concepts, encounters } from "@/constants";
 import { useNavigation, useParameters } from "@/hooks";
@@ -13,6 +13,8 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
 import { NursingNotesForm } from "./nursingNotes";
+import { Alert, Snackbar } from "@mui/material";
+
 
 export const MonitoringChart = () => {
   const {
@@ -32,6 +34,8 @@ export const MonitoringChart = () => {
   const { params } = useParameters();
   const { mutate } = addEncounter();
   const { navigateTo, navigateBack } = useNavigation();
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertSeverity, setAlertSeverity] = useState<"error" | "success" | null>(null);
   const dateTime = getDateTime();
 
   const {
@@ -57,28 +61,82 @@ export const MonitoringChart = () => {
 
   const {
     mutate: createInterventions,
-    isSuccess: InterventionsCreated,
+    isSuccess: interventionsCreated,
     isPending: creatingInterventions,
-    isError: InterventionError,
+    isError: interventionsError,
   } = addEncounter();
 
   const {
     mutate: createNursingNotes,
-    isSuccess: NursingNotesCreated,
+    isSuccess: nursingNotesCreated,
     isPending: creatingNursingNotes,
-    isError: NursingNotesError,
+    isError: nursingNotesError,
   } = addEncounter();
 
-  const handleObservationsSubmit = (values: any) => {
-    createVitals({
-      encounterType: encounters.VITALS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: getObservations(values, dateTime),
-    });
-    setActiveStep(1);
+
+  useEffect(() => {
+    if (vitalsError) {
+      setAlertMessage(`Error submitting vitals encounter`);
+      setAlertSeverity("error");
+    } 
+    
+    if (interventionsError) {
+      setAlertMessage(`Error submitting interventions`);
+      setAlertSeverity("error");
+    } 
+
+    if (nursingNotesError) {
+      setAlertMessage(`Error submitting nursing notes`);
+      setAlertSeverity("error");
+    }
+
+    if(vitalsCreated) {
+      setAlertMessage(`Vitals submitted successfully`);
+      setAlertSeverity("success");
+      setActiveStep(1);
+    }
+
+    if(interventionsCreated) {
+      setAlertMessage(`All encounters submitted successfully`);
+      setAlertSeverity("success");
+    }
+    if(nursingNotesCreated) {
+      setAlertMessage(`All encounters submitted successfully`);
+      setAlertSeverity("success");
+    }
+
+
+  }, [vitalsError, interventionsError, nursingNotesError, vitalsCreated, interventionsCreated, nursingNotesCreated]);
+
+  const handleObservationsSubmit = async (values: any) => {
+
+      const forGroupMembers = Object.fromEntries(
+        Object.entries(values).filter(([key, value]) => key !== concepts.TRIAGE_RESULT)
+      );
+
+      const groupMemberObs = getObservations(forGroupMembers, dateTime);
+
+      const observations = [
+        {
+          concept: concepts.TRIAGE_RESULT,
+          obsDatetime: dateTime,
+          value: values[concepts.TRIAGE_RESULT],
+          group_members: groupMemberObs,
+        },
+      ];
+
+      createVitals({
+        encounterType: encounters.VITALS,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: observations,
+      });
+  
+  
   };
+
+
 
   const handleInterventionsSubmit = (values: any) => {
     const airwayKey = concepts.AIRWAY_OPENING_INTERVENTIONS;
@@ -164,6 +222,22 @@ export const MonitoringChart = () => {
 
   return (
     <>
+      <Snackbar
+      open={Boolean(alertMessage)}
+      autoHideDuration={5000} 
+      onClose={() => setAlertMessage(null)}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }} 
+    >
+ 
+        <Alert
+          variant="filled"
+          severity={alertSeverity||"success"}
+          onClose={() => setAlertMessage(null)}
+          style={{opacity: 0.8}}
+        >
+          {alertMessage}
+        </Alert>
+    </Snackbar>
       <NewStepperContainer
         setActive={setActiveStep}
         title="Monitoring Chart"
