@@ -60,7 +60,7 @@ export const MonitoringChart = () => {
   } = addEncounter();
 
   const {
-    mutate: createInterventions,
+    mutateAsync: createInterventions,
     isSuccess: interventionsCreated,
     isPending: creatingInterventions,
     isError: interventionsError,
@@ -142,35 +142,80 @@ export const MonitoringChart = () => {
     const airwayKey = concepts.AIRWAY_OPENING_INTERVENTIONS;
     const otherKey = `${airwayKey}_Other`;
 
-    if (values[airwayKey]) {
-      values[airwayKey] = values[airwayKey]?.map((item: any) => {
-        if (item.id === concepts.OTHER_AIRWAY_INTERVENTION) {
-          const newLabel = values[otherKey];
-          delete values[otherKey];
-          return {
-            id: concepts.OTHER_AIRWAY_INTERVENTION,
-            label: newLabel,
-          };
+
+    for (const [key, value] of Object.entries(values)) {
+      if(key === "fluidEntries"){
+
+        if (Array.isArray(value)) {
+          const fluidObs = value.map(entry => ([
+              { concept: "IntakeFluids", value: entry.intakeFluidType.value },
+              { concept: "IntakeFluidAmount", value: entry.intakeFluidAmount },
+              { concept: "OutputFluidAmount", value: entry.outputFluidAmount },
+              { concept: "FluidBalance", value: entry.balance }
+            ]));
+
+          fluidObs.forEach(groupMembersObj => {
+
+              const observations = [
+                {
+                  concept: concepts.PATIENTS_FLUID_MANAGEMENT,
+                  obsDatetime: dateTime,
+                  value: true,
+                  group_members: groupMembersObj,
+                },
+              ];
+
+              createInterventions({
+                encounterType: encounters.PROCEDURES_DONE,
+                visit: activeVisit?.uuid,
+                patient: params.id,
+                encounterDatetime: dateTime,
+                obs: observations,
+              });
+          });
         }
-        return item;
+        continue;
+        }
+
+
+      if(key === otherKey || !value || (Array.isArray(value) && value.length === 0)) {
+        continue;
+      }
+      
+      const obsObject = (value as any[]).reduce((acc, item) => {
+        acc[item.id] = true;
+        return acc;
+      }, {} as Record<string, boolean>);
+      const obs = getObservations(obsObject, dateTime);
+      
+
+      obs.forEach(element => {
+          if(element.concept === concepts.OTHER_AIRWAY_INTERVENTION) {
+            element.value = values[otherKey];
+          }
       });
+      const observations = [
+        {
+          concept: key,
+          obsDatetime: dateTime,
+          value: true,
+          group_members: obs,
+        },
+      ];
+
+      createInterventions({
+        encounterType: encounters.PROCEDURES_DONE,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: observations,
+      });
+
+
+      };
     }
 
-    if (values.fluidEntries) {
-      values[concepts.INTAKE_FLUIDS] = values.fluidEntries;
-      delete values.fluidEntries;
-    }
 
-    createInterventions({
-      encounterType: encounters.PROCEDURES_DONE,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: getObservations(values, dateTime),
-    });
-
-    setActiveStep(2);
-  };
 
   const handleMedicationsSubmit = (values: any) => {
     console.log("Medications:", values);

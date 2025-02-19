@@ -38,35 +38,7 @@ export const InterventionFormConfig = {
 };
 
 const schema = Yup.object().shape({
-  // Airway Intervention Validation
-  [InterventionFormConfig.airwayIntervention.name]: Yup.array()
-    .of(
-      Yup.object().shape({
-        id: Yup.string().required(),
-        label: Yup.string().required(),
-      })
-    )
-    .label(InterventionFormConfig.airwayIntervention.label),
 
-  // Breathing Intervention Validation
-  [InterventionFormConfig.breathingIntervention.name]: Yup.array()
-    .of(
-      Yup.object().shape({
-        id: Yup.string().required(),
-        label: Yup.string().required(),
-      })
-    )
-    .label(InterventionFormConfig.breathingIntervention.label),
-
-  // Circulation Intervention Validation
-  [InterventionFormConfig.circulationIntervention.name]: Yup.array()
-    .of(
-      Yup.object().shape({
-        id: Yup.string().required(),
-        label: Yup.string().required(),
-      })
-    )
-    .label(InterventionFormConfig.circulationIntervention.label),
 });
 
 export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
@@ -117,7 +89,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const groupedOptions = [
     {
-      label: "IV Fluids",
+      label: "IV Fluids", value: "IV Fluids",
       options: [
         { value: "Lingers Lactate", label: "Lingers Lactate" },
         { value: "Saline 5%", label: "Saline 5%" },
@@ -130,7 +102,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: "Blood products",
+      label: "Blood products", value: "Blood products",
       options: [
         { value: "Whole blood", label: "Whole blood" },
         { value: "Packed Red cells", label: "Packed Red cells" },
@@ -139,7 +111,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: "Oral products",
+      label: "Oral products", value: "Oral products",
       options: [
         { value: "Water", label: "Water" },
         { value: "Juice", label: "Juice" },
