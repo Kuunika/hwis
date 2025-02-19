@@ -112,7 +112,7 @@ const form = {
   },
 
   date: {
-    name: concepts.DATE,
+    name: concepts.DATE_OF_CPR,
     label: "Date of Call",
   },
   cause: {
@@ -353,7 +353,7 @@ const CPRForm = ({ onClose }: { onClose: () => void }) => {
   const { medicationOptions } = useFetchMedications();
   const { data: users, isLoading } = getAllUsers();
   const { mutate, isSuccess } = addEncounter();
-  const { activeVisitId, patientId } = getActivePatientDetails();
+  const { activeVisitId, patientId, activeVisit } = getActivePatientDetails();
 
   const userOptions = users?.map((user) => {
     return {
@@ -373,79 +373,84 @@ const CPRForm = ({ onClose }: { onClose: () => void }) => {
   const handleSubmit = (values: any) => {
     const obsDatetime = getDateTime();
 
+    const formValues = { ...values };
+
     let recordsObservation = [];
 
-    if (Array.isArray(values.records)) {
-      recordsObservation = values.records.map((record: any, index: number) => {
-        const interventionsObs = record.Interventions.map((v: any) => ({
-          concept: concepts.INTERVENTION_NOTES,
-          value: v.id,
-          obsDatetime,
-        }));
-        const rhythmObs = record.rhythm.map((v: any) => ({
-          concept: concepts.RHYTHM,
-          value: v.id,
-          obsDatetime,
-        }));
+    if (Array.isArray(formValues.records)) {
+      recordsObservation = formValues.records.map(
+        (record: any, index: number) => {
+          const interventionsObs = record.Interventions.map((v: any) => ({
+            concept: concepts.INTERVENTION_NOTES,
+            value: v.id,
+            obsDatetime,
+          }));
+          const rhythmObs = record.rhythm.map((v: any) => ({
+            concept: concepts.RHYTHM,
+            value: v.id,
+            obsDatetime,
+          }));
 
-        return {
-          concept: concepts.OTHER,
-          value: `record ${index}`,
-          groupMembers: [
-            {
-              concept: concepts.TIME,
-              value: record.time,
-              obsDatetime,
-            },
-            {
-              concept: concepts.SHOCK_ENERGY,
-              value: record.shockEnergy,
-              obsDatetime,
-            },
-            {
-              concept: concepts.MEDICATION,
-              value: record.medication,
-              obsDatetime,
-            },
-            {
-              concept: concepts.MEDICATION_DOSE,
-              value: record.dose,
-              obsDatetime,
-            },
-            {
-              concept: concepts.MEDICATION_ROUTE,
-              value: record.route,
-              obsDatetime,
-            },
+          return {
+            concept: concepts.OTHER,
+            value: `record ${index}`,
+            groupMembers: [
+              {
+                concept: concepts.TIME,
+                value: record.time,
+                obsDatetime,
+              },
+              {
+                concept: concepts.SHOCK_ENERGY,
+                value: record.shockEnergy,
+                obsDatetime,
+              },
+              {
+                concept: concepts.MEDICATION,
+                value: record.medication,
+                obsDatetime,
+              },
+              {
+                concept: concepts.MEDICATION_DOSE,
+                value: record.dose,
+                obsDatetime,
+              },
+              {
+                concept: concepts.MEDICATION_ROUTE,
+                value: record.route,
+                obsDatetime,
+              },
 
-            {
-              concept: concepts.OCCURRENCES,
-              value: record.occurrences,
-            },
-            ...interventionsObs,
-            ...rhythmObs,
-          ],
-        };
-      });
+              {
+                concept: concepts.OCCURRENCES,
+                value: record.occurrences,
+              },
+              ...interventionsObs,
+              ...rhythmObs,
+            ],
+          };
+        }
+      );
     }
 
-    const teamMembersObs = values[form.teamMembers.name].map((v: any) => ({
+    const teamMembersObs = formValues[form.teamMembers.name].map((v: any) => ({
       concept: concepts.COMPLAINTS,
       value: v.id,
       obsDatetime,
     }));
 
-    delete values.records;
-    delete values.medications;
-    delete values[concepts.TEAM_MEMBERS];
-    delete values[concepts.REVERSIBLE_CAUSES];
+    delete formValues.records;
+    delete formValues.medications;
+    delete formValues[concepts.TEAM_MEMBERS];
+    delete formValues[concepts.REVERSIBLE_CAUSES];
 
-    const observations = getObservations(values, obsDatetime);
+    const observations = getObservations(formValues, obsDatetime);
 
     mutate({
       encounterType: encounters.CPR,
-      patientId,
-      visit: activeVisitId,
+      patient: patientId,
+      visit: activeVisit,
+      encounterDatetime: obsDatetime,
       obs: [...observations, ...recordsObservation, ...teamMembersObs],
     });
   };
