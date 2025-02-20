@@ -1,4 +1,10 @@
-import { createEncounter, getPatientEncounters, deleteObservation } from "@/services/encounter";
+import { Concept, Obs } from "@/interfaces";
+import {
+  createEncounter,
+  getPatientEncounters,
+  deleteObservation,
+} from "@/services/encounter";
+import { getAll } from "@/services/httpService";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 export const addEncounter = () => {
@@ -43,4 +49,62 @@ export const removeObservation = () => {
       queryClient.invalidateQueries({ queryKey: ["observations"] });
     },
   });
+};
+
+export const fetchConceptAndCreateEncounter = () => {
+  const queryClient = useQueryClient();
+
+  const addData = async (encounter: any) => {
+    const filteredEncounter = {
+      ...encounter,
+      obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
+    };
+
+    filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
+
+    console.log({ obs: filteredEncounter.obs });
+
+    return createEncounter(filteredEncounter).then((response) => response.data);
+  };
+
+  return useMutation({
+    mutationFn: addData,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["encounters"],
+      });
+    },
+  });
+};
+
+const getConceptIds: any = async (obs: Obs[]) => {
+  const queryClient = useQueryClient();
+  const obsWithUUIDs = [];
+  try {
+    for (let i = 0; i < obs.length; i++) {
+      const conceptName = obs[i].concept;
+      const concept = await getAll<Concept[]>(
+        `/concepts?name=${conceptName}&paginate=false&exact_match=true`
+      );
+
+      // register cache
+      queryClient.setQueryData(["concepts", conceptName], concept);
+
+      const groupMembers = Array.isArray(obs[i].groupMembers)
+        ? await getConceptIds(obs[i].groupMembers)
+        : [];
+
+      if (concept.data.length > 0) {
+        obsWithUUIDs.push({
+          ...obs[i],
+          concept: concept.data[0].uuid,
+          groupMembers,
+        });
+      }
+    }
+  } catch (error) {
+    console.log({ error });
+  }
+
+  return obsWithUUIDs;
 };

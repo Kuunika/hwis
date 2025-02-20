@@ -15,7 +15,10 @@ import { concepts, encounters, NO, YES } from "@/constants";
 import { getInitialValues, getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
-import { addEncounter } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { getAllUsers } from "@/hooks/users";
 import { Box, Typography } from "@mui/material";
@@ -35,7 +38,7 @@ const form = {
     label: "SITE",
   },
   specify: {
-    name: concepts.OTHER,
+    name: concepts.SPECIFY,
     label: "Specify",
   },
   reversibleCauses: {
@@ -352,7 +355,7 @@ const routeOptions = [
 const CPRForm = ({ onClose }: { onClose: () => void }) => {
   const { medicationOptions } = useFetchMedications();
   const { data: users, isLoading } = getAllUsers();
-  const { mutate, isSuccess } = addEncounter();
+  const { mutate, isSuccess } = fetchConceptAndCreateEncounter();
   const { activeVisitId, patientId, activeVisit } = getActivePatientDetails();
 
   const userOptions = users?.map((user) => {
@@ -474,7 +477,7 @@ const CPRForm = ({ onClose }: { onClose: () => void }) => {
             name={form.date.name}
             label={form.date.label}
           />
-          {console.log({ values })}
+
           <FormTimePicker
             sx={{ my: "1ch" }}
             name={form.time.name}
