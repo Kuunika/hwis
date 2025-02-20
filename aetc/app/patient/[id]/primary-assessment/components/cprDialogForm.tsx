@@ -374,6 +374,7 @@ const CPRForm = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleSubmit = (values: any) => {
+    console.log({ values });
     const obsDatetime = getDateTime();
 
     const formValues = { ...values };

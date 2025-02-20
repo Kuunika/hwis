@@ -15,7 +15,10 @@ import {
 import { addVisit } from "@/hooks/visit";
 import { useEffect, useState } from "react";
 import { AETC_VISIT_TYPE, concepts, encounters, roles } from "@/constants";
-import { addEncounter } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import { useNavigation } from "@/hooks";
 import { getVisitNum } from "@/hooks/visitNumber";
 import { CustomizedProgressBars } from "@/components/loader";
@@ -73,7 +76,7 @@ function InitialRegistration() {
     isPending: creatingEncounter,
     isSuccess: encounterCreated,
     isError: encounterError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     data: visitNumberResponse,

@@ -52,7 +52,7 @@ export const removeObservation = () => {
 };
 
 export const fetchConceptAndCreateEncounter = () => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const addData = async (encounter: any) => {
     const filteredEncounter = {
@@ -60,9 +60,10 @@ export const fetchConceptAndCreateEncounter = () => {
       obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
     };
 
+  
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
 
-    console.log({ obs: filteredEncounter.obs });
+ 
 
     return createEncounter(filteredEncounter).then((response) => response.data);
   };
@@ -70,25 +71,22 @@ export const fetchConceptAndCreateEncounter = () => {
   return useMutation({
     mutationFn: addData,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ["encounters"],
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: ["encounters"],
+      // });
     },
   });
 };
 
 const getConceptIds: any = async (obs: Obs[]) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const obsWithUUIDs = [];
   try {
     for (let i = 0; i < obs.length; i++) {
       const conceptName = obs[i].concept;
-      const concept = await getAll<Concept[]>(
-        `/concepts?name=${conceptName}&paginate=false&exact_match=true`
-      );
-
+      const concept = await getConcept(conceptName);
       // register cache
-      queryClient.setQueryData(["concepts", conceptName], concept);
+      // queryClient.setQueryData(["concepts", conceptName], concept);
 
       const groupMembers = Array.isArray(obs[i].groupMembers)
         ? await getConceptIds(obs[i].groupMembers)
@@ -108,3 +106,11 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
   return obsWithUUIDs;
 };
+
+
+export const getConcept:any = async (conceptName:string)=>{
+  return await getAll<Concept[]>(
+  `/concepts?name=${conceptName}&paginate=false&exact_match=true`
+);
+
+}
