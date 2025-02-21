@@ -613,14 +613,14 @@ export const Circulation = ({ onSubmit }: Prop) => {
                     imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                     onValueChange={setLegImage}
                   /> */}
-                  {/* {gender == "Female" && (
-                    <LowerLimbFemaleAnteriorImage
+                  {gender == "Male" && (
+                    <LowerLimbMaleAnteriorImage
                       imageSection={form.femurAndTibiaNormalInfo.name}
                       imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                       onValueChange={setLegImage}
                       form="deformity"
                     />
-                  )} */}
+                  )}
                   {gender == "Female" && (
                     <LowerLimbMaleAnteriorImage
                       imageSection={form.femurAndTibiaNormalInfo.name}
