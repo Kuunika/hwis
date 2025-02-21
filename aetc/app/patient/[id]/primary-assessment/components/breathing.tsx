@@ -266,6 +266,11 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     onSubmit
   );
 
+  const [lungLeft, setLungLeft] = useState<Array<any>>([]);
+  const [lungRight, setLungRight] = useState<Array<any>>([]);
+  const [lungFront, setLungFront] = useState<Array<any>>([]);
+  const [lungBack, setLungBack] = useState<Array<any>>([]);
+
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
@@ -287,6 +292,36 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         value: formValues[form.chestExpansion.name],
         obsDatetime: getDateTime(),
         group_members: flattenImagesObs(chestExpansionImagesEnc),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Left",
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(lungLeft),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Right",
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(lungRight),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Front",
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(lungFront),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Back",
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(lungBack),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Front",
+        obsDatetime: getDateTime(),
+        group_members: flattenImagesObs(lungFront),
       },
     ];
 
@@ -315,26 +350,32 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     ]);
   };
 
+  useEffect(() => {
+    console.log({ lungLeft, lungRight, lungFront, lungBack });
+  }, [lungLeft, lungRight, lungFront, lungBack]);
+
   const breathSoundsSlides = [
     {
       id: 1,
       label: "Lung Left",
-      content: <LungRightSideImage onValueChange={() => {}} />,
+      content: <LungRightSideImage onValueChange={setLungLeft} />,
     },
     {
       id: 2,
       label: "Lung Right",
-      content: <LungLeftSideImage onValueChange={() => {}} />,
+      content: <LungLeftSideImage onValueChange={setLungRight} />,
     },
     {
       id: 3,
       label: "Lung Front",
-      content: <LungImage breathSounds={true} onValueChange={() => {}} />,
+      content: <LungImage breathSounds={true} onValueChange={setLungFront} />,
     },
     {
       id: 4,
       label: "Lung Back",
-      content: <LungBackImage breathSounds={true} onValueChange={() => {}} />,
+      content: (
+        <LungBackImage breathSounds={true} onValueChange={setLungBack} />
+      ),
     },
   ];
 

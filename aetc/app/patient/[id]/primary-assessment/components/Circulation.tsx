@@ -126,7 +126,7 @@ const form = {
   },
   mucousAbnormal: {
     name: concepts.MUCOUS_ABNORMAL,
-    label: "Reason Not Done",
+    label: "Mucous Abnormal",
   },
   bloodPressureNotDoneOther: {
     name: concepts.SPECIFY,
@@ -193,10 +193,7 @@ const schema = yup.object({
     .string()
 
     .label(form.mucousMembranesInfo.label),
-  [form.catheterInfo.name]: yup
-    .string()
-
-    .label(form.catheterInfo.label),
+  [form.catheterInfo.name]: yup.array().label(form.catheterInfo.label),
   [form.femurAndTibiaNormalInfo.name]: yup
     .string()
 
@@ -213,15 +210,15 @@ const schema = yup.object({
     .string()
     .label(form.assessPeripheries.label),
   [form.reasonNotDone.name]: yup.string().label(form.reasonNotDone.label),
-  [form.mucousAbnormal.name]: yup.string().label(form.mucousAbnormal.label),
+  [form.mucousAbnormal.name]: yup.array().label(form.mucousAbnormal.label),
   [form.bloodPressureNotDoneOther.name]: yup
     .string()
     .label(form.bloodPressureNotDoneOther.label),
   [form.siteOfCannulation.name]: yup
-    .string()
+    .array()
     .label(form.siteOfCannulation.label),
   [form.diagramCannulationSite.name]: yup
-    .string()
+    .array()
     .label(form.diagramCannulationSite.label),
   [form.pulse.name]: yup.number().label(form.pulse.label),
 });
@@ -330,6 +327,9 @@ export const Circulation = ({ onSubmit }: Prop) => {
       //   group_members: flattenImagesObs(abdomenImage),
       // },
     ];
+
+    console.log(formValues[form.siteOfCannulation.name]);
+    console.log(formValues[form.diagramCannulationSite.name]);
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
       form.mucousAbnormal.name,
@@ -340,17 +340,32 @@ export const Circulation = ({ onSubmit }: Prop) => {
       form.mucousAbnormal.name,
       getDateTime()
     );
+    const siteOfCannulationObs = mapSearchComboOptionsToConcepts(
+      formValues[form.siteOfCannulation.name],
+      form.siteOfCannulation.name,
+      getDateTime()
+    );
+
+    const diagramCannulationSiteObs = mapSearchComboOptionsToConcepts(
+      formValues[form.diagramCannulationSite.name],
+      form.diagramCannulationSite.name,
+      getDateTime()
+    );
 
     delete formValues[form.abnormalitiesInfo.name];
     delete formValues[form.femurAndTibiaNormalInfo.name];
     delete formValues[form.mucousAbnormal.name];
     delete formValues[form.catheterInfo.name];
+    delete formValues[form.siteOfCannulation.name];
+    delete formValues[form.diagramCannulationSite.name];
 
     await handleSubmit([
-      ...getObservations(values, getDateTime()),
+      ...getObservations(formValues, getDateTime()),
       ...obs,
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,
+      ...siteOfCannulationObs,
+      ...diagramCannulationSiteObs,
     ]);
   };
   const checkCanulationSite = (valueArray: any, value: any) => {
