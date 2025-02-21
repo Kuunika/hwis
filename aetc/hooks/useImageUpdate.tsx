@@ -56,33 +56,33 @@ export const useImageUpdate = () => {
 
   useEffect(() => {
     let elements: Array<SVGRectElement | SVGPathElement> = [];
+
     if (containerRef.current) {
-      const rects = Array.from(
-        containerRef.current.getElementsByTagName("rect")
-      );
-      const paths = Array.from(
-        containerRef.current.getElementsByTagName("path")
-      );
+      const gElement = containerRef.current.querySelector("#BODY_PART");
 
-      elements = [...rects, ...paths];
+      if (!gElement) return;
 
-      for (let i = 0; i < elements.length; i++) {
-        elements[i].style.fill = ``;
-        elements[i].style.opacity = ``;
-        elements[i].style.stroke = ``;
-        elements[i].addEventListener("mouseleave", handleMouseLeave);
+      elements = Array.from(gElement.querySelectorAll("path"));
 
+      elements.forEach((el) => {
+        el.style.fill = "";
+        el.style.opacity = "";
+        el.style.stroke = "";
+
+        el.addEventListener("mouseleave", handleMouseLeave);
         //@ts-ignore
-        elements[i].addEventListener("mouseenter", handleMouseEnter);
-        elements[i].addEventListener("click", handleClickLister);
-      }
+        el.addEventListener("mouseenter", handleMouseEnter);
+        el.addEventListener("click", handleClickLister);
+      });
     }
+
     return () => {
-      for (let i = 0; i < elements.length; i++) {
-        elements[i].removeEventListener("mouseleave", handleMouseLeave);
+      elements.forEach((el) => {
+        el.removeEventListener("mouseleave", handleMouseLeave);
         //@ts-ignore
-        elements[i].removeEventListener("mouseenter", handleMouseEnter);
-      }
+        el.removeEventListener("mouseenter", handleMouseEnter);
+        el.removeEventListener("click", handleClickLister);
+      });
     };
   }, []);
 

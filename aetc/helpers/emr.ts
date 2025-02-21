@@ -9,7 +9,10 @@ export const getObservationValue = (obs: any, uuid: string) => {
     return null;
   }
   const ob = obs.find((ob: any) => {
-    return ob?.names?.find((n: any) => n.uuid == uuid);
+   
+    const results = ob?.names?.find((n: any) => n.name.toLowerCase() == uuid.toLowerCase());
+
+    return results;
   });
 
   if (!ob) {
@@ -46,8 +49,9 @@ export const findEncounterObs = (data:Encounter[], encounter:string, visit:numbe
 
 export const formatAllVitalsToObject = (obs:Obs[])=>{
 
-  const oxygen=filterObservations(obs,concepts.OXYGEN_SATURATION);
+  const oxygen=filterObservations(obs,concepts.SATURATION_RATE);
   const heartRate=filterObservations(obs,concepts.HEART_RATE);
+
   const bloodPressureDiastolic=filterObservations(obs,concepts.BLOOD_PRESSURE_DIASTOLIC);
   const respiratoryRate=filterObservations(obs,concepts.RESPIRATORY_RATE);
   const bloodPressureSystolic=filterObservations(obs,concepts.BLOOD_PRESSURE_SYSTOLIC);
@@ -56,8 +60,10 @@ export const formatAllVitalsToObject = (obs:Obs[])=>{
   const avpu=filterObservations(obs,concepts.AVPU);
 
 
- const results = [oxygen,heartRate, bloodPressureDiastolic, respiratoryRate, bloodPressureSystolic, temperature, glucose, avpu];
+ const results = [oxygen,heartRate,bloodPressureDiastolic, respiratoryRate, bloodPressureSystolic, temperature, glucose, avpu];
 
+
+//  console.log({results});
   return formatAllObsToObject(results);
 }
 
@@ -161,7 +167,6 @@ export const formatAllPersistentPain = (obs: Obs[]) => {
 const  formatAllObsToObject=(results:Array<any>)=>{
 
   let totalNumberOfTriageConducted: number =0;
-
   results.forEach((r:any)=>{
     totalNumberOfTriageConducted = r.length>totalNumberOfTriageConducted ?r?.length : totalNumberOfTriageConducted;
   })
@@ -179,16 +184,17 @@ const  formatAllObsToObject=(results:Array<any>)=>{
   }
 
 return formattedTriageResults;
-
 }
 
-export const filterObservations = (obs: Obs[], uuid: string): Obs[] | null => {
+export const filterObservations = (obs: Obs[], name: string): Obs[] | null => {
+
+  console.log({obs});
 
   if (!obs) {
     return null;
   }
   return obs.filter((ob: any) => {
-    return ob.names.find((n: any) => n.uuid == uuid);
+    return ob.names.find((n: any) => n.name.toLowerCase() == name.toLowerCase());
   }).sort((a:Obs,b:Obs)=>dayjs(a?.obs_datetime).isBefore(dayjs(b?.obs_datetime)) ? -1:1)
 };
 

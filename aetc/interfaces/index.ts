@@ -127,6 +127,7 @@ export interface Obs {
   names: Name[];
   created_by: string;
   children: Obs[]
+  groupMembers: Obs[];
 }
 
 export interface Encounter {

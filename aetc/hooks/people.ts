@@ -2,6 +2,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { findByNPID } from "@/services/patient";
 import { createRelationship, createPerson, searchPerson, searchRegistrationPerson } from "@/services/people";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { getConcept } from "./encounter";
 
 export const addPerson = () => {
   const queryClient = useQueryClient();
@@ -27,9 +28,9 @@ export const addPerson = () => {
   });
 };
 export const addRelationship = () => {
-  const addData = (data: any) => {
+  const addData = async (data: any) => {
 
-    console.log("=======>",data.nextOfKinRelationship)
+    // const concept= await getConcept(data.nextOfKinRelationship)
     const mappedData = {
       person_a: data.patient,
       person_b: data.person,
