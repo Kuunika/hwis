@@ -328,8 +328,6 @@ export const Circulation = ({ onSubmit }: Prop) => {
       // },
     ];
 
-    console.log(formValues[form.siteOfCannulation.name]);
-    console.log(formValues[form.diagramCannulationSite.name]);
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
       form.mucousAbnormal.name,
