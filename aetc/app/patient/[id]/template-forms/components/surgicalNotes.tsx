@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MainGrid, MainPaper } from "@/components";
+import { MainGrid, MainPaper, BackButton, } from "@/components";
 import { Typography, Button } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
@@ -27,7 +27,11 @@ interface NeurologicalObservation {
 }
 interface ExtremitiesObservation {
   id: string;
-  finding: string;
+  oedema: string;
+  oedemaDetails?: string;
+  coldClammy: string;
+  abnormalitiesUpperLimb: string;
+  abnormalitiesLowerLimb: string;
   obsDatetime: string;
 }
 interface SkinObservation {
@@ -140,6 +144,20 @@ interface SkinAssessment {
   additionalNotes: string;
   obsDatetime: string;
 }
+interface HeadAndNeckObservation {
+  id: string;
+  region: string;
+  partOfBody: string;
+  abnormality: string;
+  obsDatetime: string;
+}
+
+// Interface for Investigation (Bedside Assessment)
+interface Investigation {
+  id: string;
+  assessment: string;
+  obsDatetime: string;
+}
 
 
 
@@ -151,13 +169,14 @@ function SurgicalNotesTemplate() {
   const [neurologicalExaminations, setNeurologicalExaminations] = useState<NeurologicalObservation[]>([]);
   const [extremitiesExaminations, setExtremitiesExaminations] = useState<ExtremitiesObservation[]>([]);
   const [skinExaminations, setSkinExaminations] = useState<SkinObservation[]>([]);
-  const [headAndNeckExaminations, setHeadAndNeckExaminations] = useState<Observation[]>([]);
+  const [headAndNeckExaminations, setHeadAndNeckExaminations] = useState<HeadAndNeckObservation[]>([]);
   const [chestAssessments, setChestAssessments] = useState<ChestObservation[]>([]);
   const [abdomenPelvisAssessments, setAbdomenPelvisAssessments] = useState<AbdomenPelvisObservation[]>([]);
   const [lungsAssessments, setLungsAssessments] = useState<LungsObservation[]>([]);
   const [primaryLungsAssessments, setPrimaryLungsAssessments] = useState<PrimaryLungsObservation[]>([]);
+  const [investigations, setInvestigations] = useState<Investigation[]>([]);
 
-  const [deathObservations, setDeathObservations] = useState<DeathObservation[]>([]);
+
 
   const [presentingComplaints, setPresentingComplaints] = useState<PresentingComplaint[]>([]);
   // const [triageComplaints, setTriageComplaints] = useState<TriageComplaint[]>([]);
@@ -168,6 +187,15 @@ function SurgicalNotesTemplate() {
   const [reviewOfSystems, setReviewOfSystems] = useState<ReviewOfSystem[]>([]);
   const [drugHistory, setDrugHistory] = useState<DrugHistory[]>([]);
   const [skinAssessment, setSkinAssessment] = useState<SkinAssessment[]>([]);
+
+  const abnormalityMap: Record<string, string> = {
+    "147c7e5c-7da5-40a4-a3d7-1cedba7f9404": "BRUISE",
+    "b90b5256-8d80-11d8-abbb-0024217bb78e": "HAEMATOMA",
+    "b8bbc2f4-8d80-11d8-abbb-0024217bb78e": "FRACTURE",
+    "b9caa8b8-8d80-11d8-abbb-0024217bb78e": "OTHER",
+    "b8bac0ac-8d80-11d8-abbb-0024217bb78e": "LACERATION",
+  };
+
 
 
   const { data: patientEncounters, isLoading, error } = getPatientsEncounters(params.id as string);
@@ -197,32 +225,26 @@ function SurgicalNotesTemplate() {
 
       //past surgical history
 
+      // Extract past surgical history
       const historyRecords = patientEncounters
-        .filter(
-          (encounter) =>
-            encounter.encounter_type.uuid === encounters.SURGICAL_HISTORY
-          // "ba063e50-8d80-11d8-abbb-0024217bb78e" // Surgical History Encounter
-        )
+        .filter((encounter) => encounter.encounter_type.uuid === encounters.SURGICAL_HISTORY)
         .flatMap((encounter) =>
           encounter.obs
-            .filter((obs) => obs.group_members?.length > 0) // Parent observations with group members
+            .filter((obs) => obs.children?.length > 0) // Check parent observations
             .map((parentObs) => {
-              const groupMembers = parentObs.group_members || [];
-              const procedure = groupMembers.find((member: { concept: string; value: string }) =>
-                member.concept === "b9b580e6-8d80-11d8-abbb-0024217bb78e"
-              )?.value || "No Procedure";
+              const groupMembers = parentObs.children || [];
 
-              const indication = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  member.concept === "b1d31030-f5f3-492b-8c94-bf31728ddc83"
-              )?.value || "No Indication";
+              // Extract the Date of Surgery from parent observation
+              const date = parentObs.value_datetime ? new Date(parentObs.value_datetime).toLocaleDateString() : "No Date";
 
-              const complications = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  member.concept === "b9caa728-8d80-11d8-abbb-0024217bb78e"
-              )?.value || "No Complications";
+              // Extract the Procedure
+              const procedure = groupMembers.find((member) => member.concept_id === 11884)?.names?.[0]?.name || "No Procedure";
 
-              const date = parentObs.obs_datetime || "No Date";
+              // Extract the Indication
+              const indication = groupMembers.find((member) => member.concept_id === 12031)?.value_text || "No Indication";
+
+              // Extract the Complications
+              const complications = groupMembers.find((member) => member.concept_id === 6406)?.value_text || "No Complications";
 
               return {
                 id: parentObs.obs_id.toString(),
@@ -235,6 +257,7 @@ function SurgicalNotesTemplate() {
         );
 
       setSurgicalHistory(historyRecords);
+
 
       //skin assessment
       // Filter encounters with type "DISABILITY-ASSESSMENT"
@@ -440,94 +463,47 @@ function SurgicalNotesTemplate() {
 
       //Drug history from SAMPLE history
       const drugHistoryRecords = patientEncounters
-        .filter(
-          (encounter) =>
-            encounter.encounter_type.uuid === "88564b30-abaf-4744-8ea6-6e1c15465d9e" // Drug History Encounter
-        )
+        .filter((encounter) => encounter.encounter_type.name === "PRESCRIPTION")
         .flatMap((encounter) =>
           encounter.obs
-            .filter((obs) => obs.group_members?.length > 0) // Parent observations with group members
+            .filter((obs) => obs.children?.length > 0) // Parent obs with children
             .map((parentObs) => {
-              const groupMembers = parentObs.group_members || [];
+              const groupMembers = parentObs.children || [];
 
-              const medicationName = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  member.concept === "concepts.MEDICATION_NAME"
-              )?.value || "Unknown Medication";
+              const medicationName =
+                groupMembers.find((member) => member.concept_id === 11269)?.names?.[0]?.name || "Unknown Medication";
 
-              const formulation = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  [
-                    concepts.TABLET,
-                    concepts.VIAL,
-                    concepts.INTRAVENOUS,
-                    concepts.POWDER,
-                    concepts.SOLUTION,
-                    concepts.EYE_OINTMENT,
-                    concepts.EYE_DROPS,
-                    concepts.CREAM,
-                    concepts.OINTMENT,
-                    concepts.INHALER,
-                    concepts.SUPPOSITORY,
-                    concepts.PESSARY,
-                    concepts.SUSPENSION,
-                    concepts.SHAMPOO,
-                    concepts.EAR_DROPS,
-                    concepts.EYE_PASTE,
-                  ].includes(member.concept)
-              )?.value || "Unknown Formulation";
+              const formulation =
+                groupMembers.find((member) =>
+                  [11950 /* Example concept ID for FORMULATION */].includes(member.concept_id)
+                )?.names?.[0]?.name || "Unknown Formulation";
 
-              const doseObs = groupMembers.find(
-                (member: { concept: string; value: string; names: { name: string }[] }) =>
-                  [
-                    concepts.DOSE_IN_MILLIGRAMS,
-                    concepts.DOSE_IN_MICROGRAMS,
-                    concepts.DOSE_IN_GRAMS,
-                    concepts.DOSE_IN_IU,
-                    concepts.DOSE_IN_MILLIMOLES,
-                  ].includes(member.concept)
+              const doseObs = groupMembers.find((member) =>
+                [3122 /* Example concept ID for DOSE */].includes(member.concept_id)
               );
-
               const dose = doseObs?.value || "No Dose";
               const doseUnit = doseObs?.names?.[0]?.name || "Unknown Dose Unit";
 
+              const frequency =
+                groupMembers.find((member) =>
+                  [3321 /* Example concept ID for FREQUENCY */].includes(member.concept_id)
+                )?.names?.[0]?.name || "Unknown Frequency";
 
-              const frequency = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  [
-                    concepts.ONCE_A_DAY,
-                    concepts.TWICE_A_DAY,
-                    concepts.THREE_TIMES_A_DAY,
-                    concepts.FOUR_TIMES_A_DAY,
-                    concepts.SIX_TIMES_A_DAY,
-                    concepts.ONCE_A_WEEK,
-                    concepts.ONCE_A_MONTH,
-                  ].includes(member.concept)
-              )?.value || "Unknown Frequency";
-
-              const durationObs = groupMembers.find(
-                (member: { concept: string; value: string; names: { name: string }[] }) =>
-                  [
-                    concepts.DURATION_ON_MEDICATION_DAYS,
-                    concepts.DURATION_ON_MEDICATION_WEEKS,
-                    concepts.DURATION_ON_MEDICATION_MONTHS,
-                    concepts.DURATION_ON_MEDICATION_YEARS,
-                  ].includes(member.concept)
+              const durationObs = groupMembers.find((member) =>
+                [11946 /* Example concept ID for DURATION */].includes(member.concept_id)
               );
-
               const duration = durationObs?.value || "No Duration";
               const durationUnit = durationObs?.names?.[0]?.name || "Unknown Duration Unit";
 
+              const lastTaken =
+                groupMembers.find((member) =>
+                  [11909 /* Example concept ID for LAST TAKEN */].includes(member.concept_id)
+                )?.value_text || "Not Recorded";
 
-              const lastTaken = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  member.concept === concepts.MEDICATION_DATE_LAST_TAKEN
-              )?.value || "Not Recorded";
-
-              const lastPrescribed = groupMembers.find(
-                (member: { concept: string; value: string }) =>
-                  member.concept === concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION
-              )?.value || "Not Recorded";
+              const lastPrescribed =
+                groupMembers.find((member) =>
+                  [11910 /* Example concept ID for LAST PRESCRIBED */].includes(member.concept_id)
+                )?.value_text || "Not Recorded";
 
               const obsDatetime = parentObs.obs_datetime || "No Date";
 
@@ -547,7 +523,18 @@ function SurgicalNotesTemplate() {
             })
         );
 
-      setDrugHistory(drugHistoryRecords);
+      // setDrugHistory(drugHistoryRecords);
+
+      const latestDrugRecords = drugHistoryRecords
+        .sort(
+          (a, b) =>
+            new Date(b.obsDatetime).getTime() -
+            new Date(a.obsDatetime).getTime()
+        )
+        .slice(0, 1); // Get the latest record
+
+      setDrugHistory(latestDrugRecords);
+
 
 
 
@@ -655,17 +642,56 @@ function SurgicalNotesTemplate() {
           encounter.obs
             .filter(
               (obs) =>
+                obs.names[0]?.uuid === concepts.OEDEMA ||
+                obs.names[0]?.uuid === concepts.OEDEMA_DETAILS ||
+                obs.names[0]?.uuid === concepts.COLD_CLAMMY ||
                 obs.names[0]?.uuid === concepts.ABNORMALITIES_UPPER_LIMB ||
                 obs.names[0]?.uuid === concepts.ABNORMALITIES_LOWER_LIMB
             )
-            .map((obs) => ({
-              id: obs.obs_id.toString(),
-              finding: obs.value || "No Finding",
-              obsDatetime: obs.obs_datetime || "",
-            }))
-        );
+        )
+        .reduce((acc, obs) => {
+          const obsId = obs.obs_id.toString();
+          const obsDatetime = obs.obs_datetime || "";
 
-      // Sort by observation date and select the most recent record
+          const existingRecord = acc.find((record) => record.id === obsId);
+
+          if (existingRecord) {
+            // Update existing record with the correct observation field
+            if (obs.names[0]?.uuid === concepts.OEDEMA) {
+              existingRecord.oedema = obs.value_text || "";
+            }
+            if (obs.names[0]?.uuid === concepts.OEDEMA_DETAILS) {
+              existingRecord.oedemaDetails = obs.value_text || "";
+            }
+            if (obs.names[0]?.uuid === concepts.COLD_CLAMMY) {
+              existingRecord.coldClammy = obs.value_text || "";
+            }
+            if (obs.names[0]?.uuid === concepts.ABNORMALITIES_UPPER_LIMB) {
+              existingRecord.abnormalitiesUpperLimb = obs.value_text || "";
+            }
+            if (obs.names[0]?.uuid === concepts.ABNORMALITIES_LOWER_LIMB) {
+              existingRecord.abnormalitiesLowerLimb = obs.value_text || "";
+            }
+          } else {
+            // Create a new record
+            acc.push({
+              id: obsId,
+              oedema: obs.names[0]?.uuid === concepts.OEDEMA ? obs.value_text || "" : "",
+              oedemaDetails:
+                obs.names[0]?.uuid === concepts.OEDEMA_DETAILS ? obs.value_text || "" : "",
+              coldClammy:
+                obs.names[0]?.uuid === concepts.COLD_CLAMMY ? obs.value_text || "" : "",
+              abnormalitiesUpperLimb:
+                obs.names[0]?.uuid === concepts.ABNORMALITIES_UPPER_LIMB ? obs.value_text || "" : "",
+              abnormalitiesLowerLimb:
+                obs.names[0]?.uuid === concepts.ABNORMALITIES_LOWER_LIMB ? obs.value_text || "" : "",
+              obsDatetime,
+            });
+          }
+          return acc;
+        }, [] as ExtremitiesObservation[]);
+
+      // Sort by latest observation date and get the most recent one
       const latestExtremitiesRecords = extremitiesRecords
         .sort(
           (a, b) =>
@@ -674,6 +700,44 @@ function SurgicalNotesTemplate() {
         .slice(0, 1); // Get the latest record
 
       setExtremitiesExaminations(latestExtremitiesRecords);
+
+      // Extract Bedside Assessments
+      const bedsideAssessments = patientEncounters
+        .filter(
+          (encounter) =>
+            encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS
+        )
+        .flatMap((encounter) =>
+          encounter.obs
+            .filter(
+              (obs) => obs.names[0]?.uuid === concepts.POINT_OF_CARE_ULTRASOUND
+            )
+            .map((obs) => ({
+              id: obs.obs_id.toString(),
+              assessment: obs.value,
+              obsDatetime: obs.obs_datetime || "",
+            }))
+        );
+
+      // Sort by most recent observation date and limit to the latest one
+      const latestAssessments = bedsideAssessments
+        .sort(
+          (a, b) =>
+            new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime()
+        )
+        .slice(0, 1); // Keep only the latest assessment
+
+      setInvestigations(latestAssessments);
+
+
+
+      //  // Ensure the data is stored as an array
+      //  const latestExtremitiesRecords = [...extremitiesRecords].sort(
+      //    (a, b) =>
+      //      new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime()
+      //  );
+
+      //  setExtremitiesExaminations(latestExtremitiesRecords);
 
       // Skin Assessment
       const skinRecords = patientEncounters
@@ -706,28 +770,64 @@ function SurgicalNotesTemplate() {
       setSkinExaminations(latestSkinRecords);
 
       // Head & Neck Examinations
+      // Filter for HEAD AND NECK ASSESSMENT encounters
       const headAndNeckRecords = patientEncounters
         .filter(
           (encounter) =>
             encounter.encounter_type.uuid === encounters.HEAD_AND_NECK_ASSESSMENT
         )
-        .flatMap((encounter) =>
-          encounter.obs.map((obs) => ({
-            id: obs.obs_id.toString(),
-            description: obs.value || "No Description",
-            obsDatetime: obs.obs_datetime || "",
-          }))
-        );
+        .flatMap((encounter) => {
+          const groupedObservations: Record<string, HeadAndNeckObservation> = {};
 
-      // Sort by the latest observation date and select the most recent record
-      const latestHeadAndNeckRecords = headAndNeckRecords
-        .sort(
-          (a, b) =>
-            new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime()
-        )
-        .slice(0, 1); // Select the latest record
+          encounter.obs.forEach((obs) => {
+            const groupId = obs.obs_group_id || obs.obs_id; // Use obs_id if obs_group_id is null
 
-      setHeadAndNeckExaminations(latestHeadAndNeckRecords);
+            if (!groupedObservations[groupId]) {
+              groupedObservations[groupId] = {
+                id: groupId.toString(),
+                region: "",
+                partOfBody: "",
+                abnormality: "",
+                obsDatetime: obs.obs_datetime || "",
+              };
+            }
+
+            // Identify the type of observation
+            if (obs.names[0]?.name === "Image Part Name") {
+              if (!obs.obs_group_id) {
+                // If obs_group_id is null, it's a region
+                groupedObservations[groupId].region = obs.value || "Unknown";
+              } else {
+                // Otherwise, it's a part of the body
+                groupedObservations[groupId].partOfBody = obs.value || "Unknown";
+              }
+            }
+            else if (obs.names[0]?.name === "Abnormalities") {
+              groupedObservations[groupId].abnormality =
+                abnormalityMap[obs.value] || obs.value || "None";
+            }
+
+            // Check if this observation has children (abnormalities)
+            if (obs.children?.length > 0) {
+              groupedObservations[groupId].abnormality = obs.children
+                .map((child) => child.value)
+                .join(", ");
+            }
+          });
+
+
+          return Object.values(groupedObservations);
+        });
+
+      // Sort by latest observation date
+      const sortedRecords = headAndNeckRecords.sort(
+        (a, b) =>
+          new Date(b.obsDatetime).getTime() -
+          new Date(a.obsDatetime).getTime()
+      )
+        .slice(0, 1); // Get the latest record
+
+      setHeadAndNeckExaminations(sortedRecords);
 
       // Chest Assessments
       // Extract Chest Assessments
@@ -958,123 +1058,141 @@ function SurgicalNotesTemplate() {
     return <Typography>Error fetching encounters: {error.message}</Typography>;
   }
   return (
+
+
+
+
     <MainGrid container spacing={2}>
+      {/* Print to PDF */}
+      <section style={{ width: "100%", display: "flex", justifyContent: "flex-end", }}>
+        <Button variant="contained" color="primary" onClick={handlePrintToPDF}>
+          Print to PDF
+        </Button>
+      </section>
       <MainGrid item xs={12}>
         <MainPaper>
-          <Typography variant="h4">Surgical Notes</Typography>
-          <br />
-
+          {/* <Typography variant="h4">Surgical Notes</Typography>
+          <br /> */}
 
           {/* 1. Past Presenting Complaint(s) */}
-          <section>
-            <Typography variant="h5">1) Past Presenting Complaint(s)</Typography>
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              -Triage.</Typography>
-            {/* <section>
-              <Typography variant="h5">Triage Complaints</Typography>
-              {triageComplaints.length > 0 ? (
-                <ul>
-                  {triageComplaints.map((complaint) => (
-                    <li key={complaint.id}>
-                      {complaint.complaint} - {new Date(complaint.obsDatetime).toLocaleDateString()}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <Typography>No triage complaints recorded.</Typography>
-              )}
-            </section> */}
+          <section style={{ paddingBottom: "16px" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Past Presenting Complaint(s)
+            </Typography>
 
+            {/* Triage Subsection */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
+              Triage
+            </Typography>
 
-
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              -SAMPLE history</Typography>
+            {/* SAMPLE History Subsection */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              SAMPLE History
+            </Typography>
             <section>
               {presentingComplaints.length > 0 ? (
-                <ul>
+                <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
                   {presentingComplaints.map((complaint) => (
                     <li key={complaint.id}>
-                      <p><b>Symptom:</b> {complaint.complaint}</p>
-                      <p> {complaint.duration || "No Duration"}</p>
-                      <p><b>Date:</b> {new Date(complaint.obsDatetime).toLocaleDateString()}</p>
+                      <strong>Symptom:</strong> {complaint.complaint} <br />
+                      <strong> {complaint.duration || "No Duration"} </strong><br />
+                      <strong>Date:</strong> {new Date(complaint.obsDatetime).toLocaleDateString()}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <Typography>No presenting complaints recorded.</Typography>
+                <Typography sx={{ pl: 4, fontStyle: "italic" }}>No presenting complaints recorded.</Typography>
               )}
             </section>
-
-
           </section>
-          <br />
+
 
 
           {/* 2. Drug History */}
-          <section>
-            <Typography variant="h5">2) Drug History</Typography>
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - SAMPLE History
+          <section style={{ paddingBottom: "16px" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Drug History
+            </Typography>
+
+            {/* SAMPLE History Subsection */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
+              SAMPLE History
             </Typography>
             {drugHistory.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
                 {drugHistory.map((drug) => (
-                  <li key={drug.id}>
-                    <b>Medication Name:</b> {drug.medicationName} | <b>Formulation:</b> {drug.formulation} |{" "}
-                    <b>Dose:</b> {drug.dose} {drug.doseUnit} | <b>Frequency:</b> {drug.frequency} |{" "}
-                    <b>Duration:</b> {drug.duration} {drug.durationUnit} | <b>Last Taken:</b> {drug.lastTaken} |{" "}
-                    <b>Last Prescribed:</b> {drug.lastPrescribed} | <b>Date:</b>{" "}
-                    {new Date(drug.obsDatetime).toLocaleDateString()}
+                  <li key={drug.id} style={{ marginBottom: "8px" }}>
+                    <strong>Medication Name:</strong> {drug.medicationName}  <br />
+                    <strong> Formulation:</strong> {drug.formulation}  <br />
+                    <strong> {drug.doseUnit}:</strong> {drug.dose}  <br />
+                    <strong> Frequency:</strong> {drug.frequency}  <br />
+                    <strong>  {drug.durationUnit}:</strong> {drug.duration}  <br />
+                    <strong> Last Taken:</strong> {drug.lastTaken} |
+                    <strong> Last Prescribed:</strong> {drug.lastPrescribed}  <br />
+                    <strong> Date:</strong> {new Date(drug.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No drug history recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No drug history recorded.</Typography>
             )}
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - AETC prescriptions
-            </Typography>
-            <Typography sx={{ pl: 4 }}>Prescription data from AETC.</Typography>
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - AETC dispensation
+            {/* AETC Prescriptions Subsection */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              AETC Prescriptions
             </Typography>
-            <Typography sx={{ pl: 4 }}>Dispensation details here.</Typography>
+            <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>
+              No Prescriptions recorded.</Typography>
+
+            {/* AETC Dispensation Subsection */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              AETC Dispensation
+            </Typography>
+            <Typography sx={{ pl: 4 }}>No Dispensations recorded.</Typography>
           </section>
+
           <br />
 
 
           {/* 3. PAST MEDICAL HISTORY */}
-          <section>
-            <Typography variant="h5">3) PAST MEDICAL HISTORY</Typography>
-
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - HIV STATUS
-            </Typography>
-            <Typography sx={{ pl: 4 }}>            <b>Status:</b> {HIVStatus}
+          <section style={{ paddingBottom: "16px" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Past Medical History
             </Typography>
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Past surgical history
+            {/* HIV Status Subsection */}
+            <Typography sx={{ pl: 4, mb: 2 }}>
+              <strong>HIV Status:</strong> {HIVStatus}
+            </Typography>
+
+            {/* Past Surgical History */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
+              Past Surgical History
             </Typography>
             {surgicalHistory.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
                 {surgicalHistory.map((history) => (
-                  <li key={history.id}>
-                    <b>Procedure:</b> {history.procedure} | <b>Indication:</b> {history.indication} |{" "}
-                    <b>Date:</b> {new Date(history.date).toLocaleDateString()} |{" "}
-                    <b>Complications:</b> {history.complications}
+                  <li key={history.id} style={{ marginBottom: "8px" }}>
+                    <strong>Procedure:</strong> {history.procedure} <br />
+                    <strong>Indication:</strong> {history.indication} <br />
+                    <strong>Date of Surgery:</strong> {new Date(history.date).toLocaleDateString()} <br />
+                    <strong>Complications:</strong> {history.complications}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No past surgical history recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No past surgical history recorded.</Typography>
             )}
-            <Typography variant="h6" sx={{ pl: 2 }}>- Allergy</Typography>
+
+            {/* Allergy Section */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Allergy
+            </Typography>
             {allergies.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch" }}>
+              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
                 {allergies.map((allergy) => (
-                  <li key={allergy.id}>
+                  <li key={allergy.id} style={{ marginBottom: "8px" }}>
                     <strong>Allergy Name:</strong> {allergy.allergen} <br />
                     <strong>Allergy Details:</strong> {allergy.comment} <br />
                     <strong>Date:</strong> {new Date(allergy.obsDatetime).toLocaleDateString()}
@@ -1082,126 +1200,138 @@ function SurgicalNotesTemplate() {
                 ))}
               </ul>
             ) : (
-              <Typography sx={{ pl: 4 }}>No allergies recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No allergies recorded.</Typography>
             )}
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Social history
+            {/* Social History */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Social History
             </Typography>
-            <Typography sx={{ pl: 4 }}>Social history details here.</Typography>
+            <Typography sx={{ pl: 4, mb: 2 }}>Social history details here.</Typography>
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Family history
+            {/* Family History */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Family History
             </Typography>
             {familyHistory.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
                 {familyHistory.map((history) => (
-                  <li key={history.id}>
-                    <b>Condition:</b> {history.condition} | <b>Relationship:</b> {history.relationship}{" "}
-                    | <b>Date:</b> {new Date(history.obsDatetime).toLocaleDateString()}
+                  <li key={history.id} style={{ marginBottom: "8px" }}>
+                    <strong>Condition:</strong> {history.condition} <br />
+                    <strong>Relationship:</strong> {history.relationship} <br />
+                    <strong>Date:</strong> {new Date(history.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography sx={{ pl: 4 }}>No family history recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No family history recorded.</Typography>
             )}
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Review of systems
+
+            {/* Review of Systems */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Review of Systems
             </Typography>
             {reviewOfSystems.length > 0 ? (
-              <div>
-                {reviewOfSystems.map((ros) => (
-                  <div key={ros.id}>
-                    <Typography>
-                      <b>Date of Last Meal:</b> {ros.dateOfLastMeal}
-                    </Typography>
-                    <Typography>
-                      <b>Events:</b> {ros.events}
-                    </Typography>
-                    <Typography variant="subtitle1">General History:</Typography>
-                    <ul>
-                      {ros.generalHistory.map((history) => (
-                        <li key={history.id}>
-                          {history.symptom} - {history.duration} {history.durationUnit}{" "}
-                          {history.site && `(Site: ${history.site})`} on{" "}
-                          {new Date(history.obsDatetime).toLocaleDateString()}
-                        </li>
-                      ))}
-                    </ul>
-                    <Typography variant="subtitle1">Specific History:</Typography>
-                    <ul>
-                      {ros.dropdownHistory.map((dropdown) => (
-                        <li key={dropdown.id}>
-                          {dropdown.category}: {dropdown.selection} on{" "}
-                          {new Date(dropdown.obsDatetime).toLocaleDateString()}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+              reviewOfSystems.map((ros) => (
+                <div key={ros.id} style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
+                  <Typography>
+                    <strong>Date of Last Meal:</strong> {ros.dateOfLastMeal}
+                  </Typography>
+                  <Typography>
+                    <strong>Events:</strong> {ros.events}
+                  </Typography>
+
+                  <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: "bold" }}>General History:</Typography>
+                  <ul>
+                    {ros.generalHistory.map((history) => (
+                      <li key={history.id}>
+                        {history.symptom} - {history.duration} {history.durationUnit}{" "}
+                        {history.site && `(Site: ${history.site})`} on{" "}
+                        {new Date(history.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: "bold" }}>Specific History:</Typography>
+                  <ul>
+                    {ros.dropdownHistory.map((dropdown) => (
+                      <li key={dropdown.id}>
+                        {dropdown.category}: {dropdown.selection} on{" "}
+                        {new Date(dropdown.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
             ) : (
-              <Typography sx={{ pl: 4 }}>No review of systems recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No review of systems recorded.</Typography>
             )}
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Vital signs
+
+            {/* Vital Signs */}
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Vital Signs
             </Typography>
-            <Typography sx={{ pl: 4 }}>
-              -- Triage and Monitoring Chart Data
-            </Typography>
+            <Typography sx={{ pl: 4 }}>-- Triage and Monitoring Chart Data</Typography>
           </section>
+
           <br />
 
           {/* Body System Assessments */}
-          <section>
-            <Typography variant="h5">4) Body System Assessments</Typography>
+          <section style={{ paddingBottom: "16px" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Body System Assessments</Typography>
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Head & Neck Assessment</Typography>
+            <Typography
+              variant="h6"
+              sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}
+            >
+              Head & Neck Assessment
+            </Typography>
             {headAndNeckExaminations.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch" }}>
                 {headAndNeckExaminations.map((exam) => (
                   <li key={exam.id}>
-                    {exam.description} -{" "}
-                    {new Date(exam.obsDatetime).toLocaleDateString()}
+                    <strong>Region:</strong> {exam.region} {" "}  <br />
+                    <strong>Part:</strong> {exam.partOfBody} {" "}  <br />
+                    <strong>Abnormality:</strong> {exam.abnormality} {" "}  <br />
+                    <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No head and neck observations recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No head and neck observations recorded.
+              </Typography>
             )}
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Chest (Secondary Assessment)
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Chest (Secondary Assessment)
             </Typography>
             {chestAssessments.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch" }}>
                 {chestAssessments.map((exam) => (
                   <li key={exam.id}>
-                    <p>
-                      <b>Status:</b> {exam.status}
-                    </p>
+                    <strong>Status:</strong> {exam.status} <br />
                     {exam.status === "Abnormal" && (
-                      <p>
-                        <b>Description:</b> {exam.description}
-                      </p>
+                      <>
+                        <strong>Description:</strong> {exam.description} <br />
+                      </>
                     )}
-                    <p>
-                      <b>Date:</b> {new Date(exam.obsDatetime).toLocaleDateString()}
-                    </p>
+                    <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No chest observations recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No chest observations recorded.</Typography>
             )}
 
-
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Lungs
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Lungs
             </Typography>
-            <Typography sx={{ pl: 4 }}>-- Primary Assessment</Typography>
-            {primaryLungsAssessments.length > 0 ? (
-              <ul>
+            {/* <Typography sx={{ pl: 4, mb: 2 }}>
+              Primary Assessment</Typography> */}
+            {/* {primaryLungsAssessments.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch" }}>
                 {primaryLungsAssessments.map((exam) => (
                   <li key={exam.id}>
                     {exam.description} -{" "}
@@ -1209,14 +1339,15 @@ function SurgicalNotesTemplate() {
                   </li>
                 ))}
               </ul>
-            ) : (
-              <Typography>No  primary lungs assessment observations recorded.</Typography>
-            )}
+            ) : ( */}
+            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+              No  primary lungs assessment observations recorded.</Typography>
+            {/* )} */}
 
-
-            <Typography sx={{ pl: 4 }}>-- Secondary Assessment</Typography>
-            {lungsAssessments.length > 0 ? (
-              <ul>
+            {/* <Typography sx={{ pl: 4, mb: 2 }}>
+              Secondary Assessment</Typography> */}
+            {/* {lungsAssessments.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch" }}>
                 {lungsAssessments.map((exam) => (
                   <li key={exam.id}>
                     {exam.description} -{" "}
@@ -1224,12 +1355,13 @@ function SurgicalNotesTemplate() {
                   </li>
                 ))}
               </ul>
-            ) : (
-              <Typography>No  secondary lungs assessment observations recorded.</Typography>
-            )}
+            ) : ( */}
+            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+              No secondary lungs assessment observations recorded.</Typography>
+            {/* )} */}
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Abdomen (Secondary Assessment)
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Abdomen (Secondary Assessment)
             </Typography>
             {abdomenPelvisAssessments.length > 0 ? (
               <ul>
@@ -1241,102 +1373,134 @@ function SurgicalNotesTemplate() {
                 ))}
               </ul>
             ) : (
-              <Typography>No abdomen and pelvis observations recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No abdomen and pelvis observations recorded.</Typography>
             )}
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Extremities Assessment</Typography>
+            <Typography variant="h6" sx={{ fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Extremities Assessment
+            </Typography>
+
             {extremitiesExaminations.length > 0 ? (
-              <ul>
-                {extremitiesExaminations.map((exam) => (
+              extremitiesExaminations.map((exam) => (
+                <ul style={{ paddingLeft: "2ch" }}>
+
                   <li key={exam.id}>
-                    {exam.finding} -{" "}
-                    {new Date(exam.obsDatetime).toLocaleDateString()}
+                    <strong>Oedema:</strong> {exam.oedema}
+                    {exam.oedema === "Yes" && <p><strong>Oedema Details:</strong> {exam.oedemaDetails}</p>} <br />
+                    <strong>Cold Clammy:</strong> {exam.coldClammy} <br />
+                    <strong>Abnormalities Upper Limb:</strong> {exam.abnormalitiesUpperLimb} <br />
+                    <strong>Abnormalities Lower Limb:</strong> {exam.abnormalitiesLowerLimb} <br />
+                    <em>Recorded on: {new Date(exam.obsDatetime).toLocaleDateString()}</em>
                   </li>
-                ))}
-              </ul>
+                </ul>
+              ))
             ) : (
-              <Typography>No extremities observations recorded.</Typography>
+              <Typography sx={{ fontStyle: "italic" }}>No extremities observations recorded.</Typography>
             )}
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Skin Assessment
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Skin Assessment
             </Typography>
             {skinAssessment.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch" }}>
                 {skinAssessment.map((assessment) => (
                   <li key={assessment.id}>
-                    <b>Temperature:</b> {assessment.temperature || "N/A"} |
-                    <b> Additional Notes:</b> {assessment.additionalNotes || "N/A"} |
-                    <b> Date:</b> {new Date(assessment.obsDatetime).toLocaleDateString()}
+                    <strong>Temperature:</strong> {assessment.temperature || "N/A"} <br />
+                    <strong>Additional Notes:</strong> {assessment.additionalNotes || "N/A"} <br />
+                    <strong>Date:</strong> {new Date(assessment.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography sx={{ pl: 4 }}>No skin assessment recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No skin assessment recorded.</Typography>
             )}
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              - Neurological Examination
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Neurological Examination
             </Typography>
             {neurologicalExaminations.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch" }}>
                 {neurologicalExaminations.map((exam) => (
                   <li key={exam.id}>
-                    <b>Notes:</b> {exam.notes} | <b>Date:</b>{" "}
-                    {new Date(exam.obsDatetime).toLocaleDateString()}
+                    <strong>Notes:</strong> {exam.notes || "N/A"} <br />
+                    <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No neurological observations recorded.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No neurological observations recorded.</Typography>
             )}
+
           </section>
 
-          {/* Other Sections */}
-          <section>
-            <Typography variant="h5">5) Differential Diagnosis</Typography>
+          {/* Differential Diagnosis Sections */}
+          <section style={{ paddingBottom: "16px" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Differential Diagnosis</Typography>
             {differentialDiagnoses.length > 0 ? (
-              <ul>
+              <ul style={{ paddingLeft: "2ch" }}>
                 {differentialDiagnoses.map((diagnosis) => (
                   <li key={diagnosis.id}>
-                    <p><b>Condition:</b> {diagnosis.condition}</p>
-                    <p><b>Date:</b> {new Date(diagnosis.obsDatetime).toLocaleDateString()}</p>
+                    <strong>Condition:</strong> {diagnosis.condition} <br />
+                    <strong>Date:</strong> {new Date(diagnosis.obsDatetime).toLocaleDateString()}
                   </li>
                 ))}
               </ul>
             ) : (
-              <Typography>No differential diagnosis added.</Typography>
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No differential diagnosis observations added.</Typography>
             )}
           </section>
 
 
-          <section>
-            <Typography variant="h5">6) Investigations</Typography>
-            <Typography>Investigation data here.</Typography>
+          <section style={{ paddingBottom: "16px" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Investigation (Bedside Assessment)
+            </Typography>
+
+            {investigations.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch" }}>
+                {investigations.map((investigation) => (
+                  <li key={investigation.id}>
+                    <strong>Assessment:</strong> {investigation.assessment} <br />
+                    <strong>Date:</strong>{" "}
+                    {new Date(investigation.obsDatetime).toLocaleDateString()}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                No bedside assessment observations added.
+              </Typography>
+            )}
           </section>
 
-          <section>
-            <Typography variant="h5">7) Management Plan</Typography>
-            <Typography>Management plan details here.</Typography>
+          <section style={{ paddingBottom: "16px" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Management Plan</Typography>
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              -- Prescription
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Prescription
             </Typography>
-            <Typography sx={{ pl: 4 }}>Prescription details here.</Typography>
+            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+              No Prescription observations added.</Typography>
 
-            <Typography variant="h6" sx={{ pl: 2 }}>
-              -- Monitoring Chart
+            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+              Monitoring Chart
             </Typography>
-            <Typography sx={{ pl: 4 }}>Monitoring chart data here.</Typography>
+            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+              No Monitoring chart observations added.</Typography>
           </section>
 
           {/* Print to PDF */}
-          <section style={{ marginTop: "2rem" }}>
+          {/* <section style={{ marginTop: "2rem" }}>
             <Button variant="contained" color="primary" onClick={handlePrintToPDF}>
               Print to PDF
             </Button>
-          </section>
+          </section> */}
 
 
         </MainPaper>

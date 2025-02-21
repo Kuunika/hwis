@@ -181,7 +181,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                     {showICD11 && (
                         <ECTReactComponent
                             iNo={1}  // Provide a unique number (adjust as needed)
-                            name="diagnosis" // Give an appropriate name
+                            // name="diagnosis" // Give an appropriate name
                             label="Select Diagnosis" // Set a meaningful label
                             onICD11Selection={(selectedCondition: any) => handleAddDiagnosis(selectedCondition)}
                         />
