@@ -15,7 +15,7 @@ import {
 
 import { concepts, encounters, durationOptions } from "@/constants";
 import { useNavigation } from "@/hooks";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
@@ -41,11 +41,6 @@ type OutputObservation = {
   concept: string;
   value: string | boolean;
 };
-
-interface OverlayWithMessageProps {
-  open: boolean;
-  message: string;
-}
 
 
 
@@ -109,7 +104,7 @@ export const MedicalHistoryFlow = () => {
     isSuccess: encounterCreated,
     isError: encounterError,
     error: errorMessage,
-} = addEncounter();
+} = fetchConceptAndCreateEncounter();
 
   const { data: patientVisits, isSuccess } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
@@ -177,7 +172,7 @@ export const MedicalHistoryFlow = () => {
               concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
               value: true,
               obsDatetime: dateTime,
-              group_members: chunk,
+              groupMembers: chunk,
             },
           ],
         });
@@ -242,12 +237,12 @@ export const MedicalHistoryFlow = () => {
       concept: groupConcept, 
       obsDatetime: dateTime,
       value: true,
-      group_members: chunk, 
+      groupMembers: chunk, 
     };
   });
   
   observationsPayload.forEach(async (observation) => {
-      observation.group_members.push({
+      observation.groupMembers.push({
         concept: concepts.ALLERGY_COMMENT,
         value: values[concepts.ALLERGY_COMMENT]
       });
@@ -262,7 +257,7 @@ export const MedicalHistoryFlow = () => {
           concept: observation.concept, 
           value: true,
           obsDatetime: dateTime,
-          group_members: observation.group_members,
+          groupMembers: observation.groupMembers,
         },],            
     },);
     console.log("Encounter successfully created:", response);
@@ -307,26 +302,26 @@ export const MedicalHistoryFlow = () => {
         concept: medication.name, 
         obsDatetime: dateTime,
         value: true,
-        group_members: [] as OutputObservation[], 
+        groupMembers: [] as OutputObservation[], 
       };
     
      
         if (medication.medication_date_last_taken) {
-          observation.group_members.push({
+          observation.groupMembers.push({
             concept: concepts.MEDICATION_DATE_LAST_TAKEN,
             value: medication.medication_date_last_taken,    
           } as OutputObservation);
         }
 
         if (medication.medication_date_of_last_prescription) {
-          observation.group_members.push({
+          observation.groupMembers.push({
             concept: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,   
             value: medication.medication_date_of_last_prescription  
           } as OutputObservation);
         }
 
         if(medication.medication_frequency){
-          observation.group_members.push({
+          observation.groupMembers.push({
             concept: medication.medication_frequency,   
             value: true     
           } as OutputObservation);
@@ -334,7 +329,7 @@ export const MedicalHistoryFlow = () => {
 
         if(medication.medication_dose_unit){
           const unitconcept = doseUnits[medication.medication_dose_unit];
-          observation.group_members.push({
+          observation.groupMembers.push({
             concept: unitconcept,   
             value: medication.medication_dose  
           } as OutputObservation);
@@ -343,14 +338,14 @@ export const MedicalHistoryFlow = () => {
         
         if(medication.medication_duration_unit){
           const unitconcept = durationUnits[medication.medication_duration_unit];
-          observation.group_members.push({
+          observation.groupMembers.push({
             concept: unitconcept,   
             value: medication.medication_duration    
           } as OutputObservation);
         }
 
         if(medication.formulation){
-          observation.group_members.push({
+          observation.groupMembers.push({
             concept: medication.formulation,   
             value: true     
           } as OutputObservation);
@@ -392,7 +387,7 @@ export const MedicalHistoryFlow = () => {
       concept: concepts.DIAGNOSIS_DATE,
       obsDatetime: dateTime,
       value: condition.date,
-      group_members: [
+      groupMembers: [
   
         { concept: concepts.ICD11_DIAGNOSIS, value: condition.name },
         { concept: concepts.ON_TREATMENT, value: condition.onTreatment },
@@ -430,7 +425,7 @@ export const MedicalHistoryFlow = () => {
       concept: concepts.DATE_OF_SURGERY,
       obsDatetime: dateTime,
       value: surgery.date,
-      group_members: [
+      groupMembers: [
         { concept: surgery.procedure === 'other_surgical_procedure'? concepts.OTHER : surgery.procedure, value: surgery.procedure === 'other_surgical_procedure'? surgery.other : true },
         { concept: concepts.INDICATION_FOR_SURGERY, value: surgery.indication },
         { concept: concepts.COMPLICATIONS, value: surgery.complication },
@@ -509,7 +504,7 @@ export const MedicalHistoryFlow = () => {
         concept: concepts.PREGENANCY_OUTCOME,
         obsDatetime: dateTime,
         value: true,
-        group_members: [
+        groupMembers: [
           { concept: outcome, value: true },
           { concept: concepts.NUMBER_OF_BIRTHS, value: births[index] },
         ] as OutputObservation[],
@@ -521,7 +516,7 @@ export const MedicalHistoryFlow = () => {
         concept: concepts.PREGENANCY_OUTCOME,
         obsDatetime: dateTime,
         value: true,
-        group_members: [
+        groupMembers: [
           { concept: outcome, value: true },
         ] as OutputObservation[],
       }
@@ -569,7 +564,7 @@ export const MedicalHistoryFlow = () => {
           concept: concepts.ADMISSION_DATE, 
           value: admission.date,
           obsDatetime: dateTime,
-          group_members: [
+          groupMembers: [
             { concept: concepts.HEALTH_CENTER_HOSPITALS, value: admission.hospital }, 
             { concept: concepts.ADMISSION_SECTION, value: admission.ward },
             {concept: concepts.ICD11_DIAGNOSIS, value: admission.diagnosis},
@@ -624,7 +619,7 @@ export const MedicalHistoryFlow = () => {
         concept: initialObs?concepts.PRESENTING_HISTORY:concepts.DATE_OF_LAST_MEAL, 
         value: initialObs?true:lastMeal,
         obsDatetime: dateTime,
-        group_members:initialObs?initialObs:null,
+        groupMembers:initialObs?initialObs:null,
       },]});
     }catch(error: any){
         throw error;
@@ -682,7 +677,7 @@ export const MedicalHistoryFlow = () => {
           concept: concepts.GASTROINTESTINAL, 
           value: true,
           obsDatetime: dateTime,
-          group_members: gastroObs,
+          groupMembers: gastroObs,
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
@@ -707,7 +702,7 @@ export const MedicalHistoryFlow = () => {
           concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
           value: true,
           obsDatetime: dateTime,
-          group_members: cardiacObs,
+          groupMembers: cardiacObs,
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
@@ -732,7 +727,7 @@ export const MedicalHistoryFlow = () => {
           concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
           value: true,
           obsDatetime: dateTime,
-          group_members: nervousObs,
+          groupMembers: nervousObs,
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
@@ -767,7 +762,7 @@ export const MedicalHistoryFlow = () => {
           concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
           value: true,
           obsDatetime: dateTime,
-          group_members: genitoObs,
+          groupMembers: genitoObs,
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
@@ -817,7 +812,7 @@ export const MedicalHistoryFlow = () => {
             concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
             value: true,
             obsDatetime: dateTime,
-            group_members: obsGroup,
+            groupMembers: obsGroup,
           },]});
           console.log("Encounter successfully created:", response);
       } catch (error: any) {
@@ -901,7 +896,7 @@ export const MedicalHistoryFlow = () => {
           concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
           value: true,
           obsDatetime: dateTime,
-          group_members: traumaObs,
+          groupMembers: traumaObs,
         },]});
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
@@ -951,7 +946,7 @@ export const MedicalHistoryFlow = () => {
         concept: concepts.OTHER, 
         value: true,
         obsDatetime: dateTime,
-        group_members: socialDetailsObs,
+        groupMembers: socialDetailsObs,
       },]});
       console.log("Encounter successfully created:", response);
       } catch (error: any) {
@@ -1049,7 +1044,7 @@ async function handleFamilyHistorySubmission(values: any): Promise<any> {
           concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
           value: true,
           obsDatetime: dateTime,
-          group_members: group,  
+          groupMembers: group,  
         },
       ],
     });
