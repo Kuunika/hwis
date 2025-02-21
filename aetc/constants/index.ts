@@ -1172,6 +1172,13 @@ export const concepts = {
   PROSTRATE_DESCRIPTION: "Prostrate Description",
   DIAGNOSIS: "Diagnosis",
   FUNDO_SCOPY_FINDINGS:'Fundoscopy Findings',
+  OBJECTIVE_DATA_HEAD: "Objective data head",
+  OBJECTIVE_DATA_CHEST: "Objective data chest",
+  OBJECTIVE_DATA_ABDOMEN: "Objective data abdomen",
+  OBJECTIVE_DATA_EXTREMITIES: "Objective data extremities",
+  INVESTIGATIONS_FBC: "Investigations FBC",
+  INVESTIGATIONS_PT: "Investigations PT",
+  OTHER_NURSING_NOTES: "Other nursing notes",
 }
 
 export const conceptNames= {
