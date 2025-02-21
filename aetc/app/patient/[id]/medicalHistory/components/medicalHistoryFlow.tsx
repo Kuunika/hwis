@@ -369,7 +369,7 @@ export const MedicalHistoryFlow = () => {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: [observation, observation],
+        obs: [observation],
       })  
       console.log("Encounter successfully created:", response);
     } catch (error: any) {

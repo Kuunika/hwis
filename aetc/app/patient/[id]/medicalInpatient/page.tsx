@@ -1,5 +1,5 @@
 "use client";
-import { MainTypography, WrapperBox } from "@/components";
+import { MainButton, MainTypography, WrapperBox } from "@/components";
 import { PatientInfoTab } from "@/components";
 import { FaAngleLeft } from "react-icons/fa6";
 import PresentingComplaintsPanel from "./components/pastPresentingComplaints";
@@ -95,7 +95,7 @@ function InPatientAdmission() {
     Back
   </MainTypography>
   </div>
-  <Button sx={{mr:'15px', background:'rgba(137, 129, 129, 0.5)', borderRadius: '1ch'}} onClick={handlePrint}>Download PDF</Button>
+  <MainButton onClick={handlePrint} sx={{marginRight:'20px'}} title="Download PDF" />
 </WrapperBox>
 <Box
   sx={{

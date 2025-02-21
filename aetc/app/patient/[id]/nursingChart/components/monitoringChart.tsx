@@ -148,7 +148,7 @@ export const MonitoringChart = () => {
 
         if (Array.isArray(value)) {
           const fluidObs = value.map(entry => ([
-              { concept: "IntakeFluids", value: entry.intakeFluidType.value },
+              { concept: concepts.INTAKE_FLUIDS, value: entry.intakeFluidType.value },
               { concept: "IntakeFluidAmount", value: entry.intakeFluidAmount },
               { concept: "OutputFluidAmount", value: entry.outputFluidAmount },
               { concept: "FluidBalance", value: entry.balance }
@@ -223,6 +223,7 @@ export const MonitoringChart = () => {
   };
 
   const handleNursingNotesSubmit = (values: any) => {
+    console.log(values)
     const objectiveKey = concepts.OBJECTIVE_DATA;
     const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS;
 
@@ -236,6 +237,8 @@ export const MonitoringChart = () => {
       delete values.investigations;
     }
 
+    
+
     createNursingNotes({
       encounterType: encounters.NURSING_NOTES,
       visit: activeVisit?.uuid,
@@ -243,7 +246,7 @@ export const MonitoringChart = () => {
       encounterDatetime: dateTime,
       obs: getObservations(values, dateTime),
     });
-    navigateBack();
+
   };
 
   const handleSkip = () => {

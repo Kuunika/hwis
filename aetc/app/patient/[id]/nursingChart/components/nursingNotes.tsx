@@ -13,17 +13,17 @@ const nursingNotesFormConfig = {
       label: "Subjective Data",
     },
     objective: {
-      head: { name: "objective.head", label: "Objective Data (Head)" },
-      chest: { name: "objective.chest", label: "Objective Data (Chest)" },
-      abdomen: { name: "objective.abdomen", label: "Objective Data (Abdomen)" },
-      extremities: { name: "objective.extremities", label: "Objective Data (Extremities)" },
+      head: { name: `objective.${concepts.OBJECTIVE_DATA_HEAD}`, label: "Objective Data (Head)" },
+      chest: { name: `objective.${concepts.OBJECTIVE_DATA_CHEST}`, label: "Objective Data (Chest)" },
+      abdomen: { name: `objective.${concepts.OBJECTIVE_DATA_ABDOMEN}`, label: "Objective Data (Abdomen)" },
+      extremities: { name: `objective.${concepts.OBJECTIVE_DATA_EXTREMITIES}`, label: "Objective Data (Extremities)" },
     },
     investigations: {
-      MRDT: { name: "investigations.MRDT", label: "MRDT" },
-      RBG: { name: "investigations.RBG", label: "RBG" },
-      PT: { name: "investigations.PT", label: "PT" },
-      FBC: { name: "investigations.FBC", label: "FBC" },
-      urineDipstick: { name: "investigations.urineDipstick", label: "Urine Dipstick" },
+      MRDT: { name: `investigations.${concepts.MRDT}`, label: "MRDT" },
+      RBG: { name: `investigations.${concepts.BLOOD_GLUCOSE}`, label: "RBG" },
+      PT: { name: `investigations.${concepts.INVESTIGATIONS_PT}`, label: "PT" },
+      FBC: { name: `investigations.${concepts.INVESTIGATIONS_FBC}`, label: "FBC" },
+      urineDipstick: { name: `investigations.${concepts.URINE_DIPSTICK_KETONES}`, label: "Urine Dipstick" },
     },
     assessment: {
       name: concepts.ASSESSMENT_COMMENTS,
@@ -81,11 +81,12 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
       <FormFieldContainerLayout title="Subjective Data">
         <FieldsContainer>
           {/* Subjective Data */}
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.subjective.name}
             name={nursingNotesFormConfig.subjective.name}
             label={nursingNotesFormConfig.subjective.label}
-            maxRows={5}
+            multiline
+            rows={5}
             sx={{ lineHeight: '250px' }}
           />
 </FieldsContainer>
@@ -93,104 +94,114 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
 <FormFieldContainerLayout title="Objective Data">
 <FieldsContainer>
           {/* Objective Data */}
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.objective.head.name}
             name={nursingNotesFormConfig.objective.head.name}
             label="Head"
-            maxRows={5}
+            multiline
+            rows={5}
           />
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.objective.chest.name}
             name={nursingNotesFormConfig.objective.chest.name}
             label="Chest"
-            maxRows={5}
+            multiline
+            rows={5}
           />
           </FieldsContainer>
           <FieldsContainer>
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.objective.abdomen.name}
             name={nursingNotesFormConfig.objective.abdomen.name}
             label="Abdomen"
-            maxRows={5}
+            multiline
+            rows={5}
           />
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.objective.extremities.name}
             name={nursingNotesFormConfig.objective.extremities.name}
             label="Extremities"
-            maxRows={5}
+            multiline
+            rows={5}
           />
 </FieldsContainer>
 </FormFieldContainerLayout>
 <FormFieldContainerLayout title="Investigations">
 <FieldsContainer>
-          {/* Investigations */}
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.investigations.MRDT.name}
             name={nursingNotesFormConfig.investigations.MRDT.name}
             label={nursingNotesFormConfig.investigations.MRDT.label}
-            maxRows={5}
-            
+            multiline
+            rows={5}
           />
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.investigations.RBG.name}
             name={nursingNotesFormConfig.investigations.RBG.name}
             label={nursingNotesFormConfig.investigations.RBG.label}
-            maxRows={5}
+            multiline
+            rows={5}
           />
           </FieldsContainer>
           <FieldsContainer>
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.investigations.PT.name}
             name={nursingNotesFormConfig.investigations.PT.name}
             label={nursingNotesFormConfig.investigations.PT.label}
-            maxRows={5}
+            multiline
+            rows={5}
           />
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.investigations.FBC.name}
             name={nursingNotesFormConfig.investigations.FBC.name}
             label={nursingNotesFormConfig.investigations.FBC.label}
-            maxRows={5}
+            multiline
+            rows={5}
           />
           </FieldsContainer>
           <FieldsContainer>
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.investigations.urineDipstick.name}
             name={nursingNotesFormConfig.investigations.urineDipstick.name}
             label={nursingNotesFormConfig.investigations.urineDipstick.label}
-            maxRows={5}
+            multiline
+            rows={5}
           />
         </FieldsContainer>
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Assessment">
         <FieldsContainer>
           {/* Assessment */}
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.assessment.name}
             name={nursingNotesFormConfig.assessment.name}
             label={nursingNotesFormConfig.assessment.label}
-            maxRows={5}
+            multiline
+            rows={5}
           />
           </FieldsContainer>
           </FormFieldContainerLayout>
           <FormFieldContainerLayout title="Plan">
           <FieldsContainer>
           {/* Plan */}
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.plan.name}
             name={nursingNotesFormConfig.plan.name}
             label="Recommendation"
-            maxRows={5}
+            multiline
+            rows={5}
           />
             </FieldsContainer>
             </FormFieldContainerLayout>
             <FormFieldContainerLayout title="Interventions">
           <FieldsContainer>
           {/* Interventions */}
-          <MultlineInput
+          <TextInputField
             id={nursingNotesFormConfig.interventions.name}
             name={nursingNotesFormConfig.interventions.name}
             label={nursingNotesFormConfig.interventions.label}
-            maxRows={5}
+            multiline
+            rows={5}
           />
         </FieldsContainer>
         </FormFieldContainerLayout>

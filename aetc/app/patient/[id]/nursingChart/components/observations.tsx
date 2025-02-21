@@ -370,7 +370,7 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       enableReinitialize={true}
       submitButtonText="Submit"
       submitButton={false}

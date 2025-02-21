@@ -77,14 +77,14 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   ];
 
   const circulationList = [
-    { id: "Intake fluids", label: "Intake fluids" },
-    { id: "Hemorrhage control", label: "Hemorrhage control" },
-    { id: "Blood sample", label: "Blood sample" },
-    { id: "Catheter", label: "Catheter" },
-    { id: "Transfusion", label: "Transfusion" },
-    { id: "NG Insertion", label: "NG Insertion" },
-    { id: "Suturing", label: "Suturing" },
-    { id: "Keep warm", label: "Keep warm" },
+    { id: concepts.INTAKE_FLUIDS, label: "Intake fluids" },
+    { id: concepts.HEMORRHAGE_CONTROL, label: "Hemorrhage control" },
+    { id: concepts.BLOOD_SAMPLE, label: "Blood sample" },
+    { id: concepts.CATHETER, label: "Catheter" },
+    { id: concepts.TRANSFUSION, label: "Transfusion" },
+    { id: concepts.NG_INSERTION, label: "NG Insertion" },
+    { id: concepts.SUTURING, label: "Suturing" },
+    { id: concepts.KEEP_WARM, label: "Keep warm" },
   ];
 
   const groupedOptions = [
@@ -199,7 +199,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
             options={circulationList}
             getValue={(value: any) => {
               const existsIV = value.some(
-                (item: { id: string }) => item.id === circulationList[0].label
+                (item: { id: string }) => item.id === circulationList[0].id
               );
               if (existsIV) setCirculationIVFluids(true);
               else setCirculationIVFluids(false);

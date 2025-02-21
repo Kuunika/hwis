@@ -69,16 +69,16 @@ const injuryMechanismList = {
 };
 
 const GastrointenstinalOptions = [
-  { id: concepts.YellowingOfEyesOrSkin, label: 'Yellowing of eyes or skin' },
-  { id: concepts.Nausea, label: 'Nausea' },
-  { id: concepts.Dyspepsia, label: 'Dyspepsia' },
-  { id: concepts.AbdominalPains, label: 'Abdominal pains' },
-  { id: concepts.Vomiting, label: 'Vomiting' },
-  { id: concepts.Diarrhoea, label: 'Diarrhoea' },
-  { id: concepts.DifficultyInSwallowing, label: 'Difficulty in swallowing' },
-  { id: concepts.PainfulSwallowing, label: 'Painful in swallowing' },
-  { id: concepts.AbdominalDistension, label: 'Abdominal distension' },
-  { id: concepts.BloodyStool, label: 'Bloody stool' },
+  { id: concepts.YELLOWINGOFEYESORSKIN, label: 'Yellowing of eyes or skin' },
+  { id: concepts.NAUSEA, label: 'Nausea' },
+  { id: concepts.DYSPEPSIA, label: 'Dyspepsia' },
+  { id: concepts.ABDOMINALPAINS, label: 'Abdominal pains' },
+  { id: concepts.VOMITING, label: 'Vomiting' },
+  { id: concepts.DIARRHOEA, label: 'Diarrhoea' },
+  { id: concepts.DIFFICULTYINSWALLOWING, label: 'Difficulty in swallowing' },
+  { id: concepts.PAINFULSWALLOWING, label: 'Painful in swallowing' },
+  { id: concepts.ABDOMINALDISTENSION, label: 'Abdominal distension' },
+  { id: concepts.BLOODYSTOOL, label: 'Bloody stool' },
   { id: concepts.STOOL_INCONTINENCE, label: 'Stool incontinence' },
   { id: concepts.ANAL_SWELLING, label: 'Anal swelling' },
   { id: concepts.ANAL_DISCHARGE, label: 'Anal discharge' }
