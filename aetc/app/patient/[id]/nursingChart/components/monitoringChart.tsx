@@ -14,6 +14,7 @@ import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
 import { NursingNotesForm } from "./nursingNotes";
 import { Alert, Snackbar } from "@mui/material";
+import { date } from "yup";
 
 
 export const MonitoringChart = () => {
@@ -223,9 +224,13 @@ export const MonitoringChart = () => {
   };
 
   const handleNursingNotesSubmit = (values: any) => {
-    console.log(values)
+    
     const objectiveKey = concepts.OBJECTIVE_DATA;
     const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS;
+    const subjectiveKey = concepts.SUBJECTIVE_DATA;
+    const interventionsKey = concepts.INTERVENTION_NOTES;
+    const assessmentKey = concepts.ASSESSMENT_COMMENTS;
+    const planKey = concepts.TREATMENT_PLAN;
 
     if (values.objective) {
       values[objectiveKey] = values.objective;
@@ -237,15 +242,103 @@ export const MonitoringChart = () => {
       delete values.investigations;
     }
 
+
+    if(values[investigationsKey]){
+      const investigations = values[investigationsKey];
+
+      const investigationObs = Object.entries(investigations).map(([concept, value]) => ({
+        concept,
+        value,
+        dateTime
+    }));
+      const observations = [
+        {
+          concept: concepts.BEDSIDE_INVESTIGATIONS,
+          obsDatetime: dateTime,
+          value: true,
+          group_members: investigationObs,
+        },
+      ];
     
+      createNursingNotes({
+        encounterType: encounters.NURSING_NOTES,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: observations,
+      });
+    }
+    
+    
+if(values[objectiveKey]){
+  const objective = values[objectiveKey];
+  const objectiveObs = Object.entries(objective).map(([concept, value]) => ({
+            concept,
+            value,
+            dateTime
+  }));
+  
+      const observations = [
+        {
+          concept: concepts.OBJECTIVE_DATA,
+          obsDatetime: dateTime,
+          value: true,
+          group_members: objectiveObs,
+        },
+      ];
+
+      createNursingNotes({
+        encounterType: encounters.NURSING_NOTES,
+        visit: activeVisit?.uuid,
+        patient: params.id,
+        encounterDatetime: dateTime,
+        obs: observations,
+      });
+}
+
+if (values[subjectiveKey] || values[assessmentKey] || values[planKey] || values[interventionsKey]) {
+  const groupMembers = [
+    {
+      concept: concepts.SUBJECTIVE_DATA,
+      obsDatetime: dateTime,
+      value: values[subjectiveKey],
+    },
+    {
+      concept: concepts.ASSESSMENT_COMMENTS,
+      obsDatetime: dateTime,
+      value: values[assessmentKey],
+    },
+    {
+      concept: concepts.TREATMENT_PLAN,
+      obsDatetime: dateTime,
+      value: values[planKey],
+    },
+    {
+      concept: concepts.INTERVENTION_NOTES,
+      obsDatetime: dateTime,
+      value: values[interventionsKey],
+    },
+  ].filter(member => member.value);
+
+  if (groupMembers.length > 0) {
+    const observations = [
+      {
+        concept: concepts.OTHER_NURSING_NOTES,
+        obsDatetime: dateTime,
+        value: true,
+        group_members: groupMembers,
+      },
+    ];
 
     createNursingNotes({
       encounterType: encounters.NURSING_NOTES,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
-      obs: getObservations(values, dateTime),
+      obs: observations, 
     });
+  }
+}
 
   };
 

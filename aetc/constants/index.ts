@@ -1175,6 +1175,7 @@ export const concepts = {
   OBJECTIVE_DATA_EXTREMITIES: "Objective data extremities",
   INVESTIGATIONS_FBC: "Investigations FBC",
   INVESTIGATIONS_PT: "Investigations PT",
+  OTHER_NURSING_NOTES: "Other nursing notes",
 
 };
 

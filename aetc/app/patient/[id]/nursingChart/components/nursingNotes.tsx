@@ -93,7 +93,8 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
 </FormFieldContainerLayout>
 <FormFieldContainerLayout title="Objective Data">
 <FieldsContainer>
-          {/* Objective Data */}
+  <div>
+          <p style={{marginBottom:"2ch", fontSize:"small"}}>Indicate only significant/abnormal parameters</p>
           <TextInputField
             id={nursingNotesFormConfig.objective.head.name}
             name={nursingNotesFormConfig.objective.head.name}
@@ -108,6 +109,7 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
             multiline
             rows={5}
           />
+          </div>
           </FieldsContainer>
           <FieldsContainer>
           <TextInputField
@@ -128,6 +130,8 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
 </FormFieldContainerLayout>
 <FormFieldContainerLayout title="Investigations">
 <FieldsContainer>
+<div>
+<p style={{marginBottom:"2ch", fontSize:"small"}}>Indicate only significant/abnormal parameters</p>
           <TextInputField
             id={nursingNotesFormConfig.investigations.MRDT.name}
             name={nursingNotesFormConfig.investigations.MRDT.name}
@@ -142,6 +146,7 @@ export const NursingNotesForm = ({ onSubmit, onSkip }: Prop) => {
             multiline
             rows={5}
           />
+    </div>
           </FieldsContainer>
           <FieldsContainer>
           <TextInputField
