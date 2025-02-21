@@ -1171,6 +1171,7 @@ export const concepts = {
   HEMORROID: "Hemorroid",
   PROSTRATE_DESCRIPTION: "Prostrate Description",
   DIAGNOSIS: "Diagnosis",
+  FUNDO_SCOPY_FINDINGS:'Fundoscopy Findings',
 }
 
 export const conceptNames= {
