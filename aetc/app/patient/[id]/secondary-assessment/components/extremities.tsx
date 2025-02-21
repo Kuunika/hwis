@@ -81,8 +81,8 @@ const radioOptions = [
 export const ExtremitiesForm = ({ onSubmit }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
 
-  const [abnormalitiesUpperLimbImageEnc, setAbnormalitiesUpperLimbImageEnc] =
-    useState<Array<any>>([]);
+  const [lowerLimbAnterior, setLowerLimbAnterior] = useState<Array<any>>([]);
+  const [lowerLimbPosterior, setLowerLimbPosterior] = useState<Array<any>>([]);
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.EXTREMITIES_ASSESSMENT,
@@ -97,13 +97,19 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
     const formValues = { ...values };
     const obs = [
       {
-        concept: form.abnormalitiesUpperLimb.name,
-        value: formValues[form.abnormalitiesUpperLimb.name],
+        concept: concepts.IMAGE_PART_NAME,
+        value: "lower limb anterior",
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abnormalitiesUpperLimbImageEnc),
+        groupMembers: flattenImagesObs(lowerLimbAnterior),
+      },
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        value: "lower limb posterior",
+        obsDatetime: getDateTime(),
+        groupMembers: flattenImagesObs(lowerLimbPosterior),
       },
     ];
-    delete formValues[form.abnormalitiesLowerLimb.name];
+    // delete formValues[form.abnormalitiesLowerLimb.name];
     await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
 
@@ -147,7 +153,7 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
           />
           {formValues[form.abnormalitiesUpperLimb.name] == YES && (
             <LowerLimbAnteriorImage
-              onValueChange={setAbnormalitiesUpperLimbImageEnc}
+              onValueChange={setLowerLimbAnterior}
               imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
               imageSection={form.abnormalitiesUpperLimb.name}
             />
@@ -163,14 +169,14 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
               {gender == "Female" && (
                 <>
                   <LowerLimbFemaleAnteriorImage
-                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    onValueChange={setLowerLimbAnterior}
                     imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
                     imageSection={form.abnormalitiesLowerLimb.name}
                     form="extremities"
                   />
 
                   <LowerLimbFemalePosteriorImage
-                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    onValueChange={setLowerLimbPosterior}
                     imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
                     imageSection={form.abnormalitiesLowerLimb.name}
                   />
@@ -179,14 +185,14 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
               {gender == "Male" && (
                 <>
                   <LowerLimbMaleAnteriorImage
-                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    onValueChange={setLowerLimbAnterior}
                     imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
                     imageSection={form.abnormalitiesLowerLimb.name}
                     form="extremities"
                   />
 
                   <LowerLimbMalePosteriorImage
-                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    onValueChange={setLowerLimbPosterior}
                     imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
                     imageSection={form.abnormalitiesLowerLimb.name}
                   />
