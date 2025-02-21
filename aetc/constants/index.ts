@@ -1179,6 +1179,12 @@ export const concepts = {
   INVESTIGATIONS_FBC: "Investigations FBC",
   INVESTIGATIONS_PT: "Investigations PT",
   OTHER_NURSING_NOTES: "Other nursing notes",
+  PATIENTS_FLUID_MANAGEMENT: "Patients fluid management",
+  INTAKE_FLUID_AMOUNT: "Intake fluid amount",
+  OUTPUT_FLUID_AMOUNT: "Output fluid amount",
+  OUTPUT_FLUID_TYPE: "Output fluid type",
+  FLUID_BALANCE: "Fluid balance",
+  FLUID_BALANCE_CHART: "Fluid balance chart",
 }
 
 export const conceptNames= {

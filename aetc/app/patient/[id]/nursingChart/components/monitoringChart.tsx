@@ -7,7 +7,7 @@ import { MedicationsForm } from "./medications";
 
 import { concepts, encounters } from "@/constants";
 import { useNavigation, useParameters } from "@/hooks";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
@@ -58,21 +58,21 @@ export const MonitoringChart = () => {
     isSuccess: vitalsCreated,
     isPending: creatingVitals,
     isError: vitalsError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     mutateAsync: createInterventions,
     isSuccess: interventionsCreated,
     isPending: creatingInterventions,
     isError: interventionsError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     mutate: createNursingNotes,
     isSuccess: nursingNotesCreated,
     isPending: creatingNursingNotes,
     isError: nursingNotesError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export const MonitoringChart = () => {
           concept: concepts.TRIAGE_RESULT,
           obsDatetime: dateTime,
           value: values[concepts.TRIAGE_RESULT],
-          group_members: groupMemberObs,
+          groupMembers: groupMemberObs,
         },
       ];
 
@@ -150,19 +150,20 @@ export const MonitoringChart = () => {
         if (Array.isArray(value)) {
           const fluidObs = value.map(entry => ([
               { concept: concepts.INTAKE_FLUIDS, value: entry.intakeFluidType.value },
-              { concept: "IntakeFluidAmount", value: entry.intakeFluidAmount },
-              { concept: "OutputFluidAmount", value: entry.outputFluidAmount },
-              { concept: "FluidBalance", value: entry.balance }
+              { concept: concepts.INTAKE_FLUID_AMOUNT, value: entry.intakeFluidAmount },
+              { concept: concepts.OUTPUT_FLUID_TYPE, value: entry.outputFluidType },
+              { concept: concepts.OUTPUT_FLUID_AMOUNT, value: entry.outputFluidAmount },
+              { concept: concepts.FLUID_BALANCE, value: entry.balance }
             ]));
 
           fluidObs.forEach(groupMembersObj => {
 
               const observations = [
                 {
-                  concept: concepts.PATIENTS_FLUID_MANAGEMENT,
+                  concept: concepts.FLUID_BALANCE_CHART,
                   obsDatetime: dateTime,
                   value: true,
-                  group_members: groupMembersObj,
+                  groupMembers: groupMembersObj,
                 },
               ];
 
@@ -200,7 +201,7 @@ export const MonitoringChart = () => {
           concept: key,
           obsDatetime: dateTime,
           value: true,
-          group_members: obs,
+          groupMembers: obs,
         },
       ];
 
@@ -256,7 +257,7 @@ export const MonitoringChart = () => {
           concept: concepts.BEDSIDE_INVESTIGATIONS,
           obsDatetime: dateTime,
           value: true,
-          group_members: investigationObs,
+          groupMembers: investigationObs,
         },
       ];
     
@@ -283,7 +284,7 @@ if(values[objectiveKey]){
           concept: concepts.OBJECTIVE_DATA,
           obsDatetime: dateTime,
           value: true,
-          group_members: objectiveObs,
+          groupMembers: objectiveObs,
         },
       ];
 
@@ -326,7 +327,7 @@ if (values[subjectiveKey] || values[assessmentKey] || values[planKey] || values[
         concept: concepts.OTHER_NURSING_NOTES,
         obsDatetime: dateTime,
         value: true,
-        group_members: groupMembers,
+        groupMembers: groupMembers,
       },
     ];
 
