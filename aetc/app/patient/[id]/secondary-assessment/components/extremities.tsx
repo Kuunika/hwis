@@ -11,12 +11,19 @@ import {
   SearchComboBox,
 } from "@/components";
 import * as Yup from "yup";
-import { LowerLimbPosteriorImage } from "@/components/svgImages";
-import { useSubmitEncounter } from "@/hooks";
+import {
+  LowerLimbFemaleAnteriorImage,
+  LowerLimbFemalePosteriorImage,
+  LowerLimbMaleAnteriorImage,
+  LowerLimbMalePosteriorImage,
+  LowerLimbPosteriorImage,
+} from "@/components/svgImages";
+import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { LowerLimbAnterior } from "@/assets";
 import { LowerLimbAnteriorImage } from "@/components/svgImages/lowerLimbAnterior";
+import { Box } from "@mui/material";
 
 const form = {
   oedama: {
@@ -81,6 +88,10 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
     encounters.EXTREMITIES_ASSESSMENT,
     onSubmit
   );
+
+  const { gender } = getActivePatientDetails();
+
+  // const gender = "Male";
 
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
@@ -148,11 +159,40 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
             label={form.abnormalitiesLowerLimb.label}
           />
           {formValues[form.abnormalitiesLowerLimb.name] == YES && (
-            <LowerLimbAnteriorImage
-              onValueChange={setAbnormalitiesUpperLimbImageEnc}
-              imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
-              imageSection={form.abnormalitiesLowerLimb.name}
-            />
+            <>
+              {gender == "Female" && (
+                <>
+                  <LowerLimbFemaleAnteriorImage
+                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                    imageSection={form.abnormalitiesLowerLimb.name}
+                    form="extremities"
+                  />
+
+                  <LowerLimbFemalePosteriorImage
+                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                    imageSection={form.abnormalitiesLowerLimb.name}
+                  />
+                </>
+              )}
+              {gender == "Male" && (
+                <>
+                  <LowerLimbMaleAnteriorImage
+                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                    imageSection={form.abnormalitiesLowerLimb.name}
+                    form="extremities"
+                  />
+
+                  <LowerLimbMalePosteriorImage
+                    onValueChange={setAbnormalitiesUpperLimbImageEnc}
+                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                    imageSection={form.abnormalitiesLowerLimb.name}
+                  />
+                </>
+              )}
+            </>
           )}
         </FormFieldContainerLayout>
       </FormikInit>

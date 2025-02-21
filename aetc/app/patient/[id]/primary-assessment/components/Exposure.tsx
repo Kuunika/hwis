@@ -14,7 +14,7 @@ import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getOnePatient } from "@/hooks/patientReg";
-import { useParameters } from "@/hooks";
+import { getActivePatientDetails, useParameters } from "@/hooks";
 
 type Props = {
   onSubmit: () => void;
@@ -56,6 +56,7 @@ const initialValues = getInitialValues(form);
 
 export const Exposure = ({ onSubmit }: Props) => {
   const { params } = useParameters();
+
   const { data: patient, isLoading: patientLoading } = getOnePatient(
     params?.id as string
   );

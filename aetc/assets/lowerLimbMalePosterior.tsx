@@ -7,7 +7,7 @@ export const LowerLimbMalePosterior = forwardRef<
     ref={ref}
     id="MALE"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 4388 3509"
+    viewBox="1600 0 4000 3509"
     {...props}
   >
     <defs>

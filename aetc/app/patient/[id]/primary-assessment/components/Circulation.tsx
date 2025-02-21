@@ -21,12 +21,15 @@ import { LegAbnormalityImage } from "@/components/svgImages/legAbnormality";
 import {
   AbdomenImage,
   AbdomenImageWithOtherForm,
+  LowerLimbFemaleAnteriorImage,
+  LowerLimbMaleAnteriorImage,
 } from "@/components/svgImages";
 import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CPRDialogForm } from "./cprDialogForm";
+import { getActivePatientDetails } from "@/hooks";
 
 type Prop = {
   onSubmit: () => void;
@@ -293,6 +296,7 @@ const diagramSitesOfCannulation = [
 ];
 
 export const Circulation = ({ onSubmit }: Prop) => {
+  const { gender } = getActivePatientDetails();
   const [formValues, setFormValues] = useState<any>({});
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
   const [legImage, setLegImage] = useState<Array<any>>([]);
@@ -604,11 +608,32 @@ export const Circulation = ({ onSubmit }: Prop) => {
               {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
                 <>
                   <br />
-                  <LegAbnormalityImage
+                  {/* <LowerLimbMaleAnteriorImage
                     imageSection={form.femurAndTibiaNormalInfo.name}
                     imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                     onValueChange={setLegImage}
-                  />
+                  /> */}
+                  {/* {gender == "Female" && (
+                    <LowerLimbFemaleAnteriorImage
+                      imageSection={form.femurAndTibiaNormalInfo.name}
+                      imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                      onValueChange={setLegImage}
+                      form="deformity"
+                    />
+                  )} */}
+                  {gender == "Female" && (
+                    <LowerLimbMaleAnteriorImage
+                      imageSection={form.femurAndTibiaNormalInfo.name}
+                      imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                      onValueChange={setLegImage}
+                      form="deformity"
+                    />
+                  )}
+                  {/* <LegAbnormalityImage
+                    imageSection={form.femurAndTibiaNormalInfo.name}
+                    imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                    onValueChange={setLegImage}
+                  /> */}
                   <br />
                 </>
               )}
