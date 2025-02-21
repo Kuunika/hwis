@@ -11,12 +11,19 @@ import {
   UnitInputField,
 } from "@/components";
 import DynamicFormList from "@/components/form/dynamicFormList";
-import { concepts, NO, YES } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { concepts, encounters, NO, YES } from "@/constants";
+import { getInitialValues, getObservations } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
+import { getActivePatientDetails } from "@/hooks";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { getAllUsers } from "@/hooks/users";
 import { Box, Typography } from "@mui/material";
 import { FieldArray } from "formik";
+import { useEffect } from "react";
 
 import { GiMedicines } from "react-icons/gi";
 import * as Yup from "yup";
@@ -31,7 +38,7 @@ const form = {
     label: "SITE",
   },
   specify: {
-    name: concepts.OTHER,
+    name: concepts.SPECIFY,
     label: "Specify",
   },
   reversibleCauses: {
@@ -70,10 +77,10 @@ const form = {
     name: concepts.BLOOD_PRESSURE_DIASTOLIC,
     label: "Diastolic",
   },
-  gcs: {
-    name: concepts.GCS,
-    label: "Glasgow Coma Scale",
-  },
+  // gcs: {
+  //   name: concepts.GCS,
+  //   label: "Glasgow Coma Scale",
+  // },
   pulseRate: {
     name: concepts.PULSE_RATE,
     label: "Pulse Rate",
@@ -108,7 +115,7 @@ const form = {
   },
 
   date: {
-    name: concepts.DATE,
+    name: concepts.DATE_OF_CPR,
     label: "Date of Call",
   },
   cause: {
@@ -134,13 +141,15 @@ const validationSchema = Yup.object().shape({
   }),
   records: Yup.array().of(
     Yup.object().shape({
-      rhythm: Yup.string().required("Required"),
-      shockEnergy: Yup.string().required("Required"),
-      medication: Yup.string().required("Required"),
-      dose: Yup.string().required("Required"),
-      route: Yup.string().required("Required"),
-      Interventions: Yup.string().required("Required"),
-      occurrences: Yup.string().required("Required"),
+      rhythm: Yup.array().required().label("Rhythm"),
+      shockEnergy: Yup.string().required().label("Shock Energy"),
+      medication: Yup.string().required().label("Medication"),
+      dose: Yup.string().required().label("Dose"),
+      route: Yup.string().required().label("Route"),
+      doseUnit: Yup.string().required().label("Dose Unit"),
+      Interventions: Yup.array().required().label("Interventions"),
+      occurrences: Yup.string().required().label("Occurrences"),
+      time: Yup.string().required().label("Time"),
     })
   ),
   [form.reversibleCauses.name]: Yup.array()
@@ -179,7 +188,7 @@ const validationSchema = Yup.object().shape({
     .max(300)
     .required()
     .label(form.diastolic.label),
-  [form.gcs.name]: Yup.string().required().label(form.gcs.label),
+  // [form.gcs.name]: Yup.string().required().label(form.gcs.label),
   [form.temperature.name]: Yup.number()
     .min(20)
     .max(45)
@@ -262,6 +271,7 @@ const emptyRecord = {
   route: "",
   Interventions: "",
   occurrences: "",
+  time: "",
 };
 const medicationUnits = [
   "Milligrams (mg)",
@@ -342,9 +352,11 @@ const routeOptions = [
   { label: "Inhaled", id: "Inh  aled" },
 ];
 
-const CPRForm = () => {
+const CPRForm = ({ onClose }: { onClose: () => void }) => {
   const { medicationOptions } = useFetchMedications();
   const { data: users, isLoading } = getAllUsers();
+  const { mutate, isSuccess } = fetchConceptAndCreateEncounter();
+  const { activeVisitId, patientId, activeVisit } = getActivePatientDetails();
 
   const userOptions = users?.map((user) => {
     return {
@@ -361,9 +373,101 @@ const CPRForm = () => {
     return found ? found.weight : 0;
   };
 
+  const handleSubmit = (values: any) => {
+    console.log({ values });
+    const obsDatetime = getDateTime();
+
+    const formValues = { ...values };
+
+    let recordsObservation = [];
+
+    if (Array.isArray(formValues.records)) {
+      recordsObservation = formValues.records.map(
+        (record: any, index: number) => {
+          const interventionsObs = record.Interventions.map((v: any) => ({
+            concept: concepts.INTERVENTION_NOTES,
+            value: v.id,
+            obsDatetime,
+          }));
+          const rhythmObs = record.rhythm.map((v: any) => ({
+            concept: concepts.RHYTHM,
+            value: v.id,
+            obsDatetime,
+          }));
+
+          return {
+            concept: concepts.OTHER,
+            value: `record ${index}`,
+            groupMembers: [
+              {
+                concept: concepts.TIME,
+                value: record.time,
+                obsDatetime,
+              },
+              {
+                concept: concepts.SHOCK_ENERGY,
+                value: record.shockEnergy,
+                obsDatetime,
+              },
+              {
+                concept: concepts.MEDICATION,
+                value: record.medication,
+                obsDatetime,
+              },
+              {
+                concept: concepts.MEDICATION_DOSE,
+                value: record.dose,
+                obsDatetime,
+              },
+              {
+                concept: concepts.MEDICATION_ROUTE,
+                value: record.route,
+                obsDatetime,
+              },
+
+              {
+                concept: concepts.OCCURRENCES,
+                value: record.occurrences,
+              },
+              ...interventionsObs,
+              ...rhythmObs,
+            ],
+          };
+        }
+      );
+    }
+
+    const teamMembersObs = formValues[form.teamMembers.name].map((v: any) => ({
+      concept: concepts.COMPLAINTS,
+      value: v.id,
+      obsDatetime,
+    }));
+
+    delete formValues.records;
+    delete formValues.medications;
+    delete formValues[concepts.TEAM_MEMBERS];
+    delete formValues[concepts.REVERSIBLE_CAUSES];
+
+    const observations = getObservations(formValues, obsDatetime);
+
+    mutate({
+      encounterType: encounters.CPR,
+      patient: patientId,
+      visit: activeVisit,
+      encounterDatetime: obsDatetime,
+      obs: [...observations, ...recordsObservation, ...teamMembersObs],
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      onClose();
+    }
+  }, [isSuccess]);
+
   return (
     <FormikInit
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
       initialValues={{ ...initialValues, records: [emptyRecord] }}
       validationSchema={validationSchema}
     >
@@ -374,6 +478,7 @@ const CPRForm = () => {
             name={form.date.name}
             label={form.date.label}
           />
+
           <FormTimePicker
             sx={{ my: "1ch" }}
             name={form.time.name}
@@ -426,7 +531,7 @@ const CPRForm = () => {
                     <br />
                     <FormTimePicker
                       sx={{ my: "1ch" }}
-                      name="time"
+                      name={`records.${index}.time`}
                       label="Time"
                     />
                     <FieldsContainer sx={{ width: "100%" }} mr="1ch">
@@ -456,10 +561,10 @@ const CPRForm = () => {
                         multiple={false}
                       />
                       <UnitInputField
-                        id={`medications[${index}].medication_dose`}
+                        id={`records[${index}].dose`}
                         label="Dose"
-                        name={`medications[${index}].medication_dose`}
-                        unitName={`medications[${index}].medication_dose_unit`}
+                        name={`records[${index}].dose`}
+                        unitName={`records[${index}].doseUnit`}
                         unitOptions={medicationUnits}
                         placeholder="e.g., 500"
                         sx={{ m: 0 }}
@@ -664,7 +769,7 @@ export const CPRDialogForm = ({
 }) => {
   return (
     <GenericDialog maxWidth="md" open={open} title="CPR" onClose={onClose}>
-      <CPRForm />
+      <CPRForm onClose={onClose} />
     </GenericDialog>
   );
 };
