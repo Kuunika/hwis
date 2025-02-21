@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MainGrid, MainPaper, BackButton, } from "@/components";
 import { Typography, Button } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { encounters, concepts } from "@/constants";
+import { useReactToPrint } from "react-to-print";  // Import react-to-print
+
+
 
 interface Diagnosis {
   id: string;
@@ -164,6 +167,8 @@ interface Investigation {
 
 function SurgicalNotesTemplate() {
   const { params } = useParameters();
+  const printRef = useRef(null); // Reference for printing
+
   const [differentialDiagnoses, setDifferentialDiagnoses] = useState<Diagnosis[]>([]);
   const [allergies, setAllergies] = useState<Allergy[]>([]);
   const [neurologicalExaminations, setNeurologicalExaminations] = useState<NeurologicalObservation[]>([]);
@@ -199,6 +204,11 @@ function SurgicalNotesTemplate() {
 
 
   const { data: patientEncounters, isLoading, error } = getPatientsEncounters(params.id as string);
+
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+    documentTitle: "Surgical Notes",
+  });
 
 
   const handlePrintToPDF = () => {
@@ -1060,277 +1070,285 @@ function SurgicalNotesTemplate() {
   return (
 
 
-
-
-    <MainGrid container spacing={2}>
-      {/* Print to PDF */}
-      <section style={{ width: "100%", display: "flex", justifyContent: "flex-end", }}>
-        <Button variant="contained" color="primary" onClick={handlePrintToPDF}>
+    <>
+      <section style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
+        <Button variant="contained" color="primary" onClick={handlePrint}>
           Print to PDF
         </Button>
       </section>
-      <MainGrid item xs={12}>
-        <MainPaper>
-          {/* <Typography variant="h4">Surgical Notes</Typography>
+
+
+      <div ref={printRef}> {/* Wrap content inside ref for printing */}
+
+        <MainGrid container spacing={2}>
+          {/* Print to PDF */}
+          {/* <section style={{ width: "100%", display: "flex", justifyContent: "flex-end", }}>
+        <Button variant="contained" color="primary" onClick={handlePrintToPDF}>
+          Print to PDF
+        </Button>
+      </section> */}
+          <MainGrid item xs={12}>
+            <MainPaper>
+              {/* <Typography variant="h4">Surgical Notes</Typography>
           <br /> */}
 
-          {/* 1. Past Presenting Complaint(s) */}
-          <section style={{ paddingBottom: "16px" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Past Presenting Complaint(s)
-            </Typography>
+              {/* 1. Past Presenting Complaint(s) */}
+              <section style={{ paddingBottom: "16px" }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Past Presenting Complaint(s)
+                </Typography>
 
-            {/* Triage Subsection */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
-              Triage
-            </Typography>
+                {/* Triage Subsection */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
+                  Triage
+                </Typography>
 
-            {/* SAMPLE History Subsection */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              SAMPLE History
-            </Typography>
-            <section>
-              {presentingComplaints.length > 0 ? (
-                <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
-                  {presentingComplaints.map((complaint) => (
-                    <li key={complaint.id}>
-                      <strong>Symptom:</strong> {complaint.complaint} <br />
-                      <strong> {complaint.duration || "No Duration"} </strong><br />
-                      <strong>Date:</strong> {new Date(complaint.obsDatetime).toLocaleDateString()}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <Typography sx={{ pl: 4, fontStyle: "italic" }}>No presenting complaints recorded.</Typography>
-              )}
-            </section>
-          </section>
-
-
-
-          {/* 2. Drug History */}
-          <section style={{ paddingBottom: "16px" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Drug History
-            </Typography>
-
-            {/* SAMPLE History Subsection */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
-              SAMPLE History
-            </Typography>
-            {drugHistory.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
-                {drugHistory.map((drug) => (
-                  <li key={drug.id} style={{ marginBottom: "8px" }}>
-                    <strong>Medication Name:</strong> {drug.medicationName}  <br />
-                    <strong> Formulation:</strong> {drug.formulation}  <br />
-                    <strong> {drug.doseUnit}:</strong> {drug.dose}  <br />
-                    <strong> Frequency:</strong> {drug.frequency}  <br />
-                    <strong>  {drug.durationUnit}:</strong> {drug.duration}  <br />
-                    <strong> Last Taken:</strong> {drug.lastTaken} |
-                    <strong> Last Prescribed:</strong> {drug.lastPrescribed}  <br />
-                    <strong> Date:</strong> {new Date(drug.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No drug history recorded.</Typography>
-            )}
-
-            {/* AETC Prescriptions Subsection */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              AETC Prescriptions
-            </Typography>
-            <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>
-              No Prescriptions recorded.</Typography>
-
-            {/* AETC Dispensation Subsection */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              AETC Dispensation
-            </Typography>
-            <Typography sx={{ pl: 4 }}>No Dispensations recorded.</Typography>
-          </section>
-
-          <br />
+                {/* SAMPLE History Subsection */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  SAMPLE History
+                </Typography>
+                <section>
+                  {presentingComplaints.length > 0 ? (
+                    <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
+                      {presentingComplaints.map((complaint) => (
+                        <li key={complaint.id}>
+                          <strong>Symptom:</strong> {complaint.complaint} <br />
+                          <strong> {complaint.duration || "No Duration"} </strong><br />
+                          <strong>Date:</strong> {new Date(complaint.obsDatetime).toLocaleDateString()}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <Typography sx={{ pl: 4, fontStyle: "italic" }}>No presenting complaints recorded.</Typography>
+                  )}
+                </section>
+              </section>
 
 
-          {/* 3. PAST MEDICAL HISTORY */}
-          <section style={{ paddingBottom: "16px" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Past Medical History
-            </Typography>
 
-            {/* HIV Status Subsection */}
-            <Typography sx={{ pl: 4, mb: 2 }}>
-              <strong>HIV Status:</strong> {HIVStatus}
-            </Typography>
+              {/* 2. Drug History */}
+              <section style={{ paddingBottom: "16px" }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Drug History
+                </Typography>
 
-            {/* Past Surgical History */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
-              Past Surgical History
-            </Typography>
-            {surgicalHistory.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
-                {surgicalHistory.map((history) => (
-                  <li key={history.id} style={{ marginBottom: "8px" }}>
-                    <strong>Procedure:</strong> {history.procedure} <br />
-                    <strong>Indication:</strong> {history.indication} <br />
-                    <strong>Date of Surgery:</strong> {new Date(history.date).toLocaleDateString()} <br />
-                    <strong>Complications:</strong> {history.complications}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No past surgical history recorded.</Typography>
-            )}
-
-            {/* Allergy Section */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Allergy
-            </Typography>
-            {allergies.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
-                {allergies.map((allergy) => (
-                  <li key={allergy.id} style={{ marginBottom: "8px" }}>
-                    <strong>Allergy Name:</strong> {allergy.allergen} <br />
-                    <strong>Allergy Details:</strong> {allergy.comment} <br />
-                    <strong>Date:</strong> {new Date(allergy.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No allergies recorded.</Typography>
-            )}
-
-            {/* Social History */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Social History
-            </Typography>
-            <Typography sx={{ pl: 4, mb: 2 }}>Social history details here.</Typography>
-
-            {/* Family History */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Family History
-            </Typography>
-            {familyHistory.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
-                {familyHistory.map((history) => (
-                  <li key={history.id} style={{ marginBottom: "8px" }}>
-                    <strong>Condition:</strong> {history.condition} <br />
-                    <strong>Relationship:</strong> {history.relationship} <br />
-                    <strong>Date:</strong> {new Date(history.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No family history recorded.</Typography>
-            )}
-
-            {/* Review of Systems */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Review of Systems
-            </Typography>
-            {reviewOfSystems.length > 0 ? (
-              reviewOfSystems.map((ros) => (
-                <div key={ros.id} style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
-                  <Typography>
-                    <strong>Date of Last Meal:</strong> {ros.dateOfLastMeal}
-                  </Typography>
-                  <Typography>
-                    <strong>Events:</strong> {ros.events}
-                  </Typography>
-
-                  <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: "bold" }}>General History:</Typography>
-                  <ul>
-                    {ros.generalHistory.map((history) => (
-                      <li key={history.id}>
-                        {history.symptom} - {history.duration} {history.durationUnit}{" "}
-                        {history.site && `(Site: ${history.site})`} on{" "}
-                        {new Date(history.obsDatetime).toLocaleDateString()}
+                {/* SAMPLE History Subsection */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
+                  SAMPLE History
+                </Typography>
+                {drugHistory.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
+                    {drugHistory.map((drug) => (
+                      <li key={drug.id} style={{ marginBottom: "8px" }}>
+                        <strong>Medication Name:</strong> {drug.medicationName}  <br />
+                        <strong> Formulation:</strong> {drug.formulation}  <br />
+                        <strong> {drug.doseUnit}:</strong> {drug.dose}  <br />
+                        <strong> Frequency:</strong> {drug.frequency}  <br />
+                        <strong>  {drug.durationUnit}:</strong> {drug.duration}  <br />
+                        <strong> Last Taken:</strong> {drug.lastTaken} |
+                        <strong> Last Prescribed:</strong> {drug.lastPrescribed}  <br />
+                        <strong> Date:</strong> {new Date(drug.obsDatetime).toLocaleDateString()}
                       </li>
                     ))}
                   </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No drug history recorded.</Typography>
+                )}
 
-                  <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: "bold" }}>Specific History:</Typography>
-                  <ul>
-                    {ros.dropdownHistory.map((dropdown) => (
-                      <li key={dropdown.id}>
-                        {dropdown.category}: {dropdown.selection} on{" "}
-                        {new Date(dropdown.obsDatetime).toLocaleDateString()}
+                {/* AETC Prescriptions Subsection */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  AETC Prescriptions
+                </Typography>
+                <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>
+                  No Prescriptions recorded.</Typography>
+
+                {/* AETC Dispensation Subsection */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  AETC Dispensation
+                </Typography>
+                <Typography sx={{ pl: 4 }}>No Dispensations recorded.</Typography>
+              </section>
+
+              <br />
+
+
+              {/* 3. PAST MEDICAL HISTORY */}
+              <section style={{ paddingBottom: "16px" }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Past Medical History
+                </Typography>
+
+                {/* HIV Status Subsection */}
+                <Typography sx={{ pl: 4, mb: 2 }}>
+                  <strong>HIV Status:</strong> {HIVStatus}
+                </Typography>
+
+                {/* Past Surgical History */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}>
+                  Past Surgical History
+                </Typography>
+                {surgicalHistory.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
+                    {surgicalHistory.map((history) => (
+                      <li key={history.id} style={{ marginBottom: "8px" }}>
+                        <strong>Procedure:</strong> {history.procedure} <br />
+                        <strong>Indication:</strong> {history.indication} <br />
+                        <strong>Date of Surgery:</strong> {new Date(history.date).toLocaleDateString()} <br />
+                        <strong>Complications:</strong> {history.complications}
                       </li>
                     ))}
                   </ul>
-                </div>
-              ))
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No review of systems recorded.</Typography>
-            )}
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No past surgical history recorded.</Typography>
+                )}
 
-            {/* Vital Signs */}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Vital Signs
-            </Typography>
-            <Typography sx={{ pl: 4 }}>-- Triage and Monitoring Chart Data</Typography>
-          </section>
+                {/* Allergy Section */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Allergy
+                </Typography>
+                {allergies.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
+                    {allergies.map((allergy) => (
+                      <li key={allergy.id} style={{ marginBottom: "8px" }}>
+                        <strong>Allergy Name:</strong> {allergy.allergen} <br />
+                        <strong>Allergy Details:</strong> {allergy.comment} <br />
+                        <strong>Date:</strong> {new Date(allergy.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No allergies recorded.</Typography>
+                )}
 
-          <br />
+                {/* Social History */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Social History
+                </Typography>
+                <Typography sx={{ pl: 4, mb: 2 }}>Social history details here.</Typography>
 
-          {/* Body System Assessments */}
-          <section style={{ paddingBottom: "16px" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Body System Assessments</Typography>
+                {/* Family History */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Family History
+                </Typography>
+                {familyHistory.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
+                    {familyHistory.map((history) => (
+                      <li key={history.id} style={{ marginBottom: "8px" }}>
+                        <strong>Condition:</strong> {history.condition} <br />
+                        <strong>Relationship:</strong> {history.relationship} <br />
+                        <strong>Date:</strong> {new Date(history.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No family history recorded.</Typography>
+                )}
 
-            <Typography
-              variant="h6"
-              sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}
-            >
-              Head & Neck Assessment
-            </Typography>
-            {headAndNeckExaminations.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch" }}>
-                {headAndNeckExaminations.map((exam) => (
-                  <li key={exam.id}>
-                    <strong>Region:</strong> {exam.region} {" "}  <br />
-                    <strong>Part:</strong> {exam.partOfBody} {" "}  <br />
-                    <strong>Abnormality:</strong> {exam.abnormality} {" "}  <br />
-                    <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No head and neck observations recorded.
-              </Typography>
-            )}
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Chest (Secondary Assessment)
-            </Typography>
-            {chestAssessments.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch" }}>
-                {chestAssessments.map((exam) => (
-                  <li key={exam.id}>
-                    <strong>Status:</strong> {exam.status} <br />
-                    {exam.status === "Abnormal" && (
-                      <>
-                        <strong>Description:</strong> {exam.description} <br />
-                      </>
-                    )}
-                    <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No chest observations recorded.</Typography>
-            )}
+                {/* Review of Systems */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Review of Systems
+                </Typography>
+                {reviewOfSystems.length > 0 ? (
+                  reviewOfSystems.map((ros) => (
+                    <div key={ros.id} style={{ paddingLeft: "2ch", marginBottom: "16px" }}>
+                      <Typography>
+                        <strong>Date of Last Meal:</strong> {ros.dateOfLastMeal}
+                      </Typography>
+                      <Typography>
+                        <strong>Events:</strong> {ros.events}
+                      </Typography>
 
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Lungs
-            </Typography>
-            {/* <Typography sx={{ pl: 4, mb: 2 }}>
+                      <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: "bold" }}>General History:</Typography>
+                      <ul>
+                        {ros.generalHistory.map((history) => (
+                          <li key={history.id}>
+                            {history.symptom} - {history.duration} {history.durationUnit}{" "}
+                            {history.site && `(Site: ${history.site})`} on{" "}
+                            {new Date(history.obsDatetime).toLocaleDateString()}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: "bold" }}>Specific History:</Typography>
+                      <ul>
+                        {ros.dropdownHistory.map((dropdown) => (
+                          <li key={dropdown.id}>
+                            {dropdown.category}: {dropdown.selection} on{" "}
+                            {new Date(dropdown.obsDatetime).toLocaleDateString()}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No review of systems recorded.</Typography>
+                )}
+
+                {/* Vital Signs */}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Vital Signs
+                </Typography>
+                <Typography sx={{ pl: 4 }}>-- Triage and Monitoring Chart Data</Typography>
+              </section>
+
+              <br />
+
+              {/* Body System Assessments */}
+              <section style={{ paddingBottom: "16px" }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Body System Assessments</Typography>
+
+                <Typography
+                  variant="h6"
+                  sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mb: 1 }}
+                >
+                  Head & Neck Assessment
+                </Typography>
+                {headAndNeckExaminations.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch" }}>
+                    {headAndNeckExaminations.map((exam) => (
+                      <li key={exam.id}>
+                        <strong>Region:</strong> {exam.region} {" "}  <br />
+                        <strong>Part:</strong> {exam.partOfBody} {" "}  <br />
+                        <strong>Abnormality:</strong> {exam.abnormality} {" "}  <br />
+                        <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No head and neck observations recorded.
+                  </Typography>
+                )}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Chest (Secondary Assessment)
+                </Typography>
+                {chestAssessments.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch" }}>
+                    {chestAssessments.map((exam) => (
+                      <li key={exam.id}>
+                        <strong>Status:</strong> {exam.status} <br />
+                        {exam.status === "Abnormal" && (
+                          <>
+                            <strong>Description:</strong> {exam.description} <br />
+                          </>
+                        )}
+                        <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No chest observations recorded.</Typography>
+                )}
+
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Lungs
+                </Typography>
+                {/* <Typography sx={{ pl: 4, mb: 2 }}>
               Primary Assessment</Typography> */}
-            {/* {primaryLungsAssessments.length > 0 ? (
+                {/* {primaryLungsAssessments.length > 0 ? (
               <ul style={{ paddingLeft: "2ch" }}>
                 {primaryLungsAssessments.map((exam) => (
                   <li key={exam.id}>
@@ -1340,13 +1358,13 @@ function SurgicalNotesTemplate() {
                 ))}
               </ul>
             ) : ( */}
-            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-              No  primary lungs assessment observations recorded.</Typography>
-            {/* )} */}
+                <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                  No  primary lungs assessment observations recorded.</Typography>
+                {/* )} */}
 
-            {/* <Typography sx={{ pl: 4, mb: 2 }}>
+                {/* <Typography sx={{ pl: 4, mb: 2 }}>
               Secondary Assessment</Typography> */}
-            {/* {lungsAssessments.length > 0 ? (
+                {/* {lungsAssessments.length > 0 ? (
               <ul style={{ paddingLeft: "2ch" }}>
                 {lungsAssessments.map((exam) => (
                   <li key={exam.id}>
@@ -1356,156 +1374,158 @@ function SurgicalNotesTemplate() {
                 ))}
               </ul>
             ) : ( */}
-            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-              No secondary lungs assessment observations recorded.</Typography>
-            {/* )} */}
+                <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                  No secondary lungs assessment observations recorded.</Typography>
+                {/* )} */}
 
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Abdomen (Secondary Assessment)
-            </Typography>
-            {abdomenPelvisAssessments.length > 0 ? (
-              <ul>
-                {abdomenPelvisAssessments.map((assessment) => (
-                  <li key={assessment.id}>
-                    {assessment.description} -{" "}
-                    {new Date(assessment.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No abdomen and pelvis observations recorded.</Typography>
-            )}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Abdomen (Secondary Assessment)
+                </Typography>
+                {abdomenPelvisAssessments.length > 0 ? (
+                  <ul>
+                    {abdomenPelvisAssessments.map((assessment) => (
+                      <li key={assessment.id}>
+                        {assessment.description} -{" "}
+                        {new Date(assessment.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No abdomen and pelvis observations recorded.</Typography>
+                )}
 
-            <Typography variant="h6" sx={{ fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Extremities Assessment
-            </Typography>
+                <Typography variant="h6" sx={{ fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Extremities Assessment
+                </Typography>
 
-            {extremitiesExaminations.length > 0 ? (
-              extremitiesExaminations.map((exam) => (
-                <ul style={{ paddingLeft: "2ch" }}>
+                {extremitiesExaminations.length > 0 ? (
+                  extremitiesExaminations.map((exam) => (
+                    <ul style={{ paddingLeft: "2ch" }}>
 
-                  <li key={exam.id}>
-                    <strong>Oedema:</strong> {exam.oedema}
-                    {exam.oedema === "Yes" && <p><strong>Oedema Details:</strong> {exam.oedemaDetails}</p>} <br />
-                    <strong>Cold Clammy:</strong> {exam.coldClammy} <br />
-                    <strong>Abnormalities Upper Limb:</strong> {exam.abnormalitiesUpperLimb} <br />
-                    <strong>Abnormalities Lower Limb:</strong> {exam.abnormalitiesLowerLimb} <br />
-                    <em>Recorded on: {new Date(exam.obsDatetime).toLocaleDateString()}</em>
-                  </li>
-                </ul>
-              ))
-            ) : (
-              <Typography sx={{ fontStyle: "italic" }}>No extremities observations recorded.</Typography>
-            )}
+                      <li key={exam.id}>
+                        <strong>Oedema:</strong> {exam.oedema}
+                        {exam.oedema === "Yes" && <p><strong>Oedema Details:</strong> {exam.oedemaDetails}</p>} <br />
+                        <strong>Cold Clammy:</strong> {exam.coldClammy} <br />
+                        <strong>Abnormalities Upper Limb:</strong> {exam.abnormalitiesUpperLimb} <br />
+                        <strong>Abnormalities Lower Limb:</strong> {exam.abnormalitiesLowerLimb} <br />
+                        <em>Recorded on: {new Date(exam.obsDatetime).toLocaleDateString()}</em>
+                      </li>
+                    </ul>
+                  ))
+                ) : (
+                  <Typography sx={{ fontStyle: "italic" }}>No extremities observations recorded.</Typography>
+                )}
 
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Skin Assessment
-            </Typography>
-            {skinAssessment.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch" }}>
-                {skinAssessment.map((assessment) => (
-                  <li key={assessment.id}>
-                    <strong>Temperature:</strong> {assessment.temperature || "N/A"} <br />
-                    <strong>Additional Notes:</strong> {assessment.additionalNotes || "N/A"} <br />
-                    <strong>Date:</strong> {new Date(assessment.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No skin assessment recorded.</Typography>
-            )}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Skin Assessment
+                </Typography>
+                {skinAssessment.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch" }}>
+                    {skinAssessment.map((assessment) => (
+                      <li key={assessment.id}>
+                        <strong>Temperature:</strong> {assessment.temperature || "N/A"} <br />
+                        <strong>Additional Notes:</strong> {assessment.additionalNotes || "N/A"} <br />
+                        <strong>Date:</strong> {new Date(assessment.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No skin assessment recorded.</Typography>
+                )}
 
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Neurological Examination
-            </Typography>
-            {neurologicalExaminations.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch" }}>
-                {neurologicalExaminations.map((exam) => (
-                  <li key={exam.id}>
-                    <strong>Notes:</strong> {exam.notes || "N/A"} <br />
-                    <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No neurological observations recorded.</Typography>
-            )}
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Neurological Examination
+                </Typography>
+                {neurologicalExaminations.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch" }}>
+                    {neurologicalExaminations.map((exam) => (
+                      <li key={exam.id}>
+                        <strong>Notes:</strong> {exam.notes || "N/A"} <br />
+                        <strong>Date:</strong> {new Date(exam.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No neurological observations recorded.</Typography>
+                )}
 
-          </section>
+              </section>
 
-          {/* Differential Diagnosis Sections */}
-          <section style={{ paddingBottom: "16px" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Differential Diagnosis</Typography>
-            {differentialDiagnoses.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch" }}>
-                {differentialDiagnoses.map((diagnosis) => (
-                  <li key={diagnosis.id}>
-                    <strong>Condition:</strong> {diagnosis.condition} <br />
-                    <strong>Date:</strong> {new Date(diagnosis.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No differential diagnosis observations added.</Typography>
-            )}
-          </section>
+              {/* Differential Diagnosis Sections */}
+              <section style={{ paddingBottom: "16px" }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Differential Diagnosis</Typography>
+                {differentialDiagnoses.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch" }}>
+                    {differentialDiagnoses.map((diagnosis) => (
+                      <li key={diagnosis.id}>
+                        <strong>Condition:</strong> {diagnosis.condition} <br />
+                        <strong>Date:</strong> {new Date(diagnosis.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No differential diagnosis observations added.</Typography>
+                )}
+              </section>
 
 
-          <section style={{ paddingBottom: "16px" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Investigation (Bedside Assessment)
-            </Typography>
+              <section style={{ paddingBottom: "16px" }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Investigation (Bedside Assessment)
+                </Typography>
 
-            {investigations.length > 0 ? (
-              <ul style={{ paddingLeft: "2ch" }}>
-                {investigations.map((investigation) => (
-                  <li key={investigation.id}>
-                    <strong>Assessment:</strong> {investigation.assessment} <br />
-                    <strong>Date:</strong>{" "}
-                    {new Date(investigation.obsDatetime).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-                No bedside assessment observations added.
-              </Typography>
-            )}
-          </section>
+                {investigations.length > 0 ? (
+                  <ul style={{ paddingLeft: "2ch" }}>
+                    {investigations.map((investigation) => (
+                      <li key={investigation.id}>
+                        <strong>Assessment:</strong> {investigation.assessment} <br />
+                        <strong>Date:</strong>{" "}
+                        {new Date(investigation.obsDatetime).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                    No bedside assessment observations added.
+                  </Typography>
+                )}
+              </section>
 
-          <section style={{ paddingBottom: "16px" }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Management Plan</Typography>
+              <section style={{ paddingBottom: "16px" }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Management Plan</Typography>
 
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Prescription
-            </Typography>
-            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-              No Prescription observations added.</Typography>
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Prescription
+                </Typography>
+                <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                  No Prescription observations added.</Typography>
 
-            <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
-              Monitoring Chart
-            </Typography>
-            <Typography sx={{ pl: 4, fontStyle: "italic" }}>
-              No Monitoring chart observations added.</Typography>
-          </section>
+                <Typography variant="h6" sx={{ pl: 2, fontWeight: "bold", textDecoration: "underline", mt: 2 }}>
+                  Monitoring Chart
+                </Typography>
+                <Typography sx={{ pl: 4, fontStyle: "italic" }}>
+                  No Monitoring chart observations added.</Typography>
+              </section>
 
-          {/* Print to PDF */}
-          {/* <section style={{ marginTop: "2rem" }}>
+              {/* Print to PDF */}
+              {/* <section style={{ marginTop: "2rem" }}>
             <Button variant="contained" color="primary" onClick={handlePrintToPDF}>
               Print to PDF
             </Button>
           </section> */}
 
 
-        </MainPaper>
-      </MainGrid>
-    </MainGrid>
+            </MainPaper>
+          </MainGrid>
+        </MainGrid>
+      </div>
+    </>
   );
 }
 
