@@ -17,7 +17,11 @@ import { useNavigation, useParameters } from "@/hooks";
 
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
-import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+  getPatientsEncounters,
+} from "@/hooks/encounter";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
@@ -74,44 +78,44 @@ export default function TriageWorkFlow() {
     isPending: creatingPresenting,
     isError: presentingError,
     data: presentingComplaintsResponse,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createVitals,
     isSuccess: vitalsCreated,
     isPending: creatingVitals,
     isError: vitalsError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createAirway,
     isSuccess: airwayCreated,
     isPending: creatingAirway,
     isError: airwayError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createBlood,
     isSuccess: bloodCreated,
     isPending: creatingBlood,
     isError: bloodError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createDisability,
     isSuccess: disabilityCreated,
     isPending: creatingDisability,
     isError: disabilityError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createPain,
     isSuccess: painCreated,
     isPending: creatingPain,
     isError: painError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     mutate: createTriageResult,
     isSuccess: triageResultCreated,
     isPending: creatingTriageResult,
     isError: triageResultError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const { navigateTo, navigateBack } = useNavigation();
 

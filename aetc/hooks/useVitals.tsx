@@ -40,7 +40,6 @@ export const useVitals = () => {
       const obs = encounter?.obs ?? [];
 
       setFormattedVitals(formatAllVitalsToObject(obs));
-      // updateVitals(obs);
     }
   }, [activeVisitId, data]);
 
@@ -48,7 +47,7 @@ export const useVitals = () => {
     const initialVitals = [
       {
         name: "Oxygen Saturation (%)",
-        value: getObservationValue(obs, concepts.OXYGEN_SATURATION),
+        value: getObservationValue(obs, concepts.SATURATION_RATE),
       },
 
       {
@@ -79,6 +78,7 @@ export const useVitals = () => {
         value: getObservationValue(obs, concepts.AVPU),
       },
     ];
+
     setVitals(initialVitals);
   };
 

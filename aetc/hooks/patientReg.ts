@@ -19,6 +19,7 @@ import {
   updatePatient,
 } from "@/services/patient";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { getConcept } from "./encounter";
 
 export const addPatient = () => {
   const addData = (patientData: any) => {
@@ -57,9 +58,14 @@ export const patchPatient = () => {
   });
 };
 
-export const registerPatient = () => {
-  const addData = (patientData: any) => {
+export const registerPatient =  () => {
+  const addData = async (patientData: any) => {
     const getAddress = (address: any) => (address !== "" ? address : "N/A");
+
+
+    const concept = await getConcept(concepts.NATIONAL_ID_IDENTIFIER_TYPE);
+
+    const nationalIdIdentifierType ='dc047ea8-e9ce-4fd0-af93-a2ade6b14b42'
 
     const identifiers =
       patientData.identificationNumber == ""
@@ -67,7 +73,7 @@ export const registerPatient = () => {
         : [
             {
               identifier: patientData.identificationNumber,
-              identifierType: concepts.NATIONAL_ID_IDENTIFIER_TYPE,
+              identifierType: nationalIdIdentifierType,
               preferred: true,
             },
           ];
