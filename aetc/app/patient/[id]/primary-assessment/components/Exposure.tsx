@@ -49,40 +49,19 @@ const schema = yup.object({
     .min(25)
     .max(45)
     .label(form.temperatureInfo.label),
-  // [form.skinRashInfo.name]: yup
-  //   .string()
-  //   .required()
-  //   .label(form.skinRashInfo.label),
-  // [form.abnormalities.name]: yup
-  //   .string()
-  //   .required()
-  //   .label(form.abnormalities.label),
-  // [form.injuries.name]: yup.string().required().label(form.injuries.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
 });
 
 const initialValues = getInitialValues(form);
 
-const radioOptions = [
-  { label: "Yes", value: concepts.YES },
-  { label: "No", value: concepts.NO },
-];
 export const Exposure = ({ onSubmit }: Props) => {
   const { params } = useParameters();
   const { data: patient, isLoading: patientLoading } = getOnePatient(
     params?.id as string
   );
   const [formValues, setFormValues] = useState<any>({});
-  const [skinRashInfoImage, setSkinRashInfoImage] = useState<Array<any>>([]);
-  const [skinRashInfoBackImage, setSkinRashInfoBackImage] = useState<
-    Array<any>
-  >([]);
-  const [abnormalitiesBackImage, setAbnormalitiesBackImage] = useState<
-    Array<any>
-  >([]);
-  const [abnormalitiesImage, setAbnormalitiesImage] = useState<Array<any>>([]);
-  const [injuriesImage, setInjuriesImage] = useState<Array<any>>([]);
-  const [injuriesBackImage, setInjuriesBackImage] = useState<Array<any>>([]);
+  const [fullImageFront, setFullImageFront] = useState<Array<any>>([]);
+  const [fullImageBack, setFullImageBack] = useState<Array<any>>([]);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.DISABILITY_ASSESSMENT,
@@ -93,38 +72,19 @@ export const Exposure = ({ onSubmit }: Props) => {
     const formValues = { ...values };
 
     const obs = [
-      // {
-      //   concept: form.skinRashInfo.name,
-      //   value: formValues[form.skinRashInfo.name],
-      //   obsDatetime: getDateTime(),
-      //   group_members: [
-      //     ...flattenImagesObs(skinRashInfoImage),
-      //     ...flattenImagesObs(skinRashInfoBackImage),
-      //   ],
-      // },
-      // {
-      //   concept: form.abnormalities.name,
-      //   value: formValues[form.abnormalities.name],
-      //   obsDatetime: getDateTime(),
-      //   group_members: [
-      //     ...flattenImagesObs(abnormalitiesBackImage),
-      //     ...flattenImagesObs(abnormalitiesImage),
-      //   ],
-      // },
       {
-        concept: form.injuries.name,
-        value: formValues[form.injuries.name],
+        concept: concepts.IMAGE_PART_NAME,
+        value: "full body front",
         obsDatetime: getDateTime(),
-        group_members: [
-          ...flattenImagesObs(injuriesBackImage),
-          ...flattenImagesObs(injuriesImage),
-        ],
+        groupMembers: [...flattenImagesObs(fullImageFront)],
+      },
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        value: "full body back",
+        obsDatetime: getDateTime(),
+        groupMembers: [...flattenImagesObs(fullImageBack)],
       },
     ];
-
-    // delete formValues[form.abnormalities.name];
-    // delete formValues[form.injuries.name];
-    // delete formValues[form.skinRashInfo.name];
 
     handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
@@ -148,13 +108,6 @@ export const Exposure = ({ onSubmit }: Props) => {
           id={form.temperatureInfo.name}
         />
 
-        {/* <RadioGroupInput
-          name={form.skinRashInfo.name}
-          row
-          label={form.skinRashInfo.label}
-          options={radioOptions}
-        /> */}
-        <br />
         <br />
         <Typography color={"grey"} variant="h5">
           Select areas with rash, injuries and other abnormalities
@@ -168,14 +121,14 @@ export const Exposure = ({ onSubmit }: Props) => {
                 width: "60ch",
               }}
             >
-              <FullBodyImage onValueChange={setSkinRashInfoBackImage} />
+              <FullBodyImage onValueChange={setFullImageFront} />
             </Box>
             <Box
               sx={{
                 width: "60ch",
               }}
             >
-              <FullBodyBackImage onValueChange={setSkinRashInfoImage} />
+              <FullBodyBackImage onValueChange={setFullImageBack} />
             </Box>
           </Box>
         )}
@@ -186,16 +139,14 @@ export const Exposure = ({ onSubmit }: Props) => {
                 width: "60ch",
               }}
             >
-              <FullBodyFemaleFrontImage
-                onValueChange={setSkinRashInfoBackImage}
-              />
+              <FullBodyFemaleFrontImage onValueChange={setFullImageFront} />
             </Box>
             <Box
               sx={{
                 width: "60ch",
               }}
             >
-              <FullBodyFemaleBackImage onValueChange={setSkinRashInfoImage} />
+              <FullBodyFemaleBackImage onValueChange={setFullImageBack} />
             </Box>
           </Box>
         )}
