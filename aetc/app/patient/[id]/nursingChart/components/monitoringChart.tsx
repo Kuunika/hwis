@@ -5,7 +5,7 @@ import { ObservationsForm } from "./observations";
 import { InterventionsForm } from "./interventions";
 import { MedicationsForm } from "./medications";
 
-import { concepts, encounters } from "@/constants";
+import { concepts, encounters, triageResult } from "@/constants";
 import { useNavigation, useParameters } from "@/hooks";
 import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
@@ -104,12 +104,19 @@ export const MonitoringChart = () => {
     if(nursingNotesCreated) {
       setAlertMessage(`All encounters submitted successfully`);
       setAlertSeverity("success");
+      setTimeout(() => {
+      navigateBack();}, 5000);
     }
 
 
   }, [vitalsError, interventionsError, nursingNotesError, vitalsCreated, interventionsCreated, nursingNotesCreated]);
 
   const handleObservationsSubmit = async (values: any) => {
+    if(values["Triage Result"] === "No Score") {
+        setAlertMessage(values["Triage Result"]);
+        setAlertSeverity("error");
+        return;
+      }
 
       const forGroupMembers = Object.fromEntries(
         Object.entries(values).filter(([key, value]) => key !== concepts.TRIAGE_RESULT)
