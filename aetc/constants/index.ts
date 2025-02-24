@@ -164,7 +164,8 @@ export const encounters = {
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",
   PATIENT_CARE_AREA: "d0d12af5-7f67-41fe-a856-db3b54ca6c0d",
   DISPENSING:"ba0612c2-8d80-11d8-abbb-0024217bb78e",
-  FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e'
+  FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e',
+  REVIEW_OF_SYSTEMS: '54e32e5d-51c5-4f16-8cff-9fc7da3c68ca',
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";

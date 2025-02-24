@@ -43,7 +43,7 @@ function InPatientAdmission() {
           drugHistory: true,
           pastSurgicalHistory: true,
           socialHistory: true,
-          FamilyHistory: true
+          familyHistory: true
         });
         setTimeout(resolve, 100);
       }),
@@ -53,7 +53,7 @@ function InPatientAdmission() {
         drugHistory: false,
         pastSurgicalHistory: false,
         socialHistory: false,
-        FamilyHistory: false
+        familyHistory: false
       }),
   });
 

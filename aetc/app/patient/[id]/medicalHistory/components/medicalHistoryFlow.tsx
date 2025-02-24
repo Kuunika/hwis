@@ -669,7 +669,7 @@ export const MedicalHistoryFlow = () => {
       });
 
       try{
-      const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      const response = await createEncounter({ encounterType: encounters.REVIEW_OF_SYSTEMS,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -694,7 +694,7 @@ export const MedicalHistoryFlow = () => {
       });
 
       try{
-        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        const response = await createEncounter({ encounterType: encounters.REVIEW_OF_SYSTEMS,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -719,7 +719,7 @@ export const MedicalHistoryFlow = () => {
       });
 
       try{
-        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        const response = await createEncounter({ encounterType: encounters.REVIEW_OF_SYSTEMS,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -754,7 +754,7 @@ export const MedicalHistoryFlow = () => {
 
       
       try{
-        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        const response = await createEncounter({ encounterType: encounters.REVIEW_OF_SYSTEMS,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 
@@ -804,7 +804,7 @@ export const MedicalHistoryFlow = () => {
       obsGroup.push(intentionalPoisoningObs)
     }
     try{
-      const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+      const response = await createEncounter({ encounterType: encounters.REVIEW_OF_SYSTEMS,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime, 
@@ -888,7 +888,7 @@ export const MedicalHistoryFlow = () => {
       }
 
       try{
-        const response = await createEncounter({ encounterType: encounters.SUMMARY_ASSESSMENT,
+        const response = await createEncounter({ encounterType: encounters.REVIEW_OF_SYSTEMS,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime, 

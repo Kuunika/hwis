@@ -29,16 +29,16 @@ interface familyHistoryPanelProps {
 
 }
 
-function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelProps) {
+function reviewOfSystemsPanel({ showForPrinting , toggleShow}: familyHistoryPanelProps) {
     const { params } = useParameters();
-    const { data: historicFamilyData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
+    const { data: reviewOfSystemsData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const displayedObservations = showForPrinting ? observations : observations.slice(0, 4);
 
   useEffect(() => {
     if (!historyLoading) {
 
-        const familyHistoryEncounters = historicFamilyData?.filter(
+        const familyHistoryEncounters = reviewOfSystemsData?.filter(
             (item) => item.encounter_type?.name === "FAMILY MEDICAL HISTORY"
           )
 
@@ -69,7 +69,7 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
             setObservations(observations)
  
         }
-  },[historicFamilyData])
+  },[medicationData])
 
 return (
   <>
@@ -166,4 +166,4 @@ return (
 }
 
 
-export default FamilyHistoryPanel;
+export default reviewOfSystemsPanel;
