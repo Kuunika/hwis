@@ -13,6 +13,7 @@ import {
 import * as Yup from "yup";
 import React from "react";
 import { Box } from "@mui/material";
+import { fetchConceptsSelectOptions } from "@/hooks/encounter";
 
 const form = {
   abnormalities: {
@@ -97,6 +98,7 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
+          coded
         />
         {showBruiseDescription && (
           <>

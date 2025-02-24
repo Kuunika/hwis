@@ -96,6 +96,7 @@ export const EarForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
+          coded
         />
 
         {showLaceration && (

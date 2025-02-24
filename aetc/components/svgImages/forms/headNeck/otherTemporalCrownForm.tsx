@@ -96,6 +96,7 @@ export const OtherTemporalCrownForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
+          coded
         />
         {showOtherAbnormalities && (
           <>

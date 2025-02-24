@@ -83,6 +83,7 @@ export const MouthForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
+          coded
         />
 
         {showOtherAbnormalities && (

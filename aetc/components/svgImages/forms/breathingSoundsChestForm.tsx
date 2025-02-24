@@ -115,6 +115,7 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
             }}
             label={form.abnormalities.label}
             options={options}
+            coded
           />
 
           {showAdded && (
@@ -124,6 +125,7 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
                 name={form.added.name}
                 label={form.added.label}
                 options={addedOptions}
+                coded
               />
             </>
           )}

@@ -101,6 +101,7 @@ export const SecondaryAbdomenPelvicForm = (props: Props) => {
         name={form.abnormalities.name}
         label={form.abnormalities.label}
         options={options}
+        coded
         getValue={handleValueChange}
       />
       {showLaceration && (

@@ -7,6 +7,7 @@ import { InputLabel, SxProps } from "@mui/material";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { MainTypography, WrapperBox, defaultTheme } from "..";
+import { fetchConceptsSelectOptions } from "@/hooks/encounter";
 
 type Props = {
   name: string;
@@ -21,6 +22,7 @@ type Props = {
   size?: "small" | "medium";
   applyPadding?: boolean;
   manualInitialValues?: Array<any>;
+  coded?: boolean;
 };
 
 const animatedComponents = makeAnimated();
@@ -36,6 +38,7 @@ export const SearchComboBox: FC<Props> = ({
   disabled = false,
   multiple = true,
   applyPadding = true,
+  coded = false,
 }) => {
   const { hasError, setFieldValue, initialValues, value, errorMessage } =
     useFormikField(name);
@@ -47,14 +50,15 @@ export const SearchComboBox: FC<Props> = ({
     };
   });
 
-  const handleChange = (values: any) => {
-    console.log(values);
-    const inputValue = multiple
+  const handleChange = async (values: any) => {
+    let inputValue = multiple
       ? values.map((v: any) => ({
           id: v.value,
           label: v.label,
         }))
       : values.value;
+
+    if (coded) inputValue = await fetchConceptsSelectOptions(inputValue);
 
     setFieldValue(name, inputValue);
     if (getValue) {

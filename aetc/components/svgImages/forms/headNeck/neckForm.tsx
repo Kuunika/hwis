@@ -221,6 +221,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
+          coded
         />
         <br />
         {showRaised && (

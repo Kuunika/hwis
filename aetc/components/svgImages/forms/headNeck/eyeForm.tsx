@@ -113,6 +113,7 @@ export const EyeForm = ({ onSubmit }: Prop) => {
           label={form.abnormalities.label}
           options={abnormalities}
           sx={{ mb: "1ch" }}
+          coded
         />
 
         {showOtherAbnormalities && (
