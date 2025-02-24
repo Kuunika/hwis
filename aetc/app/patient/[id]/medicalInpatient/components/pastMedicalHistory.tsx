@@ -82,8 +82,6 @@ if(onTreatmentValue) updateOnHIVTreatment(onTreatmentValue);
 
        
         sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-          console.log('Patient history:',encounter);
-          
         
           encounter.obs.forEach((observation) => {
           const value = observation.value;
@@ -108,8 +106,6 @@ if(onTreatmentValue) updateOnHIVTreatment(onTreatmentValue);
             setObservations(observations)
         });
 
-
-        console.log(hasAIDS);
         }
 
   },[historicData])
@@ -117,20 +113,20 @@ if(onTreatmentValue) updateOnHIVTreatment(onTreatmentValue);
 return (
     <>
         <Panel title="Past Medical History">
-            <WrapperBox sx={{ height: "180px" }}>
+            <WrapperBox >
             {historyLoading ? (
                                 <div
                                   style={{
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    height: "150px",
+                                    height: "180px",
                                   }}
                                 >
                                   <CircularProgress size={40} />
                                 </div>
                               ) : (
-                                <> { observations.length === 0 ? ( <p>No past medical history available</p>):(<>
+                                <>
             <div>
             <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
                 HIV Status:
@@ -157,7 +153,7 @@ return (
                 </b>
 ??
             </p>
-            </div> </>)}
+            </div> 
             </>)}
             </WrapperBox>
         </Panel>
