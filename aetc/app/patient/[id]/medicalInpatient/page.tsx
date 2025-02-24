@@ -12,6 +12,7 @@ import { useReactToPrint } from "react-to-print";
 import { useRef, useState } from "react";
 import AllergiesPanel from "./components/allergies";
 import SocialHistoryPanel from "./components/socialHistory";
+import FamilyHistoryPanel from "./components/familyHistory";
 
 function InPatientAdmission() {
 
@@ -22,6 +23,7 @@ function InPatientAdmission() {
     drugHistory: false,
     pastSurgicalHistory: false,
     socialHistory: false,
+    familyHistory: false
   });
   
   const togglePanel = (panel: keyof typeof showAllPanels) => {
@@ -41,6 +43,7 @@ function InPatientAdmission() {
           drugHistory: true,
           pastSurgicalHistory: true,
           socialHistory: true,
+          FamilyHistory: true
         });
         setTimeout(resolve, 100);
       }),
@@ -50,6 +53,7 @@ function InPatientAdmission() {
         drugHistory: false,
         pastSurgicalHistory: false,
         socialHistory: false,
+        FamilyHistory: false
       }),
   });
 
@@ -143,7 +147,9 @@ function InPatientAdmission() {
   <AllergiesPanel
   />
 </WrapperBox>
-
+<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+  <FamilyHistoryPanel showForPrinting={showAllPanels.familyHistory} toggleShow={()=>togglePanel("familyHistory")}/>
+</WrapperBox>
 </Box>
 </div>
     </>
