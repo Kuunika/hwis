@@ -112,5 +112,22 @@ export const getConcept:any = async (conceptName:string)=>{
   return await getAll<Concept[]>(
   `/concepts?name=${conceptName}&paginate=false&exact_match=true`
 );
+}
 
+
+export const fetchConceptsSelectOptions =  async (options: Array<{id:string, label:string}>) => {
+ const mappedSelectOptions = [];
+for(let i=0; i<options.length; i++){
+
+  // const key: 'id' | 'value' = options[i].id ? 'id' : 'value';
+
+  const concept = await getConcept(options[i].id);
+
+  if(concept.data.length){
+    mappedSelectOptions.push({id: concept.data[0].uuid, label: options[i].label})
+  }
+
+  return mappedSelectOptions;
+
+}
 }

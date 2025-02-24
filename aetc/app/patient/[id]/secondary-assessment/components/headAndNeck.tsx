@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { FormValuesListener, FormikInit } from "@/components";
+import { FormikInit } from "@/components";
 import * as yup from "yup";
 
 import { HeadNeckImage } from "@/components/svgImages";
 import { useSubmitEncounter } from "@/hooks";
 import { concepts, encounters } from "@/constants";
-import { flattenImagesObs, getObservations } from "@/helpers";
+import { flattenImagesObs } from "@/helpers";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
 import { HeadLeftImage } from "@/components/svgImages/headLeft";
@@ -58,28 +58,30 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(headNeckImageEncounter),
+        groupMembers: flattenImagesObs(headNeckImageEncounter),
         value: "Front",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(leftHeadNeckImageEncounter),
+        groupMembers: flattenImagesObs(leftHeadNeckImageEncounter),
         value: "Left",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(rightHeadNeckImageEncounter),
+        groupMembers: flattenImagesObs(rightHeadNeckImageEncounter),
         value: "Right",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(backHeadNeckImageEncounter),
+        groupMembers: flattenImagesObs(backHeadNeckImageEncounter),
         value: "Back",
       },
     ];
+
+    // console.log({ obs });
 
     await handleSubmit(obs);
   };
