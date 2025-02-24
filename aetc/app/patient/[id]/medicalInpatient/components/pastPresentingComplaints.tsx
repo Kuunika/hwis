@@ -73,7 +73,7 @@ const PresentingComplaintsPanel: React.FC<PresentingComplaintsPanelProps> = ({ s
       });}
     
   },[complaintsData])
-
+  console.log(displayedObservations)
 return (
     <>
     
@@ -96,7 +96,7 @@ return (
             <div>
               {displayedObservations.map(item => (
                   <div key={item.obs_id} style={{ marginBottom: "20px", color:'rgba(0, 0, 0, 0.6)' }}>
-                      {(item.name == 'Presenting complaint') && <p>{item.value}</p>}
+                      {(item.name == 'Presenting complaint') || (item.name == 'Complaints') && <p>{item.value}</p>}
                       {item.children && item.children.length > 0 && (
                        <>
                               {item.children.map(child => (

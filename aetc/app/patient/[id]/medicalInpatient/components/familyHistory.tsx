@@ -88,7 +88,7 @@ return (
                                   </div>
                                 ) : (
                                   <>
-                                  {displayedObservations.length === 0 ? ( <p>No drug history available</p>):(<>
+                                  {displayedObservations.length === 0 ? ( <p>No family history available</p>):(<>
     <div
   style={{
     display: "flex",
