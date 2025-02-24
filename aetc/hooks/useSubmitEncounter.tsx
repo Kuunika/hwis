@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { addEncounter } from "./encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "./encounter";
 import { useParameters } from "./navigation";
 import { getPatientVisitTypes } from "./patientReg";
 import { getDateTime } from "@/helpers/dateTime";
@@ -8,7 +8,7 @@ export const useSubmitEncounter = (
   encounterType: string,
   onDataSubmitComplete: () => void
 ) => {
-  const { mutate, isSuccess, isPending, data } = addEncounter();
+  const { mutate, isSuccess, isPending, data } = fetchConceptAndCreateEncounter();
   const { params } = useParameters();
   const { data: patientVisits, isLoading } = getPatientVisitTypes(
     params?.id as string

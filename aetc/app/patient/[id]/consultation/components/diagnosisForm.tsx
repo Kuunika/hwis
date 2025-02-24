@@ -7,6 +7,7 @@ import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Button, Typography } from "@mui/material";
 import {
     addEncounter,
+    fetchConceptAndCreateEncounter,
     getPatientsEncounters,
     removeObservation,
 } from "@/hooks/encounter";
@@ -31,7 +32,7 @@ interface DiagnosisFormProps {
 
 function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
     const [diagnosisList, setDiagnosisList] = useState<Diagnosis[]>([]);
-    const { mutate: createDiagnosis, isSuccess, isError } = addEncounter();
+    const { mutate: createDiagnosis, isSuccess, isError } = fetchConceptAndCreateEncounter();
     const { params } = useParameters();
     const { data: patient } = getOnePatient(params.id as string);
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -59,7 +60,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                 .filter((encounter) => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
                 .flatMap((encounter) =>
                     encounter.obs
-                        .filter((obs) => obs.names[0]?.uuid === conceptType)
+                        .filter((obs) => obs.names[0]?.name === conceptType)
                         .map((obs) => ({
                             id: obs.obs_id.toString(),
                             condition: obs.value,

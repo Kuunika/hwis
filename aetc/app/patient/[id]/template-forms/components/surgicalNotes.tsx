@@ -557,7 +557,7 @@ function SurgicalNotesTemplate() {
         )
         .flatMap((encounter) =>
           encounter.obs
-            .filter((obs) => obs.names[0]?.uuid === concepts.DIFFERENTIAL_DIAGNOSIS)
+            .filter((obs) => obs.names[0]?.name === concepts.DIFFERENTIAL_DIAGNOSIS)
             .map((obs) => ({
               id: obs.obs_id.toString(),
               condition: obs.value,
