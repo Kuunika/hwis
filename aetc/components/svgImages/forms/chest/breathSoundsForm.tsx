@@ -7,6 +7,7 @@ import {
 } from "@/components";
 import { concepts, NO, YES } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
+import { getCachedConcept } from "@/helpers/data";
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
 
@@ -137,7 +138,12 @@ export const BreathingSoundsForm = (props: Props) => {
                 getValue={(values) => {
                   if (values)
                     setShowAdded(
-                      Boolean(values.find((v: any) => v.id == concepts.OTHER))
+                      Boolean(
+                        values.find(
+                          (v: any) =>
+                            v.id == getCachedConcept(concepts.OTHER)?.uuid
+                        )
+                      )
                     );
                 }}
               />
@@ -168,7 +174,11 @@ export const BreathingSoundsForm = (props: Props) => {
             getValue={(values) => {
               if (values)
                 setShowAdded(
-                  Boolean(values.find((v: any) => v.id == concepts.OTHER))
+                  Boolean(
+                    values.find(
+                      (v: any) => v.id == getCachedConcept(concepts.OTHER)
+                    )
+                  )
                 );
             }}
           />

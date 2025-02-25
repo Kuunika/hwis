@@ -104,8 +104,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showLight, setShowLight] = useState(false);
 
-  console.log(formValues[form.palpation.name]);
-
   const palpationCheck = (palpation: string) => {
     if (!Array.isArray(formValues[form.palpation.name])) return;
 

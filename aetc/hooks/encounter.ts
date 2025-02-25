@@ -1,4 +1,5 @@
 import { Concept, Obs } from "@/interfaces";
+import { queryClient } from "@/providers";
 import {
   createEncounter,
   getPatientEncounters,
@@ -79,22 +80,32 @@ export const fetchConceptAndCreateEncounter = () => {
 };
 
 const getConceptIds: any = async (obs: Obs[]) => {
-  // const queryClient = useQueryClient();
   const obsWithUUIDs = [];
+
   try {
-    for (let i = 0; i < obs.length; i++) {
-      const conceptName = obs[i].concept;
-      const concept = await getConcept(conceptName);
-      // register cache
-      // queryClient.setQueryData(["concepts", conceptName], concept);
+    for (const observation of obs) {
+      const conceptName = observation.concept;
 
-      const groupMembers = Array.isArray(obs[i].groupMembers)
-        ? await getConceptIds(obs[i].groupMembers)
+
+      const cachedConcept = queryClient.getQueryData(["concepts", conceptName]);
+      let concept;
+
+      if (cachedConcept) {
+       
+        concept = { data: [cachedConcept] }; 
+        console.log('Using cached concept:', cachedConcept);
+      } else {
+        
+        concept = await getConcept(conceptName);
+        queryClient.setQueryData(["concepts", conceptName], concept);
+      }
+
+      const groupMembers = Array.isArray(observation.groupMembers)
+        ? await getConceptIds(observation.groupMembers)
         : [];
-
       if (concept.data.length > 0) {
         obsWithUUIDs.push({
-          ...obs[i],
+          ...observation,
           concept: concept.data[0].uuid,
           groupMembers,
         });
@@ -115,19 +126,26 @@ export const getConcept:any = async (conceptName:string)=>{
 }
 
 
-export const fetchConceptsSelectOptions =  async (options: Array<{id:string, label:string}>) => {
- const mappedSelectOptions = [];
-for(let i=0; i<options.length; i++){
+export const fetchConceptsSelectOptions = async (options: Array<{ id: string; label: string }>) => {
+  const mappedSelectOptions = [];
 
-  // const key: 'id' | 'value' = options[i].id ? 'id' : 'value';
+  for (const option of options) {
+    const cachedConcept = queryClient.getQueryData(["concepts", option.id]);
 
-  const concept = await getConcept(options[i].id);
+    let concept;
 
-  if(concept.data.length){
-    mappedSelectOptions.push({id: concept.data[0].uuid, label: options[i].label})
+    if (cachedConcept) {
+      concept = { data: [cachedConcept] }; 
+     
+    } else {
+      // Fetch new data
+      concept = await getConcept(option.id);
+      queryClient.setQueryData(["concepts", option.id], concept.data[0]);
+    }
+    if (concept.data.length) {
+      mappedSelectOptions.push({ id: concept.data[0].uuid, label: option.label });
+    }
   }
 
   return mappedSelectOptions;
-
-}
-}
+};

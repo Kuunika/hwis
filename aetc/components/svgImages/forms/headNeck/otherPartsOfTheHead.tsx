@@ -14,6 +14,7 @@ import * as Yup from "yup";
 import React from "react";
 import { Box } from "@mui/material";
 import { fetchConceptsSelectOptions } from "@/hooks/encounter";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abnormalities: {
@@ -77,11 +78,21 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
   const [showOther, setShowOther] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
-    setShowBruiseDescription(
-      Boolean(values.find((v) => v.id == concepts.BRUISE))
+    setShowLaceration(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
+      )
     );
-    setShowOther(Boolean(values.find((v) => v.id == concepts.OTHER)));
+    setShowBruiseDescription(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.BRUISE)?.uuid)
+      )
+    );
+    setShowOther(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
+      )
+    );
   };
   return (
     <FormikInit

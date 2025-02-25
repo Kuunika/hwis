@@ -81,8 +81,6 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       },
     ];
 
-    // console.log({ obs });
-
     await handleSubmit(obs);
   };
 

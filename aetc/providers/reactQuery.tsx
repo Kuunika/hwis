@@ -8,13 +8,12 @@ import {
 import React from "react";
 import { ReactNode, FC } from "react";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
+
 export const ReactQueryProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };

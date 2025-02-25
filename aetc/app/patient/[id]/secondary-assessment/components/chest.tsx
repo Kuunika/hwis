@@ -20,6 +20,7 @@ import {
 import { useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   respiratoryRate: {
@@ -314,7 +315,11 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   };
 
   const handleValueChange = (values: Array<any>) => {
-    setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
+    setShowSpecify(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
+      )
+    );
   };
 
   return (
@@ -348,6 +353,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               options={chestWallAbnormalities}
               name={form.chestWallAbnormalities.name}
               label={form.chestWallAbnormalities.label}
+              coded
             />
           )}
           {showSpecify && formValues[form.chestWallAbnormality.name] == YES && (
@@ -505,15 +511,26 @@ export const ChestForm = ({ onSubmit }: Prop) => {
                 getValue={(values) => {
                   if (!values) return;
                   setShowAbnormalities(
-                    Boolean(values.find((v: any) => v.id == concepts.MURMUR))
+                    Boolean(
+                      values.find(
+                        (v: any) =>
+                          v.id == getCachedConcept(concepts.MURMUR)?.uuid
+                      )
+                    )
                   );
                   setShowAbnormalitiesOther(
-                    Boolean(values.find((v: any) => v.id == concepts.OTHER))
+                    Boolean(
+                      values.find(
+                        (v: any) =>
+                          v.id == getCachedConcept(concepts.OTHER)?.uuid
+                      )
+                    )
                   );
                 }}
                 name={form.abnormalities.name}
                 label={form.abnormalities.label}
                 options={abnormalities}
+                coded
               />
 
               {showAbnormalities && (

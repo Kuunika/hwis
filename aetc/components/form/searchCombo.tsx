@@ -58,9 +58,15 @@ export const SearchComboBox: FC<Props> = ({
         }))
       : values.value;
 
-    if (coded) inputValue = await fetchConceptsSelectOptions(inputValue);
+    if (coded && !multiple) {
+      inputValue = (
+        await fetchConceptsSelectOptions([{ id: inputValue, label: "" }])
+      )[0].id;
+    }
 
-    setFieldValue(name, inputValue);
+    if (coded && multiple)
+      inputValue = await fetchConceptsSelectOptions([...inputValue]);
+
     if (getValue) {
       getValue(inputValue);
     }

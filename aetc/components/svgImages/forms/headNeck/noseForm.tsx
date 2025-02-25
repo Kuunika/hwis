@@ -13,6 +13,7 @@ import {
 import * as Yup from "yup";
 import React from "react";
 import { Box } from "@mui/material";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abnormalities: {
@@ -66,9 +67,15 @@ export const NoseForm = ({ onSubmit }: Prop) => {
   const [showLaceration, setShowLaceration] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
+    setShowLaceration(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
+      )
+    );
     setShowOtherAbnormalities(
-      Boolean(values.find((v) => v.id == concepts.OTHER))
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
+      )
     );
   };
   return (
