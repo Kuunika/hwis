@@ -1172,6 +1172,7 @@ export const concepts = {
   PROSTRATE_DESCRIPTION: "Prostrate Description",
   DIAGNOSIS: "Diagnosis",
   FUNDO_SCOPY_FINDINGS:'Fundoscopy Findings',
+  NOTES:"Notes"
 }
 
 export const conceptNames= {

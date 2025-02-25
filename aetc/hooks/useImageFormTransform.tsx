@@ -14,11 +14,12 @@ export const useImageFormTransform = () => {
   useEffect(() => {
     const formData = Object.keys(data.formData)
       .map((key) => {
-        const label = data.formConceptsLabels.find(
+        console.log({ data });
+        const label = data?.formConceptsLabels?.find(
           ({ concept }: any) => concept == key
         )?.label;
 
-        const labelValue = data.formConceptsLabels.find(
+        const labelValue = data?.formConceptsLabels?.find(
           (label) => label.concept == data.formData[key]
         )?.label;
 

@@ -7,7 +7,8 @@ import {
   TextInputField,
 } from "@/components/form";
 import { concepts, NO, YES } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getFormLabels, getInitialValues } from "@/helpers";
+import { getCachedConcept } from "@/helpers/data";
 
 import { useState } from "react";
 import * as yup from "yup";
@@ -116,7 +117,15 @@ export const PalpationForm = ({ onSubmit }: Props) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={(values) =>
+        onSubmit(
+          values,
+          getFormLabels(form, palpationOptions, [
+            ...radioOptions,
+            ...kidneyOptions,
+          ])
+        )
+      }
     >
       <FormValuesListener getValues={setFormValues} />
 
@@ -132,6 +141,7 @@ export const PalpationForm = ({ onSubmit }: Props) => {
           <RadioGroupInput
             row
             options={radioOptions}
+            coded
             name={form.tenderness.name}
             label={form.tenderness.label}
           />
@@ -145,8 +155,10 @@ export const PalpationForm = ({ onSubmit }: Props) => {
             options={radioOptions}
             name={form.hepatomegaly.name}
             label={form.hepatomegaly.label}
+            coded
           />
-          {formValues[form.hepatomegaly.name] == YES && (
+          {formValues[form.hepatomegaly.name] ==
+            getCachedConcept(YES)?.uuid && (
             <TextInputField
               multiline
               rows={5}
@@ -161,8 +173,10 @@ export const PalpationForm = ({ onSubmit }: Props) => {
             options={radioOptions}
             name={form.splenomegaly.name}
             label={form.splenomegaly.label}
+            coded
           />
-          {formValues[form.splenomegaly.name] == YES && (
+          {formValues[form.splenomegaly.name] ==
+            getCachedConcept(YES)?.uuid && (
             <TextInputField
               multiline
               rows={5}
@@ -180,13 +194,16 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         options={radioOptions}
         name={form.kidneyBallotable.name}
         label={form.kidneyBallotable.label}
+        coded
       />
-      {formValues[form.kidneyBallotable.name] == YES && (
+      {formValues[form.kidneyBallotable.name] ==
+        getCachedConcept(YES)?.uuid && (
         <RadioGroupInput
           row
           name={form.side.name}
           label={form.side.label}
           options={kidneyOptions}
+          coded
         />
       )}
       <RadioGroupInput
@@ -194,6 +211,7 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         options={radioOptions}
         name={form.fullBladder.name}
         label={form.fullBladder.label}
+        coded
       />
 
       <RadioGroupInput
@@ -201,9 +219,10 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         options={radioOptions}
         name={form.otherMasses.name}
         label={form.otherMasses.label}
+        coded
       />
 
-      {formValues[form.otherMasses.name] == YES && (
+      {formValues[form.otherMasses.name] == getCachedConcept(YES)?.uuid && (
         <TextInputField
           multiline
           rows={5}

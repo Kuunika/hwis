@@ -108,7 +108,7 @@ const form = {
     label: "Additional Notes",
   },
   abnormalityOther: {
-    name: concepts.DESCRIPTION,
+    name: concepts.NOTES,
     label: "Other",
   },
 };
@@ -347,7 +347,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             coded
           />
 
-          {formValues[form.chestWallAbnormality.name] == YES && (
+          {formValues[form.chestWallAbnormality.name] ==
+            getCachedConcept(YES)?.uuid && (
             <SearchComboBox
               sx={{ mb: "2ch" }}
               getValue={handleValueChange}
@@ -357,14 +358,16 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               coded
             />
           )}
-          {showSpecify && formValues[form.chestWallAbnormality.name] == YES && (
-            <TextInputField
-              sx={{ width: "100%" }}
-              name={form.otherSpecify.name}
-              label={form.otherSpecify.label}
-              id={form.otherSpecify.name}
-            />
-          )}
+          {showSpecify &&
+            formValues[form.chestWallAbnormality.name] ==
+              getCachedConcept(YES)?.uuid && (
+              <TextInputField
+                sx={{ width: "100%" }}
+                name={form.otherSpecify.name}
+                label={form.otherSpecify.label}
+                id={form.otherSpecify.name}
+              />
+            )}
 
           <RadioGroupInput
             sx={{ flex: 1 }}
@@ -374,7 +377,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             options={radioOptions}
             coded
           />
-          {formValues[form.localizedChestAbnormality.name] == YES && (
+          {formValues[form.localizedChestAbnormality.name] ==
+            getCachedConcept(YES)?.uuid && (
             <ChestLung
               onValueChange={setLocalizedChestImagesEnc}
               imageEncounter={encounters.CHEST_ASSESSMENT}
@@ -386,9 +390,12 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.chestExpansion.name}
             options={chestExpansionOptions}
             label={form.chestExpansion.label}
+            coded
           />
-          {(formValues[form.chestExpansion.name] == concepts.REDUCED ||
-            formValues[form.chestExpansion.name] == concepts.INCREASED) && (
+          {(formValues[form.chestExpansion.name] ==
+            getCachedConcept(concepts.REDUCED)?.uuid ||
+            formValues[form.chestExpansion.name] ==
+              getCachedConcept(concepts.INCREASED)?.uuid) && (
             <ChestLung
               onValueChange={setChestExpansionImagesEnc}
               imageEncounter={encounters.CHEST_ASSESSMENT}
@@ -401,9 +408,12 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.tactileFremitus.name}
             options={chestExpansionOptions}
             label={form.tactileFremitus.label}
+            coded
           />
-          {(formValues[form.tactileFremitus.name] == concepts.REDUCED ||
-            formValues[form.tactileFremitus.name] == concepts.INCREASED) && (
+          {(formValues[form.tactileFremitus.name] ==
+            getCachedConcept(concepts.REDUCED)?.uuid ||
+            formValues[form.tactileFremitus.name] ==
+              getCachedConcept(concepts.INCREASED)?.uuid) && (
             <ChestLung
               selectable={true}
               onValueChange={setTactileFremitusImagesEnc}
@@ -418,8 +428,10 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.apexBeat.name}
             options={apexBeatOptions}
             label={form.apexBeat.label}
+            coded
           />
-          {formValues[form.apexBeat.name] == concepts.DISPLACED && (
+          {formValues[form.apexBeat.name] ==
+            getCachedConcept(concepts.DISPLACED)?.uuid && (
             <TextInputField
               sx={{ width: "100%" }}
               name={form.position.name}
@@ -435,7 +447,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             coded
             label={form.thrill.label}
           />
-          {formValues[form.thrill.name] == YES && (
+          {formValues[form.thrill.name] == getCachedConcept(YES)?.uuid && (
             <TextInputField
               sx={{ width: "100%" }}
               name={form.thrillDescription.name}
@@ -450,7 +462,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             coded
             label={form.heaves.label}
           />
-          {formValues[form.heaves.name] == YES && (
+          {formValues[form.heaves.name] == getCachedConcept(YES)?.uuid && (
             <TextInputField
               sx={{ width: "100%" }}
               name={form.heavesDescription.name}
@@ -463,8 +475,10 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.percussion.name}
             options={percussionOptions}
             label={form.percussion.label}
+            coded
           />
-          {formValues[form.percussion.name] == concepts.ABNORMAL && (
+          {formValues[form.percussion.name] ==
+            getCachedConcept(concepts.ABNORMAL)?.uuid && (
             <PercussionChestLung
               onValueChange={setPercussionImagesEnc}
               imageSection={form.percussion.name}
@@ -508,8 +522,10 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.heartSounds.name}
             label={form.heartSounds.label}
             options={percussionOptions}
+            coded
           />
-          {formValues[form.heartSounds.name] == concepts.ABNORMAL && (
+          {formValues[form.heartSounds.name] ==
+            getCachedConcept(concepts.ABNORMAL)?.uuid && (
             <>
               <SearchComboBox
                 getValue={(values) => {

@@ -156,6 +156,7 @@ export const SecondaryAbdomenPelvicForm = (props: Props) => {
             <RadioGroupInput
               row
               options={radioOptions}
+              coded
               name={form.burnsDescription.name}
               label={form.burnsDescription.label}
             />
