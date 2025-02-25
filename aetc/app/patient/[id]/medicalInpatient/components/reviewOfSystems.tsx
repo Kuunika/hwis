@@ -66,7 +66,7 @@ function ReviewOfSystemsPanel({ showForPrinting , toggleShow}: PanelProps) {
               }
             });
           });
-          
+
           const seen = new Set();
           const dedupedObs = observations.map(element => {
                 if (seen.has(element.name)) return null;
@@ -119,16 +119,16 @@ return (
 >
   {displayedObservations.map((item) => (
     <div
-      key={item.obs_id}
+      key={item?.obs_id}
       style={{
         width: "300px",
         color: "rgba(0, 0, 0, 0.6)",
       }}
     >
-        <b>{item.name}</b>
-      {item.children && item.children.length > 0 && (
+        <b>{item?.name}</b>
+      {item?.children && item?.children.length > 0 && (
         <>
-          {item.children.map((child) => (
+          {item?.children.map((child) => (
             <p key={child.obs_id}>
               {(child.name)?.split("Family History ").pop()}
               {child.value === "true" ? null : `: ${child.value}`}
