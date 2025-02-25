@@ -674,7 +674,7 @@ export const MedicalHistoryFlow = () => {
         patient: params.id,
         encounterDatetime: dateTime, 
         obs:  [{
-          concept: concepts.GASTROINTESTINAL, 
+          concept: concepts.REVIEW_OF_SYSTEMS_GASTROINTESTINAL, 
           value: true,
           obsDatetime: dateTime,
           groupMembers: gastroObs,
@@ -699,7 +699,7 @@ export const MedicalHistoryFlow = () => {
         patient: params.id,
         encounterDatetime: dateTime, 
         obs:  [{
-          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          concept: concepts.REVIEW_OF_SYSTEMS_CARDIOPULMONARY, 
           value: true,
           obsDatetime: dateTime,
           groupMembers: cardiacObs,
@@ -724,7 +724,7 @@ export const MedicalHistoryFlow = () => {
         patient: params.id,
         encounterDatetime: dateTime, 
         obs:  [{
-          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          concept: concepts.REVIEW_OF_SYSTEMS_NERVOUS, 
           value: true,
           obsDatetime: dateTime,
           groupMembers: nervousObs,
@@ -759,7 +759,7 @@ export const MedicalHistoryFlow = () => {
         patient: params.id,
         encounterDatetime: dateTime, 
         obs:  [{
-          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          concept: concepts.REVIEW_OF_SYSTEMS_GENITOURINARY, 
           value: true,
           obsDatetime: dateTime,
           groupMembers: genitoObs,
@@ -809,7 +809,7 @@ export const MedicalHistoryFlow = () => {
           patient: params.id,
           encounterDatetime: dateTime, 
           obs:  [{
-            concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+            concept: concepts.REVIEW_OF_SYSTEMS_GENERAL, 
             value: true,
             obsDatetime: dateTime,
             groupMembers: obsGroup,
@@ -836,16 +836,14 @@ export const MedicalHistoryFlow = () => {
         fall: concepts.FALL,
         bite: concepts.BITE,
         gunshot: concepts.GUNSHOT,
-        collapse: concepts.FAINTING_SYNCOPE_COLLAPSE,
+        collapse: concepts.BUILDING_COLLAPSE,
         selfInflicted: concepts.SELF_HARM,
         burns: concepts.BURN_INJURY,
         drowning: concepts.DROWNING,
       };
 
       const mechanism = Object.keys(injuryMechanismList).filter((key) => values[key] === true);
-      console.log("mechanism", mechanism);
       
-
       const timeOfInjury = (values['timeOfInjury'].$d).toLocaleString()
 
       const traumaObs = [];
@@ -893,7 +891,7 @@ export const MedicalHistoryFlow = () => {
         patient: params.id,
         encounterDatetime: dateTime, 
         obs:  [{
-          concept: concepts.REVIEW_OF_SYSTEMS_OTHER, 
+          concept: concepts.REVIEW_OF_SYSTEMS_TRAUMA, 
           value: true,
           obsDatetime: dateTime,
           groupMembers: traumaObs,

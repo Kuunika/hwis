@@ -22,29 +22,31 @@ interface ProcessedObservation {
   children: ProcessedObservation[];
 }
 
-interface familyHistoryPanelProps {
+interface PanelProps {
 
   showForPrinting: boolean;
   toggleShow: (value: boolean) => void;
 
 }
 
-function reviewOfSystemsPanel({ showForPrinting , toggleShow}: familyHistoryPanelProps) {
+function ReviewOfSystemsPanel({ showForPrinting , toggleShow}: PanelProps) {
     const { params } = useParameters();
-    const { data: reviewOfSystemsData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
+    const { data: encounterData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const displayedObservations = showForPrinting ? observations : observations.slice(0, 4);
 
   useEffect(() => {
     if (!historyLoading) {
 
-        const familyHistoryEncounters = reviewOfSystemsData?.filter(
-            (item) => item.encounter_type?.name === "FAMILY MEDICAL HISTORY"
+        const rOSEncounters = encounterData?.filter(
+            (item) => item.encounter_type?.name === "Review of Systems"
           )
 
+
+          console.log(rOSEncounters);
         const observations: ProcessedObservation[] = [];
 
-        familyHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        rOSEncounters?.forEach((encounter: { obs: Observation[] }) => {
             encounter.obs.forEach((observation) => {
               const value = observation.value;
           
@@ -69,11 +71,11 @@ function reviewOfSystemsPanel({ showForPrinting , toggleShow}: familyHistoryPane
             setObservations(observations)
  
         }
-  },[medicationData])
+  },[encounterData])
 
 return (
   <>
-  <Panel title="Known Family History">
+  <Panel title="Review of Systems">
     <WrapperBox>
               {historyLoading ? (
                                   <div
@@ -88,7 +90,7 @@ return (
                                   </div>
                                 ) : (
                                   <>
-                                  {displayedObservations.length === 0 ? ( <p>No family history available</p>):(<>
+                                  {displayedObservations.length === 0 ? ( <p>No Review of Systems information available</p>):(<>
     <div
   style={{
     display: "flex",
@@ -105,6 +107,7 @@ return (
         color: "rgba(0, 0, 0, 0.6)",
       }}
     >
+        <p>{item.name}</p>
       {item.children && item.children.length > 0 && (
         <>
           {item.children.map((child) => (
@@ -166,4 +169,4 @@ return (
 }
 
 
-export default reviewOfSystemsPanel;
+export default ReviewOfSystemsPanel;

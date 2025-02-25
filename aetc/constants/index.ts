@@ -1083,6 +1083,8 @@ export const concepts = {
   REVIEW_OF_SYSTEMS_NERVOUS: "Review Of Systems Nervous",
   REVIEW_OF_SYSTEMS_GENITOURINARY: "Review Of Systems Genitourinary",
   REVIEW_OF_SYSTEMS_GASTROINTESTINAL: "Review Of Systems Gastrointestinal",
+  REVIEW_OF_SYSTEMS_GENERAL: "Review of systems, general",
+  REVIEW_OF_SYSTEMS_TRAUMA: "Review of systems, trauma",
   CONVULSIONS: "Convulsions",
   HALLUCINATIONS: "Hallucinations",
   ABNORMAL_BEHAVIOUR: "Abnormal Behaviour",
@@ -1186,6 +1188,7 @@ export const concepts = {
   OUTPUT_FLUID_TYPE: "Output fluid type",
   FLUID_BALANCE: "Fluid balance",
   FLUID_BALANCE_CHART: "Fluid balance chart",
+  BUILDING_COLLAPSE: "Building Collapse",
 }
 
 export const conceptNames= {

@@ -13,6 +13,7 @@ import { useRef, useState } from "react";
 import AllergiesPanel from "./components/allergies";
 import SocialHistoryPanel from "./components/socialHistory";
 import FamilyHistoryPanel from "./components/familyHistory";
+import ReviewOfSystemsPanel from "./components/reviewOfSystems";
 
 function InPatientAdmission() {
 
@@ -149,6 +150,9 @@ function InPatientAdmission() {
 </WrapperBox>
 <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
   <FamilyHistoryPanel showForPrinting={showAllPanels.familyHistory} toggleShow={()=>togglePanel("familyHistory")}/>
+</WrapperBox>
+<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+  <ReviewOfSystemsPanel showForPrinting={showAllPanels.familyHistory} toggleShow={()=>togglePanel("familyHistory")}/>
 </WrapperBox>
 </Box>
 </div>
