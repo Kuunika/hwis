@@ -32,7 +32,7 @@ interface PanelProps {
 function ReviewOfSystemsPanel({ showForPrinting , toggleShow}: PanelProps) {
     const { params } = useParameters();
     const { data: encounterData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
-    const [observations, setObservations] = useState<ProcessedObservation[]>([]);
+    const [observations, setObservations] = useState<(ProcessedObservation|null)[]>([]);
     const displayedObservations = showForPrinting ? observations : observations.slice(0, 4);
 
   useEffect(() => {
@@ -43,7 +43,6 @@ function ReviewOfSystemsPanel({ showForPrinting , toggleShow}: PanelProps) {
           )
 
 
-          console.log(rOSEncounters);
         const observations: ProcessedObservation[] = [];
 
         rOSEncounters?.forEach((encounter: { obs: Observation[] }) => {
@@ -67,8 +66,27 @@ function ReviewOfSystemsPanel({ showForPrinting , toggleShow}: PanelProps) {
               }
             });
           });
+          const seen = new Set();
+
+          const dedupedObs = observations.map(element => {
+                if (seen.has(element.name)) return null;
+                seen.add(element.name);
+          
+                const matches = observations.filter(item => item.name === element.name && item !== element);
+          
+                matches.forEach(match => {
+                    if (match.children) {
+                        element.children = [...(element.children || []), ...match.children];
+                    }
+                });
+          
+                return element;
+            })
+            .filter(Boolean);
+            
   
-            setObservations(observations)
+            setObservations(dedupedObs)
+
  
         }
   },[encounterData])
@@ -107,12 +125,12 @@ return (
         color: "rgba(0, 0, 0, 0.6)",
       }}
     >
-        <p>{item.name}</p>
+        <b>{item.name}</b>
       {item.children && item.children.length > 0 && (
         <>
           {item.children.map((child) => (
             <p key={child.obs_id}>
-              <b>{(child.name)?.split("Family History ").pop()}</b>
+              {(child.name)?.split("Family History ").pop()}
               {child.value === "true" ? null : `: ${child.value}`}
             </p>
           ))}
