@@ -14,6 +14,7 @@ import AllergiesPanel from "./components/allergies";
 import SocialHistoryPanel from "./components/socialHistory";
 import FamilyHistoryPanel from "./components/familyHistory";
 import ReviewOfSystemsPanel from "./components/reviewOfSystems";
+import VitalsPanel from "./components/vitals";
 
 function InPatientAdmission() {
 
@@ -153,6 +154,11 @@ function InPatientAdmission() {
 </WrapperBox>
 <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
   <ReviewOfSystemsPanel showForPrinting={showAllPanels.familyHistory} toggleShow={()=>togglePanel("familyHistory")}/>
+</WrapperBox>
+
+<h1>General Impression</h1>
+<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+  <VitalsPanel/>
 </WrapperBox>
 </Box>
 </div>

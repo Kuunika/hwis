@@ -66,8 +66,8 @@ function ReviewOfSystemsPanel({ showForPrinting , toggleShow}: PanelProps) {
               }
             });
           });
+          
           const seen = new Set();
-
           const dedupedObs = observations.map(element => {
                 if (seen.has(element.name)) return null;
                 seen.add(element.name);
