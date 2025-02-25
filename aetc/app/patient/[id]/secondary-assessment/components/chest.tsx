@@ -344,6 +344,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.chestWallAbnormality.name}
             label={form.chestWallAbnormality.label}
             options={radioOptions}
+            coded
           />
 
           {formValues[form.chestWallAbnormality.name] == YES && (
@@ -371,6 +372,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.localizedChestAbnormality.name}
             label={form.localizedChestAbnormality.label}
             options={radioOptions}
+            coded
           />
           {formValues[form.localizedChestAbnormality.name] == YES && (
             <ChestLung
@@ -430,6 +432,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             row={true}
             name={form.thrill.name}
             options={radioOptions}
+            coded
             label={form.thrill.label}
           />
           {formValues[form.thrill.name] == YES && (
@@ -444,6 +447,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             row={true}
             name={form.heaves.name}
             options={radioOptions}
+            coded
             label={form.heaves.label}
           />
           {formValues[form.heaves.name] == YES && (
