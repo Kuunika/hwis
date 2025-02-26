@@ -16,7 +16,7 @@ interface Props {
   imageEncounter?: string;
   imageSection?: string;
 
-  form: "breathSound" | "breathingLung" | "selectable";
+  form: "breathSounds" | "breathingLung" | "selectable";
 }
 
 export function LungFrontFemaleImage({
@@ -73,7 +73,7 @@ export function LungFrontFemaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        {form == "breathSound" && (
+        {form == "breathSounds" && (
           <BreathingSoundsForm
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>

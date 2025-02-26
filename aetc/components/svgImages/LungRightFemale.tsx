@@ -9,7 +9,8 @@ import { useEffect } from "react";
 
 import { useImageUpdate } from "@/hooks/useImageUpdate";
 import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
-import { LungLeftFemale } from "@/assets";
+import { LungLeftFemale, LungRightFemale } from "@/assets";
+import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
@@ -53,7 +54,7 @@ export function LungRightFemaleImage({
 
   return (
     <div>
-      <LungLeftFemale ref={containerRef} />
+      <LungRightFemale ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />
