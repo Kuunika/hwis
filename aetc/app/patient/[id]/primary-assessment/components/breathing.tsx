@@ -617,24 +617,22 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               <br />
               {formValues[form.percussion.name] == concepts.ABNORMAL && (
                 <>
-                  <LungBackMaleImage
-                    imageSection={form.percussion.name}
-                    imageEncounter={encounters.BREATHING_ASSESSMENT}
-                    percussion={true}
-                    onValueChange={setPercussionImage}
-                  />
-                  <LungBackFemaleImage
-                    imageSection={form.percussion.name}
-                    imageEncounter={encounters.BREATHING_ASSESSMENT}
-                    percussion={true}
-                    onValueChange={setPercussionImage}
-                  />
-                  <LungBackImage
-                    imageSection={form.percussion.name}
-                    imageEncounter={encounters.BREATHING_ASSESSMENT}
-                    percussion={true}
-                    onValueChange={setPercussionImage}
-                  />
+                  {gender == "Male" && (
+                    <LungBackMaleImage
+                      imageSection={form.percussion.name}
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      form="percussion"
+                      onValueChange={setPercussionImage}
+                    />
+                  )}
+                  {gender == "Female" && (
+                    <LungBackFemaleImage
+                      imageSection={form.percussion.name}
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      form="percussion"
+                      onValueChange={setPercussionImage}
+                    />
+                  )}
                 </>
               )}
               <FieldsContainer>
