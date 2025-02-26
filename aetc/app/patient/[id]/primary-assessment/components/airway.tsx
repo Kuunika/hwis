@@ -1,6 +1,10 @@
 import { GenericDialog, NotificationContainer } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { getInitialValues, getObservations } from "@/helpers";
+import {
+  getInitialValues,
+  getObservations,
+  mapSubmissionToCodedArray,
+} from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -17,15 +21,18 @@ import { getDateTime } from "@/helpers/dateTime";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { AirwayBreathingForm } from "@/app/triage/components";
 
 const form = {
   isAirwayPatent: {
     name: concepts.AIRWAY_PATENT,
     label: "Is Airway Patent",
+    coded: true,
   },
   isPatientInjured: {
     name: concepts.PATIENT_INJURED,
     label: "Is Patient Injured",
+    coded: true,
   },
   neckCollar: {
     name: concepts.NECK_COLLAR_APPLIED,
@@ -38,10 +45,12 @@ const form = {
   headBlocks: {
     name: concepts.HEAD_BLOCKS_APPLIED,
     label: "Head Blocks Applied",
+    coded: true,
   },
   airWayThreatenedReason: {
     name: concepts.AIRWAY_REASON,
     label: "Reason",
+    coded: true,
   },
   otherReason: {
     name: concepts.OTHER,
@@ -50,6 +59,7 @@ const form = {
   intervention: {
     name: concepts.AIRWAY_OPENING_INTERVENTION,
     label: "Airway Opening Intervention",
+    coded: true,
   },
   nasopharyngealSize: {
     name: concepts.NASOPHARYNGEAL_AIRWAY,
@@ -148,12 +158,14 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     const formValues = { ...values };
     const interventions = formValues[form.intervention.name];
     let interventionsObs: any = [];
+
     if (Array.isArray(interventions)) {
       interventionsObs = interventions.map((intervention) => {
         return {
           concept: form.intervention.name,
           value: intervention.id,
           obsDateTime: getDateTime(),
+          coded: true,
         };
       });
     }
@@ -166,6 +178,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
           concept: form.airWayThreatenedReason.name,
           value: reasons.id,
           obsDateTime: getDateTime(),
+          coded: true,
         };
       });
     }
@@ -174,7 +187,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     delete formValues[form.intervention.name];
 
     await handleSubmit([
-      ...getObservations(formValues, getDateTime()),
+      ...mapSubmissionToCodedArray(form, formValues),
       ...interventionsObs,
       ...reasonsObs,
     ]);

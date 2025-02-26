@@ -6,6 +6,7 @@ import {
   getInitialValues,
   getObservations,
   mapSearchComboOptionsToConcepts,
+  mapSubmissionToCodedArray,
 } from "@/helpers";
 import React, { useState } from "react";
 import {
@@ -38,14 +39,17 @@ const form = {
   bleedingInfo: {
     name: concepts.IS_PATIENT_ACTIVELY_BLEEDING,
     label: "Is the patient actively bleeding",
+    coded: true,
   },
   pulseInfo: {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
     label: "Does the patient have a pulse",
+    coded: true,
   },
   pulseRate: {
     name: concepts.PULSE_RATE_WEAK,
     label: "Purse Rate",
+    coded: true,
   },
   bloodPressureSystolic: {
     name: concepts.BLOOD_PRESSURE_SYSTOLIC,
@@ -58,32 +62,39 @@ const form = {
   intravenousAccess: {
     name: concepts.PATIENT_INTRAVENOUS,
     label: "Does the patient need intravenous access",
+    coded: true,
   },
   traumatizedInfo: {
     name: concepts.IS_PATIENT_TRAUMATIZED,
     label: "Is the patient injured",
+    coded: true,
   },
 
   abnormalitiesInfo: {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is there any other abnormalities?",
+    coded: true,
   },
   capillaryInfo: {
     name: concepts.CAPILLARY_REFILL_TIME,
     label: "Capillary refill time",
+    coded: true,
   },
   pelvisInfo: {
     name: concepts.IS_PELVIS_STABLE,
     label: "Is the pelvis stable?",
+    coded: true,
   },
   abdnomenDistention: {
     name: concepts.HEADACHE,
     label: "Is there abdominal distention?",
+    coded: true,
   },
 
   mucousMembranesInfo: {
     name: concepts.MUCOUS_MEMBRANES,
     label: "Mucous membranes",
+    coded: true,
   },
 
   catheterInfo: {
@@ -93,6 +104,7 @@ const form = {
   femurAndTibiaNormalInfo: {
     name: concepts.IS_FEMUR_TIBIA_NORMAL,
     label: "is the femur and tibia normal?",
+    coded: true,
   },
   bleedingActionDone: {
     name: concepts.ACTION_DONE,
@@ -118,6 +130,7 @@ const form = {
   bloodPressureMeasured: {
     name: concepts.BLOOD_PRESSURE_MEASURED,
     label: "Blood Pressure Measured",
+    coded: true,
   },
   reasonNotRecorded: {
     name: concepts.REASON_NOT_RECORDED,
@@ -126,10 +139,12 @@ const form = {
   reasonNotDone: {
     name: concepts.DESCRIPTION,
     label: "Reason Not Done",
+    coded: true,
   },
   mucousAbnormal: {
     name: concepts.MUCOUS_ABNORMAL,
     label: "Mucous Abnormal",
+    coded: true,
   },
   bloodPressureNotDoneOther: {
     name: concepts.SPECIFY,
@@ -138,10 +153,12 @@ const form = {
   siteOfCannulation: {
     name: concepts.CANNULATION_SITE,
     label: "Cannulation Site",
+    coded: true,
   },
   diagramCannulationSite: {
     name: concepts.DIAGRAM_CANNULATION_SITE,
     label: "Cannulation Site",
+    coded: true,
   },
   pulse: {
     name: concepts.PULSE_RATE,
@@ -316,11 +333,13 @@ export const Circulation = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
         obsDatetime: getDateTime(),
+        coded: true,
         groupMembers: flattenImagesObs(abdomenOtherImage),
       },
       {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
+        coded: true,
         obsDatetime: getDateTime(),
         groupMembers: flattenImagesObs(legImage),
       },
@@ -335,23 +354,27 @@ export const Circulation = ({ onSubmit }: Prop) => {
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
       form.mucousAbnormal.name,
-      getDateTime()
+      getDateTime(),
+      true
     );
     const sizeOfCatheterObs = mapSearchComboOptionsToConcepts(
-      formValues[form.mucousAbnormal.name],
-      form.mucousAbnormal.name,
-      getDateTime()
+      formValues[form.catheterInfo.name],
+      form.catheterInfo.name,
+      getDateTime(),
+      true
     );
     const siteOfCannulationObs = mapSearchComboOptionsToConcepts(
       formValues[form.siteOfCannulation.name],
       form.siteOfCannulation.name,
-      getDateTime()
+      getDateTime(),
+      true
     );
 
     const diagramCannulationSiteObs = mapSearchComboOptionsToConcepts(
       formValues[form.diagramCannulationSite.name],
       form.diagramCannulationSite.name,
-      getDateTime()
+      getDateTime(),
+      true
     );
 
     delete formValues[form.abnormalitiesInfo.name];
@@ -362,7 +385,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
     delete formValues[form.diagramCannulationSite.name];
 
     await handleSubmit([
-      ...getObservations(formValues, getDateTime()),
+      ...mapSubmissionToCodedArray(form, formValues),
       ...obs,
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,

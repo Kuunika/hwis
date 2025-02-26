@@ -100,7 +100,7 @@ const getConceptIds: any = async (obs: Obs[]) => {
         ? await getConceptIds(observation.groupMembers)
         : [];
 
-    
+  
       if (concept.data.length > 0) {
         obsWithUUIDs.push({
           ...observation,
@@ -119,7 +119,7 @@ const getConceptIds: any = async (obs: Obs[]) => {
 };
 
 
-const getConceptFromCacheOrFetch = async (conceptName:string)=>{
+export const getConceptFromCacheOrFetch = async (conceptName:string)=>{
   const cachedConcept = queryClient.getQueryData(["concepts", conceptName]);
 
   let concept;

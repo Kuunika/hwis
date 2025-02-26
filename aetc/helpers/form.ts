@@ -53,12 +53,13 @@ return formImageEncounters.flatMap((enc)=>{
 
 }
 
-export const mapSearchComboOptionsToConcepts = (options: Array<any>, concept:string, obsDatetime:any)=>{
+export const mapSearchComboOptionsToConcepts = (options: Array<any>, concept:string, obsDatetime:any, coded:boolean=false)=>{
 return Array.isArray(options)
 ? options.map((opt: any) => ({
     concept,
     value: opt.id,
-    obsDatetime
+    obsDatetime,
+    coded
   }))
 : [];
 }

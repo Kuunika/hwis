@@ -23,7 +23,12 @@ import {
   LungLeftSideImage,
   ChestLung,
 } from "@/components/svgImages";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSubmissionToCodedArray,
+} from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -42,6 +47,7 @@ const form = {
   isPatientBreathing: {
     name: concepts.IS_BREATHING_ABNORMAL,
     label: "Is Patient Breathing",
+    coded: true,
   },
   startTimeIntervention: {
     name: concepts.START_TIME,
@@ -54,6 +60,7 @@ const form = {
   deviceForIntervention: {
     name: concepts.DEVICE_USED,
     label: "Device used for intervention",
+    coded: true,
   },
   respiratoryRate: {
     name: concepts.RESPIRATORY_RATE,
@@ -66,6 +73,7 @@ const form = {
   oxygenNeeded: {
     name: concepts.PATIENT_NEED_OXYGEN,
     label: "Patient Need Oxygen",
+    coded: true,
   },
   oxygenGiven: {
     name: concepts.OXYGEN_GIVEN,
@@ -74,26 +82,32 @@ const form = {
   oxygenSource: {
     name: concepts.OXYGEN_SOURCE,
     label: "Oxygen Source",
+    coded: true,
   },
   deviceUsed: {
     name: concepts.DEVICE_USED,
     label: "Device Used",
+    coded: true,
   },
   isTracheaCentral: {
     name: concepts.IS_TRACHEA_CENTRAL,
     label: "Is Trachea Central",
+    coded: true,
   },
   deviationSide: {
     name: concepts.SIDE_DEVIATED,
     label: "Which side is it deviated to",
+    coded: true,
   },
   chestWallAbnormality: {
     name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
+    coded: true,
   },
   chestExpansion: {
     name: concepts.CHEST_EXPANSION,
     label: "Chest Expansion",
+    coded: true,
   },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
@@ -110,10 +124,12 @@ const form = {
   percussion: {
     name: concepts.PERCUSSION,
     label: "Percussion",
+    coded: true,
   },
   breathSounds: {
     name: concepts.BREATHING_SOUNDS,
     label: "Breath Sounds",
+    coded: true,
   },
 };
 
@@ -289,17 +305,20 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         concept: form.chestWallAbnormality.name,
         value: formValues[form.chestWallAbnormality.name],
         obsDatetime: getDateTime(),
+        coded: true,
         groupMembers: flattenImagesObs(chestAbnormalitiesImage),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime: getDateTime(),
+        coded: true,
         groupMembers: flattenImagesObs(percussionImage),
       },
       {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
+        coded: true,
         obsDatetime: getDateTime(),
         groupMembers: flattenImagesObs(chestExpansionImagesEnc),
       },
@@ -344,6 +363,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
           concept: form.deviceForIntervention.name,
           value: device.id,
           obsDateTime: getDateTime(),
+          coded: true,
         };
       });
     }
@@ -354,7 +374,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.chestExpansion.name];
 
     await handleSubmit([
-      ...getObservations(formValues, getDateTime()),
+      ...mapSubmissionToCodedArray(form, formValues),
       ...obs,
       ...devicesObs,
     ]);

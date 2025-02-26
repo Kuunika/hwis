@@ -129,11 +129,11 @@ export const AirwayAndBreathingForm = ({
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
+      submitButtonText="next"
+      submitButton={false}
       onSubmit={(values) =>
         onSubmit(mapSubmissionToCodedArray(AirwayBreathingForm, values))
       }
-      submitButtonText="next"
-      submitButton={false}
       getFormValues={(value) =>
         getFormValues(mapSubmissionToCodedArray(AirwayBreathingForm, value))
       }
