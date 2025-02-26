@@ -22,6 +22,7 @@ import { LiaSyringeSolid } from "react-icons/lia";
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  submitting: boolean;
 };
 
 export const ObservationFormConfig = {
@@ -93,7 +94,7 @@ const schema = Yup.object().shape({
 
 const initialValues = getInitialValues(ObservationFormConfig);
 
-export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
+export const ObservationsForm = ({ onSubmit, onSkip, submitting }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const { navigateTo } = useNavigation();
   const { flow, addKeyToFlow} = useContext(KeyValueContext) as KeyValueContextType;
@@ -497,8 +498,8 @@ export const ObservationsForm = ({ onSubmit, onSkip }: Prop) => {
   
 
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit}/>
-        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip} />
+        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} disabled={submitting}/>
+        <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip}/>
       </WrapperBox>
     </FormikInit>
   );

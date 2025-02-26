@@ -27,14 +27,14 @@ function VitalsPanel() {
     const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const [bP, setBP] = useState<string>("No BP data available");
-
-    
+    const [heartRate, setHeartRate] = useState<string>("No heart rate data available");
+    const [respiratoryRate, setRespiratoryRate] = useState<string>("No respiratory rate data available");
+    const [temperature, setTemperature] = useState<string>("No temperature data available");
  
 
   useEffect(() => {
     if (!historyLoading) {
-        const observations: ProcessedObservation[] = [];
-        
+
         const vitalsEncounters = historicData?.filter((item) => item.encounter_type?.name === 'VITALS');
         const vitalsObs = vitalsEncounters && vitalsEncounters.length > 0 ? vitalsEncounters[0].obs : null;
         console.log(vitalsObs)
@@ -49,7 +49,19 @@ function VitalsPanel() {
                 
                 const diastolicObs = sortedVitals?.filter((item)=> item.names[0].name === 'Blood Pressure Diastolic' || item.names[0].name === 'Diastolic blood pressure');
                 const diastolic = (diastolicObs[0]?.value);
-                setBP(`${systolic}/${diastolic} mmHg`);
+                if(systolic && diastolic) setBP(`${systolic}/${diastolic} mmHg`);
+
+                const heartRateObs = sortedVitals?.filter((item)=> item.names[0].name === 'Pulse');
+                const heartRate = (heartRateObs[0]?.value);
+                if(heartRate > 0) setHeartRate(`${heartRate} bpm`);
+
+                const respiratoryRateObs = sortedVitals?.filter((item)=> item.names[0].name === 'Respiratory rate');
+                const respiratoryRate = (respiratoryRateObs[0]?.value);
+                if(respiratoryRate) setRespiratoryRate(`${respiratoryRate} bs/m`);
+
+                const temperatureObs = sortedVitals?.filter((item)=> item.names[0].name === 'Temperature (c)');
+                const temperature = (temperatureObs[0]?.value);
+                if(temperature) setTemperature(`${temperature} °C`);
 
         }
     }
@@ -73,8 +85,11 @@ return (
                                 </div>
                               ) : (
                                 <>
-            <div>
-            <p><b>BP:</b> {bP}</p>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>BP:</b> {bP}</p>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>Pulse Rate:</b> {heartRate}</p>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>Respiratory Rate:</b> {respiratoryRate}</p>
+            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>Temperature:</b> {temperature}</p>
             </div> 
             </>)}
             </WrapperBox>

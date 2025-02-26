@@ -38,6 +38,7 @@ export const MonitoringChart = () => {
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertSeverity, setAlertSeverity] = useState<"error" | "success" | null>(null);
   const dateTime = getDateTime();
+  const [vitalsSubmitting, setVitalsSubmitting] = useState<boolean>(false);
 
   const {
     data: patientVisits,
@@ -108,8 +109,9 @@ export const MonitoringChart = () => {
       navigateBack();}, 5000);
     }
 
+    setVitalsSubmitting(creatingVitals);
 
-  }, [vitalsError, interventionsError, nursingNotesError, vitalsCreated, interventionsCreated, nursingNotesCreated]);
+  }, [vitalsError, interventionsError, nursingNotesError, vitalsCreated, interventionsCreated, nursingNotesCreated, creatingVitals]);
 
   const handleObservationsSubmit = async (values: any) => {
     if(values["Triage Result"] === "No Score") {
@@ -123,13 +125,14 @@ export const MonitoringChart = () => {
       );
 
       const groupMemberObs = getObservations(forGroupMembers, dateTime);
+      const filteredVitals = groupMemberObs.filter(item => item.value !== "");
 
       const observations = [
         {
           concept: concepts.TRIAGE_RESULT,
           obsDatetime: dateTime,
           value: values[concepts.TRIAGE_RESULT],
-          groupMembers: groupMemberObs,
+          groupMembers: filteredVitals,
         },
       ];
 
@@ -397,6 +400,7 @@ if (values[subjectiveKey] || values[assessmentKey] || values[planKey] || values[
         <ObservationsForm
           onSubmit={handleObservationsSubmit}
           onSkip={handleSkip}
+          submitting={vitalsSubmitting}
         />
         <InterventionsForm
           onSubmit={handleInterventionsSubmit}
