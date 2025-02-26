@@ -1,17 +1,22 @@
 "use client";
 import { FC } from "react";
-
 import { useFormikField } from "./hooks";
 import { InputLabel, SxProps } from "@mui/material";
-
-import Select from "react-select";
+import Select, {
+  MultiValue,
+  SingleValue,
+  StylesConfig,
+  Theme,
+} from "react-select";
 import makeAnimated from "react-select/animated";
 import { MainTypography, WrapperBox, defaultTheme } from "..";
 import { fetchConceptsSelectOptions } from "@/hooks/encounter";
 
+type OptionType = { id: number | string; label: string | number };
+
 type Props = {
   name: string;
-  options: Array<{ id: number | string; label: number | string }>;
+  options: OptionType[];
   label: string;
   width?: string;
   sx?: SxProps;
@@ -21,7 +26,7 @@ type Props = {
   multiple?: boolean;
   size?: "small" | "medium";
   applyPadding?: boolean;
-  manualInitialValues?: Array<any>;
+  manualInitialValues?: OptionType[];
   coded?: boolean;
 };
 
@@ -40,15 +45,12 @@ export const SearchComboBox: FC<Props> = ({
   applyPadding = true,
   coded = false,
 }) => {
-  const { hasError, setFieldValue, initialValues, value, errorMessage } =
-    useFormikField(name);
+  const { hasError, setFieldValue, value, errorMessage } = useFormikField(name);
 
-  const mappedOptions = options.map((op) => {
-    return {
-      value: op.id,
-      label: op.label,
-    };
-  });
+  const mappedOptions = options.map((op) => ({
+    value: op.id,
+    label: op.label,
+  }));
 
   const handleChange = async (values: any) => {
     let inputValue = multiple
@@ -74,32 +76,28 @@ export const SearchComboBox: FC<Props> = ({
     }
   };
 
-  const padding = applyPadding
-    ? {
-        paddingTop: "1ch",
-        paddingBottom: "1ch",
-      }
+  const paddingStyles = applyPadding
+    ? { paddingTop: "1ch", paddingBottom: "1ch" }
     : {};
+
+  const customStyles: StylesConfig = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: hasError ? "red" : "#B3B3B3",
+      ...paddingStyles,
+    }),
+  };
 
   return (
     <WrapperBox sx={{ width, ...sx, borderRadius: 0.5 }}>
       <InputLabel shrink>{label}</InputLabel>
-      {mappedOptions && mappedOptions.length > 0 ? (
+      {mappedOptions.length > 0 && (
         <Select
           isDisabled={disabled}
-          styles={{
-            //@ts-ignore
-            control: (baseStyles, state) => ({
-              ...baseStyles,
-              borderColor: hasError ? "red" : "#B3B3B3",
-              ...padding,
-            }),
-          }}
-          // value={() => mappedOptions.find((op) => op.value == value)}
-          //@ts-ignore
+          value={mappedOptions.find((op) => op.value === value)}
+          styles={customStyles}
           defaultValue={manualInitialValues}
-          //@ts-ignore
-          theme={(theme) => ({
+          theme={(theme: Theme) => ({
             ...theme,
             colors: {
               ...theme.colors,
@@ -107,13 +105,13 @@ export const SearchComboBox: FC<Props> = ({
               primary25: "#cffccf",
             },
           })}
-          onChange={(values) => handleChange(values)}
+          onChange={handleChange}
           isMulti={multiple}
           components={animatedComponents}
           options={mappedOptions}
         />
-      ) : null}
-      <MainTypography color={"red"} variant="subtitle2">
+      )}
+      <MainTypography color="red" variant="subtitle2">
         {errorMessage}
       </MainTypography>
     </WrapperBox>

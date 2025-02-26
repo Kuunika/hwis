@@ -242,37 +242,37 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(chestExpansionImagesEnc),
+        groupMembers: flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: form.tactileFremitus.name,
         value: formValues[form.tactileFremitus.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(tactileFremitusImagesEnc),
+        groupMembers: flattenImagesObs(tactileFremitusImagesEnc),
       },
       {
         concept: concepts.AUSCULTATION_LUNG,
         value: concepts.AUSCULTATION_LUNG,
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(breathingSoundsImagesEnc),
+        groupMembers: flattenImagesObs(breathingSoundsImagesEnc),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(percussionImagesEnc),
+        groupMembers: flattenImagesObs(percussionImagesEnc),
       },
       {
         concept: form.localizedChestAbnormality.name,
         value: formValues[form.localizedChestAbnormality.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(localizedChestImagesEnc),
+        groupMembers: flattenImagesObs(localizedChestImagesEnc),
       },
       // {
       //   concept: form.vocalFremitus.name,
       //   value: formValues[form.vocalFremitus.name],
       //   obsDatetime: getDateTime(),
-      //   group_members: flattenImagesObs(vocalFremitusImagesEnc),
+      //   groupMembers: flattenImagesObs(vocalFremitusImagesEnc),
       // },
     ];
 

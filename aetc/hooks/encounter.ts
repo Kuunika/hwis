@@ -61,15 +61,9 @@ export const fetchConceptAndCreateEncounter = () => {
       obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
     };
 
-
-  
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
- 
 
 
-  
-
- 
     return createEncounter(filteredEncounter).then((response) => response.data);
   };
 
@@ -88,34 +82,32 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
   try {
     for (const observation of obs) {
-      const conceptName = observation.concept;
+      const conceptName = observation.concept as unknown as string;
 
      
-      const cachedConcept = queryClient.getQueryData(["concepts", conceptName]);
-      let concept;
+      let concept:any = await getConceptFromCacheOrFetch(conceptName);
 
-      if (cachedConcept) {
-      
-        concept = cachedConcept 
-       console.log("using cached data",cachedConcept);
-      } else {
-      
-        concept = await getConcept(conceptName);
-        queryClient.setQueryData(["concepts", conceptName], concept);
+      let value= observation.value;
+
+      if(observation.coded){
+
+        value =  (await getConceptFromCacheOrFetch(observation.value))?.data[0].uuid
+
       }
-
-      console.log(conceptName, concept.data, concept.data[0]);
+      
     
       const groupMembers = Array.isArray(observation.groupMembers)
         ? await getConceptIds(observation.groupMembers)
         : [];
 
-     
+    
       if (concept.data.length > 0) {
         obsWithUUIDs.push({
           ...observation,
-          concept: concept.data[0].uuid,
+          concept: concept?.data[0]?.uuid,
+          value,
           groupMembers,
+          conceptName
         });
       }
     }
@@ -125,6 +117,24 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
   return obsWithUUIDs;
 };
+
+
+const getConceptFromCacheOrFetch = async (conceptName:string)=>{
+  const cachedConcept = queryClient.getQueryData(["concepts", conceptName]);
+
+  let concept;
+  if (cachedConcept) {
+    concept = cachedConcept 
+   console.log("using cached data",cachedConcept);
+  } else {
+  
+    concept = await getConcept(conceptName);
+    queryClient.setQueryData(["concepts", conceptName], concept);
+    queryClient.setQueryData([concept.data[0].uuid], conceptName);
+  }
+
+  return concept
+}
 
 
 
@@ -144,10 +154,12 @@ const fetchConcepts = async (options: Array<{ key: string; label: string }>, use
   for (const option of options) {
     const cachedConcept = queryClient.getQueryData(["concepts", option.key]);
 
-    let conceptData = cachedConcept ? { data: [cachedConcept] } : await getConcept(option.key);
+    let conceptData = cachedConcept ? cachedConcept : await getConcept(option.key);
 
     if (!cachedConcept) {
-      queryClient.setQueryData(["concepts", option.key], conceptData.data[0]);
+      queryClient.setQueryData(["concepts", option.key], conceptData);
+      queryClient.setQueryData([conceptData.data[0].uuid], option.key);
+
     }
 
     if (conceptData.data.length) {

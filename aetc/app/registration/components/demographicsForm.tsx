@@ -295,6 +295,7 @@ export const DemographicsForm: FC<Prop> = ({
   setContext,
 }) => {
   const [guardianAvailable, setGuardianAvailable] = useState("");
+
   const {
     initialRegisteredPatient,
     patient,
@@ -374,7 +375,6 @@ export const DemographicsForm: FC<Prop> = ({
   }, [initialRegisteredPatient]);
 
   useEffect(() => {
-    console.log(fieldFunction, checked);
     if (fieldFunction && checked) {
       const { setFieldValue } = fieldFunction;
       setCurrentSelectedLocation(selectedLocation);
@@ -382,6 +382,7 @@ export const DemographicsForm: FC<Prop> = ({
         form.currentDistrict.name,
         formValues[form.homeDistrict.name]
       );
+
       setFieldValue(
         form.currentVillage.name,
         formValues[form.homeVillage.name]

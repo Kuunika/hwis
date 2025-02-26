@@ -316,19 +316,19 @@ export const Circulation = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abdomenOtherImage),
+        groupMembers: flattenImagesObs(abdomenOtherImage),
       },
       {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(legImage),
+        groupMembers: flattenImagesObs(legImage),
       },
       // {
       //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
       //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
       //   obsDatetime: getDateTime(),
-      //   group_members: flattenImagesObs(abdomenImage),
+      //   groupMembers: flattenImagesObs(abdomenImage),
       // },
     ];
 

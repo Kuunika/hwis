@@ -133,6 +133,7 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         options={palpationOptions}
         name={form.palpation.name}
         label={form.palpation.label}
+        coded
       />
       <br />
 

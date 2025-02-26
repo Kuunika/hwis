@@ -396,13 +396,13 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesPresent.name,
         value: formValues[form.abnormalitiesPresent.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abnormalitiesPresentImageEnc),
+        groupMembers: flattenImagesObs(abnormalitiesPresentImageEnc),
       },
       {
         concept: concepts.PALPATION,
         value: concepts.PALPATION,
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(tendernessImageEnc),
+        groupMembers: flattenImagesObs(tendernessImageEnc),
       },
     ];
 
@@ -438,6 +438,11 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
       form.digitalVaginalExamination.name,
       datetime
     );
+    const generalObs = mapSearchComboOptionsToConcepts(
+      formValues[form.general.name],
+      form.general.name,
+      datetime
+    );
 
     delete formValues[form.generalInspection.name];
     delete formValues[form.scrotum.name];
@@ -446,6 +451,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     delete formValues[form.urethralMeatus.name];
     delete formValues[form.abnormalitiesPresent.name];
     delete formValues[form.digitalVaginalExamination.name];
+    delete formValues[form.general.name];
 
     await handleSubmit([
       ...getObservations(formValues, getDateTime()),
@@ -456,6 +462,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
       ...periymenObs,
       ...vaginaObs,
       ...digitalVaginalExaminationObs,
+      ...generalObs,
     ]);
   };
 
