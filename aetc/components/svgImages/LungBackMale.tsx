@@ -15,6 +15,7 @@ import {
   LungFrontFemale,
   LungFrontMale,
   LungLeftFemale,
+  LungRightMale,
 } from "@/assets";
 interface Props {
   onValueChange: (values: any) => void;
@@ -22,7 +23,7 @@ interface Props {
   imageSection?: string;
 }
 
-export function LungFrontMaleImage({
+export function LungBackMaleImage({
   onValueChange,
   imageEncounter,
   imageSection,
@@ -59,7 +60,7 @@ export function LungFrontMaleImage({
 
   return (
     <div>
-      <LungFrontMale ref={containerRef} />
+      <LungBackMale ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />

@@ -28,6 +28,11 @@ import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
+import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
+import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
+import { getActivePatientDetails } from "@/hooks";
+import { LungBackMaleImage } from "@/components/svgImages/LungBackMale";
+import { LungBackFemaleImage } from "@/components/svgImages/LungBackFemale";
 
 const form = {
   isPatientBreathing: {
@@ -252,6 +257,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
+  const { gender } = getActivePatientDetails();
   const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
     Array<any>
   >([]);
@@ -349,10 +355,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       ...devicesObs,
     ]);
   };
-
-  useEffect(() => {
-    console.log({ lungLeft, lungRight, lungFront, lungBack });
-  }, [lungLeft, lungRight, lungFront, lungBack]);
 
   const breathSoundsSlides = [
     {
@@ -527,11 +529,24 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 <>
                   <br />
                   <NotificationContainer message="Diagram to select area" />
-                  <LungImage
-                    imageEncounter={encounters.BREATHING_ASSESSMENT}
-                    imageSection={form.chestWallAbnormality.name}
-                    onValueChange={setChestAbnormalitiesImage}
-                  />
+
+                  {gender == "Male" && (
+                    <LungFrontMaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestAbnormalitiesImage}
+                      form="breathingLung"
+                    />
+                  )}
+                  {gender == "Female" && (
+                    <LungFrontFemaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestAbnormalitiesImage}
+                      form="breathingLung"
+                    />
+                  )}
+
                   <br />
                   <FieldsContainer>
                     {/* <SearchComboBox
@@ -574,25 +589,53 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 />
               </FieldsContainer>
               {formValues[form.chestExpansion.name] == concepts.REDUCED && (
-                <FieldsContainer>
-                  <ChestLung
+                <>
+                  {gender == "Male" && (
+                    <LungFrontMaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestExpansionImagesEnc}
+                      form="selectable"
+                    />
+                  )}
+                  {gender == "Female" && (
+                    <LungFrontFemaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestExpansionImagesEnc}
+                      form="selectable"
+                    />
+                  )}
+                  {/* <ChestLung
                     onValueChange={setChestExpansionImagesEnc}
                     imageEncounter={encounters.CHEST_ASSESSMENT}
                     imageSection={form.chestExpansion.name}
                     selectable={true}
-                  />
-                </FieldsContainer>
+                  /> */}
+                </>
               )}
               <br />
               {formValues[form.percussion.name] == concepts.ABNORMAL && (
-                <FieldsContainer>
+                <>
+                  <LungBackMaleImage
+                    imageSection={form.percussion.name}
+                    imageEncounter={encounters.BREATHING_ASSESSMENT}
+                    percussion={true}
+                    onValueChange={setPercussionImage}
+                  />
+                  <LungBackFemaleImage
+                    imageSection={form.percussion.name}
+                    imageEncounter={encounters.BREATHING_ASSESSMENT}
+                    percussion={true}
+                    onValueChange={setPercussionImage}
+                  />
                   <LungBackImage
                     imageSection={form.percussion.name}
                     imageEncounter={encounters.BREATHING_ASSESSMENT}
                     percussion={true}
                     onValueChange={setPercussionImage}
                   />
-                </FieldsContainer>
+                </>
               )}
               <FieldsContainer>
                 <RadioGroupInput

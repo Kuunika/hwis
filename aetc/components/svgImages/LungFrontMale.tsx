@@ -1,7 +1,7 @@
 import { SVGPopover } from "./svgPopover";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 
-import { DataBox, RushForm } from "./forms";
+import { BreathingLungForm, DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 
 import { concepts } from "@/constants";
@@ -11,21 +11,25 @@ import { useImageUpdate } from "@/hooks/useImageUpdate";
 import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
 import {
   LungBackFemale,
+  LungBackMale,
   LungFrontFemale,
   LungFrontMale,
   LungLeftFemale,
-  LungRightMale,
 } from "@/assets";
+import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
+  form: "breathSound" | "breathingLung" | "selectable";
 }
 
-export function LungRightMaleImage({
+export function LungFrontMaleImage({
   onValueChange,
   imageEncounter,
   imageSection,
+
+  form,
 }: Props) {
   const {
     handleClose,
@@ -35,11 +39,13 @@ export function LungRightMaleImage({
     anchorEl,
     selectedSection,
     ids,
+    deselectSection,
   } = useImageUpdate();
   const { setData, submittedValues } = useImageFormTransform();
   useEffect(() => {
     onValueChange(ids);
   }, [ids]);
+  const isSelected = ids.find((id) => id.id == selectedSection.id);
 
   const handleDataSubmission = (
     section: string,
@@ -59,7 +65,7 @@ export function LungRightMaleImage({
 
   return (
     <div>
-      <LungRightMale ref={containerRef} />
+      <LungFrontMale ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />
@@ -71,7 +77,65 @@ export function LungRightMaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <></>
+        {form == "breathSound" && (
+          <BreathingSoundsForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {form == "breathingLung" && (
+          <BreathingLungForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+
+        {form == "selectable" && (
+          <Box sx={{ display: "flex", gap: "0.2ch" }}>
+            {!isSelected && (
+              <Button
+                type="submit"
+                onClick={() => handleFormSubmit({})}
+                sx={{ borderRadius: "1px" }}
+                variant="contained"
+                fullWidth
+              >
+                Select
+              </Button>
+            )}
+            {isSelected && (
+              <Button
+                type="submit"
+                onClick={deselectSection}
+                sx={{ borderRadius: "1px" }}
+                variant="contained"
+                color="inherit"
+                fullWidth
+              >
+                deselect
+              </Button>
+            )}
+            <Button
+              sx={{ borderRadius: "1px" }}
+              fullWidth
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+          </Box>
+        )}
       </SVGPopover>
     </div>
   );

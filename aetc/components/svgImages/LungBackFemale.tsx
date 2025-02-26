@@ -1,7 +1,7 @@
 import { SVGPopover } from "./svgPopover";
 import { Box } from "@mui/material";
 
-import { DataBox, RushForm } from "./forms";
+import { BreathingLungForm, DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 
 import { concepts } from "@/constants";
@@ -10,16 +10,20 @@ import { useEffect } from "react";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
 import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
 import { LungBackFemale, LungFrontFemale, LungLeftFemale } from "@/assets";
+import { PercussionForm } from "./forms/chest/percussionForm";
+import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
+  form: "percussion" | "breathSounds" | "breathLungs";
 }
 
-export function LungFrontFemaleImage({
+export function LungBackFemaleImage({
   onValueChange,
   imageEncounter,
   imageSection,
+  form,
 }: Props) {
   const {
     handleClose,
@@ -65,7 +69,42 @@ export function LungFrontFemaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <></>
+        {form == "percussion" && (
+          <PercussionForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {form == "breathSounds" && (
+          <BreathingSoundsForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {form == "breathLungs" && (
+          <BreathingLungForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
       </SVGPopover>
     </div>
   );
