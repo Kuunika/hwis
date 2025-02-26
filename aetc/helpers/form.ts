@@ -1,3 +1,5 @@
+import { getDateTime } from "./dateTime";
+
 export const getInitialValues = (values: any) => {
   const keys = Object.keys(values);
 
@@ -60,3 +62,48 @@ return Array.isArray(options)
   }))
 : [];
 }
+
+type FormType = {
+  [key: string]: { name: string; label: string; coded?: boolean };
+};
+
+type SubmissionType = { [key: string]: any };
+
+export const mapSubmissionToCodedArray = (
+  formDefinition: FormType,
+  submission: SubmissionType
+) => {
+  return Object.entries(submission)
+    .map(([key, value]) => {
+      // Find the matching form key where `name` matches the submitted key
+      const matchedKey = Object.keys(formDefinition).find(
+        (formKey) => formDefinition[formKey].name === key
+      );
+
+      if (!matchedKey) return null; // Skip unmatched keys
+
+      const conceptName = formDefinition[matchedKey].name;
+      const coded = formDefinition[matchedKey].coded;
+
+      // If value is an array of objects with `{ id: string }`, map each separately
+      if (Array.isArray(value) && value.every((v) => v && v.id !== undefined)) {
+        return value.map((v) => ({
+          key: conceptName,
+          value: v.id,
+          coded,
+        }));
+      }
+
+      // Return as a single object if not an array
+      return {
+        concept: conceptName,
+        value,
+        coded,
+        obsDatetime: getDateTime(),
+      };
+    })
+    .flat() // Flatten in case of nested arrays
+    .filter(Boolean); 
+
+ 
+};
