@@ -10,17 +10,12 @@ import { useEffect } from "react";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
 import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
 import { LungLeftFemale } from "@/assets";
+import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
 interface Props {
   onValueChange: (values: any) => void;
-  imageEncounter?: string;
-  imageSection?: string;
 }
 
-export function LungLeftFemaleImage({
-  onValueChange,
-  imageEncounter,
-  imageSection,
-}: Props) {
+export function LungLeftFemaleImage({ onValueChange }: Props) {
   const {
     handleClose,
     handleFormSubmit,
@@ -41,13 +36,6 @@ export function LungLeftFemaleImage({
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    if (imageEncounter && imageSection) {
-      formData = {
-        ...formData,
-        [concepts.IMAGE_ENCOUNTER]: imageEncounter,
-        [concepts.IMAGE_SECTION]: imageSection,
-      };
-    }
     handleFormSubmit(formData);
   };
 
@@ -65,7 +53,16 @@ export function LungLeftFemaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <></>
+        <BreathingSoundsForm
+          onCancel={handleClose}
+          onSubmit={(values, formConceptsLabels) =>
+            handleDataSubmission(
+              selectedSection.label as string,
+              values,
+              formConceptsLabels
+            )
+          }
+        />
       </SVGPopover>
     </div>
   );

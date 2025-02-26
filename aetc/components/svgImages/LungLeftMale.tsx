@@ -15,6 +15,7 @@ import {
   LungLeftFemale,
   LungLeftMale,
 } from "@/assets";
+import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
@@ -70,7 +71,16 @@ export function LungLeftMaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <></>
+        <BreathingSoundsForm
+          onCancel={handleClose}
+          onSubmit={(values, formConceptsLabels) =>
+            handleDataSubmission(
+              selectedSection.label as string,
+              values,
+              formConceptsLabels
+            )
+          }
+        />
       </SVGPopover>
     </div>
   );

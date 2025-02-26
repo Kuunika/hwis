@@ -65,7 +65,16 @@ export function LungRightFemaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <></>
+        <BreathingSoundsForm
+          onCancel={handleClose}
+          onSubmit={(values, formConceptsLabels) =>
+            handleDataSubmission(
+              selectedSection.label as string,
+              values,
+              formConceptsLabels
+            )
+          }
+        />
       </SVGPopover>
     </div>
   );

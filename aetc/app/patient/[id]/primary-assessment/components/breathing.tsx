@@ -33,6 +33,10 @@ import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
 import { getActivePatientDetails } from "@/hooks";
 import { LungBackMaleImage } from "@/components/svgImages/LungBackMale";
 import { LungBackFemaleImage } from "@/components/svgImages/LungBackFemale";
+import { LungLeftFemaleImage } from "@/components/svgImages/LungLeftFemale";
+import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
+import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
+import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 
 const form = {
   isPatientBreathing: {
@@ -360,12 +364,22 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     {
       id: 1,
       label: "Lung Left",
-      content: <LungRightSideImage onValueChange={setLungLeft} />,
+      content:
+        gender == "Female" ? (
+          <LungLeftFemaleImage onValueChange={setLungLeft} />
+        ) : (
+          <LungLeftMaleImage onValueChange={setLungLeft} />
+        ),
     },
     {
       id: 2,
       label: "Lung Right",
-      content: <LungLeftSideImage onValueChange={setLungRight} />,
+      content:
+        gender == "Female" ? (
+          <LungRightFemaleImage onValueChange={setLungRight} />
+        ) : (
+          <LungRightMaleImage onValueChange={setLungRight} />
+        ),
     },
     {
       id: 3,
