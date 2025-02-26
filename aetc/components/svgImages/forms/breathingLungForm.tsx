@@ -67,7 +67,7 @@ export const BreathingLungForm = (props: Props) => {
             setShowInputTextDisplay(
               Boolean(
                 values.find(
-                  (v: any) => v.id == getCachedConcept(concepts.OTHER).uuid
+                  (v: any) => v.id == getCachedConcept(concepts.OTHER)?.uuid
                 )
               )
             );
