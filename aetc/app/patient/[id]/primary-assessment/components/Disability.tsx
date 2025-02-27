@@ -11,7 +11,11 @@ import {
 import * as yup from "yup";
 import { Box } from "@mui/material";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { getInitialValues, getObservations } from "@/helpers";
+import {
+  getInitialValues,
+  getObservations,
+  mapSubmissionToCodedArray,
+} from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -51,6 +55,7 @@ const form = {
   seizureInfo: {
     name: concepts.ACTIVE_SEIZURES,
     label: "Is the patient having Seizures",
+    coded: true,
   },
 };
 
@@ -140,7 +145,7 @@ export const Disability = ({ onSubmit }: Props) => {
   );
 
   const handleFormSubmit = (values: any) => {
-    handleSubmit(getObservations(values, getDateTime()));
+    handleSubmit(mapSubmissionToCodedArray(form, values));
   };
 
   const totalSum =

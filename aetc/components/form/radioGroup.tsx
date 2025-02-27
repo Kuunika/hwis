@@ -1,5 +1,5 @@
-'use client'
-import { FC, useEffect } from "react";
+"use client";
+import { FC, useEffect, useState } from "react";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -7,16 +7,18 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
+import { fetchConceptsRadioOptions } from "@/hooks/encounter";
 
 type Prop = {
   label: string;
   name: string;
-  options: Array<{ label: string; value: string | number | boolean }>;
+  options: Array<{ label: string; value: any }>;
   stylings?: boolean;
   sx?: SxProps;
   getValue?: (value: any) => void;
   row?: boolean;
   disabled?: boolean;
+  coded?: boolean;
 };
 
 export const RadioGroupInput: FC<Prop> = ({
@@ -27,19 +29,37 @@ export const RadioGroupInput: FC<Prop> = ({
   row,
   sx,
   disabled = false,
+  coded,
 }) => {
   const { value, handleChange, hasError } = useFormikField(name);
+
+  const [transformedOptions, setTransformedOptions] = useState(options);
 
   useEffect(() => {
     if (getValue) getValue(value);
   }, [value]);
+
+  useEffect(() => {
+    const transformOptions = async () => {
+      if (coded) {
+        const fetchedOptions = await fetchConceptsRadioOptions(options).then(
+          (options) =>
+            options.map((option) => ({ ...option, value: option.value || "" }))
+        );
+        setTransformedOptions(fetchedOptions);
+      } else {
+        setTransformedOptions(options);
+      }
+    };
+    transformOptions();
+  }, [options, coded]);
 
   return (
     <BaseRadioInput
       sx={sx}
       label={label}
       handleChange={handleChange}
-      options={options}
+      options={transformedOptions}
       hasError={hasError}
       value={value}
       name={name}
@@ -77,7 +97,7 @@ export const BaseRadioInput: FC<BaseProp & Prop> = ({
     >
       <FormLabel id={name}>{label}</FormLabel>
       <RadioGroup row={row} value={value} onChange={handleChange} name={name}>
-        {options.map(({ label, value }) => (
+        {options?.map(({ label, value }) => (
           <FormControlLabel
             key={label}
             value={value}

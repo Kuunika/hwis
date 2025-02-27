@@ -168,8 +168,8 @@ export const encounters = {
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
-export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
-export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
+export const YES = "Yes";
+export const NO = "No";
 
 export const concepts = {
   COMPLAINTS: "Complaints",
@@ -1172,6 +1172,7 @@ export const concepts = {
   PROSTRATE_DESCRIPTION: "Prostrate Description",
   DIAGNOSIS: "Diagnosis",
   FUNDO_SCOPY_FINDINGS:'Fundoscopy Findings',
+  NOTES:"Notes",
   OBJECTIVE_DATA_HEAD: "Objective data head",
   OBJECTIVE_DATA_CHEST: "Objective data chest",
   OBJECTIVE_DATA_ABDOMEN: "Objective data abdomen",

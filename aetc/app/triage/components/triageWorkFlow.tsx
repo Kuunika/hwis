@@ -185,7 +185,7 @@ export default function TriageWorkFlow() {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.airway, dateTime),
+        obs: formData.airway, //getObservations(formData.airway, dateTime),
       });
     }
   }, [vitalsCreated]);
@@ -194,13 +194,12 @@ export default function TriageWorkFlow() {
     if (airwayCreated) {
       setCompleted(3);
       setMessage("adding blood circulation data...");
-
       createBlood({
         encounterType: encounters.BLOOD_CIRCULATION,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.bloodCirculation, dateTime),
+        obs: formData.bloodCirculation, // getObservations(formData.bloodCirculation, dateTime),
       });
     }
   }, [airwayCreated]);
@@ -215,7 +214,7 @@ export default function TriageWorkFlow() {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.disability, dateTime),
+        obs: formData.disability, // getObservations(formData.disability, dateTime),
       });
     }
   }, [bloodCreated]);
@@ -230,7 +229,7 @@ export default function TriageWorkFlow() {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.pain, dateTime),
+        obs: formData.pain, // getObservations(formData.pain, dateTime),
       });
     }
   }, [disabilityCreated]);
@@ -319,6 +318,7 @@ export default function TriageWorkFlow() {
   };
 
   const handleAirwaySubmit = (values: any) => {
+    console.log({ values });
     formData["airway"] = values;
     setActiveStep(3);
     setSubmittedSteps((steps) => [...steps, 2]);
