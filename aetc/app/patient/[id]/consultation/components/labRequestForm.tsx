@@ -47,6 +47,7 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
     refetch: reloadSamples,
     isRefetching: reloading,
   } = getConceptSetMembers(sampleId);
+
   const {
     data: bedsideTests,
     isLoading: bedsideTestsLoading,
@@ -64,15 +65,6 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
   useEffect(() => {
     refetch();
   }, [sampleName]);
-
-  // useEffect(() => {
-  //   if (testType === "bedside") {
-  //     setSampleId("beed8ce9-fd0f-4606-9911-dbb0ef9df055");
-  //     setSamples(transformedBedsideSamples());
-  //   } else {
-  //     refetchLabSpecimen();
-  //   }
-  // }, [testType]);
 
   useEffect(() => {
     reloadSamples();

@@ -438,7 +438,7 @@ export const concepts = {
   DURATION_OF_SYMPTOMS_WEEKS: "Duration Of Symptoms Weeks",
   DURATION_OF_SYMPTOMS_MONTHS: "Duration Of Symptoms Months",
   DURATION_OF_SYMPTOMS_YEARS: "Duration Of Symptoms Years",
-  INVESTIGATIONS: "Investigations",
+  INVESTIGATIONS: "Laboratory Investigations",
   PRESENTING_HISTORY: "Presenting History",
   PUPIL_SIZE: "Pupil Size",
   PALLOR: "Pallor",
