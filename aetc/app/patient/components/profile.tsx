@@ -52,7 +52,7 @@ export const DesktopView = () => {
             links={[
               {
                 title: "Sample History",
-                link: `/patient/${params.id}/medical-history`,
+                link: `/patient/${params.id}/medicalHistory`,
               },
             ]}
           />

@@ -164,7 +164,8 @@ export const encounters = {
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",
   PATIENT_CARE_AREA: "d0d12af5-7f67-41fe-a856-db3b54ca6c0d",
   DISPENSING:"ba0612c2-8d80-11d8-abbb-0024217bb78e",
-  FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e'
+  FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e',
+  REVIEW_OF_SYSTEMS: '54e32e5d-51c5-4f16-8cff-9fc7da3c68ca',
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -1082,6 +1083,8 @@ export const concepts = {
   REVIEW_OF_SYSTEMS_NERVOUS: "Review Of Systems Nervous",
   REVIEW_OF_SYSTEMS_GENITOURINARY: "Review Of Systems Genitourinary",
   REVIEW_OF_SYSTEMS_GASTROINTESTINAL: "Review Of Systems Gastrointestinal",
+  REVIEW_OF_SYSTEMS_GENERAL: "Review of systems, general",
+  REVIEW_OF_SYSTEMS_TRAUMA: "Review of systems, trauma",
   CONVULSIONS: "Convulsions",
   HALLUCINATIONS: "Hallucinations",
   ABNORMAL_BEHAVIOUR: "Abnormal Behaviour",
@@ -1180,6 +1183,13 @@ export const concepts = {
   INVESTIGATIONS_FBC: "Investigations FBC",
   INVESTIGATIONS_PT: "Investigations PT",
   OTHER_NURSING_NOTES: "Other nursing notes",
+  PATIENTS_FLUID_MANAGEMENT: "Patients fluid management",
+  INTAKE_FLUID_AMOUNT: "Intake fluid amount",
+  OUTPUT_FLUID_AMOUNT: "Output fluid amount",
+  OUTPUT_FLUID_TYPE: "Output fluid type",
+  FLUID_BALANCE: "Fluid balance",
+  FLUID_BALANCE_CHART: "Fluid balance chart",
+  BUILDING_COLLAPSE: "Building Collapse",
 }
 
 export const conceptNames= {

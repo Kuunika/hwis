@@ -38,35 +38,7 @@ export const InterventionFormConfig = {
 };
 
 const schema = Yup.object().shape({
-  // Airway Intervention Validation
-  [InterventionFormConfig.airwayIntervention.name]: Yup.array()
-    .of(
-      Yup.object().shape({
-        id: Yup.string().required(),
-        label: Yup.string().required(),
-      })
-    )
-    .label(InterventionFormConfig.airwayIntervention.label),
 
-  // Breathing Intervention Validation
-  [InterventionFormConfig.breathingIntervention.name]: Yup.array()
-    .of(
-      Yup.object().shape({
-        id: Yup.string().required(),
-        label: Yup.string().required(),
-      })
-    )
-    .label(InterventionFormConfig.breathingIntervention.label),
-
-  // Circulation Intervention Validation
-  [InterventionFormConfig.circulationIntervention.name]: Yup.array()
-    .of(
-      Yup.object().shape({
-        id: Yup.string().required(),
-        label: Yup.string().required(),
-      })
-    )
-    .label(InterventionFormConfig.circulationIntervention.label),
 });
 
 export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
@@ -105,19 +77,19 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   ];
 
   const circulationList = [
-    { id: "Intake fluids", label: "Intake fluids" },
-    { id: "Hemorrhage control", label: "Hemorrhage control" },
-    { id: "Blood sample", label: "Blood sample" },
-    { id: "Catheter", label: "Catheter" },
-    { id: "Transfusion", label: "Transfusion" },
-    { id: "NG Insertion", label: "NG Insertion" },
-    { id: "Suturing", label: "Suturing" },
-    { id: "Keep warm", label: "Keep warm" },
+    { id: concepts.INTAKE_FLUIDS, label: "Intake fluids" },
+    { id: concepts.HEMORRHAGE_CONTROL, label: "Hemorrhage control" },
+    { id: concepts.BLOOD_SAMPLE, label: "Blood sample" },
+    { id: concepts.CATHETER, label: "Catheter" },
+    { id: concepts.TRANSFUSION, label: "Transfusion" },
+    { id: concepts.NG_INSERTION, label: "NG Insertion" },
+    { id: concepts.SUTURING, label: "Suturing" },
+    { id: concepts.KEEP_WARM, label: "Keep warm" },
   ];
 
   const groupedOptions = [
     {
-      label: "IV Fluids",
+      label: "IV Fluids", value: "IV Fluids",
       options: [
         { value: "Lingers Lactate", label: "Lingers Lactate" },
         { value: "Saline 5%", label: "Saline 5%" },
@@ -130,7 +102,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: "Blood products",
+      label: "Blood products", value: "Blood products",
       options: [
         { value: "Whole blood", label: "Whole blood" },
         { value: "Packed Red cells", label: "Packed Red cells" },
@@ -139,7 +111,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: "Oral products",
+      label: "Oral products", value: "Oral products",
       options: [
         { value: "Water", label: "Water" },
         { value: "Juice", label: "Juice" },
@@ -227,7 +199,7 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
             options={circulationList}
             getValue={(value: any) => {
               const existsIV = value.some(
-                (item: { id: string }) => item.id === circulationList[0].label
+                (item: { id: string }) => item.id === circulationList[0].id
               );
               if (existsIV) setCirculationIVFluids(true);
               else setCirculationIVFluids(false);
