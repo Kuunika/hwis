@@ -1,5 +1,5 @@
 import { useParameters } from "./navigation";
-import { getPatientVisitTypes } from "./patientReg";
+import { getOnePatient, getPatientVisitTypes } from "./patientReg";
 
 export const getActivePatientDetails = () => {
   const { params } = useParameters();
@@ -9,6 +9,9 @@ export const getActivePatientDetails = () => {
     isSuccess,
   } = getPatientVisitTypes(params?.id as string);
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
+  const { data: patient, isLoading: patientLoading } = getOnePatient(
+    params?.id as string
+  );
 
   return {
     activeVisit: activeVisit?.uuid,
@@ -16,5 +19,6 @@ export const getActivePatientDetails = () => {
     activeVisitId: activeVisit?.visit_id,
     isLoading,
     isSuccess,
+    gender: patient && patient?.gender,
   };
 };

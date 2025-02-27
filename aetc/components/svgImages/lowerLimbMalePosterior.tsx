@@ -1,35 +1,38 @@
+import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { Box } from "@mui/material";
 
-import { DataBox, RushForm } from "./forms";
+import { DataBox, ExtremitiesLegForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
-
-import { concepts } from "@/constants";
+import { Box } from "@mui/material";
 import { useEffect } from "react";
-
+import { concepts } from "@/constants";
+import { LowerLimbMalePosterior } from "@/assets";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
-import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
+
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
 }
 
-export function FullBodyFemaleBackImage({
+export function LowerLimbMalePosteriorImage({
   onValueChange,
   imageEncounter,
   imageSection,
 }: Props) {
   const {
     handleClose,
-    handleFormSubmit,
     containerRef,
     section,
     anchorEl,
     selectedSection,
+    setAnchorEl,
+    handleFormSubmit,
     ids,
   } = useImageUpdate();
+
   const { setData, submittedValues } = useImageFormTransform();
+
   useEffect(() => {
     onValueChange(ids);
   }, [ids]);
@@ -40,31 +43,32 @@ export function FullBodyFemaleBackImage({
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    if (imageEncounter && imageSection) {
-      formData = {
-        ...formData,
-        [concepts.IMAGE_ENCOUNTER]: imageEncounter,
-        [concepts.IMAGE_SECTION]: imageSection,
-      };
-    }
-    handleFormSubmit(formData);
+
+    const updatedFormData = {
+      ...formData,
+      ...(imageEncounter && { [concepts.IMAGE_ENCOUNTER]: imageEncounter }),
+      ...(imageSection && { [concepts.IMAGE_SECTION]: imageSection }),
+    };
+
+    handleFormSubmit(updatedFormData);
   };
 
   return (
-    <div>
-      <FullBodyFemaleBack ref={containerRef} />
+    <>
+      <LowerLimbMalePosterior ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
-          <DataBox key={value.section} labelValue={value} />
+          <DataBox maxWidth="230px" key={value.section} labelValue={value} />
         ))}
       </Box>
       <SVGPopover
+        width="40ch"
         section={section}
         selectedSection={selectedSection}
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <RushForm
+        <ExtremitiesLegForm
           onCancel={handleClose}
           onSubmit={(values, formConceptsLabels) =>
             handleDataSubmission(
@@ -75,6 +79,6 @@ export function FullBodyFemaleBackImage({
           }
         />
       </SVGPopover>
-    </div>
+    </>
   );
 }
