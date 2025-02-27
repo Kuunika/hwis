@@ -12,6 +12,7 @@ import {
 import * as Yup from "yup";
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abnormalities: {
@@ -159,18 +160,33 @@ export const NeckForm = ({ onSubmit }: Prop) => {
   // const [showJVP, setShowJVP] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
+    setShowLaceration(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
+      )
+    );
     setShowOtherAbnormalities(
-      Boolean(values.find((v) => v.id == concepts.OTHER))
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
+      )
     );
-    setShowRaised(Boolean(values.find((v) => v.id == concepts.RAISED)));
+    setShowRaised(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.RAISED)?.uuid)
+      )
+    );
     setShowEnlargedThyroid(
-      Boolean(values.find((v) => v.id == concepts.ENLARGED_THYROID))
+      Boolean(
+        values.find(
+          (v) => v.id == getCachedConcept(concepts.ENLARGED_THYROID)?.uuid
+        )
+      )
     );
-    setShowLymph(Boolean(values.find((v) => v.id == concepts.LYMPH_NODES)));
-    // setShowJVP(
-    //   Boolean(values.find((v) => v.id == concepts.JUGULAR_VENOUS_PRESSURE))
-    // );
+    setShowLymph(
+      Boolean(
+        values.find((v) => v.id == getCachedConcept(concepts.LYMPH_NODES)?.uuid)
+      )
+    );
   };
 
   return (
@@ -221,6 +237,7 @@ export const NeckForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
+          coded
         />
         <br />
         {showRaised && (

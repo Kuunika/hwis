@@ -13,33 +13,39 @@ import {
 import * as Yup from "yup";
 
 import { useConditions } from "@/hooks";
-import { getInitialValues } from "@/helpers";
+import { getInitialValues, mapSubmissionToCodedArray } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 
 export const AirwayBreathingForm = {
   airway: {
     name: concepts.IS_AIRWAY_COMPROMISED,
     label: "is Airway Compromised",
+    coded: true,
   },
   breathing: {
     name: concepts.IS_BREATHING_ABNORMAL,
     label: "is Breathing Abnormal",
+    coded: true,
   },
   respiratoryDysfunction: {
     name: concepts.SEVERE_RESPIRATORY,
     label: "Severe Respiratory dysfunction or exhaustion ",
+    coded: true,
   },
   inabilityToSpeak: {
     name: concepts.INABILITY_TO_SPEAK,
     label: "Inability to speak in complete sentences ",
+    coded: true,
   },
   stridor: {
     name: concepts.STRIDOR,
     label: "Stridor",
+    coded: true,
   },
   reducedLevelOfConsciousness: {
     name: concepts.REDUCED_LEVEL_CONSCIOUSNESS,
-    label: "Reduced Level of Consciousness due to low oxygen ",
+    label: "Reduced Level of Consciousness due to low oxygen",
+    coded: true,
   },
 };
 
@@ -123,10 +129,14 @@ export const AirwayAndBreathingForm = ({
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
       submitButtonText="next"
       submitButton={false}
-      getFormValues={getFormValues}
+      onSubmit={(values) =>
+        onSubmit(mapSubmissionToCodedArray(AirwayBreathingForm, values))
+      }
+      getFormValues={(value) =>
+        getFormValues(mapSubmissionToCodedArray(AirwayBreathingForm, value))
+      }
     >
       <FormValuesListener getValues={setFormValues} />
 

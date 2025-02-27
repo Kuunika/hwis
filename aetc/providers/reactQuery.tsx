@@ -9,7 +9,8 @@ import React from "react";
 import { ReactNode, FC } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
+
 export const ReactQueryProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {

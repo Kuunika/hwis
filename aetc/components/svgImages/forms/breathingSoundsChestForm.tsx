@@ -7,6 +7,7 @@ import {
 } from "@/components";
 import { concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
+import { getCachedConcept } from "@/helpers/data";
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
 
@@ -110,11 +111,18 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
             name={form.abnormalities.name}
             getValue={(values) => {
               if (!values) return;
-              setOther(Boolean(values == concepts.OTHER));
-              setAdded(Boolean(values == concepts.ADDED));
+
+              console.log({ values });
+              setOther(
+                Boolean(values == getCachedConcept(concepts.OTHER)?.uuid)
+              );
+              setAdded(
+                Boolean(values == getCachedConcept(concepts.ADDED)?.uuid)
+              );
             }}
             label={form.abnormalities.label}
             options={options}
+            coded
           />
 
           {showAdded && (
@@ -124,6 +132,7 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
                 name={form.added.name}
                 label={form.added.label}
                 options={addedOptions}
+                coded
               />
             </>
           )}

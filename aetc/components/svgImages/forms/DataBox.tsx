@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FormValueLabel } from "@/interfaces";
 import { Box, Typography, IconButton, Collapse, Button } from "@mui/material";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { queryClient } from "@/providers";
+import { isUUID } from "@/helpers/data";
 
 export const DataBox = ({
   labelValue,
@@ -25,7 +27,13 @@ export const DataBox = ({
         return `${acc}${separator}${current.label}`;
       }, "");
     }
-    return values;
+
+    let value = values;
+
+    if (isUUID(values)) {
+      value = queryClient.getQueryData([values]);
+    }
+    return value;
   };
 
   return (

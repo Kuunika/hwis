@@ -69,11 +69,13 @@ export default function Prescreening() {
           concept: concepts.IS_PATIENT_REFERRED,
           value: values[concepts.IS_PATIENT_REFERRED],
           obsDatetime: getDateTime(),
+          coded: true,
         },
         {
           concept: concepts.IS_SITUATION_URGENT,
           value: values[concepts.IS_SITUATION_URGENT],
           obsDatetime: getDateTime(),
+          coded: true,
         },
         {
           concept: concepts.PATIENT_REFERRED_TO,
