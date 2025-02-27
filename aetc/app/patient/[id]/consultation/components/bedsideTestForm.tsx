@@ -8,7 +8,10 @@ import { concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
-import { addEncounter } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import { Typography } from "@mui/material";
 import * as yup from "yup";
 
@@ -16,6 +19,7 @@ const formConfig = {
   mrdt: {
     name: concepts.MRDT,
     label: "MRDT",
+    coded: true,
   },
   PH: {
     name: concepts.PH,
@@ -88,14 +92,17 @@ const formConfig = {
   pregnancyTest: {
     name: concepts.PREGNANCY_TEST,
     label: "Pregnancy Test",
+    coded: true,
   },
   hiv: {
     name: concepts.HIV,
     label: "HIV",
+    coded: true,
   },
   vdrl: {
     name: concepts.VDRL,
     label: "VDRL",
+    coded: true,
   },
   urobilinogen: {
     name: concepts.UROBILINOGEN,
@@ -273,7 +280,7 @@ const formValues = getInitialValues(formConfig);
 export const BedsideTestForm = () => {
   const { activeVisit, patientId } = getActivePatientDetails();
 
-  const { mutate } = addEncounter();
+  const { mutate } = fetchConceptAndCreateEncounter();
   const handleSubmit = (values: any) => {
     const dateTime = getDateTime();
 
@@ -424,16 +431,25 @@ export const BedsideTestForm = () => {
         concept: formConfig.pregnancyTest.name,
         obsDatetime: dateTime,
         value: values[formConfig.pregnancyTest.name],
+        coded: true,
       },
       {
         concept: formConfig.hiv.name,
         obsDatetime: dateTime,
         value: values[formConfig.hiv.name],
+        coded: true,
       },
       {
         concept: formConfig.vdrl.name,
         obsDatetime: dateTime,
+        coded: true,
         value: values[formConfig.vdrl.name],
+      },
+      {
+        concept: formConfig.mrdt.name,
+        obsDatetime: dateTime,
+        coded: true,
+        value: values[formConfig.mrdt.name],
       },
       {
         concepts: concepts.DESCRIPTION,
