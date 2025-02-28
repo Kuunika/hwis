@@ -24,6 +24,7 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { LowerLimbAnterior } from "@/assets";
 import { LowerLimbAnteriorImage } from "@/components/svgImages/lowerLimbAnterior";
 import { Box } from "@mui/material";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   oedama: {
@@ -126,32 +127,37 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               row
               options={radioOptions}
+              coded
               name={form.oedama.name}
               label={form.oedama.label}
             />
             <RadioGroupInput
               row
               options={radioOptions}
+              coded
               name={form.coldClammy.name}
               label={form.coldClammy.label}
             />
           </FieldsContainer>
-          {formValues[form.oedama.name] == YES && (
+          {formValues[form.oedama.name] == getCachedConcept(YES)?.uuid && (
             <SearchComboBox
               sx={{ width: "100%" }}
               multiple={false}
               name={form.oedamaDetails.name}
               options={oedamaOptions}
               label={form.oedamaDetails.label}
+              coded
             />
           )}
           <RadioGroupInput
             row
             options={radioOptions}
+            coded
             name={form.abnormalitiesUpperLimb.name}
             label={form.abnormalitiesUpperLimb.label}
           />
-          {formValues[form.abnormalitiesUpperLimb.name] == YES && (
+          {formValues[form.abnormalitiesUpperLimb.name] ==
+            getCachedConcept(YES)?.uuid && (
             <LowerLimbAnteriorImage
               onValueChange={setLowerLimbAnterior}
               imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
@@ -161,10 +167,12 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
           <RadioGroupInput
             row
             options={radioOptions}
+            coded
             name={form.abnormalitiesLowerLimb.name}
             label={form.abnormalitiesLowerLimb.label}
           />
-          {formValues[form.abnormalitiesLowerLimb.name] == YES && (
+          {formValues[form.abnormalitiesLowerLimb.name] ==
+            getCachedConcept(YES)?.uuid && (
             <>
               {gender == "Female" && (
                 <>

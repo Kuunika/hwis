@@ -149,6 +149,19 @@ const GastrointenstinalOptions = [
   { id: concepts.STOOL_INCONTINENCE, label: "Stool incontinence" },
   { id: concepts.ANAL_SWELLING, label: "Anal swelling" },
   { id: concepts.ANAL_DISCHARGE, label: "Anal discharge" },
+  { id: concepts.YELLOWINGOFEYESORSKIN, label: 'Yellowing of eyes or skin' },
+  { id: concepts.NAUSEA, label: 'Nausea' },
+  { id: concepts.DYSPEPSIA, label: 'Dyspepsia' },
+  { id: concepts.ABDOMINALPAINS, label: 'Abdominal pains' },
+  { id: concepts.VOMITING, label: 'Vomiting' },
+  { id: concepts.DIARRHOEA, label: 'Diarrhoea' },
+  { id: concepts.DIFFICULTYINSWALLOWING, label: 'Difficulty in swallowing' },
+  { id: concepts.PAINFULSWALLOWING, label: 'Painful in swallowing' },
+  { id: concepts.ABDOMINALDISTENSION, label: 'Abdominal distension' },
+  { id: concepts.BLOODYSTOOL, label: 'Bloody stool' },
+  { id: concepts.STOOL_INCONTINENCE, label: 'Stool incontinence' },
+  { id: concepts.ANAL_SWELLING, label: 'Anal swelling' },
+  { id: concepts.ANAL_DISCHARGE, label: 'Anal discharge' }
 ];
 
 const cardiacRespiratoryOptions = [
@@ -250,40 +263,41 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     shape["events"] = yup.string().required("Events field is required.");
     shape["timeOfInjury"] = yup.date().required("Time of injury is required.");
 
-    shape["wasInjured"] = yup
-      .string()
-      .required("Please specify whether the patient was injured");
-    shape["injuryMechanism"] = yup
-      .boolean()
-      .when("wasInjured", (wasInjured, schema) => {
-        return wasInjured
-          ? schema.oneOf([true], "Injury mechanism is required")
-          : schema.nullable();
-      });
+    shape['wasInjured'] = yup.string().required('Please specify whether the patient was injured') 
+    shape['injuryMechanism'] = yup.boolean().when('wasInjured', (wasInjured, schema) => {
+      return wasInjured[0]==='Yes' ? schema.oneOf([true], 'Injury mechanism is required') : schema.nullable();
+    });
 
+  
     Object.keys(injuryMechanismList).forEach((key) => {
       const mechanism =
         injuryMechanismList[key as keyof typeof injuryMechanismList];
       const label = `${mechanism.name}Comment`;
-
-      if (formValues[key]) {
-        shape[label] = yup
-          .string()
-          .required(
-            `Please provide details about the ${mechanism.label} injury`
-          );
+    
+      if(formValues[key]){
+      shape[label] = yup.string().required(`Please provide details about the ${mechanism.label} injury`);
+    }
+  
+      if(key === 'assault'){
+        shape['assaultType'] = yup.string().when('assault', (assault, schema) => {
+          return assault[0] ? schema.required('Please specify the type of assault') : schema.nullable();
+        });
+        
       }
+  });
 
-      if (key === "assault") {
-        shape["assaultType"] = yup
-          .string()
-          .when("assault", (assault, schema) => {
-            return assault
-              ? schema.required("Please specify the type of assault")
-              : schema.nullable();
-          });
-      }
+  
+    shape['occupation'] = yup.string().when('showSocialHistory', (socialHistory, schema)=>{
+      return socialHistory[0]? schema.required('Occupation is required.'): schema.nullable()
     });
+    shape['maritalStatus'] = yup.string().when('showSocialHistory', (socialHistory, schema)=>{
+      return socialHistory[0]? schema.required('Marital status is required.'): schema.nullable()
+    });
+
+    shape['travelDetails'] = yup.string().when('showSocialHistory', (socialHistory, schema)=>{
+      return socialHistory[0]? schema.required('Travel details are required.'): schema.nullable()
+    });
+
 
     shape["Gastrointenstinal_history"] = yup.array().of(
       yup.object({
@@ -401,6 +415,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     injuryMechanism: [],
     showSocialHistory: false,
     lostConsciousness: "Unknown",
+    occupation: "",
+    maritalStatus: "",
     occupationalInjury: "Unknown",
     assaultType: "",
     assault: false,
@@ -692,19 +708,16 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
       <FormFieldContainer direction="column">
         <LabelledCheckbox
-          name="showSocialHistory"
-          label="Update social history?"
-        />
-        {updateSocial && (
-          <>
-            <h3 style={{ marginTop: "2ch", marginBottom: "1ch" }}>
-              Social History
-            </h3>
-            <RadioGroupInput
-              row={true}
-              name="occupation"
-              label="Occupation"
-              options={[
+                        name= "showSocialHistory"
+                        label='Update social history?'
+                      />
+        {updateSocial && (<>
+        <h3 style={{marginTop:'2ch', marginBottom:'1ch'}}>Social History</h3>
+        <RadioGroupInput
+            row={true}
+            name='occupation'
+            label='What is the patients occupation?'
+            options={[
                 { label: "Working", value: "working" },
                 { label: "Business", value: "business" },
                 { label: "Unemployed", value: "unemployed" },
@@ -712,41 +725,48 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                 { label: "Student", value: "student" },
                 { label: "House Wife", value: "housewife" },
                 { label: "Unknown", value: "unknown" },
-              ]}
-              sx={{ mb: "1ch" }}
-            />
-            <CheckboxesGroup
-              getValue={(value: Array<any>) => {}}
-              name="socialDetails"
-              options={[
-                { label: "Smoker", value: "smoking" },
-                { label: "Drinker", value: "alcohol" },
-              ]}
-            />
-            <RadioGroupInput
-              sx={{ mt: "1ch" }}
-              row={true}
-              name="maritalStatus"
-              label="Marital Status"
-              options={[
+            ]}
+            sx={{mb:'1ch'}}
+        />
+          <CheckboxesGroup getValue={
+            (value: Array<any>) => {
+              
+            }
+          } name='socialDetails' options={[
+            { label: "Smoker", value: "smoking" },
+            { label: "Drinker", value: "alcohol" },
+          ]}
+          />
+               <RadioGroupInput
+               sx={{mt:'1ch'}}
+            row={true}
+            name='maritalStatus'
+            label='What is the patients marital status?'
+            options={[
                 { label: "Single", value: "single" },
                 { label: "Married", value: "married" },
                 { label: "Separated", value: "separated" },
                 { label: "Widowed", value: "widow/widower" },
                 { label: "Divorced", value: "divorced" },
                 { label: "Unknown", value: "unknown" },
-              ]}
-            />
-            <TextInputField
-              id="travelDetails"
-              name="travelDetails"
-              label="Travel Details"
-              multiline
-              rows={4}
-            />
-          </>
-        )}
-      </FormFieldContainer>
+
+            ]}
+        />
+        <TextInputField
+           id="travelDetails"
+           name="travelDetails"
+           label="Travel Details"
+           multiline
+           rows={4}
+          />
+          <div style={{ color: "red", fontSize: "0.875rem" }}>
+                        <ErrorMessage
+                name={'travelDetails'}
+              />
+          </div>
+          </>)}
+        </FormFieldContainer>
+      
 
       <WrapperBox>
         <MainButton

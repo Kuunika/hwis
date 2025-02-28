@@ -151,51 +151,6 @@ export const Exposure = ({ onSubmit }: Props) => {
             </Box>
           </Box>
         )}
-
-        {/* {formValues[form.skinRashInfo.name] == concepts.YES && (
-        )} */}
-
-        {/* <RadioGroupInput
-          name={form.abnormalities.name}
-          row
-          label={form.abnormalities.label}
-          options={radioOptions}
-        /> */}
-
-        {/* {formValues[form.abnormalities.name] == concepts.YES && (
-          <>
-            <Typography color={"grey"} variant="h6">
-              Rash
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-              <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-                <FullBodyImage onValueChange={setAbnormalitiesImage} />
-              </Box>
-              <Box>
-                <FullBodyBackImage onValueChange={setAbnormalitiesBackImage} />
-              </Box>
-            </Box>
-          </>
-        )} */}
-
-        {/* <RadioGroupInput
-          name={form.injuries.name}
-          row
-          label={form.injuries.label}
-          options={radioOptions}
-        />
-
-        {formValues[form.injuries.name] == concepts.YES && (
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <Box sx={{ borderRight: "solid 2px grey", pr: "2ch", mr: "2ch" }}>
-              <FullBodyImage onValueChange={setInjuriesImage} />
-            </Box>
-            <Box>
-              <FullBodyBackImage onValueChange={setInjuriesBackImage} />
-            </Box>
-          </Box>
-        )} */}
-
         <TextInputField
           sx={{ width: "100%" }}
           name={form.additionalNotes.name}

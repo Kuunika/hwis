@@ -46,6 +46,7 @@ export const PercussionChestLungForm = (props: Props) => {
         name={form.abnormalities.name}
         label={form.abnormalities.label}
         options={options}
+        coded
       />
       <br />
       <Box sx={{ display: "flex", gap: "0.2ch" }}>

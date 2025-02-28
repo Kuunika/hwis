@@ -226,7 +226,7 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
   useEffect(() => {
     if(!isLoading){
       const obstetricsEncounters = data?.filter(
-        (item) => item.encounter_type.name === "OBSTETRIC HISTORY"
+        (item) => item.encounter_type?.name === "OBSTETRIC HISTORY"
       )
       
       

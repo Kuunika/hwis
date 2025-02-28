@@ -15,7 +15,7 @@ import {
   getLabTestReason,
   getLabTestTypes,
 } from "@/hooks/labOrder";
-import { useParameters } from "@/hooks";
+import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import * as Yup from "yup";
@@ -47,6 +47,7 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
     refetch: reloadSamples,
     isRefetching: reloading,
   } = getConceptSetMembers(sampleId);
+
   const {
     data: bedsideTests,
     isLoading: bedsideTestsLoading,
@@ -58,21 +59,13 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
   const [tests, setTests] = useState<Concept[]>([]);
 
   const { params } = useParameters();
-  const { data: patient } = getOnePatient(params.id as string);
+  // const { data: patient } = getOnePatient(params.id as string);
+  const { activeVisit, patientId } = getActivePatientDetails();
   const { mutate, isPending, isSuccess: orderCreated } = createOrder();
 
   useEffect(() => {
     refetch();
   }, [sampleName]);
-
-  // useEffect(() => {
-  //   if (testType === "bedside") {
-  //     setSampleId("beed8ce9-fd0f-4606-9911-dbb0ef9df055");
-  //     setSamples(transformedBedsideSamples());
-  //   } else {
-  //     refetchLabSpecimen();
-  //   }
-  // }, [testType]);
 
   useEffect(() => {
     reloadSamples();
@@ -151,8 +144,8 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
     const order = {
       orders: [
         {
-          patient: params.id,
-          visit: patient?.visit_uuid,
+          patient: patientId,
+          visit: activeVisit,
           tests: mappedTests,
           reason_for_test: "b998cdac-8d80-11d8-abbb-0024217bb78e",
           target_lab: "Blantyre Dream Project Clinic",
@@ -174,7 +167,8 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
       initialValues={{ testType: "", sampleType: "" }}
       onSubmit={handleLabSend}
       validationSchema={Yup.object().shape({
-        testType: Yup.string().required().label("Test Type"),
+        // testType: Yup.string().required().label("Test Type"),
+        tests: Yup.array().required().label("Tests"),
         sampleType: Yup.string().required().label("Sample Type"),
       })}
     >

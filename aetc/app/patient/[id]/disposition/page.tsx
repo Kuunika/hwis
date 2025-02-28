@@ -106,7 +106,7 @@ function DispositionFeature() {
                         links={[
                             {
                                 title: "Sample History",
-                                link: `/medical-history/${params.id}`,
+                                link: `/medicalHistory/${params.id}`,
                             },
                         ]}
                     />

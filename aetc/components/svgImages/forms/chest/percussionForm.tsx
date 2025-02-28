@@ -70,6 +70,7 @@ export const PercussionForm = (props: Props) => {
         name={form.abnormalities.name}
         label={form.abnormalities.label}
         options={options}
+        coded
       />
       <Box sx={{ display: "flex", mt: "1ch", gap: "0.2ch" }}>
         <Button

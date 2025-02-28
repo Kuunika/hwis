@@ -15,6 +15,7 @@ import {
   import { getPatientsEncounters } from "@/hooks/encounter";
 import { getInitialValues } from "@/helpers";
 import { Field, getIn } from "formik";
+import FamilyHistoryPanel from "../../medicalInpatient/components/familyHistory";
   
   interface Observation {
     obs_id: number | null;
@@ -73,7 +74,8 @@ import { Field, getIn } from "formik";
       other: false,
     });
     const [familyHistory, setFamilyHistory] = useState<ProcessedObservation[]>([]);
-  
+    const [showAll, setShowAll] = useState(false);
+
     const schema = yup.object().shape({
       asthma: yup.boolean(),
       asthmaRelationship: yup.string().when("asthma", {
@@ -157,43 +159,6 @@ import { Field, getIn } from "formik";
     };
 
     useEffect(() => {
-      if(!isLoading){
-        const familyHistoryEncounters = data?.filter(
-          (item) => item.encounter_type.name === "FAMILY MEDICAL HISTORY"
-        )
-        
-        
-        const observations: ProcessedObservation[] = [];
-      
-        familyHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-          encounter.obs.forEach((observation) => {
-            const value = observation.value;
-        
-            const obsData: ProcessedObservation = {
-              obs_id: observation.obs_id,
-              name: observation.names?.[0]?.name,
-              value,
-              children: [],
-            };
-        
-            if (observation.obs_group_id) {
-              const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-              if (parent) {
-                parent.children.push(obsData);
-              }
-            } else {
-              observations.push(obsData);
-            }
-          });
-        });
-
-        setFamilyHistory(observations)
-      }
-      
-      
-    }, [ data]);
-
-    useEffect(() => {
       setShowRelationshipFields((prev) => {
         const updatedFields: Record<string, boolean> = { ...prev };
     
@@ -209,33 +174,7 @@ import { Field, getIn } from "formik";
   
     return (
       <>
-      <div style={{ background: 'white', padding: '20px', borderRadius: '5px', marginBottom: '20px' }}>
-      
-  <h4 style={{ color: 'rgba(0, 0, 0, 0.6)', marginBottom: '10px' }}>Known Conditions</h4>
-  {familyHistory.map((obs) => (
-    <div key={obs.obs_id} style={{ marginBottom: "10px", color: 'rgba(0, 0, 0, 0.6)' }}>
-        <div>
-          {obs.children.map((child) => (
-            <div key={child.obs_id} style={{ paddingLeft: "20px" }}>
-                                                  {(() => {
-  let parsedValue = child.value;
-  if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
-    parsedValue = child.value === "true";
-  }
-  return typeof parsedValue === "boolean" ? (
-    <strong>{String(child.name)}</strong>
-  ) : (
-    `${String(child.name)}: ${String(parsedValue)}`
-  );
-
-})()}
-            </div>
-          ))}
-        </div>
-   
-    </div>
-  ))}
-</div>
+   <FamilyHistoryPanel showForPrinting={showAll} toggleShow={setShowAll}/>
       <FormikInit
         validationSchema={schema}
         initialValues={initialValues}

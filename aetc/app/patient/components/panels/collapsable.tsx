@@ -16,7 +16,7 @@ import referral from "../../../../icons/referral.svg";
 export const templateForms = [
   {
     label: "Medical Inpatient",
-    link: "medicalInpatient",
+    link: "inPatientAdmission",
     icon: medicalInpatient,
   },
   { label: "Surgical Notes", link: "surgicalNotes", icon: surgical },
