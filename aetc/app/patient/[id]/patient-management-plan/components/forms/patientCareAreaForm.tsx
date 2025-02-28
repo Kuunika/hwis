@@ -14,7 +14,7 @@ import {
 import { toast } from "react-toastify";
 import { useParameters } from "@/hooks";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { concepts, encounters } from "@/constants";
 import { Visit } from "@/interfaces";
@@ -58,7 +58,7 @@ export const PatientCareAreaForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
 
     const { params } = useParameters();
-    const { mutate: submitEncounter } = addEncounter();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
 

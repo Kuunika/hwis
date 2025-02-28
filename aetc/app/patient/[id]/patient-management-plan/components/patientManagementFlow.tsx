@@ -15,9 +15,10 @@ export const PatientManagementFlow = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
 
     const steps = [
-        { id: 1, label: "Medication" },
-        { id: 2, label: "Non-Pharmacological" },
-        { id: 3, label: "Patient Care Area" },
+        { id: 1, label: "Non-Pharmacological" },
+        { id: 2, label: "Patient Care Area" },
+        { id: 3, label: "Medication" },
+
     ];
 
     useEffect(() => {
@@ -31,26 +32,29 @@ export const PatientManagementFlow = () => {
             active={activeStep}
             setActive={setActiveStep}
         >
-            <>
-                <MedicationsForm onSkip={() => { }} onSubmit={() => { }} />
-                {/* <MedicationForm /> */}
-                <StepButtons
-                    onNext={() => setActiveStep(1)}
-                />
-            </>
+
             <>
                 <NonPharmacologicalForm onSkip={() => { }} onSubmit={() => { }} />
                 <StepButtons
                     onNext={() => setActiveStep(2)}
-                    onPrevious={() => setActiveStep(0)}
                 />
             </>
             <>
                 <PatientCareAreaForm onSkip={() => { }} onSubmit={() => { }} />
                 <StepButtons
+                    onNext={() => setActiveStep(2)}
                     onPrevious={() => setActiveStep(1)}
                 />
             </>
+            <>
+                <MedicationsForm onSkip={() => { }} onSubmit={() => { }} />
+                {/* <MedicationForm /> */}
+                <StepButtons
+                    onPrevious={() => setActiveStep(1)}
+                />
+            </>
+
+
         </NewStepperContainer>
     );
 };
