@@ -16,7 +16,10 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 //   output: 'standalone',
 // })
 const nextConfig = {
-  output: "standalone",
+  output: "export",
+  images: {
+    unoptimized: true, // Disable the image optimization API
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
