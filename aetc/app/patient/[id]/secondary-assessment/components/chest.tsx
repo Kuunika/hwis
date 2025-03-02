@@ -17,10 +17,12 @@ import {
   ChestLung,
   PercussionChestLung,
 } from "@/components/svgImages";
-import { useSubmitEncounter } from "@/hooks";
+import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getCachedConcept } from "@/helpers/data";
+import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
+import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
 
 const form = {
   respiratoryRate: {
@@ -229,6 +231,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   const [vocalFremitusImagesEnc, setVocalFremitusImagesEnc] = useState<
     Array<any>
   >([]);
+  const { gender } = getActivePatientDetails();
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.CHEST_ASSESSMENT,
@@ -379,11 +382,29 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           />
           {formValues[form.localizedChestAbnormality.name] ==
             getCachedConcept(YES)?.uuid && (
-            <ChestLung
-              onValueChange={setLocalizedChestImagesEnc}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-              imageSection={form.localizedChestAbnormality.name}
-            />
+            <>
+              {gender == "Male" && (
+                <LungFrontMaleImage
+                  onValueChange={setLocalizedChestImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="chestLung"
+                />
+              )}
+              {gender == "Female" && (
+                <LungFrontFemaleImage
+                  onValueChange={setLocalizedChestImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="chestLung"
+                />
+              )}
+              {/* <ChestLung
+                onValueChange={setLocalizedChestImagesEnc}
+                imageEncounter={encounters.CHEST_ASSESSMENT}
+                imageSection={form.localizedChestAbnormality.name}
+              /> */}
+            </>
           )}
           <RadioGroupInput
             row={true}
@@ -396,12 +417,30 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             getCachedConcept(concepts.REDUCED)?.uuid ||
             formValues[form.chestExpansion.name] ==
               getCachedConcept(concepts.INCREASED)?.uuid) && (
-            <ChestLung
-              onValueChange={setChestExpansionImagesEnc}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-              imageSection={form.chestExpansion.name}
-              selectable={true}
-            />
+            <>
+              {gender == "Male" && (
+                <LungFrontMaleImage
+                  onValueChange={setChestExpansionImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="selectable"
+                />
+              )}
+              {gender == "Female" && (
+                <LungFrontFemaleImage
+                  onValueChange={setChestExpansionImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="selectable"
+                />
+              )}
+              {/* <ChestLung
+                onValueChange={setChestExpansionImagesEnc}
+                imageEncounter={encounters.CHEST_ASSESSMENT}
+                imageSection={form.chestExpansion.name}
+                selectable={true}
+              /> */}
+            </>
           )}
           <RadioGroupInput
             row={true}
@@ -414,12 +453,30 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             getCachedConcept(concepts.REDUCED)?.uuid ||
             formValues[form.tactileFremitus.name] ==
               getCachedConcept(concepts.INCREASED)?.uuid) && (
-            <ChestLung
-              selectable={true}
-              onValueChange={setTactileFremitusImagesEnc}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-              imageSection={form.tactileFremitus.name}
-            />
+            <>
+              {gender == "Male" && (
+                <LungFrontMaleImage
+                  onValueChange={setTactileFremitusImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="selectable"
+                />
+              )}
+              {gender == "Female" && (
+                <LungFrontFemaleImage
+                  onValueChange={setTactileFremitusImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="selectable"
+                />
+              )}
+              {/* <ChestLung
+                selectable={true}
+                onValueChange={setTactileFremitusImagesEnc}
+                imageEncounter={encounters.CHEST_ASSESSMENT}
+                imageSection={form.tactileFremitus.name}
+              /> */}
+            </>
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation (Heart)">
@@ -479,19 +536,60 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           />
           {formValues[form.percussion.name] ==
             getCachedConcept(concepts.ABNORMAL)?.uuid && (
-            <PercussionChestLung
-              onValueChange={setPercussionImagesEnc}
-              imageSection={form.percussion.name}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-            />
+            <>
+              {gender == "Male" && (
+                <LungFrontMaleImage
+                  onValueChange={setPercussionImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="percussion"
+                />
+              )}
+              {gender == "Female" && (
+                <LungFrontFemaleImage
+                  onValueChange={setPercussionImagesEnc}
+                  imageEncounter={encounters.CHEST_ASSESSMENT}
+                  imageSection={form.localizedChestAbnormality.name}
+                  form="percussion"
+                />
+              )}
+              {/* <ChestLung
+                selectable={true}
+                onValueChange={setTactileFremitusImagesEnc}
+                imageEncounter={encounters.CHEST_ASSESSMENT}
+                imageSection={form.tactileFremitus.name}
+              /> */}
+
+              {/* <PercussionChestLung
+                onValueChange={setPercussionImagesEnc}
+                imageSection={form.percussion.name}
+                imageEncounter={encounters.CHEST_ASSESSMENT}
+              /> */}
+            </>
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Auscultation (Lungs)">
-          <BreathingSoundsChestLung
+          {gender == "Male" && (
+            <LungFrontMaleImage
+              onValueChange={setBreathingSoundsImagesEnc}
+              imageEncounter={encounters.CHEST_ASSESSMENT}
+              imageSection={form.localizedChestAbnormality.name}
+              form="breathingSoundChest"
+            />
+          )}
+          {gender == "Female" && (
+            <LungFrontFemaleImage
+              onValueChange={setBreathingSoundsImagesEnc}
+              imageEncounter={encounters.CHEST_ASSESSMENT}
+              imageSection={form.localizedChestAbnormality.name}
+              form="breathingSoundChest"
+            />
+          )}
+          {/* <BreathingSoundsChestLung
             imageEncounter={encounters.CHEST_ASSESSMENT}
             // imageSection={form.breathingSounds.name}
             onValueChange={setBreathingSoundsImagesEnc}
-          />
+          /> */}
 
           {/* {formValues[form.breathingSounds.name] == concepts.ABNORMAL && (
             <BreathingSoundsChestLung
