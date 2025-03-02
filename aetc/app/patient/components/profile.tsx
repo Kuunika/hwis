@@ -192,7 +192,7 @@ export const DesktopView = () => {
       </MainGrid>
       <MainGrid item lg={9}>
         <VitalsPanel />
-        <Charts />
+        {/* <Charts /> */}
         <TabsContainer />
       </MainGrid>
       <FlowStarter patient={params} />
