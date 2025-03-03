@@ -52,7 +52,7 @@ export const DesktopView = () => {
             links={[
               {
                 title: "Sample History",
-                link: `/patient/${params.id}/medical-history`,
+                link: `/patient/${params.id}/medicalHistory`,
               },
             ]}
           />
@@ -90,9 +90,6 @@ export const DesktopView = () => {
               //   title: "Medication",
               //   link: `/patient/${params.id}/consultation`,
               // },
-
-
-
             ]}
             title="Consultation"
           />
@@ -107,7 +104,6 @@ export const DesktopView = () => {
               },
             ]}
           />
-
 
           {/* New Button */}
           <ConsultationCard

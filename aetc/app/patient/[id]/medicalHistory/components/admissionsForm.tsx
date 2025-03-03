@@ -108,7 +108,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   const displayedObservations = showAll ? observations : observations.slice(0, 3);
 
   const admissionsEncounters = patientHistory?.filter(
-    (item) => item.encounter_type.name === "PATIENT ADMISSIONS"
+    (item) => item.encounter_type?.name === "PATIENT ADMISSIONS"
   );
 
   interface ShowSelectionState {

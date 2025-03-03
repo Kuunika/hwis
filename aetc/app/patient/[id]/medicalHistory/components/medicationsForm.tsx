@@ -148,7 +148,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     if (data) {
       const formatMedicationOptions = (data: any) => {
         return data.map((drug: { concept_uuid: string; name: string }) => ({
-          id: drug.concept_uuid.toString(),
+          id: drug.concept_uuid?.toString(),
           label: drug.name,
         }));
       };

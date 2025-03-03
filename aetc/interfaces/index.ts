@@ -127,6 +127,8 @@ export interface Obs {
   names: Name[];
   created_by: string;
   children: Obs[]
+  groupMembers: Obs[];
+  coded?:boolean
 }
 
 export interface Encounter {

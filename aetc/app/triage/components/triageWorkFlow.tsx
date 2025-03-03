@@ -17,7 +17,11 @@ import { useNavigation, useParameters } from "@/hooks";
 
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
-import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+  getPatientsEncounters,
+} from "@/hooks/encounter";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
@@ -74,44 +78,44 @@ export default function TriageWorkFlow() {
     isPending: creatingPresenting,
     isError: presentingError,
     data: presentingComplaintsResponse,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createVitals,
     isSuccess: vitalsCreated,
     isPending: creatingVitals,
     isError: vitalsError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createAirway,
     isSuccess: airwayCreated,
     isPending: creatingAirway,
     isError: airwayError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createBlood,
     isSuccess: bloodCreated,
     isPending: creatingBlood,
     isError: bloodError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createDisability,
     isSuccess: disabilityCreated,
     isPending: creatingDisability,
     isError: disabilityError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
   const {
     mutate: createPain,
     isSuccess: painCreated,
     isPending: creatingPain,
     isError: painError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     mutate: createTriageResult,
     isSuccess: triageResultCreated,
     isPending: creatingTriageResult,
     isError: triageResultError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const { navigateTo, navigateBack } = useNavigation();
 
@@ -181,7 +185,7 @@ export default function TriageWorkFlow() {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.airway, dateTime),
+        obs: formData.airway, //getObservations(formData.airway, dateTime),
       });
     }
   }, [vitalsCreated]);
@@ -190,13 +194,12 @@ export default function TriageWorkFlow() {
     if (airwayCreated) {
       setCompleted(3);
       setMessage("adding blood circulation data...");
-
       createBlood({
         encounterType: encounters.BLOOD_CIRCULATION,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.bloodCirculation, dateTime),
+        obs: formData.bloodCirculation, // getObservations(formData.bloodCirculation, dateTime),
       });
     }
   }, [airwayCreated]);
@@ -211,7 +214,7 @@ export default function TriageWorkFlow() {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.disability, dateTime),
+        obs: formData.disability, // getObservations(formData.disability, dateTime),
       });
     }
   }, [bloodCreated]);
@@ -226,7 +229,7 @@ export default function TriageWorkFlow() {
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
-        obs: getObservations(formData.pain, dateTime),
+        obs: formData.pain, // getObservations(formData.pain, dateTime),
       });
     }
   }, [disabilityCreated]);
@@ -315,6 +318,7 @@ export default function TriageWorkFlow() {
   };
 
   const handleAirwaySubmit = (values: any) => {
+    console.log({ values });
     formData["airway"] = values;
     setActiveStep(3);
     setSubmittedSteps((steps) => [...steps, 2]);

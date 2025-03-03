@@ -4,15 +4,7 @@ import { Box } from "@mui/material";
 
 import React, { useEffect } from "react";
 
-import {
-  EarForm,
-  EyeForm,
-  MouthForm,
-  NeckForm,
-  NoseForm,
-  OtherPartsOfTheHeadForm,
-  OtherTemporalCrownForm,
-} from "./forms/headNeck";
+import { OtherPartsOfTheHeadForm } from "./forms/headNeck";
 import { DataBox } from "./forms";
 
 import { useImageFormTransform } from "@/hooks";

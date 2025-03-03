@@ -25,6 +25,7 @@ import { getOnePatient } from "@/hooks/patientReg";
 import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abdominalDistention: {
@@ -231,8 +232,8 @@ const schema = Yup.object().shape({
   [form.bowelSounds.name]: Yup.string()
     .label(form.bowelSounds.label)
     .required(),
-  [form.general.name]: Yup.string().label(form.general.label).required(),
-  [form.prostate.name]: Yup.array().label(form.prostate.label).required(),
+  [form.general.name]: Yup.array().label(form.general.label).required(),
+  [form.prostate.name]: Yup.array().label(form.prostate.label),
   [form.mass.name]: Yup.string().label(form.mass.label).required(),
   [form.massDescription.name]: Yup.string().label(form.massDescription.label),
   [form.sphincterTone.name]: Yup.string()
@@ -240,7 +241,7 @@ const schema = Yup.object().shape({
     .label(form.sphincterTone.label),
   [form.periymen.name]: Yup.array().label(form.periymen.label),
   [form.scrotum.name]: Yup.array().label(form.scrotum.label),
-  [form.vagina.name]: Yup.array().label(form.vagina.label),
+  [form.vagina.name]: Yup.string().label(form.vagina.label),
   [form.urethralMeatus.name]: Yup.array().label(form.urethralMeatus.label),
   [form.unusualAppearance.name]: Yup.string().label(
     form.unusualAppearance.label
@@ -395,13 +396,13 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesPresent.name,
         value: formValues[form.abnormalitiesPresent.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abnormalitiesPresentImageEnc),
+        groupMembers: flattenImagesObs(abnormalitiesPresentImageEnc),
       },
       {
         concept: concepts.PALPATION,
         value: concepts.PALPATION,
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(tendernessImageEnc),
+        groupMembers: flattenImagesObs(tendernessImageEnc),
       },
     ];
 
@@ -437,6 +438,11 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
       form.digitalVaginalExamination.name,
       datetime
     );
+    const generalObs = mapSearchComboOptionsToConcepts(
+      formValues[form.general.name],
+      form.general.name,
+      datetime
+    );
 
     delete formValues[form.generalInspection.name];
     delete formValues[form.scrotum.name];
@@ -445,6 +451,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     delete formValues[form.urethralMeatus.name];
     delete formValues[form.abnormalitiesPresent.name];
     delete formValues[form.digitalVaginalExamination.name];
+    delete formValues[form.general.name];
 
     await handleSubmit([
       ...getObservations(formValues, getDateTime()),
@@ -455,6 +462,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
       ...periymenObs,
       ...vaginaObs,
       ...digitalVaginalExaminationObs,
+      ...generalObs,
     ]);
   };
 
@@ -476,16 +484,19 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           <FieldsContainer>
             <RadioGroupInput
               options={radioOptions}
+              coded
               name={form.abdominalDistention.name}
               label={form.abdominalDistention.label}
             />
             <RadioGroupInput
               options={radioOptions}
+              coded
               name={form.abnormalitiesPresent.name}
               label={form.abnormalitiesPresent.label}
             />
           </FieldsContainer>
-          {formValues[form.abnormalitiesPresent.name] == concepts.YES && (
+          {formValues[form.abnormalitiesPresent.name] ==
+            getCachedConcept(concepts.YES)?.uuid && (
             <SecondaryAbdomenImage
               imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
               imageSection={form.abnormalitiesPresent.name}
@@ -504,12 +515,14 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             <RadioGroupInput
               row
               options={radioOptions}
+              coded
               name={form.shiftingDullness.name}
               label={form.shiftingDullness.label}
             />
             <RadioGroupInput
               row
               options={radioOptions}
+              coded
               name={form.fluidThrill.name}
               label={form.fluidThrill.label}
             />
@@ -517,6 +530,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           <RadioGroupInput
             row
             options={radioOptions}
+            coded
             name={form.tenderness.name}
             label={form.tenderness.label}
           />
@@ -525,6 +539,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           <RadioGroupInput
             row
             options={radioOptions}
+            coded
             name={form.bruit.name}
             label={form.bruit.label}
           />
@@ -533,6 +548,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             options={bowelSounds}
             name={form.bowelSounds.name}
             label={form.bowelSounds.label}
+            coded
           />
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Digital Rectal Examination">
@@ -541,8 +557,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             options={generalOptions}
             label={form.general.label}
             name={form.general.name}
+            coded
           />
-          {checkIfExist(formValues[form.general.name], concepts.OTHER) && (
+          {checkIfExist(
+            formValues[form.general.name],
+            getCachedConcept(concepts.OTHER)?.uuid
+          ) && (
             <>
               <br />
               <TextInputField
@@ -563,8 +583,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 options={prostateOptions}
                 label={form.prostate.label}
                 name={form.prostate.name}
+                coded
               />
-              {checkIfExist(formValues[form.prostate.name], concepts.OTHER) && (
+              {checkIfExist(
+                formValues[form.prostate.name],
+                getCachedConcept(concepts.OTHER)?.uuid
+              ) && (
                 <>
                   <br />
                   <TextInputField
@@ -585,8 +609,9 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             name={form.mass.name}
             label={form.mass.label}
             options={radioOptions}
+            coded
           />
-          {formValues[form.mass.name] == YES && (
+          {formValues[form.mass.name] == getCachedConcept(YES)?.uuid && (
             <TextInputField
               multiline
               rows={5}
@@ -602,8 +627,10 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             options={sphincterOptions}
             label={form.sphincterTone.label}
             name={form.sphincterTone.name}
+            coded
           />
-          {formValues[form.sphincterTone.name] == concepts.OTHER && (
+          {formValues[form.sphincterTone.name] ==
+            getCachedConcept(concepts.OTHER)?.uuid && (
             <>
               <br />
               <TextInputField
@@ -623,17 +650,20 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.circumcisionStatus.name}
                 label={form.circumcisionStatus.label}
               />
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.laceration.name}
                 label={form.laceration.label}
               />
 
-              {formValues[form.laceration.name] == YES && (
+              {formValues[form.laceration.name] ==
+                getCachedConcept(YES)?.uuid && (
                 <>
                   <br />
                   <TextInputField
@@ -650,10 +680,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.hematomas.name}
                 label={form.hematomas.label}
               />
-              {formValues[form.hematomas.name] == YES && (
+              {formValues[form.hematomas.name] ==
+                getCachedConcept(YES)?.uuid && (
                 <>
                   <br />
                   <TextInputField
@@ -670,10 +702,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.inflammation.name}
                 label={form.inflammation.label}
               />
-              {formValues[form.inflammation.name] == YES && (
+              {formValues[form.inflammation.name] ==
+                getCachedConcept(YES)?.uuid && (
                 <>
                   <br />
                   <TextInputField
@@ -690,10 +724,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.urethralMeatus.name}
                 label={form.urethralMeatus.label}
               />
-              {formValues[form.urethralMeatus.name] == YES && (
+              {formValues[form.urethralMeatus.name] ==
+                getCachedConcept(YES)?.uuid && (
                 <>
                   <br />
                   <TextInputField
@@ -747,6 +783,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 name={form.scrotum.name}
                 label={form.scrotum.label}
                 options={radioOptions}
+                coded
               />
 
               {/* <SearchComboBox
@@ -755,7 +792,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 name={form.scrotum.name}
                 label={form.scrotum.label}
               /> */}
-              {formValues[form.scrotum.name] == YES && (
+              {formValues[form.scrotum.name] == getCachedConcept(YES)?.uuid && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -772,10 +809,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.unusualAppearance.name}
                 label={form.unusualAppearance.label}
               />
-              {formValues[form.unusualAppearance.name] == YES && (
+              {formValues[form.unusualAppearance.name] ==
+                getCachedConcept(YES)?.uuid && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -789,10 +828,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.perihymen.name}
                 label={form.perihymen.label}
               />
-              {formValues[form.periymen.name] == YES && (
+              {formValues[form.periymen.name] ==
+                getCachedConcept(YES)?.uuid && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -813,11 +854,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               <RadioGroupInput
                 row
                 options={radioOptions}
+                coded
                 name={form.vagina.name}
                 label={form.vagina.label}
               />
 
-              {formValues[form.vagina.name] == YES && (
+              {formValues[form.vagina.name] == getCachedConcept(YES)?.uuid && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -838,6 +880,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 label={form.digitalVaginalExamination.label}
                 name={form.digitalVaginalExamination.name}
                 options={digitalVaginalOptions}
+                coded
               />
               {formValues[form.digitalVaginalExamination.name]?.length > 0 && (
                 <TextInputField
@@ -858,9 +901,11 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 label={form.testicles.label}
                 row
                 options={radioOptions}
+                coded
               />
 
-              {formValues[form.testicles.name] == NO && (
+              {formValues[form.testicles.name] ==
+                getCachedConcept(NO)?.uuid && (
                 <TextInputField
                   multiline
                   rows={5}

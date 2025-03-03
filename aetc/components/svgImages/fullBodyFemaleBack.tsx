@@ -6,7 +6,7 @@ import { useImageFormTransform } from "@/hooks";
 
 import { concepts } from "@/constants";
 import { useEffect } from "react";
-import { FullBodyMaleBack } from "@/assets/fullBodyMaleBack";
+
 import { useImageUpdate } from "@/hooks/useImageUpdate";
 import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
 interface Props {

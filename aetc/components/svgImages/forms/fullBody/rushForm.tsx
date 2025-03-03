@@ -112,6 +112,7 @@ export const RushForm = (props: Props) => {
             name={form.description.name}
             label={form.description.label}
             options={options}
+            coded
           />
           <TextInputField
             sx={{

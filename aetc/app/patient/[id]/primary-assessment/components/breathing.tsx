@@ -23,16 +23,31 @@ import {
   LungLeftSideImage,
   ChestLung,
 } from "@/components/svgImages";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSubmissionToCodedArray,
+} from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
+import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
+import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
+import { getActivePatientDetails } from "@/hooks";
+import { LungBackMaleImage } from "@/components/svgImages/LungBackMale";
+import { LungBackFemaleImage } from "@/components/svgImages/LungBackFemale";
+import { LungLeftFemaleImage } from "@/components/svgImages/LungLeftFemale";
+import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
+import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
+import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 
 const form = {
   isPatientBreathing: {
     name: concepts.IS_BREATHING_ABNORMAL,
     label: "Is Patient Breathing",
+    coded: true,
   },
   startTimeIntervention: {
     name: concepts.START_TIME,
@@ -45,6 +60,7 @@ const form = {
   deviceForIntervention: {
     name: concepts.DEVICE_USED,
     label: "Device used for intervention",
+    coded: true,
   },
   respiratoryRate: {
     name: concepts.RESPIRATORY_RATE,
@@ -57,6 +73,7 @@ const form = {
   oxygenNeeded: {
     name: concepts.PATIENT_NEED_OXYGEN,
     label: "Patient Need Oxygen",
+    coded: true,
   },
   oxygenGiven: {
     name: concepts.OXYGEN_GIVEN,
@@ -65,26 +82,32 @@ const form = {
   oxygenSource: {
     name: concepts.OXYGEN_SOURCE,
     label: "Oxygen Source",
+    coded: true,
   },
   deviceUsed: {
     name: concepts.DEVICE_USED,
     label: "Device Used",
+    coded: true,
   },
   isTracheaCentral: {
     name: concepts.IS_TRACHEA_CENTRAL,
     label: "Is Trachea Central",
+    coded: true,
   },
   deviationSide: {
     name: concepts.SIDE_DEVIATED,
     label: "Which side is it deviated to",
+    coded: true,
   },
   chestWallAbnormality: {
     name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
+    coded: true,
   },
   chestExpansion: {
     name: concepts.CHEST_EXPANSION,
     label: "Chest Expansion",
+    coded: true,
   },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
@@ -101,10 +124,12 @@ const form = {
   percussion: {
     name: concepts.PERCUSSION,
     label: "Percussion",
+    coded: true,
   },
   breathSounds: {
     name: concepts.BREATHING_SOUNDS,
     label: "Breath Sounds",
+    coded: true,
   },
 };
 
@@ -252,6 +277,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
+  const { gender } = getActivePatientDetails();
   const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
     Array<any>
   >([]);
@@ -266,6 +292,11 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     onSubmit
   );
 
+  const [lungLeft, setLungLeft] = useState<Array<any>>([]);
+  const [lungRight, setLungRight] = useState<Array<any>>([]);
+  const [lungFront, setLungFront] = useState<Array<any>>([]);
+  const [lungBack, setLungBack] = useState<Array<any>>([]);
+
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
@@ -274,19 +305,52 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         concept: form.chestWallAbnormality.name,
         value: formValues[form.chestWallAbnormality.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(chestAbnormalitiesImage),
+        coded: true,
+        groupMembers: flattenImagesObs(chestAbnormalitiesImage),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(percussionImage),
+        coded: true,
+        groupMembers: flattenImagesObs(percussionImage),
       },
       {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
+        coded: true,
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(chestExpansionImagesEnc),
+        groupMembers: flattenImagesObs(chestExpansionImagesEnc),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Left",
+        obsDatetime: getDateTime(),
+        groupMembers: flattenImagesObs(lungLeft),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Right",
+        obsDatetime: getDateTime(),
+        groupMembers: flattenImagesObs(lungRight),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Front",
+        obsDatetime: getDateTime(),
+        groupMembers: flattenImagesObs(lungFront),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Back",
+        obsDatetime: getDateTime(),
+        groupMembers: flattenImagesObs(lungBack),
+      },
+      {
+        concept: concepts.SITE,
+        value: "Lung Front",
+        obsDatetime: getDateTime(),
+        groupMembers: flattenImagesObs(lungFront),
       },
     ];
 
@@ -299,6 +363,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
           concept: form.deviceForIntervention.name,
           value: device.id,
           obsDateTime: getDateTime(),
+          coded: true,
         };
       });
     }
@@ -309,7 +374,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.chestExpansion.name];
 
     await handleSubmit([
-      ...getObservations(formValues, getDateTime()),
+      ...mapSubmissionToCodedArray(form, formValues),
       ...obs,
       ...devicesObs,
     ]);
@@ -319,22 +384,51 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     {
       id: 1,
       label: "Lung Left",
-      content: <LungRightSideImage onValueChange={() => {}} />,
+      content:
+        gender == "Female" ? (
+          <LungLeftFemaleImage onValueChange={setLungLeft} />
+        ) : (
+          <LungLeftMaleImage onValueChange={setLungLeft} />
+        ),
     },
     {
       id: 2,
       label: "Lung Right",
-      content: <LungLeftSideImage onValueChange={() => {}} />,
+      content:
+        gender == "Female" ? (
+          <LungRightFemaleImage onValueChange={setLungRight} />
+        ) : (
+          <LungRightMaleImage onValueChange={setLungRight} />
+        ),
     },
     {
       id: 3,
       label: "Lung Front",
-      content: <LungImage breathSounds={true} onValueChange={() => {}} />,
+      content:
+        gender == "Female" ? (
+          <LungFrontFemaleImage
+            onValueChange={setLungFront}
+            form="breathSounds"
+          />
+        ) : (
+          <LungFrontMaleImage
+            onValueChange={setLungFront}
+            form="breathSounds"
+          />
+        ),
     },
     {
       id: 4,
       label: "Lung Back",
-      content: <LungBackImage breathSounds={true} onValueChange={() => {}} />,
+      content:
+        gender == "Female" ? (
+          <LungBackFemaleImage
+            onValueChange={setLungFront}
+            form="breathSounds"
+          />
+        ) : (
+          <LungBackMaleImage onValueChange={setLungFront} form="breathSounds" />
+        ),
     },
   ];
 
@@ -486,11 +580,24 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 <>
                   <br />
                   <NotificationContainer message="Diagram to select area" />
-                  <LungImage
-                    imageEncounter={encounters.BREATHING_ASSESSMENT}
-                    imageSection={form.chestWallAbnormality.name}
-                    onValueChange={setChestAbnormalitiesImage}
-                  />
+
+                  {gender == "Male" && (
+                    <LungFrontMaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestAbnormalitiesImage}
+                      form="breathingLung"
+                    />
+                  )}
+                  {gender == "Female" && (
+                    <LungFrontFemaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestAbnormalitiesImage}
+                      form="breathingLung"
+                    />
+                  )}
+
                   <br />
                   <FieldsContainer>
                     {/* <SearchComboBox
@@ -533,25 +640,51 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 />
               </FieldsContainer>
               {formValues[form.chestExpansion.name] == concepts.REDUCED && (
-                <FieldsContainer>
-                  <ChestLung
+                <>
+                  {gender == "Male" && (
+                    <LungFrontMaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestExpansionImagesEnc}
+                      form="selectable"
+                    />
+                  )}
+                  {gender == "Female" && (
+                    <LungFrontFemaleImage
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      imageSection={form.chestWallAbnormality.name}
+                      onValueChange={setChestExpansionImagesEnc}
+                      form="selectable"
+                    />
+                  )}
+                  {/* <ChestLung
                     onValueChange={setChestExpansionImagesEnc}
                     imageEncounter={encounters.CHEST_ASSESSMENT}
                     imageSection={form.chestExpansion.name}
                     selectable={true}
-                  />
-                </FieldsContainer>
+                  /> */}
+                </>
               )}
               <br />
               {formValues[form.percussion.name] == concepts.ABNORMAL && (
-                <FieldsContainer>
-                  <LungBackImage
-                    imageSection={form.percussion.name}
-                    imageEncounter={encounters.BREATHING_ASSESSMENT}
-                    percussion={true}
-                    onValueChange={setPercussionImage}
-                  />
-                </FieldsContainer>
+                <>
+                  {gender == "Male" && (
+                    <LungBackMaleImage
+                      imageSection={form.percussion.name}
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      form="percussion"
+                      onValueChange={setPercussionImage}
+                    />
+                  )}
+                  {gender == "Female" && (
+                    <LungBackFemaleImage
+                      imageSection={form.percussion.name}
+                      imageEncounter={encounters.BREATHING_ASSESSMENT}
+                      form="percussion"
+                      onValueChange={setPercussionImage}
+                    />
+                  )}
+                </>
               )}
               <FieldsContainer>
                 <RadioGroupInput

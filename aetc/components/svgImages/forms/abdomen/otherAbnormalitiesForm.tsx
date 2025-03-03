@@ -81,11 +81,13 @@ export const OtherAbnormalityForm = (props: Props) => {
             name={form.tenderness.name}
             label={form.tenderness.label}
             options={options}
+            coded
           />
           <SearchComboBox
             name={form.wound.name}
             label={form.wound.label}
             options={options}
+            coded
           />
         </>
       )}

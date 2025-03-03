@@ -8,7 +8,10 @@ import {
 } from "@/app/registration/components/common";
 
 import { MainGrid } from "@/components";
-import { addEncounter } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
 import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
@@ -24,7 +27,11 @@ export default function Prescreening() {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const { data } = getPatientsWaitingForPrescreening();
-  const { mutate: createEncounter, isPending, isSuccess } = addEncounter();
+  const {
+    mutate: createEncounter,
+    isPending,
+    isSuccess,
+  } = fetchConceptAndCreateEncounter();
   const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
   const {
     loading,
@@ -62,11 +69,13 @@ export default function Prescreening() {
           concept: concepts.IS_PATIENT_REFERRED,
           value: values[concepts.IS_PATIENT_REFERRED],
           obsDatetime: getDateTime(),
+          coded: true,
         },
         {
           concept: concepts.IS_SITUATION_URGENT,
           value: values[concepts.IS_SITUATION_URGENT],
           obsDatetime: getDateTime(),
+          coded: true,
         },
         {
           concept: concepts.PATIENT_REFERRED_TO,

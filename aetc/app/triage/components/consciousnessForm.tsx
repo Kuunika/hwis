@@ -12,7 +12,7 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 
-import { getInitialValues } from "@/helpers";
+import { getInitialValues, mapSubmissionToCodedArray } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 import { TriageContext, TriageContextType } from "@/contexts";
 
@@ -28,6 +28,7 @@ export const ConsciousnessFormConfig = {
   consciousness: {
     name: concepts.DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS,
     label: "Does the patient have a reduced Level of consciousness",
+    coded: true,
   },
 
   bloodGlucose: {
@@ -97,7 +98,6 @@ export const ConsciousnessForm = ({
   return (
     <FormikInit
       validationSchema={schema}
-      getFormValues={getFormValues}
       initialValues={{
         ...initialValues,
         [ConsciousnessFormConfig.consciousness.name]:
@@ -106,7 +106,12 @@ export const ConsciousnessForm = ({
         [ConsciousnessFormConfig.bloodGlucose.name]: flow["glucose"],
       }}
       enableReinitialize={true}
-      onSubmit={onSubmit}
+      onSubmit={(values) =>
+        onSubmit(mapSubmissionToCodedArray(ConsciousnessFormConfig, values))
+      }
+      getFormValues={(value) =>
+        getFormValues(mapSubmissionToCodedArray(ConsciousnessFormConfig, value))
+      }
       submitButtonText="next"
       submitButton={false}
     >

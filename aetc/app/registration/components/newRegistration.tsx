@@ -19,7 +19,10 @@ import {
   searchByDemographics,
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
-import { addEncounter } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
 import { getDateTime } from "@/helpers/dateTime";
 import { OperationSuccess } from "@/components/operationSuccess";
@@ -113,21 +116,21 @@ export const NewRegistrationFlow = () => {
     isSuccess: socialHistoryCreated,
     isPending: creatingSocialHistory,
     isError: socialHistoryError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     mutate: createReferral,
     isSuccess: referralCreated,
     isPending: creatingReferral,
     isError: referralError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     mutate: createFinancing,
     isSuccess: financingCreated,
     isPending: creatingFinancing,
     isError: financingError,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
     mutate: createRelationship,
