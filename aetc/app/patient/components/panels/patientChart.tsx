@@ -37,7 +37,7 @@ export const PatientChart = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const graph1Options = ["Weight", "Height", "Respiratory and Heart Trend"];
-  const graph2Options = ["BP Trend", "O₂ Sat Trend"];
+  const graph2Options = ["BP Trend", "Temp and O₂ Sat Trend"];
 
   const anchorRef1 = useRef<HTMLDivElement>(null);
   const anchorRef2 = useRef<HTMLDivElement>(null);
