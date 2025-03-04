@@ -307,6 +307,8 @@ export const concepts = {
   HEART_RATE: "Heart Rate",
   BLOOD_PRESSURE_SYSTOLIC: "Blood Pressure Systolic",
   BLOOD_PRESSURE_DIASTOLIC: "Blood Pressure Diastolic",
+  SYSTOLIC_BLOOD_PRESSURE: "Systolic blood pressure",
+  DIASTOLIC_BLOOD_PRESSURE: "Diastolic blood pressure",
   MOTOR_RESPONSE: "Motor Response",
   EYE_OPENING_RESPONSE: "Eye Opening Response",
   VERBAL_RESPONSE: "Verbal Response",
