@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -31,7 +31,8 @@ export const FormDatePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const { value, setFieldValue, initialValues, errorMessage } = useFormikField(name);
+  const { value, setFieldValue, initialValues, errorMessage } =
+    useFormikField(name);
 
   useEffect(() => {
     getValue && getValue(value);
@@ -39,36 +40,44 @@ export const FormDatePicker: FC<Prop> = ({
 
   let initialDate = "";
 
-  if (typeof initialValues == 'object' && initialValues !== null) {
-
+  if (typeof initialValues == "object" && initialValues !== null) {
     //@ts-ignore
-    initialDate = initialValues[name] as Date
+    initialDate = initialValues[name] as Date;
   }
+
+  const display =
+    typeof sx === "object" && sx !== null ? (sx as any).display : undefined;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ display: "flex", flexDirection: "column", width }}>
-      <InputLabel sx={{mb:'1ch', fontSize: "0.76rem", color: "text.secondary" }}>
-        {label}
-      </InputLabel>
-      <DatePicker
-        sx={{
-          backgroundColor:'white',
-          "& fieldset": { borderRadius: "5px" },
-          ...sx,
-        }}
-        defaultValue={dayjs(initialDate)}
-        label=""  // Keep label empty to avoid internal label rendering
-        onChange={(dateValue: any) =>
-          setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
-        }
-        disabled={disabled}
-      />
-                <MainTypography color={"red"} variant="subtitle2">
-            {errorMessage}
-          </MainTypography>
-    </Box>
+        <InputLabel
+          sx={{
+            mb: "1ch",
+            fontSize: "0.76rem",
+            color: "text.secondary",
+            display,
+          }}
+        >
+          {label}
+        </InputLabel>
+        <DatePicker
+          sx={{
+            backgroundColor: "white",
+            "& fieldset": { borderRadius: "5px" },
+            ...sx,
+          }}
+          defaultValue={dayjs(initialDate)}
+          label="" // Keep label empty to avoid internal label rendering
+          onChange={(dateValue: any) =>
+            setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
+          }
+          disabled={disabled}
+        />
+        <MainTypography color={"red"} variant="subtitle2">
+          {errorMessage}
+        </MainTypography>
+      </Box>
     </LocalizationProvider>
-
   );
 };
