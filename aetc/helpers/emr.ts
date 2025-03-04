@@ -52,9 +52,9 @@ export const formatAllVitalsToObject = (obs:Obs[])=>{
   const oxygen=filterObservations(obs,concepts.SATURATION_RATE);
   const heartRate=filterObservations(obs,concepts.HEART_RATE);
 
-  const bloodPressureDiastolic=filterObservations(obs,concepts.BLOOD_PRESSURE_DIASTOLIC);
+  const bloodPressureDiastolic=filterObservations(obs,concepts.SYSTOLIC_BLOOD_PRESSURE);
   const respiratoryRate=filterObservations(obs,concepts.RESPIRATORY_RATE);
-  const bloodPressureSystolic=filterObservations(obs,concepts.BLOOD_PRESSURE_SYSTOLIC);
+  const bloodPressureSystolic=filterObservations(obs,concepts.DIASTOLIC_BLOOD_PRESSURE);
   const temperature=filterObservations(obs,concepts.TEMPERATURE);
   const glucose=filterObservations(obs,concepts.GLUCOSE);
   const avpu=filterObservations(obs,concepts.AVPU);

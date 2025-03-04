@@ -52,11 +52,11 @@ const form = {
     coded: true,
   },
   bloodPressureSystolic: {
-    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
+    name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Systolic",
   },
   bloodPressureDiastolic: {
-    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
+    name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Diastolic",
   },
   intravenousAccess: {
