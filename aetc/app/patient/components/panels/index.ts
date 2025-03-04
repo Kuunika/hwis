@@ -2,6 +2,7 @@ export * from "./clinicalNotes";
 export * from "./panel";
 export * from "./investigations";
 export * from "./patientChart";
+export * from "./visitHistory";
 export * from "./medications";
 export * from "./results";
 export * from "./disposition";

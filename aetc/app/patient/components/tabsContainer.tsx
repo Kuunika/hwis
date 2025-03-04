@@ -6,6 +6,7 @@ import {
   Medications,
   Results,
   PatientChart,
+  VisitHistory,
 } from "./panels";
 
 interface TabPanelProps {
@@ -161,7 +162,9 @@ export const TabsContainer = () => {
       <CustomTabPanel value={value} index={0}>
         <PatientChart />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}></CustomTabPanel>
+      <CustomTabPanel value={value} index={1}>
+        <VisitHistory />
+      </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <Investigations />
       </CustomTabPanel>
