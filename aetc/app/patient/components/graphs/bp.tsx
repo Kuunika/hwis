@@ -3,9 +3,24 @@ import ApexCharts from "apexcharts";
 import { Grid, Box, Typography, Paper, IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import SvgIcon from "@mui/material/SvgIcon";
+import { useVitalsGraphData } from "@/hooks";
 
 export function BP() {
   const lineChartRef = useRef(null);
+  const { chartData } = useVitalsGraphData();
+  console.log("🚀 ~ BP ~ chartData:", chartData)
+  interface Observation {
+    obs_datetime: string;
+    [key: string]: any;
+  }
+  
+  const extractTimes = (dates: Date[]): string[] => {
+    return dates.map(date => {
+      const dateString = date.toString();
+      const timePart = dateString.split(' ')[4];
+      return timePart;
+    });
+  };
 
   // Initialize line chart in a separate useEffect
   useEffect(() => {
@@ -61,17 +76,7 @@ export function BP() {
       },
       colors: ["#FF1654", "#247BA0"],
       xaxis: {
-        categories: [
-          "08:00",
-          "09:00",
-          "10:00",
-          "11:00",
-          "12:00",
-          "13:00",
-          "14:00",
-          "15:00",
-          "16:00",
-        ],
+        categories: extractTimes(chartData.xAxisData),
       },
       yaxis: {
         min: 0,
@@ -80,11 +85,11 @@ export function BP() {
       series: [
         {
           name: "Systolic",
-          data: [72, 75, 78, 70, 68, 80, 74, 73, 76], // Heart rate in bpm, typically 60-100
+          data: chartData.systolicbpData, // Heart rate in bpm, typically 60-100
         },
         {
           name: "Diastolic",
-          data: [120, 125, 118, 122, 110, 115, 117, 123, 121], // Blood pressure systolic values (typically ~120)
+          data: chartData.diastolicbpData, // Blood pressure systolic values (typically ~120)
         },
       ],
     };
@@ -101,7 +106,7 @@ export function BP() {
         lineChart.destroy();
       }
     };
-  }, []);
+  }, [chartData]);
 
   return <Box id="line-chart" ref={lineChartRef} sx={{ height: 350 }}></Box>;
 }
