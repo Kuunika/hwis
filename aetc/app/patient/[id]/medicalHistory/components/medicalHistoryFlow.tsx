@@ -22,6 +22,7 @@ import { getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
+import { date } from "yup";
 
 
 
@@ -157,31 +158,41 @@ export const MedicalHistoryFlow = () => {
    
     const myobs = convertObservations(getObservations(values, dateTime));
 
-    for (let i = 0; i < myobs.length; i += 2) {
-      const chunk = myobs.slice(i, i + 2);
-      
-      try {
+    const presentingSymptoms: any[] = [];
+    let lastSymptom: any = null;
+  
+    myobs.forEach(obs => {
+      if (obs.value === true) {
+        lastSymptom = {
+          concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
+          value: obs.concept,
+          obsDatetime: dateTime,
+          groupMembers: []
+        };
+        presentingSymptoms.push(lastSymptom);
+      } else if (lastSymptom) {
+        lastSymptom.groupMembers.push({
+          concept: obs.concept,
+          value: obs.value,
+          obsDatetime: dateTime
+        });
+      }
+    });
+
+    try {
         
-        const response = await createEncounter({
+       await createEncounter({
           encounterType: encounters.PRESENTING_COMPLAINTS,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime,
-          obs: [
-            {
-              concept: concepts.CURRENT_COMPLAINTS_OR_SYMPTOMS,
-              value: true,
-              obsDatetime: dateTime,
-              groupMembers: chunk,
-            },
-          ],
+          obs: presentingSymptoms,
         });
-      
     
       } catch (error: any) {
         throw error;
       }
-    }
+
 
   };
 
