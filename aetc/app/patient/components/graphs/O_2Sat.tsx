@@ -4,7 +4,7 @@ import { Grid, Box, Typography, Paper, IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import SvgIcon from "@mui/material/SvgIcon";
 
-export function TempOsat() {
+export function O_2Sat() {
   const lineChartRef = useRef(null);
 
   // Initialize line chart in a separate useEffect

@@ -1,5 +1,13 @@
 import { MainButton, MainTypography, WrapperBox } from "@/components";
-import { WeightHeight, BP, RespiratoryHeartRate, TempOsat } from "../";
+import {
+  Weight,
+  Height,
+  BP,
+  HeartRate,
+  RespiratoryRate,
+  Temp,
+  O_2Sat,
+} from "../graphs";
 import { FaPlus } from "react-icons/fa";
 import { Panel } from ".";
 import {
@@ -36,8 +44,8 @@ export const PatientChart = () => {
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
   const [isLoading, setIsLoading] = useState(true);
 
-  const graph1Options = ["Weight", "Height", "Respiratory and Heart Trend"];
-  const graph2Options = ["BP Trend", "Temp and O₂ Sat Trend"];
+  const graph1Options = ["Weight", "Height", "Respiratory Rate", " Heart Rate"];
+  const graph2Options = ["BP", "Temperature", " O₂ Sat"];
 
   const anchorRef1 = useRef<HTMLDivElement>(null);
   const anchorRef2 = useRef<HTMLDivElement>(null);
@@ -127,9 +135,10 @@ export const PatientChart = () => {
               </Grow>
             )}
           </Popper>
-          {graph1SelectedIndex === 0 && <WeightHeight />}
-          {graph1SelectedIndex === 1 && <WeightHeight />}
-          {graph1SelectedIndex === 2 && <RespiratoryHeartRate />}
+          {graph1SelectedIndex === 0 && <Weight />}
+          {graph1SelectedIndex === 1 && <Height />}
+          {graph1SelectedIndex === 2 && <RespiratoryRate />}
+          {graph1SelectedIndex === 3 && <HeartRate />}
         </Paper>
       </Grid>
 
@@ -183,7 +192,9 @@ export const PatientChart = () => {
               </Grow>
             )}
           </Popper>
-          {graph2SelectedIndex === 0 ? <BP /> : <TempOsat />}
+          {graph2SelectedIndex === 0 && <BP />}
+          {graph2SelectedIndex === 1 && <Temp />}
+          {graph2SelectedIndex === 2 && <O_2Sat />}
         </Paper>
       </Grid>
     </Grid>

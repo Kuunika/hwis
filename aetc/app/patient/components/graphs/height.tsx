@@ -4,7 +4,7 @@ import { Grid, Box, Typography, Paper, IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import SvgIcon from "@mui/material/SvgIcon";
 
-export function WeightHeight() {
+export function Height() {
   const areaChartRef = useRef(null);
 
   // Initialize area chart
