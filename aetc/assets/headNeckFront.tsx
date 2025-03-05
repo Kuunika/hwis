@@ -1,4 +1,3 @@
-import { encounters } from "@/constants";
 import React, { forwardRef } from "react";
 export const HeadNeckFront = forwardRef<
   SVGSVGElement,
@@ -9,6 +8,7 @@ export const HeadNeckFront = forwardRef<
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 4388 3509"
     {...props}
+    ref={ref}
   >
     <defs>
       <style>
