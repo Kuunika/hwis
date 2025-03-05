@@ -106,7 +106,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       label: "Front",
       content: (
         <>
-          <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />
+          {/* <HeadNeckImage onValueChange={setHeadNeckImageEncounter} /> */}
           <HeadNeckFrontImage onValueChange={setHeadNeckImageEncounter} />
         </>
       ),

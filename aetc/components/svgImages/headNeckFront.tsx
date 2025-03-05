@@ -65,6 +65,7 @@ export function HeadNeckFrontImage({
     handleFormSubmit(updatedFormData);
   };
 
+  console.log({ idSelected });
   return (
     <>
       <HeadNeckFront ref={containerRef} />
