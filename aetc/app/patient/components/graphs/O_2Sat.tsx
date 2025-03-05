@@ -9,7 +9,7 @@ export function O_2Sat() {
         series: [
           {
             name: "O₂ Sat",
-            data: chartData.rrData,
+            data: chartData.O_2SatData,
           },
         ],
         xAxisCategories: extractTimes(chartData.xAxisData),

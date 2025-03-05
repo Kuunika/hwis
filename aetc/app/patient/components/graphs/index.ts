@@ -1,5 +1,5 @@
 export * from "./height";
-export * from "./weight";
+export * from "./glucose";
 export * from "./bp";
 export * from "./O_2Sat";
 export * from "./temp";
