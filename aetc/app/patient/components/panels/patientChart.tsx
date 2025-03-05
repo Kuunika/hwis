@@ -1,12 +1,11 @@
 import { MainButton, MainTypography, WrapperBox } from "@/components";
 import {
-  Weight,
-  Height,
   BP,
   HeartRate,
   RespiratoryRate,
   Temp,
   O_2Sat,
+  Glucose,
 } from "../graphs";
 import { FaPlus } from "react-icons/fa";
 import { Panel } from ".";
@@ -44,7 +43,7 @@ export const PatientChart = () => {
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
   const [isLoading, setIsLoading] = useState(true);
 
-  const graph1Options = ["Weight", "Height", "Respiratory Rate", " Heart Rate"];
+  const graph1Options = ["Respiratory Rate", " Heart Rate", "Glucose"];
   const graph2Options = ["BP", "Temperature", " O₂ Sat"];
 
   const anchorRef1 = useRef<HTMLDivElement>(null);
@@ -135,10 +134,9 @@ export const PatientChart = () => {
               </Grow>
             )}
           </Popper>
-          {graph1SelectedIndex === 0 && <Weight />}
-          {graph1SelectedIndex === 1 && <Height />}
-          {graph1SelectedIndex === 2 && <RespiratoryRate />}
-          {graph1SelectedIndex === 3 && <HeartRate />}
+          {graph1SelectedIndex === 0 && <RespiratoryRate />}
+          {graph1SelectedIndex === 1 && <HeartRate />}
+          {graph1SelectedIndex === 2 && <Glucose />}
         </Paper>
       </Grid>
 
