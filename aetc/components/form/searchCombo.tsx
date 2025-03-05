@@ -91,26 +91,25 @@ export const SearchComboBox: FC<Props> = ({
   return (
     <WrapperBox sx={{ width, ...sx, borderRadius: 0.5 }}>
       <InputLabel shrink>{label}</InputLabel>
-      {mappedOptions.length > 0 && (
-        <Select
-          isDisabled={disabled}
-          value={mappedOptions.find((op) => op.value === value)}
-          styles={customStyles}
-          defaultValue={manualInitialValues}
-          theme={(theme: Theme) => ({
-            ...theme,
-            colors: {
-              ...theme.colors,
-              primary: defaultTheme.primary,
-              primary25: "#cffccf",
-            },
-          })}
-          onChange={handleChange}
-          isMulti={multiple}
-          components={animatedComponents}
-          options={mappedOptions}
-        />
-      )}
+
+      <Select
+        isDisabled={disabled}
+        value={mappedOptions?.find((op) => op.value === value)}
+        styles={customStyles}
+        defaultValue={manualInitialValues}
+        theme={(theme: Theme) => ({
+          ...theme,
+          colors: {
+            ...theme.colors,
+            primary: defaultTheme.primary,
+            primary25: "#cffccf",
+          },
+        })}
+        onChange={handleChange}
+        isMulti={multiple}
+        components={animatedComponents}
+        options={mappedOptions}
+      />
       <MainTypography color="red" variant="subtitle2">
         {errorMessage}
       </MainTypography>
