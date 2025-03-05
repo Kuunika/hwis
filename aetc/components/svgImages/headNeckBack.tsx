@@ -11,6 +11,7 @@ import { useImageFormTransform } from "@/hooks";
 import { concepts } from "@/constants";
 import { HeadBack } from "@/assets/headBack";
 import { HeadNeckBack } from "@/assets";
+import { useImageUpdate } from "@/hooks/useImageUpdate";
 
 interface Props {
   onValueChange: (values: any) => void;
@@ -31,7 +32,7 @@ export function HeadNeckBackImage({
     selectedSection,
     handleFormSubmit,
     ids,
-  } = useImage();
+  } = useImageUpdate();
   const idSelected = selectedSection.id;
   const labelSelected = selectedSection.label as string;
 

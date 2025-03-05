@@ -18,6 +18,7 @@ import { DataBox } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { concepts, encounters } from "@/constants";
 import { HeadNeckFront } from "@/assets";
+import { useImageUpdate } from "@/hooks/useImageUpdate";
 
 interface Props {
   onValueChange: (values: any) => void;
@@ -38,7 +39,7 @@ export function HeadNeckFrontImage({
     selectedSection,
     handleFormSubmit,
     ids,
-  } = useImage();
+  } = useImageUpdate();
   const idSelected = selectedSection.id;
   const labelSelected = selectedSection.label as string;
 

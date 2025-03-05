@@ -4,7 +4,13 @@ import React, { useState } from "react";
 import { FormikInit } from "@/components";
 import * as yup from "yup";
 
-import { HeadNeckImage } from "@/components/svgImages";
+import {
+  HeadNeckBackImage,
+  HeadNeckFrontImage,
+  HeadNeckImage,
+  HeadNeckLeftImage,
+  HeadNeckRightImage,
+} from "@/components/svgImages";
 import { useSubmitEncounter } from "@/hooks";
 import { concepts, encounters } from "@/constants";
 import { flattenImagesObs } from "@/helpers";
@@ -88,24 +94,42 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     {
       id: 1,
       label: "Left",
-      content: <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} />,
+      content: (
+        <>
+          {/* <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} /> */}
+          <HeadNeckLeftImage onValueChange={setLeftHeadNeckImageEncounter} />
+        </>
+      ),
     },
     {
       id: 2,
       label: "Front",
-      content: <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />,
+      content: (
+        <>
+          <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />
+          <HeadNeckFrontImage onValueChange={setHeadNeckImageEncounter} />
+        </>
+      ),
     },
     {
       id: 3,
       label: "Right",
       content: (
-        <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} />
+        <>
+          {/* <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} /> */}
+          <HeadNeckRightImage onValueChange={setRightHeadNeckImageEncounter} />
+        </>
       ),
     },
     {
       id: 4,
       label: "Back",
-      content: <HeadBackImage onValueChange={setBackHeadNeckImageEncounter} />,
+      content: (
+        <>
+          <HeadBackImage onValueChange={setBackHeadNeckImageEncounter} />
+          {/* <HeadNeckBackImage onValueChange={setBackHeadNeckImageEncounter} /> */}
+        </>
+      ),
     },
   ];
 
