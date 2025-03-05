@@ -6,7 +6,6 @@ import SvgIcon from "@mui/material/SvgIcon";
 
 export function WeightHeight() {
   const areaChartRef = useRef(null);
-  const lineChartRef = useRef(null);
 
   // Initialize area chart
   useEffect(() => {
