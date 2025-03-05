@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { MainGrid, MainPaper, MainTypography, WrapperBox, BackButton, MainButton } from "@/components";
+import { MainGrid, MainPaper, MainTypography, WrapperBox, BackButton, MainButton, PatientInfoTab } from "@/components";
 import { Typography, Button, Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
@@ -168,6 +168,20 @@ interface Investigation {
   obsDatetime: string;
 }
 
+interface BedsideAssessment {
+  mrdt: string | null;
+  pregnancyTest: string | null;
+  pc02: string | null;
+
+
+  vdrl: string | null;
+  hiv: string | null;
+  pointOfCareUltrasound: string | null;
+  ecg: string | null;
+  other: string | null;
+  obsDatetime: string;
+}
+
 
 const YES_UUID = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 const NO_UUID = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
@@ -191,6 +205,8 @@ function SurgicalNotesTemplate() {
   const [lungsAssessments, setLungsAssessments] = useState<LungsObservation[]>([]);
   const [primaryLungsAssessments, setPrimaryLungsAssessments] = useState<PrimaryLungsObservation[]>([]);
   const [investigations, setInvestigations] = useState<Investigation[]>([]);
+  const [bedsideAssessment, setBedsideAssessment] = useState<BedsideAssessment | null>(null);
+
 
 
 
@@ -222,9 +238,6 @@ function SurgicalNotesTemplate() {
   });
 
 
-  const handlePrintToPDF = () => {
-    console.log("Implement PDF export functionality here.");
-  };
   useEffect(() => {
     if (patientEncounters) {
 
@@ -654,33 +667,54 @@ function SurgicalNotesTemplate() {
       setNeurologicalExaminations(latestNeurologicalRecords);
 
       //Extremities assessment
-      const mapConceptValue = (obs) => {
-        return obs.value || "Not Recorded";
-      };
-
       const extremitiesRecords = patientEncounters
-        .filter((encounter) => encounter.encounter_type.name === "EXTREMITIES ASSESSMENT")
-        .flatMap((encounter) =>
-          encounter.obs.map((obs) => {
-            return {
-              id: obs.obs_id.toString(),
-              oedema: mapConceptValue(obs),
-              oedemaDetails: mapConceptValue(
-                encounter.obs.find((o) => o.obs_id === 18705) || {}
-              ),
-              coldClammy: getYesNo(
-                mapConceptValue(encounter.obs.find((o) => o.concept_id === 11624) || {})
-              ),
-              abnormalitiesUpperLimb: getYesNo(
-                mapConceptValue(encounter.obs.find((o) => o.concept_id === 11625) || {})
-              ),
-              abnormalitiesLowerLimb: getYesNo(
-                mapConceptValue(encounter.obs.find((o) => o.concept_id === 11626) || {})
-              ),
-              obsDatetime: obs.obs_datetime || "No Date",
-            };
-          })
-        );
+        .filter((encounter) => encounter.encounter_type.uuid === encounters.EXTREMITIES_ASSESSMENT)
+        .map((encounter) => {
+          const obsMap = new Map<number, string>();
+
+          // Populate the map with observations
+          encounter.obs.forEach((obs) => {
+            obsMap.set(obs.concept_id, obs.value || "Not Recorded");
+          });
+
+          return {
+            id: encounter.encounter_id.toString(),
+            oedema: obsMap.get(18705) || "Not Recorded",
+            oedemaDetails: obsMap.get(18705) || "Not Recorded",
+            coldClammy: getYesNo(obsMap.get(11624) || "Not Recorded"),
+            abnormalitiesUpperLimb: getYesNo(obsMap.get(11625) || "Not Recorded"),
+            abnormalitiesLowerLimb: getYesNo(obsMap.get(11626) || "Not Recorded"),
+            obsDatetime: encounter.encounter_datetime || "No Date",
+          };
+        });
+
+      // const mapConceptValue = (obs) => {
+      //   return obs.value || "Not Recorded";
+      // };
+
+      // const extremitiesRecords = patientEncounters
+      //   .filter((encounter) => encounter.encounter_type.name === "EXTREMITIES ASSESSMENT")
+      //   .flatMap((encounter) =>
+      //     encounter.obs.map((obs) => {
+      //       return {
+      //         id: obs.obs_id.toString(),
+      //         oedema: mapConceptValue(obs),
+      //         oedemaDetails: mapConceptValue(
+      //           encounter.obs.find((o) => o.obs_id === 18705) || {}
+      //         ),
+      //         coldClammy: getYesNo(
+      //           mapConceptValue(encounter.obs.find((o) => o.concept_id === 11624) || {})
+      //         ),
+      //         abnormalitiesUpperLimb: getYesNo(
+      //           mapConceptValue(encounter.obs.find((o) => o.concept_id === 11625) || {})
+      //         ),
+      //         abnormalitiesLowerLimb: getYesNo(
+      //           mapConceptValue(encounter.obs.find((o) => o.concept_id === 11626) || {})
+      //         ),
+      //         obsDatetime: obs.obs_datetime || "No Date",
+      //       };
+      //     })
+      //   );
 
       // Sorting and selecting the latest record
       const latestExtremitiesRecords = extremitiesRecords
@@ -718,6 +752,40 @@ function SurgicalNotesTemplate() {
         .slice(0, 1); // Keep only the latest assessment
 
       setInvestigations(latestAssessments);
+
+      // Find the latest "Triage Result" encounter
+      const triageEncounters = patientEncounters.filter(
+        (encounter) => encounter.encounter_type.name === "Triage Result"
+      );
+
+      // Map encounters to extract relevant observations
+      const obsRecords = triageEncounters.flatMap((encounter) => encounter.obs);
+
+      // Create a map for quick access by concept_id
+      const obsMap = new Map<number, string>();
+
+      obsRecords.forEach((obs) => {
+        obsMap.set(obs.concept_id, obs.value_text || obs.value || "Not Recorded");
+      });
+
+      // Store assessment values
+      const assessment = {
+        mrdt: obsMap.get(10124) || "Not Recorded", // Concept ID for Point of Care Ultrasound
+        pc02: obsMap.get(11701) || "Not Recorded", // Concept ID for Point of Care Ultrasound
+
+        pregnancyTest: obsMap.get(45) || "Not Recorded", // Concept ID for Point of Care Ultrasound
+
+        vdrl: obsMap.get(299) || "Not Recorded", // Concept ID for Point of Care Ultrasound
+        hiv: obsMap.get(822) || "Not Recorded", // Concept ID for Point of Care Ultrasound
+
+        pointOfCareUltrasound: obsMap.get(11716) || "Not Recorded", // Concept ID for Point of Care Ultrasound
+        ecg: obsMap.get(3403) || "Not Recorded", // Concept ID for ECG
+        other: obsMap.get(8) || "Not Recorded", // Concept ID for Other
+        obsDatetime: obsRecords.length ? obsRecords[0].obs_datetime : "No Date",
+      };
+
+      setBedsideAssessment(assessment);
+
 
 
       // Skin Assessment
@@ -1036,23 +1104,13 @@ function SurgicalNotesTemplate() {
 
         <MainButton onClick={handlePrint} sx={{ marginRight: "20px" }} title="Download PDF" />
       </WrapperBox>
-      <div ref={printRef}>
+      <div ref={printRef} className="printable-content">
+        <div className="print-only">
+          <PatientInfoTab />
+        </div>
 
         {/* Surgical Notes Content */}
 
-
-        {/* new ends here */}
-
-
-
-        {/* <section style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
-        <Button variant="contained" color="primary" onClick={handlePrint}>
-          Print to PDF
-        </Button>
-      </section> */}
-
-
-        {/* <div > Wrap content inside ref for printing */}
 
         {/* 1. Past Presenting Complaint(s) */}
         <MainTypography sx={{ fontWeight: "bold", color: "green", fontSize: "20px" }}>
@@ -1439,13 +1497,32 @@ function SurgicalNotesTemplate() {
           Investigation</MainTypography>
         <MainGrid container spacing={2} paddingBottom={"16px"} sx={{ background: "white" }}>
           {/* Bedside Subsection */}
+          {/* Bedside Subsection */}
           <MainGrid item xs={6}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
               Bedside Assessment
             </MainTypography>
-            <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
-              No bedside assessment observations recorded.
-            </MainTypography>
+            {bedsideAssessment ? (
+              <div style={{ paddingLeft: "20px", marginTop: "10px" }}>
+                <p><strong>MRDT:</strong> {bedsideAssessment.mrdt}</p>
+                <p><strong>PC02:</strong> {bedsideAssessment.pc02}</p>
+
+                <p><strong>Pregnancy Test:</strong> {bedsideAssessment.pregnancyTest}</p>
+
+                <p><strong>VDRL:</strong> {bedsideAssessment.vdrl}</p>
+                <p><strong>HIV:</strong> {bedsideAssessment.hiv}</p>
+
+
+                <p><strong>Point of Care Ultrasound:</strong> {bedsideAssessment.pointOfCareUltrasound}</p>
+                <p><strong>ECG:</strong> {bedsideAssessment.ecg}</p>
+                <p><strong>Other:</strong> {bedsideAssessment.other}</p>
+                <p><strong>Last Updated:</strong> {new Date(bedsideAssessment.obsDatetime).toLocaleDateString()}</p>
+              </div>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No bedside assessment observations recorded.
+              </MainTypography>
+            )}
           </MainGrid>
 
           {/* Lab order Subsection */}
@@ -1490,6 +1567,18 @@ function SurgicalNotesTemplate() {
         </MainGrid>
 
       </div>
+      {/* CSS for Print Handling */}
+      <style jsx>{`
+        @media print {
+          .print-only {
+            display: block !important; /* Ensure visibility in print */
+          }
+        }
+        .print-only {
+          display: none; /* Hide on screen */
+        }
+      `}</style>
+
     </>
   );
 }

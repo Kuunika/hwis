@@ -36,7 +36,7 @@ export const PatientManagementFlow = () => {
             <>
                 <NonPharmacologicalForm onSkip={() => { }} onSubmit={() => { }} />
                 <StepButtons
-                    onNext={() => setActiveStep(2)}
+                    onNext={() => setActiveStep(1)}
                 />
             </>
             <>
