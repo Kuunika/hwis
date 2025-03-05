@@ -88,12 +88,6 @@ export const AreaChart: React.FC<AreaChartProps> = ({
         forceNiceScale: true,
       },
       series: chartConfig.series,
-      title: chartConfig.title
-        ? {
-            text: chartConfig.title,
-            align: "left",
-          }
-        : undefined,
     };
 
     let chart: ApexCharts;
