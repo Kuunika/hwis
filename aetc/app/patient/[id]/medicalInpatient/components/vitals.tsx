@@ -37,7 +37,6 @@ function VitalsPanel() {
 
         const vitalsEncounters = historicData?.filter((item) => item.encounter_type?.name === 'VITALS');
         const vitalsObs = vitalsEncounters && vitalsEncounters.length > 0 ? vitalsEncounters[0].obs : null;
-        console.log(vitalsObs)
         if(vitalsObs){
 
               const sortedVitals = [...vitalsObs].sort((a, b) => 
