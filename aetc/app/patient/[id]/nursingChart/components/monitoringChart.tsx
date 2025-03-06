@@ -95,12 +95,13 @@ export const MonitoringChart = () => {
     if(vitalsCreated) {
       setAlertMessage(`Vitals submitted successfully`);
       setAlertSeverity("success");
-      setActiveStep(1);
+      handleSkip();
     }
 
     if(interventionsCreated) {
       setAlertMessage(`All encounters submitted successfully`);
       setAlertSeverity("success");
+      handleSkip();
     }
     if(nursingNotesCreated) {
       setAlertMessage(`All encounters submitted successfully`);
