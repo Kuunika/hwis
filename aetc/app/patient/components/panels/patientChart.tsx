@@ -69,7 +69,7 @@ export const PatientChart = () => {
   };
 
   const handleClose = (
-    event: MouseEvent,
+    event: MouseEvent | TouchEvent,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     anchorRef: React.RefObject<HTMLDivElement>
   ) => {
@@ -108,7 +108,7 @@ export const PatientChart = () => {
               >
                 <Paper sx={{ zIndex: 2000 }}>
                   <ClickAwayListener
-                    onClick={(event) =>
+                    onClickAway={(event) =>
                       handleClose(event, setOpenGraph1, anchorRef1)
                     }
                   >
@@ -164,7 +164,7 @@ export const PatientChart = () => {
               >
                 <Paper sx={{ zIndex: 2000 }}>
                   <ClickAwayListener
-                    onClick={(event) =>
+                    onClickAway={(event) =>
                       handleClose(event, setOpenGraph2, anchorRef2)
                     }
                   >
