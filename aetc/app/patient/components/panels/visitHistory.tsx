@@ -20,21 +20,14 @@ export const VisitHistory = () => {
       <Paper style={{ marginTop: "10px" }}>
         <Grid container spacing={1}>
           <Grid item xs={12} md={3}>
-            <div
-              style={{
-                width: "240px",
-                marginTop: "5px",
-                marginBottom: "5px",
-                marginLeft: "10px",
-              }}
-            >
+            <div style={{ padding: "15px" }}>
               <div>
                 <Button
                   size="large"
                   style={{
                     width: "100%",
-                    margin: "5px",
                     backgroundColor: "#DDEEDD",
+                    marginBottom: "8px",
                   }}
                   variant="outlined"
                 >
@@ -44,7 +37,7 @@ export const VisitHistory = () => {
               <div>
                 <Button
                   size="large"
-                  style={{ width: "100%", margin: "5px" }}
+                  style={{ width: "100%", marginBottom: "8px" }}
                   variant="outlined"
                 >
                   26 Feb, 2025
