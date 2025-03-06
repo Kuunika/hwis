@@ -211,11 +211,12 @@ export const MedicalHistoryFlow = () => {
     return acc;
   }, {});
   
+
   const observationsPayload = Object.keys(groupedAllergies).map(groupKey => {
     const groupConcept = groupKey; 
     const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
-      let conceptValue = allergy.value; 
-      let value = true; 
+      let conceptValue = concepts.ALLERGEN; 
+      let value = allergy.value; 
       if (allergy.label.includes("Other medical substance allergy")) {
         
         conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
@@ -240,43 +241,53 @@ export const MedicalHistoryFlow = () => {
       return {
         concept: conceptValue, 
         value: value, 
+        obsDateTime: dateTime,
       };
     });
   
     return {
-      person: params.id,
-      concept: groupConcept, 
+      concept: concepts.ALLERGY_CATEGORY, 
       obsDatetime: dateTime,
-      value: true,
+      value: groupConcept,
       groupMembers: chunk, 
     };
   });
   
+  const allergiesData: any[] = [];
   observationsPayload.forEach(async (observation) => {
-      observation.groupMembers.push({
-        concept: concepts.ALLERGY_COMMENT,
-        value: values[concepts.ALLERGY_COMMENT]
-      });
+      const detailKeyMap = {
+        [concepts.MEDICATION_ALLERGY]: "medication_Allergy_Details",
+        [concepts.MEDICAL_SUBSTANCE_ALLERGY]: "medical_Substance_Allergy_Details",
+        [concepts.SUBSTANCE_ALLERGY]: "substance_Allergy_Details",
+        [concepts.FOOD_ALLERGY]: "food_Allergy_Details",
+    };
   
-      try {
-        const response = await createEncounter({
-        encounterType: encounters.ALLERGIES,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime, 
-        obs: [{
-          concept: observation.concept, 
-          value: true,
+    const allergyCategory = observation.value;
+    const detailKey = detailKeyMap[allergyCategory];
+
+    if (detailKey && values[detailKey]) {
+      observation.groupMembers.push({
+          "concept": concepts.ALLERGY_DETAILS,
+          "value": values[detailKey],
           obsDatetime: dateTime,
-          groupMembers: observation.groupMembers,
-        },],            
-    },);
-    console.log("Encounter successfully created:", response);
-  } catch (error: any) {
-    throw error;
-  }
+      });
+    }
+    allergiesData.push(observation);
+  
   });
 
+  try {
+    const response = await createEncounter({
+    encounterType: encounters.ALLERGIES,
+    visit: activeVisit?.uuid,
+    patient: params.id,
+    encounterDatetime: dateTime, 
+    obs: allergiesData,            
+},);
+console.log("Encounter successfully created:", response);
+} catch (error: any) {
+throw error;
+}
 
   };
 

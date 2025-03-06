@@ -243,6 +243,7 @@ const initialValues = {
     onSubmit(formValues);
   };
 
+
   useEffect(() => {
     if (allergySelected.length > 0) {
       // Check for each allergy type and set the corresponding state
@@ -311,18 +312,50 @@ return (<>
       label={allergiesFormConfig.otherSubstance.label}
       sx={{ width: '100%', mt: '2ch' }}
     />
+    
   )}
-{allergySelected.length>0 &&(
-  <TextInputField 
-  id={allergiesFormConfig.allergyDetails.name}
-  name={allergiesFormConfig.allergyDetails.name}
-  label={allergiesFormConfig.allergyDetails.label}
-  sx={{ width: '100%', mt:'2ch' }}
-  multiline={true}
-  rows={3}
-/>
- 
+
+
+{allergySelected.some(item => item.group === concepts.MEDICATION_ALLERGY) && (
+  <TextInputField
+    id="medication_Allergy_Details"
+    name={"medication_Allergy_Details"}
+    label="Medication allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
 )}
+
+{allergySelected.some(item => item.group === concepts.MEDICAL_SUBSTANCE_ALLERGY) && (
+  <TextInputField
+    id="medical_Substance_Allergy_Details"
+    name={"medical_Substance_Allergy_Details"}
+    label="Medical substance allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
+)}
+
+{allergySelected.some(item => item.group === concepts.FOOD_ALLERGY) && (
+  <TextInputField
+    id="food_Allergy_Details"
+    name={"food_Allergy_Details"}
+    label="Food allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
+)}
+
+{allergySelected.some(item => item.group === concepts.SUBSTANCE_ALLERGY) && (
+  <TextInputField
+    id="substance_Allergy_Details"
+    name={"substance_Allergy_Details"}
+    label="Substance allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
+)}
+
+
+
+ 
+
 
 <WrapperBox sx={{mt: '2ch' }}>
     <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
