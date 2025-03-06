@@ -163,7 +163,7 @@ export const encounters = {
   TREATMENT: "ba05ed9c-8d80-11d8-abbb-0024217bb78e",
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",
   PATIENT_CARE_AREA: "d0d12af5-7f67-41fe-a856-db3b54ca6c0d",
-  DISPENSING:"ba0612c2-8d80-11d8-abbb-0024217bb78e",
+  DISPENSING: "ba0612c2-8d80-11d8-abbb-0024217bb78e",
   FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e',
   REVIEW_OF_SYSTEMS: '54e32e5d-51c5-4f16-8cff-9fc7da3c68ca',
 };
@@ -317,7 +317,7 @@ export const concepts = {
   URINE_DIPSTICK_KETONES: "Urine Dipstick Ketones",
   PEAK_EXPIRATORY_FLOW_RATE: "Peak Expiratory Flow Rate",
   CONDITION: "Condition",
-  DIFFERENTIAL_DIAGNOSIS: "Differential Diagnosis",
+  DIFFERENTIAL_DIAGNOSIS: "Attempted/ Differential Diagnosis",
   FINAL_DIAGNOSIS: "Final Diagnosis",
   IS_AIRWAY_COMPROMISED: "Is Airway Compromised",
   IS_BREATHING_ABNORMAL: "Is Breathing Abnormal",
@@ -1174,8 +1174,8 @@ export const concepts = {
   HEMORROID: "Hemorroid",
   PROSTRATE_DESCRIPTION: "Prostrate Description",
   DIAGNOSIS: "Diagnosis",
-  FUNDO_SCOPY_FINDINGS:'Fundoscopy Findings',
-  NOTES:"Notes",
+  FUNDO_SCOPY_FINDINGS: 'Fundoscopy Findings',
+  NOTES: "Notes",
   OBJECTIVE_DATA_HEAD: "Objective data head",
   OBJECTIVE_DATA_CHEST: "Objective data chest",
   OBJECTIVE_DATA_ABDOMEN: "Objective data abdomen",
@@ -1192,16 +1192,16 @@ export const concepts = {
   BUILDING_COLLAPSE: "Building Collapse",
 }
 
-export const conceptNames= {
-  DRUG_GIVEN:'Given drugs',
-  PRESCRIBED_DOSE:'Prescribed dose',
-  MEDICATION_DOSE_UNIT:'Medication Dose Unit',
-  MEDICATION_FREQUENCY:'Medication Frequency',
-  MEDICATION_DURATION:'Medication Duration',
-  MEDICATION_DURATION_UNIT:'Medication Duration Unit',
-  MEDICATION_FORMULATION:'Medication Formulation',
-  DESCRIPTION:'Description',
-  MEDICATION_ROUTE:'Medication Route',
+export const conceptNames = {
+  DRUG_GIVEN: 'Given drugs',
+  PRESCRIBED_DOSE: 'Prescribed dose',
+  MEDICATION_DOSE_UNIT: 'Medication Dose Unit',
+  MEDICATION_FREQUENCY: 'Medication Frequency',
+  MEDICATION_DURATION: 'Medication Duration',
+  MEDICATION_DURATION_UNIT: 'Medication Duration Unit',
+  MEDICATION_FORMULATION: 'Medication Formulation',
+  DESCRIPTION: 'Description',
+  MEDICATION_ROUTE: 'Medication Route',
 }
 
 
