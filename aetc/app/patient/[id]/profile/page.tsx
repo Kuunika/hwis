@@ -8,7 +8,7 @@ function PatientProfile() {
   return (
     <>
       <DesktopView />
-      <TabletView />
+      {/* <TabletView /> */}
     </>
   );
 }

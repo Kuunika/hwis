@@ -35,11 +35,11 @@ export const ObservationFormConfig = {
     label: "Heart Rate (HR)",
   },
   bloodPressureSystolic: {
-    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
+    name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Systolic",
   },
   bloodPressureDiastolic: {
-    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
+    name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Diastolic",
   },
   respiratoryRate: {

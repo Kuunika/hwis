@@ -18,15 +18,17 @@ import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 import { useContext } from "react";
 
 export const VisitsBar = () => {
-  const { openVisit  } = useContext(PatientProfileContext) as PatientProfileContextType;
+  const { openVisit } = useContext(
+    PatientProfileContext
+  ) as PatientProfileContextType;
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
 
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
 
   const uniqueArray: any = {};
-  data?.forEach(item => {
-    uniqueArray[item.visit_id] = false
+  data?.forEach((item) => {
+    uniqueArray[item.visit_id] = false;
   });
 
   return (
@@ -43,7 +45,6 @@ export const VisitsBar = () => {
         borderColor: "#E6E6E6",
       }}
     >
-      <VisitDates  />
       <WrapperBox sx={{ display: "flex", alignItems: "center", mx: "1ch" }}>
         <MainTypography sx={{ cursor: "pointer" }}>
           <FaChevronLeft />
@@ -60,9 +61,8 @@ export const VisitsBar = () => {
         sx={{ ml: "1ch" }}
         variant="secondary"
         title={"Triage"}
-      // size="small"
+        // size="small"
       />
-
     </WrapperBox>
   );
 };
