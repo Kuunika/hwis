@@ -329,7 +329,7 @@ export const concepts = {
   URINE_DIPSTICK_KETONES: "Urine Dipstick Ketones",
   PEAK_EXPIRATORY_FLOW_RATE: "Peak Expiratory Flow Rate",
   CONDITION: "Condition",
-  DIFFERENTIAL_DIAGNOSIS: "Differential Diagnosis",
+  DIFFERENTIAL_DIAGNOSIS: "Attempted/ Differential Diagnosis",
   FINAL_DIAGNOSIS: "Final Diagnosis",
   IS_AIRWAY_COMPROMISED: "Is Airway Compromised",
   IS_BREATHING_ABNORMAL: "Is Breathing Abnormal",

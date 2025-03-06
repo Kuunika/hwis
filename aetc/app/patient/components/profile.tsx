@@ -132,7 +132,9 @@ export const DesktopView = () => {
               },
               {
                 title: "Surgical Notes",
-                link: `/patient/${params.id}/surgicalNotes`,
+                // link: `/patient/${params.id}/surgicalNotes`,
+                link: `/patient/${params.id}/template-forms`,
+
                 icon: (
                   <Image
                     width={20}

@@ -118,7 +118,6 @@ export const useImage = () => {
   };
 
   const handleFormSubmit = (formData: any) => {
-    console.log({ formData });
     const dateTime = getDateTime();
     const obs = Object.keys(formData)
       .flatMap((key) => {

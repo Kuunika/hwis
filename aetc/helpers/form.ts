@@ -1,3 +1,4 @@
+import { concepts } from "@/constants";
 import { getDateTime } from "./dateTime";
 
 export const getInitialValues = (values: any) => {
@@ -45,11 +46,23 @@ export const getFormLabels = (formConceptLabels:any, selectOptionsFormLabels:Arr
 return [...form, ...radios, ...selects]
 }
 
-export const flattenImagesObs = (formImageEncounters: Array<{formData: {obs:any}}>)=>{
+export const flattenImagesObs = (formImageEncounters: Array<{formData: {obs:any}, label:string}>)=>{
 
-return formImageEncounters.flatMap((enc)=>{
-  return enc.formData.obs
-})
+ return formImageEncounters.map(enc=>{
+    return  {
+      concept: concepts.IMAGE_PART_NAME,
+      value:  enc.label,
+      obsDateTime: getDateTime(),
+      groupMembers: enc.formData.obs
+    }
+  });
+
+// console.log({obs});
+
+
+// return formImageEncounters.flatMap((enc)=>{
+//   return enc.formData.obs
+// })
 
 }
 
