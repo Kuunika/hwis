@@ -7,7 +7,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: "1px",
+          textTransform: "capitalize",
         },
       },
     },

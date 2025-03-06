@@ -18,6 +18,7 @@ export const useVitalsGraphData = () => {
     glucoseData: [],
     tempData: [],
     rrData: [],
+    O_2Sat: [],
   });
 
   const [selectedChartTop, setSelectedChartTop] = useState("bp"); // State for top chart container
@@ -62,13 +63,16 @@ export const useVitalsGraphData = () => {
           obsArray.find((obs: any) => obs?.concept_id === 5087)
             ?.value_numeric || null;
         const glucose =
-          obsArray.find((obs: any) => obs?.concept_id === 887)?.value_numeric ||
+          obsArray.find((obs: any) => obs?.concept_id === 887)?.value_text ||
           null;
         const temperature =
           obsArray.find((obs: any) => obs?.concept_id === 5088)
             ?.value_numeric || null;
         const rr =
           obsArray.find((obs: any) => obs?.concept_id === 5242)?.value_text ||
+          null;
+        const O_2Sat =
+          obsArray.find((obs: any) => obs?.concept_id === 5092)?.value_text ||
           null;
 
         // Extract and format timestamp
@@ -84,6 +88,7 @@ export const useVitalsGraphData = () => {
           glucose,
           temperature,
           rr,
+          O_2Sat,
         });
       }
 
@@ -100,6 +105,7 @@ export const useVitalsGraphData = () => {
       const glucoseData = triageData.map((data) => data.glucose);
       const tempData = triageData.map((data) => data.temperature);
       const rrData = triageData.map((data) => data.rr);
+      const O_2SatData = triageData.map((data) => data.O_2Sat);
 
       return {
         xAxisData,
@@ -109,6 +115,7 @@ export const useVitalsGraphData = () => {
         glucoseData,
         tempData,
         rrData,
+        O_2SatData,
       };
     };
 

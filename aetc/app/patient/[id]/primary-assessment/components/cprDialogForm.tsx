@@ -70,11 +70,11 @@ const form = {
     label: "Respiratory Rate",
   },
   systolic: {
-    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
+    name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Systolic",
   },
   diastolic: {
-    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
+    name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Diastolic",
   },
   // gcs: {
