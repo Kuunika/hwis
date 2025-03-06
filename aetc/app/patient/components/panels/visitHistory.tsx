@@ -1,4 +1,5 @@
 import { Button, Grid, Paper } from "@mui/material";
+import { Vitals } from "../visits";
 
 export const VisitHistory = () => {
   return (
@@ -57,6 +58,9 @@ export const VisitHistory = () => {
             }}
           >
             <div className="noData">No Vitals were recorded</div>
+            <div>
+              <Vitals />
+            </div>
             <div className="noData">No Investigations were recorded</div>
             <div className="noData">No Medication were recorded</div>
             <div className="noData">No Clinical Notes were recorded</div>
