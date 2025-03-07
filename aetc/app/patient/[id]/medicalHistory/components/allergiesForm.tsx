@@ -51,19 +51,19 @@ allergy: {
   },
   otherMedication:{
     name:concepts.OTHER_MEDICATION_ALLERGY,
-    label:'Specify other medication allergy'
+    label:'Specify other medication allergen'
   },
   otherMedicalSubstance:{
     name:concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY,
-    label:'Specify other medical substance allergy'
+    label:'Specify other medical substance allergen'
   },
   otherFood:{
     name: concepts.OTHER_FOOD_ALLERGY,
-    label: 'Specify other food allergy'
+    label: 'Specify other food allergen'
   },
   otherSubstance:{
     name: concepts.OTHER_SUBSTANCE_ALLERGY,
-    label: 'Specify other substance allergy'
+    label: 'Specify other substance allergen'
   }
 }
 
@@ -146,11 +146,10 @@ setAllergyOptions(allergyOptions);
 
 
 if (allergySelected.length > 0) {
-  console.log(allergySelected, foodAllergens, allergenCats);
   setShowFoodOther(allergySelected.some((allergy) => allergy.value === foodAllergens[4].uuid));
-  setShowMedicalSubstanceOther(allergySelected.some((allergy) => allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY));
-  setShowMedicationOther(allergySelected.some((allergy) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY));
-  setShowSubstanceOther(allergySelected.some((allergy) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY));
+  setShowMedicalSubstanceOther(allergySelected.some((allergy) => allergy.value === medicalSubstanceAllergens[2].uuid));
+  setShowMedicationOther(allergySelected.some((allergy) => allergy.value === medicationAllergens[10].uuid));
+  setShowSubstanceOther(allergySelected.some((allergy) => allergy.value === substanceAllergens[3].uuid));
 } else {
   setShowFoodOther(null);
   setShowMedicalSubstanceOther(null);

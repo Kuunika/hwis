@@ -215,25 +215,25 @@ export const MedicalHistoryFlow = () => {
   const observationsPayload = Object.keys(groupedAllergies).map(groupKey => {
     const groupConcept = groupKey; 
     const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
+      console.log(allergy)
       let conceptValue = concepts.ALLERGEN; 
       let value = allergy.value; 
-      if (allergy.label.includes("Other medical substance allergy")) {
-        
+      if (allergy.label.includes("Other Medical Substance Allergen")) {
         conceptValue = concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY; 
         value = values[concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY]; 
       } 
       
-      if (allergy.label.includes("Other substance allergy")) {
+      if (allergy.label.includes("Other Substance Allergen")) {
         conceptValue = concepts.OTHER_SUBSTANCE_ALLERGY; 
         value = values[concepts.OTHER_SUBSTANCE_ALLERGY]; 
       }
       
-      if (allergy.label.includes("Other medication allergy")) {
+      if (allergy.label.includes("Other Medication Allergen")) {
         conceptValue = concepts.OTHER_MEDICATION_ALLERGY; 
         value = values[concepts.OTHER_MEDICATION_ALLERGY]; 
       }
 
-      if (allergy.label.includes("Other food allergy")) {
+      if (allergy.label.includes("Other Food Allergen")) {
         conceptValue = concepts.OTHER_FOOD_ALLERGY; 
         value = values[concepts.OTHER_FOOD_ALLERGY]; 
       }
