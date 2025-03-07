@@ -10,12 +10,16 @@ import {
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
+import { closeCurrentVisit } from "@/hooks/visit";
+import { useNavigation } from "@/hooks"; // Import navigation hook
+
+
 
 const vitalSignsOptions = [
     { value: concepts.YES, label: "Yes" },
@@ -26,23 +30,27 @@ const validationSchema = Yup.object({
     expectedDuration: Yup.number()
         .min(1, "Duration must be at least 1 hour")
         .required("Expected Duration is required"),
-    reasonForShortStay: Yup.string().required("Reason for Short Stay is required"),
+    // reasonForShortStay: Yup.string().required("Reason for Short Stay is required"),
     vitalSignsMonitoring: Yup.string().required("Vital Signs Monitoring option is required"),
     additionalNotes: Yup.string(),
 });
 
 const initialValues = {
     expectedDuration: "",
-    reasonForShortStay: "",
+    // reasonForShortStay: "",
     vitalSignsMonitoring: "",
     additionalNotes: "",
 };
 
 export default function ShortStayForm() {
     const { params } = useParameters();
-    const { mutate: submitEncounter } = addEncounter();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+    const { navigateTo } = useNavigation(); // Initialize navigation
+
+
 
 
     useEffect(() => {
@@ -86,6 +94,12 @@ export default function ShortStayForm() {
         try {
             await submitEncounter(payload);
             toast.success("Short Stay information submitted successfully!");
+            // Close the visit after successfully submitting the encounter
+            if (activeVisit?.uuid) {
+                closeVisit(activeVisit.uuid);
+            }
+            navigateTo("/assessments");
+
         } catch (error) {
             console.error("Error submitting Short Stay information: ", error);
             toast.error("Failed to submit Short Stay information.");
@@ -127,7 +141,7 @@ export default function ShortStayForm() {
                             </MainGrid>
 
                             {/* Reason for Short Stay */}
-                            <MainGrid item xs={12}>
+                            {/* <MainGrid item xs={12}>
                                 <TextInputField
                                     id="reasonForShortStay"
                                     name="reasonForShortStay"
@@ -137,7 +151,7 @@ export default function ShortStayForm() {
                                     multiline={true}
                                     sx={{ width: "100%" }}
                                 />
-                            </MainGrid>
+                            </MainGrid> */}
 
                             {/* Additional Notes */}
                             <MainGrid item xs={12}>

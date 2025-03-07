@@ -11,13 +11,17 @@ import {
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
+import { closeCurrentVisit } from "@/hooks/visit";
+import { useNavigation } from "@/hooks"; // Import navigation hook
+
+
 
 const followUpOptions = [
     { id: concepts.HEALTH_CENTER, label: "Health Center" },
@@ -53,9 +57,11 @@ const initialValues = {
 
 export default function DischargeHomeForm() {
     const { params } = useParameters();
-    const { mutate: submitEncounter } = addEncounter();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+    const { navigateTo } = useNavigation(); // Initialize navigation
 
 
     useEffect(() => {
@@ -98,6 +104,12 @@ export default function DischargeHomeForm() {
         try {
             await submitEncounter(payload);
             toast.success("Discharge Home information submitted successfully!");
+            // Close the visit after successfully submitting the encounter
+            if (activeVisit?.uuid) {
+                closeVisit(activeVisit.uuid);
+            }
+            navigateTo("/assessments");
+
         } catch (error) {
             console.error("Error submitting Discharge Home information: ", error);
             toast.error("Failed to submit Discharge Home information.");

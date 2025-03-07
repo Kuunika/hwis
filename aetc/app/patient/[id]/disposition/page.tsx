@@ -5,7 +5,7 @@ import {
     MainPaper,
     SearchComboBox,
     BackButton,
-    WrapperBox,
+    WrapperBox, PatientInfoTab
 } from "@/components";
 import { ConsultationCard, PersonalDetailsCard } from "@/app/patient/components";
 import TransferForm from "./components/TransferForm";
@@ -36,8 +36,6 @@ const dispositionOptions = [
     { id: concepts.DISCHARGE_HOME, label: "Discharge home" },
     { id: concepts.AWAITING_SPECIALITY_REVIEW, label: "Awaiting specialty review" },
     { id: concepts.ADMISSION, label: "Admission" },
-    { id: concepts.THEATRE, label: "Theatre" },
-    { id: concepts.OTHER_INTERVENTION_SUITE, label: "Other intervention suite" },
     { id: concepts.SHORT_STAY, label: "Short stay" },
     { id: concepts.TRANSFER_TO_ANOTHER_FACILITY, label: "Transfer to another facility" },
     { id: concepts.DEATH, label: "Death" },
@@ -65,10 +63,6 @@ function DispositionFeature() {
                 return <AwaitingSpecialityReviewForm />;
             case concepts.ADMISSION:
                 return <AdmissionForm />;
-            case concepts.THEATRE:
-                return <div>Theatre form coming soon!</div>;
-            case concepts.OTHER_INTERVENTION_SUITE:
-                return <div>Intervention Suite form coming soon!</div>;
             case concepts.SHORT_STAY:
                 return <ShortStayForm />;
             case concepts.TRANSFER_TO_ANOTHER_FACILITY:
@@ -85,113 +79,42 @@ function DispositionFeature() {
     };
 
     return (
-        <MainGrid container spacing={2} mt={"2ch"}>
-            {/* Left Panel */}
-            <MainGrid item xs={12} lg={3}>
-                <PersonalDetailsCard />
-                <WrapperBox sx={{ my: "1ch" }}>
-                    <ConsultationCard
-                        disabled={!isOnList}
-                        title="Assessments"
-                        links={[
-                            {
-                                title: "Primary Assessment",
-                                link: `/patient/${params.id}/primary-assessment`,
-                            },
-                        ]}
-                    />
-                    <ConsultationCard
-                        disabled={!isOnList}
-                        title="Sample History"
-                        links={[
-                            {
-                                title: "Sample History",
-                                link: `/medicalHistory/${params.id}`,
-                            },
-                        ]}
-                    />
-                    <ConsultationCard
-                        disabled={!isOnList}
-                        title="Assessments"
-                        links={[
-                            {
-                                title: "Secondary Assessment",
-                                link: `/patient/${params.id}/secondary-assessment`,
-                            },
-                        ]}
-                    />
-                    <ConsultationCard
-                        disabled={!isOnList}
-                        onClick={setActiveStep}
-                        links={[
-                            {
-                                id: 0,
-                                title: "Differential Diagnosis",
-                                link: `/patient/${params.id}/consultation`,
-                            },
-                            {
-                                id: 1,
-                                title: "Investigations",
-                                link: `/patient/${params.id}/consultation`,
-                            },
-                            {
-                                id: 2,
-                                title: "Final Diagnosis",
-                                link: `/patient/${params.id}/consultation`,
-                            },
-                            {
-                                id: 3,
-                                title: "Medication",
-                                link: `/patient/${params.id}/consultation`,
-                            },
+        <>
+            <PatientInfoTab />
 
-                        ]}
-                        title="Consultation"
-                    />
-                    {/* New Button */}
-                    <ConsultationCard
-                        disabled={!isOnList}
-                        title="Disposition"
-                        links={[
-                            {
-                                title: "Disposition",
-                                link: `/patient/${params.id}/disposition`,
-                            },
-                        ]}
-                    />
-                </WrapperBox>
-            </MainGrid>
-            {/* Main Content */}
-            <MainGrid item xs={12} lg={9}>
-                <MainPaper elevation={0} sx={{ p: "1ch" }}>
-                    <BackButton />
-                    <h2>Disposition</h2>
-                    {/* Dropdown */}
-                    <select
-                        value={selectedDisposition || ""}
-                        onChange={(e) => setSelectedDisposition(e.target.value)}
-                        style={{
-                            padding: "8px",
-                            width: "100%",
-                            marginBottom: "20px",
-                            fontSize: "16px",
-                        }}
-                    >
-                        <option value="" disabled>
-                            Select a Disposition
-                        </option>
-                        {dispositionOptions.map((option) => (
-                            <option key={option.id} value={option.id}>
-                                {option.label}
+            <MainGrid container spacing={2} mt={"2ch"} sx={{ ml: 16 }}>
+                {/* Main Content */}
+                <MainGrid item xs={12} lg={9} >
+                    <MainPaper elevation={0} sx={{ p: "1ch" }}>
+                        <BackButton />
+                        <h2>Disposition</h2>
+                        {/* Dropdown */}
+                        <select
+                            value={selectedDisposition || ""}
+                            onChange={(e) => setSelectedDisposition(e.target.value)}
+                            style={{
+                                padding: "8px",
+                                width: "100%",
+                                marginBottom: "20px",
+                                fontSize: "16px",
+                            }}
+                        >
+                            <option value="" disabled>
+                                Select  Disposition Option
                             </option>
-                        ))}
-                    </select>
+                            {dispositionOptions.map((option) => (
+                                <option key={option.id} value={option.id}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
 
-                    {/* Dynamic Form */}
-                    <div style={{ marginTop: "20px" }}>{renderForm()}</div>
-                </MainPaper>
+                        {/* Dynamic Form */}
+                        <div style={{ marginTop: "20px" }}>{renderForm()}</div>
+                    </MainPaper>
+                </MainGrid>
             </MainGrid>
-        </MainGrid>
+        </>
     );
 }
 

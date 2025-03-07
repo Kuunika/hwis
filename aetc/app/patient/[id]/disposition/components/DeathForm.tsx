@@ -16,11 +16,14 @@ import * as Yup from "yup";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
+import { closeCurrentVisit } from "@/hooks/visit";
+import { useNavigation } from "@/hooks"; // Import navigation hook
+
 
 const mortuaryOptions = [
     { id: concepts.QECH, label: "QECH" },
@@ -61,9 +64,12 @@ const initialValues = {
 
 export default function DeathForm() {
     const { params } = useParameters();
-    const { mutate: submitEncounter } = addEncounter();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+    const { navigateTo } = useNavigation(); // Initialize navigation
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -85,7 +91,7 @@ export default function DeathForm() {
                 value: "DISPOSITION TYPE DEATH",
                 obsDatetime: currentDateTime,
                 group_members: [
-                    // { concept: concepts.CAUSE_OF_DEATH, value: values.causeOfDeath, obsDatetime: currentDateTime },
+                    { concept: concepts.CAUSE_OF_DEATH, value: values.causeOfDeath, obsDatetime: currentDateTime },
                     { concept: concepts.FAMILY_INFORMED, value: values.familyInformed, obsDatetime: currentDateTime },
                     { concept: concepts.RELATIONSHIP_TO_DECEASED, value: values.relationshipToDeceased, obsDatetime: currentDateTime },
                     { concept: concepts.MORTUARY, value: values.mortuary, obsDatetime: currentDateTime },
@@ -108,6 +114,12 @@ export default function DeathForm() {
         try {
             await submitEncounter(payload);
             toast.success("Death Form information submitted successfully!");
+            // Close the visit after successfully submitting the encounter
+            if (activeVisit?.uuid) {
+                closeVisit(activeVisit.uuid);
+            }
+            // Redirect to assessments page
+            navigateTo("/assessments");
         } catch (error) {
             console.error("Error submitting Death form information: ", error);
             toast.error("Failed to submit Death Form information.");

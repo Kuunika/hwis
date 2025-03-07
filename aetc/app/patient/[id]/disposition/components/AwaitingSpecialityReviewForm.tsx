@@ -11,12 +11,15 @@ import {
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
+import { closeCurrentVisit } from "@/hooks/visit";
+import { useNavigation } from "@/hooks"; // Import navigation hook
+
 
 const specialtyOptions = [
     { id: concepts.MEDICINE, label: "Medicine" },
@@ -46,9 +49,11 @@ const initialValues = {
 
 export default function AwaitingSpecialityReviewForm() {
     const { params } = useParameters();
-    const { mutate: submitEncounter } = addEncounter();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+    const { navigateTo } = useNavigation(); // Initialize navigation
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -69,6 +74,9 @@ export default function AwaitingSpecialityReviewForm() {
                 obsDatetime: currentDateTime,
                 group_members: [
                     { concept: concepts.SPECIALITY_DEPARTMENT, value: values.specialtyDepartment, obsDatetime: currentDateTime },
+                    { concept: concepts.REASON_FOR_REQUEST, value: values.reasonForReview, obsDatetime: currentDateTime },
+                    { concept: concepts.DATE, value: values.reviewDate, obsDatetime: currentDateTime },
+
                 ],
             },
         ];
@@ -84,6 +92,13 @@ export default function AwaitingSpecialityReviewForm() {
         try {
             await submitEncounter(payload);
             toast.success("Awaiting Speciality Review information submitted successfully!");
+            // Close the visit after successfully submitting the encounter
+            if (activeVisit?.uuid) {
+                closeVisit(activeVisit.uuid);
+            }
+            navigateTo("/assessments");
+
+
         } catch (error) {
             console.error("Error submitting Awaiting Speciality Review information: ", error);
             toast.error("Failed to submit Awaiting Speciality Review information.");
@@ -91,7 +106,6 @@ export default function AwaitingSpecialityReviewForm() {
 
 
     };
-
 
 
     return (
