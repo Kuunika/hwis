@@ -1,0 +1,23 @@
+import { extractTimes } from "@/helpers/dateTime";
+import { useVitalsGraphData } from "@/hooks";
+import { LineChart } from "./lineChart";
+export function Temp() {
+  const { chartData } = useVitalsGraphData();
+  return (
+    <LineChart
+      chartConfig={{
+        series: [
+          {
+            name: "Temperature",
+            data: chartData.tempData,
+          },
+        ],
+        xAxisCategories: extractTimes(chartData.xAxisData),
+        title: "",
+        height: 350,
+        yAxisMin: 0,
+        colors: ["#8C54FF"],
+      }}
+    />
+  );
+}

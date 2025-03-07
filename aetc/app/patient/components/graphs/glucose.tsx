@@ -1,0 +1,23 @@
+import { useVitalsGraphData } from "@/hooks";
+import { LineChart } from "./lineChart";
+import { extractTimes } from "@/helpers/dateTime";
+export function Glucose() {
+  const { chartData } = useVitalsGraphData();
+  return (
+    <LineChart
+      chartConfig={{
+        series: [
+          {
+            name: "Glucose",
+            data: chartData.glucoseData,
+          },
+        ],
+        xAxisCategories: extractTimes(chartData.xAxisData),
+        title: "",
+        height: 350,
+        yAxisMin: 0,
+        colors: ["#247BA0"],
+      }}
+    />
+  );
+}

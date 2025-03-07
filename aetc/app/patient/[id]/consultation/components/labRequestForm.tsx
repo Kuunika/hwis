@@ -199,15 +199,6 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
       />
       <br />
       <WrapperBox sx={{ display: "flex", width: "50ch" }}>
-        {/* <RadioGroupInput
-          getValue={(test) => setTestType(test)}
-          name="testType"
-          options={[
-            { value: "bedside", label: "Bed Side" },
-            { value: "laboratory", label: "Laboratory" },
-          ]}
-          label="Test Type"
-        /> */}
         <RadioGroupInput
           getValue={(test) => setTestType(test)}
           row

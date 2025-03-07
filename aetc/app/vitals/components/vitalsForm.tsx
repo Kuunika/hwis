@@ -51,12 +51,12 @@ export const VitalFormConfig = {
     short: "HR",
   },
   bloodPressure: {
-    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
+    name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Systolic",
     short: "BP",
   },
   bloodPressureDiastolic: {
-    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
+    name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Diastolic",
   },
   motorResponse: {

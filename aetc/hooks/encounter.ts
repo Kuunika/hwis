@@ -158,12 +158,12 @@ const fetchConcepts = async (options: Array<{ key: string; label: string }>, use
 
     if (!cachedConcept) {
       queryClient.setQueryData(["concepts", option.key], conceptData);
-      queryClient.setQueryData([conceptData.data[0].uuid], option.key);
+      queryClient.setQueryData([conceptData.data[0]?.uuid], option.key);
 
     }
 
     if (conceptData.data.length) {
-      mappedOptions.push({ [useValueKey ? "value" : "id"]: conceptData.data[0].uuid, label: option.label });
+      mappedOptions.push({ [useValueKey ? "value" : "id"]: conceptData.data[0]?.uuid, label: option.label });
     }
   }
 
