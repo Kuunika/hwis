@@ -9,12 +9,13 @@ import { concepts } from "@/constants";
 import { PalpationForm } from "./forms/abdomen/palpationForm";
 import { AbdomenMale } from "@/assets/abdomenMale";
 import { AbdomenFemale } from "@/assets/abdomenFemale";
+import { useImageUpdate } from "@/hooks/useImageUpdate";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
   formNameSection?: string;
-  gender: "Male" | "Female";
+  gender?: "Male" | "Female" | undefined;
 }
 
 export function NewAbdomenImage({
@@ -35,7 +36,7 @@ export function NewAbdomenImage({
     deleteSection,
     setData,
     submittedValues,
-  } = useImage();
+  } = useImageUpdate();
 
   useEffect(() => {
     onValueChange(ids);

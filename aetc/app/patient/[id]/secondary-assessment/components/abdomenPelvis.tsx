@@ -19,6 +19,7 @@ import {
 import * as Yup from "yup";
 import {
   AbdomenImageWithOtherForm,
+  NewAbdomenImage,
   SecondaryAbdomenImage,
 } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
@@ -497,11 +498,19 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           </FieldsContainer>
           {formValues[form.abnormalitiesPresent.name] ==
             getCachedConcept(concepts.YES)?.uuid && (
-            <SecondaryAbdomenImage
-              imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
-              imageSection={form.abnormalitiesPresent.name}
-              onValueChange={setAbnormalitiesPresentImageEnc}
-            />
+            <>
+              <SecondaryAbdomenImage
+                imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+                imageSection={form.abnormalitiesPresent.name}
+                onValueChange={setAbnormalitiesPresentImageEnc}
+              />
+              <NewAbdomenImage
+                imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+                imageSection={form.abnormalitiesPresent.name}
+                onValueChange={setAbnormalitiesPresentImageEnc}
+                gender={gender as any}
+              />
+            </>
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation">
