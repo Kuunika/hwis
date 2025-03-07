@@ -113,7 +113,7 @@ return (
           }}>
             {observations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", marginLeft:"10px", color:'rgba(0, 0, 0, 0.6)' }}>
-                    <h4>{item.name}</h4>
+                    <h4>{item.value}</h4>
                     {item.children && item.children.length > 0 && (
                         <ul style={{ paddingLeft: "15px" }}>
                             {item.children.map(child => (

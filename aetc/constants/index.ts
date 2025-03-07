@@ -986,7 +986,7 @@ export const concepts = {
   SULFADOXIME_PYRIMETHAMINE_ALLERGY: "Sulfadoxime Pyrimethamine Allergy",
   SULPHUR_CONTAINING_MEDICATION_ALLERGY: "Sulphur Containing Medication Allergy",
   ALLERGEN: "Allergen",
-  ALLERGY_CATEGORY: "Allergy Category",
+  ALLERGEN_CATEGORY: "Allergen Category",
   OTHER_MEDICATION_ALLERGY: "Other Medication Allergy",
   OTHER_MEDICAL_SUBSTANCE_ALLERGY: "Other Medical Substance Allergy",
   OTHER_SUBSTANCE_ALLERGY: "Other Substance Allergy",

@@ -246,7 +246,7 @@ export const MedicalHistoryFlow = () => {
     });
   
     return {
-      concept: concepts.ALLERGY_CATEGORY, 
+      concept: concepts.ALLERGEN_CATEGORY, 
       obsDatetime: dateTime,
       value: groupConcept,
       groupMembers: chunk, 
@@ -267,7 +267,7 @@ export const MedicalHistoryFlow = () => {
 
     if (detailKey && values[detailKey]) {
       observation.groupMembers.push({
-          "concept": concepts.ALLERGY_DETAILS,
+          "concept": concepts.DESCRIPTION,
           "value": values[detailKey],
           obsDatetime: dateTime,
       });
@@ -275,6 +275,7 @@ export const MedicalHistoryFlow = () => {
     allergiesData.push(observation);
   
   });
+
 
   try {
     const response = await createEncounter({
@@ -321,9 +322,9 @@ throw error;
     const observationsPayload = medicationObs.map((medication: any) => {
       const observation = {
         person: params.id,
-        concept: medication.name, 
+        concept: concepts.MEDICATION_NAME, 
         obsDatetime: dateTime,
-        value: true,
+        value: medication.name,
         groupMembers: [] as OutputObservation[], 
       };
     
@@ -378,7 +379,7 @@ throw error;
     });
 
     observationsPayload.forEach(async (observation: any) => {
-
+      console.log("Observation:", observation);
       try {
         const response = await
         createEncounter({
