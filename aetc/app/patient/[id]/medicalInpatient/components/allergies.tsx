@@ -23,7 +23,26 @@ function AllergiesPanel() {
     if (!historyLoading && historicData) {
       if (allergiesEncounters) {
         const obs = allergiesEncounters[0]?.obs;
-        setObservations(obs??[]);
+        const merged: any[] = [];
+              
+              obs?.forEach(item => {
+                  let existing = merged.find(mergedItem => mergedItem.value === item.value);
+                  
+                  if (!existing) {
+                      merged.push({ ...item, children: [...item.children] });
+                  } else {
+                      const childMap = new Map();
+                      [...existing.children, ...item.children].forEach(child => {
+                          const key = `${child.name}_${child.value}`;
+                          childMap.set(key, child);
+                      });
+                      existing.children = Array.from(childMap.values());
+                  }
+                
+              });
+
+        const filteredmerged = merged?.filter((o) => o.children.length !== 0);
+        setObservations(filteredmerged??[]);
       }
     }
   },[historicData])
