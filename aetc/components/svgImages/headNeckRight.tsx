@@ -12,17 +12,20 @@ import { concepts } from "@/constants";
 
 import { HeadNeckRight } from "@/assets";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
+import { HeadNeckRightFemale } from "@/assets/headNeckRightFemale";
 
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
+  gender?: "Male" | "Female";
 }
 
 export function HeadNeckRightImage({
   onValueChange,
   imageEncounter,
   imageSection,
+  gender,
 }: Props) {
   const {
     handleClose,
@@ -60,8 +63,12 @@ export function HeadNeckRightImage({
 
   return (
     <>
-      {/* <HeadRight ref={containerRef} /> */}
-      <HeadNeckRight ref={containerRef} />
+      {gender == "Male" ? (
+        <HeadNeckRight ref={containerRef} />
+      ) : (
+        <HeadNeckRightFemale ref={containerRef} />
+      )}
+
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />

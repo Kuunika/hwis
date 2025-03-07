@@ -183,6 +183,8 @@ export const useImageUpdate = () => {
     highlightAllSelectedSections();
   };
 
+  console.log(containerRef);
+
   return {
     handleClose,
     handleFormSubmit,

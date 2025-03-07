@@ -499,25 +499,31 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           {formValues[form.abnormalitiesPresent.name] ==
             getCachedConcept(concepts.YES)?.uuid && (
             <>
-              <SecondaryAbdomenImage
+              {/* <SecondaryAbdomenImage
                 imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
                 imageSection={form.abnormalitiesPresent.name}
                 onValueChange={setAbnormalitiesPresentImageEnc}
-              />
+              /> */}
               <NewAbdomenImage
                 imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
                 imageSection={form.abnormalitiesPresent.name}
                 onValueChange={setAbnormalitiesPresentImageEnc}
+                formNameSection="secondaryAbdomen"
                 gender={gender as any}
               />
             </>
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation">
-          <AbdomenImageWithOtherForm
+          <NewAbdomenImage
             formNameSection="palpation"
             onValueChange={setTendernessImageEnc}
+            gender={gender as any}
           />
+          {/* <AbdomenImageWithOtherForm
+            formNameSection="palpation"
+            onValueChange={setTendernessImageEnc}
+          /> */}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Percussion Tenderness">
           <FieldsContainer>

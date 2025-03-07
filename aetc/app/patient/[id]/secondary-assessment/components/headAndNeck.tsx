@@ -11,7 +11,7 @@ import {
   HeadNeckLeftImage,
   HeadNeckRightImage,
 } from "@/components/svgImages";
-import { useSubmitEncounter } from "@/hooks";
+import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { concepts, encounters } from "@/constants";
 import { flattenImagesObs } from "@/helpers";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -53,6 +53,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   const [backHeadNeckImageEncounter, setBackHeadNeckImageEncounter] = useState<
     Array<any>
   >([]);
+  const { gender } = getActivePatientDetails();
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.HEAD_AND_NECK_ASSESSMENT,
@@ -97,7 +98,10 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       content: (
         <>
           {/* <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} /> */}
-          <HeadNeckLeftImage onValueChange={setLeftHeadNeckImageEncounter} />
+          <HeadNeckLeftImage
+            gender={gender as any}
+            onValueChange={setLeftHeadNeckImageEncounter}
+          />
         </>
       ),
     },
@@ -107,7 +111,10 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       content: (
         <>
           {/* <HeadNeckImage onValueChange={setHeadNeckImageEncounter} /> */}
-          <HeadNeckFrontImage onValueChange={setHeadNeckImageEncounter} />
+          <HeadNeckFrontImage
+            gender={gender as any}
+            onValueChange={setHeadNeckImageEncounter}
+          />
         </>
       ),
     },
@@ -117,7 +124,11 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       content: (
         <>
           {/* <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} /> */}
-          <HeadNeckRightImage onValueChange={setRightHeadNeckImageEncounter} />
+
+          <HeadNeckRightImage
+            gender={gender as any}
+            onValueChange={setRightHeadNeckImageEncounter}
+          />
         </>
       ),
     },

@@ -2,7 +2,11 @@ import { Abdomen } from "@/assets/abdomen";
 import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { Box, Button } from "@mui/material";
-import { DataBox, OtherAbnormalityForm } from "./forms";
+import {
+  DataBox,
+  OtherAbnormalityForm,
+  SecondaryAbdomenPelvicForm,
+} from "./forms";
 import { useImageFormTransform } from "@/hooks";
 import { useEffect } from "react";
 import { concepts } from "@/constants";
@@ -81,7 +85,7 @@ export function NewAbdomenImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        {formNameSection != "palpation" && (
+        {formNameSection == "other" && (
           <OtherAbnormalityForm
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>
@@ -93,8 +97,22 @@ export function NewAbdomenImage({
             }
           />
         )}
+
         {formNameSection == "palpation" && (
           <PalpationForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+
+        {formNameSection == "secondaryAbdomen" && (
+          <SecondaryAbdomenPelvicForm
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(
