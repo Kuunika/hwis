@@ -23,6 +23,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { date } from "yup";
+import { getConceptSet } from "@/hooks/getConceptSet";
 
 
 
@@ -83,7 +84,7 @@ export const MedicalHistoryFlow = () => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
-
+  const {data: allergenCats} = getConceptSet("Allergen Category");
 
   const {
     loading,
@@ -215,7 +216,6 @@ export const MedicalHistoryFlow = () => {
   const observationsPayload = Object.keys(groupedAllergies).map(groupKey => {
     const groupConcept = groupKey; 
     const chunk = groupedAllergies[groupKey].map((allergy: { value: any; label: string | string[]; }) => {
-      console.log(allergy)
       let conceptValue = concepts.ALLERGEN; 
       let value = allergy.value; 
       if (allergy.label.includes("Other Medical Substance Allergen")) {
@@ -254,12 +254,18 @@ export const MedicalHistoryFlow = () => {
   });
   
   const allergiesData: any[] = [];
+  const medicationCatKey = allergenCats[0].uuid;
+  const medicalSubstanceCatKey = allergenCats[1].uuid;
+  const substanceCatKEy = allergenCats[2].uuid;
+  const foodCatKey = allergenCats[3].uuid;
+
+  allergenCats[3].uuid
   observationsPayload.forEach(async (observation) => {
       const detailKeyMap = {
-        [concepts.MEDICATION_ALLERGY]: "medication_Allergy_Details",
-        [concepts.MEDICAL_SUBSTANCE_ALLERGY]: "medical_Substance_Allergy_Details",
-        [concepts.SUBSTANCE_ALLERGY]: "substance_Allergy_Details",
-        [concepts.FOOD_ALLERGY]: "food_Allergy_Details",
+        [medicationCatKey as string]: "medication_Allergy_Details",
+        [medicalSubstanceCatKey]: "medical_Substance_Allergy_Details",
+        [substanceCatKEy]: "substance_Allergy_Details",
+        [foodCatKey]: "food_Allergy_Details",
     };
   
     const allergyCategory = observation.value;
@@ -276,7 +282,7 @@ export const MedicalHistoryFlow = () => {
   
   });
 
-
+  console.log(allergiesData)
   try {
     const response = await createEncounter({
     encounterType: encounters.ALLERGIES,
@@ -322,7 +328,7 @@ throw error;
     const observationsPayload = medicationObs.map((medication: any) => {
       const observation = {
         person: params.id,
-        concept: concepts.MEDICATION_NAME, 
+        concept: concepts.DRUG_GIVEN, 
         obsDatetime: dateTime,
         value: medication.name,
         groupMembers: [] as OutputObservation[], 
