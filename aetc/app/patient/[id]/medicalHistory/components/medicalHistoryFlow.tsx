@@ -259,7 +259,6 @@ export const MedicalHistoryFlow = () => {
   const substanceCatKEy = allergenCats[2].uuid;
   const foodCatKey = allergenCats[3].uuid;
 
-  allergenCats[3].uuid
   observationsPayload.forEach(async (observation) => {
       const detailKeyMap = {
         [medicationCatKey as string]: "medication_Allergy_Details",
