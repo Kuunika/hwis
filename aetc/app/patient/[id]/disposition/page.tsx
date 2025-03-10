@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import {
     MainGrid,
     MainPaper,
+    MainTypography,
+
     SearchComboBox,
     BackButton,
     WrapperBox, PatientInfoTab
@@ -24,6 +26,8 @@ import {
     useParameters,
 } from "@/hooks";
 import { concepts } from "@/constants";
+import { FaAngleLeft } from "react-icons/fa6";
+
 
 
 import {
@@ -85,8 +89,20 @@ function DispositionFeature() {
             <MainGrid container spacing={2} mt={"2ch"} sx={{ ml: 16 }}>
                 {/* Main Content */}
                 <MainGrid item xs={12} lg={9} >
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <MainTypography
+                            sx={{ width: "24px", height: "24px", fontSize: "20px", fontWeight: 400 }}
+                        >
+                            <FaAngleLeft />
+                        </MainTypography>
+                        <MainTypography
+                            sx={{ fontSize: "14px", fontWeight: 400, lineHeight: "21px", pl: "1ch" }}
+                            onClick={() => window.history.back()}
+                        >
+                            Back
+                        </MainTypography>
+                    </div>
                     <MainPaper elevation={0} sx={{ p: "1ch" }}>
-                        <BackButton />
                         <h2>Disposition</h2>
                         {/* Dropdown */}
                         <select
