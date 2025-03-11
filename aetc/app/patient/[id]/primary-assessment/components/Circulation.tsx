@@ -32,6 +32,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CPRDialogForm } from "./cprDialogForm";
 import { getActivePatientDetails } from "@/hooks";
+import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 
 type Prop = {
   onSubmit: () => void;
@@ -791,13 +792,22 @@ export const Circulation = ({ onSubmit }: Prop) => {
                 imageSection={form.abnormalitiesInfo.name}
                 onValueChange={setAbdomenOtherImage}
               /> */}
-              <NewAbdomenImage
-                formNameSection="other"
-                imageEncounter={encounters.CIRCULATION_ASSESSMENT}
-                imageSection={form.abnormalitiesInfo.name}
-                onValueChange={setAbdomenOtherImage}
-                gender={gender as any}
-              />
+              {gender == "Male" && (
+                <NewAbdomenImage
+                  formNameSection="other"
+                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                  imageSection={form.abnormalitiesInfo.name}
+                  onValueChange={setAbdomenOtherImage}
+                />
+              )}
+              {gender == "Female" && (
+                <NewAbdomenFemaleImage
+                  formNameSection="other"
+                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                  imageSection={form.abnormalitiesInfo.name}
+                  onValueChange={setAbdomenOtherImage}
+                />
+              )}
 
               <br />
             </>
