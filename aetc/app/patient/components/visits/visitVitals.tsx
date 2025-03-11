@@ -49,7 +49,6 @@ const Table = React.memo(({ data }: { data: any }) => {
       id: item.obs_id,
     }));
   }, [data]);
-  console.log("🚀 ~ transformedData ~ transformedData:", transformedData);
 
   // Define columns outside of render
   const columns = useMemo<MRT_ColumnDef<Employee>[]>(
@@ -76,9 +75,13 @@ const Table = React.memo(({ data }: { data: any }) => {
     []
   );
 
+  const rootData = useMemo(
+    () => transformedData.filter((r: any) => !r.managerId),
+    [transformedData]
+  );
   const table = useMaterialReactTable({
     columns,
-    data: transformedData,
+    data: rootData,
     enableExpanding: true,
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
