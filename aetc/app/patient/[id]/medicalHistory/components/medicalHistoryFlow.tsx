@@ -343,8 +343,9 @@ export const MedicalHistoryFlow = () => {
 
       if (medication.medication_frequency) {
         observation.groupMembers.push({
-          concept: medication.medication_frequency,
-          value: true,
+          concept: concepts.MEDICATION_FREQUENCY,
+          value: medication.medication_frequency,
+          coded: true,
         } as OutputObservation);
       }
 
@@ -353,6 +354,7 @@ export const MedicalHistoryFlow = () => {
         observation.groupMembers.push({
           concept: unitconcept,
           value: medication.medication_dose,
+          coded: true,
         } as OutputObservation);
       }
 
@@ -361,13 +363,15 @@ export const MedicalHistoryFlow = () => {
         observation.groupMembers.push({
           concept: unitconcept,
           value: medication.medication_duration,
+          coded: true,
         } as OutputObservation);
       }
 
       if (medication.formulation) {
         observation.groupMembers.push({
-          concept: medication.formulation,
-          value: true,
+          value: medication.formulation,
+          concept: concepts.MEDICATION_FORMULATION,
+          coded: true,
         } as OutputObservation);
       }
 

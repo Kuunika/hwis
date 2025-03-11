@@ -336,7 +336,6 @@ export default function TriageWorkFlow() {
 
   const handlePresentComplaints = (values: any) => {
     formData["presentingComplaints"] = values;
-
     setActiveStep(1);
     setSubmittedSteps((steps) => [...steps, 0]);
   };
