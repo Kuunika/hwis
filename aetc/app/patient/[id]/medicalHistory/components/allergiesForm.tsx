@@ -10,6 +10,7 @@ import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import AllergiesPanel from "../../medicalInpatient/components/allergies";
+import { getConceptSet } from "@/hooks/getConceptSet";
 
 interface Observation {
   obs_id: number | null;
@@ -45,24 +46,24 @@ allergy: {
     label: "Allergies",
   },
   allergyDetails:{
-    name:concepts.ALLERGY_COMMENT,
+    name:concepts.DESCRIPTION,
     label:'Allergy Details'
   },
   otherMedication:{
     name:concepts.OTHER_MEDICATION_ALLERGY,
-    label:'Specify other medication allergy'
+    label:'Specify other medication allergen'
   },
   otherMedicalSubstance:{
     name:concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY,
-    label:'Specify other medical substance allergy'
+    label:'Specify other medical substance allergen'
   },
   otherFood:{
     name: concepts.OTHER_FOOD_ALLERGY,
-    label: 'Specify other food allergy'
+    label: 'Specify other food allergen'
   },
   otherSubstance:{
     name: concepts.OTHER_SUBSTANCE_ALLERGY,
-    label: 'Specify other substance allergy'
+    label: 'Specify other substance allergen'
   }
 }
 
@@ -76,7 +77,12 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
     const [showSubstanceOther, setShowSubstanceOther] = useState<boolean | null>(null);
     const { data, isLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-
+    const{data: allergenCats} = getConceptSet("Allergen Category");
+    const {data: medicationAllergens} = getConceptSet("Medication Allergens");
+    const {data: medicalSubstanceAllergens} = getConceptSet("Medical Substance Allergens");
+    const {data: substanceAllergens} = getConceptSet("Substance Allergens");
+    const {data: foodAllergens} = getConceptSet("Food Allergens");
+    const [allergyOptions, setAllergyOptions] = useState<any[]>([]);
     const allergiesEncounters = data?.filter(
       (item) => 
         item.encounter_type?.name === "Allergies"
@@ -84,52 +90,73 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
     );
   
 
+useEffect(() => {
+
+  let medicationOptions: { value: string; label: string }[] = [];
+  let foodOptions: { value: string; label: string }[] = [];
+  let substanceOptions: { value: string; label: string }[] = [];
+  let medicalSubstanceOptions: { value: string; label: string }[] = [];
+
+if (medicationAllergens && foodAllergens && substanceAllergens && medicalSubstanceAllergens) {
+  
+  foodOptions = foodAllergens.map(({ name, uuid }: { name: string; uuid: string }) => ({
+    value: uuid,
+    label: name,
+  }));
+
+  substanceOptions = substanceAllergens.map(({ name, uuid }: { name: string; uuid: string }) => ({
+    value: uuid,
+    label: name,
+  }));
+
+  medicalSubstanceOptions = medicalSubstanceAllergens.map(({ name, uuid }: { name: string; uuid: string }) => ({
+    value: uuid,
+    label: name,
+  }));
+
+  medicationOptions = medicationAllergens.map(({ name, uuid }: { name: string; uuid: string }) => ({
+    value: uuid,
+    label: name,
+  }));
+
+}
+
+if(allergenCats){
 const allergyOptions = [
   {
-    label:'MEDICATIONS' , value:concepts.MEDICATION_ALLERGY,
-    options: [
-      { value: concepts.ASPIRIN_ALLERGY, label: "Aspirin" },
-      { value: concepts.IBUPROFEN_ALLERGY, label: "Ibuprofen" },
-      { value: concepts.INDOMETHACIN_ALLERGY, label: "Indomethacin" },
-      { value: concepts.DICLOFENAC_ALLERGY, label: "Diclofenac" },
-      { value: concepts.AMOXICILLIN_ALLERGY, label: "Amoxicillin" },
-      { value: concepts.PENICILLIN_V_ALLERGY, label: "Penicillin V" },
-      { value: concepts.AMOXICILLIN_CLAVULANIC_ACID_ALLERGY, label: "Amoxicillin - clavulanic acid" },
-      { value: concepts.COTRIMOXAZOLE_ALLERGY, label: "Cotrimoxazole" },
-      { value: concepts.SULFADOXIME_PYRIMETHAMINE_ALLERGY, label: "Sulfadoxime Pyrimethamine (SP)" },
-      { value: concepts.SULPHUR_CONTAINING_MEDICATION_ALLERGY, label: "Sulphur containing medication" },
-      { value: concepts.OTHER_MEDICATION_ALLERGY, label: "Other medication allergy" },
-    ],
+    label:allergenCats[0].name , value:allergenCats[0].uuid,
+    options: medicationOptions,
   },
   {
-    label:'MEDICAL SUBSTANCE' ,value:concepts.MEDICAL_SUBSTANCE_ALLERGY,
-    options: [
-      { value: concepts.RADIOCONTRAST_ALLERGY, label: "Radiocontrast" },
-      { value: concepts.LATEX_ALLERGY, label: "Latex" },
-      { value: concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY, label: "Other medical substance allergy" },
-    ],
+    label:allergenCats[1].name ,value:allergenCats[1].uuid,
+    options: medicalSubstanceOptions,
   },
   {
-    label: 'SUBSTANCE', value: concepts.SUBSTANCE_ALLERGY,
-    options: [
-      { value: concepts.POLLEN_ALLERGY, label: "Pollen" },
-      { value: concepts.BEES_ALLERGY, label: "Bees" },
-      { value: concepts.WASPS_ALLERGY, label: "Wasps" },
-      { value: concepts.OTHER_SUBSTANCE_ALLERGY, label: "Other substance allergy" },
-    ],
+    label:allergenCats[2].name ,value:allergenCats[2].uuid,
+    options: substanceOptions,
   },
   {
-    label: 'FOOD', value: concepts.FOOD_ALLERGY,
-    options: [
-      { value: concepts.SEAFOOD_ALLERGY, label: "Seafood: Shellfish, prawns, calamari" },
-      { value: concepts.OTHER_FISH_ALLERGY, label: "Other fish" },
-      { value: concepts.EGGS_ALLERGY, label: "Eggs" },
-      { value: concepts.PEANUT_ALLERGY, label: "Peanut butter" },
-      { value: concepts.OTHER_FOOD_ALLERGY, label: "Other food allergy" },
-    ],
+    label:allergenCats[3].name ,value:allergenCats[3].uuid,
+    options: foodOptions,
   },
 ];
 
+setAllergyOptions(allergyOptions);
+}
+
+
+if (allergySelected.length > 0) {
+  setShowFoodOther(allergySelected.some((allergy) => allergy.value === foodAllergens[4].uuid));
+  setShowMedicalSubstanceOther(allergySelected.some((allergy) => allergy.value === medicalSubstanceAllergens[2].uuid));
+  setShowMedicationOther(allergySelected.some((allergy) => allergy.value === medicationAllergens[10].uuid));
+  setShowSubstanceOther(allergySelected.some((allergy) => allergy.value === substanceAllergens[3].uuid));
+} else {
+  setShowFoodOther(null);
+  setShowMedicalSubstanceOther(null);
+  setShowMedicationOther(null);
+  setShowSubstanceOther(null);
+}
+}, [allergenCats, medicationAllergens, foodAllergens, substanceAllergens, medicalSubstanceAllergens, allergySelected]);
 
 const schema = yup.object().shape({
 
@@ -243,20 +270,9 @@ const initialValues = {
     onSubmit(formValues);
   };
 
+
   useEffect(() => {
-    if (allergySelected.length > 0) {
-      // Check for each allergy type and set the corresponding state
-      setShowFoodOther(allergySelected.some((allergy) => allergy.value === concepts.OTHER_FOOD_ALLERGY));
-      setShowMedicalSubstanceOther(allergySelected.some((allergy) => allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY));
-      setShowMedicationOther(allergySelected.some((allergy) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY));
-      setShowSubstanceOther(allergySelected.some((allergy) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY));
-    } else {
-      // Reset states if no allergies are selected
-      setShowFoodOther(null);
-      setShowMedicalSubstanceOther(null);
-      setShowMedicationOther(null);
-      setShowSubstanceOther(null);
-    }
+
 
 
   }, [allergySelected]);
@@ -311,18 +327,46 @@ return (<>
       label={allergiesFormConfig.otherSubstance.label}
       sx={{ width: '100%', mt: '2ch' }}
     />
+    
   )}
-{allergySelected.length>0 &&(
-  <TextInputField 
-  id={allergiesFormConfig.allergyDetails.name}
-  name={allergiesFormConfig.allergyDetails.name}
-  label={allergiesFormConfig.allergyDetails.label}
-  sx={{ width: '100%', mt:'2ch' }}
-  multiline={true}
-  rows={3}
-/>
- 
+
+
+{allergySelected.some(item => item.group === allergenCats[0].uuid) && (
+  <TextInputField
+    id="medication_Allergy_Details"
+    name={"medication_Allergy_Details"}
+    label="Medication allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
 )}
+
+{allergySelected.some(item => item.group === allergenCats[1].uuid) && (
+  <TextInputField
+    id="medical_Substance_Allergy_Details"
+    name={"medical_Substance_Allergy_Details"}
+    label="Medical substance allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
+)}
+
+{allergySelected.some(item => item.group === allergenCats[3].uuid) && (
+  <TextInputField
+    id="food_Allergy_Details"
+    name={"food_Allergy_Details"}
+    label="Food allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
+)}
+
+{allergySelected.some(item => item.group === allergenCats[2].uuid) && (
+  <TextInputField
+    id="substance_Allergy_Details"
+    name={"substance_Allergy_Details"}
+    label="Substance allergy details"
+    sx={{ width: '100%', mt: '2ch' }}
+  />
+)}
+
 
 <WrapperBox sx={{mt: '2ch' }}>
     <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
