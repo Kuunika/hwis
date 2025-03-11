@@ -1,1 +1,1 @@
-export * from "./vitals";
+export * from "./visitVitals";
