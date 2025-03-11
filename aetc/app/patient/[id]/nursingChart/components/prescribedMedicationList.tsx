@@ -1,7 +1,7 @@
 import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { MinimalTable } from "@/components/tables/minimalTable";
-import { conceptNames, encounters } from "@/constants";
+import { conceptNames, concepts, encounters } from "@/constants";
 import { getActivePatientDetails } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
@@ -36,13 +36,18 @@ export const PrescribedMedicationList = ({
       );
     });
 
+    console.log({ prescriptionEncounter });
+
     if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
 
     const formattedRows = prescriptionEncounter[0].obs
-      .filter((ob) => ob?.names && ob?.names[0].name == conceptNames.DRUG_GIVEN)
+      .filter((ob) => ob?.names && ob?.names[0].name == concepts.DRUG_GIVEN)
       .map((childObs) => {
-        const durationUnit = getValue(childObs, conceptNames.DESCRIPTION);
-        const dose = getValue(childObs, conceptNames.PRESCRIBED_DOSE);
+        const durationUnit = getValue(
+          childObs,
+          conceptNames.MEDICATION_DURATION_UNIT
+        );
+        const dose = getValue(childObs, concepts.MEDICATION_DOSE);
         const description = getValue(childObs, conceptNames.DESCRIPTION);
         const formulation = getValue(
           childObs,
@@ -82,6 +87,8 @@ export const PrescribedMedicationList = ({
         };
       })
       .filter((medication) => medication.description == "current");
+
+    console.log({ formattedRows });
 
     setRows(formattedRows);
   }, [data]);

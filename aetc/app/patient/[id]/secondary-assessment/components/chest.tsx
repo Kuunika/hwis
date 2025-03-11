@@ -578,12 +578,13 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             />
           )}
           {gender == "Female" && (
-            <LungFrontFemaleImage
-              onValueChange={setBreathingSoundsImagesEnc}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-              imageSection={form.localizedChestAbnormality.name}
-              form="breathingSoundChest"
-            />
+            <></>
+            // <LungFrontFemaleImage
+            //   onValueChange={setBreathingSoundsImagesEnc}
+            //   imageEncounter={encounters.CHEST_ASSESSMENT}
+            //   imageSection={form.localizedChestAbnormality.name}
+            //   form="breathingSoundChest"
+            // />
           )}
           {/* <BreathingSoundsChestLung
             imageEncounter={encounters.CHEST_ASSESSMENT}
