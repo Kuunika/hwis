@@ -1118,17 +1118,9 @@ function SurgicalNotesTemplate() {
         </MainTypography>
         <MainGrid container spacing={2} sx={{ background: "white" }}>
 
-          <MainGrid item xs={6}>
-            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
-              Triage
-            </MainTypography>
-            <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>No presenting complaints recorded.</MainTypography>
-          </MainGrid>
-          <MainGrid item xs={6}>
+          <MainGrid item xs={12}>
             {/* SAMPLE History Subsection */}
-            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
-              SAMPLE History
-            </MainTypography>
+
             <section style={{ paddingBottom: "16px" }}>
               {presentingComplaints.length > 0 ? (
                 <ul style={{ paddingLeft: "2ch", marginBottom: "16px", listStyleType: "none" }}>
