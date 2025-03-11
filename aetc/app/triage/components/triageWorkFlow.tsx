@@ -335,13 +335,7 @@ export default function TriageWorkFlow() {
   };
 
   const handlePresentComplaints = (values: any) => {
-    formData["presentingComplaints"] = values[concepts.COMPLAINTS].map(
-      (v: any) => ({
-        concept: concepts.COMPLAINTS,
-        value: v.id,
-        obsDatetime: dateTime,
-      })
-    );
+    formData["presentingComplaints"] = values;
     setActiveStep(1);
     setSubmittedSteps((steps) => [...steps, 0]);
   };
@@ -529,9 +523,9 @@ export default function TriageWorkFlow() {
             open={triagePrintOpen}
             onClose={() => setTriagePrintOpen(false)}
             presentingComplaints={presentingComplaints[
-              concepts.COMPLAINTS
+              concepts.PRESENTING_COMPLAINTS
             ].reduce((prev: any, current: any) => {
-              return prev == "" ? current.id : prev + "," + current.id;
+              return prev == "" ? current.label : prev + "," + current.label;
             }, "")}
             triageCategory={triageResult}
             date={getHumanReadableDateTime(dateTime)}

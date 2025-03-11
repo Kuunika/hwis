@@ -19,19 +19,6 @@ import { NursingNotesForm } from "./nursingNotes";
 import { Alert, Snackbar } from "@mui/material";
 
 export const MonitoringChart = () => {
-  const {
-    loading,
-    setLoading,
-    completed,
-    setCompleted,
-    message,
-    setMessage,
-    showForm,
-    setShowForm,
-    error,
-    setError,
-  } = useFormLoading();
-
   const [activeStep, setActiveStep] = useState<number>(0);
   const { params } = useParameters();
   const { mutate } = addEncounter();
@@ -219,6 +206,7 @@ export const MonitoringChart = () => {
         acc[item.id] = true;
         return acc;
       }, {} as Record<string, boolean>);
+
       const obs = getObservations(obsObject, dateTime);
 
       obs.forEach((element) => {
