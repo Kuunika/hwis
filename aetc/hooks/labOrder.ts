@@ -59,17 +59,12 @@ export const getPatientLabOrder = (patientId: string) => {
 };
 
 export const getConceptSetMembers = (id: string) => {
-
-
     const findAll = async () => {
-
-   
-       
         return getSetMembers(id).then(response => response.data)
     };
 
     return useQuery({
-        queryKey: ["concept-setmembers", id],
+        queryKey: ["concept-setMembers", id],
         queryFn: findAll,
         enabled: false,
     });
