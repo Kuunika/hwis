@@ -19,7 +19,10 @@ import { GiMedicines } from "react-icons/gi";
 
 import { concepts, durationOptions, encounters } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
-import { addEncounter } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails, useNavigation } from "@/hooks";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -145,7 +148,11 @@ const medicationUnits = [
 // ];
 
 export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
-  const { mutate, isPending: addingDrugs, isSuccess } = addEncounter();
+  const {
+    mutate,
+    isPending: addingDrugs,
+    isSuccess,
+  } = fetchConceptAndCreateEncounter();
   const { medicationOptions, loadingDrugs } = useFetchMedications();
   const { navigateBack } = useNavigation();
 
@@ -175,11 +182,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         concept: concepts.DRUG_GIVEN,
         value: medication.name,
         obsDateTime,
-        group_members: [
+        groupMembers: [
           {
             concept: concepts.MEDICATION_FORMULATION,
             value: medication.formulation,
             obsDateTime,
+            coded: true,
           },
           {
             concept: concepts.MEDICATION_DOSE,
@@ -194,6 +202,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
           {
             concept: concepts.MEDICATION_FREQUENCY,
             value: medication.medication_frequency,
+            coded: true,
             obsDateTime,
           },
           {

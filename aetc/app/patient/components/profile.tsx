@@ -27,13 +27,10 @@ export const DesktopView = () => {
 
   return (
     <MainGrid
-      display={{ xs: "none", lg: "flex" }}
       container
-      spacing={1}
-      mt={"2ch"}
-      ml={"9ch"}
+      style={{ justifyContent: "center", marginTop: "10px", gap: "10px" }}
     >
-      <MainGrid item lg={2}>
+      <MainGrid item lg={2} sm={2}>
         <PersonalDetailsCard />
         <WrapperBox sx={{ my: "1ch" }}>
           <ConsultationCard
@@ -135,7 +132,9 @@ export const DesktopView = () => {
               },
               {
                 title: "Surgical Notes",
-                link: `/patient/${params.id}/surgicalNotes`,
+                // link: `/patient/${params.id}/surgicalNotes`,
+                link: `/patient/${params.id}/template-forms`,
+
                 icon: (
                   <Image
                     width={20}
@@ -186,9 +185,9 @@ export const DesktopView = () => {
         </WrapperBox>
         {/* <BasicAccordion /> */}
       </MainGrid>
-      <MainGrid item lg={9}>
+      <MainGrid item lg={9} sm={9}>
         <VitalsPanel />
-        <Charts />
+        {/* <Charts /> */}
         <TabsContainer />
       </MainGrid>
       <FlowStarter patient={params} />

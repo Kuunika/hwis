@@ -1,6 +1,11 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSubmissionToCodedArray,
+} from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -16,35 +21,38 @@ import {
   LowerLimbFemalePosteriorImage,
   LowerLimbMaleAnteriorImage,
   LowerLimbMalePosteriorImage,
-  LowerLimbPosteriorImage,
 } from "@/components/svgImages";
 import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { LowerLimbAnterior } from "@/assets";
+
 import { LowerLimbAnteriorImage } from "@/components/svgImages/lowerLimbAnterior";
-import { Box } from "@mui/material";
 
 const form = {
   oedama: {
     name: concepts.OEDEMA,
     label: "Oedema",
+    coded: true,
   },
   oedamaDetails: {
     name: concepts.OEDEMA_DETAILS,
     label: "Oedema Details",
+    coded: true,
   },
   coldClammy: {
     name: concepts.COLD_CLAMMY,
     label: "Cold Clammy",
+    coded: true,
   },
   abnormalitiesUpperLimb: {
     name: concepts.ABNORMALITIES_UPPER_LIMB,
     label: "Are there other abnormalities  in the upper limbs",
+    coded: true,
   },
   abnormalitiesLowerLimb: {
     name: concepts.ABNORMALITIES_LOWER_LIMB,
     label: "Are there other abnormalities  in the lower limbs",
+    coded: true,
   },
 };
 
@@ -91,8 +99,6 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
 
   const { gender } = getActivePatientDetails();
 
-  // const gender = "Male";
-
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
     const obs = [
@@ -110,7 +116,10 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
       },
     ];
     // delete formValues[form.abnormalitiesLowerLimb.name];
-    await handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+    // await handleSubmit([
+    //   ...mapSubmissionToCodedArray(form, formValues),
+    //   ...obs,
+    // ]);
   };
 
   return (

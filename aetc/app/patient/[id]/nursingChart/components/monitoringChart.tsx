@@ -7,15 +7,16 @@ import { MedicationsForm } from "./medications";
 
 import { concepts, encounters, triageResult } from "@/constants";
 import { useNavigation, useParameters } from "@/hooks";
-import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
 import { NursingNotesForm } from "./nursingNotes";
 import { Alert, Snackbar } from "@mui/material";
-import { date } from "yup";
-
 
 export const MonitoringChart = () => {
   const {
@@ -36,7 +37,9 @@ export const MonitoringChart = () => {
   const { mutate } = addEncounter();
   const { navigateTo, navigateBack } = useNavigation();
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [alertSeverity, setAlertSeverity] = useState<"error" | "success" | null>(null);
+  const [alertSeverity, setAlertSeverity] = useState<
+    "error" | "success" | null
+  >(null);
   const dateTime = getDateTime();
   const [vitalsSubmitting, setVitalsSubmitting] = useState<boolean>(false);
 
@@ -75,137 +78,153 @@ export const MonitoringChart = () => {
     isError: nursingNotesError,
   } = fetchConceptAndCreateEncounter();
 
-
   useEffect(() => {
     if (vitalsError) {
       setAlertMessage(`Error submitting vitals encounter`);
       setAlertSeverity("error");
-    } 
-    
+    }
+
     if (interventionsError) {
       setAlertMessage(`Error submitting interventions`);
       setAlertSeverity("error");
-    } 
+    }
 
     if (nursingNotesError) {
       setAlertMessage(`Error submitting nursing notes`);
       setAlertSeverity("error");
     }
 
-    if(vitalsCreated) {
+    if (vitalsCreated) {
       setAlertMessage(`Vitals submitted successfully`);
       setAlertSeverity("success");
       handleSkip();
     }
 
-    if(interventionsCreated) {
+    if (interventionsCreated) {
       setAlertMessage(`All encounters submitted successfully`);
       setAlertSeverity("success");
       handleSkip();
     }
-    if(nursingNotesCreated) {
+    if (nursingNotesCreated) {
       setAlertMessage(`All encounters submitted successfully`);
       setAlertSeverity("success");
       setTimeout(() => {
-      navigateBack();}, 5000);
+        navigateBack();
+      }, 5000);
     }
 
     setVitalsSubmitting(creatingVitals);
-
-  }, [vitalsError, interventionsError, nursingNotesError, vitalsCreated, interventionsCreated, nursingNotesCreated, creatingVitals]);
+  }, [
+    vitalsError,
+    interventionsError,
+    nursingNotesError,
+    vitalsCreated,
+    interventionsCreated,
+    nursingNotesCreated,
+    creatingVitals,
+  ]);
 
   const handleObservationsSubmit = async (values: any) => {
-    if(values["Triage Result"] === "No Score") {
-        setAlertMessage(values["Triage Result"]);
-        setAlertSeverity("error");
-        return;
-      }
+    if (values["Triage Result"] === "No Score") {
+      setAlertMessage(values["Triage Result"]);
+      setAlertSeverity("error");
+      return;
+    }
 
-      const forGroupMembers = Object.fromEntries(
-        Object.entries(values).filter(([key, value]) => key !== concepts.TRIAGE_RESULT)
-      );
+    const forGroupMembers = Object.fromEntries(
+      Object.entries(values).filter(
+        ([key, value]) => key !== concepts.TRIAGE_RESULT
+      )
+    );
 
-      const groupMemberObs = getObservations(forGroupMembers, dateTime);
-      const filteredVitals = groupMemberObs.filter(item => item.value !== "");
+    const groupMemberObs = getObservations(forGroupMembers, dateTime);
+    const filteredVitals = groupMemberObs.filter((item) => item.value !== "");
 
-      const observations = [
-        {
-          concept: concepts.TRIAGE_RESULT,
-          obsDatetime: dateTime,
-          value: values[concepts.TRIAGE_RESULT],
-          groupMembers: filteredVitals,
-        },
-      ];
+    const observations = [
+      {
+        concept: concepts.TRIAGE_RESULT,
+        obsDatetime: dateTime,
+        value: values[concepts.TRIAGE_RESULT],
+        groupMembers: filteredVitals,
+      },
+    ];
 
-      createVitals({
-        encounterType: encounters.VITALS,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: observations,
-      });
-  
-  
+    createVitals({
+      encounterType: encounters.VITALS,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: dateTime,
+      obs: observations,
+    });
   };
-
-
 
   const handleInterventionsSubmit = (values: any) => {
     const airwayKey = concepts.AIRWAY_OPENING_INTERVENTIONS;
     const otherKey = `${airwayKey}_Other`;
 
-
     for (const [key, value] of Object.entries(values)) {
-      if(key === "fluidEntries"){
-
+      if (key === "fluidEntries") {
         if (Array.isArray(value)) {
-          const fluidObs = value.map(entry => ([
-              { concept: concepts.INTAKE_FLUIDS, value: entry.intakeFluidType.value },
-              { concept: concepts.INTAKE_FLUID_AMOUNT, value: entry.intakeFluidAmount },
-              { concept: concepts.OUTPUT_FLUID_TYPE, value: entry.outputFluidType },
-              { concept: concepts.OUTPUT_FLUID_AMOUNT, value: entry.outputFluidAmount },
-              { concept: concepts.FLUID_BALANCE, value: entry.balance }
-            ]));
+          const fluidObs = value.map((entry) => [
+            {
+              concept: concepts.INTAKE_FLUIDS,
+              value: entry.intakeFluidType.value,
+            },
+            {
+              concept: concepts.INTAKE_FLUID_AMOUNT,
+              value: entry.intakeFluidAmount,
+            },
+            {
+              concept: concepts.OUTPUT_FLUID_TYPE,
+              value: entry.outputFluidType,
+            },
+            {
+              concept: concepts.OUTPUT_FLUID_AMOUNT,
+              value: entry.outputFluidAmount,
+            },
+            { concept: concepts.FLUID_BALANCE, value: entry.balance },
+          ]);
 
-          fluidObs.forEach(groupMembersObj => {
+          fluidObs.forEach((groupMembersObj) => {
+            const observations = [
+              {
+                concept: concepts.FLUID_BALANCE_CHART,
+                obsDatetime: dateTime,
+                value: true,
+                groupMembers: groupMembersObj,
+              },
+            ];
 
-              const observations = [
-                {
-                  concept: concepts.FLUID_BALANCE_CHART,
-                  obsDatetime: dateTime,
-                  value: true,
-                  groupMembers: groupMembersObj,
-                },
-              ];
-
-              createInterventions({
-                encounterType: encounters.PROCEDURES_DONE,
-                visit: activeVisit?.uuid,
-                patient: params.id,
-                encounterDatetime: dateTime,
-                obs: observations,
-              });
+            createInterventions({
+              encounterType: encounters.PROCEDURES_DONE,
+              visit: activeVisit?.uuid,
+              patient: params.id,
+              encounterDatetime: dateTime,
+              obs: observations,
+            });
           });
         }
         continue;
-        }
+      }
 
-
-      if(key === otherKey || !value || (Array.isArray(value) && value.length === 0)) {
+      if (
+        key === otherKey ||
+        !value ||
+        (Array.isArray(value) && value.length === 0)
+      ) {
         continue;
       }
-      
+
       const obsObject = (value as any[]).reduce((acc, item) => {
         acc[item.id] = true;
         return acc;
       }, {} as Record<string, boolean>);
       const obs = getObservations(obsObject, dateTime);
-      
 
-      obs.forEach(element => {
-          if(element.concept === concepts.OTHER_AIRWAY_INTERVENTION) {
-            element.value = values[otherKey];
-          }
+      obs.forEach((element) => {
+        if (element.concept === concepts.OTHER_AIRWAY_INTERVENTION) {
+          element.value = values[otherKey];
+        }
       });
       const observations = [
         {
@@ -223,12 +242,8 @@ export const MonitoringChart = () => {
         encounterDatetime: dateTime,
         obs: observations,
       });
-
-
-      };
     }
-
-
+  };
 
   const handleMedicationsSubmit = (values: any) => {
     console.log("Medications:", values);
@@ -236,7 +251,6 @@ export const MonitoringChart = () => {
   };
 
   const handleNursingNotesSubmit = (values: any) => {
-    
     const objectiveKey = concepts.OBJECTIVE_DATA;
     const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS;
     const subjectiveKey = concepts.SUBJECTIVE_DATA;
@@ -254,15 +268,16 @@ export const MonitoringChart = () => {
       delete values.investigations;
     }
 
-
-    if(values[investigationsKey]){
+    if (values[investigationsKey]) {
       const investigations = values[investigationsKey];
 
-      const investigationObs = Object.entries(investigations).map(([concept, value]) => ({
-        concept,
-        value,
-        dateTime
-    }));
+      const investigationObs = Object.entries(investigations).map(
+        ([concept, value]) => ({
+          concept,
+          value,
+          dateTime,
+        })
+      );
       const observations = [
         {
           concept: concepts.BEDSIDE_INVESTIGATIONS,
@@ -271,7 +286,7 @@ export const MonitoringChart = () => {
           groupMembers: investigationObs,
         },
       ];
-    
+
       createNursingNotes({
         encounterType: encounters.NURSING_NOTES,
         visit: activeVisit?.uuid,
@@ -280,16 +295,17 @@ export const MonitoringChart = () => {
         obs: observations,
       });
     }
-    
-    
-if(values[objectiveKey]){
-  const objective = values[objectiveKey];
-  const objectiveObs = Object.entries(objective).map(([concept, value]) => ({
-            concept,
-            value,
-            dateTime
-  }));
-  
+
+    if (values[objectiveKey]) {
+      const objective = values[objectiveKey];
+      const objectiveObs = Object.entries(objective).map(
+        ([concept, value]) => ({
+          concept,
+          value,
+          dateTime,
+        })
+      );
+
       const observations = [
         {
           concept: concepts.OBJECTIVE_DATA,
@@ -306,52 +322,56 @@ if(values[objectiveKey]){
         encounterDatetime: dateTime,
         obs: observations,
       });
-}
+    }
 
-if (values[subjectiveKey] || values[assessmentKey] || values[planKey] || values[interventionsKey]) {
-  const groupMembers = [
-    {
-      concept: concepts.SUBJECTIVE_DATA,
-      obsDatetime: dateTime,
-      value: values[subjectiveKey],
-    },
-    {
-      concept: concepts.ASSESSMENT_COMMENTS,
-      obsDatetime: dateTime,
-      value: values[assessmentKey],
-    },
-    {
-      concept: concepts.TREATMENT_PLAN,
-      obsDatetime: dateTime,
-      value: values[planKey],
-    },
-    {
-      concept: concepts.INTERVENTION_NOTES,
-      obsDatetime: dateTime,
-      value: values[interventionsKey],
-    },
-  ].filter(member => member.value);
+    if (
+      values[subjectiveKey] ||
+      values[assessmentKey] ||
+      values[planKey] ||
+      values[interventionsKey]
+    ) {
+      const groupMembers = [
+        {
+          concept: concepts.SUBJECTIVE_DATA,
+          obsDatetime: dateTime,
+          value: values[subjectiveKey],
+        },
+        {
+          concept: concepts.ASSESSMENT_COMMENTS,
+          obsDatetime: dateTime,
+          value: values[assessmentKey],
+        },
+        {
+          concept: concepts.TREATMENT_PLAN,
+          obsDatetime: dateTime,
+          value: values[planKey],
+        },
+        {
+          concept: concepts.INTERVENTION_NOTES,
+          obsDatetime: dateTime,
+          value: values[interventionsKey],
+        },
+      ].filter((member) => member.value);
 
-  if (groupMembers.length > 0) {
-    const observations = [
-      {
-        concept: concepts.OTHER_NURSING_NOTES,
-        obsDatetime: dateTime,
-        value: true,
-        groupMembers: groupMembers,
-      },
-    ];
+      if (groupMembers.length > 0) {
+        const observations = [
+          {
+            concept: concepts.OTHER_NURSING_NOTES,
+            obsDatetime: dateTime,
+            value: true,
+            groupMembers: groupMembers,
+          },
+        ];
 
-    createNursingNotes({
-      encounterType: encounters.NURSING_NOTES,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: observations, 
-    });
-  }
-}
-
+        createNursingNotes({
+          encounterType: encounters.NURSING_NOTES,
+          visit: activeVisit?.uuid,
+          patient: params.id,
+          encounterDatetime: dateTime,
+          obs: observations,
+        });
+      }
+    }
   };
 
   const handleSkip = () => {
@@ -376,21 +396,20 @@ if (values[subjectiveKey] || values[assessmentKey] || values[planKey] || values[
   return (
     <>
       <Snackbar
-      open={Boolean(alertMessage)}
-      autoHideDuration={5000} 
-      onClose={() => setAlertMessage(null)}
-      anchorOrigin={{ vertical: "top", horizontal: "center" }} 
-    >
- 
+        open={Boolean(alertMessage)}
+        autoHideDuration={5000}
+        onClose={() => setAlertMessage(null)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
         <Alert
           variant="filled"
-          severity={alertSeverity||"success"}
+          severity={alertSeverity || "success"}
           onClose={() => setAlertMessage(null)}
-          style={{opacity: 0.8}}
+          style={{ opacity: 0.8 }}
         >
           {alertMessage}
         </Alert>
-    </Snackbar>
+      </Snackbar>
       <NewStepperContainer
         setActive={setActiveStep}
         title="Monitoring Chart"

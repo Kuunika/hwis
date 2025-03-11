@@ -6,6 +6,7 @@ import {
   getInitialValues,
   getObservations,
   mapSearchComboOptionsToConcepts,
+  mapSubmissionToCodedArray,
 } from "@/helpers";
 import React, { useState } from "react";
 import {
@@ -23,6 +24,7 @@ import {
   AbdomenImageWithOtherForm,
   LowerLimbFemaleAnteriorImage,
   LowerLimbMaleAnteriorImage,
+  NewAbdomenImage,
 } from "@/components/svgImages";
 import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
@@ -30,6 +32,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CPRDialogForm } from "./cprDialogForm";
 import { getActivePatientDetails } from "@/hooks";
+import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 
 type Prop = {
   onSubmit: () => void;
@@ -38,52 +41,62 @@ const form = {
   bleedingInfo: {
     name: concepts.IS_PATIENT_ACTIVELY_BLEEDING,
     label: "Is the patient actively bleeding",
+    coded: true,
   },
   pulseInfo: {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
     label: "Does the patient have a pulse",
+    coded: true,
   },
   pulseRate: {
     name: concepts.PULSE_RATE_WEAK,
     label: "Purse Rate",
+    coded: true,
   },
   bloodPressureSystolic: {
-    name: concepts.BLOOD_PRESSURE_SYSTOLIC,
+    name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Systolic",
   },
   bloodPressureDiastolic: {
-    name: concepts.BLOOD_PRESSURE_DIASTOLIC,
+    name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Diastolic",
   },
   intravenousAccess: {
     name: concepts.PATIENT_INTRAVENOUS,
     label: "Does the patient need intravenous access",
+    coded: true,
   },
   traumatizedInfo: {
     name: concepts.IS_PATIENT_TRAUMATIZED,
     label: "Is the patient injured",
+    coded: true,
   },
 
   abnormalitiesInfo: {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is there any other abnormalities?",
+    coded: true,
   },
   capillaryInfo: {
     name: concepts.CAPILLARY_REFILL_TIME,
     label: "Capillary refill time",
+    coded: true,
   },
   pelvisInfo: {
     name: concepts.IS_PELVIS_STABLE,
     label: "Is the pelvis stable?",
+    coded: true,
   },
   abdnomenDistention: {
     name: concepts.HEADACHE,
     label: "Is there abdominal distention?",
+    coded: true,
   },
 
   mucousMembranesInfo: {
     name: concepts.MUCOUS_MEMBRANES,
     label: "Mucous membranes",
+    coded: true,
   },
 
   catheterInfo: {
@@ -93,6 +106,7 @@ const form = {
   femurAndTibiaNormalInfo: {
     name: concepts.IS_FEMUR_TIBIA_NORMAL,
     label: "is the femur and tibia normal?",
+    coded: true,
   },
   bleedingActionDone: {
     name: concepts.ACTION_DONE,
@@ -118,6 +132,7 @@ const form = {
   bloodPressureMeasured: {
     name: concepts.BLOOD_PRESSURE_MEASURED,
     label: "Blood Pressure Measured",
+    coded: true,
   },
   reasonNotRecorded: {
     name: concepts.REASON_NOT_RECORDED,
@@ -126,10 +141,12 @@ const form = {
   reasonNotDone: {
     name: concepts.DESCRIPTION,
     label: "Reason Not Done",
+    coded: true,
   },
   mucousAbnormal: {
     name: concepts.MUCOUS_ABNORMAL,
     label: "Mucous Abnormal",
+    coded: true,
   },
   bloodPressureNotDoneOther: {
     name: concepts.SPECIFY,
@@ -138,10 +155,12 @@ const form = {
   siteOfCannulation: {
     name: concepts.CANNULATION_SITE,
     label: "Cannulation Site",
+    coded: true,
   },
   diagramCannulationSite: {
     name: concepts.DIAGRAM_CANNULATION_SITE,
     label: "Cannulation Site",
+    coded: true,
   },
   pulse: {
     name: concepts.PULSE_RATE,
@@ -316,42 +335,48 @@ export const Circulation = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(abdomenOtherImage),
+        coded: true,
+        groupMembers: flattenImagesObs(abdomenOtherImage),
       },
       {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
+        coded: true,
         obsDatetime: getDateTime(),
-        group_members: flattenImagesObs(legImage),
+        groupMembers: flattenImagesObs(legImage),
       },
       // {
       //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
       //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
       //   obsDatetime: getDateTime(),
-      //   group_members: flattenImagesObs(abdomenImage),
+      //   groupMembers: flattenImagesObs(abdomenImage),
       // },
     ];
 
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
       form.mucousAbnormal.name,
-      getDateTime()
+      getDateTime(),
+      true
     );
     const sizeOfCatheterObs = mapSearchComboOptionsToConcepts(
-      formValues[form.mucousAbnormal.name],
-      form.mucousAbnormal.name,
-      getDateTime()
+      formValues[form.catheterInfo.name],
+      form.catheterInfo.name,
+      getDateTime(),
+      true
     );
     const siteOfCannulationObs = mapSearchComboOptionsToConcepts(
       formValues[form.siteOfCannulation.name],
       form.siteOfCannulation.name,
-      getDateTime()
+      getDateTime(),
+      true
     );
 
     const diagramCannulationSiteObs = mapSearchComboOptionsToConcepts(
       formValues[form.diagramCannulationSite.name],
       form.diagramCannulationSite.name,
-      getDateTime()
+      getDateTime(),
+      true
     );
 
     delete formValues[form.abnormalitiesInfo.name];
@@ -362,7 +387,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
     delete formValues[form.diagramCannulationSite.name];
 
     await handleSubmit([
-      ...getObservations(formValues, getDateTime()),
+      ...mapSubmissionToCodedArray(form, formValues),
       ...obs,
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,
@@ -762,11 +787,28 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.abnormalitiesInfo.name] == YES && (
             <>
               <br />
-              <AbdomenImageWithOtherForm
+              {/* <AbdomenImageWithOtherForm
                 imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                 imageSection={form.abnormalitiesInfo.name}
                 onValueChange={setAbdomenOtherImage}
-              />
+              /> */}
+              {gender == "Male" && (
+                <NewAbdomenImage
+                  formNameSection="other"
+                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                  imageSection={form.abnormalitiesInfo.name}
+                  onValueChange={setAbdomenOtherImage}
+                />
+              )}
+              {gender == "Female" && (
+                <NewAbdomenFemaleImage
+                  formNameSection="other"
+                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                  imageSection={form.abnormalitiesInfo.name}
+                  onValueChange={setAbdomenOtherImage}
+                />
+              )}
+
               <br />
             </>
           )}

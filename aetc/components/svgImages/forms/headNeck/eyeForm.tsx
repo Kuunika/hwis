@@ -13,6 +13,7 @@ import {
 import * as Yup from "yup";
 import React from "react";
 import { Box } from "@mui/material";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abnormalities: {
@@ -84,10 +85,18 @@ export const EyeForm = ({ onSubmit }: Prop) => {
 
   const handleValueChange = (values: Array<any>) => {
     setShowOtherAbnormalities(
-      Boolean(values.find((v) => v.id == form.otherAbnormalities.name))
+      Boolean(
+        values.find(
+          (v) => v.id == getCachedConcept(form.otherAbnormalities.name)?.uuid
+        )
+      )
     );
     setShowEyeInjury(
-      Boolean(values.find((v) => v.id == concepts.EYELID_INJURY))
+      Boolean(
+        values.find(
+          (v) => v.id == getCachedConcept(concepts.EYELID_INJURY)?.uuid
+        )
+      )
     );
   };
 
@@ -113,6 +122,7 @@ export const EyeForm = ({ onSubmit }: Prop) => {
           label={form.abnormalities.label}
           options={abnormalities}
           sx={{ mb: "1ch" }}
+          coded
         />
 
         {showOtherAbnormalities && (

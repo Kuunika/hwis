@@ -1,18 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import { FormValuesListener, FormikInit } from "@/components";
+import { FormikInit } from "@/components";
 import * as yup from "yup";
 
-import { HeadNeckImage } from "@/components/svgImages";
-import { useSubmitEncounter } from "@/hooks";
+import {
+  HeadNeckBackImage,
+  HeadNeckFrontImage,
+  HeadNeckImage,
+  HeadNeckLeftImage,
+  HeadNeckRightImage,
+} from "@/components/svgImages";
+import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { concepts, encounters } from "@/constants";
-import { flattenImagesObs, getObservations } from "@/helpers";
+import { flattenImagesObs } from "@/helpers";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
 import { HeadLeftImage } from "@/components/svgImages/headLeft";
 import { HeadRightImage } from "@/components/svgImages/headRight";
 import { HeadBackImage } from "@/components/svgImages/headBack";
+import { HeadNeckLeftFemaleImage } from "@/components/svgImages/headNeckLeftFemale";
+import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFemale";
+import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
 
 type Props = {
   onSubmit: () => void;
@@ -47,6 +56,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   const [backHeadNeckImageEncounter, setBackHeadNeckImageEncounter] = useState<
     Array<any>
   >([]);
+  const { gender } = getActivePatientDetails();
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.HEAD_AND_NECK_ASSESSMENT,
@@ -58,25 +68,25 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(headNeckImageEncounter),
+        groupMembers: flattenImagesObs(headNeckImageEncounter),
         value: "Front",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(leftHeadNeckImageEncounter),
+        groupMembers: flattenImagesObs(leftHeadNeckImageEncounter),
         value: "Left",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(rightHeadNeckImageEncounter),
+        groupMembers: flattenImagesObs(rightHeadNeckImageEncounter),
         value: "Right",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime: new Date(),
-        group_members: flattenImagesObs(backHeadNeckImageEncounter),
+        groupMembers: flattenImagesObs(backHeadNeckImageEncounter),
         value: "Back",
       },
     ];
@@ -88,24 +98,74 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     {
       id: 1,
       label: "Left",
-      content: <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} />,
+      content: (
+        <>
+          {/* <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} /> */}
+          {gender == "Male" && (
+            <HeadNeckLeftImage onValueChange={setLeftHeadNeckImageEncounter} />
+          )}
+          {gender == "Female" && (
+            <HeadNeckLeftFemaleImage
+              onValueChange={setLeftHeadNeckImageEncounter}
+            />
+          )}
+        </>
+      ),
     },
     {
       id: 2,
       label: "Front",
-      content: <HeadNeckImage onValueChange={setHeadNeckImageEncounter} />,
+      content: (
+        <>
+          {/* <HeadNeckImage onValueChange={setHeadNeckImageEncounter} /> */}
+          {/* <HeadNeckFrontImage
+            gender={gender as any}
+            onValueChange={setHeadNeckImageEncounter}
+          /> */}
+          {gender == "Male" && (
+            <HeadNeckFrontImage onValueChange={setHeadNeckImageEncounter} />
+          )}
+          {gender == "Female" && (
+            <HeadNeckFrontFemaleImage
+              onValueChange={setHeadNeckImageEncounter}
+            />
+          )}
+        </>
+      ),
     },
     {
       id: 3,
       label: "Right",
       content: (
-        <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} />
+        <>
+          {/* <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} /> */}
+
+          {/* <HeadNeckRightImage
+            gender={gender as any}
+            onValueChange={setRightHeadNeckImageEncounter}
+          /> */}
+          {gender == "Male" && (
+            <HeadNeckRightImage
+              onValueChange={setRightHeadNeckImageEncounter}
+            />
+          )}
+          {gender == "Female" && (
+            <HeadNeckRightFemaleImage
+              onValueChange={setRightHeadNeckImageEncounter}
+            />
+          )}
+        </>
       ),
     },
     {
       id: 4,
       label: "Back",
-      content: <HeadBackImage onValueChange={setBackHeadNeckImageEncounter} />,
+      content: (
+        <>
+          {/* <HeadBackImage onValueChange={setBackHeadNeckImageEncounter} /> */}
+          <HeadNeckBackImage onValueChange={setBackHeadNeckImageEncounter} />
+        </>
+      ),
     },
   ];
 

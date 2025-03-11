@@ -127,20 +127,20 @@ export const encounters = {
   FULLBODY_LEFT_MANUS_POLLEX: "FULLBODY_LEFT_MANUS_POLLEX",
   FULLBODY_LEFT_MANUS_PALMAR: "FULLBODY_LEFT_MANUS_PALMAR",
   FULLBODY_RIGHT_TARSAL: "FULLBODY_RIGHT_TARSAL",
-  HEAD_RIGHT_TEMPORAL: "HEAD_RIGHT_TEMPORAL",
-  HEAD_LEFT_TEMPORAL: "HEAD_LEFT_TEMPORAL",
-  HEAD_CROWN: "HEAD_CROWN",
-  HEAD_RIGHT_EYE: "HEAD_RIGHT_EYE",
-  HEAD_LEFT_EYE: "HEAD_LEFT_EYE",
-  HEAD_NOSE: "HEAD_NOSE",
-  HEAD_MOUTH: "HEAD_MOUTH",
-  HEAD_NECK: "HEAD_NECK",
-  HEAD_FOREHEAD: "HEAD_FOREHEAD",
-  HEAD_CHIN: "HEAD_CHIN",
-  HEAD_RIGHT_CHEEK: "HEAD_RIGHT_CHEEK",
-  HEAD_LEFT_CHEEK: "HEAD_LEFT_CHEEK",
-  HEAD_LEFT_EAR: "HEAD_LEFT_EAR",
-  HEAD_RIGHT_EAR: "HEAD_RIGHT_EAR",
+  HEAD_RIGHT_TEMPORAL: "Right_Temporal",
+  HEAD_LEFT_TEMPORAL: "Left_Temporal",
+  HEAD_CROWN: "Crown",
+  HEAD_RIGHT_EYE: "Right_Eye",
+  HEAD_LEFT_EYE: "Left_Eye",
+  HEAD_NOSE: "Nose",
+  HEAD_MOUTH: "Mouth",
+  HEAD_NECK: "Neck",
+  HEAD_FOREHEAD: "Forehead",
+  HEAD_CHIN: "Chin",
+  HEAD_RIGHT_CHEEK: "Right_Cheek",
+  HEAD_LEFT_CHEEK: "Left_Cheek",
+  HEAD_LEFT_EAR: "Left_Ear",
+  HEAD_RIGHT_EAR: "Right_Ear",
   CHEST_ASSESSMENT: "8caec6aa-22c4-41f3-b81d-9454cac03b49",
   ABDOMEN_AND_PELVIS_ASSESSMENT: "36e596a7-dcd3-481c-83d7-adb8d63ac565",
   EXTREMITIES_ASSESSMENT: "5ddc1c09-8f2a-4e0a-ada7-fde717bd1f5b",
@@ -163,14 +163,14 @@ export const encounters = {
   TREATMENT: "ba05ed9c-8d80-11d8-abbb-0024217bb78e",
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",
   PATIENT_CARE_AREA: "d0d12af5-7f67-41fe-a856-db3b54ca6c0d",
-  DISPENSING:"ba0612c2-8d80-11d8-abbb-0024217bb78e",
-  FAMILY_MEDICAL_HISTORY: 'ba06b178-8d80-11d8-abbb-0024217bb78e',
-  REVIEW_OF_SYSTEMS: '54e32e5d-51c5-4f16-8cff-9fc7da3c68ca',
+  DISPENSING: "ba0612c2-8d80-11d8-abbb-0024217bb78e",
+  FAMILY_MEDICAL_HISTORY: "ba06b178-8d80-11d8-abbb-0024217bb78e",
+  REVIEW_OF_SYSTEMS: "54e32e5d-51c5-4f16-8cff-9fc7da3c68ca",
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
-export const YES = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
-export const NO = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
+export const YES = "Yes";
+export const NO = "No";
 
 export const concepts = {
   COMPLAINTS: "Complaints",
@@ -193,7 +193,7 @@ export const concepts = {
   ADMISSION: "Admission",
   THEATRE: "Theatre",
   OTHER_INTERVENTION_SUITE: "Other Intervention Suite",
-  SHORT_STAY: "Short Stay",
+  SHORT_STAY: "Short stay",
   TRANSFER_TO_ANOTHER_FACILITY: "Transfer To Another Facility",
   DEATH: "Death",
   ABSCONDED: "Absconded",
@@ -203,9 +203,10 @@ export const concepts = {
   HOME_CARE_INSTRUCTIONS: "Home Care Instructions",
   FOLLOWUP_DETAILS: "Followup Details",
   HEALTH_CENTER: "Health Center",
-  SPECIALIST_CLINIC: "Specialist Clinic",
+  SPECIALIST_CLINIC: "Specialist clinic",
   DISTRICT_HOSPITAL: "District Hospital",
   DISCHARGE_NOTES: "Discharge Notes",
+  REASON_FOR_REQUEST: "Reason for request",
   SPECIALITY_DEPARTMENT: "Speciality Department",
   MEDICINE: "Medicine",
   GENERAL_SURGERY: "General Surgery",
@@ -219,28 +220,38 @@ export const concepts = {
   CRITICAL_CARE: "Critical Care",
   ONCOLOGY: "Oncology",
   WARD: "Ward",
-  TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Two A Oncology Ward General Ward High Dependency Unit",
+  TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Two A Oncology Ward General Ward High Dependency Unit",
   TWO_B_RENAL_AND_DERMATOLOGY_WARD: "Two B Renal And Dermatology Ward",
   SIX_A_FEMALE_ORTHOPAEDIC_WARD: "Six A Female Orthopaedic Ward",
-  FOUR_A_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Four A Female Medical Ward General Ward High Dependency Unit",
-  GYNECOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Gynecology Ward General Ward High Dependency Unit",
-  LABOUR_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Labour Ward General Ward High Dependency Unit",
-  THREE_B_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Three B Female Medical Ward General Ward High Dependency Unit",
+  FOUR_A_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Four A Female Medical Ward General Ward High Dependency Unit",
+  GYNECOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Gynecology Ward General Ward High Dependency Unit",
+  LABOUR_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Labour Ward General Ward High Dependency Unit",
+  THREE_B_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Three B Female Medical Ward General Ward High Dependency Unit",
   THREE_A_TB_WARD: "Three A Tb Ward",
-  THREE_A_HDRU_HIGH_DEPENDENCY_RESPIRATORY_UNIT: "Three A Hdru High Dependency Respiratory Unit",
-  FIVE_A_MALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Five A Male Surgical Ward General Ward High Dependency Unit",
-  FIVE_B_FEMALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Five B Female Surgical Ward General Ward High Dependency Unit",
+  THREE_A_HDRU_HIGH_DEPENDENCY_RESPIRATORY_UNIT:
+    "Three A Hdru High Dependency Respiratory Unit",
+  FIVE_A_MALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Five A Male Surgical Ward General Ward High Dependency Unit",
+  FIVE_B_FEMALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Five B Female Surgical Ward General Ward High Dependency Unit",
   FIVE_B_ORTHOPAEDIC_WARD: "Five B Orthopaedic Ward",
-  FIVE_B_NEUROSURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT: "Five B Neurosurgical Ward General Ward High Dependency Unit",
+  FIVE_B_NEUROSURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
+    "Five B Neurosurgical Ward General Ward High Dependency Unit",
   INTENSIVE_CARE_UNIT_ICU: "Intensive Care Unit Icu",
   ENT: "Ent",
   BED_NUMBER: "Bed Number",
+  REASON_FOR_ADMISSION: "Reason for admission",
   EXPECTED_DURATION: "Expected Duration",
   VITAL_SIGNS: "Vital Signs",
   SOAP_NOTES: "Soap Notes",
   FACILITY_NAME: "Facility Name",
   REASON_FOR_TRANSFER: "Reason For Transfer",
-  CAUSE_OF_DEATH: "Cause Of Death",
+  CAUSE_OF_DEATH: "Cause of death",
   FAMILY_INFORMED: "Family Informed",
   RELATIONSHIP_TO_DECEASED: "Relationship To Deceased",
   RELATIONSHIP_SPOUSE: "Relationship Spouse",
@@ -254,7 +265,8 @@ export const concepts = {
   COM: "Com",
   MTHUNZI: "Mthunzi",
   LAST_OFFICE_CONDUCTED: "Last Office Conducted",
-  NAME_OF_HEALTH_WORKER_WHO_CONDUCTED_LAST_OFFICE: "Name Of Health Worker Who Conducted Last Office",
+  NAME_OF_HEALTH_WORKER_WHO_CONDUCTED_LAST_OFFICE:
+    "Name Of Health Worker Who Conducted Last Office",
   DATE_OF_LAST_OFFICE: "Date Of Last Office",
   LAST_SEEN_LOCATION: "Last Seen Location",
   DATE_OF_ABSCONDING: "Date Of Absconding",
@@ -307,6 +319,8 @@ export const concepts = {
   HEART_RATE: "Heart Rate",
   BLOOD_PRESSURE_SYSTOLIC: "Blood Pressure Systolic",
   BLOOD_PRESSURE_DIASTOLIC: "Blood Pressure Diastolic",
+  SYSTOLIC_BLOOD_PRESSURE: "Systolic blood pressure",
+  DIASTOLIC_BLOOD_PRESSURE: "Diastolic blood pressure",
   MOTOR_RESPONSE: "Motor Response",
   EYE_OPENING_RESPONSE: "Eye Opening Response",
   VERBAL_RESPONSE: "Verbal Response",
@@ -317,7 +331,7 @@ export const concepts = {
   URINE_DIPSTICK_KETONES: "Urine Dipstick Ketones",
   PEAK_EXPIRATORY_FLOW_RATE: "Peak Expiratory Flow Rate",
   CONDITION: "Condition",
-  DIFFERENTIAL_DIAGNOSIS: "Differential Diagnosis",
+  DIFFERENTIAL_DIAGNOSIS: "Attempted/ Differential Diagnosis",
   FINAL_DIAGNOSIS: "Final Diagnosis",
   IS_AIRWAY_COMPROMISED: "Is Airway Compromised",
   IS_BREATHING_ABNORMAL: "Is Breathing Abnormal",
@@ -438,7 +452,7 @@ export const concepts = {
   DURATION_OF_SYMPTOMS_WEEKS: "Duration Of Symptoms Weeks",
   DURATION_OF_SYMPTOMS_MONTHS: "Duration Of Symptoms Months",
   DURATION_OF_SYMPTOMS_YEARS: "Duration Of Symptoms Years",
-  INVESTIGATIONS: "Investigations",
+  INVESTIGATIONS: "Laboratory Investigations",
   PRESENTING_HISTORY: "Presenting History",
   PUPIL_SIZE: "Pupil Size",
   PALLOR: "Pallor",
@@ -914,7 +928,8 @@ export const concepts = {
   PAINFUL_URINATION: "Painful Urination",
   PATIENT_SAFETY_CONCERN: "Patient Safety Concern",
   PER_VAGINAL_BLEEDING: "Per Vaginal Bleeding",
-  PER_VAGINAL_BLEEDING_WITH_AMENORRHOEA: "Per Vaginal Bleeding With Amenorrhoea",
+  PER_VAGINAL_BLEEDING_WITH_AMENORRHOEA:
+    "Per Vaginal Bleeding With Amenorrhoea",
   PHOTOPHOBIA: "Photophobia",
   POISONING: "Poisoning",
   POLYURIA: "Polyuria",
@@ -952,7 +967,8 @@ export const concepts = {
   SUBSTANCE_WITHDRAWAL_ALCOHOL: "Substance Withdrawal Alcohol",
   SUBSTANCE_WITHDRAWAL_OPIOID: "Substance Withdrawal Opioid",
   SUBSTANCE_WITHDRAWAL_BENZODIAZEPINE: "Substance Withdrawal Benzodiazepine",
-  SURGICAL_ADMISSION_FOR_ELECTIVE_SURGERY: "Surgical Admission For Elective Surgery",
+  SURGICAL_ADMISSION_FOR_ELECTIVE_SURGERY:
+    "Surgical Admission For Elective Surgery",
   SUSPECTED_BOWEL_OBSTRUCTION: "Suspected Bowel Obstruction",
   SUTURE_REMOVAL: "Suture Removal",
   SWELLING_GROIN: "Swelling Groin",
@@ -1176,7 +1192,8 @@ export const concepts = {
   HEMORROID: "Hemorroid",
   PROSTRATE_DESCRIPTION: "Prostrate Description",
   DIAGNOSIS: "Diagnosis",
-  FUNDO_SCOPY_FINDINGS:'Fundoscopy Findings',
+  FUNDO_SCOPY_FINDINGS: "Fundoscopy Findings",
+  NOTES: "Notes",
   OBJECTIVE_DATA_HEAD: "Objective data head",
   OBJECTIVE_DATA_CHEST: "Objective data chest",
   OBJECTIVE_DATA_ABDOMEN: "Objective data abdomen",
@@ -1191,21 +1208,19 @@ export const concepts = {
   FLUID_BALANCE: "Fluid balance",
   FLUID_BALANCE_CHART: "Fluid balance chart",
   BUILDING_COLLAPSE: "Building Collapse",
-}
+};
 
-export const conceptNames= {
-  DRUG_GIVEN:'Given drugs',
-  PRESCRIBED_DOSE:'Prescribed dose',
-  MEDICATION_DOSE_UNIT:'Medication Dose Unit',
-  MEDICATION_FREQUENCY:'Medication Frequency',
-  MEDICATION_DURATION:'Medication Duration',
-  MEDICATION_DURATION_UNIT:'Medication Duration Unit',
-  MEDICATION_FORMULATION:'Medication Formulation',
-  DESCRIPTION:'Description',
-  MEDICATION_ROUTE:'Medication Route',
-}
-
-
+export const conceptNames = {
+  DRUG_GIVEN: "Given drugs",
+  PRESCRIBED_DOSE: "Prescribed dose",
+  MEDICATION_DOSE_UNIT: "Medication Dose Unit",
+  MEDICATION_FREQUENCY: "Medication Frequency",
+  MEDICATION_DURATION: "Medication Duration",
+  MEDICATION_DURATION_UNIT: "Medication Duration Unit",
+  MEDICATION_FORMULATION: "Medication Formulation",
+  DESCRIPTION: "Description",
+  MEDICATION_ROUTE: "Medication Route",
+};
 
 export const triageResult = {
   RED: "red",

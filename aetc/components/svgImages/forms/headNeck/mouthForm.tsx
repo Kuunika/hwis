@@ -13,6 +13,7 @@ import {
 import * as Yup from "yup";
 import React from "react";
 import { Box } from "@mui/material";
+import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abnormalities: {
@@ -62,10 +63,18 @@ export const MouthForm = ({ onSubmit }: Prop) => {
 
   const handleValueChange = (values: Array<any>) => {
     setShowOtherAbnormalities(
-      Boolean(values.find((v) => v.id == form.otherAbnormalities.name))
+      Boolean(
+        values.find(
+          (v) => v.id == getCachedConcept(form.otherAbnormalities.name)?.uuid
+        )
+      )
     );
     setTongueLaceration(
-      Boolean(values.find((v) => v.id == concepts.TONGUE_LACERATION))
+      Boolean(
+        values.find(
+          (v) => v.id == getCachedConcept(concepts.TONGUE_LACERATION)?.uuid
+        )
+      )
     );
   };
   return (
@@ -83,6 +92,7 @@ export const MouthForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
+          coded
         />
 
         {showOtherAbnormalities && (

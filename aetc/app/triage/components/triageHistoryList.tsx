@@ -146,8 +146,8 @@ export const TriageHistoryList = () => {
         name: `Blood Pressure (mmHg)`,
         value: `${getObservationValue(
           obs,
-          concepts.BLOOD_PRESSURE_SYSTOLIC
-        )}/${getObservationValue(obs, concepts.BLOOD_PRESSURE_DIASTOLIC)}`,
+          concepts.SYSTOLIC_BLOOD_PRESSURE
+        )}/${getObservationValue(obs, concepts.DIASTOLIC_BLOOD_PRESSURE)}`,
       },
       {
         name: `${VitalFormConfig.respiratoryRate.label} (bpm)`,

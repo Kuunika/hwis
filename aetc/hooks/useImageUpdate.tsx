@@ -4,46 +4,74 @@ import { useRef, useState, useEffect } from "react";
 import { getActivePatientDetails, useImageFormTransform } from ".";
 import { concepts } from "@/constants";
 
+interface Section {
+  id: string | null;
+  label: string | null;
+  notes?: any;
+  description?: any;
+  other?: any;
+  formData?: any;
+}
+
 export const useImageUpdate = () => {
   const { submittedValues, setData, setSubmittedValues } =
     useImageFormTransform();
   const { activeVisit, patientId } = getActivePatientDetails();
   const containerRef = useRef<SVGSVGElement>(null);
-  const [ids, setIds] = useState<
-    Array<{
-      id: string | null;
-      label: string | null;
-      notes?: any;
-      description?: any;
-      other?: any;
-    }>
-  >([]);
+  const [ids, setIds] = useState<Section[]>([]);
   const [counter, setCounter] = useState(0);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedSection, setSelectedSection] = useState<{
-    id: string | null;
-    label: string | null;
-  }>({ id: "", label: "" });
-  const [anchorElDisplay, setAnchorElDisplay] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState<SVGElement | null>(null);
+  const [selectedSection, setSelectedSection] = useState<Section>({
+    id: "",
+    label: "",
+  });
+  const [anchorElDisplay, setAnchorElDisplay] = useState<SVGElement | null>(
+    null
+  );
   const [hoverId, setHoverId] = useState("");
 
-  const highlightcolor = "#708090";
+  const highlightColor = "#708090";
 
-  const handleMouseEnter = (e: MouseEvent) => {
+  const handleMouseEnter = (e: Event) => {
     const target = e.currentTarget as SVGElement;
     setHoverId(target.id);
-    //@ts-ignore
-    setAnchorElDisplay(e.target);
-    target.style.opacity = `0.5`;
-    target.style.fill = highlightcolor;
-
+    setAnchorElDisplay(target);
+    target.style.opacity = "0.5";
+    target.style.fill = highlightColor;
     target.style.cursor = "pointer";
   };
-  const handleMouseLeave = (e: MouseEvent | Event) => {
+
+  const handleMouseLeave = (e: Event) => {
     const target = e.currentTarget as SVGElement;
-    target.style.opacity = ``;
+    target.style.opacity = "";
     target.style.fill = "";
-    setCounter((count) => count + 1);
+    setCounter((prevCounter) => prevCounter + 1);
+  };
+
+  const handleClickLister = (e: Event) => {
+    const target = e.currentTarget as SVGElement;
+    const label = target.getAttribute("data-label");
+    const id = target.id;
+    setAnchorEl(target);
+    setSelectedSection({ id, label });
+  };
+
+  const highlightSection = (id: string, color: string, opacity: string) => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getElementById(id) as SVGAElement;
+      if (rect) {
+        rect.style.fill = color;
+        rect.style.opacity = opacity;
+      }
+    }
+  };
+
+  const highlightAllSelectedSections = () => {
+    ids.forEach((section) => {
+      if (section.id) {
+        highlightSection(section.id, highlightColor, "0.5");
+      }
+    });
   };
 
   useEffect(() => {
@@ -51,7 +79,9 @@ export const useImageUpdate = () => {
   }, [ids, counter]);
 
   useEffect(() => {
-    highlightSection(selectedSection.id as string, highlightcolor, "0.5");
+    if (selectedSection.id) {
+      highlightSection(selectedSection.id, highlightColor, "0.5");
+    }
   }, [selectedSection, counter]);
 
   useEffect(() => {
@@ -60,90 +90,63 @@ export const useImageUpdate = () => {
     if (containerRef.current) {
       const gElement = containerRef.current.querySelector("#BODY_PART");
 
-      if (!gElement) return;
+      if (gElement) {
+        elements = [
+          ...Array.from(gElement.querySelectorAll("path")),
+          ...Array.from(gElement.querySelectorAll("polygon")),
+        ];
 
-      elements = Array.from(gElement.querySelectorAll("path"));
+        elements.forEach((el) => {
+          el.style.fill = "";
+          el.style.opacity = "";
+          el.style.stroke = "";
 
-      elements.forEach((el) => {
-        el.style.fill = "";
-        el.style.opacity = "";
-        el.style.stroke = "";
-
-        el.addEventListener("mouseleave", handleMouseLeave);
-        //@ts-ignore
-        el.addEventListener("mouseenter", handleMouseEnter);
-        el.addEventListener("click", handleClickLister);
-      });
+          el.addEventListener("mouseleave", handleMouseLeave);
+          el.addEventListener("mouseenter", handleMouseEnter);
+          el.addEventListener("click", handleClickLister);
+        });
+      }
     }
 
     return () => {
       elements.forEach((el) => {
         el.removeEventListener("mouseleave", handleMouseLeave);
-        //@ts-ignore
         el.removeEventListener("mouseenter", handleMouseEnter);
         el.removeEventListener("click", handleClickLister);
       });
     };
   }, []);
 
-  const highlightAllSelectedSections = () => {
-    if (containerRef.current) {
-      for (let i = 0; i < ids.length; i++) {
-        highlightSection(ids[i].id as string, highlightcolor, "0.5");
-      }
-    }
-  };
-
-  const highlightSection = (id: string, color: string, opacity: string) => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getElementById(id) as SVGAElement;
-      if (!rect) return;
-      rect.style.fill = color;
-      rect.style.opacity = opacity;
-    }
-  };
-
-  const handleClickLister = (e: Event) => {
-    const target = e.currentTarget as SVGElement;
-    const label = target.getAttribute("data-label"); // Retrieve custom attribute
-    const id = target.id;
-    //@ts-ignore
-    setAnchorEl(e?.currentTarget);
-    setSelectedSection({ id, label });
-    // setIds(ids => [...ids, { id, label }]);
-  };
-
   const handleClose = () => {
     setAnchorEl(null);
-    highlightSection(selectedSection.id as string, "", "0");
+    if (selectedSection.id) {
+      highlightSection(selectedSection.id, "", "0");
+    }
     setSelectedSection({ id: null, label: null });
     highlightAllSelectedSections();
   };
 
   const handleFormSubmit = (formData: any) => {
-    console.log({ formData });
     const dateTime = getDateTime();
     const obs = Object.keys(formData)
       .flatMap((key) => {
         const conceptData = formData[key];
 
         return Array.isArray(conceptData)
-          ? conceptData.map((p: any) => {
-              return {
-                concept: key,
-                value: p.id,
-                obsDatetime: dateTime,
-              };
-            })
+          ? conceptData.map((p: any) => ({
+              concept: key,
+              value: p.id,
+              obsDatetime: dateTime,
+            }))
           : {
               concept: key,
               value: conceptData,
               obsDatetime: dateTime,
             };
       })
-      .filter((concept) => concept.value != "");
+      .filter((concept) => concept.value !== "");
 
-    formData = {
+    const newFormData = {
       encounterDateTime: dateTime,
       visit: activeVisit,
       patient: patientId,
@@ -157,29 +160,30 @@ export const useImageUpdate = () => {
         },
       ],
     };
-    setIds((ids) => [...ids, { ...selectedSection, formData }]);
+
+    setIds((prevIds) => [
+      ...prevIds,
+      { ...selectedSection, formData: newFormData },
+    ]);
     handleClose();
   };
 
-  const section = ids.find((id) => id.id == selectedSection.id);
+  const section = ids.find((id) => id.id === selectedSection.id);
 
   const deselectSection = () => {
-    let clonedIds = [...ids];
-    clonedIds = clonedIds.filter((clone) => clone.id != selectedSection.id);
-    setIds(clonedIds);
+    setIds((prevIds) => prevIds.filter((id) => id.id !== selectedSection.id));
     handleClose();
   };
 
-  const deleteSection = (id: any) => {
-    let clonedIds = [...ids];
-    clonedIds = clonedIds.filter((clone) => clone.label != id);
-    setIds(clonedIds);
-
-    setSubmittedValues((values) => {
-      return values.filter((v) => v.section != id);
-    });
+  const deleteSection = (id: string) => {
+    setIds((prevIds) => prevIds.filter((section) => section.label !== id));
+    setSubmittedValues((prevValues) =>
+      prevValues.filter((v) => v.section !== id)
+    );
     highlightAllSelectedSections();
   };
+
+  console.log(containerRef);
 
   return {
     handleClose,
