@@ -27,6 +27,7 @@ import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getCachedConcept } from "@/helpers/data";
+import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 
 const form = {
   abdominalDistention: {
@@ -504,22 +505,38 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 imageSection={form.abnormalitiesPresent.name}
                 onValueChange={setAbnormalitiesPresentImageEnc}
               /> */}
-              <NewAbdomenImage
-                imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
-                imageSection={form.abnormalitiesPresent.name}
-                onValueChange={setAbnormalitiesPresentImageEnc}
-                formNameSection="secondaryAbdomen"
-                gender={gender as any}
-              />
+              {gender == "Male" && (
+                <NewAbdomenImage
+                  imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+                  imageSection={form.abnormalitiesPresent.name}
+                  onValueChange={setAbnormalitiesPresentImageEnc}
+                  formNameSection="secondaryAbdomen"
+                />
+              )}
+              {gender == "Female" && (
+                <NewAbdomenFemaleImage
+                  imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+                  imageSection={form.abnormalitiesPresent.name}
+                  onValueChange={setAbnormalitiesPresentImageEnc}
+                  formNameSection="secondaryAbdomen"
+                />
+              )}
             </>
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation">
-          <NewAbdomenImage
-            formNameSection="palpation"
-            onValueChange={setTendernessImageEnc}
-            gender={gender as any}
-          />
+          {gender == "Male" && (
+            <NewAbdomenImage
+              formNameSection="palpation"
+              onValueChange={setTendernessImageEnc}
+            />
+          )}
+          {gender == "Female" && (
+            <NewAbdomenFemaleImage
+              formNameSection="palpation"
+              onValueChange={setTendernessImageEnc}
+            />
+          )}
           {/* <AbdomenImageWithOtherForm
             formNameSection="palpation"
             onValueChange={setTendernessImageEnc}

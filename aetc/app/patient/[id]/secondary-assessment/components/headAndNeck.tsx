@@ -19,6 +19,9 @@ import ComponentSlider from "@/components/slider/slider";
 import { HeadLeftImage } from "@/components/svgImages/headLeft";
 import { HeadRightImage } from "@/components/svgImages/headRight";
 import { HeadBackImage } from "@/components/svgImages/headBack";
+import { HeadNeckLeftFemaleImage } from "@/components/svgImages/headNeckLeftFemale";
+import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFemale";
+import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
 
 type Props = {
   onSubmit: () => void;
@@ -98,10 +101,14 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       content: (
         <>
           {/* <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} /> */}
-          <HeadNeckLeftImage
-            gender={gender as any}
-            onValueChange={setLeftHeadNeckImageEncounter}
-          />
+          {gender == "Male" && (
+            <HeadNeckLeftImage onValueChange={setLeftHeadNeckImageEncounter} />
+          )}
+          {gender == "Female" && (
+            <HeadNeckLeftFemaleImage
+              onValueChange={setLeftHeadNeckImageEncounter}
+            />
+          )}
         </>
       ),
     },
@@ -111,10 +118,18 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       content: (
         <>
           {/* <HeadNeckImage onValueChange={setHeadNeckImageEncounter} /> */}
-          <HeadNeckFrontImage
+          {/* <HeadNeckFrontImage
             gender={gender as any}
             onValueChange={setHeadNeckImageEncounter}
-          />
+          /> */}
+          {gender == "Male" && (
+            <HeadNeckFrontImage onValueChange={setHeadNeckImageEncounter} />
+          )}
+          {gender == "Female" && (
+            <HeadNeckFrontFemaleImage
+              onValueChange={setHeadNeckImageEncounter}
+            />
+          )}
         </>
       ),
     },
@@ -125,10 +140,20 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
         <>
           {/* <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} /> */}
 
-          <HeadNeckRightImage
+          {/* <HeadNeckRightImage
             gender={gender as any}
             onValueChange={setRightHeadNeckImageEncounter}
-          />
+          /> */}
+          {gender == "Male" && (
+            <HeadNeckRightImage
+              onValueChange={setRightHeadNeckImageEncounter}
+            />
+          )}
+          {gender == "Female" && (
+            <HeadNeckRightFemaleImage
+              onValueChange={setRightHeadNeckImageEncounter}
+            />
+          )}
         </>
       ),
     },

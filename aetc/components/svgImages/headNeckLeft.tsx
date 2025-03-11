@@ -18,14 +18,12 @@ interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
-  gender?: "Male" | "Female" | undefined;
 }
 
 export function HeadNeckLeftImage({
   onValueChange,
   imageEncounter,
   imageSection,
-  gender,
 }: Props) {
   const {
     handleClose,
@@ -63,11 +61,7 @@ export function HeadNeckLeftImage({
 
   return (
     <>
-      {gender == "Male" ? (
-        <HeadNeckLeft ref={containerRef} />
-      ) : (
-        <HeadNeckLeftFemale ref={containerRef} />
-      )}
+      <HeadNeckLeft ref={containerRef} />
 
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (

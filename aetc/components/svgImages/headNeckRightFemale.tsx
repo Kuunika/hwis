@@ -20,7 +20,7 @@ interface Props {
   imageSection?: string;
 }
 
-export function HeadNeckRightImage({
+export function HeadNeckRightFemaleImage({
   onValueChange,
   imageEncounter,
   imageSection,
@@ -61,7 +61,7 @@ export function HeadNeckRightImage({
 
   return (
     <>
-      <HeadNeckRight ref={containerRef} />
+      <HeadNeckRightFemale ref={containerRef} />
 
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (

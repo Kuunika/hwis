@@ -8,11 +8,11 @@ import { OtherPartsOfTheHeadForm } from "./forms/headNeck";
 import { DataBox } from "./forms";
 
 import { useImageFormTransform } from "@/hooks";
-import { concepts } from "@/constants";
-
-import { HeadNeckRight } from "@/assets";
+import { concepts, encounters } from "@/constants";
+import { HeadLeft } from "@/assets/headLeft";
+import { HeadNeckLeft } from "@/assets";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
-import { HeadNeckRightFemale } from "@/assets/headNeckRightFemale";
+import { HeadNeckLeftFemale } from "@/assets/headNeckLeftFemale";
 
 interface Props {
   onValueChange: (values: any) => void;
@@ -20,7 +20,7 @@ interface Props {
   imageSection?: string;
 }
 
-export function HeadNeckRightImage({
+export function HeadNeckLeftFemaleImage({
   onValueChange,
   imageEncounter,
   imageSection,
@@ -61,8 +61,7 @@ export function HeadNeckRightImage({
 
   return (
     <>
-      <HeadNeckRight ref={containerRef} />
-
+      <HeadNeckLeftFemale ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />

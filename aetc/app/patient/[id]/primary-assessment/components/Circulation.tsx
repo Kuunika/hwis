@@ -792,6 +792,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                 onValueChange={setAbdomenOtherImage}
               /> */}
               <NewAbdomenImage
+                formNameSection="other"
                 imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                 imageSection={form.abnormalitiesInfo.name}
                 onValueChange={setAbdomenOtherImage}

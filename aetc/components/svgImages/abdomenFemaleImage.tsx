@@ -21,7 +21,7 @@ interface Props {
   formNameSection?: string;
 }
 
-export function NewAbdomenImage({
+export function NewAbdomenFemaleImage({
   onValueChange,
   imageEncounter,
   imageSection,
@@ -62,7 +62,7 @@ export function NewAbdomenImage({
 
   return (
     <>
-      <AbdomenMale ref={containerRef} />
+      <AbdomenFemale ref={containerRef} />
 
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
