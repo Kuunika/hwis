@@ -992,6 +992,7 @@ export const MedicalHistoryFlow = () => {
     const socialDetails = values["socialDetails"];
     const marital = values["maritalStatus"];
     const travelDetails = values["travelDetails"];
+
     if (socialDetails) {
       const occupationObs = {
         concept: concepts.OCCUPATION,
