@@ -80,6 +80,12 @@ export const ReusableTable = <T extends DataRow>({
   const table = useMaterialReactTable({
     columns,
     data,
+    displayColumnDefOptions: {
+      "mrt-row-expand": {
+        enableResizing: true, //allow resizing
+        size: 1, //make the expand column wider
+      },
+    },
     enableExpanding,
     enableColumnFilterModes,
     enableColumnOrdering,
