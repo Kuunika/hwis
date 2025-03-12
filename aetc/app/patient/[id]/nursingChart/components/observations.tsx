@@ -371,8 +371,8 @@ export const ObservationsForm = ({ onSubmit, onSkip, submitting }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
-      enableReinitialize={true}
+      onSubmit={handleSubmit}
+      enableReinitialize={false}
       submitButtonText="Submit"
       submitButton={false}
     >
@@ -498,7 +498,7 @@ export const ObservationsForm = ({ onSubmit, onSkip, submitting }: Prop) => {
   
 
       <WrapperBox>
-        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={handleSubmit} disabled={submitting}/>
+        <MainButton sx={{ m: 0.5 }} title={"Submit"} type="submit" onClick={() => {}} disabled={submitting}/>
         <MainButton variant={"secondary"} title="Skip" type="button" onClick={onSkip}/>
       </WrapperBox>
     </FormikInit>

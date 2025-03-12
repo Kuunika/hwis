@@ -12,6 +12,7 @@ import { concepts } from "@/constants";
 
 import { HeadNeckRight } from "@/assets";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
+import { HeadNeckRightFemale } from "@/assets/headNeckRightFemale";
 
 interface Props {
   onValueChange: (values: any) => void;
@@ -60,8 +61,8 @@ export function HeadNeckRightImage({
 
   return (
     <>
-      {/* <HeadRight ref={containerRef} /> */}
       <HeadNeckRight ref={containerRef} />
+
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />

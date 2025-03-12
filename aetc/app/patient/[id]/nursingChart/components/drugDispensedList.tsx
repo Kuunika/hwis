@@ -1,5 +1,5 @@
 import { MinimalTable } from "@/components/tables/minimalTable";
-import { conceptNames } from "@/constants";
+import { conceptNames, concepts } from "@/constants";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Encounter } from "@/interfaces";
 
@@ -15,8 +15,7 @@ export const formatDispensed = (data: Encounter, givenMedication: string) => {
         )?.value,
         dose: ob.children.find(
           (b) =>
-            b.names?.length > 0 &&
-            b.names[0]?.name == conceptNames.PRESCRIBED_DOSE
+            b.names?.length > 0 && b.names[0]?.name == concepts.MEDICATION_DOSE
         )?.value,
         createdBy: ob.created_by,
         createdTime: getHumanReadableDateTime(ob.obs_datetime),

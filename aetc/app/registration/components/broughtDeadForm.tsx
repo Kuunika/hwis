@@ -1,6 +1,6 @@
 import { getInitialValues, successDialog } from "@/helpers";
 import { useNavigation } from "@/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormDatePicker,
@@ -12,38 +12,41 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
+import { addBroughtDead } from "@/hooks/patientReg";
+import { OverlayLoader } from "@/components/backdrop";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 const form = {
   placeOfDeath: {
-    name: "placeOfDeath",
+    name: "place_of_death",
     label: "Place of Death",
   },
   dateOfDeath: {
-    name: "dateOfDeath",
+    name: "date_of_death",
     label: "Date of Death",
   },
   timeOfDeath: {
-    name: "timeOfDeath",
+    name: "time_of_death",
     label: "Time of Death",
   },
   dateOfArrival: {
-    name: "dateOfArrival",
+    name: "date_of_arrival",
     label: "Date of Arrived at AETC",
   },
   timeOfArrival: {
-    name: "timeOfArrival",
+    name: "time_of_arrival",
     label: "Time of Arrived at AETC",
   },
   broughtBy: {
-    name: "broughtBy",
+    name: "brought_by",
     label: "Brought By",
   },
   broughtByContact: {
-    name: "broughtByContact",
+    name: "brought_by_contact",
     label: "Contact",
   },
   genderDeceased: {
-    name: "genderDeceased",
+    name: "gender_deceased",
     label: "Gender Of Deceased",
   },
   pregnant: {
@@ -51,15 +54,15 @@ const form = {
     label: "Pregnant at time of death",
   },
   whatHappened: {
-    name: "whatHappened",
+    name: "what_happened",
     label: "What Happened",
   },
   patientSeenAtHospital: {
-    name: "patientSeenAtHospital",
+    name: "patient_seen_at_hospital",
     label: "Was the patient seen at this hospital",
   },
   historyOfTravel: {
-    name: "historyOfTravel",
+    name: "history_of_travel",
     label: "History of travel",
   },
   immediate: {
@@ -67,59 +70,59 @@ const form = {
     label: "Immediate",
   },
   underlyingConditions: {
-    name: "underlyingConditions",
+    name: "underlying_conditions",
     label: "Underlying Conditions",
   },
   involvedInAccident: {
-    name: "involvedInAccident",
+    name: "involved_in_accident",
     label: "Was the patient involved in an accident",
   },
   placeOfInjury: {
-    name: "placeOfInjury",
+    name: "place_of_injury",
     label: "Place Of Injury",
   },
   timeOfInjury: {
-    name: "timeOfInjury",
+    name: "time_of_injury",
     label: "Time Of Injury",
   },
   dateOfInjury: {
-    name: "dateOfInjury",
+    name: "date_of_injury",
     label: "Date Of Injury",
   },
   howTheInjuryOccurred: {
-    name: "howTheInjuryOccurred",
+    name: "how_the_injury_occurred",
     label: "How did the Injury occur",
   },
   policeInformed: {
-    name: "policeInformed",
+    name: "police_informed",
     label: "Have the police been informed",
   },
   policeStationInformed: {
-    name: "policeStationInformed",
+    name: "police_station_informed",
     label: "Police Station Informed",
   },
   isDeathNatural: {
-    name: "isDeathNatural",
+    name: "is_death_natural",
     label: "Is the death natural",
   },
   autopsyIsDiscussed: {
-    name: "autopsyIsDiscussed",
+    name: "autopsy_is_discussed",
     label: "Autopsy Discussed With Escort",
   },
   mortuaryInformed: {
-    name: "mortuaryInformed",
+    name: "mortuary_informed",
     label: "Has the Mortuary been Informed on need of autopsy",
   },
   nameOfConfirmingDeath: {
-    name: "nameOfConfirmingDeath",
+    name: "name_of_confirming_death",
     label: "Name of person confirming death",
   },
   dateConfirmingDeath: {
-    name: "dateConfirmingDeath",
+    name: "date_confirming_death",
     label: "Date Confirming Death",
   },
   timeConfirmingDeath: {
-    name: "timeConfirmingDeath",
+    name: "time_confirming_death",
     label: "Time Confirming Death",
   },
 };
@@ -183,129 +186,144 @@ const schema = Yup.object().shape({
 });
 
 const initialValues = getInitialValues(form);
+// const { navigateBack } = useNavigation();
 export const BroughtDeadForm = () => {
   const [formValues, setFormValues] = useState<any>({});
-  const { navigateTo } = useNavigation();
 
-  const onSubmit = (values: any, options: any) => {
-    console.log({ values });
-    options.resetForm();
-    successDialog({
-      title: "Registration Completed",
-      text: "",
-      icon: "success",
-      onConfirm: () => { },
-      confirmButtonText: "Register More Patients",
-      cancelButtonText: "Home",
-      onDismiss: () => navigateTo("/"),
-    });
+  const { mutate, isSuccess, isPending } = addBroughtDead();
+
+  useEffect(() => {
+    // if (isSuccess) navigateBack();
+  }, [isSuccess]);
+
+  const onSubmit = (values: any) => {
+    mutate(values);
   };
 
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      submitButtonText="Submit"
-    >
-      <FormValuesListener getValues={setFormValues} />
-      <FieldsContainer>
+    <ContainerLoaderOverlay loading={isPending}>
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        submitButtonText="Submit"
+      >
+        <FormValuesListener getValues={setFormValues} />
         <TextInputField
           name={form.placeOfDeath.name}
           id={form.placeOfDeath.name}
           label={form.placeOfDeath.label}
+          sx={{ width: "100%" }}
         />
+
         <FormDatePicker
           name={form.dateOfDeath.name}
           label={form.dateOfDeath.label}
+          width="100%"
+          sx={{ mb: 2 }}
         />
-      </FieldsContainer>
-      <FieldsContainer>
-        <FormTimePicker
-          name={form.timeOfDeath.name}
-          label={form.timeOfDeath.label}
-        />
-      </FieldsContainer>
-      <FieldsContainer>
+
+        <FieldsContainer sx={{ mb: 2 }}>
+          <FormTimePicker
+            name={form.timeOfDeath.name}
+            label={form.timeOfDeath.label}
+          />
+
+          <FormTimePicker
+            name={form.timeOfArrival.name}
+            label={form.timeOfArrival.label}
+          />
+        </FieldsContainer>
+
         <FormDatePicker
           name={form.dateOfArrival.name}
           label={form.dateOfArrival.label}
+          width="100%"
+          sx={{ mb: 2 }}
         />
-        <FormTimePicker
-          name={form.timeOfArrival.name}
-          label={form.timeOfArrival.label}
-        />
-      </FieldsContainer>
-      <FieldsContainer>
-        <TextInputField
-          name={form.broughtBy.name}
-          id={form.broughtBy.name}
-          label={form.broughtBy.label}
-        />
-        <TextInputField
-          name={form.broughtByContact.name}
-          id={form.broughtByContact.name}
-          label={form.broughtByContact.label}
-        />
-      </FieldsContainer>
-      <FieldsContainer>
-        <RadioGroupInput
-          name={form.genderDeceased.name}
-          label={form.genderDeceased.label}
-          options={[
-            { label: "Male", value: "male" },
-            { label: "Female", value: "female" },
-          ]}
-        />
-        {formValues[form.genderDeceased.name] == "female" && (
+
+        <FieldsContainer>
+          <TextInputField
+            name={form.broughtBy.name}
+            id={form.broughtBy.name}
+            label={form.broughtBy.label}
+            sx={{ width: "100%" }}
+          />
+          <TextInputField
+            name={form.broughtByContact.name}
+            id={form.broughtByContact.name}
+            label={form.broughtByContact.label}
+            sx={{ width: "100%" }}
+          />
+        </FieldsContainer>
+        <FieldsContainer>
           <RadioGroupInput
-            name={form.pregnant.name}
-            label={form.pregnant.label}
+            name={form.genderDeceased.name}
+            label={form.genderDeceased.label}
+            row
+            options={[
+              { label: "Male", value: "male" },
+              { label: "Female", value: "female" },
+            ]}
+          />
+          {formValues[form.genderDeceased.name] == "female" && (
+            <RadioGroupInput
+              name={form.pregnant.name}
+              label={form.pregnant.label}
+              row
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+            />
+          )}
+        </FieldsContainer>
+
+        <TextInputField
+          name={form.whatHappened.name}
+          id={form.whatHappened.name}
+          label={form.whatHappened.label}
+          rows={4}
+          sx={{ width: "100%" }}
+          multiline={true}
+        />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.patientSeenAtHospital.name}
+            label={form.patientSeenAtHospital.label}
+            row
             options={[
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" },
             ]}
           />
-        )}
-      </FieldsContainer>
-
-      <FieldsContainer sx={{ alignItems: "flex-start" }}>
-        <TextInputField
-          name={form.whatHappened.name}
-          id={form.whatHappened.name}
-          label={form.whatHappened.label}
-          multiline={true}
-        />
-        <RadioGroupInput
-          name={form.patientSeenAtHospital.name}
-          label={form.patientSeenAtHospital.label}
-          options={[
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-          ]}
-        />
-      </FieldsContainer>
-      <>
-        <MainTypography>Cause of Death</MainTypography>
-        <FieldsContainer sx={{ alignItems: "flex-start" }}>
-          <TextInputField
-            name={form.immediate.name}
-            id={form.immediate.name}
-            label={form.immediate.label}
-            multiline={true}
-          />
-
-          <TextInputField
-            name={form.underlyingConditions.name}
-            id={form.underlyingConditions.name}
-            label={form.underlyingConditions.label}
-            multiline={true}
-          />
         </FieldsContainer>
-        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+        <>
+          <MainTypography>Cause of Death</MainTypography>
+          <FieldsContainer sx={{ alignItems: "flex-start" }}>
+            <TextInputField
+              name={form.immediate.name}
+              id={form.immediate.name}
+              label={form.immediate.label}
+              multiline={true}
+              rows={4}
+              sx={{ width: "100%" }}
+            />
+
+            <TextInputField
+              name={form.underlyingConditions.name}
+              id={form.underlyingConditions.name}
+              label={form.underlyingConditions.label}
+              multiline={true}
+              rows={4}
+              sx={{ width: "100%" }}
+            />
+          </FieldsContainer>
+
           <RadioGroupInput
             name={form.involvedInAccident.name}
             label={form.involvedInAccident.label}
+            row
             options={[
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" },
@@ -316,33 +334,36 @@ export const BroughtDeadForm = () => {
               name={form.placeOfInjury.name}
               id={form.placeOfInjury.name}
               label={form.placeOfInjury.label}
+              sx={{ width: "100%" }}
             />
           )}
-        </FieldsContainer>
-        {formValues[form.involvedInAccident.name] == "yes" && (
-          <>
-            <FieldsContainer>
+
+          {formValues[form.involvedInAccident.name] == "yes" && (
+            <>
               <FormDatePicker
                 name={form.dateOfInjury.name}
                 label={form.dateOfInjury.label}
+                width={"100%"}
+                sx={{ mb: 2 }}
               />
               <FormTimePicker
                 name={form.timeOfInjury.name}
                 label={form.timeOfInjury.label}
               />
-            </FieldsContainer>
-            <FieldsContainer>
+
               <TextInputField
                 name={form.howTheInjuryOccurred.name}
                 id={form.howTheInjuryOccurred.name}
                 label={form.howTheInjuryOccurred.label}
                 multiline={true}
+                rows={5}
+                sx={{ width: "100%", mt: 2 }}
               />
-            </FieldsContainer>
-            <FieldsContainer sx={{ alignItems: "flex-start" }}>
+
               <RadioGroupInput
                 name={form.policeInformed.name}
                 label={form.policeInformed.label}
+                row
                 options={[
                   { label: "Yes", value: "yes" },
                   { label: "No", value: "no" },
@@ -353,60 +374,63 @@ export const BroughtDeadForm = () => {
                   name={form.policeStationInformed.name}
                   id={form.policeStationInformed.name}
                   label={form.policeStationInformed.label}
+                  sx={{ width: "100%" }}
                 />
               )}
-            </FieldsContainer>
-            <FieldsContainer>
+
               <RadioGroupInput
                 name={form.isDeathNatural.name}
                 label={form.isDeathNatural.label}
+                row
                 options={[
                   { label: "Yes", value: "yes" },
                   { label: "No", value: "no" },
                 ]}
               />
-              {formValues[form.isDeathNatural.name] == "no" && (
-                <RadioGroupInput
-                  name={form.autopsyIsDiscussed.name}
-                  label={form.autopsyIsDiscussed.label}
-                  options={[
-                    { label: "Yes", value: "yes" },
-                    { label: "No", value: "no" },
-                  ]}
-                />
-              )}
-            </FieldsContainer>
-            {formValues[form.isDeathNatural.name] == "no" && (
-              <RadioGroupInput
-                name={form.mortuaryInformed.name}
-                label={form.mortuaryInformed.label}
-                options={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
-                ]}
-              />
-            )}
-          </>
-        )}
+              <FieldsContainer>
+                {formValues[form.isDeathNatural.name] == "no" && (
+                  <RadioGroupInput
+                    name={form.mortuaryInformed.name}
+                    label={form.mortuaryInformed.label}
+                    options={[
+                      { label: "Yes", value: "yes" },
+                      { label: "No", value: "no" },
+                    ]}
+                  />
+                )}
+                {formValues[form.isDeathNatural.name] == "no" && (
+                  <RadioGroupInput
+                    name={form.autopsyIsDiscussed.name}
+                    label={form.autopsyIsDiscussed.label}
+                    options={[
+                      { label: "Yes", value: "yes" },
+                      { label: "No", value: "no" },
+                    ]}
+                  />
+                )}
+              </FieldsContainer>
+            </>
+          )}
 
-        <FieldsContainer>
           <TextInputField
             name={form.nameOfConfirmingDeath.name}
             id={form.nameOfConfirmingDeath.name}
             label={form.nameOfConfirmingDeath.label}
+            sx={{ width: "100%" }}
           />
-        </FieldsContainer>
-        <FieldsContainer>
+
           <FormDatePicker
             name={form.dateConfirmingDeath.name}
             label={form.dateConfirmingDeath.label}
+            width={"100%"}
+            sx={{ mb: 2 }}
           />
           <FormTimePicker
             name={form.timeConfirmingDeath.name}
             label={form.timeConfirmingDeath.label}
           />
-        </FieldsContainer>
-      </>
-    </FormikInit>
+        </>
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };

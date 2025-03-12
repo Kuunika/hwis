@@ -19,6 +19,7 @@ import { useImageFormTransform } from "@/hooks";
 import { concepts, encounters } from "@/constants";
 import { HeadNeckFront } from "@/assets";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
+import { HeadNeckFrontFemale } from "@/assets/headNeckFrontFemale";
 
 interface Props {
   onValueChange: (values: any) => void;
@@ -68,6 +69,7 @@ export function HeadNeckFrontImage({
   return (
     <>
       <HeadNeckFront ref={containerRef} />
+
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />

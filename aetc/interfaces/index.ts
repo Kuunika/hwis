@@ -360,3 +360,36 @@ export interface Printer {
   name: string;
   ip_address: string
 }
+
+export interface DeathReport {
+  id: number;
+  place_of_death: string;
+  date_of_death: string;
+  time_of_death: string;
+  date_of_arrival: string;
+  time_of_arrival: string;
+  brought_by: string;
+  brought_by_contact: string;
+  gender_deceased: string;
+  pregnant: boolean;
+  what_happened: string;
+  patient_seen_at_hospital: boolean;
+  history_of_travel: string;
+  immediate: string;
+  underlying_conditions: string;
+  involved_in_accident: boolean;
+  place_of_injury: string;
+  time_of_injury: string | null;
+  date_of_injury: string | null;
+  how_the_injury_occurred: string;
+  police_informed: boolean;
+  police_station_informed: string;
+  is_death_natural: boolean;
+  autopsy_is_discussed: boolean;
+  mortuary_informed: boolean;
+  name_of_confirming_death: string;
+  date_confirming_death: string;
+  time_confirming_death: string;
+  created_at: string;
+  updated_at: string;
+}

@@ -17,4 +17,8 @@ function PatientManagementPlan() {
   );
 }
 
-export default AuthGuard(PatientManagementPlan, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);
+export default AuthGuard(PatientManagementPlan, [
+  roles.CLINICIAN,
+  roles.NURSE,
+  roles.ADMIN,
+]);

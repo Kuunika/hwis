@@ -19,6 +19,7 @@ import {
 import * as Yup from "yup";
 import {
   AbdomenImageWithOtherForm,
+  NewAbdomenImage,
   SecondaryAbdomenImage,
 } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
@@ -26,6 +27,7 @@ import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getCachedConcept } from "@/helpers/data";
+import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 
 const form = {
   abdominalDistention: {
@@ -497,18 +499,48 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           </FieldsContainer>
           {formValues[form.abnormalitiesPresent.name] ==
             getCachedConcept(concepts.YES)?.uuid && (
-            <SecondaryAbdomenImage
-              imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
-              imageSection={form.abnormalitiesPresent.name}
-              onValueChange={setAbnormalitiesPresentImageEnc}
-            />
+            <>
+              {/* <SecondaryAbdomenImage
+                imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+                imageSection={form.abnormalitiesPresent.name}
+                onValueChange={setAbnormalitiesPresentImageEnc}
+              /> */}
+              {gender == "Male" && (
+                <NewAbdomenImage
+                  imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+                  imageSection={form.abnormalitiesPresent.name}
+                  onValueChange={setAbnormalitiesPresentImageEnc}
+                  formNameSection="secondaryAbdomen"
+                />
+              )}
+              {gender == "Female" && (
+                <NewAbdomenFemaleImage
+                  imageEncounter={encounters.ABDOMEN_AND_PELVIS_ASSESSMENT}
+                  imageSection={form.abnormalitiesPresent.name}
+                  onValueChange={setAbnormalitiesPresentImageEnc}
+                  formNameSection="secondaryAbdomen"
+                />
+              )}
+            </>
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation">
-          <AbdomenImageWithOtherForm
+          {gender == "Male" && (
+            <NewAbdomenImage
+              formNameSection="palpation"
+              onValueChange={setTendernessImageEnc}
+            />
+          )}
+          {gender == "Female" && (
+            <NewAbdomenFemaleImage
+              formNameSection="palpation"
+              onValueChange={setTendernessImageEnc}
+            />
+          )}
+          {/* <AbdomenImageWithOtherForm
             formNameSection="palpation"
             onValueChange={setTendernessImageEnc}
-          />
+          /> */}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Percussion Tenderness">
           <FieldsContainer>

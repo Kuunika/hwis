@@ -37,9 +37,7 @@ export const InterventionFormConfig = {
   },
 };
 
-const schema = Yup.object().shape({
-
-});
+const schema = Yup.object().shape({});
 
 export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   const initialValues = getInitialValues(InterventionFormConfig);
@@ -89,7 +87,8 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const groupedOptions = [
     {
-      label: "IV Fluids", value: "IV Fluids",
+      label: "IV Fluids",
+      value: "IV Fluids",
       options: [
         { value: "Lingers Lactate", label: "Lingers Lactate" },
         { value: "Saline 5%", label: "Saline 5%" },
@@ -102,7 +101,8 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: "Blood products", value: "Blood products",
+      label: "Blood products",
+      value: "Blood products",
       options: [
         { value: "Whole blood", label: "Whole blood" },
         { value: "Packed Red cells", label: "Packed Red cells" },
@@ -111,7 +111,8 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       ],
     },
     {
-      label: "Oral products", value: "Oral products",
+      label: "Oral products",
+      value: "Oral products",
       options: [
         { value: "Water", label: "Water" },
         { value: "Juice", label: "Juice" },
