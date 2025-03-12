@@ -102,14 +102,20 @@ export const ReusableTable = <T extends DataRow>({
       variant: "outlined",
     },
     muiPaginationProps: {
-      color: "secondary",
+      color: "primary",
       rowsPerPageOptions: [10, 20, 30],
       shape: "rounded",
       variant: "outlined",
     },
-    getSubRows,
+    getSubRows: getSubRows ? (row) => getSubRows(row as T) : undefined,
     ...(enableRowActions && {
-      renderRowActionMenuItems: ({ row, closeMenu }) =>
+      renderRowActionMenuItems: ({
+        row,
+        closeMenu,
+      }: {
+        row: any;
+        closeMenu: any;
+      }) =>
         [
           onRowActionDelete && (
             <MenuItem
