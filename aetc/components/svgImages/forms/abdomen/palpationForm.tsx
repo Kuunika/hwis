@@ -86,7 +86,7 @@ const schema = yup.object().shape({
     .string()
     .label(form.otherMassesDescription.label),
   [form.palpation.name]: yup.array().label(form.palpation.label),
-  [form.side.name]: yup.array().label(form.side.label),
+  [form.side.name]: yup.string().label(form.side.label),
 });
 
 type Props = {
