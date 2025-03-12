@@ -9,6 +9,7 @@ import {
   findByNameAndGender,
   getDailyVisits,
   getDailyVisitsPaginated,
+  getDeathReports,
   getPatient,
   getPatientVisits,
   getPatients,
@@ -320,4 +321,10 @@ export const addBroughtDead = () => {
   });
 }
 
-
+export const getAllDeathReports = () => {
+  const getAll = () => getDeathReports().then((response) => response?.data);
+  return useQuery({
+    queryKey: ["death-reports"],
+    queryFn: getAll, 
+  });
+};

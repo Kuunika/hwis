@@ -100,4 +100,5 @@ export const checkPatientIfOnAssessment = (id: string) => {
 
 
 export const addDeathReport = (data:any)=> create<DeathReport>(data, "/death_reports");
-export const getDeathReports = ()=> get<DeathReport>("/death_reports");
+
+export const getDeathReports = ()=> get<DeathReport[]>("/death_reports");
