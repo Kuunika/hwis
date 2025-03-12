@@ -116,6 +116,17 @@ export const DesktopView = () => {
 
           <ConsultationCard
             disabled={!isOnList}
+            title="Disposition"
+            links={[
+              {
+                title: "Nursing Care Notes (SOAP)",
+                link: `/patient/${params.id}/soap`,
+              },
+            ]}
+          />
+
+          <ConsultationCard
+            disabled={!isOnList}
             title="Template Forms"
             links={[
               {

@@ -9,7 +9,7 @@ type Prop = {
   sx?: SxProps;
   mr?: string;
 };
-export const FieldsContainer = ({ children, sx, mr = "5ch" }: Prop) => {
+export const FieldsContainer = ({ children, sx, mr = "1ch" }: Prop) => {
   return (
     <WrapperBox
       display={"flex"}

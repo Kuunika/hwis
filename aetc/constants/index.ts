@@ -166,6 +166,7 @@ export const encounters = {
   DISPENSING: "ba0612c2-8d80-11d8-abbb-0024217bb78e",
   FAMILY_MEDICAL_HISTORY: "ba06b178-8d80-11d8-abbb-0024217bb78e",
   REVIEW_OF_SYSTEMS: "54e32e5d-51c5-4f16-8cff-9fc7da3c68ca",
+  NURSING_CARE_NOTES:"c7d8b240-04f0-48c1-8d83-10d95f571b92"
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -1209,6 +1210,11 @@ export const concepts = {
   FLUID_BALANCE_CHART: "Fluid balance chart",
   BUILDING_COLLAPSE: "Building Collapse",
   PRESENTING_COMPLAINTS: "Presenting Complaints",
+  SUBJECTIVE:"subjective",
+  OBJECTIVE:"objective",
+  ASSESSMENT:"assessment",
+  PLAN:"plan",
+  IMPLEMENTATION:"implementation",
 };
 
 export const conceptNames = {
