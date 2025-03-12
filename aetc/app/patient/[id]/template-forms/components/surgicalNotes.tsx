@@ -7,9 +7,12 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { encounters, concepts } from "@/constants";
 import { FaAngleLeft } from "react-icons/fa6";
-
+import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { useReactToPrint } from "react-to-print";  // Import react-to-print
-
+import { VitalsPanel } from "@/app/patient/components/panels/vitalsDetails";
+import { useVitals } from "@/hooks";
+import { DrugDispensedList, formatDispensed } from "../../nursingChart/components/drugDispensedList";
+import { Encounter } from "@/interfaces";
 
 
 interface Diagnosis {
@@ -182,7 +185,55 @@ interface BedsideAssessment {
   obsDatetime: string;
 }
 
+interface MonitoringChartObservation {
+  id: string;
+  temperature: string;
+  pulseRate: string;
+  respiratoryRate: string;
+  bloodPressureSystolic: string;
+  bloodPressureDiastolic: string;
+  oxygenSaturation: string;
+  randomBloodGlucose: string;
+  urineDipstickKetones: string;
+  avpuScale: string;
+  peakExpiratoryFlowRate: string;
+  obsDatetime: string;
+}
 
+interface InterventionObservation {
+  id: string;
+  interventionNames: string[];
+  obsDatetime: string;
+}
+
+// Interface for Nursing Notes Observations
+interface NursingNotesObservation {
+  id: string;
+  subjectiveData: string;
+  assessment: string;
+  recommendation: string;
+  intervention: string;
+  obsDatetime: string;
+}
+
+// Interface for Objective Data Observations
+interface ObjectiveDataObservation {
+  id: string;
+  head: string;
+  chest: string;
+  abdomen: string;
+  extremities: string;
+  obsDatetime: string;
+}
+interface InvestigationAssessmentObservation {
+  id: string;
+  MRDT: string;
+  RBG: string;
+  PT: string;
+  FBC: string;
+  UrineDipstick: string;
+  obsDatetime: string;
+}
 const YES_UUID = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 const NO_UUID = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
 
@@ -193,6 +244,8 @@ function getYesNo(value: string) {
 function SurgicalNotesTemplate() {
   const { params } = useParameters();
   const printRef = useRef(null); // Reference for printing
+  const { setActivePage, options, vitals } = useVitals();
+
 
   const [differentialDiagnoses, setDifferentialDiagnoses] = useState<Diagnosis[]>([]);
   const [allergies, setAllergies] = useState<Allergy[]>([]);
@@ -206,6 +259,7 @@ function SurgicalNotesTemplate() {
   const [primaryLungsAssessments, setPrimaryLungsAssessments] = useState<PrimaryLungsObservation[]>([]);
   const [investigations, setInvestigations] = useState<Investigation[]>([]);
   const [bedsideAssessment, setBedsideAssessment] = useState<BedsideAssessment | null>(null);
+  const [row, setRow] = useState<any>(null);
 
 
 
@@ -219,6 +273,34 @@ function SurgicalNotesTemplate() {
   const [reviewOfSystems, setReviewOfSystems] = useState<ReviewOfSystem[]>([]);
   const [drugHistory, setDrugHistory] = useState<DrugHistory[]>([]);
   const [skinAssessment, setSkinAssessment] = useState<SkinAssessment[]>([]);
+  const [monitoringChartObservations, setMonitoringChartObservations] = useState<MonitoringChartObservation[]>([]);
+
+  const [airwayInterventions, setAirwayInterventions] = useState<InterventionObservation[]>([]);
+  const [breathingInterventions, setBreathingInterventions] = useState<InterventionObservation[]>([]);
+  const [circulationInterventions, setCirculationInterventions] = useState<InterventionObservation[]>([]);
+  const [nursingNotes, setNursingNotes] = useState<NursingNotesObservation[]>([]);
+  const [objectiveData, setObjectiveData] = useState<ObjectiveDataObservation[]>([]);
+  const [investigationData, setInvestigationData] = useState<InvestigationAssessmentObservation[]>([]);
+  const Cell = ({ title, value }: { title: string; value: string }) => {
+    return (
+      <WrapperBox
+        sx={{
+          width: "15ch",
+          display: "flex",
+          flexDirection: "column",
+          my: "0.5ch",
+          alignItems: "center",
+        }}
+      >
+        <MainTypography variant="caption" textAlign={"center"}>
+          {title}
+        </MainTypography>
+        <MainTypography variant="h5">{value}</MainTypography>
+      </WrapperBox>
+    );
+  };
+
+
 
   const abnormalityMap: Record<string, string> = {
     "147c7e5c-7da5-40a4-a3d7-1cedba7f9404": "BRUISE",
@@ -229,6 +311,7 @@ function SurgicalNotesTemplate() {
   };
 
 
+  const [dispensedMedications, setDispensedMedications] = useState<Encounter[]>([]);
 
   const { data: patientEncounters, isLoading, error } = getPatientsEncounters(params.id as string);
 
@@ -255,6 +338,14 @@ function SurgicalNotesTemplate() {
       );
 
       setHIVStatus(isHIVPositive ? "Positive" : "Negative");
+
+      // Filter for DISPENSATION encounters
+      const dispensationEncounters = patientEncounters.filter(
+        (encounter) => encounter.encounter_type.uuid === encounters.DISPENSING
+      );
+
+      setDispensedMedications(dispensationEncounters);
+
 
 
       //past surgical history
@@ -963,6 +1054,218 @@ function SurgicalNotesTemplate() {
       setLungsAssessments(latestLungsRecords);
 
 
+      //monitoring chart
+      const monitoringRecords = patientEncounters
+        .filter((encounter) => encounter.encounter_type.name === "VITALS")
+        .map((encounter) => {
+          const obsMap = new Map<number, string>();
+
+          // Populate the map with observations
+          encounter.obs.forEach((obs) => {
+            obsMap.set(obs.concept_id, obs.value || "Not Recorded");
+          });
+
+          return {
+            id: encounter.encounter_id.toString(),
+            temperature: obsMap.get(5088) || "Not Recorded",
+            pulseRate: obsMap.get(5087) || "Not Recorded",
+            respiratoryRate: obsMap.get(5242) || "Not Recorded",
+            bloodPressureSystolic: obsMap.get(5085) || "Not Recorded",
+            bloodPressureDiastolic: obsMap.get(5086) || "Not Recorded",
+            oxygenSaturation: obsMap.get(12159) || "Not Recorded",
+            randomBloodGlucose: obsMap.get(887) || "Not Recorded",
+            urineDipstickKetones: obsMap.get(12164) || "Not Recorded",
+            avpuScale: obsMap.get(8711) || "Not Recorded",
+            peakExpiratoryFlowRate: obsMap.get(12165) || "Not Recorded",
+            obsDatetime: encounter.encounter_datetime || "No Date",
+          };
+        });
+
+      // Sort by date and keep the latest record
+      const latestMonitoringRecords = monitoringRecords
+        .sort(
+          (a, b) =>
+            new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime()
+        )
+        .slice(0, 1);
+
+      setMonitoringChartObservations(latestMonitoringRecords);
+
+
+      // Filter encounters for 'PROCEDURES DONE'
+      const interventionRecords = patientEncounters
+        .filter(encounter => encounter.encounter_type.name === "PROCEDURES DONE")
+        .map(encounter => {
+          // AIRWAY INTERVENTIONS: Find Airway Opening Interventions (concept_id: 10823)
+          const airwayObs = encounter.obs.find(obs => obs.concept_id === 10823);
+
+          // BREATHING INTERVENTIONS: Find Breathing Interventions (concept_id: 12201)
+          const breathingObs = encounter.obs.find(obs => obs.concept_id === 12201);
+
+          // CIRCULATION INTERVENTIONS: Find Circulation Interventions (concept_id: 12187)
+          const circulationObs = encounter.obs.find(obs => obs.concept_id === 12187);
+
+          // Extract Airway Interventions
+          const airwayInterventions = airwayObs
+            ? airwayObs.children.map(childObs => {
+              const nameObj = childObs.names.find(n => n.locale === "en");
+              return nameObj ? nameObj.name : "Unknown Intervention";
+            })
+            : [];
+
+          // Extract Breathing Interventions
+          const breathingInterventions = breathingObs
+            ? breathingObs.children.map(childObs => {
+              const nameObj = childObs.names.find(n => n.locale === "en");
+              return nameObj ? nameObj.name : "Unknown Intervention";
+            })
+            : [];
+
+          // Extract Circulation Interventions
+          const circulationInterventions = circulationObs
+            ? circulationObs.children.map(childObs => {
+              const nameObj = childObs.names.find(n => n.locale === "en");
+              return nameObj ? nameObj.name : "Unknown Intervention";
+            })
+            : [];
+
+          return {
+            id: encounter.encounter_id.toString(),
+            airwayInterventionNames: airwayInterventions.length > 0 ? airwayInterventions : ["No Airway Interventions Recorded"],
+            breathingInterventionNames: breathingInterventions.length > 0 ? breathingInterventions : ["No Breathing Interventions Recorded"],
+            circulationInterventionNames: circulationInterventions.length > 0 ? circulationInterventions : ["No Circulation Interventions Recorded"],
+            obsDatetime: encounter.encounter_datetime || "No Date",
+          };
+        })
+        .filter(record => record !== null);
+
+      // Sort by date and keep the latest record
+      const latestIntervention = interventionRecords
+        .sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime())
+        .slice(0, 1);
+
+      // Update state
+      setAirwayInterventions(latestIntervention.map(item => ({
+        id: item.id,
+        interventionNames: item.airwayInterventionNames,
+        obsDatetime: item.obsDatetime,
+      })));
+
+      setBreathingInterventions(latestIntervention.map(item => ({
+        id: item.id,
+        interventionNames: item.breathingInterventionNames,
+        obsDatetime: item.obsDatetime,
+      })));
+
+      setCirculationInterventions(latestIntervention.map(item => ({
+        id: item.id,
+        interventionNames: item.circulationInterventionNames,
+        obsDatetime: item.obsDatetime,
+      })));
+
+
+
+
+      // Filter encounters for "NOTES"
+      const notesRecords = patientEncounters
+        .filter((encounter) => encounter.encounter_type.name === "NOTES")
+        .map((encounter) => {
+          const obsMap = new Map<number, string>();
+
+          // Populate the map with observation values
+          encounter.obs.forEach((obs) => {
+            obsMap.set(obs.concept_id, obs.value_text || "Not Recorded");
+          });
+
+          return {
+            id: encounter.encounter_id.toString(),
+            subjectiveData: obsMap.get(12204) || "Not Recorded", // Subjective Data
+            assessment: obsMap.get(2880) || "Not Recorded", // Assessment
+            recommendation: obsMap.get(12206) || "Not Recorded", // Recommendation
+            intervention: obsMap.get(12207) || "Not Recorded", // Intervention
+            obsDatetime: encounter.encounter_datetime || "No Date",
+          };
+        });
+
+      // Sort by date and keep the latest record
+      const latestNotesRecords = notesRecords
+        .sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime())
+        .slice(0, 1);
+
+      setNursingNotes(latestNotesRecords);
+
+
+      // Filter encounters for "NOTES"
+      const objectiveRecords = patientEncounters
+        .filter((encounter) => encounter.encounter_type.name === "NOTES")
+        .map((encounter) => {
+          const obsMap = new Map();
+
+          // Find the parent observation for Objective Data (concept_id: 12205)
+          const objectiveParentObs = encounter.obs.find((obs) => obs.concept_id === 12205);
+
+          if (objectiveParentObs && objectiveParentObs.children) {
+            // Populate obsMap using children of the Objective Data parent
+            objectiveParentObs.children.forEach((obs) => {
+              obsMap.set(obs.concept_id, obs.value_text || "Not Recorded");
+            });
+          }
+
+          return {
+            id: encounter.encounter_id.toString(),
+            head: obsMap.get(12269) || "Not Recorded",
+            chest: obsMap.get(12270) || "Not Recorded",
+            abdomen: obsMap.get(12271) || "Not Recorded",
+            extremities: obsMap.get(12272) || "Not Recorded",
+            obsDatetime: encounter.encounter_datetime || "No Date",
+          };
+        });
+
+      // Sort by date and keep the latest record
+      const latestObjectiveRecords = objectiveRecords
+        .sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime())
+        .slice(0, 1);
+
+      setObjectiveData(latestObjectiveRecords);
+
+
+
+      // Filter encounters for "investigation"
+      const investigationRecords = patientEncounters
+        .filter((encounter) => encounter.encounter_type.name === "NOTES")
+        .map((encounter) => {
+          const obsMap = new Map();
+
+          // Find the parent observation for Investigation Assessment (concept_id: 10869)
+          const investigationParentObs = encounter.obs.find((obs) => obs.concept_id === 10869);
+
+          if (investigationParentObs && investigationParentObs.children) {
+            // Populate obsMap using children of the Investigation parent
+            investigationParentObs.children.forEach((obs) => {
+              obsMap.set(obs.concept_id, obs.value_text || "Not Recorded");
+            });
+          }
+
+          return {
+            id: encounter.encounter_id.toString(),
+            MRDT: obsMap.get(10124) || "Not Recorded",
+            RBG: obsMap.get(887) || "Not Recorded",
+            PT: obsMap.get(12274) || "Not Recorded",
+            FBC: obsMap.get(12273) || "Not Recorded",
+            UrineDipstick: obsMap.get(12164) || "Not Recorded",
+            obsDatetime: encounter.encounter_datetime || "No Date",
+          };
+        });
+
+      // Sort by date and keep the latest record
+      const latestInvestigationRecords = investigationRecords
+        .sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime())
+        .slice(0, 1);
+
+      setInvestigationData(latestInvestigationRecords);
+
+
+
 
 
 
@@ -1150,8 +1453,11 @@ function SurgicalNotesTemplate() {
           {/* SAMPLE History Subsection */}
           <MainGrid item xs={12}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
-              Medication
+              Prescribed Medication
             </MainTypography>
+            <PrescribedMedicationList setRow={setRow} />
+
+            {/* 
             {drugHistory.length > 0 ? (
               <ul style={{ paddingLeft: "2ch", marginBottom: "16px", listStyleType: "none" }}>
                 {drugHistory.map((drug) => (
@@ -1170,26 +1476,42 @@ function SurgicalNotesTemplate() {
             ) : (
               <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
                 No drug history recorded.</MainTypography>
-            )}
+            )} */}
 
           </MainGrid>
 
           {/* AETC Prescriptions Subsection */}
-          <MainGrid item xs={6}>
+          {/* <MainGrid item xs={6}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
               Prescriptions
             </MainTypography>
             <MainTypography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>
               No Prescriptions recorded.</MainTypography>
-          </MainGrid>
+          </MainGrid> */}
 
           {/* AETC Dispensation Subsection */}
-          <MainGrid item xs={6}>
+          <MainGrid item xs={12}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
               Dispensation
             </MainTypography>
-            <MainTypography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>
-              No Dispensations recorded.</MainTypography>
+
+            {dispensedMedications.length > 0 ? (
+              dispensedMedications.map((encounter) =>
+                encounter.obs
+                  ?.filter((ob) => ob.names?.[0]?.name === concepts.DRUG_GIVEN) // Filter only medication-related obs
+                  .map((ob) => (
+                    <DrugDispensedList
+                      key={ob.obs_id}
+                      data={encounter}
+                      givenMedication={ob.value_coded_uuid} // Pass actual medication UUID
+                    />
+                  ))
+              )
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>
+                No Dispensations recorded.
+              </MainTypography>
+            )}
           </MainGrid>
         </MainGrid>
 
@@ -1237,7 +1559,7 @@ function SurgicalNotesTemplate() {
                 {allergies.map((allergy) => (
                   <li key={allergy.id} style={{ marginBottom: "8px" }}>
                     <strong>Allergy Name:</strong> {allergy.allergen}   <br />
-                    <strong>Allergy Details:</strong> {allergy.comment} |
+                    <strong>Allergy Details:</strong> {allergy.comment} <br />
                     <em>Recorded on: {new Date(allergy.obsDatetime).toLocaleDateString()}</em>
                   </li>
                 ))}
@@ -1282,19 +1604,24 @@ function SurgicalNotesTemplate() {
 
           </MainGrid>
           {/* Vital Signs Section */}
-          <MainGrid item xs={6}>
+          <MainGrid item xs={12}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
               Vital Signs (Triage)
             </MainTypography>
-            <MainTypography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No vital signs recorded.</MainTypography>
+            <WrapperBox sx={{ display: "flex", flexWrap: "wrap" }}>
+              {vitals.map(({ name, value }: any) => (
+                <Cell key={`${value}${name}`} title={name} value={value} />
+              ))}
+            </WrapperBox>
+            {/* <MainTypography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No vital signs recorded.</MainTypography> */}
 
           </MainGrid>
-          <MainGrid item xs={6}>
+          {/* <MainGrid item xs={6}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
               Vital Signs (Monitoring Chart)
             </MainTypography>
             <MainTypography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>No vital signs recorded.</MainTypography>
-          </MainGrid>
+          </MainGrid> */}
         </MainGrid>
         <br />
 
@@ -1346,18 +1673,18 @@ function SurgicalNotesTemplate() {
           </MainGrid>
 
           {/* Primary Lung Assesment */}
-          <MainGrid item xs={6}>
+          {/* <MainGrid item xs={6}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
               Primary Lung Assessment
             </MainTypography>
             <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
               No lung assessment observations recorded.</MainTypography>
 
-          </MainGrid>
+          </MainGrid> */}
           {/* Secondary Lung Assessment */}
           <MainGrid item xs={6}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
-              Secondary Lung Assessment    </MainTypography>
+              Lung Assessment    </MainTypography>
 
             {lungsAssessments.length > 0 ? (
               <ul style={{ paddingLeft: "2ch", marginBottom: "16px", listStyleType: "none" }}>
@@ -1535,7 +1862,7 @@ function SurgicalNotesTemplate() {
           Management Plan</MainTypography>
         <MainGrid container spacing={2} paddingBottom={"16px"} sx={{ background: "white" }}>
           {/* Prescription Subsection */}
-          <MainGrid item xs={6}>
+          {/* <MainGrid item xs={6}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
               Prescription
             </MainTypography>
@@ -1543,18 +1870,178 @@ function SurgicalNotesTemplate() {
             <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
               No Prescription observations added.</MainTypography>
 
-          </MainGrid>
+          </MainGrid> */}
 
           {/* Monitoring Chart Subsection */}
           <MainGrid item xs={6}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
-              Monitoring Chart
+              Monitoring Chart Observations
             </MainTypography>
-
-            <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
-              No Monitoring chart observations added.</MainTypography>
-
+            {monitoringChartObservations.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {monitoringChartObservations.map((exam) => (
+                  <li key={exam.id}>
+                    <strong>Temperature:</strong> {exam.temperature}°C <br />
+                    <strong>Heart Rate:</strong> {exam.pulseRate} bpm <br />
+                    <strong>Respiratory Rate:</strong> {exam.respiratoryRate} breaths/min <br />
+                    <strong>Blood Pressure (Systolic):</strong> {exam.bloodPressureSystolic} mmHg <br />
+                    <strong>Blood Pressure (Diastolic):</strong> {exam.bloodPressureDiastolic} mmHg <br />
+                    <strong>Oxygen Saturation:</strong> {exam.oxygenSaturation}% <br />
+                    <strong>Random Blood Glucose (RBG):</strong> {exam.randomBloodGlucose} mg/dL <br />
+                    <strong>Urine Dipstick - Ketones:</strong> {exam.urineDipstickKetones} <br />
+                    <strong>AVPU Scale:</strong> {exam.avpuScale} <br />
+                    <strong>Peak Expiratory Flow Rate (PEFR):</strong> {exam.peakExpiratoryFlowRate} L/min <br />
+                    <em>Recorded on: {new Date(exam.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No monitoring chart observations recorded.
+              </MainTypography>
+            )}
           </MainGrid>
+
+          {/* Interventions Subsection */}
+          {/* Airway Interventions Section */}
+          <MainGrid item xs={6}>
+            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
+              Airway Interventions
+            </MainTypography>
+            {airwayInterventions.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {airwayInterventions.map((intervention) => (
+                  <li key={intervention.id}>
+                    <strong>Airway intervention(s):</strong> {intervention.interventionNames.join(", ")} <br />
+                    <em>Recorded on: {new Date(intervention.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No airway interventions recorded.
+              </MainTypography>
+            )}
+          </MainGrid>
+
+          {/* Breathing Interventions Section */}
+          <MainGrid item xs={6}>
+            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
+              Breathing Interventions
+            </MainTypography>
+            {breathingInterventions.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {breathingInterventions.map((intervention) => (
+                  <li key={intervention.id}>
+                    <strong>Breathing intervention(s):</strong> {intervention.interventionNames.join(", ")} <br />
+                    <em>Recorded on: {new Date(intervention.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No breathing interventions recorded.
+              </MainTypography>
+            )}
+          </MainGrid>
+
+          {/* Circulation Interventions Section */}
+          <MainGrid item xs={6}>
+            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
+              Circulation Interventions
+            </MainTypography>
+            {circulationInterventions.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {circulationInterventions.map((intervention) => (
+                  <li key={intervention.id}>
+                    <strong>Circulation intervention(s):</strong> {intervention.interventionNames.join(", ")} <br />
+                    <em>Recorded on: {new Date(intervention.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No circulation interventions recorded.
+              </MainTypography>
+            )}
+          </MainGrid>.
+
+
+
+          {/* Nursing Notes Section */}
+          <MainGrid item xs={6}>
+            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
+              Nursing Notes
+            </MainTypography>
+            {nursingNotes.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {nursingNotes.map((note) => (
+                  <li key={note.id}>
+                    <strong>Subjective Data:</strong> {note.subjectiveData} <br />
+                    <strong>Assessment:</strong> {note.assessment} <br />
+                    <strong>Recommendation:</strong> {note.recommendation} <br />
+                    <strong>Intervention:</strong> {note.intervention} <br />
+                    <em>Recorded on: {new Date(note.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No nursing notes recorded.
+              </MainTypography>
+            )}
+          </MainGrid>
+
+          {/* Objective Data Section */}
+          <MainGrid item xs={6}>
+            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
+              Objective Data
+            </MainTypography>
+            {objectiveData.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {objectiveData.map((data) => (
+                  <li key={data.id}>
+                    <strong>Head:</strong> {data.head} <br />
+                    <strong>Chest:</strong> {data.chest} <br />
+                    <strong>Abdomen:</strong> {data.abdomen} <br />
+                    <strong>Extremities:</strong> {data.extremities} <br />
+                    <em>Recorded on: {new Date(data.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No objective data recorded.
+              </MainTypography>
+            )}
+          </MainGrid>
+
+          {/* Investigation Assessment Section */}
+          <MainGrid item xs={6}>
+            <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
+              Investigation Assessment
+            </MainTypography>
+            {investigationData.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {investigationData.map((data) => (
+                  <li key={data.id}>
+                    <strong>MRDT:</strong> {data.MRDT} <br />
+                    <strong>RBG:</strong> {data.RBG} <br />
+                    <strong>PT:</strong> {data.PT} <br />
+                    <strong>FBC:</strong> {data.FBC} <br />
+                    <strong>Urine Dipstick:</strong> {data.UrineDipstick} <br />
+                    <em>Recorded on: {new Date(data.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No investigation data recorded.
+              </MainTypography>
+            )}
+          </MainGrid>
+
+
 
         </MainGrid>
 

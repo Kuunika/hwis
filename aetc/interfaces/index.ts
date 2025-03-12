@@ -6,6 +6,7 @@ export interface Set {
   names: Name[];
 }
 export interface Name {
+  locale: string;
   concept_id: number;
   name: string;
   uuid: string;
