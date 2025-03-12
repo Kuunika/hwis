@@ -1159,7 +1159,6 @@ function SurgicalNotesTemplate() {
       <MainGrid container spacing={2} sx={{ background: "white" }}>
         <MainGrid item xs={12}>
           {/* SAMPLE History Subsection */}
-
           <section style={{ paddingBottom: "16px" }}>
             {presentingComplaints.length > 0 ? (
               <ul
