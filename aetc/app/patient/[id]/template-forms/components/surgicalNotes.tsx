@@ -234,6 +234,18 @@ interface InvestigationAssessmentObservation {
   UrineDipstick: string;
   obsDatetime: string;
 }
+// Define DispensingObservation interface
+interface DispensingObservation {
+  id: string;
+  givenDrugs: string;
+  prescribedDose: string;
+  medicationRoute: string;
+  dispenser: string;
+  obsDatetime: string;
+}
+
+
+
 const YES_UUID = "b9a0bbfc-8d80-11d8-abbb-0024217bb78e";
 const NO_UUID = "b9a0bd28-8d80-11d8-abbb-0024217bb78e";
 
@@ -312,6 +324,7 @@ function SurgicalNotesTemplate() {
 
 
   const [dispensedMedications, setDispensedMedications] = useState<Encounter[]>([]);
+  const [dispensingAssessments, setDispensingAssessments] = useState<DispensingObservation[]>([]);
 
   const { data: patientEncounters, isLoading, error } = getPatientsEncounters(params.id as string);
 
@@ -992,6 +1005,37 @@ function SurgicalNotesTemplate() {
 
       setChestAssessments(latestChestRecords);
 
+      // Filter for DISPENSING encounter type
+      const dispensingRecords = patientEncounters
+        .filter((encounter) => encounter.encounter_type.uuid === encounters.DISPENSING)
+        .map((encounter) => {
+          const obsMap = new Map<number, string>();
+
+          // Populate the map with observation values
+          encounter.obs.forEach((obs) => {
+            obsMap.set(obs.concept_id, obs.value || "Not Recorded");
+          });
+
+          return {
+            id: encounter.encounter_id.toString(),
+            givenDrugs: obsMap.get(9236) || "Not Recorded",
+            prescribedDose: obsMap.get(9320) || "Not Recorded",
+            medicationRoute: obsMap.get(11906) || "Not Recorded",
+            dispenser: encounter.created_by || "Unknown",
+
+            obsDatetime: encounter.encounter_datetime || "No Date",
+          };
+        });
+
+      // Sort by date and get the latest record
+      const latestDispensingRecords = dispensingRecords
+        .sort(
+          (a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime()
+        )
+        .slice(0, 1);
+
+      setDispensingAssessments(latestDispensingRecords);
+
 
 
       // Abdomen and Pelvis Assessments
@@ -1492,24 +1536,24 @@ function SurgicalNotesTemplate() {
           {/* AETC Dispensation Subsection */}
           <MainGrid item xs={12}>
             <MainTypography sx={{ fontWeight: "bold", textDecoration: "underline" }}>
-              Dispensation
+              Dispensing Assessment
             </MainTypography>
+            {dispensingAssessments.length > 0 ? (
+              <ul style={{ paddingLeft: "2ch", listStyleType: "none" }}>
+                {dispensingAssessments.map((exam) => (
+                  <li key={exam.id}>
+                    <strong>Given Drugs:</strong> {exam.givenDrugs} <br />
+                    <strong>Prescribed Dose:</strong> {exam.prescribedDose} <br />
+                    <strong>Medication Route:</strong> {exam.medicationRoute} <br />
+                    <strong>Dispenser:</strong> {exam.dispenser} <br />
 
-            {dispensedMedications.length > 0 ? (
-              dispensedMedications.map((encounter) =>
-                encounter.obs
-                  ?.filter((ob) => ob.names?.[0]?.name === concepts.DRUG_GIVEN) // Filter only medication-related obs
-                  .map((ob) => (
-                    <DrugDispensedList
-                      key={ob.obs_id}
-                      data={encounter}
-                      givenMedication={ob.value_coded_uuid} // Pass actual medication UUID
-                    />
-                  ))
-              )
+                    <em>Recorded on: {new Date(exam.obsDatetime).toLocaleDateString()}</em>
+                  </li>
+                ))}
+              </ul>
             ) : (
-              <MainTypography sx={{ pl: 4, fontStyle: "italic", mb: 2 }}>
-                No Dispensations recorded.
+              <MainTypography sx={{ pl: 4, fontStyle: "italic" }}>
+                No dispensing observations recorded.
               </MainTypography>
             )}
           </MainGrid>
