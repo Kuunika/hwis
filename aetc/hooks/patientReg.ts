@@ -1,6 +1,7 @@
 import { concepts } from "@/constants";
 import { PaginationModel } from "@/interfaces";
 import {
+  addDeathReport,
   checkPatientIfOnAssessment,
   createPatient,
   findByDemographics,
@@ -63,8 +64,6 @@ export const registerPatient =  () => {
     const getAddress = (address: any) => (address !== "" ? address : "N/A");
 
 
-    const concept = await getConcept(concepts.NATIONAL_ID_IDENTIFIER_TYPE);
-
     const nationalIdIdentifierType ='dc047ea8-e9ce-4fd0-af93-a2ade6b14b42'
 
     const identifiers =
@@ -112,9 +111,6 @@ export const registerPatient =  () => {
     return updatePatient(patientData.id, mappedPatient).then((response) => {
       return response.data;
     });
-    // return createPatient(mappedPatient).then((response) => {
-    //   return response.data;
-    // });
   };
 
   return useMutation({
@@ -304,7 +300,6 @@ export const getPatientVisitTypes = (id: string) => {
 
 export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
   const getAll = () => checkPatientIfOnAssessment(id).then((response) => response?.data);
-
   return useQuery({
     queryKey: ["visits", id, "eligible"],
     queryFn: getAll,
@@ -313,5 +308,16 @@ export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
 };
 
 
+export const addBroughtDead = () => {
+  const addData = (patientData: any) => {
+    return addDeathReport(patientData).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: addData,
+  });
+}
 
 

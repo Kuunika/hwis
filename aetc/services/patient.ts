@@ -3,6 +3,7 @@ import {
   DailyVisitPaginated,
   DDEScore,
   DDESearch,
+  DeathReport,
   PatientUpdateResponse,
   Person,
   Relationship,
@@ -96,3 +97,7 @@ export const getPatientVisits = (id: string) => {
 export const checkPatientIfOnAssessment = (id: string) => {
   return get(`/visits/${id}/eligible?category=assessment`);
 };
+
+
+export const addDeathReport = (data:any)=> create<DeathReport>(data, "/death_reports");
+export const getDeathReports = ()=> get<DeathReport>("/death_reports");
