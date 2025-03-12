@@ -191,6 +191,18 @@ export const DesktopView = () => {
                   />
                 ),
               },
+              {
+                title: "Trauma Specialty Review",
+                link: `/patient/${params.id}/traumaSpecialtyReview`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src="/icons/surgicalnotes.svg"
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
             ]}
           />
         </WrapperBox>

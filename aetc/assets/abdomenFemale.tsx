@@ -24,62 +24,63 @@ export const AbdomenFemale = forwardRef<
         d="M1268,819.68c-82,232,16.3,378,16.3,378s51.5,82.55,141.33,166.35c17.51,37.52,76.3,216.38,87.56,342.71s22.06,298.69-13.14,393.92-175,337.5-185.5,358.52-11.82,26.66-30.58,74.19c0,0-8.74,40.22,21.09,102.2s89.75,91.39,235.88,163.36c21.87,9.82,170.35,67.18,320.57,155.08,141.21,106.14,227.39,174.63,363.86,178.83,198.08,0,304.13-167.59,576.2-301.58,102.75-50.14,341.94-144.66,323.77-236.63,9.13-91.33-152-294.73-207.73-405.73-24.66-40.26-69-261-57.48-368.19s86.55-453,112-477.21,93.65-74.11,130.75-147.12,56-154.31,44.13-267.24c-13.62-55.8-43.64-84.2-26.56-124.2S3176.13,704,3183,615.17c0,0-3.69-75-101.3-127.9s-130.87-116.84-168.9-142.42-76.67-24-123.52-24-1197-4.75-1208.85,0-40.7,12-83.61,45.46-153,111.41-219.35,140.39-96,110.52-80.35,165.92S1266.33,803.36,1268,819.68Z"
       />
     </g>
-    <g id="BODY_PART" data-name="BODY PART">
+    <g id="BODY_PART" data-label="BODY PART">
       <path
         id="Right_Hypochodrium"
-        data-name="Right Hypochodrium"
+        data-label="Right Hypochodrium"
         className="cls-2-abdomen-female"
         d="M1905.5,1407.5c-240.25,46.51-426.64,39.11-442.55,38.66a.2.2,0,0,0-.19.27c14.61,38,55.81,176.85,67,302.84,3.53,39.57,8.1,78,9.8,115.07h365.92V1407.5Z"
       />
       <path
         id="Left_Hypochodrium"
-        data-name="Left Hypochodrium"
+        data-label="Left Hypochodrium"
         className="cls-3-abdomen-female"
         d="M2491,1864.34h348.52c-.7-21.66,17-172.23,28.65-232.32,20.46-105.67,25.14-91.06,52.71-207.25-35,1.84-215.51,10.26-429.88-24.07Z"
       />
       <path
         id="Epigastric_Region"
-        data-name="Epigastric Region"
+        data-label="Epigastric Region"
         className="cls-3-abdomen-female"
         d="M2483.48,1400.7c-90.59-14.51-183.75-36.65-268.12-70.14a56.07,56.07,0,0,0-15.49-3,44.08,44.08,0,0,0-15.57,2.69c-91.45,33.53-184.82,57.45-272.92,74.51l1.65,459.61h570.45Z"
       />
       <path
         id="Left_Iliac_Region"
-        data-name="Left Iliac Region"
+        data-label="Left Iliac Region"
         className="cls-3-abdomen-female"
         d="M2493.24,3007.51c85.29-58.65,173.13-132.16,309.16-199.15,296.69-115.91,313.47-177.71,304.34-244.22-5.69-41.53-34.52-77.55-74.55-145.56L2491,2420.77Z"
       />
       <path
         id="Hypogastrium"
+        data-label="Hypogastrium"
         className="cls-3-abdomen-female"
         d="M2483.47,2420.77l-572.09,2.2v540.88c134.26,97.28,188.72,143.89,308.39,147.58,99,0,180.68-41.19,266-99.84Z"
       />
       <path
         id="Right_Iliac_Region"
-        data-name="Right Iliac Region"
+        data-label="Right Iliac Region"
         className="cls-3-abdomen-female"
         d="M1903.87,2423,1355,2425.11c-9.88,17.72-88.55,101.75-39.23,198.74,45.61,70.89,84.59,88.54,230.72,160.51,267,99.73,341.75,164.51,357.38,176.17Z"
       />
       <path
         id="Left_Lumbar"
-        data-name="Left Lumbar"
+        data-label="Left Lumbar"
         className="cls-3-abdomen-female"
         d="M2491.1,2413.27l535.81-2.2c-48.19-81.87-115.65-167.86-143.06-247.26-46-133.15-40.67-178-44.34-292H2491.1Z"
       />
       <polygon
         id="Umbilical_Region"
-        data-name="Umbilical Region"
+        data-label="Umbilical Region"
         className="cls-3-abdomen-female"
         points="1911.38 1870.15 1911.38 2415.34 2196.94 2415.34 2482.49 2415.34 2482.49 1870.15 2205.05 1870.15 1911.38 1870.15"
       />
       <path
         id="Right_Lumbar"
-        data-name="Right Lumbar"
+        data-label="Right Lumbar"
         className="cls-3-abdomen-female"
         d="M1503.34,2142.75c19.18-67,43.39-164.68,36.45-271.92l365.73,1-1.65,543.6-547.08,2.15S1486.38,2202,1503.34,2142.75Z"
       />
     </g>
-    <g id="BODY_OUTLINE" data-name="BODY OUTLINE">
+    <g id="BODY_OUTLINE" data-label="BODY OUTLINE">
       <path
         className="cls-4-abdomen-female"
         d="M1605.19,1082.18a22.07,22.07,0,0,1,5.38,3c7.75,5.81,30,25.88,15.11,55.2-17.39,34.16-53,20-65.86,7.48-12.22-11.84-20.13-34.53-.33-56.76C1575.52,1073.1,1597.41,1079.19,1605.19,1082.18Z"
