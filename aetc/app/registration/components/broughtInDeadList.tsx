@@ -4,10 +4,7 @@ import { getAllDeathReports } from "@/hooks/patientReg";
 
 export const BroughtInDeadList = () => {
   const { navigateTo } = useNavigation();
-  const { data } = getAllDeathReports();
-  const rows: any = [];
-
-  console.log({ data });
+  const { data, isLoading } = getAllDeathReports();
 
   const columns = [
     { field: "place_of_death", headerName: "Place Of Death", flex: 1 },
@@ -34,12 +31,21 @@ export const BroughtInDeadList = () => {
           <MainButton
             sx={{ fontSize: "12px" }}
             title={"view"}
-            onClick={() => {}}
+            onClick={() =>
+              navigateTo(`/registration/death/${cell.row.id}/view`)
+            }
           />
         );
       },
     },
   ];
 
-  return <BaseTable columns={columns} rows={data ? data : []} />;
+  return (
+    <BaseTable
+      loading={isLoading}
+      showTopBar={false}
+      columns={columns}
+      rows={data ? data : []}
+    />
+  );
 };
