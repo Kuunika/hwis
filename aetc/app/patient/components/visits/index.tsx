@@ -1,1 +1,2 @@
-export * from "./vitals";
+export * from "./interface";
+export * from "./visitTable";
