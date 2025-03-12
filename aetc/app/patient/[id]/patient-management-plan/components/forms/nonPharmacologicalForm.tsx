@@ -10,7 +10,7 @@ import {
 import { useState, useEffect } from "react";
 import * as yup from "yup";
 import { concepts, encounters } from "@/constants";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { toast } from "react-toastify";
 import { useParameters } from "@/hooks";
@@ -141,7 +141,7 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
 
 
     const { params } = useParameters();
-    const { mutate: submitEncounter } = addEncounter();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
 

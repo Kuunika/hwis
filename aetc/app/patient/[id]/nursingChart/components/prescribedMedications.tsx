@@ -1,7 +1,9 @@
 import { conceptNames, concepts, encounters } from "@/constants";
 import { getActivePatientDetails } from "@/hooks";
-import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-
+import {
+  fetchConceptAndCreateEncounter,
+  getPatientsEncounters,
+} from "@/hooks/encounter";
 import {
   Button,
   Card,
@@ -11,9 +13,9 @@ import {
   Fade,
   Box,
   TextField,
+  Grid,
 } from "@mui/material";
-import { useState } from "react";
-
+import { useEffect, useState, useCallback } from "react";
 import { getDateTime } from "@/helpers/dateTime";
 import { Encounter } from "@/interfaces";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -22,26 +24,72 @@ import { PrescribedMedicationList } from "./prescribedMedicationList";
 
 export const PrescribedMedication = () => {
   const { patientId, activeVisitId, activeVisit } = getActivePatientDetails();
+  const { data, isPending, isRefetching, refetch } = getPatientsEncounters(
+    patientId as string
+  );
   const {
-    data,
-    isPending: fetchingEncounters,
-    isRefetching,
-    refetch,
-  } = getPatientsEncounters(patientId as string);
-  const [row, setRow] = useState<any>(null);
+    mutate,
+    isPending: isSubmitting,
+    isSuccess,
+  } = fetchConceptAndCreateEncounter();
+
+  const [selectedMedication, setSelectedMedication] = useState<any>(null);
   const [formData, setFormData] = useState({ route: "", dose: "" });
-  const { mutate, isPending, isSuccess } = addEncounter();
-  const [formError, setFormError] = useState<any>({});
+  const [formError, setFormError] = useState<{ route?: string; dose?: string }>(
+    {}
+  );
 
-  const dispensationEncounter = data?.filter((d) => {
-    return (
-      d?.encounter_type?.uuid == encounters.DISPENSING &&
-      d.visit_id == activeVisitId
-    );
-  });
+  useEffect(() => {
+    if (isSuccess) refetch();
+  }, [isSuccess, refetch]);
 
-  const handleDispenseSubmission = () => {
-    setFormError({});
+  const dispensationEncounter = data?.find(
+    (encounter) =>
+      encounter?.encounter_type?.uuid === encounters.DISPENSING &&
+      encounter.visit_id === activeVisitId
+  );
+
+  const medicationDispensed = formatDispensed(
+    dispensationEncounter ?? ({} as Encounter),
+    selectedMedication?.medicationUUID
+  );
+
+  const totalDispensed =
+    medicationDispensed?.reduce(
+      (total, entry) => total + Number(entry.dose),
+      0
+    ) || 0;
+
+  const handleInputChange = useCallback(
+    (field: "dose" | "route", value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+
+      if (field === "dose" && selectedMedication) {
+        setFormError((prev) => ({
+          ...prev,
+          dose:
+            totalDispensed + Number(value) > selectedMedication.dose
+              ? "Cannot dispense more than prescribed"
+              : undefined,
+        }));
+      } else {
+        setFormError((prev) => ({
+          ...prev,
+          [field]: value ? undefined : "Field is required",
+        }));
+      }
+    },
+    [totalDispensed, selectedMedication]
+  );
+
+  const handleSubmit = useCallback(() => {
+    if (!formData.dose || !formData.route) {
+      setFormError({
+        dose: !formData.dose ? "Field is required" : undefined,
+        route: !formData.route ? "Field is required" : undefined,
+      });
+      return;
+    }
 
     const payload = {
       encounterType: encounters.DISPENSING,
@@ -51,9 +99,10 @@ export const PrescribedMedication = () => {
       obs: [
         {
           concept: concepts.DRUG_GIVEN,
-          value: row.medicationUUID,
+          value: selectedMedication.medicationUUID,
           obsDatetime: getDateTime(),
-          group_members: [
+          coded: true,
+          groupMembers: [
             {
               concept: concepts.MEDICATION_DOSE,
               value: formData.dose,
@@ -69,163 +118,98 @@ export const PrescribedMedication = () => {
       ],
     };
 
-    if (Boolean(formData.dose) && Boolean(formData.route)) {
-      mutate(payload);
-      setFormData({ dose: "", route: "" });
-      return;
-    }
-
-    setFormError({
-      route: { state: formData.route == "", message: "can't be blank" },
-      dose: { state: formData.dose == "", message: "can't be blank" },
-    });
-  };
-
-  const medicationDispensed = formatDispensed(
-    (dispensationEncounter && dispensationEncounter[0]) ?? ({} as Encounter),
-    row?.medicationUUID
-  );
-
-  console.log({ medicationDispensed });
-
-  const totalDispensed = medicationDispensed?.reduce((previous, current) => {
-    return previous + Number(current.dose);
-  }, 0);
+    mutate(payload);
+    setFormData({ dose: "", route: "" });
+  }, [formData, mutate, activeVisit, patientId, selectedMedication]);
 
   return (
-    <>
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="subtitle1" component="h2" gutterBottom>
-          Prescribed Medication
-        </Typography>
-        <PrescribedMedicationList setRow={setRow} />
+    <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 3 }}>
+      <Typography variant="h6" fontWeight={600} gutterBottom>
+        Prescribed Medication
+      </Typography>
+      <PrescribedMedicationList setRow={setSelectedMedication} />
 
-        <Fade in={!!row} timeout={500}>
-          <div>
-            {row && (
-              <Card sx={{ marginTop: 2, padding: 2 }}>
-                <Typography variant="h6">{row?.medicationName}</Typography>
-                <ContainerLoaderOverlay
-                  loading={isPending || fetchingEncounters || isRefetching}
-                >
-                  <CardContent>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "start",
-                        gap: 1,
-                      }}
-                    >
+      <Fade in={!!selectedMedication} timeout={500}>
+        <div>
+          {selectedMedication && (
+            <Card sx={{ mt: 2, p: 3, borderRadius: 2, boxShadow: 4 }}>
+              <Typography variant="h6" color="primary" gutterBottom>
+                {selectedMedication?.medicationName}
+              </Typography>
+              <ContainerLoaderOverlay
+                loading={isSubmitting || isPending || isRefetching}
+              >
+                <CardContent>
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={6}>
                       <TextField
                         name="dose"
                         label="Dose"
                         type="number"
                         required
+                        fullWidth
+                        variant="outlined"
                         value={formData.dose}
-                        onChange={(value) => {
-                          setFormData((data) => {
-                            return { ...data, dose: value.target.value };
-                          });
-                        }}
-                        onBlur={(value) => {
-                          setFormData((current) => ({
-                            ...current,
-                            dose: value.target.value,
-                          }));
-                          if (
-                            totalDispensed + Number(value.target.value) >
-                            row.dose
-                          ) {
-                            setFormError((error: any) => {
-                              return {
-                                ...error,
-                                dose: {
-                                  message:
-                                    "you can't dispense more than what was prescribed",
-                                  state: true,
-                                },
-                              };
-                            });
-                          } else {
-                            setFormError((error: any) => {
-                              return {
-                                ...error,
-                                dose: {
-                                  message: "",
-                                  state: false,
-                                },
-                              };
-                            });
-                          }
-                        }}
-                        error={formError?.dose?.state}
-                        helperText={formError?.dose?.message}
+                        onChange={(e) =>
+                          handleInputChange("dose", e.target.value)
+                        }
+                        error={!!formError.dose}
+                        helperText={formError.dose}
                       />
+                    </Grid>
+                    <Grid item xs={6}>
                       <TextField
                         name="route"
                         label="Route"
                         required
+                        fullWidth
+                        variant="outlined"
                         value={formData.route}
-                        onChange={(value) => {
-                          setFormData((data) => {
-                            return { ...data, route: value.target.value };
-                          });
-                        }}
-                        onBlur={(value) => {
-                          if (value.target.value) {
-                            setFormError((error: any) => {
-                              return {
-                                ...error,
-                                route: {
-                                  message: "",
-                                  state: false,
-                                },
-                              };
-                            });
-                          }
-                          setFormData((current) => ({
-                            ...current,
-                            route: value.target.value,
-                          }));
-                        }}
-                        error={formError?.route?.state}
-                        helperText={formError?.route?.message}
+                        onChange={(e) =>
+                          handleInputChange("route", e.target.value)
+                        }
+                        error={!!formError.route}
+                        helperText={formError.route}
                       />
-                    </Box>
+                    </Grid>
+                  </Grid>
 
+                  <Box display="flex" justifyContent="center" mt={2} mb={2}>
                     <Button
-                      disabled={
-                        formError?.dose?.state || formError?.route?.state
-                      }
-                      onClick={handleDispenseSubmission}
-                      sx={{ borderRadius: "4px", mt: 1 }}
+                      disabled={!!formError.dose || !!formError.route}
+                      onClick={handleSubmit}
                       variant="contained"
+                      sx={{
+                        borderRadius: 5,
+                        px: 3,
+                        py: 1,
+                        textTransform: "none",
+                        fontSize: 16,
+                      }}
                     >
-                      Administer drug
+                      Administer Drug
                     </Button>
-                    <br />
-                    <br />
-                    <DrugDispensedList
-                      data={
-                        (dispensationEncounter && dispensationEncounter[0]) ??
-                        ({} as Encounter)
-                      }
-                      givenMedication={row.medicationUUID}
-                    />
-                  </CardContent>
-                </ContainerLoaderOverlay>
+                  </Box>
+
+                  <DrugDispensedList
+                    data={dispensationEncounter ?? ({} as Encounter)}
+                    givenMedication={selectedMedication.medicationUUID}
+                  />
+                </CardContent>
+              </ContainerLoaderOverlay>
+              <Box display="flex" justifyContent="center" mt={1}>
                 <Button
                   variant="text"
-                  onClick={() => setRow(null)}
+                  onClick={() => setSelectedMedication(null)}
                   color="primary"
                 >
                   Close
                 </Button>
-              </Card>
-            )}
-          </div>
-        </Fade>
-      </Paper>
-    </>
+              </Box>
+            </Card>
+          )}
+        </div>
+      </Fade>
+    </Paper>
   );
 };

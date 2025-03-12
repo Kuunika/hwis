@@ -10,13 +10,17 @@ import {
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter } from "@/hooks/encounter";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
 
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
+import { closeCurrentVisit } from "@/hooks/visit";
+import { useNavigation } from "@/hooks"; // Import navigation hook
+
+
 
 const wardOptions = [
     { id: concepts.TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "2A Oncology Ward (General ward/High Dependency Unit)" },
@@ -68,9 +72,13 @@ const initialValues = {
 
 export default function AdmissionForm() {
     const { params } = useParameters();
-    const { mutate: submitEncounter } = addEncounter();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+    const { navigateTo } = useNavigation(); // Initialize navigation
+
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -93,6 +101,9 @@ export default function AdmissionForm() {
                 group_members: [
                     { concept: concepts.WARD, value: values.wardName, obsDatetime: currentDateTime },
                     { concept: concepts.BED_NUMBER, value: values.bedNumber, obsDatetime: currentDateTime },
+                    { concept: concepts.REASON_FOR_ADMISSION, value: values.reasonForAdmission, obsDatetime: currentDateTime },
+                    { concept: concepts.SPECIALITY_DEPARTMENT, value: values.specialtyInvolved, obsDatetime: currentDateTime },
+
 
                 ],
             },
@@ -109,6 +120,12 @@ export default function AdmissionForm() {
         try {
             await submitEncounter(payload);
             toast.success("Admission information submitted successfully!");
+            // Close the visit after successfully submitting the encounter
+            if (activeVisit?.uuid) {
+                closeVisit(activeVisit.uuid);
+            }
+            navigateTo("/assessments");
+
         } catch (error) {
             console.error("Error submitting Admission information: ", error);
             toast.error("Failed to submit Admission information.");

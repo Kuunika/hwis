@@ -24,6 +24,7 @@ import {
   AbdomenImageWithOtherForm,
   LowerLimbFemaleAnteriorImage,
   LowerLimbMaleAnteriorImage,
+  NewAbdomenImage,
 } from "@/components/svgImages";
 import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
@@ -31,6 +32,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CPRDialogForm } from "./cprDialogForm";
 import { getActivePatientDetails } from "@/hooks";
+import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 
 type Prop = {
   onSubmit: () => void;
@@ -785,11 +787,28 @@ export const Circulation = ({ onSubmit }: Prop) => {
           {formValues[form.abnormalitiesInfo.name] == YES && (
             <>
               <br />
-              <AbdomenImageWithOtherForm
+              {/* <AbdomenImageWithOtherForm
                 imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                 imageSection={form.abnormalitiesInfo.name}
                 onValueChange={setAbdomenOtherImage}
-              />
+              /> */}
+              {gender == "Male" && (
+                <NewAbdomenImage
+                  formNameSection="other"
+                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                  imageSection={form.abnormalitiesInfo.name}
+                  onValueChange={setAbdomenOtherImage}
+                />
+              )}
+              {gender == "Female" && (
+                <NewAbdomenFemaleImage
+                  formNameSection="other"
+                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                  imageSection={form.abnormalitiesInfo.name}
+                  onValueChange={setAbdomenOtherImage}
+                />
+              )}
+
               <br />
             </>
           )}
