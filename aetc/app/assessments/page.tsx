@@ -11,19 +11,18 @@ import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
 
-
- function AssessmentPage() {
+function AssessmentPage() {
   return (
     <>
       <Navigation title="Patients Waiting For Assessments" link="/dashboard" />
-     
+
       <MainGrid container>
         <MainGrid xs={0} lg={0} item></MainGrid>
         <MainGrid
           xs={12}
           lg={12}
           sx={{
-            display: "flex", 
+            display: "flex",
             flexDirection: "column",
           }}
           item
@@ -37,7 +36,7 @@ import { roles } from "@/constants";
             This is a list of all patients that went through triage successfully
             and waiting for assessments.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ mx:1, p: 0 }}>
+          <RegistrationCard sx={{ mx: 1, p: 0 }}>
             <ClientWaitingForAssessment />
           </RegistrationCard>
         </MainGrid>
@@ -47,4 +46,8 @@ import { roles } from "@/constants";
   );
 }
 
-export default AuthGuard(AssessmentPage, [roles.ADMIN, roles.CLINICIAN])
+export default AuthGuard(AssessmentPage, [
+  roles.ADMIN,
+  roles.CLINICIAN,
+  roles.NURSE,
+]);

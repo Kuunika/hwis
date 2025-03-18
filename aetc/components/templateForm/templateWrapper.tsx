@@ -7,8 +7,9 @@ import { useReactToPrint } from "react-to-print";
 
 type Prop = {
   children: ReactNode;
+  OtherChildren?: ReactNode;
 };
-export const TemplateWrapper: FC<Prop> = ({ children }) => {
+export const TemplateWrapper: FC<Prop> = ({ children, OtherChildren }) => {
   const printRef = useRef(null);
 
   const handlePrint = useReactToPrint({
@@ -59,6 +60,7 @@ export const TemplateWrapper: FC<Prop> = ({ children }) => {
           title="Download PDF"
         />
       </WrapperBox>
+      {OtherChildren}
       <div ref={printRef} className="printable-content">
         <div className="print-only">
           <PatientInfoTab />
