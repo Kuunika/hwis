@@ -21,7 +21,7 @@ export const VitalsPanel = () => {
     <Paper elevation={3}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div style={{ fontWeight: "bold", fontSize: "1.2rem", padding: "1ch" }}>
-          Vitals
+          Most recent Vitals & Biometrics
         </div>
         <div style={{ padding: "1ch" }}>
           <FlowStarter patient={params} />
