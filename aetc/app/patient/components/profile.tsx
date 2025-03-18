@@ -190,7 +190,6 @@ export const DesktopView = () => {
         {/* <Charts /> */}
         <TabsContainer />
       </MainGrid>
-      <FlowStarter patient={params} />
     </MainGrid>
   );
 };
