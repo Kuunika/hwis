@@ -90,7 +90,10 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       label: "Update Medical History",
       path: `/patient/${patient.id}/medicalHistory`,
     },
-    { label: "Start Triage", path: `/triage/${patient.id}/history` },
+    {
+      label: "Start/Continue monitoring",
+      path: `/triage/${patient.id}/history`,
+    },
     {
       label: "Start Primary Assessment",
       path: `/patient/${patient.id}/primary-assessment`,
