@@ -44,38 +44,47 @@ export const useVitals = () => {
   }, [activeVisitId, data]);
 
   const updateVitals = (obs: any) => {
+    const saturationRate = getObservationValue(obs, concepts.SATURATION_RATE);
+    const heartRate = getObservationValue(obs, concepts.HEART_RATE);
+    const respiratoryRate = getObservationValue(obs, concepts.RESPIRATORY_RATE);
+    const temperature = getObservationValue(obs, concepts.TEMPERATURE);
+    const glucose = getObservationValue(obs, concepts.GLUCOSE);
+    const avpu = getObservationValue(obs, concepts.AVPU);
+    const systolic = getObservationValue(obs, concepts.SYSTOLIC_BLOOD_PRESSURE);
+    const diastolic = getObservationValue(
+      obs,
+      concepts.DIASTOLIC_BLOOD_PRESSURE
+    );
+
     const initialVitals = [
       {
-        name: "Oxygen Saturation (%)",
-        value: getObservationValue(obs, concepts.SATURATION_RATE),
+        name: "Oxygen Saturation ",
+        value: saturationRate ? saturationRate + "%" : "",
       },
 
       {
-        name: "Heart Rate (bpm)",
-        value: getObservationValue(obs, concepts.HEART_RATE),
+        name: "Heart Rate",
+        value: heartRate ? heartRate + " bpm" : "",
       },
       {
-        name: "Blood Pressure (mmHg)",
-        value: `${getObservationValue(
-          obs,
-          concepts.SYSTOLIC_BLOOD_PRESSURE
-        )}/${getObservationValue(obs, concepts.DIASTOLIC_BLOOD_PRESSURE)}`,
+        name: "Blood Pressure",
+        value: systolic ? `${systolic}/${diastolic} mmHg` : "",
       },
       {
-        name: "Respiratory Rate (bpm)",
-        value: getObservationValue(obs, concepts.RESPIRATORY_RATE),
+        name: "Respiratory Rate",
+        value: respiratoryRate ? respiratoryRate + "bpm" : "",
       },
       {
-        name: "Temperature (°C)",
-        value: getObservationValue(obs, concepts.TEMPERATURE),
+        name: "Temperature",
+        value: temperature ? temperature + "°C" : "",
       },
       {
-        name: "Glucose (mg/dL)",
-        value: getObservationValue(obs, concepts.GLUCOSE),
+        name: "Glucose",
+        value: glucose ? glucose + " mg/dL" : "",
       },
       {
         name: "AVPU",
-        value: getObservationValue(obs, concepts.AVPU),
+        value: avpu ? avpu : "",
       },
     ];
 
