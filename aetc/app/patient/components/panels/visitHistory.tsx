@@ -10,6 +10,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import {VisitData} from "@/app/patient/components/visits/visitData";
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -360,29 +361,29 @@ export const VisitHistory = () => {
           >
             {/* Render all accordion panels */}
             {Object.entries(encounterData).map(
-              ([panelId, { title, data }]) =>
-                data.length > 0 && (
-                  <Accordion
-                    key={panelId}
-                    expanded={expanded === panelId}
-                    onChange={handleChange(panelId)}
-                  >
-                    <AccordionSummary
-                      expandIcon={
-                        <ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />
-                      }
-                      aria-controls={`${panelId}-content`}
-                      id={`${panelId}-header`}
-                    >
-                      <Typography sx={{ fontWeight: 700 }} component="span">
-                        {title}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <VisitTable data={data} />
-                    </AccordionDetails>
-                  </Accordion>
-                )
+                ([panelId, { title, data }]) =>
+                    data.length > 0 && (
+                        <Accordion
+                            key={panelId}
+                            expanded={expanded === panelId}
+                            onChange={handleChange(panelId)}
+                        >
+                          <AccordionSummary
+                              expandIcon={
+                                <ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />
+                              }
+                              aria-controls={`${panelId}-content`}
+                              id={`${panelId}-header`}
+                          >
+                            <Typography sx={{ fontWeight: 700 }} component="span">
+                              {title}
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <VisitData data={data} />
+                          </AccordionDetails>
+                        </Accordion>
+                    )
             )}
           </Grid>
         </Grid>
