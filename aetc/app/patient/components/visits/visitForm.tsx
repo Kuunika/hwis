@@ -6,7 +6,7 @@ interface VisitDataProps {
 
 export const VisitForm = ({ data }: VisitDataProps) => {
   return (
-      <Paper elevation={1} sx={{ padding: 2, borderRadius: 2 }}>
+      <Paper elevation={0} sx={{ padding: 1, borderRadius: 1 }}>
           {data.map((item, index) => {
               console.log("item", item)
               const name = item.names || "Unknown";
