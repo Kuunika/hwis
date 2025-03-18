@@ -18,7 +18,7 @@ export const VitalsPanel = () => {
     return <ProfilePanelSkeletonLoader />;
   }
   return (
-    <Paper>
+    <Paper elevation={3}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div style={{ fontWeight: "bold", fontSize: "1.2rem", padding: "1ch" }}>
           Vitals
