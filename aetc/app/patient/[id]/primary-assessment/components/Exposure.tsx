@@ -65,7 +65,7 @@ export const Exposure = ({ onSubmit }: Props) => {
   const [fullImageBack, setFullImageBack] = useState<Array<any>>([]);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
-    encounters.DISABILITY_ASSESSMENT,
+    encounters.EXPOSURE_ASSESSMENT,
     onSubmit
   );
 

@@ -82,9 +82,6 @@ export const ClinicalNotes = () => {
       (ob) => ob.names.some((n) => n.name.toLowerCase() === concepts.FOCAL_NEUROLOGY.toLowerCase())
     );
 
-
-
-
     // if (levelOfConsciousnessObs?.value  === "No") {
     //   setDisabilityMessage("The patient is alert and does not exhibit a low level of consciousness.");
     // } else {

@@ -242,7 +242,7 @@ const schema = Yup.object().shape({
     .required()
     .label(form.sphincterTone.label),
   [form.periymen.name]: Yup.array().label(form.periymen.label),
-  [form.scrotum.name]: Yup.array().label(form.scrotum.label),
+  [form.scrotum.name]: Yup.string().label(form.scrotum.label),
   [form.vagina.name]: Yup.string().label(form.vagina.label),
   [form.urethralMeatus.name]: Yup.array().label(form.urethralMeatus.label),
   [form.unusualAppearance.name]: Yup.string().label(
@@ -380,12 +380,11 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     useState<Array<any>>([]);
   const [tendernessImageEnc, setTendernessImageEnc] = useState<Array<any>>([]);
   const { handleSubmit, isLoading: creatingEncounter } = useSubmitEncounter(
-    encounters.CHEST_ASSESSMENT,
+    encounters.ABDOMEN_AND_PELVIS_ASSESSMENT,
     onSubmit
   );
 
   const checkIfExist = (formArrayInput: any, value: string) => {
-    console.log({ formArrayInput });
     if (!Array.isArray(formArrayInput)) return;
 
     return formArrayInput?.find((op: any) => op.id == value);
