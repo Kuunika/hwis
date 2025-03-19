@@ -18,13 +18,17 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
 } from "@/components/barcodePrinterDialogs";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 
 export const ClientWaitingForAssessment = () => {
+  const [cpr, setCpr] = useState(false);
+  const [patientId, setPatientId] = useState("");
+  const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     page: 1,
@@ -46,7 +50,7 @@ export const ClientWaitingForAssessment = () => {
     { field: "aetc_visit_number", headerName: "Visit" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "birthdate", headerName: "Date Of Birth" },
+    // { field: "birthdate", headerName: "Date Of Birth" },
     { field: "gender", headerName: "Gender" },
     {
       field: "waiting",
@@ -112,6 +116,19 @@ export const ClientWaitingForAssessment = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+
+            {cell.row.triage_result == "red" && (
+              <Button
+                variant="text"
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+              >
+                Start CPR
+              </Button>
+            )}
             <BasicMenu patient={cell.row} />
           </>
         );
@@ -154,18 +171,28 @@ export const ClientWaitingForAssessment = () => {
   });
 
   return (
-    <PatientTableListServer
-      columns={columns}
-      data={
-        data?.data ? data : { data: [], page: 1, per_page: 10, total_pages: 0 }
-      }
-      searchText={searchText}
-      setSearchString={setSearchText}
-      setPaginationModel={setPaginationModel}
-      paginationModel={paginationModel}
-      loading={isPending}
-      formatForMobileView={formatForMobileView ? formatForMobileView : []}
-    />
+    <>
+      <PatientTableListServer
+        columns={columns}
+        data={
+          data?.data
+            ? data
+            : { data: [], page: 1, per_page: 10, total_pages: 0 }
+        }
+        searchText={searchText}
+        setSearchString={setSearchText}
+        setPaginationModel={setPaginationModel}
+        paginationModel={paginationModel}
+        loading={isPending}
+        formatForMobileView={formatForMobileView ? formatForMobileView : []}
+      />
+      <CPRDialogForm
+        patientuuid={patientId}
+        visituuid={visitUUID}
+        open={cpr}
+        onClose={() => setCpr(false)}
+      />
+    </>
   );
 };
 

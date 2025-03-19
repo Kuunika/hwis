@@ -266,9 +266,6 @@ export const PresentingComplaintsForm = ({
     const vomiting = await getConceptFromCacheOrFetch(concepts.VOMITING_BLOOD);
     const other = await getConceptFromCacheOrFetch(concepts.OTHER);
 
-    console.log(carbon?.data[0]);
-    console.log(values);
-
     const triage = [
       carbon?.data[0]?.names[0]?.uuid,
       trauma?.data[0]?.names[0]?.uuid,

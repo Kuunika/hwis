@@ -647,7 +647,8 @@ export const Circulation = ({ onSubmit }: Prop) => {
                     />
                   )}
                   {gender == "Female" && (
-                    <LowerLimbMaleAnteriorImage
+                    // <></>
+                    <LowerLimbFemaleAnteriorImage
                       imageSection={form.femurAndTibiaNormalInfo.name}
                       imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                       onValueChange={setLegImage}
@@ -795,16 +796,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
               {gender == "Male" && (
                 <NewAbdomenImage
                   formNameSection="other"
-                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
-                  imageSection={form.abnormalitiesInfo.name}
                   onValueChange={setAbdomenOtherImage}
                 />
               )}
               {gender == "Female" && (
                 <NewAbdomenFemaleImage
                   formNameSection="other"
-                  imageEncounter={encounters.CIRCULATION_ASSESSMENT}
-                  imageSection={form.abnormalitiesInfo.name}
                   onValueChange={setAbdomenOtherImage}
                 />
               )}
