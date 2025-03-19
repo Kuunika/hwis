@@ -45,13 +45,7 @@ export function LungBackImage({
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-    if (imageEncounter && imageSection) {
-      formData = {
-        ...formData,
-        [concepts.IMAGE_ENCOUNTER]: imageEncounter,
-        [concepts.IMAGE_SECTION]: imageSection,
-      };
-    }
+
     handleFormSubmit(formData);
   };
 

@@ -352,7 +352,15 @@ const routeOptions = [
   { label: "Inhaled", id: "Inh  aled" },
 ];
 
-const CPRForm = ({ onClose }: { onClose: () => void }) => {
+const CPRForm = ({
+  onClose,
+  patientuuid,
+  visituuid,
+}: {
+  onClose: () => void;
+  patientuuid?: string;
+  visituuid?: string;
+}) => {
   const { medicationOptions } = useFetchMedications();
   const { data: users, isLoading } = getAllUsers();
   const { mutate, isSuccess } = fetchConceptAndCreateEncounter();
@@ -374,9 +382,7 @@ const CPRForm = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleSubmit = (values: any) => {
-    console.log({ values });
     const obsDatetime = getDateTime();
-
     const formValues = { ...values };
 
     let recordsObservation = [];
@@ -452,8 +458,8 @@ const CPRForm = ({ onClose }: { onClose: () => void }) => {
 
     mutate({
       encounterType: encounters.CPR,
-      patient: patientId,
-      visit: activeVisit,
+      patient: patientId ? patientId : patientuuid,
+      visit: activeVisit ? activeVisit : visituuid,
       encounterDatetime: obsDatetime,
       obs: [...observations, ...recordsObservation, ...teamMembersObs],
     });
@@ -763,13 +769,21 @@ const CPRForm = ({ onClose }: { onClose: () => void }) => {
 export const CPRDialogForm = ({
   open,
   onClose,
+  patientuuid,
+  visituuid,
 }: {
   open: boolean;
   onClose: () => void;
+  patientuuid?: string;
+  visituuid?: string;
 }) => {
   return (
     <GenericDialog maxWidth="md" open={open} title="CPR" onClose={onClose}>
-      <CPRForm onClose={onClose} />
+      <CPRForm
+        visituuid={visituuid}
+        patientuuid={patientuuid}
+        onClose={onClose}
+      />
     </GenericDialog>
   );
 };
