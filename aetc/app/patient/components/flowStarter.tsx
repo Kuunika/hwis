@@ -34,10 +34,7 @@ interface ConsultationItemConfig {
 }
 
 interface FlowStarterProps {
-  patient: {
-    id: string;
-    [key: string]: any;
-  };
+  patient: any;
 }
 
 const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
