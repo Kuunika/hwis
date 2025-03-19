@@ -24,33 +24,60 @@ export const AirwayAssessment = () => {
     }, [patientHistory, historyLoading]);
 
     const formatAirwayAssessmentData = (obs: any[]) => {
-        return obs.map((ob: any) => {
-            const name = ob.names?.[0]?.name;
-            const valueText = ob.value;
+        return obs
+            .map((ob: any) => {
+                const name = ob.names?.[0]?.name;
+                const valueText = ob.value;
 
-            let humanReadableResponse = "";
-            if (name === "Is Airway Compromised") {
-                humanReadableResponse =
-                    valueText === "Yes"
-                        ? "The patient's airway is compromised."
-                        : valueText === "No"
-                            ? "The patient's airway is not compromised."
-                            : "The patient's airway is threatened.";
-            } else if (name === "Is Breathing Abnormal") {
-                humanReadableResponse =
-                    valueText === "Yes"
-                        ? "The patient is injured."
-                        : "The patient is not injured.";
-            } else {
-                humanReadableResponse = "No data available.";
-            }
+                console.log("Processing observation:", { name, valueText }); // Debugging log
 
-            return {
-                name: name,
-                value: humanReadableResponse,
-                time: ob.obs_datetime,
-            };
-        });
+                let humanReadableResponse = "";
+
+                if (name === "Airway Patent") {
+                    if (valueText === "Yes") {
+                        humanReadableResponse = "The patient's airway is patent.";
+                    } else if (valueText === "No") {
+                        humanReadableResponse = "The patient's airway is not patent.";
+                    } else {
+                        humanReadableResponse = "The patient's airway status is unclear.";
+                    }
+                } else if (name === "Airway Reason") {
+                    humanReadableResponse = `The airway is not patent due to ${valueText}.`;
+                } else if (name === "Airway Opening Intervention") {
+                    humanReadableResponse = `The ${valueText} was provided as intervention.`;
+                } else if (name === "Patient Injured") {
+                    if (valueText === "Yes") {
+                        humanReadableResponse = "The patient is injured.";
+                    } else if (valueText === "No") {
+                        humanReadableResponse = "The patient is not injured.";
+                    }
+                } else if (name === "Neck collar applied") {
+                    if (valueText === "Yes") {
+                        humanReadableResponse = "The neck collar was provided as intervention.";
+                    } else if (valueText === "No") {
+                        humanReadableResponse = "The neck collar was not provided.";
+                    } else {
+                        humanReadableResponse = "The neck collar intervention was not indicated.";
+                    }
+                } else if (name === "Head blocks applied") {
+                    if (valueText === "Yes") {
+                        humanReadableResponse = "The head block was provided as intervention.";
+                    } else {
+                        humanReadableResponse = "No head block was provided as intervention.";
+                    }
+                }
+
+                if (humanReadableResponse) {
+                    return {
+                        name: name,
+                        value: humanReadableResponse,
+                        time: ob.obs_datetime,
+                    };
+                } else {
+                    return null;
+                }
+            })
+            .filter((item) => item !== null);
     };
 
     if (historyLoading) {

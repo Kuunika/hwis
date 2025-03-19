@@ -280,7 +280,7 @@ export const VisitHistory = () => {
     },
     panel36: {
       title: "Airway and Breathing",
-      data: getEncountersByType(encounters.AIRWAY_BREATHING),
+      data: getEncountersByType(encounters.BREATHING_ASSESSMENT),
     },
     panel37: {
       title: "Consciousness",

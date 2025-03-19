@@ -8,7 +8,7 @@ import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import ReactMarkdown from "react-markdown";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
@@ -16,6 +16,7 @@ import { concepts, encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Obs } from "@/interfaces";
 import {AirwayAssessment} from "@/app/patient/components/clinicalNotes/airwayAssement";
+import {BreathingAssessment} from "@/app/patient/components/clinicalNotes/breathingAssement";
 
 export const ClinicalNotes = () => {
   const [clinicalNotes, setClinicalNotes] = useState<
@@ -93,8 +94,7 @@ export const ClinicalNotes = () => {
     </WrapperBox>
   );
   return (
-    <Panel title="Clinical Notes" icon={expandIcon}>
-      <br />
+    <Panel title="" icon={expandIcon}>
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
         <AddClinicalNotes onAddNote={addClinicalNote} />
         <FaRegChartBar />
@@ -128,9 +128,14 @@ export const ClinicalNotes = () => {
           })
         )}
       </WrapperBox>
-        <Box sx={{ mt: "2ch" }}>
-            <AirwayAssessment />
-        </Box>
+        <Grid container spacing={2} sx={{ mt: "2ch" }}>
+            <Grid item xs={12} sm={6}>
+                <AirwayAssessment />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <BreathingAssessment />
+            </Grid>
+        </Grid>
     </Panel>
   );
 };
