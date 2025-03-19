@@ -96,6 +96,10 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       path: `/patient/${patient.id}/primary-assessment`,
     },
     {
+      label: "Nursing Care Notes (SOAP)",
+      path: `/patient/${patient.id}/soap`,
+    },
+    {
       label: "Start Secondary Assessment",
       path: `/patient/${patient.id}/secondary-assessment`,
     },
@@ -141,6 +145,14 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           path: `/patient/${patient.id}/nursingChart`,
         },
         { label: "Referral", path: `/patient/${patient.id}/referral` },
+        {
+          label: "Trauma Specialty Review",
+          path: `/patient/${patient.id}/trauma-specialty-review`,
+        },
+        {
+          label: "Orthopaedic Specialty Review",
+          path: `/patient/${patient.id}/orthopaedic-specialty-review`,
+        },
       ],
     },
   };
