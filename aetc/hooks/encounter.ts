@@ -84,9 +84,10 @@ const getConceptIds: any = async (obs: Obs[]) => {
      
       let concept:any = await getConceptFromCacheOrFetch(conceptName);
 
+
       let value= observation.value;
 
-      if(observation.coded){
+      if(observation.coded || concept?.data[0].datatype=='Coded'){
 
         value =  (await getConceptFromCacheOrFetch(observation.value))?.data[0].uuid
 

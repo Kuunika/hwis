@@ -23,6 +23,7 @@ const form = {
   abnormality: {
     name: concepts.ABNORMALITIES,
     label: "Are there abnormalities on this Region",
+    coded: true,
   },
 };
 
