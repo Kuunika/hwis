@@ -15,7 +15,7 @@ const EditUserPage = () => {
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const userId = params?.id as string;
+    const userId = params.id.toString();
     setUserId(userId);
     if (userId) {
       getUserById(userId)
