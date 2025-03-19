@@ -102,7 +102,11 @@ export const getHumanReadableDateTimeLab = (
 
   return dayjs(date).format("YYYY-MM-DD h:mm A");
 };
+export const getShortDate = (date: string | Date | undefined) => {
+  if (!date) return "";
 
+  return dayjs(date).format("DD-MM-YY");
+};
 export function isToday(dateString: string) {
   const inputDate = new Date(dateString);
   const today = new Date();
@@ -119,10 +123,9 @@ export function isToday(dateString: string) {
   return inputDateUTC.getTime() === todayUTC.getTime();
 }
 
-export function extractTimes(dates: Date[]): string[] {
+export function extractDateTime(dates: Date[]): string[] {
+  if (!dates) return [];
   return dates.map((date) => {
-    const dateString = date.toString();
-    const timePart = dateString.split(" ")[4];
-    return timePart;
+    return getShortDate(date);
   });
 }
