@@ -1,17 +1,12 @@
 import { MainTypography, WrapperBox } from "@/components";
-import { Panel } from ".";
 import { useParameters, useVitals } from "@/hooks";
-import { BasicSelect } from "../basicSelect";
-
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
-
-import { VisitDates } from "../visitDates";
 import { Paper } from "@mui/material";
 import FlowStarter from "../flowStarter";
-import { Padding } from "@mui/icons-material";
 
 export const VitalsPanel = () => {
-  const { setActivePage, options, isLoading, vitals } = useVitals();
+  const { isLoading, vitals } = useVitals();
+
   const { params } = useParameters();
 
   if (isLoading) {
