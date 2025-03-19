@@ -71,7 +71,15 @@ export const ClinicalNotes = () => {
     );
 
     const pupilSizeObs = reviewOfSystemsEncounter?.obs.find(
-      (ob) => ob.names.some((n) => n.name === concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT)
+      (ob) => ob.names.some((n) => n.name.toLowerCase() === concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT.toLowerCase())
+    );
+
+    const focalNeurologyObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name == concepts.FOCAL_NEUROLOGY)
+    );
+
+    const postureObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name.toLowerCase() === concepts.FOCAL_NEUROLOGY.toLowerCase())
     );
 
 
@@ -126,7 +134,13 @@ export const ClinicalNotes = () => {
         //   setDisabilityMessage("Invalid verbal response value.");
         // }
       
-        setDisabilityMessage(`Pupil Size and Reaction to Light: ${pupilSizeObs?.value || "Not available"}`);
+        // setDisabilityMessage(`Pupil Size and Reaction to Light: ${pupilSizeObs?.value || "Not available"}`);
+
+        //setDisabilityMessage(`Focal Neurology : ${focalNeurologyObs?.value || "Not available"}`);
+
+        setDisabilityMessage(`Posture : ${postureObs?.value || "Not available"}`);
+        console.log("Lets see the text behind it",postureObs )
+
 
         
 
