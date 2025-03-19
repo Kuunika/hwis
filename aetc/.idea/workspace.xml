@@ -6,12 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="1f2d02be-60f9-43d7-be4b-2a5c6bea0138" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/panels/visitHistory.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/panels/visitHistory.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/visits/visitForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/visits/visitForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript JSX File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -35,7 +44,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "refactoring-primary-secondary-survey-display",
-    "last_opened_file_path": "/Users/wisdom/Documents/Projects/Work/hwis/aetc/app/patient/components/visits",
+    "last_opened_file_path": "/Users/wisdom/Documents/Projects/Work/hwis/aetc",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -66,7 +75,8 @@
       <option name="presentableId" value="Default" />
       <updated>1726914738295</updated>
       <workItem from="1726914739488" duration="43000" />
-      <workItem from="1742307365177" duration="14020000" />
+      <workItem from="1742307365177" duration="17250000" />
+      <workItem from="1742369480396" duration="12581000" />
     </task>
     <servers />
   </component>

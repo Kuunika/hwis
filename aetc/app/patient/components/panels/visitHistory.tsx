@@ -380,7 +380,7 @@ export const VisitHistory = () => {
                             </Typography>
                           </AccordionSummary>
                           <AccordionDetails>
-                            <VisitData data={data} />
+                            <VisitTable data={data} />
                           </AccordionDetails>
                         </Accordion>
                     )

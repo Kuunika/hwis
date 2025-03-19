@@ -8,9 +8,7 @@ export const VisitForm = ({ data }: VisitDataProps) => {
   return (
       <Paper elevation={0} sx={{ padding: 1, borderRadius: 1 }}>
           {data.map((item, index) => {
-              console.log("item", item)
               const name = item.names || "Unknown";
-              console.log("tittle", name )
               const value = item.value || "No value provided";
               const date = item.obs_datetime ? new Date(item.obs_datetime).toLocaleString() : "Invalid Date";
 
