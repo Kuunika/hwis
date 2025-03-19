@@ -8,20 +8,29 @@ import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import ReactMarkdown from "react-markdown";
-import { Box } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid } from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Obs } from "@/interfaces";
+import { VisitTable } from "../visits/visitTable";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+
+
 
 export const ClinicalNotes = () => {
+
+  //-------------------------------------------
+
   const [clinicalNotes, setClinicalNotes] = useState<
     Array<{ note: string | null; creator: string; time: any }>
   >([]);
+  
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
+  const { data:pData } = getPatientsEncounters(params.id as string);
   const { data: patient } = getOnePatient(params.id as string);
 
   const {
@@ -30,15 +39,41 @@ export const ClinicalNotes = () => {
     isSuccess: encountersFetched,
   } = getPatientsEncounters(params.id as string);
 
+  //---------------------------------------
+  const [traumaMessage, setDisabilityMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!pData) return;
+  
+    const reviewOfSystemsEncounter = pData.find(
+      (d) => d.encounter_type.uuid === encounters.DISABILITY_ASSESSMENT
+    );
+  
+    const reviewOfSystemsTraumaObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS)
+    );
+    if (reviewOfSystemsTraumaObs?.value  === "No") {
+      setDisabilityMessage("The patient is alert and does not exhibit a low level of consciousness.");
+    } else {
+      setDisabilityMessage("The patient exhibits a low level of consciousness and requires further evaluation and monitoring.");
+    }
+  }, [pData]);
+
+  
+  
+  //-------------------------------------------
+
   useEffect(() => {
     if (encountersFetched) {
       const noteEncounter = patientEncounters.find(
         (encounter) =>
           encounter?.encounter_type?.uuid == encounters.CLINICAL_NOTES
+          
       );
 
       if (noteEncounter) formatNotes(noteEncounter.obs);
     }
+    
   }, [patientEncounters]);
 
   useEffect(() => {
@@ -92,7 +127,8 @@ export const ClinicalNotes = () => {
     </WrapperBox>
   );
   return (
-    <Panel title="Clinical Notes" icon={expandIcon}>
+    <>
+        <Panel title="Clinical Notes" icon={expandIcon}>
       <br />
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
         <AddClinicalNotes onAddNote={addClinicalNote} />
@@ -128,6 +164,46 @@ export const ClinicalNotes = () => {
         )}
       </WrapperBox>
     </Panel>
+---
+    <Panel title="Disability Assessment" icon={expandIcon}>
+      <br />
+      {traumaMessage && (
+  <Typography sx={{}}>{traumaMessage}</Typography>
+)}
+      <WrapperBox
+        sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch", pl: "2ch" }}
+      >
+        {clinicalNotes.length == 0 ? (
+          <Typography>No Information Availbale</Typography>
+        ) : (
+          clinicalNotes.map((note: any) => {
+            return (
+              <Box
+                key={note.note}
+                sx={{ my: "1ch", py: "1ch", borderBottom: "1px solid #E0E0E0" }}
+              >
+                <ReactMarkdown>{note.note}</ReactMarkdown>
+                <br />
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography>~ {note.creator}</Typography>
+                  <Typography variant="caption">{note.time}</Typography>
+                </Box>
+              </Box>
+            );
+          })
+        )}
+      </WrapperBox>
+    </Panel>
+    </>
+    
+
+    
   );
 };
 
