@@ -124,6 +124,16 @@ export const DesktopView = () => {
               },
             ]}
           />
+          <ConsultationCard
+            disabled={!isOnList}
+            title="Continuation Sheet"
+            links={[
+              {
+                title: "Continuation Sheet",
+                link: `/patient/${params.id}/continuationSheet`,
+              },
+            ]}
+          />
 
           <ConsultationCard
             disabled={!isOnList}
@@ -187,6 +197,18 @@ export const DesktopView = () => {
                     width={20}
                     height={20}
                     src="/icons/referral.svg"
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
+              {
+                title: "Trauma Specialty Review",
+                link: `/patient/${params.id}/traumaSpecialtyReview`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src="/icons/surgicalnotes.svg"
                     alt="AETC Form icon"
                   />
                 ),

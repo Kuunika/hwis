@@ -229,8 +229,6 @@ const formatAllObsToObject = (results: Array<any>) => {
 };
 
 export const filterObservations = (obs: Obs[], name: string): Obs[] | null => {
-  console.log({ obs });
-
   if (!obs) {
     return null;
   }

@@ -19,9 +19,6 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
-
-
-
 const wardOptions = [
     { id: concepts.TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT, label: "2A Oncology Ward (General ward/High Dependency Unit)" },
     { id: concepts.TWO_B_RENAL_AND_DERMATOLOGY_WARD, label: "2B Renal and Dermatology Ward" },
@@ -77,9 +74,6 @@ export default function AdmissionForm() {
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
-
-
-
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
         if (patientVisits) {
@@ -103,12 +97,9 @@ export default function AdmissionForm() {
                     { concept: concepts.BED_NUMBER, value: values.bedNumber, obsDatetime: currentDateTime },
                     { concept: concepts.REASON_FOR_ADMISSION, value: values.reasonForAdmission, obsDatetime: currentDateTime },
                     { concept: concepts.SPECIALITY_DEPARTMENT, value: values.specialtyInvolved, obsDatetime: currentDateTime },
-
-
                 ],
             },
         ];
-
         const payload = {
             encounterType: encounters.DISCHARGE_PATIENT,
             visit: activeVisit?.uuid,
@@ -131,7 +122,6 @@ export default function AdmissionForm() {
             toast.error("Failed to submit Admission information.");
         }
     };
-
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
@@ -179,7 +169,6 @@ export default function AdmissionForm() {
                                     sx={{ width: "100%" }}
                                 />
                             </MainGrid>
-
                             {/* Specialty Involved */}
                             <MainGrid item xs={12}>
                                 <SearchComboBox

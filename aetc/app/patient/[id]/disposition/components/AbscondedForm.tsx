@@ -87,10 +87,12 @@ export default function AbscondedForm() {
             await submitEncounter(payload);
             toast.success("Absconded information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            
+
+            navigateTo("/dispositions");
 
         } catch (error) {
             console.error("Error submitting Absconded information: ", error);

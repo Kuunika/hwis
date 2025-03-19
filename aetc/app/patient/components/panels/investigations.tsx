@@ -13,6 +13,7 @@ import { LabRequestModal } from "../labRequest";
 import { LabOrderTable } from "./labOrderTable";
 import { LabRequest } from "@/interfaces";
 import { Box, Button, Popover, Typography } from "@mui/material";
+import { TestAccordion } from "../../[id]/consultation/components/testAccordion";
 
 export const Investigations = () => {
   const { navigateTo } = useNavigation();
@@ -41,7 +42,7 @@ export const Investigations = () => {
   return (
     <Panel
       title="Investigations"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => {}} />}
+      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
     >
       <WrapperBox>
         <BasicPopover />
@@ -67,7 +68,7 @@ export default function BasicPopover() {
   return (
     <>
       <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-        Add Lab Order
+        Add Investigation
       </Button>
       <Popover
         id={id}
@@ -86,10 +87,8 @@ export default function BasicPopover() {
         <Box sx={{ padding: "2ch" }}>
           <Typography variant="h4">Lab Order</Typography>
           <br />
-          <LabRequestModal
-            addRequest={() => {}}
-            onClose={() => setAnchorEl(null)}
-          />
+          <TestAccordion /> {/* Replacing LabRequestModal with TestAccordion */}
+
         </Box>
       </Popover>
     </>

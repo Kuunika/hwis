@@ -60,6 +60,7 @@ export interface Patient {
 }
 
 export interface Person {
+  latest_encounter_type: string;
   patient_id: number;
   identifiers: Identifier[];
   given_name: string;
@@ -342,6 +343,11 @@ export interface Drugs {
 }
 
 export interface LabFormProps {
+  onClose: () => void;
+  addRequest: (value: LabRequest) => void;
+}
+
+export interface BedsideFormProps {
   onClose: () => void;
   addRequest: (value: LabRequest) => void;
 }

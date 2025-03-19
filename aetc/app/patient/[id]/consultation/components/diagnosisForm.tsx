@@ -42,7 +42,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
 
     const [showICD11, setShowICD11] = useState(false);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { data: patientEncounters } = getPatientsEncounters(params.id as string);
+    const { data: patientEncounters, refetch } = getPatientsEncounters(params.id as string);
     const { mutate: deleteDiagnosis } = removeObservation();
 
     useEffect(() => {
@@ -86,33 +86,30 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
         const currentDateTime = getDateTime();
 
         if (selectedCondition && activeVisit?.uuid) {
-            createDiagnosis({
-                encounterType: encounters.OUTPATIENT_DIAGNOSIS,
-                visit: activeVisit?.uuid,
-                patient: params.id,
-                encounterDatetime: currentDateTime,
-                obs: [
-                    {
-                        concept: conceptType,
-                        value: `${selectedCondition.code} - ${selectedCondition.bestMatchText}`, // Use ICD-11 code
-                        obsDatetime: currentDateTime,
+            createDiagnosis(
+                {
+                    encounterType: encounters.OUTPATIENT_DIAGNOSIS,
+                    visit: activeVisit?.uuid,
+                    patient: params.id,
+                    encounterDatetime: currentDateTime,
+                    obs: [
+                        {
+                            concept: conceptType,
+                            value: `${selectedCondition.code} - ${selectedCondition.bestMatchText}`, // Use ICD-11 code
+                            obsDatetime: currentDateTime,
+                        },
+                    ],
+                },
+                {
+                    onSuccess: async () => {
+                        await refetch(); // Ensure data is updated after successful submission
+                        toast.success("Diagnosis submitted successfully!");
                     },
-                ],
-            });
-
-            if (isSuccess) {
-                setDiagnosisList((prev) => [
-                    ...prev,
-                    {
-                        id: Date.now().toString(),
-                        condition: `${selectedCondition.code} - ${selectedCondition.label}`, // Display both code & label
-                        obsDatetime: currentDateTime,
+                    onError: () => {
+                        toast.error("Failed to submit diagnosis.");
                     },
-                ]);
-                toast.success("Diagnosis submitted successfully!");
-            } else if (isError) {
-                toast.error("Failed to submit diagnosis.");
-            }
+                }
+            );
         } else {
             toast.error("Visit information is missing, cannot add diagnosis.");
         }
