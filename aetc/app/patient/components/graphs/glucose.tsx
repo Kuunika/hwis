@@ -1,6 +1,6 @@
 import { useVitalsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-import { extractTimes } from "@/helpers/dateTime";
+import { extractDateTime } from "@/helpers/dateTime";
 export function Glucose() {
   const { chartData } = useVitalsGraphData();
   return (
@@ -12,7 +12,7 @@ export function Glucose() {
             data: chartData.glucoseData,
           },
         ],
-        xAxisCategories: extractTimes(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.xAxisData),
         title: "",
         height: 350,
         yAxisMin: 0,

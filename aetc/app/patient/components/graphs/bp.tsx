@@ -1,6 +1,6 @@
 import { useVitalsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-import { extractTimes } from "@/helpers/dateTime";
+import { extractDateTime } from "@/helpers/dateTime";
 export function BP() {
   const { chartData } = useVitalsGraphData();
   return (
@@ -16,7 +16,7 @@ export function BP() {
             data: chartData.diastolicbpData,
           },
         ],
-        xAxisCategories: extractTimes(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.xAxisData),
         title: "",
         height: 350,
         yAxisMin: 0,

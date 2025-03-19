@@ -119,10 +119,8 @@ export function isToday(dateString: string) {
   return inputDateUTC.getTime() === todayUTC.getTime();
 }
 
-export function extractTimes(dates: Date[]): string[] {
+export function extractDateTime(dates: Date[]): string[] {
   return dates.map((date) => {
-    const dateString = date.toString();
-    const timePart = dateString.split(" ")[4];
-    return timePart;
+    return getHumanReadableDateTime(date);
   });
 }
