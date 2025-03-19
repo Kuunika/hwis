@@ -61,8 +61,7 @@ export const fetchConceptAndCreateEncounter = () => {
     };
 
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
-
-
+    
     return createEncounter(filteredEncounter).then((response) => response.data);
   };
 
@@ -82,13 +81,13 @@ const getConceptIds: any = async (obs: Obs[]) => {
   try {
     for (const observation of obs) {
       const conceptName = observation.concept as unknown as string;
-
      
       let concept:any = await getConceptFromCacheOrFetch(conceptName);
 
+
       let value= observation.value;
 
-      if(observation.coded){
+      if(observation.coded || concept?.data[0].datatype=='Coded'){
 
         value =  (await getConceptFromCacheOrFetch(observation.value))?.data[0].uuid
 
@@ -98,7 +97,6 @@ const getConceptIds: any = async (obs: Obs[]) => {
       const groupMembers = Array.isArray(observation.groupMembers)
         ? await getConceptIds(observation.groupMembers)
         : [];
-
   
       if (concept.data.length > 0) {
         obsWithUUIDs.push({
@@ -109,6 +107,8 @@ const getConceptIds: any = async (obs: Obs[]) => {
           conceptName
         });
       }
+
+
     }
   } catch (error) {
     console.log({ error });

@@ -107,7 +107,7 @@ function Home() {
           <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
             <Card icon={<FcTodoList />} link="/triage" title="Triage List" />
           </AuthGuardComp>
-          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN]}>
+          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
             <Card
               icon={<FcTodoList />}
               link="/assessments"
