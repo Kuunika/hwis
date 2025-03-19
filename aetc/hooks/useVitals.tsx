@@ -36,7 +36,7 @@ export const useVitals = () => {
       const encounter = filteredEncounters[0]; // Get the first matching encounter
       const obs = encounter?.obs ?? [];
 
-      setFormattedVitals(formatAllVitalsToObject(obs));
+      setFormattedVitals(formatAllVitalsToObject(getLatestObservations(obs)));
     }
   }, [visitDate, data]);
 
@@ -49,7 +49,37 @@ export const useVitals = () => {
       }))
     );
   }, [formattedVitals]);
+  const getLatestObservations = (obs: any) => {
+    if (!obs || !Array.isArray(obs) || obs.length === 0) {
+      return [];
+    }
 
+    const latestObsMap = new Map();
+
+    // Find the most recent observation for each concept_id
+    obs.forEach((observation: any) => {
+      if (
+        !observation ||
+        !observation.concept_id ||
+        !observation.obs_datetime
+      ) {
+        return; // Skip invalid observations
+      }
+
+      const { concept_id, obs_datetime } = observation;
+      const currentLatest = latestObsMap.get(concept_id);
+
+      if (
+        !currentLatest ||
+        new Date(obs_datetime) > new Date(currentLatest.obs_datetime)
+      ) {
+        latestObsMap.set(concept_id, observation);
+      }
+    });
+
+    // Convert Map values back to an array
+    return Array.from(latestObsMap.values());
+  };
   const updateVitals = (obs: any) => {
     const saturationRate = getObservationValue(obs, concepts.SATURATION_RATE);
     const heartRate = getObservationValue(obs, concepts.HEART_RATE);
