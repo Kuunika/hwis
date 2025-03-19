@@ -1,25 +1,46 @@
 import { encounters, concepts } from "@/constants";
-import { PatientProfileContext, PatientProfileContextType } from "@/contexts";
 import { formatAllVitalsToObject, getObservationValue } from "@/helpers/emr";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getPatientsEncounters } from "./encounter";
 import { getActivePatientDetails } from "./getActivePatientDetails";
+import { useVisitDates } from "@/contexts/visitDatesContext";
 
 export const useVitals = () => {
-  const { patientId, activeVisitId } = getActivePatientDetails();
-
+  const { patientId } = getActivePatientDetails();
+  const { visitDate } = useVisitDates();
   const { data, isLoading } = getPatientsEncounters(patientId as string);
   const [vitals, setVitals] = useState<any>([]);
   const [formattedVitals, setFormattedVitals] = useState<any>({});
   const [options, setOptions] = useState<Array<any>>([]);
   const [activePage, setActivePage] = useState<number>(0);
 
+  // Update vitals when active page changes
   useEffect(() => {
     updateVitals(
       Object.keys(formattedVitals).length > 0 ? formattedVitals[activePage] : []
     );
-  }, [activePage]);
+  }, [activePage, formattedVitals]);
 
+  useEffect(() => {
+    // Reset active page when visit date changes
+    setActivePage(0);
+
+    if (data) {
+      const filteredEncounters = data.filter((d: any) => {
+        return (
+          d?.encounter_type?.uuid === encounters.VITALS &&
+          d.visit.date_started === visitDate
+        );
+      });
+
+      const encounter = filteredEncounters[0]; // Get the first matching encounter
+      const obs = encounter?.obs ?? [];
+
+      setFormattedVitals(formatAllVitalsToObject(obs));
+    }
+  }, [visitDate, data]);
+
+  // Update options when formattedVitals changes
   useEffect(() => {
     setOptions(
       Object.keys(formattedVitals).map((key) => ({
@@ -27,21 +48,7 @@ export const useVitals = () => {
         label: `Triage ${Number(key) + 1}`,
       }))
     );
-    updateVitals(
-      Object.keys(formattedVitals).length > 0 ? formattedVitals[activePage] : []
-    );
   }, [formattedVitals]);
-
-  useEffect(() => {
-    if (data && activeVisitId !== 0) {
-      const encounter = data
-        .filter((d) => d?.encounter_type?.uuid == encounters.VITALS)
-        .find((d) => d.visit_id == activeVisitId);
-      const obs = encounter?.obs ?? [];
-
-      setFormattedVitals(formatAllVitalsToObject(obs));
-    }
-  }, [activeVisitId, data]);
 
   const updateVitals = (obs: any) => {
     const saturationRate = getObservationValue(obs, concepts.SATURATION_RATE);
@@ -58,13 +65,12 @@ export const useVitals = () => {
 
     const initialVitals = [
       {
-        name: "Oxygen Saturation ",
-        value: saturationRate ? saturationRate + "%" : "",
+        name: "Oxygen Saturation",
+        value: saturationRate ? `${saturationRate}%` : "",
       },
-
       {
         name: "Heart Rate",
-        value: heartRate ? heartRate + " bpm" : "",
+        value: heartRate ? `${heartRate} bpm` : "",
       },
       {
         name: "Blood Pressure",
@@ -72,19 +78,19 @@ export const useVitals = () => {
       },
       {
         name: "Respiratory Rate",
-        value: respiratoryRate ? respiratoryRate + "bpm" : "",
+        value: respiratoryRate ? `${respiratoryRate} bpm` : "",
       },
       {
         name: "Temperature",
-        value: temperature ? temperature + "°C" : "",
+        value: temperature ? `${temperature}°C` : "",
       },
       {
         name: "Glucose",
-        value: glucose ? glucose + " mg/dL" : "",
+        value: glucose ? `${glucose} mg/dL` : "",
       },
       {
         name: "AVPU",
-        value: avpu ? avpu : "",
+        value: avpu || "",
       },
     ];
 
