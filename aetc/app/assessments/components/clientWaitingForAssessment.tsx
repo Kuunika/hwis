@@ -117,17 +117,18 @@ export const ClientWaitingForAssessment = () => {
               patientId={cell.id}
             />
 
-            <Button
-              variant="text"
-              onClick={() => {
-                setPatientId(cell.id);
-                setCpr(true);
-                setVisitUUID(cell.row.visit_uuid);
-              }}
-            >
-              Start CPR
-            </Button>
-
+            {cell.row.triage_result == "red" && (
+              <Button
+                variant="text"
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+              >
+                Start CPR
+              </Button>
+            )}
             <BasicMenu patient={cell.row} />
           </>
         );
