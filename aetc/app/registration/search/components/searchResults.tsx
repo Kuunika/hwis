@@ -40,18 +40,17 @@ import {
 } from "@/app/patient/[id]/view/components";
 import { DDEPatientRegistration } from "../../components/ddePatientRegistration";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
-import { Chip, Typography } from "@mui/material";
+import { Button, Chip, Typography } from "@mui/material";
 import { AbscondButton } from "@/components/abscondButton";
-
 
 export const SearchResults = ({
   searchedPatient,
   searchResults,
-  genericSearch
+  genericSearch,
 }: {
   searchedPatient: any;
   searchResults: DDESearch;
-  genericSearch: boolean
+  genericSearch: boolean;
 }) => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
@@ -104,23 +103,27 @@ export const SearchResults = ({
           </MainTypography>
           <br />
 
-          {!genericSearch && <MainButton
-            sx={{ mr: "0.2ch", borderRadius: "1px" }}
-            variant="secondary"
-            title="add new record"
-            onClick={handleNewRecord}
-          />}
+          {!genericSearch && (
+            <MainButton
+              sx={{ mr: "0.2ch", borderRadius: "1px" }}
+              variant="secondary"
+              title="add new record"
+              onClick={handleNewRecord}
+            />
+          )}
         </WrapperBox>
       )}
       <br />
       {!resultNotFound && (
         <WrapperBox sx={{ width: "100%" }}>
-          {!genericSearch && <MainButton
-            sx={{ mr: "0.2ch", borderRadius: "1px" }}
-            variant="secondary"
-            title="add new record"
-            onClick={handleNewRecord}
-          />}
+          {!genericSearch && (
+            <MainButton
+              sx={{ mr: "0.2ch", borderRadius: "1px" }}
+              variant="secondary"
+              title="add new record"
+              onClick={handleNewRecord}
+            />
+          )}
         </WrapperBox>
       )}
       <br />
@@ -130,7 +133,9 @@ export const SearchResults = ({
             <>
               <ResultBox
                 genericSearch={genericSearch}
-                setOpen={(person: Person) => !genericSearch && selectPatient(person, "local")}
+                setOpen={(person: Person) =>
+                  !genericSearch && selectPatient(person, "local")
+                }
                 type="Local"
                 key={patient?.uuid}
                 person={patient}
@@ -143,9 +148,10 @@ export const SearchResults = ({
           return (
             <ResultBox
               genericSearch={genericSearch}
-              setOpen={(person: Person) => !genericSearch && selectPatient(person, "remote")}
+              setOpen={(person: Person) =>
+                !genericSearch && selectPatient(person, "remote")
+              }
               type="Remote"
-
               //@ts-ignore
               key={patient?.uuid}
               person={patient}
@@ -177,23 +183,19 @@ export const ResultBox = ({
   person,
   type,
   setOpen,
-  genericSearch
+  genericSearch,
 }: {
   person: any;
   type: string;
   setOpen: (person: any) => void;
-  genericSearch: boolean
-
+  genericSearch: boolean;
 }) => {
-
   const [visitActive, setVisitActive] = useState(false);
-
+  const { navigateTo } = useNavigation();
 
   useEffect(() => {
-    setVisitActive(Boolean(person?.active_visit))
-
-  }, [person])
-
+    setVisitActive(Boolean(person?.active_visit));
+  }, [person]);
 
   if (!person) {
     return <></>;
@@ -207,10 +209,9 @@ export const ResultBox = ({
   return (
     <MainPaper
       onClick={() => {
-        if (visitActive) return
-        setOpen(person)
-      }
-      }
+        if (visitActive) return;
+        setOpen(person);
+      }}
       sx={{
         display: "flex",
         padding: 2,
@@ -219,14 +220,20 @@ export const ResultBox = ({
         cursor: "pointer",
       }}
     >
-      <WrapperBox sx={{ display: "flex", flexDirection: "column", justifyContent: "center", mr: 1, }}>
+      <WrapperBox
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          mr: 1,
+        }}
+      >
         <WrapperBox
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#F5F5F5",
-
           }}
         >
           <MainTypography color={defaultTheme.primary} variant="h1">
@@ -234,8 +241,42 @@ export const ResultBox = ({
           </MainTypography>
         </WrapperBox>
         <br />
-        {type == "Local" && genericSearch && <PrinterBarcodeButton title={`Print Barcode`} icon={<Typography mr="1ch"><FaBarcode /></Typography>} variant="primary" patient={person} />}
-        {visitActive && !genericSearch && <AbscondButton patientId="" dialogTitle="Close Patient Visit" dialogConfirmationMsg="Are you sure you want to close this visit?" visitId={person?.active_visit?.uuid} buttonTitle="Close Visit" onDelete={() => setVisitActive(false)} />}
+
+        {type == "Local" && genericSearch && (
+          <PrinterBarcodeButton
+            title={`Print Barcode`}
+            icon={
+              <Typography mr="1ch">
+                <FaBarcode />
+              </Typography>
+            }
+            variant="primary"
+            patient={person}
+          />
+        )}
+        {type == "Local" && genericSearch && (
+          <>
+            {console.log({ person })}
+            <Button
+              onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
+              sx={{ mb: "1ch" }}
+              variant="text"
+            >
+              view profile
+            </Button>
+          </>
+        )}
+
+        {visitActive && !genericSearch && (
+          <AbscondButton
+            patientId=""
+            dialogTitle="Close Patient Visit"
+            dialogConfirmationMsg="Are you sure you want to close this visit?"
+            visitId={person?.active_visit?.uuid}
+            buttonTitle="Close Visit"
+            onDelete={() => setVisitActive(false)}
+          />
+        )}
       </WrapperBox>
       <WrapperBox>
         <WrapperBox
@@ -750,7 +791,7 @@ const AddReferralDialog = ({
 const SuccessMessage = ({ open }: { open: boolean }) => {
   const { navigateTo } = useNavigation();
   return (
-    <GenericDialog open={open} maxWidth="sm" title="" onClose={() => { }}>
+    <GenericDialog open={open} maxWidth="sm" title="" onClose={() => {}}>
       <OperationSuccess
         title="Process Completed Successfully"
         primaryActionText="Register More"

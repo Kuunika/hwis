@@ -82,10 +82,7 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.postureInfo.label),
-  [form.bloodGlocose.name]: yup
-    .string()
-    .required()
-    .label(form.bloodGlocose.label),
+  [form.bloodGlocose.name]: yup.string().label(form.bloodGlocose.label),
   [form.seizureInfo.name]: yup
     .string()
     .required()
@@ -203,7 +200,7 @@ export const Disability = ({ onSubmit }: Props) => {
           </Box>
         </FormFieldContainerLayout>
 
-        <FormFieldContainerLayout title="Light">
+        <FormFieldContainerLayout title="Pupillary Response">
           <FieldsContainer mr="1ch">
             <TextInputField
               sx={{ m: 0, width: "100%" }}
@@ -219,7 +216,10 @@ export const Disability = ({ onSubmit }: Props) => {
             />
           </FieldsContainer>
         </FormFieldContainerLayout>
-        <FormFieldContainerLayout last={true} title="Posture and Glucose">
+        <FormFieldContainerLayout
+          last={true}
+          title="Additional finds and Glucose"
+        >
           <FieldsContainer mr="1ch">
             <TextInputField
               sx={{ m: 0, width: "100%" }}
