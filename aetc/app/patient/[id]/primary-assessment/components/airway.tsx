@@ -37,6 +37,7 @@ const form = {
   neckCollar: {
     name: concepts.NECK_COLLAR_APPLIED,
     label: "Neck Collar Applied",
+    coded: true,
   },
   weakness: {
     name: concepts.WEAKNESS,
