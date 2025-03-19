@@ -4,29 +4,16 @@ import { Box } from "@mui/material";
 import { DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 
-import { concepts } from "@/constants";
 import { useEffect } from "react";
 
 import { useImageUpdate } from "@/hooks/useImageUpdate";
-import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
-import {
-  LungBackFemale,
-  LungFrontFemale,
-  LungLeftFemale,
-  LungRightMale,
-} from "@/assets";
-import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
+
+import { RadiologyAdult } from "@/assets/radiologyAdult";
 interface Props {
   onValueChange: (values: any) => void;
-  imageEncounter?: string;
-  imageSection?: string;
 }
 
-export function LungRightMaleImage({
-  onValueChange,
-  imageEncounter,
-  imageSection,
-}: Props) {
+export function RadiologyAdultImage({ onValueChange }: Props) {
   const {
     handleClose,
     handleFormSubmit,
@@ -47,13 +34,12 @@ export function LungRightMaleImage({
     formConceptsLabels: Array<{ concept: string; label: string }>
   ) => {
     setData({ section, formData, formConceptsLabels });
-
     handleFormSubmit(formData);
   };
 
   return (
     <div>
-      <LungRightMale ref={containerRef} />
+      <RadiologyAdult ref={null} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
           <DataBox key={value.section} labelValue={value} />
@@ -65,7 +51,8 @@ export function LungRightMaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <BreathingSoundsForm
+        <></>
+        {/* <RushForm
           onCancel={handleClose}
           onSubmit={(values, formConceptsLabels) =>
             handleDataSubmission(
@@ -74,7 +61,7 @@ export function LungRightMaleImage({
               formConceptsLabels
             )
           }
-        />
+        /> */}
       </SVGPopover>
     </div>
   );

@@ -583,7 +583,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
 
                   {gender == "Male" && (
                     <LungFrontMaleImage
-                      imageEncounter={encounters.BREATHING_ASSESSMENT}
                       imageSection={form.chestWallAbnormality.name}
                       onValueChange={setChestAbnormalitiesImage}
                       form="breathingLung"
@@ -591,7 +590,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                   )}
                   {gender == "Female" && (
                     <LungFrontFemaleImage
-                      imageEncounter={encounters.BREATHING_ASSESSMENT}
                       imageSection={form.chestWallAbnormality.name}
                       onValueChange={setChestAbnormalitiesImage}
                       form="breathingLung"
@@ -643,8 +641,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 <>
                   {gender == "Male" && (
                     <LungFrontMaleImage
-                      imageEncounter={encounters.BREATHING_ASSESSMENT}
-                      imageSection={form.chestWallAbnormality.name}
                       onValueChange={setChestExpansionImagesEnc}
                       form="selectable"
                     />
@@ -652,7 +648,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                   {gender == "Female" && (
                     <LungFrontFemaleImage
                       imageEncounter={encounters.BREATHING_ASSESSMENT}
-                      imageSection={form.chestWallAbnormality.name}
                       onValueChange={setChestExpansionImagesEnc}
                       form="selectable"
                     />
@@ -670,16 +665,12 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 <>
                   {gender == "Male" && (
                     <LungBackMaleImage
-                      imageSection={form.percussion.name}
-                      imageEncounter={encounters.BREATHING_ASSESSMENT}
                       form="percussion"
                       onValueChange={setPercussionImage}
                     />
                   )}
                   {gender == "Female" && (
                     <LungBackFemaleImage
-                      imageSection={form.percussion.name}
-                      imageEncounter={encounters.BREATHING_ASSESSMENT}
                       form="percussion"
                       onValueChange={setPercussionImage}
                     />

@@ -203,7 +203,19 @@ export const DesktopView = () => {
               },
               {
                 title: "Trauma Specialty Review",
-                link: `/patient/${params.id}/traumaSpecialtyReview`,
+                link: `/patient/${params.id}/trauma-specialty-review`,
+                icon: (
+                  <Image
+                    width={20}
+                    height={20}
+                    src="/icons/surgicalnotes.svg"
+                    alt="AETC Form icon"
+                  />
+                ),
+              },
+              {
+                title: "Orthopaedic Specialty Review",
+                link: `/patient/${params.id}/orthopaedic-specialty-review`,
                 icon: (
                   <Image
                     width={20}

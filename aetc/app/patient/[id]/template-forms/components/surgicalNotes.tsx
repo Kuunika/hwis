@@ -1507,7 +1507,6 @@ function SurgicalNotesTemplate() {
 
         <MainGrid item xs={12}>
           {/* SAMPLE History Subsection */}
-
           <section style={{ paddingBottom: "16px" }}>
             {presentingComplaints.length > 0 ? (
               <ul style={{ paddingLeft: "2ch", marginBottom: "16px", listStyleType: "none" }}>
