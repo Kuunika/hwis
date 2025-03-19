@@ -16,6 +16,8 @@ import { ConsultationContext, ConsultationContextType } from "@/contexts";
 
 import { TabsContainer } from "./tabsContainer";
 import { Charts } from "./charts";
+import { ListVisitDates } from "./listVisitDates";
+import { VisitDatesProvider } from "@/contexts/visitDatesContext";
 
 export const DesktopView = () => {
   const { params } = useParameters();
@@ -30,13 +32,17 @@ export const DesktopView = () => {
       container
       style={{ justifyContent: "center", marginTop: "10px", gap: "10px" }}
     >
-      <MainGrid item lg={2} sm={2}>
-        <PersonalDetailsCard />
-      </MainGrid>
-      <MainGrid item lg={9} sm={9}>
-        <VitalsPanel />
-        <TabsContainer />
-      </MainGrid>
+      <VisitDatesProvider>
+        <MainGrid item lg={2} sm={2}>
+          <PersonalDetailsCard />
+          <br />
+          <ListVisitDates />
+        </MainGrid>
+        <MainGrid item lg={9} sm={9}>
+          <VitalsPanel />
+          <TabsContainer />
+        </MainGrid>
+      </VisitDatesProvider>
     </MainGrid>
   );
 };
