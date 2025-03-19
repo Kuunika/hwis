@@ -1,4 +1,4 @@
-import { extractTimes } from "@/helpers/dateTime";
+import { extractDateTime } from "@/helpers/dateTime";
 import { useVitalsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
 export function O_2Sat() {
@@ -12,7 +12,7 @@ export function O_2Sat() {
             data: chartData.O_2SatData,
           },
         ],
-        xAxisCategories: extractTimes(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.datetimeO2Sat),
         title: "",
         height: 350,
         yAxisMin: 0,

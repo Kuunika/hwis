@@ -4,7 +4,7 @@ import {
   MainTypography,
   WrapperBox,
 } from "@/components";
-import { Chip, Typography } from "@mui/material";
+import { Chip, Paper, Typography } from "@mui/material";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useNavigation, useParameters } from "@/hooks";
 import { calculateAge } from "@/helpers/dateTime";
@@ -22,17 +22,13 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   }
 
   return (
-    <MainPaper
-      elevation={0}
-      sx={{
-        flex: 1,
+    <Paper
+      style={{
         backgroundColor: "#ffffff", // Light grey background for placeholders
         height: "300px", // Height of the graph placeholders
         alignItems: "center",
         justifyContent: "center",
         padding: "1ch",
-        border: "1px solid #ccc",
-        ...sx,
       }}
     >
       <WrapperBox sx={{ display: "flex", alignItems: "center" }}>
@@ -94,7 +90,7 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
         </WrapperBox>
         <Allergies />
       </WrapperBox>
-    </MainPaper>
+    </Paper>
   );
 };
 
