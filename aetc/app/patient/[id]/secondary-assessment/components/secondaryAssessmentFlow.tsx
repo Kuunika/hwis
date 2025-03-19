@@ -10,18 +10,35 @@ import {
   HeadAndNeck,
   NeurologicalExamination,
 } from ".";
+import { encounters } from "@/constants";
 
 export function SecondaryAssessmentFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { navigateBack } = useNavigation();
 
   const steps = [
-    { id: 1, label: "General Information" },
+    {
+      id: 1,
+      label: "General Information",
+      encounter: encounters.GENERAL_INFORMATION_ASSESSMENT,
+    },
     { id: 2, label: "Head and Neck" },
-    { id: 3, label: "Chest" },
-    { id: 4, label: "Abdomen and Pelvis" },
-    { id: 5, label: "Extremities" },
-    { id: 52, label: "Neurological Examination" },
+    { id: 3, label: "Chest", encounter: encounters.CHEST_ASSESSMENT },
+    {
+      id: 4,
+      label: "Abdomen and Pelvis",
+      encounter: encounters.ABDOMEN_AND_PELVIS_ASSESSMENT,
+    },
+    {
+      id: 5,
+      label: "Extremities",
+      encounter: encounters.EXTREMITIES_ASSESSMENT,
+    },
+    {
+      id: 52,
+      label: "Neurological Examination",
+      encounter: encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT,
+    },
   ];
 
   const handleGeneralInformationSubmit = () => {
@@ -48,6 +65,7 @@ export function SecondaryAssessmentFlow() {
       steps={steps}
       active={activeStep}
       onBack={() => navigateBack()}
+      showSubmittedStatus
     >
       <GeneralInformation onSubmit={handleGeneralInformationSubmit} />
       <HeadAndNeck onSubmit={handleHeadAndNeckSubmit} />

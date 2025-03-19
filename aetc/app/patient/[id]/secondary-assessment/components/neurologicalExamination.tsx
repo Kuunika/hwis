@@ -34,7 +34,7 @@ const initialValues = getInitialValues(form);
 
 export const NeurologicalExamination = ({ onSubmit }: Props) => {
   const { handleSubmit, isLoading } = useSubmitEncounter(
-    encounters.EXTREMITIES_ASSESSMENT,
+    encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT,
     onSubmit
   );
   const handleSubmitForm = async (values: any) => {
