@@ -12,7 +12,7 @@ export function O_2Sat() {
             data: chartData.O_2SatData,
           },
         ],
-        xAxisCategories: extractDateTime(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.datetimeO2Sat),
         title: "",
         height: 350,
         yAxisMin: 0,

@@ -12,7 +12,7 @@ export function Temp() {
             data: chartData.tempData,
           },
         ],
-        xAxisCategories: extractDateTime(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.datetimeTemperature),
         title: "",
         height: 350,
         yAxisMin: 0,

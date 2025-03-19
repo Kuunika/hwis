@@ -12,7 +12,7 @@ export function HeartRate() {
             data: chartData.heartRateData,
           },
         ],
-        xAxisCategories: extractDateTime(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.datetimeHeartrate),
         title: "",
         height: 350,
         yAxisMin: 0,

@@ -16,7 +16,7 @@ export function BP() {
             data: chartData.diastolicbpData,
           },
         ],
-        xAxisCategories: extractDateTime(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.datetimeSystolicbp),
         title: "",
         height: 350,
         yAxisMin: 0,

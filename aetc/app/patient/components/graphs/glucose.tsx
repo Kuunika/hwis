@@ -12,7 +12,7 @@ export function Glucose() {
             data: chartData.glucoseData,
           },
         ],
-        xAxisCategories: extractDateTime(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.datetimeGlucose),
         title: "",
         height: 350,
         yAxisMin: 0,
