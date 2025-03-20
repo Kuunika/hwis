@@ -18,17 +18,16 @@ import VitalsPanel from "./components/vitals";
 import HeadAndNeckPanel from "./components/headAndNeck";
 
 function InPatientAdmission() {
-
   const { navigateBack } = useNavigation();
-  const printRef = useRef(null);
+  const printRef = useRef();
   const [showAllPanels, setShowAllPanels] = useState({
     presentingComplaints: false,
     drugHistory: false,
     pastSurgicalHistory: false,
     socialHistory: false,
-    familyHistory: false
+    familyHistory: false,
   });
-  
+
   const togglePanel = (panel: keyof typeof showAllPanels) => {
     setShowAllPanels((prev) => ({
       ...prev,
@@ -37,16 +36,16 @@ function InPatientAdmission() {
   };
 
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    contentRef: printRef.current,
     documentTitle: "In-Patient Template Form",
-    onBeforeGetContent: () =>
+    onBeforePrint: () =>
       new Promise((resolve) => {
         setShowAllPanels({
           presentingComplaints: true,
           drugHistory: true,
           pastSurgicalHistory: true,
           socialHistory: true,
-          familyHistory: true
+          familyHistory: true,
         });
         setTimeout(resolve, 100);
       }),
@@ -56,121 +55,125 @@ function InPatientAdmission() {
         drugHistory: false,
         pastSurgicalHistory: false,
         socialHistory: false,
-        familyHistory: false
+        familyHistory: false,
       }),
   });
 
-  
   return (
     <>
-    <div ref={printRef}>
-      <PatientInfoTab />
-      <WrapperBox
-  
-  sx={{
-    display: { lg: "flex", xs: "none" },
-    alignItems: "center",
-    justifyContent: "space-between",
-    cursor: "pointer",
-    pt: "2ch",
-    pl: "2ch",
-    mb: "2ch",
-  }}
->
-  <div style={{display: "flex"}}>
-  <MainTypography
-    sx={{
-      width: "24px",
-      height: "24px",
-      fontSize: "20px",
-      fontWeight: 400,
-    }}
-  >
-    <FaAngleLeft />
-  </MainTypography>
-  <MainTypography
-    sx={{
-      fontSize: "14px",
-      fontWeight: 400,
-      lineHeight: "21px",
-      letterSpacing: "0em",
-      textAlign: "left",
-      paddingTop: "1px",
-    }}
-    onClick={() => navigateBack()}
-  >
-    Back
-  </MainTypography>
-  </div>
-  <MainButton onClick={handlePrint} sx={{marginRight:'20px'}} title="Download PDF" />
-</WrapperBox>
-<Box
-  sx={{
-    display: "grid",
-    gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, 
-    gap: "1.5ch",
-    gridAutoFlow: "dense",
-    pl: "2ch",
-    pr: "2ch",
-    alignItems: "start",
-  }}
-  
->
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <SocialHistoryPanel showForPrinting={showAllPanels.socialHistory}
-    toggleShow={() => togglePanel("socialHistory")}/>
-</WrapperBox>
-<WrapperBox sx={{ width: "100%" }}>
-  <PresentingComplaintsPanel
-    showForPrinting={showAllPanels.presentingComplaints}
-    toggleShow={() => togglePanel("presentingComplaints")}
-  />
-</WrapperBox>
+      <div ref={printRef as any}>
+        <PatientInfoTab />
+        <WrapperBox
+          sx={{
+            display: { lg: "flex", xs: "none" },
+            alignItems: "center",
+            justifyContent: "space-between",
+            cursor: "pointer",
+            pt: "2ch",
+            pl: "2ch",
+            mb: "2ch",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            <MainTypography
+              sx={{
+                width: "24px",
+                height: "24px",
+                fontSize: "20px",
+                fontWeight: 400,
+              }}
+            >
+              <FaAngleLeft />
+            </MainTypography>
+            <MainTypography
+              sx={{
+                fontSize: "14px",
+                fontWeight: 400,
+                lineHeight: "21px",
+                letterSpacing: "0em",
+                textAlign: "left",
+                paddingTop: "1px",
+              }}
+              onClick={() => navigateBack()}
+            >
+              Back
+            </MainTypography>
+          </div>
+          <MainButton
+            onClick={handlePrint}
+            sx={{ marginRight: "20px" }}
+            title="Download PDF"
+          />
+        </WrapperBox>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+            gap: "1.5ch",
+            gridAutoFlow: "dense",
+            pl: "2ch",
+            pr: "2ch",
+            alignItems: "start",
+          }}
+        >
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <SocialHistoryPanel
+              showForPrinting={showAllPanels.socialHistory}
+              toggleShow={() => togglePanel("socialHistory")}
+            />
+          </WrapperBox>
+          <WrapperBox sx={{ width: "100%" }}>
+            <PresentingComplaintsPanel
+              showForPrinting={showAllPanels.presentingComplaints}
+              toggleShow={() => togglePanel("presentingComplaints")}
+            />
+          </WrapperBox>
 
-<WrapperBox sx={{ width: "100%" }}>
-  <PastMedicalHistoryPanel
-  />
-</WrapperBox>
+          <WrapperBox sx={{ width: "100%" }}>
+            <PastMedicalHistoryPanel />
+          </WrapperBox>
 
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <DrugHistoryPanel
-    showForPrinting={showAllPanels.drugHistory}
-    toggleShow={() => togglePanel("drugHistory")}
-  />
-</WrapperBox>
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <DrugHistoryPanel
+              showForPrinting={showAllPanels.drugHistory}
+              toggleShow={() => togglePanel("drugHistory")}
+            />
+          </WrapperBox>
 
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <PastSurgicalHistoryPanel
-    showForPrinting={showAllPanels.pastSurgicalHistory}
-    toggleShow={() => togglePanel("pastSurgicalHistory")}
-  />
-</WrapperBox>
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <PastSurgicalHistoryPanel
+              showForPrinting={showAllPanels.pastSurgicalHistory}
+              toggleShow={() => togglePanel("pastSurgicalHistory")}
+            />
+          </WrapperBox>
 
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <AllergiesPanel
-  />
-</WrapperBox>
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <FamilyHistoryPanel showForPrinting={showAllPanels.familyHistory} toggleShow={()=>togglePanel("familyHistory")}/>
-</WrapperBox>
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <ReviewOfSystemsPanel showForPrinting={showAllPanels.familyHistory} toggleShow={()=>togglePanel("familyHistory")}/>
-</WrapperBox>
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <AllergiesPanel />
+          </WrapperBox>
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <FamilyHistoryPanel
+              showForPrinting={showAllPanels.familyHistory}
+              toggleShow={() => togglePanel("familyHistory")}
+            />
+          </WrapperBox>
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <ReviewOfSystemsPanel
+              showForPrinting={showAllPanels.familyHistory}
+              toggleShow={() => togglePanel("familyHistory")}
+            />
+          </WrapperBox>
 
-<h1>General Impression</h1>
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <VitalsPanel/>
-</WrapperBox>
-<WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
-  <HeadAndNeckPanel/>
-</WrapperBox>
-</Box>
-</div>
+          <h1>General Impression</h1>
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <VitalsPanel />
+          </WrapperBox>
+          <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
+            <HeadAndNeckPanel />
+          </WrapperBox>
+        </Box>
+      </div>
     </>
-    
   );
-  
 }
-
 
 export default InPatientAdmission;
