@@ -194,7 +194,7 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                 <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/medicalInpatient`)}>
                     Medical Inpatient
                 </MenuItem>
-                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/template-forms`)}>
+                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/surgicalNotes`)}>
                     Surgical Notes
                 </MenuItem>
                 <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>
