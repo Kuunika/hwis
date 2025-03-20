@@ -32,7 +32,7 @@ export const MedicalInPatientFlow = () => {
     },
     {
       id: 2,
-      label: "Circulation Assessment",
+      label: "Past medical history",
       encounter: encounters.CIRCULATION_ASSESSMENT,
     },
     {
