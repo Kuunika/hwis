@@ -104,7 +104,7 @@ export default function DeathForm() {
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -115,11 +115,11 @@ export default function DeathForm() {
             await submitEncounter(payload);
             toast.success("Death Form information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
             // Redirect to assessments page
-            navigateTo("/assessments");
+            navigateTo("/dispositions");
         } catch (error) {
             console.error("Error submitting Death form information: ", error);
             toast.error("Failed to submit Death Form information.");

@@ -10,9 +10,14 @@ import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { useState, useEffect } from "react";
 
 import { LabRequestModal } from "../labRequest";
+import { LabResultsTable } from "./labResults";
+
 import { LabOrderTable } from "./labOrderTable";
 import { LabRequest } from "@/interfaces";
 import { Box, Button, Popover, Typography } from "@mui/material";
+import { TestAccordion } from "../../[id]/consultation/components/testAccordion";
+import { MinimalTable } from "@/components/tables/minimalTable"; // Import MinimalTable
+
 
 export const Investigations = () => {
   const { navigateTo } = useNavigation();
@@ -20,6 +25,7 @@ export const Investigations = () => {
   const [open, setOpen] = useState(false);
   const [labRequests, setLabRequests] = useState<LabRequest[]>([]);
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
+
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,12 +47,24 @@ export const Investigations = () => {
   return (
     <Panel
       title="Investigations"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => {}} />}
+      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
     >
       <WrapperBox>
-        <BasicPopover />
+        <TestAccordion /> {/* Replacing LabRequestModal with TestAccordion */}
+
       </WrapperBox>
-      <LabOrderTable />
+
+      {/* Flex container for inline tables */}
+      <Box display="flex" gap={2} width="100%">
+        <Box flex={1}>
+          <LabOrderTable />
+        </Box>
+        <Box flex={1}>
+          <LabResultsTable rows={[]} />
+        </Box>
+      </Box>
+
+
     </Panel>
   );
 };
@@ -67,7 +85,7 @@ export default function BasicPopover() {
   return (
     <>
       <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-        Add Lab Order
+        Add Investigation
       </Button>
       <Popover
         id={id}
@@ -86,10 +104,8 @@ export default function BasicPopover() {
         <Box sx={{ padding: "2ch" }}>
           <Typography variant="h4">Lab Order</Typography>
           <br />
-          <LabRequestModal
-            addRequest={() => {}}
-            onClose={() => setAnchorEl(null)}
-          />
+          <TestAccordion /> {/* Replacing LabRequestModal with TestAccordion */}
+
         </Box>
       </Popover>
     </>

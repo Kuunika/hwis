@@ -16,6 +16,7 @@ export const encounters = {
   FINANCING: "ceec1aca-1bbb-427a-bc6d-ef8ae11f31b2",
   PRESENTING_COMPLAINTS: "ba069102-8d80-11d8-abbb-0024217bb78e",
   // TRIAGE_RESULT: "723ea21f-408e-4da5-a91f-56b0a8d0ce73",
+  DISPOSITION: "ef689dc1-364f-4e18-b44f-36c5938c78da",
   TRIAGE_RESULT: "27e4890f-1677-4098-aa85-c65cfe32359c",
   CLINICAL_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   PROCEDURES_DONE: "ba0656ec-8d80-11d8-abbb-0024217bb78e",
@@ -166,8 +167,9 @@ export const encounters = {
   DISPENSING: "ba0612c2-8d80-11d8-abbb-0024217bb78e",
   FAMILY_MEDICAL_HISTORY: "ba06b178-8d80-11d8-abbb-0024217bb78e",
   REVIEW_OF_SYSTEMS: "54e32e5d-51c5-4f16-8cff-9fc7da3c68ca",
-  NURSING_CARE_NOTES:"c7d8b240-04f0-48c1-8d83-10d95f571b92",
-  TEMPLATE_NOTES:'ba067294-8d80-11d8-abbb-0024217bb78e'
+  NURSING_CARE_NOTES: "c7d8b240-04f0-48c1-8d83-10d95f571b92",
+  TEMPLATE_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
+  CONTINUATION_SHEET: "dd12d7ad-f177-463a-9013-c135440c6cf9",
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -1002,7 +1004,8 @@ export const concepts = {
   AMOXICILLIN_CLAVULANIC_ACID_ALLERGY: "Amoxicillin Clavulanic Acid Allergy",
   COTRIMOXAZOLE_ALLERGY: "Cotrimoxazole Allergy",
   SULFADOXIME_PYRIMETHAMINE_ALLERGY: "Sulfadoxime Pyrimethamine Allergy",
-  SULPHUR_CONTAINING_MEDICATION_ALLERGY: "Sulphur Containing Medication Allergy",
+  SULPHUR_CONTAINING_MEDICATION_ALLERGY:
+    "Sulphur Containing Medication Allergy",
   ALLERGEN: "Allergen",
   ALLERGEN_CATEGORY: "Allergen Category",
   OTHER_MEDICATION_ALLERGY: "Other Medication Allergy",
@@ -1211,6 +1214,7 @@ export const concepts = {
   FLUID_BALANCE_CHART: "Fluid balance chart",
   BUILDING_COLLAPSE: "Building Collapse",
   PRESENTING_COMPLAINTS: "Presenting Complaints",
+
   SUBJECTIVE:"subjective",
   OBJECTIVE:"objective",
   ASSESSMENT:"assessment",
@@ -1223,8 +1227,6 @@ export const concepts = {
   INTOXICATION_DESCRIPTION:"Intoxication description",
   SOCIAL_HISTORY:"social history",
   FAMILY_HISTORY:"family history"
-
-
 };
 
 export const conceptNames = {
@@ -1510,9 +1512,8 @@ export const roles = {
 
 // username: registration, clinician, nurse
 
-export const durationOptions = ["Day(s)", "Week(s)", "Month(s)", "Year(s)"];
-
+export const durationOptions = ["Hour(s)", "Day(s)", "Week(s)", "Month(s)", "Year(s)"];
 
 export const templateForms = {
-  ORTHOPAEDIC_SPECIALTY_REVIEW:"orthopaedic specialty review"
-}
+  ORTHOPAEDIC_SPECIALTY_REVIEW: "orthopaedic specialty review",
+};
