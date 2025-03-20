@@ -264,6 +264,14 @@ export const VisitHistory = () => {
       title: "Outpatient Diagnosis",
       data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
     },
+    panel42: {
+      title: "Exposure Assessment",
+      data: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+    },
+    panel43: {
+      title: "Circulation Assessment",
+      data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+    },
   };
 
   // Handle accordion expansion

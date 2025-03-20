@@ -3,7 +3,7 @@ import { Panel } from ".";
 import { FaExpandAlt, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
@@ -41,6 +41,136 @@ export const ClinicalNotes = () => {
 
   //---------------------------------------
   const [traumaMessage, setDisabilityMessage] = useState<string | null>(null);
+  const [circulationMessage, setCirculationMessage] = useState<string | null>(null);
+
+  useEffect(()=>{
+    if (!pData) return;
+    const reviewOfSystemsEncounter = pData.find(
+      (d) => d.encounter_type.uuid === encounters.CIRCULATION_ASSESSMENT
+    );
+
+    const activelyBleddingObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.IS_PATIENT_ACTIVELY_BLEEDING)
+    );
+    const actionDoneObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.ACTION_DONE)
+    );
+    // const pulseObs = reviewOfSystemsEncounter?.obs.find(
+    //   (ob) => ob.names.some((n) => n.name === concepts.pulse)
+    // );
+    const pulseRateObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.PULSE_RATE)
+    );
+    const capillaryRefillTimeObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.CAPILLARY_REFILL_TIME)
+    );
+    // const patientPulseObs = reviewOfSystemsEncounter?.obs.find(
+    //   (ob) => ob.names.some((n) => n.name === concepts.)
+    // );
+    // //Does the patient have a pulse 
+    const mucuousObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.MUCOUS_MEMBRANES)
+    );
+    const assessPeripheriesObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.ASSESS_PERIPHERIES)
+    );
+    const bloodPressureMeasuredObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.BLOOD_PRESSURE_MEASURED)
+    );
+    const patientInjuredObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.PATIENT_INJURED)
+    );
+    const intravenousAccessObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.INTRAVENOUS)
+    );
+    const abdominalDistentionObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.ABDOMINAL_DISTENSION)
+    );
+    const otherAbnormalitiesObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.IS_THERE_OTHER_OBDONORMALITIES)
+    );
+
+    let messages = [];
+
+    if(activelyBleddingObs?.value == "Yes"){
+      messages.push("• The patient is actively bleeding")
+    }else{
+      messages.push("• The patient is not actively bleeding")
+    }
+    if (actionDoneObs?.value) {
+      messages.push(`• Action Done when the patient is actively bleeding: ${actionDoneObs.value}`);
+    } 
+  
+    if(pulseRateObs?.value == "Weak"){
+      messages.push("• The  patient's Purse Rate is weak")
+    }else if(pulseRateObs?.value == "Strong,Regular"){
+      messages.push("• The  patient's Purse Rate is Strong,Regular ")
+    }else{
+      messages.push("• The  patient's Purse Rate is Irregular")
+    }
+    
+    if(capillaryRefillTimeObs?.value == "Less than 3 seconds"){
+      messages.push("• The  patient's Capillary refill time is Less than 3 seconds")
+    }else if(pulseRateObs?.value == "3 seconds"){
+      messages.push("• The  patient's Capillary refill time is 3 seconds")
+    }else{
+      messages.push("• The  patient's Capillary refill time is More than 3 seconds")
+    }
+
+
+    // if(activelyBleddingObs?.value == "Yes"){
+    //   messages.push("• The patient patient have a pulse")
+    // }else{
+    //   messages.push("• The patient does not have a pulse")
+    // }
+
+    if(mucuousObs?.value == "Normal"){
+      messages.push("• Mucous membranes is Normal")
+    }else{
+      messages.push("• Mucous membranes is Abnormal")
+    }
+
+    if(assessPeripheriesObs?.value == "Cold and clammy"){
+      messages.push("• Assess Peripheries is Cold and clammy")
+    }else{
+      messages.push("• Assess Peripheries is Warm")
+    }
+
+    if(bloodPressureMeasuredObs?.value == "Done"){
+      messages.push("• Blood Pressure is Measured ")
+    }else if(bloodPressureMeasuredObs?.value == "Not Done"){
+      messages.push("• Blood Pressure is not Measured")
+    }else{
+      messages.push("• BP is Unrecordable")
+    }
+
+    if(patientInjuredObs?.value == "Yes"){
+      messages.push("•  The patient is injured")
+    }else{
+      messages.push("• The patient is not injured")
+    }
+
+    if(intravenousAccessObs?.value == "Yes"){
+      messages.push("• The patient needs intravenous access")
+    }else{
+      messages.push("• The patient does not need intravenous access")
+    }
+
+    if(abdominalDistentionObs?.value == "Yes"){
+      messages.push("• There is abdominal distention")
+    }else{
+      messages.push("• There is no abdominal distention")
+    }
+
+    if(otherAbnormalitiesObs?.value == "Yes"){
+      messages.push("• There are other abnormalities")
+    }else{
+      messages.push("• There are no other abnormalities")
+    }
+
+    setCirculationMessage(messages.join("<br />"));
+
+  }, [pData])
 
   useEffect(() => {
     if (!pData) return;
@@ -131,6 +261,126 @@ export const ClinicalNotes = () => {
     setDisabilityMessage(messages.join("<br />"));
   
   }, [pData]); 
+
+
+const [additionalFieldsMessage, setAdditionalFieldsMessage] = useState<string | null>(null);
+const [exposureMessage, setExposureMessage] = useState<string | null>(null);
+
+
+useEffect(() => {
+  if (!pData) return;
+
+  const additionalFieldsEncounter = pData.find(
+    (d) => d.encounter_type.uuid === encounters.EXPOSURE_ASSESSMENT 
+  );
+
+ 
+  const temperatureObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.TEMPERATURE)
+  );
+
+  const additionalNotesObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.ADDITIONAL_NOTES)
+  );
+
+  const descriptionObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.DESCRIPTION)
+  );
+
+  const abnormalityDescriptionObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.ABNORMALITY_DESCRIPTION)
+  );
+
+  const injuryDescriptionObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.DESCRIPTION_OF_INJURY)
+  );
+
+  const imagePartNameObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.IMAGE_PART_NAME)
+  );
+
+  const skinRashObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.SKIN_RASH)
+  );
+
+  const abnormalitiesObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.ABNORMALITIES)
+  );
+
+  const injuryObs = additionalFieldsEncounter?.obs.find(
+    (ob) => ob.names.some((n) => n.name === concepts.INJURY)
+  );
+
+
+  let messages = [];
+
+ 
+  if (temperatureObs?.value) {
+    messages.push(`• Temperature (C): ${temperatureObs.value}`);
+  } else {
+    messages.push("• Temperature (C): Not reported.");
+  }
+
+
+  if (additionalNotesObs?.value) {
+    messages.push(`• Additional Notes: ${additionalNotesObs.value}`);
+  } else {
+    messages.push("• Additional Notes: Not reported.");
+  }
+
+
+  if (descriptionObs?.value) {
+    messages.push(`• Description: ${descriptionObs.value}`);
+  } else {
+    messages.push("• Description: Not reported.");
+  }
+
+
+  if (abnormalityDescriptionObs?.value) {
+    messages.push(`• Abnormality Description: ${abnormalityDescriptionObs.value}`);
+  } else {
+    messages.push("• Abnormality Description: Not reported.");
+  }
+
+  
+  if (injuryDescriptionObs?.value) {
+    messages.push(`• Description of Injury: ${injuryDescriptionObs.value}`);
+  } else {
+    messages.push("• Description of Injury: Not reported.");
+  }
+
+
+  if (imagePartNameObs?.value) {
+    messages.push(`• Image Part Name: ${imagePartNameObs.value}`);
+  } else {
+    messages.push("• Image Part Name: Not reported.");
+  }
+
+
+  if (skinRashObs?.value) {
+    messages.push(`• Skin Rash: ${skinRashObs.value}`);
+  } else {
+    messages.push("• Skin Rash: Not reported.");
+  }
+
+
+  if (abnormalitiesObs?.value) {
+    messages.push(`• Abnormalities: ${abnormalitiesObs.value}`);
+  } else {
+    messages.push("• Abnormalities: Not reported.");
+  }
+
+  if (injuryObs?.value) {
+    messages.push(`• Injury: ${injuryObs.value}`);
+  } else {
+    messages.push("• Injury: Not reported.");
+  }
+
+
+  setAdditionalFieldsMessage(messages.join("<br />"));
+
+}, [pData]);
+
   
   //-------------------------------------------
 
@@ -199,86 +449,81 @@ export const ClinicalNotes = () => {
   );
   return (
     <>
-        <Panel title="Clinical Notes" icon={expandIcon}>
-      <br />
-      <WrapperBox display={"flex"} justifyContent={"space-between"}>
-        <AddClinicalNotes onAddNote={addClinicalNote} />
-        <FaRegChartBar />
-      </WrapperBox>
-      <WrapperBox
-        sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch", pl: "2ch" }}
-      >
-        {clinicalNotes.length == 0 ? (
-          <Typography>No Notes added</Typography>
-        ) : (
-          clinicalNotes.map((note: any) => {
-            return (
-              <Box
-                key={note.note}
-                sx={{ my: "1ch", py: "1ch", borderBottom: "1px solid #E0E0E0" }}
-              >
-                <ReactMarkdown>{note.note}</ReactMarkdown>
-                <br />
+      <Panel title="Clinical Notes" icon={expandIcon}>
+        <br />
+        <WrapperBox display={"flex"} justifyContent={"space-between"}>
+          <AddClinicalNotes onAddNote={addClinicalNote} />
+          <FaRegChartBar />
+        </WrapperBox>
+        <WrapperBox
+          sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch", pl: "2ch" }}
+        >
+          {clinicalNotes.length == 0 ? (
+            <Typography>No Notes added</Typography>
+          ) : (
+            clinicalNotes.map((note: any) => {
+              return (
                 <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+                  key={note.note}
+                  sx={{ my: "1ch", py: "1ch", borderBottom: "1px solid #E0E0E0" }}
                 >
-                  <Typography>~ {note.creator}</Typography>
-                  <Typography variant="caption">{note.time}</Typography>
+                  <ReactMarkdown>{note.note}</ReactMarkdown>
+                  <br />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography>~ {note.creator}</Typography>
+                    <Typography variant="caption">{note.time}</Typography>
+                  </Box>
                 </Box>
-              </Box>
-            );
-          })
-        )}
-      </WrapperBox>
+              );
+            })
+          )}
+        </WrapperBox>
+      </Panel>
+      <Panel title="Circulation Assessment" icon={expandIcon}>
+      <br />
+      {circulationMessage ? (
+        <Typography
+          sx={{}}
+          dangerouslySetInnerHTML={{ __html: circulationMessage }}
+        />
+      ) : (
+        <Typography>No Information Available</Typography>
+      )}
     </Panel>
----
-<Panel title="Disability Assessment" icon={expandIcon}>
-  <br />
-  {traumaMessage && (
-    <Typography
-      sx={{}}
-      dangerouslySetInnerHTML={{ __html: traumaMessage }}
-    />
-  )}
-  <WrapperBox
-    sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch", pl: "2ch" }}
-  >
-    {clinicalNotes.length == 0 ? (
-      <Typography>No Information Available</Typography>
-    ) : (
-      clinicalNotes.map((note: any) => {
-        return (
-          <Box
-            key={note.note}
-            sx={{ my: "1ch", py: "1ch", borderBottom: "1px solid #E0E0E0" }}
-          >
-            <ReactMarkdown>{note.note}</ReactMarkdown>
-            <br />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Typography>~ {note.creator}</Typography>
-              <Typography variant="caption">{note.time}</Typography>
-            </Box>
-          </Box>
-        );
-      })
-    )}
-  </WrapperBox>
-</Panel>
+  
+      <Panel title="Disability Assessment" icon={expandIcon}>
+        <br />
+        {traumaMessage ? (
+          <Typography
+            sx={{}}
+            dangerouslySetInnerHTML={{ __html: traumaMessage }}
+          />
+        ) : (
+          <Typography>No Information Available</Typography>
+        )}
+      </Panel>
+  
+  
+      <Panel title="Exposure Assessment" icon={expandIcon}>
+        <br />
+        {additionalFieldsMessage ? (
+          <Typography
+            sx={{}}
+            dangerouslySetInnerHTML={{ __html: additionalFieldsMessage }}
+          />
+        ) : (
+          <Typography>No Information Available</Typography>
+        )}
+      </Panel>
     </>
-    
-
-    
   );
+
 };
 
 const AddClinicalNotes = ({
