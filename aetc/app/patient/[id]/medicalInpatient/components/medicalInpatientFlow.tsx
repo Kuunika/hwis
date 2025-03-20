@@ -8,6 +8,7 @@ import {
   Circulation,
   Disability,
   Exposure,
+  PastMedicalHistory,
   PresentingComplaints,
 } from ".";
 
@@ -73,8 +74,9 @@ export const MedicalInPatientFlow = () => {
       >
         <PresentingComplaints />
         <DrugList />
+        <PastMedicalHistory />
         {/* <BreathingForm onSubmit={handleBreathingSubmit} /> */}
-        <Circulation onSubmit={handleCirculationSubmit} />
+        {/* <Circulation onSubmit={handleCirculationSubmit} /> */}
         <Disability onSubmit={handleDisabilitySubmit} />
         <Exposure onSubmit={navigateBack} />
       </NewStepperContainer>

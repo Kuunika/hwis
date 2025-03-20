@@ -7,3 +7,4 @@ export * from "./breathing";
 export * from "./cprDialogForm"
 export * from "./presentingComplaints"
 export * from "./drugList"
+export * from "./pastMedicalHistory"

@@ -1222,7 +1222,8 @@ export const concepts = {
   SURGICAL_HISTORY:"surgical history",
   INTOXICATION_DESCRIPTION:"Intoxication description",
   SOCIAL_HISTORY:"social history",
-  FAMILY_HISTORY:"family history"
+  FAMILY_HISTORY:"family history",
+  UNKNOWN:"unknown"
 
 
 };
