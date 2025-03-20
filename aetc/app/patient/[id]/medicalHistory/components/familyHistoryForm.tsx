@@ -14,7 +14,7 @@ import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getInitialValues } from "@/helpers";
 import { Field, getIn } from "formik";
-import FamilyHistoryPanel from "../../medicalInpatient/components/familyHistory";
+import FamilyHistoryPanel from "../../medicalInpatient-/components/familyHistory";
 
 interface Observation {
   obs_id: number | null;

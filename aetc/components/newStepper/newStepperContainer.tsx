@@ -79,7 +79,9 @@ export function NewStepperContainer({
   showSubmittedStatus = false,
 }: IProps) {
   const { patientId, activeVisit, activeVisitId } = getActivePatientDetails();
-  const { data, isLoading } = getPatientsEncounters(patientId as string);
+  const { data, isLoading, isRefetching, isPending, isFetching } =
+    getPatientsEncounters(patientId as string);
+
   // Map children to steps to ensure order consistency
   const filteredChildren = children.filter((child) => child !== false);
   const validChildren = steps.map((step, index) => filteredChildren[index]);
@@ -197,7 +199,7 @@ export function NewStepperContainer({
                     </Typography>
                     {showSubmittedStatus && (
                       <Typography>
-                        {isLoading ? (
+                        {isLoading || (isRefetching && active - 1 == key) ? (
                           <FaSpinner
                             size={"2.5ch"}
                             style={{

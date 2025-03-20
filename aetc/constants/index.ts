@@ -1216,6 +1216,15 @@ export const concepts = {
   ASSESSMENT:"assessment",
   PLAN:"plan",
   IMPLEMENTATION:"implementation",
+
+  ARV:"on arv",
+  OTHER_MEDICATION: "Other Medication",
+  SURGICAL_HISTORY:"surgical history",
+  INTOXICATION_DESCRIPTION:"Intoxication description",
+  SOCIAL_HISTORY:"social history",
+  FAMILY_HISTORY:"family history"
+
+
 };
 
 export const conceptNames = {
