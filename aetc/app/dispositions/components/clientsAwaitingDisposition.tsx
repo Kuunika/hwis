@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
-// import { getPatientsAwaitingDisposition } from "@/hooks/patientReg"; 
-import { getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
-
+// import { getPatientsAwaitingDisposition } from "@/hooks/patientReg";
+import { getPatientsWaitingForDispositionPaginated } from "@/hooks/patientReg";
 import * as React from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -18,10 +17,12 @@ import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { Box } from "@mui/material";
 import { calculateAge } from "@/helpers/dateTime";
+import { closeCurrentVisit } from "@/hooks/visit";
+import { closeVisit } from "@/services/visit";
 
 export const ClientsAwaitingDisposition = () => {
     const [deleted, setDeleted] = useState("");
-
+    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const [paginationModel, setPaginationModel] = useState({
         page: 1,
         pageSize: 10,
@@ -29,10 +30,9 @@ export const ClientsAwaitingDisposition = () => {
 
     const { navigateTo } = useNavigation();
     const [searchText, setSearchText] = useState("");
-    const { data, refetch, isPending } = getPatientsWaitingForAssessmentPaginated(
-        paginationModel,
-        searchText
-    );
+    const { data, refetch, isPending } =
+        getPatientsWaitingForDispositionPaginated(paginationModel, searchText);
+    console.log({ data })
 
     useEffect(() => {
         refetch();
@@ -57,7 +57,7 @@ export const ClientsAwaitingDisposition = () => {
             flex: 1,
         },
         {
-            field: "care_area",
+            field: "disposition_type",
             headerName: "Disposition Type",
             flex: 1,
             // renderCell: (cell: any) => <CareAreaDropdown patient={cell.row} />,
@@ -79,8 +79,12 @@ export const ClientsAwaitingDisposition = () => {
             gender: row.gender,
             arrivalTime: row.patient_arrival_time,
             arrivalDateTime: row.arrival_time,
+            dispositionType: row.disposition_type, // 
             actor: (
-                <DisplayEncounterCreator encounterType={encounters.DISCHARGE_PATIENT} patientId={row.id} />
+                <DisplayEncounterCreator
+                    encounterType={encounters.DISPOSITION}
+                    patientId={row.id}
+                />
             ),
             aggregate: <CalculateWaitingTime arrival_time={row.arrival_time} />,
             waitingTime: (
@@ -104,7 +108,9 @@ export const ClientsAwaitingDisposition = () => {
     return (
         <PatientTableListServer
             columns={columns}
-            data={data?.data ? data : { data: [], page: 1, per_page: 10, total_pages: 0 }}
+            data={
+                data?.data ? data : { data: [], page: 1, per_page: 10, total_pages: 0 }
+            }
             searchText={searchText}
             setSearchString={setSearchText}
             setPaginationModel={setPaginationModel}
@@ -150,9 +156,17 @@ const DispositionActions = ({ patient }: { patient: any }) => {
         setAnchorEl(null);
     };
 
-    const handleCloseVisit = () => {
-        console.log(`Closing visit for patient ${patient.id}`);
-        // Add API call to close the visit here
+    const handleCloseVisit = async () => {
+        if (patient.visit_uuid) {
+            try {
+                await closeVisit(patient.visit_uuid, patient.id);
+                navigateTo("/dispositions"); // Navigate after successful closure
+            } catch (error) {
+                console.error("Error closing visit:", error);
+            }
+        } else {
+            console.warn("No active visit UUID found for this patient.");
+        }
     };
 
     return (
@@ -168,16 +182,25 @@ const DispositionActions = ({ patient }: { patient: any }) => {
             <MainButton
                 size="small"
                 sx={{ fontSize: "12px", ml: "5px", mr: "5px" }}
-                title={"Select Form"}
+                title={"Template Forms"}
                 onClick={handleClick}
             />
-            <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
-                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>Form 1</MenuItem>
-                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>Form 2</MenuItem>
-                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>Form 3</MenuItem>
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/medicalInpatient`)}>
+                    Medical Inpatient
+                </MenuItem>
+                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/template-forms`)}>
+                    Surgical Notes
+                </MenuItem>
+                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>
+                    Form 3
+                </MenuItem>
             </Menu>
-
-
         </div>
     );
 };
@@ -196,7 +219,6 @@ const CardAction = ({
     patient: any;
 }) => {
     const { navigateTo } = useNavigation();
-
     return (
         <Box sx={{ display: "flex", flexDirection: "column", flex: "1" }}>
             <WrapperBox
