@@ -62,5 +62,5 @@ const form = {
 };
 
 export const PastMedicalHistory = () => {
-  return <FormikInit></FormikInit>;
+  return <></>;
 };
