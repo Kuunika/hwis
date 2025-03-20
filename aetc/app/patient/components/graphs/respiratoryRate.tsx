@@ -1,8 +1,9 @@
-import { extractTimes } from "@/helpers/dateTime";
+import { extractDateTime } from "@/helpers/dateTime";
 import { useVitalsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
 export function RespiratoryRate() {
   const { chartData } = useVitalsGraphData();
+  console.log("🚀 ~ RespiratoryRate ~ chartData:", chartData.datetimeRR);
   return (
     <LineChart
       chartConfig={{
@@ -12,7 +13,7 @@ export function RespiratoryRate() {
             data: chartData.rrData,
           },
         ],
-        xAxisCategories: extractTimes(chartData.xAxisData),
+        xAxisCategories: extractDateTime(chartData.datetimeRR),
         title: "",
         height: 350,
         yAxisMin: 0,

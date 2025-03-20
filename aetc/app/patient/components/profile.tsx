@@ -16,6 +16,8 @@ import { ConsultationContext, ConsultationContextType } from "@/contexts";
 
 import { TabsContainer } from "./tabsContainer";
 import { Charts } from "./charts";
+import { ListVisitDates } from "./listVisitDates";
+import { VisitDatesProvider } from "@/contexts/visitDatesContext";
 
 export const DesktopView = () => {
   const { params } = useParameters();
@@ -32,210 +34,13 @@ export const DesktopView = () => {
     >
       <MainGrid item lg={2} sm={2}>
         <PersonalDetailsCard />
-        <WrapperBox sx={{ my: "1ch" }}>
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Assessments"
-            links={[
-              {
-                title: "Primary Assessment",
-                link: `/patient/${params.id}/primary-assessment`,
-              },
-            ]}
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Sample History"
-            links={[
-              {
-                title: "Sample History",
-                link: `/patient/${params.id}/medicalHistory`,
-              },
-            ]}
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Assessments"
-            links={[
-              {
-                title: "Secondary Assessment",
-                link: `/patient/${params.id}/secondary-assessment`,
-              },
-            ]}
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            onClick={setActiveStep}
-            links={[
-              {
-                id: 0,
-                title: "Differential Diagnosis",
-                link: `/patient/${params.id}/consultation`,
-              },
-              {
-                id: 1,
-                title: "Investigations",
-                link: `/patient/${params.id}/consultation`,
-              },
-              {
-                id: 2,
-                title: "Final Diagnosis",
-                link: `/patient/${params.id}/consultation`,
-              },
-              // {
-              //   id: 3,
-              //   title: "Medication",
-              //   link: `/patient/${params.id}/consultation`,
-              // },
-            ]}
-            title="Consultation"
-          />
-          {/* New Button */}
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Patient Management Plan"
-            links={[
-              {
-                title: "Patient Management Plan",
-                link: `/patient/${params.id}/patient-management-plan`,
-              },
-            ]}
-          />
-
-          {/* New Button */}
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Disposition"
-            links={[
-              {
-                title: "Disposition",
-                link: `/patient/${params.id}/disposition`,
-              },
-            ]}
-          />
-
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Disposition"
-            links={[
-              {
-                title: "Nursing Care Notes (SOAP)",
-                link: `/patient/${params.id}/soap`,
-              },
-            ]}
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Continuation Sheet"
-            links={[
-              {
-                title: "Continuation Sheet",
-                link: `/patient/${params.id}/continuationSheet`,
-              },
-            ]}
-          />
-
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Template Forms"
-            links={[
-              {
-                title: "Medical Inpatient",
-                link: `/patient/${params.id}/medicalInpatient`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src={"/icons/medicalInpatient.svg"}
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Surgical Notes",
-                // link: `/patient/${params.id}/surgicalNotes`,
-                link: `/patient/${params.id}/surgicalNotes`,
-
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/surgicalnotes.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Gynacological",
-                link: `/patient/${params.id}/gynacological`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/gynacology.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Monitoring Chart",
-                link: `/patient/${params.id}/nursingChart`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/monitoring.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Referral",
-                link: `/patient/${params.id}/referral`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/referral.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Trauma Specialty Review",
-                link: `/patient/${params.id}/trauma-specialty-review`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/surgicalnotes.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Orthopaedic Specialty Review",
-                link: `/patient/${params.id}/orthopaedic-specialty-review`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/surgicalnotes.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-            ]}
-          />
-        </WrapperBox>
-        {/* <BasicAccordion /> */}
+        <br />
+        <ListVisitDates />
       </MainGrid>
       <MainGrid item lg={9} sm={9}>
         <VitalsPanel />
-        {/* <Charts /> */}
         <TabsContainer />
       </MainGrid>
-      <FlowStarter patient={params} />
     </MainGrid>
   );
 };

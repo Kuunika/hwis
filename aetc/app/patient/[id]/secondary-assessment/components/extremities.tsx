@@ -116,10 +116,10 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
       },
     ];
     // delete formValues[form.abnormalitiesLowerLimb.name];
-    // await handleSubmit([
-    //   ...mapSubmissionToCodedArray(form, formValues),
-    //   ...obs,
-    // ]);
+    await handleSubmit([
+      ...mapSubmissionToCodedArray(form, formValues),
+      ...obs,
+    ]);
   };
 
   return (

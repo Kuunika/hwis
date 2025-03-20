@@ -9,6 +9,7 @@ import StepLabel from "@mui/material/StepLabel";
 export type Step = {
   id: string | number;
   label: string;
+  encounter?: string;
 };
 type StepperProp = {
   steps: Step[];

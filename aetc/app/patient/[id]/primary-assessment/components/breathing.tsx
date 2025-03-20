@@ -58,7 +58,7 @@ const form = {
     label: "End Time",
   },
   deviceForIntervention: {
-    name: concepts.DEVICE_USED,
+    name: concepts.DEVICE_USED_FOR_INTERVENTION,
     label: "Device used for intervention",
     coded: true,
   },
@@ -143,7 +143,7 @@ const schema = Yup.object().shape({
   [form.finishTimeIntervention.name]: Yup.string().label(
     form.finishTimeIntervention.label
   ),
-  [form.deviceForIntervention.name]: Yup.string().label(
+  [form.deviceForIntervention.name]: Yup.array().label(
     form.deviceForIntervention.label
   ),
   [form.respiratoryRate.name]: Yup.number()
@@ -203,9 +203,7 @@ const schema = Yup.object().shape({
   [form.chestWallAbnormality.name]: Yup.string().label(
     form.chestWallAbnormality.label
   ),
-  [form.breathSounds.name]: Yup.string()
-    .required()
-    .label(form.breathSounds.label),
+  [form.breathSounds.name]: Yup.string().label(form.breathSounds.label),
 });
 
 const initialsValues = getInitialValues(form);
@@ -476,7 +474,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
               name={form.deviceForIntervention.name}
               label={form.deviceForIntervention.label}
               sx={{ width: "100%" }}
-              multiple
               options={[
                 { label: "Bag and mask", id: concepts.BAG_AND_MASK },
                 {

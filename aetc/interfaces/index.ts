@@ -143,6 +143,7 @@ export interface Encounter {
   uuid: string;
   obs: Obs[];
   created_by: string;
+  person_uuid?:string
 }
 
 export interface Visit {

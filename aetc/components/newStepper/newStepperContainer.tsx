@@ -1,6 +1,11 @@
 "use client";
 import { styled } from "@mui/material/styles";
-import { FaAngleDown, FaAngleLeft } from "react-icons/fa";
+import {
+  FaAngleDown,
+  FaAngleLeft,
+  FaCheckCircle,
+  FaSpinner,
+} from "react-icons/fa";
 import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
 import MuiAccordionSummary, {
   AccordionSummaryProps,
@@ -17,6 +22,9 @@ import {
   StepperTablet,
   WrapperBox,
 } from "..";
+import { Box } from "@mui/material";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { getActivePatientDetails, useParameters } from "@/hooks";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -58,6 +66,7 @@ interface IProps {
   title: string;
   setActive?: (value: any) => void;
   onBack?: () => void;
+  showSubmittedStatus?: boolean;
 }
 
 export function NewStepperContainer({
@@ -67,10 +76,23 @@ export function NewStepperContainer({
   title,
   setActive,
   onBack,
+  showSubmittedStatus = false,
 }: IProps) {
+  const { patientId, activeVisit, activeVisitId } = getActivePatientDetails();
+  const { data, isLoading } = getPatientsEncounters(patientId as string);
   // Map children to steps to ensure order consistency
   const filteredChildren = children.filter((child) => child !== false);
   const validChildren = steps.map((step, index) => filteredChildren[index]);
+
+  const checkIfEncounterSubmitted = (encounterType: string) => {
+    const found = data
+      ?.filter((d) => {
+        return d.encounter_type.uuid == encounterType;
+      })
+      .filter((d) => d.visit_id == activeVisitId);
+
+    return Boolean(found?.length);
+  };
 
   return (
     <MainGrid container spacing={5}>
@@ -152,18 +174,51 @@ export function NewStepperContainer({
                   aria-controls={`panel${key + 1}-content`}
                   id={`panel${key + 1}-header`}
                 >
-                  <Typography
-                    variant="h5"
+                  <Box
                     sx={{
-                      fontSize: "24px",
-                      fontWeight: 700,
-                      lineHeight: "29px",
-                      letterSpacing: "0em",
-                      textAlign: "left",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      pr: "2ch",
                     }}
                   >
-                    {steps[key]?.label}
-                  </Typography>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontSize: "24px",
+                        fontWeight: 700,
+                        lineHeight: "29px",
+                        letterSpacing: "0em",
+                        textAlign: "left",
+                      }}
+                    >
+                      {steps[key]?.label}
+                    </Typography>
+                    {showSubmittedStatus && (
+                      <Typography>
+                        {isLoading ? (
+                          <FaSpinner
+                            size={"2.5ch"}
+                            style={{
+                              animation: "spin 1s linear infinite",
+                            }}
+                          />
+                        ) : (
+                          <FaCheckCircle
+                            size={"2.5ch"}
+                            color={
+                              checkIfEncounterSubmitted(
+                                steps[key]?.encounter as string
+                              )
+                                ? "green"
+                                : "gray"
+                            }
+                          />
+                        )}
+                      </Typography>
+                    )}
+                  </Box>
                 </AccordionSummary>
                 <AccordionDetails>{child}</AccordionDetails>
               </Accordion>

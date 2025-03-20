@@ -55,15 +55,15 @@ export const Investigations = () => {
       </WrapperBox>
 
       {/* Flex container for inline tables */}
-      {/* <Box display="flex" gap={2} width="100%">
+      <Box display="flex" gap={2} width="100%">
         <Box flex={1}>
           <LabOrderTable />
         </Box>
         <Box flex={1}>
           <LabResultsTable rows={[]} />
         </Box>
-      </Box> */}
-      
+      </Box>
+
 
     </Panel>
   );

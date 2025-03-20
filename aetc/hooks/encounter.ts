@@ -68,9 +68,10 @@ export const fetchConceptAndCreateEncounter = () => {
   return useMutation({
     mutationFn: addData,
     onSuccess: (data) => {
-      // queryClient.invalidateQueries({
-      //   queryKey: ["encounters"],
-      // });
+      console.log({data});
+      queryClient.invalidateQueries({
+        queryKey: ["encounters", data.person_uuid]
+      });
     },
   });
 };
