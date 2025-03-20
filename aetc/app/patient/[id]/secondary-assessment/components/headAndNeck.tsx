@@ -22,6 +22,7 @@ import { HeadBackImage } from "@/components/svgImages/headBack";
 import { HeadNeckLeftFemaleImage } from "@/components/svgImages/headNeckLeftFemale";
 import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFemale";
 import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
+import { getDateTime } from "@/helpers/dateTime";
 
 type Props = {
   onSubmit: () => void;
@@ -64,28 +65,30 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   );
 
   const handleSubmitForm = async (values: any) => {
+    const obsDatetime = getDateTime();
+
     const obs = [
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(headNeckImageEncounter),
         value: "Front",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(leftHeadNeckImageEncounter),
         value: "Left",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(rightHeadNeckImageEncounter),
         value: "Right",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(backHeadNeckImageEncounter),
         value: "Back",
       },

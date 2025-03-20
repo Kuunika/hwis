@@ -6,7 +6,7 @@ import { concepts } from "@/constants";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
-import AllergiesPanel from "../../medicalInpatient/components/allergies";
+import AllergiesPanel from "../../medicalInpatient-/components/allergies";
 import { getConceptSet } from "@/hooks/getConceptSet";
 
 interface Observation {

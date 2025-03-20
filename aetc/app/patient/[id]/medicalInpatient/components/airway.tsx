@@ -160,14 +160,12 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     const interventions = formValues[form.intervention.name];
     let interventionsObs: any = [];
 
-    const obsDateTime = getDateTime();
-
     if (Array.isArray(interventions)) {
       interventionsObs = interventions.map((intervention) => {
         return {
           concept: form.intervention.name,
           value: intervention.id,
-          obsDateTime,
+          obsDateTime: getDateTime(),
           coded: true,
         };
       });
@@ -180,7 +178,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.airWayThreatenedReason.name,
           value: reasons.id,
-          obsDateTime,
+          obsDateTime: getDateTime(),
           coded: true,
         };
       });
