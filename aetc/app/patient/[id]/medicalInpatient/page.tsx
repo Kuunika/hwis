@@ -5,7 +5,7 @@ import { FaAngleLeft } from "react-icons/fa6";
 import PresentingComplaintsPanel from "./components/pastPresentingComplaints";
 import { useNavigation } from "@/hooks";
 import DrugHistoryPanel from "./components/drugHistory";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import PastMedicalHistoryPanel from "./components/pastMedicalHistory";
 import PastSurgicalHistoryPanel from "./components/pastSurgicalHistory";
 import { useReactToPrint } from "react-to-print";
@@ -19,13 +19,15 @@ import HeadAndNeckPanel from "./components/headAndNeck";
 
 function InPatientAdmission() {
   const { navigateBack } = useNavigation();
-  const printRef = useRef();
+  const printRef = useRef<HTMLDivElement>(null);
+
   const [showAllPanels, setShowAllPanels] = useState({
     presentingComplaints: false,
     drugHistory: false,
     pastSurgicalHistory: false,
     socialHistory: false,
     familyHistory: false,
+    reviewOfSystems: false,
   });
 
   const togglePanel = (panel: keyof typeof showAllPanels) => {
@@ -36,8 +38,7 @@ function InPatientAdmission() {
   };
 
   const handlePrint = useReactToPrint({
-    contentRef: printRef.current,
-    documentTitle: "In-Patient Template Form",
+    contentRef: printRef,
     onBeforePrint: () =>
       new Promise((resolve) => {
         setShowAllPanels({
@@ -46,6 +47,7 @@ function InPatientAdmission() {
           pastSurgicalHistory: true,
           socialHistory: true,
           familyHistory: true,
+          reviewOfSystems: true,
         });
         setTimeout(resolve, 100);
       }),
@@ -56,12 +58,13 @@ function InPatientAdmission() {
         pastSurgicalHistory: false,
         socialHistory: false,
         familyHistory: false,
+        reviewOfSystems: false,
       }),
   });
 
   return (
     <>
-      <div ref={printRef as any}>
+      <div ref={printRef}>
         <PatientInfoTab />
         <WrapperBox
           sx={{
@@ -90,17 +93,15 @@ function InPatientAdmission() {
                 fontSize: "14px",
                 fontWeight: 400,
                 lineHeight: "21px",
-                letterSpacing: "0em",
-                textAlign: "left",
                 paddingTop: "1px",
               }}
-              onClick={() => navigateBack()}
+              onClick={navigateBack}
             >
               Back
             </MainTypography>
           </div>
           <MainButton
-            onClick={handlePrint}
+            onClick={() => handlePrint()}
             sx={{ marginRight: "20px" }}
             title="Download PDF"
           />
@@ -158,8 +159,8 @@ function InPatientAdmission() {
           </WrapperBox>
           <WrapperBox sx={{ width: "100%", gridColumn: "1 / -1" }}>
             <ReviewOfSystemsPanel
-              showForPrinting={showAllPanels.familyHistory}
-              toggleShow={() => togglePanel("familyHistory")}
+              showForPrinting={showAllPanels.reviewOfSystems}
+              toggleShow={() => togglePanel("reviewOfSystems")}
             />
           </WrapperBox>
 

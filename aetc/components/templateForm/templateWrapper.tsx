@@ -9,13 +9,11 @@ type Prop = {
   children: ReactNode;
   OtherChildren?: ReactNode;
 };
-export const TemplateWrapper: FC<Prop> = ({ children, OtherChildren }) => {
-  const printRef = useRef(null);
 
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-    documentTitle: "Surgical Notes",
-  });
+export const TemplateWrapper: FC<Prop> = ({ children, OtherChildren }) => {
+  const printRef = useRef<HTMLDivElement>(null); // Ensure the ref has a valid type
+
+  const handlePrint = useReactToPrint({ contentRef: printRef });
 
   return (
     <>
@@ -55,18 +53,21 @@ export const TemplateWrapper: FC<Prop> = ({ children, OtherChildren }) => {
         </div>
 
         <MainButton
-          onClick={handlePrint}
+          onClick={() => handlePrint()} // Ensure it's inside an arrow function
           sx={{ marginRight: "20px" }}
           title="Download PDF"
         />
       </WrapperBox>
+
       {OtherChildren}
+
       <div ref={printRef} className="printable-content">
         <div className="print-only">
           <PatientInfoTab />
         </div>
         {children}
       </div>
+
       {/* CSS for Print Handling */}
       <style jsx>{`
         @media print {

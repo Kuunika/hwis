@@ -255,10 +255,10 @@ function SurgicalNotesTemplate() {
     error,
   } = getPatientsEncounters(params.id as string);
 
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-    documentTitle: "Surgical Notes",
-  });
+  // const handlePrint = useReactToPrint({
+  //   content: () => printRef.current,
+  //   documentTitle: "Surgical Notes",
+  // });
 
   useEffect(() => {
     if (patientEncounters) {
@@ -350,9 +350,8 @@ function SurgicalNotesTemplate() {
           }
 
           if (obs.concept_id === 5088) {
-            groupedSkinAssessment[obsDate].temperature = `${
-              obs.value_numeric || obs.value
-            }°C`;
+            groupedSkinAssessment[obsDate].temperature = `${obs.value_numeric || obs.value
+              }°C`;
           }
 
           if (obs.concept_id === 2592) {
