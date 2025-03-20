@@ -13,6 +13,7 @@ import {
 
 import { useNavigation } from "@/hooks";
 import { encounters } from "@/constants";
+import { DrugList } from "./drugList";
 
 export const MedicalInPatientFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -26,7 +27,7 @@ export const MedicalInPatientFlow = () => {
     },
     {
       id: 11,
-      label: "Breathing Assessment",
+      label: "Drug History",
       encounter: encounters.BREATHING_ASSESSMENT,
     },
     {
@@ -71,7 +72,8 @@ export const MedicalInPatientFlow = () => {
         showSubmittedStatus
       >
         <PresentingComplaints />
-        <BreathingForm onSubmit={handleBreathingSubmit} />
+        <DrugList />
+        {/* <BreathingForm onSubmit={handleBreathingSubmit} /> */}
         <Circulation onSubmit={handleCirculationSubmit} />
         <Disability onSubmit={handleDisabilitySubmit} />
         <Exposure onSubmit={navigateBack} />
