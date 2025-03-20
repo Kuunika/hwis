@@ -7,9 +7,11 @@ import {
   SearchComboBox,
   TextInputField,
 } from "@/components";
+import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { getFacilities } from "@/hooks";
+import { useAllergyFormat } from "@/hooks/useAllergyFormat";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -87,10 +89,56 @@ const radioOptions = [
   { value: concepts.YES, label: "YES" },
   { value: concepts.NO, label: "NO" },
 ];
+
+const intoxications = [
+  { id: "ethanol", label: "Ethanol (Beer, Wine, Spirits)" },
+  { id: "methanol", label: "Methanol" },
+  { id: "isopropanol", label: "Isopropanol (Rubbing alcohol)" },
+  { id: "cannabis", label: "Cannabis (Marijuana, THC products)" },
+  { id: "cocaine", label: "Cocaine" },
+  { id: "heroin", label: "Heroin" },
+  { id: "methamphetamine", label: "Methamphetamine" },
+  { id: "mdma", label: "MDMA (Ecstasy)" },
+  { id: "lsd", label: "LSD (Acid)" },
+  { id: "pcp", label: "PCP (Phencyclidine)" },
+  { id: "ketamine", label: "Ketamine" },
+  {
+    id: "opioids",
+    label: "Opioids (Morphine, Codeine, Oxycodone, Fentanyl, Tramadol)",
+  },
+  {
+    id: "benzodiazepines",
+    label: "Benzodiazepines (Diazepam, Lorazepam, Alprazolam)",
+  },
+  { id: "barbiturates", label: "Barbiturates (Phenobarbital, Secobarbital)" },
+  {
+    id: "antidepressants",
+    label: "Antidepressants (Amitriptyline, Fluoxetine, Sertraline)",
+  },
+  { id: "antipsychotics", label: "Antipsychotics (Haloperidol, Olanzapine)" },
+  { id: "acetaminophen", label: "Acetaminophen (Paracetamol)" },
+  { id: "nsaids", label: "NSAIDs (Ibuprofen, Diclofenac)" },
+  { id: "carbon_monoxide", label: "Carbon Monoxide" },
+  { id: "cyanide", label: "Cyanide" },
+  { id: "pesticides", label: "Pesticides (Organophosphates, Carbamates)" },
+  { id: "heavy_metals", label: "Heavy Metals (Lead, Mercury, Arsenic)" },
+  { id: "antifreeze", label: "Antifreeze (Ethylene glycol)" },
+  { id: "paint_thinners", label: "Paint thinners, Glue (Toluene, Xylene)" },
+  { id: "mushrooms", label: "Mushrooms (Amanita, Psilocybin)" },
+  { id: "aflatoxins", label: "Aflatoxins (Contaminated grains, nuts)" },
+  { id: "strychnine", label: "Strychnine" },
+  { id: "poisonous_plants", label: "Poisonous berries or plants" },
+  { id: "synthetic_cannabinoids", label: "Synthetic Cannabinoids (Spice, K2)" },
+  { id: "bath_salts", label: "Bath salts (Synthetic cathinones)" },
+  { id: "inhalants", label: "Inhalants (Nitrous oxide, Butane, Freon)" },
+  { id: concepts.OTHER, label: "Other" },
+];
+
 export const PastMedicalHistory = () => {
   const { data, isLoading } = getFacilities();
   const [formValues, setFormValues] = useState<any>({});
   const { medicationOptions } = useFetchMedications();
+  const { allergyOptions } = useAllergyFormat();
 
   return (
     <FormikInit
@@ -167,6 +215,52 @@ export const PastMedicalHistory = () => {
         label={form.surgicalHistory.label}
         id={form.surgicalHistory.name}
         sx={{ width: "100%" }}
+      />
+      <br />
+      <GroupedSearchComboBox
+        options={allergyOptions}
+        multiple={true}
+        name={form.allergy.name}
+        label={form.allergy.label}
+      />
+      <br />
+      <SearchComboBox
+        options={intoxications}
+        name={form.intoxication.name}
+        label={form.intoxication.label}
+      />
+      {formValues[form.intoxication.name] &&
+        formValues[form.intoxication.name]?.find(
+          (opt: any) => opt.id == concepts.OTHER
+        ) && (
+          <>
+            <TextInputField
+              multiline
+              rows={5}
+              sx={{ width: "100%" }}
+              name={form.intoxicationDescription.name}
+              label={form.intoxicationDescription.label}
+              id={form.intoxicationDescription.name}
+            />
+          </>
+        )}
+      <br />
+      <TextInputField
+        multiline
+        rows={5}
+        sx={{ width: "100%" }}
+        id={form.socialHistory.name}
+        label={form.socialHistory.label}
+        name={form.socialHistory.name}
+      />
+      <br />
+      <TextInputField
+        multiline
+        rows={5}
+        sx={{ width: "100%" }}
+        id={form.familyHistory.name}
+        label={form.familyHistory.label}
+        name={form.familyHistory.name}
       />
     </FormikInit>
   );
