@@ -165,12 +165,28 @@ export const ClinicalNotes = () => {
     const mucuousObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.MUCOUS_MEMBRANES)
     );
+    const mucuouAbnormalObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.MUCOUS_ABNORMAL)
+    );
     const assessPeripheriesObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.ASSESS_PERIPHERIES)
     );
     const bloodPressureMeasuredObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.BLOOD_PRESSURE_MEASURED)
     );
+    const bloodPressurSystolicObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.BLOOD_PRESSURE_SYSTOLIC)
+    );
+    const bloodPressurDystolicObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.BLOOD_PRESSURE_DIASTOLIC)
+    );
+    const bloodPressurNotDoneObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.NOT_DONE)
+    );
+    const BPUnrecordableObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.BP_NOT_RECORDABLE)
+    );
+
     const patientInjuredObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.PATIENT_INJURED)
     );
@@ -211,7 +227,17 @@ export const ClinicalNotes = () => {
       messages.push("• The  patient's Capillary refill time is More than 3 seconds")
     }
 
-    messages.push(`• Date of CPR: ${cprDateOfCallObs?.value || ""}`);
+    // if (additionalNotesObs?.value) {
+    //   messages.push(`• Additional Notes: ${additionalNotesObs.value}`);
+    // } else {
+    //   messages.push("• Additional Notes: Not reported.");
+    // }
+
+    if(cprDateOfCallObs?.value ){
+      messages.push(`• Additional Notes: ${cprDateOfCallObs.value}`);
+    }
+
+    //messages.push(`• CPR Date of Call: ${cprDateOfCallObs?.value || ""}`);
 
     if(cprCardiacArrestObs?.value == "Yes"){
       messages.push("• There is Witnessed Cardiac Arrest")
@@ -227,11 +253,162 @@ export const ClinicalNotes = () => {
       messages.push("• The Site is Priority")
     }
 
-    messages.push(`• Witnessed Cardiac Arrest specification: ${cprSpecifyObs?.value || ""}`);
-    messages.push(`• Record Time: ${cprRecord1TimeObs?.value || ""}`);
-    messages.push(`• Rhythm: ${cprRecord1RhythmObs?.value || ""}`);
-    messages.push(`• Shock Energy: ${cprRecord1ShockEnergyObs?.value || ""}`);
-    messages.push(`• Medication Name: ${cprRecord1MedicationNameObs?.value || ""}`);
+    // messages.push(`• Witnessed Cardiac Arrest specification: ${cprSpecifyObs?.value || ""}`);
+    // messages.push(`• Record Time: ${cprRecord1TimeObs?.value || ""}`);
+    // messages.push(`• Rhythm: ${cprRecord1RhythmObs?.value || ""}`);
+    // messages.push(`• Shock Energy: ${cprRecord1ShockEnergyObs?.value || ""}`);
+    // messages.push(`• Medication Name: ${cprRecord1MedicationNameObs?.value || ""}`);
+    // messages.push(`• Dose Name: ${cprRecord1DoseNameObs?.value || ""}`);
+    // messages.push(`• Medication Route: ${cprRecord1RouteObs?.value || ""}`);
+    // messages.push(`• Interventions: ${cprRecord1IntervationsObs?.value || ""}`);
+    // messages.push(`• Occurrences: ${cprRecord1OccurrencesObs?.value || ""}`);
+    // messages.push(`• Reversible Causes: ${cprRecord1OReversibleCausesObs?.value || ""}`);
+    // messages.push(`• Likely or known cause of cardiac arrest: ${cprRecord1CardicaArrestObs?.value || ""}`);
+    // messages.push(`• SPO2: ${cprROSCspo2Obs?.value || ""}`);
+
+    if (cprSpecifyObs?.value) {
+      messages.push(`• Witnessed Cardiac Arrest specification: ${cprSpecifyObs.value}`);
+    }
+    
+    if (cprRecord1TimeObs?.value) {
+      messages.push(`• Record Time: ${cprRecord1TimeObs.value}`);
+    }
+    
+    if (cprRecord1RhythmObs?.value) {
+      messages.push(`• Rhythm: ${cprRecord1RhythmObs.value}`);
+    }
+    
+    if (cprRecord1ShockEnergyObs?.value) {
+      messages.push(`• Shock Energy: ${cprRecord1ShockEnergyObs.value}`);
+    }
+    
+    if (cprRecord1MedicationNameObs?.value) {
+      messages.push(`• Medication Name: ${cprRecord1MedicationNameObs.value}`);
+    }
+    
+    if (cprRecord1DoseNameObs?.value) {
+      messages.push(`• Dose Name: ${cprRecord1DoseNameObs.value}`);
+    }
+    
+    if (cprRecord1RouteObs?.value) {
+      messages.push(`• Medication Route: ${cprRecord1RouteObs.value}`);
+    }
+    
+    if (cprRecord1IntervationsObs?.value) {
+      messages.push(`• Interventions: ${cprRecord1IntervationsObs.value}`);
+    }
+    
+    if (cprRecord1OccurrencesObs?.value) {
+      messages.push(`• Occurrences: ${cprRecord1OccurrencesObs.value}`);
+    }
+    
+    if (cprRecord1OReversibleCausesObs?.value) {
+      messages.push(`• Reversible Causes: ${cprRecord1OReversibleCausesObs.value}`);
+    }
+    
+    if (cprRecord1CardicaArrestObs?.value) {
+      messages.push(`• Likely or known cause of cardiac arrest: ${cprRecord1CardicaArrestObs.value}`);
+    }
+    
+    if (cprROSCspo2Obs?.value) {
+      messages.push(`• SPO2: ${cprROSCspo2Obs.value}`);
+    }
+
+    if(cprOxygenObs?.value == "Yes"){
+      messages.push("• There is Oxygen")
+    }else if(cprOxygenObs?.value == "No"){
+      messages.push("• There is no Oxygen")
+    }
+
+    // messages.push(`• Systolic: ${cprSystolicObs?.value || ""}`);
+    // messages.push(`• Diastolic: ${cprDystoricObs?.value || ""}`);
+    // messages.push(`• Respiratory Rate: ${cprRespirotyObs?.value || ""}`);
+    // messages.push(`• Pulse Rate: ${cprPulseObs?.value || ""}`);
+    // messages.push(`• Temperature: ${cprTemperatureObs?.value || ""}`);
+
+    if (cprSystolicObs?.value) {
+      messages.push(`• Systolic: ${cprSystolicObs.value}`);
+    }
+    
+    if (cprDystoricObs?.value) {
+      messages.push(`• Diastolic: ${cprDystoricObs.value}`);
+    }
+    
+    if (cprRespirotyObs?.value) {
+      messages.push(`• Respiratory Rate: ${cprRespirotyObs.value}`);
+    }
+    
+    if (cprPulseObs?.value) {
+      messages.push(`• Pulse Rate: ${cprPulseObs.value}`);
+    }
+    
+    if (cprTemperatureObs?.value) {
+      messages.push(`• Temperature: ${cprTemperatureObs.value}`);
+    }
+
+
+    if(cprMotorResponseObs?.value == "Obeying Commands"){
+      messages.push("• Motor Response is Obeying Commands")
+    }else if(cprMotorResponseObs?.value == "Localising"){
+      messages.push("• Motor Response is Localising")
+    }else if(cprMotorResponseObs?.value == "Withdraw"){
+      messages.push("• Motor Response is Withdraw")
+    }else if(cprMotorResponseObs?.value == "Normal Flexion"){
+      messages.push("• Motor Response is Normal Flexion")
+    }else if(cprMotorResponseObs?.value == "Extension"){
+      messages.push("• Motor Response is Extension")
+    }else if(cprMotorResponseObs?.value == "None"){
+      messages.push("• No Motor Response ")
+    }
+
+    if(cprVerbalResponseObs?.value == "Oriented"){
+      messages.push("• Verbal Response is Oriented")
+    }else if(cprVerbalResponseObs?.value == "Confused"){
+      messages.push("• Verbal Response is Confused")
+    }else if(cprVerbalResponseObs?.value == "Inappropriate Words"){
+      messages.push("• Verbal Response is Inappropriate Words")
+    }else if(cprVerbalResponseObs?.value == "Incomprehensible sounds"){
+      messages.push("• Verbal Response is Incomprehensible sounds")
+    }else if(cprVerbalResponseObs?.value == "None"){
+      messages.push("• There is no Verbal Response")
+    }
+
+    if(cprEyeOpeningResponseObs?.value == "Spontaneous"){
+      messages.push("• Eye Opening Response is Spontaneous")
+    }else if(cprEyeOpeningResponseObs?.value == "To Speech"){
+      messages.push("• Eye Opening Response is To Speech")
+    }else if(cprEyeOpeningResponseObs?.value == "To Pain"){
+      messages.push("• Eye Opening Response is To Pain")
+    }else if(cprEyeOpeningResponseObs?.value == "No Response"){
+      messages.push("• There is no Eye Opening Response")
+    }
+
+    // messages.push(`• Reason CPR Stopped: ${cprTimeStoppedObs?.value || ""}`);
+    // messages.push(`• CPR Time Stopped: ${cprREASONTimeStoppedObs?.value || ""}`);
+    // messages.push(`• Disposition After CPR: ${cprDispositionObs?.value || ""}`);
+    // messages.push(`• Team Leader: ${cprTeamReaderObs?.value || ""}`);
+    // messages.push(`• Team Members: ${cprTeamMemberrObs?.value || ""}`);
+
+    if (cprTimeStoppedObs?.value) {
+      messages.push(`• Reason CPR Stopped: ${cprTimeStoppedObs.value}`);
+    }
+    
+    if (cprREASONTimeStoppedObs?.value) {
+      messages.push(`• CPR Time Stopped: ${cprREASONTimeStoppedObs.value}`);
+    }
+    
+    if (cprDispositionObs?.value) {
+      messages.push(`• Disposition After CPR: ${cprDispositionObs.value}`);
+    }
+    
+    if (cprTeamReaderObs?.value) {
+      messages.push(`• Team Leader: ${cprTeamReaderObs.value}`);
+    }
+    
+    if (cprTeamMemberrObs?.value) {
+      messages.push(`• Team Members: ${cprTeamMemberrObs.value}`);
+    }
+
 
 
     // if(activelyBleddingObs?.value == "Yes"){
@@ -246,6 +423,8 @@ export const ClinicalNotes = () => {
       messages.push("• Mucous membranes is Abnormal")
     }
 
+    messages.push(`• Mucus Abnormal: ${mucuouAbnormalObs?.value || ""}`);
+
     if(assessPeripheriesObs?.value == "Cold and clammy"){
       messages.push("• Assess Peripheries is Cold and clammy")
     }else{
@@ -258,6 +437,27 @@ export const ClinicalNotes = () => {
       messages.push("• Blood Pressure is not Measured")
     }else{
       messages.push("• BP is Unrecordable")
+    }
+    
+    // messages.push(`• Blood Pressure Systolic: ${bloodPressurSystolicObs?.value || ""}`);
+    // messages.push(`• Blood Pressure Distolic: ${bloodPressurDystolicObs?.value || ""}`);
+    // messages.push(`• BP Unrecodable: ${BPUnrecordableObs?.value || ""}`);
+    // messages.push(`• BP Not done: ${bloodPressurNotDoneObs?.value || ""}`);
+
+    if (bloodPressurSystolicObs?.value) {
+      messages.push(`• Blood Pressure Systolic: ${bloodPressurSystolicObs.value}`);
+    }
+    
+    if (bloodPressurDystolicObs?.value) {
+      messages.push(`• Blood Pressure Diastolic: ${bloodPressurDystolicObs.value}`);
+    }
+    
+    if (BPUnrecordableObs?.value) {
+      messages.push(`• BP Unrecordable: ${BPUnrecordableObs.value}`);
+    }
+    
+    if (bloodPressurNotDoneObs?.value) {
+      messages.push(`• BP Not done: ${bloodPressurNotDoneObs.value}`);
     }
 
     if(patientInjuredObs?.value == "Yes"){
