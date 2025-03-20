@@ -52,102 +52,85 @@ export const ClinicalNotes = () => {
     const levelOfConsciousnessObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS)
     );
+  
     const GCSObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.GCS)
     );
-
-    console.log("whats going on!!",reviewOfSystemsEncounter?.obs)
-
+  
     const eyeOpeingObs = reviewOfSystemsEncounter?.obs.find(
-      (ob) => ob.names.some((n) => n.name.toLowerCase() == concepts.EYE_OPENING_RESPONSE.toLowerCase())
+      (ob) => ob.names.some((n) => n.name.toLowerCase() === concepts.EYE_OPENING_RESPONSE.toLowerCase())
     );
-
+  
     const verbalResponseObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.VERBAL_RESPONSE)
     );
-
-    const motorResponseObs = reviewOfSystemsEncounter?.obs.find(
-      (ob) => ob.names.some((n) => n.name === concepts.MOTOR_RESPONSE)
-    );
-
+  
     const pupilSizeObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name.toLowerCase() === concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT.toLowerCase())
     );
-
+  
     const focalNeurologyObs = reviewOfSystemsEncounter?.obs.find(
-      (ob) => ob.names.some((n) => n.name == concepts.FOCAL_NEUROLOGY)
+      (ob) => ob.names.some((n) => n.name === concepts.FOCAL_NEUROLOGY)
     );
-
+  
     const postureObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name.toLowerCase() === concepts.FOCAL_NEUROLOGY.toLowerCase())
     );
-
-    // if (levelOfConsciousnessObs?.value  === "No") {
-    //   setDisabilityMessage("The patient is alert and does not exhibit a low level of consciousness.");
-    // } else {
-    //   setDisabilityMessage("The patient exhibits a low level of consciousness and requires further evaluation and monitoring.");
-    // } 
-
-
-    // if (GCSObs?.value === 15) {
-    //   setDisabilityMessage("The GCS is 15: patient is fully conscious with normal neurological function.");
-    //   } else if (GCSObs?.value >= 13 && GCSObs?.value <= 14) {
-    //       setDisabilityMessage("GCS is 13–14: Mild brain injury. Close monitoring advised.");
-    //   } else if (GCSObs?.value >= 9 && GCSObs?.value <= 12) {
-    //       setDisabilityMessage("GCS is 9–12: Moderate brain injury. Further assessment required.");
-    //   } else if (GCSObs?.value >= 3 && GCSObs?.value <= 8) {
-    //       setDisabilityMessage("GCS is 3–8: Severe brain injury or coma. Immediate intervention required.");
-    //   } else {
-    //       setDisabilityMessage("Invalid GCS score.");
-    //   }
+  
+    let messages = [];
+  
+    if (levelOfConsciousnessObs?.value === "No") {
+      messages.push("• The patient is alert and does not exhibit a low level of consciousness.");
+    } else {
+      messages.push("• The patient exhibits a low level of consciousness and requires further evaluation and monitoring.");
+    }
+  
+    if (GCSObs?.value === 15) {
+      messages.push("• The GCS is 15: patient is fully conscious with normal neurological function.");
+    } else if (GCSObs?.value >= 13 && GCSObs?.value <= 14) {
+      messages.push("• GCS is 13–14: Mild brain injury. Close monitoring advised.");
+    } else if (GCSObs?.value >= 9 && GCSObs?.value <= 12) {
+      messages.push("• GCS is 9–12: Moderate brain injury. Further assessment required.");
+    } else if (GCSObs?.value >= 3 && GCSObs?.value <= 8) {
+      messages.push("• GCS is 3–8: Severe brain injury or coma. Immediate intervention required.");
+    } else {
+      messages.push("• Invalid GCS score.");
+    }
+  
+    if (eyeOpeingObs?.value == 4) {
+      messages.push("• Eyes open spontaneously: patient is fully conscious.");
+    } else if (eyeOpeingObs?.value == 3) {
+      messages.push("• Eyes open to speech: mild impairment in consciousness.");
+    } else if (eyeOpeingObs?.value == 2) {
+      messages.push("• Eyes open to pain: more significant impairment in consciousness.");
+    } else if (eyeOpeingObs?.value == 1) {
+      messages.push("• No eye opening response: patient may be in a deep coma.");
+    } else {
+      messages.push("• Invalid eye opening response value.");
+    }
+  
+    if (verbalResponseObs?.value == 5) {
+      messages.push("• Verbal response is 5: patient is oriented and converses normally.");
+    } else if (verbalResponseObs?.value == 4) {
+      messages.push("• Verbal response is 4: patient is confused but able to speak.");
+    } else if (verbalResponseObs?.value == 3) {
+      messages.push("• Verbal response is 3: inappropriate words, not making sense.");
+    } else if (verbalResponseObs?.value == 2) {
+      messages.push("• Verbal response is 2: incomprehensible sounds, moaning or groaning.");
+    } else if (verbalResponseObs?.value == 1) {
+      messages.push("• Verbal response is 1: no verbal response, patient is unresponsive.");
+    } else {
+      messages.push("• Invalid verbal response value.");
+    }
+  
+    messages.push(`• Pupil Size and Reaction to Light: ${pupilSizeObs?.value || "Not available"}`);
+    messages.push(`• Focal Neurology: ${focalNeurologyObs?.value || "Not available"}`);
+    messages.push(`• Posture: ${postureObs?.value || "Not available"}`);
+  
  
-
-      // if (eyeOpeingObs?.value == 4) {
-      //   setDisabilityMessage("Eyes open spontaneously is 4: patient is fully conscious.");
-      // } else if (eyeOpeingObs?.value == 3) {
-      //   setDisabilityMessage("Eyes open to speech is 3 is 3: mild impairment in consciousness.");
-      // } else if (eyeOpeingObs?.value ==2) {
-      //   setDisabilityMessage("Eyes open to pain is 2: more significant impairment in consciousness.");
-      // } else if (eyeOpeingObs?.value == 1) {
-      //   setDisabilityMessage("No eye opening response is 1: patient may be in a deep coma.");
-      // } else {
-      //   setDisabilityMessage("Invalid eye opening response value.");
-      // }
-
-      
-
-
-        // if (verbalResponseObs?.value == 5) {
-        //   setDisabilityMessage("Verbal response is 5: patient is oriented and converses normally.");
-        // } else if (verbalResponseObs?.value == 4) {
-        //   setDisabilityMessage("Verbal response is 4: patient is confused but able to speak.");
-        // } else if (verbalResponseObs?.value == 3) {
-        //   setDisabilityMessage("Verbal response is 3: inappropriate words, not making sense.");
-        // } else if (verbalResponseObs?.value == 2) {
-        //   setDisabilityMessage("Verbal response is 2: incomprehensible sounds, moaning or groaning.");
-        // } else if (verbalResponseObs?.value == 1) {
-        //   setDisabilityMessage("Verbal response is 1: no verbal response, patient is unresponsive.");
-        // } else {
-        //   setDisabilityMessage("Invalid verbal response value.");
-        // }
-      
-        // setDisabilityMessage(`Pupil Size and Reaction to Light: ${pupilSizeObs?.value || "Not available"}`);
-
-        //setDisabilityMessage(`Focal Neurology : ${focalNeurologyObs?.value || "Not available"}`);
-
-        setDisabilityMessage(`Posture : ${postureObs?.value || "Not available"}`);
-        console.log("Lets see the text behind it",postureObs )
-
-
-        
-
-
-
-
+    setDisabilityMessage(messages.join("<br />"));
   
-  }, [pData]);
-
-  
+  }, [pData]); 
   
   //-------------------------------------------
 
@@ -253,41 +236,44 @@ export const ClinicalNotes = () => {
       </WrapperBox>
     </Panel>
 ---
-    <Panel title="Disability Assessment" icon={expandIcon}>
-      <br />
-      {traumaMessage && (
-  <Typography sx={{}}>{traumaMessage}</Typography>
-)}
-      <WrapperBox
-        sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch", pl: "2ch" }}
-      >
-        {clinicalNotes.length == 0 ? (
-          <Typography>No Information Availbale</Typography>
-        ) : (
-          clinicalNotes.map((note: any) => {
-            return (
-              <Box
-                key={note.note}
-                sx={{ my: "1ch", py: "1ch", borderBottom: "1px solid #E0E0E0" }}
-              >
-                <ReactMarkdown>{note.note}</ReactMarkdown>
-                <br />
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography>~ {note.creator}</Typography>
-                  <Typography variant="caption">{note.time}</Typography>
-                </Box>
-              </Box>
-            );
-          })
-        )}
-      </WrapperBox>
-    </Panel>
+<Panel title="Disability Assessment" icon={expandIcon}>
+  <br />
+  {traumaMessage && (
+    <Typography
+      sx={{}}
+      dangerouslySetInnerHTML={{ __html: traumaMessage }}
+    />
+  )}
+  <WrapperBox
+    sx={{ mt: "1ch", overflow: "scroll", maxHeight: "15ch", pl: "2ch" }}
+  >
+    {clinicalNotes.length == 0 ? (
+      <Typography>No Information Available</Typography>
+    ) : (
+      clinicalNotes.map((note: any) => {
+        return (
+          <Box
+            key={note.note}
+            sx={{ my: "1ch", py: "1ch", borderBottom: "1px solid #E0E0E0" }}
+          >
+            <ReactMarkdown>{note.note}</ReactMarkdown>
+            <br />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography>~ {note.creator}</Typography>
+              <Typography variant="caption">{note.time}</Typography>
+            </Box>
+          </Box>
+        );
+      })
+    )}
+  </WrapperBox>
+</Panel>
     </>
     
 
