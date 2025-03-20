@@ -64,6 +64,100 @@ export const ClinicalNotes = () => {
     const capillaryRefillTimeObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.CAPILLARY_REFILL_TIME)
     );
+    const cprDateOfCallObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.DATE_OF_CPR)
+    );
+    // const cprTimeOFCallObs = reviewOfSystemsEncounter?.obs.find(
+    //   (ob) => ob.names.some((n) => n.name === concepts.TIME OF CALL)
+    // );
+    const cprCardiacArrestObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.CARDIAC_ARREST)
+    );
+    const cprSiteObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.SITE)
+    );
+    const cprSpecifyObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.SPECIFY)
+    );
+    const cprRecord1TimeObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.TIME)
+    );
+    const cprRecord1RhythmObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.RHYTHM)
+    );
+    const cprRecord1ShockEnergyObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.SHOCK_ENERGY)
+    );
+    const cprRecord1MedicationNameObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.MEDICATION)
+    );
+    const cprRecord1DoseNameObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.DOSE_IN_MILLIGRAMS)
+    );
+    const cprRecord1RouteObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.MEDICATION_ROUTE)
+    );
+    const cprRecord1IntervationsObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.INTERVENTION)
+    );
+    const cprRecord1OccurrencesObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.OCCURRENCES)
+    );
+    const cprRecord1OReversibleCausesObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.REVERSIBLE_CAUSES)
+    );
+    const cprRecord1CardicaArrestObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.CARDIAC_ARREST)
+    );
+    const cprROSCspo2Obs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.SPO2)
+    );
+    const cprOxygenObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.OXYGEN_GIVEN)
+    );
+    const cprSystolicObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.SYSTOLIC_BLOOD_PRESSURE)
+    );
+    const cprDystoricObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.DIASTOLIC_BLOOD_PRESSURE)
+    );
+    const cprRespirotyObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.RESPIRATORY_RATE)
+    );
+    const cprPulseObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.PULSE_RATE)
+    );
+    const cprTemperatureObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.TEMPERATURE)
+    );
+    const cprMotorResponseObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.MOTOR_RESPONSE)
+    );
+    const cprVerbalResponseObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.VERBAL_RESPONSE)
+    );
+    const cprEyeOpeningResponseObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.EYE_OPENING_RESPONSE)
+    );
+    const cprTimeStoppedObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.CPR_TIME_STOPPED)
+    );
+    const cprREASONTimeStoppedObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.REASON_CPR_STOPPED)
+    );
+    const cprDispositionObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.DISPOSITION_AFTER_CPR)
+    );
+    const cprTeamReaderObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.TEAM_LEADER)
+    );
+    const cprTeamMemberrObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.TEAM_MEMBERS)
+    );
+
+
+
+
     // const patientPulseObs = reviewOfSystemsEncounter?.obs.find(
     //   (ob) => ob.names.some((n) => n.name === concepts.)
     // );
@@ -116,6 +210,28 @@ export const ClinicalNotes = () => {
     }else{
       messages.push("• The  patient's Capillary refill time is More than 3 seconds")
     }
+
+    messages.push(`• Date of CPR: ${cprDateOfCallObs?.value || ""}`);
+
+    if(cprCardiacArrestObs?.value == "Yes"){
+      messages.push("• There is Witnessed Cardiac Arrest")
+    }else if(cprCardiacArrestObs?.value == "No"){
+      messages.push("• There is No Witnessed Cardiac Arrest")
+    }
+
+    if(cprSiteObs?.value == "Rescitation"){
+      messages.push("• The Site is Rescitation")
+    }else if(cprCardiacArrestObs?.value == "SSW"){
+      messages.push("• The Site is SSW")
+    }else if(cprCardiacArrestObs?.value == "Priority"){
+      messages.push("• The Site is Priority")
+    }
+
+    messages.push(`• Witnessed Cardiac Arrest specification: ${cprSpecifyObs?.value || ""}`);
+    messages.push(`• Record Time: ${cprRecord1TimeObs?.value || ""}`);
+    messages.push(`• Rhythm: ${cprRecord1RhythmObs?.value || ""}`);
+    messages.push(`• Shock Energy: ${cprRecord1ShockEnergyObs?.value || ""}`);
+    messages.push(`• Medication Name: ${cprRecord1MedicationNameObs?.value || ""}`);
 
 
     // if(activelyBleddingObs?.value == "Yes"){
