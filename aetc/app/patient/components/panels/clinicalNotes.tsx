@@ -17,6 +17,7 @@ import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Obs } from "@/interfaces";
 import {AirwayAssessment} from "@/app/patient/components/clinicalNotes/airwayAssement";
 import {BreathingAssessment} from "@/app/patient/components/clinicalNotes/breathingAssement";
+import {SoapierNotes} from "@/app/patient/components/clinicalNotes/soapierNotes";
 
 export const ClinicalNotes = () => {
   const [clinicalNotes, setClinicalNotes] = useState<
@@ -134,6 +135,9 @@ export const ClinicalNotes = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
                 <BreathingAssessment />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <SoapierNotes />
             </Grid>
         </Grid>
     </Panel>

@@ -7,8 +7,8 @@
     <list default="true" id="1f2d02be-60f9-43d7-be4b-2a5c6bea0138" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/airwayAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/airwayAssement.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/breathingAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/breathingAssement.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/patient/components/panels/visitHistory.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/panels/visitHistory.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

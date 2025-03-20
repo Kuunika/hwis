@@ -19,7 +19,6 @@ export const AirwayAssessment = () => {
                 const formattedData = formatAirwayAssessmentData(airwayEncounter.obs);
                 setAirwayAssessmentData(formattedData);
             }
-            console.log("Encounter", airwayEncounter);
         }
     }, [patientHistory, historyLoading]);
 
@@ -29,7 +28,7 @@ export const AirwayAssessment = () => {
                 const name = ob.names?.[0]?.name;
                 const valueText = ob.value;
 
-                console.log("Processing observation:", { name, valueText }); // Debugging log
+                // console.log("Processing observation:", { name, valueText });
 
                 let humanReadableResponse = "";
 
@@ -86,7 +85,7 @@ export const AirwayAssessment = () => {
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: "primary.main" }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold",}}>
                 Airway Assessment Notes
             </Typography>
             {airwayAssessmentData.length === 0 ? (

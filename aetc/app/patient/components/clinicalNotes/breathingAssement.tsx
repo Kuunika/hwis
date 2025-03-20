@@ -30,29 +30,27 @@ export const BreathingAssessment = () => {
                 const valueText = ob.value;
 
                 let humanReadableResponse = "";
-                let status = "normal"; // Default status is "normal"
+                let status = "normal";
 
                 if (name === "Is Breathing Abnormal") {
                     if (valueText === "Yes") {
                         humanReadableResponse = "The patient is not breathing normally.";
-                        status = "abnormal"; // Mark as abnormal
+                        status = "abnormal";
                     } else if (valueText === "No") {
                         humanReadableResponse = "The patient is breathing abnormally.";
-                        status = "abnormal"; // Mark as abnormal
+                        status = "abnormal";
                     } else {
                         humanReadableResponse = "The patient's airway status is threatened.";
-                        status = "abnormal"; // Mark as abnormal
+                        status = "abnormal";
                     }
                 } else if (name === "Respiratory rate") {
                     humanReadableResponse = `The patient's respiratory rate is ${valueText} breaths per minute.`;
-                    // Mark as abnormal if respiratory rate is outside normal range (e.g., < 12 or > 20)
                     const rate = parseInt(valueText, 10);
                     if (rate < 12 || rate > 20) {
                         status = "abnormal";
                     }
                 } else if (name === "Oxygen Saturation") {
                     humanReadableResponse = `The patient's oxygen saturation is ${valueText}%.`;
-                    // Mark as abnormal if oxygen saturation is below normal (e.g., < 95%)
                     const saturation = parseInt(valueText, 10);
                     if (saturation < 95) {
                         status = "abnormal";
@@ -62,46 +60,45 @@ export const BreathingAssessment = () => {
                         ? "The patient requires oxygen."
                         : "The patient does not require oxygen.";
                     if (valueText === "Yes") {
-                        status = "abnormal"; // Mark as abnormal if oxygen is required
+                        status = "abnormal";
                     }
                 } else if (name === "Is Trachea Central") {
                     humanReadableResponse = valueText === "Yes"
                         ? "The patient's trachea is central."
                         : "The trachea is not central.";
                     if (valueText === "No") {
-                        status = "abnormal"; // Mark as abnormal if trachea is not central
+                        status = "abnormal";
                     }
                 } else if (name === "Chest wall abnormality") {
                     humanReadableResponse = valueText === "Yes"
                         ? "The chest wall is abnormal."
                         : "The chest wall is normal.";
                     if (valueText === "Yes") {
-                        status = "abnormal"; // Mark as abnormal if chest wall is abnormal
+                        status = "abnormal";
                     }
                 } else if (name === "Chest Expansion") {
                     humanReadableResponse = valueText === "Normal"
                         ? "The patient's chest expansion is normal."
                         : "The patient's chest expansion is reduced.";
                     if (valueText === "Reduced") {
-                        status = "abnormal"; // Mark as abnormal if chest expansion is reduced
+                        status = "abnormal";
                     }
                 } else if (name === "Percussion") {
                     humanReadableResponse = valueText === "Normal"
                         ? "The patient's percussion is normal."
                         : "The patient's percussion is abnormal.";
                     if (valueText === "Abnormal") {
-                        status = "abnormal"; // Mark as abnormal if percussion is abnormal
+                        status = "abnormal";
                     }
                 } else if (name === "Breathing sounds") {
                     humanReadableResponse = valueText === "Normal"
                         ? "The breath sounds are normal."
                         : "The breath sounds are abnormal.";
                     if (valueText === "Abnormal") {
-                        status = "abnormal"; // Mark as abnormal if breath sounds are abnormal
+                        status = "abnormal";
                     }
                 } else if (name === "Additional Notes") {
                     humanReadableResponse = `Additional Notes: ${valueText}`;
-                    // Additional notes are neutral, so no status change
                 }
 
                 if (humanReadableResponse) {
@@ -109,7 +106,7 @@ export const BreathingAssessment = () => {
                         name: name,
                         value: humanReadableResponse,
                         time: ob.obs_datetime,
-                        status: status, // Include the status
+                        status: status,
                     };
                 } else {
                     return null;
@@ -124,11 +121,11 @@ export const BreathingAssessment = () => {
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: "primary.main" }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", }}>
                 Breathing Assessment Notes
             </Typography>
             {airwayAssessmentData.length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No breathing assessment data available.
                 </Typography>
             ) : (
@@ -137,7 +134,12 @@ export const BreathingAssessment = () => {
                         <ListItem key={index} sx={{ display: "list-item", p: 0 }}>
                             <ListItemText
                                 primary={
-                                    <Typography variant="body2" sx={{ color: "text.primary" }}>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            color: data.status === "abnormal" ? "red" : "primary.main",
+                                        }}
+                                    >
                                         {data.value}
                                     </Typography>
                                 }
