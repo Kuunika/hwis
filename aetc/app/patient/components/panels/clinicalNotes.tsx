@@ -101,6 +101,45 @@ export const ClinicalNotes = () => {
   );
     return (
         <Panel title="" icon={expandIcon}>
+            <WrapperBox display={"flex"} justifyContent={"space-between"}>
+                <AddClinicalNotes onAddNote={addClinicalNote} />
+                <FaRegChartBar />
+            </WrapperBox>
+            <WrapperBox
+                sx={{
+                    overflow: "scroll",
+                    maxHeight: "15ch",
+                    pl: "2ch",
+                }}
+            >
+                {clinicalNotes.length === 0 ? (
+                    <Typography></Typography>
+                ) : (
+                    clinicalNotes.map((note: any) => (
+                        <Box
+                            key={note.note}
+                            sx={{
+                                my: "1ch",
+                                py: "1ch",
+                                borderBottom: "1px solid #E0E0E0",
+                            }}
+                        >
+                            <ReactMarkdown>{note.note}</ReactMarkdown>
+                            <br />
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Typography>~ {note.creator}</Typography>
+                                <Typography variant="caption">{note.time}</Typography>
+                            </Box>
+                        </Box>
+                    ))
+                )}
+            </WrapperBox>
             <Accordion
                 expanded={expandedAccordion === 'airway-assessment'}
                 onChange={handleAccordionChange('airway-assessment')}
