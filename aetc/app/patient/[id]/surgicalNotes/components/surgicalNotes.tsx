@@ -353,10 +353,10 @@ function SurgicalNotesTemplate() {
 
   const { data: patientEncounters, isLoading, error } = getPatientsEncounters(params.id as string);
 
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-    documentTitle: "Surgical Notes",
-  });
+  // const handlePrint = useReactToPrint({
+  //   content: () => printRef.current,
+  //   documentTitle: "Surgical Notes",
+  // });
 
   useEffect(() => {
     if (patientEncounters) {
