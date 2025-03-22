@@ -100,6 +100,10 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       path: `/patient/${patient.id}/soap`,
     },
     {
+      label: "Continuation Sheet",
+      path: `/patient/${patient.id}/continuationSheet`,
+    },
+    {
       label: "Start Secondary Assessment",
       path: `/patient/${patient.id}/secondary-assessment`,
     },
@@ -134,7 +138,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         },
         {
           label: "Surgical Notes",
-          path: `/patient/${patient.id}/template-forms`,
+          path: `/patient/${patient.id}/surgicalNotes`,
         },
         {
           label: "Gynacological",
