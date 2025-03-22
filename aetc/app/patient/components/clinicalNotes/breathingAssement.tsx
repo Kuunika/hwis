@@ -7,8 +7,7 @@ import { encounters } from "@/constants";
 export const BreathingAssessment = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setAirwayAssessmentData] = useState<any[]>([]);
-
+    const [airwayAssessmentData, setAirwayAssessmentData] = useState<{ paragraph: string; status: string; time: string }[]>([]);
     useEffect(() => {
         if (!historyLoading && patientHistory) {
             const airwayEncounter = patientHistory.find(
@@ -16,137 +15,175 @@ export const BreathingAssessment = () => {
             );
 
             if (airwayEncounter) {
-                const formattedData = formatAirwayAssessmentData(airwayEncounter.obs);
+                const formattedData = formatBreathingAssessmentData(airwayEncounter.obs);
                 setAirwayAssessmentData(formattedData);
             }
-            console.log("Encounter", airwayEncounter);
         }
     }, [patientHistory, historyLoading]);
 
-    const formatAirwayAssessmentData = (obs: any[]) => {
-        return obs
-            .map((ob: any) => {
-                const name = ob.names?.[0]?.name;
-                const valueText = ob.value;
-
-                let humanReadableResponse = "";
-                let status = "normal";
-
-                if (name === "Is Breathing Abnormal") {
-                    if (valueText === "Yes") {
-                        humanReadableResponse = "The patient is not breathing normally.";
-                        status = "abnormal";
-                    } else if (valueText === "No") {
-                        humanReadableResponse = "The patient is breathing abnormally.";
-                        status = "abnormal";
-                    } else {
-                        humanReadableResponse = "The patient's airway status is threatened.";
-                        status = "abnormal";
-                    }
-                } else if (name === "Respiratory rate") {
-                    humanReadableResponse = `The patient's respiratory rate is ${valueText} breaths per minute.`;
-                    const rate = parseInt(valueText, 10);
-                    if (rate < 12 || rate > 20) {
-                        status = "abnormal";
-                    }
-                } else if (name === "Oxygen Saturation") {
-                    humanReadableResponse = `The patient's oxygen saturation is ${valueText}%.`;
-                    const saturation = parseInt(valueText, 10);
-                    if (saturation < 95) {
-                        status = "abnormal";
-                    }
-                } else if (name === "Patient Need Oxygen") {
-                    humanReadableResponse = valueText === "Yes"
-                        ? "The patient requires oxygen."
-                        : "The patient does not require oxygen.";
-                    if (valueText === "Yes") {
-                        status = "abnormal";
-                    }
-                } else if (name === "Is Trachea Central") {
-                    humanReadableResponse = valueText === "Yes"
-                        ? "The patient's trachea is central."
-                        : "The trachea is not central.";
-                    if (valueText === "No") {
-                        status = "abnormal";
-                    }
-                } else if (name === "Chest wall abnormality") {
-                    humanReadableResponse = valueText === "Yes"
-                        ? "The chest wall is abnormal."
-                        : "The chest wall is normal.";
-                    if (valueText === "Yes") {
-                        status = "abnormal";
-                    }
-                } else if (name === "Chest Expansion") {
-                    humanReadableResponse = valueText === "Normal"
-                        ? "The patient's chest expansion is normal."
-                        : "The patient's chest expansion is reduced.";
-                    if (valueText === "Reduced") {
-                        status = "abnormal";
-                    }
-                } else if (name === "Percussion") {
-                    humanReadableResponse = valueText === "Normal"
-                        ? "The patient's percussion is normal."
-                        : "The patient's percussion is abnormal.";
-                    if (valueText === "Abnormal") {
-                        status = "abnormal";
-                    }
-                } else if (name === "Breathing sounds") {
-                    humanReadableResponse = valueText === "Normal"
-                        ? "The breath sounds are normal."
-                        : "The breath sounds are abnormal.";
-                    if (valueText === "Abnormal") {
-                        status = "abnormal";
-                    }
-                } else if (name === "Additional Notes") {
-                    humanReadableResponse = `Additional Notes: ${valueText}`;
-                }
-
-                if (humanReadableResponse) {
-                    return {
-                        name: name,
-                        value: humanReadableResponse,
-                        time: ob.obs_datetime,
-                        status: status,
-                    };
-                } else {
-                    return null;
-                }
-            })
-            .filter((item) => item !== null);
+    const isValidDate = (dateString: string) => {
+        return !isNaN(new Date(dateString).getTime());
     };
+    const formatBreathingAssessmentData = (obs: any[]) => {
+        const paragraphs: { paragraph: string; status: string; time: string }[] = [];
+        let currentParagraph: string[] = [];
+        let currentStatus = "normal";
+        let currentTime = "";
+        let additionalNotes = "";
 
+        const addStatement = (statement: string, isAbnormal: boolean = false) => {
+            currentParagraph.push(statement);
+            if (isAbnormal) {
+                currentStatus = "abnormal";
+            }
+        };
+
+        obs.forEach((ob: any) => {
+            const name = ob.names?.[0]?.name;
+            const valueText = ob.value;
+            console.log("Processed", `${name} ${valueText}`);
+
+            if (name === "Is Breathing Abnormal" && currentParagraph.length > 0) {
+                if (additionalNotes) {
+                    currentParagraph.push(additionalNotes);
+                    additionalNotes = "";
+                }
+
+                paragraphs.push({
+                    paragraph: currentParagraph.join(" "),
+                    status: currentStatus,
+                    time: currentTime,
+                });
+
+                currentParagraph = [];
+                currentStatus = "normal";
+            }
+
+            if (name === "Is Breathing Abnormal") {
+                if (isValidDate(ob.obs_datetime)) {
+                    currentTime = ob.obs_datetime;
+                } else {
+                    console.error("Invalid obs_datetime:", ob.obs_datetime);
+                    currentTime = new Date().toISOString();
+                }
+            }
+
+            if (name === "Is Breathing Abnormal") {
+                if (valueText === "Yes") {
+                    addStatement("The patient is breathing normally.", true);
+                }else if (valueText === "No") {
+                    addStatement("The patient is breathing abnormally.", true);
+                    const startTimeObs = obs.find((ob: any) => ob.names?.[0]?.name === "Start Time");
+                    const endTimeObs = obs.find((ob: any) => ob.names?.[0]?.name === "End Time");
+
+                    if (startTimeObs) {
+                        addStatement(`The patient was assisted with ventilation from ${startTimeObs.value}.`, true);
+                    }
+                    if (endTimeObs) {
+                        addStatement(`to ${endTimeObs.value}.`, true);
+                    }
+                }else {
+                    addStatement("The patient's airway status is threatened.", true);
+                }
+            } else if (name === "Respiratory rate") {
+                const rate = parseInt(valueText, 10);
+                if (rate < 12 || rate > 20) {
+                    addStatement(`The patient's respiratory rate is ${valueText} bpm, which is outside the normal range.`, true);
+                } else {
+                    addStatement(`The patient's respiratory rate is ${valueText} breaths per minute, within normal limits.`);
+                }
+            } else if (name === "Oxygen Saturation") {
+                const saturation = parseInt(valueText, 10);
+                if (saturation < 95) {
+                    addStatement(`The patient's oxygen saturation is ${valueText}%, indicating hypoxemia.`, true);
+                } else {
+                    addStatement(`The patient's oxygen saturation is ${valueText}%, within normal limits.`);
+                }
+            } else if (name === "Patient Need Oxygen") {
+                if (valueText === "Yes") {
+                    addStatement("The patient requires supplemental oxygen.", true);
+                } else {
+                    addStatement("The patient does not require supplemental oxygen.");
+                }
+            } else if (name === "Is Trachea Central") {
+                if (valueText === "No") {
+                    addStatement("The trachea is not central, suggesting possible mediastinal shift.", true);
+                } else {
+                    addStatement("The trachea is central.");
+                }
+            } else if (name === "Chest wall abnormality") {
+                if (valueText === "Yes") {
+                    addStatement("The chest wall is abnormal, indicating possible trauma or deformity.", true);
+                } else {
+                    addStatement("The chest wall is normal.");
+                }
+            } else if (name === "Chest Expansion") {
+                if (valueText === "Reduced") {
+                    addStatement("The patient's chest expansion is reduced, suggesting possible respiratory compromise.", true);
+                } else {
+                    addStatement("The patient's chest expansion is normal.");
+                }
+            } else if (name === "Percussion") {
+                if (valueText === "Abnormal") {
+                    addStatement("Percussion findings are abnormal, indicating possible underlying pathology.", true);
+                } else {
+                    addStatement("Percussion findings are normal.");
+                }
+            } else if (name === "Breathing sounds") {
+                if (valueText === "Abnormal") {
+                    addStatement("Breath sounds are abnormal, suggesting possible airway obstruction or consolidation.", true);
+                } else {
+                    addStatement("Breath sounds are normal.");
+                }
+            } else if (name === "Additional Notes") {
+                additionalNotes = `Additional Notes: ${valueText}`;
+            }
+        });
+
+        if (currentParagraph.length > 0) {
+            if (additionalNotes) {
+                currentParagraph.push(additionalNotes);
+            }
+
+            paragraphs.push({
+                paragraph: currentParagraph.join(" "),
+                status: currentStatus,
+                time: currentTime,
+            });
+        }
+
+        return paragraphs;
+    };
     if (historyLoading) {
         return <Typography>Loading...</Typography>;
     }
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", }}>
-                Breathing Assessment Notes
-            </Typography>
-            {airwayAssessmentData.length === 0 ? (
+            {/*<Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>*/}
+            {/*    Breathing Assessment Notes*/}
+            {/*</Typography>*/}
+            {airwayAssessmentData.length > 0 ? (
+                airwayAssessmentData.map((data, index) => (
+                    <Box key={index} sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
+                            {new Date(data.time).toLocaleString()}
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: data.status === "abnormal" ? "" : "primary.main",
+                                mb: 2,
+                            }}
+                        >
+                            {data.paragraph}
+                        </Typography>
+                    </Box>
+                ))
+            ) : (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No breathing assessment data available.
                 </Typography>
-            ) : (
-                <List sx={{ listStyleType: "disc", pl: 4 }}>
-                    {airwayAssessmentData.map((data, index) => (
-                        <ListItem key={index} sx={{ display: "list-item", p: 0 }}>
-                            <ListItemText
-                                primary={
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            color: data.status === "abnormal" ? "red" : "primary.main",
-                                        }}
-                                    >
-                                        {data.value}
-                                    </Typography>
-                                }
-                            />
-                        </ListItem>
-                    ))}
-                </List>
             )}
         </Box>
     );

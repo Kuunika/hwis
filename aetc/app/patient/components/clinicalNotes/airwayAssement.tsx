@@ -7,8 +7,7 @@ import { encounters } from "@/constants";
 export const AirwayAssessment = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setAirwayAssessmentData] = useState<any[]>([]);
-
+    const [airwayAssessmentData, setAirwayAssessmentData] = useState<{ paragraph: string; time: string }[]>([]);
     useEffect(() => {
         if (!historyLoading && patientHistory) {
             const airwayEncounter = patientHistory.find(
@@ -22,61 +21,80 @@ export const AirwayAssessment = () => {
         }
     }, [patientHistory, historyLoading]);
 
+    const isValidDate = (dateString: string) => {
+        return !isNaN(new Date(dateString).getTime());
+    };
+
     const formatAirwayAssessmentData = (obs: any[]) => {
-        return obs
-            .map((ob: any) => {
-                const name = ob.names?.[0]?.name;
-                const valueText = ob.value;
+        const paragraphs: { paragraph: string; time: string }[] = [];
+        let currentParagraph: string[] = [];
+        let currentTime = "";
 
-                // console.log("Processing observation:", { name, valueText });
+        obs.forEach((ob: any) => {
+            const name = ob.names?.[0]?.name;
+            const valueText = ob.value;
 
-                let humanReadableResponse = "";
+            if (name === "Airway Patent" && currentParagraph.length > 0) {
+                paragraphs.push({
+                    paragraph: currentParagraph.join(" "),
+                    time: currentTime,
+                });
 
-                if (name === "Airway Patent") {
-                    if (valueText === "Yes") {
-                        humanReadableResponse = "The patient's airway is patent.";
-                    } else if (valueText === "No") {
-                        humanReadableResponse = "The patient's airway is not patent.";
-                    } else {
-                        humanReadableResponse = "The patient's airway status is unclear.";
-                    }
-                } else if (name === "Airway Reason") {
-                    humanReadableResponse = `The airway is not patent due to ${valueText}.`;
-                } else if (name === "Airway Opening Intervention") {
-                    humanReadableResponse = `The ${valueText} was provided as intervention.`;
-                } else if (name === "Patient Injured") {
-                    if (valueText === "Yes") {
-                        humanReadableResponse = "The patient is injured.";
-                    } else if (valueText === "No") {
-                        humanReadableResponse = "The patient is not injured.";
-                    }
-                } else if (name === "Neck collar applied") {
-                    if (valueText === "Yes") {
-                        humanReadableResponse = "The neck collar was provided as intervention.";
-                    } else if (valueText === "No") {
-                        humanReadableResponse = "The neck collar was not provided.";
-                    } else {
-                        humanReadableResponse = "The neck collar intervention was not indicated.";
-                    }
-                } else if (name === "Head blocks applied") {
-                    if (valueText === "Yes") {
-                        humanReadableResponse = "The head block was provided as intervention.";
-                    } else {
-                        humanReadableResponse = "No head block was provided as intervention.";
-                    }
-                }
+                currentParagraph = [];
+            }
 
-                if (humanReadableResponse) {
-                    return {
-                        name: name,
-                        value: humanReadableResponse,
-                        time: ob.obs_datetime,
-                    };
+            if (name === "Airway Patent") {
+                if (isValidDate(ob.obs_datetime)) {
+                    currentTime = ob.obs_datetime;
                 } else {
-                    return null;
+                    console.error("Invalid obs_datetime:", ob.obs_datetime);
+                    currentTime = new Date().toISOString();
                 }
-            })
-            .filter((item) => item !== null);
+            }
+
+            if (name === "Airway Patent") {
+                if (valueText === "Yes") {
+                    currentParagraph.push("The patient's airway is patent.");
+                } else if (valueText === "No") {
+                    currentParagraph.push("The patient's airway is not patent.");
+                } else {
+                    currentParagraph.push("The patient's airway is threatened.");
+                }
+            } else if (name === "Airway Reason") {
+                currentParagraph.push(`The airway obstruction is attributed to ${valueText}.`);
+            } else if (name === "Airway Opening Intervention") {
+                currentParagraph.push(`Intervention was performed using ${valueText} to maintain airway patency.`);
+            } else if (name === "Patient Injured") {
+                if (valueText === "Yes") {
+                    currentParagraph.push("The patient has sustained injuries.");
+                } else if (valueText === "No") {
+                    currentParagraph.push("No injuries were reported.");
+                }
+            } else if (name === "Neck collar applied") {
+                if (valueText === "Yes") {
+                    currentParagraph.push("A cervical collar was applied as a precautionary measure.");
+                } else if (valueText === "No") {
+                    currentParagraph.push("No cervical collar was applied.");
+                } else {
+                    currentParagraph.push("Application of a cervical collar was not indicated.");
+                }
+            } else if (name === "Head blocks applied") {
+                if (valueText === "Yes") {
+                    currentParagraph.push("Head blocks were applied to stabilize the cervical spine.");
+                } else {
+                    currentParagraph.push("Head blocks were not utilized during the intervention.");
+                }
+            }
+        });
+
+        if (currentParagraph.length > 0) {
+            paragraphs.push({
+                paragraph: currentParagraph.join(" "),
+                time: currentTime,
+            });
+        }
+
+        return paragraphs;
     };
 
     if (historyLoading) {
@@ -85,27 +103,24 @@ export const AirwayAssessment = () => {
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold",}}>
-                Airway Assessment Notes
-            </Typography>
+            {/*<Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>*/}
+            {/*    Airway Assessment Notes*/}
+            {/*</Typography>*/}
             {airwayAssessmentData.length === 0 ? (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
                     No airway assessment data available.
                 </Typography>
             ) : (
-                <List sx={{ listStyleType: "disc", pl: 4 }}>
-                    {airwayAssessmentData.map((data, index) => (
-                        <ListItem key={index} sx={{ display: "list-item", p: 0 }}>
-                            <ListItemText
-                                primary={
-                                    <Typography variant="body2" sx={{ color: "text.primary" }}>
-                                        {data.value}
-                                    </Typography>
-                                }
-                            />
-                        </ListItem>
-                    ))}
-                </List>
+                airwayAssessmentData.map((data, index) => (
+                    <Box key={index} sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
+                            {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "text.primary" }}>
+                            {data.paragraph}
+                        </Typography>
+                    </Box>
+                ))
             )}
         </Box>
     );

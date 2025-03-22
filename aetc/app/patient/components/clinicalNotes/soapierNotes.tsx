@@ -7,7 +7,7 @@ import { encounters } from "@/constants";
 export const SoapierNotes = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setAirwayAssessmentData] = useState<{ [key: string]: any[] }>({});
+    const [soapNotes, setSoapNotes] = useState<{ time: string; data: any[] }[]>([]);
 
     useEffect(() => {
         if (!historyLoading && patientHistory) {
@@ -17,24 +17,33 @@ export const SoapierNotes = () => {
 
             if (soapierEncounter) {
                 const formattedData = formatSoapierAssessmentData(soapierEncounter.obs);
-                setAirwayAssessmentData(formattedData);
+                setSoapNotes(formattedData);
             }
             console.log("Ma Encounter", soapierEncounter);
         }
     }, [patientHistory, historyLoading]);
 
     const formatSoapierAssessmentData = (obs: any[]) => {
-        const groupedData: { [key: string]: any[] } = {};
+        const groupedData: { time: string; data: any[] }[] = [];
+        let currentBlock: { time: string; data: any[] } | null = null;
 
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
             const time = ob.obs_datetime;
-            console.log("Processing observation:", { name, valueText, time });
+            // console.log("Processing observation:", { name, valueText, time });
 
             let humanReadableResponse = "";
 
             if (name === "Subjective") {
+                // If a new "Subjective" is found, start a new block
+                if (currentBlock) {
+                    groupedData.push(currentBlock);
+                }
+                currentBlock = {
+                    time: time,
+                    data: [],
+                };
                 humanReadableResponse = `Subjective: ${valueText}`;
             } else if (name === "Objective") {
                 humanReadableResponse = `Objective: ${valueText}`;
@@ -52,17 +61,17 @@ export const SoapierNotes = () => {
                 humanReadableResponse = `Implementation: ${valueText}`;
             }
 
-            if (humanReadableResponse) {
-                if (!groupedData[time]) {
-                    groupedData[time] = [];
-                }
-                groupedData[time].push({
+            if (humanReadableResponse && currentBlock) {
+                currentBlock.data.push({
                     name: name,
                     value: humanReadableResponse,
-                    time: time,
                 });
             }
         });
+
+        if (currentBlock) {
+            groupedData.push(currentBlock);
+        }
 
         return groupedData;
     };
@@ -73,21 +82,18 @@ export const SoapierNotes = () => {
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
-                SOAP Notes
-            </Typography>
-            {Object.keys(airwayAssessmentData).length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
-                    No airway assessment data available.
+            {soapNotes.length === 0 ? (
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "main.secondary" }}>
+                    No SOAPIER notes available.
                 </Typography>
             ) : (
-                Object.keys(airwayAssessmentData).map((time) => (
-                    <Box key={time} sx={{ mb: 3, borderBottom: "1px solid #E0E0E0", pb: 2 }}>
+                soapNotes.map((block, blockIndex) => (
+                    <Box key={blockIndex} sx={{ mb: 3, borderBottom: "1px solid #E0E0E0", pb: 2 }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
-                            {new Date(time).toLocaleString()} {/* Display the time */}
+                            {new Date(block.time).toLocaleString()}
                         </Typography>
                         <List sx={{ listStyleType: "disc", pl: 4 }}>
-                            {airwayAssessmentData[time].map((data, index) => (
+                            {block.data.map((data, index) => (
                                 <ListItem key={index} sx={{ display: "list-item", p: 0 }}>
                                     <ListItemText
                                         primary={
