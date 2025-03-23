@@ -82,7 +82,7 @@ export default function AwaitingSpecialityReviewForm() {
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -93,10 +93,10 @@ export default function AwaitingSpecialityReviewForm() {
             await submitEncounter(payload);
             toast.success("Awaiting Speciality Review information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            navigateTo("/dispositions");
 
 
         } catch (error) {

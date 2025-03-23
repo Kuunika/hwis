@@ -298,18 +298,20 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
+    const obsDatetime = getDateTime();
+
     const obs = [
       {
         concept: form.chestWallAbnormality.name,
         value: formValues[form.chestWallAbnormality.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         coded: true,
         groupMembers: flattenImagesObs(chestAbnormalitiesImage),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         coded: true,
         groupMembers: flattenImagesObs(percussionImage),
       },
@@ -317,37 +319,37 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
         coded: true,
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: concepts.SITE,
         value: "Lung Left",
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(lungLeft),
       },
       {
         concept: concepts.SITE,
         value: "Lung Right",
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(lungRight),
       },
       {
         concept: concepts.SITE,
         value: "Lung Front",
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(lungFront),
       },
       {
         concept: concepts.SITE,
         value: "Lung Back",
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(lungBack),
       },
       {
         concept: concepts.SITE,
         value: "Lung Front",
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(lungFront),
       },
     ];
@@ -360,7 +362,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.deviceForIntervention.name,
           value: device.id,
-          obsDateTime: getDateTime(),
+          obsDatetime,
           coded: true,
         };
       });
@@ -372,7 +374,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.chestExpansion.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues),
+      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
       ...obs,
       ...devicesObs,
     ]);

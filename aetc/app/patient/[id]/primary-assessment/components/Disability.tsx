@@ -142,7 +142,8 @@ export const Disability = ({ onSubmit }: Props) => {
   );
 
   const handleFormSubmit = (values: any) => {
-    handleSubmit(mapSubmissionToCodedArray(form, values));
+    const obsDateTime = getDateTime();
+    handleSubmit(mapSubmissionToCodedArray(form, values, obsDateTime));
   };
 
   const totalSum =
@@ -218,7 +219,7 @@ export const Disability = ({ onSubmit }: Props) => {
         </FormFieldContainerLayout>
         <FormFieldContainerLayout
           last={true}
-          title="Additional finds and Glucose"
+          title="Additional findings and Glucose"
         >
           <FieldsContainer mr="1ch">
             <TextInputField

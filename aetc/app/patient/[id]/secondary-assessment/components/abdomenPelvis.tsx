@@ -242,7 +242,7 @@ const schema = Yup.object().shape({
     .required()
     .label(form.sphincterTone.label),
   [form.periymen.name]: Yup.array().label(form.periymen.label),
-  [form.scrotum.name]: Yup.array().label(form.scrotum.label),
+  [form.scrotum.name]: Yup.string().label(form.scrotum.label),
   [form.vagina.name]: Yup.string().label(form.vagina.label),
   [form.urethralMeatus.name]: Yup.array().label(form.urethralMeatus.label),
   [form.unusualAppearance.name]: Yup.string().label(
@@ -380,12 +380,11 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     useState<Array<any>>([]);
   const [tendernessImageEnc, setTendernessImageEnc] = useState<Array<any>>([]);
   const { handleSubmit, isLoading: creatingEncounter } = useSubmitEncounter(
-    encounters.CHEST_ASSESSMENT,
+    encounters.ABDOMEN_AND_PELVIS_ASSESSMENT,
     onSubmit
   );
 
   const checkIfExist = (formArrayInput: any, value: string) => {
-    console.log({ formArrayInput });
     if (!Array.isArray(formArrayInput)) return;
 
     return formArrayInput?.find((op: any) => op.id == value);
@@ -393,57 +392,56 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
 
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
+    const obsDatetime = getDateTime();
     const obs = [
       {
         concept: form.abnormalitiesPresent.name,
         value: formValues[form.abnormalitiesPresent.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(abnormalitiesPresentImageEnc),
       },
       {
         concept: concepts.PALPATION,
         value: concepts.PALPATION,
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(tendernessImageEnc),
       },
     ];
 
-    const datetime = getDateTime();
-
     const generalInspectionObs = mapSearchComboOptionsToConcepts(
       formValues[form.generalInspection.name],
       form.generalInspection.name,
-      datetime
+      obsDatetime
     );
     const urethralMeatusObs = mapSearchComboOptionsToConcepts(
       formValues[form.urethralMeatus.name],
       form.urethralMeatus.name,
-      datetime
+      obsDatetime
     );
     const scrotumObs = mapSearchComboOptionsToConcepts(
       formValues[form.scrotum.name],
       form.scrotum.name,
-      datetime
+      obsDatetime
     );
     const periymenObs = mapSearchComboOptionsToConcepts(
       formValues[form.periymen.name],
       form.periymen.name,
-      datetime
+      obsDatetime
     );
     const vaginaObs = mapSearchComboOptionsToConcepts(
       formValues[form.vagina.name],
       form.vagina.name,
-      datetime
+      obsDatetime
     );
     const digitalVaginalExaminationObs = mapSearchComboOptionsToConcepts(
       formValues[form.digitalVaginalExamination.name],
       form.digitalVaginalExamination.name,
-      datetime
+      obsDatetime
     );
     const generalObs = mapSearchComboOptionsToConcepts(
       formValues[form.general.name],
       form.general.name,
-      datetime
+      obsDatetime
     );
 
     delete formValues[form.generalInspection.name];
@@ -456,7 +454,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
     delete formValues[form.general.name];
 
     await handleSubmit([
-      ...getObservations(formValues, getDateTime()),
+      ...getObservations(formValues, obsDatetime),
       ...obs,
       ...generalInspectionObs,
       ...urethralMeatusObs,

@@ -6,6 +6,7 @@ export interface Set {
   names: Name[];
 }
 export interface Name {
+  locale: string;
   concept_id: number;
   name: string;
   uuid: string;
@@ -59,6 +60,7 @@ export interface Patient {
 }
 
 export interface Person {
+  latest_encounter_type: string;
   patient_id: number;
   identifiers: Identifier[];
   given_name: string;
@@ -141,6 +143,7 @@ export interface Encounter {
   uuid: string;
   obs: Obs[];
   created_by: string;
+  person_uuid?:string
 }
 
 export interface Visit {
@@ -341,6 +344,11 @@ export interface Drugs {
 }
 
 export interface LabFormProps {
+  onClose: () => void;
+  addRequest: (value: LabRequest) => void;
+}
+
+export interface BedsideFormProps {
   onClose: () => void;
   addRequest: (value: LabRequest) => void;
 }

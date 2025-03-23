@@ -101,25 +101,26 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
 
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
+    const obsDatetime = getDateTime();
     const obs = [
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "lower limb anterior",
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(lowerLimbAnterior),
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "lower limb posterior",
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(lowerLimbPosterior),
       },
     ];
     // delete formValues[form.abnormalitiesLowerLimb.name];
-    // await handleSubmit([
-    //   ...mapSubmissionToCodedArray(form, formValues),
-    //   ...obs,
-    // ]);
+    await handleSubmit([
+      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...obs,
+    ]);
   };
 
   return (
