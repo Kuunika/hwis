@@ -23,7 +23,6 @@ export function PresentingComplaintTable({
     if (!data) return [];
 
     return data.map((item: any) => ({
-      name: item.names?.[0]?.name || "",
       value: item.value || "",
       duration: item?.children[0]?.value || "",
       date: getHumanReadableDateTime(item.obs_datetime) || "",
@@ -36,15 +35,9 @@ export function PresentingComplaintTable({
   const columns = useMemo<MRT_ColumnDef<ObjectRow>[]>(
     () => [
       {
-        accessorKey: "name",
-        id: "name",
-        header: "Name",
-        size: 100,
-      },
-      {
         accessorKey: "value",
         filterVariant: "autocomplete",
-        header: "Value",
+        header: "Presenting Complaint",
         size: 100,
       },
       {
