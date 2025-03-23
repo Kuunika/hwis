@@ -181,12 +181,29 @@ export const ClinicalNotes = () => {
     const intravenousAccessObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.INTRAVENOUS)
     );
+    const sizeOfInteraveneousCatheterObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.SIZE_OF_CATHETER)
+    );
+    const cannulationSiteObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.CANNULATION_SITE)
+    );
+
+
+    const scarpaObs = reviewOfSystemsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.FEMORAL)
+    );
+
+
     const abdominalDistentionObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.ABDOMINAL_DISTENSION)
     );
     const otherAbnormalitiesObs = reviewOfSystemsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.IS_THERE_OTHER_OBDONORMALITIES)
     );
+
+    // const otherAbnormaliiesObs = reviewOfSystemsEncounter?.obs.find(
+    //   (ob) => ob.names.some((n) => n.name === concepts.)
+    // );
   
     let messages = [];
   
@@ -374,6 +391,17 @@ export const ClinicalNotes = () => {
     } else {
       messages.push("The patient does not require intravenous access.");
     }
+    if (sizeOfInteraveneousCatheterObs?.value) {
+      messages.push(`Size of interaveneous catheter: ${sizeOfInteraveneousCatheterObs.value}.`);
+    }
+    if (cannulationSiteObs?.value) {
+      messages.push(`Cannulation Site: ${cannulationSiteObs.value}.`);
+    }
+
+    if (scarpaObs?.value) {
+      messages.push(`Diastolic blood pressure: ${scarpaObs.value}.`);
+    }
+
     if (abdominalDistentionObs?.value == "Yes") {
       messages.push("There is abdominal distention.");
     } else {
@@ -502,6 +530,16 @@ const [exposureMessage, setExposureMessage] = useState<string | null>(null);
     const temperatureObs = additionalFieldsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.TEMPERATURE)
     );
+
+    const rashOnCephalicFrontalObs = additionalFieldsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.RASH)
+    );
+    const skinAbnormalitiesOnCephalicFrontalObs = additionalFieldsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.ABNORMALITIES)
+    );
+    const  injuryOnCephalicFrontalObs = additionalFieldsEncounter?.obs.find(
+      (ob) => ob.names.some((n) => n.name === concepts.INJURY)
+    );
   
     const additionalNotesObs = additionalFieldsEncounter?.obs.find(
       (ob) => ob.names.some((n) => n.name === concepts.ADDITIONAL_NOTES)
@@ -554,15 +592,17 @@ const [exposureMessage, setExposureMessage] = useState<string | null>(null);
     } else {
       messages.push("Description: Not reported.");
     }
+
+    if (rashOnCephalicFrontalObs?.value) {
+      messages.push(`Rash on Cephalic: ${rashOnCephalicFrontalObs.value}.`);
+    } 
   
-    if (abnormalityDescriptionObs?.value) {
-      messages.push(`Abnormality Description: ${abnormalityDescriptionObs.value}.`);
-    } else {
-      messages.push("Abnormality Description: Not reported.");
+    if (skinAbnormalitiesOnCephalicFrontalObs?.value) {
+      messages.push(`Skin abnomalities on Cephalic: ${skinAbnormalitiesOnCephalicFrontalObs.value}.`);
     }
   
-    if (injuryDescriptionObs?.value) {
-      messages.push(`Description of Injury: ${injuryDescriptionObs.value}.`);
+    if (injuryOnCephalicFrontalObs?.value) {
+      messages.push(`Injury on Cephalic: ${injuryOnCephalicFrontalObs.value}.`);
     } else {
       messages.push("Description of Injury: Not reported.");
     }
