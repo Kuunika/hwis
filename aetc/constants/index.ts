@@ -318,6 +318,7 @@ export const concepts = {
   TEMPERATURE: "Temperature",
   RESPIRATORY_RATE: "Respiratory Rate",
   SATURATION_RATE: "Saturation Rate",
+  BLOOD_OXYGEN_SATURATION: "Blood oxygen saturation",
   HEART_RATE: "Heart Rate",
   BLOOD_PRESSURE_SYSTOLIC: "Blood Pressure Systolic",
   BLOOD_PRESSURE_DIASTOLIC: "Blood Pressure Diastolic",
@@ -1216,8 +1217,8 @@ export const concepts = {
   OBJECTIVE: "objective",
   ASSESSMENT: "assessment",
   PLAN: "plan",
-  EVALUATION: "evaluation",
-  REPLAN: "replan",
+  EVALUATION: "Evaluation",
+  REPLAN: "Replan",
   IMPLEMENTATION: "implementation",
 };
 
