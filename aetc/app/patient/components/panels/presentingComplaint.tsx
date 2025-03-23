@@ -1,14 +1,9 @@
 import { Paper, Typography } from "@mui/material";
-import { VisitTable } from "../visits";
+import { PresentingComplaintTable } from "../visits";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import { useEffect, useState } from "react";
 import { encounters } from "@/constants";
-import { styled } from "@mui/material/styles";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import MuiAccordion from "@mui/material/Accordion";
-import MuiAccordionSummary from "@mui/material/AccordionSummary";
-import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 
 export const PresentingComplaint = () => {
@@ -29,35 +24,6 @@ export const PresentingComplaint = () => {
     }
   }, [patientHistory, visitDate, historyLoading]);
 
-  // Get the most recent observations for each concept
-  const processObservations = (obs: any) => {
-    console.log("🚀 ~ processObservations ~ obs:", obs);
-    const latestObsMap = new Map();
-
-    // Find the most recent observation for each concept_id
-    obs.forEach((observation: any) => {
-      const { concept_id, obs_datetime } = observation;
-      const currentLatest = latestObsMap.get(concept_id);
-
-      if (
-        !currentLatest ||
-        new Date(obs_datetime) > new Date(currentLatest.obs_datetime)
-      ) {
-        latestObsMap.set(concept_id, observation);
-      }
-    });
-
-    // Mark observations as latest or with reference to the latest
-    return obs.map((observation: any) => {
-      const { concept_id, obs_id } = observation;
-      const latestObsId = latestObsMap.get(concept_id).obs_id;
-      return {
-        ...observation,
-        managerId: latestObsId === obs_id ? null : latestObsId,
-      };
-    });
-  };
-
   // Filter encounters by type and process observations
   const getEncountersByType = (encounterTypeUuid: any) => {
     if (!visitDate) return [];
@@ -66,7 +32,7 @@ export const PresentingComplaint = () => {
       (d: any) => d?.encounter_type?.uuid === encounterTypeUuid
     );
 
-    return encounter ? processObservations(encounter.obs || []) : [];
+    return encounter?.obs || [];
   };
 
   // Define encounter data for each accordion panel
@@ -94,7 +60,7 @@ export const PresentingComplaint = () => {
       <Paper style={{ marginTop: "10px" }}>
         {Object.entries(encounterData).map(
           ([panelId, { title, data }]) =>
-            data.length > 0 && <VisitTable data={data} />
+            data.length > 0 && <PresentingComplaintTable data={data} />
         )}
       </Paper>
     </>
