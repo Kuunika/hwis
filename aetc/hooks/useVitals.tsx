@@ -35,7 +35,6 @@ export const useVitals = () => {
 
       const encounter = filteredEncounters[0]; // Get the first matching encounter
       const obs = encounter?.obs ?? [];
-      console.log("🚀 ~ useEffect ~ obs:", obs);
 
       setFormattedVitals(formatAllVitalsToObject(getLatestObservations(obs)));
     }
