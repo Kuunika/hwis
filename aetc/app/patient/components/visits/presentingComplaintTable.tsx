@@ -11,7 +11,7 @@ import { getHumanReadableDateTime } from "@/helpers/dateTime";
 import { ReusableTable } from "@/components/tables/table";
 import { ObjectRow } from "./interface";
 
-export function VisitTable({
+export function PresentingComplaintTable({
   data,
   title = "",
 }: {
@@ -25,6 +25,7 @@ export function VisitTable({
     return data.map((item: any) => ({
       name: item.names?.[0]?.name || "",
       value: item.value || "",
+      duration: item?.children[0]?.value || "",
       date: getHumanReadableDateTime(item.obs_datetime) || "",
       managerId: item.managerId,
       id: item.obs_id,
@@ -44,6 +45,12 @@ export function VisitTable({
         accessorKey: "value",
         filterVariant: "autocomplete",
         header: "Value",
+        size: 100,
+      },
+      {
+        accessorKey: "duration",
+        filterVariant: "autocomplete",
+        header: "duration",
         size: 100,
       },
       {
@@ -67,9 +74,6 @@ export function VisitTable({
   //   });
   // };
 
-  const getSubRows = (row: ObjectRow) =>
-    transformedData.filter((r: ObjectRow) => r.managerId === row.id);
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ReusableTable<ObjectRow>
@@ -78,8 +82,6 @@ export function VisitTable({
         title={title}
         // enableRowActions={true}
         // enableRowSelection={true}
-        enableExpanding={true}
-        getSubRows={getSubRows}
         // onRowActionDelete={(row) => alert("voiding " + row.name)}
         // onRowActionEdit={(row) => alert("editing " + row.name)}
         // onBulkAction={handleVoid}
