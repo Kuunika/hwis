@@ -114,6 +114,15 @@ function Home() {
               title="Assessment List"
             />
           </AuthGuardComp>
+          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+            <Card
+              icon={<FcTodoList />}
+              link="/dispositions"
+              title="Disposition List"
+            />
+          </AuthGuardComp>
+
+
           <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
             <Card icon={<FcSettings />} link="/config" title="Config" />
           </AuthGuardComp>
