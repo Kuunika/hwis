@@ -1238,9 +1238,10 @@ export const concepts = {
   JVP_RAISED:"JVP raised",
   LYMPHADENOPATHY:"Lymphadenopathy",
   SYMMETRICAL_EXPANSION:"symmetrical expansion",
-  THRILL_HEAVES: 'thrill heaves'
-
-
+  THRILL_HEAVES: 'thrill heaves',
+  PINK:"pink",
+  PRESENT:"present",
+  HERPES_ZOSTER_SCAR:"Herpes zoster scar"
 };
 
 export const conceptNames = {
