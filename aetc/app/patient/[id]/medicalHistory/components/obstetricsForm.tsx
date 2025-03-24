@@ -210,7 +210,6 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const handleSubmit = async () => {
     await schema.validate(formValues);
-    console.log(formValues);
     onSubmit(formValues);
   };
 
@@ -233,7 +232,6 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
         encounter.obs.forEach((observation) => {
           const value = observation.value;
       
-          // Format the observation data
           const obsData: ProcessedObservation = {
             obs_id: observation.obs_id,
             name: observation.names?.[0]?.name,
@@ -242,13 +240,11 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
           };
       
           if (observation.obs_group_id) {
-            // Find the parent observation and group it
             const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
             if (parent) {
               parent.children.push(obsData);
             }
           } else {
-            // Add it to the top-level observations
             observations.push(obsData);
           }
         });
