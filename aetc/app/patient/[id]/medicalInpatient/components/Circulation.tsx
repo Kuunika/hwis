@@ -330,13 +330,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = getDateTime();
-
     const obs = [
       {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
-        obsDatetime,
+        obsDatetime: getDateTime(),
         coded: true,
         groupMembers: flattenImagesObs(abdomenOtherImage),
       },
@@ -344,13 +342,13 @@ export const Circulation = ({ onSubmit }: Prop) => {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
         coded: true,
-        obsDatetime,
+        obsDatetime: getDateTime(),
         groupMembers: flattenImagesObs(legImage),
       },
       // {
       //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
       //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
-      //   obsDatetime,
+      //   obsDatetime: getDateTime(),
       //   groupMembers: flattenImagesObs(abdomenImage),
       // },
     ];
@@ -358,26 +356,26 @@ export const Circulation = ({ onSubmit }: Prop) => {
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
       form.mucousAbnormal.name,
-      obsDatetime,
+      getDateTime(),
       true
     );
     const sizeOfCatheterObs = mapSearchComboOptionsToConcepts(
       formValues[form.catheterInfo.name],
       form.catheterInfo.name,
-      obsDatetime,
+      getDateTime(),
       true
     );
     const siteOfCannulationObs = mapSearchComboOptionsToConcepts(
       formValues[form.siteOfCannulation.name],
       form.siteOfCannulation.name,
-      obsDatetime,
+      getDateTime(),
       true
     );
 
     const diagramCannulationSiteObs = mapSearchComboOptionsToConcepts(
       formValues[form.diagramCannulationSite.name],
       form.diagramCannulationSite.name,
-      obsDatetime,
+      getDateTime(),
       true
     );
 
@@ -389,7 +387,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
     delete formValues[form.diagramCannulationSite.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...mapSubmissionToCodedArray(form, formValues),
       ...obs,
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,

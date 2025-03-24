@@ -240,53 +240,53 @@ export const ChestForm = ({ onSubmit }: Prop) => {
 
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
+
+    const obsDatetime = getDateTime();
     const obs = [
       {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: form.tactileFremitus.name,
         value: formValues[form.tactileFremitus.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(tactileFremitusImagesEnc),
       },
       {
         concept: concepts.AUSCULTATION_LUNG,
         value: concepts.AUSCULTATION_LUNG,
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(breathingSoundsImagesEnc),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(percussionImagesEnc),
       },
       {
         concept: form.localizedChestAbnormality.name,
         value: formValues[form.localizedChestAbnormality.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(localizedChestImagesEnc),
       },
       // {
       //   concept: form.vocalFremitus.name,
       //   value: formValues[form.vocalFremitus.name],
-      //   obsDatetime: getDateTime(),
+      //   obsDatetime,
       //   groupMembers: flattenImagesObs(vocalFremitusImagesEnc),
       // },
     ];
-
-    const datetime = getDateTime();
 
     const abnormalitiesObs = formValues[form.abnormalities.name]?.map(
       (opt: any) => {
         return {
           concept: form.abnormalities.name,
           value: opt.id,
-          obsDatetime: datetime,
+          obsDatetime,
         };
       }
     );
@@ -296,7 +296,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
       return {
         concept: form.chestWallAbnormalities.name,
         value: opt.id,
-        obsDatetime: datetime,
+        obsDatetime,
       };
     });
 
@@ -310,7 +310,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     // delete formValues[form.vocalFremitus.name];
 
     await handleSubmit([
-      ...getObservations(formValues, getDateTime()),
+      ...getObservations(formValues, obsDatetime),
       ...obs,
       ...abnormalitiesObs,
       ...chestWallAbnormalitiesObs,

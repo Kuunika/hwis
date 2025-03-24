@@ -1214,11 +1214,19 @@ export const concepts = {
   FLUID_BALANCE_CHART: "Fluid balance chart",
   BUILDING_COLLAPSE: "Building Collapse",
   PRESENTING_COMPLAINTS: "Presenting Complaints",
-  SUBJECTIVE: "subjective",
-  OBJECTIVE: "objective",
-  ASSESSMENT: "assessment",
-  PLAN: "plan",
-  IMPLEMENTATION: "implementation",
+
+  SUBJECTIVE:"subjective",
+  OBJECTIVE:"objective",
+  ASSESSMENT:"assessment",
+  PLAN:"plan",
+  IMPLEMENTATION:"implementation",
+
+  ARV:"on arv",
+  OTHER_MEDICATION: "Other Medication",
+  SURGICAL_HISTORY:"surgical history",
+  INTOXICATION_DESCRIPTION:"Intoxication description",
+  SOCIAL_HISTORY:"social history",
+  FAMILY_HISTORY:"family history"
 };
 
 export const conceptNames = {

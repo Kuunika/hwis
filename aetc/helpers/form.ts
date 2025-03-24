@@ -85,7 +85,8 @@ type SubmissionType = { [key: string]: any };
 
 export const mapSubmissionToCodedArray = (
   formDefinition: FormType,
-  submission: SubmissionType
+  submission: SubmissionType,
+  obsDateTime?:string
 ) => {
   return Object.entries(submission)
     .map(([key, value]) => {
@@ -113,7 +114,7 @@ export const mapSubmissionToCodedArray = (
         concept: conceptName,
         value,
         coded,
-        obsDatetime: getDateTime(),
+        obsDatetime: obsDateTime ? obsDateTime : getDateTime()
       };
     })
     .flat() // Flatten in case of nested arrays

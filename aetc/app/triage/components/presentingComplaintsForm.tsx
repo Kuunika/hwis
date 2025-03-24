@@ -9,6 +9,7 @@ import { TextInputDisplay } from "@/components/form/textInputDisplay";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
 import { getCachedConcept } from "@/helpers/data";
 import { getDateTime } from "@/helpers/dateTime";
+import { usePresentingComplaints } from "@/hooks/usePresentingComplaints";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -251,7 +252,7 @@ export const PresentingComplaintsForm = ({
   setTriageResult,
   getFormValues,
 }: Prop) => {
-  const [presentingComplaints, setPresentingComplaints] = useState([]);
+  const { presentingComplaints } = usePresentingComplaints();
   const [otherPresenting, setOtherPresenting] = useState([]);
   const [showInputTextDisplay, setShowInputTextDisplay] = useState(false);
 
@@ -289,21 +290,6 @@ export const PresentingComplaintsForm = ({
       }
     });
   };
-
-  useEffect(() => {
-    (async () => {
-      let complaints = await getConceptFromCacheOrFetch(
-        concepts.PRESENTING_COMPLAINTS
-      );
-      complaints = complaints.data[0].set_members.map((complaint: any) => {
-        return {
-          id: complaint?.names[0]?.uuid,
-          label: complaint?.names[0]?.name,
-        };
-      });
-      setPresentingComplaints(complaints);
-    })();
-  }, []);
 
   const handleSubmit = (values: any) => {
     const dateTime = getDateTime();

@@ -72,24 +72,22 @@ export const Exposure = ({ onSubmit }: Props) => {
   const handleFormSubmit = (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = getDateTime();
-
     const obs = [
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body front",
-        obsDatetime,
+        obsDatetime: getDateTime(),
         groupMembers: [...flattenImagesObs(fullImageFront)],
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body back",
-        obsDatetime,
+        obsDatetime: getDateTime(),
         groupMembers: [...flattenImagesObs(fullImageBack)],
       },
     ];
 
-    handleSubmit([...getObservations(formValues, obsDatetime), ...obs]);
+    handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
   };
 
   const gender = patient && patient?.gender;
