@@ -41,7 +41,7 @@ export const VitalFormConfig = {
     short: "RR",
   },
   saturationRate: {
-    name: concepts.SATURATION_RATE,
+    name: concepts.BLOOD_OXYGEN_SATURATION,
     label: "Oxygen Saturation",
     short: "SPO2",
   },

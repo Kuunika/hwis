@@ -320,6 +320,7 @@ export const concepts = {
   TEMPERATURE: "Temperature",
   RESPIRATORY_RATE: "Respiratory Rate",
   SATURATION_RATE: "Saturation Rate",
+  BLOOD_OXYGEN_SATURATION: "Blood oxygen saturation",
   HEART_RATE: "Heart Rate",
   BLOOD_PRESSURE_SYSTOLIC: "Blood Pressure Systolic",
   BLOOD_PRESSURE_DIASTOLIC: "Blood Pressure Diastolic",
@@ -1214,20 +1215,21 @@ export const concepts = {
   FLUID_BALANCE_CHART: "Fluid balance chart",
   BUILDING_COLLAPSE: "Building Collapse",
   PRESENTING_COMPLAINTS: "Presenting Complaints",
-
-  SUBJECTIVE:"subjective",
-  OBJECTIVE:"objective",
-  ASSESSMENT:"assessment",
-  PLAN:"plan",
-  IMPLEMENTATION:"implementation",
-
-  ARV:"on arv",
+  SUBJECTIVE: "subjective",
+  OBJECTIVE: "objective",
+  ASSESSMENT: "assessment",
+  PLAN: "plan",
+  EVALUATION: "Evaluation",
+  REPLAN: "Replan",
+  IMPLEMENTATION: "implementation",
+  ARV: "on arv",
   OTHER_MEDICATION: "Other Medication",
   SURGICAL_HISTORY:"surgical history",
   INTOXICATION_DESCRIPTION:"Intoxication description",
   SOCIAL_HISTORY:"social history",
   FAMILY_HISTORY:"family history",
-  UNKNOWN:"unknown"
+  UNKNOWN:"unknown",
+
 };
 
 export const conceptNames = {
@@ -1513,7 +1515,13 @@ export const roles = {
 
 // username: registration, clinician, nurse
 
-export const durationOptions = ["Hour(s)", "Day(s)", "Week(s)", "Month(s)", "Year(s)"];
+export const durationOptions = [
+  "Hour(s)",
+  "Day(s)",
+  "Week(s)",
+  "Month(s)",
+  "Year(s)",
+];
 
 export const templateForms = {
   ORTHOPAEDIC_SPECIALTY_REVIEW: "orthopaedic specialty review",

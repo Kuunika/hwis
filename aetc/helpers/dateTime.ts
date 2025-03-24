@@ -55,6 +55,9 @@ export const estimateBirthdate = (years: number) => {
 export const getHumanReadableDate = (date: string | Date) => {
   return dayjs(date).format("dddd, MMMM D, YYYY");
 };
+export const getHumanReadableShortDate = (date: any) => {
+  return dayjs(date).format(" D MMM, YYYY");
+};
 // export const getHumanReadableDateTime = (date: string | Date | undefined) => {
 
 //   if (!date) return ""

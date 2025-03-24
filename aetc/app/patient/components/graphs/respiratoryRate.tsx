@@ -3,7 +3,6 @@ import { useVitalsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
 export function RespiratoryRate() {
   const { chartData } = useVitalsGraphData();
-  console.log("🚀 ~ RespiratoryRate ~ chartData:", chartData.datetimeRR);
   return (
     <LineChart
       chartConfig={{

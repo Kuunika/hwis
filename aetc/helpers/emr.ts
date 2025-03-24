@@ -55,7 +55,7 @@ export const findEncounterObs = (
 };
 
 export const formatAllVitalsToObject = (obs: Obs[]) => {
-  const oxygen = filterObservations(obs, concepts.SATURATION_RATE);
+  const oxygen = filterObservations(obs, concepts.BLOOD_OXYGEN_SATURATION);
   const heartRate = filterObservations(obs, concepts.HEART_RATE);
 
   const bloodPressureDiastolic = filterObservations(
