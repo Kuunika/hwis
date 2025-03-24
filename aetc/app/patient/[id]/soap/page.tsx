@@ -17,7 +17,7 @@ export default function Page() {
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <BackButton />
           </Box>
-          <Typography variant="h4">SOAP</Typography>
+          <Typography variant="h4">SOAPIER</Typography>
           <br />
           <SoapForm />
         </Box>

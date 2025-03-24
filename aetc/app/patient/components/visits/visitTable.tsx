@@ -23,7 +23,7 @@ export function VisitTable({
     if (!data) return [];
 
     return data.map((item: any) => ({
-      name: item.names?.[0]?.name || "Unknown",
+      name: item.names?.[0]?.name || "",
       value: item.value || "",
       date: getHumanReadableDateTime(item.obs_datetime) || "",
       managerId: item.managerId,
