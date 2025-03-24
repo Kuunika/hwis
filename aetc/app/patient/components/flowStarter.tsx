@@ -92,7 +92,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       path: `/patient/${patient.id}/soap`,
     },
     {
-      label: "Start/Continue monitoring",
+      label: "Continue monitoring",
       path: `/patient/${patient.id}/nursingChart`,
     },
     {
