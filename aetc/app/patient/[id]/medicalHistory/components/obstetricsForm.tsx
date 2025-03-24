@@ -101,6 +101,7 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
       );
   const [observations, setObservations] = useState<ProcessedObservation[]>([]);
   const [showGestation, setShowGestation] = useState(false);
+  const [gestationalAge, setGestationalAge] = useState("");
 
     const contraceptiveOptions = [
       { id: concepts.JADELLE, label: 'Jadelle' },
@@ -262,6 +263,22 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
     }
 
     formValues["pregnant"]=="Yes"? setShowGestation(true): setShowGestation(false);
+    
+   
+    const currentDate = new Date();
+    const unixNow = Math.floor(currentDate.getTime() / 1000);
+    const lastMenstrual = new Date(formValues[obstetricsFormConfig.last_menstrual.name]);
+    const unixLast = Math.floor(lastMenstrual.getTime() / 1000);
+
+      if(lastMenstrual){
+        const gestationalAgeInSeconds= (unixNow - unixLast);
+        const Gestational_age = Math.floor(gestationalAgeInSeconds/ 604800);
+        const remainingDays = Math.floor((gestationalAgeInSeconds % 604800) / 86400);
+        const ageText = (`${Gestational_age} weeks and ${remainingDays} days`);
+        formValues[obstetricsFormConfig.gestational_age.name] = ageText;
+      }
+    
+
   }, [ data, formValues]);
 
 
