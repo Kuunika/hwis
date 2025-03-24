@@ -38,7 +38,7 @@ type Prop = {
     age_at_menarche: 0,
     last_menstrual: "",
     pregnant:"No",
-    gestational_age: 0,
+    gestational_age: "Select a date of last menstrual",
     number_of_previous_pregnancies: 0,
     previous_pregnancy_outcomes: [],
     number_of_births: [],
@@ -101,7 +101,6 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
       );
   const [observations, setObservations] = useState<ProcessedObservation[]>([]);
   const [showGestation, setShowGestation] = useState(false);
-  const [gestationalAge, setGestationalAge] = useState("");
 
     const contraceptiveOptions = [
       { id: concepts.JADELLE, label: 'Jadelle' },
@@ -131,14 +130,14 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
         .required("Age at menarche is required")
         .positive("Age at menarche  must be a positive number"),
 
-        [obstetricsFormConfig.gestational_age.name]: yup
-        .number()
-        .when(obstetricsFormConfig.pregnant.name, (pregnant: any, schema) => {
-          if (pregnant === "Yes") {
-            return schema.required("Gestational age is required").positive("Gestational age must be a positive number");
-          }
-          return schema;
-        }),
+        // [obstetricsFormConfig.gestational_age.name]: yup
+        // .number()
+        // .when(obstetricsFormConfig.pregnant.name, (pregnant: any, schema) => {
+        //   if (pregnant === "Yes") {
+        //     return schema.required("Gestational age is required").positive("Gestational age must be a positive number");
+        //   }
+        //   return schema;
+        // }),
 
           number_of_previous_pregnancies: yup
             .number()
@@ -198,11 +197,7 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
             .required("Last menstrual date is required")
             .nullable()
             .max(new Date(), "Date cannot be in the future"),
-      
-            [obstetricsFormConfig.gestational_age.name]: yup.number()
-                .min(0, "Number of pregnancies cannot be negative"),
-              otherwise: yup.number().nullable(),
-     
+
               [obstetricsFormConfig.number_of_previous_pregnancies.name]: yup.number()
             .required("Number of previous pregnancies is required")
             .min(0, "Number of previous pregnancies cannot be negative")
@@ -215,6 +210,7 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const handleSubmit = async () => {
     await schema.validate(formValues);
+    console.log(formValues);
     onSubmit(formValues);
   };
 
@@ -270,13 +266,13 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
     const lastMenstrual = new Date(formValues[obstetricsFormConfig.last_menstrual.name]);
     const unixLast = Math.floor(lastMenstrual.getTime() / 1000);
 
-      if(lastMenstrual){
-        const gestationalAgeInSeconds= (unixNow - unixLast);
-        const Gestational_age = Math.floor(gestationalAgeInSeconds/ 604800);
+    if (!isNaN(unixLast)) { 
+        const gestationalAgeInSeconds = unixNow - unixLast;
+        const Gestational_age = Math.floor(gestationalAgeInSeconds / 604800);
         const remainingDays = Math.floor((gestationalAgeInSeconds % 604800) / 86400);
-        const ageText = (`${Gestational_age} weeks and ${remainingDays} days`);
+        const ageText = `${Gestational_age} weeks and ${remainingDays} days`;
         formValues[obstetricsFormConfig.gestational_age.name] = ageText;
-      }
+    }
     
 
   }, [ data, formValues]);
@@ -356,6 +352,7 @@ return (
               name={obstetricsFormConfig.gestational_age.name}
               label={obstetricsFormConfig.gestational_age.label}
               sx={{ marginRight: '2ch'}}
+              disabled
             />
 
             )}
