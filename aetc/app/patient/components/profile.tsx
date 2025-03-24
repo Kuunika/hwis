@@ -28,21 +28,21 @@ export const DesktopView = () => {
   ) as ConsultationContextType;
 
   return (
-    <MainGrid
-      container
-      style={{ justifyContent: "center", marginTop: "10px", gap: "10px" }}
-    >
-      <VisitDatesProvider>
-        <MainGrid item lg={2} sm={2}>
+    <VisitDatesProvider>
+      <MainGrid
+        container
+        style={{ justifyContent: "center", marginTop: "15px", gap: "15px" }}
+      >
+        <MainGrid item lg={2.2} sm={2.2}>
           <PersonalDetailsCard />
           <br />
           <ListVisitDates />
         </MainGrid>
-        <MainGrid item lg={9} sm={9}>
+        <MainGrid item lg={8.5} sm={8.5}>
           <VitalsPanel />
           <TabsContainer />
         </MainGrid>
-      </VisitDatesProvider>
-    </MainGrid>
+      </MainGrid>
+    </VisitDatesProvider>
   );
 };

@@ -60,12 +60,11 @@ export const patchPatient = () => {
   });
 };
 
-export const registerPatient =  () => {
+export const registerPatient = () => {
   const addData = async (patientData: any) => {
     const getAddress = (address: any) => (address !== "" ? address : "N/A");
 
-
-    const nationalIdIdentifierType ='dc047ea8-e9ce-4fd0-af93-a2ade6b14b42'
+    const nationalIdIdentifierType = "dc047ea8-e9ce-4fd0-af93-a2ade6b14b42";
 
     const identifiers =
       patientData.identificationNumber == ""
@@ -166,16 +165,44 @@ export const getPatientsWaitingForAssessment = () => {
 };
 
 export const getPatientsWaitingForAssessmentPaginated = (
-  paginationDetails: PaginationModel, search?:string
+  paginationDetails: PaginationModel,
+  search?: string
 ) => {
-  const page = paginationDetails.page==0 ? 1 :paginationDetails.page;
+  const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
   const getall = () =>
     getDailyVisitsPaginated(
       `category=assessment&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
     ).then((response) => response.data);
 
   return useQuery({
-    queryKey: ["assessment",paginationDetails.page, paginationDetails.pageSize, search],
+    queryKey: [
+      "assessment",
+      paginationDetails.page,
+      paginationDetails.pageSize,
+      search,
+    ],
+    queryFn: getall,
+    enabled: true,
+  });
+};
+
+export const getPatientsWaitingForDispositionPaginated = (
+  paginationDetails: PaginationModel,
+  search?: string
+) => {
+  const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
+  const getall = () =>
+    getDailyVisitsPaginated(
+      `category=disposition&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+    ).then((response) => response.data);
+
+  return useQuery({
+    queryKey: [
+      "disposition",
+      paginationDetails.page,
+      paginationDetails.pageSize,
+      search,
+    ],
     queryFn: getall,
     enabled: true,
   });
@@ -300,14 +327,14 @@ export const getPatientVisitTypes = (id: string) => {
 };
 
 export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
-  const getAll = () => checkPatientIfOnAssessment(id).then((response) => response?.data);
+  const getAll = () =>
+    checkPatientIfOnAssessment(id).then((response) => response?.data);
   return useQuery({
     queryKey: ["visits", id, "eligible"],
     queryFn: getAll,
     enabled: true,
   });
 };
-
 
 export const addBroughtDead = () => {
   const addData = (patientData: any) => {
@@ -319,12 +346,12 @@ export const addBroughtDead = () => {
   return useMutation({
     mutationFn: addData,
   });
-}
+};
 
 export const getAllDeathReports = () => {
   const getAll = () => getDeathReports().then((response) => response?.data);
   return useQuery({
     queryKey: ["death-reports"],
-    queryFn: getAll, 
+    queryFn: getAll,
   });
 };

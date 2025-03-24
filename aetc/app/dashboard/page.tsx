@@ -69,20 +69,6 @@ function Home() {
           </AuthGuardComp>
           <AuthGuardComp
             roles={[
-              roles.REGISTRATION_CLERK,
-              roles.ADMIN,
-              roles.CLINICIAN,
-              roles.NURSE,
-            ]}
-          >
-            <Card
-              icon={<FcRules />}
-              link="/registration/death/list"
-              title="Brought In Dead"
-            />
-          </AuthGuardComp>
-          <AuthGuardComp
-            roles={[
               roles.ADMIN,
               roles.CLINICIAN,
               roles.NURSE,
@@ -114,11 +100,33 @@ function Home() {
               title="Assessment List"
             />
           </AuthGuardComp>
-          <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
-            <Card icon={<FcSettings />} link="/config" title="Config" />
+          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+            <Card
+              icon={<FcTodoList />}
+              link="/dispositions"
+              title="Disposition List"
+            />
+          </AuthGuardComp>
+
+          <AuthGuardComp
+            roles={[
+              roles.REGISTRATION_CLERK,
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+            ]}
+          >
+            <Card
+              icon={<FcRules />}
+              link="/registration/death/list"
+              title="Brought In Dead"
+            />
           </AuthGuardComp>
           <AuthGuardComp roles={[roles.ADMIN, roles.REGISTRATION_CLERK]}>
             <Card icon={<FcAreaChart />} link="/reports" title="Reports" />
+          </AuthGuardComp>
+          <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
+            <Card icon={<FcSettings />} link="/config" title="Config" />
           </AuthGuardComp>
         </MainGrid>
         <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>

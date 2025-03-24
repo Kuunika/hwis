@@ -181,7 +181,7 @@ export default function TriageWorkFlow() {
       setCompleted(2);
       setMessage("adding airway...");
       createAirway({
-        encounterType: encounters.AIRWAY_ASSESSMENT,
+        encounterType: encounters.AIRWAY_BREATHING,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,

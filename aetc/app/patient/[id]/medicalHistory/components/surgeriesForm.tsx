@@ -14,7 +14,7 @@ import { Field, FieldArray, getIn } from "formik";
 import { concepts } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import PastSurgicalHistoryPanel from "../../medicalInpatient/components/pastSurgicalHistory";
+import PastSurgicalHistoryPanel from "../../medicalInpatient-/components/pastSurgicalHistory";
 
 interface Observation {
   obs_id: number | null;

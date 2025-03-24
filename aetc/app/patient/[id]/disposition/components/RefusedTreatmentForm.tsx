@@ -78,7 +78,7 @@ export default function RefusedTreatmentForm() {
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -89,10 +89,10 @@ export default function RefusedTreatmentForm() {
             await submitEncounter(payload);
             toast.success("Refused Hospital Treatment information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            navigateTo("/dispositions");
 
 
         } catch (error) {

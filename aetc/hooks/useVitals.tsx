@@ -81,7 +81,10 @@ export const useVitals = () => {
     return Array.from(latestObsMap.values());
   };
   const updateVitals = (obs: any) => {
-    const saturationRate = getObservationValue(obs, concepts.SATURATION_RATE);
+    const saturationRate = getObservationValue(
+      obs,
+      concepts.BLOOD_OXYGEN_SATURATION
+    );
     const heartRate = getObservationValue(obs, concepts.HEART_RATE);
     const respiratoryRate = getObservationValue(obs, concepts.RESPIRATORY_RATE);
     const temperature = getObservationValue(obs, concepts.TEMPERATURE);

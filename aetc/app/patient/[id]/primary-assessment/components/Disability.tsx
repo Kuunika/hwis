@@ -142,7 +142,8 @@ export const Disability = ({ onSubmit }: Props) => {
   );
 
   const handleFormSubmit = (values: any) => {
-    handleSubmit(mapSubmissionToCodedArray(form, values));
+    const obsDateTime = getDateTime();
+    handleSubmit(mapSubmissionToCodedArray(form, values, obsDateTime));
   };
 
   const totalSum =

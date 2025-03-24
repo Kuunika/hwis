@@ -29,6 +29,18 @@ const form = {
     name: concepts.PLAN,
     label: "Plan",
   },
+  intervention: {
+    name: concepts.INTERVENTION,
+    label: "Intervention",
+  },
+  evaluation: {
+    name: concepts.EVALUATION,
+    label: "Evaluation",
+  },
+  replan: {
+    name: concepts.REPLAN,
+    label: "Replan",
+  },
   implementation: {
     name: concepts.IMPLEMENTATION,
     label: "Implementation",
@@ -40,12 +52,13 @@ const validationSchema = Yup.object().shape({
   [form.objective.name]: Yup.string().required(form.objective.label),
   [form.assessment.name]: Yup.string().required(form.assessment.label),
   [form.plan.name]: Yup.string().required(form.plan.label),
+  [form.intervention.name]: Yup.string().required(form.intervention.label),
+  [form.evaluation.name]: Yup.string().required(form.evaluation.label),
+  [form.replan.name]: Yup.string().required(form.replan.label),
   [form.implementation.name]: Yup.string().required(form.implementation.label),
 });
 
 const initialValues = getInitialValues(form);
-
-console.log({ initialValues });
 
 export const SoapForm = () => {
   const { navigateBack } = useNavigation();
@@ -95,6 +108,30 @@ export const SoapForm = () => {
           name={form.plan.name}
           multiline
           id={form.plan.name}
+          rows={4}
+          sx={{ width: "100%" }}
+        />
+        <TextInputField
+          label={form.intervention.label}
+          name={form.intervention.name}
+          multiline
+          id={form.intervention.name}
+          rows={4}
+          sx={{ width: "100%" }}
+        />
+        <TextInputField
+          label={form.evaluation.label}
+          name={form.evaluation.name}
+          multiline
+          id={form.evaluation.name}
+          rows={4}
+          sx={{ width: "100%" }}
+        />
+        <TextInputField
+          label={form.replan.label}
+          name={form.replan.name}
+          multiline
+          id={form.replan.name}
           rows={4}
           sx={{ width: "100%" }}
         />
