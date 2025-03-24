@@ -127,6 +127,10 @@ const form = {
     name: concepts.EYE_OPENING_RESPONSE,
     label: "Eye Opening Response",
   },
+  summary: {
+    name: concepts.SUMMARY,
+    label: "Summary",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -163,6 +167,7 @@ const schema = Yup.object().shape({
   [form.eyeOpeningResponse.name]: Yup.string().label(
     form.eyeOpeningResponse.label
   ),
+  [form.summary.name]: Yup.string().label(form.summary.label),
 });
 const initialValues = getInitialValues(form);
 
@@ -481,6 +486,16 @@ export const ReviewOfSystems = () => {
       <Typography fontWeight={"800"} variant="body2">
         ({v}V {e} E {m} M ) {m + v + e}/15
       </Typography>
+      <Typography>Cranial nerves</Typography>
+      <Typography>Peripherals nerves</Typography>
+      <TextInputField
+        name={form.summary.name}
+        id={form.summary.name}
+        label={form.summary.label}
+        multiline
+        rows={5}
+        sx={{ width: "100%" }}
+      />
     </FormikInit>
   );
 };

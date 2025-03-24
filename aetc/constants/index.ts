@@ -1241,7 +1241,8 @@ export const concepts = {
   THRILL_HEAVES: 'thrill heaves',
   PINK:"pink",
   PRESENT:"present",
-  HERPES_ZOSTER_SCAR:"Herpes zoster scar"
+  HERPES_ZOSTER_SCAR:"Herpes zoster scar",
+  SUMMARY:"summary"
 };
 
 export const conceptNames = {
