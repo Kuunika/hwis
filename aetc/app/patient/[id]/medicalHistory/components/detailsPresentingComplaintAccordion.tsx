@@ -4,7 +4,6 @@ import { encounters } from "@/constants";
 import { getHumanReadableDate } from "@/helpers/dateTime";
 import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientEncounters } from "@/services/encounter";
 
 const Complaints = () => {
   const { patientId } = getActivePatientDetails();
