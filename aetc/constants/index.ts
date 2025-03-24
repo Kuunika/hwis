@@ -1237,6 +1237,8 @@ export const concepts = {
   ORLA_THRUSH:"Oral thrush",
   JVP_RAISED:"JVP raised",
   LYMPHADENOPATHY:"Lymphadenopathy",
+  SYMMETRICAL_EXPANSION:"symmetrical expansion",
+  THRILL_HEAVES: 'thrill heaves'
 
 
 };
