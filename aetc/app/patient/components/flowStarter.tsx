@@ -113,6 +113,19 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       label: "Patient Management Plan",
       path: `/patient/${patient.id}/patient-management-plan`,
     },
+    {
+      label: "Differential Diagnosis",
+      path: `/patient/${patient.id}/differential-diagnosis`,
+    },
+    {
+      label: "Investigations",
+      path: `/patient/${patient.id}/investigations`,
+    },
+    {
+      label: "Final Diagnosis",
+      path: `/patient/${patient.id}/final-diagnosis`,
+    },
+
     { label: "Disposition", path: `/patient/${patient.id}/disposition` },
   ];
 
