@@ -57,6 +57,7 @@ export default function TriageWorkFlow() {
   const [consciousness, setConsciousness] = useState({});
   const [persistentPain, setPersistentPain] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [showYellowModal, setShowYellowModal] = useState(false);
 
   const [triagePrintOpen, setTriagePrintOpen] = useState(false);
   const {
@@ -308,6 +309,12 @@ export default function TriageWorkFlow() {
       setShowModal(true);
       return;
     }
+
+    if (triageResult == "yellow") {
+      setShowYellowModal(true);
+      return;
+    }
+    
     triggerSubmission();
   };
 
@@ -610,6 +617,18 @@ export default function TriageWorkFlow() {
       <GenericDialog
         open={showModal}
         onClose={closeModal}
+        title="Triage Decision"
+      >
+        <p>
+          Triage status is <span style={{ color: "green" }}>GREEN</span>. Where
+          should this patient go next?
+        </p>
+        <ServiceAreaForm onSubmit={handleServiceArea} />
+      </GenericDialog>
+
+      <GenericDialog
+        open={showYellowModal}
+        onClose={closeYellowModal}
         title="Triage Decision"
       >
         <p>
