@@ -84,7 +84,7 @@ export const AbdomenMedicalInpatient = (props: Props) => {
       />
       <TextInputField
         multiline
-        rows={5}
+        rows={3}
         sx={{ width: "100%" }}
         name={form.lightPalpation.name}
         label={form.lightPalpation.label}
@@ -92,7 +92,7 @@ export const AbdomenMedicalInpatient = (props: Props) => {
       />
       <TextInputField
         multiline
-        rows={5}
+        rows={3}
         sx={{ width: "100%" }}
         name={form.deepPalpation.name}
         label={form.deepPalpation.label}
@@ -100,7 +100,7 @@ export const AbdomenMedicalInpatient = (props: Props) => {
       />
       <TextInputField
         multiline
-        rows={5}
+        rows={3}
         sx={{ width: "100%" }}
         name={form.auscultation.name}
         label={form.auscultation.label}
