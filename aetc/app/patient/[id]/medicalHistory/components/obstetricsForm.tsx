@@ -1,3 +1,4 @@
+'use client'
 import { FormDatePicker, MainButton, RadioGroupInput, SearchComboBox, WrapperBox } from "@/components";
 import React, { useEffect, useState } from "react";
 import {

@@ -24,6 +24,7 @@ type Prop = {
   inputIcon?: any;
   helperTextWidth?: string;
   handleBlurEvent?: (value: any) => void;
+  setFormFieldValue?: (name: string, value: any) => void;
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -43,16 +44,32 @@ export const TextInputField: FC<Prop> = ({
   unitOfMeasure,
   helperTextWidth = "25ch",
   handleBlurEvent,
+  setFormFieldValue,
 }) => {
-  const { value, handleChange, hasError, errorMessage, handleBlur } =
-    useFormikField(name);
+  const {
+    value,
+    handleChange,
+    hasError,
+    errorMessage,
+    handleBlur,
+    setFieldValue,
+  } = useFormikField(name);
+
+  useEffect(() => {
+    if (setFormFieldValue) {
+      setFormFieldValue = setFieldValue;
+    }
+  }, [setFieldValue]);
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
 
   return (
-    <FormControl variant="standard" sx={{ mb: "1ch", fontSize: "0.76rem", ...sx }}>
+    <FormControl
+      variant="standard"
+      sx={{ mb: "1ch", fontSize: "0.76rem", ...sx }}
+    >
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
@@ -96,9 +113,9 @@ export const TextInputField: FC<Prop> = ({
           ),
         }}
       />
-                <MainTypography color={"red"} variant="subtitle2">
-            {errorMessage}
-          </MainTypography>
+      <MainTypography color={"red"} variant="subtitle2">
+        {errorMessage}
+      </MainTypography>
     </FormControl>
   );
 };

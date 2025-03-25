@@ -181,3 +181,7 @@
 export default function Page() {
   return <></>;
 }
+export function generateStaticParams() {
+  return [];
+}
+

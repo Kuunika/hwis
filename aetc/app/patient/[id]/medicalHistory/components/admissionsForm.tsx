@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from "react";
 import { FormDatePicker, MainButton, SearchComboBox, TextInputField, WrapperBox, FormFieldContainer, FormValuesListener, FormikInit } from "@/components";
 import * as yup from "yup";

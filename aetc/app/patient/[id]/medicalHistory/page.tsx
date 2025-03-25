@@ -1,4 +1,3 @@
-"use client";
 import { FormContainer } from "@/components";
 import { MedicalHistoryFlow } from "./components";
 import { PatientInfoTab } from "@/components";
@@ -14,5 +13,8 @@ function SampleHistory() {
   );
 }
 
-
 export default SampleHistory;
+
+export function generateStaticParams() {
+  return [];
+}

@@ -1,3 +1,4 @@
+'use client'
 import { MainButton, TextInputField, WrapperBox } from "@/components";
 import { useEffect, useState } from "react";
 import { FormValuesListener, FormikInit } from "@/components";
