@@ -119,7 +119,7 @@ export const useVitals = () => {
       },
       {
         name: "Glucose",
-        value: glucose ? `${glucose} mg/dL` : "",
+        value: glucose ? `${glucose}` : "",
       },
       {
         name: "AVPU",
