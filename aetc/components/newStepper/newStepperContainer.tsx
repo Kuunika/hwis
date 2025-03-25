@@ -147,7 +147,7 @@ export function NewStepperContainer({
                 textAlign: "left",
               }}
             >
-              Back
+              Back to Profile
             </MainTypography>
           </WrapperBox>
           {validChildren.map((child, key) => {
