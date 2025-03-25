@@ -1228,6 +1228,7 @@ export const concepts = {
   INTOXICATION_DESCRIPTION: "Intoxication description",
   SOCIAL_HISTORY: "social history",
   FAMILY_HISTORY: "family history",
+  OTHER_AETC_SERVICE_AREA: "Other AETC service area",
 };
 
 export const conceptNames = {

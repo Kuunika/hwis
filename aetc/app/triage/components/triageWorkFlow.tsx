@@ -239,6 +239,9 @@ export default function TriageWorkFlow() {
     if (painCreated) {
       setCompleted(6);
       setMessage("finalizing...");
+      
+      const  otherAETCArea= Object.entries(formData.serviceArea).find(([key]) => key !== concepts.PATIENT_REFERRED_TO)?.[1];
+
 
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
@@ -259,6 +262,11 @@ export default function TriageWorkFlow() {
                 : "",
             obsDatetime: getDateTime(),
           },
+          {
+            concept: concepts.OTHER_AETC_SERVICE_AREA,
+            value:otherAETCArea,
+            obsDatetime: getDateTime(),
+          }
         ],
       });
     }
