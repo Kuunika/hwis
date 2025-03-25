@@ -419,13 +419,13 @@ export const ReviewOfSystems = () => {
       {gender == "Male" && (
         <NewAbdomenImage
           onValueChange={setPercussionImagesEnc}
-          formNameSection="secondaryAbdomen"
+          formNameSection="medicalInPatient"
         />
       )}
       {gender == "Female" && (
         <NewAbdomenFemaleImage
           onValueChange={setPercussionImagesEnc}
-          formNameSection="secondaryAbdomen"
+          formNameSection="medicalInPatient"
         />
       )}
       <br />
