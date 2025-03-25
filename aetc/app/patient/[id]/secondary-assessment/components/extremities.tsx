@@ -27,6 +27,11 @@ import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 import { LowerLimbAnteriorImage } from "@/components/svgImages/lowerLimbAnterior";
+import { UpperLimbFemaleAnterior } from "@/assets/upperLimbFemaleAnterior";
+import { UpperLimbFemaleAnteriorImage } from "@/components/svgImages/upperLimbFemaleAnterior";
+import { UpperLimbFemalePosteriorImage } from "@/components/svgImages/upperLimbFemalePosterior";
+import { UpperLimbMaleAnteriorImage } from "@/components/svgImages/upperLimbMaleAnterior";
+import { UpperLimbMalePosteriorImage } from "@/components/svgImages/upperLimbMalePosterior";
 
 const form = {
   oedama: {
@@ -91,6 +96,8 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
 
   const [lowerLimbAnterior, setLowerLimbAnterior] = useState<Array<any>>([]);
   const [lowerLimbPosterior, setLowerLimbPosterior] = useState<Array<any>>([]);
+  const [upperLimbAnterior, setUpperLimbAnterior] = useState<Array<any>>([]);
+  const [upperLimbPosterior, setUpperLimbPosterior] = useState<Array<any>>([]);
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.EXTREMITIES_ASSESSMENT,
@@ -162,11 +169,30 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
             label={form.abnormalitiesUpperLimb.label}
           />
           {formValues[form.abnormalitiesUpperLimb.name] == YES && (
-            <LowerLimbAnteriorImage
-              onValueChange={setLowerLimbAnterior}
-              imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
-              imageSection={form.abnormalitiesUpperLimb.name}
-            />
+            <>
+              {gender == "Female" && (
+                <>
+                  <UpperLimbFemaleAnteriorImage
+                    onValueChange={setUpperLimbAnterior}
+                    form="extremities"
+                  />
+                  <UpperLimbFemalePosteriorImage
+                    onValueChange={setUpperLimbPosterior}
+                  />
+                </>
+              )}
+              {gender == "Male" && (
+                <>
+                  <UpperLimbMaleAnteriorImage
+                    onValueChange={setUpperLimbAnterior}
+                    form="extremities"
+                  />
+                  <UpperLimbMalePosteriorImage
+                    onValueChange={setUpperLimbPosterior}
+                  />
+                </>
+              )}
+            </>
           )}
           <RadioGroupInput
             row
