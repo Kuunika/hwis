@@ -1,6 +1,6 @@
 "use client";
 import { NewStepperContainer } from "@/components";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import React, { useState } from "react";
 import {
   AbdomenPelvisForm,
@@ -14,7 +14,8 @@ import { encounters } from "@/constants";
 
 export function SecondaryAssessmentFlow() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { navigateBack } = useNavigation();
+  const { navigateBackToProfile, navigateTo } = useNavigation();
+  const { params } = useParameters();
 
   const steps = [
     {
@@ -57,6 +58,9 @@ export function SecondaryAssessmentFlow() {
   const handleExtremitiesSubmit = () => {
     setActiveStep(5);
   };
+  const redirectToDifferentialDiagnosis = () => {
+    navigateTo(`/patient/${params.id}/differential-diagnosis`);
+  };
 
   return (
     <NewStepperContainer
@@ -64,7 +68,7 @@ export function SecondaryAssessmentFlow() {
       title="Secondary Assessment"
       steps={steps}
       active={activeStep}
-      onBack={() => navigateBack()}
+      onBack={() => navigateBackToProfile()}
       showSubmittedStatus
     >
       <GeneralInformation onSubmit={handleGeneralInformationSubmit} />
@@ -72,7 +76,7 @@ export function SecondaryAssessmentFlow() {
       <ChestForm onSubmit={handleChestSubmit} />
       <AbdomenPelvisForm onSubmit={handleAbdomenSubmit} />
       <ExtremitiesForm onSubmit={handleExtremitiesSubmit} />
-      <NeurologicalExamination onSubmit={navigateBack} />
+      <NeurologicalExamination onSubmit={redirectToDifferentialDiagnosis} />
     </NewStepperContainer>
   );
 }
