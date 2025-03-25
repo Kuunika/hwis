@@ -1,23 +1,9 @@
-import { FormContainer } from "@/components";
-import { PatientInfoTab } from "@/components";
-import { roles } from "@/constants";
-import AuthGuard from "@/helpers/authguard";
-import { StartConsultationFlow } from "./components/startConsultationFlow";
+import ConsultationPage from "./components/consultationPage";
 
-function Consultation() {
-  return (
-    <>
-      <PatientInfoTab />
-      <FormContainer>
-        <StartConsultationFlow />
-      </FormContainer>
-    </>
-  );
+export default function Consultation() {
+  return <ConsultationPage />;
 }
 
-// export default Consultation;
-export default AuthGuard(Consultation, [
-  roles.CLINICIAN,
-  roles.NURSE,
-  roles.ADMIN,
-]);
+export function generateStaticParams() {
+  return [];
+}

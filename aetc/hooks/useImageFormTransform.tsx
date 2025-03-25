@@ -1,3 +1,4 @@
+"use client";
 import { FormValueLabel } from "@/interfaces";
 import { useEffect, useState } from "react";
 

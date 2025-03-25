@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { addEncounter, fetchConceptAndCreateEncounter } from "./encounter";
+"use client";
+import { useEffect } from "react";
+import { fetchConceptAndCreateEncounter } from "./encounter";
 import { useParameters } from "./navigation";
 import { getPatientVisitTypes } from "./patientReg";
 import { getDateTime } from "@/helpers/dateTime";

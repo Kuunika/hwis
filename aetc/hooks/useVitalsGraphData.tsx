@@ -1,3 +1,4 @@
+"use client";
 import { encounters } from "@/constants";
 import { formatAllVitalsToObject } from "@/helpers/emr";
 import { useState, useEffect } from "react";

@@ -1,3 +1,4 @@
+"use client";
 import { YES } from "@/constants";
 import { TriageResult } from "@/interfaces";
 import { useEffect, useState } from "react";
