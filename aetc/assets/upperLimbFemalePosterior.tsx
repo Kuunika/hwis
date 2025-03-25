@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-export const UpperLimbFemaleAnterior = forwardRef<
+export const UpperLimbFemalePosterior = forwardRef<
   SVGSVGElement,
   React.SVGProps<SVGSVGElement>
 >((props, ref) => (
