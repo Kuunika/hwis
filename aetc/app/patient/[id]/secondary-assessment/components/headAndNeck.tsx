@@ -16,9 +16,7 @@ import { concepts, encounters } from "@/constants";
 import { flattenImagesObs } from "@/helpers";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
-import { HeadLeftImage } from "@/components/svgImages/headLeft";
-import { HeadRightImage } from "@/components/svgImages/headRight";
-import { HeadBackImage } from "@/components/svgImages/headBack";
+
 import { HeadNeckLeftFemaleImage } from "@/components/svgImages/headNeckLeftFemale";
 import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFemale";
 import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
@@ -96,7 +94,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       },
       {
         concept: concepts.NOTES,
-        values: isChecked ? "Normal" : "Abnormalities",
+        value: isChecked ? "Normal" : "Abnormalities",
         obsDatetime,
       },
     ];

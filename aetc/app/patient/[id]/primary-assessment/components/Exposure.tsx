@@ -91,7 +91,7 @@ export const Exposure = ({ onSubmit }: Props) => {
       },
       {
         concept: concepts.NOTES,
-        values: isChecked ? "Normal" : "Abnormalities",
+        value: isChecked ? "Normal" : "Abnormalities",
         obsDatetime,
       },
     ];
