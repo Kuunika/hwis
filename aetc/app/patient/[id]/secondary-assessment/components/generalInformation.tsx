@@ -1,11 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import {
-  FieldsContainer,
-  FormValuesListener,
-  FormikInit,
-  TextInputField,
-} from "@/components";
+import React from "react";
+import { FormikInit, TextInputField } from "@/components";
 import * as yup from "yup";
 import { concepts, encounters } from "@/constants";
 import { useSubmitEncounter } from "@/hooks";

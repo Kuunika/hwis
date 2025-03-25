@@ -1,4 +1,4 @@
-import { useImage } from "@/hooks/useImage";
+"use client";
 import { SVGPopover } from "./svgPopover";
 import { Box } from "@mui/material";
 
