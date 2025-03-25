@@ -16,6 +16,8 @@ import { LabOrderTable } from "./labOrderTable";
 import { LabRequest } from "@/interfaces";
 import { Box, Button, Popover, Typography } from "@mui/material";
 import { TestAccordion } from "../../[id]/consultation/components/testAccordion";
+import { AccordionComponent } from "@/components/accordion"; // Import AccordionComponent
+
 import { MinimalTable } from "@/components/tables/minimalTable"; // Import MinimalTable
 
 
@@ -44,25 +46,42 @@ export const Investigations = () => {
     setOpen(false);
   };
 
+  const sections = [
+    {
+      id: "labOrders",
+      title: "Lab Orders",
+      content: <LabOrderTable />,
+    },
+    {
+      id: "labResults",
+      title: "Lab Results",
+      content: <LabResultsTable rows={[]} />,
+    },
+  ];
+
   return (
     <Panel
       title="Investigations"
       icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
     >
       <WrapperBox>
-        <TestAccordion /> {/* Replacing LabRequestModal with TestAccordion */}
+        {/* <TestAccordion /> Replacing LabRequestModal with TestAccordion */}
+        <BasicPopover />
 
       </WrapperBox>
 
+      {/* Accordion with Lab Orders and Lab Results */}
+      <AccordionComponent sections={sections} />
+
       {/* Flex container for inline tables */}
-      <Box display="flex" gap={2} width="100%">
+      {/* <Box display="flex" gap={2} width="100%">
         <Box flex={1}>
           <LabOrderTable />
         </Box>
         <Box flex={1}>
           <LabResultsTable rows={[]} />
         </Box>
-      </Box>
+      </Box> */}
 
 
     </Panel>
