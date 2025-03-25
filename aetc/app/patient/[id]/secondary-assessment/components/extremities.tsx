@@ -122,6 +122,18 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
         obsDatetime,
         groupMembers: flattenImagesObs(lowerLimbPosterior),
       },
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        value: "upper limb posterior",
+        obsDatetime,
+        groupMembers: flattenImagesObs(upperLimbPosterior),
+      },
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        value: "upper limb anterior",
+        obsDatetime,
+        groupMembers: flattenImagesObs(upperLimbAnterior),
+      },
     ];
     // delete formValues[form.abnormalitiesLowerLimb.name];
     await handleSubmit([
