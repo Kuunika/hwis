@@ -20,6 +20,9 @@ import {BreathingAssessment} from "@/app/patient/components/clinicalNotes/breath
 import {SoapierNotes} from "@/app/patient/components/clinicalNotes/soapierNotes";
 import Accordion from "@mui/material/Accordion";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {ChestAssessment} from "@/app/patient/components/clinicalNotes/chestAssement";
+import {GeneralInformation} from "@/app/patient/components/clinicalNotes/generalInformation";
+import {HeadAndNeck} from "@/app/patient/components/clinicalNotes/headAndNeck";
 
 
 export const ClinicalNotes = () => {
@@ -152,12 +155,13 @@ export const ClinicalNotes = () => {
                     aria-controls="airway-assessment-content"
                     id="airway-assessment-header"
                 >
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        Airway assessment notes
+                    <Typography variant="h6" fontWeight="bold">
+                        Primary Assessment
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <AirwayAssessment />
+                    <BreathingAssessment />
                 </AccordionDetails>
             </Accordion>
 
@@ -173,15 +177,16 @@ export const ClinicalNotes = () => {
                     aria-controls="breathing-assessment-content"
                     id="breathing-assessment-header"
                 >
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        Breathing assessment notes
+                    <Typography variant="h6" fontWeight="bold">
+                        Secondary Assessment
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <BreathingAssessment />
+                    <GeneralInformation />
+                    <HeadAndNeck />
+                    <ChestAssessment />
                 </AccordionDetails>
             </Accordion>
-
             <Accordion
                 expanded={expandedAccordion === 'soapier-notes'}
                 onChange={handleAccordionChange('soapier-notes')}
@@ -194,7 +199,7 @@ export const ClinicalNotes = () => {
                     aria-controls="soap-notes-content"
                     id="soap-notes-header"
                 >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography variant="h6" fontWeight="bold">
                         SOAPIER notes
                     </Typography>
                 </AccordionSummary>
