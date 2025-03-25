@@ -1,4 +1,4 @@
-import { FormContainer, PatientInfoTab } from "@/components";
+import { BackButton, FormContainer, PatientInfoTab } from "@/components";
 import React from "react";
 import { concepts } from "@/constants";
 
@@ -9,6 +9,8 @@ export default function DifferentialDiagnosis() {
     return <>
         <PatientInfoTab />
         <FormContainer>
+            <BackButton />
+
             <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />
 
         </FormContainer>

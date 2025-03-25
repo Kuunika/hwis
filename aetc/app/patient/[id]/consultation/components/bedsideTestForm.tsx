@@ -144,6 +144,10 @@ const formConfig = {
     name: concepts.ECG,
     label: "ECG",
   },
+  pefr: {
+    name: concepts.PEFR,
+    label: "PEFR",
+  },
   other: {
     name: concepts.OTHER,
     label: "Other",
@@ -288,7 +292,7 @@ export const BedsideTestForm = () => {
       {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
-        value: "Arterial Gas",
+        value: "Arterial Blood Gas",
         group_members: [
           {
             concept: formConfig.PH.name,
@@ -528,6 +532,11 @@ export const BedsideTestForm = () => {
         obsDatetime: dateTime,
         value: values[formConfig.ecg.name],
       },
+      {
+        concept: formConfig.pefr.name,
+        obsDatetime: dateTime,
+        value: values[formConfig.pefr.name],
+      },
     ];
     mutate({
       encounterType: encounters.BED_SIDE_TEST,
@@ -552,8 +561,7 @@ export const BedsideTestForm = () => {
       />
       <br />
       <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Arterial Gas
-      </Typography>
+        Arterial Blood Gas      </Typography>
 
       <FormFieldContainerMultiple>
         <TextInputField
@@ -818,6 +826,14 @@ export const BedsideTestForm = () => {
         name={formConfig.ecg.name}
         label={formConfig.ecg.label}
         id={formConfig.ecg.name}
+      />
+      <TextInputField
+        sx={{ width: "100%" }}
+        multiline
+        rows={5}
+        name={formConfig.pefr.name}
+        label={formConfig.pefr.label}
+        id={formConfig.pefr.name}
       />
       <TextInputField
         sx={{ width: "100%" }}

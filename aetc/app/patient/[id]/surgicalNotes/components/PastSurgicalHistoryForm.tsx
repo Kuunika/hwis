@@ -9,13 +9,18 @@ import {
     TextInputField,
 } from "@/components";
 
+type Prop = {
+    onSubmit: (values: any) => void;
+    onSkip: () => void;
+};
+
 // Validation schema
 const schema = Yup.object().shape({
     hasSurgicalHistory: Yup.string().required("Please select Yes or No"),
     surgicalDetails: Yup.string().required(" "),
 });
 
-export const PastSurgicalHistoryForm = () => {
+export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     return (
         <FormikInit
             validationSchema={schema}

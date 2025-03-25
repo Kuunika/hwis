@@ -810,6 +810,7 @@ export const concepts = {
   LEUKOCYTES: "Leukocytes",
   POINT_OF_CARE_ULTRASOUND: "Point Of Care Ultrasound",
   ECG: "Ecg",
+  PEFR: "PEFR",
   BLEEDING_FROM_INSIDE_NOSE: "Bleeding From Inside Nose",
   SHIVERING: "Shivering",
   ABDOMINAL_DISTENSION: "Abdominal Distension",
