@@ -386,11 +386,11 @@ export const ReviewOfSystems = () => {
         <FormFieldContainerMultiple>
           <LungFrontMaleImage
             onValueChange={setPercussionImagesEnc}
-            form="percussion"
+            form="medicalInpatient"
           />
           <LungBackMaleImage
             onValueChange={setPercussionImagesEnc}
-            form="percussion"
+            form="medicalInpatient"
           />
         </FormFieldContainerMultiple>
       )}
@@ -398,11 +398,11 @@ export const ReviewOfSystems = () => {
         <Box>
           <LungFrontFemaleImage
             onValueChange={setPercussionImagesEnc}
-            form="percussion"
+            form="medicalInpatient"
           />
           <LungBackFemaleImage
             onValueChange={setPercussionImagesEnc}
-            form="percussion"
+            form="medicalInpatient"
           />
         </Box>
       )}
