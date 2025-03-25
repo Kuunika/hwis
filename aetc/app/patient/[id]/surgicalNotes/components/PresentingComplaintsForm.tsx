@@ -9,6 +9,11 @@ import {
 import * as yup from "yup";
 import React from "react";
 
+type Prop = {
+    onSubmit: (values: any) => void;
+    onSkip: () => void;
+};
+
 // List of presenting complaints
 const presentingComplaintsOptions = [
     "Feeling of a mass",
@@ -38,7 +43,7 @@ const schema = yup.object().shape({
     historyOfPresentingComplaint: yup.string().required("History is required"),
 });
 
-export const PresentingComplaintsForm = () => {
+export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     return (
         <FormikInit
             validationSchema={schema}

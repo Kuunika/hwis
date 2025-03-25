@@ -8,6 +8,11 @@ import {
 import * as yup from "yup";
 import React from "react";
 
+type Prop = {
+    onSubmit: (values: any) => void;
+    onSkip: () => void;
+};
+
 // List of past medical history conditions
 const pastMedicalHistoryOptions = [
     "HIV",
@@ -25,7 +30,7 @@ const schema = yup.object().shape({
     pastMedicalHistory: yup.array().min(1, "Select at least one condition"),
 });
 
-export const PastMedicalHistoryForm = () => {
+export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     return (
         <FormikInit
             validationSchema={schema}
