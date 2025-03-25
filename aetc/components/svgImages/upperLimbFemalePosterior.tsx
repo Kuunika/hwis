@@ -1,18 +1,13 @@
-"use client";
+import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
-import { Box } from "@mui/material";
-
-import React, { useEffect } from "react";
-
-import { OtherPartsOfTheHeadForm } from "./forms/headNeck";
-import { DataBox } from "./forms";
-
+import { DataBox, ExtremitiesLegForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
-import { concepts, encounters } from "@/constants";
-import { HeadLeft } from "@/assets/headLeft";
-import { HeadNeckLeft } from "@/assets";
+import { Box } from "@mui/material";
+import { useEffect } from "react";
+import { concepts } from "@/constants";
+import { LowerLimbFemalePosterior } from "@/assets";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
-import { HeadNeckLeftFemale } from "@/assets/headNeckLeftFemale";
+import { UpperLimbFemalePosterior } from "@/assets/upperLimbFemalePosterior";
 
 interface Props {
   onValueChange: (values: any) => void;
@@ -20,7 +15,7 @@ interface Props {
   imageSection?: string;
 }
 
-export function HeadNeckLeftFemaleImage({
+export function UpperLimbFemalePosteriorImage({
   onValueChange,
   imageEncounter,
   imageSection,
@@ -31,11 +26,10 @@ export function HeadNeckLeftFemaleImage({
     section,
     anchorEl,
     selectedSection,
+    setAnchorEl,
     handleFormSubmit,
     ids,
   } = useImageUpdate();
-  const idSelected = selectedSection.id;
-  const labelSelected = selectedSection.label as string;
 
   const { setData, submittedValues } = useImageFormTransform();
 
@@ -61,22 +55,27 @@ export function HeadNeckLeftFemaleImage({
 
   return (
     <>
-      <HeadNeckLeftFemale ref={containerRef} />
+      <UpperLimbFemalePosterior ref={containerRef} />
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {submittedValues.map((value) => (
-          <DataBox key={value.section} labelValue={value} />
+          <DataBox maxWidth="230px" key={value.section} labelValue={value} />
         ))}
       </Box>
       <SVGPopover
-        width="50ch"
+        width="40ch"
         section={section}
         selectedSection={selectedSection}
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <OtherPartsOfTheHeadForm
+        <ExtremitiesLegForm
+          onCancel={handleClose}
           onSubmit={(values, formConceptsLabels) =>
-            handleDataSubmission(labelSelected, values, formConceptsLabels)
+            handleDataSubmission(
+              selectedSection.label as string,
+              values,
+              formConceptsLabels
+            )
           }
         />
       </SVGPopover>

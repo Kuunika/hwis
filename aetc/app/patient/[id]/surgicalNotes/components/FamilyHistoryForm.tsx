@@ -8,6 +8,11 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 
+type Prop = {
+    onSubmit: (values: any) => void;
+    onSkip: () => void;
+};
+
 // Family History options
 const familyHistoryOptions = [
     "Asthma",
@@ -22,7 +27,7 @@ const schema = Yup.object().shape({
     familyHistory: Yup.array().min(1, "Please select at least one option"),
 });
 
-export const FamilyHistoryForm = () => {
+export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     return (
         <FormikInit
             validationSchema={schema}

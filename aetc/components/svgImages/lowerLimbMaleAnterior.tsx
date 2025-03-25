@@ -8,7 +8,6 @@ import { useEffect } from "react";
 import { concepts } from "@/constants";
 import { LowerLimbMaleAnterior } from "@/assets/lowerLimbMaleAnterior";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
-import { LowerLimbFemaleAnterior, LowerLimbMalePosterior } from "@/assets";
 
 interface Props {
   onValueChange: (values: any) => void;

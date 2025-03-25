@@ -16,13 +16,12 @@ import { concepts, encounters } from "@/constants";
 import { flattenImagesObs } from "@/helpers";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
-import { HeadLeftImage } from "@/components/svgImages/headLeft";
-import { HeadRightImage } from "@/components/svgImages/headRight";
-import { HeadBackImage } from "@/components/svgImages/headBack";
+
 import { HeadNeckLeftFemaleImage } from "@/components/svgImages/headNeckLeftFemale";
 import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFemale";
 import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
 import { getDateTime } from "@/helpers/dateTime";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 type Props = {
   onSubmit: () => void;
@@ -58,6 +57,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     Array<any>
   >([]);
   const { gender } = getActivePatientDetails();
+  const [isChecked, setIsChecked] = useState(false);
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.HEAD_AND_NECK_ASSESSMENT,
@@ -91,6 +91,11 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
         obsDatetime,
         groupMembers: flattenImagesObs(backHeadNeckImageEncounter),
         value: "Back",
+      },
+      {
+        concept: concepts.NOTES,
+        value: isChecked ? "Normal" : "Abnormalities",
+        obsDatetime,
       },
     ];
 
@@ -180,7 +185,19 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
         onSubmit={handleSubmitForm}
         submitButtonText="Next"
       >
-        <ComponentSlider slides={slides} />
+        <FormControlLabel
+          label="Tick if the Head and Neck is normal and there are no abnormalities"
+          control={
+            <Checkbox
+              checked={isChecked}
+              onChange={(event) => {
+                setIsChecked(event.currentTarget.checked);
+              }}
+            />
+          }
+        />{" "}
+        <br />
+        {!isChecked && <ComponentSlider slides={slides} />}
       </FormikInit>
     </ContainerLoaderOverlay>
   );
