@@ -1223,12 +1223,27 @@ export const concepts = {
   EVALUATION: "Evaluation",
   REPLAN: "Replan",
   IMPLEMENTATION: "implementation",
+
+  // to be created
   ARV: "on arv",
   OTHER_MEDICATION: "Other Medication",
-  SURGICAL_HISTORY: "surgical history",
-  INTOXICATION_DESCRIPTION: "Intoxication description",
-  SOCIAL_HISTORY: "social history",
-  FAMILY_HISTORY: "family history",
+  SURGICAL_HISTORY:"surgical history",
+  INTOXICATION_DESCRIPTION:"Intoxication description",
+  SOCIAL_HISTORY:"social history",
+  FAMILY_HISTORY:"family history",
+  UNKNOWN:"unknown",
+  PUPIL_SYMMETRICAL:"Pupils symmetrical",
+  CONJUNCTIVA:"Conjunctiva",
+  ORAL_KS:"Oral KS",
+  ORLA_THRUSH:"Oral thrush",
+  JVP_RAISED:"JVP raised",
+  LYMPHADENOPATHY:"Lymphadenopathy",
+  SYMMETRICAL_EXPANSION:"symmetrical expansion",
+  THRILL_HEAVES: 'thrill heaves',
+  PINK:"pink",
+  PRESENT:"present",
+  HERPES_ZOSTER_SCAR:"Herpes zoster scar",
+  SUMMARY:"summary"
 };
 
 export const conceptNames = {

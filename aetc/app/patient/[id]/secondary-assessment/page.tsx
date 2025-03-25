@@ -1,3 +1,4 @@
+"use client";
 import { FormContainer, PatientInfoTab } from "@/components";
 import React from "react";
 import { SecondaryAssessmentFlow } from "./components";

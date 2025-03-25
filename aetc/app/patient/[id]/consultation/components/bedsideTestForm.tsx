@@ -292,7 +292,7 @@ export const BedsideTestForm = () => {
       {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
-        value: "Arterial Gas",
+        value: "Arterial Blood Gas",
         group_members: [
           {
             concept: formConfig.PH.name,
@@ -561,8 +561,7 @@ export const BedsideTestForm = () => {
       />
       <br />
       <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Arterial Gas
-      </Typography>
+        Arterial Blood Gas      </Typography>
 
       <FormFieldContainerMultiple>
         <TextInputField

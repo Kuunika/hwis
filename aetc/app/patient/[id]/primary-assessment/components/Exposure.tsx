@@ -9,12 +9,13 @@ import {
 } from "@/components/svgImages";
 import { concepts, encounters } from "@/constants";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
-import { Box, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getOnePatient } from "@/hooks/patientReg";
 import { getActivePatientDetails, useParameters } from "@/hooks";
+import { CheckBox } from "@mui/icons-material";
 
 type Props = {
   onSubmit: () => void;
@@ -63,6 +64,7 @@ export const Exposure = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
   const [fullImageFront, setFullImageFront] = useState<Array<any>>([]);
   const [fullImageBack, setFullImageBack] = useState<Array<any>>([]);
+  const [isChecked, setIsChecked] = useState(false);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.EXPOSURE_ASSESSMENT,
@@ -86,6 +88,11 @@ export const Exposure = ({ onSubmit }: Props) => {
         value: "full body back",
         obsDatetime,
         groupMembers: [...flattenImagesObs(fullImageBack)],
+      },
+      {
+        concept: concepts.NOTES,
+        value: isChecked ? "Normal" : "Abnormalities",
+        obsDatetime,
       },
     ];
 
@@ -112,46 +119,61 @@ export const Exposure = ({ onSubmit }: Props) => {
         />
 
         <br />
-        <Typography color={"grey"} variant="h5">
-          Select areas with rash, injuries and other abnormalities
-        </Typography>
-        <br />
+        <FormControlLabel
+          label="Tick if the body is normal and there are no abnormalities"
+          control={
+            <Checkbox
+              checked={isChecked}
+              onChange={(event) => {
+                setIsChecked(event.currentTarget.checked);
+              }}
+            />
+          }
+        />
 
-        {gender == "Male" && (
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <Box
-              sx={{
-                width: "60ch",
-              }}
-            >
-              <FullBodyImage onValueChange={setFullImageFront} />
-            </Box>
-            <Box
-              sx={{
-                width: "60ch",
-              }}
-            >
-              <FullBodyBackImage onValueChange={setFullImageBack} />
-            </Box>
-          </Box>
-        )}
-        {gender == "Female" && (
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <Box
-              sx={{
-                width: "60ch",
-              }}
-            >
-              <FullBodyFemaleFrontImage onValueChange={setFullImageFront} />
-            </Box>
-            <Box
-              sx={{
-                width: "60ch",
-              }}
-            >
-              <FullBodyFemaleBackImage onValueChange={setFullImageBack} />
-            </Box>
-          </Box>
+        {!isChecked && (
+          <>
+            <Typography color={"grey"} variant="h5">
+              Select areas with rash, injuries and other abnormalities
+            </Typography>
+            <br />{" "}
+            {gender == "Male" && (
+              <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                <Box
+                  sx={{
+                    width: "60ch",
+                  }}
+                >
+                  <FullBodyImage onValueChange={setFullImageFront} />
+                </Box>
+                <Box
+                  sx={{
+                    width: "60ch",
+                  }}
+                >
+                  <FullBodyBackImage onValueChange={setFullImageBack} />
+                </Box>
+              </Box>
+            )}
+            {gender == "Female" && (
+              <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                <Box
+                  sx={{
+                    width: "60ch",
+                  }}
+                >
+                  <FullBodyFemaleFrontImage onValueChange={setFullImageFront} />
+                </Box>
+                <Box
+                  sx={{
+                    width: "60ch",
+                  }}
+                >
+                  <FullBodyFemaleBackImage onValueChange={setFullImageBack} />
+                </Box>
+              </Box>
+            )}
+          </>
         )}
         <TextInputField
           sx={{ width: "100%" }}

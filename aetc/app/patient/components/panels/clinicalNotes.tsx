@@ -1,3 +1,4 @@
+"use client";
 import { MainButton, MainTypography, WrapperBox } from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaRegChartBar } from "react-icons/fa";
@@ -8,26 +9,38 @@ import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import ReactMarkdown from "react-markdown";
-import {AccordionDetails, AccordionSummary, Box, Grid, Tab, Tabs} from "@mui/material";
+import {
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Grid,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Obs } from "@/interfaces";
-import {AirwayAssessment} from "@/app/patient/components/clinicalNotes/airwayAssement";
-import {BreathingAssessment} from "@/app/patient/components/clinicalNotes/breathingAssement";
-import {SoapierNotes} from "@/app/patient/components/clinicalNotes/soapierNotes";
+import { AirwayAssessment } from "@/app/patient/components/clinicalNotes/airwayAssement";
+import { BreathingAssessment } from "@/app/patient/components/clinicalNotes/breathingAssement";
+import { SoapierNotes } from "@/app/patient/components/clinicalNotes/soapierNotes";
 import Accordion from "@mui/material/Accordion";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-
 export const ClinicalNotes = () => {
-    const [value, setValue] = useState(0);
-    const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-        setExpandedAccordion(isExpanded ? panel : false);
+  const [value, setValue] = useState(0);
+  const handleAccordionChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpandedAccordion(isExpanded ? panel : false);
     };
-    const [clinicalNotes, setClinicalNotes] = useState<Array<{ note: string | null; creator: string; time: any }>>([]);const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
+  const [clinicalNotes, setClinicalNotes] = useState<
+    Array<{ note: string | null; creator: string; time: any }>
+  >([]);
+  const [expandedAccordion, setExpandedAccordion] = useState<string | false>(
+    false
+  );
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
   const { data: patient } = getOnePatient(params.id as string);
@@ -99,111 +112,111 @@ export const ClinicalNotes = () => {
       <FaExpandAlt />
     </WrapperBox>
   );
-    return (
-        <Panel title="" icon={expandIcon}>
-            <WrapperBox display={"flex"} justifyContent={"space-between"}>
-                <AddClinicalNotes onAddNote={addClinicalNote} />
-                <FaRegChartBar />
-            </WrapperBox>
-            <WrapperBox
-                sx={{
-                    overflow: "scroll",
-                    maxHeight: "15ch",
-                    pl: "2ch",
-                }}
+  return (
+    <Panel title="" icon={expandIcon}>
+      <WrapperBox display={"flex"} justifyContent={"space-between"}>
+        <AddClinicalNotes onAddNote={addClinicalNote} />
+        <FaRegChartBar />
+      </WrapperBox>
+      <WrapperBox
+        sx={{
+          overflow: "scroll",
+          maxHeight: "15ch",
+          pl: "2ch",
+        }}
+      >
+        {clinicalNotes.length === 0 ? (
+          <Typography></Typography>
+        ) : (
+          clinicalNotes.map((note: any) => (
+            <Box
+              key={note.note}
+              sx={{
+                my: "1ch",
+                py: "1ch",
+                borderBottom: "1px solid #E0E0E0",
+              }}
             >
-                {clinicalNotes.length === 0 ? (
-                    <Typography></Typography>
-                ) : (
-                    clinicalNotes.map((note: any) => (
-                        <Box
-                            key={note.note}
-                            sx={{
-                                my: "1ch",
-                                py: "1ch",
-                                borderBottom: "1px solid #E0E0E0",
-                            }}
-                        >
-                            <ReactMarkdown>{note.note}</ReactMarkdown>
-                            <br />
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Typography>~ {note.creator}</Typography>
-                                <Typography variant="caption">{note.time}</Typography>
-                            </Box>
-                        </Box>
-                    ))
-                )}
-            </WrapperBox>
-            <Accordion
-                expanded={expandedAccordion === 'airway-assessment'}
-                onChange={handleAccordionChange('airway-assessment')}
+              <ReactMarkdown>{note.note}</ReactMarkdown>
+              <br />
+              <Box
                 sx={{
-                    backgroundColor: '#f5f5f5',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
-            >
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="airway-assessment-content"
-                    id="airway-assessment-header"
-                >
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        Airway assessment notes
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <AirwayAssessment />
-                </AccordionDetails>
-            </Accordion>
+              >
+                <Typography>~ {note.creator}</Typography>
+                <Typography variant="caption">{note.time}</Typography>
+              </Box>
+            </Box>
+          ))
+        )}
+      </WrapperBox>
+      <Accordion
+        expanded={expandedAccordion === "airway-assessment"}
+        onChange={handleAccordionChange("airway-assessment")}
+        sx={{
+          backgroundColor: "#f5f5f5",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="airway-assessment-content"
+          id="airway-assessment-header"
+        >
+          <Typography variant="subtitle1" fontWeight="bold">
+            Airway assessment notes
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <AirwayAssessment />
+        </AccordionDetails>
+      </Accordion>
 
-            <Accordion
-                expanded={expandedAccordion === 'breathing-assessment'}
-                onChange={handleAccordionChange('breathing-assessment')}
-                sx={{
-                    backgroundColor: '#f5f5f5',
-                }}
-            >
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="breathing-assessment-content"
-                    id="breathing-assessment-header"
-                >
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        Breathing assessment notes
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <BreathingAssessment />
-                </AccordionDetails>
-            </Accordion>
+      <Accordion
+        expanded={expandedAccordion === "breathing-assessment"}
+        onChange={handleAccordionChange("breathing-assessment")}
+        sx={{
+          backgroundColor: "#f5f5f5",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="breathing-assessment-content"
+          id="breathing-assessment-header"
+        >
+          <Typography variant="subtitle1" fontWeight="bold">
+            Breathing assessment notes
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <BreathingAssessment />
+        </AccordionDetails>
+      </Accordion>
 
-            <Accordion
-                expanded={expandedAccordion === 'soapier-notes'}
-                onChange={handleAccordionChange('soapier-notes')}
-                sx={{
-                    backgroundColor: '#f5f5f5',
-                }}
-            >
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="soap-notes-content"
-                    id="soap-notes-header"
-                >
-                    <Typography variant="subtitle1" fontWeight="bold">
-                        SOAPIER notes
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <SoapierNotes />
-                </AccordionDetails>
-            </Accordion>
-        </Panel>
-    );
+      <Accordion
+        expanded={expandedAccordion === "soapier-notes"}
+        onChange={handleAccordionChange("soapier-notes")}
+        sx={{
+          backgroundColor: "#f5f5f5",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="soap-notes-content"
+          id="soap-notes-header"
+        >
+          <Typography variant="subtitle1" fontWeight="bold">
+            SOAPIER notes
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <SoapierNotes />
+        </AccordionDetails>
+      </Accordion>
+    </Panel>
+  );
 };
 
 const AddClinicalNotes = ({

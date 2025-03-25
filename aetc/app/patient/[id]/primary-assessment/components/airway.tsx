@@ -190,7 +190,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     delete formValues[form.intervention.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues),
+      ...mapSubmissionToCodedArray(form, formValues, obsDateTime),
       ...interventionsObs,
       ...reasonsObs,
     ]);

@@ -22,7 +22,11 @@ export function SecondaryAssessmentFlow() {
       label: "General Information",
       encounter: encounters.GENERAL_INFORMATION_ASSESSMENT,
     },
-    { id: 2, label: "Head and Neck" },
+    {
+      id: 2,
+      label: "Head and Neck",
+      encounters: encounters.HEAD_AND_NECK_ASSESSMENT,
+    },
     { id: 3, label: "Chest", encounter: encounters.CHEST_ASSESSMENT },
     {
       id: 4,
