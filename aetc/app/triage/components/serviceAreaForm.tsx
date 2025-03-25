@@ -1,11 +1,12 @@
 import { SelectInputField, FormikInit, MainButton } from "@/components";
 import * as Yup from "yup";
-import { concepts } from "@/constants";
+import { concepts, triageResult } from "@/constants";
 
 import { getInitialValues } from "@/helpers";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  triageStatus: string
 };
 
 const form = {
@@ -60,8 +61,20 @@ const serviceAreas =
   { "name": "VIA", "value": "VIA" }
 ];
 
+const aetcServiceAreas = [
+    { "name": "Short stay ward", "value": "Short stay ward" },
+    { "name": "Gynae Bench", "value": "Gynae Bench" },
+    { "name": "Surgical bench", "value": "Surgical bench" },
+    { "name": "Priority area", "value": "Priority area" },
+    { "name": "Isolation room", "value": "Isolation room" },
+    { "name": "Trauma", "value": "Trauma" },
+    { "name": "Medical bench", "value": "Medical bench" },
+    { "name": "Other (Free Text)", "value": "Other (Free Text)" }
+]
 
-export const ServiceAreaForm = ({ onSubmit }: Prop) => {
+
+export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
+  console.log(triageStatus)
   return (
     <FormikInit
       validationSchema={schema}
@@ -74,9 +87,8 @@ export const ServiceAreaForm = ({ onSubmit }: Prop) => {
       id={form.Referred.name}
         name={form.Referred.name}
         label={form.Referred.label}
-        selectItems={serviceAreas}
+        selectItems={triageStatus === "green"?serviceAreas: aetcServiceAreas}
       />
-
       <MainButton sx={{ m: 0.5 }} title="Next" type="submit" onClick={() => { }} />
     </FormikInit>
   );
