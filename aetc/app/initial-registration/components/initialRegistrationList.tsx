@@ -50,7 +50,7 @@ export const InitialRegistrationList = () => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
-    { field: "last_encounter_creator", headerName: "Registered By", flex: 1 },
+    { field: "last_encounter_creator", headerName: "Attended By", flex: 1 },
     {
       field: "action",
       flex: 1,
@@ -117,9 +117,11 @@ export const InitialRegistrationList = () => {
   });
 
   return (
-    <PatientTableList formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching}
+    <PatientTableList
+      formatForMobileView={formatForMobileView}
+      isLoading={isLoading || isRefetching}
       columns={columns}
-      rows={rows ? rows : []} />
+      rows={rows ? rows : []}
+    />
   );
 };
-
