@@ -1,4 +1,3 @@
-"use client";
 import { FormContainer } from "@/components";
 import { PatientInfoTab } from "@/components";
 import { roles } from "@/constants";

@@ -1,3 +1,4 @@
+"use client";
 import { OverlayLoader } from "@/components/backdrop";
 import { useNavigation, useParameters } from "@/hooks";
 import { editUser } from "@/hooks/users";
