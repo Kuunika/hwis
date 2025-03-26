@@ -18,6 +18,7 @@ import { useImageUpdate } from "@/hooks/useImageUpdate";
 import { FullBodyFemaleBack } from "@/assets/fullBodyFemaleBack";
 import { LungFrontFemale, LungLeftFemale } from "@/assets";
 import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
+import { PercussionMedicalInPatientForm } from "./forms/chest/percussionMedicalInpatientForm";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
@@ -28,16 +29,11 @@ interface Props {
     | "selectable"
     | "chestLung"
     | "percussion"
-    | "breathingSoundChest";
+    | "breathingSoundChest"
+    | "medicalInpatient";
 }
 
-export function LungFrontFemaleImage({
-  onValueChange,
-  imageEncounter,
-  imageSection,
-
-  form,
-}: Props) {
+export function LungFrontFemaleImage({ onValueChange, form }: Props) {
   const {
     handleClose,
     handleFormSubmit,
@@ -93,6 +89,19 @@ export function LungFrontFemaleImage({
         )}
         {form == "breathingLung" && (
           <BreathingLungForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+
+        {form == "medicalInpatient" && (
+          <PercussionMedicalInPatientForm
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(

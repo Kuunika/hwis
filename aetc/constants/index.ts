@@ -810,6 +810,7 @@ export const concepts = {
   LEUKOCYTES: "Leukocytes",
   POINT_OF_CARE_ULTRASOUND: "Point Of Care Ultrasound",
   ECG: "Ecg",
+  PEFR: "PEFR",
   BLEEDING_FROM_INSIDE_NOSE: "Bleeding From Inside Nose",
   SHIVERING: "Shivering",
   ABDOMINAL_DISTENSION: "Abdominal Distension",
@@ -1237,8 +1238,27 @@ export const concepts = {
   ORLA_THRUSH:"Oral thrush",
   JVP_RAISED:"JVP raised",
   LYMPHADENOPATHY:"Lymphadenopathy",
-
-
+  SYMMETRICAL_EXPANSION:"symmetrical expansion",
+  THRILL_HEAVES: 'thrill heaves',
+  PINK:"pink",
+  PRESENT:"present",
+  HERPES_ZOSTER_SCAR:"Herpes zoster scar",
+  SUMMARY:"summary",
+  OTHER_AETC_SERVICE_AREA: "Other AETC service area",
+  PUPIL:"pupil",
+  VISUAL_FIELD_ACUITY:"visual field acuity",
+  EYE_MOVEMENTS_NYSTAGMUS:"Eye movements/nystagmus",
+  EYE_MOVEMENTS_SENSATION:"Eye movements/sensation",
+  HEARING:"hearing",
+  TONGUE_MOVEMENTS_TASTES:"tongue movement/tastes",
+  COUGH_GAG_REFLEX:"cough gag reflex",
+  POWER:"power",
+  TONE:"tone",
+  REFLEXES:"reflexes",
+  PLANTARS:"plantars",
+  SENSATION:"sensation",
+  COORDINATION:"coordination",
+  GAIT:"gait",
 };
 
 export const conceptNames = {

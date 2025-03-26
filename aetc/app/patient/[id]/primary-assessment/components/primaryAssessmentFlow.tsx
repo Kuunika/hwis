@@ -10,12 +10,13 @@ import {
   Exposure,
 } from ".";
 
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { encounters } from "@/constants";
 
 export const PrimaryAssessmentFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { navigateBack } = useNavigation();
+  const { navigateBackToProfile, navigateTo } = useNavigation();
+  const { params } = useParameters();
 
   const steps = [
     {
@@ -58,7 +59,9 @@ export const PrimaryAssessmentFlow = () => {
   const handleDisabilitySubmit = () => {
     setActiveStep(4);
   };
-
+  const redirectToSampleHistory = () => {
+    navigateTo(`/patient/${params.id}/medicalHistory`);
+  };
   return (
     <>
       <NewStepperContainer
@@ -66,14 +69,14 @@ export const PrimaryAssessmentFlow = () => {
         title="Primary Assessment"
         steps={steps}
         active={activeStep}
-        onBack={() => navigateBack()}
+        onBack={() => navigateBackToProfile()}
         showSubmittedStatus
       >
         <AirwayForm onSubmit={handleAirwaySubmit} />
         <BreathingForm onSubmit={handleBreathingSubmit} />
         <Circulation onSubmit={handleCirculationSubmit} />
         <Disability onSubmit={handleDisabilitySubmit} />
-        <Exposure onSubmit={navigateBack} />
+        <Exposure onSubmit={redirectToSampleHistory} />
       </NewStepperContainer>
     </>
   );

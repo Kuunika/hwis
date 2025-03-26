@@ -103,7 +103,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                 {
                     onSuccess: async () => {
                         await refetch(); // Ensure data is updated after successful submission
-                        toast.success("Diagnosis submitted successfully!");
+                        // toast.success("Diagnosis submitted successfully!");
                     },
                     onError: () => {
                         toast.error("Failed to submit diagnosis.");
@@ -124,11 +124,11 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                 setDiagnosisList((prevList) =>
                     prevList.filter((diagnosis) => diagnosis.id !== obs_id)
                 );
-                toast.success("Diagnosis deleted successfully!");
+                // toast.success("Diagnosis deleted successfully!");
             },
             onError: () => {
                 console.error("Error deleting diagnosis");
-                toast.error("Failed to delete diagnosis.");
+                // toast.error("Failed to delete diagnosis.");
             },
         });
     };
