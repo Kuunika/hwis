@@ -155,7 +155,7 @@ export const MonitoringChart = () => {
           const fluidObs = value.map((entry) => [
             {
               concept: concepts.INTAKE_FLUIDS,
-              value: entry.intakeFluidType.value,
+              value: entry.intakeFluidType[0].value,
             },
             {
               concept: concepts.INTAKE_FLUID_AMOUNT,
@@ -163,7 +163,7 @@ export const MonitoringChart = () => {
             },
             {
               concept: concepts.OUTPUT_FLUID_TYPE,
-              value: entry.outputFluidType,
+              value: entry.outputFluidType[0].id,
             },
             {
               concept: concepts.OUTPUT_FLUID_AMOUNT,
