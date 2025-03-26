@@ -5,7 +5,7 @@ export const LowerLimbFemalePosterior = forwardRef<
 >((props, ref) => (
   <svg
     ref={ref}
-    id="FEMALEddd"
+    id="FEMALE"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="1600 0 4000 3509"
     {...props}

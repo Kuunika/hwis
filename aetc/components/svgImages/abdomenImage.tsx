@@ -7,13 +7,13 @@ import {
   OtherAbnormalityForm,
   SecondaryAbdomenPelvicForm,
 } from "./forms";
-import { useImageFormTransform } from "@/hooks";
+
 import { useEffect } from "react";
-import { concepts } from "@/constants";
 import { PalpationForm } from "./forms/abdomen/palpationForm";
 import { AbdomenMale } from "@/assets/abdomenMale";
-import { AbdomenFemale } from "@/assets/abdomenFemale";
+
 import { useImageUpdate } from "@/hooks/useImageUpdate";
+import { AbdomenMedicalInpatient } from "./forms/abdomen/abdomenInpatient";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
@@ -40,7 +40,6 @@ export function NewAbdomenImage({
   } = useImageUpdate();
 
   useEffect(() => {
-    console.log({ ids });
     onValueChange(ids);
   }, [ids]);
 
@@ -103,6 +102,18 @@ export function NewAbdomenImage({
 
         {formNameSection == "secondaryAbdomen" && (
           <SecondaryAbdomenPelvicForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {formNameSection == "medicalInPatient" && (
+          <AbdomenMedicalInpatient
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(
