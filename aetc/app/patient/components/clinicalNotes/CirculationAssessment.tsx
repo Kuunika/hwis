@@ -12,8 +12,10 @@ export const useCirculationAssessment = (pData: any) => {
       (d:any) => d.encounter_type.uuid === encounters.CIRCULATION_ASSESSMENT
     );
 
+
     if (!reviewOfSystemsEncounter?.obs) return;
 
+ 
     const getObservation = (conceptName: string) => {
       return reviewOfSystemsEncounter.obs.find((ob: Obs) =>
         ob.names.some((n) => n.name === conceptName)

@@ -29,6 +29,7 @@ export const useDisabilityAssessment = (pData: any) => {
       focalNeurology: getObservation(concepts.FOCAL_NEUROLOGY),
       posture: getObservation(concepts.FOCAL_NEUROLOGY)
     };
+    console.log("Observations object>>>>>:", observations);
 
     let messages = [];
 
