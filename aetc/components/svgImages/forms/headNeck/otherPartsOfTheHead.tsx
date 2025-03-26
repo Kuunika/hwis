@@ -78,21 +78,11 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
   const [showOther, setShowOther] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
-      )
-    );
+    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
     setShowBruiseDescription(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.BRUISE)?.uuid)
-      )
+      Boolean(values.find((v) => v.id == concepts.BRUISE))
     );
-    setShowOther(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
-      )
-    );
+    setShowOther(Boolean(values.find((v) => v.id == concepts.OTHER)));
   };
   return (
     <FormikInit
@@ -109,7 +99,6 @@ export const OtherPartsOfTheHeadForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
-          coded
         />
         {showBruiseDescription && (
           <>

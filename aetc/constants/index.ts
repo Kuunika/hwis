@@ -1259,6 +1259,10 @@ export const concepts = {
   SENSATION:"sensation",
   COORDINATION:"coordination",
   GAIT:"gait",
+  GLOBAL_CHEST_WALL_ABNORMALITY:"global chest wall abnormality",
+  ADDED_BREATH_SOUNDS:'added breath sounds',
+  BREATH_SOUNDS:"breath sounds"
+  
 };
 
 export const conceptNames = {

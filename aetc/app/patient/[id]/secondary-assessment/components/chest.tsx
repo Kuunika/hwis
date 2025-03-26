@@ -1,6 +1,11 @@
 "use client";
 import { NO, YES, concepts, encounters } from "@/constants";
-import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import {
+  flattenImagesObs,
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import { useState } from "react";
 import {
   FieldsContainer,
@@ -109,6 +114,18 @@ const form = {
     name: concepts.NOTES,
     label: "Other",
   },
+  globalChestWallAbnormality: {
+    name: concepts.GLOBAL_CHEST_WALL_ABNORMALITY,
+    label: "Global chest wall abnormality",
+  },
+  globalChestWallAbnormalityList: {
+    name: "global abnormalities",
+    label: "abnormalities",
+  },
+  globalChestWallAbnormalityOther: {
+    name: "global abnormalities other",
+    label: "specify",
+  },
 };
 
 type Prop = {
@@ -165,6 +182,15 @@ const schema = Yup.object().shape({
   [form.type.name]: Yup.string().label(form.type.label),
   [form.additionalNotes.name]: Yup.string().label(form.additionalNotes.label),
   [form.abnormalityOther.name]: Yup.string().label(form.abnormalityOther.label),
+  [form.globalChestWallAbnormality.name]: Yup.string()
+    .label(form.globalChestWallAbnormality.label)
+    .required(),
+  [form.globalChestWallAbnormalityList.name]: Yup.array().label(
+    form.globalChestWallAbnormalityList.label
+  ),
+  [form.globalChestWallAbnormalityOther.name]: Yup.array().label(
+    form.globalChestWallAbnormalityOther.label
+  ),
 });
 
 const chestWallAbnormalities = [
@@ -238,6 +264,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     const formValues: any = { ...values };
 
     const obsDatetime = getDateTime();
+
     const obs = [
       {
         concept: form.chestExpansion.name,
@@ -268,6 +295,23 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         value: formValues[form.localizedChestAbnormality.name],
         obsDatetime,
         groupMembers: flattenImagesObs(localizedChestImagesEnc),
+      },
+      {
+        concept: form.globalChestWallAbnormality.name,
+        value: formValues[form.globalChestWallAbnormality.name],
+        obsDatetime,
+        groupMembers: [
+          ...mapSearchComboOptionsToConcepts(
+            formValues[form.globalChestWallAbnormalityList.name],
+            concepts.ABNORMALITIES,
+            obsDatetime
+          ),
+          {
+            concept: concepts.OTHER,
+            value: formValues[form.globalChestWallAbnormalityOther.name],
+            obsDatetime,
+          },
+        ],
       },
       // {
       //   concept: form.vocalFremitus.name,
@@ -304,6 +348,9 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     delete formValues[form.percussion.name];
     // delete formValues[form.breathingSounds.name];
     delete formValues[form.tactileFremitus.name];
+    delete formValues[form.globalChestWallAbnormality.name];
+    delete formValues[form.globalChestWallAbnormalityOther.name];
+    delete formValues[form.globalChestWallAbnormalityList.name];
     // delete formValues[form.vocalFremitus.name];
 
     await handleSubmit([
@@ -342,6 +389,38 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           <RadioGroupInput
             sx={{ flex: 1 }}
             row={true}
+            name={form.globalChestWallAbnormality.name}
+            label={form.globalChestWallAbnormality.label}
+            options={radioOptions}
+          />
+          {formValues[form.globalChestWallAbnormality.name] == YES && (
+            <>
+              <SearchComboBox
+                name={form.globalChestWallAbnormalityList.name}
+                label={form.globalChestWallAbnormality.label}
+                options={chestWallAbnormalities}
+                multiple
+              />
+              {Array.isArray(
+                formValues[form.globalChestWallAbnormalityList.name]
+              ) &&
+                formValues[form.globalChestWallAbnormalityList.name]?.find(
+                  (op: any) => op.id == concepts.OTHER
+                ) && (
+                  <TextInputField
+                    name={form.globalChestWallAbnormalityOther.name}
+                    label={form.globalChestWallAbnormalityOther.label}
+                    id={form.globalChestWallAbnormalityOther.name}
+                    multiline
+                    rows={5}
+                    sx={{ width: "100%", mt: "1ch" }}
+                  />
+                )}
+            </>
+          )}
+          <RadioGroupInput
+            sx={{ flex: 1 }}
+            row={true}
             name={form.localizedChestAbnormality.name}
             label={form.localizedChestAbnormality.label}
             options={radioOptions}
@@ -373,13 +452,13 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           )}
         </FormFieldContainerLayout>
         <FormFieldContainerLayout title="Palpation (Lungs)">
-          <RadioGroupInput
+          {/* <RadioGroupInput
             sx={{ flex: 1 }}
             row={true}
             name={form.chestWallAbnormality.name}
             label={form.chestWallAbnormality.label}
             options={radioOptions}
-          />
+          /> */}
 
           {formValues[form.chestWallAbnormality.name] == YES && (
             <SearchComboBox
