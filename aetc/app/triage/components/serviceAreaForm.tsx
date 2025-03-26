@@ -4,6 +4,7 @@ import { concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { useEffect, useState } from "react";
 import { getConceptSet } from "@/hooks/getConceptSet";
+import { CircularProgress } from "@mui/material";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -20,8 +21,8 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
   const [otherId, setOtherId] = useState<string | null>(null);
   const [serviceAreaOptions, setServiceAreaOptions] = useState<{ label: string; id: string }[]>([]);
 
-  const { data: serviceAreas } = getConceptSet("Service areas");
-  const { data: aetcServiceAreas } = getConceptSet("AETC service areas");
+  const { data: serviceAreas, isLoading: serviceAreaLoading } = getConceptSet("Service areas");
+  const { data: aetcServiceAreas, isLoading: aetcServiceAreaLoading } = getConceptSet("AETC service areas");
 
   const form = {
     Referred: {
@@ -75,6 +76,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
   });
 
   return (
+    <>{aetcServiceAreaLoading || serviceAreaLoading && <CircularProgress />}
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
@@ -91,5 +93,6 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
       </FormFieldContainer>
 
     </FormikInit>
+    </>
   );
 };
