@@ -25,134 +25,201 @@ export const AbdomenAndPelvisAssessment = () => {
         return !isNaN(new Date(dateString).getTime());
     };
     const formatAbdomenPelvisAssessmentData = (obs: any[]) => {
-        const paragraphs: { paragraph: string; status: string; time: string }[] = [];
-        let currentParagraph: string[] = [];
-        let currentStatus = "normal";
-        let currentTime = "";
-        let additionalNotes = "";
+        const encounterGroups: {time: string; observations: any[]}[] = [];
 
-        const addStatement = (statement: string, isAbnormal: boolean = false) => {
-            currentParagraph.push(statement);
-            if (isAbnormal) {
-                currentStatus = "abnormal";
-            }
-        };
+        const sortedObs = [...obs].sort((a, b) =>
+            new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+        );
 
-        obs.forEach((ob: any) => {
-            const name = ob.names?.[0]?.name;
-            const valueText = ob.value;
-            console.log("Processed Lero", `${name} ${valueText}`);
+        let currentGroup: {time: string; observations: any[]} | null = null;
 
-            if (name === "Abdominal distention") {
-                if (isValidDate(ob.obs_datetime)) {
-                    currentTime = ob.obs_datetime;
-                } else {
-                    currentTime = new Date().toISOString();
-                }
+        sortedObs.forEach(ob => {
+            const obTime = isValidDate(ob.obs_datetime) ? ob.obs_datetime : new Date().toISOString();
+            const obTimestamp = new Date(obTime).getTime();
+
+            if (!currentGroup ||
+                obTimestamp - new Date(currentGroup.time).getTime() > 5 * 60 * 1000) {
+                currentGroup = {
+                    time: obTime,
+                    observations: []
+                };
+                encounterGroups.push(currentGroup);
             }
 
-            if (name === "Abdominal distention") {
-                if (valueText === "Yes") {
-                    addStatement("The patient has abdominal distention.", true);
-                }else if (valueText === "No") {
-                    addStatement("The patient has no abdominal distention.", true);
-                }
-            } else if (name === "Abnormalities present") {
-                if (valueText === "Yes") {
-                    addStatement("Abnormality present.", true);
-                }else if (valueText === "No") {
-                    addStatement("Abnormality not present.", true);
-                }
+            currentGroup.observations.push(ob);
+        });
 
-            } else if (name === "Shifting dullness") {
-                if (valueText === "Yes") {
-                    addStatement("Shifting dullness present.", true);
-                }else if (valueText === "No") {
-                    addStatement("Shifting dullness not present.", true);
-                }
+        const assessments: { paragraph: string; status: string; time: string }[] = [];
 
-            } else if (name === "Fluid thrill") {
-                if (valueText === "Yes") {
-                    addStatement("Fluid Thrill available.", true);
-                } else {
-                    addStatement("Fluid Thrill not available. ", true);
-                }
-            } else if (name === "Tenderness") {
-                if (valueText === "No") {
-                    addStatement("Tenderness not present. ", true);
-                } else {
-                    addStatement("Tenderness present. ", true);
-                }
-            } else if (name === "Bruit") {
-                if (valueText === "Yes") {
-                    addStatement("Bruit present. ", true);
-                } else {
-                    addStatement("Bruit not present.", true);
-                }
-            } else if (name === "Bowel sounds") {
+        encounterGroups.forEach(group => {
+            const assessment: {
+                findings: Record<string, string>,
+                additionalNotes: string[],
+                status: string
+            } = {
+                findings: {},
+                additionalNotes: [],
+                status: 'normal'
+            };
 
-                    addStatement(`Bowel sounds: ${valueText}. `, true);
+            // Process all observations for this encounter
+            group.observations.forEach(ob => {
+                const name = ob.names?.[0]?.name;
+                const valueText = ob.value;
 
-            } else if (name === "General") {
-                addStatement(`General  digital rectal examination results: ${valueText}.`, true);
+                switch (name) {
+                    case "Abdominal distention":
+                        assessment.findings[name] = valueText === "Yes"
+                            ? "The patient has abdominal distention."
+                            : "The patient has no abdominal distention.";
+                        if (valueText === "Yes") assessment.status = 'abnormal';
+                        break;
 
-            } else if (name === "Mass") {
-                if (valueText === "No") {
-                    addStatement("Mass not present. ", true);
-                } else {
-                    addStatement("Mass present. ", true);
-                }
-            } else if (name === "Sphincter tone") {
-                addStatement(`Sphincter tone: ${valueText}.`, true);
+                    case "Abnormalities present":
+                        assessment.findings[name] = valueText === "Yes"
+                            ? "Abnormality present."
+                            : "Abnormality not present.";
+                        if (valueText === "Yes") assessment.status = 'abnormal';
+                        break;
 
-            } else if (name === "Circumcision status") {
-                if (valueText === "No") {
-                    addStatement("Patient is not circumcised.", true);
-                } else {
-                    addStatement("Patient is circumcised.", true);
+                    case "Shifting dullness":
+                        assessment.findings[name] = valueText === "Yes"
+                            ? "Shifting dullness present."
+                            : "Shifting dullness not present.";
+                        if (valueText === "Yes") assessment.status = 'abnormal';
+                        break;
+
+                    case "Fluid thrill":
+                        assessment.findings[name] = valueText === "Yes"
+                            ? "Fluid Thrill available."
+                            : "Fluid Thrill not available.";
+                        if (valueText === "Yes") assessment.status = 'abnormal';
+                        break;
+
+                    case "Tenderness":
+                        assessment.findings[name] = valueText === "No"
+                            ? "Tenderness not present."
+                            : "Tenderness present.";
+                        if (valueText !== "No") assessment.status = 'abnormal';
+                        break;
+
+                    case "Bruit":
+                        assessment.findings[name] = valueText === "Yes"
+                            ? "Bruit present."
+                            : "Bruit not present.";
+                        if (valueText === "Yes") assessment.status = 'abnormal';
+                        break;
+
+                    case "Bowel sounds":
+                        assessment.findings[name] = `Bowel sounds: ${valueText}.`;
+                        if (valueText !== "Normal") assessment.status = 'abnormal';
+                        break;
+
+                    case "Mass":
+                        assessment.findings[name] = valueText === "No"
+                            ? "Mass not present."
+                            : "Mass present.";
+                        if (valueText !== "No") assessment.status = 'abnormal';
+                        break;
+
+                    case "General":
+                        assessment.findings["Digital rectal"] = `Digital rectal examination: ${valueText}.`;
+                        assessment.status = 'abnormal';
+                        break;
+
+                    case "Sphincter tone":
+                        assessment.findings[name] = `Sphincter tone: ${valueText}.`;
+                        if (valueText !== "Normal") assessment.status = 'abnormal';
+                        break;
+
+                    case "Circumcision status":
+                        assessment.findings[name] = valueText === "No"
+                            ? "Patient is not circumcised."
+                            : "Patient is circumcised.";
+                        break;
+
+                    case "Laceration":
+                        assessment.findings[name] = valueText === "No"
+                            ? "Ulcerations/lacerations, bite marks not present."
+                            : "Ulcerations/lacerations, bite marks present.";
+                        if (valueText !== "No") assessment.status = 'abnormal';
+                        break;
+
+                    case "Hematomas":
+                        assessment.findings[name] = valueText === "No"
+                            ? "Signs of oedema, Hematomas, discolourations not present."
+                            : "Signs of oedema, Hematomas, discolourations present.";
+                        if (valueText !== "No") assessment.status = 'abnormal';
+                        break;
+
+                    case "Inflammation":
+                        assessment.findings[name] = valueText === "No"
+                            ? "Signs of inflammation, edema, lesions around periurethral tissue, bleeding not present."
+                            : "Signs of inflammation, edema, lesions around periurethral tissue, bleeding present.";
+                        if (valueText !== "No") assessment.status = 'abnormal';
+                        break;
+
+                    case "Testicles":
+                        assessment.findings[name] = valueText === "No"
+                            ? "Both Testicles not present."
+                            : "Both Testicles present.";
+                        if (valueText === "No") assessment.status = 'abnormal';
+                        break;
+
+                    case "Additional Notes":
+                        if (valueText.trim()) {
+                            assessment.additionalNotes.push(valueText);
+                        }
+                        break;
                 }
-            }else if (name === "Laceration") {
-                if (valueText === "No") {
-                    addStatement("Ulcerations/lacerations, bite marks not present.", true);
-                } else {
-                    addStatement("Ulcerations/lacerations, bite marks present.", true);
+            });
+
+            // Define the order of findings in the final paragraph
+            const orderedFindings = [
+                "Abdominal distention",
+                "Abnormalities present",
+                "Shifting dullness",
+                "Fluid thrill",
+                "Tenderness",
+                "Bruit",
+                "Bowel sounds",
+                "Mass",
+                "Digital rectal",
+                "Sphincter tone",
+                "Circumcision status",
+                "Laceration",
+                "Hematomas",
+                "Inflammation",
+                "Testicles"
+            ];
+
+            const paragraphParts: string[] = [];
+
+            orderedFindings.forEach(finding => {
+                if (assessment.findings[finding]) {
+                    paragraphParts.push(assessment.findings[finding]);
                 }
-            }else if (name === "Hematomas") {
-                if (valueText === "No") {
-                    addStatement("Signs of oedema, Hematomas, discolourations not present. ", true);
-                } else {
-                    addStatement("Signs of oedema, Hematomas, discolourations present. ", true);
+            });
+
+            if (assessment.additionalNotes.length > 0) {
+                const cleanNotes = assessment.additionalNotes
+                    .filter(note => note.trim().length > 0)
+                    .map(note => note.trim());
+                if (cleanNotes.length > 0) {
+                    paragraphParts.push(`Additional notes: ${cleanNotes.join('; ')}`);
                 }
-            }else if (name === "Inflammation") {
-                if (valueText === "No") {
-                    addStatement("Signs of inflammation, edema, lesions around periurethral tissue, bleedingnot not present.", true);
-                } else {
-                    addStatement("Signs of inflammation, edema, lesions around periurethral tissue, bleeding present.", true);
-                }
-            }else if (name === "Testicles") {
-                if (valueText === "No") {
-                    addStatement("Both Testicles not present. ", true);
-                } else {
-                    addStatement("Both Testicles present.", true);
-                }
-            }else if (name === "Additional Notes") {
-                additionalNotes = `Additional Notes: ${valueText}`;
+            }
+
+            if (paragraphParts.length > 0) {
+                assessments.push({
+                    paragraph: paragraphParts.join(' '),
+                    status: assessment.status,
+                    time: group.time
+                });
             }
         });
 
-        if (currentParagraph.length > 0) {
-            if (additionalNotes) {
-                currentParagraph.push(additionalNotes);
-            }
-
-            paragraphs.push({
-                paragraph: currentParagraph.join(" "),
-                status: currentStatus,
-                time: currentTime,
-            });
-        }
-
-        return paragraphs;
+        return assessments;
     };
     if (historyLoading) {
         return <Typography>Loading...</Typography>;
@@ -172,7 +239,6 @@ export const AbdomenAndPelvisAssessment = () => {
                         <Typography
                             variant="body2"
                             sx={{
-                                color: data.status === "abnormal" ? "" : "primary.main",
                                 mb: 2,
                             }}
                         >
