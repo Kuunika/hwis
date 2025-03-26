@@ -312,7 +312,7 @@ export default function TriageWorkFlow() {
   const handlePersistentPain = (values: any) => {
     formData["pain"] = values;
     setShowForm(false);
-    if (triageResult == "green" || "yellow") {
+    if (triageResult == "green" || triageResult == "yellow") {
       setShowModal(true);
       return;
     }

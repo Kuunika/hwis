@@ -1243,7 +1243,7 @@ export const concepts = {
   PINK:"pink",
   PRESENT:"present",
   HERPES_ZOSTER_SCAR:"Herpes zoster scar",
-  SUMMARY:"summary"
+  SUMMARY:"summary",
   OTHER_AETC_SERVICE_AREA: "Other AETC service area",
 };
 
