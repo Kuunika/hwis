@@ -112,7 +112,7 @@ export function NewAbdomenImage({
             }
           />
         )}
-        {formNameSection == "secondaryAbdomen" && (
+        {formNameSection == "medicalInPatient" && (
           <AbdomenMedicalInpatient
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>
