@@ -44,6 +44,7 @@ export const useFormikField = <T extends FormikValues = FormikValues>(
     value,
     errorMessage,
     hasError,
+    values,
     handleChange,
     handleBlur: (e: React.FocusEvent) => handleBlur(e),
     setValue,
