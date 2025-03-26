@@ -23,7 +23,11 @@ import {
   SecondaryAbdomenImage,
 } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
-import { useParameters, useSubmitEncounter } from "@/hooks";
+import {
+  getActivePatientDetails,
+  useParameters,
+  useSubmitEncounter,
+} from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getCachedConcept } from "@/helpers/data";

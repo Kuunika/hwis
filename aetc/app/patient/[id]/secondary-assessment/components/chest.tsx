@@ -12,11 +12,7 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import {
-  BreathingSoundsChestLung,
-  ChestLung,
-  PercussionChestLung,
-} from "@/components/svgImages";
+
 import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -335,43 +331,13 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         submitButtonText="Next"
       >
         <FormValuesListener getValues={setFormValues} />
-        <FormFieldContainerLayout title="Palpation (Lungs)">
+        <FormFieldContainerLayout title="Inspection (Lungs)">
           <TextInputField
             sx={{ width: "100%" }}
             name={form.respiratoryRate.name}
             label={form.respiratoryRate.label}
             id={form.respiratoryRate.name}
           />
-          <RadioGroupInput
-            sx={{ flex: 1 }}
-            row={true}
-            name={form.chestWallAbnormality.name}
-            label={form.chestWallAbnormality.label}
-            options={radioOptions}
-            coded
-          />
-
-          {formValues[form.chestWallAbnormality.name] ==
-            getCachedConcept(YES)?.uuid && (
-            <SearchComboBox
-              sx={{ mb: "2ch" }}
-              getValue={handleValueChange}
-              options={chestWallAbnormalities}
-              name={form.chestWallAbnormalities.name}
-              label={form.chestWallAbnormalities.label}
-              coded
-            />
-          )}
-          {showSpecify &&
-            formValues[form.chestWallAbnormality.name] ==
-              getCachedConcept(YES)?.uuid && (
-              <TextInputField
-                sx={{ width: "100%" }}
-                name={form.otherSpecify.name}
-                label={form.otherSpecify.label}
-                id={form.otherSpecify.name}
-              />
-            )}
 
           <RadioGroupInput
             sx={{ flex: 1 }}
@@ -407,6 +373,38 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               /> */}
             </>
           )}
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Palpation (Lungs)">
+          <RadioGroupInput
+            sx={{ flex: 1 }}
+            row={true}
+            name={form.chestWallAbnormality.name}
+            label={form.chestWallAbnormality.label}
+            options={radioOptions}
+            coded
+          />
+
+          {formValues[form.chestWallAbnormality.name] ==
+            getCachedConcept(YES)?.uuid && (
+            <SearchComboBox
+              sx={{ mb: "2ch" }}
+              getValue={handleValueChange}
+              options={chestWallAbnormalities}
+              name={form.chestWallAbnormalities.name}
+              label={form.chestWallAbnormalities.label}
+              coded
+            />
+          )}
+          {showSpecify &&
+            formValues[form.chestWallAbnormality.name] ==
+              getCachedConcept(YES)?.uuid && (
+              <TextInputField
+                sx={{ width: "100%" }}
+                name={form.otherSpecify.name}
+                label={form.otherSpecify.label}
+                id={form.otherSpecify.name}
+              />
+            )}
           <RadioGroupInput
             row={true}
             name={form.chestExpansion.name}
@@ -480,6 +478,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             </>
           )}
         </FormFieldContainerLayout>
+
         <FormFieldContainerLayout title="Palpation (Heart)">
           <RadioGroupInput
             row={true}

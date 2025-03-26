@@ -30,10 +30,10 @@ const form = {
     name: concepts.SPLENOMEGALY_DESCRIPTION,
     label: "Splenomegaly Description",
   },
-  // kidneyBallotable: {
-  //   name: concepts.KIDNEYS_BALLOTABLE,
-  //   label: "Kidney Ballotable",
-  // },
+  kidneyBallotable: {
+    name: concepts.KIDNEYS_BALLOTABLE,
+    label: "Kidney Ballotable",
+  },
   tenderness: {
     name: concepts.TENDERNESS,
     label: "Tenderness",
@@ -79,7 +79,7 @@ const schema = yup.object().shape({
   [form.splenomegalyDescription.name]: yup
     .string()
     .label(form.splenomegalyDescription.label),
-  // [form.kidneyBallotable.name]: yup.string().label(form.kidneyBallotable.label),
+  [form.kidneyBallotable.name]: yup.string().label(form.kidneyBallotable.label),
   [form.tenderness.name]: yup.string().label(form.tenderness.label),
   [form.otherMasses.name]: yup.string().label(form.otherMasses.label),
   [form.otherMassesDescription.name]: yup
@@ -92,6 +92,7 @@ const schema = yup.object().shape({
 type Props = {
   onSubmit: (values: any, formConceptsLabels: any) => void;
   onCancel: () => void;
+  umbilicalSection?: boolean;
 };
 
 const initialValues = getInitialValues(form);
@@ -101,7 +102,7 @@ const palpationOptions = [
   { label: "Deep", id: concepts.DEEP_PALPATION },
 ];
 
-export const PalpationForm = ({ onSubmit }: Props) => {
+export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
 
   const palpationCheck = (palpation: string) => {
@@ -127,14 +128,12 @@ export const PalpationForm = ({ onSubmit }: Props) => {
       }
     >
       <FormValuesListener getValues={setFormValues} />
-
       <SearchComboBox
         options={palpationOptions}
         name={form.palpation.name}
         label={form.palpation.label}
       />
       <br />
-
       {palpationCheck(concepts.LIGHT_PALPATION) && (
         <>
           <RadioGroupInput
@@ -145,7 +144,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
           />
         </>
       )}
-
       {palpationCheck(concepts.DEEP_PALPATION) && (
         <>
           <RadioGroupInput
@@ -184,24 +182,25 @@ export const PalpationForm = ({ onSubmit }: Props) => {
           )}
         </>
       )}
+      {umbilicalSection && (
+        <>
+          <RadioGroupInput
+            row
+            options={radioOptions}
+            name={form.kidneyBallotable.name}
+            label={form.kidneyBallotable.label}
+          />
+          {formValues[form.kidneyBallotable.name] == concepts.YES && (
+            <RadioGroupInput
+              row
+              name={form.side.name}
+              label={form.side.label}
+              options={kidneyOptions}
+            />
+          )}
+        </>
+      )}
 
-      {/* <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.kidneyBallotable.name}
-        label={form.kidneyBallotable.label}
-        coded
-      />
-      {formValues[form.kidneyBallotable.name] ==
-        getCachedConcept(YES)?.uuid && (
-        <RadioGroupInput
-          row
-          name={form.side.name}
-          label={form.side.label}
-          options={kidneyOptions}
-          coded
-        />
-      )} */}
       <RadioGroupInput
         row
         options={radioOptions}
@@ -209,7 +208,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         label={form.fullBladder.label}
         coded
       />
-
       <RadioGroupInput
         row
         options={radioOptions}
@@ -217,7 +215,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         label={form.otherMasses.label}
         coded
       />
-
       {formValues[form.otherMasses.name] == getCachedConcept(YES)?.uuid && (
         <TextInputField
           multiline
