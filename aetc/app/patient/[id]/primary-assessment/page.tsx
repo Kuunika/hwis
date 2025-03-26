@@ -1,22 +1,9 @@
-"use client";
-import { FormContainer } from "@/components";
-import { PatientInfoTab } from "@/components";
-import { roles } from "@/constants";
-import AuthGuard from "@/helpers/authguard";
-import { PrimaryAssessmentFlow } from "./components";
+import PrimaryAssessmentPage from "./components/primaryAssessmentPage";
 
-function PrimaryAssessment() {
-  return (
-    <>
-      <PatientInfoTab />
-      <FormContainer>
-        <PrimaryAssessmentFlow />
-      </FormContainer>
-    </>
-  );
+export default function Page() {
+  return  <PrimaryAssessmentPage />
 }
-export default AuthGuard(PrimaryAssessment, [
-  roles.CLINICIAN,
-  roles.NURSE,
-  roles.ADMIN,
-]);
+
+export function generateStaticParams() {
+  return [];
+}

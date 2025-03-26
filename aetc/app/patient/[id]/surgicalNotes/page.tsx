@@ -11,3 +11,7 @@ export default function SurgicalNotesAssessment() {
         </FormContainer>
     </>
 }
+
+export function generateStaticParams() {
+    return [];
+  }

@@ -1,19 +1,14 @@
-"use client";
+import PatientProfilePage from "./components/patientProfilePage";
 
-import { roles } from "@/constants";
-import AuthGuard from "@/helpers/authguard";
-import { DesktopView } from "../../components/profile";
-import { TabletView } from "../../components/tabletView";
-function PatientProfile() {
+
+
+export default function PatientProfile() {
   return (
     <>
-      <DesktopView />
-      {/* <TabletView /> */}
+      <PatientProfilePage />
     </>
   );
 }
-export default AuthGuard(PatientProfile, [
-  roles.CLINICIAN,
-  roles.ADMIN,
-  roles.NURSE,
-]);
+export function generateStaticParams() {
+  return [];
+}

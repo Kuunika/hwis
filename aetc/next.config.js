@@ -20,14 +20,14 @@ const nextConfig = {
   // images: {
   //   unoptimized: true, // Disable the image optimization API
   // },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    });
+  // webpack(config) {
+  //   config.module.rules.push({
+  //     test: /\.svg$/,
+  //     use: ["@svgr/webpack"],
+  //   });
 
-    return config;
-  },
+  //   return config;
+  // },
 };
 
 module.exports = nextConfig;

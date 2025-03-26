@@ -1,19 +1,11 @@
-"use client";
-
-import { PatientInfoTab } from "@/components";
-import TriageWorkFlow from "../../components/triageWorkFlow";
-import { FormContainer } from "@/components";
-import AuthGuard from "@/helpers/authguard";
-import { roles } from "@/constants";
-function Triage() {
+import TriageStartPage from "../../components/TriageStartPage";
+export default function Triage() {
   return (
-    <>
-      <PatientInfoTab />
-      <FormContainer>
-        <TriageWorkFlow />
-      </FormContainer>
-    </>
+   
+    <TriageStartPage />
   );
 }
 
-export default AuthGuard(Triage, [roles.CLINICIAN, roles.NURSE, roles.ADMIN])
+export function generateStaticParams() {
+  return [];
+}

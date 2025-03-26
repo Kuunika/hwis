@@ -1,4 +1,4 @@
-"use client";
+
 import {
   BackButton,
   FormContainer,
@@ -24,4 +24,7 @@ export default function Page() {
       </FormContainer>
     </>
   );
+}
+export function generateStaticParams() {
+  return [];
 }

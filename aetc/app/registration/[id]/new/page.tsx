@@ -1,14 +1,10 @@
-"use client";
 
-import AuthGuard from "@/helpers/authguard";
-import { NewRegistrationFlow } from "../../components/newRegistration";
-import { roles } from "@/constants";
+import RegistrationPage from "../../components/registrationPage";
 
-function Page() {
-  return <NewRegistrationFlow />;
+export default function Page() {
+  return <RegistrationPage />
 }
-export default AuthGuard(Page, [
-  roles.ADMIN,
-  roles.REGISTRATION_CLERK,
-  roles.CLINICIAN,
-]);
+
+export function generateStaticParams() {
+  return [];
+}

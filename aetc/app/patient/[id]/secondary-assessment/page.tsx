@@ -1,15 +1,12 @@
-"use client";
-import { FormContainer, PatientInfoTab } from "@/components";
-import React from "react";
-import { SecondaryAssessmentFlow } from "./components";
+
+import SecondaryAssessmentPage from "./components/secondaryAssessmentPage";
 
 export default function SecondaryAssessment() {
   return (
-    <>
-      <PatientInfoTab />
-      <FormContainer>
-        <SecondaryAssessmentFlow />
-      </FormContainer>
-    </>
+   <SecondaryAssessmentPage />
   );
+}
+
+export function generateStaticParams() {
+  return [];
 }
