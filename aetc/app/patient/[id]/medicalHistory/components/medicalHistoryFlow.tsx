@@ -79,7 +79,7 @@ const symptomDurationUnits: Record<string, string> = {
 export const MedicalHistoryFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [formData, setFormData] = useState<any>({});
-  const { navigateBack } = useNavigation();
+  const { navigateBack, navigateBackToProfile, navigateTo } = useNavigation();
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
@@ -130,14 +130,16 @@ export const MedicalHistoryFlow = () => {
     { id: patient?.gender === "Female" ? 8 : 7, label: "Review of Systems" },
     { id: patient?.gender === "Female" ? 9 : 8, label: "Family history" },
   ];
-
+  const redirectToSecondarySurvey = () => {
+    navigateTo(`/patient/${params.id}/secondary-assessment`);
+  };
   const handleSkip = () => {
     const nextStep = activeStep + 1;
 
     if (nextStep < steps.length) {
       setActiveStep(nextStep);
     } else {
-      navigateBack();
+      redirectToSecondarySurvey();
     }
   };
 
@@ -1195,7 +1197,7 @@ export const MedicalHistoryFlow = () => {
           title="Medical History"
           steps={steps}
           active={activeStep}
-          onBack={() => navigateBack()}
+          onBack={() => navigateBackToProfile()}
         >
           <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
           <AllergiesForm
