@@ -50,7 +50,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
 
   const { value: unitValue, setFieldValue: setUnitFieldValue } =
     useFormikField(unitName);
-  const [localUnitValue, setLocalUnitValue] = useState(
+  const [localUnitValue, setLocalUnitValue] = useState<any>(
     unitValue || unitOptions[0]
   );
 
@@ -124,10 +124,9 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
             </MenuItem>
           ))}
         </Select>
-                        
       </Box>
       <MainTypography color={"red"} variant="subtitle2">
-          {errorMessage}
+        {errorMessage}
       </MainTypography>
     </WrapperBox>
   );
