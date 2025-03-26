@@ -345,10 +345,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             name={form.localizedChestAbnormality.name}
             label={form.localizedChestAbnormality.label}
             options={radioOptions}
-            coded
           />
-          {formValues[form.localizedChestAbnormality.name] ==
-            getCachedConcept(YES)?.uuid && (
+          {formValues[form.localizedChestAbnormality.name] == YES && (
             <>
               {gender == "Male" && (
                 <LungFrontMaleImage
@@ -527,6 +525,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               label={form.heavesDescription.label}
             />
           )}
+        </FormFieldContainerLayout>
+        <FormFieldContainerLayout title="Percussion">
           <RadioGroupInput
             row={true}
             name={form.percussion.name}
