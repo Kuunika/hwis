@@ -56,7 +56,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
 
   useEffect(() => {
     if (formValues && otherId !== null) {
-      const showOther = formValues[form.Referred.name] === otherId
+      const showOther = formValues[form.Referred.name] && formValues[form.Referred.name] === otherId
       setShowOther(showOther);
       if (!showOther) {
         setFormValues((prev) => {
@@ -76,7 +76,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
   });
 
   return (
-    <>{aetcServiceAreaLoading || serviceAreaLoading && <CircularProgress />}
+    <>{(aetcServiceAreaLoading || serviceAreaLoading) && <CircularProgress />}
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
