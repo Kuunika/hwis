@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import {
     FormikInit,
@@ -32,6 +32,8 @@ const schema = Yup.object().shape({
 });
 
 export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
+    const [doYouSmoke, setDoYouSmoke] = useState<string>("");
+
     return (
         <FormikInit
             validationSchema={schema}
@@ -56,23 +58,37 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             { value: "Yes", label: "Yes" },
                             { value: "No", label: "No" },
                         ]}
+                        getValue={(value: string) => setDoYouSmoke(value)}
                     />
 
-                    {/* If user smokes, show input for cigarettes per day */}
-                    <TextInputField id="cigarettesPerDay" name="cigarettesPerDay" label="How many cigarettes per day?" />
+                    {/* Show text input for cigarettes per day if user smokes */}
+                    {doYouSmoke === "Yes" && (
+                        <TextInputField
+                            id="cigarettesPerDay"
+                            name="cigarettesPerDay"
+                            label="How many cigarettes per day?"
+                        />
+                    )}
+                    <br />
 
-                    {/* If user doesn't smoke, ask for smoking history */}
-                    <RadioGroupInput
-                        name="smokingHistory"
-                        label="If not, did you quit over a month ago or never smoked?"
-                        options={[
-                            { value: "Quit over a month ago", label: "Quit over a month ago" },
-                            { value: "Never smoked", label: "Never smoked" },
-                        ]}
-                    />
+                    {/* Show smoking history if user does not smoke */}
+                    {doYouSmoke === "No" && (
+                        <RadioGroupInput
+                            name="smokingHistory"
+                            label="If not, did you quit over a month ago or never smoked?"
+                            options={[
+                                { value: "Quit over a month ago", label: "Quit over a month ago" },
+                                { value: "Never smoked", label: "Never smoked" },
+                            ]}
+                        />
+                    )}
 
                     {/* Alcohol Intake */}
-                    <TextInputField id="alcoholIntake" name="alcoholIntake" label="What is your daily alcohol intake?" />
+                    <TextInputField
+                        id="alcoholIntake"
+                        name="alcoholIntake"
+                        label="What is your daily alcohol intake?"
+                    />
 
                     {/* Recreational Drugs */}
                     <RadioGroupInput

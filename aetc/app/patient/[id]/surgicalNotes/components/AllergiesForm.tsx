@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
     FormikInit,
     WrapperBox,
@@ -60,6 +60,12 @@ const schema = Yup.object().shape({
 });
 
 export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
+    const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
+
+    const handleCheckboxChange = (values: any) => {
+        setSelectedAllergies(values.filter((item: any) => item.value).map((item: any) => item.key));
+    };
+
     return (
         <FormikInit
             validationSchema={schema}
@@ -78,17 +84,26 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
                     <h4>Allergies and Adverse Reactions</h4>
 
-                    {/* Allergies Checkboxes */}
-                    <CheckboxesGroup
-                        name="allergies"
-                        allowFilter={false}
-                        options={allergyOptions.map((item) => ({
-                            value: item,
-                            label: item,
-                        }))}
-                    />
+                    {allergyOptions.map((allergy) => (
+                        <div key={allergy} style={{ marginBottom: "10px" }}>
+                            <CheckboxesGroup
+                                name="allergies"
+                                allowFilter={false}
+                                options={[{ value: allergy, label: allergy }]}
+                                getValue={handleCheckboxChange}
+                            />
 
-
+                            {/* Show Text Input if specific allergy is selected */}
+                            {selectedAllergies.includes(allergy) && (
+                                <div style={{ marginLeft: "20px", marginTop: "5px" }}>
+                                    <TextInputField
+                                        name={`${allergy.toLowerCase().replace(/\s+/g, '')}Details`}
+                                        label={`Specify ${allergy} allergy`}
+                                        placeholder={`Enter ${allergy} allergy details`} id={""} />
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>
