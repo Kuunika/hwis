@@ -30,10 +30,10 @@ const form = {
     name: concepts.SPLENOMEGALY_DESCRIPTION,
     label: "Splenomegaly Description",
   },
-  kidneyBallotable: {
-    name: concepts.KIDNEYS_BALLOTABLE,
-    label: "Kidney Ballotable",
-  },
+  // kidneyBallotable: {
+  //   name: concepts.KIDNEYS_BALLOTABLE,
+  //   label: "Kidney Ballotable",
+  // },
   tenderness: {
     name: concepts.TENDERNESS,
     label: "Tenderness",
@@ -79,7 +79,7 @@ const schema = yup.object().shape({
   [form.splenomegalyDescription.name]: yup
     .string()
     .label(form.splenomegalyDescription.label),
-  [form.kidneyBallotable.name]: yup.string().label(form.kidneyBallotable.label),
+  // [form.kidneyBallotable.name]: yup.string().label(form.kidneyBallotable.label),
   [form.tenderness.name]: yup.string().label(form.tenderness.label),
   [form.otherMasses.name]: yup.string().label(form.otherMasses.label),
   [form.otherMassesDescription.name]: yup
@@ -103,7 +103,6 @@ const palpationOptions = [
 
 export const PalpationForm = ({ onSubmit }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
-  const [showLight, setShowLight] = useState(false);
 
   const palpationCheck = (palpation: string) => {
     if (!Array.isArray(formValues[form.palpation.name])) return;
@@ -133,7 +132,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         options={palpationOptions}
         name={form.palpation.name}
         label={form.palpation.label}
-        coded
       />
       <br />
 
@@ -142,7 +140,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
           <RadioGroupInput
             row
             options={radioOptions}
-            coded
             name={form.tenderness.name}
             label={form.tenderness.label}
           />
@@ -156,7 +153,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
             options={radioOptions}
             name={form.hepatomegaly.name}
             label={form.hepatomegaly.label}
-            coded
           />
           {formValues[form.hepatomegaly.name] ==
             getCachedConcept(YES)?.uuid && (
@@ -174,7 +170,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
             options={radioOptions}
             name={form.splenomegaly.name}
             label={form.splenomegaly.label}
-            coded
           />
           {formValues[form.splenomegaly.name] ==
             getCachedConcept(YES)?.uuid && (
@@ -190,7 +185,7 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         </>
       )}
 
-      <RadioGroupInput
+      {/* <RadioGroupInput
         row
         options={radioOptions}
         name={form.kidneyBallotable.name}
@@ -206,7 +201,7 @@ export const PalpationForm = ({ onSubmit }: Props) => {
           options={kidneyOptions}
           coded
         />
-      )}
+      )} */}
       <RadioGroupInput
         row
         options={radioOptions}
