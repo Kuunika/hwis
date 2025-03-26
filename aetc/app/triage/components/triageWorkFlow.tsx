@@ -58,6 +58,7 @@ export default function TriageWorkFlow() {
   const [persistentPain, setPersistentPain] = useState({});
   const [showModal, setShowModal] = useState(false);
 
+
   const [triagePrintOpen, setTriagePrintOpen] = useState(false);
   const {
     loading,
@@ -238,6 +239,9 @@ export default function TriageWorkFlow() {
     if (painCreated) {
       setCompleted(6);
       setMessage("finalizing...");
+      
+      const otherAETCArea= Object.entries(formData.serviceArea).find(([key]) => key !== concepts.PATIENT_REFERRED_TO)?.[1];
+
 
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
@@ -252,12 +256,16 @@ export default function TriageWorkFlow() {
           },
           {
             concept: concepts.PATIENT_REFERRED_TO,
-            value:
-              triageResult == "green"
-                ? formData.serviceArea[concepts.PATIENT_REFERRED_TO]
-                : "",
+            value: triageResult === "green" || triageResult === "yellow"
+              ? formData.serviceArea?.[concepts.PATIENT_REFERRED_TO] || ""
+              : "",
             obsDatetime: getDateTime(),
           },
+          {
+            concept: concepts.OTHER_AETC_SERVICE_AREA,
+            value:otherAETCArea?otherAETCArea:"",
+            obsDatetime: getDateTime(),
+          }
         ],
       });
     }
@@ -304,10 +312,11 @@ export default function TriageWorkFlow() {
   const handlePersistentPain = (values: any) => {
     formData["pain"] = values;
     setShowForm(false);
-    if (triageResult == "green") {
+    if (triageResult == "green" || triageResult == "yellow") {
       setShowModal(true);
       return;
     }
+    
     triggerSubmission();
   };
 
@@ -618,11 +627,16 @@ export default function TriageWorkFlow() {
         onClose={closeModal}
         title="Triage Decision"
       >
-        <p>
-          Triage status is <span style={{ color: "green" }}>GREEN</span>. Where
-          should this patient go next?
-        </p>
-        <ServiceAreaForm onSubmit={handleServiceArea} />
+       <p>
+  Triage status is (
+  {triageResult === "green" ? (
+    <span style={{ color: "green" }}>{triageResult}</span>
+  ) : (
+    <span style={{ color: "#cc9900" }}>{triageResult}</span>
+  )}
+  ). Where should this patient go next?
+</p>
+        <ServiceAreaForm onSubmit={handleServiceArea} triageStatus={triageResult} />
       </GenericDialog>
 
       {loading && !error && (
