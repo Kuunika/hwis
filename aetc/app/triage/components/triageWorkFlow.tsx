@@ -321,7 +321,13 @@ export default function TriageWorkFlow() {
   };
 
   const handleVitalsSubmit = (values: any) => {
+    values[concepts.GLUCOSE] = `${values[concepts.GLUCOSE]} ${
+      values[concepts.ADDITIONAL_NOTES]
+    }`;
     formData["vitals"] = values;
+
+    console.log({ values });
+
     setActiveStep(2);
     setSubmittedSteps((steps) => [...steps, 1]);
   };

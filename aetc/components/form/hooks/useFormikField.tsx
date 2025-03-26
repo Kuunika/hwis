@@ -1,38 +1,61 @@
 "use client";
-import { useFormikContext } from "formik";
-export const useFormikField = (name: string) => {
+import {
+  useFormikContext,
+  FormikValues,
+  FormikTouched,
+  FormikErrors,
+} from "formik";
+import { useMemo } from "react";
+
+export const useFormikField = <T extends FormikValues = FormikValues>(
+  fieldName: keyof T
+) => {
+  const context = useFormikContext<T>();
+
+  if (!context) {
+    throw new Error("useFormikField must be used within a Formik provider");
+  }
+
   const {
+    validateField,
+    initialValues,
     values,
-    handleChange,
     touched,
     errors,
     setFieldValue,
-    validateField,
-    initialValues,
+    handleChange,
     handleBlur,
-  } = useFormikContext();
+  } = context;
 
-  //@ts-ignore
-  const value = values[name];
+  // Safely get field value with fallback
+  const value = useMemo(() => values?.[fieldName], [values, fieldName]);
 
-  //@ts-ignore
-  const hasError = touched[name] && Boolean(errors[name]);
+  // Error handling with null checks
+  const hasError = Boolean(touched?.[fieldName] && errors?.[fieldName]);
 
-  // console.log({ errors });
+  const errorMessage = hasError ? String(errors[fieldName]) : "";
 
-  //@ts-ignore
-  const errorMessage = touched[name] && errors[name];
+  // Type-safe value updater
+  const setValue = (value: unknown) => {
+    setFieldValue(fieldName as string, value);
+  };
 
   return {
     value,
     errorMessage,
     hasError,
+    values,
     handleChange,
+    handleBlur: (e: React.FocusEvent) => handleBlur(e),
+    setValue,
     setFieldValue,
     validateField,
     initialValues,
-    handleBlur,
-    values,
-    touched,
+    fieldProps: {
+      name: fieldName as string,
+      value,
+      onChange: handleChange,
+      onBlur: handleBlur,
+    },
   };
 };

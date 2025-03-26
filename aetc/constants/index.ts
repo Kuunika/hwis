@@ -1245,6 +1245,20 @@ export const concepts = {
   HERPES_ZOSTER_SCAR:"Herpes zoster scar",
   SUMMARY:"summary",
   OTHER_AETC_SERVICE_AREA: "Other AETC service area",
+  PUPIL:"pupil",
+  VISUAL_FIELD_ACUITY:"visual field acuity",
+  EYE_MOVEMENTS_NYSTAGMUS:"Eye movements/nystagmus",
+  EYE_MOVEMENTS_SENSATION:"Eye movements/sensation",
+  HEARING:"hearing",
+  TONGUE_MOVEMENTS_TASTES:"tongue movement/tastes",
+  COUGH_GAG_REFLEX:"cough gag reflex",
+  POWER:"power",
+  TONE:"tone",
+  REFLEXES:"reflexes",
+  PLANTARS:"plantars",
+  SENSATION:"sensation",
+  COORDINATION:"coordination",
+  GAIT:"gait",
 };
 
 export const conceptNames = {
