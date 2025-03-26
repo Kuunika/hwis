@@ -1,6 +1,7 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
-import { concepts } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
+import { useSubmitEncounter } from "@/hooks";
 import { usePresentingComplaints } from "@/hooks/usePresentingComplaints";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -22,7 +23,12 @@ const schema = Yup.object().shape({
 });
 const initialValues = getInitialValues(form);
 
-export const PresentingComplaints = () => {
+export const PresentingComplaints = ({
+  onSubmit,
+}: {
+  onSubmit: () => void;
+}) => {
+  const {} = useSubmitEncounter(encounters.MEDICAL_IN_PATIENT, onSubmit);
   const { presentingComplaints } = usePresentingComplaints();
 
   const handleSubmit = () => {};
