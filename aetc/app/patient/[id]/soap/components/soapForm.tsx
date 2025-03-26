@@ -60,8 +60,6 @@ const validationSchema = Yup.object().shape({
 
 const initialValues = getInitialValues(form);
 
-console.log({ initialValues });
-
 export const SoapForm = () => {
   const { navigateBack } = useNavigation();
   const { handleSubmit } = useSubmitEncounter(

@@ -20,6 +20,7 @@ import { ConsultationContext, ConsultationContextType } from "@/contexts";
 interface MenuItemConfig {
   label: string;
   path: string;
+  id?: number;
 }
 
 interface CollapsibleMenuSection {
@@ -84,83 +85,47 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   // Define main menu items
   const mainMenuItems: MenuItemConfig[] = [
     {
-      label: "Update Medical History",
-      path: `/patient/${patient.id}/medicalHistory`,
+      label: "Continue monitoring",
+      path: `/patient/${patient.id}/nursingChart`,
     },
     {
-      label: "Nursing Care Notes (SOAPIER)",
+      label: "Nursing Care Notes",
       path: `/patient/${patient.id}/soap`,
     },
     {
-      label: "Start/Continue monitoring",
-      path: `/triage/${patient.id}/history`,
-    },
-    {
-      label: "Start Primary Assessment",
+      label: "Primary Survey",
       path: `/patient/${patient.id}/primary-assessment`,
     },
-
     {
-      label: "Continuation Sheet",
-      path: `/patient/${patient.id}/continuationSheet`,
+      label: "SAMPLE History",
+      path: `/patient/${patient.id}/medicalHistory`,
     },
     {
-      label: "Start Secondary Assessment",
+      label: "Secondary Survey",
       path: `/patient/${patient.id}/secondary-assessment`,
     },
-    { label: "Sample History", path: `/patient/${patient.id}/medicalHistory` },
+    {
+      label: "Differential Diagnosis",
+      path: `/patient/${patient.id}/differential-diagnosis`,
+    },
+    {
+      label: "Investigations",
+      path: `/patient/${patient.id}/investigations`,
+    },
+    {
+      label: "Final Diagnosis",
+      path: `/patient/${patient.id}/final-diagnosis`,
+    },
     {
       label: "Patient Management Plan",
       path: `/patient/${patient.id}/patient-management-plan`,
     },
     { label: "Disposition", path: `/patient/${patient.id}/disposition` },
+    {
+      label: "Continuation Sheet",
+      path: `/patient/${patient.id}/continuationSheet`,
+    },
   ];
-
-  // Define collapsible sections
-  const collapsibleSections: { [key: string]: CollapsibleMenuSection } = {
-    consultation: {
-      label: "Consultation",
-      items: [
-        {
-          id: 0,
-          title: "Differential Diagnosis",
-          label: "Differential Diagnosis",
-        },
-        { id: 1, title: "Investigations", label: "Investigations" },
-        { id: 2, title: "Final Diagnosis", label: "Final Diagnosis" },
-      ],
-    },
-    templateForms: {
-      label: "Template Forms",
-      items: [
-        {
-          label: "Medical Inpatient",
-          path: `/patient/${patient.id}/medicalInpatient`,
-        },
-        {
-          label: "Surgical Notes",
-          path: `/patient/${patient.id}/surgicalNotes`,
-        },
-        {
-          label: "Gynacological",
-          path: `/patient/${patient.id}/gynacological`,
-        },
-        {
-          label: "Monitoring Chart",
-          path: `/patient/${patient.id}/nursingChart`,
-        },
-        { label: "Referral", path: `/patient/${patient.id}/referral` },
-        {
-          label: "Trauma Specialty Review",
-          path: `/patient/${patient.id}/trauma-specialty-review`,
-        },
-        {
-          label: "Orthopaedic Specialty Review",
-          path: `/patient/${patient.id}/orthopaedic-specialty-review`,
-        },
-      ],
-    },
-  };
 
   return (
     <Box>
@@ -252,39 +217,6 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
               <FaPlus />
               <ListItemText primary={item.label} />
             </ListItemButton>
-          ))}
-
-          {/* Collapsible sections */}
-          {Object.entries(collapsibleSections).map(([key, section]) => (
-            <React.Fragment key={key}>
-              <ListItemButton
-                className="listItemButton"
-                onClick={() => toggleSection(key)}
-              >
-                <FaPlus />
-                <ListItemText primary={section.label} />
-                {openSections[key] ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={openSections[key]} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {section.items.map((item, i) => (
-                    <ListItemButton
-                      key={i}
-                      sx={{ pl: 7 }}
-                      onClick={() => {
-                        if ("path" in item) {
-                          startFlow(item.path);
-                        } else {
-                          handleConsultationItem(item);
-                        }
-                      }}
-                    >
-                      <ListItemText primary={item.label} />
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Collapse>
-            </React.Fragment>
           ))}
         </List>
       </Menu>

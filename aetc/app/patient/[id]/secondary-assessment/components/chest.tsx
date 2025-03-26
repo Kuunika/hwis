@@ -239,7 +239,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   );
 
   const handleSubmitForm = async (values: any) => {
-    const formValues = { ...values };
+    const formValues: any = { ...values };
 
     const obsDatetime = getDateTime();
     const obs = [
@@ -281,15 +281,16 @@ export const ChestForm = ({ onSubmit }: Prop) => {
       // },
     ];
 
-    const abnormalitiesObs = formValues[form.abnormalities.name]?.map(
-      (opt: any) => {
-        return {
-          concept: form.abnormalities.name,
-          value: opt.id,
-          obsDatetime,
-        };
-      }
-    );
+    const abnormalitiesObs =
+      formValues &&
+      typeof formValues === "object" &&
+      Array.isArray(formValues[form.abnormalities.name]) &&
+      formValues[form.abnormalities.name].map((opt: { id: string }) => ({
+        concept: form.abnormalities.name,
+        value: opt.id,
+        obsDatetime,
+      }));
+
     const chestWallAbnormalitiesObs = formValues[
       form.chestWallAbnormalities.name
     ].map((opt: any) => {

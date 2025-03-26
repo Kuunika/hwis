@@ -38,7 +38,7 @@ type Prop = {
     age_at_menarche: 0,
     last_menstrual: "",
     pregnant:"No",
-    gestational_age: 0,
+    gestational_age: "Select a date of last menstrual",
     number_of_previous_pregnancies: 0,
     previous_pregnancy_outcomes: [],
     number_of_births: [],
@@ -130,14 +130,14 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
         .required("Age at menarche is required")
         .positive("Age at menarche  must be a positive number"),
 
-        [obstetricsFormConfig.gestational_age.name]: yup
-        .number()
-        .when(obstetricsFormConfig.pregnant.name, (pregnant: any, schema) => {
-          if (pregnant === "Yes") {
-            return schema.required("Gestational age is required").positive("Gestational age must be a positive number");
-          }
-          return schema;
-        }),
+        // [obstetricsFormConfig.gestational_age.name]: yup
+        // .number()
+        // .when(obstetricsFormConfig.pregnant.name, (pregnant: any, schema) => {
+        //   if (pregnant === "Yes") {
+        //     return schema.required("Gestational age is required").positive("Gestational age must be a positive number");
+        //   }
+        //   return schema;
+        // }),
 
           number_of_previous_pregnancies: yup
             .number()
@@ -197,11 +197,7 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
             .required("Last menstrual date is required")
             .nullable()
             .max(new Date(), "Date cannot be in the future"),
-      
-            [obstetricsFormConfig.gestational_age.name]: yup.number()
-                .min(0, "Number of pregnancies cannot be negative"),
-              otherwise: yup.number().nullable(),
-     
+
               [obstetricsFormConfig.number_of_previous_pregnancies.name]: yup.number()
             .required("Number of previous pregnancies is required")
             .min(0, "Number of previous pregnancies cannot be negative")
@@ -236,7 +232,6 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
         encounter.obs.forEach((observation) => {
           const value = observation.value;
       
-          // Format the observation data
           const obsData: ProcessedObservation = {
             obs_id: observation.obs_id,
             name: observation.names?.[0]?.name,
@@ -245,13 +240,11 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
           };
       
           if (observation.obs_group_id) {
-            // Find the parent observation and group it
             const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
             if (parent) {
               parent.children.push(obsData);
             }
           } else {
-            // Add it to the top-level observations
             observations.push(obsData);
           }
         });
@@ -262,6 +255,22 @@ export const ObstetricsForm = ({ onSubmit, onSkip }: Prop) => {
     }
 
     formValues["pregnant"]=="Yes"? setShowGestation(true): setShowGestation(false);
+    
+   
+    const currentDate = new Date();
+    const unixNow = Math.floor(currentDate.getTime() / 1000);
+    const lastMenstrual = new Date(formValues[obstetricsFormConfig.last_menstrual.name]);
+    const unixLast = Math.floor(lastMenstrual.getTime() / 1000);
+
+    if (!isNaN(unixLast)) { 
+        const gestationalAgeInSeconds = unixNow - unixLast;
+        const Gestational_age = Math.floor(gestationalAgeInSeconds / 604800);
+        const remainingDays = Math.floor((gestationalAgeInSeconds % 604800) / 86400);
+        const ageText = `${Gestational_age} weeks and ${remainingDays} days`;
+        formValues[obstetricsFormConfig.gestational_age.name] = ageText;
+    }
+    
+
   }, [ data, formValues]);
 
 
@@ -339,6 +348,7 @@ return (
               name={obstetricsFormConfig.gestational_age.name}
               label={obstetricsFormConfig.gestational_age.label}
               sx={{ marginRight: '2ch'}}
+              disabled
             />
 
             )}

@@ -12,7 +12,7 @@ import MuiAccordionSummary, {
 } from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import {
   MainGrid,
   MainPaper,
@@ -24,7 +24,8 @@ import {
 } from "..";
 import { Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getActivePatientDetails, useParameters } from "@/hooks";
+import { getActivePatientDetails } from "@/hooks";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -78,34 +79,42 @@ export function NewStepperContainer({
   onBack,
   showSubmittedStatus = false,
 }: IProps) {
-  const { patientId, activeVisit, activeVisitId } = getActivePatientDetails();
-  const { data, isLoading, isRefetching, isPending, isFetching } =
-    getPatientsEncounters(patientId as string);
+  const { patientId, activeVisitId } = getActivePatientDetails();
+  const { data, isLoading, isRefetching } = getPatientsEncounters(
+    patientId as string
+  );
 
-  // Map children to steps to ensure order consistency
-  const filteredChildren = children.filter((child) => child !== false);
-  const validChildren = steps.map((step, index) => filteredChildren[index]);
+  const [encounterTimes, setEncounterTimes] = useState<{
+    [key: number]: string;
+  }>({});
 
-  const checkIfEncounterSubmitted = (encounterType: string) => {
-    const found = data
-      ?.filter((d) => {
-        return d.encounter_type.uuid == encounterType;
-      })
-      .filter((d) => d.visit_id == activeVisitId);
+  useEffect(() => {
+    if (showSubmittedStatus) {
+      const updatedTimes: { [key: number]: string } = {};
 
-    return Boolean(found?.length);
-  };
+      steps.forEach((step, index) => {
+        const time = data
+          ?.filter((d) => d.encounter_type.uuid === step.encounter)
+          .filter((d) => d.visit_id === activeVisitId)?.[0]?.encounter_datetime;
+
+        if (time) {
+          updatedTimes[index] = time;
+        }
+      });
+
+      setEncounterTimes(updatedTimes);
+    }
+  }, [data, steps, showSubmittedStatus]);
 
   return (
     <MainGrid container spacing={5}>
+      {/* Sidebar Navigation */}
       <MainGrid sx={{ display: { xs: "none", lg: "block" } }} item lg={3}>
         <MainPaper elevation={0} sx={{ p: "1ch", width: "288px" }}>
           <MainTypography
             sx={{
               fontSize: "20px",
               fontWeight: 600,
-              lineHeight: "24px",
-              letterSpacing: "0em",
               textAlign: "left",
               ml: "2ch",
               my: "2ch",
@@ -119,113 +128,123 @@ export function NewStepperContainer({
 
       <MainGrid item xs={1} lg={0}></MainGrid>
 
+      {/* Main Content */}
       <MainGrid item xs={10} lg={8}>
         <WrapperBox width={"100%"}>
+          {/* Mobile Stepper */}
           <MainGrid item sx={{ display: { xs: "block", lg: "none" } }} xs={12}>
             <StepperTablet steps={steps} active={active} />
           </MainGrid>
+
+          {/* Back Button */}
           <WrapperBox
             onClick={() => onBack && onBack()}
             sx={{ display: { lg: "flex", xs: "none" }, cursor: "pointer" }}
           >
             <MainTypography
-              sx={{
-                width: "24px",
-                height: "24px",
-                fontSize: "20px",
-                fontWeight: 400,
-              }}
+              sx={{ width: "24px", height: "24px", fontSize: "20px" }}
             >
               <FaAngleLeft />
             </MainTypography>
-            <MainTypography
-              sx={{
-                fontSize: "14px",
-                fontWeight: 400,
-                lineHeight: "21px",
-                letterSpacing: "0em",
-                textAlign: "left",
-              }}
-            >
+            <MainTypography sx={{ fontSize: "14px", fontWeight: 400 }}>
               Back
             </MainTypography>
           </WrapperBox>
-          {validChildren.map((child, key) => {
-            return (
-              <Accordion
-                sx={{
-                  my: "2ch",
+
+          {/* Step Accordions */}
+          {steps.map((step, key) => (
+            <Accordion
+              sx={{
+                my: "2ch",
+                backgroundColor: "whitesmoke",
+                borderStyle: "none",
+                "& .MuiAccordionSummary-root": {
                   backgroundColor: "whitesmoke",
-                  borderStyle: "none",
-                  "& .MuiAccordionSummary-root": {
-                    backgroundColor: "whitesmoke",
-                    display: "flex",
-                    flexDirection: "row",
-                    borderBottom: "solid 0.2ch #B3B3B3",
-                  },
-                }}
-                onChange={() => {
-                  if (setActive) {
-                    setActive(key);
-                  }
-                }}
-                expanded={key === active}
-                key={key}
+                  display: "flex",
+                  flexDirection: "row",
+                  borderBottom: "solid 0.2ch #B3B3B3",
+                },
+              }}
+              onChange={() => setActive && setActive(key)}
+              expanded={key === active}
+              key={key}
+            >
+              <AccordionSummary
+                aria-controls={`panel${key + 1}-content`}
+                id={`panel${key + 1}-header`}
               >
-                <AccordionSummary
-                  aria-controls={`panel${key + 1}-content`}
-                  id={`panel${key + 1}-header`}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    pr: "2ch",
+                  }}
                 >
-                  <Box
+                  <Typography
+                    variant="h5"
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      pr: "2ch",
+                      fontSize: "24px",
+                      fontWeight: 700,
+                      textAlign: "left",
                     }}
                   >
-                    <Typography
-                      variant="h5"
+                    {step.label}
+                  </Typography>
+
+                  {/* Encounter Status with Aligned Icons */}
+                  {showSubmittedStatus && (
+                    <Box
                       sx={{
-                        fontSize: "24px",
-                        fontWeight: 700,
-                        lineHeight: "29px",
-                        letterSpacing: "0em",
-                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "0.5rem",
+
+                        width: "30%",
                       }}
                     >
-                      {steps[key]?.label}
-                    </Typography>
-                    {showSubmittedStatus && (
-                      <Typography>
-                        {isLoading || (isRefetching && active - 1 == key) ? (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {isLoading || (isRefetching && active - 1 === key) ? (
                           <FaSpinner
-                            size={"2.5ch"}
+                            size={"20px"}
                             style={{
                               animation: "spin 1s linear infinite",
+                              color: "gray",
                             }}
                           />
                         ) : (
                           <FaCheckCircle
-                            size={"2.5ch"}
-                            color={
-                              checkIfEncounterSubmitted(
-                                steps[key]?.encounter as string
-                              )
-                                ? "green"
-                                : "gray"
-                            }
+                            size={"20px"}
+                            color={encounterTimes[key] ? "green" : "gray"}
                           />
                         )}
+                      </Box>
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: encounterTimes[key] ? "green" : "gray",
+                          minWidth: "120px", // Ensure alignment
+                          textAlign: "left",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {getHumanReadableDateTime(encounterTimes[key]) ||
+                          "not submitted"}
                       </Typography>
-                    )}
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>{child}</AccordionDetails>
-              </Accordion>
-            );
-          })}
+                    </Box>
+                  )}
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>{children[key]}</AccordionDetails>
+            </Accordion>
+          ))}
         </WrapperBox>
       </MainGrid>
     </MainGrid>
