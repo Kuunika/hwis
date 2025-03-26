@@ -19,7 +19,6 @@ export const SoapierNotes = () => {
                 const formattedData = formatSoapierAssessmentData(soapierEncounter.obs);
                 setSoapNotes(formattedData);
             }
-            console.log("Ma Encounter", soapierEncounter);
         }
     }, [patientHistory, historyLoading]);
 
@@ -31,12 +30,10 @@ export const SoapierNotes = () => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
             const time = ob.obs_datetime;
-            // console.log("Processing observation:", { name, valueText, time });
 
             let humanReadableResponse = "";
 
             if (name === "Subjective") {
-                // If a new "Subjective" is found, start a new block
                 if (currentBlock) {
                     groupedData.push(currentBlock);
                 }

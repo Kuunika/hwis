@@ -7,7 +7,7 @@ export const useCirculationAssessment = (pData: any) => {
 
   useEffect(() => {
     if (!pData) return;
-  
+
     const reviewOfSystemsEncounter = pData.find(
       (d:any) => d.encounter_type.uuid === encounters.CIRCULATION_ASSESSMENT
     );

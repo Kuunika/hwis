@@ -1,4 +1,4 @@
-import { Typography, Box, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import { useEffect, useState } from "react";
@@ -7,16 +7,23 @@ import { encounters } from "@/constants";
 export const ChestAssessment = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setChestAssessmentData] = useState<{ paragraph: string; time: string }[]>([]);
+    const [chestAssessmentData, setChestAssessmentData] = useState<{ paragraph: string; time: string }[]>([]);
+
     useEffect(() => {
         if (!historyLoading && patientHistory) {
-            const chestEncounter = patientHistory.find(
+            const chestEncounters = patientHistory.filter(
                 (encounter: any) => encounter?.encounter_type?.uuid === encounters.CHEST_ASSESSMENT
             );
 
-            if (chestEncounter) {
-                const formattedData = formatChestAssessmentData(chestEncounter.obs);
-                setChestAssessmentData(formattedData);
+            if (chestEncounters.length > 0) {
+                const allFormattedData: { paragraph: string; time: string }[] = [];
+
+                chestEncounters.forEach(encounter => {
+                    const formattedData = formatChestAssessmentData(encounter.obs, encounter.encounter_datetime);
+                    allFormattedData.push(...formattedData);
+                });
+
+                setChestAssessmentData(allFormattedData);
             }
         }
     }, [patientHistory, historyLoading]);
@@ -24,61 +31,54 @@ export const ChestAssessment = () => {
     const isValidDate = (dateString: string) => {
         return !isNaN(new Date(dateString).getTime());
     };
-    const formatChestAssessmentData = (obs: any[]) => {
+
+    const formatChestAssessmentData = (obs: any[], encounterTime: string) => {
         const paragraphs: { paragraph: string; time: string }[] = [];
         let currentParagraph: string[] = [];
-        let currentTime = "";
-        let imageParts: string[] = []; // To track multiple image parts
+        let currentTime = isValidDate(encounterTime) ? encounterTime : new Date().toISOString();
+        let abnormalZones = new Set<string>(); // Track zones without notes
 
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
 
-            if (name === "Respiratory rate" && currentParagraph.length > 0) {
-                if (imageParts.length > 0) {
-                    currentParagraph.push(`Abnormal tactile fremitus was noted in the ${formatList(imageParts)}.`);
-                    imageParts = [];
-                }
-
-                paragraphs.push({
-                    paragraph: currentParagraph.join(" "),
-                    time: currentTime,
-                });
-                currentParagraph = [];
-            }
-
             if (name === "Respiratory rate") {
-                currentTime = isValidDate(ob.obs_datetime) ? ob.obs_datetime : new Date().toISOString();
-                currentParagraph.push(`The patient's respiratory rate is ${valueText} breaths per minute.`);
+                if (currentParagraph.length > 0) {
+                    if (abnormalZones.size > 0) {
+                        currentParagraph.push(`Abnormal findings in ${formatList(Array.from(abnormalZones))}.`);
+                        abnormalZones = new Set();
+                    }
+                    paragraphs.push({
+                        paragraph: currentParagraph.join(" "),
+                        time: currentTime,
+                    });
+                    currentParagraph = [];
+                }
+                currentTime = isValidDate(ob.obs_datetime) ? ob.obs_datetime : currentTime;
+                currentParagraph.push(`Respiratory rate: ${valueText} bpm.`);
             }
             else if (name === "Chest wall abnormality") {
                 currentParagraph.push(valueText === "Yes"
-                    ? "Chest wall abnormality was observed."
-                    : "No chest wall abnormality was detected.");
+                    ? "Chest wall abnormality present."
+                    : "No chest wall abnormality.");
             }
             else if (name === "Apex beat") {
                 if (valueText === "Displaced") {
                     const positioning = obs.find(o => o.names?.[0]?.name === "Positioning")?.value;
-                    currentParagraph.push("The apex beat is displaced" + (positioning ? ` (${positioning}).` : "."));
+                    currentParagraph.push("Apex beat displaced" + (positioning ? ` (${positioning}).` : "."));
                 } else {
-                    currentParagraph.push("The apex beat is normally positioned.");
+                    currentParagraph.push("Apex beat normal.");
                 }
             }
             else if (name === "Trill") {
-                if (valueText === "Yes") {
-                    const description = obs.find(o => o.names?.[0]?.name === "Description")?.value;
-                    currentParagraph.push("A trill was detected" + (description ? ` (${description}).` : "."));
-                } else {
-                    currentParagraph.push("No trill was detected.");
-                }
+                currentParagraph.push(valueText === "Yes"
+                    ? "Trill detected."
+                    : "No trill detected.");
             }
             else if (name === "Heaves") {
-                if (valueText === "Yes") {
-                    const description = obs.find(o => o.names?.[0]?.name === "Heaves description")?.value;
-                    currentParagraph.push("Heaves were present" + (description ? ` (${description}).` : "."));
-                } else {
-                    currentParagraph.push("No heaves were present.");
-                }
+                currentParagraph.push(valueText === "Yes"
+                    ? "Heaves present."
+                    : "No heaves present.");
             }
             else if (name === "Chest Expansion") {
                 currentParagraph.push(`Chest expansion is ${valueText.toLowerCase()}.`);
@@ -94,13 +94,22 @@ export const ChestAssessment = () => {
                 ];
 
                 if (validZones.includes(valueText)) {
-                    imageParts.push(valueText);
+                    const notes = obs.find(o =>
+                        o.names?.[0]?.name === "Clinician notes" &&
+                        o.group_id === ob.group_id
+                    )?.value;
+
+                    if (notes) {
+                        currentParagraph.push(`${valueText}: ${notes}.`);
+                    } else {
+                        abnormalZones.add(valueText);
+                    }
                 }
             }
         });
 
-        if (imageParts.length > 0) {
-            currentParagraph.push(`Abnormal findings were noted.`);
+        if (abnormalZones.size > 0) {
+            currentParagraph.push(`Abnormal findings in ${formatList(Array.from(abnormalZones))}.`);
         }
 
         if (currentParagraph.length > 0) {
@@ -118,18 +127,22 @@ export const ChestAssessment = () => {
         if (items.length === 2) return `${items[0]} and ${items[1]}`;
         return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
     };
+
     if (historyLoading) {
-        return <Typography>Loading...</Typography>;
+        return <Typography>Loading chest assessment...</Typography>;
     }
 
     return (
         <Box sx={{ p: 2 }}>
-            {airwayAssessmentData.length === 0 ? (
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                Chest Assessment Notes
+            </Typography>
+            {chestAssessmentData.length === 0 ? (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
-                    No airway assessment data available.
+                    No chest assessment data available.
                 </Typography>
             ) : (
-                airwayAssessmentData.map((data, index) => (
+                chestAssessmentData.map((data, index) => (
                     <Box key={index} sx={{ mb: 3 }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}

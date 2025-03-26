@@ -23,6 +23,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {ChestAssessment} from "@/app/patient/components/clinicalNotes/chestAssement";
 import {GeneralInformation} from "@/app/patient/components/clinicalNotes/generalInformation";
 import {HeadAndNeck} from "@/app/patient/components/clinicalNotes/headAndNeck";
+import {useCirculationAssessment} from "@/app/patient/components/clinicalNotes/CirculationAssessment";
+import {useDisabilityAssessment} from "@/app/patient/components/clinicalNotes/DisabilityAssessment";
+import {useExposureAssessment} from "@/app/patient/components/clinicalNotes/ExposureAssessment";
+import {NeurogicalExamination} from "@/app/patient/components/clinicalNotes/neurogicalExamination";
+import {AbdomenAndPelvisAssessment} from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
 
 
 export const ClinicalNotes = () => {
@@ -34,8 +39,12 @@ export const ClinicalNotes = () => {
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
   const { data: patient } = getOnePatient(params.id as string);
+    const { data: pData } = getPatientsEncounters(params.id as string);
+    const circulationMessage = useCirculationAssessment(pData);
+    const disabilityMessage = useDisabilityAssessment(pData);
+    const exposureMessage = useExposureAssessment(pData);
 
-  const {
+    const {
     data: patientEncounters,
     isLoading,
     isSuccess: encountersFetched,
@@ -162,6 +171,61 @@ export const ClinicalNotes = () => {
                 <AccordionDetails>
                     <AirwayAssessment />
                     <BreathingAssessment />
+
+                    {/* Circulation Assessment */}
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                            Circulation Assessment Notes
+                        </Typography>
+                        {circulationMessage ? (
+                            <Box sx={{ mb: 3 }}>
+                                <Typography variant="body2" sx={{ color: "text.primary" }}>
+                                    {circulationMessage}
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                                No circulation assessment data available.
+                            </Typography>
+                        )}
+                    </Box>
+
+                    {/* Disability Assessment */}
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                            Disability Assessment Notes
+                        </Typography>
+                        {disabilityMessage ? (
+                            <Box sx={{ mb: 3 }}>
+                                <Typography variant="body2" sx={{ color: "text.primary" }}>
+                                    {disabilityMessage}
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                                No disability assessment data available.
+                            </Typography>
+                        )}
+                    </Box>
+
+                    {/* Exposure Assessment */}
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                            Exposure Assessment Notes
+                        </Typography>
+                        {exposureMessage ? (
+                            <Box sx={{ mb: 3 }}>
+                                <Typography variant="body2" sx={{ color: "text.primary" }}>
+                                    {exposureMessage}
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                                No exposure assessment data available.
+                            </Typography>
+                        )}
+                    </Box>
+
                 </AccordionDetails>
             </Accordion>
 
@@ -185,6 +249,8 @@ export const ClinicalNotes = () => {
                     <GeneralInformation />
                     <HeadAndNeck />
                     <ChestAssessment />
+                    <AbdomenAndPelvisAssessment/>
+                    <NeurogicalExamination/>
                 </AccordionDetails>
             </Accordion>
             <Accordion

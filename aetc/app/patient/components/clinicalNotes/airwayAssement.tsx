@@ -35,7 +35,6 @@ export const AirwayAssessment = () => {
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
-            console.log("Processed", `${name} ${valueText}`);
 
             if (name === "Airway Patent" && currentParagraph.length > 0) {
                 if (airwayReasons.length > 0) {
@@ -132,7 +131,7 @@ export const AirwayAssessment = () => {
             ) : (
                 airwayAssessmentData.map((data, index) => (
                     <Box key={index} sx={{ mb: 3 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 1 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
                         </Typography>
                         <Typography variant="body2" sx={{ color: "text.primary" }}>

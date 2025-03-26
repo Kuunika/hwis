@@ -4,12 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f2d02be-60f9-43d7-be4b-2a5c6bea0138" name="Changes" comment="">
+    <list default="true" id="1f2d02be-60f9-43d7-be4b-2a5c6bea0138" name="Changes" comment="Merged">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/airwayAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/airwayAssement.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/breathingAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/breathingAssement.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/chestAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/chestAssement.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/generalInformation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/generalInformation.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/headAndNeck.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/headAndNeck.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/soapierNotes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/soapierNotes.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/panels/CirculationAssessment.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/panels/DisabilityAssessment.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/panels/ExposureAssessment.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +32,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="main" />
+        <entry key="$PROJECT_DIR$/.." value="primary-corrections" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -40,25 +46,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "refactoring-primary-secondary-survey-display",
-    "last_opened_file_path": "/Users/wisdom/Documents/Projects/Work/hwis/aetc/app/patient/components/clinicalNotes",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "/Users/wisdom/Documents/Projects/Work/hwis/aetc/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;refactoring-primary-secondary-survey-display&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/wisdom/Documents/Projects/Work/hwis/aetc/app/patient/components/clinicalNotes&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/wisdom/Documents/Projects/Work/hwis/aetc/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/patient/components/clinicalNotes" />
       <recent name="$PROJECT_DIR$/app/patient/components/visits" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/patient/components/clinicalNotes" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -80,9 +89,22 @@
       <workItem from="1742307365177" duration="17250000" />
       <workItem from="1742369480396" duration="12581000" />
     </task>
+    <task id="LOCAL-00001" summary="Merged">
+      <option name="closed" value="true" />
+      <created>1742911887054</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1742911887054</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Merged" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merged" />
   </component>
 </project>

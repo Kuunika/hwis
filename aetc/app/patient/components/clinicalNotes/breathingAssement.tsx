@@ -41,8 +41,6 @@ export const BreathingAssessment = () => {
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
-            console.log("Processed", `${name} ${valueText}`);
-
             if (name === "Is Breathing Abnormal" && currentParagraph.length > 0) {
                 if (additionalNotes) {
                     currentParagraph.push(additionalNotes);
@@ -156,7 +154,7 @@ export const BreathingAssessment = () => {
             {airwayAssessmentData.length > 0 ? (
                 airwayAssessmentData.map((data, index) => (
                     <Box key={index} sx={{ mb: 3 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 1 }}>
                             {new Date(data.time).toLocaleString()}
                         </Typography>
                         <Typography
