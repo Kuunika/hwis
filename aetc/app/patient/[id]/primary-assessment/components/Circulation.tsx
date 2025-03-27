@@ -50,7 +50,7 @@ const form = {
   },
   pulseRate: {
     name: concepts.PULSE_RATE_WEAK,
-    label: "Purse Rate",
+    label: "Purse rate",
     coded: true,
   },
   bloodPressureSystolic: {
