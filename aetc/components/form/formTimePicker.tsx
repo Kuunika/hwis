@@ -1,16 +1,12 @@
 "use client";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { FC, useEffect, useState } from "react";
-import { Button, TextField, InputAdornment, IconButton } from "@mui/material";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { FC, useEffect, useState, useRef } from "react";
+import { Button, TextField, InputAdornment, SxProps } from "@mui/material";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
-import OpenWithIcon from "@mui/icons-material/OpenWith";
 import { useFormikField } from "./hooks";
-import { SxProps } from "@mui/material";
-import { Dayjs } from "dayjs";
 
 type Prop = {
   name: string;
@@ -35,13 +31,14 @@ export const FormTimePicker: FC<Prop> = ({
 }) => {
   const { value, setFieldValue } = useFormikField(name);
   const [open, setOpen] = useState(false);
+  const inputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
 
   const handleSetNowTime = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent opening time picker
+    e.stopPropagation();
     const currentTime = dayjs().format("HH:mm:ss");
     setFieldValue(name, currentTime);
   };
@@ -49,6 +46,13 @@ export const FormTimePicker: FC<Prop> = ({
   const handleTextFieldClick = () => {
     if (!disabled) {
       setOpen(true);
+    }
+  };
+
+  const handleAccept = (newValue: Dayjs | null) => {
+    if (newValue) {
+      setFieldValue(name, newValue.format("HH:mm:ss"));
+      setOpen(false);
     }
   };
 
@@ -60,14 +64,23 @@ export const FormTimePicker: FC<Prop> = ({
         onClose={() => setOpen(false)}
         label={label}
         value={value ? dayjs(value, "HH:mm:ss") : null}
-        onChange={(newValue: Dayjs | null) => {
-          setFieldValue(name, newValue ? newValue.format("HH:mm:ss") : null);
+        onChange={() => {
+          // Do nothing on change to keep picker open
+        }}
+        onAccept={handleAccept}
+        PopperProps={{
+          anchorEl: inputRef.current,
+          placement: "bottom-start",
+          style: {
+            width: inputRef.current ? inputRef.current.clientWidth : "auto",
+          },
         }}
         sx={{ width, ...sx }}
         slots={{
           textField: (params) => (
             <TextField
               {...params}
+              ref={inputRef}
               fullWidth
               onClick={handleTextFieldClick}
               InputProps={{
