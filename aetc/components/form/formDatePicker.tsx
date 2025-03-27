@@ -143,7 +143,7 @@ export const FormDatePicker: FC<Prop> = ({
               },
             },
           }}
-          onChange={(newValue, context) => {
+          onChange={(newValue, context: any) => {
             // Prevents calendar from closing when selecting year or month
             if (context.validationError === null && context.view === "day") {
               setDateValue(newValue);
