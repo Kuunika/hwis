@@ -46,7 +46,7 @@ const validationSchema = Yup.object({
     ),
     //   followUpDetails: Yup.string().required("Follow-Up Details are required"),
     dischargeNotes: Yup.string().required("Discharge Notes are required"),
-    specialistClinic: Yup.string(),
+    // specialistClinic: Yup.string(),
 });
 const initialValues = {
     dischargePlan: "",
@@ -179,17 +179,24 @@ export default function DischargeHomeForm() {
 
                                         {/* Conditionally render Follow-Up Details */}
                                         {values.followUpPlan === concepts.YES && (
-                                            <p>
-                                                <strong>Follow up details:</strong> {values.followUpDetails}
-                                            </p>
+                                            <>
+                                                <p>
+                                                    <strong>Follow up details:</strong> {values.followUpDetails}
+                                                </p>
+
+                                                <p>
+                                                    <strong>Specialist Clinic (if applicable):</strong> {values.specialistClinic}
+                                                </p>
+
+                                            </>
+
+
                                         )}
 
                                         <p>
                                             <strong>Discharge notes:</strong> {values.dischargeNotes}
                                         </p>
-                                        <p>
-                                            <strong>Specialist Clinic (if applicable):</strong> {values.specialistClinic}
-                                        </p>
+
                                     </div>
                                 </div>
 
@@ -232,16 +239,27 @@ export default function DischargeHomeForm() {
                                         />
                                     </MainGrid>
 
-                                    {/* Conditionally render Follow-Up Details field */}
+                                    {/* Conditionally render Follow-Up Details and Specialist Clinic fields */}
                                     {values.followUpPlan === concepts.YES && (
-                                        <MainGrid item xs={6}>
-                                            <SearchComboBox
-                                                name="followUpDetails"
-                                                label="Follow-Up Details"
-                                                options={followUpOptions}
-                                                multiple={false}
-                                            />
-                                        </MainGrid>
+                                        <>
+                                            <MainGrid item xs={6}>
+                                                <SearchComboBox
+                                                    name="followUpDetails"
+                                                    label="Follow-Up Details"
+                                                    options={followUpOptions}
+                                                    multiple={false}
+                                                />
+                                            </MainGrid>
+
+                                            <MainGrid item xs={6}>
+                                                <SearchComboBox
+                                                    name="specialistClinic"
+                                                    label="Specialist Clinic (if applicable)"
+                                                    options={specialistClinicOptions}
+                                                    multiple={false}
+                                                />
+                                            </MainGrid>
+                                        </>
                                     )}
 
                                     {/* Discharge Notes */}
@@ -257,15 +275,7 @@ export default function DischargeHomeForm() {
                                         />
                                     </MainGrid>
 
-                                    {/* Specialist Clinics */}
-                                    <MainGrid item xs={6}>
-                                        <SearchComboBox
-                                            name="specialistClinic"
-                                            label="Specialist Clinic (if applicable)"
-                                            options={specialistClinicOptions}
-                                            multiple={false}
-                                        />
-                                    </MainGrid>
+
 
                                     {/* Submit & Print */}
                                     <MainGrid item xs={12}>

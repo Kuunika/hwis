@@ -73,8 +73,12 @@ import { FamilyHistoryForm } from "./FamilyHistoryForm";
 import { PastSurgicalHistoryForm } from "./PastSurgicalHistoryForm";
 import { AllergiesForm } from "./AllergiesForm";
 import { SocialHistoryForm } from "./SocialHistoryForm";
-// import { GynaeObstetricHistoryForm } from "./GynaeForm";
-// import { ReviewOfSystemsForm } from "./ReviewOfSystemsForm";
+import { GynaeObstetricHistoryForm } from "./GynaeForm";
+import { ReviewOfSystemsForm } from "./ReviewOfSystemsForm";
+import { PhysicalExaminationForm } from "./PhysicalExaminationForm";
+import { WorkingDifferentialDiagnosisForm } from "./WorkingDifferentialDiagnosisForm";
+import { InvestigationsForm } from "./InvestigationsForm";
+import { InitialManagementForm } from "./InitialManagementForm";
 
 export const SurgicalNotesFlow = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
@@ -89,6 +93,14 @@ export const SurgicalNotesFlow = () => {
         { id: 5, label: "Social History" },
         { id: 6, label: "Gynae History" },
         { id: 7, label: "Review of Systems" },
+        { id: 8, label: "Physical Examination" },
+        { id: 9, label: "Working Differential Diagnosis" },
+        { id: 10, label: "Investigations" },
+        { id: 11, label: "Initial Management" },
+
+
+
+
 
 
     ];
@@ -144,23 +156,50 @@ export const SurgicalNotesFlow = () => {
             <>
                 <SocialHistoryForm onSkip={() => { }} onSubmit={() => { }} />
                 <StepButtons
-                    onNext={() => setActiveStep(5)}
+                    onNext={() => setActiveStep(6)}
                 />
             </>
 
-            {/* <>
+            <>
                 <GynaeObstetricHistoryForm onSkip={() => { }} onSubmit={() => { }} />
                 <StepButtons
-                    onNext={() => setActiveStep(5)}
+                    onNext={() => setActiveStep(7)}
                 />
-            </> */}
+            </>
 
-            {/* <>
+            <>
                 <ReviewOfSystemsForm onSkip={() => { }} onSubmit={() => { }} />
                 <StepButtons
-                    onNext={() => setActiveStep(5)}
+                    onNext={() => setActiveStep(8)}
                 />
-            </> */}
+            </>
+
+            <>
+                <PhysicalExaminationForm onSkip={() => { }} onSubmit={() => { }} />
+                <StepButtons
+                    onNext={() => setActiveStep(9)}
+                />
+            </>
+
+            <>
+                <WorkingDifferentialDiagnosisForm onSkip={() => { }} onSubmit={() => { }} />
+                <StepButtons
+                    onNext={() => setActiveStep(9)}
+                />
+            </>
+
+            <>
+                <InvestigationsForm onSkip={() => { }} onSubmit={() => { }} />
+                <StepButtons
+                    onNext={() => setActiveStep(9)}
+                />
+            </>
+            <>
+                <InitialManagementForm onSkip={() => { }} onSubmit={() => { }} />
+                <StepButtons
+                    onNext={() => setActiveStep(9)}
+                />
+            </>
 
 
         </NewStepperContainer>
