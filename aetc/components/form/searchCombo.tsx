@@ -115,6 +115,7 @@ export const SearchComboBox: FC<Props> = ({
       <Select
         isDisabled={disabled}
         value={value ? mappedOptions?.find((op) => op.value === value) : value}
+        //value={value ? mappedOptions?.find((op) => op.value === value) : null}
         styles={customStyles}
         defaultValue={manualInitialValues}
         theme={(theme) => ({

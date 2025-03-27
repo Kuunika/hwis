@@ -70,7 +70,7 @@ export const RadioGroupInput: FC<Prop> = ({
 };
 
 type BaseProp = {
-  value: string | boolean | number;
+  value: any;
   handleChange: (values: any) => void;
   hasError: boolean;
   row?: boolean;

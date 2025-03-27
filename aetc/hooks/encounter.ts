@@ -121,7 +121,6 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
 export const getConceptFromCacheOrFetch = async (conceptName:string)=>{
   const cachedConcept = queryClient.getQueryData(["concepts", conceptName]);
-
   let concept;
   if (cachedConcept) {
     concept = cachedConcept 
@@ -132,7 +131,6 @@ export const getConceptFromCacheOrFetch = async (conceptName:string)=>{
     queryClient.setQueryData(["concepts", conceptName], concept);
     queryClient.setQueryData([concept.data[0].uuid], conceptName);
   }
-
   return concept
 }
 

@@ -85,6 +85,10 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   // Define main menu items
   const mainMenuItems: MenuItemConfig[] = [
     {
+      label: "Continue monitoring",
+      path: `/patient/${patient.id}/nursingChart`,
+    },
+    {
       label: "Nursing Care Notes",
       path: `/patient/${patient.id}/soap`,
     },
@@ -101,22 +105,22 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       path: `/patient/${patient.id}/secondary-assessment`,
     },
     {
-      id: 0,
-      path: "Differential Diagnosis",
       label: "Differential Diagnosis",
+      path: `/patient/${patient.id}/differential-diagnosis`,
     },
-    { id: 1, path: "Investigations", label: "Investigations" },
-    { id: 2, path: "Final Diagnosis", label: "Final Diagnosis" },
+    {
+      label: "Investigations",
+      path: `/patient/${patient.id}/investigations`,
+    },
+    {
+      label: "Final Diagnosis",
+      path: `/patient/${patient.id}/final-diagnosis`,
+    },
     {
       label: "Patient Management Plan",
       path: `/patient/${patient.id}/patient-management-plan`,
     },
     { label: "Disposition", path: `/patient/${patient.id}/disposition` },
-    {
-      label: "Continue monitoring",
-      path: `/patient/${patient.id}/nursingChart`,
-    },
-
     {
       label: "Continuation Sheet",
       path: `/patient/${patient.id}/continuationSheet`,

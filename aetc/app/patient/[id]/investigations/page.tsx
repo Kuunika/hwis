@@ -1,0 +1,33 @@
+"use client";
+import {
+  BackButton,
+  FormContainer,
+  NextButton,
+  PatientInfoTab,
+} from "@/components";
+import React from "react";
+import { concepts } from "@/constants";
+import { TestAccordion } from "../consultation/components/testAccordion";
+
+import DiagnosisForm from "../consultation/components/diagnosisForm";
+import { useParameters } from "@/hooks";
+
+export default function FinalDiagnosis() {
+  const { params } = useParameters();
+  return (
+    <>
+      <PatientInfoTab />
+      <FormContainer>
+        <BackButton />
+
+        <TestAccordion />
+        <NextButton
+          size="medium"
+          sx={{ fontSize: "12px", mr: "1px", mt: "1ch", float: "right" }}
+          title={"Proceed to Final Diagnosis"}
+          url={`/patient/${params.id}/final-diagnosis`}
+        />
+      </FormContainer>
+    </>
+  );
+}
