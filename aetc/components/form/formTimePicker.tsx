@@ -6,6 +6,7 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { FC, useEffect, useState } from "react";
 import { Button, TextField, InputAdornment, IconButton } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import OpenWithIcon from "@mui/icons-material/OpenWith";
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
@@ -39,9 +40,16 @@ export const FormTimePicker: FC<Prop> = ({
     getValue && getValue(value);
   }, [value]);
 
-  const handleSetNowTime = () => {
+  const handleSetNowTime = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening time picker
     const currentTime = dayjs().format("HH:mm:ss");
     setFieldValue(name, currentTime);
+  };
+
+  const handleTextFieldClick = () => {
+    if (!disabled) {
+      setOpen(true);
+    }
   };
 
   return (
@@ -61,28 +69,25 @@ export const FormTimePicker: FC<Prop> = ({
             <TextField
               {...params}
               fullWidth
+              onClick={handleTextFieldClick}
               InputProps={{
                 ...params.InputProps,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AccessTimeFilledIcon />
+                  </InputAdornment>
+                ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <Button
-                      variant="outlined"
+                      variant="contained"
                       color="primary"
                       size="small"
                       onClick={handleSetNowTime}
                       disabled={disabled}
-                      startIcon={<AccessTimeIcon />}
-                      style={{ marginRight: 8 }}
                     >
                       Now
                     </Button>
-                    <IconButton
-                      size="small"
-                      onClick={() => setOpen(true)}
-                      disabled={disabled}
-                    >
-                      <OpenWithIcon />
-                    </IconButton>
                   </InputAdornment>
                 ),
               }}
