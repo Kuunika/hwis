@@ -134,7 +134,7 @@ const intoxications = [
   { id: concepts.OTHER, label: "Other" },
 ];
 
-export const PastMedicalHistory = () => {
+export const PastMedicalHistory = ({ onSubmit }: { onSubmit: () => void }) => {
   const { data, isLoading } = getFacilities();
   const [formValues, setFormValues] = useState<any>({});
   const { medicationOptions } = useFetchMedications();

@@ -7,7 +7,7 @@ export const useCirculationAssessment = (pData: any) => {
 
   useEffect(() => {
     if (!pData) return;
-
+  
     const reviewOfSystemsEncounter = pData.find(
       (d:any) => d.encounter_type.uuid === encounters.CIRCULATION_ASSESSMENT
     );
@@ -73,67 +73,7 @@ export const useCirculationAssessment = (pData: any) => {
       otherAbnormalities: getObservation(concepts.IS_THERE_OTHER_OBDONORMALITIES)
     };
 
-        
-        const allObservationDates = [
-          observations.activelyBledding?.obs_datetime,
-          observations.actionDone?.obs_datetime,
-          observations.pulseRate?.obs_datetime,
-          observations.capillaryRefillTime?.obs_datetime,
-          observations.cprDateOfCall?.obs_datetime,
-          observations.cprCardiacArrest?.obs_datetime,
-          observations.cprSite?.obs_datetime,
-          observations.cprSpecify?.obs_datetime,
-          observations.cprRecord1Time?.obs_datetime,
-          observations.cprRecord1Rhythm?.obs_datetime,
-          observations.cprRecord1ShockEnergy?.obs_datetime,
-          observations.cprRecord1MedicationName?.obs_datetime,
-          observations.cprRecord1DoseName?.obs_datetime,
-          observations.cprRecord1Route?.obs_datetime,
-          observations.cprRecord1Intervations?.obs_datetime,
-          observations.cprRecord1Occurrences?.obs_datetime,
-          observations.cprRecord1ReversibleCauses?.obs_datetime,
-          observations.cprRecord1CardiacArrest?.obs_datetime,
-          observations.cprROSCspo2?.obs_datetime,
-          observations.cprOxygen?.obs_datetime,
-          observations.cprSystolic?.obs_datetime,
-          observations.cprDystoric?.obs_datetime,
-          observations.cprRespiratory?.obs_datetime,
-          observations.cprPulse?.obs_datetime,
-          observations.cprTemperature?.obs_datetime,
-          observations.cprMotorResponse?.obs_datetime,
-          observations.cprVerbalResponse?.obs_datetime,
-          observations.cprEyeOpeningResponse?.obs_datetime,
-          observations.cprTimeStopped?.obs_datetime,
-          observations.cprReasonTimeStopped?.obs_datetime,
-          observations.cprDisposition?.obs_datetime,
-          observations.cprTeamLeader?.obs_datetime,
-          observations.cprTeamMembers?.obs_datetime,
-          observations.mucuous?.obs_datetime,
-          observations.mucuouAbnormal?.obs_datetime,
-          observations.assessPeripheries?.obs_datetime,
-          observations.bloodPressureMeasured?.obs_datetime,
-          observations.bloodPressureSystolic?.obs_datetime,
-          observations.bloodPressureDiastolic?.obs_datetime,
-          observations.bloodPressureNotDone?.obs_datetime,
-          observations.bpUnrecordable?.obs_datetime,
-          observations.patientInjured?.obs_datetime,
-          observations.intravenousAccess?.obs_datetime,
-          observations.sizeOfCatheter?.obs_datetime,
-          observations.cannulationSite?.obs_datetime,
-          observations.scarpa?.obs_datetime,
-          observations.abdominalDistention?.obs_datetime,
-          observations.otherAbnormalities?.obs_datetime,
-          reviewOfSystemsEncounter.encounter_datetime
-        ].filter(Boolean); 
-    
-   
-        const observationDateTime = allObservationDates.length > 0 
-          ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
-          : new Date().toISOString();
-    
-        const formattedDate = new Date(observationDateTime).toLocaleString();
-    
-        let messages = [`Circulation Assessment recorded on ${formattedDate}.\n`];
+    let messages = [];
 
     if (observations.activelyBledding?.value == "Yes") {
       messages.push("The patient is actively bleeding.");
@@ -385,7 +325,7 @@ export const useCirculationAssessment = (pData: any) => {
       messages.push("There are no other abnormalities.");
     }
 
-    setCirculationMessage(messages.join(""));
+    setCirculationMessage(messages.join(" "));
   }, [pData]);
 
   return circulationMessage;

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { concepts, encounters } from "@/constants";
 import { Obs } from "@/interfaces";
@@ -8,15 +7,15 @@ export const useDisabilityAssessment = (pData: any) => {
 
   useEffect(() => {
     if (!pData) return;
-
-    const disabilityAssessmentEncounter = pData.find(
-      (d: any) => d.encounter_type.uuid === encounters.DISABILITY_ASSESSMENT
+  
+    const reviewOfSystemsEncounter = pData.find(
+      (d:any) => d.encounter_type.uuid === encounters.DISABILITY_ASSESSMENT
     );
 
-    if (!disabilityAssessmentEncounter?.obs) return;
+    if (!reviewOfSystemsEncounter?.obs) return;
 
     const getObservation = (conceptName: string) => {
-      return disabilityAssessmentEncounter.obs.find((ob: Obs) =>
+      return reviewOfSystemsEncounter.obs.find((ob: Obs) =>
         ob.names.some((n) => n.name === conceptName)
       );
     };
@@ -28,37 +27,19 @@ export const useDisabilityAssessment = (pData: any) => {
       verbalResponse: getObservation(concepts.VERBAL_RESPONSE),
       pupilSize: getObservation(concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT),
       focalNeurology: getObservation(concepts.FOCAL_NEUROLOGY),
-      posture: getObservation(concepts.POSTURE),
+      posture: getObservation(concepts.FOCAL_NEUROLOGY)
     };
-
-  
-    const allObservationDates = [
-      observations.levelOfConsciousness?.obs_datetime,
-      observations.gcs?.obs_datetime,
-      observations.eyeOpening?.obs_datetime,
-      observations.verbalResponse?.obs_datetime,
-      observations.pupilSize?.obs_datetime,
-      observations.focalNeurology?.obs_datetime,
-      observations.posture?.obs_datetime,
-      disabilityAssessmentEncounter.encounter_datetime
-    ].filter(Boolean); 
-
-    const observationDateTime = allObservationDates.length > 0 
-      ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
-      : new Date().toISOString();
-
-    const formattedDate = new Date(observationDateTime).toLocaleString();
-
-    let messages = [`Disability Assessment recorded on ${formattedDate}.\n`];
     
-    // Level of Consciousness
+    // console.log("Checking on the object:",observations.levelOfConsciousness);`
+    console.log("<><><<><><><<>>><><><<><><>><><<>")
+    let messages = [];
+
     if (observations.levelOfConsciousness?.value === "No") {
       messages.push("The patient is alert and does not exhibit a low level of consciousness.");
     } else {
       messages.push("The patient exhibits a low level of consciousness and requires further evaluation and monitoring.");
     }
 
-    // GCS
     if (observations.gcs?.value === 15) {
       messages.push("The GCS is 15: patient is fully conscious with normal neurological function.");
     } else if (observations.gcs?.value >= 13 && observations.gcs?.value <= 14) {
@@ -68,10 +49,9 @@ export const useDisabilityAssessment = (pData: any) => {
     } else if (observations.gcs?.value >= 3 && observations.gcs?.value <= 8) {
       messages.push("GCS is 3–8: Severe brain injury or coma. Immediate intervention required.");
     } else {
-      messages.push("GCS score not available or invalid.");
+      messages.push("Invalid GCS score.");
     }
 
-    // Eye Opening Response
     if (observations.eyeOpening?.value == 4) {
       messages.push("Eyes open spontaneously: patient is fully conscious.");
     } else if (observations.eyeOpening?.value == 3) {
@@ -81,10 +61,9 @@ export const useDisabilityAssessment = (pData: any) => {
     } else if (observations.eyeOpening?.value == 1) {
       messages.push("No eye opening response: patient may be in a deep coma.");
     } else {
-      messages.push("Eye opening response not available or invalid.");
+      messages.push("Invalid eye opening response value.");
     }
 
-    // Verbal Response
     if (observations.verbalResponse?.value == 5) {
       messages.push("Verbal response is 5: patient is oriented and converses normally.");
     } else if (observations.verbalResponse?.value == 4) {
@@ -96,21 +75,14 @@ export const useDisabilityAssessment = (pData: any) => {
     } else if (observations.verbalResponse?.value == 1) {
       messages.push("Verbal response is 1: no verbal response, patient is unresponsive.");
     } else {
-      messages.push("Verbal response not available or invalid.");
+      messages.push("Invalid verbal response value.");
     }
 
-    // Pupil Size
-    messages.push(`Pupil Size and Reaction to Light: ${observations.pupilSize?.value || "Not available"}`);
+    messages.push(`Pupil Size and Reaction to Light: ${observations.pupilSize?.value || "Not available"}.`);
+    messages.push(`Focal Neurology: ${observations.focalNeurology?.value || "Not available"}.`);
+    messages.push(`Posture: ${observations.posture?.value || "Not available"}.`);
 
-    // Focal Neurology
-    messages.push(`Focal Neurology: ${observations.focalNeurology?.value || "Not available"}`);
-
-    // Posture
-    messages.push(`Posture: ${observations.posture?.value || "Not available"}`);
-
-    // Set the formatted message
-    setDisabilityMessage(messages.join(""));
-
+    setDisabilityMessage(messages.join(" "));
   }, [pData]);
 
   return disabilityMessage;

@@ -26,8 +26,6 @@ import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
-import { LowerLimbAnteriorImage } from "@/components/svgImages/lowerLimbAnterior";
-import { UpperLimbFemaleAnterior } from "@/assets/upperLimbFemaleAnterior";
 import { UpperLimbFemaleAnteriorImage } from "@/components/svgImages/upperLimbFemaleAnterior";
 import { UpperLimbFemalePosteriorImage } from "@/components/svgImages/upperLimbFemalePosterior";
 import { UpperLimbMaleAnteriorImage } from "@/components/svgImages/upperLimbMaleAnterior";

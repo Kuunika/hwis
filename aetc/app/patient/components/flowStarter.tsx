@@ -159,6 +159,10 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
             fontSize: "14px",
             flexGrow: 1,
             textTransform: "none",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            maxWidth: "calc(100% - 40px)", // Ensure text doesn't overlap with dropdown
             "&:hover": {
               backgroundColor: "#004d00",
             },
@@ -175,6 +179,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
             fontSize: "14px",
             padding: "0px",
             minWidth: "unset",
+            width: "40px", // Fixed width for dropdown button
             "&:hover": {
               backgroundColor: "#006b00",
             },

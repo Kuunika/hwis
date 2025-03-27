@@ -1,20 +1,12 @@
-"use client";
+"use client";;
 import { useEffect, useState } from "react";
 import DynamicFormList from "@/components/form/dynamicFormList"; // Import the updated component
-import {
-  FormikInit,
-  FormValuesListener,
-  MainButton,
-  SearchComboBox,
-  UnitInputField,
-  WrapperBox,
-} from "@/components";
+import { FormikInit, FormValuesListener, SearchComboBox, UnitInputField } from "@/components";
 import * as Yup from "yup";
 import { IoTimeOutline } from "react-icons/io5";
 import { concepts, durationOptions } from "@/constants";
 import { FieldArray } from "formik";
 import { Field, getIn } from "formik";
-import { getConceptSetMembers } from "@/hooks/labOrder";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
 import { DetailsPresentingComplaintsAccordion } from "./detailsPresentingComplaintAccordion";
 const ErrorMessage = ({ name }: { name: string }) => (
@@ -55,7 +47,7 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
         concepts.PRESENTING_COMPLAINTS
       );
       complaints = complaints.data[0].set_members.map((complaint: any) => {
-        return { id: complaint.uuid, label: complaint.names[0].name };
+        return { id: complaint.names[0].uuid, label: complaint.names[0].name };
       });
       setPresentingComplaints(complaints);
     })();

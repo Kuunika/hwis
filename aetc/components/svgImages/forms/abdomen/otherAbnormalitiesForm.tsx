@@ -1,5 +1,6 @@
 import {
   FormikInit,
+  FormValuesListener,
   RadioGroupInput,
   SearchComboBox,
   TextInputField,
@@ -12,18 +13,17 @@ import { useState } from "react";
 import * as Yup from "yup";
 
 const form = {
-  wound: {
-    name: concepts.WOUND,
-    label: "Wound",
+  other: {
+    name: concepts.OTHER,
+    label: "Specify",
   },
-  tenderness: {
-    name: concepts.TENDERNESS,
-    label: "Tenderness",
+  abnormalities: {
+    name: concepts.ABNORMALITIES,
+    label: "Abnormalities",
   },
   abnormality: {
-    name: concepts.ABNORMALITIES,
+    name: concepts.ABNORMALITIES_PRESENT,
     label: "Are there abnormalities on this Region",
-    coded: true,
   },
 };
 
@@ -31,8 +31,8 @@ const schema = Yup.object().shape({
   [form.abnormality.name]: Yup.string()
     .required()
     .label(form.abnormality.label),
-  [form.wound.name]: Yup.array().label(form.wound.label),
-  [form.tenderness.name]: Yup.array().label(form.tenderness.label),
+  [form.other.name]: Yup.string().label(form.other.label),
+  [form.abnormalities.name]: Yup.array().label(form.abnormalities.label),
 });
 
 type Props = {
@@ -40,11 +40,12 @@ type Props = {
   onCancel: () => void;
 };
 const options = [
+  { id: concepts.TENDERNESS, label: "Tenderness" },
   { id: concepts.LACERATION, label: "Laceration" },
   { id: concepts.STAB_PUNCTURE, label: "Stab/Puncture" },
   { id: concepts.BRUISE, label: "Bruise" },
   { id: concepts.BURNS, label: "Burns" },
-  { id: concepts.WOUND, label: "Wound" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const yesNoOptions = [
@@ -54,6 +55,7 @@ const yesNoOptions = [
 
 export const OtherAbnormalityForm = (props: Props) => {
   const [show, setShow] = useState(false);
+  const [formValues, setFormValues] = useState<any>({});
   return (
     <FormikInit
       validationSchema={schema}
@@ -64,35 +66,39 @@ export const OtherAbnormalityForm = (props: Props) => {
       submitButton={false}
       submitButtonText="next"
     >
-      <RadioGroupInput
-        options={yesNoOptions}
-        name={form.abnormality.name}
-        label={form.abnormality.label}
-        row
-        getValue={(value) => setShow(value === YES)}
-      />
-      {show && (
+      <FormValuesListener getValues={setFormValues} />
+      <>
+        {/* <RadioGroupInput
+          options={yesNoOptions}
+          name={form.abnormality.name}
+          label={form.abnormality.label}
+          row
+          getValue={(value) => setShow(value === YES)}
+        /> */}
+
         <>
-          <br />
-          <Typography color={"grey"} variant="h6">
-            Select Descriptions if applicable
-          </Typography>
-          <br />
           <SearchComboBox
-            name={form.tenderness.name}
-            label={form.tenderness.label}
+            name={form.abnormalities.name}
+            label={form.abnormalities.label}
             options={options}
-            coded
           />
-          <SearchComboBox
-            name={form.wound.name}
-            label={form.wound.label}
-            options={options}
-            coded
-          />
+          <br />
+          {Array.isArray(formValues[form.abnormalities.name]) &&
+            formValues[form.abnormalities.name].find(
+              (opt: any) => opt.id == concepts.OTHER
+            ) && (
+              <TextInputField
+                multiline
+                rows={5}
+                sx={{ width: "100%" }}
+                name={form.other.name}
+                label={form.other.label}
+                id={form.other.name}
+              />
+            )}
         </>
-      )}
-      <br />
+      </>
+
       <Box sx={{ display: "flex", gap: "0.2ch" }}>
         <Button
           type="submit"

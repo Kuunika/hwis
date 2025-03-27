@@ -1,5 +1,5 @@
 import { MainButton, MainTypography, WrapperBox } from "@/components";
-import {Panel, PresentingComplaint} from ".";
+import { Panel } from ".";
 import { FaExpandAlt, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import ReactMarkdown from "react-markdown";
 import {AccordionDetails, AccordionSummary, Box, Grid, Tab, Tabs} from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-import { useParameters } from "@/hooks";
+import {useParameters, useSubmitEncounter} from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
@@ -33,6 +33,8 @@ import AllergiesNotes from "@/app/patient/components/clinicalNotes/allergies";
 import {PresentingComplaintsNotes} from "@/app/patient/components/clinicalNotes/presentingComplaintsNotes";
 import {MedicationsNotes} from "@/app/patient/components/clinicalNotes/medicationsNotes";
 
+import { getObservations } from "@/helpers";
+
 
 export const ClinicalNotes = () => {
     const [value, setValue] = useState(0);
@@ -40,6 +42,11 @@ export const ClinicalNotes = () => {
         setExpandedAccordion(isExpanded ? panel : false);
     };
     const [clinicalNotes, setClinicalNotes] = useState<Array<{ note: string | null; creator: string; time: any }>>([]);const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
+  const { handleSubmit } = useSubmitEncounter(
+    encounters.CLINICAL_NOTES,
+    () => ""
+  );
+
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
   const { data: patient } = getOnePatient(params.id as string);
@@ -82,20 +89,7 @@ export const ClinicalNotes = () => {
   };
 
   const addClinicalNote = (note: any) => {
-    const dateTime = getDateTime();
-    mutate({
-      encounterType: encounters.CLINICAL_NOTES,
-      visit: patient?.visit_uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: [
-        {
-          concept: concepts.ADDITIONAL_NOTES,
-          value: note,
-          obsDatetime: dateTime,
-        },
-      ],
-    });
+    handleSubmit(getObservations(data, getDateTime()));
   };
 
   if (isLoading) {
@@ -169,66 +163,81 @@ export const ClinicalNotes = () => {
                     id="airway-assessment-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Primary Survey
+                        Primary Assessment
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <AirwayAssessment />
                     <BreathingAssessment />
 
-                    {/* Circulation Assessment */}
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Circulation Assessment
-                        </Typography>
-                        {circulationMessage ? (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="body2" sx={{ color: "text.primary" }}>
-                                    {circulationMessage}
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                                No circulation assessment data available.
+           {/* Circulation Assessment */}
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                        Circulation Assessment Notes
+                    </Typography>
+                    {circulationMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            {/* Date in primary color */}
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {circulationMessage.split("\n")[0]}
                             </Typography>
-                        )}
-                    </Box>
+
+                            {/* Rest of the content */}
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {circulationMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                            No circulation assessment data available.
+                        </Typography>
+                    )}
+                </Box>
 
                     {/* Disability Assessment */}
                     <Box sx={{ p: 2 }}>
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Disability Assessment
-                        </Typography>
-                        {disabilityMessage ? (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="body2" sx={{ color: "text.primary" }}>
-                                    {disabilityMessage}
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                                No disability assessment data available.
+                            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                                Disability Assessment Notes
                             </Typography>
-                        )}
-                    </Box>
+                            {disabilityMessage ? (
+                                <Box sx={{ mb: 3 }}>
+                                    {/* Date in primary color */}
+                                    <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                        {disabilityMessage.split("\n")[0]}
+                                    </Typography>
 
-                    {/* Exposure Assessment */}
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Exposure Assessment
-                        </Typography>
-                        {exposureMessage ? (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="body2" sx={{ color: "text.primary" }}>
-                                    {exposureMessage}
+                                    {/* Rest of the content */}
+                                    <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                        {disabilityMessage.split("\n").slice(1).join("\n")} //note this line
+                                    </Typography>
+                                </Box>
+                            ) : (
+                                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                                    No disability assessment data available.
                                 </Typography>
-                            </Box>
-                        ) : (
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                                No exposure assessment data available.
+                            )}
+                     </Box>
+
+
+                 <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                        Exposure Assessment Notes
+                    </Typography>
+                    {exposureMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {exposureMessage.split("\n")[0]}
                             </Typography>
-                        )}
-                    </Box>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {exposureMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                            No exposure assessment data available.
+                        </Typography>
+                    )}
+                </Box>
 
                 </AccordionDetails>
             </Accordion>
@@ -268,7 +277,7 @@ export const ClinicalNotes = () => {
                     id="breathing-assessment-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Secondary Survey
+                        Secondary Assessment
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -276,7 +285,6 @@ export const ClinicalNotes = () => {
                     <HeadAndNeck />
                     <ChestAssessment />
                     <AbdomenAndPelvisAssessment/>
-                    <Extremities/>
                     <NeurogicalExamination/>
                 </AccordionDetails>
             </Accordion>

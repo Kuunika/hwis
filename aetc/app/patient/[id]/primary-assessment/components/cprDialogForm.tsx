@@ -537,7 +537,7 @@ const CPRForm = ({
                     <br />
                     <FormTimePicker
                       sx={{ my: "1ch" }}
-                      name={`records.${index}.time`}
+                      name={`records_time_${index}`}
                       label="Time"
                     />
                     <FieldsContainer sx={{ width: "100%" }} mr="1ch">

@@ -17,13 +17,6 @@ import {
 import * as Yup from "yup";
 
 import {
-  LungImage,
-  LungBackImage,
-  LungRightSideImage,
-  LungLeftSideImage,
-  ChestLung,
-} from "@/components/svgImages";
-import {
   flattenImagesObs,
   getInitialValues,
   getObservations,
@@ -516,12 +509,14 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                   name={form.oxygenNeeded.name}
                   label={form.oxygenNeeded.label}
                   options={radioOptions}
+                  row
                 />
                 {formValues[form.oxygenNeeded.name] == YES && (
                   <RadioGroupInput
                     name={form.oxygenSource.name}
                     label={form.oxygenSource.label}
                     options={sourceOxygen}
+                    row
                   />
                 )}
               </FieldsContainer>
@@ -554,11 +549,13 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                   name={form.isTracheaCentral.name}
                   label={form.isTracheaCentral.label}
                   options={radioOptions}
+                  row
                 />
                 <RadioGroupInput
                   name={form.chestWallAbnormality.name}
                   label={form.chestWallAbnormality.label}
                   options={radioOptions}
+                  row
                 />
               </FieldsContainer>
               {formValues[form.isTracheaCentral.name] == NO && (
@@ -567,6 +564,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                     <RadioGroupInput
                       name={form.deviationSide.name}
                       label={form.deviationSide.label}
+                      row
                       options={[
                         { label: "Left", value: concepts.LEFT },
                         { label: "Right", value: concepts.RIGHT },
@@ -618,24 +616,16 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 </>
               )}
               <br />
-              <FieldsContainer>
-                <RadioGroupInput
-                  name={form.chestExpansion.name}
-                  label={form.chestExpansion.label}
-                  options={[
-                    { label: "Normal", value: concepts.NORMAL },
-                    { label: "Reduced", value: concepts.REDUCED },
-                  ]}
-                />
-                <RadioGroupInput
-                  name={form.percussion.name}
-                  label={form.percussion.label}
-                  options={[
-                    { label: "Normal", value: concepts.NORMAL },
-                    { label: "Abnormal", value: concepts.ABNORMAL },
-                  ]}
-                />
-              </FieldsContainer>
+
+              <RadioGroupInput
+                name={form.chestExpansion.name}
+                label={form.chestExpansion.label}
+                row
+                options={[
+                  { label: "Normal", value: concepts.NORMAL },
+                  { label: "Reduced", value: concepts.REDUCED },
+                ]}
+              />
               {formValues[form.chestExpansion.name] == concepts.REDUCED && (
                 <>
                   {gender == "Male" && (
@@ -651,15 +641,19 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                       form="selectable"
                     />
                   )}
-                  {/* <ChestLung
-                    onValueChange={setChestExpansionImagesEnc}
-                    imageEncounter={encounters.CHEST_ASSESSMENT}
-                    imageSection={form.chestExpansion.name}
-                    selectable={true}
-                  /> */}
                 </>
               )}
               <br />
+              <RadioGroupInput
+                name={form.percussion.name}
+                label={form.percussion.label}
+                row
+                options={[
+                  { label: "Normal", value: concepts.NORMAL },
+                  { label: "Abnormal", value: concepts.ABNORMAL },
+                ]}
+              />
+
               {formValues[form.percussion.name] == concepts.ABNORMAL && (
                 <>
                   {gender == "Male" && (
@@ -680,6 +674,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
                 <RadioGroupInput
                   name={form.breathSounds.name}
                   label={form.breathSounds.label}
+                  row
                   options={[
                     { label: "Normal", value: concepts.NORMAL },
                     { label: "Abnormal", value: concepts.ABNORMAL },

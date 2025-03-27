@@ -71,7 +71,6 @@ export const SearchComboBox: FC<Props> = ({
   }));
 
   const handleChange = async (values: any) => {
-
     let inputValue = multiple
       ? values.map((v: any) => ({
           id: v.value,
@@ -89,12 +88,11 @@ export const SearchComboBox: FC<Props> = ({
       inputValue = await fetchConceptsSelectOptions([...inputValue]);
 
     setFieldValue(name, inputValue);
-    
+
     if (getValue) {
       getValue(inputValue);
     }
   };
-
 
   const paddingStyles = applyPadding
     ? { paddingTop: "1ch", paddingBottom: "1ch" }
@@ -116,6 +114,7 @@ export const SearchComboBox: FC<Props> = ({
 
       <Select
         isDisabled={disabled}
+        value={value ? mappedOptions?.find((op) => op.value === value) : value}
         //value={value ? mappedOptions?.find((op) => op.value === value) : null}
         styles={customStyles}
         defaultValue={manualInitialValues}

@@ -137,7 +137,7 @@ export const Disability = ({ onSubmit }: Props) => {
   const [verbalResponseValue, setVerbalResponseValue] = useState();
   const [motorResponseValue, setMotorResponseValue] = useState();
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
-    encounters.DISABILITY_ASSESSMENT,
+    encounters.PRIMARY_DISABILITY_ASSESSMENT,
     onSubmit
   );
 
