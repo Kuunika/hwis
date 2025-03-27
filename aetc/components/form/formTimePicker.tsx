@@ -29,7 +29,7 @@ export const FormTimePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const { value, setFieldValue } = useFormikField(name);
+  const { value, setFieldValue } = useFormikField<any>(name);
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
 
@@ -68,6 +68,7 @@ export const FormTimePicker: FC<Prop> = ({
           // Do nothing on change to keep picker open
         }}
         onAccept={handleAccept}
+        // @ts-ignore
         PopperProps={{
           anchorEl: inputRef.current,
           placement: "bottom-start",
@@ -75,7 +76,6 @@ export const FormTimePicker: FC<Prop> = ({
             width: inputRef.current ? inputRef.current.clientWidth : "auto",
           },
         }}
-        sx={{ width, ...sx }}
         slots={{
           textField: (params) => (
             <TextField
@@ -107,6 +107,7 @@ export const FormTimePicker: FC<Prop> = ({
             />
           ),
         }}
+        sx={{ width, ...sx }}
         disabled={disabled}
       />
     </LocalizationProvider>
