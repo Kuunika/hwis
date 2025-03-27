@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import ReactMarkdown from "react-markdown";
 import {AccordionDetails, AccordionSummary, Box, Grid, Tab, Tabs} from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-import { useParameters } from "@/hooks";
+import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
@@ -29,6 +29,8 @@ import {useExposureAssessment} from "@/app/patient/components/clinicalNotes/Expo
 import {NeurogicalExamination} from "@/app/patient/components/clinicalNotes/neurogicalExamination";
 import {AbdomenAndPelvisAssessment} from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
 
+import { getObservations } from "@/helpers";
+
 
 export const ClinicalNotes = () => {
     const [value, setValue] = useState(0);
@@ -36,6 +38,11 @@ export const ClinicalNotes = () => {
         setExpandedAccordion(isExpanded ? panel : false);
     };
     const [clinicalNotes, setClinicalNotes] = useState<Array<{ note: string | null; creator: string; time: any }>>([]);const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
+  const { handleSubmit } = useSubmitEncounter(
+    encounters.CLINICAL_NOTES,
+    () => ""
+  );
+
   const { mutate, isSuccess, isPending, isError, data } = addEncounter();
   const { params } = useParameters();
   const { data: patient } = getOnePatient(params.id as string);
@@ -78,20 +85,7 @@ export const ClinicalNotes = () => {
   };
 
   const addClinicalNote = (note: any) => {
-    const dateTime = getDateTime();
-    mutate({
-      encounterType: encounters.CLINICAL_NOTES,
-      visit: patient?.visit_uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: [
-        {
-          concept: concepts.ADDITIONAL_NOTES,
-          value: note,
-          obsDatetime: dateTime,
-        },
-      ],
-    });
+    handleSubmit(getObservations(data, getDateTime()));
   };
 
   if (isLoading) {

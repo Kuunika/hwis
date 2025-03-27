@@ -31,14 +31,20 @@ export const DesktopView = () => {
     <VisitDatesProvider>
       <MainGrid
         container
-        style={{ justifyContent: "center", marginTop: "15px", gap: "15px" }}
+        style={{
+          justifyContent: "center",
+          marginTop: "15px",
+          gap: "15px",
+          margin: "5px",
+          width: "unset",
+        }}
       >
-        <MainGrid item lg={2.2} sm={2.2}>
+        <MainGrid item lg={2.2} sm={12}>
           <PersonalDetailsCard />
           <br />
           <ListVisitDates />
         </MainGrid>
-        <MainGrid item lg={8.5} sm={8.5}>
+        <MainGrid item lg={8.5} sm={12} style={{ minWidth: "300px" }}>
           <VitalsPanel />
           <TabsContainer />
         </MainGrid>

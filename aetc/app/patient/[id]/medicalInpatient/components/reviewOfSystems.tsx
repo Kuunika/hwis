@@ -298,7 +298,7 @@ const verbalResponses = [
   { label: "None", value: "None", weight: 1 },
 ];
 
-export const ReviewOfSystems = () => {
+export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
   const [formValues, setFormValues] = useState<any>({});
   const { gender } = getActivePatientDetails();
   const [percussionImageEnc, setPercussionImagesEnc] = useState({});

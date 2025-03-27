@@ -73,7 +73,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           stroke-width="1.0118"
         />
         <rect
-          id={encounters.ABDOMEN_EPIGASTRIC_REGION}
           data-label="Epigastric Region"
           x="239.06"
           y="-.40043"
@@ -82,7 +81,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           stroke-width="1.0076"
         />
         <rect
-          id={encounters.ABDOMEN_LEFT_HYPOCHONDRIUM}
           data-label="Left Hypochondrium"
           x="319.54"
           y="-1.5996"
@@ -92,7 +90,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           stroke-width="1.0059"
         />
         <rect
-          id={encounters.ABDOMEN_RIGHT_LUMBAR}
           data-label="Right Lumbar"
           x="166.98"
           y="68.474"
@@ -102,7 +99,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           stroke-width="1.0076"
         />
         <rect
-          id={encounters.ABDOMEN_LEFT_ILIAC_REGION}
           data-label="Left Iliac Region"
           x="319.95"
           y="148.16"
@@ -111,7 +107,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           clip-path="url(#clipPath61452)"
         />
         <rect
-          id={encounters.ABDOMEN_RIGHT_ILIAC_REGION}
           data-label="Right Iliac Region"
           x="149.76"
           y="148.16"
@@ -120,7 +115,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           clip-path="url(#clipPath61280)"
         />
         <rect
-          id={encounters.ABDOMEN_UMBILICAL_REGION}
           data-label="Umbilical Region"
           x="239.06"
           y="67.673"
@@ -129,7 +123,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           stroke-width="1.0176"
         />
         <rect
-          id={encounters.ABDOMEN_HYPOGASTRIUM}
           data-label="Hypogastrium"
           x="239.46"
           y="148.56"
@@ -137,7 +130,6 @@ export const Abdomen = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           height="59.664"
         />
         <rect
-          id={encounters.ABDOMEN_LEFT_LUMBAR}
           data-label="Left Lumbar"
           x="319.54"
           y="66.87"
