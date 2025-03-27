@@ -18,7 +18,7 @@ import {
   Tabs,
 } from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-import { useParameters } from "@/hooks";
+import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
@@ -28,6 +28,7 @@ import { BreathingAssessment } from "@/app/patient/components/clinicalNotes/brea
 import { SoapierNotes } from "@/app/patient/components/clinicalNotes/soapierNotes";
 import Accordion from "@mui/material/Accordion";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { getObservations } from "@/helpers";
 
 export const ClinicalNotes = () => {
   const [value, setValue] = useState(0);
@@ -35,6 +36,10 @@ export const ClinicalNotes = () => {
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpandedAccordion(isExpanded ? panel : false);
     };
+  const { handleSubmit } = useSubmitEncounter(
+    encounters.CLINICAL_NOTES,
+    () => ""
+  );
   const [clinicalNotes, setClinicalNotes] = useState<
     Array<{ note: string | null; creator: string; time: any }>
   >([]);
@@ -79,20 +84,7 @@ export const ClinicalNotes = () => {
   };
 
   const addClinicalNote = (note: any) => {
-    const dateTime = getDateTime();
-    mutate({
-      encounterType: encounters.CLINICAL_NOTES,
-      visit: patient?.visit_uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: [
-        {
-          concept: concepts.ADDITIONAL_NOTES,
-          value: note,
-          obsDatetime: dateTime,
-        },
-      ],
-    });
+    handleSubmit(getObservations(data, getDateTime()));
   };
 
   if (isLoading) {
