@@ -216,7 +216,7 @@ export const AbdomenAndPelvisAssessment = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Abdomen and Pelvis assessment notes
+                Abdomen and Pelvis assessment
             </Typography>
             {airwayAssessmentData.length > 0 ? (
                 airwayAssessmentData.map((data, index) => (

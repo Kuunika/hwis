@@ -149,7 +149,7 @@ export const BreathingAssessment = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Breathing Assessment Notes
+                Breathing Assessment
             </Typography>
             {airwayAssessmentData.length > 0 ? (
                 airwayAssessmentData.map((data, index) => (

@@ -71,7 +71,7 @@ export const GeneralInformation = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                General information notes
+                General information
             </Typography>
             {airwayAssessmentData.length === 0 ? (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>

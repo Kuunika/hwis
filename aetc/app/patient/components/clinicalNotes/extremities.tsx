@@ -210,7 +210,7 @@ export const Extremities = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Extremities assessment notes
+                Extremities assessment
             </Typography>
             {airwayAssessmentData.length > 0 ? (
                 airwayAssessmentData.map((data, index) => (

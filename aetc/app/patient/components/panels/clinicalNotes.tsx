@@ -169,7 +169,7 @@ export const ClinicalNotes = () => {
                     id="airway-assessment-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Primary Assessment
+                        Primary Survey
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -179,7 +179,7 @@ export const ClinicalNotes = () => {
                     {/* Circulation Assessment */}
                     <Box sx={{ p: 2 }}>
                         <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Circulation Assessment Notes
+                            Circulation Assessment
                         </Typography>
                         {circulationMessage ? (
                             <Box sx={{ mb: 3 }}>
@@ -197,7 +197,7 @@ export const ClinicalNotes = () => {
                     {/* Disability Assessment */}
                     <Box sx={{ p: 2 }}>
                         <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Disability Assessment Notes
+                            Disability Assessment
                         </Typography>
                         {disabilityMessage ? (
                             <Box sx={{ mb: 3 }}>
@@ -215,7 +215,7 @@ export const ClinicalNotes = () => {
                     {/* Exposure Assessment */}
                     <Box sx={{ p: 2 }}>
                         <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Exposure Assessment Notes
+                            Exposure Assessment
                         </Typography>
                         {exposureMessage ? (
                             <Box sx={{ mb: 3 }}>
@@ -268,7 +268,7 @@ export const ClinicalNotes = () => {
                     id="breathing-assessment-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Secondary Assessment
+                        Secondary Survey
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
