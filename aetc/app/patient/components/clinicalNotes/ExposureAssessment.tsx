@@ -59,7 +59,7 @@ export const useExposureAssessment = (pData: any) => {
 
     const formattedDate = new Date(observationDateTime).toLocaleString();
 
-    let messages = [`Exposure Assessment recorded on ${formattedDate}\n`];
+    let messages = [`Exposure Assessment recorded on ${formattedDate}.\n`];
 
     // Temperature
     if (observations.temperature?.value) {
@@ -127,7 +127,7 @@ export const useExposureAssessment = (pData: any) => {
       messages.push("Injury: Not reported. ");
     }
 
-    setExposureMessage(messages.join("\n"));
+    setExposureMessage(messages.join(""));
   }, [pData]);
 
   return exposureMessage;

@@ -49,7 +49,7 @@ export const useDisabilityAssessment = (pData: any) => {
 
     const formattedDate = new Date(observationDateTime).toLocaleString();
 
-    let messages = [`Disability Assessment recorded on ${formattedDate}\n`];
+    let messages = [`Disability Assessment recorded on ${formattedDate}.\n`];
     
     // Level of Consciousness
     if (observations.levelOfConsciousness?.value === "No") {
@@ -109,7 +109,7 @@ export const useDisabilityAssessment = (pData: any) => {
     messages.push(`Posture: ${observations.posture?.value || "Not available"}`);
 
     // Set the formatted message
-    setDisabilityMessage(messages.join("\n"));
+    setDisabilityMessage(messages.join(""));
 
   }, [pData]);
 

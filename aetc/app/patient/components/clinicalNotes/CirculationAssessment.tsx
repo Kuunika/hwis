@@ -385,7 +385,7 @@ export const useCirculationAssessment = (pData: any) => {
       messages.push("There are no other abnormalities.");
     }
 
-    setCirculationMessage(messages.join("\n"));
+    setCirculationMessage(messages.join(""));
   }, [pData]);
 
   return circulationMessage;
