@@ -42,7 +42,7 @@ export const FormDatePicker: FC<Prop> = ({
   onAddClick,
 }) => {
   const { value, setFieldValue, initialValues, errorMessage } =
-    useFormikField(name);
+    useFormikField<any>(name);
 
   const [open, setOpen] = useState(false);
   const [dateValue, setDateValue] = useState<any>(
