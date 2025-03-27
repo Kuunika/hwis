@@ -23,7 +23,7 @@ const schema = Yup.object().shape({
 });
 const initialValues = getInitialValues(form);
 
-export const DrugList = () => {
+export const DrugList = ({ onSubmit }: { onSubmit: () => void }) => {
   const [showOther, setShowOther] = useState(false);
   const { medicationOptions } = useFetchMedications();
 

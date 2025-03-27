@@ -2,8 +2,6 @@ import { NO, YES, concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
-  FieldsContainer,
-  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   RadioGroupInput,
@@ -80,11 +78,7 @@ export const EarForm = ({ onSubmit }: Prop) => {
   const [showLaceration, setShowLaceration] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
-      )
-    );
+    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
   };
   return (
     <FormikInit
@@ -101,7 +95,6 @@ export const EarForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
-          coded
         />
 
         {showLaceration && (

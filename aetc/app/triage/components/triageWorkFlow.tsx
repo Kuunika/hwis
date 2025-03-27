@@ -327,14 +327,11 @@ export default function TriageWorkFlow() {
     }`;
     formData["vitals"] = values;
 
-    console.log({ values });
-
     setActiveStep(2);
     setSubmittedSteps((steps) => [...steps, 1]);
   };
 
   const handleAirwaySubmit = (values: any) => {
-    console.log({ values });
     formData["airway"] = values;
     setActiveStep(3);
     setSubmittedSteps((steps) => [...steps, 2]);

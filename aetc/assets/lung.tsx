@@ -58,7 +58,6 @@ const Lung = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
         />
 
         <rect
-          id={encounters.LUNG_LEFT_UPPER_ZONE}
           data-label="Left Upper Zone"
           width="70.991379"
           height="29.360632"
@@ -68,7 +67,6 @@ const Lung = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           transform="translate(2)"
         />
         <rect
-          id={encounters.LUNG_LEFT_MIDDLE_ZONE}
           data-label="Left Middle Zone"
           width="70.553162"
           height="29.360632"
@@ -76,7 +74,6 @@ const Lung = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           y="331.97845"
         />
         <rect
-          id={encounters.LUNG_LEFT_LOWER_ZONE}
           data-label="Left Lower Zone"
           width="69.238503"
           height="36.372128"
@@ -85,7 +82,6 @@ const Lung = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           clipPath="url(#clipPath689)"
         />
         <rect
-          id={encounters.LUNG_RIGHT_LOWER_ZONE}
           data-label="Right Lower Zone"
           width="84.764717"
           height="34.232597"
@@ -96,7 +92,6 @@ const Lung = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           ry="0"
         />
         <rect
-          id={encounters.LUNG_RIGHT_MIDDLE_ZONE}
           data-label="Right Middle Zone"
           width="73.620689"
           height="29.360632"
@@ -104,7 +99,6 @@ const Lung = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
           y="331.97845"
         />
         <rect
-          id={encounters.LUNG_RIGHT_UPPER_ZONE}
           data-label="Right Upper Zone"
           width="76.25"
           height="31.113501"

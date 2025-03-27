@@ -160,33 +160,15 @@ export const NeckForm = ({ onSubmit }: Prop) => {
   // const [showJVP, setShowJVP] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
-      )
-    );
+    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
     setShowOtherAbnormalities(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
-      )
+      Boolean(values.find((v) => v.id == concepts.OTHER))
     );
-    setShowRaised(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.RAISED)?.uuid)
-      )
-    );
+    setShowRaised(Boolean(values.find((v) => v.id == concepts.RAISED)));
     setShowEnlargedThyroid(
-      Boolean(
-        values.find(
-          (v) => v.id == getCachedConcept(concepts.ENLARGED_THYROID)?.uuid
-        )
-      )
+      Boolean(values.find((v) => v.id == concepts.ENLARGED_THYROID))
     );
-    setShowLymph(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.LYMPH_NODES)?.uuid)
-      )
-    );
+    setShowLymph(Boolean(values.find((v) => v.id == concepts.LYMPH_NODES)));
   };
 
   return (
@@ -237,7 +219,6 @@ export const NeckForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
-          coded
         />
         <br />
         {showRaised && (
