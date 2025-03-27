@@ -131,7 +131,7 @@ const form = {
   },
   bloodPressureMeasured: {
     name: concepts.BLOOD_PRESSURE_MEASURED,
-    label: "Blood Pressure Measured",
+    label: "Blood pressure measured",
     coded: true,
   },
   reasonNotRecorded: {
