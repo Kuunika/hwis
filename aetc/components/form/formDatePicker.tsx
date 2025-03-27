@@ -45,23 +45,20 @@ export const FormDatePicker: FC<Prop> = ({
     useFormikField(name);
 
   const [open, setOpen] = useState(false);
+  const [dateValue, setDateValue] = useState<any>(
+    initialValues && typeof initialValues === "object" && initialValues[name]
+      ? dayjs(initialValues[name])
+      : null
+  );
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
 
-  let initialDate = "";
-  if (typeof initialValues == "object" && initialValues !== null) {
-    //@ts-ignore
-    initialDate = initialValues[name] as Date;
-  }
-
-  const display =
-    typeof sx === "object" && sx !== null ? (sx as any).display : undefined;
-
   const handleSetToday = () => {
-    const today = dayjs().format("YYYY-MM-DD");
-    setFieldValue(name, today);
+    const today = dayjs();
+    setDateValue(today);
+    setFieldValue(name, today.format("YYYY-MM-DD"));
   };
 
   return (
@@ -72,12 +69,12 @@ export const FormDatePicker: FC<Prop> = ({
             mb: "1ch",
             fontSize: "0.76rem",
             color: "text.secondary",
-            display,
           }}
         >
           {label}
         </InputLabel>
         <DatePicker
+          value={dateValue}
           open={open}
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
@@ -130,8 +127,8 @@ export const FormDatePicker: FC<Prop> = ({
               },
             },
           }}
-          value={initialDate ? dayjs(initialDate) : null}
           onChange={(newValue) => {
+            setDateValue(newValue);
             setFieldValue(
               name,
               newValue ? dayjs(newValue).format("YYYY-MM-DD") : null
