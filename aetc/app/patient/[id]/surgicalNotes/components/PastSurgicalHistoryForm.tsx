@@ -21,6 +21,9 @@ const schema = Yup.object().shape({
     surgicalDetails: Yup.string().required(" "),
 });
 
+//encounter: SURGICAL_NOTES_TEMPLATE_FORM
+//concepts: PROCEDURES
+
 export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     return (
         <FormikInit
@@ -49,6 +52,8 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Text Input for Surgery Details - Shown if 'Yes' is selected */}
                         <TextInputField
                             id="surgicalDetails"
+                            sx={{ width: "100%" }}
+
                             name="surgicalDetails"
                             label="Enter previous procedures and surgeries (Month & Year)"
                             placeholder="E.g., Appendectomy - January 2020"

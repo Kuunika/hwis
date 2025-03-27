@@ -92,10 +92,14 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Vitals */}
                         <FormFieldContainerLayout title="Vitals">
 
-                            <TextInputField name="temperature" label="Temperature" type="text" id={""} />
-                            <TextInputField name="pulse" label="Pulse" type="text" id={""} />
-                            <TextInputField name="bloodPressure" label="Blood Pressure (BP)" type="text" id={""} />
-                            <TextInputField name="respiratoryRate" label="Respiratory Rate" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="temperature" label="Temperature" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="pulse" label="Pulse" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="bloodPressure" label="Blood Pressure (BP)" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="respiratoryRate" label="Respiratory Rate" type="text" id={""} />
                         </FormFieldContainerLayout>
 
                         {/* Eyes */}
@@ -120,7 +124,8 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Chest */}
                         <FormFieldContainerLayout title="Chest Examination">
 
-                            <TextInputField name="chest" label="Chest" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="chest" label="Chest" type="text" id={""} />
                         </FormFieldContainerLayout>
 
                         {/* Endocrine */}
@@ -132,7 +137,8 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Abdomen */}
                         <FormFieldContainerLayout title="Abdominal Examination">
 
-                            <TextInputField name="abdomen" label="Abdomen" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="abdomen" label="Abdomen" type="text" id={""} />
                         </FormFieldContainerLayout>
 
                         {/* Glasgow Coma Scale (GCS) */}
@@ -154,18 +160,24 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
 
                         <FormFieldContainerLayout title="Additional Examinations">
 
-                            <TextInputField name="cranialNerves" label="Cranial Nerves" type="text" id={""} />
-                            <TextInputField name="grossMotor" label="Gross Motor" type="text" id={""} />
-                            <TextInputField name="sensation" label="Sensation" type="text" id={""} />
+                            <TextInputField name="cranialNerves" sx={{ width: "100%" }}
+                                label="Cranial Nerves" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="grossMotor" label="Gross Motor" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="sensation" label="Sensation" type="text" id={""} />
 
                         </FormFieldContainerLayout>
 
                         <FormFieldContainerLayout title="Extremities">
 
 
-                            <TextInputField name="pulsations" label="Pulsations" type="text" id={""} />
-                            <TextInputField name="rectalExamination" label="Rectal Examination" type="text" id={""} />
-                            <TextInputField name="vaginalExamination" label="Vaginal Examination (For Females Only)" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="pulsations" label="Pulsations" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="rectalExamination" label="Rectal Examination" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="vaginalExamination" label="Vaginal Examination (For Females Only)" type="text" id={""} />
                         </FormFieldContainerLayout>
 
                     </FormFieldContainerLayout>

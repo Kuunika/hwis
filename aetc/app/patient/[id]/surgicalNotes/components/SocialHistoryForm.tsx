@@ -88,6 +88,8 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Alcohol Intake */}
                         <TextInputField
                             id="alcoholIntake"
+                            sx={{ width: "100%" }}
+
                             name="alcoholIntake"
                             label="What is your daily alcohol intake?"
                         />

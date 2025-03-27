@@ -83,6 +83,9 @@ const schema = yup.object().shape({
     historyOfPresentingComplaint: yup.string().required("History is required"),
 });
 
+// encounter: SURGICAL_NOTES_TEMPLATE_FORM
+//concepts:  PRESENTING_COMPLAINTS  PRESENTING_HISTORY
+
 export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
     const [showOtherTextField, setShowOtherTextField] = useState(false);
@@ -151,17 +154,19 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
                     </FormFieldContainerLayout>
 
                     <br />
-                    <FormFieldContainerLayout title="Presenting complaints history">
+                    {/* <FormFieldContainerLayout title="Presenting complaints history"> */}
 
-                        <TextInputField
-                            id="historyOfPresentingComplaint"
-                            name="historyOfPresentingComplaint"
-                            label="History of Presenting Complaint"
-                            multiline
-                            rows={5}
-                            placeholder="Describe the history of the presenting complaint..."
-                        />
-                    </FormFieldContainerLayout>
+                    <TextInputField
+                        sx={{ width: "100%" }}
+
+                        id="historyOfPresentingComplaint"
+                        name="historyOfPresentingComplaint"
+                        label="History of Presenting Complaint"
+                        multiline
+                        rows={5}
+                        placeholder="Describe the history of the presenting complaint..."
+                    />
+                    {/* </FormFieldContainerLayout> */}
 
                 </WrapperBox>
             </FormFieldContainer>

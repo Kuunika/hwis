@@ -33,6 +33,8 @@ export const WorkingDifferentialDiagnosisForm = ({ onSubmit, onSkip }: Prop) => 
 
                         {/* ICD-11 Differential Diagnosis Input */}
                         <TextInputField
+                            sx={{ width: "100%" }}
+
                             name="differentialDiagnosis"
                             label="Working/Differential Diagnosis (ICD 11)"
                             type="text"
