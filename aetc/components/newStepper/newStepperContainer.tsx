@@ -83,6 +83,8 @@ export function NewStepperContainer({
   const { data, isLoading, isRefetching } = getPatientsEncounters(
     patientId as string
   );
+ 
+  const filteredChildren = children.filter((item) => item !== false);
 
   const [encounterTimes, setEncounterTimes] = useState<{
     [key: number]: string;
@@ -146,8 +148,16 @@ export function NewStepperContainer({
             >
               <FaAngleLeft />
             </MainTypography>
-            <MainTypography sx={{ fontSize: "14px", fontWeight: 400 }}>
-              Back
+            <MainTypography
+              sx={{
+                fontSize: "14px",
+                fontWeight: 400,
+                lineHeight: "21px",
+                letterSpacing: "0em",
+                textAlign: "left",
+              }}
+            >
+              Back to Profile
             </MainTypography>
           </WrapperBox>
 
@@ -242,7 +252,7 @@ export function NewStepperContainer({
                   )}
                 </Box>
               </AccordionSummary>
-              <AccordionDetails>{children[key]}</AccordionDetails>
+              <AccordionDetails>{filteredChildren[key]}</AccordionDetails>
             </Accordion>
           ))}
         </WrapperBox>

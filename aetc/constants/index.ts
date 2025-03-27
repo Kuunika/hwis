@@ -170,7 +170,9 @@ export const encounters = {
   NURSING_CARE_NOTES: "c7d8b240-04f0-48c1-8d83-10d95f571b92",
   TEMPLATE_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   CONTINUATION_SHEET: "dd12d7ad-f177-463a-9013-c135440c6cf9",
-  SURGICAL_NOTES_TEMPLATE_FORM: "389c3f51-558d-45d8-affa-d290a6015577"
+  SURGICAL_NOTES_TEMPLATE_FORM: "389c3f51-558d-45d8-affa-d290a6015577",
+  PRIMARY_DISABILITY_ASSESSMENT: "e0beb64f-603f-4e1d-8afd-2e2fae0d5e54",
+  MEDICAL_IN_PATIENT: "",
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -1244,7 +1246,26 @@ export const concepts = {
   PINK: "pink",
   PRESENT: "present",
   HERPES_ZOSTER_SCAR: "Herpes zoster scar",
-  SUMMARY: "summary"
+  SUMMARY: "summary",
+  OTHER_AETC_SERVICE_AREA: "Other AETC service area",
+  PUPIL: "pupil",
+  VISUAL_FIELD_ACUITY: "visual field acuity",
+  EYE_MOVEMENTS_NYSTAGMUS: "Eye movements/nystagmus",
+  EYE_MOVEMENTS_SENSATION: "Eye movements/sensation",
+  HEARING: "hearing",
+  TONGUE_MOVEMENTS_TASTES: "tongue movement/tastes",
+  COUGH_GAG_REFLEX: "cough gag reflex",
+  POWER: "power",
+  TONE: "tone",
+  REFLEXES: "reflexes",
+  PLANTARS: "plantars",
+  SENSATION: "sensation",
+  COORDINATION: "coordination",
+  GAIT: "gait",
+  GLOBAL_CHEST_WALL_ABNORMALITY: "global chest wall abnormality",
+  ADDED_BREATH_SOUNDS: 'added breath sounds',
+  BREATH_SOUNDS: "breath sounds"
+
 };
 
 export const conceptNames = {

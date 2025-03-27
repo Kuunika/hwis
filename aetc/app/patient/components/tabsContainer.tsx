@@ -52,7 +52,6 @@ export const TabsContainer = () => {
           alignItems: "center",
           backgroundColor: "#f4f4f4",
           borderRadius: "4px 4px 0 0",
-
           marginRight: "2px",
           borderBottom: "none",
         }}
@@ -61,9 +60,11 @@ export const TabsContainer = () => {
           value={value}
           onChange={handleChange}
           sx={{
+            overflow: "scroll",
             width: "100%", // Ensure tabs fill the entire container width
             "& .MuiTabs-flexContainer": {
-              justifyContent: "space-evenly", // Ensure tabs are spaced evenly
+              justifyContent: "space-evenly",
+              overflow: "scroll", // Ensure tabs are spaced evenly
             },
           }}
         >

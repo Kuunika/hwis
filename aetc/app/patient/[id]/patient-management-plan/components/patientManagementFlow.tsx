@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect } from "react";
 import { NewStepperContainer } from "@/components";
@@ -7,8 +6,10 @@ import { MedicationForm } from "./forms/medicationForm";
 import { MedicationsForm } from "../../consultation/components/medication"; // Import the MedicationsForm
 import { NonPharmacologicalForm } from "./forms/nonPharmacologicalForm";
 import { PatientCareAreaForm } from "./forms/patientCareAreaForm";
+import { useNavigation } from "@/hooks";
 export const PatientManagementFlow = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
+    const { navigateBackToProfile } = useNavigation();
 
     const steps = [
         { id: 1, label: "Non-Pharmacological" },
@@ -71,8 +72,12 @@ const StepButtons = ({
                 </Button>
             )}
             {onNext && (
-                <Button size="small" variant="contained" color="inherit"
-                    onClick={onNext}>
+                <Button
+                    size="small"
+                    variant="contained"
+                    color="inherit"
+                    onClick={onNext}
+                >
                     Next
                 </Button>
             )}

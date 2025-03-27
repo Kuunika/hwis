@@ -41,7 +41,7 @@ export const MonitoringChart = () => {
     { id: 0, label: "Observations" },
     { id: 1, label: "Interventions" },
     { id: 2, label: "Medications" },
-    { id: 3, label: "Nursing Notes" },
+    //{ id: 3, label: "Nursing Notes" },
   ];
 
   const {
@@ -58,12 +58,12 @@ export const MonitoringChart = () => {
     isError: interventionsError,
   } = fetchConceptAndCreateEncounter();
 
-  const {
-    mutate: createNursingNotes,
-    isSuccess: nursingNotesCreated,
-    isPending: creatingNursingNotes,
-    isError: nursingNotesError,
-  } = fetchConceptAndCreateEncounter();
+  // const {
+  //   mutate: createNursingNotes,
+  //   isSuccess: nursingNotesCreated,
+  //   isPending: creatingNursingNotes,
+  //   isError: nursingNotesError,
+  // } = fetchConceptAndCreateEncounter();
 
   useEffect(() => {
     if (vitalsError) {
@@ -76,10 +76,10 @@ export const MonitoringChart = () => {
       setAlertSeverity("error");
     }
 
-    if (nursingNotesError) {
-      setAlertMessage(`Error submitting nursing notes`);
-      setAlertSeverity("error");
-    }
+    // if (nursingNotesError) {
+    //   setAlertMessage(`Error submitting nursing notes`);
+    //   setAlertSeverity("error");
+    // }
 
     if (vitalsCreated) {
       setAlertMessage(`Vitals submitted successfully`);
@@ -92,22 +92,22 @@ export const MonitoringChart = () => {
       setAlertSeverity("success");
       handleSkip();
     }
-    if (nursingNotesCreated) {
-      setAlertMessage(`All encounters submitted successfully`);
-      setAlertSeverity("success");
-      setTimeout(() => {
-        navigateBack();
-      }, 5000);
-    }
+    // if (nursingNotesCreated) {
+    //   setAlertMessage(`All encounters submitted successfully`);
+    //   setAlertSeverity("success");
+    //   setTimeout(() => {
+    //     navigateBack();
+    //   }, 5000);
+    //}
 
     setVitalsSubmitting(creatingVitals);
   }, [
     vitalsError,
     interventionsError,
-    nursingNotesError,
+    //nursingNotesError,
     vitalsCreated,
     interventionsCreated,
-    nursingNotesCreated,
+    //nursingNotesCreated,
     creatingVitals,
   ]);
 
@@ -155,7 +155,7 @@ export const MonitoringChart = () => {
           const fluidObs = value.map((entry) => [
             {
               concept: concepts.INTAKE_FLUIDS,
-              value: entry.intakeFluidType.value,
+              value: entry.intakeFluidType[0].value,
             },
             {
               concept: concepts.INTAKE_FLUID_AMOUNT,
@@ -163,7 +163,7 @@ export const MonitoringChart = () => {
             },
             {
               concept: concepts.OUTPUT_FLUID_TYPE,
-              value: entry.outputFluidType,
+              value: entry.outputFluidType[0].id,
             },
             {
               concept: concepts.OUTPUT_FLUID_AMOUNT,
@@ -238,146 +238,136 @@ export const MonitoringChart = () => {
     setActiveStep(3);
   };
 
-  const handleNursingNotesSubmit = (values: any) => {
-    const objectiveKey = concepts.OBJECTIVE_DATA;
-    const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS;
-    const subjectiveKey = concepts.SUBJECTIVE_DATA;
-    const interventionsKey = concepts.INTERVENTION_NOTES;
-    const assessmentKey = concepts.ASSESSMENT_COMMENTS;
-    const planKey = concepts.TREATMENT_PLAN;
+  // const handleNursingNotesSubmit = (values: any) => {
+  //   const objectiveKey = concepts.OBJECTIVE_DATA;
+  //   const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS;
+  //   const subjectiveKey = concepts.SUBJECTIVE_DATA;
+  //   const interventionsKey = concepts.INTERVENTION_NOTES;
+  //   const assessmentKey = concepts.ASSESSMENT_COMMENTS;
+  //   const planKey = concepts.TREATMENT_PLAN;
 
-    if (values.objective) {
-      values[objectiveKey] = values.objective;
-      delete values.objective;
-    }
+  //   if (values.objective) {
+  //     values[objectiveKey] = values.objective;
+  //     delete values.objective;
+  //   }
 
-    if (values.investigations) {
-      values[investigationsKey] = values.investigations;
-      delete values.investigations;
-    }
+  //   if (values.investigations) {
+  //     values[investigationsKey] = values.investigations;
+  //     delete values.investigations;
+  //   }
 
-    if (values[investigationsKey]) {
-      const investigations = values[investigationsKey];
+  //   if (values[investigationsKey]) {
+  //     const investigations = values[investigationsKey];
 
-      const investigationObs = Object.entries(investigations).map(
-        ([concept, value]) => ({
-          concept,
-          value,
-          dateTime,
-        })
-      );
-      const observations = [
-        {
-          concept: concepts.BEDSIDE_INVESTIGATIONS,
-          obsDatetime: dateTime,
-          value: true,
-          groupMembers: investigationObs,
-        },
-      ];
+  //     const investigationObs = Object.entries(investigations).map(
+  //       ([concept, value]) => ({
+  //         concept,
+  //         value,
+  //         dateTime,
+  //       })
+  //     );
+  //     const observations = [
+  //       {
+  //         concept: concepts.BEDSIDE_INVESTIGATIONS,
+  //         obsDatetime: dateTime,
+  //         value: true,
+  //         groupMembers: investigationObs,
+  //       },
+  //     ];
 
-      createNursingNotes({
-        encounterType: encounters.NURSING_NOTES,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: observations,
-      });
-    }
+  //     createNursingNotes({
+  //       encounterType: encounters.NURSING_NOTES,
+  //       visit: activeVisit?.uuid,
+  //       patient: params.id,
+  //       encounterDatetime: dateTime,
+  //       obs: observations,
+  //     });
+  //   }
 
-    if (values[objectiveKey]) {
-      const objective = values[objectiveKey];
-      const objectiveObs = Object.entries(objective).map(
-        ([concept, value]) => ({
-          concept,
-          value,
-          dateTime,
-        })
-      );
+  //   if (values[objectiveKey]) {
+  //     const objective = values[objectiveKey];
+  //     const objectiveObs = Object.entries(objective).map(
+  //       ([concept, value]) => ({
+  //         concept,
+  //         value,
+  //         dateTime,
+  //       })
+  //     );
 
-      const observations = [
-        {
-          concept: concepts.OBJECTIVE_DATA,
-          obsDatetime: dateTime,
-          value: true,
-          groupMembers: objectiveObs,
-        },
-      ];
+  //     const observations = [
+  //       {
+  //         concept: concepts.OBJECTIVE_DATA,
+  //         obsDatetime: dateTime,
+  //         value: true,
+  //         groupMembers: objectiveObs,
+  //       },
+  //     ];
 
-      createNursingNotes({
-        encounterType: encounters.NURSING_NOTES,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: observations,
-      });
-    }
+  //     createNursingNotes({
+  //       encounterType: encounters.NURSING_NOTES,
+  //       visit: activeVisit?.uuid,
+  //       patient: params.id,
+  //       encounterDatetime: dateTime,
+  //       obs: observations,
+  //     });
+  //   }
 
-    if (
-      values[subjectiveKey] ||
-      values[assessmentKey] ||
-      values[planKey] ||
-      values[interventionsKey]
-    ) {
-      const groupMembers = [
-        {
-          concept: concepts.SUBJECTIVE_DATA,
-          obsDatetime: dateTime,
-          value: values[subjectiveKey],
-        },
-        {
-          concept: concepts.ASSESSMENT_COMMENTS,
-          obsDatetime: dateTime,
-          value: values[assessmentKey],
-        },
-        {
-          concept: concepts.TREATMENT_PLAN,
-          obsDatetime: dateTime,
-          value: values[planKey],
-        },
-        {
-          concept: concepts.INTERVENTION_NOTES,
-          obsDatetime: dateTime,
-          value: values[interventionsKey],
-        },
-      ].filter((member) => member.value);
+  //   if (
+  //     values[subjectiveKey] ||
+  //     values[assessmentKey] ||
+  //     values[planKey] ||
+  //     values[interventionsKey]
+  //   ) {
+  //     const groupMembers = [
+  //       {
+  //         concept: concepts.SUBJECTIVE_DATA,
+  //         obsDatetime: dateTime,
+  //         value: values[subjectiveKey],
+  //       },
+  //       {
+  //         concept: concepts.ASSESSMENT_COMMENTS,
+  //         obsDatetime: dateTime,
+  //         value: values[assessmentKey],
+  //       },
+  //       {
+  //         concept: concepts.TREATMENT_PLAN,
+  //         obsDatetime: dateTime,
+  //         value: values[planKey],
+  //       },
+  //       {
+  //         concept: concepts.INTERVENTION_NOTES,
+  //         obsDatetime: dateTime,
+  //         value: values[interventionsKey],
+  //       },
+  //     ].filter((member) => member.value);
 
-      if (groupMembers.length > 0) {
-        const observations = [
-          {
-            concept: concepts.OTHER_NURSING_NOTES,
-            obsDatetime: dateTime,
-            value: true,
-            groupMembers: groupMembers,
-          },
-        ];
+  //     if (groupMembers.length > 0) {
+  //       const observations = [
+  //         {
+  //           concept: concepts.OTHER_NURSING_NOTES,
+  //           obsDatetime: dateTime,
+  //           value: true,
+  //           groupMembers: groupMembers,
+  //         },
+  //       ];
 
-        createNursingNotes({
-          encounterType: encounters.NURSING_NOTES,
-          visit: activeVisit?.uuid,
-          patient: params.id,
-          encounterDatetime: dateTime,
-          obs: observations,
-        });
-      }
-    }
-  };
-
+  //       createNursingNotes({
+  //         encounterType: encounters.NURSING_NOTES,
+  //         visit: activeVisit?.uuid,
+  //         patient: params.id,
+  //         encounterDatetime: dateTime,
+  //         obs: observations,
+  //       });
+  //     }
+  //   }
+  // };
   const handleSkip = () => {
-    switch (activeStep) {
-      case 0:
-        setActiveStep(1);
-        return;
-      case 1:
-        setActiveStep(2);
-        return;
-      case 2:
-        setActiveStep(3);
-        return;
-      case 3:
-        navigateBack();
-        return;
-      default:
-        return;
+    const nextStep = activeStep + 1;
+
+    if (nextStep < steps.length) {
+      setActiveStep(nextStep);
+    } else {
+      navigateBack();
     }
   };
 
@@ -418,10 +408,10 @@ export const MonitoringChart = () => {
           onSubmit={handleMedicationsSubmit}
           onSkip={handleSkip}
         />
-        <NursingNotesForm
+        {/* <NursingNotesForm
           onSubmit={handleNursingNotesSubmit}
           onSkip={handleSkip}
-        />
+        /> */}
       </NewStepperContainer>
     </>
   );

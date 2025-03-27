@@ -45,10 +45,10 @@ export const MedicalInPatientFlow = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <PresentingComplaints />
-        <DrugList />
-        <PastMedicalHistory />
-        <ReviewOfSystems />
+        <PresentingComplaints onSubmit={() => setActiveStep(1)} />
+        <DrugList onSubmit={() => setActiveStep(2)} />
+        <PastMedicalHistory onSubmit={() => setActiveStep(3)} />
+        <ReviewOfSystems onSubmit={() => navigateBack()} />
       </NewStepperContainer>
     </>
   );

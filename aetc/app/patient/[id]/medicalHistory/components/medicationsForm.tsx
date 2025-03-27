@@ -166,7 +166,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     <FormikInit
       initialValues={initialValues}
       validationSchema={schema}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       enableReinitialize
       submitButton={false}
     >
@@ -297,7 +297,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
           </FieldArray>
           <WrapperBox sx={{mt: '2ch' }}>
     <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
-    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+    <MainButton onClick={() => {}} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
   </WrapperBox>
         </>
       )}

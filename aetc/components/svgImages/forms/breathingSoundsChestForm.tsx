@@ -18,6 +18,15 @@ const form = {
     name: concepts.BREATHING_SOUNDS,
     label: "Breath Sounds",
   },
+  addedBreathSounds: {
+    name: concepts.ADDED_BREATH_SOUNDS,
+    label: "Check for added breath sounds",
+  },
+  breathSoundsList: {
+    name: concepts.BREATH_SOUNDS,
+    label: "Select added breath sounds",
+  },
+
   vocalFremitus: {
     name: concepts.VOCAL_FREMITUS,
     label: "Vocal Fremitus",
@@ -43,9 +52,13 @@ const schema = Yup.object().shape({
   [form.breathSounds.name]: Yup.string()
     .required()
     .label(form.breathSounds.label),
+  [form.breathSoundsList.name]: Yup.array().label(form.breathSoundsList.label),
   [form.vocalFremitus.name]: Yup.string()
     .required()
     .label(form.vocalFremitus.label),
+  [form.addedBreathSounds.name]: Yup.string().label(
+    form.addedBreathSounds.label
+  ),
 });
 
 type Props = {
@@ -63,11 +76,16 @@ const options = [
 const addedOptions = [
   { id: concepts.CRACKLES, label: "Crackles" },
   { id: concepts.WHEEZES, label: "Wheezes" },
+  { id: concepts.BRONCHIAL, label: "Bronchial" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const radioOptions = [
   { label: "Normal", value: concepts.NORMAL },
   { label: "Abnormal", value: concepts.ABNORMAL },
+  { label: "Absent", value: concepts.ABSENT },
+  { label: "Reduced", value: concepts.REDUCED },
+  { label: "Added", value: concepts.ADDED },
 ];
 
 const chestExpansionOptions = [
@@ -104,6 +122,48 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
         label={form.breathSounds.label}
         options={radioOptions}
       />
+
+      {(formValues[form.breathSounds.name] == concepts.REDUCED ||
+        formValues[form.breathSounds.name] == concepts.ADDED) && (
+        <>
+          {formValues[form.breathSounds.name] == concepts.REDUCED && (
+            <RadioGroupInput
+              row
+              name={form.addedBreathSounds.name}
+              label={form.addedBreathSounds.label}
+              options={[
+                { label: "YES", value: concepts.YES },
+                { label: "NO", value: concepts.NO },
+              ]}
+            />
+          )}
+          {(formValues[form.addedBreathSounds.name] == concepts.YES ||
+            formValues[form.breathSounds.name] == concepts.ADDED) && (
+            <>
+              <SearchComboBox
+                name={form.breathSoundsList.name}
+                label={form.breathSoundsList.label}
+                options={addedOptions}
+                multiple
+              />
+              {Array.isArray(formValues[form.breathSoundsList.name]) &&
+                formValues[form.breathSoundsList.name].find(
+                  (opt: any) => opt.id == concepts.OTHER
+                ) && (
+                  <TextInputField
+                    name={form.specify.name}
+                    label={form.specify.label}
+                    id={form.specify.label}
+                    multiline
+                    rows={5}
+                    sx={{ width: "100%" }}
+                  />
+                )}
+            </>
+          )}
+        </>
+      )}
+      {/* 
       {formValues[concepts.BREATHING_SOUNDS] == concepts.ABNORMAL && (
         <>
           <SearchComboBox
@@ -111,14 +171,8 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
             name={form.abnormalities.name}
             getValue={(values) => {
               if (!values) return;
-
-              console.log({ values });
-              setOther(
-                Boolean(values == getCachedConcept(concepts.OTHER)?.uuid)
-              );
-              setAdded(
-                Boolean(values == getCachedConcept(concepts.ADDED)?.uuid)
-              );
+              setOther(Boolean(values == concepts.OTHER));
+              setAdded(Boolean(values == concepts.ADDED));
             }}
             label={form.abnormalities.label}
             options={options}
@@ -149,7 +203,7 @@ export const BreathingSoundsChestLungForm = (props: Props) => {
             />
           )}
         </>
-      )}
+      )} */}
 
       <RadioGroupInput
         row

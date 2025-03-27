@@ -22,8 +22,10 @@ type Prop = {
   multiline?: boolean;
   unitOfMeasure?: string;
   inputIcon?: any;
+  externalValue?: any; // Changed from externalData
   helperTextWidth?: string;
   handleBlurEvent?: (value: any) => void;
+  onChange?: (value: any) => void;
 };
 
 export const TextInputField: FC<Prop> = ({
@@ -42,17 +44,29 @@ export const TextInputField: FC<Prop> = ({
   inputIcon,
   unitOfMeasure,
   helperTextWidth = "25ch",
+  externalValue, // Now using externalValue instead of externalData
   handleBlurEvent,
+  onChange,
 }) => {
-  const { value, handleChange, hasError, errorMessage, handleBlur } =
+  const { value, handleChange, hasError, errorMessage, handleBlur, setValue } =
     useFormikField(name);
 
+  // Sync external value with Formik
   useEffect(() => {
-    getValue && getValue(value);
+    if (externalValue !== undefined && externalValue !== value) {
+      setValue(externalValue);
+    }
+  }, [externalValue]);
+
+  useEffect(() => {
+    getValue?.(value);
   }, [value]);
 
   return (
-    <FormControl variant="standard" sx={{ mb: "1ch", fontSize: "0.76rem", ...sx }}>
+    <FormControl
+      variant="standard"
+      sx={{ mb: "1ch", fontSize: "0.76rem", ...sx }}
+    >
       <InputLabel shrink htmlFor={id}>
         {label}
       </InputLabel>
@@ -76,11 +90,15 @@ export const TextInputField: FC<Prop> = ({
         name={name}
         value={value}
         type={type}
-        onBlur={(event: any) => {
+        onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
           handleBlur(event);
-          if (handleBlurEvent) handleBlurEvent(event.target.value);
+          handleBlurEvent?.(event.target.value);
         }}
-        onChange={handleChange}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          const newValue = event.target.value;
+          handleChange(event);
+          onChange?.(newValue);
+        }}
         error={hasError}
         size={size}
         placeholder={placeholder}
@@ -88,17 +106,19 @@ export const TextInputField: FC<Prop> = ({
         disabled={disabled}
         multiline={multiline}
         InputProps={{
-          endAdornment: (
+          endAdornment: unitOfMeasure && (
             <InputAdornment position="start">{unitOfMeasure}</InputAdornment>
           ),
-          startAdornment: (
+          startAdornment: inputIcon && (
             <InputAdornment position="start">{inputIcon}</InputAdornment>
           ),
         }}
       />
-                <MainTypography color={"red"} variant="subtitle2">
-            {errorMessage}
-          </MainTypography>
+      {showHelperText && (
+        <MainTypography color={"red"} variant="subtitle2">
+          {errorMessage}
+        </MainTypography>
+      )}
     </FormControl>
   );
 };

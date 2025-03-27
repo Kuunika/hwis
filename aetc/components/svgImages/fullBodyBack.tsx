@@ -1,11 +1,9 @@
-import { useImage } from "@/hooks/useImage";
 import { SVGPopover } from "./svgPopover";
 import { Box } from "@mui/material";
 
 import { DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
-import { FullBodyBack } from "@/assets";
-import { concepts } from "@/constants";
+
 import { useEffect } from "react";
 import { FullBodyMaleBack } from "@/assets/fullBodyMaleBack";
 import { useImageUpdate } from "@/hooks/useImageUpdate";

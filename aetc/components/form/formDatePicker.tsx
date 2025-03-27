@@ -3,11 +3,19 @@ import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useFormikField } from "./hooks";
-import { Box, InputLabel, SxProps } from "@mui/material";
+import {
+  Box,
+  InputLabel,
+  SxProps,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Button,
+} from "@mui/material";
 import { MainTypography } from "..";
+import { CalendarToday, Add, Today } from "@mui/icons-material";
 
 type Prop = {
   name: string;
@@ -20,6 +28,7 @@ type Prop = {
   size?: "small" | "medium";
   showHelperText?: boolean;
   disabled?: boolean;
+  onAddClick?: () => void;
 };
 
 export const FormDatePicker: FC<Prop> = ({
@@ -30,23 +39,35 @@ export const FormDatePicker: FC<Prop> = ({
   size = "medium",
   getValue,
   disabled = false,
+  onAddClick,
 }) => {
   const { value, setFieldValue, initialValues, errorMessage } =
-    useFormikField(name);
+    useFormikField<any>(name);
+
+  const [open, setOpen] = useState(false);
+  const [dateValue, setDateValue] = useState<any>(
+    initialValues && typeof initialValues === "object" && initialValues[name]
+      ? dayjs(initialValues[name])
+      : null
+  );
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
 
-  let initialDate = "";
+  const handleSetToday = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening the calendar
+    const today = dayjs();
+    setDateValue(today);
+    setFieldValue(name, today.format("YYYY-MM-DD"));
+    setOpen(false);
+  };
 
-  if (typeof initialValues == "object" && initialValues !== null) {
-    //@ts-ignore
-    initialDate = initialValues[name] as Date;
-  }
-
-  const display =
-    typeof sx === "object" && sx !== null ? (sx as any).display : undefined;
+  const handleOpenCalendar = () => {
+    if (!disabled) {
+      setOpen(true);
+    }
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -56,22 +77,83 @@ export const FormDatePicker: FC<Prop> = ({
             mb: "1ch",
             fontSize: "0.76rem",
             color: "text.secondary",
-            display,
           }}
         >
           {label}
         </InputLabel>
         <DatePicker
+          value={dateValue}
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          views={["year", "month", "day"]}
           sx={{
             backgroundColor: "white",
             "& fieldset": { borderRadius: "5px" },
             ...sx,
+            width: "100%",
           }}
-          defaultValue={dayjs(initialDate)}
-          label="" // Keep label empty to avoid internal label rendering
-          onChange={(dateValue: any) =>
-            setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
-          }
+          slotProps={{
+            textField: {
+              onClick: handleOpenCalendar,
+              InputProps: {
+                startAdornment: (
+                  <InputAdornment
+                    position="start"
+                    sx={{ display: "flex", alignItems: "center", mr: 1 }}
+                  >
+                    <IconButton
+                      edge="start"
+                      onClick={handleOpenCalendar}
+                      disabled={disabled}
+                      size="small"
+                    >
+                      <CalendarToday />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    {onAddClick && (
+                      <IconButton
+                        edge="end"
+                        onClick={onAddClick}
+                        disabled={disabled}
+                        size="small"
+                        sx={{ mr: 1 }}
+                      >
+                        <Add />
+                      </IconButton>
+                    )}
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSetToday}
+                      disabled={disabled}
+                      size="small"
+                      sx={{ mr: 1, textTransform: "none" }}
+                    >
+                      Today
+                    </Button>
+                  </InputAdornment>
+                ),
+              },
+            },
+          }}
+          onChange={(newValue, context: any) => {
+            // Prevents calendar from closing when selecting year or month
+            if (context.validationError === null && context.view === "day") {
+              setDateValue(newValue);
+              setFieldValue(
+                name,
+                newValue ? dayjs(newValue).format("YYYY-MM-DD") : null
+              );
+              setOpen(false);
+            }
+          }}
           disabled={disabled}
         />
         <MainTypography color={"red"} variant="subtitle2">

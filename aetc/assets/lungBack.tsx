@@ -2761,64 +2761,6 @@ SUVORK5CYII="
             x="3.6362276"
             y="9.324378"
           />
-          <rect
-            id={encounters.LUNG_BACK_RIGHT_UPPER_ZONE}
-            data-label="Right Upper Zone"
-            width="110.1773"
-            height="29.777649"
-            x="195.53989"
-            y="329.53931"
-            clipPath="url(#clipPath1599)"
-          />
-          <rect
-            id={encounters.LUNG_BACK_LEFT_UPPER_ZONE}
-            data-label="Left Upper Zone"
-            width="110.1773"
-            height="29.777649"
-            x="195.53989"
-            y="329.53931"
-            clipPath="url(#clipPath1575)"
-            transform="matrix(-1,0,0,1,388.07198,1.0074117)"
-          />
-          <rect
-            id={encounters.LUNG_BACK_RIGHT_MIDDLE_ZONE}
-            data-label="Right Middle Zone"
-            width="110.17731"
-            height="58.562721"
-            x="194.5473"
-            y="361.30215"
-            clipPath="url(#clipPath1467)"
-          />
-          <rect
-            id={encounters.LUNG_LEFT_MIDDLE_ZONE}
-            data-label="Left Middle Zone"
-            width="110.17731"
-            height="58.562721"
-            x="194.5473"
-            y="361.30215"
-            clipPath="url(#clipPath1503)"
-            transform="matrix(-1,0,0,1,387.83046,0)"
-          />
-          <rect
-            id={encounters.LUNG_BACK_LEFT_LOWER_ZONE}
-            data-label="Left Lower Zone"
-            width="109.18472"
-            height="60.547863"
-            x="85.362595"
-            y="421.85004"
-            clipPath="url(#clipPath1479)"
-            transform="translate(-2)"
-          />
-          <rect
-            id={encounters.LUNG_BACK_RIGHT_LOWER_ZONE}
-            data-label="Right Lower Zone"
-            width="109.18472"
-            height="60.547863"
-            x="85.362595"
-            y="421.85004"
-            clipPath="url(#clipPath1658)"
-            transform="matrix(-1,0,0,1,388.12443,0)"
-          />
         </g>
       </svg>
     );

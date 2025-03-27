@@ -130,9 +130,7 @@ const Table: React.FC<IProp> = ({
         rows={filteredRows}
         columns={columns}
         hideFooterPagination={hidePagination}
-        paginationModel={{ page: 0, pageSize: 10 }}
-        paginationMode="server"
-        onPaginationModelChange={(pagination) => console.log({ pagination })}
+        paginationMode="client"
         initialState={{
           columns: {
             columnVisibilityModel,

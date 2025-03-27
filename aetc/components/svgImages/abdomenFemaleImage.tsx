@@ -14,6 +14,7 @@ import { PalpationForm } from "./forms/abdomen/palpationForm";
 import { AbdomenMale } from "@/assets/abdomenMale";
 import { AbdomenFemale } from "@/assets/abdomenFemale";
 import { useImageUpdate } from "@/hooks/useImageUpdate";
+import { AbdomenMedicalInpatient } from "./forms/abdomen/abdomenInpatient";
 interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
@@ -90,6 +91,7 @@ export function NewAbdomenFemaleImage({
         {formNameSection == "palpation" && (
           <PalpationForm
             onCancel={handleClose}
+            umbilicalSection={selectedSection.label == "Umbilical Region"}
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(
                 selectedSection.label as string,
@@ -102,6 +104,18 @@ export function NewAbdomenFemaleImage({
 
         {formNameSection == "secondaryAbdomen" && (
           <SecondaryAbdomenPelvicForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {formNameSection == "medicalInPatient" && (
+          <AbdomenMedicalInpatient
             onCancel={handleClose}
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(
