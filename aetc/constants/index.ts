@@ -170,10 +170,7 @@ export const encounters = {
   NURSING_CARE_NOTES: "c7d8b240-04f0-48c1-8d83-10d95f571b92",
   TEMPLATE_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   CONTINUATION_SHEET: "dd12d7ad-f177-463a-9013-c135440c6cf9",
-<<<<<<< HEAD
-=======
   SURGICAL_NOTES_TEMPLATE_FORM: "389c3f51-558d-45d8-affa-d290a6015577",
->>>>>>> 67f4796c597f7a71d76a87d93805b5fb30d36539
   PRIMARY_DISABILITY_ASSESSMENT: "e0beb64f-603f-4e1d-8afd-2e2fae0d5e54",
   MEDICAL_IN_PATIENT: "",
 };
@@ -1267,14 +1264,8 @@ export const concepts = {
   COORDINATION: "coordination",
   GAIT: "gait",
   GLOBAL_CHEST_WALL_ABNORMALITY: "global chest wall abnormality",
-<<<<<<< HEAD
   ADDED_BREATH_SOUNDS: "added breath sounds",
   BREATH_SOUNDS: "breath sounds",
-=======
-  ADDED_BREATH_SOUNDS: 'added breath sounds',
-  BREATH_SOUNDS: "breath sounds"
-
->>>>>>> 67f4796c597f7a71d76a87d93805b5fb30d36539
 };
 
 export const conceptNames = {
