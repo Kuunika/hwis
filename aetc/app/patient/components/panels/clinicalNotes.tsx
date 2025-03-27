@@ -172,59 +172,75 @@ export const ClinicalNotes = () => {
                     <AirwayAssessment />
                     <BreathingAssessment />
 
-                    {/* Circulation Assessment */}
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Circulation Assessment Notes
-                        </Typography>
-                        {circulationMessage ? (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="body2" sx={{ color: "text.primary" }}>
-                                    {circulationMessage}
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                                No circulation assessment data available.
+           {/* Circulation Assessment */}
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                        Circulation Assessment Notes
+                    </Typography>
+                    {circulationMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            {/* Date in primary color */}
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {circulationMessage.split("\n")[0]}
                             </Typography>
-                        )}
-                    </Box>
+                            
+                            {/* Rest of the content */}
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {circulationMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                            No circulation assessment data available.
+                        </Typography>
+                    )}
+                </Box>
 
                     {/* Disability Assessment */}
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Disability Assessment Notes
-                        </Typography>
-                        {disabilityMessage ? (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="body2" sx={{ color: "text.primary" }}>
-                                    {disabilityMessage}
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                                No disability assessment data available.
-                            </Typography>
-                        )}
-                    </Box>
 
-                    {/* Exposure Assessment */}
                     <Box sx={{ p: 2 }}>
-                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                            Exposure Assessment Notes
-                        </Typography>
-                        {exposureMessage ? (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="body2" sx={{ color: "text.primary" }}>
-                                    {exposureMessage}
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                                No exposure assessment data available.
+                            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                                Disability Assessment Notes
                             </Typography>
-                        )}
-                    </Box>
+                            {disabilityMessage ? (
+                                <Box sx={{ mb: 3 }}>
+                                    {/* Date in primary color */}
+                                    <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                        {disabilityMessage.split("\n")[0]}
+                                    </Typography>
+                                    
+                                    {/* Rest of the content */}
+                                    <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                        {disabilityMessage.split("\n").slice(1).join("\n")} //note this line
+                                    </Typography>
+                                </Box>
+                            ) : (
+                                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                                    No disability assessment data available.
+                                </Typography>
+                            )}
+                     </Box>
+
+
+                 <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                        Exposure Assessment Notes
+                    </Typography>
+                    {exposureMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {exposureMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {exposureMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                            No exposure assessment data available.
+                        </Typography>
+                    )}
+                </Box>
 
                 </AccordionDetails>
             </Accordion>
