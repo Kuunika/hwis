@@ -228,6 +228,8 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       }
     });
 
+    console.log(formValues);
+    return;
     onSubmit(formValues);
   };
 
