@@ -50,7 +50,7 @@ const form = {
   },
   pulseRate: {
     name: concepts.PULSE_RATE_WEAK,
-    label: "Purse rate",
+    label: "Pulse rate",
     coded: true,
   },
   bloodPressureSystolic: {
@@ -127,7 +127,7 @@ const form = {
   },
   assessPeripheries: {
     name: concepts.ASSESS_PERIPHERIES,
-    label: "Assess Peripheries",
+    label: "Assess peripheries",
   },
   bloodPressureMeasured: {
     name: concepts.BLOOD_PRESSURE_MEASURED,
@@ -164,7 +164,7 @@ const form = {
   },
   pulse: {
     name: concepts.PULSE_RATE,
-    label: "Pulse",
+    label: "Pulse rate",
   },
 };
 
@@ -412,7 +412,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
         submitButtonText="next"
       >
         <FormValuesListener getValues={setFormValues} />
-        <FormFieldContainerLayout title="Bleeding and Pulse">
+        <FormFieldContainerLayout title="Bleeding and Pulse Rate">
           <FieldsContainer>
             <RadioGroupInput
               name={form.bleedingInfo.name}

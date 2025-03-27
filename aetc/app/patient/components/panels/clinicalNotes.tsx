@@ -375,6 +375,27 @@ export const ClinicalNotes = () => {
                     {/* <SoapierNotes /> */}
                 </AccordionDetails>
             </Accordion>
+
+            <Accordion
+                expanded={expandedAccordion === 'disposition-notes'}
+                onChange={handleAccordionChange('disposition-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="disposition-content"
+                    id="disposition-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Disposition
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {/* <SoapierNotes /> */}
+                </AccordionDetails>
+            </Accordion>
         </Panel>
     );
 };
