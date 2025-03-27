@@ -55,10 +55,18 @@ export const FormDatePicker: FC<Prop> = ({
     getValue && getValue(value);
   }, [value]);
 
-  const handleSetToday = () => {
+  const handleSetToday = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening the calendar
     const today = dayjs();
     setDateValue(today);
     setFieldValue(name, today.format("YYYY-MM-DD"));
+    setOpen(false);
+  };
+
+  const handleOpenCalendar = () => {
+    if (!disabled) {
+      setOpen(true);
+    }
   };
 
   return (
@@ -78,6 +86,7 @@ export const FormDatePicker: FC<Prop> = ({
           open={open}
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
+          views={["year", "month", "day"]}
           sx={{
             backgroundColor: "white",
             "& fieldset": { borderRadius: "5px" },
@@ -86,7 +95,23 @@ export const FormDatePicker: FC<Prop> = ({
           }}
           slotProps={{
             textField: {
+              onClick: handleOpenCalendar,
               InputProps: {
+                startAdornment: (
+                  <InputAdornment
+                    position="start"
+                    sx={{ display: "flex", alignItems: "center", mr: 1 }}
+                  >
+                    <IconButton
+                      edge="start"
+                      onClick={handleOpenCalendar}
+                      disabled={disabled}
+                      size="small"
+                    >
+                      <CalendarToday />
+                    </IconButton>
+                  </InputAdornment>
+                ),
                 endAdornment: (
                   <InputAdornment
                     position="end"
@@ -104,9 +129,8 @@ export const FormDatePicker: FC<Prop> = ({
                       </IconButton>
                     )}
                     <Button
-                      variant="text"
+                      variant="contained"
                       color="primary"
-                      startIcon={<Today />}
                       onClick={handleSetToday}
                       disabled={disabled}
                       size="small"
@@ -114,26 +138,21 @@ export const FormDatePicker: FC<Prop> = ({
                     >
                       Today
                     </Button>
-                    <IconButton
-                      edge="end"
-                      onClick={() => setOpen(true)}
-                      disabled={disabled}
-                      size="small"
-                    >
-                      <CalendarToday />
-                    </IconButton>
                   </InputAdornment>
                 ),
               },
             },
           }}
-          onChange={(newValue) => {
-            setDateValue(newValue);
-            setFieldValue(
-              name,
-              newValue ? dayjs(newValue).format("YYYY-MM-DD") : null
-            );
-            setOpen(false);
+          onChange={(newValue, context) => {
+            // Prevents calendar from closing when selecting year or month
+            if (context.validationError === null && context.view === "day") {
+              setDateValue(newValue);
+              setFieldValue(
+                name,
+                newValue ? dayjs(newValue).format("YYYY-MM-DD") : null
+              );
+              setOpen(false);
+            }
           }}
           disabled={disabled}
         />
