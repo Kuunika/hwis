@@ -1,4 +1,4 @@
-import { Typography, Box, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import { useEffect, useState } from "react";
@@ -7,17 +7,21 @@ import { encounters } from "@/constants";
 export const HeadAndNeck = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setNeckAndNeckData] = useState<{ paragraph: string; time: string }[]>([]);
+    const [headAndNeckData, setHeadAndNeckData] = useState<{
+        paragraph: string;
+        time: string;
+        creator: string
+    }[]>([]);
 
     useEffect(() => {
         if (!historyLoading && patientHistory) {
-            const chestEncounter = patientHistory.find(
+            const headAndNeckEncounter = patientHistory.find(
                 (encounter: any) => encounter?.encounter_type?.uuid === encounters.HEAD_AND_NECK_ASSESSMENT
             );
 
-            if (chestEncounter) {
-                const formattedData = formatHeadAndNeckData(chestEncounter.obs);
-                setNeckAndNeckData(formattedData);
+            if (headAndNeckEncounter) {
+                const formattedData = formatHeadAndNeckData(headAndNeckEncounter.obs);
+                setHeadAndNeckData(formattedData);
             }
         }
     }, [patientHistory, historyLoading]);
@@ -32,7 +36,7 @@ export const HeadAndNeck = () => {
     };
 
     const formatHeadAndNeckData = (obs: any[]) => {
-        const assessments: { paragraph: string; time: string }[] = [];
+        const assessments: { paragraph: string; time: string; creator: string }[] = [];
         let currentAssessment: {
             parts: string[];
             abnormalities: Map<
@@ -43,10 +47,12 @@ export const HeadAndNeck = () => {
                 }[]
             >;
             time: string;
+            creator: string;
         } = {
             parts: [],
             abnormalities: new Map(),
-            time: ""
+            time: "",
+            creator: "Unknown"
         };
 
         let currentImageName = "";
@@ -55,6 +61,7 @@ export const HeadAndNeck = () => {
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
+            const creator = ob.created_by;
 
             if (name === "Image Part Name") {
                 if (valueText === "Front") {
@@ -66,11 +73,12 @@ export const HeadAndNeck = () => {
                     currentAssessment = {
                         parts: [],
                         abnormalities: new Map(),
-                        time: isValidDate(ob.obs_datetime) ? ob.obs_datetime : new Date().toISOString()
+                        time: isValidDate(ob.obs_datetime) ? ob.obs_datetime : new Date().toISOString(),
+                        creator: creator
                     };
                 }
 
-                // Track current image name if it's not Left, Right, Back and front
+                // Track current image name if it's not a basic one
                 if (!isBasicImageName(valueText)) {
                     currentImageName = valueText;
                     if (!currentAssessment.parts.includes(valueText)) {
@@ -144,7 +152,7 @@ export const HeadAndNeck = () => {
         }
 
         // Add abnormalities for each part
-        assessment.abnormalities.forEach((abnormalities:any, part:any) => {
+        assessment.abnormalities.forEach((abnormalities: any, part: any) => {
             if (part === "General") {
                 abnormalities.forEach((abnormality: any) => {
                     paragraphParts.push(`Clinician notes: ${abnormality.details.note}.`);
@@ -176,7 +184,8 @@ export const HeadAndNeck = () => {
 
         return {
             paragraph: paragraphParts.join(" "),
-            time: assessment.time
+            time: assessment.time,
+            creator: assessment.creator
         };
     };
 
@@ -187,20 +196,32 @@ export const HeadAndNeck = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Head and Neck assessment
+                Head and Neck Assessment
             </Typography>
-            {airwayAssessmentData.length === 0 ? (
+            {headAndNeckData.length === 0 ? (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                    No head and neck data available.
+                    No head and neck assessment data available.
                 </Typography>
             ) : (
-                airwayAssessmentData.map((data, index) => (
-                    <Box key={index} sx={{ mb: 3 }}>
+                headAndNeckData.map((data, index) => (
+                    <Box key={index} sx={{ mb: 0, position: 'relative' }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: "text.primary" }}>
+                        <Typography variant="body2" sx={{ color: "text.primary", mb: 0 }}>
                             {data.paragraph}
+                        </Typography>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                textAlign: 'right',
+                                color: 'text.secondary',
+                                fontStyle: 'italic',
+                                mt: 0
+                            }}
+                        >
+                            Assessed by: {data.creator}
                         </Typography>
                     </Box>
                 ))

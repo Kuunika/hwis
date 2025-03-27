@@ -7,7 +7,11 @@ import { encounters } from "@/constants";
 export const ChestAssessment = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [chestAssessmentData, setChestAssessmentData] = useState<{ paragraph: string; time: string }[]>([]);
+    const [chestAssessmentData, setChestAssessmentData] = useState<{
+        paragraph: string;
+        time: string;
+        creator: string
+    }[]>([]);
 
     useEffect(() => {
         if (!historyLoading && patientHistory) {
@@ -16,10 +20,14 @@ export const ChestAssessment = () => {
             );
 
             if (chestEncounters.length > 0) {
-                const allFormattedData: { paragraph: string; time: string }[] = [];
+                const allFormattedData: { paragraph: string; time: string; creator: string }[] = [];
 
                 chestEncounters.forEach(encounter => {
-                    const formattedData = formatChestAssessmentData(encounter.obs, encounter.encounter_datetime);
+                    const formattedData = formatChestAssessmentData(
+                        encounter.obs,
+                        encounter.encounter_datetime,
+                        encounter.created_by,
+                    );
                     allFormattedData.push(...formattedData);
                 });
 
@@ -32,11 +40,12 @@ export const ChestAssessment = () => {
         return !isNaN(new Date(dateString).getTime());
     };
 
-    const formatChestAssessmentData = (obs: any[], encounterTime: string) => {
-        const paragraphs: { paragraph: string; time: string }[] = [];
+    const formatChestAssessmentData = (obs: any[], encounterTime: string, creator: string) => {
+        const paragraphs: { paragraph: string; time: string; creator: string }[] = [];
         let currentParagraph: string[] = [];
         let currentTime = isValidDate(encounterTime) ? encounterTime : new Date().toISOString();
-        let abnormalZones = new Set<string>(); // Track zones without notes
+        let currentCreator = creator;
+        let abnormalZones = new Set<string>();
 
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
@@ -51,10 +60,12 @@ export const ChestAssessment = () => {
                     paragraphs.push({
                         paragraph: currentParagraph.join(" "),
                         time: currentTime,
+                        creator: currentCreator
                     });
                     currentParagraph = [];
                 }
                 currentTime = isValidDate(ob.obs_datetime) ? ob.obs_datetime : currentTime;
+                currentCreator = ob.creator?.display || currentCreator;
                 currentParagraph.push(`Respiratory rate: ${valueText} bpm.`);
             }
             else if (name === "Chest wall abnormality") {
@@ -116,6 +127,7 @@ export const ChestAssessment = () => {
             paragraphs.push({
                 paragraph: currentParagraph.join(" "),
                 time: currentTime,
+                creator: currentCreator
             });
         }
 
@@ -143,12 +155,24 @@ export const ChestAssessment = () => {
                 </Typography>
             ) : (
                 chestAssessmentData.map((data, index) => (
-                    <Box key={index} sx={{ mb: 3 }}>
+                    <Box key={index} sx={{ mb: 0, position: 'relative' }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: "text.primary" }}>
+                        <Typography variant="body2" sx={{ color: "text.primary", mb: 0 }}>
                             {data.paragraph}
+                        </Typography>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                textAlign: 'right',
+                                color: 'text.secondary',
+                                fontStyle: 'italic',
+                                mt:0
+                            }}
+                        >
+                            Assessed by: {data.creator}
                         </Typography>
                     </Box>
                 ))

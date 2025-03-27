@@ -1,4 +1,4 @@
-import { Typography, Box, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import { useEffect, useState } from "react";
@@ -7,16 +7,22 @@ import { encounters } from "@/constants";
 export const BreathingAssessment = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setAirwayAssessmentData] = useState<{ paragraph: string; status: string; time: string }[]>([]);
+    const [breathingAssessmentData, setBreathingAssessmentData] = useState<{
+        paragraph: string;
+        status: string;
+        time: string;
+        creator: string
+    }[]>([]);
+
     useEffect(() => {
         if (!historyLoading && patientHistory) {
-            const airwayEncounter = patientHistory.find(
+            const breathingEncounter = patientHistory.find(
                 (encounter: any) => encounter?.encounter_type?.uuid === encounters.BREATHING_ASSESSMENT
             );
 
-            if (airwayEncounter) {
-                const formattedData = formatBreathingAssessmentData(airwayEncounter.obs);
-                setAirwayAssessmentData(formattedData);
+            if (breathingEncounter) {
+                const formattedData = formatBreathingAssessmentData(breathingEncounter.obs);
+                setBreathingAssessmentData(formattedData);
             }
         }
     }, [patientHistory, historyLoading]);
@@ -24,11 +30,13 @@ export const BreathingAssessment = () => {
     const isValidDate = (dateString: string) => {
         return !isNaN(new Date(dateString).getTime());
     };
+
     const formatBreathingAssessmentData = (obs: any[]) => {
-        const paragraphs: { paragraph: string; status: string; time: string }[] = [];
+        const paragraphs: { paragraph: string; status: string; time: string; creator: string }[] = [];
         let currentParagraph: string[] = [];
         let currentStatus = "normal";
         let currentTime = "";
+        let currentCreator = "";
         let additionalNotes = "";
 
         const addStatement = (statement: string, isAbnormal: boolean = false) => {
@@ -41,6 +49,8 @@ export const BreathingAssessment = () => {
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
+            const creator = ob.created_by;
+
             if (name === "Is Breathing Abnormal" && currentParagraph.length > 0) {
                 if (additionalNotes) {
                     currentParagraph.push(additionalNotes);
@@ -51,6 +61,7 @@ export const BreathingAssessment = () => {
                     paragraph: currentParagraph.join(" "),
                     status: currentStatus,
                     time: currentTime,
+                    creator: currentCreator
                 });
 
                 currentParagraph = [];
@@ -63,12 +74,13 @@ export const BreathingAssessment = () => {
                 } else {
                     currentTime = new Date().toISOString();
                 }
+                currentCreator = creator;
             }
 
             if (name === "Is Breathing Abnormal") {
                 if (valueText === "Yes") {
                     addStatement("The patient is breathing normally.", true);
-                }else if (valueText === "No") {
+                } else if (valueText === "No") {
                     addStatement("The patient is breathing abnormally.", true);
                     const startTimeObs = obs.find((ob: any) => ob.names?.[0]?.name === "Start Time");
                     const endTimeObs = obs.find((ob: any) => ob.names?.[0]?.name === "End Time");
@@ -81,12 +93,9 @@ export const BreathingAssessment = () => {
                     }
                 }
             } else if (name === "Respiratory rate") {
-                    addStatement(`The patient's respiratory rate is ${valueText} bpm.`, true);
-
+                addStatement(`The patient's respiratory rate is ${valueText} bpm.`, true);
             } else if (name === "Oxygen Saturation") {
-
-                    addStatement(`And oxygen saturation is ${valueText}%.`, true);
-
+                addStatement(`And oxygen saturation is ${valueText}%.`, true);
             } else if (name === "Patient Need Oxygen") {
                 if (valueText === "Yes") {
                     addStatement("Supplemental oxygen required.", true);
@@ -137,11 +146,13 @@ export const BreathingAssessment = () => {
                 paragraph: currentParagraph.join(" "),
                 status: currentStatus,
                 time: currentTime,
+                creator: currentCreator
             });
         }
 
         return paragraphs;
     };
+
     if (historyLoading) {
         return <Typography>Loading...</Typography>;
     }
@@ -151,27 +162,39 @@ export const BreathingAssessment = () => {
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
                 Breathing Assessment
             </Typography>
-            {airwayAssessmentData.length > 0 ? (
-                airwayAssessmentData.map((data, index) => (
-                    <Box key={index} sx={{ mb: 3 }}>
-                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 1 }}>
-                            {new Date(data.time).toLocaleString()}
+            {breathingAssessmentData.length === 0 ? (
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                    No breathing assessment data available.
+                </Typography>
+            ) : (
+                breathingAssessmentData.map((data, index) => (
+                    <Box key={index} sx={{ mb: 0, position: 'relative' }}>
+                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 0 }}>
+                            {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
                         </Typography>
                         <Typography
                             variant="body2"
                             sx={{
                                 color: data.status === "abnormal" ? "" : "primary.main",
-                                mb: 2,
+                                mb: 1
                             }}
                         >
                             {data.paragraph}
                         </Typography>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                textAlign: 'right',
+                                color: 'text.secondary',
+                                fontStyle: 'italic',
+                                mt: 1
+                            }}
+                        >
+                            Assessed by: {data.creator}
+                        </Typography>
                     </Box>
                 ))
-            ) : (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                    No breathing assessment data available.
-                </Typography>
             )}
         </Box>
     );

@@ -26,7 +26,6 @@ import {HeadAndNeck} from "@/app/patient/components/clinicalNotes/headAndNeck";
 import {useCirculationAssessment} from "@/app/patient/components/clinicalNotes/CirculationAssessment";
 import {useDisabilityAssessment} from "@/app/patient/components/clinicalNotes/DisabilityAssessment";
 import {useExposureAssessment} from "@/app/patient/components/clinicalNotes/ExposureAssessment";
-import {NeurogicalExamination} from "@/app/patient/components/clinicalNotes/neurogicalExamination";
 import {AbdomenAndPelvisAssessment} from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
 import {Extremities} from "@/app/patient/components/clinicalNotes/extremities";
 import AllergiesNotes from "@/app/patient/components/clinicalNotes/allergies";
@@ -34,6 +33,7 @@ import {PresentingComplaintsNotes} from "@/app/patient/components/clinicalNotes/
 import {MedicationsNotes} from "@/app/patient/components/clinicalNotes/medicationsNotes";
 
 import { getObservations } from "@/helpers";
+import {NeurologicalExamination} from "@/app/patient/components/clinicalNotes/neurogicalExamination";
 
 
 export const ClinicalNotes = () => {
@@ -163,7 +163,7 @@ export const ClinicalNotes = () => {
                     id="airway-assessment-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Primary Assessment
+                        Primary Survey
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -173,7 +173,7 @@ export const ClinicalNotes = () => {
            {/* Circulation Assessment */}
                 <Box sx={{ p: 2 }}>
                     <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                        Circulation Assessment Notes
+                        Circulation Assessment
                     </Typography>
                     {circulationMessage ? (
                         <Box sx={{ mb: 3 }}>
@@ -197,7 +197,7 @@ export const ClinicalNotes = () => {
                     {/* Disability Assessment */}
                     <Box sx={{ p: 2 }}>
                             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                                Disability Assessment Notes
+                                Disability Assessment
                             </Typography>
                             {disabilityMessage ? (
                                 <Box sx={{ mb: 3 }}>
@@ -221,7 +221,7 @@ export const ClinicalNotes = () => {
 
                  <Box sx={{ p: 2 }}>
                     <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                        Exposure Assessment Notes
+                        Exposure Assessment
                     </Typography>
                     {exposureMessage ? (
                         <Box sx={{ mb: 3 }}>
@@ -277,7 +277,7 @@ export const ClinicalNotes = () => {
                     id="breathing-assessment-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Secondary Assessment
+                        Secondary Survey
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -285,7 +285,7 @@ export const ClinicalNotes = () => {
                     <HeadAndNeck />
                     <ChestAssessment />
                     <AbdomenAndPelvisAssessment/>
-                    <NeurogicalExamination/>
+                    <NeurologicalExamination/>
                 </AccordionDetails>
             </Accordion>
             <Accordion

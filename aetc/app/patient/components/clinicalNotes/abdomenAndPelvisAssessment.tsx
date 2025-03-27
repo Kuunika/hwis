@@ -1,4 +1,4 @@
-import { Typography, Box, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import { useEffect, useState } from "react";
@@ -7,16 +7,25 @@ import { encounters } from "@/constants";
 export const AbdomenAndPelvisAssessment = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setAbdomenPelvisAssessmentData] = useState<{ paragraph: string; status: string; time: string }[]>([]);
+    const [abdomenPelvisData, setAbdomenPelvisData] = useState<{
+        paragraph: string;
+        status: string;
+        time: string;
+        creator: string
+    }[]>([]);
+
     useEffect(() => {
         if (!historyLoading && patientHistory) {
-            const airwayEncounter = patientHistory.find(
+            const abdomenEncounter = patientHistory.find(
                 (encounter: any) => encounter?.encounter_type?.uuid === encounters.ABDOMEN_AND_PELVIS_ASSESSMENT
             );
 
-            if (airwayEncounter) {
-                const formattedData = formatAbdomenPelvisAssessmentData(airwayEncounter.obs);
-                setAbdomenPelvisAssessmentData(formattedData);
+            if (abdomenEncounter) {
+                const formattedData = formatAbdomenPelvisData(
+                    abdomenEncounter.obs,
+                    abdomenEncounter.created_by,
+                );
+                setAbdomenPelvisData(formattedData);
             }
         }
     }, [patientHistory, historyLoading]);
@@ -24,24 +33,26 @@ export const AbdomenAndPelvisAssessment = () => {
     const isValidDate = (dateString: string) => {
         return !isNaN(new Date(dateString).getTime());
     };
-    const formatAbdomenPelvisAssessmentData = (obs: any[]) => {
-        const encounterGroups: {time: string; observations: any[]}[] = [];
 
+    const formatAbdomenPelvisData = (obs: any[], creator: string) => {
+        const encounterGroups: {time: string; observations: any[]; creator: string}[] = [];
         const sortedObs = [...obs].sort((a, b) =>
             new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
         );
 
-        let currentGroup: {time: string; observations: any[]} | null = null;
+        let currentGroup: {time: string; observations: any[]; creator: string} | null = null;
 
         sortedObs.forEach(ob => {
             const obTime = isValidDate(ob.obs_datetime) ? ob.obs_datetime : new Date().toISOString();
             const obTimestamp = new Date(obTime).getTime();
+            const obCreator = ob.creator?.display || creator;
 
             if (!currentGroup ||
                 obTimestamp - new Date(currentGroup.time).getTime() > 5 * 60 * 1000) {
                 currentGroup = {
                     time: obTime,
-                    observations: []
+                    observations: [],
+                    creator: obCreator
                 };
                 encounterGroups.push(currentGroup);
             }
@@ -49,9 +60,7 @@ export const AbdomenAndPelvisAssessment = () => {
             currentGroup.observations.push(ob);
         });
 
-        const assessments: { paragraph: string; status: string; time: string }[] = [];
-
-        encounterGroups.forEach(group => {
+        return encounterGroups.map(group => {
             const assessment: {
                 findings: Record<string, string>,
                 additionalNotes: string[],
@@ -65,7 +74,7 @@ export const AbdomenAndPelvisAssessment = () => {
             group.observations.forEach(ob => {
                 const name = ob.names?.[0]?.name;
                 const valueText = ob.value;
-                console.log("PROCESSED", name, valueText);
+
                 switch (name) {
                     case "Abdominal distention":
                         assessment.findings[name] = valueText === "Yes"
@@ -161,7 +170,6 @@ export const AbdomenAndPelvisAssessment = () => {
                 }
             });
 
-            // Define the order of findings in the final paragraph
             const orderedFindings = [
                 "Abdominal distention",
                 "Abnormalities present",
@@ -181,34 +189,27 @@ export const AbdomenAndPelvisAssessment = () => {
                 "Testicles"
             ];
 
-            const paragraphParts: string[] = [];
-
-            orderedFindings.forEach(finding => {
-                if (assessment.findings[finding]) {
-                    paragraphParts.push(assessment.findings[finding]);
-                }
-            });
+            const paragraphParts = orderedFindings
+                .filter(finding => assessment.findings[finding])
+                .map(finding => assessment.findings[finding]);
 
             if (assessment.additionalNotes.length > 0) {
                 const cleanNotes = assessment.additionalNotes
-                    .filter(note => note.trim().length > 0)
-                    .map(note => note.trim());
+                    .filter(note => note.trim().length > 0);
                 if (cleanNotes.length > 0) {
                     paragraphParts.push(`Additional notes: ${cleanNotes.join('; ')}`);
                 }
             }
 
-            if (paragraphParts.length > 0) {
-                assessments.push({
-                    paragraph: paragraphParts.join(' '),
-                    status: assessment.status,
-                    time: group.time
-                });
-            }
+            return {
+                paragraph: paragraphParts.join(' '),
+                status: assessment.status,
+                time: group.time,
+                creator: group.creator
+            };
         });
-
-        return assessments;
     };
+
     if (historyLoading) {
         return <Typography>Loading...</Typography>;
     }
@@ -216,28 +217,35 @@ export const AbdomenAndPelvisAssessment = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Abdomen and Pelvis assessment
+                Abdomen and Pelvis Assessment
             </Typography>
-            {airwayAssessmentData.length > 0 ? (
-                airwayAssessmentData.map((data, index) => (
-                    <Box key={index} sx={{ mb: 3 }}>
-                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 1 }}>
-                            {new Date(data.time).toLocaleString()}
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                mb: 2,
-                            }}
-                        >
-                            {data.paragraph}
-                        </Typography>
-                    </Box>
-                ))
-            ) : (
+            {abdomenPelvisData.length === 0 ? (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No abdomen and pelvis assessment data available.
                 </Typography>
+            ) : (
+                abdomenPelvisData.map((data, index) => (
+                    <Box key={index} sx={{ mb: 3, position: 'relative' }}>
+                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 1 }}>
+                            {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "text.primary", mb: 1 }}>
+                            {data.paragraph}
+                        </Typography>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                textAlign: 'right',
+                                color: 'text.secondary',
+                                fontStyle: 'italic',
+                                mt: 1
+                            }}
+                        >
+                            Assessed by: {data.creator}
+                        </Typography>
+                    </Box>
+                ))
             )}
         </Box>
     );

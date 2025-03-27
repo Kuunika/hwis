@@ -6,10 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="1f2d02be-60f9-43d7-be4b-2a5c6bea0138" name="Changes" comment="Merged">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/CirculationAssessment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/CirculationAssessment.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/airwayAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/airwayAssement.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/breathingAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/breathingAssement.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/extremities.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/extremities.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/chestAssement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/chestAssement.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/generalInformation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/generalInformation.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/headAndNeck.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/headAndNeck.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/clinicalNotes/neurogicalExamination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/clinicalNotes/neurogicalExamination.tsx" afterDir="false" />
@@ -103,7 +104,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742991986232</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Merged">
+      <option name="closed" value="true" />
+      <created>1743071693599</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1743071693600</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
