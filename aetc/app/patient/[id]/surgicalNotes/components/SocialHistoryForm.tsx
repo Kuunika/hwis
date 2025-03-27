@@ -6,6 +6,7 @@ import {
     WrapperBox,
     FormFieldContainer,
     TextInputField,
+    FormFieldContainerLayout,
     RadioGroupInput,
 } from "@/components";
 
@@ -48,57 +49,60 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h4>Social History</h4>
 
-                    {/* Smoking */}
-                    <RadioGroupInput
-                        name="doYouSmoke"
-                        label="Do you smoke?"
-                        options={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
-                        ]}
-                        getValue={(value: string) => setDoYouSmoke(value)}
-                    />
+                    <FormFieldContainerLayout title="Social History">
 
-                    {/* Show text input for cigarettes per day if user smokes */}
-                    {doYouSmoke === "Yes" && (
-                        <TextInputField
-                            id="cigarettesPerDay"
-                            name="cigarettesPerDay"
-                            label="How many cigarettes per day?"
-                        />
-                    )}
-                    <br />
-
-                    {/* Show smoking history if user does not smoke */}
-                    {doYouSmoke === "No" && (
+                        {/* Smoking */}
                         <RadioGroupInput
-                            name="smokingHistory"
-                            label="If not, did you quit over a month ago or never smoked?"
+                            name="doYouSmoke"
+                            label="Do you smoke?"
                             options={[
-                                { value: "Quit over a month ago", label: "Quit over a month ago" },
-                                { value: "Never smoked", label: "Never smoked" },
+                                { value: "Yes", label: "Yes" },
+                                { value: "No", label: "No" },
+                            ]}
+                            getValue={(value: string) => setDoYouSmoke(value)}
+                        />
+
+                        {/* Show text input for cigarettes per day if user smokes */}
+                        {doYouSmoke === "Yes" && (
+                            <TextInputField
+                                id="cigarettesPerDay"
+                                name="cigarettesPerDay"
+                                label="How many cigarettes per day?"
+                            />
+                        )}
+                        <br />
+
+                        {/* Show smoking history if user does not smoke */}
+                        {doYouSmoke === "No" && (
+                            <RadioGroupInput
+                                name="smokingHistory"
+                                label="If not, did you quit over a month ago or never smoked?"
+                                options={[
+                                    { value: "Quit over a month ago", label: "Quit over a month ago" },
+                                    { value: "Never smoked", label: "Never smoked" },
+                                ]}
+                            />
+                        )}
+
+                        {/* Alcohol Intake */}
+                        <TextInputField
+                            id="alcoholIntake"
+                            name="alcoholIntake"
+                            label="What is your daily alcohol intake?"
+                        />
+
+                        {/* Recreational Drugs */}
+                        <RadioGroupInput
+                            name="recreationalDrugs"
+                            label="Do you use recreational drugs?"
+                            options={[
+                                { value: "Yes", label: "Yes" },
+                                { value: "No", label: "No" },
                             ]}
                         />
-                    )}
+                    </FormFieldContainerLayout>
 
-                    {/* Alcohol Intake */}
-                    <TextInputField
-                        id="alcoholIntake"
-                        name="alcoholIntake"
-                        label="What is your daily alcohol intake?"
-                    />
-
-                    {/* Recreational Drugs */}
-                    <RadioGroupInput
-                        name="recreationalDrugs"
-                        label="Do you use recreational drugs?"
-                        options={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
-                        ]}
-                    />
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

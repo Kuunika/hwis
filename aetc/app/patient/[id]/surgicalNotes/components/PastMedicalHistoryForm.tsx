@@ -3,6 +3,7 @@ import {
     FormikInit,
     WrapperBox,
     FormFieldContainer,
+    FormFieldContainerLayout,
     CheckboxesGroup,
     RadioGroupInput,
 } from "@/components";
@@ -67,33 +68,36 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
             <FormFieldContainer direction="column">
                 {/* Past Medical History Checkboxes */}
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h4>Past Medical History</h4>
-                    {pastMedicalHistoryOptions.map((condition) => (
-                        <div key={condition} style={{ marginBottom: "10px" }}>
-                            <CheckboxesGroup
-                                name="pastMedicalHistory"
-                                allowFilter={false}
-                                options={[{ value: condition, label: condition }]}
-                                getValue={handleCheckboxChange}
-                            />
-                            {/* Show Diabetes Type & Control options if Diabetes Mellitus is selected */}
-                            {selectedConditions.includes("Diabetes Mellitus") &&
-                                condition === "Diabetes Mellitus" && (
-                                    <div style={{ marginLeft: "20px", marginTop: "5px" }}>
-                                        <RadioGroupInput
-                                            name="diabetesType"
-                                            label="Type"
-                                            options={diabetesTypeOptions}
-                                        />
-                                        <RadioGroupInput
-                                            name="diabetesControl"
-                                            label="Controlled by"
-                                            options={diabetesControlOptions}
-                                        />
-                                    </div>
-                                )}
-                        </div>
-                    ))}
+                    <FormFieldContainerLayout title="Past Medical History">
+
+                        {pastMedicalHistoryOptions.map((condition) => (
+                            <div key={condition} style={{ marginBottom: "10px" }}>
+                                <CheckboxesGroup
+                                    name="pastMedicalHistory"
+                                    allowFilter={false}
+                                    options={[{ value: condition, label: condition }]}
+                                    getValue={handleCheckboxChange}
+                                />
+                                {/* Show Diabetes Type & Control options if Diabetes Mellitus is selected */}
+                                {selectedConditions.includes("Diabetes Mellitus") &&
+                                    condition === "Diabetes Mellitus" && (
+                                        <div style={{ marginLeft: "20px", marginTop: "5px" }}>
+                                            <RadioGroupInput
+                                                name="diabetesType"
+                                                label="Type"
+                                                options={diabetesTypeOptions}
+                                            />
+                                            <RadioGroupInput
+                                                name="diabetesControl"
+                                                label="Controlled by"
+                                                options={diabetesControlOptions}
+                                            />
+                                        </div>
+                                    )}
+                            </div>
+                        ))}
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

@@ -100,10 +100,12 @@ export const PatientCareAreaForm = ({ onSubmit, onSkip }: Prop) => {
 
         try {
             await submitEncounter(payload);
-            toast.success("Patient Care Area submitted successfully!");
+            // toast.success("Patient Care Area submitted successfully!");
+            onSubmit(values); //  This triggers navigation to the next step
+
         } catch (error) {
             console.error("Error submitting Patient Care Area: ", error);
-            toast.error("Failed to submit the form.");
+            // toast.error("Failed to submit the form.");
         }
 
     };

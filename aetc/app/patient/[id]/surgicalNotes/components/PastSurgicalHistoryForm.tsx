@@ -6,6 +6,7 @@ import {
     FormFieldContainer,
     WrapperBox,
     RadioGroupInput,
+    FormFieldContainerLayout,
     TextInputField,
 } from "@/components";
 
@@ -32,27 +33,30 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h4>Any history of previous surgery or procedures?</h4>
 
-                    {/* Yes/No Radio Buttons */}
-                    <RadioGroupInput
-                        name="hasSurgicalHistory"
-                        label="Has Surgical History"
-                        options={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
-                        ]}
-                    />
+                    <FormFieldContainerLayout title="Any history of previous surgery or procedures?">
 
-                    {/* Text Input for Surgery Details - Shown if 'Yes' is selected */}
-                    <TextInputField
-                        id="surgicalDetails"
-                        name="surgicalDetails"
-                        label="Enter previous procedures and surgeries (Month & Year)"
-                        placeholder="E.g., Appendectomy - January 2020"
-                        multiline
-                        rows={5}
-                    />
+                        {/* Yes/No Radio Buttons */}
+                        <RadioGroupInput
+                            name="hasSurgicalHistory"
+                            label="Has Surgical History"
+                            options={[
+                                { value: "Yes", label: "Yes" },
+                                { value: "No", label: "No" },
+                            ]}
+                        />
+
+                        {/* Text Input for Surgery Details - Shown if 'Yes' is selected */}
+                        <TextInputField
+                            id="surgicalDetails"
+                            name="surgicalDetails"
+                            label="Enter previous procedures and surgeries (Month & Year)"
+                            placeholder="E.g., Appendectomy - January 2020"
+                            multiline
+                            rows={5}
+                        />
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

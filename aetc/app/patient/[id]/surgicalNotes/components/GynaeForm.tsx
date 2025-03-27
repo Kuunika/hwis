@@ -7,6 +7,7 @@ import {
     FormFieldContainer,
     TextInputField,
     RadioGroupInput,
+    FormFieldContainerLayout,
     DatePickerInput,
     FormDatePicker,
 
@@ -62,27 +63,30 @@ export const GynaeObstetricHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h4>Gynae/Obstetric History (Only for Females)</h4>
+                    <FormFieldContainerLayout title="Gynae/Obstetric History (Only for Females) ">
 
-                    {/* Pregnancy Status */}
-                    <RadioGroupInput
-                        name="areYouPregnant"
-                        label="Are you pregnant?"
-                        options={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
-                        ]}
-                    />
 
-                    {/* If pregnant, show additional fields */}
-                    <FormDatePicker name="lnmp" label="Last Normal Menstrual Period (LNMP)" />
-                    <TextInputField
-                        name="gestationalAge"
-                        label="Gestational Age (weeks)"
-                        id={""}
-                    // calculateValue={(values: { lnmp: string | null; }) => calculateGestationalAge(values.lnmp)}
-                    />
-                    <TextInputField id="parity" name="parity" label="Parity" />
+                        {/* Pregnancy Status */}
+                        <RadioGroupInput
+                            name="areYouPregnant"
+                            label="Are you pregnant?"
+                            options={[
+                                { value: "Yes", label: "Yes" },
+                                { value: "No", label: "No" },
+                            ]}
+                        />
+
+                        {/* If pregnant, show additional fields */}
+                        <FormDatePicker name="lnmp" label="Last Normal Menstrual Period (LNMP)" />
+                        <TextInputField
+                            name="gestationalAge"
+                            label="Gestational Age (weeks)"
+                            id={""}
+                        // calculateValue={(values: { lnmp: string | null; }) => calculateGestationalAge(values.lnmp)}
+                        />
+                        <TextInputField id="parity" name="parity" label="Parity" />
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

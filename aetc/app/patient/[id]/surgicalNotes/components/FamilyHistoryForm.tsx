@@ -5,6 +5,7 @@ import {
     WrapperBox,
     FormFieldContainer,
     CheckboxesGroup,
+    FormFieldContainerLayout,
     TextInputField,
 } from "@/components";
 import * as Yup from "yup";
@@ -51,28 +52,31 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h4>Family History</h4>
+                    <FormFieldContainerLayout title="Family History">
 
-                    {familyHistoryOptions.map((condition) => (
-                        <div key={condition} style={{ marginBottom: "10px" }}>
-                            <CheckboxesGroup
-                                name="familyHistory"
-                                allowFilter={false}
-                                options={[{ value: condition, label: condition }]}
-                                getValue={handleCheckboxChange}
-                            />
 
-                            {/* Show Text Input if "Cancer" is selected */}
-                            {selectedConditions.includes("Cancer") && condition === "Cancer" && (
-                                <div style={{ marginLeft: "20px", marginTop: "5px" }}>
-                                    <TextInputField
-                                        name="cancerType"
-                                        label="Type of Cancer"
-                                        placeholder="Specify cancer type" id={""} />
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                        {familyHistoryOptions.map((condition) => (
+                            <div key={condition} style={{ marginBottom: "10px" }}>
+                                <CheckboxesGroup
+                                    name="familyHistory"
+                                    allowFilter={false}
+                                    options={[{ value: condition, label: condition }]}
+                                    getValue={handleCheckboxChange}
+                                />
+
+                                {/* Show Text Input if "Cancer" is selected */}
+                                {selectedConditions.includes("Cancer") && condition === "Cancer" && (
+                                    <div style={{ marginLeft: "20px", marginTop: "5px" }}>
+                                        <TextInputField
+                                            name="cancerType"
+                                            label="Type of Cancer"
+                                            placeholder="Specify cancer type" id={""} />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

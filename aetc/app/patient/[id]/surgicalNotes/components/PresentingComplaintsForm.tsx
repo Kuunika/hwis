@@ -4,6 +4,7 @@ import {
     WrapperBox,
     FormFieldContainer,
     TextInputField,
+    FormFieldContainerLayout,
     CheckboxesGroup,
     FormValuesListener,
     RadioGroupInput, // Ensure this is imported
@@ -111,49 +112,57 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
             <FormFieldContainer direction="row">
                 {/* Presenting Complaints Checkboxes */}
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%" }}>
-                    <h4>Presenting Complaints</h4>
-                    {presentingComplaintsConfig.map((complaint) => (
-                        <div key={complaint.value} style={{ marginBottom: "10px" }}>
-                            <CheckboxesGroup
-                                name="presentingComplaints"
-                                allowFilter={false}
-                                options={[complaint]} // Only render one checkbox per row
-                                getValue={handleCheckboxChange}
+
+                    <FormFieldContainerLayout title="Presenting complaints">
+
+
+                        {presentingComplaintsConfig.map((complaint) => (
+                            <div key={complaint.value} style={{ marginBottom: "10px" }}>
+                                <CheckboxesGroup
+                                    name="presentingComplaints"
+                                    allowFilter={false}
+                                    options={[complaint]} // Only render one checkbox per row
+                                    getValue={handleCheckboxChange}
+                                />
+                                {/* Show RadioGroupInput below specific complaints */}
+                                {selectedComplaints.includes(complaint.value) &&
+                                    ["Feeling of a mass", "Pain", "Ulcer", "Bleeding"].includes(
+                                        complaint.value
+                                    ) && (
+                                        <div style={{ marginLeft: "20px", marginTop: "5px" }}>
+                                            <RadioGroupInput
+                                                name="location"
+                                                label="Location"
+                                                options={locationOptions}
+                                            />
+                                        </div>
+                                    )}
+                            </div>
+                        ))}
+
+                        {showOtherTextField && (
+                            <TextInputField
+                                id="otherComplaintSpecify"
+                                label="Specify Other Complaint"
+                                name="otherComplaintSpecify"
+                                placeholder="Specify the complaint"
                             />
-                            {/* Show RadioGroupInput below specific complaints */}
-                            {selectedComplaints.includes(complaint.value) &&
-                                ["Feeling of a mass", "Pain", "Ulcer", "Bleeding"].includes(
-                                    complaint.value
-                                ) && (
-                                    <div style={{ marginLeft: "20px", marginTop: "5px" }}>
-                                        <RadioGroupInput
-                                            name="location"
-                                            label="Location"
-                                            options={locationOptions}
-                                        />
-                                    </div>
-                                )}
-                        </div>
-                    ))}
+                        )}
+                    </FormFieldContainerLayout>
 
-                    {showOtherTextField && (
-                        <TextInputField
-                            id="otherComplaintSpecify"
-                            label="Specify Other Complaint"
-                            name="otherComplaintSpecify"
-                            placeholder="Specify the complaint"
-                        />
-                    )}
                     <br />
+                    <FormFieldContainerLayout title="Presenting complaints history">
 
-                    <TextInputField
-                        id="historyOfPresentingComplaint"
-                        name="historyOfPresentingComplaint"
-                        label="History of Presenting Complaint"
-                        multiline
-                        rows={5}
-                        placeholder="Describe the history of the presenting complaint..."
-                    />
+                        <TextInputField
+                            id="historyOfPresentingComplaint"
+                            name="historyOfPresentingComplaint"
+                            label="History of Presenting Complaint"
+                            multiline
+                            rows={5}
+                            placeholder="Describe the history of the presenting complaint..."
+                        />
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

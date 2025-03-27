@@ -4,6 +4,7 @@ import {
     FormikInit,
     WrapperBox,
     FormFieldContainer,
+    FormFieldContainerLayout,
     TextInputField,
 } from "@/components";
 
@@ -27,15 +28,18 @@ export const WorkingDifferentialDiagnosisForm = ({ onSubmit, onSkip }: Prop) => 
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h2>Working Differential Diagnosis</h2>
+                    <FormFieldContainerLayout title="Working Differential Diagnosis">
 
-                    {/* ICD-11 Differential Diagnosis Input */}
-                    <TextInputField
-                        name="differentialDiagnosis"
-                        label="Working/Differential Diagnosis (ICD 11)"
-                        type="text"
-                        id="differentialDiagnosis"
-                    />
+
+                        {/* ICD-11 Differential Diagnosis Input */}
+                        <TextInputField
+                            name="differentialDiagnosis"
+                            label="Working/Differential Diagnosis (ICD 11)"
+                            type="text"
+                            id="differentialDiagnosis"
+                        />
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

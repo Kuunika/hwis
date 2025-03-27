@@ -2,7 +2,7 @@
 import React from "react";
 import * as Yup from "yup";
 
-import { FormikInit, WrapperBox, FormFieldContainer, CheckboxesGroup } from "@/components";
+import { FormikInit, WrapperBox, FormFieldContainer, FormFieldContainerLayout, CheckboxesGroup } from "@/components";
 
 // Define the checklist options for each system
 const reviewOfSystemsOptions = {
@@ -40,22 +40,25 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: { onSubmit: (values: a
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h4>Review of Systems</h4>
+                    <FormFieldContainerLayout title="Review of Systems">
 
-                    {/* Generate a checkbox list for each category */}
-                    {Object.entries(reviewOfSystemsOptions).map(([category, options]) => (
-                        <div key={category} style={{ marginBottom: "2ch" }}>
-                            <h5 style={{ textTransform: "capitalize" }}>{category.replace(/_/g, " ")}</h5>
-                            <CheckboxesGroup
-                                name={category}
-                                allowFilter={false}
-                                options={options.map((item) => ({
-                                    value: item,
-                                    label: item,
-                                }))}
-                            />
-                        </div>
-                    ))}
+
+                        {/* Generate a checkbox list for each category */}
+                        {Object.entries(reviewOfSystemsOptions).map(([category, options]) => (
+                            <div key={category} style={{ marginBottom: "2ch" }}>
+                                <h5 style={{ textTransform: "capitalize" }}>{category.replace(/_/g, " ")}</h5>
+                                <CheckboxesGroup
+                                    name={category}
+                                    allowFilter={false}
+                                    options={options.map((item) => ({
+                                        value: item,
+                                        label: item,
+                                    }))}
+                                />
+                            </div>
+                        ))}
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

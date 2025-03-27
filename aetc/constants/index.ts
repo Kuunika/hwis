@@ -170,6 +170,7 @@ export const encounters = {
   NURSING_CARE_NOTES: "c7d8b240-04f0-48c1-8d83-10d95f571b92",
   TEMPLATE_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   CONTINUATION_SHEET: "dd12d7ad-f177-463a-9013-c135440c6cf9",
+  SURGICAL_NOTES_TEMPLATE_FORM: "389c3f51-558d-45d8-affa-d290a6015577"
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -1227,23 +1228,23 @@ export const concepts = {
   // to be created
   ARV: "on arv",
   OTHER_MEDICATION: "Other Medication",
-  SURGICAL_HISTORY:"surgical history",
-  INTOXICATION_DESCRIPTION:"Intoxication description",
-  SOCIAL_HISTORY:"social history",
-  FAMILY_HISTORY:"family history",
-  UNKNOWN:"unknown",
-  PUPIL_SYMMETRICAL:"Pupils symmetrical",
-  CONJUNCTIVA:"Conjunctiva",
-  ORAL_KS:"Oral KS",
-  ORLA_THRUSH:"Oral thrush",
-  JVP_RAISED:"JVP raised",
-  LYMPHADENOPATHY:"Lymphadenopathy",
-  SYMMETRICAL_EXPANSION:"symmetrical expansion",
+  SURGICAL_HISTORY: "surgical history",
+  INTOXICATION_DESCRIPTION: "Intoxication description",
+  SOCIAL_HISTORY: "social history",
+  FAMILY_HISTORY: "family history",
+  UNKNOWN: "unknown",
+  PUPIL_SYMMETRICAL: "Pupils symmetrical",
+  CONJUNCTIVA: "Conjunctiva",
+  ORAL_KS: "Oral KS",
+  ORLA_THRUSH: "Oral thrush",
+  JVP_RAISED: "JVP raised",
+  LYMPHADENOPATHY: "Lymphadenopathy",
+  SYMMETRICAL_EXPANSION: "symmetrical expansion",
   THRILL_HEAVES: 'thrill heaves',
-  PINK:"pink",
-  PRESENT:"present",
-  HERPES_ZOSTER_SCAR:"Herpes zoster scar",
-  SUMMARY:"summary"
+  PINK: "pink",
+  PRESENT: "present",
+  HERPES_ZOSTER_SCAR: "Herpes zoster scar",
+  SUMMARY: "summary"
 };
 
 export const conceptNames = {

@@ -5,6 +5,7 @@ import {
     WrapperBox,
     FormFieldContainer,
     TextInputField,
+    FormFieldContainerLayout,
     RadioGroupInput
 } from "@/components";
 import * as Yup from "yup";
@@ -80,66 +81,95 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <h4>Physical Examination</h4>
+                    <FormFieldContainerLayout title="Physical Examination">
 
-                    {/* General */}
-                    <h5>General Condition</h5>
-                    <RadioGroupInput name="general" options={physicalExaminationOptions.general.map((option) => ({ value: option, label: option }))} label={""} />
 
-                    {/* Vitals */}
-                    <h5>Vitals</h5>
-                    <TextInputField name="temperature" label="Temperature" type="text" id={""} />
-                    <TextInputField name="pulse" label="Pulse" type="text" id={""} />
-                    <TextInputField name="bloodPressure" label="Blood Pressure (BP)" type="text" id={""} />
-                    <TextInputField name="respiratoryRate" label="Respiratory Rate" type="text" id={""} />
+                        {/* General */}
+                        <FormFieldContainerLayout title="General Condition">
+                            <RadioGroupInput name="general" options={physicalExaminationOptions.general.map((option) => ({ value: option, label: option }))} label={""} />
+                        </FormFieldContainerLayout>
 
-                    {/* Eyes */}
-                    <h5>Eyes</h5>
-                    <RadioGroupInput name="eyes" options={physicalExaminationOptions.eyes.map((option) => ({ value: option, label: option }))} label={""} />
+                        {/* Vitals */}
+                        <FormFieldContainerLayout title="Vitals">
 
-                    {/* Mouth */}
-                    <h5>Mouth</h5>
-                    <RadioGroupInput name="mouth" options={physicalExaminationOptions.mouth.map((option) => ({ value: option, label: option }))} label={""} />
+                            <TextInputField name="temperature" label="Temperature" type="text" id={""} />
+                            <TextInputField name="pulse" label="Pulse" type="text" id={""} />
+                            <TextInputField name="bloodPressure" label="Blood Pressure (BP)" type="text" id={""} />
+                            <TextInputField name="respiratoryRate" label="Respiratory Rate" type="text" id={""} />
+                        </FormFieldContainerLayout>
 
-                    {/* Neck */}
-                    <h5>Neck</h5>
-                    <RadioGroupInput name="neck" options={physicalExaminationOptions.neck.map((option) => ({ value: option, label: option }))} label={""} />
+                        {/* Eyes */}
+                        <FormFieldContainerLayout title="Eyes">
 
-                    {/* Chest */}
-                    <h5>Chest Examination</h5>
-                    <TextInputField name="chest" label="Chest" type="text" id={""} />
+                            <RadioGroupInput name="eyes" options={physicalExaminationOptions.eyes.map((option) => ({ value: option, label: option }))} label={""} />
+                        </FormFieldContainerLayout>
 
-                    {/* Endocrine */}
-                    <h5>Endocrine Examination</h5>
-                    <RadioGroupInput name="endocrine" options={physicalExaminationOptions.endocrine.map((option) => ({ value: option, label: option }))} label={""} />
+                        {/* Mouth */}
+                        <FormFieldContainerLayout title="Mouth">
 
-                    {/* Abdomen */}
-                    <h5>Abdominal Examination</h5>
-                    <TextInputField name="abdomen" label="Abdomen" type="text" id={""} />
 
-                    {/* Glasgow Coma Scale (GCS) */}
-                    <h4>Glasgow Coma Scale (GCS)</h4>
+                            <RadioGroupInput name="mouth" options={physicalExaminationOptions.mouth.map((option) => ({ value: option, label: option }))} label={""} />
+                        </FormFieldContainerLayout>
 
-                    <h5>Motor Response</h5>
-                    <RadioGroupInput name="motorResponse" options={gcsOptions.motorResponse.map((option) => ({ value: option, label: option }))} label={""} />
+                        {/* Neck */}
+                        <FormFieldContainerLayout title="Neck">
 
-                    <h5>Verbal Response</h5>
-                    <RadioGroupInput name="verbalResponse" options={gcsOptions.verbalResponse.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="neck" options={physicalExaminationOptions.neck.map((option) => ({ value: option, label: option }))} label={""} />
+                        </FormFieldContainerLayout>
 
-                    <h5>Eye Response</h5>
-                    <RadioGroupInput name="eyeResponse" options={gcsOptions.eyeResponse.map((option) => ({ value: option, label: option }))} label={""} />
+                        {/* Chest */}
+                        <FormFieldContainerLayout title="Chest Examination">
 
-                    {/* Additional Examinations */}
-                    <h4>Additional Examinations</h4>
+                            <TextInputField name="chest" label="Chest" type="text" id={""} />
+                        </FormFieldContainerLayout>
 
-                    <TextInputField name="cranialNerves" label="Cranial Nerves" type="text" id={""} />
-                    <TextInputField name="grossMotor" label="Gross Motor" type="text" id={""} />
-                    <TextInputField name="sensation" label="Sensation" type="text" id={""} />
-                    <h4>Extremities</h4>
+                        {/* Endocrine */}
+                        <FormFieldContainerLayout title="Endocrine Examination">
 
-                    <TextInputField name="pulsations" label="Pulsations" type="text" id={""} />
-                    <TextInputField name="rectalExamination" label="Rectal Examination" type="text" id={""} />
-                    <TextInputField name="vaginalExamination" label="Vaginal Examination (For Females Only)" type="text" id={""} />
+                            <RadioGroupInput name="endocrine" options={physicalExaminationOptions.endocrine.map((option) => ({ value: option, label: option }))} label={""} />
+                        </FormFieldContainerLayout>
+
+                        {/* Abdomen */}
+                        <FormFieldContainerLayout title="Abdominal Examination">
+
+                            <TextInputField name="abdomen" label="Abdomen" type="text" id={""} />
+                        </FormFieldContainerLayout>
+
+                        {/* Glasgow Coma Scale (GCS) */}
+                        <FormFieldContainerLayout title="Glasgow Coma Scale (GCS)">
+
+
+                            <h5>Motor Response</h5>
+                            <RadioGroupInput name="motorResponse" options={gcsOptions.motorResponse.map((option) => ({ value: option, label: option }))} label={""} />
+
+                            <h5>Verbal Response</h5>
+                            <RadioGroupInput name="verbalResponse" options={gcsOptions.verbalResponse.map((option) => ({ value: option, label: option }))} label={""} />
+
+                            <h5>Eye Response</h5>
+                            <RadioGroupInput name="eyeResponse" options={gcsOptions.eyeResponse.map((option) => ({ value: option, label: option }))} label={""} />
+
+                        </FormFieldContainerLayout>
+
+                        {/* Additional Examinations */}
+
+                        <FormFieldContainerLayout title="Additional Examinations">
+
+                            <TextInputField name="cranialNerves" label="Cranial Nerves" type="text" id={""} />
+                            <TextInputField name="grossMotor" label="Gross Motor" type="text" id={""} />
+                            <TextInputField name="sensation" label="Sensation" type="text" id={""} />
+
+                        </FormFieldContainerLayout>
+
+                        <FormFieldContainerLayout title="Extremities">
+
+
+                            <TextInputField name="pulsations" label="Pulsations" type="text" id={""} />
+                            <TextInputField name="rectalExamination" label="Rectal Examination" type="text" id={""} />
+                            <TextInputField name="vaginalExamination" label="Vaginal Examination (For Females Only)" type="text" id={""} />
+                        </FormFieldContainerLayout>
+
+                    </FormFieldContainerLayout>
+
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>
