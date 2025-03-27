@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { NewStepperContainer } from "@/components";
+import { NewStepperContainer, SubSteps } from "@/components";
 import {
   ComplaintsForm,
   SurgeriesForm,
@@ -118,17 +118,15 @@ export const MedicalHistoryFlow = () => {
 
   // Construct steps based on patient gender
   const steps = [
-    { id: 1, label: "Presenting complaints" },
+    { id: 1, label: "Symptoms (Presenting Complaints)" },
     { id: 2, label: "Allergies" },
     { id: 3, label: "Medications" },
     { id: 4, label: "Prior/Existing conditions" },
-    { id: 5, label: "Surgeries" },
     ...(patient?.gender === "Female"
-      ? [{ id: 6, label: "Gynaecology and Obstetrics" }]
+      ? [{ id: 5, label: "Gynaecology and Obstetrics" }]
       : []),
-    { id: patient?.gender === "Female" ? 7 : 6, label: "Previous Admissions" },
-    { id: patient?.gender === "Female" ? 8 : 7, label: "Review of Systems" },
-    { id: patient?.gender === "Female" ? 9 : 8, label: "Family history" },
+    { id: patient?.gender === "Female" ? 6 : 5, label: "Events" },
+    { id: patient?.gender === "Female" ? 7 : 6, label: "Family history" },
   ];
   const redirectToSecondarySurvey = () => {
     navigateTo(`/patient/${params.id}/secondary-assessment`);
@@ -1211,21 +1209,26 @@ export const MedicalHistoryFlow = () => {
           <PriorConditionsForm
             onSubmit={handleConditionsNext}
             onSkip={handlePrevious}
-          />
+          ></PriorConditionsForm>
+
+          <SubSteps parent={3}>
           <SurgeriesForm
             onSubmit={handleSurgeriesNext}
             onSkip={handlePrevious}
           />
+          <AdmissionsForm
+            onSubmit={handleAdmissionsNext}
+            onSkip={handlePrevious}
+          />
+
+          </SubSteps>
           {patient?.gender === "Female" && (
             <ObstetricsForm
               onSubmit={handleObstetricsNext}
               onSkip={handlePrevious}
             />
           )}
-          <AdmissionsForm
-            onSubmit={handleAdmissionsNext}
-            onSkip={handlePrevious}
-          />
+
           <ReviewOfSystemsForm
             onSubmit={handleReviewNext}
             onSkip={handlePrevious}

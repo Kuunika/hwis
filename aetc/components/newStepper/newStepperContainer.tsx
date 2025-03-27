@@ -20,12 +20,14 @@ import {
   NewStepper,
   Step,
   StepperTablet,
+  SubSteps,
   WrapperBox,
 } from "..";
 import { Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import React from "react";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -83,8 +85,33 @@ export function NewStepperContainer({
   const { data, isLoading, isRefetching } = getPatientsEncounters(
     patientId as string
   );
- 
+
   const filteredChildren = children.filter((item) => item !== false);
+  
+  let indexToDelete: number | undefined;
+  const subChildren = React.Children.toArray(children).filter((obj, key) => {
+    if (React.isValidElement(obj) && obj.type === SubSteps) {
+      indexToDelete = key;
+      return true; 
+    }
+    return false; 
+  });
+  
+  if (indexToDelete !== undefined) {
+    filteredChildren.splice(indexToDelete, 1);
+  }
+
+  console.log(filteredChildren, steps)
+
+  const nestedChild = subChildren[0];
+  const parentOfChild = React.isValidElement(nestedChild)
+    ? nestedChild.props.parent
+    : undefined;
+
+    const subChild = React.isValidElement(nestedChild)
+    ? nestedChild.props.children
+    : undefined;
+
 
   const [encounterTimes, setEncounterTimes] = useState<{
     [key: number]: string;
@@ -253,6 +280,9 @@ export function NewStepperContainer({
                 </Box>
               </AccordionSummary>
               <AccordionDetails>{filteredChildren[key]}</AccordionDetails>
+              {key === parentOfChild && subChildren.length > 0 && (
+                  <AccordionDetails>{subChild[0]}</AccordionDetails>
+                )}
             </Accordion>
           ))}
         </WrapperBox>
