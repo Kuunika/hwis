@@ -1228,6 +1228,8 @@ export const concepts = {
   IMPLEMENTATION: "Implementation",
 
   // to be created
+  ARV: "on arv",
+  OTHER_MEDICATION: "Other Medication",
   SURGICAL_HISTORY: "surgical history",
   INTOXICATION_DESCRIPTION: "Intoxication description",
   SOCIAL_HISTORY: "social history",
