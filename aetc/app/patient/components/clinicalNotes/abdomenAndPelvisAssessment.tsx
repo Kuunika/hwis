@@ -62,74 +62,65 @@ export const AbdomenAndPelvisAssessment = () => {
                 status: 'normal'
             };
 
-            // Process all observations for this encounter
             group.observations.forEach(ob => {
                 const name = ob.names?.[0]?.name;
                 const valueText = ob.value;
-
+                console.log("PROCESSED", name, valueText);
                 switch (name) {
                     case "Abdominal distention":
                         assessment.findings[name] = valueText === "Yes"
                             ? "The patient has abdominal distention."
                             : "The patient has no abdominal distention.";
-                        if (valueText === "Yes") assessment.status = 'abnormal';
                         break;
 
                     case "Abnormalities present":
                         assessment.findings[name] = valueText === "Yes"
                             ? "Abnormality present."
                             : "Abnormality not present.";
-                        if (valueText === "Yes") assessment.status = 'abnormal';
                         break;
 
                     case "Shifting dullness":
                         assessment.findings[name] = valueText === "Yes"
                             ? "Shifting dullness present."
                             : "Shifting dullness not present.";
-                        if (valueText === "Yes") assessment.status = 'abnormal';
                         break;
 
                     case "Fluid thrill":
                         assessment.findings[name] = valueText === "Yes"
                             ? "Fluid Thrill available."
                             : "Fluid Thrill not available.";
-                        if (valueText === "Yes") assessment.status = 'abnormal';
                         break;
 
                     case "Tenderness":
                         assessment.findings[name] = valueText === "No"
                             ? "Tenderness not present."
                             : "Tenderness present.";
-                        if (valueText !== "No") assessment.status = 'abnormal';
                         break;
 
                     case "Bruit":
                         assessment.findings[name] = valueText === "Yes"
                             ? "Bruit present."
                             : "Bruit not present.";
-                        if (valueText === "Yes") assessment.status = 'abnormal';
                         break;
 
                     case "Bowel sounds":
                         assessment.findings[name] = `Bowel sounds: ${valueText}.`;
-                        if (valueText !== "Normal") assessment.status = 'abnormal';
                         break;
 
+                    case "General":
+                        assessment.findings[name] = `Digital rectal examination: ${valueText}.`;
+                        break;
+                    case "Prostate":
+                        assessment.findings[name] = `Prostate: ${valueText}.`;
+                        break;
                     case "Mass":
                         assessment.findings[name] = valueText === "No"
                             ? "Mass not present."
                             : "Mass present.";
-                        if (valueText !== "No") assessment.status = 'abnormal';
-                        break;
-
-                    case "General":
-                        assessment.findings["Digital rectal"] = `Digital rectal examination: ${valueText}.`;
-                        assessment.status = 'abnormal';
                         break;
 
                     case "Sphincter tone":
                         assessment.findings[name] = `Sphincter tone: ${valueText}.`;
-                        if (valueText !== "Normal") assessment.status = 'abnormal';
                         break;
 
                     case "Circumcision status":
@@ -142,28 +133,24 @@ export const AbdomenAndPelvisAssessment = () => {
                         assessment.findings[name] = valueText === "No"
                             ? "Ulcerations/lacerations, bite marks not present."
                             : "Ulcerations/lacerations, bite marks present.";
-                        if (valueText !== "No") assessment.status = 'abnormal';
                         break;
 
                     case "Hematomas":
                         assessment.findings[name] = valueText === "No"
                             ? "Signs of oedema, Hematomas, discolourations not present."
                             : "Signs of oedema, Hematomas, discolourations present.";
-                        if (valueText !== "No") assessment.status = 'abnormal';
                         break;
 
                     case "Inflammation":
                         assessment.findings[name] = valueText === "No"
                             ? "Signs of inflammation, edema, lesions around periurethral tissue, bleeding not present."
                             : "Signs of inflammation, edema, lesions around periurethral tissue, bleeding present.";
-                        if (valueText !== "No") assessment.status = 'abnormal';
                         break;
 
                     case "Testicles":
                         assessment.findings[name] = valueText === "No"
                             ? "Both Testicles not present."
                             : "Both Testicles present.";
-                        if (valueText === "No") assessment.status = 'abnormal';
                         break;
 
                     case "Additional Notes":
@@ -183,8 +170,9 @@ export const AbdomenAndPelvisAssessment = () => {
                 "Tenderness",
                 "Bruit",
                 "Bowel sounds",
+                "General",
+                "Prostate",
                 "Mass",
-                "Digital rectal",
                 "Sphincter tone",
                 "Circumcision status",
                 "Laceration",

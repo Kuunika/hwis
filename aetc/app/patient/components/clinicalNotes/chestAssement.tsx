@@ -138,7 +138,7 @@ export const ChestAssessment = () => {
                 Chest Assessment Notes
             </Typography>
             {chestAssessmentData.length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No chest assessment data available.
                 </Typography>
             ) : (

@@ -76,7 +76,7 @@ export const NeurogicalExamination = () => {
                 Neurogical examination notes
             </Typography>
             {airwayAssessmentData.length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "main.secondary" }}>
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No neurological examination data available.
                 </Typography>
             ) : (

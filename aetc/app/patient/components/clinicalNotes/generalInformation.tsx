@@ -74,7 +74,7 @@ export const GeneralInformation = () => {
                 General information notes
             </Typography>
             {airwayAssessmentData.length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "main.secondary" }}>
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No general information data available.
                 </Typography>
             ) : (

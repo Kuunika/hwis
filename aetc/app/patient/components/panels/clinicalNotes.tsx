@@ -1,5 +1,5 @@
 import { MainButton, MainTypography, WrapperBox } from "@/components";
-import { Panel } from ".";
+import {Panel, PresentingComplaint} from ".";
 import { FaExpandAlt, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
@@ -28,6 +28,10 @@ import {useDisabilityAssessment} from "@/app/patient/components/clinicalNotes/Di
 import {useExposureAssessment} from "@/app/patient/components/clinicalNotes/ExposureAssessment";
 import {NeurogicalExamination} from "@/app/patient/components/clinicalNotes/neurogicalExamination";
 import {AbdomenAndPelvisAssessment} from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
+import {Extremities} from "@/app/patient/components/clinicalNotes/extremities";
+import AllergiesNotes from "@/app/patient/components/clinicalNotes/allergies";
+import {PresentingComplaintsNotes} from "@/app/patient/components/clinicalNotes/presentingComplaintsNotes";
+import {MedicationsNotes} from "@/app/patient/components/clinicalNotes/medicationsNotes";
 
 
 export const ClinicalNotes = () => {
@@ -228,6 +232,28 @@ export const ClinicalNotes = () => {
 
                 </AccordionDetails>
             </Accordion>
+            <Accordion
+                expanded={expandedAccordion === 'sample-history'}
+                onChange={handleAccordionChange('sample-history')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="sample-history-content"
+                    id="sample-history-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Sample History
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <PresentingComplaintsNotes/>
+                    <AllergiesNotes />
+                    <MedicationsNotes/>
+                </AccordionDetails>
+            </Accordion>
 
             <Accordion
                 expanded={expandedAccordion === 'breathing-assessment'}
@@ -250,6 +276,7 @@ export const ClinicalNotes = () => {
                     <HeadAndNeck />
                     <ChestAssessment />
                     <AbdomenAndPelvisAssessment/>
+                    <Extremities/>
                     <NeurogicalExamination/>
                 </AccordionDetails>
             </Accordion>
@@ -266,7 +293,7 @@ export const ClinicalNotes = () => {
                     id="soap-notes-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        SOAPIER notes
+                        SOAPIER Notes
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>

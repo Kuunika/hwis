@@ -125,7 +125,7 @@ export const AirwayAssessment = () => {
                 Airway Assessment Notes
             </Typography>
             {airwayAssessmentData.length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No airway assessment data available.
                 </Typography>
             ) : (
