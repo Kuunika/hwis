@@ -92,6 +92,7 @@ const schema = yup.object().shape({
 type Props = {
   onSubmit: (values: any, formConceptsLabels: any) => void;
   onCancel: () => void;
+  umbilicalSection?: boolean;
 };
 
 const initialValues = getInitialValues(form);
@@ -101,9 +102,8 @@ const palpationOptions = [
   { label: "Deep", id: concepts.DEEP_PALPATION },
 ];
 
-export const PalpationForm = ({ onSubmit }: Props) => {
+export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
   const [formValues, setFormValues] = useState<any>({});
-  const [showLight, setShowLight] = useState(false);
 
   const palpationCheck = (palpation: string) => {
     if (!Array.isArray(formValues[form.palpation.name])) return;
@@ -128,27 +128,22 @@ export const PalpationForm = ({ onSubmit }: Props) => {
       }
     >
       <FormValuesListener getValues={setFormValues} />
-
       <SearchComboBox
         options={palpationOptions}
         name={form.palpation.name}
         label={form.palpation.label}
-        coded
       />
       <br />
-
       {palpationCheck(concepts.LIGHT_PALPATION) && (
         <>
           <RadioGroupInput
             row
             options={radioOptions}
-            coded
             name={form.tenderness.name}
             label={form.tenderness.label}
           />
         </>
       )}
-
       {palpationCheck(concepts.DEEP_PALPATION) && (
         <>
           <RadioGroupInput
@@ -156,7 +151,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
             options={radioOptions}
             name={form.hepatomegaly.name}
             label={form.hepatomegaly.label}
-            coded
           />
           {formValues[form.hepatomegaly.name] ==
             getCachedConcept(YES)?.uuid && (
@@ -174,7 +168,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
             options={radioOptions}
             name={form.splenomegaly.name}
             label={form.splenomegaly.label}
-            coded
           />
           {formValues[form.splenomegaly.name] ==
             getCachedConcept(YES)?.uuid && (
@@ -189,24 +182,25 @@ export const PalpationForm = ({ onSubmit }: Props) => {
           )}
         </>
       )}
-
-      <RadioGroupInput
-        row
-        options={radioOptions}
-        name={form.kidneyBallotable.name}
-        label={form.kidneyBallotable.label}
-        coded
-      />
-      {formValues[form.kidneyBallotable.name] ==
-        getCachedConcept(YES)?.uuid && (
-        <RadioGroupInput
-          row
-          name={form.side.name}
-          label={form.side.label}
-          options={kidneyOptions}
-          coded
-        />
+      {umbilicalSection && (
+        <>
+          <RadioGroupInput
+            row
+            options={radioOptions}
+            name={form.kidneyBallotable.name}
+            label={form.kidneyBallotable.label}
+          />
+          {formValues[form.kidneyBallotable.name] == concepts.YES && (
+            <RadioGroupInput
+              row
+              name={form.side.name}
+              label={form.side.label}
+              options={kidneyOptions}
+            />
+          )}
+        </>
       )}
+
       <RadioGroupInput
         row
         options={radioOptions}
@@ -214,7 +208,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         label={form.fullBladder.label}
         coded
       />
-
       <RadioGroupInput
         row
         options={radioOptions}
@@ -222,7 +215,6 @@ export const PalpationForm = ({ onSubmit }: Props) => {
         label={form.otherMasses.label}
         coded
       />
-
       {formValues[form.otherMasses.name] == getCachedConcept(YES)?.uuid && (
         <TextInputField
           multiline

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { SxProps } from "@mui/material";
 import { Formik, Form } from "formik";
@@ -7,7 +7,9 @@ import { MainButton } from "../buttons";
 
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
-  children: ReactNode | ((props: { values: any; setFieldValue: any }) => ReactNode);
+  children:
+    | ReactNode
+    | ((props: { values: any; setFieldValue: any }) => ReactNode);
   validationSchema: any;
   initialValues: any;
   width?: string;
@@ -32,7 +34,7 @@ export const FormikInit: FC<Prop> = ({
   submitVariant = "primary",
   loading,
   enableReinitialize = false,
-  getFormValues = (values) => {}
+  getFormValues = (values) => {},
 }) => {
   return (
     <Formik
@@ -44,7 +46,9 @@ export const FormikInit: FC<Prop> = ({
       {({ values, setFieldValue }) => (
         <Form>
           <ListenToValueChanges getFormValues={getFormValues} values={values} />
-          {typeof children === "function" ? children({ values, setFieldValue }) : children}
+          {typeof children === "function"
+            ? children({ values, setFieldValue })
+            : children}
           {submitButton && (
             <MainButton
               sx={{ mt: 3 }}
@@ -68,7 +72,7 @@ export const FormikInit: FC<Prop> = ({
 
 const ListenToValueChanges = ({
   values,
-  getFormValues
+  getFormValues,
 }: {
   values: any;
   getFormValues: (values: any) => void;

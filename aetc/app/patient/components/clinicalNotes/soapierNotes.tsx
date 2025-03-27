@@ -19,7 +19,7 @@ export const SoapierNotes = () => {
                 const formattedData = formatSoapierAssessmentData(soapierEncounter.obs);
                 setSoapNotes(formattedData);
             }
-            console.log("Ma Encounter", soapierEncounter);
+            // console.log("Ma Encounter", soapierEncounter);
         }
     }, [patientHistory, historyLoading]);
 
@@ -36,7 +36,6 @@ export const SoapierNotes = () => {
             let humanReadableResponse = "";
 
             if (name === "Subjective") {
-                // If a new "Subjective" is found, start a new block
                 if (currentBlock) {
                     groupedData.push(currentBlock);
                 }

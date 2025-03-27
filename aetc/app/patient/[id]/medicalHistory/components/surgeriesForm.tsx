@@ -160,7 +160,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
       <FormikInit
         initialValues={initialValues}
         validationSchema={schema}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         enableReinitialize
         submitButton={false}
       >
@@ -250,7 +250,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
                       sx={{ flex: 1, marginRight: "8px" }}
                     />
                     <MainButton
-                      onClick={handleSubmit}
+                      onClick={() => {}}
                       variant="primary"
                       title="Next"
                       type="submit"

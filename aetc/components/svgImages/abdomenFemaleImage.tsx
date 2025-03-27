@@ -91,6 +91,7 @@ export function NewAbdomenFemaleImage({
         {formNameSection == "palpation" && (
           <PalpationForm
             onCancel={handleClose}
+            umbilicalSection={selectedSection.label == "Umbilical Region"}
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(
                 selectedSection.label as string,

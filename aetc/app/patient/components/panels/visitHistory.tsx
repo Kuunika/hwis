@@ -265,6 +265,10 @@ export const VisitHistory = () => {
       data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
     },
     panel42: {
+      title: "Circulation Assessment",
+      data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+    },
+    panel43: {
       title: "Nursing Care Notes",
       data: getEncountersByType(encounters.NURSING_CARE_NOTES),
     },

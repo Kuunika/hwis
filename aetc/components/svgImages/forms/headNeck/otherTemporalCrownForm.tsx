@@ -2,18 +2,14 @@ import { NO, YES, concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
 import {
-  FieldsContainer,
-  FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
-  RadioGroupInput,
   SearchComboBox,
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
 import React from "react";
 import { Box } from "@mui/material";
-import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abnormalities: {
@@ -76,19 +72,11 @@ export const OtherTemporalCrownForm = ({ onSubmit }: Prop) => {
   const [showBruise, setShowBruise] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowLaceration(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
-      )
-    );
+    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
     setShowOtherAbnormalities(
       Boolean(values.find((v) => v.id == concepts.OTHER))
     );
-    setShowBruise(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.BRUISE)?.uuid)
-      )
-    );
+    setShowBruise(Boolean(values.find((v) => v.id == concepts.BRUISE)));
   };
   return (
     <FormikInit
@@ -105,7 +93,6 @@ export const OtherTemporalCrownForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
-          coded
         />
         {showOtherAbnormalities && (
           <>

@@ -83,6 +83,8 @@ export function NewStepperContainer({
   const { data, isLoading, isRefetching } = getPatientsEncounters(
     patientId as string
   );
+ 
+  const filteredChildren = children.filter((item) => item !== false);
 
   const [encounterTimes, setEncounterTimes] = useState<{
     [key: number]: string;
@@ -250,7 +252,7 @@ export function NewStepperContainer({
                   )}
                 </Box>
               </AccordionSummary>
-              <AccordionDetails>{children[key]}</AccordionDetails>
+              <AccordionDetails>{filteredChildren[key]}</AccordionDetails>
             </Accordion>
           ))}
         </WrapperBox>

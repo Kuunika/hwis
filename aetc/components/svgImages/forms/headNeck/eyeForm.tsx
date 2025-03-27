@@ -85,18 +85,10 @@ export const EyeForm = ({ onSubmit }: Prop) => {
 
   const handleValueChange = (values: Array<any>) => {
     setShowOtherAbnormalities(
-      Boolean(
-        values.find(
-          (v) => v.id == getCachedConcept(form.otherAbnormalities.name)?.uuid
-        )
-      )
+      Boolean(values.find((v) => v.id == form.otherAbnormalities.name))
     );
     setShowEyeInjury(
-      Boolean(
-        values.find(
-          (v) => v.id == getCachedConcept(concepts.EYELID_INJURY)?.uuid
-        )
-      )
+      Boolean(values.find((v) => v.id == concepts.EYELID_INJURY))
     );
   };
 
