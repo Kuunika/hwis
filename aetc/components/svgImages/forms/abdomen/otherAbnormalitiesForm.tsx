@@ -68,42 +68,35 @@ export const OtherAbnormalityForm = (props: Props) => {
     >
       <FormValuesListener getValues={setFormValues} />
       <>
-        <RadioGroupInput
+        {/* <RadioGroupInput
           options={yesNoOptions}
           name={form.abnormality.name}
           label={form.abnormality.label}
           row
           getValue={(value) => setShow(value === YES)}
-        />
-        {show && (
-          <>
-            <br />
-            <Typography color={"grey"} variant="h6">
-              Select Descriptions if applicable
-            </Typography>
-            <br />
-            <SearchComboBox
-              name={form.abnormalities.name}
-              label={form.abnormalities.label}
-              options={options}
-            />
+        /> */}
 
-            {Array.isArray(formValues[form.abnormalities.name]) &&
-              formValues[form.abnormalities.name].find(
-                (opt: any) => opt.id == concepts.OTHER
-              ) && (
-                <TextInputField
-                  multiline
-                  rows={5}
-                  sx={{ width: "100%" }}
-                  name={form.other.name}
-                  label={form.other.label}
-                  id={form.other.name}
-                />
-              )}
-          </>
-        )}
-        <br />
+        <>
+          <SearchComboBox
+            name={form.abnormalities.name}
+            label={form.abnormalities.label}
+            options={options}
+          />
+          <br />
+          {Array.isArray(formValues[form.abnormalities.name]) &&
+            formValues[form.abnormalities.name].find(
+              (opt: any) => opt.id == concepts.OTHER
+            ) && (
+              <TextInputField
+                multiline
+                rows={5}
+                sx={{ width: "100%" }}
+                name={form.other.name}
+                label={form.other.label}
+                id={form.other.name}
+              />
+            )}
+        </>
       </>
 
       <Box sx={{ display: "flex", gap: "0.2ch" }}>
