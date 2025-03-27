@@ -345,7 +345,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
             sx={{ flex: 1, marginRight: "8px" }}
           />
           <MainButton
-            onClick={handleSubmit}
+            onClick={() => {}}
             variant="primary"
             title="Next"
             type="submit"

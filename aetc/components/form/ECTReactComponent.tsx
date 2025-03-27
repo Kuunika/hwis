@@ -20,6 +20,7 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
   useEffect(() => {
     const settings = {
       apiServerUrl,
+      wordsAvailable: false,
       autoBind: false,
     };
 
@@ -72,7 +73,12 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
 </div>
 <div
     className="ctw-window"
-    style={{ color: "white" }}
+    style={{
+      color: "white",
+      marginLeft: "40px",
+      position: "relative",
+      zIndex: 9999, // High value to ensure it appears on top
+    }}
     data-ctw-ino={iNo}
   ></div>
 </div>
