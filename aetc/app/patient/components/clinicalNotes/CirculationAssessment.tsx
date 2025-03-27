@@ -73,7 +73,7 @@ export const useCirculationAssessment = (pData: any) => {
       otherAbnormalities: getObservation(concepts.IS_THERE_OTHER_OBDONORMALITIES)
     };
 
-        // Get all possible observation datetimes
+        
         const allObservationDates = [
           observations.activelyBledding?.obs_datetime,
           observations.actionDone?.obs_datetime,
