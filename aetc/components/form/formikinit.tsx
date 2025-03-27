@@ -1,8 +1,7 @@
 "use client";
-
 import { SxProps } from "@mui/material";
 import { Formik, Form } from "formik";
-import { ReactNode, FC, useEffect } from "react";
+import { ReactNode, FC, useEffect, useState } from "react";
 import { MainButton } from "../buttons";
 
 type Prop = {
@@ -43,9 +42,13 @@ export const FormikInit: FC<Prop> = ({
       validationSchema={validationSchema}
       enableReinitialize={enableReinitialize}
     >
-      {({ values, setFieldValue }) => (
+      {({ values, setFieldValue, dirty }) => (
         <Form>
-          <ListenToValueChanges getFormValues={getFormValues} values={values} />
+          <ListenToValueChanges
+            getFormValues={getFormValues}
+            values={values}
+            dirty={dirty}
+          />
           {typeof children === "function"
             ? children({ values, setFieldValue })
             : children}
@@ -73,13 +76,34 @@ export const FormikInit: FC<Prop> = ({
 const ListenToValueChanges = ({
   values,
   getFormValues,
+  dirty,
 }: {
   values: any;
   getFormValues: (values: any) => void;
+  dirty: boolean;
 }) => {
+  const [initialValues, setInitialValues] = useState(values);
+
   useEffect(() => {
     getFormValues(values);
-  }, [values]);
+
+    // Function to handle before unload event
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Check if the form has been modified
+      if (dirty) {
+        e.preventDefault(); // Cancel the event
+        e.returnValue = ""; // Display a generic warning message
+      }
+    };
+
+    // Add event listener
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Cleanup the event listener
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [values, dirty, getFormValues]);
 
   return null;
 };
