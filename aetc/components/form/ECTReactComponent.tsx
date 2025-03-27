@@ -34,8 +34,10 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
     };
 
     ECT.Handler.configure(settings, callbacks);
-    ECT.Handler.bind(iNo);
-  }, [onICD11Selection]);
+    setTimeout(() => {
+      ECT.Handler.bind(iNo);
+    }, 50); 
+  }, [onICD11Selection, iNo]);
 
   return (
     <div>
