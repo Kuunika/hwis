@@ -264,6 +264,10 @@ export const VisitHistory = () => {
       title: "Outpatient Diagnosis",
       data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
     },
+    panel42: {
+      title: "Nursing Care Notes",
+      data: getEncountersByType(encounters.NURSING_CARE_NOTES),
+    },
   };
 
   // Handle accordion expansion
