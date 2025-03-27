@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev -p 3008",
     "build": "next build --debug",
     "start": "next start",
     "lint": "next lint"
@@ -36,7 +36,7 @@
     "formik": "^2.4.3",
     "html-to-image": "^1.11.11",
     "material-react-table": "^3.2.1",
-    "next": "^15.2.3",
+    "next": "^15.2.4",
     "react": "^19.0.0",
     "react-barcode": "^1.5.1",
     "react-dom": "^19.0.0",
