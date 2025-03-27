@@ -3,10 +3,13 @@ import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
+import { Button, TextField, InputAdornment, IconButton } from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import OpenWithIcon from "@mui/icons-material/OpenWith";
 import { useFormikField } from "./hooks";
 import { SxProps } from "@mui/material";
+import { Dayjs } from "dayjs";
 
 type Prop = {
   name: string;
@@ -30,34 +33,61 @@ export const FormTimePicker: FC<Prop> = ({
   disabled = false,
 }) => {
   const { value, setFieldValue } = useFormikField(name);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
 
+  const handleSetNowTime = () => {
+    const currentTime = dayjs().format("HH:mm:ss");
+    setFieldValue(name, currentTime);
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <TimePicker
-        sx={{
-          width: width,
-          backgroundColor: "white",
-          // "label + &": {
-          //   marginTop: "2.3ch",
-          // },
-          // "& .MuiInputBase-input": {
-          //   width: "100%",
-          //   borderRadius: "5px",
-          // },
-          // "& .MuiFormHelperText-root": {
-          //   // width: helperTextWidth,
-          // },
-          // "& fieldset": { borderRadius: "5px" },
-          ...sx,
-        }}
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
         label={label}
-        // value={value}
-        onChange={(dateValue: any) => {
-          setFieldValue(name, dayjs(dateValue).format("HH:mm:ss"));
+        value={value ? dayjs(value, "HH:mm:ss") : null}
+        onChange={(newValue: Dayjs | null) => {
+          setFieldValue(name, newValue ? newValue.format("HH:mm:ss") : null);
+        }}
+        sx={{ width, ...sx }}
+        slots={{
+          textField: (params) => (
+            <TextField
+              {...params}
+              fullWidth
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={handleSetNowTime}
+                      disabled={disabled}
+                      startIcon={<AccessTimeIcon />}
+                      style={{ marginRight: 8 }}
+                    >
+                      Now
+                    </Button>
+                    <IconButton
+                      size="small"
+                      onClick={() => setOpen(true)}
+                      disabled={disabled}
+                    >
+                      <OpenWithIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          ),
         }}
         disabled={disabled}
       />
