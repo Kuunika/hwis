@@ -75,8 +75,12 @@
 
 * {
   box-sizing: border-box;
-  padding: 10;
+  padding: 0;
   margin: 0;
+}
+
+.ctw-window .toplevel {
+  padding-left: 30px;
 }
 
 html,
