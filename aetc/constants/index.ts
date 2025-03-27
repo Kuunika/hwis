@@ -1263,7 +1263,8 @@ export const concepts = {
   GAIT:"gait",
   GLOBAL_CHEST_WALL_ABNORMALITY:"global chest wall abnormality",
   ADDED_BREATH_SOUNDS:'added breath sounds',
-  BREATH_SOUNDS:"breath sounds"
+  BREATH_SOUNDS:"breath sounds",
+  CPR_RECORD:"cpr record"
   
 };
 

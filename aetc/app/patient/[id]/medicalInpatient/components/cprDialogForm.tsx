@@ -361,7 +361,6 @@ const CPRForm = ({
   patientuuid?: string;
   visituuid?: string;
 }) => {
-  const { medicationOptions } = useFetchMedications();
   const { data: users, isLoading } = getAllUsers();
   const { mutate, isSuccess } = fetchConceptAndCreateEncounter();
   const { activeVisitId, patientId, activeVisit } = getActivePatientDetails();
@@ -515,98 +514,7 @@ const CPRForm = ({
               sx={{ width: "100%" }}
             />
           )}
-          <FieldArray name="records">
-            {({}) => (
-              <DynamicFormList
-                items={values.records}
-                setItems={(newItems) => setFieldValue("records", newItems)}
-                newItem={emptyRecord}
-                itemsProps={{
-                  flexDirection: "column",
-                  gap: 0,
-                  alignItems: "start",
-                  borderBottom: "1px solid #ccc",
-                  pb: "1ch",
-                }}
-                renderFields={(item, index) => (
-                  <>
-                    <br />
-                    <Typography color={"#333"} variant="h6">
-                      Record {index + 1}
-                    </Typography>
-                    <br />
-                    <FormTimePicker
-                      sx={{ my: "1ch" }}
-                      name={`records.${index}.time`}
-                      label="Time"
-                    />
-                    <FieldsContainer sx={{ width: "100%" }} mr="1ch">
-                      <SearchComboBox
-                        name={`records.${index}.rhythm`}
-                        label="Rhythm"
-                        options={rhythmOptions}
-                        size="small"
-                        sx={{ width: "100%" }}
-                      />
-                      <TextInputField
-                        name={`records.${index}.shockEnergy`}
-                        label="Shock Energy"
-                        id={`records.${index}.shockEnergy`}
-                        sx={{ width: "100%" }}
-                      />
-                    </FieldsContainer>
-                    <br />
-                    <FormFieldContainerMultiple>
-                      <SearchComboBox
-                        name={`records[${index}].medication`}
-                        label="Medication Name"
-                        options={medicationOptions}
-                        getValue={(value) =>
-                          setFieldValue(`records[${index}].medication`, value)
-                        }
-                        multiple={false}
-                      />
-                      <UnitInputField
-                        id={`records[${index}].dose`}
-                        label="Dose"
-                        name={`records[${index}].dose`}
-                        unitName={`records[${index}].doseUnit`}
-                        unitOptions={medicationUnits}
-                        placeholder="e.g., 500"
-                        sx={{ m: 0 }}
-                        inputIcon={<GiMedicines />}
-                      />
-                      <SearchComboBox
-                        multiple={false}
-                        name={`records[${index}].route`}
-                        label="Route"
-                        options={routeOptions}
-                        // id={`records[${index}].route`}
-                        sx={{ width: "100%" }}
-                      />
-                    </FormFieldContainerMultiple>
-                    <br />
-                    <FormFieldContainerMultiple>
-                      <Box>
-                        <SearchComboBox
-                          name={`records[${index}].Interventions`}
-                          label="Interventions"
-                          options={interventions}
-                          sx={{ width: "100%" }}
-                        />
-                      </Box>
-                      <TextInputField
-                        name={`records[${index}].occurrences`}
-                        label="Occurrences"
-                        id={`records[${index}].occurrences`}
-                        sx={{ width: "100%" }}
-                      />
-                    </FormFieldContainerMultiple>
-                  </>
-                )}
-              ></DynamicFormList>
-            )}
-          </FieldArray>
+
           <br />
           <br />
           <SearchComboBox
@@ -730,6 +638,7 @@ const CPRForm = ({
             label={form.timeStopped.label}
           />
           <br />
+          <RecordForm />
           <br />
           <FormFieldContainerMultiple>
             <SearchComboBox
@@ -785,5 +694,73 @@ export const CPRDialogForm = ({
         onClose={onClose}
       />
     </GenericDialog>
+  );
+};
+
+const RecordForm = () => {
+  const { medicationOptions } = useFetchMedications();
+  return (
+    <FormikInit onSubmit={() => {}} validationSchema={{}} initialValues={{}}>
+      <FormTimePicker sx={{ my: "1ch" }} name={`time`} label="Time" />
+      <FieldsContainer sx={{ width: "100%" }} mr="1ch">
+        <SearchComboBox
+          name={`rhythm`}
+          label="Rhythm"
+          options={rhythmOptions}
+          size="small"
+          sx={{ width: "100%" }}
+        />
+        <TextInputField
+          name={`shockEnergy`}
+          label="Shock Energy"
+          id={`shockEnergy`}
+          sx={{ width: "100%" }}
+        />
+      </FieldsContainer>
+      <br />
+      <FormFieldContainerMultiple>
+        <SearchComboBox
+          name={`medication`}
+          label="Medication Name"
+          options={medicationOptions}
+          multiple={false}
+        />
+        <UnitInputField
+          id={`dose`}
+          label="Dose"
+          name={`dose`}
+          unitName={`doseUnit`}
+          unitOptions={medicationUnits}
+          placeholder="e.g., 500"
+          sx={{ m: 0 }}
+          inputIcon={<GiMedicines />}
+        />
+        <SearchComboBox
+          multiple={false}
+          name={`route`}
+          label="Route"
+          options={routeOptions}
+          // id={`route`}
+          sx={{ width: "100%" }}
+        />
+      </FormFieldContainerMultiple>
+      <br />
+      <FormFieldContainerMultiple>
+        <Box>
+          <SearchComboBox
+            name={`Interventions`}
+            label="Interventions"
+            options={interventions}
+            sx={{ width: "100%" }}
+          />
+        </Box>
+        <TextInputField
+          name={`occurrences`}
+          label="Occurrences"
+          id={`occurrences`}
+          sx={{ width: "100%" }}
+        />
+      </FormFieldContainerMultiple>
+    </FormikInit>
   );
 };
