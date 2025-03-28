@@ -394,7 +394,7 @@ name={'previous_pregnancy_outcomes'}
         <SearchComboBox options={contraceptiveOptions}  multiple={true} name={obstetricsFormConfig.contraceptive_history.name}label={obstetricsFormConfig.contraceptive_history.label} />
                    <WrapperBox sx={{mt: '2ch' }}>
     <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
-    <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+    <MainButton onClick={() => {}} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
   </WrapperBox>
 </FormikInit>
 </>
