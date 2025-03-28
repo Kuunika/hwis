@@ -1220,7 +1220,6 @@ export const MedicalHistoryFlow = () => {
             onSubmit={handleAdmissionsNext}
             onSkip={handlePrevious}
           />
-
           </SubSteps>
           {patient?.gender === "Female" && (
             <ObstetricsForm

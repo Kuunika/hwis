@@ -87,32 +87,33 @@ export function NewStepperContainer({
   );
 
   const filteredChildren = children.filter((item) => item !== false);
-  
-  let indexToDelete: number | undefined;
+
+  let indexToDelete: number[] = [];
   const subChildren = React.Children.toArray(children).filter((obj, key) => {
     if (React.isValidElement(obj) && obj.type === SubSteps) {
-      indexToDelete = key;
+      indexToDelete.push(key);
       return true; 
     }
-    return false; 
+    return false;
+  });
+
+  indexToDelete.sort((a, b) => b - a).forEach((index) => {
+    filteredChildren.splice(index, 1);
   });
   
-  if (indexToDelete !== undefined) {
-    filteredChildren.splice(indexToDelete, 1);
-  }
+  const subStepData = new Map<Number, string[]>();
+  
+  subChildren.forEach((subChild) => {
+    if (React.isValidElement(subChild)) {
+      const parent = subChild.props.parent;
+      if (!subStepData.has(parent)) {
+        subStepData.set(parent, []);
+      }
+      subStepData.get(parent)!.push(subChild.props.children);
+    }
+  });
 
-  console.log(filteredChildren, steps)
-
-  const nestedChild = subChildren[0];
-  const parentOfChild = React.isValidElement(nestedChild)
-    ? nestedChild.props.parent
-    : undefined;
-
-    const subChild = React.isValidElement(nestedChild)
-    ? nestedChild.props.children
-    : undefined;
-
-
+  console.log(subStepData)
   const [encounterTimes, setEncounterTimes] = useState<{
     [key: number]: string;
   }>({});
@@ -280,9 +281,10 @@ export function NewStepperContainer({
                 </Box>
               </AccordionSummary>
               <AccordionDetails>{filteredChildren[key]}</AccordionDetails>
-              {key === parentOfChild && subChildren.length > 0 && (
-                  <AccordionDetails>{subChild[0]}</AccordionDetails>
-                )}
+                {subStepData.has(key) &&
+                  subStepData.get(key)?.map((substep, index) => (
+                    <AccordionDetails key={index}>{substep}</AccordionDetails>
+                  ))}
             </Accordion>
           ))}
         </WrapperBox>
