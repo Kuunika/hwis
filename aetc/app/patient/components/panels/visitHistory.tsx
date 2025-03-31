@@ -1,4 +1,4 @@
-import { Paper, Typography } from "@mui/material";
+import { Paper, Typography, Box } from "@mui/material";
 import { VisitTable } from "../visits";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
@@ -10,6 +10,10 @@ import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { useVisitDates } from "@/contexts/visitDatesContext";
+import { useExposureAssessment } from "../clinicalNotes/ExposureAssessment";
+import { useDisabilityAssessment } from "../clinicalNotes/DisabilityAssessment";
+import { useCirculationAssessment } from "./CirculationAssessment";
+// import { useExposureAssessment } from "./useExposureAssessment";
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -40,6 +44,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
+
 export const VisitHistory = () => {
   const { patientId }: { patientId: any } = getActivePatientDetails();
   const { data: patientHistory, isLoading: historyLoading } =
@@ -48,6 +53,10 @@ export const VisitHistory = () => {
   const { visitDate } = useVisitDates();
   const [filteredEncounters, setFilteredEncounter] = useState([]);
   const [expanded, setExpanded] = useState("panel1");
+
+  const exposureMessage = useExposureAssessment(filteredEncounters);
+  const disabilityMessage = useDisabilityAssessment(filteredEncounters);
+  const circulationMessage = useCirculationAssessment(filteredEncounters)
 
   // Filter encounters when patientHistory or visitDate changes
   useEffect(() => {
@@ -139,6 +148,13 @@ export const VisitHistory = () => {
     panel10: {
       title: "Disability Assessment",
       data: getEncountersByType(encounters.DISABILITY_ASSESSMENT),
+      customComponent: disabilityMessage ? (
+        <Box sx={{ whiteSpace: 'pre-line', p: 2 }}>
+          {disabilityMessage}
+        </Box>
+      ) : (
+        <Typography className="noData">No data available</Typography>
+      )
     },
     panel11: {
       title: "Persistent Pain",
@@ -265,10 +281,28 @@ export const VisitHistory = () => {
       data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
     },
     panel42: {
-      title: "Circulation Assesment",
+      title: "Circulation Assessment",
       data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+      customComponent: circulationMessage ? (
+        <Box sx={{ whiteSpace: 'pre-line', p: 2 }}>
+          {exposureMessage}
+        </Box>
+      ): (
+        <Typography className="noData">No data available</Typography>
+      )
     },
-  };
+    panel43: {
+      title: "Exposure Assessment",
+      data: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+      customComponent: exposureMessage ? (
+        <Box sx={{ whiteSpace: 'pre-line', p: 2 }}>
+          {exposureMessage}
+        </Box>
+      ) : (
+        <Typography className="noData">No data available</Typography>
+      )
+    },
+  } as Record<string, { title: string; data: any; customComponent?: React.ReactNode }>;
 
   // Handle accordion expansion
   const handleChange = (panel: any) => (_: any, isExpanded: any) => {
@@ -286,12 +320,12 @@ export const VisitHistory = () => {
             padding: 10px;
             text-align: center;
             margin: 10px 10px 10px 0;
-        }
+         }
         `}
       </style>
       <Paper style={{ marginTop: "10px" }}>
         {Object.entries(encounterData).map(
-          ([panelId, { title, data }]) =>
+          ([panelId, { title, data, customComponent }]) =>
             data.length > 0 && (
               <Accordion
                 key={panelId}
@@ -310,8 +344,9 @@ export const VisitHistory = () => {
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <VisitTable data={data} />
+                  {customComponent ? customComponent : <VisitTable data={data} />}
                 </AccordionDetails>
+
               </Accordion>
             )
         )}
