@@ -88,21 +88,26 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
       let value= observation.value;
 
-      console.log("=====>",!concept || (!Array.isArray(concept.data) && concept?.data?.length==0));
-    
-
-      if(!concept || !Array.isArray(concept.data)) {
-        console.warn(`"${conceptName}`)
+      if(concept?.data?.length==0) {
+        console.warn(`couldn't find concept "${conceptName}" 😥`)
         continue;
       }
 
       if(observation.coded || concept?.data[0]?.datatype=='Coded'){
 
-        value =  (await getConceptFromCacheOrFetch(observation.value))?.data[0].uuid
+        const valueConcept = await getConceptFromCacheOrFetch(observation.value)
+
+        if(valueConcept?.data.length==0) {
+          console.warn(`couldn't find concept "${observation.value}" 😥`)
+          continue;
+        }
+
+        value =  valueConcept?.data[0].uuid
 
       }
+
       
-    
+ 
       const groupMembers = Array.isArray(observation.groupMembers)
         ? await getConceptIds(observation.groupMembers)
         : [];

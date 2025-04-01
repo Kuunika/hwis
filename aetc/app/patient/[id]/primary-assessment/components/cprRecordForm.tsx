@@ -199,7 +199,6 @@ export const RecordForm = ({
         obsDateTime: dateTime,
       },
     ];
-    // console.log({ observation });
 
     handleSubmit(observation);
   };

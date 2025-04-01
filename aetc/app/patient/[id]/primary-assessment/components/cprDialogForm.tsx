@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { RecordForm } from "./cprRecordForm";
 import { EndCPRForm } from "./endCprForm";
 import { BasicDetailsForm } from "./cprBasicDetailsForm";
+import { CPRRecordTable } from "./cprRecordsTable";
 
 const CPRForm = ({
   onClose,
@@ -126,6 +127,7 @@ const CPRForm = ({
     <>
       <BasicDetailsForm onSubmit={() => {}} />
       <br />
+      <CPRRecordTable patientId={patientuuid as string} />
       <RecordForm
         onSubmit={handleRecordSubmit}
         visitUuid={visituuid}
