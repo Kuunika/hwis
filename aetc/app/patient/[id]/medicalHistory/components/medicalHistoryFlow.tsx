@@ -11,6 +11,7 @@ import {
   FamilyHistoryForm,
   AdmissionsForm,
   ReviewOfSystemsForm,
+  lastMealForm,
 } from ".";
 
 import { concepts, encounters, durationOptions } from "@/constants";
@@ -27,6 +28,7 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { date } from "yup";
 import { getConceptSet } from "@/hooks/getConceptSet";
+import { LastMealForm } from "./lastMealForm";
 
 type Complaint = {
   complaint: string;
@@ -125,8 +127,8 @@ export const MedicalHistoryFlow = () => {
     ...(patient?.gender === "Female"
       ? [{ id: 5, label: "Gynaecology and Obstetrics" }]
       : []),
-    { id: patient?.gender === "Female" ? 6 : 5, label: "Events" },
-    { id: patient?.gender === "Female" ? 7 : 6, label: "Family history" },
+    { id: patient?.gender === "Female" ? 6 : 5, label: "Last Meal" },
+    { id: patient?.gender === "Female" ? 7 : 6, label: "Events" },
   ];
   const redirectToSecondarySurvey = () => {
     navigateTo(`/patient/${params.id}/secondary-assessment`);
@@ -1227,15 +1229,19 @@ export const MedicalHistoryFlow = () => {
               onSkip={handlePrevious}
             />
           )}
-
+          <LastMealForm onSubmit={handleReviewNext}
+            onSkip={handlePrevious}/>
           <ReviewOfSystemsForm
             onSubmit={handleReviewNext}
             onSkip={handlePrevious}
           />
+
+          <SubSteps parent={5}>
           <FamilyHistoryForm
             onSubmit={handleFamilyNext}
             onSkip={handlePrevious}
           />
+          </SubSteps>
         </NewStepperContainer>
       )}
     </>

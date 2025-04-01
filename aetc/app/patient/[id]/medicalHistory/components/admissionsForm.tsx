@@ -195,7 +195,10 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
 
   return (
     <>
-  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}><h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
+    <h2 style={{marginTop:'20px', paddingBottom:"20px"}}>Previous admissions:</h2>
+  <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}>
+    
+    <h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
 <div>
             {displayedObservations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color: "rgba(0, 0, 0, 0.6)" }}>

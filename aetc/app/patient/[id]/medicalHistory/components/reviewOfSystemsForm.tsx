@@ -256,10 +256,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       }
     });
 
-    shape["lastMeal"] = yup
-      .date()
-      .required("Last meal is required.")
-      .max(new Date(), "Last meal cannot be in the future.");
     shape["events"] = yup.string().required("Events field is required.");
     shape["timeOfInjury"] = yup.date().required("Time of injury is required.");
 
@@ -368,7 +364,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const initialValues = {
     wasInjured: "",
-    lastMeal: "",
     events: "",
     pain: false,
     painDuration: "",
@@ -497,26 +492,11 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
-      <FormFieldContainer direction="row">
-        <FormDatePicker
-          label={symptomList.lastMeal.label}
-          name={symptomList.lastMeal.name}
-          sx={{ background: "white", marginRight: 2 }}
-        />
 
-        <TextInputField
-          id={symptomList.events.name}
-          label={symptomList.events.label}
-          name={symptomList.events.name}
-          placeholder="e.g., Started with mild abdominal pain 3 days ago..."
-          multiline
-          rows={4}
-        />
-      </FormFieldContainer>
 
       <FormFieldContainer direction="row">
         <WrapperBox
-          sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%" }}
+          sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%", borderRadius: "5px" }}
         >
           <h3>General History</h3>
           {Object.keys(symptomList).map((key) => {
@@ -678,6 +658,18 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
           )}
         </WrapperBox>
       </FormFieldContainer>
+      <FormFieldContainer direction="row">
+
+<TextInputField
+  id={symptomList.events.name}
+  label={symptomList.events.label}
+  name={symptomList.events.name}
+  placeholder="e.g., Started with mild abdominal pain 3 days ago..."
+  multiline
+  rows={4}
+  sx={{ width: "70%" }}
+/>
+</FormFieldContainer>
       <FormFieldContainer direction="row">
         <SearchComboBox
           name="Gastrointenstinal_history"

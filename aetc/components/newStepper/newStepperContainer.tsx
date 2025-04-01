@@ -60,6 +60,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: "1px solid rgba(0, 0, 0, .125)",
+
 }));
 
 interface IProps {
@@ -113,7 +114,6 @@ export function NewStepperContainer({
     }
   });
 
-  console.log(subStepData)
   const [encounterTimes, setEncounterTimes] = useState<{
     [key: number]: string;
   }>({});
@@ -283,7 +283,7 @@ export function NewStepperContainer({
               <AccordionDetails>{filteredChildren[key]}</AccordionDetails>
                 {subStepData.has(key) &&
                   subStepData.get(key)?.map((substep, index) => (
-                    <AccordionDetails key={index}>{substep}</AccordionDetails>
+                    <AccordionDetails style={{ borderTop: "1px solid rgba(0, 0, 0, .125)"}} key={index}>{substep}</AccordionDetails>
                   ))}
             </Accordion>
           ))}
