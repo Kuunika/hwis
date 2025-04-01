@@ -76,6 +76,14 @@ export const useAllergyFormat = () => {
         },
       ];
 
+      
+  const noneOption = {
+    label: "None",
+    value: "None",
+    options: [{ label: "None", value: "None" }],
+  };
+      
+      allergyOptions.push(noneOption);
       setAllergyOptions(allergyOptions);
     }
   }, [

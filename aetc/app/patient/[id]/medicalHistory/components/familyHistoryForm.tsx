@@ -260,7 +260,7 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
             sx={{ flex: 1, marginRight: "8px" }}
           />
           <MainButton
-            onClick={handleSubmit}
+            onClick={() => {}}
             variant="primary"
             title="Submit"
             type="submit"

@@ -308,6 +308,113 @@ export const ClinicalNotes = () => {
                     <SoapierNotes />
                 </AccordionDetails>
             </Accordion>
+
+            {/* ============================================ */}
+
+            <Accordion
+                expanded={expandedAccordion === 'differential-diagnosis-notes'}
+                onChange={handleAccordionChange('differential-diagnosis-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="differential-diagnosis-content"
+                    id="differential-diagnosis-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Differential Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {/* <SoapierNotes /> */}
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion
+                expanded={expandedAccordion === 'investigations-notes'}
+                onChange={handleAccordionChange('investigations-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="investigations-content"
+                    id="investigations-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Investigations
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {/* <SoapierNotes /> */}
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion
+                expanded={expandedAccordion === 'final-diagnosis-notes'}
+                onChange={handleAccordionChange('final-diagnosis-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="final-diagnosis-content"
+                    id="final-diagnosis-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Final Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {/* <SoapierNotes /> */}
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion
+                expanded={expandedAccordion === 'patient-management-plan-notes'}
+                onChange={handleAccordionChange('patient-management-plan-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="patient-management-plan-content"
+                    id="patient-management-plan-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Patient Management Plan
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {/* <SoapierNotes /> */}
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion
+                expanded={expandedAccordion === 'disposition-notes'}
+                onChange={handleAccordionChange('disposition-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="disposition-content"
+                    id="disposition-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Disposition
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {/* <SoapierNotes /> */}
+                </AccordionDetails>
+            </Accordion>
         </Panel>
     );
 };
