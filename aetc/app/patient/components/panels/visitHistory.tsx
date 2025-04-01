@@ -285,7 +285,7 @@ export const VisitHistory = () => {
       data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
       customComponent: circulationMessage ? (
         <Box sx={{ whiteSpace: 'pre-line', p: 2 }}>
-          {exposureMessage}
+          {circulationMessage}
         </Box>
       ): (
         <Typography className="noData">No data available</Typography>
