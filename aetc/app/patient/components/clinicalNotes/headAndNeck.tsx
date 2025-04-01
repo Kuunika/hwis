@@ -36,7 +36,7 @@ export const HeadAndNeck = () => {
     };
 
     const formatHeadAndNeckData = (obs: any[]) => {
-        const assessments: { paragraph: string; time: string; creator: string }[] = [];
+        const assessments: { paragraph: string; rawTime: number;  time: string; creator: string }[] = [];
         let currentAssessment: {
             parts: string[];
             abnormalities: Map<
@@ -134,7 +134,7 @@ export const HeadAndNeck = () => {
             assessments.push(formatAssessmentToParagraph(currentAssessment));
         }
 
-        return assessments;
+        return assessments.sort((a, b) => b.rawTime - a.rawTime);
     };
 
     const getLastAbnormality = (assessment: any, imageName: string) => {
@@ -185,7 +185,8 @@ export const HeadAndNeck = () => {
         return {
             paragraph: paragraphParts.join(" "),
             time: assessment.time,
-            creator: assessment.creator
+            creator: assessment.creator,
+            rawTime: new Date(assessment.time).getTime(),
         };
     };
 

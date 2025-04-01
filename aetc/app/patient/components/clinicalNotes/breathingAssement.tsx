@@ -32,7 +32,7 @@ export const BreathingAssessment = () => {
     };
 
     const formatBreathingAssessmentData = (obs: any[]) => {
-        const paragraphs: { paragraph: string; status: string; time: string; creator: string }[] = [];
+        const paragraphs: { paragraph: string;rawTime: number;  status: string; time: string; creator: string }[] = [];
         let currentParagraph: string[] = [];
         let currentStatus = "normal";
         let currentTime = "";
@@ -61,7 +61,9 @@ export const BreathingAssessment = () => {
                     paragraph: currentParagraph.join(" "),
                     status: currentStatus,
                     time: currentTime,
-                    creator: currentCreator
+                    creator: currentCreator,
+                    rawTime: new Date(currentTime).getTime(),
+
                 });
 
                 currentParagraph = [];
@@ -146,11 +148,13 @@ export const BreathingAssessment = () => {
                 paragraph: currentParagraph.join(" "),
                 status: currentStatus,
                 time: currentTime,
-                creator: currentCreator
+                creator: currentCreator,
+                rawTime: new Date(currentTime).getTime(),
+
             });
         }
 
-        return paragraphs;
+        return paragraphs.sort((a, b) => b.rawTime - a.rawTime);
     };
 
     if (historyLoading) {
@@ -176,7 +180,7 @@ export const BreathingAssessment = () => {
                             variant="body2"
                             sx={{
                                 color: data.status === "abnormal" ? "" : "primary.main",
-                                mb: 1
+                                mb: 0
                             }}
                         >
                             {data.paragraph}
@@ -188,7 +192,7 @@ export const BreathingAssessment = () => {
                                 textAlign: 'right',
                                 color: 'text.secondary',
                                 fontStyle: 'italic',
-                                mt: 1
+                                mt: 0
                             }}
                         >
                             Assessed by: {data.creator}

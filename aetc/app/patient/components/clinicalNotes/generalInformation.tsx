@@ -31,7 +31,7 @@ export const GeneralInformation = () => {
     };
 
     const formatGeneralInformationData = (obs: any[]) => {
-        const paragraphs: { paragraph: string; time: string; creator: string }[] = [];
+        const paragraphs: { paragraph: string; time: string;rawTime: number;  creator: string }[] = [];
         let currentParagraph: string[] = [];
         let currentTime = "";
         let currentCreator = "";
@@ -45,7 +45,9 @@ export const GeneralInformation = () => {
                 paragraphs.push({
                     paragraph: currentParagraph.join(" "),
                     time: currentTime,
-                    creator: currentCreator
+                    creator: currentCreator,
+                    rawTime: new Date(currentTime).getTime(),
+
                 });
 
                 currentParagraph = [];
@@ -69,11 +71,13 @@ export const GeneralInformation = () => {
             paragraphs.push({
                 paragraph: currentParagraph.join(" "),
                 time: currentTime,
-                creator: currentCreator
+                creator: currentCreator,
+                rawTime: new Date(currentTime).getTime(),
+
             });
         }
 
-        return paragraphs;
+        return paragraphs.sort((a, b) => b.rawTime - a.rawTime);
     };
 
     if (historyLoading) {
@@ -92,10 +96,10 @@ export const GeneralInformation = () => {
             ) : (
                 generalInformationData.map((data, index) => (
                     <Box key={index} sx={{ mb: 0, position: 'relative' }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 0 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: "text.primary", mb: 1 }}>
+                        <Typography variant="body2" sx={{ color: "text.primary", mb: 0 }}>
                             {data.paragraph}
                         </Typography>
                         <Typography

@@ -27,7 +27,7 @@ export const AirwayAssessment = () => {
     };
 
     const formatAirwayAssessmentData = (obs: any[]) => {
-        const paragraphs: { paragraph: string; time: string; creator: string }[] = [];
+        const paragraphs: { paragraph: string; time: string; rawTime: number; creator: string }[] = [];
         let currentParagraph: string[] = [];
         let currentTime = "";
         let currentCreator = "";
@@ -52,7 +52,8 @@ export const AirwayAssessment = () => {
                 paragraphs.push({
                     paragraph: currentParagraph.join(" "),
                     time: currentTime,
-                    creator: currentCreator
+                    creator: currentCreator,
+                    rawTime: new Date(currentTime).getTime(),
                 });
 
                 currentParagraph = [];
@@ -114,11 +115,12 @@ export const AirwayAssessment = () => {
             paragraphs.push({
                 paragraph: currentParagraph.join(" "),
                 time: currentTime,
-                creator: currentCreator
+                creator: currentCreator,
+                rawTime: new Date(currentTime).getTime(),
             });
         }
 
-        return paragraphs;
+        return paragraphs.sort((a, b) => b.rawTime - a.rawTime);
     };
 
     if (historyLoading) {
@@ -136,11 +138,11 @@ export const AirwayAssessment = () => {
                 </Typography>
             ) : (
                 airwayAssessmentData.map((data, index) => (
-                    <Box key={index} sx={{ mb: 3, position: 'relative' }}>
-                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 1 }}>
+                    <Box key={index} sx={{ mb: 0, position: 'relative' }}>
+                        <Typography variant="subtitle2" sx={{ fontStyle: "italic", color: "primary.main", mb: 0 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: "text.primary", mb: 1 }}>
+                        <Typography variant="body2" sx={{ color: "text.primary", mb: 0 }}>
                             {data.paragraph}
                         </Typography>
                         <Typography
@@ -150,7 +152,7 @@ export const AirwayAssessment = () => {
                                 textAlign: 'right',
                                 color: 'text.secondary',
                                 fontStyle: 'italic',
-                                mt: 1
+                                mt: 0
                             }}
                         >
                             Assessed by: {data.creator}

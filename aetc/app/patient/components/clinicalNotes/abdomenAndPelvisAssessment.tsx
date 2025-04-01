@@ -60,7 +60,9 @@ export const AbdomenAndPelvisAssessment = () => {
             currentGroup.observations.push(ob);
         });
 
-        return encounterGroups.map(group => {
+        return encounterGroups
+            .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+            .map(group => {
             const assessment: {
                 findings: Record<string, string>,
                 additionalNotes: string[],

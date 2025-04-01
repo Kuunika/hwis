@@ -41,7 +41,7 @@ export const ChestAssessment = () => {
     };
 
     const formatChestAssessmentData = (obs: any[], encounterTime: string, creator: string) => {
-        const paragraphs: { paragraph: string; time: string; creator: string }[] = [];
+        const paragraphs: { paragraph: string;rawTime: number; time: string; creator: string }[] = [];
         let currentParagraph: string[] = [];
         let currentTime = isValidDate(encounterTime) ? encounterTime : new Date().toISOString();
         let currentCreator = creator;
@@ -60,7 +60,9 @@ export const ChestAssessment = () => {
                     paragraphs.push({
                         paragraph: currentParagraph.join(" "),
                         time: currentTime,
-                        creator: currentCreator
+                        creator: currentCreator,
+                        rawTime: new Date(currentTime).getTime(),
+
                     });
                     currentParagraph = [];
                 }
@@ -127,11 +129,13 @@ export const ChestAssessment = () => {
             paragraphs.push({
                 paragraph: currentParagraph.join(" "),
                 time: currentTime,
-                creator: currentCreator
+                creator: currentCreator,
+                rawTime: new Date(currentTime).getTime(),
+
             });
         }
 
-        return paragraphs;
+        return paragraphs.sort((a, b) => b.rawTime - a.rawTime);
     };
 
     const formatList = (items: string[]) => {
