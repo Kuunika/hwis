@@ -7,7 +7,11 @@ import {
   UnitInputField,
 } from "@/components";
 import { concepts, encounters } from "@/constants";
-import { getObservations, mapSearchComboOptionsToConcepts } from "@/helpers";
+import {
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { useSubmitEncounter } from "@/hooks";
 import useFetchMedications from "@/hooks/useFetchMedications";
@@ -40,7 +44,7 @@ const form = {
     label: "Unit",
   },
   interventions: {
-    name: concepts.INTERVENTION,
+    name: concepts.INTERVENTION_LIST,
     label: "Interventions",
   },
   occurrences: {
@@ -136,18 +140,24 @@ const recordValidationSchema = Yup.object().shape({
     .required()
     .label(form.occurrences.label),
   [form.time.name]: Yup.string().required().label(form.time.label),
-  [form.reversibleCauses.name]: Yup.string()
+  [form.reversibleCauses.name]: Yup.array()
     .required()
     .label(form.reversibleCauses.label),
 });
 export const RecordForm = ({
   onSubmit,
+  patientUuid,
+  visitUuid,
 }: {
   onSubmit: (values: any) => void;
+  patientUuid?: string;
+  visitUuid?: string;
 }) => {
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.CPR,
-    () => {}
+    () => {},
+    patientUuid,
+    visitUuid
   );
   const { medicationOptions } = useFetchMedications();
 
@@ -157,48 +167,66 @@ export const RecordForm = ({
     const dateTime = getDateTime();
     const rythmObs = mapSearchComboOptionsToConcepts(
       formValues[form.rhythm.name],
-      form.rhythm.label,
+      form.rhythm.name,
       dateTime
     );
     const interventionsObs = mapSearchComboOptionsToConcepts(
       formValues[form.interventions.name],
-      form.rhythm.label,
+      form.interventions.name,
+      dateTime
+    );
+    const reversibleCauseObs = mapSearchComboOptionsToConcepts(
+      formValues[form.reversibleCauses.name],
+      form.reversibleCauses.name,
       dateTime
     );
     delete formValues[form.rhythm.name];
     delete formValues[form.interventions.name];
+    delete formValues[form.reversibleCauses.name];
+
     const obs = getObservations(formValues, dateTime);
 
     const observation = [
       {
         concept: concepts.CPR_RECORD,
-        value: "",
-        groupMembers: [...interventionsObs, ...rythmObs, ...obs],
+        value: dateTime,
+        groupMembers: [
+          ...interventionsObs,
+          ...rythmObs,
+          ...obs,
+          ...reversibleCauseObs,
+        ],
+        obsDateTime: dateTime,
       },
     ];
+    // console.log({ observation });
 
     handleSubmit(observation);
   };
   return (
     <FormikInit
-      initialValues={{}}
+      initialValues={getInitialValues(form)}
       validationSchema={recordValidationSchema}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmitForm}
     >
       <>
         <br />
-        <FormTimePicker sx={{ my: "1ch" }} name={`time`} label="Time" />
+        <FormTimePicker
+          sx={{ my: "1ch" }}
+          name={form.time.name}
+          label={form.time.label}
+        />
         <SearchComboBox
-          name={`rhythm`}
-          label="Rhythm"
+          name={form.rhythm.name}
+          label={form.rhythm.label}
           options={rhythmOptions}
           size="small"
           sx={{ width: "100%" }}
         />
         <br />
         <TextInputField
-          name={`shockEnergy`}
-          label="Shock Energy"
+          name={form.shockEnergy.name}
+          label={form.shockEnergy.label}
           id={`shockEnergy`}
           sx={{ width: "100%" }}
         />
@@ -206,16 +234,16 @@ export const RecordForm = ({
         <br />
         <FormFieldContainerMultiple>
           <SearchComboBox
-            name={`medication`}
+            name={form.medication.name}
             label="Medication Name"
             options={medicationOptions}
             multiple={false}
           />
           <UnitInputField
-            id={`dose`}
-            label="Dose"
-            name={`dose`}
-            unitName={`doseUnit`}
+            id={form.dose.name}
+            label={form.dose.label}
+            name={form.dose.name}
+            unitName={form.doseUnit.name}
             unitOptions={medicationUnits}
             placeholder="e.g., 500"
             sx={{ m: 0 }}
@@ -223,8 +251,8 @@ export const RecordForm = ({
           />
           <SearchComboBox
             multiple={false}
-            name={`route`}
-            label="Route"
+            name={form.route.name}
+            label={form.route.label}
             options={routeOptions}
             // id={`route`}
             sx={{ width: "100%" }}
@@ -232,8 +260,8 @@ export const RecordForm = ({
         </FormFieldContainerMultiple>
         <br />
         <SearchComboBox
-          name={`Interventions`}
-          label="Interventions"
+          name={form.interventions.name}
+          label={form.interventions.label}
           options={interventions}
           sx={{ width: "100%" }}
         />
@@ -241,8 +269,8 @@ export const RecordForm = ({
         <TextInputField
           multiline
           rows={5}
-          name={`occurrences`}
-          label="Occurrences"
+          name={form.occurrences.name}
+          label={form.occurrences.label}
           id={`occurrences`}
           sx={{ width: "100%" }}
         />

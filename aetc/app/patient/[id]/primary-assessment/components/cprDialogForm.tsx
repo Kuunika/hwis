@@ -125,7 +125,13 @@ const CPRForm = ({
   return (
     <>
       <BasicDetailsForm onSubmit={() => {}} />
-      <RecordForm onSubmit={handleRecordSubmit} />
+      <br />
+      <RecordForm
+        onSubmit={handleRecordSubmit}
+        visitUuid={visituuid}
+        patientUuid={patientuuid}
+      />
+      <br />
       <EndCPRForm onSubmit={() => {}} />
     </>
   );

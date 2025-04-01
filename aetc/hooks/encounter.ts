@@ -88,7 +88,15 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
       let value= observation.value;
 
-      if(observation.coded || concept?.data[0].datatype=='Coded'){
+      console.log("=====>",!concept || (!Array.isArray(concept.data) && concept?.data?.length==0));
+    
+
+      if(!concept || !Array.isArray(concept.data)) {
+        console.warn(`"${conceptName}`)
+        continue;
+      }
+
+      if(observation.coded || concept?.data[0]?.datatype=='Coded'){
 
         value =  (await getConceptFromCacheOrFetch(observation.value))?.data[0].uuid
 
@@ -112,7 +120,7 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
     }
   } catch (error) {
-    console.log({ error });
+    console.error({error});
   }
 
   return obsWithUUIDs;
