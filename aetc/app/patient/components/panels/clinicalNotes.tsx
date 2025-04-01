@@ -285,6 +285,7 @@ export const ClinicalNotes = () => {
                     <HeadAndNeck />
                     <ChestAssessment />
                     <AbdomenAndPelvisAssessment/>
+                    <Extremities/>
                     <NeurologicalExamination/>
                 </AccordionDetails>
             </Accordion>
