@@ -31,7 +31,7 @@ const lastMealFormConfig = {
         .string()
         .when("didNotEat", {
           is: false,
-          then: (schema) => schema.required("Unless they did not eat, please select a time of last meal.")
+          then: (schema) => schema.required('If they did not eat check "Patient did not eat" below, Otherwise please select a time of last meal.')
         }),
         [lastMealFormConfig.description.name]: yup.string().when("didNotEat", {
             is: false,
@@ -91,7 +91,7 @@ export const LastMealForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
               }}
             />
             { error && (
-              <MainTypography color="red" variant="subtitle2">
+              <MainTypography color="red" variant="subtitle2" width={"300px"}>
                 {error}
               </MainTypography>
             )}
