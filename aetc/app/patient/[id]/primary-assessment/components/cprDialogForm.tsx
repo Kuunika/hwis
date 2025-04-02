@@ -1,9 +1,9 @@
 import {
   FieldsContainer,
-  FormDatePicker,
+  FormDatePickerToday,
   FormFieldContainerMultiple,
   FormikInit,
-  FormTimePicker,
+  FormTimePickerNow,
   GenericDialog,
   RadioGroupInput,
   SearchComboBox,
@@ -479,13 +479,13 @@ const CPRForm = ({
     >
       {({ values, setFieldValue }) => (
         <>
-          <FormDatePicker
+          <FormDatePickerToday
             width={"100%"}
             name={form.date.name}
             label={form.date.label}
           />
 
-          <FormTimePicker
+          <FormTimePickerNow
             sx={{ my: "1ch" }}
             name={form.time.name}
             label={form.time.label}
@@ -535,7 +535,7 @@ const CPRForm = ({
                       Record {index + 1}
                     </Typography>
                     <br />
-                    <FormTimePicker
+                    <FormTimePickerNow
                       sx={{ my: "1ch" }}
                       name={`records_time_${index}`}
                       label="Time"
@@ -725,7 +725,7 @@ const CPRForm = ({
           </Typography>
           <br />
 
-          <FormTimePicker
+          <FormTimePickerNow
             name={form.timeStopped.name}
             label={form.timeStopped.label}
           />
