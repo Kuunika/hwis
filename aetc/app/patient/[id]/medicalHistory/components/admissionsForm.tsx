@@ -231,7 +231,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       enableReinitialize
       submitButton={false}
     >
@@ -360,7 +360,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
           </WrapperBox>
   
           <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
-          <MainButton onClick={handleSubmit} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+          <MainButton onClick={() => {}} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
         </>
       )}
     </FormikInit>

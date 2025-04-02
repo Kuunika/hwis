@@ -104,7 +104,7 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/dispositions"
-              title="Disposition List"
+              title="Awaiting Specialty"
             />
           </AuthGuardComp>
 

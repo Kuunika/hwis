@@ -228,6 +228,8 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       }
     });
 
+    console.log(formValues);
+    return;
     onSubmit(formValues);
   };
 
@@ -345,7 +347,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
             sx={{ flex: 1, marginRight: "8px" }}
           />
           <MainButton
-            onClick={handleSubmit}
+            onClick={() => {}}
             variant="primary"
             title="Next"
             type="submit"
