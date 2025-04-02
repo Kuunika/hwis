@@ -37,7 +37,7 @@ export const PrimaryAssessmentFlow = () => {
     {
       id: 3,
       label: "Disability Assessment",
-      encounter: encounters.DISABILITY_ASSESSMENT,
+      encounter: encounters.PRIMARY_DISABILITY_ASSESSMENT,
     },
     {
       id: 4,
