@@ -15,6 +15,7 @@ import {
 import { getDateTime } from "@/helpers/dateTime";
 import { useSubmitEncounter } from "@/hooks";
 import useFetchMedications from "@/hooks/useFetchMedications";
+import { useEffect, useState } from "react";
 import { GiMedicines } from "react-icons/gi";
 import * as Yup from "yup";
 
@@ -147,9 +148,11 @@ const recordValidationSchema = Yup.object().shape({
 export const RecordForm = ({
   patientUuid,
   visitUuid,
+  onSubmitRecord,
 }: {
   patientUuid?: string;
   visitUuid?: string;
+  onSubmitRecord: (state: any) => void;
 }) => {
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.CPR,
@@ -159,7 +162,7 @@ export const RecordForm = ({
   );
   const { medicationOptions } = useFetchMedications();
 
-  const handleSubmitForm = (values: any) => {
+  const handleSubmitForm = (values: any, formik: any) => {
     const formValues = { ...values };
 
     const dateTime = getDateTime();
@@ -199,12 +202,18 @@ export const RecordForm = ({
     ];
 
     handleSubmit(observation);
+    formik.resetForm();
   };
+
+  useEffect(() => {
+    onSubmitRecord(isLoading);
+  }, [isLoading]);
   return (
     <FormikInit
       initialValues={getInitialValues(form)}
       validationSchema={recordValidationSchema}
       onSubmit={handleSubmitForm}
+      submitButtonText="Add Record"
     >
       <>
         <br />

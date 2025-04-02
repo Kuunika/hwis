@@ -14,22 +14,6 @@ import { Button, Typography } from "@mui/material";
 import * as Yup from "yup";
 
 const form = {
-  cardiacArrest: {
-    name: concepts.CARDIAC_ARREST,
-    label: "Witnessed Cardiac Arrest",
-  },
-  site: {
-    name: concepts.SITE,
-    label: "SITE",
-  },
-  specify: {
-    name: concepts.SPECIFY,
-    label: "Specify",
-  },
-  reversibleCauses: {
-    name: concepts.REVERSIBLE_CAUSES,
-    label: "Reversible Causes",
-  },
   reasonsCprStopped: {
     name: concepts.REASON_CPR_STOPPED,
     label: "Reason CPR Stopped",
@@ -94,15 +78,7 @@ const form = {
     name: concepts.TEAM_MEMBERS,
     label: "Team Members",
   },
-  time: {
-    name: concepts.TIME,
-    label: "Time of Call",
-  },
 
-  date: {
-    name: concepts.DATE_OF_CPR,
-    label: "Date of Call",
-  },
   cause: {
     name: concepts.CAUSE,
     label: "Likely or known cause of cardiac arrest",
@@ -168,8 +144,6 @@ const endCPRValidationSchema = Yup.object().shape({
     .label(form.verbalResponse.label),
   [form.teamLeader.name]: Yup.string().required().label(form.teamLeader.label),
   [form.teamMembers.name]: Yup.array().required().label(form.teamMembers.label),
-  [form.date.name]: Yup.date().required().label(form.date.label),
-  [form.time.name]: Yup.string().required().label(form.time.label),
   [form.cause.name]: Yup.string().required().label(form.cause.label),
   [form.timeStopped.name]: Yup.string()
     .required()
@@ -236,9 +210,11 @@ const verbalResponses = [
 export const EndCPRForm = ({
   onSubmit,
   formRef,
+  triggerValidate,
 }: {
   onSubmit: (values: any) => void;
   formRef: any;
+  triggerValidate: () => void;
 }) => {
   const { data: users, isLoading } = getAllUsers();
   const userOptions = users?.map((user) => {
@@ -393,6 +369,17 @@ export const EndCPRForm = ({
             />
           </FormFieldContainerMultiple>
           <br />
+          {values[form.reasonsCprStopped.name] == concepts.OTHER && (
+            <TextInputField
+              multiline
+              rows={5}
+              name={form.otherReason.name}
+              label={form.otherReason.label}
+              sx={{ width: "100%" }}
+              id={form.otherReason.name}
+            />
+          )}
+          <br />
           <Typography variant="h6">Resuscitation Team</Typography>
           <br />
           <SearchComboBox
@@ -408,7 +395,7 @@ export const EndCPRForm = ({
             options={userOptions ?? []}
           />
           <br />
-          <Button onClick={onSubmit} variant="contained" fullWidth>
+          <Button onClick={triggerValidate} variant="contained" fullWidth>
             Finish CPR
           </Button>
         </>

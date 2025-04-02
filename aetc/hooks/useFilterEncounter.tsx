@@ -5,7 +5,9 @@ export const useFindPatientEncounter = (
   patientId: string,
   encounter: string
 ) => {
-  const { data, isLoading } = getPatientsEncounters(patientId as string);
+  const { data, isLoading, isRefetching } = getPatientsEncounters(
+    patientId as string
+  );
   const patientEncounter = data?.find((enc) => {
     return enc.encounter_type.uuid === encounter;
   });
@@ -17,5 +19,5 @@ export const useFindPatientEncounter = (
     }
   }, [patientEncounter]);
 
-  return { dataObs, isLoading };
+  return { dataObs, isLoading: isRefetching || isLoading };
 };
