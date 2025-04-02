@@ -1,12 +1,18 @@
-import { FormDatePicker, FormFieldContainer, MainButton, TextInputField, WrapperBox } from "@/components";
+import { FormDatePicker, FormFieldContainer, MainButton, MainTypography, TextInputField, WrapperBox } from "@/components";
 import { useEffect, useState } from "react";
 import { FormValuesListener, FormikInit } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
+import { Field, getIn } from "formik";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: () => void;
 };
 
 const lastMealFormConfig = {
@@ -21,22 +27,33 @@ const lastMealFormConfig = {
   }
   
   const schema = yup.object().shape({
-  
-      ["lastMeal"] : yup
-        .date()
-        .required("Last meal is required.")
-        .max(new Date(), "Last meal cannot be in the future.")
+      [lastMealFormConfig.lastMeal.name] : yup
+        .string()
+        .when("didNotEat", {
+          is: false,
+          then: (schema) => schema.required("Unless they did not eat, please select a time of last meal.")
+        }),
+        [lastMealFormConfig.description.name]: yup.string().when("didNotEat", {
+            is: false,
+            then: (schema) => schema.required("Unless they did not eat a description of the last meal is required.")
+          }),  
   });
     const initialValues = {
-      lastMeal: "",
+        [lastMealFormConfig.lastMeal.name]: undefined,
+        [lastMealFormConfig.description.name]: "",
+        didNotEat: false,
     };
 
-export const LastMealForm = ({ onSubmit, onSkip }: Prop) => {
+export const LastMealForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
 
   const handleSubmit = async () => {
+    if(formValues.didnotEat){
+      onSkip();
+    }
 
     onSubmit(formValues);
+
   };
 
   return (
@@ -49,13 +66,42 @@ export const LastMealForm = ({ onSubmit, onSkip }: Prop) => {
         enableReinitialize={true}
         submitButton={false}
       >
+        
         <FormValuesListener getValues={setFormValues} />
-<FormFieldContainer direction="row">
-               <FormDatePicker
-                 label={lastMealFormConfig.lastMeal.label}
-                 name={lastMealFormConfig.lastMeal.name}
-                 sx={{ background: "white"}}
-               />
+            <FormFieldContainer direction="row">
+            <div style={{ marginRight: "2ch" }}>
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <Field name={lastMealFormConfig.lastMeal.name}>
+      {({ form }: { form: any }) => {
+        const error = getIn(form.errors, lastMealFormConfig.lastMeal.name);
+        return (
+          <>
+            <DateTimePicker
+              disableFuture
+              label={lastMealFormConfig.lastMeal.label}
+              onChange={(newValue: any) => {
+                form.setFieldValue(lastMealFormConfig.lastMeal.name, newValue?.$d.toLocaleString());
+              }}
+              sx={{
+                width: "300px",
+                mt: "1.8ch",
+                backgroundColor: "white",
+                borderRadius: "5px",
+                border: error ? "1px solid red" : "1px solid #ccc",
+              }}
+            />
+            { error && (
+              <MainTypography color="red" variant="subtitle2">
+                {error}
+              </MainTypography>
+            )}
+          </>
+        );
+      }}
+    </Field>
+  </LocalizationProvider>
+</div>
+               
                        <TextInputField
                          id={lastMealFormConfig.description.name}
                          label={lastMealFormConfig.description.label}
@@ -63,15 +109,20 @@ export const LastMealForm = ({ onSubmit, onSkip }: Prop) => {
                          placeholder="e.g., rice and beans"
                          multiline
                          rows={4}
-
+                        disabled={formValues.didnotEat}
                        />
+                              
                        </FormFieldContainer>
+                       <LabelledCheckbox
+          name="didNotEat"
+          label="Patient did not eat"
+        />
         <WrapperBox sx={{ mt: "2ch" }}>
           <MainButton
             variant="secondary"
             title="Previous"
             type="button"
-            onClick={onSkip}
+            onClick={onPrevious}
             sx={{ flex: 1, marginRight: "8px" }}
           />
           <MainButton

@@ -645,14 +645,50 @@ export const MedicalHistoryFlow = () => {
       }
     });
   }
-
+  
   function handleReviewNext(values: any): void {
     setFormData((prev: any) => ({ ...prev, review: values }));
     handleSkip();
   }
 
+  function handleLastMealNext(values: any): void {
+    setFormData((prev: any) => ({ ...prev, lastMeal: values }));
+    handleSkip();
+  }
+
+  async function handleLastMealSubmission(values: any): Promise<any> {
+    const lastMealDate = values.dateOfMeal;
+    const lastMealDescription = values.descriptionOfLastMeal;
+
+    const lastMealObs = {
+      concept: concepts.TIME_OF_LAST_MEAL,
+      value: lastMealDate,
+      groupMembers: [
+        {
+          concept: concepts.DESCRIPTION_OF_LAST_MEAL,
+          value: lastMealDescription,
+        },
+      ],
+    };
+
+
+    try {      
+      const response = createEncounter({ 
+            encounterType: encounters.SUMMARY_ASSESSMENT,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: dateTime,
+            obs: lastMealObs,
+      });
+
+      console.log("Encounter successfully created:", response);
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
   async function handleReviewSubmission(values: any): Promise<any> {
-    const lastMeal = values["lastMeal"];
+    
     const historyOfComplaints = values["events"];
 
     const historyOfComplaintsObs = {
@@ -660,13 +696,10 @@ export const MedicalHistoryFlow = () => {
       value: historyOfComplaints,
     };
 
-    const lastMealObs = {
-      concept: concepts.DATE_OF_LAST_MEAL,
-      value: lastMeal,
-    };
+
 
     const initialObs = historyOfComplaints
-      ? [historyOfComplaintsObs, lastMealObs]
+      ? [historyOfComplaintsObs]
       : null;
 
     if (initialObs) {
@@ -678,12 +711,10 @@ export const MedicalHistoryFlow = () => {
           encounterDatetime: dateTime,
           obs: [
             {
-              concept: initialObs
-                ? concepts.PRESENTING_HISTORY
-                : concepts.DATE_OF_LAST_MEAL,
-              value: initialObs ? true : lastMeal,
+              concept: concepts.PRESENTING_HISTORY,
+              value: true,
               obsDatetime: dateTime,
-              groupMembers: initialObs ? initialObs : null,
+              groupMembers: initialObs,
             },
           ],
         });
@@ -1054,6 +1085,9 @@ export const MedicalHistoryFlow = () => {
     handleSubmitAll(0);
   }
 
+
+
+
   async function handleFamilyHistorySubmission(values: any): Promise<any> {
     const conditionConcepts: { [key: string]: string } = {
       asthma: concepts.FAMILY_HISTORY_ASTHMA,
@@ -1157,6 +1191,7 @@ export const MedicalHistoryFlow = () => {
       conditions: handleConditionsSubmission,
       surgeries: handleSurgeriesSubmission,
       obstetrics: handleObstetricsSubmission,
+      lastMeal: handleLastMealSubmission,
       admissions: handleAdmissionsSubmission,
       review: handleReviewSubmission,
       family: handleFamilyHistorySubmission,
@@ -1229,14 +1264,14 @@ export const MedicalHistoryFlow = () => {
               onSkip={handlePrevious}
             />
           )}
-          <LastMealForm onSubmit={handleReviewNext}
-            onSkip={handlePrevious}/>
+          <LastMealForm onSubmit={handleLastMealNext}
+            onPrevious={handlePrevious} onSkip={handleSkip}/>
           <ReviewOfSystemsForm
             onSubmit={handleReviewNext}
             onSkip={handlePrevious}
           />
 
-          <SubSteps parent={5}>
+          <SubSteps parent={patient?.gender === "Female"?6:5}>
           <FamilyHistoryForm
             onSubmit={handleFamilyNext}
             onSkip={handlePrevious}
