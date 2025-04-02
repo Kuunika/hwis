@@ -33,10 +33,14 @@ import { HeadAndNeck } from "@/app/patient/components/clinicalNotes/headAndNeck"
 import { useCirculationAssessment } from "@/app/patient/components/clinicalNotes/CirculationAssessment";
 import { useDisabilityAssessment } from "@/app/patient/components/clinicalNotes/DisabilityAssessment";
 import { useExposureAssessment } from "@/app/patient/components/clinicalNotes/ExposureAssessment";
-import { NeurogicalExamination } from "@/app/patient/components/clinicalNotes/neurogicalExamination";
 import { AbdomenAndPelvisAssessment } from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
 
 import { getObservations } from "@/helpers";
+import {Extremities} from "@/app/patient/components/clinicalNotes/extremities";
+import {NeurologicalExamination} from "@/app/patient/components/clinicalNotes/neurogicalExamination";
+import {PresentingComplaintsNotes} from "@/app/patient/components/clinicalNotes/presentingComplaintsNotes";
+import AllergiesNotes from "@/app/patient/components/clinicalNotes/allergies";
+import {MedicationsNotes} from "@/app/patient/components/clinicalNotes/medicationsNotes";
 
 export const ClinicalNotes = () => {
   const [value, setValue] = useState(0);
@@ -161,183 +165,167 @@ export const ClinicalNotes = () => {
           ))
         )}
       </WrapperBox>
-      <Accordion
-        expanded={expandedAccordion === "airway-assessment"}
-        onChange={handleAccordionChange("airway-assessment")}
-        sx={{
-          backgroundColor: "#f5f5f5",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="airway-assessment-content"
-          id="airway-assessment-header"
+        <Accordion
+            expanded={expandedAccordion === 'airway-assessment'}
+            onChange={handleAccordionChange('airway-assessment')}
+            sx={{
+                backgroundColor: '#f5f5f5',
+            }}
         >
-          <Typography variant="h6" fontWeight="bold">
-            Primary Assessment
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <AirwayAssessment />
-          <BreathingAssessment />
-
-          {/* Circulation Assessment */}
-          <Box sx={{ p: 2 }}>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{ fontWeight: "bold" }}
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="airway-assessment-content"
+                id="airway-assessment-header"
             >
-              Circulation Assessment Notes
-            </Typography>
-            {circulationMessage ? (
-              <Box sx={{ mb: 3 }}>
-                {/* Date in primary color */}
-                <Typography
-                  variant="body2"
-                  sx={{ color: "primary.main", fontWeight: "bold" }}
-                >
-                  {circulationMessage.split("\n")[0]}
+                <Typography variant="h6" fontWeight="bold">
+                    Primary Survey
                 </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <AirwayAssessment />
+                <BreathingAssessment />
 
-                {/* Rest of the content */}
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
-                >
-                  {circulationMessage.split("\n").slice(1).join("\n")}
-                </Typography>
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", color: "secondary.main" }}
-              >
-                No circulation assessment data available.
-              </Typography>
-            )}
-          </Box>
+                {/* Circulation Assessment */}
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                        Circulation Assessment
+                    </Typography>
+                    {circulationMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            {/* Date in primary color */}
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {circulationMessage.split("\n")[0]}
+                            </Typography>
 
-          {/* Disability Assessment */}
+                            {/* Rest of the content */}
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {circulationMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                            No circulation assessment data available.
+                        </Typography>
+                    )}
+                </Box>
 
-          <Box sx={{ p: 2 }}>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{ fontWeight: "bold" }}
-            >
-              Disability Assessment Notes
-            </Typography>
-            {disabilityMessage ? (
-              <Box sx={{ mb: 3 }}>
-                {/* Date in primary color */}
-                <Typography
-                  variant="body2"
-                  sx={{ color: "primary.main", fontWeight: "bold" }}
-                >
-                  {disabilityMessage.split("\n")[0]}
-                </Typography>
+                {/* Disability Assessment */}
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                        Disability Assessment
+                    </Typography>
+                    {disabilityMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            {/* Date in primary color */}
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {disabilityMessage.split("\n")[0]}
+                            </Typography>
 
-                {/* Rest of the content */}
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
-                >
-                  {disabilityMessage.split("\n").slice(1).join("\n")} //note
-                  this line
-                </Typography>
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", color: "secondary.main" }}
-              >
-                No disability assessment data available.
-              </Typography>
-            )}
-          </Box>
+                            {/* Rest of the content */}
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {disabilityMessage.split("\n").slice(1).join("\n")} //note this line
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                            No disability assessment data available.
+                        </Typography>
+                    )}
+                </Box>
 
-          <Box sx={{ p: 2 }}>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{ fontWeight: "bold" }}
-            >
-              Exposure Assessment Notes
-            </Typography>
-            {exposureMessage ? (
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "primary.main", fontWeight: "bold" }}
-                >
-                  {exposureMessage.split("\n")[0]}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
-                >
-                  {exposureMessage.split("\n").slice(1).join("\n")}
-                </Typography>
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", color: "secondary.main" }}
-              >
-                No exposure assessment data available.
-              </Typography>
-            )}
-          </Box>
-        </AccordionDetails>
-      </Accordion>
 
-      <Accordion
-        expanded={expandedAccordion === "breathing-assessment"}
-        onChange={handleAccordionChange("breathing-assessment")}
-        sx={{
-          backgroundColor: "#f5f5f5",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="breathing-assessment-content"
-          id="breathing-assessment-header"
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+                        Exposure Assessment
+                    </Typography>
+                    {exposureMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {exposureMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {exposureMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
+                            No exposure assessment data available.
+                        </Typography>
+                    )}
+                </Box>
+
+            </AccordionDetails>
+        </Accordion>
+        <Accordion
+            expanded={expandedAccordion === 'sample-history'}
+            onChange={handleAccordionChange('sample-history')}
+            sx={{
+                backgroundColor: '#f5f5f5',
+            }}
         >
-          <Typography variant="h6" fontWeight="bold">
-            Secondary Assessment
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <GeneralInformation />
-          <HeadAndNeck />
-          <ChestAssessment />
-          <AbdomenAndPelvisAssessment />
-          <NeurogicalExamination />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion
-        expanded={expandedAccordion === "soapier-notes"}
-        onChange={handleAccordionChange("soapier-notes")}
-        sx={{
-          backgroundColor: "#f5f5f5",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="soap-notes-content"
-          id="soap-notes-header"
-        >
-          <Typography variant="h6" fontWeight="bold">
-            SOAPIER notes
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <SoapierNotes />
-        </AccordionDetails>
-      </Accordion>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="sample-history-content"
+                id="sample-history-header"
+            >
+                <Typography variant="h6" fontWeight="bold">
+                    Sample History
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <PresentingComplaintsNotes/>
+                <AllergiesNotes />
+                <MedicationsNotes/>
+            </AccordionDetails>
+        </Accordion>
 
-      {/* ============================================ */}
+        <Accordion
+            expanded={expandedAccordion === 'breathing-assessment'}
+            onChange={handleAccordionChange('breathing-assessment')}
+            sx={{
+                backgroundColor: '#f5f5f5',
+            }}
+        >
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="breathing-assessment-content"
+                id="breathing-assessment-header"
+            >
+                <Typography variant="h6" fontWeight="bold">
+                    Secondary Survey
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <GeneralInformation />
+                <HeadAndNeck />
+                <ChestAssessment />
+                <AbdomenAndPelvisAssessment/>
+                <Extremities/>
+                <NeurologicalExamination/>
+            </AccordionDetails>
+        </Accordion>
+        <Accordion
+            expanded={expandedAccordion === 'soapier-notes'}
+            onChange={handleAccordionChange('soapier-notes')}
+            sx={{
+                backgroundColor: '#f5f5f5',
+            }}
+        >
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="soap-notes-content"
+                id="soap-notes-header"
+            >
+                <Typography variant="h6" fontWeight="bold">
+                    SOAPIER Notes
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <SoapierNotes />
+            </AccordionDetails>
+        </Accordion>
+
+        {/* ============================================ */}
 
       <Accordion
         expanded={expandedAccordion === "differential-diagnosis-notes"}
