@@ -5,7 +5,7 @@ export const useFindPatientEncounter = (
   patientId: string,
   encounter: string
 ) => {
-  const { data } = getPatientsEncounters(patientId as string);
+  const { data, isLoading } = getPatientsEncounters(patientId as string);
   const patientEncounter = data?.find((enc) => {
     return enc.encounter_type.uuid === encounter;
   });
@@ -17,5 +17,5 @@ export const useFindPatientEncounter = (
     }
   }, [patientEncounter]);
 
-  return { dataObs };
+  return { dataObs, isLoading };
 };

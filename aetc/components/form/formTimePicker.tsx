@@ -94,7 +94,7 @@ export const FormTimePicker: FC<Prop> = ({
                   <InputAdornment position="end">
                     <Button
                       variant="contained"
-                      color="primary"
+                      color="secondary"
                       size="small"
                       onClick={handleSetNowTime}
                       disabled={disabled}

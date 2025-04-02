@@ -8,8 +8,9 @@ import {
   SearchComboBox,
 } from "@/components";
 import { concepts, NO, YES } from "@/constants";
+import { getInitialValues } from "@/helpers";
 import { getAllUsers } from "@/hooks/users";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import * as Yup from "yup";
 
 const form = {
@@ -234,8 +235,10 @@ const verbalResponses = [
 
 export const EndCPRForm = ({
   onSubmit,
+  formRef,
 }: {
   onSubmit: (values: any) => void;
+  formRef: any;
 }) => {
   const { data: users, isLoading } = getAllUsers();
   const userOptions = users?.map((user) => {
@@ -254,11 +257,13 @@ export const EndCPRForm = ({
   };
   return (
     <FormikInit
-      initialValues={{}}
+      initialValues={getInitialValues(form)}
       validationSchema={endCPRValidationSchema}
       onSubmit={onSubmit}
+      submitButton={false}
+      ref={formRef}
     >
-      {({ values, setFieldValue }) => (
+      {({ values }) => (
         <>
           <TextInputField
             name={form.cause.name}
@@ -402,6 +407,10 @@ export const EndCPRForm = ({
             label={form.teamMembers.label}
             options={userOptions ?? []}
           />
+          <br />
+          <Button onClick={onSubmit} variant="contained" fullWidth>
+            Finish CPR
+          </Button>
         </>
       )}
     </FormikInit>

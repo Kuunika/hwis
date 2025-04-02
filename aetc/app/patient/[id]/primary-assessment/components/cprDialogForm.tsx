@@ -15,7 +15,7 @@ import { getInitialValues, getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { RecordForm } from "./cprRecordForm";
 import { EndCPRForm } from "./endCprForm";
 import { BasicDetailsForm } from "./cprBasicDetailsForm";
@@ -31,6 +31,8 @@ const CPRForm = ({
   visituuid?: string;
 }) => {
   const { mutate, isSuccess } = fetchConceptAndCreateEncounter();
+  const basicFormRef = useRef<any>(null);
+  const endFormRef = useRef<any>(null);
 
   //   const obsDatetime = getDateTime();
   //   const formValues = { ...values };
@@ -115,7 +117,23 @@ const CPRForm = ({
   //   });
   // };
 
-  const handleRecordSubmit = (values: any) => {};
+  const finishCpr = async () => {
+    console.log("====>", basicFormRef?.current.values);
+    await basicFormRef?.current?.submitForm();
+    await endFormRef?.current?.submitForm();
+    const basicFormErrors = await basicFormRef?.current?.validateForm();
+
+    // Validate end form
+    const endFormErrors = await endFormRef?.current?.validateForm();
+
+    // Check if there are any errors in either form
+    if (
+      Object.keys(basicFormErrors).length === 0 &&
+      Object.keys(endFormErrors).length === 0
+    ) {
+      console.log("====>", basicFormRef?.current.values);
+    }
+  };
 
   useEffect(() => {
     if (isSuccess) {
@@ -125,16 +143,12 @@ const CPRForm = ({
 
   return (
     <>
-      <BasicDetailsForm onSubmit={() => {}} />
+      <BasicDetailsForm formRef={basicFormRef} onSubmit={() => {}} />
       <br />
       <CPRRecordTable patientId={patientuuid as string} />
-      <RecordForm
-        onSubmit={handleRecordSubmit}
-        visitUuid={visituuid}
-        patientUuid={patientuuid}
-      />
+      <RecordForm visitUuid={visituuid} patientUuid={patientuuid} />
       <br />
-      <EndCPRForm onSubmit={() => {}} />
+      <EndCPRForm formRef={endFormRef} onSubmit={finishCpr} />
     </>
   );
 };

@@ -145,11 +145,9 @@ const recordValidationSchema = Yup.object().shape({
     .label(form.reversibleCauses.label),
 });
 export const RecordForm = ({
-  onSubmit,
   patientUuid,
   visitUuid,
 }: {
-  onSubmit: (values: any) => void;
   patientUuid?: string;
   visitUuid?: string;
 }) => {

@@ -9,6 +9,7 @@ import {
   Paper,
   IconButton,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -17,7 +18,9 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   overflow: "auto",
   maxHeight: "400px",
+  minHeight: "200px", // Add minimum height
   boxShadow: theme.shadows[3],
+  position: "relative", // Ensure this is set for absolute children
 }));
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -33,7 +36,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
-  maxWidth: "200px", // Limit cell width to prevent excessive row height
+  maxWidth: "200px",
 }));
 
 const HeaderCell = styled(StyledTableCell)(({ theme }) => ({
@@ -53,11 +56,25 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   boxShadow: theme.shadows[1],
 }));
 
+const LoadingWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: "rgba(255, 255, 255, 0.7)", // Semi-transparent background
+  zIndex: 1, // Ensure it appears above the table
+}));
+
 interface TableProps {
   columns: { label: string; field: string }[];
   data: any[];
   actions?: boolean;
   getSelectedRow?: (row: any) => void;
+  loading?: boolean;
 }
 
 export const MinimalTable: React.FC<TableProps> = ({
@@ -65,6 +82,7 @@ export const MinimalTable: React.FC<TableProps> = ({
   data,
   actions = false,
   getSelectedRow,
+  loading = false,
 }) => {
   return (
     <StyledTableContainer>
@@ -78,32 +96,42 @@ export const MinimalTable: React.FC<TableProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row, index) => (
-            <StyledTableRow
-              key={index}
-              onClick={() => getSelectedRow && getSelectedRow(row)}
-            >
-              {columns.map((column, colIndex) => (
-                <Tooltip key={colIndex} title={row[column.field]} arrow>
-                  <StyledTableCell>{row[column.field]}</StyledTableCell>
-                </Tooltip>
-              ))}
-              {actions && (
-                <StyledTableCell>
-                  <IconButton aria-label="edit" color="primary" size="small">
-                    {/* Edit Icon */}
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    color="secondary"
-                    size="small"
-                  >
-                    {/* Delete Icon */}
-                  </IconButton>
-                </StyledTableCell>
-              )}
-            </StyledTableRow>
-          ))}
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length + (actions ? 1 : 0)}>
+                <LoadingWrapper>
+                  <CircularProgress />
+                </LoadingWrapper>
+              </TableCell>
+            </TableRow>
+          ) : (
+            data.map((row, index) => (
+              <StyledTableRow
+                key={index}
+                onClick={() => getSelectedRow && getSelectedRow(row)}
+              >
+                {columns.map((column, colIndex) => (
+                  <Tooltip key={colIndex} title={row[column.field]} arrow>
+                    <StyledTableCell>{row[column.field]}</StyledTableCell>
+                  </Tooltip>
+                ))}
+                {actions && (
+                  <StyledTableCell>
+                    <IconButton aria-label="edit" color="primary" size="small">
+                      {/* Edit Icon */}
+                    </IconButton>
+                    <IconButton
+                      aria-label="delete"
+                      color="secondary"
+                      size="small"
+                    >
+                      {/* Delete Icon */}
+                    </IconButton>
+                  </StyledTableCell>
+                )}
+              </StyledTableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
     </StyledTableContainer>

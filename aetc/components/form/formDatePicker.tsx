@@ -130,7 +130,7 @@ export const FormDatePicker: FC<Prop> = ({
                     )}
                     <Button
                       variant="contained"
-                      color="primary"
+                      color="secondary"
                       onClick={handleSetToday}
                       disabled={disabled}
                       size="small"

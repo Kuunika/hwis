@@ -5,7 +5,10 @@ import { useFindPatientEncounter } from "@/hooks/useFilterEncounter";
 import { Obs } from "@/interfaces";
 
 export const CPRRecordTable = ({ patientId }: { patientId: string }) => {
-  const { dataObs } = useFindPatientEncounter(patientId, encounters.CPR);
+  const { dataObs, isLoading } = useFindPatientEncounter(
+    patientId,
+    encounters.CPR
+  );
 
   const records = dataObs.filter((ob: any) => ob.children.length > 0);
 
@@ -65,8 +68,6 @@ export const CPRRecordTable = ({ patientId }: { patientId: string }) => {
     };
   });
 
-  console.log({ formatted });
-
   return (
     <MinimalTable
       columns={[
@@ -80,6 +81,7 @@ export const CPRRecordTable = ({ patientId }: { patientId: string }) => {
         { label: "Rhythm", field: "rhythm" },
         { label: "Reversible Causes", field: "causes" },
       ]}
+      loading={isLoading}
       data={formatted}
     />
   );

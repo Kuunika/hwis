@@ -103,7 +103,6 @@ const getConceptIds: any = async (obs: Obs[]) => {
         }
 
         value =  valueConcept?.data[0].uuid
-
       }
 
       
