@@ -1266,7 +1266,7 @@ export const concepts = {
   BREATH_SOUNDS:"breath sounds",
   CPR_RECORD:"cpr record",
   INTERVENTION_LIST:"intervention list",
-  CPR:"Other"
+  CPR:"cpr"
   
 };
 
