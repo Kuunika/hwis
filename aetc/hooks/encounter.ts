@@ -37,7 +37,10 @@ export const getPatientsEncounters = (patientId: string) => {
   return useQuery({
     queryKey: ["encounters", patientId],
     queryFn: () => getall(patientId),
-    enabled: true,
+    enabled: !!patientId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
