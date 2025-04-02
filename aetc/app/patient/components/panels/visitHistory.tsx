@@ -12,8 +12,12 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { useExposureAssessment } from "../clinicalNotes/ExposureAssessment";
 import { useDisabilityAssessment } from "../clinicalNotes/DisabilityAssessment";
-import { useCirculationAssessment } from "./CirculationAssessment";
-// import { useExposureAssessment } from "./useExposureAssessment";
+import { useCirculationAssessment } from "../clinicalNotes/CirculationAssessment";
+import { ClinicalNotes } from "./clinicalNotes";
+import { AirwayAssessment } from "../clinicalNotes/airwayAssement";
+import { BreathingAssessment } from "../clinicalNotes/breathingAssement";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -137,25 +141,18 @@ export const VisitHistory = () => {
       title: "Vitals",
       data: getEncountersByType(encounters.VITALS),
     },
-    panel8: {
-      title: "Airway Assessment",
-      data: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
-    },
+    // panel8: {
+    //   title: "Airway Assessment",
+    //   data: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+    // },
     panel9: {
       title: "Blood Circulation",
       data: getEncountersByType(encounters.BLOOD_CIRCULATION),
     },
-    panel10: {
-      title: "Disability Assessment",
-      data: getEncountersByType(encounters.DISABILITY_ASSESSMENT),
-      customComponent: disabilityMessage ? (
-        <Box sx={{ whiteSpace: 'pre-line', p: 2 }}>
-          {disabilityMessage}
-        </Box>
-      ) : (
-        <Typography className="noData">No data available</Typography>
-      )
-    },
+    // panel10: {
+    //   title: "Disability Assessment",
+    //   data: getEncountersByType(encounters.DISABILITY_ASSESSMENT),
+    // },
     panel11: {
       title: "Persistent Pain",
       data: getEncountersByType(encounters.PERSISTENT_PAIN),
@@ -280,77 +277,117 @@ export const VisitHistory = () => {
       title: "Outpatient Diagnosis",
       data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
     },
-    panel42: {
-      title: "Circulation Assessment",
-      data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
-      customComponent: circulationMessage ? (
-        <Box sx={{ whiteSpace: 'pre-line', p: 2 }}>
-          {circulationMessage}
-        </Box>
-      ): (
-        <Typography className="noData">No data available</Typography>
-      )
-    },
-    panel43: {
-      title: "Exposure Assessment",
-      data: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
-      customComponent: exposureMessage ? (
-        <Box sx={{ whiteSpace: 'pre-line', p: 2 }}>
-          {exposureMessage}
-        </Box>
-      ) : (
-        <Typography className="noData">No data available</Typography>
-      )
-    },
-  } as Record<string, { title: string; data: any; customComponent?: React.ReactNode }>;
+    // panel42: {
+    //   title: "Circulation Assessment",
+    //   data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+    // },
+    // panel43: {
+    //   title: "Exposure Assessment",
+    //   data: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+    // },
+  } 
 
   // Handle accordion expansion
   const handleChange = (panel: any) => (_: any, isExpanded: any) => {
     setExpanded(isExpanded ? panel : false);
   };
 
+  const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedAccordion(isExpanded ? panel : false);
+};
+  const [clinicalNotes, setClinicalNotes] = useState<Array<{ note: string | null; creator: string; time: any }>>([]);const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
+
+
   return (
     <>
-      <style>
-        {`
-         .noData {
-            border: #a3a1a1 solid 1px;
-            border-style: dashed;
-            border-radius: 5px;
-            padding: 10px;
-            text-align: center;
-            margin: 10px 10px 10px 0;
-         }
-        `}
-      </style>
-      <Paper style={{ marginTop: "10px" }}>
-        {Object.entries(encounterData).map(
-          ([panelId, { title, data, customComponent }]) =>
-            data.length > 0 && (
-              <Accordion
-                key={panelId}
-                expanded={expanded === panelId}
-                onChange={handleChange(panelId)}
-              >
-                <AccordionSummary
-                  expandIcon={
-                    <ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />
-                  }
-                  aria-controls={`${panelId}-content`}
-                  id={`${panelId}-header`}
-                >
-                  <Typography sx={{ fontWeight: 700 }} component="span">
-                    {title}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {customComponent ? customComponent : <VisitTable data={data} />}
-                </AccordionDetails>
+        <Paper style={{ marginTop: "10px" }}>
+            {Object.entries(encounterData).map(
+              ([panelId, { title, data, }]) =>
+                data.length > 0 && (
+                    <Accordion
+                     key={panelId} 
+                     expanded={expanded === panelId} 
+                     onChange={handleChange(panelId)}
+                     >
+                        <AccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />} aria-controls={`${panelId}-content`} id={`${panelId}-header`}>
+                            <Typography sx={{ fontWeight: 700 }} component="span">{title}</Typography>
+                        </AccordionSummary>
+                    </Accordion>
+                )
+            )}
+        </Paper>
 
-              </Accordion>
-            )
-        )}
-      </Paper>
+        <Accordion
+            expanded={expandedAccordion === 'primary-assessment'}
+            onChange={handleAccordionChange('primary-assessment')}
+            sx={{ backgroundColor: '#f5f5f5', marginTop: '10px' }}
+        >
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="primary-assessment-content"
+                id="primary-assessment-header"
+            >
+                <Typography variant="h6" fontWeight="bold">Primary Assessment</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <AirwayAssessment />
+                <BreathingAssessment />
+
+                {/* Circulation Assessment */}
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>Circulation Assessment Notes</Typography>
+                    {circulationMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {circulationMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {circulationMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No circulation assessment data available.</Typography>
+                    )}
+                </Box>
+
+                {/* Disability Assessment */}
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>Disability Assessment Notes</Typography>
+                    {disabilityMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {disabilityMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {disabilityMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No disability assessment data available.</Typography>
+                    )}
+                </Box>
+
+                {/* Exposure Assessment */}
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>Exposure Assessment Notes</Typography>
+                    {exposureMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {exposureMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {exposureMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No exposure assessment data available.</Typography>
+                    )}
+                </Box>
+            </AccordionDetails>
+        </Accordion>
     </>
-  );
+);
+
+
 };
+
