@@ -9,33 +9,30 @@ type Prop = {
   onSkip: () => void;
 };
 
+const lastMealFormConfig = {
+    lastMeal: {
+      name: "dateOfMeal",
+      label: "When did the patient eat last?"
+    },
+    description: {
+      name: "descriptionOfLastMeal",
+      label: "What did the patient eat?",
+    }
+  }
+  
+  const schema = yup.object().shape({
+  
+      ["lastMeal"] : yup
+        .date()
+        .required("Last meal is required.")
+        .max(new Date(), "Last meal cannot be in the future.")
+  });
+    const initialValues = {
+      lastMeal: "",
+    };
 
 export const LastMealForm = ({ onSubmit, onSkip }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
-
-
-
-const lastMealFormConfig = {
-  lastMeal: {
-    name: "dateOfMeal",
-    label: "When did the patient eat last?"
-  },
-  description: {
-    name: "descriptionOfLastMeal",
-    label: "What did the patient eat?",
-  }
-}
-
-const schema = yup.object().shape({
-
-    ["lastMeal"] : yup
-      .date()
-      .required("Last meal is required.")
-      .max(new Date(), "Last meal cannot be in the future.")
-});
-  const initialValues = {
-    lastMeal: "",
-  };
 
   const handleSubmit = async () => {
 
@@ -89,3 +86,5 @@ const schema = yup.object().shape({
     </>
   );
 };
+
+export default LastMealForm;

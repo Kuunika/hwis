@@ -4,7 +4,6 @@ import { FormValuesListener, FormikInit } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
-
 import AllergiesPanel from "../../medicalInpatient-/components/allergies";
 import { useAllergyFormat } from "@/hooks/useAllergyFormat";
 

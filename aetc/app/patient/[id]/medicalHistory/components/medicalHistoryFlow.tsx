@@ -11,7 +11,7 @@ import {
   FamilyHistoryForm,
   AdmissionsForm,
   ReviewOfSystemsForm,
-  lastMealForm,
+  LastMealForm
 } from ".";
 
 import { concepts, encounters, durationOptions } from "@/constants";
@@ -28,7 +28,7 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { date } from "yup";
 import { getConceptSet } from "@/hooks/getConceptSet";
-import { LastMealForm } from "./lastMealForm";
+
 
 type Complaint = {
   complaint: string;
