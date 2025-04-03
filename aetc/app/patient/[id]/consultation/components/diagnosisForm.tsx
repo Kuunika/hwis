@@ -63,7 +63,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                         .filter((obs) => obs.names[0]?.name === conceptType)
                         .map((obs) => ({
                             id: obs.obs_id.toString(),
-                            condition: obs.value,
+                            condition: obs.value_text ?? "",
                             obsDatetime: obs.obs_datetime || "",
                         }))
                 );

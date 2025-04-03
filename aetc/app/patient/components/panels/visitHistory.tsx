@@ -17,6 +17,7 @@ import { ClinicalNotes } from "./clinicalNotes";
 import { AirwayAssessment } from "../clinicalNotes/airwayAssement";
 import { BreathingAssessment } from "../clinicalNotes/breathingAssement";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useDifferentialDiagnosis } from "../clinicalNotes/DifferentialDiagnosis";
 
 
 // Styled components for accordion
@@ -61,6 +62,7 @@ export const VisitHistory = () => {
   const exposureMessage = useExposureAssessment(filteredEncounters);
   const disabilityMessage = useDisabilityAssessment(filteredEncounters);
   const circulationMessage = useCirculationAssessment(filteredEncounters)
+  const differentialDiagnosisMessage = useDifferentialDiagnosis(filteredEncounters)
 
   // Filter encounters when patientHistory or visitDate changes
   useEffect(() => {
@@ -140,6 +142,10 @@ export const VisitHistory = () => {
     panel7: {
       title: "Vitals",
       data: getEncountersByType(encounters.VITALS),
+    },
+    panel8:{
+      title:"Differential",
+      data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS)
     },
     // panel8: {
     //   title: "Airway Assessment",
@@ -383,6 +389,25 @@ export const VisitHistory = () => {
                         <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No exposure assessment data available.</Typography>
                     )}
                 </Box>
+
+                //========trying section =======
+
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>differentialDiagnosisMessage Notes</Typography>
+                    {differentialDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {differentialDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No differentialDiagnosisMessage data available.</Typography>
+                    )}
+                </Box>
+                
             </AccordionDetails>
         </Accordion>
     </>
