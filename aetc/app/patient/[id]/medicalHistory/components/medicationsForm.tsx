@@ -8,7 +8,6 @@ import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
 import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { getFrequencyOptions } from "@/hooks/getFrequencyOptions";
 import { getFormulationOptions } from "@/hooks/getFormulationOptions";
 
