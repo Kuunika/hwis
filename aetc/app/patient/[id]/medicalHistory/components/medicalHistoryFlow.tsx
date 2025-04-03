@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { NewStepperContainer, SubSteps } from "@/components";
 import {
   ComplaintsForm,
@@ -86,6 +86,8 @@ export const MedicalHistoryFlow = () => {
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
   const dateTime = getDateTime();
   const { data: allergenCats } = getConceptSet("Allergen Category");
+  const surgeriesFormRef = useRef<HTMLDivElement | null>(null);
+  const admissionsFormRef = useRef<HTMLDivElement | null>(null);
 
   const {
     loading,
@@ -148,6 +150,8 @@ export const MedicalHistoryFlow = () => {
     setActiveStep(previousStep);
   };
 
+  
+
   const handlePresentingComplaintsNext = (values: any) => {
     setFormData((prev: any) => ({ ...prev, presentingComplaints: values }));
     handleSkip();
@@ -178,7 +182,7 @@ export const MedicalHistoryFlow = () => {
         });
       }
     });
-
+    
     try {
       await createEncounter({
         encounterType: encounters.PRESENTING_COMPLAINTS,
@@ -380,26 +384,31 @@ export const MedicalHistoryFlow = () => {
       return observation;
     });
 
-    observationsPayload.forEach(async (observation: any) => {
-      console.log("Observation:", observation);
+   
       try {
         const response = await createEncounter({
           encounterType: encounters.PRESCRIPTIONS,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime,
-          obs: [observation],
+          obs: observationsPayload,
         });
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
         throw error;
       }
-    });
+   
   }
+
+  const scrollToDiv = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   function handleConditionsNext(values: any): void {
     setFormData((prev: any) => ({ ...prev, conditions: values }));
-    handleSkip();
+    scrollToDiv(surgeriesFormRef);
   }
 
   async function handleConditionsSubmission(values: any): Promise<any> {
@@ -419,25 +428,25 @@ export const MedicalHistoryFlow = () => {
       };
     });
 
-    observationsPayload.forEach(async (observation: any) => {
+
       try {
         const response = await createEncounter({
           encounterType: encounters.DIAGNOSIS,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime,
-          obs: [observation],
+          obs: observationsPayload,
         });
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
         throw error;
       }
-    });
+  
   }
 
   function handleSurgeriesNext(values: any): void {
     setFormData((prev: any) => ({ ...prev, surgeries: values }));
-    handleSkip();
+    scrollToDiv(admissionsFormRef);
   }
 
   async function handleSurgeriesSubmission(values: any): Promise<any> {
@@ -466,20 +475,19 @@ export const MedicalHistoryFlow = () => {
       };
     });
 
-    observationsPayload.forEach(async (observation: any) => {
       try {
         const response = await createEncounter({
           encounterType: encounters.SURGICAL_HISTORY,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime,
-          obs: [observation],
+          obs: observationsPayload,
         });
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
         throw error;
       }
-    });
+
   }
 
   function handleObstetricsNext(values: any): void {
@@ -606,12 +614,6 @@ export const MedicalHistoryFlow = () => {
     }
 
     const encounterPayload = admissions.map((admission: any) => ({
-      encounterType: encounters.PATIENT_ADMISSIONS,
-      visit: activeVisit?.uuid,
-      patient: params.id,
-      encounterDatetime: dateTime,
-      obs: [
-        {
           concept: concepts.ADMISSION_DATE,
           value: admission.date,
           obsDatetime: dateTime,
@@ -632,18 +634,22 @@ export const MedicalHistoryFlow = () => {
             },
             { concept: concepts.FOLLOW_UP, value: admission.follow_up_plans },
           ] as OutputObservation[],
-        },
-      ],
     }));
 
-    encounterPayload.forEach(async (encounter, index) => {
       try {
-        const response = await createEncounter(encounter);
+        const response = await createEncounter({
+          encounterType: encounters.PATIENT_ADMISSIONS,
+          visit: activeVisit?.uuid,
+          patient: params.id,
+          encounterDatetime: dateTime,
+          obs: encounterPayload
+        });
+
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
         throw error;
       }
-    });
+   
   }
   
   function handleReviewNext(values: any): void {
@@ -663,6 +669,7 @@ export const MedicalHistoryFlow = () => {
     const lastMealObs = {
       concept: concepts.TIME_OF_LAST_MEAL,
       value: lastMealDate,
+      obsDatetime: dateTime,
       groupMembers: [
         {
           concept: concepts.DESCRIPTION_OF_LAST_MEAL,
@@ -671,14 +678,13 @@ export const MedicalHistoryFlow = () => {
       ],
     };
 
-
     try {      
       const response = createEncounter({ 
             encounterType: encounters.SUMMARY_ASSESSMENT,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: dateTime,
-            obs: lastMealObs,
+            obs: [lastMealObs],
       });
 
       console.log("Encounter successfully created:", response);
@@ -1216,6 +1222,10 @@ export const MedicalHistoryFlow = () => {
     }, 2000);
   }
 
+
+  
+ 
+
   return (
     <>
       {loading && (
@@ -1249,14 +1259,18 @@ export const MedicalHistoryFlow = () => {
           ></PriorConditionsForm>
 
           <SubSteps parent={3}>
+            <div ref={surgeriesFormRef}>
           <SurgeriesForm
             onSubmit={handleSurgeriesNext}
             onSkip={handlePrevious}
           />
+          </div>
+          <div ref={admissionsFormRef}>
           <AdmissionsForm
             onSubmit={handleAdmissionsNext}
             onSkip={handlePrevious}
           />
+          </div>
           </SubSteps>
           {patient?.gender === "Female" && (
             <ObstetricsForm
