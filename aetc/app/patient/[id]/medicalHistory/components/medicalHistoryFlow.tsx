@@ -325,64 +325,40 @@ export const MedicalHistoryFlow = () => {
     };
 
     const observationsPayload = medicationObs.map((medication: any) => {
-      const observation = {
-        person: params.id,
+      const unitconcept = doseUnits[medication.medication_dose_unit];
+      const durationUnitConcept = durationUnits[medication.medication_duration_unit];
+     return {
         concept: concepts.DRUG_GIVEN,
         obsDatetime: dateTime,
         value: medication.name,
-        groupMembers: [] as OutputObservation[],
-      };
-
-      if (medication.medication_date_last_taken) {
-        observation.groupMembers.push({
+        groupMembers: [
+      {
           concept: concepts.MEDICATION_DATE_LAST_TAKEN,
           value: medication.medication_date_last_taken,
-        } as OutputObservation);
-      }
-
-      if (medication.medication_date_of_last_prescription) {
-        observation.groupMembers.push({
+   
+      },
+      {
           concept: concepts.MEDICATION_DATE_OF_LAST_PRESCRIPTION,
           value: medication.medication_date_of_last_prescription,
-        } as OutputObservation);
-      }
-
-      if (medication.medication_frequency) {
-        observation.groupMembers.push({
+      },
+      {
           concept: concepts.MEDICATION_FREQUENCY,
           value: medication.medication_frequency,
-          coded: true,
-        } as OutputObservation);
-      }
-
-      if (medication.medication_dose_unit) {
-        const unitconcept = doseUnits[medication.medication_dose_unit];
-        observation.groupMembers.push({
+      },
+      {
           concept: unitconcept,
           value: medication.medication_dose,
-          coded: true,
-        } as OutputObservation);
-      }
-
-      if (medication.medication_duration_unit) {
-        const unitconcept = durationUnits[medication.medication_duration_unit];
-        observation.groupMembers.push({
-          concept: unitconcept,
+      },
+      {
+          concept: durationUnitConcept,
           value: medication.medication_duration,
-          coded: true,
-        } as OutputObservation);
-      }
-
-      if (medication.formulation) {
-        observation.groupMembers.push({
+      }, 
+      {
           concept: concepts.MEDICATION_FORMULATION,
           value: medication.formulation,
-          coded: true,
-        } as OutputObservation);
-      }
-
-      return observation;
-    });
+      } 
+    ]as OutputObservation[]
+    }});
 
    console.log(observationsPayload)
       try {
