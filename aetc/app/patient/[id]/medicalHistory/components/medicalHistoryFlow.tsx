@@ -375,8 +375,8 @@ export const MedicalHistoryFlow = () => {
 
       if (medication.formulation) {
         observation.groupMembers.push({
-          value: medication.formulation,
           concept: concepts.MEDICATION_FORMULATION,
+          value: medication.formulation,
           coded: true,
         } as OutputObservation);
       }
@@ -384,7 +384,7 @@ export const MedicalHistoryFlow = () => {
       return observation;
     });
 
-   
+   console.log(observationsPayload)
       try {
         const response = await createEncounter({
           encounterType: encounters.PRESCRIPTIONS,

@@ -1,5 +1,5 @@
 "use client";
-import { FormDatePicker, FormikInit, FormValuesListener, MainButton, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
+import { FormDatePicker, FormikInit, FormValuesListener, MainButton, MainTypography, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
 import React, { useEffect, useState } from "react";
 import { Field, FieldArray, getIn } from "formik";
 import * as yup from "yup";
@@ -9,6 +9,8 @@ import { GiMedicines } from "react-icons/gi";
 import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { getFrequencyOptions } from "@/hooks/getFrequencyOptions";
+import { getFormulationOptions } from "@/hooks/getFormulationOptions";
 
 
 type Prop = {
@@ -53,36 +55,6 @@ const medicationUnits = [
 "Millimoles (mmol)",	
 ];
 
-
-const formulationOptions =   [
-  { id: concepts.TABLET, label: "Tablet" },
-  { id: concepts.VIAL, label: "Vial" },
-  { id: concepts.INTRAVENOUS, label: "Intravenous" },
-  { id: concepts.POWDER, label: "Powder" },
-  { id: concepts.SOLUTION, label: "Solution" },
-  { id: concepts.EYE_OINTMENT, label: "Eye Ointment" },
-  { id: concepts.CREAM, label: "Cream" },
-  { id: concepts.EYE_DROPS, label: "Eye Drops" },
-  { id: concepts.OINTMENT, label: "Ointment" },
-  { id: concepts.INHALER, label: "Inhaler" },
-  { id: concepts.SUPPOSITORY, label: "Suppository" },
-  { id: concepts.PESSARY, label: "Pessary" },
-  { id: concepts.SUSPENSION, label: "Suspension" },
-  { id: concepts.SHAMPOO, label: "Shampoo" },
-  { id: concepts.EAR_DROPS, label: "Ear Drops" },
-  { id: concepts.EYE_PASTE, label: "Eye Paste" },
-  ];
-
-  const frequencyOptions = [
-      {id:concepts.ONCE_A_DAY, label:'24 Hourly (OD) - Once a day '},
-      {id:concepts.TWICE_A_DAY, label:'12 Hourly (BID) - Twice a day'},
-      {id:concepts.THREE_TIMES_A_DAY, label:'8 Hourly (TID) - Three times a day'},
-      {id:concepts.FOUR_TIMES_A_DAY, label:'6 Hourly (QID) - Four times a day'},
-      {id:concepts.SIX_TIMES_A_DAY, label:'4 Hourly (OD) - Six times a day '},
-      {id:concepts.ONCE_A_WEEK, label:'Once a week'},
-      {id:concepts.ONCE_A_MONTH, label:'Once a month'},
-      {id:'Other', label:'Other'},
-    ];
 
 // Validation schema
 const schema = yup.object().shape({
@@ -133,7 +105,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
   const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
   const [formValues, setFormValues] = useState<any>({});
-  
+  const { frequencyOptions } = getFrequencyOptions();
+  const { formulationOptions } = getFormulationOptions();  
 
   
   const handleUpdateFrequency = (index: number, value: boolean) => {
@@ -180,7 +153,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                 setItems={(newItems) => setFieldValue("medications", newItems)}
                 newItem={medicationTemplate}
                 renderFields={(item, index) => (
-                  <>
+                  <><div>
                     <SearchComboBox
                       name={`medications[${index}].name`}
                       label="Medication Name"
@@ -189,11 +162,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       sx={{ width: "200px" }}
                       multiple={false}
                     />
-                                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                   <MainTypography color="red" variant="subtitle2">
                    <ErrorMessage
                      name={`medications[${index}].name`}
                    />
+                   </MainTypography>
                    </div>
+                   <div>
                     <SearchComboBox
                       name={`medications[${index}].formulation`}
                       label="Formulation"
@@ -202,11 +177,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       sx={{ width: "200px" }}
                       multiple={false}
                     />
-                   <div style={{ color: "red", fontSize: "0.875rem" }}>
+                   <MainTypography color="red" variant="subtitle2">
                    <ErrorMessage
                      name={`medications[${index}].formulation`}
                    />
+                   </MainTypography>
                    </div>
+                   <div>
                     <UnitInputField
                       id={`medications[${index}].medication_dose`}
                       label="Dose"
@@ -217,13 +194,15 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       sx={{ width: "320px" }}
                       inputIcon={<GiMedicines />}
                     />
-                    <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <MainTypography color="red" variant="subtitle2">
                    <ErrorMessage
                      name={`medications[${index}].medication_dose`}
                    />
+                   </MainTypography>
                    </div>
                     {!otherFrequency[index] ? (
                       <>
+                      <div>
                       <SearchComboBox
                         name={`medications[${index}].medication_frequency`}
                         label="Frequency"
@@ -235,27 +214,31 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                         sx={{ width: "180px" }}
                         multiple={false}
                       />
-                      <div style={{ color: "red", fontSize: "0.875rem" }}>
+                      <MainTypography color="red" variant="subtitle2">
                       <ErrorMessage
                         name={`medications[${index}].medication_frequency`}
                       />
+                      </MainTypography>
                       </div>
                       </>
                     ) : (
                       <>
+                      <div>
                       <TextInputField
                         id={`medications[${index}].medication_frequency`}
                         name={`medications[${index}].medication_frequency`}
                         label="Specify frequency"
                         sx={{ width: "180px" }}
                       />
-                      <div style={{ color: "red", fontSize: "0.875rem"}}>
+                      <MainTypography color="red" variant="subtitle2">
                       <ErrorMessage
                         name={`medications[${index}].medication_frequency`}
                       />
+                      </MainTypography>
                       </div>
                       </>
                     )}
+                    <div>
                     <UnitInputField
                       id={`medications[${index}].medication_duration`}
                       name={`medications[${index}].medication_duration`}
@@ -265,30 +248,35 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       placeholder="e.g. 7"
                       inputIcon={<IoTimeOutline />}
                     />
-                            <div style={{ color: "red", fontSize: "0.875rem"}}>
+                       <MainTypography color="red" variant="subtitle2">
                       <ErrorMessage
                         name={`medications[${index}].medication_duration`}
                       />
+                      </MainTypography>
                       </div>
+                      <div>
                     <FormDatePicker
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
                       sx={{ width: "150px" }}
                     />
-                                                <div style={{ color: "red", fontSize: "0.875rem"}}>
+                    <MainTypography color="red" variant="subtitle2">
                       <ErrorMessage
                         name={`medications[${index}].medication_date_last_taken`}
                       />
+                      </MainTypography>
                       </div>
+                      <div>
                     <FormDatePicker
                       name={`medications[${index}].medication_date_of_last_prescription`}
                       label="Last Prescribed"
                       sx={{ width: "150px" }}
                     />
-                                                <div style={{ color: "red", fontSize: "0.875rem"}}>
+                    <MainTypography color="red" variant="subtitle2">
                       <ErrorMessage
                         name={`medications[${index}].medication_date_of_last_prescription`}
                       />
+                    </MainTypography>
                       </div>
                   </>
                 )}
