@@ -5,6 +5,7 @@ import {
   TextInputField,
   FormFieldContainerMultiple,
   UnitInputField,
+  FormTimePickerNow,
 } from "@/components";
 import { concepts, encounters } from "@/constants";
 import {
@@ -217,7 +218,7 @@ export const RecordForm = ({
     >
       <>
         <br />
-        <FormTimePicker
+        <FormTimePickerNow
           sx={{ my: "1ch" }}
           name={form.time.name}
           label={form.time.label}

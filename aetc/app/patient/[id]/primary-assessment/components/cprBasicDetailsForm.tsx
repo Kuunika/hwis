@@ -5,6 +5,8 @@ import {
   FormFieldContainerMultiple,
   RadioGroupInput,
   TextInputField,
+  FormTimePickerNow,
+  FormDatePickerToday,
 } from "@/components";
 import { concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
@@ -79,13 +81,13 @@ export const BasicDetailsForm = ({
       >
         {({ values, setFieldValue }) => (
           <>
-            <FormDatePicker
+            <FormDatePickerToday
               width={"100%"}
               name={form.date.name}
               label={form.date.label}
             />
 
-            <FormTimePicker
+            <FormTimePickerNow
               sx={{ my: "1ch" }}
               name={form.time.name}
               label={form.time.label}
