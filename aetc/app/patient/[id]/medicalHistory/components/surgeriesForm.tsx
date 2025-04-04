@@ -203,6 +203,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     renderFields={(item, index) => (
                       <><div>
                         <SearchComboBox
+                        disabled={formValues.none}
                           options={surgicalProcedures}
                           name={`surgeries[${index}].procedure`}
                           label="Surgical Procedure"
@@ -218,6 +219,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         {showOther[index] && (
                           <div>
                             <TextInputField
+                            disabled={formValues.none}
                               id={`surgeries[${index}].other`}
                               name={`surgeries[${index}].other`}
                               label="Other procedure"
@@ -233,6 +235,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         )}
                         <div>
                         <FormDatePicker
+                        disabled={formValues.none}
                           name={`surgeries[${index}].date`}
                           label="Date of Surgery"
                           sx={{
@@ -246,6 +249,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         </MainTypography>
                         </div>
                         <TextInputField
+                        disabled={formValues.none}
                           id={`surgeries[${index}].complication`}
                           name={`surgeries[${index}].complication`}
                           label="Complications (optional)"
@@ -253,6 +257,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         />
 <div>
                         <TextInputField
+                        disabled={formValues.none}
                           id={`surgeries[${index}].indication`}
                           name={`surgeries[${index}].indication`}
                           label="Indication"

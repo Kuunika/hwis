@@ -1246,7 +1246,8 @@ console.log(formData)
           <div ref={admissionsFormRef}>
           <AdmissionsForm
             onSubmit={handleAdmissionsNext}
-            onSkip={handlePrevious}
+            onSkip={handleSkip}
+            onPrevious={()=>scrollToDiv(surgeriesFormRef)}
           />
           </div>
           </SubSteps>

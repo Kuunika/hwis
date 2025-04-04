@@ -265,6 +265,7 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                                   index
                                 ).name
                               }
+                              disabled={formValues.none}
                               label={
                                 priorConditionsFormConfig.conditions_diagnosis_date(
                                   index
@@ -283,6 +284,7 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                             </MainTypography>
 
                             <RadioGroupInput
+                            disabled={formValues.none}
                               name={
                                 priorConditionsFormConfig.conditions_on_treatment(
                                   index
@@ -312,6 +314,7 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         </div>
 
                         <TextInputField
+                        disabled={formValues.none}
                           id={
                             priorConditionsFormConfig.conditions_additional_details(
                               index

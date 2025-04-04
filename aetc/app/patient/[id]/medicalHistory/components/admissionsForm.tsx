@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormDatePicker, MainButton, SearchComboBox, TextInputField, WrapperBox, FormFieldContainer, FormValuesListener, FormikInit } from "@/components";
+import { FormDatePicker, MainButton, SearchComboBox, TextInputField, WrapperBox, FormFieldContainer, FormValuesListener, FormikInit, MainTypography } from "@/components";
 import * as yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { TableCell } from "@mui/material";
@@ -9,6 +9,7 @@ import { getFacilities, useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { MdOutlineClose } from "react-icons/md";
 import ECTReactComponent from "@/components/form/ECTReactComponent";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
 
 interface Observation {
   obs_id: number | null;
@@ -30,6 +31,7 @@ interface ProcessedObservation {
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: ()=>void;
 };
 
 type Admission = {
@@ -54,6 +56,7 @@ const admissionTemplate: Admission = {
 
 const initialValues = {
   admissions: [admissionTemplate],
+  none: false
 };
 
 const admissionsFormConfig = {
@@ -98,8 +101,42 @@ const admissionsFormConfig = {
      }}
    />
   );
+
+  const admissionsSchema = yup.object().shape({
+
+    date: yup
+      .date()
+      .nullable()
+      .required("Admission date is required")
+      .typeError("Invalid date format")
+      .max(new Date(), "Admission date cannot be in the future"),
+    hospital: yup.string().nullable().required("Hospital name is required"),
+    ward: yup.string().nullable().required("Ward is required"),
+    diagnosis: yup.string().nullable().required("Diagnosis is required"),
+    interventions: yup.string().nullable().required("Interventions are required"),
+    discharge_instructions: yup
+      .string()
+      .nullable()
+      .required("Discharge instructions are required"),
+    follow_up_plans: yup
+      .string()
+      .nullable()
+      .required("Follow-up plans are required"),
+});
+
+export const schema = yup.object().shape({
+none: yup.boolean().required(),
+admissions: yup.array().when("none", {
+  is: false,
+  then: (schema) =>
+    schema
+      .of(admissionsSchema)
+      .min(1, "At least one medication must be added"),
+  otherwise: (schema) => schema.notRequired(),
+}),
+});
   
-export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
+export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const { params } = useParameters();
   const [formValues, setFormValues] = useState<any>({});
   const [hospitalOptions, setHospitalOptions] = useState<[]>();
@@ -118,30 +155,8 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   }
 
   const [showSelection, setShowSelection] = useState<ShowSelectionState>({});
-  const schema = yup.object().shape({
-    admissions: yup.array().of(
-      yup.object().shape({
-        date: yup
-          .date()
-          .nullable()
-          .required("Admission date is required")
-          .typeError("Invalid date format")
-          .max(new Date(), "Admission date cannot be in the future"),
-        hospital: yup.string().nullable().required("Hospital name is required"),
-        ward: yup.string().nullable().required("Ward is required"),
-        diagnosis: yup.string().nullable().required("Diagnosis is required"),
-        interventions: yup.string().nullable().required("Interventions are required"),
-        discharge_instructions: yup
-          .string()
-          .nullable()
-          .required("Discharge instructions are required"),
-        follow_up_plans: yup
-          .string()
-          .nullable()
-          .required("Follow-up plans are required"),
-      })
-    ),
-  });
+
+  
   
   const handleSubmit = async () => {
     if(formValues.none){
@@ -243,6 +258,12 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
     >
       {({ values, setFieldValue}) => (
         <>
+                                <div style={{marginBottom:"2ch"}}>
+                <LabelledCheckbox
+                  name="none"
+                  label="Patient has not been admitted"
+                />
+                </div>
           <FormValuesListener getValues={setFormValues} />
           
           <WrapperBox sx={{ mb: '2ch' }}>
@@ -255,43 +276,51 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                   renderFields={(item, index) => (
                     <>
                     <FormFieldContainer direction="row">
+                      <div>
                       <FormDatePicker
+                      disabled={formValues.none}
                         name={admissionsFormConfig.admission_date(index).name}
                         label={admissionsFormConfig.admission_date(index).label}
                         sx={{ background: "white", width: "220px" }}
                       />
-                  <div style={{ color: "red", fontSize: "0.875rem" }}>
+                  <MainTypography color="red" variant="subtitle2">
                     <ErrorMessage
                       name={admissionsFormConfig.admission_date(index).name}
                     />
+                  </MainTypography>
                   </div>
+                  <div>
                       <SearchComboBox
+                      disabled={formValues.none}
                         name={admissionsFormConfig.hospitals(index).name}
                         label={admissionsFormConfig.hospitals(index).label}
                         options={hospitalOptions?hospitalOptions:[]}
                         multiple={false}
                         sx={{ width: "320px" }}
                       />
-                    <div style={{ color: "red", fontSize: "0.875rem" }}>
+                    <MainTypography color="red" variant="subtitle2">
                     <ErrorMessage
                       name={admissionsFormConfig.hospitals(index).name}
                     />
+                  </MainTypography>
                   </div>
                   </FormFieldContainer>
                   <FormFieldContainer direction="column">
+                    <div>
                       <TextInputField
+                      disabled={formValues.none}
                         id={admissionsFormConfig.wards(index).name}
                         name={admissionsFormConfig.wards(index).name}
                         label={admissionsFormConfig.wards(index).label}
                         multiline={false}
                         sx={{ width: "420px", marginRight: "2ch" }}
                       />
-                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                     <MainTypography color="red" variant="subtitle2">
                     <ErrorMessage
                       name={admissionsFormConfig.wards(index).name}
                     />
+                  </MainTypography>
                   </div>
-                  
                   {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch", marginTop: "" }}>
                         <label style={{fontWeight: "bold" }}>
                         {formValues.admissions[index]["diagnosis"]}
@@ -312,50 +341,59 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                           iNo={100+index}
                         />
                         )}
-                      <div style={{ color: "red", fontSize: "0.875rem"}}>
+                      <MainTypography color="red" variant="subtitle2">
                         <ErrorMessage name={admissionsFormConfig.diagnosis(index).name} />
-                      </div>
+                      </MainTypography>
                   </FormFieldContainer>
                   <FormFieldContainer direction="column">
+                      <div>
                       <TextInputField
+                      disabled={formValues.none}
                         id={admissionsFormConfig.interventions(index).name}
                         name={admissionsFormConfig.interventions(index).name}
                         label={admissionsFormConfig.interventions(index).label}
                         multiline
                         rows={4}
                       />
-                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                      <MainTypography color="red" variant="subtitle2">
                     <ErrorMessage
                       name={admissionsFormConfig.interventions(index).name}
                     />
+                  </MainTypography>
                   </div>
                   </FormFieldContainer>
                   <FormFieldContainer direction="row">
+                    <div>
                       <TextInputField
+                      disabled={formValues.none}
                         id={admissionsFormConfig.discharge_instructions(index).name}
                         name={admissionsFormConfig.discharge_instructions(index).name}
                         label={admissionsFormConfig.discharge_instructions(index).label}
                         multiline
                         rows={4}
                       />
-                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                       <MainTypography color="red" variant="subtitle2">
                     <ErrorMessage
                       name={admissionsFormConfig.discharge_instructions(index).name}
                     />
+                  </MainTypography>
                   </div>
                   </FormFieldContainer>
                   <FormFieldContainer direction="row">
+                    <div>
                       <TextInputField
+                      disabled={formValues.none}
                         id={admissionsFormConfig.follow_up_plans(index).name}
                         name={admissionsFormConfig.follow_up_plans(index).name}
                         label={admissionsFormConfig.follow_up_plans(index).label}
                         multiline
                         rows={4}
                       />
-                       <div style={{ color: "red", fontSize: "0.875rem" }}>
+                       <MainTypography color="red" variant="subtitle2">
                     <ErrorMessage
                       name={admissionsFormConfig.follow_up_plans(index).name}
                     />
+                  </MainTypography>
                   </div>
                     </FormFieldContainer>
                     </>
@@ -365,7 +403,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
             </FieldArray>
           </WrapperBox>
   
-          <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+          <MainButton variant="secondary" title="Previous" type="button" onClick={onPrevious} sx={{ flex: 1, marginRight: '8px' }} />
           <MainButton onClick={() => {}} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
         </>
       )}
