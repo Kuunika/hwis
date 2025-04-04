@@ -389,11 +389,29 @@ export const VisitHistory = () => {
                         <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No exposure assessment data available.</Typography>
                     )}
                 </Box>
+                
+            </AccordionDetails>
+        </Accordion>
 
-                //========trying section =======
-
+        <Accordion
+                expanded={expandedAccordion === 'investigations-notes'}
+                onChange={handleAccordionChange('investigations-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="investigations-content"
+                    id="investigations-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Investigations
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
                 <Box sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>differentialDiagnosisMessage Notes</Typography>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>Differential Diagnosis</Typography>
                     {differentialDiagnosisMessage ? (
                         <Box sx={{ mb: 3 }}>
                             <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
@@ -407,9 +425,8 @@ export const VisitHistory = () => {
                         <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No differentialDiagnosisMessage data available.</Typography>
                     )}
                 </Box>
-                
-            </AccordionDetails>
-        </Accordion>
+                </AccordionDetails>
+            </Accordion>
     </>
 );
 

@@ -12,6 +12,8 @@ export const useExposureAssessment = (pData: any) => {
       (d: any) => d.encounter_type.uuid === encounters.EXPOSURE_ASSESSMENT
     );
 
+    //console.log("SEEEEE >>>>>>>>>",additionalFieldsEncounter)
+
     if (!additionalFieldsEncounter?.obs) return;
 
     const getObservation = (conceptName: string) => {
@@ -20,6 +22,7 @@ export const useExposureAssessment = (pData: any) => {
       );
     };
 
+   
     const observations = {
       temperature: getObservation(concepts.TEMPERATURE),
       rashOnCephalicFrontal: getObservation(concepts.RASH),
