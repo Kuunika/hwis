@@ -88,6 +88,7 @@ export const MedicalHistoryFlow = () => {
   const { data: allergenCats } = getConceptSet("Allergen Category");
   const surgeriesFormRef = useRef<HTMLDivElement | null>(null);
   const admissionsFormRef = useRef<HTMLDivElement | null>(null);
+  const conditionsFormRef = useRef<HTMLDivElement | null>(null);
 
   const {
     loading,
@@ -1227,17 +1228,19 @@ console.log(formData)
             onPrevious={handlePrevious}
             onSkip={handleSkip}
           />
+          <div ref={conditionsFormRef}>
           <PriorConditionsForm
             onSubmit={handleConditionsNext}
             onPrevious={handlePrevious}
             onSkip={()=>scrollToDiv(surgeriesFormRef)}
           ></PriorConditionsForm>
-
+            </div>
           <SubSteps parent={3}>
             <div ref={surgeriesFormRef}>
           <SurgeriesForm
             onSubmit={handleSurgeriesNext}
-            onSkip={handlePrevious}
+            onSkip={()=>scrollToDiv(admissionsFormRef)}
+            onPrevious={()=>scrollToDiv(conditionsFormRef)}
           />
           </div>
           <div ref={admissionsFormRef}>
