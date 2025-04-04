@@ -85,7 +85,7 @@ const conditionsSchema = Yup.object().shape({
 
 });
 
-export const schema = Yup.object().shape({
+const schema = Yup.object().shape({
   none: Yup.boolean().required(),
   conditions: Yup.array().when("none", {
     is: false,

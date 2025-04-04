@@ -102,7 +102,7 @@ const surgeriesSchema = Yup.object().shape({
 
 });
 
-export const schema = Yup.object().shape({
+const schema = Yup.object().shape({
   none: Yup.boolean().required(),
   surgeries: Yup.array().when("none", {
     is: false,

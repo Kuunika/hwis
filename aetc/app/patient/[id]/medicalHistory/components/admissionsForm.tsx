@@ -124,7 +124,7 @@ const admissionsFormConfig = {
       .required("Follow-up plans are required"),
 });
 
-export const schema = yup.object().shape({
+const schema = yup.object().shape({
 none: yup.boolean().required(),
 admissions: yup.array().when("none", {
   is: false,
