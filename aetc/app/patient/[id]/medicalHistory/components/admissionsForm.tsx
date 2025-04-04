@@ -13,7 +13,8 @@ import ECTReactComponent from "@/components/form/ECTReactComponent";
 interface Observation {
   obs_id: number | null;
   obs_group_id: number | null;
-  value: any;
+  value?: any;
+  value_text?: any;
   names: { name: string }[];
   children?: Observation[]; // To support nested children
 }
@@ -21,7 +22,8 @@ interface Observation {
 interface ProcessedObservation {
   obs_id: number | null;
   name: string | undefined;
-  value: any;
+  value?: any;
+  value_text?: any;
   children: ProcessedObservation[];
 }
 
@@ -142,7 +144,10 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
   });
   
   const handleSubmit = async () => {
-    await schema.validate(formValues);
+    if(formValues.none){
+      onSkip();
+      return;
+    }
     onSubmit(formValues);
   };
 
@@ -157,29 +162,27 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
 
     if (!historyLoading) {
       const observations: ProcessedObservation[] = [];
-
       admissionsEncounters?.forEach((encounter: { obs: Observation[] }) => {
         encounter.obs.forEach((observation) => {
           const value = observation.value;
       
-          // Format the observation data
           const obsData: ProcessedObservation = {
             obs_id: observation.obs_id,
             name: observation.names?.[0]?.name,
             value,
-            children: [],
+            children: observation.children
+              ? observation.children.map((child) => ({
+                  obs_id: child.obs_id,
+                  name: child.names?.[0]?.name,
+                  value_text: child.value_text,
+                  children: [],
+                }))
+              : [],
           };
       
-          if (observation.obs_group_id) {
-            // Find the parent observation and group it
-            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-            if (parent) {
-              parent.children.push(obsData);
-            }
-          } else {
-            // Add it to the top-level observations
+   
             observations.push(obsData);
-          }
+      
         });
         
         observations.sort((a, b) => new Date(b.value).getTime() - new Date(a.value).getTime());
@@ -208,7 +211,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip }: Prop) => {
                         <ul>
                             {item.children.map(child => (
                                 <li key={child.obs_id}>
-                                    {child.name}: {child.value}
+                                    {child.name}: {child.value_text}
                                 </li>
                             ))}
                         </ul>

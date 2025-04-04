@@ -1197,10 +1197,7 @@ export const MedicalHistoryFlow = () => {
       handleSubmitAll(index + 1);
     }, 2000);
   }
-
-
-  
- console.log(formData)
+console.log(formData)
 
   return (
     <>
@@ -1232,7 +1229,8 @@ export const MedicalHistoryFlow = () => {
           />
           <PriorConditionsForm
             onSubmit={handleConditionsNext}
-            onSkip={handlePrevious}
+            onPrevious={handlePrevious}
+            onSkip={()=>scrollToDiv(surgeriesFormRef)}
           ></PriorConditionsForm>
 
           <SubSteps parent={3}>
