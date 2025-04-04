@@ -10,11 +10,13 @@ import { concepts, durationOptions } from "@/constants";
 import { getAllDrugs } from "@/hooks/drugs";
 import { getFrequencyOptions } from "@/hooks/getFrequencyOptions";
 import { getFormulationOptions } from "@/hooks/getFormulationOptions";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
 
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: ()=>void;
 };
 
 type Medication = {
@@ -43,6 +45,7 @@ const medicationTemplate: Medication = {
 
 const initialValues = {
   medications: [medicationTemplate],
+  none: false
 };
 
 const medicationUnits = [
@@ -55,37 +58,63 @@ const medicationUnits = [
 ];
 
 
-// Validation schema
-const schema = yup.object().shape({
-  medications: yup.array().of(
-    yup.object().shape({
-      name: yup.string().required("Medication name is required"),
-      formulation: yup.string().required("Formulation is required"),
-      medication_dose: yup.number().required("Dose is required").positive("Dose must be greater than 0"),
-      medication_dose_unit: yup.string().required("Dose unit is required"),
-      medication_frequency: yup.string().required("Frequency is required"),
-      medication_duration: yup.number().required("Duration is required").positive("Duration must be greater than 0"),
-      medication_duration_unit: yup.string().required("Duration unit is required"),
-      medication_date_last_taken: yup
-        .date()
-        .nullable()
-        .required("Date of last taken is required")
-        .test('is-in-the-past', 'Date of last taken must be in the past', (value) => {
-          return value && value <= new Date(); // Ensure the date is in the past
-        })
-        .test('last-taken-after-prescription', 'Date of last taken cannot be before the date of last prescription', function(value) {
-          const { medication_date_of_last_prescription } = this.parent;
-          return !value || !medication_date_of_last_prescription || value >= medication_date_of_last_prescription; // Ensure it's not before the prescription date
-        }),
-      medication_date_of_last_prescription: yup
-        .date()
-        .nullable()
-        .required("Date of last prescription is required")
-        .test('is-in-the-past', 'Date of last prescription must be in the past', (value) => {
-          return value && value <= new Date(); // Ensure the date is in the past
-        }),
-    })
-  ),
+
+const medicationItemSchema = yup.object().shape({
+  name: yup.string().required("Medication name is required"),
+  formulation: yup.string().required("Formulation is required"),
+  medication_dose: yup
+    .number()
+    .required("Dose is required")
+    .positive("Dose must be greater than 0"),
+  medication_dose_unit: yup.string().required("Dose unit is required"),
+  medication_frequency: yup.string().required("Frequency is required"),
+  medication_duration: yup
+    .number()
+    .required("Duration is required")
+    .positive("Duration must be greater than 0"),
+  medication_duration_unit: yup.string().required("Duration unit is required"),
+  medication_date_last_taken: yup
+    .date()
+    .nullable()
+    .required("Date of last taken is required")
+    .test(
+      "is-in-the-past",
+      "Date of last taken must be in the past",
+      (value) => value && value <= new Date()
+    )
+    .test(
+      "last-taken-after-prescription",
+      "Date of last taken cannot be before the date of last prescription",
+      function (value) {
+        const { medication_date_of_last_prescription } = this.parent;
+        return (
+          !value ||
+          !medication_date_of_last_prescription ||
+          value >= medication_date_of_last_prescription
+        );
+      }
+    ),
+  medication_date_of_last_prescription: yup
+    .date()
+    .nullable()
+    .required("Date of last prescription is required")
+    .test(
+      "is-in-the-past",
+      "Date of last prescription must be in the past",
+      (value) => value && value <= new Date()
+    ),
+});
+
+export const schema = yup.object().shape({
+  none: yup.boolean().required(),
+  medications: yup.array().when("none", {
+    is: false,
+    then: (schema) =>
+      schema
+        .of(medicationItemSchema)
+        .min(1, "At least one medication must be added"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 const ErrorMessage = ({ name }: { name: string }) => (
@@ -99,7 +128,7 @@ const ErrorMessage = ({ name }: { name: string }) => (
  />
 );
 
-export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
+export const MedicationsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const { data } = getAllDrugs();
   const [medicationOptions, setMedicationOptions] = useState<{ id: string; label: string }[]>([]);
   const [otherFrequency, setOtherFrequency] = useState<{ [key: number]: boolean }>({});
@@ -127,9 +156,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       setMedicationOptions(formatMedicationOptions(data));
     }
   }, [data]);
-
+  
   const handleSubmit= async()=> {
-    await schema.validate(formValues);
+    if(formValues.none){
+      onSkip();
+      return;
+    }
     onSubmit(formValues);
   }
 
@@ -145,6 +177,12 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
       {({ values, setFieldValue }) => (
         <>
         <FormValuesListener getValues={setFormValues} />
+        <div style={{marginBottom:"2ch"}}>
+        <LabelledCheckbox
+          name="none"
+          label="Patient was not prescribed any medication"
+        />
+        </div>
           <FieldArray name="medications">
             {({ push, remove }) => (
               <DynamicFormList
@@ -152,7 +190,9 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                 setItems={(newItems) => setFieldValue("medications", newItems)}
                 newItem={medicationTemplate}
                 renderFields={(item, index) => (
-                  <><div>
+                  <>
+                  <div>
+                    
                     <SearchComboBox
                       name={`medications[${index}].name`}
                       label="Medication Name"
@@ -160,6 +200,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       getValue={(value) => setFieldValue(`medications[${index}].name`, value)}
                       sx={{ width: "200px" }}
                       multiple={false}
+                      disabled={formValues['none']}
                     />
                    <MainTypography color="red" variant="subtitle2">
                    <ErrorMessage
@@ -175,6 +216,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       getValue={(value) => setFieldValue(`medications[${index}].formulation`, value)}
                       sx={{ width: "200px" }}
                       multiple={false}
+                      disabled={formValues['none']}
                     />
                    <MainTypography color="red" variant="subtitle2">
                    <ErrorMessage
@@ -184,6 +226,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                    </div>
                    <div>
                     <UnitInputField
+                    disabled={formValues['none']}
                       id={`medications[${index}].medication_dose`}
                       label="Dose"
                       name={`medications[${index}].medication_dose`}
@@ -191,7 +234,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       unitOptions={medicationUnits}
                       placeholder="e.g., 500"
                       sx={{ width: "320px" }}
-                      inputIcon={<GiMedicines />}
+                      inputIcon={<GiMedicines
+                         />}
                     />
                     <MainTypography color="red" variant="subtitle2">
                    <ErrorMessage
@@ -203,6 +247,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       <>
                       <div>
                       <SearchComboBox
+                      disabled={formValues['none']}
                         name={`medications[${index}].medication_frequency`}
                         label="Frequency"
                         options={frequencyOptions}
@@ -224,6 +269,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       <>
                       <div>
                       <TextInputField
+                      disabled={formValues['none']}
                         id={`medications[${index}].medication_frequency`}
                         name={`medications[${index}].medication_frequency`}
                         label="Specify frequency"
@@ -239,6 +285,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                     )}
                     <div>
                     <UnitInputField
+                    disabled={formValues['none']}
                       id={`medications[${index}].medication_duration`}
                       name={`medications[${index}].medication_duration`}
                       unitName={`medications[${index}].medication_duration_unit`}
@@ -255,6 +302,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       </div>
                       <div>
                     <FormDatePicker
+                    disabled={formValues['none']}
                       name={`medications[${index}].medication_date_last_taken`}
                       label="Last Taken"
                       sx={{ width: "150px" }}
@@ -267,6 +315,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                       </div>
                       <div>
                     <FormDatePicker
+                    disabled={formValues['none']}
                       name={`medications[${index}].medication_date_of_last_prescription`}
                       label="Last Prescribed"
                       sx={{ width: "150px" }}
@@ -283,7 +332,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             )}
           </FieldArray>
           <WrapperBox sx={{mt: '2ch' }}>
-    <MainButton variant="secondary" title="Previous" type="button" onClick={onSkip} sx={{ flex: 1, marginRight: '8px' }} />
+    <MainButton variant="secondary" title="Previous" type="button" onClick={onPrevious} sx={{ flex: 1, marginRight: '8px' }} />
     <MainButton onClick={() => {}} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
   </WrapperBox>
         </>

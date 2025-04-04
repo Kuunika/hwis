@@ -48,8 +48,9 @@ export const LastMealForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
 
   const handleSubmit = async () => {
-    if(formValues.didnotEat){
+    if(formValues.didNotEat){
       onSkip();
+      return;
     }
 
     onSubmit(formValues);

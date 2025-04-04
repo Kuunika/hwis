@@ -1200,7 +1200,7 @@ export const MedicalHistoryFlow = () => {
 
 
   
- 
+ console.log(formData)
 
   return (
     <>
@@ -1227,7 +1227,8 @@ export const MedicalHistoryFlow = () => {
           />
           <MedicationsForm
             onSubmit={handleMedicationsNext}
-            onSkip={handlePrevious}
+            onPrevious={handlePrevious}
+            onSkip={handleSkip}
           />
           <PriorConditionsForm
             onSubmit={handleConditionsNext}
