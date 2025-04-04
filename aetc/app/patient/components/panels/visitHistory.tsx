@@ -422,7 +422,7 @@ export const VisitHistory = () => {
                             </Typography>
                         </Box>
                     ) : (
-                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No differentialDiagnosisMessage data available.</Typography>
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Differential Diagnosis Data available.</Typography>
                     )}
                 </Box>
                 </AccordionDetails>
