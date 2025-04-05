@@ -3,8 +3,8 @@ import { Obs } from "@/interfaces";
 import { useEffect, useState } from "react";
 
 
-export const useDifferentialDiagnosis = (data:any) =>{
-    const [differentialDiagnosisMessage, setDifferentialDiagnosisMessage] = useState<string | null>(null);
+export const useInvestigations = (data:any) =>{
+    const [investigationsMessage, setInvestigationsMessage] = useState<string | null>(null);
 
     useEffect(() => {
         if (!data) return;
@@ -61,7 +61,7 @@ export const useDifferentialDiagnosis = (data:any) =>{
         //   messages.push(`Urgent Sample: ${observations.urgentSampleValue.value}. `);
         // }
       
-        setDifferentialDiagnosisMessage(messages.join(""));
+        setInvestigationsMessage(messages.join(""));
       
       }, [data]);
 
@@ -161,7 +161,7 @@ export const useDifferentialDiagnosis = (data:any) =>{
   
       const formattedDate = new Date(observationDateTime).toLocaleString();
   
-      let messages = [`Differential Diagnosis Assessment recorded on ${formattedDate}.\n`];
+      let messages = [`Bed side data recorded on ${formattedDate}.\n`];
 
       if (observations.pH?.value) {
         messages.push(`PH is: ${observations.pH.value}. `);
@@ -299,8 +299,8 @@ export const useDifferentialDiagnosis = (data:any) =>{
         messages.push(`Other findings: ${observations.otherValues.value}. `);
       }
 
-      setDifferentialDiagnosisMessage(messages.join(""));
+      setInvestigationsMessage(messages.join(""));
     },[data]);
 
-    return differentialDiagnosisMessage;
+    return investigationsMessage;
 }

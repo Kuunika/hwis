@@ -17,7 +17,7 @@ import { ClinicalNotes } from "./clinicalNotes";
 import { AirwayAssessment } from "../clinicalNotes/airwayAssement";
 import { BreathingAssessment } from "../clinicalNotes/breathingAssement";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useDifferentialDiagnosis } from "../clinicalNotes/DifferentialDiagnosis";
+import { useInvestigations } from "../clinicalNotes/Investigations";
 
 
 // Styled components for accordion
@@ -62,7 +62,7 @@ export const VisitHistory = () => {
   const exposureMessage = useExposureAssessment(filteredEncounters);
   const disabilityMessage = useDisabilityAssessment(filteredEncounters);
   const circulationMessage = useCirculationAssessment(filteredEncounters)
-  const differentialDiagnosisMessage = useDifferentialDiagnosis(filteredEncounters)
+  const investigationsMessage = useInvestigations(filteredEncounters)
 
   // Filter encounters when patientHistory or visitDate changes
   useEffect(() => {
@@ -411,18 +411,18 @@ export const VisitHistory = () => {
                 </AccordionSummary>
                 <AccordionDetails>        
                 <Box sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>Differential Diagnosis</Typography>
-                    {differentialDiagnosisMessage ? (
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>Investigations</Typography>
+                    {investigationsMessage ? (
                         <Box sx={{ mb: 3 }}>
                             <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
-                                {differentialDiagnosisMessage.split("\n")[0]}
+                                {investigationsMessage.split("\n")[0]}
                             </Typography>
                             <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
-                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                                {investigationsMessage.split("\n").slice(1).join("\n")}
                             </Typography>
                         </Box>
                     ) : (
-                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Differential Diagnosis Data available.</Typography>
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Investigations Data available.</Typography>
                     )}
                 </Box>
                 </AccordionDetails>
