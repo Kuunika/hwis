@@ -2,100 +2,68 @@ import { conceptNames, concepts, encounters } from "@/constants";
 import { Obs } from "@/interfaces";
 import { useEffect, useState } from "react";
 
-// export const useDifferentialDiagnosis = (data:any) =>{
-//     const [differentialDiagnosisMessage, setDifferentialDiagnosisMessage] = useState<string | null>(null);
-
-//     useEffect(()=>{
-//         if(!data) return
-
-//         const fieldsEncounter = data.find(
-//             (d:any) => d.encounter_type.uuid === encounters.BED_SIDE_TEST
-//         )
-
-//         console.log("SEEEEE >>>>>>>>>",fieldsEncounter)
-// //bedside 
-// //BED_SIDE_TEST
-// //OUTPATIENT_DIAGNOSIS
-//         if(!fieldsEncounter?.obs) return;
-
-//         const getObservation = (conceptName: string) => {
-//             return fieldsEncounter.obs.find((ob: Obs) =>
-//               ob.names.some((n) => n.name === conceptName)
-//             );
-//           };
-    
-//         //   console.log("SEEEEE >>>>>>>>> ||||",getObservation)
-
-//           const observations = {
-//             MRDT:getObservation(concepts.MRDT),
-//             pH: getObservation(concepts.PH),
-//             pC02: getObservation(concepts.PCO2),
-//             metabolicValues: getObservation(concepts.LACTATE),
-//             metabolicValues1: getObservation(concepts.GLUCOSE),
-//             acidStatus: getObservation(concepts.HCO3),
-//             acidStatus1: getObservation(concepts.ANION_GAPC),
-//             acidStatus2: getObservation(concepts.MOSMC),
-//             oxymetryValues: getObservation(concepts.SO2E),
-//             oxymetryValues1: getObservation(concepts.FO2HBE),
-//             oxymetryValues2: getObservation(concepts.FHHBE),
-//             electrolyteValues: getObservation(concepts.CK),
-//             electrolyteValues1: getObservation(concepts.CNA),
-//             electrolyteValues2: getObservation(concepts.CA2),
-//             electrolyteValues3: getObservation(concepts.CCL),
-//             temperatureCorrectedteValues: getObservation(concepts.PH),
-//             temperatureCorrectedteValues1: getObservation(concepts.PCO2),
-//             temperatureCorrectedteValues2: getObservation(concepts.PO2),
-//             temperatureCorrectedteValues3: getObservation(concepts.P50E),
-//             pregnancyTestValues: getObservation(concepts.PREGNANCY_TEST),
-//             hivValues: getObservation(concepts.HIV),
-//             VDRLValues: getObservation(concepts.VDRL),
-//             UROBILINOGENValues: getObservation(concepts.UROBILINOGEN),
-//             pHValues: getObservation(concepts.PH),
-//             LEUKOCYTESValues: getObservation(concepts.LEUKOCYTES),
-//             glucoseValues: getObservation(concepts.GLUCOSE),
-//             specificGravityValues: getObservation(concepts.SPECIFIC_GRAVITY),
-//             nitrateValues: getObservation(concepts.NITRITE),
-//             ketonesVales: getObservation(concepts.KETONES),
-//             bilirubinVales: getObservation(concepts.BILIRUBIN),
-//             bloodValues: getObservation(concepts.BLOOD),
-//             ultraSoundValues: getObservation(concepts.POINT_OF_CARE_ULTRASOUND),
-//             ecgValues: getObservation(concepts.ECG),
-//             pefrValues: getObservation(concepts.PEFR),
-//             otherValues: getObservation(concepts.OTHER),
-
-//           }       
-
-//         const allObservationDates =[
-//             observations.pH?.obs_datetime,
-//             observations.pC02?.obs_datetime,
-//         ].filter(Boolean);
-
-
-//         const observationDateTime = allObservationDates.length > 0 
-//         ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
-//         : new Date().toISOString();
-  
-//       const formattedDate = new Date(observationDateTime).toLocaleString();
-  
-//       let messages = [`Differential Diagnosis Assessment recorded on ${formattedDate}.\n`];
-
-//          if (observations.pH?.value) {
-//             messages.push(`PH is: ${observations.pH.value}. `);
-//           }
-
-//           if (observations.pC02?.value) {
-//             messages.push(`pC02 is: ${observations.pC02.value}. `);
-//           }
-//           setDifferentialDiagnosisMessage(messages.join(""));
-//     },[data]);
-
-//     return differentialDiagnosisMessage;
-// }
-
-
 
 export const useDifferentialDiagnosis = (data:any) =>{
     const [differentialDiagnosisMessage, setDifferentialDiagnosisMessage] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!data) return;
+      
+        const fieldsEncounter = data.find(
+          (d: any) => d.encounter_type.uuid === encounters.BED_SIDE_TEST
+        );
+      
+        if (!fieldsEncounter?.obs) return;
+      
+        const getObservation = (conceptName: string) => {
+          return fieldsEncounter.obs.find((ob: Obs) =>
+            ob.names.some((n) => n.name === conceptName)
+          );
+        };
+      
+        const observations = {
+          sampleTypeValue: getObservation(concepts.BLOOD_SAMPLE),
+          // Keeping your commented-out observations
+          // testsValue: getObservation(concepts.TESTS),
+          // emergencyValue: getObservation(concepts.EMERGECY),
+          // urgentSampleValue: getObservation(concepts.URGENT_SAMPLE)
+        };
+      
+        // Only include dates from the observations we're actually using
+        const allObservationDates = [
+          observations.sampleTypeValue?.obs_datetime,
+          // Uncomment these if you enable the other observations
+          // observations.testsValue?.obs_datetime,
+          // observations.emergencyValue?.obs_datetime,
+          // observations.urgentSampleValue?.obs_datetime
+        ].filter(Boolean);
+      
+        const observationDateTime = allObservationDates.length > 0
+          ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
+          : new Date().toISOString();
+      
+        const formattedDate = new Date(observationDateTime).toLocaleString();
+      
+        let messages = [`Blood Sample Assessment recorded on ${formattedDate}.\n`];
+      
+        if (observations.sampleTypeValue?.value) {
+          messages.push(`Blood Sample Type: ${observations.sampleTypeValue.value}. `);
+        }
+      
+        // Uncomment these if you enable the other observations
+        // if (observations.testsValue?.value) {
+        //   messages.push(`Test Type: ${observations.testsValue.value}. `);
+        // }
+        // if (observations.emergencyValue?.value) {
+        //   messages.push(`Emergency Status: ${observations.emergencyValue.value}. `);
+        // }
+        // if (observations.urgentSampleValue?.value) {
+        //   messages.push(`Urgent Sample: ${observations.urgentSampleValue.value}. `);
+        // }
+      
+        setDifferentialDiagnosisMessage(messages.join(""));
+      
+      }, [data]);
 
     useEffect(()=>{
         if(!data) return
