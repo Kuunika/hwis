@@ -9,10 +9,74 @@ export const usePatientManagementPlan = (pData: any) => {
     if (!pData) return;
   
     const additionalFieldsEncounter = pData.find(
+      (d: any) => d.encounter_type.uuid === encounters.PATIENT_CARE_AREA
+    );
+    
+    if (!additionalFieldsEncounter?.obs) return;
+  
+    const getObservation = (conceptName: string) => {
+      return additionalFieldsEncounter.obs.find((ob: Obs) =>
+        ob.names.some((n) => n.name === conceptName)
+      );
+    };
+  
+    const observations = {
+      surgical: getObservation(concepts.SURGICAL),
+      MedicalBench: getObservation(concepts.MEDICAL_BENCH),
+      ShortStay: getObservation(concepts.SHORT_STAY),
+      isoloation: getObservation(concepts.ISOLATION),
+      trauma: getObservation(concepts.TRAUMA),
+    };
+  
+   
+    const allObservationDates = [
+      observations.surgical?.obs_datetime,
+      observations.MedicalBench?.obs_datetime,
+      observations.ShortStay?.obs_datetime,
+      observations.isoloation?.obs_datetime,
+      observations.trauma?.obs_datetime,
+      additionalFieldsEncounter.encounter_datetime
+    ].filter(Boolean);
+  
+ 
+    const observationDateTime = allObservationDates.length > 0 
+      ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
+      : new Date().toISOString();
+  
+    const formattedDate = new Date(observationDateTime).toLocaleString();
+  
+    let messages = [`Patient Care Area recorded on ${formattedDate}.\n`];
+  
+   
+    if (observations.surgical?.value) {
+      messages.push(`Surgical: ${observations.surgical.value}. `);
+    }
+    if (observations.MedicalBench?.value) {
+      messages.push(`Medical Bench: ${observations.MedicalBench.value}. `);
+    }
+    if (observations.ShortStay?.value) {
+      messages.push(`Short Stay: ${observations.ShortStay.value}. `);
+    }
+    if (observations.isoloation?.value) {
+      messages.push(`Isolation: ${observations.isoloation.value}. `);
+    }
+    if (observations.trauma?.value) {
+      messages.push(`Trauma: ${observations.trauma.value}. `);
+    }
+  
+
+    setPatientManagementPlanMessage(messages.join(""));
+  
+  }, [pData]);
+
+  useEffect(() => {
+    if (!pData) return;
+  
+    const additionalFieldsEncounter = pData.find(
       (d: any) => d.encounter_type.uuid === encounters.NON_PHARMACOLOGICAL
     );
     
-    console.log("the values of p managment are:",additionalFieldsEncounter)
+   
     if (!additionalFieldsEncounter?.obs) return;
 
     const getObservation = (conceptName: string) => {
