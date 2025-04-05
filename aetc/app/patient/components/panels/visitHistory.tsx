@@ -18,6 +18,8 @@ import { AirwayAssessment } from "../clinicalNotes/airwayAssement";
 import { BreathingAssessment } from "../clinicalNotes/breathingAssement";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useInvestigations } from "../clinicalNotes/Investigations";
+import { useDifferentialDiagnosis } from "../clinicalNotes/DifferentialDiagnosis";
+import { usePatientManagementPlan } from "../clinicalNotes/PatientManagmentPlan";
 
 
 // Styled components for accordion
@@ -63,6 +65,8 @@ export const VisitHistory = () => {
   const disabilityMessage = useDisabilityAssessment(filteredEncounters);
   const circulationMessage = useCirculationAssessment(filteredEncounters)
   const investigationsMessage = useInvestigations(filteredEncounters)
+  const differentialDiagnosisMessage = useDifferentialDiagnosis(filteredEncounters)
+  const patientManagementPlanMessage = usePatientManagementPlan(filteredEncounters)
 
   // Filter encounters when patientHistory or visitDate changes
   useEffect(() => {
@@ -423,6 +427,78 @@ export const VisitHistory = () => {
                         </Box>
                     ) : (
                         <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Investigations Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+            </Accordion>
+
+
+            <Accordion
+                expanded={expandedAccordion === 'differential-diagnosis-notes'}
+                onChange={handleAccordionChange('differential-diagnosis-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="differential-diagnosis-content"
+                    id="differential-diagnosis-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                    Differential Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}> Differential Diagnosis</Typography>
+                    {differentialDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {differentialDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Differential Diagnosis Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+            </Accordion>
+
+
+            <Accordion
+                expanded={expandedAccordion === 'patient-management-plan-notes'}
+                onChange={handleAccordionChange('patient-management-plan-notes')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="patient-management-plan-content"
+                    id="patient-management-plan-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                    Differential Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}> Differential Diagnosis</Typography>
+                    {differentialDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                                {differentialDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Differential Diagnosis Data available.</Typography>
                     )}
                 </Box>
                 </AccordionDetails>

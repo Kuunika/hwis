@@ -377,19 +377,19 @@ export const ClinicalNotes = () => {
             </Accordion>
 
             <Accordion
-                expanded={expandedAccordion === 'disposition-notes'}
-                onChange={handleAccordionChange('disposition-notes')}
+                expanded={expandedAccordion === 'patient-management-plan-notes'}
+                onChange={handleAccordionChange('patient-management-plan-notes')}
                 sx={{
                     backgroundColor: '#f5f5f5',
                 }}
             >
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    aria-controls="disposition-content"
-                    id="disposition-header"
+                    aria-controls="patient-management-plan-content"
+                    id="patient-management-plan-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Disposition
+                        Patient Management Plan
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
