@@ -1,89 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { concepts, encounters } from "@/constants";
-// import { Obs } from "@/interfaces";
-
-// export const usePatientManagmentPlan = (pData: any) => {
-//   const [patientManagmentPlanMessage, setPatientManagmentPlanMessage] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     if (!pData) return;
-  
-//     const additionalFieldsEncounter = pData.find(
-//       (d: any) => d.encounter_type.uuid === encounters.NON_PHARMACOLOGICAL
-//     );
- 
-//     //  console.log("Tione matenda",additionalFieldsEncounter)
-    
-//     if (!additionalFieldsEncounter?.obs) return;
-
-//     const getObservation = (conceptName: string) => {
-//       return additionalFieldsEncounter.obs.find((ob: Obs) =>
-//         ob.names.some((n) => n.name === conceptName)
-//       );
-//     };
-
-   
-//     const observations = {
-//         MinorSurgery: getObservation(concepts.MINOR_SURGERY),
-//         Suturing: getObservation(concepts.SUTURING),
-//         JointReduction: getObservation(concepts.JOINT_REDUCTION),
-//         FractureReduction:getObservation(concepts.FRACTURE_REDUCTION),
-//         IntercostalDrainInsertion:getObservation(concepts.INTERCOSTAL_DRAIN_INSERTION),
-//         Pleurocentesis:getObservation(concepts.PLEUROCENTESIS),
-//         Pericardiocentesis:getObservation(concepts.PERICARDIOCENTESISI),
-//         Paracentesis:getObservation(concepts.PARACENTESISI),
-//         LumbarPuncture:getObservation(concepts.LUMBER_PUNCTURE),
-//         IntravenousCannulation:getObservation(concepts.INTRAVENOUS_CANNULATION),
-//         CentralLineInsertion:getObservation(concepts.CENTRAL_LINE_INSERTION),
-//         UrethralCatheterization:getObservation(concepts.CATHETERIZATION_URETHRAL),
-//         SuprapubicCatheterization:getObservation(concepts.CATHETERIZATION_SUPRAPUBIC),
-//         Suctioning:getObservation(concepts.SUCTIONING),
-//         OropharyngealAirwayInsertion:getObservation(concepts.OROPHARYNGEAL_AIRWAY_INSERTION),
-//         NasopharyngealAirwayInsertion:getObservation(concepts.NASOPHARYNGEAL_AIRWAY_INSERTION),
-//         LaryngealMaskAirwayInsertion:getObservation(concepts.LARYNGEAL_MASK_AIRWAY_INSERTION),
-//         EndotrachealTubeInsertion:getObservation(concepts.ENDOTRACHEAL_TUBE_INSERTION),
-//         NasogastricTubeInsertion:getObservation(concepts.NASOGASTRIC_TUBE_INSERTION),
-//         ManualVentilation:getObservation(concepts.MANUAL_VENTILATION),
-//         ContinuousPositiveAirwayPressure:getObservation(concepts.CONTINUOUS_POSITIVE_AIRWAY_PRESSURE),
-//         WoundDressing:getObservation(concepts.WOUND_DRESSING),
-//         PatientEducation:getObservation(concepts.PATIENT_EDUCATION),
-//         Counselling:getObservation(concepts.COUNSELLING),
-//         Feeding:getObservation(concepts.FEEDING),
-//         Oxygenation:getObservation(concepts.OXYGENATION),
-//         ElectrocardiographMonitoring:getObservation(concepts.ELECTROCARDIOGRAPHY_MONITORING),
-//         TurningPatients:getObservation(concepts.TURNING_PATIENTS),
-//         OralCare:getObservation(concepts.ORAL_CARE),
-      
-//     };
-
-    
-//     const allObservationDates = [
-//        observations.MinorSurgery?.obs_datetime,
-//       additionalFieldsEncounter.encounter_datetime
-//     ].filter(Boolean); 
-
-   
-//     const observationDateTime = allObservationDates.length > 0 
-//       ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
-//       : new Date().toISOString();
-
-//     const formattedDate = new Date(observationDateTime).toLocaleString();
-
-//     let messages = [`Differential Diagnosis recorded on ${formattedDate}.\n`];
-
-//     // Temperature
-//     if (observations.MinorSurgery?.value) {
-//       messages.push(`Consitions Are: ${observations.MinorSurgery.value}. `);
-//     }
-
-    
-
-//     setPatientManagmentPlanMessage(messages.join(""));
-//   }, [pData]);
-
-//   return patientManagmentPlanMessage;
-// };
-
 import { useEffect, useState } from "react";
 import { concepts, encounters } from "@/constants";
 import { Obs } from "@/interfaces";
@@ -98,6 +12,7 @@ export const usePatientManagementPlan = (pData: any) => {
       (d: any) => d.encounter_type.uuid === encounters.NON_PHARMACOLOGICAL
     );
     
+    console.log("the values of p managment are:",additionalFieldsEncounter)
     if (!additionalFieldsEncounter?.obs) return;
 
     const getObservation = (conceptName: string) => {
@@ -183,6 +98,7 @@ export const usePatientManagementPlan = (pData: any) => {
     if (observations.MinorSurgery?.value) {
       messages.push(`Minor Surgery: ${observations.MinorSurgery.value}. `);
     }
+    
     if (observations.Suturing?.value) {
       messages.push(`Suturing: ${observations.Suturing.value}. `);
     }

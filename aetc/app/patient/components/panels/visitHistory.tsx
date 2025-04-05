@@ -482,23 +482,23 @@ export const VisitHistory = () => {
                     id="patient-management-plan-header"
                 >
                     <Typography variant="h6" fontWeight="bold">
-                    Differential Diagnosis
+                    Patient Management Plan
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>        
                 <Box sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}> Differential Diagnosis</Typography>
-                    {differentialDiagnosisMessage ? (
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}> Patient Management Plan</Typography>
+                    {patientManagementPlanMessage ? (
                         <Box sx={{ mb: 3 }}>
                             <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "bold" }}>
-                                {differentialDiagnosisMessage.split("\n")[0]}
+                                {patientManagementPlanMessage.split("\n")[0]}
                             </Typography>
                             <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
-                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                                {patientManagementPlanMessage.split("\n").slice(1).join("\n")}
                             </Typography>
                         </Box>
                     ) : (
-                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Differential Diagnosis Data available.</Typography>
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Patient Management Plan Data available.</Typography>
                     )}
                 </Box>
                 </AccordionDetails>
