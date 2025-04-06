@@ -1,41 +1,40 @@
-import { Typography, Box } from "@mui/material";
+"use client";
+import { Typography, Box, CircularProgress } from "@mui/material";
 import { useComponentNotes } from "@/hooks/useComponentNotes";
 import { encounters } from "@/constants";
 
-export const DisabilityAssessment = () => {
-  const { notes, isLoading } = useComponentNotes(encounters.DISABILITY_ASSESSMENT);
-
-  const isValidDate = (dateString: string) => {
-    return !isNaN(new Date(dateString).getTime());
-  };
+export const SurgicalNotes = () => {
+  const { notes, isLoading } = useComponentNotes(encounters.SURGICAL_HISTORY);
 
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+        <Box sx={{ p: 2 }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
+            Surgical History
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+            <CircularProgress size={40} />
+          </Box>
+        </Box>
+    );
   }
 
   return (
       <Box sx={{ p: 2 }}>
         <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-          Disability Assessment
+          Surgical History
         </Typography>
         {notes.length === 0 ? (
             <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-              No disability assessment data available.
+              No surgical history available.
             </Typography>
         ) : (
             notes.map((data, index) => (
-                <Box key={index} sx={{ mb: 2, position: 'relative' }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
-                    {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
+                <Box key={index} sx={{ mb: 0, position: 'relative' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 0 }}>
+                    {new Date(data.time).toLocaleString()}
                   </Typography>
-                  <Typography
-                      variant="body2"
-                      sx={{
-                        color: "text.primary",
-                        mb: 0,
-                        whiteSpace: 'pre-line' // Preserves line breaks
-                      }}
-                  >
+                  <Typography variant="body2" sx={{ color: "text.primary", mb: 0 }}>
                     {data.paragraph}
                   </Typography>
                   <Typography
@@ -48,7 +47,7 @@ export const DisabilityAssessment = () => {
                         mt: 0
                       }}
                   >
-                    ~{data.creator}
+                    ~ {data.creator}
                   </Typography>
                 </Box>
             ))
@@ -56,3 +55,5 @@ export const DisabilityAssessment = () => {
       </Box>
   );
 };
+
+export default SurgicalNotes;

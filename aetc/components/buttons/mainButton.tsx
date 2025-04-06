@@ -4,8 +4,9 @@ import { buttonStyles } from "./button.style";
 import { FC } from "react";
 
 type Props = {
-  variant?: "primary" | "secondary" | "text";
+  variant?: "primary" | "secondary" | "text"| "contained";
   title?: any;
+  startIcon?: any;
   onClick: (params?: any) => void;
   type?: "submit" | "button" | "reset";
   sx?: SxProps;
@@ -17,7 +18,7 @@ type Props = {
 
 export const MainButton: FC<Props> = ({
   variant = "primary",
-  title,
+  title, startIcon,
   onClick,
   type,
   sx,
