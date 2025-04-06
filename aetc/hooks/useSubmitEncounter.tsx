@@ -6,7 +6,9 @@ import { getDateTime } from "@/helpers/dateTime";
 
 export const useSubmitEncounter = (
   encounterType: string,
-  onDataSubmitComplete: () => void
+  onDataSubmitComplete: () => void,
+  patientuuid?: string,
+  visitId?: string
 ) => {
   const { mutate, isSuccess, isPending, data } =
     fetchConceptAndCreateEncounter();
@@ -21,8 +23,8 @@ export const useSubmitEncounter = (
 
     await mutate({
       encounterType,
-      visit: activeVisit?.uuid,
-      patient: params.id,
+      patient: patientuuid ? patientuuid : params.id,
+      visit: visitId ? visitId : activeVisit?.uuid,
       encounterDatetime: dateTime,
       obs,
     });

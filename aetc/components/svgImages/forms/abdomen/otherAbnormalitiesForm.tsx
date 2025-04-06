@@ -28,9 +28,6 @@ const form = {
 };
 
 const schema = Yup.object().shape({
-  [form.abnormality.name]: Yup.string()
-    .required()
-    .label(form.abnormality.label),
   [form.other.name]: Yup.string().label(form.other.label),
   [form.abnormalities.name]: Yup.array().label(form.abnormalities.label),
 });

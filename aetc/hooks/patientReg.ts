@@ -125,8 +125,9 @@ export const getPatientsWaitingForPrescreening = () => {
   return useQuery({
     queryKey: ["screening"],
     queryFn: getall,
-    enabled: true,
-    // refetchInterval: 1000 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
@@ -137,8 +138,9 @@ export const getPatientsWaitingForRegistrations = () => {
   return useQuery({
     queryKey: ["registration"],
     queryFn: getall,
-    enabled: true,
-    // refetchInterval: 1000 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
@@ -149,8 +151,9 @@ export const getPatientsWaitingForTriage = () => {
   return useQuery({
     queryKey: ["triage"],
     queryFn: getall,
-    enabled: true,
-    // refetchInterval: 1000 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 export const getPatientsWaitingForAssessment = () => {
@@ -160,7 +163,10 @@ export const getPatientsWaitingForAssessment = () => {
   return useQuery({
     queryKey: ["assessments"],
     queryFn: getall,
-    enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
+    // enabled: true,
   });
 };
 
@@ -182,7 +188,9 @@ export const getPatientsWaitingForAssessmentPaginated = (
       search,
     ],
     queryFn: getall,
-    enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
@@ -204,7 +212,9 @@ export const getPatientsWaitingForDispositionPaginated = (
       search,
     ],
     queryFn: getall,
-    enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
@@ -225,7 +235,10 @@ export const getOnePatient = (patientId: string) => {
   return useQuery({
     queryKey: ["patients", patientId],
     queryFn: getOne,
-    enabled: true,
+    enabled: !!patientId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 export const searchDDEPatient = (
@@ -322,7 +335,10 @@ export const getPatientVisitTypes = (id: string) => {
   return useQuery({
     queryKey: ["patient", id, "visits"],
     queryFn: getAll,
-    enabled: true,
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
@@ -332,7 +348,10 @@ export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
   return useQuery({
     queryKey: ["visits", id, "eligible"],
     queryFn: getAll,
-    enabled: true,
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
@@ -353,5 +372,8 @@ export const getAllDeathReports = () => {
   return useQuery({
     queryKey: ["death-reports"],
     queryFn: getAll,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };

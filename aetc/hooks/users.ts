@@ -43,7 +43,9 @@ export const getAllUsers = () => {
     return useQuery({
         queryKey: ["users"],
         queryFn: () => getall(),
-        enabled: true,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false, 
+        refetchOnReconnect: false,
     });
 };
 export const checkUsername = (username: string) => {
