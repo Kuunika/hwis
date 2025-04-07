@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f2d02be-60f9-43d7-be4b-2a5c6bea0138" name="Changes" comment="Merged">
-      <change afterPath="$PROJECT_DIR$/components/form/formDatePickerToday.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/form/formTimePickerNow.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/patient/[id]/primary-assessment/components/cprDialogForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/[id]/primary-assessment/components/cprDialogForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/patient/[id]/soap/components/soapForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/[id]/soap/components/soapForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/patient/[id]/soap/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/[id]/soap/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/panels/clinicalNotes.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/patient/components/panels/visitHistory.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/patient/components/panels/visitHistory.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/form/formDatePicker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/form/formDatePicker.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/form/formTimePicker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/form/formTimePicker.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/form/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/components/form/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/constants/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hooks/useComponentNotes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useComponentNotes.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +18,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -50,7 +43,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging refactoring-primary-secondary-survey-display",
+    "git-widget-placeholder": "harmonised-clinical-notes",
     "last_opened_file_path": "/Users/wisdom/Documents/Projects/Work/hwis/aetc/app/patient/components/clinicalNotes",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -64,6 +57,7 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/patient/components/clinicalNotes" />
+      <recent name="$PROJECT_DIR$/hooks" />
       <recent name="$PROJECT_DIR$/app/patient/components/visits" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -113,7 +107,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743071693600</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Merged">
+      <option name="closed" value="true" />
+      <created>1743500757608</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1743500757609</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -133,5 +135,34 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Merged" />
     <option name="LAST_COMMIT_MESSAGE" value="Merged" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/hooks/useComponentNotes.ts</url>
+          <line>67</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/patient/components/clinicalNotes/previousAdmissionsNotes.tsx</url>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/hooks/useComponentNotes.ts</url>
+          <line>549</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/hooks/useComponentNotes.ts</url>
+          <line>809</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
