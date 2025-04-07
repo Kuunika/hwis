@@ -173,6 +173,7 @@ export const encounters = {
   SURGICAL_NOTES_TEMPLATE_FORM: "389c3f51-558d-45d8-affa-d290a6015577",
   PRIMARY_DISABILITY_ASSESSMENT: "e0beb64f-603f-4e1d-8afd-2e2fae0d5e54",
   MEDICAL_IN_PATIENT: "",
+
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -1269,6 +1270,7 @@ export const concepts = {
   CPR_RECORD:"cpr record",
   INTERVENTION_LIST:"intervention list",
   CPR:"cpr",
+  IS_NORMAL: "is normal"
 };
 
 export const conceptNames = {

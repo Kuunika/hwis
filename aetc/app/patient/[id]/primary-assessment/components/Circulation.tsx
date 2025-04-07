@@ -33,6 +33,7 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CPRDialogForm } from "./cprDialogForm";
 import { getActivePatientDetails } from "@/hooks";
 import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
+import { CheckBoxNext } from "@/components/form/checkBoxNext";
 
 type Prop = {
   onSubmit: () => void;
@@ -321,6 +322,8 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const [legImage, setLegImage] = useState<Array<any>>([]);
   const [abdomenImage, setAbdomenImage] = useState<Array<any>>([]);
   const [cprDialog, setCprDialog] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+
   // const [bloodNotDoneOther, setBloodNotDoneOther] = useState(false);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
@@ -405,421 +408,437 @@ export const Circulation = ({ onSubmit }: Prop) => {
   };
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialValues}
-        onSubmit={handleSubmitForm}
-        submitButtonText="next"
-      >
-        <FormValuesListener getValues={setFormValues} />
-        <FormFieldContainerLayout title="Bleeding and Pulse Rate">
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.bleedingInfo.name}
-              label={form.bleedingInfo.label}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.pulseInfo.name}
-              label={form.pulseInfo.label}
-              options={radioOptions}
-              getValue={(value) => {
-                if (value == NO) {
-                  setCprDialog(true);
-                }
-              }}
-            />
-          </FieldsContainer>
-          {formValues[form.bleedingInfo.name] == YES && (
-            <>
-              <br />
-              <NotificationContainer message="Apply pressure" />
-              <br />
-              <TextInputField
-                multiline
-                rows={3}
-                sx={{ width: "100%" }}
-                name={form.bleedingActionDone.name}
-                id={form.bleedingActionDone.name}
-                label={form.bleedingActionDone.label}
+      <CheckBoxNext
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
+        onNext={(obs: any) => handleSubmit(obs)}
+        title="Tick if circulation is normal and there are no abnormalities"
+      />
+      {!isChecked && (
+        <FormikInit
+          validationSchema={schema}
+          initialValues={initialValues}
+          onSubmit={handleSubmitForm}
+          submitButtonText="next"
+        >
+          <FormValuesListener getValues={setFormValues} />
+          <FormFieldContainerLayout title="Bleeding and Pulse Rate">
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.bleedingInfo.name}
+                label={form.bleedingInfo.label}
+                options={radioOptions}
               />
-            </>
-          )}
-
-          {formValues[form.pulseInfo.name] == NO && (
-            <>
-              <NotificationContainer message="Start cardiopulmonary resuscitation" />
-              <CPRDialogForm
-                open={cprDialog}
-                onClose={() => setCprDialog(false)}
+              <RadioGroupInput
+                name={form.pulseInfo.name}
+                label={form.pulseInfo.label}
+                options={radioOptions}
+                getValue={(value) => {
+                  if (value == NO) {
+                    setCprDialog(true);
+                  }
+                }}
               />
-            </>
-          )}
-
-          {formValues[form.pulseInfo.name] == YES && (
-            <>
-              <br />
-              <TextInputField
-                name={form.pulse.name}
-                id={form.pulse.name}
-                label={form.pulse.label}
-                sx={{ width: "100%" }}
-              />
-              <FieldsContainer>
-                <RadioGroupInput
-                  name={form.pulseRate.name}
-                  label={form.pulseRate.label}
-                  options={pulseRates}
-                />
-                <RadioGroupInput
-                  name={form.capillaryInfo.name}
-                  label={form.capillaryInfo.label}
-                  options={capillaryRefillTimes}
-                />
-              </FieldsContainer>
-            </>
-          )}
-        </FormFieldContainerLayout>
-
-        <FormFieldContainerLayout title="Mucous and Peripherals">
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.mucousMembranesInfo.name}
-              label={form.mucousMembranesInfo.label}
-              options={sizeOfMucous}
-            />
-            <RadioGroupInput
-              name={form.assessPeripheries.name}
-              label={form.assessPeripheries.label}
-              options={[
-                { label: "Cold and clammy", value: "cold and clammy" },
-                { label: "Warm", value: "warm" },
-              ]}
-            />
-          </FieldsContainer>
-          {formValues[form.mucousMembranesInfo.name] == concepts.ABNORMAL && (
-            <SearchComboBox
-              label="Mucus Abnormal"
-              name={form.mucousAbnormal.name}
-              options={mucousAbnormal}
-            />
-          )}
-        </FormFieldContainerLayout>
-
-        <FormFieldContainerLayout title="Blood Pressure">
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.bloodPressureMeasured.name}
-              label={form.bloodPressureMeasured.label}
-              options={[
-                { label: "Done", value: concepts.DONE },
-                { label: "Not Done", value: concepts.NOT_DONE },
-                { label: "BP Unrecordable", value: concepts.BP_NOT_RECORDABLE },
-              ]}
-            />
-          </FieldsContainer>
-          {formValues[form.bloodPressureMeasured.name] == concepts.NOT_DONE && (
-            <>
-              <SearchComboBox
-                multiple={false}
-                name={form.reasonNotDone.name}
-                label={form.reasonNotDone.label}
-                options={notDoneReasons}
-              />
-              {formValues[form.reasonNotDone.name] == concepts.OTHER && (
+            </FieldsContainer>
+            {formValues[form.bleedingInfo.name] == YES && (
+              <>
+                <br />
+                <NotificationContainer message="Apply pressure" />
+                <br />
                 <TextInputField
                   multiline
                   rows={3}
-                  name={form.bloodPressureNotDoneOther.name}
-                  id={form.bloodPressureNotDoneOther.name}
-                  label={form.bloodPressureNotDoneOther.label}
-                  sx={{ width: "100%", mt: "1ch" }}
+                  sx={{ width: "100%" }}
+                  name={form.bleedingActionDone.name}
+                  id={form.bleedingActionDone.name}
+                  label={form.bleedingActionDone.label}
                 />
-              )}
-            </>
-          )}
-          {formValues[form.bloodPressureMeasured.name] ==
-            concepts.BP_NOT_RECORDABLE && (
-            <>
-              <TextInputField
-                sx={{ m: 0, width: "100%" }}
-                name={form.reasonNotRecorded.name}
-                label={form.reasonNotRecorded.label}
-                id={form.reasonNotRecorded.name}
+              </>
+            )}
+
+            {formValues[form.pulseInfo.name] == NO && (
+              <>
+                <NotificationContainer message="Start cardiopulmonary resuscitation" />
+                <CPRDialogForm
+                  open={cprDialog}
+                  onClose={() => setCprDialog(false)}
+                />
+              </>
+            )}
+
+            {formValues[form.pulseInfo.name] == YES && (
+              <>
+                <br />
+                <TextInputField
+                  name={form.pulse.name}
+                  id={form.pulse.name}
+                  label={form.pulse.label}
+                  sx={{ width: "100%" }}
+                />
+                <FieldsContainer>
+                  <RadioGroupInput
+                    name={form.pulseRate.name}
+                    label={form.pulseRate.label}
+                    options={pulseRates}
+                  />
+                  <RadioGroupInput
+                    name={form.capillaryInfo.name}
+                    label={form.capillaryInfo.label}
+                    options={capillaryRefillTimes}
+                  />
+                </FieldsContainer>
+              </>
+            )}
+          </FormFieldContainerLayout>
+
+          <FormFieldContainerLayout title="Mucous and Peripherals">
+            <FieldsContainer sx={{ alignItems: "flex-start" }}>
+              <RadioGroupInput
+                name={form.mucousMembranesInfo.name}
+                label={form.mucousMembranesInfo.label}
+                options={sizeOfMucous}
               />
-            </>
-          )}
-          {formValues[form.bloodPressureMeasured.name] == concepts.DONE && (
-            <>
-              <br />
-              <FieldsContainer mr="1ch">
-                <TextInputField
-                  sx={{ width: "100%" }}
-                  unitOfMeasure="mmHg"
-                  name={form.bloodPressureSystolic.name}
-                  label={form.bloodPressureSystolic.label}
-                  id={form.bloodPressureSystolic.name}
+              <RadioGroupInput
+                name={form.assessPeripheries.name}
+                label={form.assessPeripheries.label}
+                options={[
+                  { label: "Cold and clammy", value: "cold and clammy" },
+                  { label: "Warm", value: "warm" },
+                ]}
+              />
+            </FieldsContainer>
+            {formValues[form.mucousMembranesInfo.name] == concepts.ABNORMAL && (
+              <SearchComboBox
+                label="Mucus Abnormal"
+                name={form.mucousAbnormal.name}
+                options={mucousAbnormal}
+              />
+            )}
+          </FormFieldContainerLayout>
+
+          <FormFieldContainerLayout title="Blood Pressure">
+            <FieldsContainer sx={{ alignItems: "flex-start" }}>
+              <RadioGroupInput
+                name={form.bloodPressureMeasured.name}
+                label={form.bloodPressureMeasured.label}
+                options={[
+                  { label: "Done", value: concepts.DONE },
+                  { label: "Not Done", value: concepts.NOT_DONE },
+                  {
+                    label: "BP Unrecordable",
+                    value: concepts.BP_NOT_RECORDABLE,
+                  },
+                ]}
+              />
+            </FieldsContainer>
+            {formValues[form.bloodPressureMeasured.name] ==
+              concepts.NOT_DONE && (
+              <>
+                <SearchComboBox
+                  multiple={false}
+                  name={form.reasonNotDone.name}
+                  label={form.reasonNotDone.label}
+                  options={notDoneReasons}
                 />
-                <TextInputField
-                  sx={{ width: "100%" }}
-                  unitOfMeasure="mmHg"
-                  name={form.bloodPressureDiastolic.name}
-                  label={form.bloodPressureDiastolic.label}
-                  id={form.bloodPressureDiastolic.name}
-                />
-              </FieldsContainer>
-              {formValues[form.bloodPressureSystolic.name] &&
-                formValues[form.bloodPressureDiastolic.name] && (
-                  <Box>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{
-                        color:
-                          Math.round(
-                            (Number(
-                              formValues[form.bloodPressureDiastolic.name]
-                            ) *
-                              2 +
-                              Number(
-                                formValues[form.bloodPressureSystolic.name]
-                              )) /
-                              3
-                          ) < 65
-                            ? "red"
-                            : "inherit", // Use default text color if MAP is 65 or above
-                      }}
-                    >
-                      Mean Arterial Pressure:{" "}
-                      {Math.round(
-                        (Number(formValues[form.bloodPressureDiastolic.name]) *
-                          2 +
-                          Number(formValues[form.bloodPressureSystolic.name])) /
-                          3
-                      )}{" "}
-                      mmHg
-                    </Typography>
-                  </Box>
+                {formValues[form.reasonNotDone.name] == concepts.OTHER && (
+                  <TextInputField
+                    multiline
+                    rows={3}
+                    name={form.bloodPressureNotDoneOther.name}
+                    id={form.bloodPressureNotDoneOther.name}
+                    label={form.bloodPressureNotDoneOther.label}
+                    sx={{ width: "100%", mt: "1ch" }}
+                  />
                 )}
-
-              <br />
-            </>
-          )}
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Circulation Specific Trauma">
-          <RadioGroupInput
-            row
-            name={form.traumatizedInfo.name}
-            label={form.traumatizedInfo.label}
-            options={radioOptions}
-          />
-          {formValues[form.traumatizedInfo.name] == YES && (
-            <>
-              <RadioGroupInput
-                row
-                name={form.pelvisInfo.name}
-                label={form.pelvisInfo.label}
-                options={radioOptions}
-              />
-              {formValues[form.pelvisInfo.name] == YES && (
-                <>
-                  <NotificationContainer message="apply pelvic binder" />
-                </>
-              )}
-              <RadioGroupInput
-                row
-                name={form.femurAndTibiaNormalInfo.name}
-                label={form.femurAndTibiaNormalInfo.label}
-                options={radioOptions}
-              />
-
-              {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
-                <>
-                  <br />
-                  {/* <LowerLimbMaleAnteriorImage
-                    imageSection={form.femurAndTibiaNormalInfo.name}
-                    imageEncounter={encounters.CIRCULATION_ASSESSMENT}
-                    onValueChange={setLegImage}
-                  /> */}
-                  {gender == "Male" && (
-                    <LowerLimbMaleAnteriorImage
-                      imageSection={form.femurAndTibiaNormalInfo.name}
-                      imageEncounter={encounters.CIRCULATION_ASSESSMENT}
-                      onValueChange={setLegImage}
-                      form="deformity"
-                    />
-                  )}
-                  {gender == "Female" && (
-                    // <></>
-                    <LowerLimbFemaleAnteriorImage
-                      imageSection={form.femurAndTibiaNormalInfo.name}
-                      imageEncounter={encounters.CIRCULATION_ASSESSMENT}
-                      onValueChange={setLegImage}
-                      form="deformity"
-                    />
-                  )}
-                  {/* <LegAbnormalityImage
-                    imageSection={form.femurAndTibiaNormalInfo.name}
-                    imageEncounter={encounters.CIRCULATION_ASSESSMENT}
-                    onValueChange={setLegImage}
-                  /> */}
-                  <br />
-                </>
-              )}
-            </>
-          )}
-        </FormFieldContainerLayout>
-
-        <FormFieldContainerLayout title="Intravenous">
-          <RadioGroupInput
-            name={form.intravenousAccess.name}
-            label={form.intravenousAccess.label}
-            options={radioOptions}
-          />
-
-          {formValues[form.intravenousAccess.name] == YES && (
-            <>
-              <br />
-
-              <SearchComboBox
-                multiple
-                name={form.catheterInfo.name}
-                label={form.catheterInfo.label}
-                options={sizeOfCatheter}
-              />
-              <br />
-              <SearchComboBox
-                multiple
-                name={form.siteOfCannulation.name}
-                label={form.siteOfCannulation.label}
-                options={sitesOfCannulation}
-              />
-              {checkCanulationSite(
-                formValues[form.siteOfCannulation.name],
-                concepts.LEFT
-              ) && (
-                <>
-                  <Typography my={2} variant="h6">
-                    Left
-                  </Typography>
-                  <SearchComboBox
-                    name={form.diagramCannulationSite.name}
-                    label={form.diagramCannulationSite.label}
-                    options={[
-                      ...diagramSitesOfCannulation,
-                      ...(checkCanulationSite(
-                        formValues[form.catheterInfo.name],
-                        concepts.CENTRAL_LINE
-                      )
-                        ? [
-                            { id: concepts.FEMORAL, label: "Femoral" },
-                            { id: concepts.SUBCLAVIAN, label: "Subclavian" },
-                            {
-                              id: concepts.INTERNAL_JUGULAR,
-                              label: "Internal Jugular",
-                            },
-                          ]
-                        : []),
-                    ]}
+              </>
+            )}
+            {formValues[form.bloodPressureMeasured.name] ==
+              concepts.BP_NOT_RECORDABLE && (
+              <>
+                <TextInputField
+                  sx={{ m: 0, width: "100%" }}
+                  name={form.reasonNotRecorded.name}
+                  label={form.reasonNotRecorded.label}
+                  id={form.reasonNotRecorded.name}
+                />
+              </>
+            )}
+            {formValues[form.bloodPressureMeasured.name] == concepts.DONE && (
+              <>
+                <br />
+                <FieldsContainer mr="1ch">
+                  <TextInputField
+                    sx={{ width: "100%" }}
+                    unitOfMeasure="mmHg"
+                    name={form.bloodPressureSystolic.name}
+                    label={form.bloodPressureSystolic.label}
+                    id={form.bloodPressureSystolic.name}
                   />
-                </>
-              )}
-
-              {checkCanulationSite(
-                formValues[form.siteOfCannulation.name],
-                concepts.RIGHT
-              ) && (
-                <>
-                  <Typography my={2} variant="h6">
-                    Right
-                  </Typography>
-                  <SearchComboBox
-                    name={form.diagramCannulationSite.name}
-                    label={form.diagramCannulationSite.label}
-                    options={[
-                      ...diagramSitesOfCannulation,
-                      ...(checkCanulationSite(
-                        formValues[form.catheterInfo.name],
-                        concepts.CENTRAL_LINE
-                      )
-                        ? [
-                            { id: concepts.FEMORAL, label: "Femoral" },
-                            { id: concepts.SUBCLAVIAN, label: "Subclavian" },
-                            {
-                              id: concepts.INTERNAL_JUGULAR,
-                              label: "Internal Jugular",
-                            },
-                          ]
-                        : []),
-                    ]}
+                  <TextInputField
+                    sx={{ width: "100%" }}
+                    unitOfMeasure="mmHg"
+                    name={form.bloodPressureDiastolic.name}
+                    label={form.bloodPressureDiastolic.label}
+                    id={form.bloodPressureDiastolic.name}
                   />
-                </>
-              )}
+                </FieldsContainer>
+                {formValues[form.bloodPressureSystolic.name] &&
+                  formValues[form.bloodPressureDiastolic.name] && (
+                    <Box>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          color:
+                            Math.round(
+                              (Number(
+                                formValues[form.bloodPressureDiastolic.name]
+                              ) *
+                                2 +
+                                Number(
+                                  formValues[form.bloodPressureSystolic.name]
+                                )) /
+                                3
+                            ) < 65
+                              ? "red"
+                              : "inherit", // Use default text color if MAP is 65 or above
+                        }}
+                      >
+                        Mean Arterial Pressure:{" "}
+                        {Math.round(
+                          (Number(
+                            formValues[form.bloodPressureDiastolic.name]
+                          ) *
+                            2 +
+                            Number(
+                              formValues[form.bloodPressureSystolic.name]
+                            )) /
+                            3
+                        )}{" "}
+                        mmHg
+                      </Typography>
+                    </Box>
+                  )}
 
-              <br />
-            </>
-          )}
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout
-          last={true}
-          title="Circulation Specific Abdominal Findings"
-        >
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
+                <br />
+              </>
+            )}
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Circulation Specific Trauma">
             <RadioGroupInput
-              name={form.abdnomenDistention.name}
-              label={form.abdnomenDistention.label}
+              row
+              name={form.traumatizedInfo.name}
+              label={form.traumatizedInfo.label}
               options={radioOptions}
             />
-            {/* <RadioGroupInput
+            {formValues[form.traumatizedInfo.name] == YES && (
+              <>
+                <RadioGroupInput
+                  row
+                  name={form.pelvisInfo.name}
+                  label={form.pelvisInfo.label}
+                  options={radioOptions}
+                />
+                {formValues[form.pelvisInfo.name] == YES && (
+                  <>
+                    <NotificationContainer message="apply pelvic binder" />
+                  </>
+                )}
+                <RadioGroupInput
+                  row
+                  name={form.femurAndTibiaNormalInfo.name}
+                  label={form.femurAndTibiaNormalInfo.label}
+                  options={radioOptions}
+                />
+
+                {formValues[form.femurAndTibiaNormalInfo.name] == NO && (
+                  <>
+                    <br />
+                    {/* <LowerLimbMaleAnteriorImage
+                    imageSection={form.femurAndTibiaNormalInfo.name}
+                    imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                    onValueChange={setLegImage}
+                  /> */}
+                    {gender == "Male" && (
+                      <LowerLimbMaleAnteriorImage
+                        imageSection={form.femurAndTibiaNormalInfo.name}
+                        imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                        onValueChange={setLegImage}
+                        form="deformity"
+                      />
+                    )}
+                    {gender == "Female" && (
+                      // <></>
+                      <LowerLimbFemaleAnteriorImage
+                        imageSection={form.femurAndTibiaNormalInfo.name}
+                        imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                        onValueChange={setLegImage}
+                        form="deformity"
+                      />
+                    )}
+                    {/* <LegAbnormalityImage
+                    imageSection={form.femurAndTibiaNormalInfo.name}
+                    imageEncounter={encounters.CIRCULATION_ASSESSMENT}
+                    onValueChange={setLegImage}
+                  /> */}
+                    <br />
+                  </>
+                )}
+              </>
+            )}
+          </FormFieldContainerLayout>
+
+          <FormFieldContainerLayout title="Intravenous">
+            <RadioGroupInput
+              name={form.intravenousAccess.name}
+              label={form.intravenousAccess.label}
+              options={radioOptions}
+            />
+
+            {formValues[form.intravenousAccess.name] == YES && (
+              <>
+                <br />
+
+                <SearchComboBox
+                  multiple
+                  name={form.catheterInfo.name}
+                  label={form.catheterInfo.label}
+                  options={sizeOfCatheter}
+                />
+                <br />
+                <SearchComboBox
+                  multiple
+                  name={form.siteOfCannulation.name}
+                  label={form.siteOfCannulation.label}
+                  options={sitesOfCannulation}
+                />
+                {checkCanulationSite(
+                  formValues[form.siteOfCannulation.name],
+                  concepts.LEFT
+                ) && (
+                  <>
+                    <Typography my={2} variant="h6">
+                      Left
+                    </Typography>
+                    <SearchComboBox
+                      name={form.diagramCannulationSite.name}
+                      label={form.diagramCannulationSite.label}
+                      options={[
+                        ...diagramSitesOfCannulation,
+                        ...(checkCanulationSite(
+                          formValues[form.catheterInfo.name],
+                          concepts.CENTRAL_LINE
+                        )
+                          ? [
+                              { id: concepts.FEMORAL, label: "Femoral" },
+                              { id: concepts.SUBCLAVIAN, label: "Subclavian" },
+                              {
+                                id: concepts.INTERNAL_JUGULAR,
+                                label: "Internal Jugular",
+                              },
+                            ]
+                          : []),
+                      ]}
+                    />
+                  </>
+                )}
+
+                {checkCanulationSite(
+                  formValues[form.siteOfCannulation.name],
+                  concepts.RIGHT
+                ) && (
+                  <>
+                    <Typography my={2} variant="h6">
+                      Right
+                    </Typography>
+                    <SearchComboBox
+                      name={form.diagramCannulationSite.name}
+                      label={form.diagramCannulationSite.label}
+                      options={[
+                        ...diagramSitesOfCannulation,
+                        ...(checkCanulationSite(
+                          formValues[form.catheterInfo.name],
+                          concepts.CENTRAL_LINE
+                        )
+                          ? [
+                              { id: concepts.FEMORAL, label: "Femoral" },
+                              { id: concepts.SUBCLAVIAN, label: "Subclavian" },
+                              {
+                                id: concepts.INTERNAL_JUGULAR,
+                                label: "Internal Jugular",
+                              },
+                            ]
+                          : []),
+                      ]}
+                    />
+                  </>
+                )}
+
+                <br />
+              </>
+            )}
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout
+            last={true}
+            title="Circulation Specific Abdominal Findings"
+          >
+            <FieldsContainer sx={{ alignItems: "flex-start" }}>
+              <RadioGroupInput
+                name={form.abdnomenDistention.name}
+                label={form.abdnomenDistention.label}
+                options={radioOptions}
+              />
+              {/* <RadioGroupInput
               name={form.anyOtherAbnormalitiesOnAbdomen.name}
               label={form.anyOtherAbnormalitiesOnAbdomen.label}
               options={radioOptions}
             /> */}
-            {/* </FieldsContainer> */}
-            {/* {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
+              {/* </FieldsContainer> */}
+              {/* {formValues[form.anyOtherAbnormalitiesOnAbdomen.name] == YES && (
             <>
               <AbdomenImage onValueChange={setAbdomenImage} />
             </>
           )} */}
-            {/* <FieldsContainer> */}
-            <RadioGroupInput
-              name={form.abnormalitiesInfo.name}
-              label={form.abnormalitiesInfo.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-          {formValues[form.abnormalitiesInfo.name] == YES && (
-            <>
-              <br />
-              {/* <AbdomenImageWithOtherForm
+              {/* <FieldsContainer> */}
+              <RadioGroupInput
+                name={form.abnormalitiesInfo.name}
+                label={form.abnormalitiesInfo.label}
+                options={radioOptions}
+              />
+            </FieldsContainer>
+            {formValues[form.abnormalitiesInfo.name] == YES && (
+              <>
+                <br />
+                {/* <AbdomenImageWithOtherForm
                 imageEncounter={encounters.CIRCULATION_ASSESSMENT}
                 imageSection={form.abnormalitiesInfo.name}
                 onValueChange={setAbdomenOtherImage}
               /> */}
-              {gender == "Male" && (
-                <NewAbdomenImage
-                  formNameSection="other"
-                  onValueChange={setAbdomenOtherImage}
-                />
-              )}
-              {gender == "Female" && (
-                <NewAbdomenFemaleImage
-                  formNameSection="other"
-                  onValueChange={setAbdomenOtherImage}
-                />
-              )}
+                {gender == "Male" && (
+                  <NewAbdomenImage
+                    formNameSection="other"
+                    onValueChange={setAbdomenOtherImage}
+                  />
+                )}
+                {gender == "Female" && (
+                  <NewAbdomenFemaleImage
+                    formNameSection="other"
+                    onValueChange={setAbdomenOtherImage}
+                  />
+                )}
 
-              <br />
-            </>
-          )}
+                <br />
+              </>
+            )}
 
-          <TextInputField
-            sx={{ width: "100%", m: 0 }}
-            name={form.additionalNotes.name}
-            label={form.additionalNotes.label}
-            id={form.additionalNotes.name}
-          />
-        </FormFieldContainerLayout>
-      </FormikInit>
+            <TextInputField
+              sx={{ width: "100%", m: 0 }}
+              name={form.additionalNotes.name}
+              label={form.additionalNotes.label}
+              id={form.additionalNotes.name}
+            />
+          </FormFieldContainerLayout>
+        </FormikInit>
+      )}
     </ContainerLoaderOverlay>
   );
 };

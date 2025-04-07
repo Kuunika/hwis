@@ -24,6 +24,7 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getCachedConcept } from "@/helpers/data";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
+import { CheckBoxNext } from "@/components/form/checkBoxNext";
 
 const form = {
   respiratoryRate: {
@@ -231,6 +232,7 @@ const abnormalities = [
   { id: concepts.OTHER, label: "Other" },
 ];
 export const ChestForm = ({ onSubmit }: Prop) => {
+  const [isChecked, setIsChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [showSpecify, setShowSpecify] = useState(false);
   const [showAbnormalities, setShowAbnormalities] = useState(false);
@@ -371,88 +373,95 @@ export const ChestForm = ({ onSubmit }: Prop) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialsValues}
-        onSubmit={handleSubmitForm}
-        submitButtonText="Next"
-      >
-        <FormValuesListener getValues={setFormValues} />
-        <FormFieldContainerLayout title="Inspection (Lungs)">
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.respiratoryRate.name}
-            label={form.respiratoryRate.label}
-            id={form.respiratoryRate.name}
-          />
+      <CheckBoxNext
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
+        onNext={(obs: any) => handleSubmit(obs)}
+        title="Tick if circulation is normal and there are no abnormalities"
+      />
+      {!isChecked && (
+        <FormikInit
+          validationSchema={schema}
+          initialValues={initialsValues}
+          onSubmit={handleSubmitForm}
+          submitButtonText="Next"
+        >
+          <FormValuesListener getValues={setFormValues} />
+          <FormFieldContainerLayout title="Inspection (Lungs)">
+            <TextInputField
+              sx={{ width: "100%" }}
+              name={form.respiratoryRate.name}
+              label={form.respiratoryRate.label}
+              id={form.respiratoryRate.name}
+            />
 
-          <RadioGroupInput
-            sx={{ flex: 1 }}
-            row={true}
-            name={form.globalChestWallAbnormality.name}
-            label={form.globalChestWallAbnormality.label}
-            options={radioOptions}
-          />
-          {formValues[form.globalChestWallAbnormality.name] == YES && (
-            <>
-              <SearchComboBox
-                name={form.globalChestWallAbnormalityList.name}
-                label={form.globalChestWallAbnormality.label}
-                options={chestWallAbnormalities}
-                multiple
-              />
-              {Array.isArray(
-                formValues[form.globalChestWallAbnormalityList.name]
-              ) &&
-                formValues[form.globalChestWallAbnormalityList.name]?.find(
-                  (op: any) => op.id == concepts.OTHER
-                ) && (
-                  <TextInputField
-                    name={form.globalChestWallAbnormalityOther.name}
-                    label={form.globalChestWallAbnormalityOther.label}
-                    id={form.globalChestWallAbnormalityOther.name}
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "1ch" }}
+            <RadioGroupInput
+              sx={{ flex: 1 }}
+              row={true}
+              name={form.globalChestWallAbnormality.name}
+              label={form.globalChestWallAbnormality.label}
+              options={radioOptions}
+            />
+            {formValues[form.globalChestWallAbnormality.name] == YES && (
+              <>
+                <SearchComboBox
+                  name={form.globalChestWallAbnormalityList.name}
+                  label={form.globalChestWallAbnormality.label}
+                  options={chestWallAbnormalities}
+                  multiple
+                />
+                {Array.isArray(
+                  formValues[form.globalChestWallAbnormalityList.name]
+                ) &&
+                  formValues[form.globalChestWallAbnormalityList.name]?.find(
+                    (op: any) => op.id == concepts.OTHER
+                  ) && (
+                    <TextInputField
+                      name={form.globalChestWallAbnormalityOther.name}
+                      label={form.globalChestWallAbnormalityOther.label}
+                      id={form.globalChestWallAbnormalityOther.name}
+                      multiline
+                      rows={5}
+                      sx={{ width: "100%", mt: "1ch" }}
+                    />
+                  )}
+              </>
+            )}
+            <RadioGroupInput
+              sx={{ flex: 1 }}
+              row={true}
+              name={form.localizedChestAbnormality.name}
+              label={form.localizedChestAbnormality.label}
+              options={radioOptions}
+            />
+            {formValues[form.localizedChestAbnormality.name] == YES && (
+              <>
+                {gender == "Male" && (
+                  <LungFrontMaleImage
+                    onValueChange={setLocalizedChestImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="chestLung"
                   />
                 )}
-            </>
-          )}
-          <RadioGroupInput
-            sx={{ flex: 1 }}
-            row={true}
-            name={form.localizedChestAbnormality.name}
-            label={form.localizedChestAbnormality.label}
-            options={radioOptions}
-          />
-          {formValues[form.localizedChestAbnormality.name] == YES && (
-            <>
-              {gender == "Male" && (
-                <LungFrontMaleImage
-                  onValueChange={setLocalizedChestImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="chestLung"
-                />
-              )}
-              {gender == "Female" && (
-                <LungFrontFemaleImage
-                  onValueChange={setLocalizedChestImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="chestLung"
-                />
-              )}
-              {/* <ChestLung
+                {gender == "Female" && (
+                  <LungFrontFemaleImage
+                    onValueChange={setLocalizedChestImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="chestLung"
+                  />
+                )}
+                {/* <ChestLung
                 onValueChange={setLocalizedChestImagesEnc}
                 imageEncounter={encounters.CHEST_ASSESSMENT}
                 imageSection={form.localizedChestAbnormality.name}
               /> */}
-            </>
-          )}
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Palpation (Lungs)">
-          {/* <RadioGroupInput
+              </>
+            )}
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Palpation (Lungs)">
+            {/* <RadioGroupInput
             sx={{ flex: 1 }}
             row={true}
             name={form.chestWallAbnormality.name}
@@ -460,212 +469,213 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             options={radioOptions}
           /> */}
 
-          {formValues[form.chestWallAbnormality.name] == YES && (
-            <SearchComboBox
-              sx={{ mb: "2ch" }}
-              getValue={handleValueChange}
-              options={chestWallAbnormalities}
-              name={form.chestWallAbnormalities.name}
-              label={form.chestWallAbnormalities.label}
-            />
-          )}
-          {showSpecify && formValues[form.chestWallAbnormality.name] == YES && (
-            <TextInputField
-              sx={{ width: "100%" }}
-              name={form.otherSpecify.name}
-              label={form.otherSpecify.label}
-              id={form.otherSpecify.name}
-            />
-          )}
-          <RadioGroupInput
-            row={true}
-            name={form.chestExpansion.name}
-            options={chestExpansionOptions}
-            label={form.chestExpansion.label}
-          />
-          {(formValues[form.chestExpansion.name] == concepts.REDUCED ||
-            formValues[form.chestExpansion.name] == concepts.INCREASED) && (
-            <>
-              {gender == "Male" && (
-                <LungFrontMaleImage
-                  onValueChange={setChestExpansionImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="selectable"
+            {formValues[form.chestWallAbnormality.name] == YES && (
+              <SearchComboBox
+                sx={{ mb: "2ch" }}
+                getValue={handleValueChange}
+                options={chestWallAbnormalities}
+                name={form.chestWallAbnormalities.name}
+                label={form.chestWallAbnormalities.label}
+              />
+            )}
+            {showSpecify &&
+              formValues[form.chestWallAbnormality.name] == YES && (
+                <TextInputField
+                  sx={{ width: "100%" }}
+                  name={form.otherSpecify.name}
+                  label={form.otherSpecify.label}
+                  id={form.otherSpecify.name}
                 />
               )}
-              {gender == "Female" && (
-                <LungFrontFemaleImage
-                  onValueChange={setChestExpansionImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="selectable"
-                />
-              )}
-              {/* <ChestLung
+            <RadioGroupInput
+              row={true}
+              name={form.chestExpansion.name}
+              options={chestExpansionOptions}
+              label={form.chestExpansion.label}
+            />
+            {(formValues[form.chestExpansion.name] == concepts.REDUCED ||
+              formValues[form.chestExpansion.name] == concepts.INCREASED) && (
+              <>
+                {gender == "Male" && (
+                  <LungFrontMaleImage
+                    onValueChange={setChestExpansionImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="selectable"
+                  />
+                )}
+                {gender == "Female" && (
+                  <LungFrontFemaleImage
+                    onValueChange={setChestExpansionImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="selectable"
+                  />
+                )}
+                {/* <ChestLung
                 onValueChange={setChestExpansionImagesEnc}
                 imageEncounter={encounters.CHEST_ASSESSMENT}
                 imageSection={form.chestExpansion.name}
                 selectable={true}
               /> */}
-            </>
-          )}
-          <RadioGroupInput
-            row={true}
-            name={form.tactileFremitus.name}
-            options={chestExpansionOptions}
-            label={form.tactileFremitus.label}
-          />
-          {(formValues[form.tactileFremitus.name] == concepts.REDUCED ||
-            formValues[form.tactileFremitus.name] == concepts.INCREASED) && (
-            <>
-              {gender == "Male" && (
-                <LungFrontMaleImage
-                  onValueChange={setTactileFremitusImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="selectable"
-                />
-              )}
-              {gender == "Female" && (
-                <LungFrontFemaleImage
-                  onValueChange={setTactileFremitusImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="selectable"
-                />
-              )}
-              {/* <ChestLung
+              </>
+            )}
+            <RadioGroupInput
+              row={true}
+              name={form.tactileFremitus.name}
+              options={chestExpansionOptions}
+              label={form.tactileFremitus.label}
+            />
+            {(formValues[form.tactileFremitus.name] == concepts.REDUCED ||
+              formValues[form.tactileFremitus.name] == concepts.INCREASED) && (
+              <>
+                {gender == "Male" && (
+                  <LungFrontMaleImage
+                    onValueChange={setTactileFremitusImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="selectable"
+                  />
+                )}
+                {gender == "Female" && (
+                  <LungFrontFemaleImage
+                    onValueChange={setTactileFremitusImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="selectable"
+                  />
+                )}
+                {/* <ChestLung
                 selectable={true}
                 onValueChange={setTactileFremitusImagesEnc}
                 imageEncounter={encounters.CHEST_ASSESSMENT}
                 imageSection={form.tactileFremitus.name}
               /> */}
-            </>
-          )}
-        </FormFieldContainerLayout>
+              </>
+            )}
+          </FormFieldContainerLayout>
 
-        <FormFieldContainerLayout title="Palpation (Heart)">
-          <RadioGroupInput
-            row={true}
-            name={form.apexBeat.name}
-            options={apexBeatOptions}
-            label={form.apexBeat.label}
-          />
-          {formValues[form.apexBeat.name] == concepts.DISPLACED && (
-            <TextInputField
-              sx={{ width: "100%" }}
-              name={form.position.name}
-              id={form.position.name}
-              label={form.position.label}
+          <FormFieldContainerLayout title="Palpation (Heart)">
+            <RadioGroupInput
+              row={true}
+              name={form.apexBeat.name}
+              options={apexBeatOptions}
+              label={form.apexBeat.label}
             />
-          )}
+            {formValues[form.apexBeat.name] == concepts.DISPLACED && (
+              <TextInputField
+                sx={{ width: "100%" }}
+                name={form.position.name}
+                id={form.position.name}
+                label={form.position.label}
+              />
+            )}
 
-          <RadioGroupInput
-            row={true}
-            name={form.thrill.name}
-            options={radioOptions}
-            label={form.thrill.label}
-          />
-          {formValues[form.thrill.name] == YES && (
-            <TextInputField
-              sx={{ width: "100%" }}
-              multiline
-              rows={5}
-              name={form.thrillDescription.name}
-              id={form.thrillDescription.name}
-              label={form.thrillDescription.label}
+            <RadioGroupInput
+              row={true}
+              name={form.thrill.name}
+              options={radioOptions}
+              label={form.thrill.label}
             />
-          )}
-          <RadioGroupInput
-            row={true}
-            name={form.heaves.name}
-            options={radioOptions}
-            label={form.heaves.label}
-          />
-          {formValues[form.heaves.name] == YES && (
-            <TextInputField
-              sx={{ width: "100%" }}
-              multiline
-              rows={5}
-              name={form.heavesDescription.name}
-              id={form.heavesDescription.name}
-              label={form.heavesDescription.label}
+            {formValues[form.thrill.name] == YES && (
+              <TextInputField
+                sx={{ width: "100%" }}
+                multiline
+                rows={5}
+                name={form.thrillDescription.name}
+                id={form.thrillDescription.name}
+                label={form.thrillDescription.label}
+              />
+            )}
+            <RadioGroupInput
+              row={true}
+              name={form.heaves.name}
+              options={radioOptions}
+              label={form.heaves.label}
             />
-          )}
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Percussion">
-          <RadioGroupInput
-            row={true}
-            name={form.percussion.name}
-            options={percussionOptions}
-            label={form.percussion.label}
-          />
-          {formValues[form.percussion.name] == concepts.ABNORMAL && (
-            <>
-              {gender == "Male" && (
-                <LungFrontMaleImage
-                  onValueChange={setPercussionImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="percussion"
-                />
-              )}
-              {gender == "Female" && (
-                <LungFrontFemaleImage
-                  onValueChange={setPercussionImagesEnc}
-                  imageEncounter={encounters.CHEST_ASSESSMENT}
-                  imageSection={form.localizedChestAbnormality.name}
-                  form="percussion"
-                />
-              )}
-              {/* <ChestLung
+            {formValues[form.heaves.name] == YES && (
+              <TextInputField
+                sx={{ width: "100%" }}
+                multiline
+                rows={5}
+                name={form.heavesDescription.name}
+                id={form.heavesDescription.name}
+                label={form.heavesDescription.label}
+              />
+            )}
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Percussion">
+            <RadioGroupInput
+              row={true}
+              name={form.percussion.name}
+              options={percussionOptions}
+              label={form.percussion.label}
+            />
+            {formValues[form.percussion.name] == concepts.ABNORMAL && (
+              <>
+                {gender == "Male" && (
+                  <LungFrontMaleImage
+                    onValueChange={setPercussionImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="percussion"
+                  />
+                )}
+                {gender == "Female" && (
+                  <LungFrontFemaleImage
+                    onValueChange={setPercussionImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="percussion"
+                  />
+                )}
+                {/* <ChestLung
                 selectable={true}
                 onValueChange={setTactileFremitusImagesEnc}
                 imageEncounter={encounters.CHEST_ASSESSMENT}
                 imageSection={form.tactileFremitus.name}
               /> */}
 
-              {/* <PercussionChestLung
+                {/* <PercussionChestLung
                 onValueChange={setPercussionImagesEnc}
                 imageSection={form.percussion.name}
                 imageEncounter={encounters.CHEST_ASSESSMENT}
               /> */}
-            </>
-          )}
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Auscultation (Lungs)">
-          {gender == "Male" && (
-            <LungFrontMaleImage
-              onValueChange={setBreathingSoundsImagesEnc}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-              imageSection={form.localizedChestAbnormality.name}
-              form="breathingSoundChest"
-            />
-          )}
-          {gender == "Female" && (
-            // <></>
-            <LungFrontFemaleImage
-              onValueChange={setBreathingSoundsImagesEnc}
-              imageEncounter={encounters.CHEST_ASSESSMENT}
-              imageSection={form.localizedChestAbnormality.name}
-              form="breathingSoundChest"
-            />
-          )}
-          {/* <BreathingSoundsChestLung
+              </>
+            )}
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Auscultation (Lungs)">
+            {gender == "Male" && (
+              <LungFrontMaleImage
+                onValueChange={setBreathingSoundsImagesEnc}
+                imageEncounter={encounters.CHEST_ASSESSMENT}
+                imageSection={form.localizedChestAbnormality.name}
+                form="breathingSoundChest"
+              />
+            )}
+            {gender == "Female" && (
+              // <></>
+              <LungFrontFemaleImage
+                onValueChange={setBreathingSoundsImagesEnc}
+                imageEncounter={encounters.CHEST_ASSESSMENT}
+                imageSection={form.localizedChestAbnormality.name}
+                form="breathingSoundChest"
+              />
+            )}
+            {/* <BreathingSoundsChestLung
             imageEncounter={encounters.CHEST_ASSESSMENT}
             // imageSection={form.breathingSounds.name}
             onValueChange={setBreathingSoundsImagesEnc}
           /> */}
 
-          {/* {formValues[form.breathingSounds.name] == concepts.ABNORMAL && (
+            {/* {formValues[form.breathingSounds.name] == concepts.ABNORMAL && (
             <BreathingSoundsChestLung
               imageEncounter={encounters.CHEST_ASSESSMENT}
               imageSection={form.breathingSounds.name}
               onValueChange={setBreathingSoundsImagesEnc}
             />
           )} */}
-          {/* <RadioGroupInput
+            {/* <RadioGroupInput
             row
             name={form.vocalFremitus.name}
             label={form.vocalFremitus.label}
@@ -680,84 +690,85 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               selectable
             />
           )} */}
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Auscultation (Chest)">
-          <RadioGroupInput
-            row
-            name={form.heartSounds.name}
-            label={form.heartSounds.label}
-            options={percussionOptions}
-          />
-          {formValues[form.heartSounds.name] == concepts.ABNORMAL && (
-            <>
-              <SearchComboBox
-                getValue={(values) => {
-                  if (!values) return;
-                  setShowAbnormalities(
-                    Boolean(
-                      values.find(
-                        (v: any) =>
-                          v.id == getCachedConcept(concepts.MURMUR)?.uuid
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Auscultation (Chest)">
+            <RadioGroupInput
+              row
+              name={form.heartSounds.name}
+              label={form.heartSounds.label}
+              options={percussionOptions}
+            />
+            {formValues[form.heartSounds.name] == concepts.ABNORMAL && (
+              <>
+                <SearchComboBox
+                  getValue={(values) => {
+                    if (!values) return;
+                    setShowAbnormalities(
+                      Boolean(
+                        values.find(
+                          (v: any) =>
+                            v.id == getCachedConcept(concepts.MURMUR)?.uuid
+                        )
                       )
-                    )
-                  );
-                  setShowAbnormalitiesOther(
-                    Boolean(
-                      values.find(
-                        (v: any) =>
-                          v.id == getCachedConcept(concepts.OTHER)?.uuid
+                    );
+                    setShowAbnormalitiesOther(
+                      Boolean(
+                        values.find(
+                          (v: any) =>
+                            v.id == getCachedConcept(concepts.OTHER)?.uuid
+                        )
                       )
-                    )
-                  );
-                }}
-                name={form.abnormalities.name}
-                label={form.abnormalities.label}
-                options={abnormalities}
-              />
+                    );
+                  }}
+                  name={form.abnormalities.name}
+                  label={form.abnormalities.label}
+                  options={abnormalities}
+                />
 
-              {showAbnormalities && (
-                <>
-                  <FieldsContainer sx={{ mt: "1ch" }} mr="1ch">
+                {showAbnormalities && (
+                  <>
+                    <FieldsContainer sx={{ mt: "1ch" }} mr="1ch">
+                      <TextInputField
+                        name={form.location.name}
+                        label={form.location.label}
+                        id={form.location.name}
+                      />
+                      <TextInputField
+                        name={form.type.name}
+                        label={form.type.label}
+                        id={form.type.name}
+                      />
+                    </FieldsContainer>
+                  </>
+                )}
+                {showAbnormalitiesOther && (
+                  <>
+                    <br />
                     <TextInputField
-                      name={form.location.name}
-                      label={form.location.label}
-                      id={form.location.name}
+                      multiline
+                      rows={5}
+                      sx={{ width: "100%" }}
+                      name={form.abnormalityOther.name}
+                      label={form.abnormalityOther.label}
+                      id={form.abnormalityOther.name}
                     />
-                    <TextInputField
-                      name={form.type.name}
-                      label={form.type.label}
-                      id={form.type.name}
-                    />
-                  </FieldsContainer>
-                </>
-              )}
-              {showAbnormalitiesOther && (
-                <>
-                  <br />
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%" }}
-                    name={form.abnormalityOther.name}
-                    label={form.abnormalityOther.label}
-                    id={form.abnormalityOther.name}
-                  />
-                </>
-              )}
-            </>
-          )}
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout title="Additional Notes">
-          <TextInputField
-            sx={{ width: "100%" }}
-            name={form.additionalNotes.name}
-            label={form.additionalNotes.label}
-            id={form.additionalNotes.name}
-            multiline
-            rows={5}
-          />
-        </FormFieldContainerLayout>
-      </FormikInit>
+                  </>
+                )}
+              </>
+            )}
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Additional Notes">
+            <TextInputField
+              sx={{ width: "100%" }}
+              name={form.additionalNotes.name}
+              label={form.additionalNotes.label}
+              id={form.additionalNotes.name}
+              multiline
+              rows={5}
+            />
+          </FormFieldContainerLayout>
+        </FormikInit>
+      )}
     </ContainerLoaderOverlay>
   );
 };

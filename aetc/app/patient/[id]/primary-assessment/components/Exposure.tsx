@@ -16,6 +16,7 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getOnePatient } from "@/hooks/patientReg";
 import { getActivePatientDetails, useParameters } from "@/hooks";
 import { CheckBox } from "@mui/icons-material";
+import { CheckBoxNext } from "@/components/form/checkBoxNext";
 
 type Props = {
   onSubmit: () => void;
@@ -103,85 +104,95 @@ export const Exposure = ({ onSubmit }: Props) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialValues}
-        onSubmit={handleFormSubmit}
-        submitButtonText="submit"
-      >
-        <FormValuesListener getValues={setFormValues} />
+      <CheckBoxNext
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
+        onNext={(obs: any) => handleSubmit(obs)}
+        title="Tick if circulation is normal and there are no abnormalities"
+      />
+      {!isChecked && (
+        <FormikInit
+          validationSchema={schema}
+          initialValues={initialValues}
+          onSubmit={handleFormSubmit}
+          submitButtonText="submit"
+        >
+          <FormValuesListener getValues={setFormValues} />
 
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={form.temperatureInfo.name}
-          label={form.temperatureInfo.label}
-          id={form.temperatureInfo.name}
-        />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={form.temperatureInfo.name}
+            label={form.temperatureInfo.label}
+            id={form.temperatureInfo.name}
+          />
 
-        <br />
-        <FormControlLabel
-          label="Tick if the body is normal and there are no abnormalities"
-          control={
-            <Checkbox
-              checked={isChecked}
-              onChange={(event) => {
-                setIsChecked(event.currentTarget.checked);
-              }}
-            />
-          }
-        />
+          <br />
+          <FormControlLabel
+            label="Tick if the body is normal and there are no abnormalities"
+            control={
+              <Checkbox
+                checked={isChecked}
+                onChange={(event) => {
+                  setIsChecked(event.currentTarget.checked);
+                }}
+              />
+            }
+          />
 
-        {!isChecked && (
-          <>
-            <Typography color={"grey"} variant="h5">
-              Select areas with rash, injuries and other abnormalities
-            </Typography>
-            <br />{" "}
-            {gender == "Male" && (
-              <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                <Box
-                  sx={{
-                    width: "60ch",
-                  }}
-                >
-                  <FullBodyImage onValueChange={setFullImageFront} />
+          {!isChecked && (
+            <>
+              <Typography color={"grey"} variant="h5">
+                Select areas with rash, injuries and other abnormalities
+              </Typography>
+              <br />{" "}
+              {gender == "Male" && (
+                <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                  <Box
+                    sx={{
+                      width: "60ch",
+                    }}
+                  >
+                    <FullBodyImage onValueChange={setFullImageFront} />
+                  </Box>
+                  <Box
+                    sx={{
+                      width: "60ch",
+                    }}
+                  >
+                    <FullBodyBackImage onValueChange={setFullImageBack} />
+                  </Box>
                 </Box>
-                <Box
-                  sx={{
-                    width: "60ch",
-                  }}
-                >
-                  <FullBodyBackImage onValueChange={setFullImageBack} />
+              )}
+              {gender == "Female" && (
+                <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                  <Box
+                    sx={{
+                      width: "60ch",
+                    }}
+                  >
+                    <FullBodyFemaleFrontImage
+                      onValueChange={setFullImageFront}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      width: "60ch",
+                    }}
+                  >
+                    <FullBodyFemaleBackImage onValueChange={setFullImageBack} />
+                  </Box>
                 </Box>
-              </Box>
-            )}
-            {gender == "Female" && (
-              <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                <Box
-                  sx={{
-                    width: "60ch",
-                  }}
-                >
-                  <FullBodyFemaleFrontImage onValueChange={setFullImageFront} />
-                </Box>
-                <Box
-                  sx={{
-                    width: "60ch",
-                  }}
-                >
-                  <FullBodyFemaleBackImage onValueChange={setFullImageBack} />
-                </Box>
-              </Box>
-            )}
-          </>
-        )}
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={form.additionalNotes.name}
-          label={form.additionalNotes.label}
-          id={form.additionalNotes.name}
-        />
-      </FormikInit>
+              )}
+            </>
+          )}
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={form.additionalNotes.name}
+            label={form.additionalNotes.label}
+            id={form.additionalNotes.name}
+          />
+        </FormikInit>
+      )}
     </ContainerLoaderOverlay>
   );
 };
