@@ -25,6 +25,7 @@ interface ProcessedObservation {
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: () => void;
 };
 
 type Allergy = {
@@ -60,7 +61,7 @@ const allergiesFormConfig = {
   },
 };
 
-export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
+export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [allergySelected, setAllergySelected] = useState<Allergy[]>([]);
   const [showFoodOther, setShowFoodOther] = useState<boolean | null>(null);
@@ -138,7 +139,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherFoodAllergy = flatAllergies.some(
-          (allergy: any) => allergy.value === allergiesFormConfig.otherFood.name
+          (allergy: any) => allergy.label === concepts.OTHER_FOOD_ALLERGEN
         );
 
         return hasOtherFoodAllergy
@@ -153,7 +154,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherMedicationAllergy = flatAllergies.some(
-          (allergy: any) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY
+          (allergy: any) => allergy.label === concepts.OTHER_MEDICATION_ALLERGEN
         );
 
         return hasOtherMedicationAllergy
@@ -167,7 +168,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherMedicalSubstanceAllergy = flatAllergies.some(
           (allergy: any) =>
-            allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY
+            allergy.label === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGEN
         );
 
         return hasOtherMedicalSubstanceAllergy
@@ -182,7 +183,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherSubstanceAllergy = flatAllergies.some(
-          (allergy: any) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY
+          (allergy: any) => allergy.label === concepts.OTHER_SUBSTANCE_ALLERGEN
         );
 
         return hasOtherSubstanceAllergy
@@ -201,6 +202,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   const handleSubmit = async () => {
+  
     await schema.validate(formValues);
 
     const allergyListKey = concepts.ALLERGY;
@@ -227,11 +229,15 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       }
     });
 
-    return;
+    
     onSubmit(formValues);
   };
 
-  useEffect(() => {}, [allergySelected]);
+  useEffect(() => {
+      const isNone = allergySelected.find((allergy: any) => allergy.value === "None");
+      
+      if(isNone) onSkip();
+  }, [allergySelected]);
 
   return (
     <>
@@ -341,7 +347,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
             variant="secondary"
             title="Previous"
             type="button"
-            onClick={onSkip}
+            onClick={onPrevious}
             sx={{ flex: 1, marginRight: "8px" }}
           />
           <MainButton

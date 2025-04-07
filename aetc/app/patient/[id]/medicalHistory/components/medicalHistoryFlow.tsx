@@ -1221,7 +1221,8 @@ console.log(formData)
           <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
           <AllergiesForm
             onSubmit={handleAllergiesNext}
-            onSkip={handlePrevious}
+            onSkip={handleSkip}
+            onPrevious={handlePrevious}
           />
           <MedicationsForm
             onSubmit={handleMedicationsNext}

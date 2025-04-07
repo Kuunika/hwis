@@ -69,7 +69,7 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
   };
 
   const initialValues = {
-    complaints: [complaintsTemplate],
+    complaints: [complaintsTemplate]
   };
 
   const schema = Yup.object().shape({
@@ -83,8 +83,9 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
       })
     ),
   });
-
+  
   const handleSubmit = () => {
+    
     onSubmit(formValues);
   };
 
