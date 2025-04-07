@@ -30,6 +30,7 @@ import { Field, getIn } from "formik";
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: () => void;
 };
 
 const ErrorMessage = ({ name }: { name: string }) => (
@@ -206,7 +207,7 @@ const genitourinaryOptions = [
 
 const dateTime = getDateTime();
 
-export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
+export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showExtraFields, setShowExtraFields] = useState<any>({});
   const [showTraumaFields, setShowTraumaFields] = useState(false);
@@ -647,9 +648,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiline
                         rows={3}
                       />
-                      <div style={{ color: "red", fontSize: "0.875rem" }}>
-                        <ErrorMessage name={`${mechanism}Comment`} />
-                      </div>
                     </>
                   ) : null
                 )}
@@ -774,9 +772,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
               multiline
               rows={4}
             />
-            <div style={{ color: "red", fontSize: "0.875rem" }}>
-              <ErrorMessage name={"travelDetails"} />
-            </div>
           </>
         )}
       </FormFieldContainer>
@@ -786,7 +781,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
           variant="secondary"
           title="Previous"
           type="button"
-          onClick={onSkip}
+          onClick={onPrevious}
           sx={{ flex: 1, marginRight: "8px" }}
         />
         <MainButton

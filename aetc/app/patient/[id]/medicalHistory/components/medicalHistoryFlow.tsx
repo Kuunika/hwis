@@ -89,6 +89,7 @@ export const MedicalHistoryFlow = () => {
   const surgeriesFormRef = useRef<HTMLDivElement | null>(null);
   const admissionsFormRef = useRef<HTMLDivElement | null>(null);
   const conditionsFormRef = useRef<HTMLDivElement | null>(null);
+  const familyHistoryFormRef = useRef<HTMLDivElement | null>(null);
 
   const {
     loading,
@@ -123,14 +124,14 @@ export const MedicalHistoryFlow = () => {
 
   // Construct steps based on patient gender
   const steps = [
-    { id: 1, label: "Symptoms (Presenting Complaints)" },
-    { id: 2, label: "Allergies" },
-    { id: 3, label: "Medications" },
-    { id: 4, label: "Prior/Existing conditions" },
+    { id: 1, label: "Symptoms (Presenting Complaints)", encounter: encounters.PRESENTING_COMPLAINTS },
+    { id: 2, label: "Allergies", encounter: encounters.ALLERGIES },
+    { id: 3, label: "Medications", encounter: encounters.PRESCRIPTIONS },
+    { id: 4, label: "Prior/Existing conditions", encounter: encounters.DIAGNOSIS},
     ...(patient?.gender === "Female"
-      ? [{ id: 5, label: "Gynaecology and Obstetrics" }]
+      ? [{ id: 5, label: "Gynaecology and Obstetrics", encounter: encounters.OBSTETRIC_HISTORY }]
       : []),
-    { id: patient?.gender === "Female" ? 6 : 5, label: "Last Meal" },
+    { id: patient?.gender === "Female" ? 6 : 5, label: "Last Meal",  encounter: encounters.SUMMARY_ASSESSMENT},
     { id: patient?.gender === "Female" ? 7 : 6, label: "Events" },
   ];
   const redirectToSecondarySurvey = () => {
@@ -285,7 +286,7 @@ export const MedicalHistoryFlow = () => {
       allergiesData.push(observation);
     });
 
-    console.log(allergiesData);
+
     try {
       const response = await createEncounter({
         encounterType: encounters.ALLERGIES,
@@ -631,7 +632,7 @@ export const MedicalHistoryFlow = () => {
   
   function handleReviewNext(values: any): void {
     setFormData((prev: any) => ({ ...prev, review: values }));
-    handleSkip();
+    scrollToDiv(familyHistoryFormRef);
   }
 
   function handleLastMealNext(values: any): void {
@@ -1217,6 +1218,7 @@ console.log(formData)
           steps={steps}
           active={activeStep}
           onBack={() => navigateBackToProfile()}
+          showSubmittedStatus
         >
           <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
           <AllergiesForm
@@ -1262,14 +1264,17 @@ console.log(formData)
             onPrevious={handlePrevious} onSkip={handleSkip}/>
           <ReviewOfSystemsForm
             onSubmit={handleReviewNext}
-            onSkip={handlePrevious}
+            onSkip={()=>scrollToDiv(familyHistoryFormRef)}
+            onPrevious={handlePrevious}
           />
 
           <SubSteps parent={patient?.gender === "Female"?6:5}>
+            <div ref={familyHistoryFormRef}>
           <FamilyHistoryForm
             onSubmit={handleFamilyNext}
             onSkip={handlePrevious}
           />
+          </div>
           </SubSteps>
         </NewStepperContainer>
       )}

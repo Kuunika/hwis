@@ -123,12 +123,14 @@ export function NewStepperContainer({
       const updatedTimes: { [key: number]: string } = {};
 
       steps.forEach((step, index) => {
-        const time = data
+        const stepEncounter = data
           ?.filter((d) => d.encounter_type.uuid === step.encounter)
-          .filter((d) => d.visit_id === activeVisitId)?.[0]?.encounter_datetime;
+          .filter((d) => d.visit_id === activeVisitId)?.[0]
+     
+        const latestObsDatetime = stepEncounter ?.obs?.[stepEncounter .obs.length - 1]?.obs_datetime;
 
-        if (time) {
-          updatedTimes[index] = time;
+        if (latestObsDatetime) {
+          updatedTimes[index] = latestObsDatetime;
         }
       });
 
