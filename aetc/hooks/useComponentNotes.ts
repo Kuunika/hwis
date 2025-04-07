@@ -66,6 +66,7 @@ export const useComponentNotes = (encounterType: string) => {
             case encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT:
                 return formatNeurologicalExaminationNotes(obs);
             case encounters.NURSING_CARE_NOTES:
+                return formatSoapierNotes(obs)
             default:
                 return [];
         }
@@ -343,37 +344,59 @@ const formatAllergiesNotes = (obs: any[]): ComponentNote[] => {
 };
 
 const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
-    let drugGiven = "";
-    let lastTaken = "";
-    let lastPrescription = "";
-    let frequency = "";
-    let creator = "Unknown";
-    let encounterTime = new Date().toISOString();
+    const medicationNotes: ComponentNote[] = [];
 
     obs?.forEach((item: any) => {
-        const name = item.names?.[0]?.name;
-        const value = item.value;
+        // Skip if not a medication observation
+        if (item.names?.[0]?.name !== "Drug Given") return;
 
-        if (name === "Drug Given") drugGiven = value;
-        if (name === "Medication Date Last Taken") lastTaken = value;
-        if (name === "Medication Date Of Last Prescription") lastPrescription = value;
-        if (name === "Medication Frequency") frequency = value;
-        if (item.created_by) creator = item.created_by;
-        if (item.obs_datetime) encounterTime = item.obs_datetime;
+        let drugGiven = item.value;
+        let lastTaken = "";
+        let lastPrescription = "";
+        let frequency = "";
+        let creator = item.created_by || "Unknown";
+        let encounterTime = item.obs_datetime || new Date().toISOString();
+
+        // Process group members
+        if (item.groupMembers && item.groupMembers.length > 0) {
+            item.groupMembers.forEach((member: any) => {
+                const memberName = member.conceptName;
+                const memberValue = member.value;
+
+                switch (memberName) {
+                    case "Medication Date Last Taken":
+                        lastTaken = memberValue;
+                        break;
+                    case "Medication Date Of Last Prescription":
+                        lastPrescription = memberValue;
+                        break;
+                    case "Medication Frequency":
+                        frequency = memberValue;
+                        break;
+                    case "Dose In Grams":
+                        // Handle dose if needed
+                        break;
+                }
+            });
+        }
+
+        const parts = [];
+        if (drugGiven) parts.push(`${drugGiven}`);
+        if (frequency) parts.push(`Frequency: ${frequency}`);
+        if (lastTaken) parts.push(`Last taken: ${new Date(lastTaken).toLocaleDateString()}`);
+        if (lastPrescription) parts.push(`Last prescribed: ${new Date(lastPrescription).toLocaleDateString()}`);
+
+        if (parts.length > 0) {
+            medicationNotes.push({
+                paragraph: `Medication: ${parts.join('; ')}.`,
+                time: encounterTime,
+                creator,
+                rawTime: new Date(encounterTime).getTime()
+            });
+        }
     });
 
-    const parts = [];
-    if (drugGiven) parts.push(`${drugGiven}`);
-    if (frequency) parts.push(`Frequency: ${frequency}`);
-    if (lastTaken) parts.push(`Last taken: ${new Date(lastTaken).toLocaleDateString()}`);
-    if (lastPrescription) parts.push(`Last prescribed: ${new Date(lastPrescription).toLocaleDateString()}`);
-
-    return parts.length > 0 ? [{
-        paragraph: `Medication: ${parts.join('; ')}.`,
-        time: encounterTime,
-        creator,
-        rawTime: new Date(encounterTime).getTime()
-    }] : [];
+    return medicationNotes;
 };
 const formatExistingConditionsNotes = (obs: any[]): ComponentNote[] => {
     const assessments: ComponentNote[] = [];

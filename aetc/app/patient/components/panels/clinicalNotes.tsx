@@ -122,7 +122,6 @@ export const ClinicalNotes = () => {
         soapierNotes
     ]);
 
-
     const addClinicalNote = (note: string) => {
         const data = { "Clinical notes construct": note };
         handleSubmit(getObservations(data, getDateTime()))
@@ -214,7 +213,6 @@ export const ClinicalNotes = () => {
             <Extremities />
             <NeurologicalExamination />
             <SoapierNotes />*/}
-
         </Panel>
     );
 };
