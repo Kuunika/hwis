@@ -24,7 +24,7 @@ import { GeneralInformation } from "../clinicalNotes/generalInformation";
 import { HeadAndNeck } from "../clinicalNotes/headAndNeck";
 import { ChestAssessment } from "../clinicalNotes/chestAssement";
 import { AbdomenAndPelvisAssessment } from "../clinicalNotes/abdomenAndPelvisAssessment";
-import { NeurogicalExamination } from "../clinicalNotes/neurogicalExamination";
+//import { NeurogicalExamination } from "../clinicalNotes/neurogicalExamination";
 
 
 // Styled components for accordion
@@ -423,7 +423,7 @@ export const VisitHistory = () => {
                     <HeadAndNeck />
                     <ChestAssessment />
                     <AbdomenAndPelvisAssessment/>
-                    <NeurogicalExamination/>
+                    {/* <NeurogicalExamination/> */}
                 </AccordionDetails>
             </Accordion>
 

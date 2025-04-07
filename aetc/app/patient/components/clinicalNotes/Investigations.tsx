@@ -71,7 +71,7 @@ export const useInvestigations = (data:any) =>{
         const fieldsEncounter = data.find(
             (d:any) => d.encounter_type.uuid === encounters.BED_SIDE_TEST
         )
-       console.log("tione mmene zilili eti",fieldsEncounter)
+       console.log("tione mmene zilili bed",fieldsEncounter)
         if(!fieldsEncounter?.obs) return;
 
         const getObservation = (conceptName: string) => {

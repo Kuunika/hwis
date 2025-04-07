@@ -39,24 +39,16 @@ export const FormTimePicker: FC<Prop> = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <TimePicker
         sx={{
-          width: width,
-          backgroundColor: "white",
-          // "label + &": {
-          //   marginTop: "2.3ch",
-          // },
-          // "& .MuiInputBase-input": {
-          //   width: "100%",
-          //   borderRadius: "5px",
-          // },
-          // "& .MuiFormHelperText-root": {
-          //   // width: helperTextWidth,
-          // },
-          // "& fieldset": { borderRadius: "5px" },
+          width,
+          my: "1ch",
+          mr: "1ch",
+          "& fieldset": { borderRadius: "10px" },
           ...sx,
         }}
         label={label}
         // value={value}
         onChange={(dateValue: any) => {
+          //   console.log(dayjs(dateValue).format("HH:mm:ss"));
           setFieldValue(name, dayjs(dateValue).format("HH:mm:ss"));
         }}
         disabled={disabled}

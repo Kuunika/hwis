@@ -82,7 +82,7 @@ export const SoapierNotes = () => {
     return (
         <Box sx={{ p: 2 }}>
             {soapNotes.length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "main.secondary" }}>
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No SOAPIER notes available.
                 </Typography>
             ) : (

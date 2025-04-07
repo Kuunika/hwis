@@ -72,7 +72,7 @@ return Array.isArray(options)
     concept,
     value: opt.id,
     obsDatetime,
-    coded
+
   }))
 : [];
 }

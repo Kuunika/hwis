@@ -1,5 +1,5 @@
 import { getDrugs } from "@/services/drugs";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 
 export const getAllDrugs = () => {
@@ -11,6 +11,8 @@ export const getAllDrugs = () => {
   return useQuery({
     queryKey: ["drugs"],
     queryFn: getAll,
-    enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };

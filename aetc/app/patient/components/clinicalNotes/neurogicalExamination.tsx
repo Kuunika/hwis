@@ -1,22 +1,27 @@
-import { Typography, Box, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import { useEffect, useState } from "react";
 import { encounters } from "@/constants";
 
-export const NeurogicalExamination = () => {
+export const NeurologicalExamination = () => {
     const { patientId }: { patientId: any } = getActivePatientDetails();
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [airwayAssessmentData, setNeurogicalExaminationData] = useState<{ paragraph: string; time: string }[]>([]);
+    const [neurologicalData, setNeurologicalData] = useState<{
+        paragraph: string;
+        time: string;
+        creator: string
+    }[]>([]);
+
     useEffect(() => {
         if (!historyLoading && patientHistory) {
-            const chestEncounter = patientHistory.find(
+            const neuroEncounter = patientHistory.find(
                 (encounter: any) => encounter?.encounter_type?.uuid === encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT
             );
 
-            if (chestEncounter) {
-                const formattedData = formatNeurogicalExaminationData(chestEncounter.obs);
-                setNeurogicalExaminationData(formattedData);
+            if (neuroEncounter) {
+                const formattedData = formatNeurologicalData(neuroEncounter.obs, neuroEncounter.created_by || "Unknown");
+                setNeurologicalData(formattedData);
             }
         }
     }, [patientHistory, historyLoading]);
@@ -24,35 +29,30 @@ export const NeurogicalExamination = () => {
     const isValidDate = (dateString: string) => {
         return !isNaN(new Date(dateString).getTime());
     };
-    const formatNeurogicalExaminationData = (obs: any[]) => {
-        const paragraphs: { paragraph: string; time: string }[] = [];
+
+    const formatNeurologicalData = (obs: any[], defaultCreator: string) => {
+        const paragraphs: { paragraph: string; time: string; creator: string }[] = [];
         let currentParagraph: string[] = [];
         let currentTime = "";
+        let currentCreator = defaultCreator;
 
         obs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
-            console.log("Processed", `${name} ${valueText}`);
-
+            const creator = ob.creator?.display || currentCreator;
 
             if (name === "Additional Notes" && currentParagraph.length > 0) {
                 paragraphs.push({
                     paragraph: currentParagraph.join(" "),
                     time: currentTime,
+                    creator: currentCreator
                 });
-
                 currentParagraph = [];
             }
 
             if (name === "Additional Notes") {
-                if (isValidDate(ob.obs_datetime)) {
-                    currentTime = ob.obs_datetime;
-                } else {
-                    currentTime = new Date().toISOString();
-                }
-            }
-
-            if (name === "Additional Notes") {
+                currentTime = isValidDate(ob.obs_datetime) ? ob.obs_datetime : new Date().toISOString();
+                currentCreator = creator;
                 currentParagraph.push(`${valueText}.`);
             }
         });
@@ -61,32 +61,46 @@ export const NeurogicalExamination = () => {
             paragraphs.push({
                 paragraph: currentParagraph.join(" "),
                 time: currentTime,
+                creator: currentCreator
             });
         }
 
         return paragraphs;
     };
+
     if (historyLoading) {
-        return <Typography>Loading...</Typography>;
+        return <Typography>Loading neurological examination data...</Typography>;
     }
 
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Neurogical examination notes
+                Neurological Examination
             </Typography>
-            {airwayAssessmentData.length === 0 ? (
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "main.secondary" }}>
+            {neurologicalData.length === 0 ? (
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No neurological examination data available.
                 </Typography>
             ) : (
-                airwayAssessmentData.map((data, index) => (
-                    <Box key={index} sx={{ mb: 3 }}>
+                neurologicalData.map((data, index) => (
+                    <Box key={index} sx={{ mb: 0, position: 'relative' }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: "text.primary" }}>
+                        <Typography variant="body2" sx={{ color: "text.primary", mb: 0 }}>
                             {data.paragraph}
+                        </Typography>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                textAlign: 'right',
+                                color: 'text.secondary',
+                                fontStyle: 'italic',
+                                mt: 0
+                            }}
+                        >
+                            Assessed by: {data.creator}
                         </Typography>
                     </Box>
                 ))

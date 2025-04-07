@@ -14,7 +14,7 @@ import { roles } from "@/constants";
 function DispositionPage() {
     return (
         <>
-            <Navigation title="Patients Awaiting Disposition" link="/dashboard" />
+            <Navigation title="Patients Awaiting Specialty" link="/dashboard" />
             <MainGrid container>
                 <MainGrid xs={0} lg={0} item></MainGrid>
                 <MainGrid
@@ -29,11 +29,11 @@ function DispositionPage() {
                     <br />
                     <br />
                     <RegistrationMainHeader>
-                        Patients Awaiting Disposition
+                        Patients Awaiting Specialty
                     </RegistrationMainHeader>
                     <RegistrationDescriptionText>
                         This is a list of all patients who have completed assessments and
-                        are waiting for disposition to a care area.
+                        are waiting for Specialty.
                     </RegistrationDescriptionText>
                     <RegistrationCard sx={{ mx: 1, p: 0 }}>
                         <ClientsAwaitingDisposition />

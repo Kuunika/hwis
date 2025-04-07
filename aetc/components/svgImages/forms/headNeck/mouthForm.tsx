@@ -63,18 +63,10 @@ export const MouthForm = ({ onSubmit }: Prop) => {
 
   const handleValueChange = (values: Array<any>) => {
     setShowOtherAbnormalities(
-      Boolean(
-        values.find(
-          (v) => v.id == getCachedConcept(form.otherAbnormalities.name)?.uuid
-        )
-      )
+      Boolean(values.find((v) => v.id == form.otherAbnormalities.name))
     );
     setTongueLaceration(
-      Boolean(
-        values.find(
-          (v) => v.id == getCachedConcept(concepts.TONGUE_LACERATION)?.uuid
-        )
-      )
+      Boolean(values.find((v) => v.id == concepts.TONGUE_LACERATION))
     );
   };
   return (
@@ -92,7 +84,6 @@ export const MouthForm = ({ onSubmit }: Prop) => {
           name={form.abnormalities.name}
           label={form.abnormalities.label}
           options={abnormalities}
-          coded
         />
 
         {showOtherAbnormalities && (

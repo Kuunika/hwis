@@ -262,7 +262,7 @@ useEffect(() => {
     if (!pData) return;
   
     const medicationHistoryEncounter = pData.find(
-      (d: any) => d.encounter_type.uuid === encounters.MEDICAL_HISTORY // wrong encounter type
+      (d: any) => d.encounter_type.uuid === encounters.PRESCRIPTIONS 
     );
   
     if (!medicationHistoryEncounter?.obs) return;

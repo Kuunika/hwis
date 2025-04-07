@@ -45,19 +45,11 @@ export const FormDatePicker: FC<Prop> = ({
     initialDate = initialValues[name] as Date;
   }
 
-  const display =
-    typeof sx === "object" && sx !== null ? (sx as any).display : undefined;
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ display: "flex", flexDirection: "column", width }}>
         <InputLabel
-          sx={{
-            mb: "1ch",
-            fontSize: "0.76rem",
-            color: "text.secondary",
-            display,
-          }}
+          sx={{ mb: "1ch", fontSize: "0.76rem", color: "text.secondary" }}
         >
           {label}
         </InputLabel>
