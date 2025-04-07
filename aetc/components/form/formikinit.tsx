@@ -22,6 +22,7 @@ type Prop = {
   submitVariant?: "primary" | "secondary" | "text";
   enableReinitialize?: boolean;
   getFormValues?: (values: any) => void;
+  ref?: any;
 };
 
 export const FormikInit: FC<Prop> = ({
@@ -35,6 +36,7 @@ export const FormikInit: FC<Prop> = ({
   loading,
   enableReinitialize = false,
   getFormValues = (values) => {},
+  ref,
 }) => {
   return (
     <Formik
@@ -42,6 +44,7 @@ export const FormikInit: FC<Prop> = ({
       onSubmit={onSubmit}
       validationSchema={validationSchema}
       enableReinitialize={enableReinitialize}
+      innerRef={ref}
     >
       {({ values, setFieldValue }) => (
         <Form>

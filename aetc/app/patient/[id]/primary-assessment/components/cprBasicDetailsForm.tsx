@@ -1,0 +1,125 @@
+import {
+  FormikInit,
+  FormDatePicker,
+  FormTimePicker,
+  FormFieldContainerMultiple,
+  RadioGroupInput,
+  TextInputField,
+  FormTimePickerNow,
+  FormDatePickerToday,
+} from "@/components";
+import { concepts } from "@/constants";
+import { getInitialValues } from "@/helpers";
+import { Button } from "@mui/material";
+import { useRef } from "react";
+import * as Yup from "yup";
+
+const form = {
+  cardiacArrest: {
+    name: concepts.CARDIAC_ARREST,
+    label: "Witnessed Cardiac Arrest",
+  },
+  site: {
+    name: concepts.SITE,
+    label: "SITE",
+  },
+  specify: {
+    name: concepts.SPECIFY,
+    label: "Specify",
+  },
+
+  time: {
+    name: concepts.TIME,
+    label: "Time of Call",
+  },
+
+  date: {
+    name: concepts.DATE_OF_CPR,
+    label: "Date of Call",
+  },
+};
+const sites = [
+  { label: "Rescitation", value: concepts.RESUSCITATION },
+  { label: "SSW", value: concepts.SSW },
+  { label: "Priority", value: concepts.PRIORITY },
+  { label: "Other", value: concepts.OTHER },
+];
+
+const radioOptions = [
+  { label: "Yes", value: concepts.YES },
+  { label: "No", value: concepts.NO },
+];
+
+const initialValues = getInitialValues(form);
+
+const BasicDetailsValidationSchema = Yup.object().shape({
+  [form.cardiacArrest.name]: Yup.string()
+    .required()
+    .label(form.cardiacArrest.label),
+  [form.site.name]: Yup.string().required().label(form.site.label),
+  [form.specify.name]: Yup.string().when(form.site.name, {
+    is: (value: any) => value === concepts.OTHER,
+    then: (schema) => schema.required().label(form.specify.label),
+  }),
+});
+
+export const BasicDetailsForm = ({
+  onSubmit,
+  formRef,
+}: {
+  onSubmit: (values: any) => void;
+  formRef: any;
+}) => {
+  return (
+    <>
+      <FormikInit
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+        validationSchema={BasicDetailsValidationSchema}
+        submitButton={false}
+        ref={formRef}
+      >
+        {({ values, setFieldValue }) => (
+          <>
+            <FormDatePickerToday
+              width={"100%"}
+              name={form.date.name}
+              label={form.date.label}
+            />
+
+            <FormTimePickerNow
+              sx={{ my: "1ch" }}
+              name={form.time.name}
+              label={form.time.label}
+            />
+            {/* <FieldsContainer></FieldsContainer> */}
+            <FormFieldContainerMultiple>
+              <RadioGroupInput
+                options={radioOptions}
+                label={form.cardiacArrest.label}
+                name={form.cardiacArrest.name}
+                row
+              />
+              <RadioGroupInput
+                //   sx={{ backgroundColor: "red" }}
+                name={form.site.name}
+                label={form.site.label}
+                options={sites}
+                row
+              />
+            </FormFieldContainerMultiple>
+            {values[form.site.name] == concepts.OTHER && (
+              <TextInputField
+                size="small"
+                name={form.specify.name}
+                label={form.specify.label}
+                id={form.specify.name}
+                sx={{ width: "100%" }}
+              />
+            )}
+          </>
+        )}
+      </FormikInit>
+    </>
+  );
+};

@@ -333,6 +333,7 @@ export const concepts = {
   EYE_OPENING_RESPONSE: "Eye Opening Response",
   VERBAL_RESPONSE: "Verbal Response",
   GLUCOSE: "Glucose",
+  MEDICAL_RECORD_OBSERVATIONS: "Medical record observations",
   AVPU: "Avpu",
   PULSE_OXIMETRY: "Pulse Oximetry",
   PULSE_RATE: "Pulse Rate",
@@ -369,7 +370,7 @@ export const concepts = {
   HEART_RATE_50: "Heart Rate 50",
   CIRCULATION_INTERVENTIONS: "Circulation Interventions",
   DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS: "Does Patient Low Level Consciousness",
-  BLOOD_GLUCOSE: "Blood Glucose",
+  BLOOD_GLUCOSE: "Blood glucose",
   GCS: "Gcs",
   MARITAL_STATUS: "Marital Status",
   OCCUPATION: "Occupation",
@@ -780,7 +781,7 @@ export const concepts = {
   JAW_THRUST_MANOEUVRE: "Jaw Thrust Manoeuvre",
   SURGICAL_EMPHAYEMA: "Surgical Emphayema",
   LEG_LEFT_PROXIMA_LEG: "Leg Left Proxima Leg",
-  MRDT: "Mrdt",
+  MRDT: "Malaria Rapid Diagnostic Test (MRDT)",
   POSITIVE: "Positive",
   NEGATIVE: "Negative",
   INDETERMINATE: "Indeterminate",
@@ -1221,11 +1222,11 @@ export const concepts = {
   PRESENTING_COMPLAINTS: "Presenting Complaints",
   SUBJECTIVE: "subjective",
   OBJECTIVE: "objective",
-  ASSESSMENT: "assessment",
-  PLAN: "plan",
+  ASSESSMENT: "Assessment",
+  PLAN: "Plan",
   EVALUATION: "Evaluation",
   REPLAN: "Replan",
-  IMPLEMENTATION: "implementation",
+  IMPLEMENTATION: "Implementation",
 
   // to be created
   ARV: "on arv",
@@ -1242,7 +1243,7 @@ export const concepts = {
   JVP_RAISED: "JVP raised",
   LYMPHADENOPATHY: "Lymphadenopathy",
   SYMMETRICAL_EXPANSION: "symmetrical expansion",
-  THRILL_HEAVES: 'thrill heaves',
+  THRILL_HEAVES: "thrill heaves",
   PINK: "pink",
   PRESENT: "present",
   HERPES_ZOSTER_SCAR: "Herpes zoster scar",
@@ -1265,6 +1266,9 @@ export const concepts = {
   GLOBAL_CHEST_WALL_ABNORMALITY: "global chest wall abnormality",
   ADDED_BREATH_SOUNDS: 'added breath sounds',
   BREATH_SOUNDS: "breath sounds",
+  CPR_RECORD: "cpr record",
+  INTERVENTION_LIST: "intervention list",
+  CPR: "cpr",
 
   //surgical notes template form concepts
   REASON_FOR_TAKING_MEDICATION: "Reason for taking Medication",
@@ -1294,8 +1298,6 @@ export const concepts = {
   CLERK_NAME: "Clerk name",
   DESIGNATION: "Designation",
   SIGNATURE: "Signature",
-
-
 };
 
 export const conceptNames = {

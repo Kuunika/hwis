@@ -34,8 +34,10 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
     };
 
     ECT.Handler.configure(settings, callbacks);
-    ECT.Handler.bind(iNo);
-  }, [onICD11Selection]);
+    setTimeout(() => {
+      ECT.Handler.bind(iNo);
+    }, 50); 
+  }, [onICD11Selection, iNo]);
 
   return (
     <div>
@@ -74,7 +76,7 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
 <div
     className="ctw-window"
     style={{
-      color: "white",
+      background: "white",
       marginLeft: "40px",
       position: "relative",
       zIndex: 9999, // High value to ensure it appears on top

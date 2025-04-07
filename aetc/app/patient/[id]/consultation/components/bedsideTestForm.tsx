@@ -312,7 +312,7 @@ export const BedsideTestForm = () => {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
         value: "Arterial Blood Gas",
-        group_members: [
+        groupMembers: [
           {
             concept: formConfig.PH.name,
             obsDatetime: dateTime,
@@ -339,7 +339,7 @@ export const BedsideTestForm = () => {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
         value: "Metabolic Values",
-        group_members: [
+        groupMembers: [
           {
             concept: formConfig.LACTATE.name,
             obsDatetime: dateTime,
@@ -356,7 +356,7 @@ export const BedsideTestForm = () => {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
         value: "Acid base status",
-        group_members: [
+        groupMembers: [
           {
             concept: formConfig.HCO3.name,
             obsDatetime: dateTime,
@@ -378,7 +378,7 @@ export const BedsideTestForm = () => {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
         value: "Oximetry values",
-        group_members: [
+        groupMembers: [
           {
             concept: formConfig.SO2E.name,
             obsDatetime: dateTime,
@@ -400,7 +400,7 @@ export const BedsideTestForm = () => {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
         value: "Electolyte values",
-        group_members: [
+        groupMembers: [
           {
             concept: formConfig.CK.name,
             obsDatetime: dateTime,
@@ -427,7 +427,7 @@ export const BedsideTestForm = () => {
         concept: concepts.DESCRIPTION,
         obsDatetime: dateTime,
         value: "Temperature Corrected Values",
-        group_members: [
+        groupMembers: [
           {
             concept: formConfig.PH.name,
             obsDatetime: dateTime,
@@ -478,7 +478,7 @@ export const BedsideTestForm = () => {
         concepts: concepts.DESCRIPTION,
         obsDatetime: dateTime,
         value: "Dipstick",
-        group_members: [
+        groupMembers: [
           {
             concept: formConfig.urobilinogen.name,
             obsDatetime: dateTime,
@@ -580,7 +580,8 @@ export const BedsideTestForm = () => {
       />
       <br />
       <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Arterial Blood Gas      </Typography>
+        Arterial Blood Gas{" "}
+      </Typography>
 
       <FormFieldContainerMultiple>
         <TextInputField

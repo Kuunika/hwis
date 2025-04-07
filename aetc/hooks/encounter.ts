@@ -37,7 +37,10 @@ export const getPatientsEncounters = (patientId: string) => {
   return useQuery({
     queryKey: ["encounters", patientId],
     queryFn: () => getall(patientId),
-    enabled: true,
+    enabled: !!patientId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, 
+    refetchOnReconnect: false,
   });
 };
 
@@ -88,13 +91,25 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
       let value= observation.value;
 
-      if(observation.coded || concept?.data[0].datatype=='Coded'){
-
-        value =  (await getConceptFromCacheOrFetch(observation.value))?.data[0].uuid
-
+      if(concept?.data?.length==0) {
+        console.warn(`couldn't find concept "${conceptName}" 😥`)
+        continue;
       }
+
+      if(observation.coded || concept?.data[0]?.datatype=='Coded'){
+
+        const valueConcept = await getConceptFromCacheOrFetch(observation.value)
+
+        if(valueConcept?.data.length==0) {
+          console.warn(`couldn't find concept "${observation.value}" 😥`)
+          continue;
+        }
+
+        value =  valueConcept?.data[0].uuid
+      }
+
       
-    
+ 
       const groupMembers = Array.isArray(observation.groupMembers)
         ? await getConceptIds(observation.groupMembers)
         : [];
@@ -112,7 +127,7 @@ const getConceptIds: any = async (obs: Obs[]) => {
 
     }
   } catch (error) {
-    console.log({ error });
+    console.error({error});
   }
 
   return obsWithUUIDs;
