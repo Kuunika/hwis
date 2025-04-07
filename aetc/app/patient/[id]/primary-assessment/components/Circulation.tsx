@@ -84,7 +84,7 @@ const form = {
   },
   pelvisInfo: {
     name: concepts.IS_PELVIS_STABLE,
-    label: "Is the pelvis stable?",
+    label: "Is the pelvis unstable?",
     coded: true,
   },
   abdnomenDistention: {
