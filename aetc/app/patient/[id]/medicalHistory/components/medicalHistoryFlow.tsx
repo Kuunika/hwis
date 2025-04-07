@@ -741,125 +741,83 @@ export const MedicalHistoryFlow = () => {
     const nervousHistory = values["Nervous system history"];
     const genitoHistory = values["genitourinaryHistory"];
 
-    if (gastroHistory) {
-      const gastroObs = gastroHistory.map((obs: any) => {
-        return {
-          concept: obs.id,
-          value: true,
-        };
-      });
+    const encounterObs: any[] = [];
 
-      try {
-        const response = await createEncounter({
-          encounterType: encounters.REVIEW_OF_SYSTEMS,
-          visit: activeVisit?.uuid,
-          patient: params.id,
-          encounterDatetime: dateTime,
-          obs: [
-            {
-              concept: concepts.REVIEW_OF_SYSTEMS_GASTROINTESTINAL,
-              value: true,
-              obsDatetime: dateTime,
-              groupMembers: gastroObs,
-            },
-          ],
-        });
-        console.log("Encounter successfully created:", response);
-      } catch (error: any) {
-        throw error;
-      }
+    if (gastroHistory?.length > 0) {
+      const gastroObs = gastroHistory.map((obs: any) => ({
+        concept: obs.id,
+        value: true,
+      }));
+    
+      encounterObs.push({
+        concept: concepts.REVIEW_OF_SYSTEMS_GASTROINTESTINAL,
+        value: true,
+        obsDatetime: dateTime,
+        groupMembers: gastroObs,
+      });
     }
-
-    if (cardiacHistory) {
-      const cardiacObs = cardiacHistory.map((obs: any) => {
-        return {
-          concept: obs.id,
-          value: true,
-        };
+    
+    if (cardiacHistory?.length > 0) {
+      const cardiacObs = cardiacHistory.map((obs: any) => ({
+        concept: obs.id,
+        value: true,
+      }));
+    
+      encounterObs.push({
+        concept: concepts.REVIEW_OF_SYSTEMS_CARDIOPULMONARY,
+        value: true,
+        obsDatetime: dateTime,
+        groupMembers: cardiacObs,
       });
-
-      try {
-        const response = await createEncounter({
-          encounterType: encounters.REVIEW_OF_SYSTEMS,
-          visit: activeVisit?.uuid,
-          patient: params.id,
-          encounterDatetime: dateTime,
-          obs: [
-            {
-              concept: concepts.REVIEW_OF_SYSTEMS_CARDIOPULMONARY,
-              value: true,
-              obsDatetime: dateTime,
-              groupMembers: cardiacObs,
-            },
-          ],
-        });
-        console.log("Encounter successfully created:", response);
-      } catch (error: any) {
-        throw error;
-      }
     }
-
-    if (nervousHistory) {
-      const nervousObs = nervousHistory.map((obs: any) => {
-        return {
-          concept: obs.id,
-          value: true,
-        };
+    
+    if (nervousHistory?.length > 0) {
+      const nervousObs = nervousHistory.map((obs: any) => ({
+        concept: obs.id,
+        value: true,
+      }));
+    
+      encounterObs.push({
+        concept: concepts.REVIEW_OF_SYSTEMS_NERVOUS,
+        value: true,
+        obsDatetime: dateTime,
+        groupMembers: nervousObs,
       });
-
-      try {
-        const response = await createEncounter({
-          encounterType: encounters.REVIEW_OF_SYSTEMS,
-          visit: activeVisit?.uuid,
-          patient: params.id,
-          encounterDatetime: dateTime,
-          obs: [
-            {
-              concept: concepts.REVIEW_OF_SYSTEMS_NERVOUS,
-              value: true,
-              obsDatetime: dateTime,
-              groupMembers: nervousObs,
-            },
-          ],
-        });
-        console.log("Encounter successfully created:", response);
-      } catch (error: any) {
-        throw error;
-      }
     }
-
-    if (genitoHistory) {
-      const otherConditons = values["Other_Genitourinary_condition"];
-      const genitoObs = genitoHistory.map((obs: any) => {
-        return {
-          concept: obs.id,
-          value: true,
-        };
-      });
-
-      if (otherConditons) {
+    
+    if (genitoHistory?.length > 0) {
+      const otherConditions = values["Other_Genitourinary_condition"];
+      const genitoObs = genitoHistory.map((obs: any) => ({
+        concept: obs.id,
+        value: true,
+      }));
+    
+      if (otherConditions) {
         genitoObs.push({
           concept: concepts.OTHER_GENITOURINARY_CONDITION,
-          value: otherConditons,
+          value: otherConditions,
         });
       }
-
+    
+      encounterObs.push({
+        concept: concepts.REVIEW_OF_SYSTEMS_GENITOURINARY,
+        value: true,
+        obsDatetime: dateTime,
+        groupMembers: genitoObs,
+      });
+    }
+    
+    if (encounterObs.length > 0) {
       try {
         const response = await createEncounter({
           encounterType: encounters.REVIEW_OF_SYSTEMS,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime,
-          obs: [
-            {
-              concept: concepts.REVIEW_OF_SYSTEMS_GENITOURINARY,
-              value: true,
-              obsDatetime: dateTime,
-              groupMembers: genitoObs,
-            },
-          ],
+          obs: encounterObs,
         });
-        console.log("Encounter successfully created:", response);
+    
+        console.log("Unified encounter created successfully:", response);
       } catch (error: any) {
         throw error;
       }
