@@ -4,70 +4,11 @@ import { Obs } from "@/interfaces";
 
 export const usePatientManagementPlan = (pData: any) => {
   const [patientManagementPlanMessage, setPatientManagementPlanMessage] = useState<string | null>(null);
+//   const [patientManagementPlanMessage, setPatientManagementPlanMessage] = useState<string | null>(null);
+//   const [patientManagementPlanMessage, setPatientManagementPlanMessage] = useState<string | null>(null);
+//   const [patientManagementPlanMessage, setPatientManagementPlanMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!pData) return;
-  
-    const additionalFieldsEncounter = pData.find(
-      (d: any) => d.encounter_type.uuid === encounters.PATIENT_CARE_AREA
-    );
-    
-    if (!additionalFieldsEncounter?.obs) return;
-  
-    const getObservation = (conceptName: string) => {
-      return additionalFieldsEncounter.obs.find((ob: Obs) =>
-        ob.names.some((n) => n.name === conceptName)
-      );
-    };
-  
-    const observations = {
-      surgical: getObservation(concepts.SURGICAL),
-      MedicalBench: getObservation(concepts.MEDICAL_BENCH),
-      ShortStay: getObservation(concepts.SHORT_STAY),
-      isoloation: getObservation(concepts.ISOLATION),
-      trauma: getObservation(concepts.TRAUMA),
-    };
-  
-   
-    const allObservationDates = [
-      observations.surgical?.obs_datetime,
-      observations.MedicalBench?.obs_datetime,
-      observations.ShortStay?.obs_datetime,
-      observations.isoloation?.obs_datetime,
-      observations.trauma?.obs_datetime,
-      additionalFieldsEncounter.encounter_datetime
-    ].filter(Boolean);
-  
- 
-    const observationDateTime = allObservationDates.length > 0 
-      ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
-      : new Date().toISOString();
-  
-    const formattedDate = new Date(observationDateTime).toLocaleString();
-  
-    let messages = [`Patient Care Area recorded on ${formattedDate}.\n`];
-  
-   
-    if (observations.surgical?.value) {
-      messages.push(`Surgical: ${observations.surgical.value}. `);
-    }
-    if (observations.MedicalBench?.value) {
-      messages.push(`Medical Bench: ${observations.MedicalBench.value}. `);
-    }
-    if (observations.ShortStay?.value) {
-      messages.push(`Short Stay: ${observations.ShortStay.value}. `);
-    }
-    if (observations.isoloation?.value) {
-      messages.push(`Isolation: ${observations.isoloation.value}. `);
-    }
-    if (observations.trauma?.value) {
-      messages.push(`Trauma: ${observations.trauma.value}. `);
-    }
-  
 
-    setPatientManagementPlanMessage(messages.join(""));
-  
-  }, [pData]);
 
   useEffect(() => {
     if (!pData) return;
@@ -76,7 +17,7 @@ export const usePatientManagementPlan = (pData: any) => {
       (d: any) => d.encounter_type.uuid === encounters.NON_PHARMACOLOGICAL
     );
     
-   
+   console.log("usiku activities",additionalFieldsEncounter)
     if (!additionalFieldsEncounter?.obs) return;
 
     const getObservation = (conceptName: string) => {
@@ -251,5 +192,143 @@ export const usePatientManagementPlan = (pData: any) => {
     setPatientManagementPlanMessage(messages.join(""));
   }, [pData]);
 
+
+  useEffect(() => {
+    if (!pData) return;
+  
+    const additionalFieldsEncounter = pData.find(
+      (d: any) => d.encounter_type.uuid === encounters.PATIENT_CARE_AREA
+    );
+    
+    if (!additionalFieldsEncounter?.obs) return;
+  
+    const getObservation = (conceptName: string) => {
+      return additionalFieldsEncounter.obs.find((ob: Obs) =>
+        ob.names.some((n) => n.name === conceptName)
+      );
+    };
+  
+    const observations = {
+      surgical: getObservation(concepts.SURGICAL),
+      MedicalBench: getObservation(concepts.MEDICAL_BENCH),
+      ShortStay: getObservation(concepts.SHORT_STAY),
+      isoloation: getObservation(concepts.ISOLATION),
+      trauma: getObservation(concepts.TRAUMA),
+    };
+  
+   
+    const allObservationDates = [
+      observations.surgical?.obs_datetime,
+      observations.MedicalBench?.obs_datetime,
+      observations.ShortStay?.obs_datetime,
+      observations.isoloation?.obs_datetime,
+      observations.trauma?.obs_datetime,
+      additionalFieldsEncounter.encounter_datetime
+    ].filter(Boolean);
+  
+ 
+    const observationDateTime = allObservationDates.length > 0 
+      ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
+      : new Date().toISOString();
+  
+    const formattedDate = new Date(observationDateTime).toLocaleString();
+  
+    let messages = [`Patient Care Area recorded on ${formattedDate}.\n`];
+  
+   
+    if (observations.surgical?.value) {
+      messages.push(`Surgical: ${observations.surgical.value}. `);
+    }
+    if (observations.MedicalBench?.value) {
+      messages.push(`Medical Bench: ${observations.MedicalBench.value}. `);
+    }
+    if (observations.ShortStay?.value) {
+      messages.push(`Short Stay: ${observations.ShortStay.value}. `);
+    }
+    if (observations.isoloation?.value) {
+      messages.push(`Isolation: ${observations.isoloation.value}. `);
+    }
+    if (observations.trauma?.value) {
+      messages.push(`Trauma: ${observations.trauma.value}. `);
+    }
+  
+
+    setPatientManagementPlanMessage(messages.join(""));
+  
+  }, [pData]);
+
+
+useEffect(() => {
+    if (!pData) return;
+  
+    const medicationHistoryEncounter = pData.find(
+      (d: any) => d.encounter_type.uuid === encounters.MEDICAL_HISTORY // wrong encounter type
+    );
+  
+    if (!medicationHistoryEncounter?.obs) return;
+  
+    const getObservation = (conceptName: string) => {
+      return medicationHistoryEncounter.obs.find((ob: Obs) =>
+        ob.names.some((n) => n.name === conceptName)
+      );
+    };
+  
+    const observations = {
+      MedicationName: getObservation(concepts.MEDICATION),
+      Formulation: getObservation(concepts.MEDICATION_FORMULATION),
+      Frequency: getObservation(concepts.MEDICATION_FREQUENCY),
+      Duration: getObservation(concepts.MEDICATION_DURATION),
+    };
+  
+    
+    const allObservationDates = [
+      observations.MedicationName?.obs_datetime,
+      observations.Formulation?.obs_datetime,
+      observations.Frequency?.obs_datetime,
+      observations.Duration?.obs_datetime,
+      medicationHistoryEncounter.encounter_datetime
+    ].filter(Boolean);
+  
+    
+    const observationDateTime = allObservationDates.length > 0
+      ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
+      : new Date().toISOString();
+  
+    const formattedDate = new Date(observationDateTime).toLocaleString();
+  
+    let messages = [`Medication History recorded on ${formattedDate}.\n`];
+  
+   
+    if (observations.MedicationName?.value) {
+      messages.push(`Medication: ${observations.MedicationName.value}. `);
+    }
+    if (observations.Formulation?.value) {
+      messages.push(`Formulation: ${observations.Formulation.value}. `);
+    }
+    if (observations.Frequency?.value) {
+      messages.push(`Frequency: ${observations.Frequency.value}. `);
+    }
+    if (observations.Duration?.value) {
+      messages.push(`Duration: ${observations.Duration.value}. `);
+    }
+  
+    
+    setPatientManagementPlanMessage(messages.join(""));
+  
+  }, [pData]);
+
   return patientManagementPlanMessage;
 };
+
+
+
+// return {
+//     nonPharmacologicalMessage,
+//     careAreaMessage,
+//     medicationHistoryMessage,
+//     combinedMessage: [
+//       nonPharmacologicalMessage,
+//       careAreaMessage,
+//       medicationHistoryMessage
+//     ].filter(Boolean).join("\n\n")
+//   };

@@ -20,6 +20,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useInvestigations } from "../clinicalNotes/Investigations";
 import { useDifferentialDiagnosis } from "../clinicalNotes/DifferentialDiagnosis";
 import { usePatientManagementPlan } from "../clinicalNotes/PatientManagmentPlan";
+import { GeneralInformation } from "../clinicalNotes/generalInformation";
+import { HeadAndNeck } from "../clinicalNotes/headAndNeck";
+import { ChestAssessment } from "../clinicalNotes/chestAssement";
+import { AbdomenAndPelvisAssessment } from "../clinicalNotes/abdomenAndPelvisAssessment";
+import { NeurogicalExamination } from "../clinicalNotes/neurogicalExamination";
 
 
 // Styled components for accordion
@@ -396,6 +401,31 @@ export const VisitHistory = () => {
                 
             </AccordionDetails>
         </Accordion>
+        
+        <Accordion
+                expanded={expandedAccordion === 'breathing-assessment'}
+                onChange={handleAccordionChange('breathing-assessment')}
+                sx={{
+                    backgroundColor: '#f5f5f5',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="breathing-assessment-content"
+                    id="breathing-assessment-header"
+                >
+                    <Typography variant="h6" fontWeight="bold">
+                        Secondary Assessment
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <GeneralInformation />
+                    <HeadAndNeck />
+                    <ChestAssessment />
+                    <AbdomenAndPelvisAssessment/>
+                    <NeurogicalExamination/>
+                </AccordionDetails>
+            </Accordion>
 
         <Accordion
                 expanded={expandedAccordion === 'investigations-notes'}

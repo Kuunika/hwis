@@ -6,64 +6,64 @@ import { useEffect, useState } from "react";
 export const useInvestigations = (data:any) =>{
     const [investigationsMessage, setInvestigationsMessage] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (!data) return;
+    // useEffect(() => {
+    //     if (!data) return;
       
-        const fieldsEncounter = data.find(
-          (d: any) => d.encounter_type.uuid === encounters.BED_SIDE_TEST
-        );
+    //     const fieldsEncounter = data.find(
+    //       (d: any) => d.encounter_type.uuid === encounters.BED_SIDE_TEST
+    //     );
       
-        if (!fieldsEncounter?.obs) return;
+    //     if (!fieldsEncounter?.obs) return;
       
-        const getObservation = (conceptName: string) => {
-          return fieldsEncounter.obs.find((ob: Obs) =>
-            ob.names.some((n) => n.name === conceptName)
-          );
-        };
+    //     const getObservation = (conceptName: string) => {
+    //       return fieldsEncounter.obs.find((ob: Obs) =>
+    //         ob.names.some((n) => n.name === conceptName)
+    //       );
+    //     };
       
-        const observations = {
-          sampleTypeValue: getObservation(concepts.BLOOD_SAMPLE),
-          // Keeping your commented-out observations
-          // testsValue: getObservation(concepts.TESTS),
-          // emergencyValue: getObservation(concepts.EMERGECY),
-          // urgentSampleValue: getObservation(concepts.URGENT_SAMPLE)
-        };
+    //     const observations = {
+    //       sampleTypeValue: getObservation(concepts.BLOOD_SAMPLE),
+    //       // Keeping your commented-out observations
+    //       // testsValue: getObservation(concepts.TESTS),
+    //       // emergencyValue: getObservation(concepts.EMERGECY),
+    //       // urgentSampleValue: getObservation(concepts.URGENT_SAMPLE)
+    //     };
       
-        // Only include dates from the observations we're actually using
-        const allObservationDates = [
-          observations.sampleTypeValue?.obs_datetime,
-          // Uncomment these if you enable the other observations
-          // observations.testsValue?.obs_datetime,
-          // observations.emergencyValue?.obs_datetime,
-          // observations.urgentSampleValue?.obs_datetime
-        ].filter(Boolean);
+    //     // Only include dates from the observations we're actually using
+    //     const allObservationDates = [
+    //       observations.sampleTypeValue?.obs_datetime,
+    //       // Uncomment these if you enable the other observations
+    //       // observations.testsValue?.obs_datetime,
+    //       // observations.emergencyValue?.obs_datetime,
+    //       // observations.urgentSampleValue?.obs_datetime
+    //     ].filter(Boolean);
       
-        const observationDateTime = allObservationDates.length > 0
-          ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
-          : new Date().toISOString();
+    //     const observationDateTime = allObservationDates.length > 0
+    //       ? new Date(Math.max(...allObservationDates.map(d => new Date(d).getTime()))).toISOString()
+    //       : new Date().toISOString();
       
-        const formattedDate = new Date(observationDateTime).toLocaleString();
+    //     const formattedDate = new Date(observationDateTime).toLocaleString();
       
-        let messages = [`Blood Sample Assessment recorded on ${formattedDate}.\n`];
+    //     let messages = [`Blood Sample Assessment recorded on ${formattedDate}.\n`];
       
-        if (observations.sampleTypeValue?.value) {
-          messages.push(`Blood Sample Type: ${observations.sampleTypeValue.value}. `);
-        }
+    //     if (observations.sampleTypeValue?.value) {
+    //       messages.push(`Blood Sample Type: ${observations.sampleTypeValue.value}. `);
+    //     }
       
-        // Uncomment these if you enable the other observations
-        // if (observations.testsValue?.value) {
-        //   messages.push(`Test Type: ${observations.testsValue.value}. `);
-        // }
-        // if (observations.emergencyValue?.value) {
-        //   messages.push(`Emergency Status: ${observations.emergencyValue.value}. `);
-        // }
-        // if (observations.urgentSampleValue?.value) {
-        //   messages.push(`Urgent Sample: ${observations.urgentSampleValue.value}. `);
-        // }
+    //     // Uncomment these if you enable the other observations
+    //     // if (observations.testsValue?.value) {
+    //     //   messages.push(`Test Type: ${observations.testsValue.value}. `);
+    //     // }
+    //     // if (observations.emergencyValue?.value) {
+    //     //   messages.push(`Emergency Status: ${observations.emergencyValue.value}. `);
+    //     // }
+    //     // if (observations.urgentSampleValue?.value) {
+    //     //   messages.push(`Urgent Sample: ${observations.urgentSampleValue.value}. `);
+    //     // }
       
-        setInvestigationsMessage(messages.join(""));
+    //     setInvestigationsMessage(messages.join(""));
       
-      }, [data]);
+    //   }, [data]);
 
     useEffect(()=>{
         if(!data) return
@@ -71,7 +71,7 @@ export const useInvestigations = (data:any) =>{
         const fieldsEncounter = data.find(
             (d:any) => d.encounter_type.uuid === encounters.BED_SIDE_TEST
         )
-
+       console.log("tione mmene zilili eti",fieldsEncounter)
         if(!fieldsEncounter?.obs) return;
 
         const getObservation = (conceptName: string) => {
