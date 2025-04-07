@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useFormikContext } from "formik";
 import * as Yup from "yup";
 import {
     FormikInit,
@@ -8,25 +9,18 @@ import {
     TextInputField,
     RadioGroupInput,
     FormFieldContainerLayout,
-    DatePickerInput,
     FormDatePicker,
-
-
 } from "@/components";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
 
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
-};
-
-// Function to calculate gestational age from LNMP
-const calculateGestationalAge = (lnmp: string | null) => {
-    if (!lnmp) return "";
-    const lnmpDate = new Date(lnmp);
-    const today = new Date();
-    const diffInDays = Math.floor((today.getTime() - lnmpDate.getTime()) / (1000 * 60 * 60 * 24));
-    const gestationalWeeks = Math.floor(diffInDays / 7);
-    return `${gestationalWeeks} weeks`;
 };
 
 // Validation schema
@@ -50,6 +44,67 @@ const schema = Yup.object().shape({
 });
 
 export const GynaeObstetricHistoryForm = ({ onSubmit, onSkip }: Prop) => {
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        const obs = [
+            {
+                concept: concepts.PREGNANCY_TEST,
+                value: values.areYouPregnant,
+                obsDatetime: currentDateTime,
+            },
+            ...(values.areYouPregnant === "Yes"
+                ? [
+                    {
+                        concept: concepts.LNMP,
+                        value: values.lnmp,
+                        obsDatetime: currentDateTime,
+                    },
+                    {
+                        concept: concepts.GESTATIONAL_AGE,
+                        value: values.gestationalAge,
+                        obsDatetime: currentDateTime,
+                    },
+                    {
+                        concept: concepts.PARITY,
+                        value: values.parity,
+                        obsDatetime: currentDateTime,
+                    },
+                ]
+                : []),
+        ];
+
+        const payload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            console.log("Gynae Obstetric History submitted successfully!");
+            onSubmit(values);
+        } catch (error) {
+            console.error("Error submitting Gynae Obstetric History: ", error);
+        }
+    };
+
     return (
         <FormikInit
             validationSchema={schema}
@@ -59,13 +114,11 @@ export const GynaeObstetricHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 gestationalAge: "",
                 parity: "",
             }}
-            onSubmit={(values) => console.log("Form Data:", values)}
+            onSubmit={handleSubmit}
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <FormFieldContainerLayout title="Gynae/Obstetric History (Only for Females) ">
-
-
+                    <FormFieldContainerLayout title="Gynae/Obstetric History (Only for Females)">
                         {/* Pregnancy Status */}
                         <RadioGroupInput
                             name="areYouPregnant"
@@ -76,19 +129,25 @@ export const GynaeObstetricHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             ]}
                         />
 
-                        {/* If pregnant, show additional fields */}
-                        <FormDatePicker name="lnmp" label="Last Normal Menstrual Period (LNMP)" />
-                        <TextInputField
-                            name="gestationalAge"
-                            label="Gestational Age (weeks)"
-                            id={""}
-                        // calculateValue={(values: { lnmp: string | null; }) => calculateGestationalAge(values.lnmp)}
-                        />
-                        <TextInputField id="parity" name="parity" label="Parity" />
+                        <PregnancyFields />
                     </FormFieldContainerLayout>
-
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>
+    );
+};
+
+// Component to conditionally render pregnancy-related fields
+const PregnancyFields = () => {
+    const { values } = useFormikContext<any>();
+
+    if (values.areYouPregnant !== "Yes") return null;
+
+    return (
+        <>
+            <FormDatePicker name="lnmp" label="Last Normal Menstrual Period (LNMP)" />
+            <TextInputField name="gestationalAge" label="Gestational Age (weeks)" id={""} />
+            <TextInputField id="parity" name="parity" label="Parity" />
+        </>
     );
 };

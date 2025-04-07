@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     FormikInit,
     WrapperBox,
@@ -9,6 +9,12 @@ import {
     CheckboxesGroup,
 } from "@/components";
 import * as Yup from "yup";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -17,12 +23,12 @@ type Prop = {
 
 // Allergy options
 const allergyOptions = [
-    "Drugs",
-    "Food",
-    "Skin prep",
-    "Latex",
-    "Medications",
-    "Other",
+    { value: "Drugs", label: "Drugs" },
+    { value: "Food", label: "Food" },
+    { value: "Skin prep", label: "Skin prep" },
+    { value: "Latex", label: "Latex" },
+    { value: "Medications", label: "Medications" },
+    { value: "Other", label: "Other (Specify)" },
 ];
 
 // Validation schema
@@ -59,14 +65,75 @@ const schema = Yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
 });
-
+//encounter: SURGICAL_NOTES_TEMPLATE_FORM
+//concepts: ALLERGIC_REACTION, DESCRIPTION
 export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
+
     const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
+    const [showOtherTextField, setShowOtherTextField] = useState(false);
 
     const handleCheckboxChange = (values: any) => {
         setSelectedAllergies(values.filter((item: any) => item.value).map((item: any) => item.key));
+        setShowOtherTextField(values.some((val: any) => val.key === "Other" && val.value));
+
     };
 
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        // Extract selected allergy
+        const selectedAllergies = values.allergies.map((item: any) => item.key);
+
+        // Include "Other" allergy if specified
+        if (selectedAllergies.includes("Other") && values.otherDetails) {
+            selectedAllergies[selectedAllergies.indexOf("Other")] = values.otherDetails;
+        }
+
+        const obs = [
+            {
+                concpt: concepts.ALLERGIC_REACTION,
+                value: selectedAllergies.join(", "),
+                obsDatetime: currentDateTime,
+            }
+        ]
+
+        // const obs = values.allergies.map((allergy: string) => ({
+        //     concept: concepts.ALLERGIC_REACTION,
+        //     value: allergy,
+        //     obsDatetime: currentDateTime,
+        // }));
+
+        const payload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            console.log("Allergies submitted successfully!");
+            onSubmit(values);
+        } catch (error) {
+            console.error("Error submitting Allergies:", error);
+        }
+    };
     return (
         <FormikInit
             validationSchema={schema}
@@ -79,30 +146,28 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
                 medicationsDetails: "",
                 otherDetails: "",
             }}
-            onSubmit={(values) => console.log("Selected Allergies:", values)}
+            onSubmit={handleSubmit} // Call the updated function here
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
 
                     <FormFieldContainerLayout title="Allergies and Adverse Reactions">
-
-
                         {allergyOptions.map((allergy) => (
-                            <div key={allergy} style={{ marginBottom: "10px" }}>
+                            <div key={allergy.value} style={{ marginBottom: "10px" }}>
                                 <CheckboxesGroup
                                     name="allergies"
                                     allowFilter={false}
-                                    options={[{ value: allergy, label: allergy }]}
+                                    options={[allergy]}
                                     getValue={handleCheckboxChange}
                                 />
 
                                 {/* Show Text Input if specific allergy is selected */}
-                                {selectedAllergies.includes(allergy) && (
+                                {selectedAllergies.includes(allergy.value) && (
                                     <div style={{ marginLeft: "20px", marginTop: "5px" }}>
                                         <TextInputField
-                                            name={`${allergy.toLowerCase().replace(/\s+/g, '')}Details`}
-                                            label={`Specify ${allergy} allergy`}
-                                            placeholder={`Enter ${allergy} allergy details`} id={""} />
+                                            name={`${allergy.value.toLowerCase().replace(/\s+/g, '')}Details`}
+                                            label={`Specify allergy `}
+                                            placeholder={`Enter allergy details`} id={""} />
                                     </div>
                                 )}
                             </div>

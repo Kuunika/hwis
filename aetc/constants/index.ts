@@ -170,7 +170,7 @@ export const encounters = {
   NURSING_CARE_NOTES: "c7d8b240-04f0-48c1-8d83-10d95f571b92",
   TEMPLATE_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   CONTINUATION_SHEET: "dd12d7ad-f177-463a-9013-c135440c6cf9",
-  SURGICAL_NOTES_TEMPLATE_FORM: "389c3f51-558d-45d8-affa-d290a6015577",
+  SURGICAL_NOTES_TEMPLATE_FORM: "6c44a2d9-953d-41dd-9b99-03b4214f85ba",
   PRIMARY_DISABILITY_ASSESSMENT: "e0beb64f-603f-4e1d-8afd-2e2fae0d5e54",
   MEDICAL_IN_PATIENT: "",
 };
@@ -1264,7 +1264,37 @@ export const concepts = {
   GAIT: "gait",
   GLOBAL_CHEST_WALL_ABNORMALITY: "global chest wall abnormality",
   ADDED_BREATH_SOUNDS: 'added breath sounds',
-  BREATH_SOUNDS: "breath sounds"
+  BREATH_SOUNDS: "breath sounds",
+
+  //surgical notes template form concepts
+  REASON_FOR_TAKING_MEDICATION: "Reason for taking Medication",
+  CANCER_TYPE: "Cancer type",
+  ALCOHOL_INTAKE: "Alcohol intake",
+  RECREATIONAL_DRUG: "Recreational drug",
+  LNMP: "LNMP",
+  GESTATIONAL_AGE: "Gestational age",
+  PARITY: "Parity",
+  REVIEW_OF_SYSTEMS__ENDOCRINE: "Review of systems  endocrine",
+  REVIEW_OF_SYSTEMS_CARDIAC: "Review of systems cardiac",
+  REVIEW_OF_SYSTEMS_MUSCULOSKELETAL: "Review of systems musculoskeletal",
+  REVIEW_OF_SYSTEMS_NEUROLOGIC: "Review of systems neurologic",
+  REVIEW_OF_SYSTEMS_PSYCHIATRIC: "Review of systems psychiatric",
+  GENERAL_CONDITION: "General condition",
+  EYES: "Eyes",
+  MOUTH: "Mouth",
+  NECK: "Neck",
+  CHEST_EXAMINATION: "Chest examination",
+  ENDOCRINE_EXAMINATION: "Endocrine examination",
+  ABDOMINAL_EXAMINATION: "Abdominal examination",
+  CRANIAL_ERVES: "Cranial erves",
+  GROSS_MOTOR: "Gross motor",
+  PULSATIONS: "Pulsations",
+  RECTAL_EXAMINATION: "Rectal examination",
+  VAGINAL_EXAMINATION: "Vaginal examination",
+  CLERK_NAME: "Clerk name",
+  DESIGNATION: "Designation",
+  SIGNATURE: "Signature",
+
 
 };
 

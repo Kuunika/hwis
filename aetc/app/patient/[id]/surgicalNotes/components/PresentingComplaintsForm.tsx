@@ -10,7 +10,17 @@ import {
     RadioGroupInput, // Ensure this is imported
 } from "@/components";
 import * as yup from "yup";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import {
+    addEncounter,
+    fetchConceptAndCreateEncounter,
+} from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
+
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 
@@ -84,7 +94,7 @@ const schema = yup.object().shape({
 });
 
 // encounter: SURGICAL_NOTES_TEMPLATE_FORM
-//concepts:  PRESENTING_COMPLAINTS  PRESENTING_HISTORY
+//concepts:  PRESENTING_COMPLAINTS  PRESENTING_HISTORY, also Add LOCATION concept
 
 export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
@@ -96,6 +106,79 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
         setShowOtherTextField(values.some((val: any) => val.key === "Other" && val.value));
     };
 
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        // Extract selected complaints
+        const selectedComplaints = values.presentingComplaints.map((item: any) => item.key);
+
+        // Include "Other" complaint if specified
+        if (selectedComplaints.includes("Other") && values.otherComplaintSpecify) {
+            selectedComplaints[selectedComplaints.indexOf("Other")] = values.otherComplaintSpecify;
+        }
+
+        // Determine if location is required
+        const requiresLocation = selectedComplaints.some((complaint: string) =>
+            ["Feeling of a mass", "Pain", "Ulcer", "Bleeding"].includes(complaint)
+        );
+
+        const obs = [
+            {
+                concept: concepts.PRESENTING_COMPLAINTS,
+                value: selectedComplaints.join(", "), // Storing multiple complaints as a comma-separated string
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.PRESENTING_HISTORY,
+                value: values.historyOfPresentingComplaint,
+                obsDatetime: currentDateTime,
+            },
+        ];
+
+        // If a location is required and selected, add it to observations
+        if (requiresLocation && values.location) {
+            obs.push({
+                concept: concepts.LOCATION, // Ensure this concept is defined in your constants
+                value: values.location,
+                obsDatetime: currentDateTime,
+            });
+        }
+
+        // Prepare payload
+        const payload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            // toast.success("Presenting complaints submitted successfully!");
+            onSubmit(values); //  This triggers navigation to the next step
+
+        } catch (error) {
+            console.error("Error submitting presenting complaints: ", error);
+            // toast.error("Failed to submit presenting complaints.");
+        }
+    };
+
     return (
         <FormikInit
             validationSchema={schema}
@@ -105,20 +188,15 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
                 historyOfPresentingComplaint: "",
                 location: "", // Add location field
             }}
-            onSubmit={(values) => {
-                console.log("Submitting form data:", values);
-                toast.success("Presenting Complaints Form submitted successfully!");
-            }}
+            onSubmit={handleSubmit}
+
         >
             <FormValuesListener getValues={setFormValues} />
-
             <FormFieldContainer direction="row">
                 {/* Presenting Complaints Checkboxes */}
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%" }}>
 
                     <FormFieldContainerLayout title="Presenting complaints">
-
-
                         {presentingComplaintsConfig.map((complaint) => (
                             <div key={complaint.value} style={{ marginBottom: "10px" }}>
                                 <CheckboxesGroup
@@ -152,10 +230,8 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
                             />
                         )}
                     </FormFieldContainerLayout>
-
                     <br />
                     {/* <FormFieldContainerLayout title="Presenting complaints history"> */}
-
                     <TextInputField
                         sx={{ width: "100%" }}
 
@@ -167,7 +243,6 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
                         placeholder="Describe the history of the presenting complaint..."
                     />
                     {/* </FormFieldContainerLayout> */}
-
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>

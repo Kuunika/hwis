@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     FormikInit,
     WrapperBox,
@@ -9,6 +9,12 @@ import {
     RadioGroupInput
 } from "@/components";
 import * as Yup from "yup";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -48,10 +54,69 @@ const gcsOptions = {
         "Opens eyes spontaneously",
     ],
 };
-
 const validationSchema = Yup.object({});
 
+//// encounter: SURGICAL_NOTES_TEMPLATE_FORM
+// concepts:  CONDITION, TEMPERATURE, PULSE_RATE, BLOOD_PRESSURE_MEASURED, RESPIRATORY_RATE, PALLOR, JAUNDICE,  KAPOSI_SARCOMA_LESIONS, LYMPH_NODES,  MOTOR_RESPONSE, VERBAL_RESPONSE,  EYE_OPENING_RESPONSE  DIGITAL_VAGINAL_EXAMINATION
+// new concepts: GENERAL_CONDITION , TEMPERATURE,  PULSE_RATE,  BLOOD_PRESSURE_MEASURED,  RESPIRATORY_RATE,  EYES, MOUTH,  NECK, CHEST_EXAMINATION, ENDOCRINE_EXAMINATION, ABDOMINAL_EXAMINATION, MOTOR_RESPONSE, VERBAL_RESPONSE,  EYE_OPENING_RESPONSE,  CRANIAL_ERVES, GROSS_MOTOR, SENSATION, PULSATIONS, RECTAL_EXAMINATION, VAGINAL_EXAMINATION 
 export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        if (!activeVisit) {
+            console.error("No active visit found for the patient.");
+            return;
+        }
+
+        const encounterPayload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM, // Encounter type
+            patient: params.id, // Patient UUID
+            visit: activeVisit.uuid, // Visit UUID
+            encounterDatetime: getDateTime(), // Current timestamp
+            observations: [
+                { concept: concepts.GENERAL_CONDITION, value: values.general },
+                { concept: concepts.TEMPERATURE, value: values.temperature },
+                { concept: concepts.PULSE_RATE, value: values.pulse },
+                { concept: concepts.BLOOD_PRESSURE_MEASURED, value: values.bloodPressure },
+                { concept: concepts.RESPIRATORY_RATE, value: values.respiratoryRate },
+                { concept: concepts.EYES, value: values.eyes },
+                { concept: concepts.MOUTH, value: values.mouth },
+                { concept: concepts.NECK, value: values.neck },
+                { concept: concepts.CHEST_EXAMINATION, value: values.chest },
+                { concept: concepts.ENDOCRINE_EXAMINATION, value: values.endocrine },
+                { concept: concepts.ABDOMINAL_EXAMINATION, value: values.abdomen },
+                { concept: concepts.MOTOR_RESPONSE, value: values.motorResponse },
+                { concept: concepts.VERBAL_RESPONSE, value: values.verbalResponse },
+                { concept: concepts.EYE_OPENING_RESPONSE, value: values.eyeResponse },
+                { concept: concepts.CRANIAL_ERVES, value: values.cranialNerves },
+                { concept: concepts.GROSS_MOTOR, value: values.grossMotor },
+                { concept: concepts.SENSATION, value: values.sensation },
+                { concept: concepts.PULSATIONS, value: values.pulsations },
+                { concept: concepts.RECTAL_EXAMINATION, value: values.rectalExamination },
+                { concept: concepts.VAGINAL_EXAMINATION, value: values.vaginalExamination },
+            ].filter(obs => obs.value !== ""), // Exclude empty fields
+        };
+
+        try {
+            await submitEncounter(encounterPayload);
+            onSubmit(values);
+        } catch (error) {
+            console.error("Error submitting Physical Examination:", error);
+        }
+    };
     return (
         <FormikInit
             initialValues={{
@@ -77,12 +142,11 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                 vaginalExamination: "",
             }}
             validationSchema={validationSchema}
-            onSubmit={(values) => console.log("Physical Examination Data:", values)}
+            onSubmit={handleSubmit} // Call the updated function here
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
                     <FormFieldContainerLayout title="Physical Examination">
-
 
                         {/* General */}
                         <FormFieldContainerLayout title="General Condition">
@@ -110,7 +174,6 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
 
                         {/* Mouth */}
                         <FormFieldContainerLayout title="Mouth">
-
 
                             <RadioGroupInput name="mouth" options={physicalExaminationOptions.mouth.map((option) => ({ value: option, label: option }))} label={""} />
                         </FormFieldContainerLayout>
@@ -144,7 +207,6 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Glasgow Coma Scale (GCS) */}
                         <FormFieldContainerLayout title="Glasgow Coma Scale (GCS)">
 
-
                             <h5>Motor Response</h5>
                             <RadioGroupInput name="motorResponse" options={gcsOptions.motorResponse.map((option) => ({ value: option, label: option }))} label={""} />
 
@@ -170,7 +232,6 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         </FormFieldContainerLayout>
 
                         <FormFieldContainerLayout title="Extremities">
-
 
                             <TextInputField sx={{ width: "100%" }}
                                 name="pulsations" label="Pulsations" type="text" id={""} />

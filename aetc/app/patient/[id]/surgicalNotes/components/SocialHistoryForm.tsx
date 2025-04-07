@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import {
     FormikInit,
@@ -9,6 +9,12 @@ import {
     FormFieldContainerLayout,
     RadioGroupInput,
 } from "@/components";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -32,9 +38,71 @@ const schema = Yup.object().shape({
     recreationalDrugs: Yup.string().required("Please select if you use recreational drugs"),
 });
 
+//// encounter: SURGICAL_NOTES_TEMPLATE_FORM
+
+//  concepts:  PATIENT_SMOKES, EXPECTED_DURATION,  PATIENT_DRINKS_ALCOHOL, 
+//new concepts: PATIENT_SMOKES,  ALCOHOL_INTAKE, RECREATIONAL_DRUG
+
 export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const [doYouSmoke, setDoYouSmoke] = useState<string>("");
 
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = getDateTime();
+
+        // Construct observations for Social History
+        const obs = [
+            {
+                concept: concepts.PATIENT_SMOKES,
+                value: values.doYouSmoke,
+                obsDatetime: currentDateTime,
+                group_members: values.doYouSmoke === "Yes"
+                    ? [{ concept: concepts.EXPECTED_DURATION, value: values.cigarettesPerDay, obsDatetime: currentDateTime }]
+                    : [],
+            },
+            {
+                concept: concepts.ALCOHOL_INTAKE,
+                value: values.alcoholIntake,
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.RECREATIONAL_DRUG,
+                value: values.recreationalDrugs,
+                obsDatetime: currentDateTime,
+            },
+        ];
+
+        // Construct the encounter payload
+        const payload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            console.log("Social History submitted successfully!");
+            onSubmit(values);
+        } catch (error) {
+            console.error("Error submitting Social History: ", error);
+        }
+    };
     return (
         <FormikInit
             validationSchema={schema}
@@ -45,7 +113,7 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 alcoholIntake: "",
                 recreationalDrugs: "",
             }}
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>

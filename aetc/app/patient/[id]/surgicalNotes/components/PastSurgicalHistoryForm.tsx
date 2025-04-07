@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import {
     FormikInit,
@@ -9,6 +9,12 @@ import {
     FormFieldContainerLayout,
     TextInputField,
 } from "@/components";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -23,8 +29,58 @@ const schema = Yup.object().shape({
 
 //encounter: SURGICAL_NOTES_TEMPLATE_FORM
 //concepts: PROCEDURES
+// use these concepts: SURGICAL_PROCEDURE, SURGICAL_HISTORY
 
 export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        // Finds the active visit for the patient from their visit history
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        if (values.hasSurgicalHistory !== "Yes") {
+            // toast.error("No surgical history to submit.");
+            return;
+        }
+
+        const currentDateTime = getDateTime();
+
+        const obs = [
+            {
+                concept: concepts.PROCEDURES,
+                value: values.surgicalDetails,
+                obsDatetime: currentDateTime,
+            },
+        ];
+
+        const payload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            // toast.success("Surgical history submitted successfully!");
+            onSubmit(values);
+        } catch (error) {
+            console.error("Error submitting surgical history:", error);
+            // toast.error("Failed to submit surgical history.");
+        }
+    };
+
     return (
         <FormikInit
             validationSchema={schema}
@@ -32,7 +88,7 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 hasSurgicalHistory: "",
                 surgicalDetails: "",
             }}
-            onSubmit={(values) => console.log("Surgical History:", values)}
+            onSubmit={handleSubmit}
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
@@ -61,7 +117,6 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             rows={5}
                         />
                     </FormFieldContainerLayout>
-
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>
