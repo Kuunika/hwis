@@ -159,7 +159,7 @@ export const encounters = {
   // CPR:"8576645e-1661-47fc-90b4-12420148da8b",
   CPR: "8caec6aa-22c4-41f3-b81d-9454cac03b49",
   //TODO: replace this UUID with a bedside test
-  BED_SIDE_TEST: "27e4890f-1677-4098-aa85-c65cfe32359c",
+  BED_SIDE_TEST: "bf8cdda1-30d3-439e-96b0-50c9c36048da",
   DISCHARGE_PATIENT: "ba06820c-8d80-11d8-abbb-0024217bb78e",
   TREATMENT: "ba05ed9c-8d80-11d8-abbb-0024217bb78e",
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",
