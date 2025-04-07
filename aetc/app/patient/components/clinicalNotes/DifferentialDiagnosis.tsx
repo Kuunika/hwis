@@ -12,7 +12,7 @@ export const useDifferentialDiagnosis = (pData: any) => {
       (d: any) => d.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS
     );
  
-    //  console.log("Tione matenda",additionalFieldsEncounter)
+     console.log("Tione makhwala:",additionalFieldsEncounter)
     
     if (!additionalFieldsEncounter?.obs) return;
 
