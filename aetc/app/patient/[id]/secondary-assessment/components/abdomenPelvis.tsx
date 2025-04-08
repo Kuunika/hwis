@@ -311,7 +311,7 @@ const generalOptions = [
   { id: concepts.EMPTY_RECTUM, label: "Empty rectum" },
   { id: concepts.MALAENA, label: "Malaena" },
   { id: concepts.FRESH_BLOOD, label: "Fresh blood (Haematochezia)" },
-  { id: concepts.HEMORROID, label: "Hermorrhoid" },
+  { id: concepts.HEMORROID, label: "Haemorrhoid" },
   { id: concepts.FISSURE, label: "Fissure" },
   { id: concepts.OTHER, label: "Other" },
 ];

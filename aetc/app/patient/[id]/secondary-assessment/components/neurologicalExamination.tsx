@@ -1,12 +1,7 @@
 "use client";
-import { NotificationContainer } from "@/components";
+
 import React, { useState } from "react";
-import {
-  FieldsContainer,
-  FormValuesListener,
-  FormikInit,
-  TextInputField,
-} from "@/components";
+import { FormikInit, TextInputField } from "@/components";
 import * as yup from "yup";
 import { getInitialValues, getObservations } from "@/helpers";
 import { concepts, encounters } from "@/constants";

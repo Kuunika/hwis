@@ -554,6 +554,34 @@ export const ChestForm = ({ onSubmit }: Prop) => {
               </>
             )}
           </FormFieldContainerLayout>
+          <FormFieldContainerLayout title="Percussion">
+            <RadioGroupInput
+              row={true}
+              name={form.percussion.name}
+              options={percussionOptions}
+              label={form.percussion.label}
+            />
+            {formValues[form.percussion.name] == concepts.ABNORMAL && (
+              <>
+                {gender == "Male" && (
+                  <LungFrontMaleImage
+                    onValueChange={setPercussionImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="percussion"
+                  />
+                )}
+                {gender == "Female" && (
+                  <LungFrontFemaleImage
+                    onValueChange={setPercussionImagesEnc}
+                    imageEncounter={encounters.CHEST_ASSESSMENT}
+                    imageSection={form.localizedChestAbnormality.name}
+                    form="percussion"
+                  />
+                )}
+              </>
+            )}
+          </FormFieldContainerLayout>
 
           <FormFieldContainerLayout title="Palpation (Heart)">
             <RadioGroupInput
@@ -602,46 +630,6 @@ export const ChestForm = ({ onSubmit }: Prop) => {
                 id={form.heavesDescription.name}
                 label={form.heavesDescription.label}
               />
-            )}
-          </FormFieldContainerLayout>
-          <FormFieldContainerLayout title="Percussion">
-            <RadioGroupInput
-              row={true}
-              name={form.percussion.name}
-              options={percussionOptions}
-              label={form.percussion.label}
-            />
-            {formValues[form.percussion.name] == concepts.ABNORMAL && (
-              <>
-                {gender == "Male" && (
-                  <LungFrontMaleImage
-                    onValueChange={setPercussionImagesEnc}
-                    imageEncounter={encounters.CHEST_ASSESSMENT}
-                    imageSection={form.localizedChestAbnormality.name}
-                    form="percussion"
-                  />
-                )}
-                {gender == "Female" && (
-                  <LungFrontFemaleImage
-                    onValueChange={setPercussionImagesEnc}
-                    imageEncounter={encounters.CHEST_ASSESSMENT}
-                    imageSection={form.localizedChestAbnormality.name}
-                    form="percussion"
-                  />
-                )}
-                {/* <ChestLung
-                selectable={true}
-                onValueChange={setTactileFremitusImagesEnc}
-                imageEncounter={encounters.CHEST_ASSESSMENT}
-                imageSection={form.tactileFremitus.name}
-              /> */}
-
-                {/* <PercussionChestLung
-                onValueChange={setPercussionImagesEnc}
-                imageSection={form.percussion.name}
-                imageEncounter={encounters.CHEST_ASSESSMENT}
-              /> */}
-              </>
             )}
           </FormFieldContainerLayout>
           <FormFieldContainerLayout title="Auscultation (Lungs)">
