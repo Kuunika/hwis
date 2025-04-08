@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NewStepperContainer, SubSteps } from "@/components";
 import {
   ComplaintsForm,
@@ -90,7 +90,15 @@ export const MedicalHistoryFlow = () => {
   const admissionsFormRef = useRef<HTMLDivElement | null>(null);
   const conditionsFormRef = useRef<HTMLDivElement | null>(null);
   const familyHistoryFormRef = useRef<HTMLDivElement | null>(null);
+  const [readyToSubmit, setReadyToSubmit] = useState(false);
 
+  useEffect(() => {
+    if (readyToSubmit) {
+      handleSubmitAll(0);
+      setReadyToSubmit(false);
+    }
+  }, [readyToSubmit]);
+  
   const {
     loading,
     setLoading,
@@ -151,6 +159,8 @@ export const MedicalHistoryFlow = () => {
     const previousStep = activeStep - 1;
     setActiveStep(previousStep);
   };
+
+  
 
   
 
@@ -1022,13 +1032,10 @@ export const MedicalHistoryFlow = () => {
   function handleFamilyNext(values: any): void {
     if (Object.values(values).some((value) => value === true)) {
       setFormData((prev: any) => ({ ...prev, family: values }));
+      setReadyToSubmit(true);
     }
-
-    handleSubmitAll(0);
+    
   }
-
-
-
 
   async function handleFamilyHistorySubmission(values: any): Promise<any> {
     const conditionConcepts: { [key: string]: string } = {
@@ -1094,27 +1101,25 @@ export const MedicalHistoryFlow = () => {
       groupedObservations.push([observations[i], observations[i + 1]]);
     }
 
-    groupedObservations.forEach(async (group) => {
+
+    const encounterPayload = groupedObservations.map(([condition, relation]) => ({
+      ...condition,
+      groupMembers: [relation]
+    }));
+
       try {
         const response = await createEncounter({
           encounterType: encounters.FAMILY_MEDICAL_HISTORY,
           visit: activeVisit?.uuid,
           patient: params.id,
           encounterDatetime: dateTime,
-          obs: [
-            {
-              concept: concepts.REVIEW_OF_SYSTEMS_OTHER,
-              value: true,
-              obsDatetime: dateTime,
-              groupMembers: group,
-            },
-          ],
+          obs: encounterPayload,
         });
         console.log("Encounter successfully created:", response);
       } catch (error: any) {
         throw error;
       }
-    });
+   
   }
 
   async function handleSubmitAll(index: number) {
@@ -1125,7 +1130,7 @@ export const MedicalHistoryFlow = () => {
     }
 
     setLoading(true);
-
+    
     const submissionHandlers: Record<string, (value: any) => Promise<any>> = {
       presentingComplaints: handlePresentingComplaintsSubmission,
       allergies: handleAllergiesSubmission,
@@ -1144,7 +1149,7 @@ export const MedicalHistoryFlow = () => {
 
     try {
       await submissionHandlers[key](encounter);
-
+      console.log('submitting', encounter)
       setMessage(`${key} submitted`);
       setCompleted(index + 1);
     } catch (error) {
@@ -1157,7 +1162,6 @@ export const MedicalHistoryFlow = () => {
       handleSubmitAll(index + 1);
     }, 2000);
   }
-console.log(formData)
 
   return (
     <>

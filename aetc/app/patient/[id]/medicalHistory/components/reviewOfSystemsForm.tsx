@@ -477,7 +477,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
     const socialHistory = formValues["showSocialHistory"];
     setUpdateSocial(!!socialHistory);
 
-    console.log(formValues);
   }, [formValues, symptomList, formValues["showSocialHistory"]]);
 
   const handleSubmit = async () => {

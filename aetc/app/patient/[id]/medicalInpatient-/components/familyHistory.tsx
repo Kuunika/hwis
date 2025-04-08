@@ -6,19 +6,20 @@ import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
-
 interface Observation {
   obs_id: number | null;
   obs_group_id: number | null;
-  value: any;
+  value?: any;
+  value_text?: any;
   names: { name: string }[];
-  children?: Observation[]; // To support nested children
+  children?: Observation[]; 
 }
 
 interface ProcessedObservation {
   obs_id: number | null;
   name: string | undefined;
-  value: any;
+  value?: any;
+  value_text?: any;
   children: ProcessedObservation[];
 }
 
@@ -31,45 +32,51 @@ interface familyHistoryPanelProps {
 
 function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelProps) {
     const { params } = useParameters();
-    const { data: historicFamilyData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
+    const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const displayedObservations = showForPrinting ? observations : observations.slice(0, 4);
 
+    const familyHistoryEncounters = historicData?.filter(
+      (item) => item.encounter_type?.name === "FAMILY MEDICAL HISTORY"
+    )
+    console.log(familyHistoryEncounters)
   useEffect(() => {
     if (!historyLoading) {
+      const observations: ProcessedObservation[] = [];
+      
+     
+      familyHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
+        console.log('Patient history:',encounter);
+        
+      
+        encounter.obs.forEach((observation) => {
+        const value = observation.value;
+      
 
-        const familyHistoryEncounters = historicFamilyData?.filter(
-            (item) => item.encounter_type?.name === "FAMILY MEDICAL HISTORY"
-          )
-
-        const observations: ProcessedObservation[] = [];
-
-        familyHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-            encounter.obs.forEach((observation) => {
-              const value = observation.value;
-          
-              const obsData: ProcessedObservation = {
-                obs_id: observation.obs_id,
-                name: observation.names?.[0]?.name,
-                value,
+        const obsData: ProcessedObservation = {
+          obs_id: observation.obs_id,
+          name: observation.names?.[0]?.name,
+          value,
+          children: observation.children
+            ? observation.children.map((child) => ({
+                obs_id: child.obs_id,
+                name: child.names?.[0]?.name,
+                value: child.value,
                 children: [],
-              };
-          
-              if (observation.obs_group_id) {
-                const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-                if (parent) {
-                  parent.children.push(obsData);
-                }
-              } else {
-                observations.push(obsData);
-              }
-            });
-          });
-  
-            setObservations(observations)
- 
-        }
-  },[historicFamilyData])
+              }))
+            : [],
+        };
+        observations.push(obsData);
+
+      })
+      const filtered = observations.filter(item => item.children && item.children.length > 0);
+      console.log(filtered)
+          setObservations(filtered)
+      });
+
+      }
+
+  },[historicData])
 
 return (
   <>
@@ -104,17 +111,11 @@ return (
         width: "300px",
         color: "rgba(0, 0, 0, 0.6)",
       }}
-    >
-      {item.children && item.children.length > 0 && (
-        <>
+    ><b>{item.name?.split("Family History ").pop()}</b>
+
           {item.children.map((child) => (
-            <p key={child.obs_id}>
-              <b>{(child.name)?.split("Family History ").pop()}</b>
-              {child.value === "true" ? null : `: ${child.value}`}
-            </p>
+            <p>{child.value}</p>
           ))}
-        </>
-      )}
     </div>
   ))}
 </div>
