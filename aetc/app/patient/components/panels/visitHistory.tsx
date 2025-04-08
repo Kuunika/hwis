@@ -144,154 +144,154 @@ export const VisitHistory = () => {
       title: "Financing",
       data: getEncountersByType(encounters.FINANCING),
     },
-    panel6: {
-      title: "Presenting Complaints",
-      data: getEncountersByType(encounters.PRESENTING_COMPLAINTS),
-    },
-    panel7: {
-      title: "Vitals",
-      data: getEncountersByType(encounters.VITALS),
-    },
-    panel8:{
-      title:"Differential",
-      data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS)
-    },
+    // panel6: {
+    //   title: "Presenting Complaints",
+    //   data: getEncountersByType(encounters.PRESENTING_COMPLAINTS),
+    // },
+    // panel7: {
+    //   title: "Vitals",
+    //   data: getEncountersByType(encounters.VITALS),
+    // },
+    // panel8:{
+    //   title:"Differential",
+    //   data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS)
+    // },
     // panel8: {
     //   title: "Airway Assessment",
     //   data: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
     // },
-    panel9: {
-      title: "Blood Circulation",
-      data: getEncountersByType(encounters.BLOOD_CIRCULATION),
-    },
+    // panel9: {
+    //   title: "Blood Circulation",
+    //   data: getEncountersByType(encounters.BLOOD_CIRCULATION),
+    // },
     // panel10: {
     //   title: "Disability Assessment",
     //   data: getEncountersByType(encounters.DISABILITY_ASSESSMENT),
     // },
-    panel11: {
-      title: "Persistent Pain",
-      data: getEncountersByType(encounters.PERSISTENT_PAIN),
-    },
-    panel12: {
-      title: "Triage Result",
-      data: getEncountersByType(encounters.TRIAGE_RESULT),
-    },
-    panel13: {
-      title: "Chest Assessment",
-      data: getEncountersByType(encounters.CHEST_ASSESSMENT),
-    },
-    panel14: {
-      title: "Abdomen and Pelvis Assessment",
-      data: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
-    },
-    panel15: {
-      title: "Extremities Assessment",
-      data: getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
-    },
-    panel16: {
-      title: "Neurological Examination",
-      data: getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
-    },
-    panel17: {
-      title: "General Information",
-      data: getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
-    },
-    panel18: {
-      title: "Head and Neck Assessment",
-      data: getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
-    },
-    panel19: {
-      title: "Medical History",
-      data: getEncountersByType(encounters.MEDICAL_HISTORY),
-    },
-    panel20: {
-      title: "Obstetric History",
-      data: getEncountersByType(encounters.OBSTETRIC_HISTORY),
-    },
-    panel21: {
-      title: "Prescriptions",
-      data: getEncountersByType(encounters.PRESCRIPTIONS),
-    },
-    panel22: {
-      title: "Allergies",
-      data: getEncountersByType(encounters.ALLERGIES),
-    },
-    panel23: {
-      title: "Diagnosis",
-      data: getEncountersByType(encounters.DIAGNOSIS),
-    },
-    panel24: {
-      title: "Surgical History",
-      data: getEncountersByType(encounters.SURGICAL_HISTORY),
-    },
-    panel25: {
-      title: "Patient Admissions",
-      data: getEncountersByType(encounters.PATIENT_ADMISSIONS),
-    },
-    panel26: {
-      title: "Summary Assessment",
-      data: getEncountersByType(encounters.SUMMARY_ASSESSMENT),
-    },
-    panel27: {
-      title: "CPR",
-      data: getEncountersByType(encounters.CPR),
-    },
-    panel28: {
-      title: "Bedside Test",
-      data: getEncountersByType(encounters.BED_SIDE_TEST),
-    },
-    panel29: {
-      title: "Discharge Patient",
-      data: getEncountersByType(encounters.DISCHARGE_PATIENT),
-    },
-    panel30: {
-      title: "Treatment",
-      data: getEncountersByType(encounters.TREATMENT),
-    },
-    panel31: {
-      title: "Non-Pharmacological Treatment",
-      data: getEncountersByType(encounters.NON_PHARMACOLOGICAL),
-    },
-    panel32: {
-      title: "Patient Care Area",
-      data: getEncountersByType(encounters.PATIENT_CARE_AREA),
-    },
-    panel33: {
-      title: "Dispensing",
-      data: getEncountersByType(encounters.DISPENSING),
-    },
-    panel34: {
-      title: "Family Medical History",
-      data: getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY),
-    },
-    panel35: {
-      title: "Review of Systems",
-      data: getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
-    },
-    panel36: {
-      title: "Airway and Breathing",
-      data: getEncountersByType(encounters.AIRWAY_BREATHING),
-    },
-    panel37: {
-      title: "Consciousness",
-      data: getEncountersByType(encounters.CONSCIOUSNESS),
-    },
-    panel38: {
-      title: "Clinical Notes",
-      data: getEncountersByType(encounters.CLINICAL_NOTES),
-    },
-    panel39: {
-      title: "Procedures Done",
-      data: getEncountersByType(encounters.PROCEDURES_DONE),
-    },
-    panel40: {
-      title: "Nursing Notes",
-      data: getEncountersByType(encounters.NURSING_NOTES),
-    },
-    panel41: {
-      title: "Outpatient Diagnosis",
-      data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
-    },
+    // panel11: {
+    //   title: "Persistent Pain",
+    //   data: getEncountersByType(encounters.PERSISTENT_PAIN),
+    // },
+    // panel12: {
+    //   title: "Triage Result",
+    //   data: getEncountersByType(encounters.TRIAGE_RESULT),
+    // },
+    // panel13: {
+    //   title: "Chest Assessment",
+    //   data: getEncountersByType(encounters.CHEST_ASSESSMENT),
+    // },
+    // panel14: {
+    //   title: "Abdomen and Pelvis Assessment",
+    //   data: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
+    // },
+    // panel15: {
+    //   title: "Extremities Assessment",
+    //   data: getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
+    // },
+    // panel16: {
+    //   title: "Neurological Examination",
+    //   data: getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
+    // },
+    // panel17: {
+    //   title: "General Information",
+    //   data: getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
+    // },
+    // panel18: {
+    //   title: "Head and Neck Assessment",
+    //   data: getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
+    // },
+    // panel19: {
+    //   title: "Medical History",
+    //   data: getEncountersByType(encounters.MEDICAL_HISTORY),
+    // },
+    // panel20: {
+    //   title: "Obstetric History",
+    //   data: getEncountersByType(encounters.OBSTETRIC_HISTORY),
+    // },
+    // panel21: {
+    //   title: "Prescriptions",
+    //   data: getEncountersByType(encounters.PRESCRIPTIONS),
+    // },
+    // panel22: {
+    //   title: "Allergies",
+    //   data: getEncountersByType(encounters.ALLERGIES),
+    // },
+    // panel23: {
+    //   title: "Diagnosis",
+    //   data: getEncountersByType(encounters.DIAGNOSIS),
+    // },
+    // panel24: {
+    //   title: "Surgical History",
+    //   data: getEncountersByType(encounters.SURGICAL_HISTORY),
+    // },
+    // panel25: {
+    //   title: "Patient Admissions",
+    //   data: getEncountersByType(encounters.PATIENT_ADMISSIONS),
+    // },
+    // panel26: {
+    //   title: "Summary Assessment",
+    //   data: getEncountersByType(encounters.SUMMARY_ASSESSMENT),
+    // },
+    // panel27: {
+    //   title: "CPR",
+    //   data: getEncountersByType(encounters.CPR),
+    // },
+    // panel28: {
+    //   title: "Bedside Test",
+    //   data: getEncountersByType(encounters.BED_SIDE_TEST),
+    // },
+    // panel29: {
+    //   title: "Discharge Patient",
+    //   data: getEncountersByType(encounters.DISCHARGE_PATIENT),
+    // },
+    // panel30: {
+    //   title: "Treatment",
+    //   data: getEncountersByType(encounters.TREATMENT),
+    // },
+    // panel31: {
+    //   title: "Non-Pharmacological Treatment",
+    //   data: getEncountersByType(encounters.NON_PHARMACOLOGICAL),
+    // },
+    // panel32: {
+    //   title: "Patient Care Area",
+    //   data: getEncountersByType(encounters.PATIENT_CARE_AREA),
+    // },
+    // panel33: {
+    //   title: "Dispensing",
+    //   data: getEncountersByType(encounters.DISPENSING),
+    // },
+    // panel34: {
+    //   title: "Family Medical History",
+    //   data: getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY),
+    // },
+    // panel35: {
+    //   title: "Review of Systems",
+    //   data: getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
+    // },
+    // panel36: {
+    //   title: "Airway and Breathing",
+    //   data: getEncountersByType(encounters.AIRWAY_BREATHING),
+    // },
+    // panel37: {
+    //   title: "Consciousness",
+    //   data: getEncountersByType(encounters.CONSCIOUSNESS),
+    // },
+    // panel38: {
+    //   title: "Clinical Notes",
+    //   data: getEncountersByType(encounters.CLINICAL_NOTES),
+    // },
+    // panel39: {
+    //   title: "Procedures Done",
+    //   data: getEncountersByType(encounters.PROCEDURES_DONE),
+    // },
+    // panel40: {
+    //   title: "Nursing Notes",
+    //   data: getEncountersByType(encounters.NURSING_NOTES),
+    // },
+    // panel41: {
+    //   title: "Outpatient Diagnosis",
+    //   data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+    // },
     // panel42: {
     //   title: "Circulation Assessment",
     //   data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),

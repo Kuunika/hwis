@@ -150,7 +150,7 @@ export const encounters = {
   HEAD_AND_NECK_ASSESSMENT: "b43070c9-a4bf-4b05-84af-a8c45a37dfdd",
   MEDICAL_HISTORY: "ba05f13e-8d80-11d8-abbb-0024217bb78e",
   OBSTETRIC_HISTORY: "ba063da6-8d80-11d8-abbb-0024217bb78e",
-  PRESCRIPTIONS: "88564b30-abaf-4744-8ea6-6e1c15465d9e",
+  PRESCRIPTION: "88564b30-abaf-4744-8ea6-6e1c15465d9e",
   ALLERGIES: "477f8110-ae4b-4caa-b608-c05b0f967b9e",
   DIAGNOSIS: "ba05fbfc-8d80-11d8-abbb-0024217bb78e",
   SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
@@ -158,7 +158,7 @@ export const encounters = {
   SUMMARY_ASSESSMENT: "e5fec87c-9bea-42bb-a276-0469addccf99",
   // CPR:"8576645e-1661-47fc-90b4-12420148da8b",
   CPR: "8caec6aa-22c4-41f3-b81d-9454cac03b49",
-  //TODO: replace this UUID with a bedside test
+  //TODO: replace this UUID with a bedside test 
   BED_SIDE_TEST: "bf8cdda1-30d3-439e-96b0-50c9c36048da",
   DISCHARGE_PATIENT: "ba06820c-8d80-11d8-abbb-0024217bb78e",
   TREATMENT: "ba05ed9c-8d80-11d8-abbb-0024217bb78e",
