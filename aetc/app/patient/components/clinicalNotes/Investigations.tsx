@@ -307,6 +307,54 @@
 
 
 
+// import { useEffect, useState } from "react";
+// import { encounters } from "@/constants";
+// import { Obs } from "@/interfaces";
+
+// export const useInvestigations = (pData: any) => {
+//   const [investigationsMessage, setInvestigationsMessage] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     if (!pData) return;
+
+//     const fieldsEncounter = pData.find(
+//       (d: any) => d.encounter_type.uuid === encounters.BED_SIDE_TEST
+//     );
+   
+//     if (!fieldsEncounter?.obs) return;
+
+//     console.log("tione mmene zilili bed ndi yellow man",fieldsEncounter)
+
+    
+//     const observations = fieldsEncounter.obs
+//       .map((ob: Obs) => ob.value) 
+//       .filter(Boolean); 
+
+//     if (observations.length === 0) return;
+
+    
+//     const observationDates = fieldsEncounter.obs
+//       .map((ob: Obs) => ob.obs_datetime)
+//       .filter(Boolean);
+
+//     const latestDate = observationDates.length > 0
+//       ? new Date(Math.max(...observationDates.map(d => new Date(d).getTime()))): new Date();
+
+//     const formattedDate = latestDate.toLocaleString();
+
+//     let messages = [`Bed side tests recorded on ${formattedDate}..\n`];
+
+//     observations.forEach((obs: any) => {
+//       messages.push(`Test result: ${obs}. `);
+//     });
+
+//     setInvestigationsMessage(messages.join(""));
+//   }, [pData]);
+
+//   return investigationsMessage;
+// };
+
+
 import { useEffect, useState } from "react";
 import { encounters } from "@/constants";
 import { Obs } from "@/interfaces";
@@ -323,29 +371,39 @@ export const useInvestigations = (pData: any) => {
    
     if (!fieldsEncounter?.obs) return;
 
-    console.log("tione mmene zilili bed ndi yellow man",fieldsEncounter)
+    const processObservation = (obs: Obs, indent = 0): string => {
+      let message = '';
+      const indentStr = ' '.repeat(indent * 2);
+      
 
-    
-    const observations = fieldsEncounter.obs
-      .map((ob: Obs) => ob.value) 
-      .filter(Boolean); 
+      if (obs.value) {
+        message += `${indentStr}${obs.names?.[0]?.name || 'Test'}: ${obs.value}\n`;
+      }
 
-    if (observations.length === 0) return;
+      
+      if (obs.children && obs.children.length > 0) {
+        obs.children.forEach(child => {
+          message += processObservation(child, indent + 1);
+        });
+      }
 
-    
+      return message;
+    };
+
     const observationDates = fieldsEncounter.obs
       .map((ob: Obs) => ob.obs_datetime)
       .filter(Boolean);
 
     const latestDate = observationDates.length > 0
-      ? new Date(Math.max(...observationDates.map(d => new Date(d).getTime()))): new Date();
+      ? new Date(Math.max(...observationDates.map(d => new Date(d).getTime())))
+      : new Date();
 
     const formattedDate = latestDate.toLocaleString();
 
-    let messages = [`Bed side tests recorded on ${formattedDate}..\n`];
+    let messages = [`Bed side tests recorded on ${formattedDate}:\n\n`];
 
-    observations.forEach((obs: any) => {
-      messages.push(`Test result: ${obs}. `);
+    fieldsEncounter.obs.forEach((obs: Obs) => {
+      messages.push(processObservation(obs));
     });
 
     setInvestigationsMessage(messages.join(""));
