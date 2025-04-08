@@ -160,7 +160,6 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   const handleSubmit = async () => {
-    console.log(formValues)
     onSubmit(formValues);
   };
 

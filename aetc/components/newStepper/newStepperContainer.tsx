@@ -102,7 +102,7 @@ export function NewStepperContainer({
     filteredChildren.splice(index, 1);
   });
   
-  const subStepData = new Map<Number, string[]>();
+  const subStepData = new Map<number, string[]>();
   
   subChildren.forEach((subChild) => {
     if (React.isValidElement(subChild)) {

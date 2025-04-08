@@ -39,7 +39,7 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
     const familyHistoryEncounters = historicData?.filter(
       (item) => item.encounter_type?.name === "FAMILY MEDICAL HISTORY"
     )
-    console.log(familyHistoryEncounters)
+    
   useEffect(() => {
     if (!historyLoading) {
       const observations: ProcessedObservation[] = [];
@@ -76,7 +76,7 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
 
       }
 
-  },[historicData])
+  },[[historicData, historyLoading, familyHistoryEncounters]])
 
 return (
   <>
@@ -114,7 +114,7 @@ return (
     ><b>{item.name?.split("Family History ").pop()}</b>
 
           {item.children.map((child) => (
-            <p>{child.value}</p>
+            <p key={child.obs_id}>{child.value}</p>
           ))}
     </div>
   ))}

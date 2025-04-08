@@ -92,7 +92,7 @@ const schema = Yup.object().shape({
     then: (schema) =>
       schema
         .of(conditionsSchema)
-        .min(1, "At least one medication must be added"),
+        .min(1, "At least one condition must be added"),
     otherwise: (schema) => schema.notRequired(),
   }),
 });

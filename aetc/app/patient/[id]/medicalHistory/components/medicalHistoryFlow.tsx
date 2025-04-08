@@ -667,7 +667,7 @@ export const MedicalHistoryFlow = () => {
     };
 
     try {      
-      const response = createEncounter({ 
+      const response = await createEncounter({ 
             encounterType: encounters.SUMMARY_ASSESSMENT,
             visit: activeVisit?.uuid,
             patient: params.id,

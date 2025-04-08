@@ -31,7 +31,7 @@ export const useFormikField = <T extends FormikValues = FormikValues>(
   const value = useMemo(() => values?.[fieldName], [values, fieldName]);
 
   // Error handling with null checks
-  const hasError = Boolean(errors?.[fieldName]);
+  const hasError = Boolean(touched?.[fieldName] && errors?.[fieldName]);
 
   const errorMessage = hasError ? String(errors[fieldName]) : "";
   // Type-safe value updater

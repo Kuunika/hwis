@@ -110,7 +110,7 @@ export const LastMealForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                          placeholder="e.g., rice and beans"
                          multiline
                          rows={4}
-                        disabled={formValues.didnotEat}
+                        disabled={formValues.didNotEat}
                        />
                               
                        </FormFieldContainer>

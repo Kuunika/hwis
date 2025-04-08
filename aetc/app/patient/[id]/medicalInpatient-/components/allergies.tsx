@@ -16,7 +16,6 @@ function AllergiesPanel() {
 
 
     const allergiesEncounters = historicData?.filter((item) => item.encounter_type.name === "Allergies");
-    const familyHist = historicData?.filter((item) => item.encounter_type.name === "");
 
   useEffect(() => {
     
