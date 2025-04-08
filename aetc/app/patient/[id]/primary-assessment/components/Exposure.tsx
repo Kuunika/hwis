@@ -48,7 +48,7 @@ const schema = yup.object({
   [form.temperatureInfo.name]: yup
     .number()
     .required()
-    .min(25)
+    .min(20)
     .max(45)
     .label(form.temperatureInfo.label),
   [form.additionalNotes.name]: yup.string().label(form.additionalNotes.label),
@@ -108,7 +108,7 @@ export const Exposure = ({ onSubmit }: Props) => {
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
-        title="Tick if circulation is normal and there are no abnormalities"
+        title="Tick if exposure is normal and there are no abnormalities"
       />
       {!isChecked && (
         <FormikInit
@@ -124,10 +124,11 @@ export const Exposure = ({ onSubmit }: Props) => {
             name={form.temperatureInfo.name}
             label={form.temperatureInfo.label}
             id={form.temperatureInfo.name}
+            unitOfMeasure="°C"
           />
 
           <br />
-          <FormControlLabel
+          {/* <FormControlLabel
             label="Tick if the body is normal and there are no abnormalities"
             control={
               <Checkbox
@@ -137,7 +138,7 @@ export const Exposure = ({ onSubmit }: Props) => {
                 }}
               />
             }
-          />
+          /> */}
 
           {!isChecked && (
             <>

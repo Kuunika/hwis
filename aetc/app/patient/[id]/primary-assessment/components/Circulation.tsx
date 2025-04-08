@@ -18,10 +18,7 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import { LegAbnormalityImage } from "@/components/svgImages/legAbnormality";
 import {
-  AbdomenImage,
-  AbdomenImageWithOtherForm,
   LowerLimbFemaleAnteriorImage,
   LowerLimbMaleAnteriorImage,
   NewAbdomenImage,
@@ -182,13 +179,13 @@ const schema = yup.object({
     .label(form.bleedingActionDone.label),
   [form.bloodPressureSystolic.name]: yup
     .number()
-    .min(30)
+    .min(0)
     .max(300)
     .label(form.bloodPressureSystolic.label),
   [form.bloodPressureDiastolic.name]: yup
     .number()
-    .min(10)
-    .max(200)
+    .min(0)
+    .max(300)
     .label(form.bloodPressureDiastolic.label),
   [form.intravenousAccess.name]: yup
     .string()

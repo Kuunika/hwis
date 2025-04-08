@@ -159,7 +159,7 @@ export const Disability = ({ onSubmit }: Props) => {
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
-        title="Tick if circulation is normal and there are no abnormalities"
+        title="Tick if disability is normal and there are no abnormalities"
       />
       {!isChecked && (
         <FormikInit

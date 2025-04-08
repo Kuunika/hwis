@@ -155,6 +155,7 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
           validationSchema={schema}
           initialValues={initialsValues}
           onSubmit={handleSubmitForm}
+          submitButtonText="next"
         >
           <FormValuesListener getValues={setFormValues} />
           <FormFieldContainerLayout title="">

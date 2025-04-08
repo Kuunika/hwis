@@ -141,6 +141,8 @@ const schema = Yup.object().shape({
     form.deviceForIntervention.label
   ),
   [form.respiratoryRate.name]: Yup.number()
+    .min(0)
+    .max(90)
     .when(form.isPatientBreathing.name, (values: any, schema: any) => {
       if (values[0] == concepts.YES) {
         return schema.required();
@@ -151,6 +153,8 @@ const schema = Yup.object().shape({
     .min(1)
     .max(70),
   [form.oxygenSaturation.name]: Yup.number()
+    .min(20)
+    .max(100)
     .when(form.isPatientBreathing.name, (values: any, schema: any) => {
       if (values[0] == concepts.YES) {
         return schema.required();
