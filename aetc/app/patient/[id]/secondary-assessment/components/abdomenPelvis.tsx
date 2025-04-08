@@ -17,20 +17,11 @@ import {
   TextInputField,
 } from "@/components";
 import * as Yup from "yup";
-import {
-  AbdomenImageWithOtherForm,
-  NewAbdomenImage,
-  SecondaryAbdomenImage,
-} from "@/components/svgImages";
+import { NewAbdomenImage } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
-import {
-  getActivePatientDetails,
-  useParameters,
-  useSubmitEncounter,
-} from "@/hooks";
+import { useParameters, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { getCachedConcept } from "@/helpers/data";
 import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
 

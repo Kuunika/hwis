@@ -21,7 +21,6 @@ import * as Yup from "yup";
 import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { getCachedConcept } from "@/helpers/data";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
@@ -364,11 +363,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   };
 
   const handleValueChange = (values: Array<any>) => {
-    setShowSpecify(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
-      )
-    );
+    setShowSpecify(Boolean(values.find((v) => v.id == concepts.OTHER)));
   };
 
   return (
@@ -692,20 +687,10 @@ export const ChestForm = ({ onSubmit }: Prop) => {
                   getValue={(values) => {
                     if (!values) return;
                     setShowAbnormalities(
-                      Boolean(
-                        values.find(
-                          (v: any) =>
-                            v.id == getCachedConcept(concepts.MURMUR)?.uuid
-                        )
-                      )
+                      Boolean(values.find((v: any) => v.id == concepts.MURMUR))
                     );
                     setShowAbnormalitiesOther(
-                      Boolean(
-                        values.find(
-                          (v: any) =>
-                            v.id == getCachedConcept(concepts.OTHER)?.uuid
-                        )
-                      )
+                      Boolean(values.find((v: any) => v.id == concepts.OTHER))
                     );
                   }}
                   name={form.abnormalities.name}

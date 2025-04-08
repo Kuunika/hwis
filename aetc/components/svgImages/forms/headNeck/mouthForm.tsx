@@ -13,7 +13,6 @@ import {
 import * as Yup from "yup";
 import React from "react";
 import { Box } from "@mui/material";
-import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   abnormalities: {

@@ -1270,7 +1270,11 @@ export const concepts = {
   CPR_RECORD:"cpr record",
   INTERVENTION_LIST:"intervention list",
   CPR:"cpr",
-  IS_NORMAL: "is normal"
+  IS_NORMAL: "is normal",
+  DEEP_TENDERNESS: "deep tenderness",
+  DEEP_LOCATION: "Deep Location",
+  GUARDING: "guarding",
+  REBOUNDING: "rebounding",
 };
 
 export const conceptNames = {
