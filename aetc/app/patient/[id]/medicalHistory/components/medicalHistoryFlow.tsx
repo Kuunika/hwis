@@ -98,7 +98,7 @@ export const MedicalHistoryFlow = () => {
       setReadyToSubmit(false);
     }
   }, [readyToSubmit]);
-  
+
   const {
     loading,
     setLoading,
@@ -140,7 +140,7 @@ export const MedicalHistoryFlow = () => {
       ? [{ id: 5, label: "Gynaecology and Obstetrics", encounter: encounters.OBSTETRIC_HISTORY }]
       : []),
     { id: patient?.gender === "Female" ? 6 : 5, label: "Last Meal",  encounter: encounters.SUMMARY_ASSESSMENT},
-    { id: patient?.gender === "Female" ? 7 : 6, label: "Events" },
+    { id: patient?.gender === "Female" ? 7 : 6, label: "Events", encounter: encounters.REVIEW_OF_SYSTEMS},
   ];
   const redirectToSecondarySurvey = () => {
     navigateTo(`/patient/${params.id}/secondary-assessment`);
@@ -1032,9 +1032,9 @@ export const MedicalHistoryFlow = () => {
   function handleFamilyNext(values: any): void {
     if (Object.values(values).some((value) => value === true)) {
       setFormData((prev: any) => ({ ...prev, family: values }));
-      setReadyToSubmit(true);
     }
     
+    setReadyToSubmit(true);
   }
 
   async function handleFamilyHistorySubmission(values: any): Promise<any> {
