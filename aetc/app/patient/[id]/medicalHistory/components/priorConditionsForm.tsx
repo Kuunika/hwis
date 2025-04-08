@@ -215,7 +215,31 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                             gap: "1rem",
                           }}
                         >
-                          {showSelection[index] ? (
+                          
+                            <FormDatePicker
+                              name={
+                                priorConditionsFormConfig.conditions_diagnosis_date(
+                                  index
+                                ).name
+                              }
+                              disabled={formValues.none}
+                              label={
+                                priorConditionsFormConfig.conditions_diagnosis_date(
+                                  index
+                                ).label
+                              }
+                              sx={{ background: "white", width: "100%" }}
+                            />
+                           <MainTypography color="red" variant="subtitle2">
+                              <ErrorMessage
+                                name={
+                                  priorConditionsFormConfig.conditions_diagnosis_date(
+                                    index
+                                  ).name
+                                }
+                              />
+                            </MainTypography>
+                            {showSelection[index] ? (
                             <div
                               style={{
                                 backgroundColor: "white",
@@ -259,30 +283,6 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                             />
                           </MainTypography>
                           <div>
-                            <FormDatePicker
-                              name={
-                                priorConditionsFormConfig.conditions_diagnosis_date(
-                                  index
-                                ).name
-                              }
-                              disabled={formValues.none}
-                              label={
-                                priorConditionsFormConfig.conditions_diagnosis_date(
-                                  index
-                                ).label
-                              }
-                              sx={{ background: "white", width: "100%" }}
-                            />
-                           <MainTypography color="red" variant="subtitle2">
-                              <ErrorMessage
-                                name={
-                                  priorConditionsFormConfig.conditions_diagnosis_date(
-                                    index
-                                  ).name
-                                }
-                              />
-                            </MainTypography>
-
                             <RadioGroupInput
                             disabled={formValues.none}
                               name={
