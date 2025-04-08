@@ -1,18 +1,14 @@
 "use client";
-import { NotificationContainer } from "@/components";
+
 import React, { useState } from "react";
-import {
-  FieldsContainer,
-  FormValuesListener,
-  FormikInit,
-  TextInputField,
-} from "@/components";
+import { FormikInit, TextInputField } from "@/components";
 import * as yup from "yup";
 import { getInitialValues, getObservations } from "@/helpers";
 import { concepts, encounters } from "@/constants";
 import { useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { CheckBoxNext } from "@/components/form/checkBoxNext";
 type Props = {
   onSubmit: () => void;
 };
@@ -33,6 +29,7 @@ const schema = yup.object({
 const initialValues = getInitialValues(form);
 
 export const NeurologicalExamination = ({ onSubmit }: Props) => {
+  const [isChecked, setIsChecked] = useState(false);
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT,
     onSubmit
@@ -43,21 +40,29 @@ export const NeurologicalExamination = ({ onSubmit }: Props) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialValues}
-        onSubmit={handleSubmitForm}
-        submitButtonText="submit"
-      >
-        <TextInputField
-          multiline
-          rows={5}
-          sx={{ width: "100%" }}
-          name={form.generalInformation.name}
-          label={form.generalInformation.label}
-          id={form.generalInformation.name}
-        />
-      </FormikInit>
+      <CheckBoxNext
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
+        onNext={(obs: any) => handleSubmit(obs)}
+        title="Tick if circulation is normal and there are no abnormalities"
+      />
+      {!isChecked && (
+        <FormikInit
+          validationSchema={schema}
+          initialValues={initialValues}
+          onSubmit={handleSubmitForm}
+          submitButtonText="submit"
+        >
+          <TextInputField
+            multiline
+            rows={5}
+            sx={{ width: "100%" }}
+            name={form.generalInformation.name}
+            label={form.generalInformation.label}
+            id={form.generalInformation.name}
+          />
+        </FormikInit>
+      )}
     </ContainerLoaderOverlay>
   );
 };

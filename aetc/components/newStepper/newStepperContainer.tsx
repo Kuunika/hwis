@@ -83,7 +83,7 @@ export function NewStepperContainer({
   const { data, isLoading, isRefetching } = getPatientsEncounters(
     patientId as string
   );
- 
+
   const filteredChildren = children.filter((item) => item !== false);
 
   const [encounterTimes, setEncounterTimes] = useState<{
@@ -94,6 +94,8 @@ export function NewStepperContainer({
     if (showSubmittedStatus) {
       const updatedTimes: { [key: number]: string } = {};
 
+      console.log({ steps });
+
       steps.forEach((step, index) => {
         const time = data
           ?.filter((d) => d.encounter_type.uuid === step.encounter)
@@ -103,6 +105,8 @@ export function NewStepperContainer({
           updatedTimes[index] = time;
         }
       });
+
+      console.log({ updatedTimes });
 
       setEncounterTimes(updatedTimes);
     }

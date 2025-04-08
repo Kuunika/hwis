@@ -8,7 +8,6 @@ import {
 } from "@/components/form";
 import { concepts, NO, YES } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
-import { getCachedConcept } from "@/helpers/data";
 
 import { useState } from "react";
 import * as yup from "yup";
@@ -36,7 +35,11 @@ const form = {
   },
   tenderness: {
     name: concepts.TENDERNESS,
-    label: "Tenderness",
+    label: "Light Tenderness",
+  },
+  deepTenderness: {
+    name: concepts.DEEP_TENDERNESS,
+    label: "Deep Tenderness",
   },
   fullBladder: {
     name: concepts.FULL_BLADDER,
@@ -57,6 +60,14 @@ const form = {
   side: {
     name: concepts.SIDE,
     label: "Side",
+  },
+  location: {
+    name: concepts.LOCATION,
+    label: "Location Light Palpation",
+  },
+  locationDeep: {
+    name: concepts.LOCATION,
+    label: "Location Deep Palpation",
   },
 };
 
@@ -81,12 +92,15 @@ const schema = yup.object().shape({
     .label(form.splenomegalyDescription.label),
   [form.kidneyBallotable.name]: yup.string().label(form.kidneyBallotable.label),
   [form.tenderness.name]: yup.string().label(form.tenderness.label),
+  [form.deepTenderness.name]: yup.string().label(form.deepTenderness.label),
   [form.otherMasses.name]: yup.string().label(form.otherMasses.label),
   [form.otherMassesDescription.name]: yup
     .string()
     .label(form.otherMassesDescription.label),
   [form.palpation.name]: yup.array().label(form.palpation.label),
   [form.side.name]: yup.string().label(form.side.label),
+  [form.location.name]: yup.array().label(form.location.label),
+  [form.locationDeep.name]: yup.array().label(form.locationDeep.label),
 });
 
 type Props = {
@@ -100,6 +114,11 @@ const initialValues = getInitialValues(form);
 const palpationOptions = [
   { label: "Light", id: concepts.LIGHT_PALPATION },
   { label: "Deep", id: concepts.DEEP_PALPATION },
+];
+
+const locationOption = [
+  { label: "Rebound", id: concepts.REBOUNDING },
+  { label: "Guarding", id: concepts.GUARDING },
 ];
 
 export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
@@ -142,6 +161,11 @@ export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
             name={form.tenderness.name}
             label={form.tenderness.label}
           />
+          <SearchComboBox
+            name={form.location.name}
+            label={form.location.label}
+            options={locationOption}
+          />
         </>
       )}
       {palpationCheck(concepts.DEEP_PALPATION) && (
@@ -149,11 +173,16 @@ export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
           <RadioGroupInput
             row
             options={radioOptions}
+            name={form.deepTenderness.name}
+            label={form.deepTenderness.label}
+          />
+          <RadioGroupInput
+            row
+            options={radioOptions}
             name={form.hepatomegaly.name}
             label={form.hepatomegaly.label}
           />
-          {formValues[form.hepatomegaly.name] ==
-            getCachedConcept(YES)?.uuid && (
+          {formValues[form.hepatomegaly.name] == YES && (
             <TextInputField
               multiline
               rows={5}
@@ -169,8 +198,7 @@ export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
             name={form.splenomegaly.name}
             label={form.splenomegaly.label}
           />
-          {formValues[form.splenomegaly.name] ==
-            getCachedConcept(YES)?.uuid && (
+          {formValues[form.splenomegaly.name] == YES && (
             <TextInputField
               multiline
               rows={5}
@@ -180,6 +208,13 @@ export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
               label={form.splenomegalyDescription.label}
             />
           )}
+          <br />
+          <SearchComboBox
+            name={form.locationDeep.name}
+            label={form.locationDeep.label}
+            options={locationOption}
+          />
+          <br />
         </>
       )}
       {umbilicalSection && (
@@ -206,16 +241,14 @@ export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
         options={radioOptions}
         name={form.fullBladder.name}
         label={form.fullBladder.label}
-        coded
       />
       <RadioGroupInput
         row
         options={radioOptions}
         name={form.otherMasses.name}
         label={form.otherMasses.label}
-        coded
       />
-      {formValues[form.otherMasses.name] == getCachedConcept(YES)?.uuid && (
+      {formValues[form.otherMasses.name] == YES && (
         <TextInputField
           multiline
           rows={5}
