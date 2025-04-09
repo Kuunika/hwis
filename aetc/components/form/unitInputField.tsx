@@ -16,6 +16,7 @@ import { useFormikField } from "./hooks"; // Import your custom hook
 import { MainTypography, WrapperBox } from "..";
 
 type UnitInputFieldProps = {
+  disabled?: boolean,
   id: string;
   label: string;
   name: string; // Formik field name
@@ -28,6 +29,7 @@ type UnitInputFieldProps = {
 };
 
 export const UnitInputField: FC<UnitInputFieldProps> = ({
+  disabled = false,
   id,
   label,
   name,
@@ -79,6 +81,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
       >
         {/* Input Field */}
         <TextField
+        disabled={disabled}
           id={id}
           name={name}
           value={value}
@@ -99,6 +102,7 @@ export const UnitInputField: FC<UnitInputFieldProps> = ({
         />
         {/* Unit Selector with Absolute Positioning and Custom Border Radius */}
         <Select
+          disabled={disabled}
           value={localUnitValue}
           onChange={handleUnitChange}
           variant="outlined"

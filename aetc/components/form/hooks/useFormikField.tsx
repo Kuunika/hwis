@@ -34,7 +34,6 @@ export const useFormikField = <T extends FormikValues = FormikValues>(
   const hasError = Boolean(touched?.[fieldName] && errors?.[fieldName]);
 
   const errorMessage = hasError ? String(errors[fieldName]) : "";
-
   // Type-safe value updater
   const setValue = (value: unknown) => {
     setFieldValue(fieldName as string, value);

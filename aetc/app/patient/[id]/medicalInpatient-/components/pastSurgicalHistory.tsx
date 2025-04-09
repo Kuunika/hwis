@@ -9,7 +9,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 interface Observation {
   obs_id: number | null;
   obs_group_id: number | null;
-  value: any;
+  value?: any;
+  value_text?: any;
   names: { name: string }[];
   children?: Observation[]; // To support nested children
 }
@@ -17,7 +18,8 @@ interface Observation {
 interface ProcessedObservation {
   obs_id: number | null;
   name: string | undefined;
-  value: any;
+  value?: any;
+  value_text?: any;
   children: ProcessedObservation[];
 }
 interface PastSurgicalHistoryPanelProps {
@@ -51,23 +53,24 @@ interface PastSurgicalHistoryPanelProps {
           encounter.obs.forEach((observation) => {
           const value = observation.value;
         
-          
+
           const obsData: ProcessedObservation = {
             obs_id: observation.obs_id,
             name: observation.names?.[0]?.name,
             value,
-            children: [],
+            children: observation.children
+              ? observation.children.map((child) => ({
+                  obs_id: child.obs_id,
+                  name: child.names?.[0]?.name,
+                  value_text: child.value_text,
+                  children: [],
+                }))
+              : [],
           };
-      
-          if (observation.obs_group_id) {
-            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-            if (parent) {
-              parent.children.push(obsData);
-            }
-          } else {
-            observations.push(obsData);
-          }
+          observations.push(obsData);
+
         })
+        console.log(observations)
             setObservations(observations)
         });
 
@@ -118,15 +121,17 @@ return (
                 <ul style={{ paddingLeft: "15px" }}>
                   {item.children.map((child) => (
                     <li key={child.obs_id}>
-                      {(() => {
-                        let parsedValue = child.value;
-                        if (typeof child.value === "string" && (child.value === "true" || child.value === "false")) {
-                          parsedValue = (child.value === "true").toString();
+  
+                    {(() => {
+                        let parsedValue = child.value_text;
+                        if (typeof child.value_text === "string" && (child.value_text === "true" || child.value_text === "false")) {
+                          parsedValue = Boolean(parsedValue);
                         }
                         return typeof parsedValue === "boolean"
                           ? String(child.name)
                           : `${String(child.name)}: ${String(parsedValue)}`;
                       })()}
+                 
                     </li>
                   ))}
                 </ul>
