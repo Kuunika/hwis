@@ -1,7 +1,7 @@
 "use client";;
 import { useEffect, useState } from "react";
 import DynamicFormList from "@/components/form/dynamicFormList"; // Import the updated component
-import { FormikInit, FormValuesListener, SearchComboBox, UnitInputField } from "@/components";
+import { FormikInit, FormValuesListener, MainTypography, SearchComboBox, UnitInputField } from "@/components";
 import * as Yup from "yup";
 import { IoTimeOutline } from "react-icons/io5";
 import { concepts, durationOptions } from "@/constants";
@@ -69,7 +69,7 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
   };
 
   const initialValues = {
-    complaints: [complaintsTemplate],
+    complaints: [complaintsTemplate]
   };
 
   const schema = Yup.object().shape({
@@ -83,8 +83,9 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
       })
     ),
   });
-
+  
   const handleSubmit = () => {
+    
     onSubmit(formValues);
   };
 
@@ -123,11 +124,13 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
                           multiple={false}
                           sx={{ width: "100%" }}
                         />
-                        <div style={{ color: "red", fontSize: "0.875rem" }}>
+                        <MainTypography
+                          color="red" variant="subtitle2"
+                        >
                           <ErrorMessage
                             name={`complaints[${index}].complaint`}
                           />
-                        </div>
+                        </MainTypography>
 
                         {/* Duration and Unit Field */}
 
@@ -152,17 +155,13 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
                           placeholder="e.g., 3"
                           inputIcon={<IoTimeOutline />} // Optional icon
                         />
-                        <div
-                          style={{
-                            color: "red",
-                            fontSize: "0.875rem",
-                            marginTop: "0.5em",
-                          }}
+                        <MainTypography
+                          color="red" variant="subtitle2"
                         >
                           <ErrorMessage
                             name={`complaints[${index}].duration`}
                           />
-                        </div>
+                        </MainTypography>
                       </div>
                     </>
                   )}

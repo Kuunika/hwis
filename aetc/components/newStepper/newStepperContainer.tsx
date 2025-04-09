@@ -20,12 +20,14 @@ import {
   NewStepper,
   Step,
   StepperTablet,
+  SubSteps,
   WrapperBox,
 } from "..";
 import { Box } from "@mui/material";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import React from "react";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -58,6 +60,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: "1px solid rgba(0, 0, 0, .125)",
+
 }));
 
 interface IProps {
@@ -86,6 +89,31 @@ export function NewStepperContainer({
 
   const filteredChildren = children.filter((item) => item !== false);
 
+  let indexToDelete: number[] = [];
+  const subChildren = React.Children.toArray(children).filter((obj, key) => {
+    if (React.isValidElement(obj) && obj.type === SubSteps) {
+      indexToDelete.push(key);
+      return true; 
+    }
+    return false;
+  });
+
+  indexToDelete.sort((a, b) => b - a).forEach((index) => {
+    filteredChildren.splice(index, 1);
+  });
+  
+  const subStepData = new Map<number, string[]>();
+  
+  subChildren.forEach((subChild) => {
+    if (React.isValidElement(subChild)) {
+      const parent = subChild.props.parent;
+      if (!subStepData.has(parent)) {
+        subStepData.set(parent, []);
+      }
+      subStepData.get(parent)!.push(subChild.props.children);
+    }
+  });
+
   const [encounterTimes, setEncounterTimes] = useState<{
     [key: number]: string;
   }>({});
@@ -97,12 +125,14 @@ export function NewStepperContainer({
       console.log({ steps });
 
       steps.forEach((step, index) => {
-        const time = data
+        const stepEncounter = data
           ?.filter((d) => d.encounter_type.uuid === step.encounter)
-          .filter((d) => d.visit_id === activeVisitId)?.[0]?.encounter_datetime;
+          .filter((d) => d.visit_id === activeVisitId)?.[0]
+     
+        const latestObsDatetime = stepEncounter ?.obs?.[stepEncounter .obs.length - 1]?.obs_datetime;
 
-        if (time) {
-          updatedTimes[index] = time;
+        if (latestObsDatetime) {
+          updatedTimes[index] = latestObsDatetime;
         }
       });
 
@@ -257,6 +287,10 @@ export function NewStepperContainer({
                 </Box>
               </AccordionSummary>
               <AccordionDetails>{filteredChildren[key]}</AccordionDetails>
+                {subStepData.has(key) &&
+                  subStepData.get(key)?.map((substep, index) => (
+                    <AccordionDetails style={{ borderTop: "1px solid rgba(0, 0, 0, .125)"}} key={index}>{substep}</AccordionDetails>
+                  ))}
             </Accordion>
           ))}
         </WrapperBox>
