@@ -112,7 +112,7 @@ return (
         color: "rgba(0, 0, 0, 0.6)",
       }}
     ><b>{item.name?.split("Family History ").pop()}</b>
-
+{item.name === "Family History Other Condition"?<p><b>{item.value}</b></p>:null}
           {item.children.map((child) => (
             <p key={child.obs_id}>{child.value}</p>
           ))}
