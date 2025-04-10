@@ -7,7 +7,6 @@ import { getInitialValues, notify } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 import { TextInputDisplay } from "@/components/form/textInputDisplay";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
-import { getCachedConcept } from "@/helpers/data";
 import { getDateTime } from "@/helpers/dateTime";
 import { usePresentingComplaints } from "@/hooks/usePresentingComplaints";
 

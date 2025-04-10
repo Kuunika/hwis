@@ -19,6 +19,7 @@ import {
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { CheckBoxNext } from "@/components/form/checkBoxNext";
 type Props = {
   onSubmit: () => void;
 };
@@ -136,6 +137,7 @@ export const Disability = ({ onSubmit }: Props) => {
   const [eyeOpeningValue, setEyeOpeningValue] = useState();
   const [verbalResponseValue, setVerbalResponseValue] = useState();
   const [motorResponseValue, setMotorResponseValue] = useState();
+  const [isChecked, setIsChecked] = useState(false);
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.PRIMARY_DISABILITY_ASSESSMENT,
     onSubmit
@@ -153,97 +155,105 @@ export const Disability = ({ onSubmit }: Props) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialValues}
-        onSubmit={handleFormSubmit}
-        submitButtonText="next"
-      >
-        <FormFieldContainerLayout title="GCS">
-          <FieldsContainer sx={{ alignItems: "start" }}>
-            <RadioGroupInput
-              name={form.eyeOpening.name}
-              label={form.eyeOpening.label}
-              options={sizeOfEyeOpeningResponse}
-              getValue={(value) => setEyeOpeningValue(value)}
-            />
-            <p>
-              {form.eyeOpening.label}: {eyeOpeningValue}
-            </p>
-          </FieldsContainer>
-          <br />
-          <FieldsContainer sx={{ alignItems: "start" }}>
-            <RadioGroupInput
-              name={form.verbalResponse.name}
-              label={form.verbalResponse.label}
-              options={sizeOfVerbalResponse}
-              getValue={(value) => setVerbalResponseValue(value)}
-            />
-            <p>
-              {form.verbalResponse.label}: {verbalResponseValue}
-            </p>
-          </FieldsContainer>
-          <br />
-          <FieldsContainer sx={{ alignItems: "start" }}>
-            <RadioGroupInput
-              name={form.motorResponse.name}
-              label={form.motorResponse.label}
-              options={sizeOfMotorResponse}
-              getValue={(value) => setMotorResponseValue(value)}
-            />
-            <p>
-              {form.motorResponse.label}: {motorResponseValue}
-            </p>
-          </FieldsContainer>
-          <br />
-          <Box>
-            <MainTypography>Total Score: {totalSum}</MainTypography>
-          </Box>
-        </FormFieldContainerLayout>
-
-        <FormFieldContainerLayout title="Pupillary Response">
-          <FieldsContainer mr="1ch">
-            <TextInputField
-              sx={{ m: 0, width: "100%" }}
-              name={form.reactionToLight.name}
-              label={form.reactionToLight.label}
-              id={form.reactionToLight.name}
-            />
-            <TextInputField
-              name={form.focalNeurology.name}
-              sx={{ m: 0, width: "100%" }}
-              label={form.focalNeurology.label}
-              id={form.bloodGlocose.name}
-            />
-          </FieldsContainer>
-        </FormFieldContainerLayout>
-        <FormFieldContainerLayout
-          last={true}
-          title="Additional findings and Glucose"
+      <CheckBoxNext
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
+        onNext={(obs: any) => handleSubmit(obs)}
+        title="Tick if disability is normal and there are no abnormalities"
+      />
+      {!isChecked && (
+        <FormikInit
+          validationSchema={schema}
+          initialValues={initialValues}
+          onSubmit={handleFormSubmit}
+          submitButtonText="next"
         >
-          <FieldsContainer mr="1ch">
-            <TextInputField
-              sx={{ m: 0, width: "100%" }}
-              name={form.postureInfo.name}
-              label={form.postureInfo.label}
-              id={form.postureInfo.name}
-            />
-            <TextInputField
-              sx={{ m: 0, width: "100%" }}
-              name={form.bloodGlocose.name}
-              label={form.bloodGlocose.label}
-              id={form.bloodGlocose.name}
-            />
-          </FieldsContainer>
-          <FieldsContainer>
-            <RadioGroupInput
-              name={form.seizureInfo.name}
-              label={form.seizureInfo.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-        </FormFieldContainerLayout>
-      </FormikInit>
+          <FormFieldContainerLayout title="GCS">
+            <FieldsContainer sx={{ alignItems: "start" }}>
+              <RadioGroupInput
+                name={form.eyeOpening.name}
+                label={form.eyeOpening.label}
+                options={sizeOfEyeOpeningResponse}
+                getValue={(value) => setEyeOpeningValue(value)}
+              />
+              <p>
+                {form.eyeOpening.label}: {eyeOpeningValue}
+              </p>
+            </FieldsContainer>
+            <br />
+            <FieldsContainer sx={{ alignItems: "start" }}>
+              <RadioGroupInput
+                name={form.verbalResponse.name}
+                label={form.verbalResponse.label}
+                options={sizeOfVerbalResponse}
+                getValue={(value) => setVerbalResponseValue(value)}
+              />
+              <p>
+                {form.verbalResponse.label}: {verbalResponseValue}
+              </p>
+            </FieldsContainer>
+            <br />
+            <FieldsContainer sx={{ alignItems: "start" }}>
+              <RadioGroupInput
+                name={form.motorResponse.name}
+                label={form.motorResponse.label}
+                options={sizeOfMotorResponse}
+                getValue={(value) => setMotorResponseValue(value)}
+              />
+              <p>
+                {form.motorResponse.label}: {motorResponseValue}
+              </p>
+            </FieldsContainer>
+            <br />
+            <Box>
+              <MainTypography>Total Score: {totalSum}</MainTypography>
+            </Box>
+          </FormFieldContainerLayout>
+
+          <FormFieldContainerLayout title="Pupillary Response">
+            <FieldsContainer mr="1ch">
+              <TextInputField
+                sx={{ m: 0, width: "100%" }}
+                name={form.reactionToLight.name}
+                label={form.reactionToLight.label}
+                id={form.reactionToLight.name}
+              />
+              <TextInputField
+                name={form.focalNeurology.name}
+                sx={{ m: 0, width: "100%" }}
+                label={form.focalNeurology.label}
+                id={form.bloodGlocose.name}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
+          <FormFieldContainerLayout
+            last={true}
+            title="Additional findings and Glucose"
+          >
+            <FieldsContainer mr="1ch">
+              <TextInputField
+                sx={{ m: 0, width: "100%" }}
+                name={form.postureInfo.name}
+                label={form.postureInfo.label}
+                id={form.postureInfo.name}
+              />
+              <TextInputField
+                sx={{ m: 0, width: "100%" }}
+                name={form.bloodGlocose.name}
+                label={form.bloodGlocose.label}
+                id={form.bloodGlocose.name}
+              />
+            </FieldsContainer>
+            <FieldsContainer>
+              <RadioGroupInput
+                name={form.seizureInfo.name}
+                label={form.seizureInfo.label}
+                options={radioOptions}
+              />
+            </FieldsContainer>
+          </FormFieldContainerLayout>
+        </FormikInit>
+      )}
     </ContainerLoaderOverlay>
   );
 };

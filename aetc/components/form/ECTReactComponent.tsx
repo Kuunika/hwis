@@ -17,27 +17,35 @@ const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection,
         ? process.env.REACT_APP_API_SERVER_URL
         : 'https://icd11restapi-developer-test.azurewebsites.net';
 
-  useEffect(() => {
-    const settings = {
-      apiServerUrl,
-      wordsAvailable: false,
-      autoBind: false,
-    };
 
-    const callbacks = {
-      selectedEntityFunction: (selectedEntity: any) => {
-        if (onICD11Selection) {
-          onICD11Selection(selectedEntity);
-        }
-        ECT.Handler.clear(iNo);
-      },
-    };
+        useEffect(() => {
+          const settings = {
+            apiServerUrl,
+            wordsAvailable: false,
+            autoBind: false,
+          };
+      
+          const callbacks = {
+            selectedEntityFunction: (selectedEntity: any) => {
+              console.log("Entity selected:", selectedEntity);
+              if (onICD11Selection) {
+                onICD11Selection(selectedEntity);
+              }
+              ECT.Handler.clear(iNo);
+            },
+          };
+      
+          ECT.Handler.configure(settings, callbacks);
 
-    ECT.Handler.configure(settings, callbacks);
-    setTimeout(() => {
-      ECT.Handler.bind(iNo);
-    }, 50); 
-  }, [onICD11Selection, iNo]);
+          ECT.Handler.bind(iNo);
+           
+      
+          return () => {
+            ECT.Handler.clear(iNo);
+          };
+      
+        }, [onICD11Selection, iNo]);
+
 
   return (
     <div>

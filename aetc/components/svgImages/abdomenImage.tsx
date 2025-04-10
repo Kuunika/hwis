@@ -53,6 +53,8 @@ export function NewAbdomenImage({
     handleFormSubmit(formData);
   };
 
+  console.log({ selectedSection });
+
   return (
     <>
       <AbdomenMale ref={containerRef} />
@@ -90,6 +92,12 @@ export function NewAbdomenImage({
         {formNameSection == "palpation" && (
           <PalpationForm
             onCancel={handleClose}
+            umbilicalSection={
+              selectedSection.id == "Right_Lumbar_Region" ||
+              selectedSection.id == "Left_Lumbar_Region" ||
+              selectedSection.id == "Right_Iliac_Region" ||
+              selectedSection.id == "Left_Iliac_Region"
+            }
             onSubmit={(values, formConceptsLabels) =>
               handleDataSubmission(
                 selectedSection.label as string,

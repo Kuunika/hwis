@@ -9,7 +9,7 @@ export function ListVisitDates() {
   const { patientId }: { patientId: any } = getActivePatientDetails();
   const { data: patientVisits }: { data: any } =
     getPatientVisitTypes(patientId);
-  const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+
   const [dates, setDates] = useState([]);
   const { visitDate, setVisitDates } = useVisitDates();
 

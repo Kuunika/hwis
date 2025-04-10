@@ -1,7 +1,6 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
-import { getCachedConcept } from "@/helpers/data";
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
 
@@ -65,11 +64,7 @@ export const BreathingLungForm = (props: Props) => {
         getValue={(values) => {
           if (values)
             setShowInputTextDisplay(
-              Boolean(
-                values.find(
-                  (v: any) => v.id == getCachedConcept(concepts.OTHER)?.uuid
-                )
-              )
+              Boolean(values.find((v: any) => v.id == concepts.OTHER))
             );
         }}
         name={form.description.name}

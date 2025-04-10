@@ -7,6 +7,7 @@ import {
   FormikInit,
   FormValuesListener,
   MainButton,
+  MainTypography,
   RadioGroupInput,
   SearchComboBox,
   TextInputField,
@@ -23,10 +24,12 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
 import ECTReactComponent from "@/components/form/ECTReactComponent";
 import { MdOutlineClose } from "react-icons/md";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: ()=>void;
 };
 
 type Condition = {
@@ -45,6 +48,7 @@ const conditionTemplate: Condition = {
 
 const initialValues = {
   conditions: [conditionTemplate],
+  none: false
 };
 
 const priorConditionsFormConfig = {
@@ -66,9 +70,7 @@ const priorConditionsFormConfig = {
   }),
 };
 
-const schema = Yup.object().shape({
-  conditions: Yup.array().of(
-    Yup.object().shape({
+const conditionsSchema = Yup.object().shape({
       name: Yup.string().required("Condition name is required"),
 
       date: Yup.date()
@@ -80,8 +82,19 @@ const schema = Yup.object().shape({
       onTreatment: Yup.string().required("Treatment status is required"),
 
       additionalDetails: Yup.string().optional(),
-    })
-  ),
+
+});
+
+const schema = Yup.object().shape({
+  none: Yup.boolean().required(),
+  conditions: Yup.array().when("none", {
+    is: false,
+    then: (schema) =>
+      schema
+        .of(conditionsSchema)
+        .min(1, "At least one condition must be added"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 const ErrorMessage = ({ name }: { name: string }) => (
@@ -95,7 +108,7 @@ const ErrorMessage = ({ name }: { name: string }) => (
   />
 );
 
-export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
+export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const { params } = useParameters();
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [formValues, setFormValues] = useState<any>({});
@@ -133,7 +146,10 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
   }, [data]);
 
   const handleSubmit = async () => {
-    await schema.validate(formValues);
+    if(formValues.none){
+      onSkip();
+      return;
+    }
     onSubmit(formValues);
   };
 
@@ -174,6 +190,12 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
       >
         {({ values, setFieldValue }) => (
           <>
+                  <div style={{marginBottom:"2ch"}}>
+        <LabelledCheckbox
+          name="none"
+          label="Patient has no prior/existing conditions"
+        />
+        </div>
             <FormValuesListener getValues={setFormValues} />
             <FieldArray name="conditions">
               {({ push, remove }) => (
@@ -193,7 +215,31 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                             gap: "1rem",
                           }}
                         >
-                          {showSelection[index] ? (
+                          
+                            <FormDatePicker
+                              name={
+                                priorConditionsFormConfig.conditions_diagnosis_date(
+                                  index
+                                ).name
+                              }
+                              disabled={formValues.none}
+                              label={
+                                priorConditionsFormConfig.conditions_diagnosis_date(
+                                  index
+                                ).label
+                              }
+                              sx={{ background: "white", width: "100%" }}
+                            />
+                           <MainTypography color="red" variant="subtitle2">
+                              <ErrorMessage
+                                name={
+                                  priorConditionsFormConfig.conditions_diagnosis_date(
+                                    index
+                                  ).name
+                                }
+                              />
+                            </MainTypography>
+                            {showSelection[index] ? (
                             <div
                               style={{
                                 backgroundColor: "white",
@@ -228,45 +274,17 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                               iNo={index + 1}
                             />
                           )}
-                          <div style={{ color: "red", fontSize: "0.875rem" }}>
+                          <MainTypography color="red" variant="subtitle2">
                             <ErrorMessage
                               name={
                                 priorConditionsFormConfig.conditions_name(index)
                                   .name
                               }
                             />
-                          </div>
+                          </MainTypography>
                           <div>
-                            <FormDatePicker
-                              name={
-                                priorConditionsFormConfig.conditions_diagnosis_date(
-                                  index
-                                ).name
-                              }
-                              label={
-                                priorConditionsFormConfig.conditions_diagnosis_date(
-                                  index
-                                ).label
-                              }
-                              sx={{ background: "white", width: "100%" }}
-                            />
-                            <div
-                              style={{
-                                color: "red",
-                                fontSize: "0.875rem",
-                                marginTop: "0.5rem",
-                              }}
-                            >
-                              <ErrorMessage
-                                name={
-                                  priorConditionsFormConfig.conditions_diagnosis_date(
-                                    index
-                                  ).name
-                                }
-                              />
-                            </div>
-
                             <RadioGroupInput
+                            disabled={formValues.none}
                               name={
                                 priorConditionsFormConfig.conditions_on_treatment(
                                   index
@@ -283,7 +301,7 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                                 ).label
                               }
                             />
-                            <div style={{ color: "red", fontSize: "0.875rem" }}>
+                            <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
                                 name={
                                   priorConditionsFormConfig.conditions_on_treatment(
@@ -291,11 +309,12 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                                   ).name
                                 }
                               />
-                            </div>
+                            </MainTypography>
                           </div>
                         </div>
 
                         <TextInputField
+                        disabled={formValues.none}
                           id={
                             priorConditionsFormConfig.conditions_additional_details(
                               index
@@ -332,7 +351,7 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                       variant="secondary"
                       title="Previous"
                       type="button"
-                      onClick={onSkip}
+                      onClick={onPrevious}
                       sx={{ flex: 1, marginRight: "8px" }}
                     />
                     <MainButton

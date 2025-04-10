@@ -195,7 +195,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
               }}
             />
           }
-        />{" "}
+        />
         <br />
         {!isChecked && <ComponentSlider slides={slides} />}
       </FormikInit>
