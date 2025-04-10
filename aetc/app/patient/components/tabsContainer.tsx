@@ -37,6 +37,8 @@ export const TabsContainer = () => {
     setValue(newValue);
   };
 
+  console.log(value==1);
+
   return (
     <Box
       sx={{
@@ -181,7 +183,7 @@ export const TabsContainer = () => {
         <PatientChart />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <VisitHistory />
+        <VisitHistory /> 
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <Investigations />

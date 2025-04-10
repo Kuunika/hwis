@@ -482,6 +482,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
           validationSchema={schema}
           initialValues={initialsValues}
           onSubmit={handleSubmitForm}
+          submitButtonText="next"
         >
           <FormValuesListener getValues={setFormValues} />
           <FormFieldContainerLayout title="Inspection">
@@ -926,6 +927,8 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 name={form.pelvicExamination.name}
                 label={form.pelvicExamination.label}
                 id={form.pelvicExamination.name}
+                multiline
+                rows={5}
               />
             </FormFieldContainerLayout>
           )}
@@ -935,6 +938,8 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
               name={form.additionalNotes.name}
               label={form.additionalNotes.label}
               id={form.additionalNotes.name}
+              multiline
+              rows={5}
             />
           </FormFieldContainerLayout>
         </FormikInit>

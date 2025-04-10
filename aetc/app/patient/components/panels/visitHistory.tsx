@@ -11,6 +11,8 @@ import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 
+import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
@@ -97,6 +99,11 @@ export const VisitHistory = () => {
 
     return encounter ? processObservations(encounter.obs || []) : [];
   };
+
+
+    if (historyLoading) {
+      return <ProfilePanelSkeletonLoader />;
+    }
 
   // Define encounter data for each accordion panel
   const encounterData = {
@@ -293,6 +300,7 @@ export const VisitHistory = () => {
         }
         `}
       </style>
+    
       <Paper style={{ marginTop: "10px" }}>
         {Object.entries(encounterData).map(
           ([panelId, { title, data }]) =>

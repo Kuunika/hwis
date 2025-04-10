@@ -18,7 +18,7 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
@@ -58,8 +58,8 @@ export const ClientWaitingForAssessment = () => {
     const updatedData = patientsData.filter(
       (item: any) => item.uuid !== deletedId
     );
-    setPatientsData(updatedData); // Update the patientsData after deletion
-    setDeleted(deletedId); // Set the deleted item to state
+    setPatientsData(updatedData); 
+    setDeleted(deletedId); 
   };
 
   const columns = [
@@ -89,10 +89,10 @@ export const ClientWaitingForAssessment = () => {
     {
       field: "triage_result",
       headerName: "Triage Category",
-
       renderCell: (cell: any) => {
         return (
-          <WrapperBox
+          <Box sx={{display:"flex", flexDirection:"column",}}>
+          <Box
             sx={{
               borderRadius: "2px",
               width: "100%",
@@ -107,7 +107,9 @@ export const ClientWaitingForAssessment = () => {
                   : "",
               marginY: 1,
             }}
-          ></WrapperBox>
+          ></Box>
+          {/* <Typography>{cell.row?.patient_referred_to}</Typography> */}
+          </Box>
         );
       },
     },

@@ -3,8 +3,12 @@ import { Encounter } from "@/interfaces";
 const endpoint = "/encounters";
 const obs_endpoint = "/observations"
 export const createEncounter = (encounter: any) => create<Encounter>(encounter, endpoint);
-export const getPatientEncounters = (patientId: string) =>
-  getAll<Encounter[]>(endpoint, `patient=${patientId}`);
+export const getPatientEncounters = (patientId: string, params?: string) =>
+  getAll<Encounter[]>(
+    endpoint,
+    `patient=${patientId}${params ? `&${params}` : ''}`
+  );
+
 
 // export const deleteEncounter = (encounterId: string) => remove(`${endpoint}/${encounterId}`, {
 //   void_reason: "Deleted by user",
