@@ -38,6 +38,12 @@ const schema = Yup.object().shape({
     recreationalDrugs: Yup.string().required("Please select if you use recreational drugs"),
 });
 
+// add:
+//  cigarettes Per Day
+// Smoking History
+// Quit over a month ago
+// Never smoked
+
 //// encounter: SURGICAL_NOTES_TEMPLATE_FORM
 
 //  concepts:  PATIENT_SMOKES, EXPECTED_DURATION,  PATIENT_DRINKS_ALCOHOL, 
@@ -70,7 +76,7 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 concept: concepts.PATIENT_SMOKES,
                 value: values.doYouSmoke,
                 obsDatetime: currentDateTime,
-                group_members: values.doYouSmoke === "Yes"
+                groupMembers: values.doYouSmoke === "Yes"
                     ? [{ concept: concepts.EXPECTED_DURATION, value: values.cigarettesPerDay, obsDatetime: currentDateTime }]
                     : [],
             },
@@ -125,8 +131,8 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             name="doYouSmoke"
                             label="Do you smoke?"
                             options={[
-                                { value: "Yes", label: "Yes" },
-                                { value: "No", label: "No" },
+                                { value: concepts.YES, label: "Yes" },
+                                { value: concepts.NO, label: "No" },
                             ]}
                             getValue={(value: string) => setDoYouSmoke(value)}
                         />
@@ -167,8 +173,8 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             name="recreationalDrugs"
                             label="Do you use recreational drugs?"
                             options={[
-                                { value: "Yes", label: "Yes" },
-                                { value: "No", label: "No" },
+                                { value: concepts.YES, label: "Yes" },
+                                { value: concepts.NO, label: "No" },
                             ]}
                         />
                     </FormFieldContainerLayout>

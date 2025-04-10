@@ -27,12 +27,18 @@ type Prop = {
 
 // Family History options
 const familyHistoryOptions = [
-    "Asthma",
-    "Diabetes",
-    "Epilepsy",
-    "Hypertension",
-    "Cancer",
+    "Asthma", "Diabetes", " Epilepsy", " Hypertension", "Cancer "
 ];
+
+
+// const familyHistoryOptions = [
+//     { value:concepts.FAMILY_HISTORY_ASTHMA, label:"Asthma" },
+//     { value:concepts.FAMILY_HISTORY_DIABETES_MELLITUS, label:"Diabetes" },
+//     { value:concepts.FAMILY_HISTORY_EPILEPSY, label:"Epilepsy" },
+//     { value:concepts.FAMILY_HISTORY_HYPERTENSION, label:"Hypertension" },
+//     { value:concepts.FAMILY_HISTORY_CANCER, label:"Cancer" },
+
+// ];
 
 // Validation schema
 const schema = Yup.object().shape({

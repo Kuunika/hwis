@@ -33,6 +33,8 @@ import useFetchMedications from "@/hooks/useFetchMedications";
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
+    onSuccess?: () => void; // ✅ new prop
+
 };
 type Medication = {
     name: string;
@@ -147,7 +149,7 @@ const medicationUnits = [
 //   { label: "Inhaled", id: "Inhaled" },
 // ];
 
-export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
+export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
     const {
         mutate,
         isPending: addingDrugs,
@@ -172,6 +174,8 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     useEffect(() => {
         if (isSuccess) {
             // navigateBack();
+            onSuccess?.();
+
         }
     }, [isSuccess]);
 
@@ -225,7 +229,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
         });
 
         mutate({
-            encounterType: encounters.PRESCRIPTIONS,
+            encounterType: encounters.DISPOSED_PRESCRIPTIONS,
             visit: activeVisit,
             patient: patientId,
             encounterDatetime: obsDateTime,

@@ -21,50 +21,46 @@ import {
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 
-import { Button } from "@mui/material";
-import { toast } from "react-toastify";
-
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
-
-// List of presenting complaints
 const presentingComplaintsConfig = [
-    { value: "Feeling of a mass", label: "Feeling of a mass" },
-    { value: "Pain", label: "Pain" },
-    { value: "Difficulty/Pain on passing stools", label: "Difficulty/Pain on passing stools" },
-    { value: "Not passing stools", label: "Not passing stools" },
-    { value: "Not passing flatus", label: "Not passing flatus" },
-    { value: "Passing bloody stools", label: "Passing bloody stools" },
-    { value: "Passing melena", label: "Passing melena" },
-    { value: "Vomiting", label: "Vomiting" },
-    { value: "Vomiting blood", label: "Vomiting blood" },
-    { value: "Dysphagia", label: "Dysphagia" },
-    { value: "Odynophagia", label: "Odynophagia" },
-    { value: "Ulcer", label: "Ulcer" },
-    { value: "Yellowing of the eyes", label: "Yellowing of the eyes" },
-    { value: "Not passing urine", label: "Not passing urine" },
-    { value: "Difficulty passing urine", label: "Difficulty passing urine" },
-    { value: "Passing deep yellow urine", label: "Passing deep yellow urine" },
-    { value: "Passing pus in urine", label: "Passing pus in urine" },
-    { value: "Bleeding", label: "Bleeding" },
-    { value: "Shortness of breath", label: "Shortness of breath" },
-    { value: "Other", label: "Other (Specify)" }, // "Other" option
+    { value: concepts.FEELING_OF_A_MASS, label: "Feeling of a mass" },
+    { value: concepts.DIFFICULTY_PAIN_ON_PASSING_STOOLS, label: "Difficulty/Pain on passing stools" },
+    { value: concepts.PAIN, label: "Pain" },
+    { value: concepts.NOT_PASSING_FLATUS, label: "Not passing flatus" },
+    { value: concepts.PASSING_BLOODY_STOOLS, label: "Passing bloody stools" },
+    { value: concepts.PASSING_MELENA, label: "Passing melena" },
+    { value: concepts.NOT_PASSING_URINE, label: "Not passing urine" },
+    { value: concepts.DIFFICULTY_PASSING_URINE, label: "Difficulty passing urine" },
+    { value: concepts.PASSING_DEEP_YELLOW_URINE, label: "Passing deep yellow urine" },
+    { value: concepts.PASSING_PUS_IN_URINE, label: "Passing pus in urine" },
+    { value: concepts.NOT_PASSING_STOOLS, label: "Not passing stools" },
+    { value: concepts.VOMITING, label: "Vomiting" },
+    { value: concepts.VOMITING_BLOOD, label: "Vomiting Blod" },
+    { value: concepts.DYSPHAGIA, label: "Dysphagia" },
+    { value: concepts.ODYNOPHAGIA, label: "Odynophagia" },
+    { value: concepts.ULCER_OR_WOUND, label: "Ulcer" },
+    { value: concepts.YELLOWINGOFEYESORSKIN, label: "Yellowing of the eyes" },
+    { value: concepts.BLEEDING, label: "Bleeding" },
+    { value: concepts.SHORTNESS_OF_BREATH, label: "Shortness of breath" },
+    { value: concepts.OTHER, label: "Other (Specify)" }, // "Other" option
+
 ];
 
 // Location options
 const locationOptions = [
-    { value: "Breast", label: "Breast" },
-    { value: "Chest", label: "Chest" },
-    { value: "Arm", label: "Arm" },
-    { value: "Forearm", label: "Forearm" },
-    { value: "Hand", label: "Hand" },
-    { value: "Thigh", label: "Thigh" },
-    { value: "Leg", label: "Leg" },
-    { value: "Foot", label: "Foot" },
-    { value: "Head", label: "Head" },
-    { value: "Neck", label: "Neck" },
+    { value: concepts.BREAST, label: "Breast" },
+    { value: concepts.CHEST, label: "Chest" },
+    { value: concepts.ARM, label: "Arm" },
+    { value: concepts.FOREARM, label: "Forearm" },
+    { value: concepts.HAND, label: "Hand" },
+    { value: concepts.THIGH, label: "Thigh" },
+    { value: concepts.LEG, label: "Leg" },
+    { value: concepts.FOOT, label: "Foot" },
+    { value: concepts.HEAD, label: "Head" },
+    { value: concepts.NECK, label: "Neck" },
 ];
 
 // Validation schema
@@ -81,7 +77,6 @@ const schema = yup.object().shape({
             Array.isArray(value) ? value.filter((item: any) => item.value === true) : []
         )
         .min(1, "Select at least one complaint"),
-
     otherComplaintSpecify: yup
         .string()
         .nullable()
@@ -92,20 +87,30 @@ const schema = yup.object().shape({
 
     historyOfPresentingComplaint: yup.string().required("History is required"),
 });
-
-// encounter: SURGICAL_NOTES_TEMPLATE_FORM
 //concepts:  PRESENTING_COMPLAINTS  PRESENTING_HISTORY, also Add LOCATION concept
-
 export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
     const [showOtherTextField, setShowOtherTextField] = useState(false);
     const [selectedComplaints, setSelectedComplaints] = useState<string[]>([]);
+    const [showLocationField, setShowLocationField] = useState(false);
+    const [complaintLocations, setComplaintLocations] = useState<Record<string, string[]>>({});
 
     const handleCheckboxChange = (values: any) => {
-        setSelectedComplaints(values.filter((item: any) => item.value).map((item: any) => item.key));
-        setShowOtherTextField(values.some((val: any) => val.key === "Other" && val.value));
-    };
+        const selected = values.filter((item: any) => item.value).map((item: any) => item.key);
 
+        setSelectedComplaints(selected);
+        setShowOtherTextField(selected.includes("Other"));
+
+        // Determine if any of the selected values require location
+        const requiresLocation = [
+            concepts.FEELING_OF_A_MASS,
+            concepts.PAIN,
+            concepts.ULCER_OR_WOUND,
+            concepts.BLEEDING,
+        ].some((c) => selected.includes(c));
+
+        setShowLocationField(requiresLocation);
+    };
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -123,43 +128,69 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
 
     const handleSubmit = async (values: any) => {
         const currentDateTime = getDateTime();
+        // Filter selected complaints
+        const selectedComplaints = (values.presentingComplaints || [])
+            .filter((item: any) => item.value)
+            .map((item: any) => item.key);
 
-        // Extract selected complaints
-        const selectedComplaints = values.presentingComplaints.map((item: any) => item.key);
-
-        // Include "Other" complaint if specified
-        if (selectedComplaints.includes("Other") && values.otherComplaintSpecify) {
-            selectedComplaints[selectedComplaints.indexOf("Other")] = values.otherComplaintSpecify;
-        }
-
-        // Determine if location is required
+        const hasOther = selectedComplaints.includes("Other");
+        const complaintsWithOther = hasOther
+            ? selectedComplaints.map((c: string) => (c === "Other" ? values.otherComplaintSpecify : c))
+            : selectedComplaints;
         const requiresLocation = selectedComplaints.some((complaint: string) =>
             ["Feeling of a mass", "Pain", "Ulcer", "Bleeding"].includes(complaint)
         );
-
         const obs = [
             {
                 concept: concepts.PRESENTING_COMPLAINTS,
-                value: selectedComplaints.join(", "), // Storing multiple complaints as a comma-separated string
+                value: concepts.PRESENTING_COMPLAINTS,
                 obsDatetime: currentDateTime,
+                groupMembers: (values.presentingComplaints || [])
+                    .filter((complaint: any) => complaint.value === true)
+                    .map((complaint: any) => {
+                        const isOther = complaint.key === "Other";
+                        const isLocationRequired = [
+                            concepts.FEELING_OF_A_MASS,
+                            concepts.PAIN,
+                            concepts.ULCER_OR_WOUND,
+                            concepts.BLEEDING
+                        ].includes(complaint.key);
+
+                        const baseObservation = {
+                            concept: complaint.key,
+                            value: isOther ? values.otherComplaintSpecify : complaint.key,
+                            obsDatetime: currentDateTime,
+                        };
+
+                        if (isLocationRequired && values.location) {
+                            return {
+                                ...baseObservation,
+                                groupMembers: [
+                                    {
+                                        concept: concepts.LOCATION,
+                                        value: values.location,
+                                        obsDatetime: currentDateTime,
+                                    },
+                                ],
+                            };
+                        }
+
+                        return baseObservation;
+                    }),
             },
+
             {
                 concept: concepts.PRESENTING_HISTORY,
                 value: values.historyOfPresentingComplaint,
                 obsDatetime: currentDateTime,
             },
+            // ...(values.location ? [{
+            //     concept: concepts.LOCATION,  // make sure concepts.LOCATION exists
+            //     value: values.location,
+            //     obsDatetime: currentDateTime,
+            // }] : []),
+
         ];
-
-        // If a location is required and selected, add it to observations
-        if (requiresLocation && values.location) {
-            obs.push({
-                concept: concepts.LOCATION, // Ensure this concept is defined in your constants
-                value: values.location,
-                obsDatetime: currentDateTime,
-            });
-        }
-
-        // Prepare payload
         const payload = {
             encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
             visit: activeVisit?.uuid,
@@ -171,14 +202,12 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
         try {
             await submitEncounter(payload);
             // toast.success("Presenting complaints submitted successfully!");
-            onSubmit(values); //  This triggers navigation to the next step
-
+            onSubmit(values); // triggers navigation to the next step
         } catch (error) {
             console.error("Error submitting presenting complaints: ", error);
             // toast.error("Failed to submit presenting complaints.");
         }
     };
-
     return (
         <FormikInit
             validationSchema={schema}
@@ -189,7 +218,6 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
                 location: "", // Add location field
             }}
             onSubmit={handleSubmit}
-
         >
             <FormValuesListener getValues={setFormValues} />
             <FormFieldContainer direction="row">
@@ -197,30 +225,12 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%" }}>
 
                     <FormFieldContainerLayout title="Presenting complaints">
-                        {presentingComplaintsConfig.map((complaint) => (
-                            <div key={complaint.value} style={{ marginBottom: "10px" }}>
-                                <CheckboxesGroup
-                                    name="presentingComplaints"
-                                    allowFilter={false}
-                                    options={[complaint]} // Only render one checkbox per row
-                                    getValue={handleCheckboxChange}
-                                />
-                                {/* Show RadioGroupInput below specific complaints */}
-                                {selectedComplaints.includes(complaint.value) &&
-                                    ["Feeling of a mass", "Pain", "Ulcer", "Bleeding"].includes(
-                                        complaint.value
-                                    ) && (
-                                        <div style={{ marginLeft: "20px", marginTop: "5px" }}>
-                                            <RadioGroupInput
-                                                name="location"
-                                                label="Location"
-                                                options={locationOptions}
-                                            />
-                                        </div>
-                                    )}
-                            </div>
-                        ))}
-
+                        <CheckboxesGroup
+                            name="presentingComplaints"
+                            allowFilter={false}
+                            options={presentingComplaintsConfig}
+                            getValue={handleCheckboxChange}
+                        />
                         {showOtherTextField && (
                             <TextInputField
                                 id="otherComplaintSpecify"
@@ -229,12 +239,18 @@ export const PresentingComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
                                 placeholder="Specify the complaint"
                             />
                         )}
+                        {showLocationField && (
+                            <RadioGroupInput
+                                label="Location of Complaint"
+                                name="location"
+                                options={locationOptions}
+                            />
+                        )}
                     </FormFieldContainerLayout>
                     <br />
                     {/* <FormFieldContainerLayout title="Presenting complaints history"> */}
                     <TextInputField
                         sx={{ width: "100%" }}
-
                         id="historyOfPresentingComplaint"
                         name="historyOfPresentingComplaint"
                         label="History of Presenting Complaint"

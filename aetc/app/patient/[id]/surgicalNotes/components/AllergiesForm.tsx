@@ -23,12 +23,12 @@ type Prop = {
 
 // Allergy options
 const allergyOptions = [
-    { value: "Drugs", label: "Drugs" },
-    { value: "Food", label: "Food" },
-    { value: "Skin prep", label: "Skin prep" },
-    { value: "Latex", label: "Latex" },
-    { value: "Medications", label: "Medications" },
-    { value: "Other", label: "Other (Specify)" },
+    { value: concepts.RECREATIONAL_DRUG, label: "Drugs" },
+    { value: concepts.FOOD_ALLERGY, label: "Food" },
+    { value: concepts.SKIN_PREP, label: "Skin prep" },
+    { value: concepts.LATEX_ALLERGY, label: "Latex" },
+    { value: concepts.MEDICATION_ALLERGY, label: "Medications" },
+    { value: concepts.OTHER, label: "Other (Specify)" },
 ];
 
 // Validation schema

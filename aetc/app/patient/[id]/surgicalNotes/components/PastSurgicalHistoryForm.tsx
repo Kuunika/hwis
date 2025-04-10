@@ -12,24 +12,25 @@ import {
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
+import { useFormikContext, useField } from "formik";
 
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
 
-// Validation schema
+// Validation schema with conditional field
 const schema = Yup.object().shape({
     hasSurgicalHistory: Yup.string().required("Please select Yes or No"),
-    surgicalDetails: Yup.string().required(" "),
+    surgicalDetails: Yup.string().when("hasSurgicalHistory", {
+        is: concepts.YES,
+        then: (schema) => schema.required("Please enter surgical details"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
 });
-
-//encounter: SURGICAL_NOTES_TEMPLATE_FORM
-//concepts: PROCEDURES
-// use these concepts: SURGICAL_PROCEDURE, SURGICAL_HISTORY
 
 export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { params } = useParameters();
@@ -38,7 +39,6 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
 
     useEffect(() => {
-        // Finds the active visit for the patient from their visit history
         if (patientVisits) {
             const active = patientVisits.find((visit) => !visit.date_stopped);
             if (active) {
@@ -48,8 +48,7 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        if (values.hasSurgicalHistory !== "Yes") {
-            // toast.error("No surgical history to submit.");
+        if (values.hasSurgicalHistory !== concepts.YES) {
             return;
         }
 
@@ -73,12 +72,33 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
 
         try {
             await submitEncounter(payload);
-            // toast.success("Surgical history submitted successfully!");
             onSubmit(values);
         } catch (error) {
             console.error("Error submitting surgical history:", error);
-            // toast.error("Failed to submit surgical history.");
         }
+    };
+
+    // Custom component to show conditional field
+    const SurgicalDetailsField = () => {
+        const { values } = useFormikContext<any>();
+        const [field, meta] = useField("surgicalDetails");
+
+        if (values.hasSurgicalHistory !== concepts.YES) {
+            return null;
+        }
+
+        return (
+            <TextInputField
+                {...field}
+                id="surgicalDetails"
+                sx={{ width: "100%" }}
+                name="surgicalDetails"
+                label="Enter previous procedures and surgeries (Month & Year)"
+                placeholder="E.g., Appendectomy - January 2020"
+                multiline
+                rows={5}
+            />
+        );
     };
 
     return (
@@ -92,30 +112,17 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-
                     <FormFieldContainerLayout title="Any history of previous surgery or procedures?">
-
-                        {/* Yes/No Radio Buttons */}
                         <RadioGroupInput
                             name="hasSurgicalHistory"
                             label="Has Surgical History"
                             options={[
-                                { value: "Yes", label: "Yes" },
-                                { value: "No", label: "No" },
+                                { value: concepts.YES, label: "Yes" },
+                                { value: concepts.NO, label: "No" },
                             ]}
                         />
 
-                        {/* Text Input for Surgery Details - Shown if 'Yes' is selected */}
-                        <TextInputField
-                            id="surgicalDetails"
-                            sx={{ width: "100%" }}
-
-                            name="surgicalDetails"
-                            label="Enter previous procedures and surgeries (Month & Year)"
-                            placeholder="E.g., Appendectomy - January 2020"
-                            multiline
-                            rows={5}
-                        />
+                        <SurgicalDetailsField />
                     </FormFieldContainerLayout>
                 </WrapperBox>
             </FormFieldContainer>

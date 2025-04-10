@@ -8,11 +8,12 @@ import { getDateTime } from "@/helpers/dateTime";
 import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
+import { Label } from "@mui/icons-material";
 
 // Define the checklist options for each system
 const reviewOfSystemsOptions = {
     general: ["Fever", "Lymphadenopathy", "Night sweats", "Fatigue", "Weight loss"],
-    ent: ["Eye pain", "Rhinorrhea", "Tinnitus", "Epistaxis", "Sinus pain", "Oral lesions", "Dysphagia", "Odynophagia", "Other"],
+    ent: ["Eye pain", "Rhinorrhea", "Tinnitus", "Epistaxis", "painSinus ", "Oral lesions", "Dysphagia", "Odynophagia", "Other"],
     endocrine: ["Heat tolerance", "Abnormal hair growth", "Cold tolerance", "Polyuria", "Polydipsia", "Other"],
     cardiac: ["Bleeding tendencies", "Chest pain", "Palpitations", "Oedema", "Cyanosis", "Claudication", "Orthopnoea", "Paroxysmal nocturnal dyspnoea", "Other"],
     respiratory: ["Shortness of breath", "Dyspnoea on exertion", "Dyspnoea at rest", "Cough", "Haemoptysis", "Wheezing", "Other"],
@@ -22,6 +23,101 @@ const reviewOfSystemsOptions = {
     neurologic: ["Headache", "Change in smell", "Change in taste", "Paraesthesias", "Muscle weakness", "Ataxia", "Change in speech"],
     psychiatric: ["Depression", "Anxiety", "Hallucinations", "Mania", "Suicidal thoughts"],
 };
+
+//add:
+// Eye pain
+// Rhinorrhea
+//  Sinus pain
+// Oral lesions
+// Heat tolerance
+// Abnormal hair growth
+// Cold tolerance
+// Polydipsia
+// Bleeding tendencies
+// Chest pain
+// Palpitations
+// Claudication
+// Orthopnoea
+// Paroxysmal nocturnal dyspnoea
+// Dyspnoea on exertion
+// "Dyspnoea at rest
+// Melena
+// Haematochezia
+// Change in appetite
+// Change in bowel habit
+// Heartburn
+// Urgency
+// Incontinence
+// Pyuria
+// Sexually Transmitted Infection (STI)
+// Dysmenorrhea
+// Pelvic pain
+// Change in smell
+// Change in taste
+// Paraesthesias
+// Muscle weakness
+// Ataxia
+// Change in speech
+// Depression
+// Mania
+// Suicidal thoughts
+
+const generalOptions = [
+    {value: concepts.FEVER, label:"Fever" },
+    {value: concepts.LYMPHADENOPATHY, label:"Lymphadenopathy" },
+    {value: concepts.NIGHT_SWEATS, label:"Night sweats" },
+    {value: concepts.FATIGUE, label:"Fatigue" },
+    {value: concepts.WEIGHT_LOSS, label:"Weight loss" },
+]
+const entOptions = [
+    {value: concepts.TINNITUS, label:"Tinnitus" },
+    {value: concepts.EPISTAXIS, label:"Epistaxis" },
+    {value: concepts.DYSPHAGIA, label:"Dysphagia" },
+    {value: concepts.ODYNOPHAGIA, label:"Odynophagia" },
+]
+
+const endocrineOptions = [
+    {value: concepts.POLYURIA, label:"Polyuria" },
+
+]
+const cardiacOptions = [
+    {value: concepts.HEART_PALPITATIONS, Label:"Palpitations" },
+    {value: concepts.OEDEMA, label:"Oedema" },
+    {value: concepts.CYANOSIS, label:"Cyanosis" },
+]
+
+const respiratoryOptions = [
+    {value: concepts.SHORTNESS_OF_BREATH, label:"Shortness Of Breath" },
+    {value: concepts.COUGH, label:"Cough" },
+    {value: concepts.HAEMOPTYSIS, label:"Haemoptysis" },
+    {value: concepts.WHEEZING, label:"Wheezing" },  
+]
+const gastrointestinalOptions = [
+    {value: concepts.NAUSEA, label:"Nausea" },
+    {value: concepts.VOMITING, label:"Vomiting" },
+    {value: concepts.ABDOMINALPAINS, label:"Abdominal pain" },
+]
+const genitourinaryOptions = [
+    {value: concepts.DYSURIA, label:"Dysuria" },
+    {value: concepts.HAEMATURIA, label:"Haematuria" },
+    {value: concepts.ABNORMAL_VAGINAL_DISCHARGE, label:"bnormal Vaginal Discharge" },
+
+]
+const musculoskeletalOptions = [
+    {value: concepts.JOINT_PAIN, label:"Joint Pain" },
+    {value: concepts.SWELLING_JOINT, label:"Joint Swelling" },
+    {value: concepts.PAIN_BACK, label:"Back Pain" },
+]
+
+const neurologicOptions = [
+    {value: concepts.HEADACHE, label:"Headache" },
+
+]
+const psychiatricOptions = [
+    {value: concepts.ANXIETY, label:"Anxiety" },
+    {value: concepts.HALLUCINATIONS, label:"Hallucinations" },
+]
+
 const validationSchema = Yup.object({});
 
 //// encounter: SURGICAL_NOTES_TEMPLATE_FORM

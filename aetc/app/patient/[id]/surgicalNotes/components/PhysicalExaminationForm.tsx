@@ -20,6 +20,32 @@ type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
+//add:
+// Comfortable
+// Ill
+// Fit for age
+// Candida
+// Kaposi's Sarcoma (KS)
+// Hydration
+// Nodes
+// Submental
+// Epithrochlear
+// Thyroid
+// No movement
+// Abnormal extension (decerebrate posture)
+// Abnormal flexion (decorticate posture)
+// Flexion/Withdrawal from painful stimuli
+// Moves to localize pain
+// Obeys commands
+// No sound
+// Incomprehensible sounds
+// Inappropriate words
+// Confused and disoriented, but able to answer questions
+// Oriented to time, person, and place, converses normally
+// Does not open eyes
+// Opens eyes in response to pain
+// Opens eyes in response to voice
+// Opens eyes spontaneously
 
 // Define options for radio group fields
 const physicalExaminationOptions = {
@@ -29,6 +55,35 @@ const physicalExaminationOptions = {
     neck: ["Nodes", "Submental", "Epithrochlear"],
     endocrine: ["Breast", "Thyroid"],
 };
+const generalOptions = [
+    { value: concepts.PAIN, label: "In Pain" },
+    { value: concepts.COMFORTABLE, label: "Comfortable" },
+    { value: concepts.ILL, label: "Ill" },
+    { value: concepts.FIT_FOR_AGE, label: "Fit for age" },
+]
+
+const eyesOptions = [
+    { value: concepts.PALLOR, label: "Pallor" },
+    { value: concepts.JAUNDICE, label: "Jaundice" },
+]
+const mouthOptions = [
+    { value: concepts.CANDIDA, label: "Candida" },
+    { value: concepts.KAPOSI_SARCOMA, label: "Kaposi's Sarcoma (KS)" },
+    { value: concepts.HYDRATION, label: "Hydration" },
+]
+
+const neckOptions = [
+    { value: concepts.NODES, label: "Nodes" },
+    { value: concepts.SUBMENTAL, label: "Submental" },
+    { value: concepts.EPITHROCHLEAR, label: "Epithrochlear" },
+]
+
+const endocrineOptions = [
+    { value: concepts.BREAST, label: "Breast" },
+    { value: concepts.THYROID, label: "Thyroid" },
+
+]
+
 
 // Glasgow Coma Scale (GCS) options
 const gcsOptions = {
@@ -54,6 +109,31 @@ const gcsOptions = {
         "Opens eyes spontaneously",
     ],
 };
+const motorResponse = [
+    { value: concepts.NO_MOVEMENT, label: "No movement" },
+    { value: concepts.ABNORMAL_EXTENSION, label: "Abnormal extension (decerebrate posture)" },
+    { value: concepts.ABNORMAL_FLEXION, label: "Abnormal flexion (decorticate posture)" },
+    { value: concepts.FLEXION_WITHDRAWAL_FROM_PAINFUL_STIMULI, label: "Flexion/Withdrawal from painful stimuli" },
+    { value: concepts.MOVES_TO_LOCALIZE_PAIN, label: "Moves to localize pain" },
+    { value: concepts.OBEYS_COMMANDS, label: "Obeys commands" },
+]
+
+const verbalResponse = [
+    { value: concepts.NO_SOUND, label: "No sound" },
+    { value: concepts.INCOMPREHENSIBLE_SOUNDS, label: "Incomprehensible sounds" },
+    { value: concepts.INAPPROPRIATE_WORDS, label: "Inappropriate words" },
+    { value: concepts.CONFUSED_AND_DISORIENTED, label: "Confused and disoriented, but able to answer questions" },
+    { value: concepts.ORIENTED_TO_TIME, label: "Oriented to time, person, and place, converses normally" },
+]
+
+const eyeResponse = [
+    { value: concepts.DOES_NOT_OPEN_EYES, label: "Does not open eyes" },
+    { value: concepts.OPENS_EYES_IN_RESPONSE_TO_PAIN, label: "Opens eyes in response to pain" },
+    { value: concepts.OPENS_EYES_IN_RESPONSE_TO_VOICE, label: "Opens eyes in response to voice" },
+    { value: concepts.OPENS_EYES_SPONTANEOUSLY, label: "Opens eyes spontaneously" },
+]
+
+
 const validationSchema = Yup.object({});
 
 //// encounter: SURGICAL_NOTES_TEMPLATE_FORM
