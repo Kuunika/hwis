@@ -348,21 +348,32 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
     const medicationNotes: ComponentNote[] = [];
 
     obs?.forEach((item: any) => {
-        // Skip if not a medication observation
         if (item.names?.[0]?.name !== "Drug Given") return;
 
         let drugGiven = item.value;
         let lastTaken = "";
         let lastPrescription = "";
         let frequency = "";
+        let doseInGrams="";
+        let doseInMilligrams="";
+        let doseInMicrograms="";
+        let doseInInternationalUnits="";
+        let doseInMilliliters="";
+        let durationInWeeks ="";
+        let durationInMonths = "";
+        let durationInYears="";
+        let durationInDays = "";
+        let durationInHours = "";
+        let medicationFormulation ="";
         let creator = item.created_by || "Unknown";
         let encounterTime = item.obs_datetime || new Date().toISOString();
 
-        // Process group members
-        if (item.groupMembers && item.groupMembers.length > 0) {
-            item.groupMembers.forEach((member: any) => {
-                const memberName = member.conceptName;
+        if (item.children && item.children.length > 0) {
+            item.children.forEach((member: any) => {
+                const memberName = member.names?.[0]?.name;
                 const memberValue = member.value;
+
+                console.log("member name: ", memberName, memberValue);
 
                 switch (memberName) {
                     case "Medication Date Last Taken":
@@ -374,9 +385,40 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Medication Frequency":
                         frequency = memberValue;
                         break;
-                    case "Dose In Grams":
-                        // Handle dose if needed
+                    case "Dose in grams":
+                        doseInGrams = memberValue;
                         break;
+                        case "Dose in milligrams":
+                        doseInMilligrams = memberValue;
+                        break;
+                    case "Dose In Micrograms":
+                        doseInMicrograms = memberValue;
+                        break;
+                    case "Dose In Millimeter":
+                        doseInMilliliters = memberValue;
+                        break;
+                    case "Dose In Iu":
+                        doseInInternationalUnits = memberValue;
+                        break;
+                        case"Duration On Medication Hours":
+                            durationInHours = memberValue;
+                            break;
+                    case "Duration On Medication Days":
+                        durationInDays = memberValue;
+                        break;
+                    case "Duration On Medication Weeks":
+                        durationInWeeks=memberValue;
+                        break;
+                    case "Duration On Medication Months":
+                        durationInMonths = memberValue;
+                        break;
+                        case "Duration On Medication Years":
+                            durationInYears = memberValue;
+                            break;
+                    case "Medication Formulation":
+                        medicationFormulation = memberValue;
+                        break;
+
                 }
             });
         }
@@ -384,6 +426,17 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         const parts = [];
         if (drugGiven) parts.push(`${drugGiven}`);
         if (frequency) parts.push(`Frequency: ${frequency}`);
+        if (doseInGrams) parts.push(`Dose: ${doseInGrams} grams`);
+        if (doseInMilligrams) parts.push(`Dose: ${doseInMilligrams} milligrams`);
+        if (doseInMicrograms) parts.push(`Dose: ${doseInMicrograms} micrograms`);
+        if (doseInMilliliters) parts.push(`Dose: ${doseInMilliliters} millimeters`);
+        if (doseInInternationalUnits) parts.push(`Dose: ${doseInInternationalUnits} international units`);
+        if (durationInDays) parts.push(`Duration: ${durationInHours} hours`);
+        if (durationInDays) parts.push(`Duration: ${durationInDays} days`);
+        if (durationInWeeks) parts.push(`Duration: ${durationInWeeks} weeks`);
+        if (durationInMonths) parts.push(`Duration: ${durationInMonths} months`);
+        if (durationInYears) parts.push(`Duration: ${durationInYears} years`);
+        if(medicationFormulation) parts.push(`Medication formulation: ${medicationFormulation}`);
         if (lastTaken) parts.push(`Last taken: ${new Date(lastTaken).toLocaleDateString()}`);
         if (lastPrescription) parts.push(`Last prescribed: ${new Date(lastPrescription).toLocaleDateString()}`);
 
@@ -764,7 +817,7 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
         const valueText = ob.value || ob.value_text;
         const creator = ob.creator || ob.created_by || "Unknown";
         const time = ob.obs_datetime || ob.obsDateTime || new Date().toISOString();
-        const children = ob.children || ob.groupMembers || [];
+        const children = ob.children || [];
         console.log("Wisdom",name, valueText, children)
 
         if (!name) return;
