@@ -22,6 +22,8 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+
 const wardOptions = [
     {
         id: concepts.TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT,
@@ -100,7 +102,7 @@ const specialtyOptions = [
 
 const validationSchema = Yup.object({
     wardName: Yup.string().required("Ward Name is required"),
-    bedNumber: Yup.string().required("Bed Number is required"),
+    // bedNumber: Yup.string().required("Bed Number is required"),
     reasonForAdmission: Yup.string().required("Reason for Admission is required"),
     specialtyInvolved: Yup.string().required("Specialty Involved is required"),
 });
@@ -185,6 +187,7 @@ export default function AdmissionForm() {
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
                     <h2>Admission Form</h2>
                     <FormikInit
