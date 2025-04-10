@@ -91,7 +91,7 @@ export const ClientWaitingForAssessment = () => {
       headerName: "Triage Category",
       renderCell: (cell: any) => {
         return (
-          <Box sx={{display:"flex", flexDirection:"column",}}>
+
           <Box
             sx={{
               borderRadius: "2px",
@@ -108,8 +108,7 @@ export const ClientWaitingForAssessment = () => {
               marginY: 1,
             }}
           ></Box>
-          {/* <Typography>{cell.row?.patient_referred_to}</Typography> */}
-          </Box>
+         
         );
       },
     },
