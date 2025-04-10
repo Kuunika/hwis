@@ -8,7 +8,7 @@ import { useVisitDates } from "@/contexts/visitDatesContext";
 export const useVitals = () => {
   const { patientId } = getActivePatientDetails();
   const { visitDate } = useVisitDates();
-  const { data, isLoading } = getPatientsEncounters(patientId as string);
+  const { data, isLoading } = getPatientsEncounters(patientId as string,`encounter_type=${encounters.VITALS}`);
   const [vitals, setVitals] = useState<any>([]);
   const [formattedVitals, setFormattedVitals] = useState<any>({});
   const [options, setOptions] = useState<Array<any>>([]);

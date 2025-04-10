@@ -176,6 +176,12 @@ export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
             name={form.deepTenderness.name}
             label={form.deepTenderness.label}
           />
+          <br />
+          <SearchComboBox
+            name={form.locationDeep.name}
+            label={form.locationDeep.label}
+            options={locationOption}
+          />
           <RadioGroupInput
             row
             options={radioOptions}
@@ -208,12 +214,7 @@ export const PalpationForm = ({ onSubmit, umbilicalSection }: Props) => {
               label={form.splenomegalyDescription.label}
             />
           )}
-          <br />
-          <SearchComboBox
-            name={form.locationDeep.name}
-            label={form.locationDeep.label}
-            options={locationOption}
-          />
+        
           <br />
         </>
       )}

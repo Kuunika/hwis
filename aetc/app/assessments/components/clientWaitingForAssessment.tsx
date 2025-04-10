@@ -18,7 +18,7 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
@@ -42,15 +42,30 @@ export const ClientWaitingForAssessment = () => {
     searchText
   );
 
+  const [patientsData, setPatientsData] = useState<any>([]);
+
   useEffect(() => {
     refetch();
   }, [paginationModel]);
+
+  useEffect(() => {
+    if (data?.data) {
+      setPatientsData(data.data);
+    }
+  }, [data]);
+
+  const handleDelete = (deletedId: string) => {
+    const updatedData = patientsData.filter(
+      (item: any) => item.uuid !== deletedId
+    );
+    setPatientsData(updatedData); 
+    setDeleted(deletedId); 
+  };
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    // { field: "birthdate", headerName: "Date Of Birth" },
     { field: "gender", headerName: "Gender" },
     {
       field: "waiting",
@@ -74,10 +89,10 @@ export const ClientWaitingForAssessment = () => {
     {
       field: "triage_result",
       headerName: "Triage Category",
-
       renderCell: (cell: any) => {
         return (
-          <WrapperBox
+          <Box sx={{display:"flex", flexDirection:"column",}}>
+          <Box
             sx={{
               borderRadius: "2px",
               width: "100%",
@@ -87,13 +102,14 @@ export const ClientWaitingForAssessment = () => {
                   ? "#B42318"
                   : cell.value == "yellow"
                   ? "#ede207"
-                  : // : "#B54708",
-                  cell.value == "green"
+                  : cell.value == "green"
                   ? "#016302"
                   : "",
               marginY: 1,
             }}
-          ></WrapperBox>
+          ></Box>
+          {/* <Typography>{cell.row?.patient_referred_to}</Typography> */}
+          </Box>
         );
       },
     },
@@ -112,7 +128,7 @@ export const ClientWaitingForAssessment = () => {
               onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
             />
             <AbscondButton
-              onDelete={() => setDeleted(cell.id)}
+              onDelete={() => handleDelete(cell.id)} // Updated to handle deletion
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
@@ -136,7 +152,7 @@ export const ClientWaitingForAssessment = () => {
     },
   ];
 
-  const formatForMobileView = data?.data?.map((row: any) => {
+  const formatForMobileView = patientsData?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -159,7 +175,7 @@ export const ClientWaitingForAssessment = () => {
       action: (
         <CardAction
           patient={row}
-          setDeleted={(id: any) => setDeleted(id)}
+          setDeleted={(id: any) => handleDelete(id)} // Updated to handle deletion
           triage={row.triage_result}
           visitId={row.visit_uuid}
           id={row.uuid}
@@ -175,8 +191,8 @@ export const ClientWaitingForAssessment = () => {
       <PatientTableListServer
         columns={columns}
         data={
-          data?.data
-            ? data
+          patientsData?.length
+            ? { data: patientsData, page: 1, per_page: 10, total_pages: 0 }
             : { data: [], page: 1, per_page: 10, total_pages: 0 }
         }
         searchText={searchText}
@@ -223,8 +239,7 @@ const CardAction = ({
               ? "#B42318"
               : triage == "yellow"
               ? "#ede207"
-              : // : "#B54708",
-              triage == "green"
+              : triage == "green"
               ? "#016302"
               : "",
           marginY: 1,
@@ -238,7 +253,7 @@ const CardAction = ({
         />
         <AbscondButton
           sx={{ width: "30%" }}
-          onDelete={() => setDeleted(id)}
+          onDelete={() => setDeleted(id)} // Call the updated handleDelete function
           visitId={visitId}
           patientId={id}
         />
@@ -281,7 +296,7 @@ export function BasicMenu({ patient }: { patient: any }) {
             variant="text"
             onClose={handleClose}
             patient={patient}
-          />{" "}
+          />
         </MenuItem>
         <MenuItem sx={{ justifyContent: "flex-start" }}>
           <FetchAndDisplayTriageBarcode

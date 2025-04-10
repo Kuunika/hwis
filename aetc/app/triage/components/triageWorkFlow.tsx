@@ -239,10 +239,13 @@ export default function TriageWorkFlow() {
       setCompleted(6);
       setMessage("finalizing...");
 
+      const otherAETCArea =
+        triageResult === "red"
+          ? null
+          : Object.entries(formData?.serviceArea ?? {}).find(
+              ([key]) => key !== concepts.PATIENT_REFERRED_TO
+            )?.[1];
 
-      const otherAETCArea = triageResult==="red"? null: Object.entries(formData?.serviceArea ?? {}).find(
-        ([key]) => key !== concepts.PATIENT_REFERRED_TO
-      )?.[1];
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,

@@ -24,5 +24,6 @@ export const closeCurrentVisit = () => {
 
   return useMutation({
     mutationFn: updateVisit,
+ 
   });
 };
