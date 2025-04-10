@@ -37,8 +37,6 @@ export const TabsContainer = () => {
     setValue(newValue);
   };
 
-  console.log(value==1);
-
   return (
     <Box
       sx={{
