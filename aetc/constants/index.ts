@@ -170,10 +170,17 @@ export const encounters = {
   NURSING_CARE_NOTES: "c7d8b240-04f0-48c1-8d83-10d95f571b92",
   TEMPLATE_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   CONTINUATION_SHEET: "dd12d7ad-f177-463a-9013-c135440c6cf9",
+<<<<<<< HEAD
   SURGICAL_NOTES_TEMPLATE_FORM: "6c44a2d9-953d-41dd-9b99-03b4214f85ba",
   PRIMARY_DISABILITY_ASSESSMENT: "e0beb64f-603f-4e1d-8afd-2e2fae0d5e54",
   MEDICAL_IN_PATIENT: "",
   DISPOSED_PRESCRIPTIONS: "a9ebe09e-0296-40d1-a9fa-3efcce85ea9e ",
+=======
+  SURGICAL_NOTES_TEMPLATE_FORM: "389c3f51-558d-45d8-affa-d290a6015577",
+  PRIMARY_DISABILITY_ASSESSMENT: "d3608295-ea61-4864-b0c7-eb3bc062a0e2",
+  MEDICAL_IN_PATIENT: "",
+
+>>>>>>> origin
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -1016,9 +1023,13 @@ export const concepts = {
   ALLERGEN: "Allergen",
   ALLERGEN_CATEGORY: "Allergen Category",
   OTHER_MEDICATION_ALLERGY: "Other Medication Allergy",
+  OTHER_MEDICATION_ALLERGEN: "Other Medication Allergen",
   OTHER_MEDICAL_SUBSTANCE_ALLERGY: "Other Medical Substance Allergy",
+  OTHER_MEDICAL_SUBSTANCE_ALLERGEN: "Other Medical Substance Allergen",
   OTHER_SUBSTANCE_ALLERGY: "Other Substance Allergy",
   OTHER_FOOD_ALLERGY: "Other Food Allergy",
+  OTHER_SUBSTANCE_ALLERGEN: "Other Substance Allergen",
+  OTHER_FOOD_ALLERGEN: "Other Food Allergen",
   FOOD_ALLERGY: "Food Allergy",
   MEDICAL_SUBSTANCE_ALLERGY: "Medical Substance Allergy",
   SUBSTANCE_ALLERGY: "Substance Allergy",
@@ -1162,6 +1173,8 @@ export const concepts = {
   FIRST_TRIMESTER_MISCARRIAGE: "First Trimester Miscarriage",
   FREQUENT_URINATION: "Frequent Urination",
   DATE_OF_LAST_MEAL: "Date Of Last Meal",
+  TIME_OF_LAST_MEAL: "Time of last meal",
+  DESCRIPTION_OF_LAST_MEAL: "Description of Last meal",
   PAIN: "Pain",
   EXCESSIVE_THIRST: "Excessive Thirst",
   HEAT_INTOLERANCE: "Heat Intolerance",
@@ -1270,7 +1283,11 @@ export const concepts = {
   CPR_RECORD: "cpr record",
   INTERVENTION_LIST: "intervention list",
   CPR: "cpr",
-
+  IS_NORMAL: "is normal",
+  DEEP_TENDERNESS: "deep tenderness",
+  DEEP_LOCATION: "Deep Location",
+  GUARDING: "guarding",
+  REBOUNDING: "rebounding",
   //surgical notes template form concepts
   REASON_FOR_TAKING_MEDICATION: "Reason for taking Medication",
   CANCER_TYPE: "Cancer type",
@@ -1388,7 +1405,6 @@ export const concepts = {
   SMOKING_HISTORY: "Smoking History",
   QUIT_OVER_A_MONTH_AGO: "Quit over a month ago",
   NEVER_SMOKED: "Never smoked",
-
 };
 
 export const conceptNames = {
