@@ -6,46 +6,38 @@ import {
     FormFieldContainerLayout,
     CheckboxesGroup,
     RadioGroupInput,
+    TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { FormikProps } from "formik";
+import { concepts, encounters } from "@/constants";
+import { useParameters } from "@/hooks";
+import { getDateTime } from "@/helpers/dateTime";
+import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { Visit } from "@/interfaces";
 
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
 
-// List of past medical history conditions
+// List of past medical history conditions with concepts mapping
 const pastMedicalHistoryOptions = [
-    "HIV",
-    "Tuberculosis (TB)",
-    "Chronic Obstructive Pulmonary Disease (COPD)",
-    "Diabetes Mellitus",
-    "Asthma",
-    "Epilepsy",
-    "Previous stroke",
-    "Bleeding disorders",
-];
-
-// Diabetes Type options
-const diabetesTypeOptions = [
-    { value: "Type I", label: "Type I" },
-    { value: "Type II", label: "Type II" },
-    { value: "Unsure", label: "Unsure" },
-];
-
-// Diabetes Control options
-const diabetesControlOptions = [
-    { value: "Diet", label: "Diet" },
-    { value: "Tablet", label: "Tablet" },
-    { value: "Insulin", label: "Insulin" },
+    { value: concepts.HIV, label: "HIV" },
+    { value: concepts.TUBERCULOSIS, label: "Tuberculosis (TB)" },
+    { value: concepts.CHRONIC_OBSTRUCTIVE_PULMONARY_DISEASE, label: "Chronic Obstructive Pulmonary Disease (COPD)" },
+    { value: concepts.DIABETES_MELLITUS, label: "Diabetes Mellitus" },
+    { value: concepts.ASTHMA, label: "Asthma" },
+    { value: concepts.EPILEPSY, label: "Epilepsy" },
+    { value: concepts.PREVIOUS_STROKE, label: "Previous stroke" },
+    { value: concepts.BLEEDING_DISORDERS, label: "Bleeding disorders" },
 ];
 
 // Validation schema
 const schema = yup.object().shape({
     pastMedicalHistory: yup.array().min(1, "Select at least one condition"),
-    diabetesType: yup.string().nullable(),
-    diabetesControl: yup.string().nullable(),
 });
 
 export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
@@ -55,51 +47,152 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         setSelectedConditions(values.filter((item: any) => item.value).map((item: any) => item.key));
     };
 
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) {
+                setActiveVisit(active as unknown as Visit);
+            }
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        console.log("pastMedicalHistory", values.pastMedicalHistory);
+        const currentDateTime = getDateTime();
+
+        // Construct observations for selected conditions
+        const obs = values.pastMedicalHistory.map((condition: string) => {
+            const isOnTreatment = values.onTreatment[condition] === concepts.YES;
+
+            return {
+                concept: concepts.CONDITION,
+                value: condition,
+                obsDatetime: currentDateTime,
+                groupMembers: [
+                    {
+                        concept: concepts.ON_TREATMENT,
+                        value: values.onTreatment[condition] || concepts.NO,
+                        obsDatetime: currentDateTime,
+                    },
+                    ...(isOnTreatment
+                        ? [
+                            {
+                                concept: concepts.MEDICATION,
+                                value: values.medications[condition]?.currentMedication || "",
+                                obsDatetime: currentDateTime,
+                            },
+                            {
+                                concept: concepts.MEDICATION_DOSE,
+                                value: values.medications[condition]?.dose || "",
+                                obsDatetime: currentDateTime,
+                            },
+                            {
+                                concept: concepts.REASON_FOR_REQUEST,
+                                value: values.medications[condition]?.reason || "",
+                                obsDatetime: currentDateTime,
+                            },
+                            {
+                                concept: concepts.MEDICATION_DURATION,
+                                value: values.medications[condition]?.duration || "",
+                                obsDatetime: currentDateTime,
+                            },
+                        ]
+                        : []),
+                ],
+            };
+        });
+
+        // Construct the encounter payload
+        const payload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+            console.log("Past Medical History submitted successfully!");
+            onSubmit(values);
+        } catch (error) {
+            console.error("Error submitting Past Medical History: ", error);
+        }
+    };
+
     return (
         <FormikInit
             validationSchema={schema}
             initialValues={{
                 pastMedicalHistory: [],
-                diabetesType: "", // Added diabetes type field
-                diabetesControl: "", // Added diabetes control field
+                onTreatment: {},
+                medications: {},
             }}
-            onSubmit={(values) => console.log("Past Medical History:", values)}
+            onSubmit={handleSubmit}
         >
-            <FormFieldContainer direction="column">
-                {/* Past Medical History Checkboxes */}
-                <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <FormFieldContainerLayout title="Past Medical History">
+            {(formik) => (
+                <FormFieldContainer direction="column">
+                    <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
+                        <FormFieldContainerLayout title="Past Medical History">
+                            {pastMedicalHistoryOptions.map((condition) => (
+                                <div key={condition.label} style={{ marginBottom: "10px" }}>
+                                    {/* Checkbox for each condition */}
+                                    <CheckboxesGroup
+                                        name="pastMedicalHistory"
+                                        allowFilter={false}
+                                        options={[{ value: condition.value, label: condition.label }]}
+                                        getValue={(values) => handleCheckboxChange(values)}
+                                    />
 
-                        {pastMedicalHistoryOptions.map((condition) => (
-                            <div key={condition} style={{ marginBottom: "10px" }}>
-                                <CheckboxesGroup
-                                    name="pastMedicalHistory"
-                                    allowFilter={false}
-                                    options={[{ value: condition, label: condition }]}
-                                    getValue={handleCheckboxChange}
-                                />
-                                {/* Show Diabetes Type & Control options if Diabetes Mellitus is selected */}
-                                {selectedConditions.includes("Diabetes Mellitus") &&
-                                    condition === "Diabetes Mellitus" && (
+                                    {/* If the condition is selected, show treatment options */}
+                                    {selectedConditions.includes(condition.value) && (
                                         <div style={{ marginLeft: "20px", marginTop: "5px" }}>
                                             <RadioGroupInput
-                                                name="diabetesType"
-                                                label="Type"
-                                                options={diabetesTypeOptions}
+                                                name={`onTreatment.${condition.value}`}
+                                                label={`Are you on treatment for ${condition.label}?`}
+                                                options={[
+                                                    { value: concepts.YES, label: "Yes" },
+                                                    { value: concepts.NO, label: "No" },
+                                                ]}
+                                                getValue={(value) =>
+                                                    formik.setFieldValue(`onTreatment.${condition.value}`, value)
+                                                }
                                             />
-                                            <RadioGroupInput
-                                                name="diabetesControl"
-                                                label="Controlled by"
-                                                options={diabetesControlOptions}
-                                            />
+
+                                            {formik.values.onTreatment[condition.value] === concepts.YES && (
+                                                <div style={{ marginLeft: "20px", marginTop: "10px" }}>
+                                                    <h5>Medication Details</h5>
+                                                    <TextInputField
+                                                        name={`medications.${condition.value}.currentMedication`}
+                                                        label="Current Medication"
+                                                        type="text" id={""} />
+                                                    <TextInputField
+                                                        name={`medications.${condition.value}.dose`}
+                                                        label="Dose"
+                                                        type="text" id={""} />
+                                                    <TextInputField
+                                                        name={`medications.${condition.value}.reason`}
+                                                        label="Reason for Taking"
+                                                        type="text" id={""} />
+                                                    <TextInputField
+                                                        name={`medications.${condition.value}.duration`}
+                                                        label="How long have you been taking it?"
+                                                        type="text" id={""} />
+                                                </div>
+                                            )}
                                         </div>
                                     )}
-                            </div>
-                        ))}
-                    </FormFieldContainerLayout>
-
-                </WrapperBox>
-            </FormFieldContainer>
+                                </div>
+                            ))}
+                        </FormFieldContainerLayout>
+                    </WrapperBox>
+                </FormFieldContainer>
+            )}
         </FormikInit>
     );
 };

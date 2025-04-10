@@ -132,7 +132,7 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
                 concept: concepts.PROCEDURES,
                 value: concepts.PROCEDURES,
                 obsDatetime: currentDateTime,
-                group_members: (values.procedures || [])
+                groupMembers: (values.procedures || [])
                     .filter((procedure: any) => procedure.value === true)
                     .map((procedure: any) => ({
                         concept: procedure.key,
@@ -144,7 +144,7 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
                 concept: concepts.SUPPORTIVE_CARE,
                 value: concepts.SUPPORTIVE_CARE,
                 obsDatetime: currentDateTime,
-                group_members: (values.supportiveCare || [])
+                groupMembers: (values.supportiveCare || [])
                     .filter((care: any) => care.value === true)
                     .map((care: any) => ({
                         concept: care.key,
