@@ -362,32 +362,103 @@ const formatPresentingComplaintsNotes = (obs: any[]): ComponentNote[] => {
 };
 
 const formatAllergiesNotes = (obs: any[]): ComponentNote[] => {
-    const allergyNames: string[] = [];
-    let assessmentTime = new Date().toISOString();
-    let creator = "Unknown";
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
 
-    obs?.forEach(item => {
-        item.children?.forEach((child: any) => {
-            if (child.value && !allergyNames.includes(child.value)) {
-                allergyNames.push(child.value);
+    const groupedNotes: {
+        time: string;
+        creator: string;
+        allergyGroups: {
+            [category: string]: {
+                allergens: string[];
+                description?: string;
             }
-        });
-        if (item.obs_datetime) {
-            assessmentTime = item.obs_datetime;
         }
-        if (item.created_by) {
-            creator = item.created_by;
+    }[] = [];
+
+    let currentGroup: {
+        time: string;
+        creator: string;
+        allergyGroups: {
+            [category: string]: {
+                allergens: string[];
+                description?: string;
+            }
+        }
+    } | null = null;
+
+    sortedObs.forEach(item => {
+        if (item.names?.[0]?.name === "Allergen Category" && item.value) {
+            const itemTime = item.obs_datetime || new Date().toISOString();
+            const itemCreator = item.created_by || "Unknown";
+            const category = item.value;
+
+            const allergens: string[] = [];
+            let description: string | undefined;
+
+            item.children?.forEach((child: any) => {
+                if (child.names?.[0]?.name === "Allergen" && child.value) {
+                    allergens.push(child.value);
+                } else if (child.names?.[0]?.name === "Description" && child.value) {
+                    description = child.value;
+                }
+            });
+
+            if (allergens.length > 0) {
+                if (!currentGroup ||
+                    new Date(itemTime).getTime() - new Date(currentGroup.time).getTime() > 3 * 60 * 1000) {
+                    currentGroup = {
+                        time: itemTime,
+                        creator: itemCreator,
+                        allergyGroups: {}
+                    };
+                    groupedNotes.push(currentGroup);
+                }
+
+                if (!currentGroup.allergyGroups[category]) {
+                    currentGroup.allergyGroups[category] = {
+                        allergens: [],
+                        description
+                    };
+                }
+
+                currentGroup.allergyGroups[category].allergens.push(...allergens);
+
+                if (description) {
+                    currentGroup.allergyGroups[category].description = description;
+                }
+
+                currentGroup.time = itemTime;
+                currentGroup.creator = itemCreator;
+            }
         }
     });
 
-    return allergyNames.length > 0 ? [{
-        paragraph: `Allergies: ${allergyNames.join(', ')}.`,
-        time: assessmentTime,
-        creator,
-        rawTime: new Date(assessmentTime).getTime()
-    }] : [];
-};
+    const notes: ComponentNote[] = [];
+    groupedNotes.forEach(group => {
+        const categoryNotes: string[] = [];
 
+        Object.entries(group.allergyGroups).forEach(([category, details]) => {
+            let noteText = `${category}: ${details.allergens.join(', ')}`;
+            if (details.description) {
+                noteText += ` (${details.description})`;
+            }
+            categoryNotes.push(noteText);
+        });
+
+        if (categoryNotes.length > 0) {
+            notes.push({
+                paragraph: `ALLERGIES: ${categoryNotes.join('; ')}.`,
+                time: group.time,
+                creator: group.creator,
+                rawTime: new Date(group.time).getTime()
+            });
+        }
+    });
+
+    return notes;
+};
 const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
     const medicationNotes: ComponentNote[] = [];
 
