@@ -69,7 +69,7 @@ export const LastMealForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
       >
         
         <FormValuesListener getValues={setFormValues} />
-            <FormFieldContainer direction="row">
+            <FormFieldContainer direction="column">
             <div style={{ marginRight: "2ch" }}>
   <LocalizationProvider dateAdapter={AdapterDayjs}>
     <Field name={lastMealFormConfig.lastMeal.name}>
@@ -110,6 +110,7 @@ export const LastMealForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                          placeholder="e.g., rice and beans"
                          multiline
                          rows={4}
+                         sx={{width:"100%", mt:"2ch"}}
                         disabled={formValues.didNotEat}
                        />
                               
