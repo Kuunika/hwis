@@ -343,6 +343,7 @@ export const Disability = ({ onSubmit }: Props) => {
                 name={form.bloodGlocose.name}
                 label={form.bloodGlocose.label}
                 id={form.bloodGlocose.name}
+                unitOfMeasure="mmol/L"
               />
             </FieldsContainer>
             <FieldsContainer>

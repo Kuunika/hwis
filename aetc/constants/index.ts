@@ -156,6 +156,7 @@ export const encounters = {
   SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
   PATIENT_ADMISSIONS: "ba0651ec-8d80-11d8-abbb-0024217bb78e",
   SUMMARY_ASSESSMENT: "e5fec87c-9bea-42bb-a276-0469addccf99",
+
   // CPR:"8576645e-1661-47fc-90b4-12420148da8b",
 
   //TODO: replace this UUID with a bedside test
@@ -1401,6 +1402,7 @@ export const concepts = {
   QUIT_OVER_A_MONTH_AGO: "Quit over a month ago",
   NEVER_SMOKED: "Never smoked",
   PUPIL_REACTION:"Pupil reaction",
+  GENETELIA_EXAMINATION_REQUIRED:"Genetelia examination required",
  
 };
 
