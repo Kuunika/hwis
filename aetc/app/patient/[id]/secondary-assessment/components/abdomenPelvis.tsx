@@ -207,6 +207,10 @@ const form = {
     name: concepts.PERIHYMEN_NOTES,
     label: "Notes",
   },
+  examination: {
+    name: concepts.GENETELIA_EXAMINATION_REQUIRED,
+    label: "Does the condition necessitate genitalia examination?",
+  },
 };
 
 type Prop = {
@@ -289,6 +293,7 @@ const schema = Yup.object().shape({
   ),
   [form.perihymen.name]: Yup.string().label(form.perihymen.label),
   [form.perihymenNotes.name]: Yup.string().label(form.perihymenNotes.label),
+  [form.examination.name]: Yup.string().label(form.examination.label),
 });
 
 const prostateOptions = [
@@ -664,120 +669,128 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             )}
           </FormFieldContainerLayout>
           <FormFieldContainerLayout title="Examination of Genitalia (inspection)">
-            {gender == "Male" && (
+            <RadioGroupInput
+              row
+              options={radioOptions}
+              name={form.examination.name}
+              label={form.examination.label}
+            />
+            {formValues[form.examination.name] == YES && (
               <>
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.circumcisionStatus.name}
-                  label={form.circumcisionStatus.label}
-                />
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.laceration.name}
-                  label={form.laceration.label}
-                />
-
-                {formValues[form.laceration.name] == YES && (
+                {gender == "Male" && (
                   <>
-                    <br />
-                    <TextInputField
-                      rows={4}
-                      multiline
-                      sx={{ width: "100%" }}
-                      name={form.lacerationNotes.label}
-                      label={form.lacerationNotes.label}
-                      id={form.lacerationNotes.name}
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.circumcisionStatus.name}
+                      label={form.circumcisionStatus.label}
                     />
-                  </>
-                )}
-
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.hematomas.name}
-                  label={form.hematomas.label}
-                />
-                {formValues[form.hematomas.name] == YES && (
-                  <>
-                    <br />
-                    <TextInputField
-                      rows={4}
-                      multiline
-                      sx={{ width: "100%" }}
-                      name={form.hematomasNotes.label}
-                      label={form.hematomasNotes.label}
-                      id={form.hematomasNotes.name}
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.laceration.name}
+                      label={form.laceration.label}
                     />
-                  </>
-                )}
 
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.inflammation.name}
-                  label={form.inflammation.label}
-                />
-                {formValues[form.inflammation.name] == YES && (
-                  <>
-                    <br />
-                    <TextInputField
-                      rows={4}
-                      multiline
-                      sx={{ width: "100%" }}
-                      name={form.inflammationNotes.label}
-                      label={form.inflammationNotes.label}
-                      id={form.inflammationNotes.name}
+                    {formValues[form.laceration.name] == YES && (
+                      <>
+                        <br />
+                        <TextInputField
+                          rows={4}
+                          multiline
+                          sx={{ width: "100%" }}
+                          name={form.lacerationNotes.label}
+                          label={form.lacerationNotes.label}
+                          id={form.lacerationNotes.name}
+                        />
+                      </>
+                    )}
+
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.hematomas.name}
+                      label={form.hematomas.label}
                     />
-                  </>
-                )}
+                    {formValues[form.hematomas.name] == YES && (
+                      <>
+                        <br />
+                        <TextInputField
+                          rows={4}
+                          multiline
+                          sx={{ width: "100%" }}
+                          name={form.hematomasNotes.label}
+                          label={form.hematomasNotes.label}
+                          id={form.hematomasNotes.name}
+                        />
+                      </>
+                    )}
 
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.urethralMeatus.name}
-                  label={form.urethralMeatus.label}
-                />
-                {formValues[form.urethralMeatus.name] == YES && (
-                  <>
-                    <br />
-                    <TextInputField
-                      rows={4}
-                      multiline
-                      sx={{ width: "100%" }}
-                      name={form.urethralMeatusNotes.label}
-                      label={form.urethralMeatusNotes.label}
-                      id={form.urethralMeatusNotes.name}
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.inflammation.name}
+                      label={form.inflammation.label}
                     />
-                  </>
-                )}
+                    {formValues[form.inflammation.name] == YES && (
+                      <>
+                        <br />
+                        <TextInputField
+                          rows={4}
+                          multiline
+                          sx={{ width: "100%" }}
+                          name={form.inflammationNotes.label}
+                          label={form.inflammationNotes.label}
+                          id={form.inflammationNotes.name}
+                        />
+                      </>
+                    )}
 
-                {/* <SearchComboBox
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.urethralMeatus.name}
+                      label={form.urethralMeatus.label}
+                    />
+                    {formValues[form.urethralMeatus.name] == YES && (
+                      <>
+                        <br />
+                        <TextInputField
+                          rows={4}
+                          multiline
+                          sx={{ width: "100%" }}
+                          name={form.urethralMeatusNotes.label}
+                          label={form.urethralMeatusNotes.label}
+                          id={form.urethralMeatusNotes.name}
+                        />
+                      </>
+                    )}
+
+                    {/* <SearchComboBox
                 options={generalInspectionOptions}
                 multiple
                 name={form.generalInspection.name}
                 label={form.generalInspection.label}
               /> */}
 
-                {formValues[form.generalInspection.name]?.length > 0 && (
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "1ch" }}
-                    name={form.generalNotes.name}
-                    id={form.generalNotes.name}
-                    label={form.generalNotes.label}
-                  />
-                )}
+                    {formValues[form.generalInspection.name]?.length > 0 && (
+                      <TextInputField
+                        multiline
+                        rows={5}
+                        sx={{ width: "100%", mt: "1ch" }}
+                        name={form.generalNotes.name}
+                        id={form.generalNotes.name}
+                        label={form.generalNotes.label}
+                      />
+                    )}
 
-                {/* <SearchComboBox
+                    {/* <SearchComboBox
                 sx={{ mt: "1ch" }}
                 options={urethralOptions}
                 name={form.urethralMeatus.name}
                 label={form.urethralMeatus.label}
               /> */}
-                {/* {formValues[form.urethralMeatus.name]?.length > 0 && (
+                    {/* {formValues[form.urethralMeatus.name]?.length > 0 && (
                 <TextInputField
                   multiline
                   rows={5}
@@ -788,140 +801,148 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                 />
               )} */}
 
-                <RadioGroupInput
-                  row
-                  name={form.scrotum.name}
-                  label={form.scrotum.label}
-                  options={radioOptions}
-                />
+                    <RadioGroupInput
+                      row
+                      name={form.scrotum.name}
+                      label={form.scrotum.label}
+                      options={radioOptions}
+                    />
 
-                {/* <SearchComboBox
+                    {/* <SearchComboBox
                 sx={{ mt: "1ch" }}
                 options={scrotumOptions}
                 name={form.scrotum.name}
                 label={form.scrotum.label}
               /> */}
-                {formValues[form.scrotum.name] == YES && (
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "1ch" }}
-                    name={form.scrotumNotes.name}
-                    id={form.scrotumNotes.name}
-                    label={form.scrotumNotes.label}
-                  />
+                    {formValues[form.scrotum.name] == YES && (
+                      <TextInputField
+                        multiline
+                        rows={5}
+                        sx={{ width: "100%", mt: "1ch" }}
+                        name={form.scrotumNotes.name}
+                        id={form.scrotumNotes.name}
+                        label={form.scrotumNotes.label}
+                      />
+                    )}
+                  </>
                 )}
-              </>
-            )}
-            {gender == "Female" && (
-              <>
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.unusualAppearance.name}
-                  label={form.unusualAppearance.label}
-                />
-                {formValues[form.unusualAppearance.name] == YES && (
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "1ch" }}
-                    name={form.unusualAppearanceNotes.name}
-                    id={form.unusualAppearanceNotes.name}
-                    label={form.unusualAppearanceNotes.label}
-                  />
-                )}
+                {gender == "Female" && (
+                  <>
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.unusualAppearance.name}
+                      label={form.unusualAppearance.label}
+                    />
+                    {formValues[form.unusualAppearance.name] == YES && (
+                      <TextInputField
+                        multiline
+                        rows={5}
+                        sx={{ width: "100%", mt: "1ch" }}
+                        name={form.unusualAppearanceNotes.name}
+                        id={form.unusualAppearanceNotes.name}
+                        label={form.unusualAppearanceNotes.label}
+                      />
+                    )}
 
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.perihymen.name}
-                  label={form.perihymen.label}
-                />
-                {formValues[form.periymen.name] == YES && (
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "1ch" }}
-                    name={form.periymenNotes.name}
-                    id={form.periymenNotes.name}
-                    label={form.periymenNotes.label}
-                  />
-                )}
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.perihymen.name}
+                      label={form.perihymen.label}
+                    />
+                    {formValues[form.periymen.name] == YES && (
+                      <TextInputField
+                        multiline
+                        rows={5}
+                        sx={{ width: "100%", mt: "1ch" }}
+                        name={form.periymenNotes.name}
+                        id={form.periymenNotes.name}
+                        label={form.periymenNotes.label}
+                      />
+                    )}
 
-                {/* <SearchComboBox
+                    {/* <SearchComboBox
                 sx={{ mt: "1ch" }}
                 options={perihymenOptions}
                 name={form.periymen.name}
                 label={form.periymen.label}
               /> */}
 
-                <RadioGroupInput
-                  row
-                  options={radioOptions}
-                  name={form.vagina.name}
-                  label={form.vagina.label}
-                />
+                    <RadioGroupInput
+                      row
+                      options={radioOptions}
+                      name={form.vagina.name}
+                      label={form.vagina.label}
+                    />
 
-                {formValues[form.vagina.name] == YES && (
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "1ch" }}
-                    name={form.vaginaNotes.name}
-                    id={form.vaginaNotes.name}
-                    label={form.vaginaNotes.label}
-                  />
+                    {formValues[form.vagina.name] == YES && (
+                      <TextInputField
+                        multiline
+                        rows={5}
+                        sx={{ width: "100%", mt: "1ch" }}
+                        name={form.vaginaNotes.name}
+                        id={form.vaginaNotes.name}
+                        label={form.vaginaNotes.label}
+                      />
+                    )}
+                  </>
                 )}
               </>
             )}
           </FormFieldContainerLayout>
-          <FormFieldContainerLayout title="Examination of Genitalia (Palpation)">
-            {gender == "Female" && (
-              <>
-                <SearchComboBox
-                  sx={{ mt: "1ch" }}
-                  label={form.digitalVaginalExamination.label}
-                  name={form.digitalVaginalExamination.name}
-                  options={digitalVaginalOptions}
-                />
-                {formValues[form.digitalVaginalExamination.name]?.length >
-                  0 && (
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "1ch" }}
-                    name={form.digitalVaginalExaminationNotes.name}
-                    id={form.digitalVaginalExaminationNotes.name}
-                    label={form.digitalVaginalExaminationNotes.label}
-                  />
-                )}
-              </>
-            )}
-            {gender == "Male" && (
-              <>
-                <RadioGroupInput
-                  name={form.testicles.name}
-                  label={form.testicles.label}
-                  row
-                  options={radioOptions}
-                />
 
-                {formValues[form.testicles.name] == NO && (
-                  <TextInputField
-                    multiline
-                    rows={5}
-                    sx={{ width: "100%", mt: "2ch" }}
-                    name={form.testiclesNotes.name}
-                    id={form.testiclesNotes.name}
-                    label={form.testiclesNotes.label}
-                  />
+          {formValues[form.examination.name] == YES && (
+            <>
+              <FormFieldContainerLayout title="Examination of Genitalia (Palpation)">
+                {gender == "Female" && (
+                  <>
+                    <SearchComboBox
+                      sx={{ mt: "1ch" }}
+                      label={form.digitalVaginalExamination.label}
+                      name={form.digitalVaginalExamination.name}
+                      options={digitalVaginalOptions}
+                    />
+                    {formValues[form.digitalVaginalExamination.name]?.length >
+                      0 && (
+                      <TextInputField
+                        multiline
+                        rows={5}
+                        sx={{ width: "100%", mt: "1ch" }}
+                        name={form.digitalVaginalExaminationNotes.name}
+                        id={form.digitalVaginalExaminationNotes.name}
+                        label={form.digitalVaginalExaminationNotes.label}
+                      />
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </FormFieldContainerLayout>
+                {gender == "Male" && (
+                  <>
+                    <RadioGroupInput
+                      name={form.testicles.name}
+                      label={form.testicles.label}
+                      row
+                      options={radioOptions}
+                    />
+
+                    {formValues[form.testicles.name] == NO && (
+                      <TextInputField
+                        multiline
+                        rows={5}
+                        sx={{ width: "100%", mt: "2ch" }}
+                        name={form.testiclesNotes.name}
+                        id={form.testiclesNotes.name}
+                        label={form.testiclesNotes.label}
+                      />
+                    )}
+                  </>
+                )}
+              </FormFieldContainerLayout>
+            </>
+          )}
+
           {gender == "Female" && (
-            <FormFieldContainerLayout title="Pelvic Examination">
+            <FormFieldContainerLayout title="Speculum Examination">
               <TextInputField
                 sx={{ width: "100%" }}
                 name={form.pelvicExamination.name}

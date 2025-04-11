@@ -9,7 +9,7 @@ import {
   TextInputField,
 } from "@/components";
 import * as yup from "yup";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { NO, YES, concepts, encounters } from "@/constants";
 import {
   getInitialValues,
@@ -37,10 +37,10 @@ const form = {
     label: "Best Motor Response",
   },
 
-  reactionToLight: {
-    name: concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT,
-    label: "Pupil Size and Reaction To Light",
-  },
+  // reactionToLight: {
+  //   name: concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT,
+  //   label: "Pupil Size and Reaction To Light",
+  // },
   focalNeurology: {
     name: concepts.FOCAL_NEUROLOGY,
     label: "Focal Neurology",
@@ -56,7 +56,22 @@ const form = {
   seizureInfo: {
     name: concepts.ACTIVE_SEIZURES,
     label: "Is the patient having Seizures",
-    coded: true,
+  },
+  leftPupilSize: {
+    name: "Left Pupil Size",
+    label: "Left Pupil Size",
+  },
+  rightPupilSize: {
+    name: "Right Pupil Size",
+    label: "Right Pupil Size",
+  },
+  leftPupilReaction: {
+    name: "Left Pupil Reaction",
+    label: "Left Pupil Reaction",
+  },
+  rightPupilReaction: {
+    name: "Right Pupil Reaction",
+    label: "Right Pupil Reaction",
   },
 };
 
@@ -71,10 +86,10 @@ const schema = yup.object({
     .required()
     .label(form.motorResponse.label),
 
-  [form.reactionToLight.name]: yup
-    .string()
-    .required()
-    .label(form.reactionToLight.label),
+  // [form.reactionToLight.name]: yup
+  //   .string()
+  //   .required()
+  //   .label(form.reactionToLight.label),
   [form.focalNeurology.name]: yup
     .string()
     .required()
@@ -83,11 +98,23 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.postureInfo.label),
-  [form.bloodGlocose.name]: yup.string().label(form.bloodGlocose.label),
+  [form.bloodGlocose.name]: yup
+    .number()
+    .min(0)
+    .max(1000)
+    .label(form.bloodGlocose.label),
   [form.seizureInfo.name]: yup
     .string()
     .required()
     .label(form.seizureInfo.label),
+  [form.rightPupilReaction.name]: yup
+    .string()
+    .label(form.rightPupilReaction.label),
+  [form.rightPupilSize.name]: yup.string().label(form.rightPupilSize.label),
+  [form.leftPupilReaction.name]: yup
+    .string()
+    .label(form.leftPupilReaction.label),
+  [form.leftPupilSize.name]: yup.string().label(form.leftPupilSize.label),
 });
 
 const initialValues = getInitialValues(form);
@@ -145,7 +172,53 @@ export const Disability = ({ onSubmit }: Props) => {
 
   const handleFormSubmit = (values: any) => {
     const obsDateTime = getDateTime();
-    handleSubmit(mapSubmissionToCodedArray(form, values, obsDateTime));
+
+    const eyes = [
+      {
+        concept: concepts.EYES,
+        value: "Left Eye",
+        obsDateTime: obsDateTime,
+        groupMembers: [
+          {
+            concept: concepts.PUPIL_SIZE,
+            value: values[form.leftPupilSize.name],
+            obsDateTime: obsDateTime,
+          },
+          {
+            concept: concepts.PUPIL_REACTION,
+            value: values[form.leftPupilReaction.name],
+            obsDateTime: obsDateTime,
+          },
+        ],
+      },
+      {
+        concept: concepts.EYES,
+        value: "Right Eye",
+        obsDateTime: obsDateTime,
+        groupMembers: [
+          {
+            concept: concepts.PUPIL_SIZE,
+            value: values[form.rightPupilSize.name],
+            obsDateTime: obsDateTime,
+          },
+          {
+            concept: concepts.PUPIL_REACTION,
+            value: values[form.rightPupilReaction.name],
+            obsDateTime: obsDateTime,
+          },
+        ],
+      },
+    ];
+
+    delete values[form.leftPupilSize.name];
+    delete values[form.leftPupilReaction.name];
+    delete values[form.rightPupilSize.name];
+    delete values[form.rightPupilReaction.name];
+
+    const obs = getObservations(values, obsDateTime);
+
+    const obsWithEyes = [...obs, ...eyes];
+    handleSubmit(obsWithEyes);
   };
 
   const totalSum =
@@ -211,20 +284,48 @@ export const Disability = ({ onSubmit }: Props) => {
           </FormFieldContainerLayout>
 
           <FormFieldContainerLayout title="Pupillary Response">
+            <Typography>Right Eye</Typography>
             <FieldsContainer mr="1ch">
               <TextInputField
                 sx={{ m: 0, width: "100%" }}
-                name={form.reactionToLight.name}
-                label={form.reactionToLight.label}
-                id={form.reactionToLight.name}
+                name={form.rightPupilSize.name}
+                label={form.rightPupilSize.label}
+                id={form.rightPupilSize.name}
+                unitOfMeasure="mm"
               />
-              <TextInputField
-                name={form.focalNeurology.name}
-                sx={{ m: 0, width: "100%" }}
-                label={form.focalNeurology.label}
-                id={form.bloodGlocose.name}
+              <RadioGroupInput
+                name={form.rightPupilReaction.name}
+                label={form.rightPupilReaction.label}
+                row
+                options={radioOptions}
               />
             </FieldsContainer>
+            <br />
+            <Typography>Left Eye</Typography>
+            <FieldsContainer mr="1ch">
+              <TextInputField
+                sx={{ m: 0, width: "100%" }}
+                name={form.leftPupilSize.name}
+                label={form.leftPupilSize.label}
+                id={form.leftPupilSize.name}
+                unitOfMeasure="mm"
+              />
+              <RadioGroupInput
+                name={form.leftPupilReaction.name}
+                label={form.leftPupilReaction.label}
+                row
+                options={radioOptions}
+              />
+            </FieldsContainer>
+            <br />
+            <TextInputField
+              name={form.focalNeurology.name}
+              sx={{ m: 0, width: "100%" }}
+              label={form.focalNeurology.label}
+              rows={5}
+              multiline
+              id={form.focalNeurology.name}
+            />
           </FormFieldContainerLayout>
           <FormFieldContainerLayout
             last={true}
@@ -242,6 +343,7 @@ export const Disability = ({ onSubmit }: Props) => {
                 name={form.bloodGlocose.name}
                 label={form.bloodGlocose.label}
                 id={form.bloodGlocose.name}
+                unitOfMeasure="mmol/L"
               />
             </FieldsContainer>
             <FieldsContainer>
