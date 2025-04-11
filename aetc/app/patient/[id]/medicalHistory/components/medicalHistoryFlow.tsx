@@ -58,11 +58,13 @@ const convertObservations = (
       },
       {
         concept:
-          complaint.duration_unit === durationOptions[0]
-            ? concepts.DURATION_OF_SYMPTOMS_DAYS
+        complaint.duration_unit === durationOptions[0]
+            ? concepts.DURATION_OF_SYMPTOMS_HOURS
             : complaint.duration_unit === durationOptions[1]
-            ? concepts.DURATION_OF_SYMPTOMS_WEEKS
+            ? concepts.DURATION_OF_SYMPTOMS_DAYS
             : complaint.duration_unit === durationOptions[2]
+            ? concepts.DURATION_OF_SYMPTOMS_WEEKS
+            : complaint.duration_unit === durationOptions[3]
             ? concepts.DURATION_OF_SYMPTOMS_MONTHS
             : concepts.DURATION_OF_SYMPTOMS_YEARS,
         value: complaint.duration,
@@ -72,10 +74,11 @@ const convertObservations = (
 };
 
 const symptomDurationUnits: Record<string, string> = {
-  [durationOptions[0].toString()]: concepts.DURATION_OF_SYMPTOMS_DAYS,
-  [durationOptions[1].toString()]: concepts.DURATION_OF_SYMPTOMS_WEEKS,
-  [durationOptions[2].toString()]: concepts.DURATION_OF_SYMPTOMS_MONTHS,
-  [durationOptions[3].toString()]: concepts.DURATION_OF_SYMPTOMS_YEARS,
+  [durationOptions[0].toString()]: concepts.DURATION_OF_SYMPTOMS_HOURS,
+  [durationOptions[1].toString()]: concepts.DURATION_OF_SYMPTOMS_DAYS,
+  [durationOptions[2].toString()]: concepts.DURATION_OF_SYMPTOMS_WEEKS,
+  [durationOptions[3].toString()]: concepts.DURATION_OF_SYMPTOMS_MONTHS,
+  [durationOptions[4].toString()]: concepts.DURATION_OF_SYMPTOMS_YEARS,
 };
 
 export const MedicalHistoryFlow = () => {
@@ -321,10 +324,11 @@ export const MedicalHistoryFlow = () => {
     const medicationObs = observations[0]?.value || [];
 
     const durationUnits: Record<string, string> = {
-      [durationOptions[0].toString()]: concepts.DURATION_ON_MEDICATION_DAYS,
-      [durationOptions[1].toString()]: concepts.DURATION_ON_MEDICATION_WEEKS,
-      [durationOptions[2].toString()]: concepts.DURATION_ON_MEDICATION_MONTHS,
-      [durationOptions[3].toString()]: concepts.DURATION_ON_MEDICATION_YEARS,
+      [durationOptions[0].toString()]: concepts.DURATION_ON_MEDICATION_HOURS,
+      [durationOptions[1].toString()]: concepts.DURATION_ON_MEDICATION_DAYS,
+      [durationOptions[2].toString()]: concepts.DURATION_ON_MEDICATION_WEEKS,
+      [durationOptions[3].toString()]: concepts.DURATION_ON_MEDICATION_MONTHS,
+      [durationOptions[4].toString()]: concepts.DURATION_ON_MEDICATION_YEARS,
     };
 
     const doseUnits: Record<string, string> = {

@@ -332,7 +332,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch", marginTop: "" }}>
+                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px"}}>
                         <label style={{fontWeight: "bold" }}>
                         {formValues.admissions[index]["diagnosis"]}
                       </label>
@@ -356,7 +356,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         <ErrorMessage name={admissionsFormConfig.diagnosis(index).name} />
                       </MainTypography>
                   </FormFieldContainer>
-                  <FormFieldContainer direction="column">
+                  <div style={{ width: "100%" }}>
                       <div>
                       <TextInputField
                       disabled={formValues.none}
@@ -364,6 +364,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         name={admissionsFormConfig.interventions(index).name}
                         label={admissionsFormConfig.interventions(index).label}
                         multiline
+                        sx={{ width: "100%"}}
                         rows={4}
                       />
                       <MainTypography color="red" variant="subtitle2">
@@ -372,8 +373,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                  </FormFieldContainer>
-                  <FormFieldContainer direction="row">
+
                     <div>
                       <TextInputField
                       disabled={formValues.none}
@@ -381,6 +381,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         name={admissionsFormConfig.discharge_instructions(index).name}
                         label={admissionsFormConfig.discharge_instructions(index).label}
                         multiline
+                        sx={{ width: "100%"}}
                         rows={4}
                       />
                        <MainTypography color="red" variant="subtitle2">
@@ -389,8 +390,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                  </FormFieldContainer>
-                  <FormFieldContainer direction="row">
+                
                     <div>
                       <TextInputField
                       disabled={formValues.none}
@@ -398,6 +398,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         name={admissionsFormConfig.follow_up_plans(index).name}
                         label={admissionsFormConfig.follow_up_plans(index).label}
                         multiline
+                        sx={{ width: "100%"}}
                         rows={4}
                       />
                        <MainTypography color="red" variant="subtitle2">
@@ -406,7 +407,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                    </FormFieldContainer>
+                  </div>
                     </>
                   )}
                 />

@@ -38,7 +38,7 @@ type Prop = {
     age_at_menarche: 0,
     last_menstrual: "",
     pregnant:"No",
-    gestational_age: "Select a date of last menstrual",
+    gestational_age: "Select a date of last normal menstrual period above",
     number_of_previous_pregnancies: 0,
     previous_pregnancy_outcomes: [],
     number_of_births: [],
@@ -347,7 +347,7 @@ return (
               id={obstetricsFormConfig.gestational_age.name}
               name={obstetricsFormConfig.gestational_age.name}
               label={obstetricsFormConfig.gestational_age.label}
-              sx={{ marginRight: '2ch'}}
+              sx={{ marginRight: '2ch', width:'450px'}}
               disabled
             />
 
