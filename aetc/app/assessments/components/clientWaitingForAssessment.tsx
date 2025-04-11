@@ -8,6 +8,9 @@ import * as React from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
+
+import {} from "react-icons/fa6";
+
 import {
   CalculateWaitingTime,
   MainButton,
@@ -18,7 +21,7 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
@@ -64,6 +67,41 @@ export const ClientWaitingForAssessment = () => {
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit" },
+    {
+      field: "triage_result",
+      headerName: "",
+      renderCell: (cell: any) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                backgroundColor:
+                  cell.value == "red"
+                    ? "#B42318"
+                    : cell.value == "yellow"
+                    ? "#EDE207"
+                    : cell.value == "green"
+                    ? "#016302"
+                    : "transparent",
+              }}
+            />
+          </Box>
+        );
+      },
+    },
+    
+  
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "gender", headerName: "Gender" },
@@ -87,34 +125,16 @@ export const ClientWaitingForAssessment = () => {
     },
     { field: "last_encounter_creator", headerName: "Triaged By", flex: 1 },
     {
-      field: "triage_result",
-      headerName: "Triage Category",
-      renderCell: (cell: any) => {
-        return (
-          <WrapperBox
-            sx={{
-              borderRadius: "2px",
-              width: "100%",
-              height: "80%",
-              backgroundColor:
-                cell.value == "red"
-                  ? "#B42318"
-                  : cell.value == "yellow"
-                  ? "#ede207"
-                  : cell.value == "green"
-                  ? "#016302"
-                  : "",
-              marginY: 1,
-            }}
-          ></WrapperBox>
-        );
-      },
+      field: "patient_referred_to",
+      flex: 1,
+      headerName: "Patient Care Area",
+    
     },
 
     {
       field: "action",
       headerName: "Action",
-      flex: 1.2,
+      flex: 1.5,
       renderCell: (cell: any) => {
         return (
           <>
