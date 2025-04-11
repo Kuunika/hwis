@@ -74,10 +74,11 @@ const convertObservations = (
 };
 
 const symptomDurationUnits: Record<string, string> = {
-  [durationOptions[0].toString()]: concepts.DURATION_OF_SYMPTOMS_DAYS,
-  [durationOptions[1].toString()]: concepts.DURATION_OF_SYMPTOMS_WEEKS,
-  [durationOptions[2].toString()]: concepts.DURATION_OF_SYMPTOMS_MONTHS,
-  [durationOptions[3].toString()]: concepts.DURATION_OF_SYMPTOMS_YEARS,
+  [durationOptions[0].toString()]: concepts.DURATION_OF_SYMPTOMS_HOURS,
+  [durationOptions[1].toString()]: concepts.DURATION_OF_SYMPTOMS_DAYS,
+  [durationOptions[2].toString()]: concepts.DURATION_OF_SYMPTOMS_WEEKS,
+  [durationOptions[3].toString()]: concepts.DURATION_OF_SYMPTOMS_MONTHS,
+  [durationOptions[4].toString()]: concepts.DURATION_OF_SYMPTOMS_YEARS,
 };
 
 export const MedicalHistoryFlow = () => {
