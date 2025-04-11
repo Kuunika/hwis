@@ -7,6 +7,9 @@ import * as React from "react";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
+
+import { FaPlay, FaSignOutAlt, FaHeartbeat } from "react-icons/fa";
 
 import {
   CalculateWaitingTime,
@@ -18,12 +21,13 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
 } from "@/components/barcodePrinterDialogs";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
+import { HiPrinter } from "react-icons/hi2";
 
 export const ClientWaitingForAssessment = () => {
   const [cpr, setCpr] = useState(false);
@@ -42,15 +46,64 @@ export const ClientWaitingForAssessment = () => {
     searchText
   );
 
+  const [patientsData, setPatientsData] = useState<any>([]);
+
   useEffect(() => {
     refetch();
   }, [paginationModel]);
 
+  useEffect(() => {
+    if (data?.data) {
+      setPatientsData(data.data);
+    }
+  }, [data]);
+
+  const handleDelete = (deletedId: string) => {
+    const updatedData = patientsData.filter(
+      (item: any) => item.uuid !== deletedId
+    );
+    setPatientsData(updatedData);
+    setDeleted(deletedId);
+  };
+
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit" },
+    // { field: "aetc_visit_number", headerName: "Visit" },
+    {
+      field: "triage_result",
+      headerName: "Triage Cat",
+      renderCell: (cell: any) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                backgroundColor:
+                  cell.value == "red"
+                    ? "#B42318"
+                    : cell.value == "yellow"
+                    ? "#EDE207"
+                    : cell.value == "green"
+                    ? "#016302"
+                    : "transparent",
+              }}
+            />
+          </Box>
+        );
+      },
+    },
+
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    // { field: "birthdate", headerName: "Date Of Birth" },
     { field: "gender", headerName: "Gender" },
     {
       field: "waiting",
@@ -72,71 +125,62 @@ export const ClientWaitingForAssessment = () => {
     },
     { field: "last_encounter_creator", headerName: "Triaged By", flex: 1 },
     {
-      field: "triage_result",
-      headerName: "Triage Category",
-
-      renderCell: (cell: any) => {
-        return (
-          <WrapperBox
-            sx={{
-              borderRadius: "2px",
-              width: "100%",
-              height: "80%",
-              backgroundColor:
-                cell.value == "red"
-                  ? "#B42318"
-                  : cell.value == "yellow"
-                  ? "#ede207"
-                  : // : "#B54708",
-                  cell.value == "green"
-                  ? "#016302"
-                  : "",
-              marginY: 1,
-            }}
-          ></WrapperBox>
-        );
-      },
+      field: "patient_referred_to",
+      flex: 1,
+      headerName: "Patient Care Area",
     },
 
     {
       field: "action",
       headerName: "Action",
-      flex: 1.2,
+      flex: 1.5,
       renderCell: (cell: any) => {
         return (
-          <>
-            <MainButton
-              size="small"
-              sx={{ fontSize: "12px", mr: "1px" }}
-              title={"start"}
-              onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
-            />
-            <AbscondButton
-              onDelete={() => setDeleted(cell.id)}
-              visitId={cell.row.visit_uuid}
-              patientId={cell.id}
-            />
+          <Box display="flex" gap={1}>
+            <Tooltip title="Start assessment" arrow>
+              <IconButton 
+                onClick={() => navigateTo(`/patient/${cell.id}/profile`)} 
+                aria-label="start assessment" 
+                color="primary"
+              >
+                <FaPlay />
+              </IconButton>
+            </Tooltip>
+            
+            <Tooltip title="Mark as absconded" arrow>
+              <AbscondButton
+                onDelete={() => handleDelete(cell.id)}
+                visitId={cell.row.visit_uuid}
+                patientId={cell.id}
+              />
+            </Tooltip>
+            
+            <Tooltip title="Print options" arrow>
+              <BasicMenu patient={cell.row} />
+            </Tooltip>
 
             {cell.row.triage_result == "red" && (
-              <Button
-                variant="text"
-                onClick={() => {
-                  setPatientId(cell.id);
-                  setCpr(true);
-                  setVisitUUID(cell.row.visit_uuid);
-                }}
-              >
-                Start CPR
-              </Button>
+              <Tooltip title="Initiate CPR" arrow>
+                <IconButton 
+                  onClick={() => {
+                    setPatientId(cell.id);
+                    setCpr(true);
+                    setVisitUUID(cell.row.visit_uuid);
+                  }} 
+                  aria-label="initiate CPR" 
+                  color="error"
+                >
+                  <FaHeartbeat />
+                </IconButton>
+              </Tooltip>
             )}
-            <BasicMenu patient={cell.row} />
-          </>
+          </Box>
         );
       },
     },
   ];
 
-  const formatForMobileView = data?.data?.map((row: any) => {
+  const formatForMobileView = patientsData?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -159,7 +203,7 @@ export const ClientWaitingForAssessment = () => {
       action: (
         <CardAction
           patient={row}
-          setDeleted={(id: any) => setDeleted(id)}
+          setDeleted={(id: any) => handleDelete(id)}
           triage={row.triage_result}
           visitId={row.visit_uuid}
           id={row.uuid}
@@ -175,8 +219,8 @@ export const ClientWaitingForAssessment = () => {
       <PatientTableListServer
         columns={columns}
         data={
-          data?.data
-            ? data
+          patientsData?.length
+            ? { data: patientsData, page: 1, per_page: 10, total_pages: 0 }
             : { data: [], page: 1, per_page: 10, total_pages: 0 }
         }
         searchText={searchText}
@@ -223,26 +267,33 @@ const CardAction = ({
               ? "#B42318"
               : triage == "yellow"
               ? "#ede207"
-              : // : "#B54708",
-              triage == "green"
+              : triage == "green"
               ? "#016302"
               : "",
           marginY: 1,
         }}
       ></WrapperBox>
       <Box sx={{ flex: "1" }}>
-        <MainButton
-          sx={{ fontSize: "12px", width: "30%", mr: "2px", mb: "1px" }}
-          title={"start"}
-          onClick={() => navigateTo(`/patient/${id}/profile`)}
-        />
-        <AbscondButton
-          sx={{ width: "30%" }}
-          onDelete={() => setDeleted(id)}
-          visitId={visitId}
-          patientId={id}
-        />
-        <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
+        <Tooltip title="Start assessment" arrow>
+          <MainButton
+            sx={{ fontSize: "12px", width: "30%", mr: "2px", mb: "1px" }}
+            title={"Start"}
+            onClick={() => navigateTo(`/patient/${id}/profile`)}
+          />
+        </Tooltip>
+        
+        <Tooltip title="Mark as absconded" arrow>
+          <AbscondButton
+            sx={{ width: "30%" }}
+            onDelete={() => setDeleted(id)}
+            visitId={visitId}
+            patientId={id}
+          />
+        </Tooltip>
+        
+        <Tooltip title="Print barcode" arrow>
+          <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
+        </Tooltip>
       </Box>
     </Box>
   );
@@ -259,15 +310,23 @@ export function BasicMenu({ patient }: { patient: any }) {
   };
 
   return (
-    <div>
-      <MainButton
+    <>
+      <Tooltip title="Print" arrow>
+            <IconButton
+              onClick={handleClick}
+              aria-label="Print"
+              sx={{color:"#015E85"}}
+            >
+              <HiPrinter />
+            </IconButton>
+          </Tooltip>
+      {/* <Button
         size="small"
-        sx={{ fontSize: "12px", ml: "1px" }}
-        variant="secondary"
-        title={"Print"}
+        variant="text"
         onClick={handleClick}
-      />
-
+      >
+        Print
+      </Button> */}
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
@@ -281,7 +340,7 @@ export function BasicMenu({ patient }: { patient: any }) {
             variant="text"
             onClose={handleClose}
             patient={patient}
-          />{" "}
+          />
         </MenuItem>
         <MenuItem sx={{ justifyContent: "flex-start" }}>
           <FetchAndDisplayTriageBarcode
@@ -291,6 +350,6 @@ export function BasicMenu({ patient }: { patient: any }) {
           />
         </MenuItem>
       </Menu>
-    </div>
+    </>
   );
 }

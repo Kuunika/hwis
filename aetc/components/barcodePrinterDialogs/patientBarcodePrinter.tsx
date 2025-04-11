@@ -1,14 +1,13 @@
 import { Address, Identifier, Person } from "@/interfaces";
 import { GenericDialog, MainButton, MainTypography } from "..";
-import {
-  BarcodeComponent,
-  PatientRegistrationBarcodeTemplate,
-} from "../barcode";
+import { PatientRegistrationBarcodeTemplate } from "../barcode";
 import { useState } from "react";
 import { BasicSelect } from "@/app/patient/components/basicSelect";
 import { getPatientId } from "@/helpers/emr";
-import { SxProps } from "@mui/material";
+import { IconButton, SxProps, Tooltip } from "@mui/material";
 import { getPrinters } from "@/hooks/loadStatic";
+import { HiPrinter } from "react-icons/hi2";
+import { FaPlay } from "react-icons/fa";
 
 type Props = {
   firstName: string;
@@ -92,14 +91,23 @@ export const PrinterBarcodeButton = ({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <MainButton
+     { icon && <Tooltip title="Print" arrow>
+        <IconButton
+          onClick={() => setOpen(true)}
+          aria-label="Print"
+          sx={{color:"#015E85"}}
+        >
+          <HiPrinter />
+        </IconButton>
+      </Tooltip>}
+   {   !icon&&<MainButton
         size="small"
         variant={variant}
         sx={{ fontSize: "12px", ml: "1px", ...sx }}
         title={title}
         icon={icon}
         onClick={() => setOpen(true)}
-      />
+      />}
       <GenericDialog
         open={open}
         onClose={() => {

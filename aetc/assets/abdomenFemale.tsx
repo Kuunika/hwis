@@ -62,7 +62,7 @@ export const AbdomenFemale = forwardRef<
         d="M1903.87,2423,1355,2425.11c-9.88,17.72-88.55,101.75-39.23,198.74,45.61,70.89,84.59,88.54,230.72,160.51,267,99.73,341.75,164.51,357.38,176.17Z"
       />
       <path
-        id="Left_Lumbar"
+        id="Left_Lumbar_Region"
         data-label="Left Lumbar"
         className="cls-3-abdomen-female"
         d="M2491.1,2413.27l535.81-2.2c-48.19-81.87-115.65-167.86-143.06-247.26-46-133.15-40.67-178-44.34-292H2491.1Z"
@@ -74,7 +74,7 @@ export const AbdomenFemale = forwardRef<
         points="1911.38 1870.15 1911.38 2415.34 2196.94 2415.34 2482.49 2415.34 2482.49 1870.15 2205.05 1870.15 1911.38 1870.15"
       />
       <path
-        id="Right_Lumbar"
+        id="Right_Lumbar_Region"
         data-label="Right Lumbar"
         className="cls-3-abdomen-female"
         d="M1503.34,2142.75c19.18-67,43.39-164.68,36.45-271.92l365.73,1-1.65,543.6-547.08,2.15S1486.38,2202,1503.34,2142.75Z"

@@ -160,7 +160,6 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   const handleSubmit = async () => {
-    await schema.validate(formValues);
     onSubmit(formValues);
   };
 

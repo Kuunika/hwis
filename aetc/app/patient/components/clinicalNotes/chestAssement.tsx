@@ -1,164 +1,29 @@
 import { Typography, Box } from "@mui/material";
-import { getPatientsEncounters } from "@/hooks/encounter";
-import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
-import { useEffect, useState } from "react";
+import { useComponentNotes } from "@/hooks/useComponentNotes";
 import { encounters } from "@/constants";
 
 export const ChestAssessment = () => {
-    const { patientId }: { patientId: any } = getActivePatientDetails();
-    const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
-    const [chestAssessmentData, setChestAssessmentData] = useState<{
-        paragraph: string;
-        time: string;
-        creator: string
-    }[]>([]);
-
-    useEffect(() => {
-        if (!historyLoading && patientHistory) {
-            const chestEncounters = patientHistory.filter(
-                (encounter: any) => encounter?.encounter_type?.uuid === encounters.CHEST_ASSESSMENT
-            );
-
-            if (chestEncounters.length > 0) {
-                const allFormattedData: { paragraph: string; time: string; creator: string }[] = [];
-
-                chestEncounters.forEach(encounter => {
-                    const formattedData = formatChestAssessmentData(
-                        encounter.obs,
-                        encounter.encounter_datetime,
-                        encounter.created_by,
-                    );
-                    allFormattedData.push(...formattedData);
-                });
-
-                setChestAssessmentData(allFormattedData);
-            }
-        }
-    }, [patientHistory, historyLoading]);
+    const { notes, isLoading } = useComponentNotes(encounters.CHEST_ASSESSMENT);
 
     const isValidDate = (dateString: string) => {
         return !isNaN(new Date(dateString).getTime());
     };
 
-    const formatChestAssessmentData = (obs: any[], encounterTime: string, creator: string) => {
-        const paragraphs: { paragraph: string;rawTime: number; time: string; creator: string }[] = [];
-        let currentParagraph: string[] = [];
-        let currentTime = isValidDate(encounterTime) ? encounterTime : new Date().toISOString();
-        let currentCreator = creator;
-        let abnormalZones = new Set<string>();
-
-        obs.forEach((ob: any) => {
-            const name = ob.names?.[0]?.name;
-            const valueText = ob.value;
-
-            if (name === "Respiratory rate") {
-                if (currentParagraph.length > 0) {
-                    if (abnormalZones.size > 0) {
-                        currentParagraph.push(`Abnormal findings in ${formatList(Array.from(abnormalZones))}.`);
-                        abnormalZones = new Set();
-                    }
-                    paragraphs.push({
-                        paragraph: currentParagraph.join(" "),
-                        time: currentTime,
-                        creator: currentCreator,
-                        rawTime: new Date(currentTime).getTime(),
-
-                    });
-                    currentParagraph = [];
-                }
-                currentTime = isValidDate(ob.obs_datetime) ? ob.obs_datetime : currentTime;
-                currentCreator = ob.creator?.display || currentCreator;
-                currentParagraph.push(`Respiratory rate: ${valueText} bpm.`);
-            }
-            else if (name === "Chest wall abnormality") {
-                currentParagraph.push(valueText === "Yes"
-                    ? "Chest wall abnormality present."
-                    : "No chest wall abnormality.");
-            }
-            else if (name === "Apex beat") {
-                if (valueText === "Displaced") {
-                    const positioning = obs.find(o => o.names?.[0]?.name === "Positioning")?.value;
-                    currentParagraph.push("Apex beat displaced" + (positioning ? ` (${positioning}).` : "."));
-                } else {
-                    currentParagraph.push("Apex beat normal.");
-                }
-            }
-            else if (name === "Trill") {
-                currentParagraph.push(valueText === "Yes"
-                    ? "Trill detected."
-                    : "No trill detected.");
-            }
-            else if (name === "Heaves") {
-                currentParagraph.push(valueText === "Yes"
-                    ? "Heaves present."
-                    : "No heaves present.");
-            }
-            else if (name === "Chest Expansion") {
-                currentParagraph.push(`Chest expansion is ${valueText.toLowerCase()}.`);
-            }
-            else if (name === "Tactile fremitus") {
-                currentParagraph.push(`Tactile fremitus is ${valueText.toLowerCase()}.`);
-            }
-            else if (name === "Image Part Name") {
-                const validZones = [
-                    "Right Upper Zone", "Left Upper Zone",
-                    "Right Middle Zone", "Left Middle Zone",
-                    "Right Lower Zone", "Left Lower Zone"
-                ];
-
-                if (validZones.includes(valueText)) {
-                    const notes = obs.find(o =>
-                        o.names?.[0]?.name === "Clinician notes" &&
-                        o.group_id === ob.group_id
-                    )?.value;
-
-                    if (notes) {
-                        currentParagraph.push(`${valueText}: ${notes}.`);
-                    } else {
-                        abnormalZones.add(valueText);
-                    }
-                }
-            }
-        });
-
-        if (abnormalZones.size > 0) {
-            currentParagraph.push(`Abnormal findings in ${formatList(Array.from(abnormalZones))}.`);
-        }
-
-        if (currentParagraph.length > 0) {
-            paragraphs.push({
-                paragraph: currentParagraph.join(" "),
-                time: currentTime,
-                creator: currentCreator,
-                rawTime: new Date(currentTime).getTime(),
-
-            });
-        }
-
-        return paragraphs.sort((a, b) => b.rawTime - a.rawTime);
-    };
-
-    const formatList = (items: string[]) => {
-        if (items.length === 1) return items[0];
-        if (items.length === 2) return `${items[0]} and ${items[1]}`;
-        return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
-    };
-
-    if (historyLoading) {
+    if (isLoading) {
         return <Typography>Loading chest assessment...</Typography>;
     }
 
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Chest Assessment Notes
+                Chest Assessment
             </Typography>
-            {chestAssessmentData.length === 0 ? (
+            {notes.length === 0 ? (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
                     No chest assessment data available.
                 </Typography>
             ) : (
-                chestAssessmentData.map((data, index) => (
+                notes.map((data, index) => (
                     <Box key={index} sx={{ mb: 0, position: 'relative' }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
                             {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
@@ -173,10 +38,10 @@ export const ChestAssessment = () => {
                                 textAlign: 'right',
                                 color: 'text.secondary',
                                 fontStyle: 'italic',
-                                mt:0
+                                mt: 0
                             }}
                         >
-                            Assessed by: {data.creator}
+                            ~ {data.creator}
                         </Typography>
                     </Box>
                 ))

@@ -24,6 +24,12 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
+import { MedicationsForm } from "../../consultation/components/medication"; // Import the MedicationsForm
+import { AccordionComponent } from "@/components/accordion"; // Import AccordionComponent
+import { FaPlus } from "react-icons/fa";
+import { Panel } from "../../../../patient/components/panels";
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+
 
 const followUpOptions = [
     { id: concepts.HEALTH_CENTER, label: "Health Center" },
@@ -131,20 +137,20 @@ export default function DischargeHomeForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Discharge Home information submitted successfully!");
+            // toast.success("Discharge Home information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
             navigateTo("/dispositions");
 
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            // navigateTo("/assessments");
         } catch (error) {
             console.error("Error submitting Discharge Home information: ", error);
-            toast.error("Failed to submit Discharge Home information.");
+            // toast.error("Failed to submit Discharge Home information.");
         }
     };
 
@@ -154,6 +160,7 @@ export default function DischargeHomeForm() {
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
                     <h2>Discharge Home Form</h2>
                     <FormikInit

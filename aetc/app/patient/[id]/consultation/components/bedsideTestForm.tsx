@@ -155,123 +155,142 @@ const formConfig = {
 };
 
 const validationSchema = yup.object({
-  // [formConfig.mrdt.name]: yup.string().required(),
-  // [formConfig.PH.name]: yup
-  //   .number()
-  //   .min(7.35)
-  //   .max(7.45)
-  //   .required()
-  //   .label(formConfig.PH.label),
-  // [formConfig.PCO2.name]: yup
-  //   .number()
-  //   .min(35)
-  //   .max(45)
-  //   .required()
-  //   .label(formConfig.PCO2.label),
-  // [formConfig.PO2.name]: yup
-  //   .number()
-  //   .min(75)
-  //   .max(100)
-  //   .required()
-  //   .label(formConfig.PO2.label),
-  // [formConfig.BASE_EXCESS.name]: yup
-  //   .number()
-  //   .min(-4)
-  //   .max(2)
-  //   .label(formConfig.BASE_EXCESS.label),
-  // [formConfig.LACTATE.name]: yup
-  //   .number()
-  //   .min(0)
-  //   .max(2)
-  //   .label(formConfig.LACTATE.label),
-  // [formConfig.glucose.name]: yup
-  //   .number()
-  //   .min(3)
-  //   .max(7)
-  //   .label(formConfig.glucose.label),
-  // [formConfig.HCO3.name]: yup
-  //   .number()
-  //   .min(3)
-  //   .max(7)
-  //   .label(formConfig.HCO3.label)
-  //   .required(),
-  // [formConfig.ANION_GAPC.name]: yup.number().label(formConfig.ANION_GAPC.label),
-  // [formConfig.MOSMC.name]: yup.number().label(formConfig.MOSMC.label),
-  // [formConfig.SO2E.name]: yup
-  //   .number()
-  //   .min(95)
-  //   .max(100)
-  //   .label(formConfig.SO2E.label)
-  //   .required(),
-  // [formConfig.FO2HBE.name]: yup.number().label(formConfig.FO2HBE.label),
-  // [formConfig.FHHBE.name]: yup.number().label(formConfig.FHHBE.label),
-  // [formConfig.CK.name]: yup
-  //   .number()
-  //   .min(3.5)
-  //   .max(5.5)
-  //   .label(formConfig.CK.label),
-  // [formConfig.CNA.name]: yup
-  //   .number()
-  //   .min(135)
-  //   .max(145)
-  //   .label(formConfig.CNA.label),
-  // [formConfig.CA2.name]: yup.number().label(formConfig.CA2.label),
-  // [formConfig.CCL.name]: yup.number().label(formConfig.CCL.label),
-  // [formConfig.P50E.name]: yup
-  //   .number()
-  //   .label(formConfig.P50E.label)
-  //   .min(24)
-  //   .max(28),
-  // [formConfig.pregnancyTest.name]: yup
-  //   .string()
-  //   .label(formConfig.pregnancyTest.label)
-  //   .required(),
-  // [formConfig.hiv.name]: yup.string().label(formConfig.hiv.label).required(),
-  // [formConfig.vdrl.name]: yup.string().label(formConfig.vdrl.label).required(),
-  // [formConfig.urobilinogen.name]: yup
-  //   .string()
-  //   .label(formConfig.urobilinogen.label),
-  // [formConfig.leukocytes.name]: yup
-  //   .string()
-  //   .label(formConfig.leukocytes.label)
-  //   .required(),
-  // [formConfig.bilirubin.name]: yup
-  //   .string()
-  //   .label(formConfig.bilirubin.label)
-  //   .required(),
-  // [formConfig.glucose.name]: yup
-  //   .string()
-  //   .label(formConfig.glucose.label)
-  //   .required(),
-  // [formConfig.specificGravity.name]: yup
-  //   .string()
-  //   .label(formConfig.specificGravity.label)
-  //   .required(),
-  // [formConfig.protein.name]: yup
-  //   .string()
-  //   .label(formConfig.protein.label)
-  //   .required(),
-  // [formConfig.nitrite.name]: yup
-  //   .string()
-  //   .label(formConfig.nitrite.label)
-  //   .required(),
-  // [formConfig.ketones.name]: yup
-  //   .string()
-  //   .label(formConfig.ketones.label)
-  //   .required(),
-  // [formConfig.blood.name]: yup
-  //   .string()
-  //   .label(formConfig.blood.label)
-  //   .required(),
-  // [formConfig.pocus.name]: yup
-  //   .string()
-  //   .label(formConfig.pocus.label)
-  //   .required(),
-  // [formConfig.ecg.name]: yup.string().label(formConfig.ecg.label).required(),
-  // [formConfig.other.name]: yup
-  //   .string()
-  //   .label(formConfig.other.label)
-  //   .required(),
+  [formConfig.mrdt.name]: yup.string().required(),
+  [formConfig.PH.name]: yup
+    .number()
+    .min(7.35)
+    .max(7.45)
+    // .required()
+    .label(formConfig.PH.label),
+  [formConfig.PCO2.name]: yup
+    .number()
+    .min(35)
+    .max(45)
+    // .required()
+    .label(formConfig.PCO2.label),
+  [formConfig.PO2.name]: yup
+    .number()
+    .min(75)
+    .max(100)
+    // .required()
+    .label(formConfig.PO2.label),
+  [formConfig.BASE_EXCESS.name]: yup
+    .number()
+    .min(-4)
+    .max(2)
+    .label(formConfig.BASE_EXCESS.label),
+  [formConfig.LACTATE.name]: yup
+    .number()
+    .min(0)
+    .max(2)
+    .label(formConfig.LACTATE.label),
+  [formConfig.glucose.name]: yup
+    .number()
+    .min(3)
+    .max(7)
+    .label(formConfig.glucose.label),
+  [formConfig.HCO3.name]: yup
+    .number()
+    .min(3)
+    .max(7)
+    .label(formConfig.HCO3.label)
+  // .required()
+  ,
+  [formConfig.ANION_GAPC.name]: yup.number().label(formConfig.ANION_GAPC.label),
+  [formConfig.MOSMC.name]: yup.number().label(formConfig.MOSMC.label),
+  [formConfig.SO2E.name]: yup
+    .number()
+    .min(95)
+    .max(100)
+    .label(formConfig.SO2E.label)
+  // .required()
+  ,
+  [formConfig.FO2HBE.name]: yup.number().label(formConfig.FO2HBE.label),
+  [formConfig.FHHBE.name]: yup.number().label(formConfig.FHHBE.label),
+  [formConfig.CK.name]: yup
+    .number()
+    .min(3.5)
+    .max(5.5)
+    .label(formConfig.CK.label),
+  [formConfig.CNA.name]: yup
+    .number()
+    .min(135)
+    .max(145)
+    .label(formConfig.CNA.label),
+  [formConfig.CA2.name]: yup.number().label(formConfig.CA2.label),
+  [formConfig.CCL.name]: yup.number().label(formConfig.CCL.label),
+  [formConfig.P50E.name]: yup
+    .number()
+    .label(formConfig.P50E.label)
+    .min(24)
+    .max(28),
+  [formConfig.pregnancyTest.name]: yup
+    .string()
+    .label(formConfig.pregnancyTest.label)
+  // .required()
+  ,
+  [formConfig.hiv.name]: yup.string().label(formConfig.hiv.label)
+  // .required()
+  ,
+  [formConfig.vdrl.name]: yup.string().label(formConfig.vdrl.label)
+  // .required()
+  ,
+  [formConfig.urobilinogen.name]: yup
+    .string()
+    .label(formConfig.urobilinogen.label),
+  [formConfig.leukocytes.name]: yup
+    .string()
+    .label(formConfig.leukocytes.label)
+  // .required()
+  ,
+  [formConfig.bilirubin.name]: yup
+    .string()
+    .label(formConfig.bilirubin.label)
+  // .required()
+  ,
+  [formConfig.glucose.name]: yup
+    .string()
+    .label(formConfig.glucose.label)
+  // .required()
+  ,
+  [formConfig.specificGravity.name]: yup
+    .string()
+    .label(formConfig.specificGravity.label)
+  // .required()
+  ,
+  [formConfig.protein.name]: yup
+    .string()
+    .label(formConfig.protein.label)
+  // .required()
+  ,
+  [formConfig.nitrite.name]: yup
+    .string()
+    .label(formConfig.nitrite.label)
+  // .required()
+  ,
+  [formConfig.ketones.name]: yup
+    .string()
+    .label(formConfig.ketones.label)
+  // .required()
+  ,
+  [formConfig.blood.name]: yup
+    .string()
+    .label(formConfig.blood.label)
+  // .required()
+  ,
+  [formConfig.pocus.name]: yup
+    .string()
+    .label(formConfig.pocus.label)
+  // .required()
+  ,
+  [formConfig.ecg.name]: yup.string().label(formConfig.ecg.label)
+  // .required()
+  ,
+  [formConfig.other.name]: yup
+    .string()
+    .label(formConfig.other.label)
+  // .required()
+  ,
 });
 
 const testStatusOptions = [
@@ -282,7 +301,7 @@ const testStatusOptions = [
 const formValues = getInitialValues(formConfig);
 
 export const BedsideTestForm = () => {
-  const { activeVisit, patientId } = getActivePatientDetails();
+  const { activeVisit, patientId, gender } = getActivePatientDetails();
 
   const { mutate } = fetchConceptAndCreateEncounter();
   const handleSubmit = (values: any) => {
@@ -720,12 +739,12 @@ export const BedsideTestForm = () => {
           id={formConfig.P50E.name}
         />
       </FormFieldContainerMultiple>
-      <RadioGroupInput
+    {gender=='Female' &&  <RadioGroupInput
         row
         label={formConfig.pregnancyTest.label}
         options={testStatusOptions}
         name={formConfig.pregnancyTest.name}
-      />
+      />}
       <RadioGroupInput
         row
         label={formConfig.hiv.label}

@@ -30,12 +30,12 @@ export const addEncounter = () => {
   });
 };
 
-export const getPatientsEncounters = (patientId: string) => {
+export const getPatientsEncounters = (patientId: string, params?:string) => {
   const getall = (patientId: string) =>
-    getPatientEncounters(patientId).then((response) => response.data);
+    getPatientEncounters(patientId,params).then((response) => response.data);
 
   return useQuery({
-    queryKey: ["encounters", patientId],
+    queryKey: ["encounters", patientId, params],
     queryFn: () => getall(patientId),
     enabled: !!patientId,
     refetchOnWindowFocus: false,

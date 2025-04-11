@@ -1,24 +1,21 @@
 "use client";
+
 import { FC, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useFormikField } from "./hooks";
-import { InputLabel, SxProps } from "@mui/material";
+import { InputLabel, SxProps, useTheme } from "@mui/material";
 import type {
   GroupBase,
   StylesConfig,
   Props as SelectProps,
 } from "react-select";
 import makeAnimated from "react-select/animated";
-import { MainTypography, WrapperBox, defaultTheme } from "..";
+import { useFormikField } from "./hooks";
+import { MainTypography, WrapperBox } from "..";
 import { fetchConceptsSelectOptions } from "@/hooks/encounter";
 
-// Dynamically import Select with proper typing
 const Select = dynamic(
   () => import("react-select").then((mod) => mod.default),
-  {
-    ssr: false,
-    loading: () => null,
-  }
+  { ssr: false, loading: () => null }
 ) as <
   Option = unknown,
   IsMulti extends boolean = false,
@@ -58,6 +55,7 @@ export const SearchComboBox: FC<Props> = ({
   applyPadding = true,
   coded = false,
 }) => {
+  const theme = useTheme();
   const [mounted, setMounted] = useState(false);
   const { hasError, setFieldValue, value, errorMessage } = useFormikField(name);
 
@@ -72,68 +70,174 @@ export const SearchComboBox: FC<Props> = ({
 
   const handleChange = async (values: any) => {
     let inputValue = multiple
-      ? values.map((v: any) => ({
-          id: v.value,
-          label: v.label,
-        }))
-      : values.value;
+      ? values.map((v: any) => ({ id: v.value, label: v.label }))
+      : values?.value;
 
-    if (coded && !multiple) {
-      inputValue = (
-        await fetchConceptsSelectOptions([{ id: inputValue, label: "" }])
-      )[0].id;
+    if (coded) {
+      inputValue = multiple
+        ? await fetchConceptsSelectOptions(inputValue)
+        : (await fetchConceptsSelectOptions([{ id: inputValue, label: "" }]))[0]
+            .id;
     }
-
-    if (coded && multiple)
-      inputValue = await fetchConceptsSelectOptions([...inputValue]);
 
     setFieldValue(name, inputValue);
-
-    if (getValue) {
-      getValue(inputValue);
-    }
+    getValue?.(inputValue);
   };
 
   const paddingStyles = applyPadding
     ? { paddingTop: "1ch", paddingBottom: "1ch" }
     : {};
 
-  const customStyles: StylesConfig = {
+  const customStyles: StylesConfig<
+    { value: string | number; label: string | number },
+    boolean
+  > = {
     control: (base, state) => ({
       ...base,
-      borderColor: hasError ? "red" : "#B3B3B3",
+      borderColor: hasError
+        ? theme.palette.error.main
+        : state.isFocused
+        ? theme.palette.primary.main
+        : theme.palette.divider,
+      boxShadow: state.isFocused
+        ? `0 0 0 1px ${theme.palette.primary.main}`
+        : "none",
+      "&:hover": {
+        borderColor: hasError
+          ? theme.palette.error.main
+          : theme.palette.primary.main,
+      },
+      backgroundColor: disabled
+        ? theme.palette.action.disabledBackground
+        : theme.palette.background.paper,
+      minHeight: "40px",
       ...paddingStyles,
+    }),
+    menu: (base) => ({
+      ...base,
+      zIndex: theme.zIndex.modal + 1,
+      backgroundColor: theme.palette.background.paper,
+    }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: theme.zIndex.modal + 1,
+    }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isSelected
+        ? theme.palette.action.selected
+        : state.isFocused
+        ? theme.palette.action.hover
+        : theme.palette.background.paper,
+      color: theme.palette.text.primary,
+      "&:active": {
+        backgroundColor: theme.palette.action.selected,
+      },
+    }),
+    multiValue: (base) => ({
+      ...base,
+      backgroundColor: theme.palette.grey[200],
+    }),
+    multiValueLabel: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+    }),
+    multiValueRemove: (base) => ({
+      ...base,
+      color: theme.palette.text.secondary,
+      ":hover": {
+        backgroundColor: theme.palette.grey[300],
+        color: theme.palette.text.primary,
+      },
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: theme.palette.text.disabled,
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+    }),
+    indicatorSeparator: (base) => ({
+      ...base,
+      backgroundColor: theme.palette.divider,
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      color: theme.palette.text.secondary,
+      ":hover": {
+        color: theme.palette.text.primary,
+      },
+    }),
+    clearIndicator: (base) => ({
+      ...base,
+      color: theme.palette.text.secondary,
+      ":hover": {
+        color: theme.palette.text.primary,
+      },
     }),
   };
 
   if (!mounted) return null;
 
   return (
-    <WrapperBox sx={{ width, ...sx, borderRadius: 0.5 }}>
-      <InputLabel shrink>{label}</InputLabel>
+    <WrapperBox sx={{ width, ...sx, borderRadius: theme.shape.borderRadius }}>
+      <InputLabel
+        shrink
+        sx={{ color: hasError ? theme.palette.error.main : "inherit" }}
+      >
+        {label}
+      </InputLabel>
 
       <Select
         isDisabled={disabled}
+        isMulti={multiple}
+        options={mappedOptions}
         value={value ? mappedOptions?.find((op) => op.value === value) : value}
-        //value={value ? mappedOptions?.find((op) => op.value === value) : null}
+        // value={value ? mappedOptions?.find((op) => op.value === value) : null}
+        // value={
+        //   multiple
+        //     ? mappedOptions.filter((op) =>
+        //         Array.isArray(value)
+        //           ? value.some((v: any) => v.id === op.value)
+        //           : false
+        //       )
+        //     : mappedOptions.find((op) => op.value === value) ?? null
+        // }
+
+        //@ts-ignore
         styles={customStyles}
-        defaultValue={manualInitialValues}
-        theme={(theme) => ({
-          ...theme,
+        menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+        menuPosition="fixed"
+        onChange={handleChange}
+        defaultValue={manualInitialValues?.map((item) => ({
+          value: item.id,
+          label: item.label,
+        }))}
+        components={makeAnimated()}
+        theme={(selectTheme) => ({
+          ...selectTheme,
           colors: {
-            ...theme.colors,
-            primary: defaultTheme.primary,
-            primary25: "#cffccf",
+            ...selectTheme.colors,
+            primary: theme.palette.primary.main,
+            primary25: theme.palette.action.hover,
+            primary50: theme.palette.action.selected,
+            neutral0: theme.palette.background.paper,
+            neutral20: theme.palette.divider,
+            neutral30: theme.palette.action.active,
+            neutral40: theme.palette.text.secondary,
+            neutral50: theme.palette.text.disabled,
+            neutral60: theme.palette.text.secondary,
+            neutral80: theme.palette.text.primary,
           },
         })}
-        onChange={handleChange}
-        isMulti={multiple}
-        components={makeAnimated()}
-        options={mappedOptions}
       />
-      <MainTypography color="red" variant="subtitle2">
-        {errorMessage}
-      </MainTypography>
+
+      {hasError && (
+        <MainTypography color="error.main" variant="caption">
+          {errorMessage}
+        </MainTypography>
+      )}
     </WrapperBox>
   );
 };

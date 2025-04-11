@@ -26,7 +26,7 @@ export function SecondaryAssessmentFlow() {
     {
       id: 2,
       label: "Head and Neck",
-      encounters: encounters.HEAD_AND_NECK_ASSESSMENT,
+      encounter: encounters.HEAD_AND_NECK_ASSESSMENT,
     },
     { id: 3, label: "Chest", encounter: encounters.CHEST_ASSESSMENT },
     {
@@ -69,7 +69,7 @@ export function SecondaryAssessmentFlow() {
   return (
     <NewStepperContainer
       setActive={setActiveStep}
-      title="Secondary Assessment"
+      title="Secondary Survey"
       steps={steps}
       active={activeStep}
       onBack={() => navigateBackToProfile()}
