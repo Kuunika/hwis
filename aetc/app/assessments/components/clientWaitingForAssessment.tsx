@@ -7,9 +7,9 @@ import * as React from "react";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
 
-
-import {} from "react-icons/fa6";
+import { FaPlay, FaSignOutAlt, FaHeartbeat } from "react-icons/fa";
 
 import {
   CalculateWaitingTime,
@@ -21,12 +21,13 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
 } from "@/components/barcodePrinterDialogs";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
+import { HiPrinter } from "react-icons/hi2";
 
 export const ClientWaitingForAssessment = () => {
   const [cpr, setCpr] = useState(false);
@@ -61,15 +62,15 @@ export const ClientWaitingForAssessment = () => {
     const updatedData = patientsData.filter(
       (item: any) => item.uuid !== deletedId
     );
-    setPatientsData(updatedData); // Update the patientsData after deletion
-    setDeleted(deletedId); // Set the deleted item to state
+    setPatientsData(updatedData);
+    setDeleted(deletedId);
   };
 
   const columns = [
-    { field: "aetc_visit_number", headerName: "Visit" },
+    // { field: "aetc_visit_number", headerName: "Visit" },
     {
       field: "triage_result",
-      headerName: "",
+      headerName: "Triage Cat",
       renderCell: (cell: any) => {
         return (
           <Box
@@ -100,8 +101,7 @@ export const ClientWaitingForAssessment = () => {
         );
       },
     },
-    
-  
+
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "gender", headerName: "Gender" },
@@ -128,7 +128,6 @@ export const ClientWaitingForAssessment = () => {
       field: "patient_referred_to",
       flex: 1,
       headerName: "Patient Care Area",
-    
     },
 
     {
@@ -137,33 +136,45 @@ export const ClientWaitingForAssessment = () => {
       flex: 1.5,
       renderCell: (cell: any) => {
         return (
-          <>
-            <MainButton
-              size="small"
-              sx={{ fontSize: "12px", mr: "1px" }}
-              title={"start"}
-              onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
-            />
-            <AbscondButton
-              onDelete={() => handleDelete(cell.id)} // Updated to handle deletion
-              visitId={cell.row.visit_uuid}
-              patientId={cell.id}
-            />
+          <Box display="flex" gap={1}>
+            <Tooltip title="Start assessment" arrow>
+              <IconButton 
+                onClick={() => navigateTo(`/patient/${cell.id}/profile`)} 
+                aria-label="start assessment" 
+                color="primary"
+              >
+                <FaPlay />
+              </IconButton>
+            </Tooltip>
+            
+            <Tooltip title="Mark as absconded" arrow>
+              <AbscondButton
+                onDelete={() => handleDelete(cell.id)}
+                visitId={cell.row.visit_uuid}
+                patientId={cell.id}
+              />
+            </Tooltip>
+            
+            <Tooltip title="Print options" arrow>
+              <BasicMenu patient={cell.row} />
+            </Tooltip>
 
             {cell.row.triage_result == "red" && (
-              <Button
-                variant="text"
-                onClick={() => {
-                  setPatientId(cell.id);
-                  setCpr(true);
-                  setVisitUUID(cell.row.visit_uuid);
-                }}
-              >
-                Start CPR
-              </Button>
+              <Tooltip title="Initiate CPR" arrow>
+                <IconButton 
+                  onClick={() => {
+                    setPatientId(cell.id);
+                    setCpr(true);
+                    setVisitUUID(cell.row.visit_uuid);
+                  }} 
+                  aria-label="initiate CPR" 
+                  color="error"
+                >
+                  <FaHeartbeat />
+                </IconButton>
+              </Tooltip>
             )}
-            <BasicMenu patient={cell.row} />
-          </>
+          </Box>
         );
       },
     },
@@ -192,7 +203,7 @@ export const ClientWaitingForAssessment = () => {
       action: (
         <CardAction
           patient={row}
-          setDeleted={(id: any) => handleDelete(id)} // Updated to handle deletion
+          setDeleted={(id: any) => handleDelete(id)}
           triage={row.triage_result}
           visitId={row.visit_uuid}
           id={row.uuid}
@@ -263,18 +274,26 @@ const CardAction = ({
         }}
       ></WrapperBox>
       <Box sx={{ flex: "1" }}>
-        <MainButton
-          sx={{ fontSize: "12px", width: "30%", mr: "2px", mb: "1px" }}
-          title={"start"}
-          onClick={() => navigateTo(`/patient/${id}/profile`)}
-        />
-        <AbscondButton
-          sx={{ width: "30%" }}
-          onDelete={() => setDeleted(id)} // Call the updated handleDelete function
-          visitId={visitId}
-          patientId={id}
-        />
-        <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
+        <Tooltip title="Start assessment" arrow>
+          <MainButton
+            sx={{ fontSize: "12px", width: "30%", mr: "2px", mb: "1px" }}
+            title={"Start"}
+            onClick={() => navigateTo(`/patient/${id}/profile`)}
+          />
+        </Tooltip>
+        
+        <Tooltip title="Mark as absconded" arrow>
+          <AbscondButton
+            sx={{ width: "30%" }}
+            onDelete={() => setDeleted(id)}
+            visitId={visitId}
+            patientId={id}
+          />
+        </Tooltip>
+        
+        <Tooltip title="Print barcode" arrow>
+          <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
+        </Tooltip>
       </Box>
     </Box>
   );
@@ -291,15 +310,23 @@ export function BasicMenu({ patient }: { patient: any }) {
   };
 
   return (
-    <div>
-      <MainButton
+    <>
+      <Tooltip title="Print" arrow>
+            <IconButton
+              onClick={handleClick}
+              aria-label="Print"
+              sx={{color:"#015E85"}}
+            >
+              <HiPrinter />
+            </IconButton>
+          </Tooltip>
+      {/* <Button
         size="small"
-        sx={{ fontSize: "12px", ml: "1px" }}
-        variant="secondary"
-        title={"Print"}
+        variant="text"
         onClick={handleClick}
-      />
-
+      >
+        Print
+      </Button> */}
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
@@ -323,6 +350,6 @@ export function BasicMenu({ patient }: { patient: any }) {
           />
         </MenuItem>
       </Menu>
-    </div>
+    </>
   );
 }

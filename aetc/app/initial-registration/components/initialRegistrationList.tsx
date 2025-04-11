@@ -15,6 +15,8 @@ import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
+import { Tooltip, IconButton } from "@mui/material";
+import { FaPlay } from "react-icons/fa";
 
 export const InitialRegistrationList = () => {
   const { navigateTo } = useNavigation();
@@ -58,12 +60,21 @@ export const InitialRegistrationList = () => {
       renderCell: (cell: any) => {
         return (
           <>
-            <MainButton
+           <Tooltip title="Start assessment" arrow>
+              <IconButton 
+                onClick={() => navigateTo(`/prescreening/${cell.id}`)} 
+                aria-label="start screening" 
+                color="primary"
+              >
+                <FaPlay />
+              </IconButton>
+            </Tooltip>
+            {/* <MainButton
               size="small"
               sx={{ fontSize: "12px", mr: "1px" }}
               title={"screen"}
               onClick={() => navigateTo(`/prescreening/${cell.id}`)}
-            />
+            /> */}
             <AbscondButton
               onDelete={() => setDeleted(cell.id)}
               visitId={cell.row.visit_uuid}
