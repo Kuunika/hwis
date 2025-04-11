@@ -11,6 +11,8 @@ import { Identifier } from "@/interfaces";
 import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
+import { Tooltip, IconButton } from "@mui/material";
+import { FaPlay } from "react-icons/fa";
 
 
 export const WaitingRegistrationList = () => {
@@ -58,23 +60,26 @@ export const WaitingRegistrationList = () => {
 
         return (
           <>
-
-            <MainButton
-              sx={{ fontSize: "12px", mr: "1px" }}
-              title={"start"}
-              onClick={() => {
-                if (cell.row.gender != 'N/A') {
-                  setSearchedPatient({
-                    firstName: cell.row.given_name,
-                    lastName: cell.row.family_name,
-                    gender: cell.row.gender
-                  })
-                  setPatient(cell.row)
-                  setRegistrationType('local');
-                }
-                navigateTo(link)
-              }}
-            />
+           <Tooltip title="Start Registration" arrow>
+              <IconButton 
+                onClick={() => {
+                  if (cell.row.gender != 'N/A') {
+                    setSearchedPatient({
+                      firstName: cell.row.given_name,
+                      lastName: cell.row.family_name,
+                      gender: cell.row.gender
+                    })
+                    setPatient(cell.row)
+                    setRegistrationType('local');
+                  }
+                  navigateTo(link)
+                }} 
+                aria-label="start screening" 
+                color="primary"
+              >
+                <FaPlay />
+              </IconButton>
+            </Tooltip>
             <AbscondButton onDelete={() => setDeleted(cell.id)} visitId={cell.row.visit_uuid} patientId={cell.id} />
           </>
         );

@@ -80,7 +80,7 @@ interface PastSurgicalHistoryPanelProps {
 
 return (
     <>
-<Panel title="Past Surgical History">
+<Panel title="Surgeries">
   <WrapperBox>
     {historyLoading ? (
       <div
