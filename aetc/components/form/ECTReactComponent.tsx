@@ -14,7 +14,7 @@ interface ECTReactComponentProps {
 const ECTReactComponent: React.FC<ECTReactComponentProps> = ({ onICD11Selection, iNo, label }) => {
   const apiServerUrl =
       process.env.NODE_ENV === 'production'
-        ? process.env.REACT_APP_API_SERVER_URL
+        ? process.env.NEXT_PUBLIC_ICD11_API_URL
         : 'https://icd11restapi-developer-test.azurewebsites.net';
 
 
