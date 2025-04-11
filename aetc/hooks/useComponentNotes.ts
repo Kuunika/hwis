@@ -289,32 +289,76 @@ const formatBreathingAssessmentNotes = (obs: any[]) => {
 };
 
 const formatPresentingComplaintsNotes = (obs: any[]): ComponentNote[] => {
-    const complaintDetails: string[] = [];
-    let assessmentTime = new Date().toISOString();
-    let creator = "Unknown";
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
 
-    obs?.forEach((item: any) => {
-        if (item.names?.[0]?.name && item.value) {
-            complaintDetails.push(item.value);
-        }
-        if (item.obs_datetime) {
-            assessmentTime = item.obs_datetime;
-        }
-        if (item.created_by) {
-            creator = item.created_by;
+    const groupedNotes: {
+        time: string;
+        creator: string;
+        complaints: string[];
+    }[] = [];
+
+    let currentGroup: {
+        time: string;
+        creator: string;
+        complaints: string[];
+    } | null = null;
+
+    const durationTypes = [
+        "Duration Of Symptoms Hours",
+        "Duration Of Symptoms Days",
+        "Duration Of Symptoms Weeks",
+        "Duration Of Symptoms Months",
+        "Duration Of Symptoms Years"
+    ];
+
+    sortedObs.forEach((item: any) => {
+        if (item.names?.[0]?.name === "Current complaints or symptoms" && item.value) {
+            const itemTime = item.obs_datetime || new Date().toISOString();
+            const itemCreator = item.created_by || "Unknown";
+            let complaintText = item.value;
+            let durationText = "";
+
+            for (const durationType of durationTypes) {
+                const durationChild = item.children?.find(
+                    (child: any) => child.names?.[0]?.name === durationType && child.value
+                );
+
+                if (durationChild) {
+                    const unit = durationType.toLowerCase().split(' ')[3];
+                    durationText = `${durationChild.value} ${unit}`;
+                    break;
+                }
+            }
+
+            if (durationText) {
+                complaintText += ` (${durationText})`;
+            }
+
+            if (!currentGroup ||
+                new Date(itemTime).getTime() - new Date(currentGroup.time).getTime() > 3 * 60 * 1000) {
+                currentGroup = {
+                    time: itemTime,
+                    creator: itemCreator,
+                    complaints: []
+                };
+                groupedNotes.push(currentGroup);
+            }
+
+            currentGroup.complaints.push(complaintText);
+
+            currentGroup.time = itemTime;
+            currentGroup.creator = itemCreator;
         }
     });
 
-    if (complaintDetails.length === 0) {
-        return [];
-    }
-
-    return [{
-        paragraph: `Presenting complaints: ${complaintDetails.join(', ')}.`,
-        time: assessmentTime,
-        creator: creator,
-        rawTime: new Date(assessmentTime).getTime()
-    }];
+    return groupedNotes.map(group => ({
+        paragraph: `Presenting complaints: ${group.complaints.join(', ')}.`,
+        time: group.time,
+        creator: group.creator,
+        rawTime: new Date(group.time).getTime()
+    }));
 };
 
 const formatAllergiesNotes = (obs: any[]): ComponentNote[] => {
@@ -372,9 +416,6 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
             item.children.forEach((member: any) => {
                 const memberName = member.names?.[0]?.name;
                 const memberValue = member.value;
-
-                console.log("member name: ", memberName, memberValue);
-
                 switch (memberName) {
                     case "Medication Date Last Taken":
                         lastTaken = memberValue;
