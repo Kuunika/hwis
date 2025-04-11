@@ -3,7 +3,8 @@ import { MainButton, MainTypography } from "@/components";
 import { GenericDialog } from ".";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { OverlayLoader } from "./backdrop";
-import { SxProps } from "@mui/material";
+import { IconButton, SxProps, Tooltip } from "@mui/material";
+import { FaPlay, FaSignOutAlt, FaHeartbeat } from "react-icons/fa";
 
 export const AbscondButton = ({
   patientId,
@@ -43,13 +44,20 @@ export const AbscondButton = ({
   };
   return (
     <>
-      <MainButton
+     <Tooltip title="Mark as absconded" arrow>
+      <IconButton  onClick={handleClick} aria-label="abscond">
+        <FaSignOutAlt />
+      </IconButton>
+      </Tooltip>
+
+
+      {/* <MainButton
         size="small"
         variant="secondary"
         sx={{ fontSize: "12px", ...sx }}
         title={buttonTitle}
         onClick={handleClick}
-      />
+      /> */}
       <GenericDialog
         maxWidth="sm"
         title={dialogTitle}
