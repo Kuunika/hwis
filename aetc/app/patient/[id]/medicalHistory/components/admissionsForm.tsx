@@ -212,12 +212,23 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
 };
 
   return (
-    <>
-    <h2 style={{marginTop:'20px', paddingBottom:"20px"}}>Previous admissions:</h2>
+    <div style={{marginLeft:"100px", marginTop:"20px", borderTop:"1px solid rgba(0, 0, 0, 0.1)", paddingTop:"20px", paddingBottom:"20px"}}>
+
   <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}>
     
-    <h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
-<div>
+  <MainTypography
+          variant="h5"
+          fontWeight={"700"}
+          sx={{
+            lineHeight: "24px",
+            letterSpacing: "0em",
+            textAlign: "left",
+            marginBottom: "1ch",
+          }}
+        >
+          Previous admissions
+        </MainTypography>
+<div>{displayedObservations.length === 0 ? ( <p>No admission history available</p>):(<>
             {displayedObservations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color: "rgba(0, 0, 0, 0.6)" }}>
                     <h4>{item.value}</h4>
@@ -246,7 +257,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     style={{color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
                 >
                     View Less
-                </button>)}
+                </button>)}</>)}
         </div>
   </div>
     <FormikInit
@@ -408,7 +419,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
         </>
       )}
     </FormikInit>
-    </>
+    </div>
   );
 }
 export default AdmissionsForm;

@@ -169,7 +169,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   }, [formValues]);
 
   return (
-    <>
+    <div style={{marginLeft:"100px"}}>
       <PastSurgicalHistoryPanel
         showForPrinting={showAll}
         toggleShow={setShowAll}
@@ -295,6 +295,6 @@ export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
           </>
         )}
       </FormikInit>
-    </>
+    </div>
   );
 };
