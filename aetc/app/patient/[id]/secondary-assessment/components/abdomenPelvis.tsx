@@ -921,7 +921,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
             )}
           </FormFieldContainerLayout>
           {gender == "Female" && (
-            <FormFieldContainerLayout title="Pelvic Examination">
+            <FormFieldContainerLayout title="Speculum Examination">
               <TextInputField
                 sx={{ width: "100%" }}
                 name={form.pelvicExamination.name}

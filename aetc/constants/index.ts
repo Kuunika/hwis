@@ -1400,6 +1400,8 @@ export const concepts = {
   SMOKING_HISTORY: "Smoking History",
   QUIT_OVER_A_MONTH_AGO: "Quit over a month ago",
   NEVER_SMOKED: "Never smoked",
+  PUPIL_REACTION:"Pupil reaction",
+ 
 };
 
 export const conceptNames = {

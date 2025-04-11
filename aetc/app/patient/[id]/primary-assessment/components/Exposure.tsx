@@ -191,6 +191,8 @@ export const Exposure = ({ onSubmit }: Props) => {
             name={form.additionalNotes.name}
             label={form.additionalNotes.label}
             id={form.additionalNotes.name}
+            rows={5}
+            multiline
           />
         </FormikInit>
       )}
