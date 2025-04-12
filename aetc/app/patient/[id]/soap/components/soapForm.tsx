@@ -256,40 +256,40 @@ const supportiveCareConfig = [
 const validationSchema = Yup.object().shape({
   [form.subjective.name]: Yup.string().required(form.subjective.label),
   [form.objective.name]: Yup.string().required(form.objective.label),
-  // [form.assessment.name]: Yup.string().required(form.assessment.label),
-  // [form.plan.name]: Yup.string().required(form.plan.label),
-  // [form.evaluation.name]: Yup.string().required(form.evaluation.label),
-  // [form.replan.name]: Yup.string().required(form.replan.label),
-  // [form.implementation.name]: Yup.string().required(form.implementation.label),
-  // [form.spo.name]: Yup.number(),
-  //   .min(0)
-  //   .max(100)
-  //   .required()
-  //   .label(form.spo.label),
-  // [form.respiratoryRate.name]: Yup.number()
-  //   .min(0)
-  //   .max(90)
-  //   .required()
-  //   .label(form.respiratoryRate.label),
-  // [form.systolic.name]: Yup.number()
-  //   .min(0)
-  //   .max(300)
-  //   .required()
-  //   .label(form.systolic.label),
-  // [form.diastolic.name]: Yup.number()
-  //   .min(0)
-  //   .max(300)
-  //   .required()
-  //   .label(form.diastolic.label),
-  // [form.temperature.name]: Yup.number()
-  //   .min(20)
-  //   .max(45)
-  //   .required()
-  //   .label(form.temperature.label),
-  // [form.pulseRate.name]: Yup.number()
-  //   .min(60)
-  //   .max(100)
-  //   .label(form.pulseRate.label),
+  [form.assessment.name]: Yup.string().required(form.assessment.label),
+  [form.plan.name]: Yup.string().required(form.plan.label),
+  [form.evaluation.name]: Yup.string().required(form.evaluation.label),
+  [form.replan.name]: Yup.string().required(form.replan.label),
+  [form.implementation.name]: Yup.string().required(form.implementation.label),
+  [form.spo.name]: Yup.number()
+    .min(0)
+    .max(100)
+    .required()
+    .label(form.spo.label),
+  [form.respiratoryRate.name]: Yup.number()
+    .min(0)
+    .max(90)
+    .required()
+    .label(form.respiratoryRate.label),
+  [form.systolic.name]: Yup.number()
+    .min(0)
+    .max(300)
+    .required()
+    .label(form.systolic.label),
+  [form.diastolic.name]: Yup.number()
+    .min(0)
+    .max(300)
+    .required()
+    .label(form.diastolic.label),
+  [form.temperature.name]: Yup.number()
+    .min(20)
+    .max(45)
+    .required()
+    .label(form.temperature.label),
+  [form.pulseRate.name]: Yup.number()
+    .min(60)
+    .max(100)
+    .label(form.pulseRate.label),
 });
 
 const initialValues = getInitialValues(form);
