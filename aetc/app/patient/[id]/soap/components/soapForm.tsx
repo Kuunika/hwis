@@ -211,11 +211,6 @@ const form = {
     name: concepts.IMPLEMENTATION,
     label: "Implementation",
   },
-  medications: [medicationTemplate],
-  procedures: [],
-  supportiveCare: [],
-  otherProcedureSpecify: "",
-  otherSupportiveCareSpecify: "",
 };
 const proceduresConfig = [
   { value: concepts.INTRAVENOUS_CANNULATION, label: "Intravenous Cannulation" },
@@ -298,6 +293,13 @@ const validationSchema = Yup.object().shape({
 });
 
 const initialValues = getInitialValues(form);
+initialValues.medications = [medicationTemplate];
+initialValues.procedures = [];
+initialValues.supportiveCare = [];
+initialValues.otherProcedureSpecify = "";
+initialValues.otherSupportiveCareSpecify = "";
+console.log("🚀 ~ form:", form);
+console.log("🚀 ~ initialValues:", initialValues);
 const initialValues2 = {
   medications: [medicationTemplate],
 };
@@ -392,7 +394,6 @@ export const SoapForm = () => {
       encounterDatetime: obsDateTime,
       obs,
     });
-    formValues.medications = form.medications;
   };
   return (
     <>
@@ -400,12 +401,12 @@ export const SoapForm = () => {
         <b>Prescribe Medication</b>
         <br />
         <FormikInit
-          initialValues={form}
+          initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmitForm}
           submitButton={false}
         >
-          {({ values, setFieldValue, resetForm }) => (
+          {({ values, setFieldValue }) => (
             <>
               <Box>
                 <Paper sx={{ p: 2, mb: 2 }}>
@@ -696,13 +697,6 @@ export const SoapForm = () => {
                     type="button"
                     onClick={async () => {
                       await submitMedications(); // This will run the form submission logic
-                      resetForm({
-                        values: {
-                          ...values,
-                          medications: [medicationTemplate],
-                        },
-                      });
-                      setFormKey((prev) => prev + 1);
                     }}
                   >
                     {" "}
