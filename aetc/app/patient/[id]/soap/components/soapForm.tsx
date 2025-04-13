@@ -350,7 +350,7 @@ export const SoapForm = () => {
   const { navigateBack } = useNavigation();
   const { handleSubmit } = useSubmitEncounter(
     encounters.NURSING_CARE_NOTES,
-    () => ""
+    () => navigateBack()
   );
 
   const handleSubmitForm = (values: any) => {
