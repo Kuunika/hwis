@@ -465,44 +465,9 @@ export const VisitHistory = () => {
             </Accordion>
 
 
-            {/* <Accordion
-                expanded={expandedAccordion === 'differential-diagnosis-notes'}
-                onChange={handleAccordionChange('differential-diagnosis-notes')}
-                sx={{
-                    backgroundColor: 'white',
-                }}
-            >
-                <AccordionSummary
-                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-                    aria-controls="differential-diagnosis-content"
-                    id="differential-diagnosis-header"
-                >
-                    <Typography  sx={{ fontWeight: 700 }}>
-                    Differential Diagnosis
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>        
-                <Box sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Differential Diagnosis</Typography>
-                    {differentialDiagnosisMessage ? (
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
-                                {differentialDiagnosisMessage.split("\n")[0]}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
-                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Differential Diagnosis Data available.</Typography>
-                    )}
-                </Box>
-                </AccordionDetails>
-            </Accordion> */}
-
             {/* Final Diagnosis */}
 
-<Accordion
+        <Accordion
                 expanded={expandedAccordion === 'final-diagnosis-notes'}
                 onChange={handleAccordionChange('final-diagnosis-notes')}
                 sx={{
@@ -575,42 +540,6 @@ export const VisitHistory = () => {
                 
             </Accordion>
 
-
-            {/* <Accordion
-                expanded={expandedAccordion === 'final-diagnosis-notes'}
-                onChange={handleAccordionChange('final-diagnosis-notes')}
-                sx={{
-                    backgroundColor: 'white',
-                }}
-            >
-                <AccordionSummary
-                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-                    aria-controls="final-diagnosis-content"
-                    id="final-diagnosis-header"
-                >
-                    <Typography  sx={{ fontWeight: 700 }}>
-                    Final Diagnosis
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>        
-                <Box sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Final Diagnosis</Typography>
-                    {finalDiagnosisMessage ? (
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
-                                {finalDiagnosisMessage.split("\n")[0]}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
-                                {finalDiagnosisMessage.split("\n").slice(1).join("\n")}
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Final Diagnosis Data available.</Typography>
-                    )}
-                </Box>
-                </AccordionDetails>
-                
-            </Accordion> */}
     </>
 );
 
