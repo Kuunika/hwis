@@ -14,7 +14,7 @@ export const useFinalDiagnosis = (pData: any) => {
     );
 
 
-    //console.log("Tione makhwala ali apa eti??:", additionalFieldsEncounter);
+    console.log("Tione za Final:", additionalFieldsEncounter);
 
     if (!additionalFieldsEncounter?.obs) return;
 
@@ -28,7 +28,7 @@ export const useFinalDiagnosis = (pData: any) => {
     let messages = [`Final Diagnosis recorded on:\n`];
 
     observations.forEach((obs:any) => {
-      messages.push(`Condition: ${obs}. `);
+      messages.push(`The Final Diagnosis are: ${obs}. `);
     });
 
     setFinalDiagnosisMessage(messages.join(""));

@@ -28,7 +28,7 @@ export const useDifferentialDiagnosis = (pData: any) => {
     let messages = [`Differential Diagnosis recorded on:\n`];
 
     observations.forEach((obs:any) => {
-      messages.push(`Condition: ${obs}. `);
+      messages.push(`The Differential Diagnosis are: ${obs}. `);
     });
 
     setDifferentialDiagnosisMessage(messages.join(""));
