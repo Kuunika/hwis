@@ -26,10 +26,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getDateTime } from "@/helpers/dateTime";
 import dayjs from "dayjs";
 import { Field, getIn } from "formik";
+import SocialHistoryPanel from "../../medicalInpatient-/components/socialHistory";
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: () => void;
 };
 
 const ErrorMessage = ({ name }: { name: string }) => (
@@ -206,7 +208,7 @@ const genitourinaryOptions = [
 
 const dateTime = getDateTime();
 
-export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
+export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [showExtraFields, setShowExtraFields] = useState<any>({});
   const [showTraumaFields, setShowTraumaFields] = useState(false);
@@ -216,6 +218,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
   }>({});
   const [genitourinaryOther, setGenitourinaryOther] = useState(false);
   const [updateSocial, setUpdateSocial] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const generateValidationSchema = (
     symptomList: Record<string, any>
@@ -256,10 +259,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       }
     });
 
-    shape["lastMeal"] = yup
-      .date()
-      .required("Last meal is required.")
-      .max(new Date(), "Last meal cannot be in the future.");
     shape["events"] = yup.string().required("Events field is required.");
     shape["timeOfInjury"] = yup.date().required("Time of injury is required.");
 
@@ -368,7 +367,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
 
   const initialValues = {
     wasInjured: "",
-    lastMeal: "",
     events: "",
     pain: false,
     painDuration: "",
@@ -481,7 +479,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
     const socialHistory = formValues["showSocialHistory"];
     setUpdateSocial(!!socialHistory);
 
-    console.log(formValues);
   }, [formValues, symptomList, formValues["showSocialHistory"]]);
 
   const handleSubmit = async () => {
@@ -497,26 +494,11 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
       submitButton={false}
     >
       <FormValuesListener getValues={setFormValues} />
-      <FormFieldContainer direction="row">
-        <FormDatePicker
-          label={symptomList.lastMeal.label}
-          name={symptomList.lastMeal.name}
-          sx={{ background: "white", marginRight: 2 }}
-        />
 
-        <TextInputField
-          id={symptomList.events.name}
-          label={symptomList.events.label}
-          name={symptomList.events.name}
-          placeholder="e.g., Started with mild abdominal pain 3 days ago..."
-          multiline
-          rows={4}
-        />
-      </FormFieldContainer>
 
       <FormFieldContainer direction="row">
         <WrapperBox
-          sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%" }}
+          sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%", borderRadius: "5px" }}
         >
           <h3>General History</h3>
           {Object.keys(symptomList).map((key) => {
@@ -667,9 +649,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
                         multiline
                         rows={3}
                       />
-                      <div style={{ color: "red", fontSize: "0.875rem" }}>
-                        <ErrorMessage name={`${mechanism}Comment`} />
-                      </div>
                     </>
                   ) : null
                 )}
@@ -678,6 +657,16 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
           )}
         </WrapperBox>
       </FormFieldContainer>
+      <TextInputField
+  id={symptomList.events.name}
+  label={symptomList.events.label}
+  name={symptomList.events.name}
+  placeholder="e.g., Started with mild abdominal pain 3 days ago..."
+  multiline
+  rows={4}
+  sx={{ width: "100%" }}
+/>
+
       <FormFieldContainer direction="row">
         <SearchComboBox
           name="Gastrointenstinal_history"
@@ -735,9 +724,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
         />
         {updateSocial && (
           <>
-            <h3 style={{ marginTop: "2ch", marginBottom: "1ch" }}>
-              Social History
-            </h3>
+            <SocialHistoryPanel showForPrinting={showAll}toggleShow={setShowAll} />
             <RadioGroupInput
               row={true}
               name="occupation"
@@ -782,9 +769,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
               multiline
               rows={4}
             />
-            <div style={{ color: "red", fontSize: "0.875rem" }}>
-              <ErrorMessage name={"travelDetails"} />
-            </div>
           </>
         )}
       </FormFieldContainer>
@@ -794,7 +778,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: Prop) => {
           variant="secondary"
           title="Previous"
           type="button"
-          onClick={onSkip}
+          onClick={onPrevious}
           sx={{ flex: 1, marginRight: "8px" }}
         />
         <MainButton

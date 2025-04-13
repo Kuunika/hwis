@@ -10,7 +10,7 @@ export const VitalsPanel = () => {
   const { params } = useParameters();
 
   if (isLoading) {
-    return <ProfilePanelSkeletonLoader />;
+    return <ProfilePanelSkeletonLoader height={120} />;
   }
   return (
     <Paper elevation={3}>

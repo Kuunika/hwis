@@ -8,7 +8,7 @@ import {
 } from "@/components";
 import { concepts } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
-import { getCachedConcept } from "@/helpers/data";
+
 import { Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
 
@@ -82,24 +82,10 @@ export const SecondaryAbdomenPelvicForm = (props: Props) => {
   const [showOther, setShowOther] = useState<boolean>(false);
 
   const handleValueChange = (values: Array<any>) => {
-    setShowBurns(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.BURNS)?.uuid)
-      )
-    );
-    setShowLaceration(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.LACERATION)?.uuid)
-      )
-    );
-    setShowScarDescription(
-      Boolean(values.find((v) => v.id == getCachedConcept(concepts.SCAR)?.uuid))
-    );
-    setShowOther(
-      Boolean(
-        values.find((v) => v.id == getCachedConcept(concepts.OTHER)?.uuid)
-      )
-    );
+    setShowBurns(Boolean(values.find((v) => v.id == concepts.BURNS)));
+    setShowLaceration(Boolean(values.find((v) => v.id == concepts.LACERATION)));
+    setShowScarDescription(Boolean(values.find((v) => v.id == concepts.SCAR)));
+    setShowOther(Boolean(values.find((v) => v.id == concepts.OTHER)));
   };
 
   return (
@@ -116,7 +102,6 @@ export const SecondaryAbdomenPelvicForm = (props: Props) => {
         name={form.abnormalities.name}
         label={form.abnormalities.label}
         options={options}
-        coded
         getValue={handleValueChange}
       />
       {showLaceration && (
@@ -156,7 +141,6 @@ export const SecondaryAbdomenPelvicForm = (props: Props) => {
             <RadioGroupInput
               row
               options={radioOptions}
-              coded
               name={form.burnsDescription.name}
               label={form.burnsDescription.label}
             />

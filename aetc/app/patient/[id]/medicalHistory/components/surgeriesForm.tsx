@@ -3,6 +3,7 @@ import {
   FormikInit,
   FormValuesListener,
   MainButton,
+  MainTypography,
   SearchComboBox,
   TextInputField,
   WrapperBox,
@@ -15,6 +16,7 @@ import { concepts } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import PastSurgicalHistoryPanel from "../../medicalInpatient-/components/pastSurgicalHistory";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
 
 interface Observation {
   obs_id: number | null;
@@ -34,6 +36,7 @@ interface ProcessedObservation {
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: ()=>void;
 };
 
 type Surgery = {
@@ -54,6 +57,7 @@ const surgeryTemplate: Surgery = {
 
 const initialValues = {
   surgeries: [surgeryTemplate],
+  none: false
 };
 
 const surgeryFormConfig = {
@@ -80,9 +84,8 @@ const surgeryFormConfig = {
   }),
 };
 
-const schema = Yup.object().shape({
-  surgeries: Yup.array().of(
-    Yup.object().shape({
+const surgeriesSchema = Yup.object().shape({
+
       procedure: Yup.string().required("Surgical procedure is required"),
       other: Yup.string().when("procedure", {
         is: (procedure: string) => procedure === "other_surgical_procedure",
@@ -96,8 +99,19 @@ const schema = Yup.object().shape({
         .max(new Date(), "Date cannot be in the future"),
       complication: Yup.string().optional(),
       indication: Yup.string().required("Indication is required"),
-    })
-  ),
+
+});
+
+const schema = Yup.object().shape({
+  none: Yup.boolean().required(),
+  surgeries: Yup.array().when("none", {
+    is: false,
+    then: (schema) =>
+      schema
+        .of(surgeriesSchema)
+        .min(1, "At least one surgery must be added"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 const surgicalProcedures = [
@@ -125,7 +139,7 @@ const ErrorMessage = ({ name }: { name: string }) => (
   />
 );
 
-export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
+export const SurgeriesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const { params } = useParameters();
   const [formValues, setFormValues] = useState<any>({});
   const { data: patientHistory, isLoading: historyLoading } =
@@ -137,7 +151,10 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
     (item) => item.encounter_type?.name === "SURGICAL HISTORY"
   );
   const handleSubmit = async () => {
-    await schema.validate(formValues);
+    if(formValues.none){
+      onSkip();
+      return;
+    }
     onSubmit(formValues);
   };
 
@@ -152,7 +169,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
   }, [formValues]);
 
   return (
-    <>
+    <div style={{marginLeft:"100px"}}>
       <PastSurgicalHistoryPanel
         showForPrinting={showAll}
         toggleShow={setShowAll}
@@ -165,7 +182,14 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
         submitButton={false}
       >
         {({ values, setFieldValue }) => (
+          
           <>
+                        <div style={{marginBottom:"2ch"}}>
+        <LabelledCheckbox
+          name="none"
+          label="Patient has had no surgeries"
+        />
+        </div>
             <FieldArray name="surgeries">
               {({ push, remove }) => (
                 <>
@@ -177,36 +201,41 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
                     }
                     newItem={surgeryTemplate}
                     renderFields={(item, index) => (
-                      <>
+                      <><div>
                         <SearchComboBox
+                        disabled={formValues.none}
                           options={surgicalProcedures}
                           name={`surgeries[${index}].procedure`}
                           label="Surgical Procedure"
                           sx={{ width: "100%" }}
                           multiple={false}
                         />
-                        <div style={{ color: "red", fontSize: "0.875rem" }}>
+                        <MainTypography color="red" variant="subtitle2">
                           <ErrorMessage
                             name={`surgeries[${index}].procedure`}
                           />
+                        </MainTypography>
                         </div>
                         {showOther[index] && (
-                          <>
+                          <div>
                             <TextInputField
+                            disabled={formValues.none}
                               id={`surgeries[${index}].other`}
                               name={`surgeries[${index}].other`}
                               label="Other procedure"
                               sx={{ width: "100%" }}
                             />
 
-                            <div style={{ color: "red", fontSize: "0.875rem" }}>
+                          <MainTypography color="red" variant="subtitle2">  
                               <ErrorMessage
                                 name={`surgeries[${index}].other`}
                               />
-                            </div>
-                          </>
+                            </MainTypography>
+                          </div>
                         )}
+                        <div>
                         <FormDatePicker
+                        disabled={formValues.none}
                           name={`surgeries[${index}].date`}
                           label="Date of Surgery"
                           sx={{
@@ -215,27 +244,30 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
                             margin: "0px",
                           }}
                         />
-                        <div style={{ color: "red", fontSize: "0.875rem" }}>
+                        <MainTypography color="red" variant="subtitle2">
                           <ErrorMessage name={`surgeries[${index}].date`} />
+                        </MainTypography>
                         </div>
-
                         <TextInputField
+                        disabled={formValues.none}
                           id={`surgeries[${index}].complication`}
                           name={`surgeries[${index}].complication`}
                           label="Complications (optional)"
                           sx={{ width: "100%" }}
                         />
-
+<div>
                         <TextInputField
+                        disabled={formValues.none}
                           id={`surgeries[${index}].indication`}
                           name={`surgeries[${index}].indication`}
                           label="Indication"
                           sx={{ width: "100%" }}
                         />
-                        <div style={{ color: "red", fontSize: "0.875rem" }}>
+                        <MainTypography color="red" variant="subtitle2">
                           <ErrorMessage
                             name={`surgeries[${index}].indication`}
                           />
+                        </MainTypography>
                         </div>
                       </>
                     )}
@@ -246,7 +278,7 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
                       variant="secondary"
                       title="Previous"
                       type="button"
-                      onClick={onSkip}
+                      onClick={onPrevious}
                       sx={{ flex: 1, marginRight: "8px" }}
                     />
                     <MainButton
@@ -263,6 +295,6 @@ export const SurgeriesForm = ({ onSubmit, onSkip }: Prop) => {
           </>
         )}
       </FormikInit>
-    </>
+    </div>
   );
 };

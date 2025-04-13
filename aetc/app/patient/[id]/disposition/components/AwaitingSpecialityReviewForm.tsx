@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
 
 
 const specialtyOptions = [
@@ -111,6 +112,7 @@ export default function AwaitingSpecialityReviewForm() {
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
                     <h2>Awaiting Specialty Review Form</h2>
                     <FormikInit

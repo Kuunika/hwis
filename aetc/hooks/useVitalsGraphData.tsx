@@ -7,7 +7,7 @@ import { getActivePatientDetails } from "./getActivePatientDetails";
 export const useVitalsGraphData = () => {
   const { activeVisitId } = getActivePatientDetails();
   const { patientId } = getActivePatientDetails();
-  const { data, isLoading } = getPatientsEncounters(patientId as string);
+  const { data, isLoading } = getPatientsEncounters(patientId as string, `encounter_type=${encounters.VITALS}`);
   const [formattedVitals, setFormattedVitals] = useState<any>({});
   const [chartLoading, setChartLoading] = useState(true);
   const [chartData, setChartData] = useState<any>({

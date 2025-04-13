@@ -30,6 +30,7 @@ import { UpperLimbFemaleAnteriorImage } from "@/components/svgImages/upperLimbFe
 import { UpperLimbFemalePosteriorImage } from "@/components/svgImages/upperLimbFemalePosterior";
 import { UpperLimbMaleAnteriorImage } from "@/components/svgImages/upperLimbMaleAnterior";
 import { UpperLimbMalePosteriorImage } from "@/components/svgImages/upperLimbMalePosterior";
+import { CheckBoxNext } from "@/components/form/checkBoxNext";
 
 const form = {
   oedama: {
@@ -90,6 +91,7 @@ const radioOptions = [
 ];
 
 export const ExtremitiesForm = ({ onSubmit }: Prop) => {
+  const [isChecked, setIsChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
 
   const [lowerLimbAnterior, setLowerLimbAnterior] = useState<Array<any>>([]);
@@ -142,112 +144,121 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialsValues}
-        onSubmit={handleSubmitForm}
-      >
-        <FormValuesListener getValues={setFormValues} />
-        <FormFieldContainerLayout title="">
-          <FieldsContainer mr="2px">
+      <CheckBoxNext
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
+        onNext={(obs: any) => handleSubmit(obs)}
+        title="Tick if circulation is normal and there are no abnormalities"
+      />
+      {!isChecked && (
+        <FormikInit
+          validationSchema={schema}
+          initialValues={initialsValues}
+          onSubmit={handleSubmitForm}
+          submitButtonText="next"
+        >
+          <FormValuesListener getValues={setFormValues} />
+          <FormFieldContainerLayout title="">
+            <FieldsContainer mr="2px">
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.oedama.name}
+                label={form.oedama.label}
+              />
+              <RadioGroupInput
+                row
+                options={radioOptions}
+                name={form.coldClammy.name}
+                label={form.coldClammy.label}
+              />
+            </FieldsContainer>
+            {formValues[form.oedama.name] == YES && (
+              <SearchComboBox
+                sx={{ width: "100%" }}
+                multiple={false}
+                name={form.oedamaDetails.name}
+                options={oedamaOptions}
+                label={form.oedamaDetails.label}
+              />
+            )}
             <RadioGroupInput
               row
               options={radioOptions}
-              name={form.oedama.name}
-              label={form.oedama.label}
+              name={form.abnormalitiesUpperLimb.name}
+              label={form.abnormalitiesUpperLimb.label}
             />
+            {formValues[form.abnormalitiesUpperLimb.name] == YES && (
+              <>
+                {gender == "Female" && (
+                  <>
+                    <UpperLimbFemaleAnteriorImage
+                      onValueChange={setUpperLimbAnterior}
+                      form="extremities"
+                    />
+                    <UpperLimbFemalePosteriorImage
+                      onValueChange={setUpperLimbPosterior}
+                    />
+                  </>
+                )}
+                {gender == "Male" && (
+                  <>
+                    <UpperLimbMaleAnteriorImage
+                      onValueChange={setUpperLimbAnterior}
+                      form="extremities"
+                    />
+                    <UpperLimbMalePosteriorImage
+                      onValueChange={setUpperLimbPosterior}
+                    />
+                  </>
+                )}
+              </>
+            )}
             <RadioGroupInput
               row
               options={radioOptions}
-              name={form.coldClammy.name}
-              label={form.coldClammy.label}
+              name={form.abnormalitiesLowerLimb.name}
+              label={form.abnormalitiesLowerLimb.label}
             />
-          </FieldsContainer>
-          {formValues[form.oedama.name] == YES && (
-            <SearchComboBox
-              sx={{ width: "100%" }}
-              multiple={false}
-              name={form.oedamaDetails.name}
-              options={oedamaOptions}
-              label={form.oedamaDetails.label}
-            />
-          )}
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.abnormalitiesUpperLimb.name}
-            label={form.abnormalitiesUpperLimb.label}
-          />
-          {formValues[form.abnormalitiesUpperLimb.name] == YES && (
-            <>
-              {gender == "Female" && (
-                <>
-                  <UpperLimbFemaleAnteriorImage
-                    onValueChange={setUpperLimbAnterior}
-                    form="extremities"
-                  />
-                  <UpperLimbFemalePosteriorImage
-                    onValueChange={setUpperLimbPosterior}
-                  />
-                </>
-              )}
-              {gender == "Male" && (
-                <>
-                  <UpperLimbMaleAnteriorImage
-                    onValueChange={setUpperLimbAnterior}
-                    form="extremities"
-                  />
-                  <UpperLimbMalePosteriorImage
-                    onValueChange={setUpperLimbPosterior}
-                  />
-                </>
-              )}
-            </>
-          )}
-          <RadioGroupInput
-            row
-            options={radioOptions}
-            name={form.abnormalitiesLowerLimb.name}
-            label={form.abnormalitiesLowerLimb.label}
-          />
-          {formValues[form.abnormalitiesLowerLimb.name] == YES && (
-            <>
-              {gender == "Female" && (
-                <>
-                  <LowerLimbFemaleAnteriorImage
-                    onValueChange={setLowerLimbAnterior}
-                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
-                    imageSection={form.abnormalitiesLowerLimb.name}
-                    form="extremities"
-                  />
+            {formValues[form.abnormalitiesLowerLimb.name] == YES && (
+              <>
+                {gender == "Female" && (
+                  <>
+                    <LowerLimbFemaleAnteriorImage
+                      onValueChange={setLowerLimbAnterior}
+                      imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                      imageSection={form.abnormalitiesLowerLimb.name}
+                      form="extremities"
+                    />
 
-                  <LowerLimbFemalePosteriorImage
-                    onValueChange={setLowerLimbPosterior}
-                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
-                    imageSection={form.abnormalitiesLowerLimb.name}
-                  />
-                </>
-              )}
-              {gender == "Male" && (
-                <>
-                  <LowerLimbMaleAnteriorImage
-                    onValueChange={setLowerLimbAnterior}
-                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
-                    imageSection={form.abnormalitiesLowerLimb.name}
-                    form="extremities"
-                  />
+                    <LowerLimbFemalePosteriorImage
+                      onValueChange={setLowerLimbPosterior}
+                      imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                      imageSection={form.abnormalitiesLowerLimb.name}
+                    />
+                  </>
+                )}
+                {gender == "Male" && (
+                  <>
+                    <LowerLimbMaleAnteriorImage
+                      onValueChange={setLowerLimbAnterior}
+                      imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                      imageSection={form.abnormalitiesLowerLimb.name}
+                      form="extremities"
+                    />
 
-                  <LowerLimbMalePosteriorImage
-                    onValueChange={setLowerLimbPosterior}
-                    imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
-                    imageSection={form.abnormalitiesLowerLimb.name}
-                  />
-                </>
-              )}
-            </>
-          )}
-        </FormFieldContainerLayout>
-      </FormikInit>
+                    <LowerLimbMalePosteriorImage
+                      onValueChange={setLowerLimbPosterior}
+                      imageEncounter={encounters.EXTREMITIES_ASSESSMENT}
+                      imageSection={form.abnormalitiesLowerLimb.name}
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </FormFieldContainerLayout>
+        </FormikInit>
+      )}
     </ContainerLoaderOverlay>
   );
 };

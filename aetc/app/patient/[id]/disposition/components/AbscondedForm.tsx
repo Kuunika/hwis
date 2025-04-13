@@ -1,5 +1,4 @@
 "use client";
-
 import {
     MainGrid,
     MainPaper,
@@ -21,8 +20,7 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
-
-
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
 
 const validationSchema = Yup.object({
     lastSeenLocation: Yup.string().required("Last Seen Location is required"),
@@ -44,8 +42,6 @@ export default function AbscondedForm() {
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
 
-
-
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
         if (patientVisits) {
@@ -55,8 +51,6 @@ export default function AbscondedForm() {
             }
         }
     }, [patientVisits]);
-
-
 
     const handleSubmit = async (values: any) => {
         const currentDateTime = getDateTime();
@@ -70,7 +64,6 @@ export default function AbscondedForm() {
                     { concept: concepts.LAST_SEEN_LOCATION, value: values.lastSeenLocation, obsDatetime: currentDateTime },
                     { concept: concepts.DATE_OF_ABSCONDING, value: values.dateAbsconded, obsDatetime: currentDateTime },
                     { concept: concepts.TIME_OF_ABSCONDING, value: values.timeAbsconded, obsDatetime: currentDateTime },
-
                 ],
             },
         ];
@@ -90,8 +83,6 @@ export default function AbscondedForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            
-
             navigateTo("/dispositions");
 
         } catch (error) {
@@ -103,6 +94,8 @@ export default function AbscondedForm() {
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                {/* Include the Accordion with Medication Form */}
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
                     <h2>Absconded Form</h2>
                     <FormikInit

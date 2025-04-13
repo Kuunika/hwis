@@ -15,6 +15,8 @@ import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { Tooltip, IconButton } from "@mui/material";
+import { FaPlay } from "react-icons/fa";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
@@ -68,18 +70,28 @@ export const ClientWaitingForTriage = () => {
       renderCell: (cell: any) => {
         return (
           <>
-            <MainButton
+           <Tooltip title="Start Triage" arrow>
+              <IconButton 
+                onClick={() => navigateTo(`/triage/${cell.id}/start`)} 
+                aria-label="start Triage" 
+                color="primary"
+              >
+                <FaPlay />
+              </IconButton>
+            </Tooltip>
+
+            {/* <MainButton
               size="small"
               sx={{ fontSize: "12px", mr: "1px" }}
               title={"start"}
               onClick={() => navigateTo(`/triage/${cell.id}/start`)}
-            />
+            /> */}
             <AbscondButton
               onDelete={() => setDeleted(cell.id)}
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
-            <PrinterBarcodeButton patient={cell.row} />
+            <PrinterBarcodeButton icon={true} patient={cell.row} />
           </>
         );
       },

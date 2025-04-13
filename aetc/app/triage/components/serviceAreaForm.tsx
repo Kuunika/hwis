@@ -47,8 +47,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
           id: serviceArea.uuid,
         }));
         setServiceAreaOptions(options);
-
-        const otherOption = options.find((option: { label: string; }) => option.label === "Other (Free Text)");
+        const otherOption = options.find((option: { id: string, label: string }) => option.label === "Other");
         setOtherId(otherOption ? otherOption.id : null);
       }
     }

@@ -20,13 +20,6 @@ import { ListVisitDates } from "./listVisitDates";
 import { VisitDatesProvider } from "@/contexts/visitDatesContext";
 
 export const DesktopView = () => {
-  const { params } = useParameters();
-  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
-
-  const { setActiveStep } = React.useContext(
-    ConsultationContext
-  ) as ConsultationContextType;
-
   return (
     <VisitDatesProvider>
       <MainGrid
