@@ -110,38 +110,7 @@ const medicationUnits = [
   "Milliliters (ml)",
   "Millimoles (mmol)",
 ];
-// const initialValues = {
-//   medications: [medicationTemplate],
-// };
-const schema = yup.object().shape({
-  medications: yup.array().of(
-    yup.object().shape({
-      name: yup.string().required("Medication name is required"),
-      formulation: yup.string().required("Formulation is required"),
-      medication_dose: yup
-        .number()
-        .required("Dose is required")
-        .positive("Dose must be greater than 0"),
-      medication_dose_unit: yup.string().required("Dose unit is required"),
-      medication_frequency: yup.string().required("Frequency is required"),
-      medication_duration: yup
-        .number()
-        .required("Duration is required")
-        .positive("Duration must be greater than 0"),
-      medication_duration_unit: yup
-        .string()
-        .required("Duration unit is required"),
-      medication_date_last_taken: yup
-        .date()
-        .nullable()
-        .required("Date of last taken is required"),
-      medication_date_of_last_prescription: yup
-        .date()
-        .nullable()
-        .required("Date of last prescription is required"),
-    })
-  ),
-});
+
 const form = {
   subjective: {
     name: concepts.SUBJECTIVE,
@@ -211,6 +180,11 @@ const form = {
     name: concepts.IMPLEMENTATION,
     label: "Implementation",
   },
+  medications: [medicationTemplate] as any,
+  procedures: [],
+  supportiveCare: [],
+  otherProcedureSpecify: "",
+  otherSupportiveCareSpecify: "",
 };
 const proceduresConfig = [
   { value: concepts.INTRAVENOUS_CANNULATION, label: "Intravenous Cannulation" },
@@ -261,6 +235,58 @@ const validationSchema = Yup.object().shape({
   [form.evaluation.name]: Yup.string().required(form.evaluation.label),
   [form.replan.name]: Yup.string().required(form.replan.label),
   [form.implementation.name]: Yup.string().required(form.implementation.label),
+  [form.MRDT.name]: Yup.string(),
+  [form.RBG.name]: Yup.string(),
+  [form.PT.name]: Yup.string(),
+  [form.urineDipstick.name]: Yup.string(),
+  procedures: yup
+    .array()
+    .of(
+      yup.object().shape({
+        key: yup.string().required(),
+        value: yup.boolean().required(),
+      })
+    )
+    .transform((value) =>
+      Array.isArray(value)
+        ? value.filter((item: any) => item.value === true)
+        : []
+    )
+    .min(1, "At least one procedure must be selected"),
+
+  otherProcedureSpecify: yup
+    .string()
+    .nullable()
+    .when("procedures", {
+      is: (procedures: any[]) =>
+        procedures.some((procedure) => procedure.key === concepts.OTHER),
+      then: (schema) => schema.required("Please specify the other procedure"),
+    }),
+
+  supportiveCare: yup
+    .array()
+    .of(
+      yup.object().shape({
+        key: yup.string().required(),
+        value: yup.boolean().required(),
+      })
+    )
+    .transform((value) =>
+      Array.isArray(value)
+        ? value.filter((item: any) => item.value === true)
+        : []
+    )
+    .min(1, "At least one supportive care option must be selected"),
+
+  otherSupportiveCareSpecify: yup
+    .string()
+    .nullable()
+    .when("supportiveCare", {
+      is: (supportiveCare: any[]) =>
+        supportiveCare.some((care) => care.key === concepts.OTHER),
+      then: (schema) =>
+        schema.required("Please specify the other supportive care"),
+    }),
   [form.spo.name]: Yup.number()
     .min(0)
     .max(100)
@@ -298,13 +324,9 @@ initialValues.procedures = [];
 initialValues.supportiveCare = [];
 initialValues.otherProcedureSpecify = "";
 initialValues.otherSupportiveCareSpecify = "";
-console.log("🚀 ~ form:", form);
-console.log("🚀 ~ initialValues:", initialValues);
-const initialValues2 = {
-  medications: [medicationTemplate],
-};
 export const SoapForm = () => {
-  const { activeVisit, patientId } = getActivePatientDetails();
+  const { activeVisit, patientId }: { activeVisit: any; patientId: any } =
+    getActivePatientDetails();
   const [otherFrequency, setOtherFrequency] = useState<{
     [key: number]: boolean;
   }>({});
@@ -332,15 +354,32 @@ export const SoapForm = () => {
   );
 
   const handleSubmitForm = (values: any) => {
-    console.log("🚀 ~ handleSubmitForm ~ values:", values.medications);
-    // submitMedications();
-    getObservations(values, getDateTime());
-    // handleSubmit(getObservations(values, getDateTime())
-    // handleSubmit(getObservations(values, getDateTime()));
+    submitMedications();
+    submitProcedureSupportiveCares(values);
+    handleSubmit(getObservations(values, getDateTime()));
   };
   const submitMedications = () => {
+    const requiredFields = [
+      "name",
+      "formulation",
+      "medication_dose",
+      "medication_dose_unit",
+      "medication_frequency",
+      "medication_duration",
+      "medication_duration_unit",
+    ];
+
+    const medications = formValues.medications.filter((med: any) =>
+      requiredFields.every(
+        (field) =>
+          med[field] !== null && med[field] !== undefined && med[field] !== ""
+      )
+    );
+
+    if (medications.length === 0) return;
+
     const obsDateTime = getDateTime();
-    const obs = formValues.medications.map((medication: any) => {
+    const obs = medications.map((medication: any) => {
       return {
         concept: concepts.DRUG_GIVEN,
         value: medication.name,
@@ -392,6 +431,53 @@ export const SoapForm = () => {
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
+      obs,
+    });
+    formValues.medications = [medicationTemplate];
+  };
+  const submitProcedureSupportiveCares = async (values: any) => {
+    console.log("Procedures Selected:", values.procedures);
+    console.log("Supportive Care Selected:", values.supportiveCare);
+    const currentDateTime = getDateTime();
+
+    const obs = [
+      {
+        concept: concepts.PROCEDURES,
+        value: concepts.PROCEDURES,
+        obsDatetime: currentDateTime,
+        group_members: (values.procedures || [])
+          .filter((procedure: any) => procedure.value === true)
+          .map((procedure: any) => ({
+            concept: procedure.key,
+            value:
+              procedure.key === concepts.OTHER
+                ? values.otherProcedureSpecify
+                : procedure.key,
+            obsDatetime: currentDateTime,
+          })),
+      },
+      {
+        concept: concepts.SUPPORTIVE_CARE,
+        value: concepts.SUPPORTIVE_CARE,
+        obsDatetime: currentDateTime,
+        group_members: (values.supportiveCare || [])
+          .filter((care: any) => care.value === true)
+          .map((care: any) => ({
+            concept: care.key,
+            value:
+              care.key === concepts.OTHER
+                ? values.otherSupportiveCareSpecify
+                : null,
+            obsDatetime: currentDateTime,
+          })),
+      },
+    ];
+
+    mutate({
+      encounterType: encounters.NON_PHARMACOLOGICAL,
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: currentDateTime,
       obs,
     });
   };
