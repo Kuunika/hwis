@@ -15,6 +15,7 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { FaPlus } from "react-icons/fa6";
 import { checkPatientIfOnWaitingAssessment, useNavigation } from "@/hooks";
 import { ConsultationContext, ConsultationContextType } from "@/contexts";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 
 // Define types for menu items
 interface MenuItemConfig {
@@ -39,6 +40,7 @@ interface FlowStarterProps {
 }
 
 const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
+  const [cprDialog, setCprDialog] = useState(false);
   const { navigateTo } = useNavigation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { isOnList } = checkPatientIfOnWaitingAssessment(patient?.id);
@@ -138,7 +140,29 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           } 
         `}
       </style>
-
+      <Button
+        onClick={() => setCprDialog(true)}
+        sx={{
+          backgroundColor: "rgb(221, 238, 221)",
+          color: "rgb(0, 70, 0)",
+          borderRadius: "9999px",
+          border: "1px solid currentColor",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          fontSize: "14px",
+          marginRight: "10px",
+          flexGrow: 1,
+          textTransform: "none",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          maxWidth: "calc(100% - 40px)", // Ensure text doesn't overlap with dropdown
+          "&:hover": {
+            backgroundColor: "rgb(197, 231, 197)",
+          },
+        }}
+      >
+        Start CPR
+      </Button>
       {/* Assessment Button Group */}
       <ButtonGroup
         variant="contained"
@@ -225,6 +249,12 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           ))}
         </List>
       </Menu>
+      <CPRDialogForm
+        open={cprDialog}
+        onClose={() => {
+          setCprDialog(false);
+        }}
+      />
     </Box>
   );
 };
