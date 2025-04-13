@@ -521,21 +521,6 @@ export const VisitHistory = () => {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>        
-                {/* <Box sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Patient Management Plan</Typography>
-                    {patientManagementPlanMessage ? (
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
-                                {patientManagementPlanMessage.split("\n")[0]}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
-                                {patientManagementPlanMessage.split("\n").slice(1).join("\n")}
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Patient Management Plan Data available.</Typography>
-                    )}
-                </Box> */}
 
                   {patientManagementPlanMessage && (
                     <Box sx={{ mb: 3 }}>
