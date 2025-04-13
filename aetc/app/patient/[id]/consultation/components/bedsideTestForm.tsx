@@ -301,7 +301,7 @@ const testStatusOptions = [
 const formValues = getInitialValues(formConfig);
 
 export const BedsideTestForm = () => {
-  const { activeVisit, patientId } = getActivePatientDetails();
+  const { activeVisit, patientId, gender } = getActivePatientDetails();
 
   const { mutate } = fetchConceptAndCreateEncounter();
   const handleSubmit = (values: any) => {
@@ -739,12 +739,12 @@ export const BedsideTestForm = () => {
           id={formConfig.P50E.name}
         />
       </FormFieldContainerMultiple>
-      <RadioGroupInput
+    {gender=='Female' &&  <RadioGroupInput
         row
         label={formConfig.pregnancyTest.label}
         options={testStatusOptions}
         name={formConfig.pregnancyTest.name}
-      />
+      />}
       <RadioGroupInput
         row
         label={formConfig.hiv.label}

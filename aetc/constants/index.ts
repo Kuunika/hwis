@@ -156,6 +156,7 @@ export const encounters = {
   SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
   PATIENT_ADMISSIONS: "ba0651ec-8d80-11d8-abbb-0024217bb78e",
   SUMMARY_ASSESSMENT: "e5fec87c-9bea-42bb-a276-0469addccf99",
+
   // CPR:"8576645e-1661-47fc-90b4-12420148da8b",
 
   //TODO: replace this UUID with a bedside test
@@ -460,6 +461,7 @@ export const concepts = {
   TRIAGE_RESULT: "Triage Result",
   ELECTIVE: "Elective",
   CURRENT_COMPLAINTS_OR_SYMPTOMS: "Current Complaints Or Symptoms",
+  DURATION_OF_SYMPTOMS_HOURS: "Duration Of Symptoms Hours",
   DURATION_OF_SYMPTOMS_DAYS: "Duration Of Symptoms Days",
   DURATION_OF_SYMPTOMS_WEEKS: "Duration Of Symptoms Weeks",
   DURATION_OF_SYMPTOMS_MONTHS: "Duration Of Symptoms Months",
@@ -1188,6 +1190,7 @@ export const concepts = {
   HEADACHE: "Headache",
   STRIDOR: "Stridor",
   OTHER_CONDITION: "Other Condition",
+  DURATION_ON_MEDICATION_HOURS: "Duration On Medication Hours",
   DURATION_ON_MEDICATION_DAYS: "Duration On Medication Days",
   DURATION_ON_MEDICATION_WEEKS: "Duration On Medication Weeks",
   DURATION_ON_MEDICATION_MONTHS: "Duration On Medication Months",
@@ -1400,6 +1403,9 @@ export const concepts = {
   SMOKING_HISTORY: "Smoking History",
   QUIT_OVER_A_MONTH_AGO: "Quit over a month ago",
   NEVER_SMOKED: "Never smoked",
+  PUPIL_REACTION:"Pupil reaction",
+  GENETELIA_EXAMINATION_REQUIRED:"Genetelia examination required",
+ 
 };
 
 export const conceptNames = {

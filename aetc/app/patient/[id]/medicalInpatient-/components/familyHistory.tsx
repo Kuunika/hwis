@@ -46,8 +46,6 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
       
      
       familyHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-        console.log('Patient history:',encounter);
-        
       
         encounter.obs.forEach((observation) => {
         const value = observation.value;
@@ -70,7 +68,6 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
 
       })
       const filtered = observations.filter(item => item.children && item.children.length > 0);
-      console.log(filtered)
           setObservations(filtered)
       });
 
@@ -80,7 +77,7 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
 
 return (
   <>
-  <Panel title="Known Family History">
+  <Panel title="Family History">
     <WrapperBox>
               {historyLoading ? (
                                   <div

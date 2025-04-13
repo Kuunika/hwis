@@ -69,7 +69,7 @@ export function SecondaryAssessmentFlow() {
   return (
     <NewStepperContainer
       setActive={setActiveStep}
-      title="Secondary Assessment"
+      title="Secondary Survey"
       steps={steps}
       active={activeStep}
       onBack={() => navigateBackToProfile()}
