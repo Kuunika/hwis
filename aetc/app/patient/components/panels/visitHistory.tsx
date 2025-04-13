@@ -31,6 +31,7 @@ import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { CirculationAssessment } from "../clinicalNotes/CirculationAssessment";
 import { DisabilityAssessment } from "../clinicalNotes/DisabilityAssessment";
 import { ExposureAssessment } from "../clinicalNotes/ExposureAssessment";
+import { useFinalDiagnosis } from "../clinicalNotes/FinalDiagnosis";
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -71,10 +72,11 @@ export const VisitHistory = () => {
   const [expanded, setExpanded] = useState("panel1");
   const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
   
-  // Custom hooks
+ 
   const investigationsMessage = useInvestigations(filteredEncounters);
   const differentialDiagnosisMessage = useDifferentialDiagnosis(filteredEncounters);
   const patientManagementPlanMessage = usePatientManagementPlan(filteredEncounters);
+  const finalDiagnosisMessage = useFinalDiagnosis(filteredEncounters);
 
 
   // Filter encounters when patientHistory or visitDate changes
@@ -325,10 +327,6 @@ export const VisitHistory = () => {
   const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpandedAccordion(isExpanded ? panel : false);
 };
-   //const [clinicalNotes, setClinicalNotes] = useState<Array<{ note: string | null; creator: string; time: any }>>([]);
-   //const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
-
-
   return (
     <>
         <Paper style={{ marginTop: "10px" }}>
@@ -394,41 +392,7 @@ export const VisitHistory = () => {
                 </AccordionDetails>
             </Accordion>
 
-        <Accordion
-                expanded={expandedAccordion === 'investigations-notes'}
-                onChange={handleAccordionChange('investigations-notes')}
-                sx={{
-                    backgroundColor: 'white',
-                }}
-            >
-                <AccordionSummary
-                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-                    aria-controls="investigations-content"
-                    id="investigations-header"
-                >
-                    <Typography  sx={{ fontWeight: 700 }}>
-                        Investigations
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>        
-                <Box sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}>Investigations</Typography>
-                    {investigationsMessage ? (
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
-                                {investigationsMessage.split("\n")[0]}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
-                                {investigationsMessage.split("\n").slice(1).join("\n")}
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Investigations Data available.</Typography>
-                    )}
-                </Box>
-                </AccordionDetails>
-            </Accordion>
-
+            {/* Differetiatial */}
 
             <Accordion
                 expanded={expandedAccordion === 'differential-diagnosis-notes'}
@@ -465,6 +429,115 @@ export const VisitHistory = () => {
                 </AccordionDetails>
             </Accordion>
 
+        <Accordion
+                expanded={expandedAccordion === 'investigations-notes'}
+                onChange={handleAccordionChange('investigations-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="investigations-content"
+                    id="investigations-header"
+                >
+                    <Typography  sx={{ fontWeight: 700 }}>
+                        Investigations
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}>Investigations</Typography>
+                    {investigationsMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
+                                {investigationsMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {investigationsMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Investigations Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+            </Accordion>
+
+
+            {/* <Accordion
+                expanded={expandedAccordion === 'differential-diagnosis-notes'}
+                onChange={handleAccordionChange('differential-diagnosis-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="differential-diagnosis-content"
+                    id="differential-diagnosis-header"
+                >
+                    <Typography  sx={{ fontWeight: 700 }}>
+                    Differential Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Differential Diagnosis</Typography>
+                    {differentialDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
+                                {differentialDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Differential Diagnosis Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+            </Accordion> */}
+
+            {/* Final Diagnosis */}
+
+<Accordion
+                expanded={expandedAccordion === 'final-diagnosis-notes'}
+                onChange={handleAccordionChange('final-diagnosis-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="final-diagnosis-content"
+                    id="final-diagnosis-header"
+                >
+                    <Typography  sx={{ fontWeight: 700 }}>
+                    Final Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Final Diagnosis</Typography>
+                    {finalDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
+                                {finalDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {finalDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Final Diagnosis Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+                
+            </Accordion>
+
 
             <Accordion
                 expanded={expandedAccordion === 'patient-management-plan-notes'}
@@ -499,7 +572,45 @@ export const VisitHistory = () => {
                     )}
                 </Box>
                 </AccordionDetails>
+                
             </Accordion>
+
+
+            {/* <Accordion
+                expanded={expandedAccordion === 'final-diagnosis-notes'}
+                onChange={handleAccordionChange('final-diagnosis-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="final-diagnosis-content"
+                    id="final-diagnosis-header"
+                >
+                    <Typography  sx={{ fontWeight: 700 }}>
+                    Final Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Final Diagnosis</Typography>
+                    {finalDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
+                                {finalDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {finalDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Final Diagnosis Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+                
+            </Accordion> */}
     </>
 );
 
