@@ -521,7 +521,7 @@ export const VisitHistory = () => {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>        
-                <Box sx={{ p: 2 }}>
+                {/* <Box sx={{ p: 2 }}>
                     <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Patient Management Plan</Typography>
                     {patientManagementPlanMessage ? (
                         <Box sx={{ mb: 3 }}>
@@ -535,7 +535,32 @@ export const VisitHistory = () => {
                     ) : (
                         <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Patient Management Plan Data available.</Typography>
                     )}
-                </Box>
+                </Box> */}
+
+                  {patientManagementPlanMessage && (
+                    <Box sx={{ mb: 3 }}>
+                      {patientManagementPlanMessage
+                        .split("\n")
+                        .map((line, index) => {
+                          const isHeader = /^(Non-Pharmacological Management Plan recorded on|Patient Care Area recorded on|Medication recorded on)/.test(line.trim());
+                          return (
+                            <Typography
+                              key={index}
+                              variant="body2"
+                              sx={{
+                                color: isHeader ? "primary.main" : "text.primary",
+                                fontWeight: isHeader ? "700" : "normal",
+                                whiteSpace: "pre-line",
+                              }}
+                            >
+                              {line}
+                            </Typography>
+                          );
+                        })}
+                    </Box>
+                  )}
+
+
                 </AccordionDetails>
                 
             </Accordion>
