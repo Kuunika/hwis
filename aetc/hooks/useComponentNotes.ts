@@ -54,6 +54,8 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatSurgicalHistoryNotes(obs)
             case encounters.PATIENT_ADMISSIONS:
                 return formatAdmissionNotes(obs);
+            case encounters.REVIEW_OF_SYSTEMS:
+                return formatSystemsReviewData(obs);
             case encounters.GENERAL_INFORMATION_ASSESSMENT:
                 return formatGeneralInformationNotes(obs);
             case encounters.HEAD_AND_NECK_ASSESSMENT:
@@ -512,9 +514,9 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Dose In Iu":
                         doseInInternationalUnits = memberValue;
                         break;
-                        case"Duration On Medication Hours":
-                            durationInHours = memberValue;
-                            break;
+                    case "Duration On Medication Hours":
+                        durationInHours = memberValue;
+                        break;
                     case "Duration On Medication Days":
                         durationInDays = memberValue;
                         break;
@@ -524,9 +526,9 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Duration On Medication Months":
                         durationInMonths = memberValue;
                         break;
-                        case "Duration On Medication Years":
-                            durationInYears = memberValue;
-                            break;
+                    case "Duration On Medication Years":
+                        durationInYears = memberValue;
+                        break;
                     case "Medication Formulation":
                         medicationFormulation = memberValue;
                         break;
@@ -543,7 +545,7 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         if (doseInMicrograms) parts.push(`Dose: ${doseInMicrograms} micrograms`);
         if (doseInMilliliters) parts.push(`Dose: ${doseInMilliliters} millimeters`);
         if (doseInInternationalUnits) parts.push(`Dose: ${doseInInternationalUnits} international units`);
-        if (durationInDays) parts.push(`Duration: ${durationInHours} hours`);
+        if (durationInHours) parts.push(`Duration: ${durationInHours} hours`);
         if (durationInDays) parts.push(`Duration: ${durationInDays} days`);
         if (durationInWeeks) parts.push(`Duration: ${durationInWeeks} weeks`);
         if (durationInMonths) parts.push(`Duration: ${durationInMonths} months`);
@@ -904,6 +906,108 @@ const createAdmissionNoteText = (admission: {
 
     return parts.join('. ') + (parts.length > 0 ? '.' : '');
 };
+const formatSystemsReviewData = (obs: any[]): ComponentNote[] => {
+    const systemsReviews: ComponentNote[] = [];
+    let currentSystem: {
+        systemName: string;
+        symptoms: {
+            name: string;
+            duration?: string;
+            location?: string;
+        }[];
+        creator: string;
+        time: string;
+    } | null = null;
+
+    obs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const creator = ob.creator || ob.created_by || "Unknown";
+        const obsTime = ob.obs_datetime || new Date().toISOString();
+
+        if (name.startsWith("Review Of Systems") || name.startsWith("Review of systems")) {
+            if (currentSystem && currentSystem.symptoms.length > 0) {
+                systemsReviews.push(createSystemReviewParagraph(currentSystem));
+            }
+            // Start new system
+            currentSystem = {
+                systemName: name.replace("Review Of Systems", "")
+                    .replace("Review of systems", "")
+                    .trim(),
+                symptoms: [],
+                creator: creator,
+                time: obsTime
+            };
+        }
+        else if (currentSystem) {
+            if (name === "Duration Of Symptoms Days") {
+                if (currentSystem.symptoms.length > 0) {
+                    currentSystem.symptoms[currentSystem.symptoms.length - 1].duration = value;
+                }
+            }
+            else if (name === "Anatomic locations") {
+                if (currentSystem.symptoms.length > 0) {
+                    currentSystem.symptoms[currentSystem.symptoms.length - 1].location = value;
+                }
+            }
+            else if (value === true || value === "true") {
+                // This is a symptom
+                currentSystem.symptoms.push({
+                    name: name,
+                    duration: undefined,
+                    location: undefined
+                });
+                currentSystem.creator = creator;
+                currentSystem.time = obsTime;
+            }
+        }
+    });
+
+    // Push the last system if it has data
+    // if (currentSystem && currentSystem.symptoms.length > 0) {
+    //     systemsReviews.push(createSystemReviewParagraph(currentSystem));
+    // }
+
+    return systemsReviews.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createSystemReviewParagraph = (system: {
+    systemName: string;
+    symptoms: {
+        name: string;
+        duration?: string;
+        location?: string;
+    }[];
+    creator: string;
+    time: string;
+}): ComponentNote => {
+    const parts: string[] = [];
+
+    // Add system name
+    parts.push(`${system.systemName} System:`);
+
+    // Add each symptom with details
+    system.symptoms.forEach(symptom => {
+        let symptomText = symptom.name;
+
+        if (symptom.duration) {
+            symptomText += ` (${symptom.duration} days)`;
+        }
+
+        if (symptom.location) {
+            symptomText += ` in ${symptom.location}`;
+        }
+
+        parts.push(symptomText);
+    });
+
+    return {
+        paragraph: parts.join(". "),
+        time: system.time,
+        creator: system.creator,
+        rawTime: new Date(system.time).getTime()
+    };
+};
 const formatGeneralInformationNotes = (obs: any[]): ComponentNote[] => {
     const paragraphs: ComponentNote[] = [];
     let currentParagraph: string[] = [];
@@ -1063,7 +1167,6 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
 
     return assessments.sort((a, b) => b.rawTime - a.rawTime);
 };
-
 const formatHeadAndNeckAssessmentToParagraph = (assessment: any): ComponentNote => {
     let paragraphParts: string[] = [];
 
@@ -2341,7 +2444,7 @@ const createExposureAssessmentNote = (note: {
 
     // Image Part Name
     if (obs[concepts.IMAGE_PART_NAME]?.value) {
-        messages.push(`Image Part Name: ${obs[concepts.IMAGE_PART_NAME].value}. `);
+        messages.push(`Body part: ${obs[concepts.IMAGE_PART_NAME].value}. `);
     }
     // Skin Rash
     if (obs[concepts.SKIN_RASH]?.value) {
