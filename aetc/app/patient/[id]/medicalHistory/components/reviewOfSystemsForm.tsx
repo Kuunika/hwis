@@ -518,184 +518,258 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
       <FormValuesListener getValues={setFormValues} />
 
 
-      <FormFieldContainer direction="row">
         <WrapperBox
           sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%", borderRadius: "5px" }}
         >
-          <h3>General History</h3>
-          {Object.keys(symptomList).map((key) => {
-            const typedKey = key as keyof typeof symptomList;
-            const symptom = symptomList[typedKey];
+               <h3
+  style={{
+    fontSize: "1.25rem",
+    fontWeight: 600,
+    marginBottom: "1rem",
+    borderBottom: "2px solid #ccc",
+    paddingBottom: "0.5rem",
+  }}
+>
+  General History
+</h3>
 
-            return (
-              <div key={typedKey}>
-                {typedKey !== "poisoningIntentional" &&
-                  typedKey !== "lastMeal" &&
-                  typedKey !== "events" && (
-                    <LabelledCheckbox
-                      name={symptomList[typedKey].name}
-                      label={symptomList[typedKey].label}
-                    />
-                  )}
+{Object.keys(symptomList).map((key) => {
+  const typedKey = key as keyof typeof symptomList;
+  const symptom = symptomList[typedKey];
 
-                {showExtraFields[typedKey] &&
-                  typedKey !== "poisoningIntentional" && (
-                    <>
-                      <>
-                        <UnitInputField
-                          id={`${typedKey}Duration`}
-                          name={`${typedKey}Duration`}
-                          unitName={`${typedKey}DurationUnit`}
-                          label="Duration"
-                          unitOptions={durationOptions}
-                          placeholder="e.g. 7"
-                          inputIcon={<IoTimeOutline />}
-                        />
-                      </>
+  const shouldRenderCheckbox =
+    typedKey !== "poisoningIntentional" &&
+    typedKey !== "lastMeal" &&
+    typedKey !== "events";
 
-                      {symptom.requiresSite && typedKey !== "poisoning" && (
-                        <TextInputField
-                          id={`${symptom.name}_site`}
-                          label="Specify Site"
-                          name={`${symptom.name}_site`}
-                          placeholder="Specify the site"
-                        />
-                      )}
+  const shouldRenderExtras = showExtraFields[typedKey] && typedKey !== "poisoningIntentional";
 
-                      {typedKey == "poisoning" && (
-                                  <RadioGroupInput
-                                  row
-                                  name="poisoningIntentional"
-                                  options={[
-                                    { value: "Yes", label: "Yes" },
-                                    { value: "No", label: "No" },
-                                  ]}
-                                  label="Was the poisoning intentional?"
-                                />
-                      )}
-                    </>
-                  )}
-              </div>
-            );
-          })}
-              <LabelledCheckbox
-                      name="other"
-                      label="Other"
-                    />
+  const shouldRenderBlock = shouldRenderCheckbox || shouldRenderExtras;
 
-                    {showOther && (
-                      <TextInputField 
-                        id="otherSymptom"
-                        label="Specify other symptom"
-                        name="otherSymptom"
-                        placeholder="Provide details of the symptom"
-                        sx={{width: "100%", marginTop: "1ch"}}
-                        />)}
-          <h3>Trauma/Injury History</h3>
-          <RadioGroupInput
-            row
-            name="wasInjured"
-            options={[
-              { value: "Yes", label: "Yes" },
-              { value: "No", label: "No" },
-            ]}
-            label="Was the patient injured?"
+  return shouldRenderBlock ? (
+    <div
+      key={typedKey}
+      style={{
+        border: "1px solid #e0e0e0",
+        borderRadius: "8px",
+        padding: "16px",
+        marginBottom: "16px",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      {shouldRenderCheckbox && (
+        <LabelledCheckbox
+          name={symptomList[typedKey].name}
+          label={symptomList[typedKey].label}
+        />
+      )}
+
+      {shouldRenderExtras && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            marginTop: "8px",
+          }}
+        >
+          <UnitInputField
+            id={`${typedKey}Duration`}
+            name={`${typedKey}Duration`}
+            unitName={`${typedKey}DurationUnit`}
+            label="Duration"
+            unitOptions={durationOptions}
+            placeholder="e.g. 7"
+            inputIcon={<IoTimeOutline />}
           />
-          {showTraumaFields && (
-            <>
-              <FormFieldContainer direction="row">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker
-                    name="timeOfInjury"
-                    label="Select Date/Time of Injury"
-                    onChange={(newValue: any) => {
-                      formValues["timeOfInjury"] = newValue;
-                    }}
-                    sx={{ mb: "1ch", mt: "1ch" }}
-                  />
-                </LocalizationProvider>
-              </FormFieldContainer>
 
-              <RadioGroupInput
-                row
-                name="lostConsciousness"
-                options={[
-                  { value: "Yes", label: "Yes" },
-                  { value: "No", label: "No" },
-                  { value: "Unknown", label: "Unknown" },
-                ]}
-                label="Did the patient lose consciouness on the scene?"
-              />
-              <RadioGroupInput
-                row
-                name="occupationalInjury"
-                options={[
-                  { value: "Yes", label: "Yes" },
-                  { value: "No", label: "No" },
-                  { value: "Unknown", label: "Unknown" },
-                ]}
-                label="Was this injury work-related?"
-              />
-              <div>
-                <h4 style={{ marginBottom: "1ch" }}>Mechanism of Injury</h4>
-                {Object.keys(injuryMechanismList).map((key) => {
-                  const mechanism =
-                    injuryMechanismList[
-                      key as keyof typeof injuryMechanismList
-                    ];
-                  return (
-                    <LabelledCheckbox
-                      key={key}
-                      name={mechanism.name}
-                      label={mechanism.label}
-                    />
-                  );
-                })}
-                <div style={{ color: "red", fontSize: "0.875rem" }}>
-                  <ErrorMessage name={"injuryMechanism"} />
-                </div>
-                {showAssaultOptions && (
-                  <div style={{ marginLeft: "1em" }}>
-                    <RadioGroupInput
-                      name="assaultType"
-                      label="Type of assault"
-                      options={injuryMechanismList.assault.subOptions}
-                      row={true}
-                    />
-                    <TextInputField
-                      id="assaultComment"
-                      label="Assault comments"
-                      name="assaultComment"
-                      placeholder="add details about the assault"
-                      multiline
-                      rows={3}
-                    />
-                    <div style={{ color: "red", fontSize: "0.875rem" }}>
-                      <ErrorMessage name={"assaultComment"} />
-                    </div>
-                  </div>
-                )}
-
-                {Object.keys(selectedMechanism).map((mechanism: string) =>
-                  selectedMechanism[mechanism] && mechanism !== "assault" ? (
-                    <>
-                      <TextInputField
-                        key={`comment-${mechanism}`}
-                        id={`${mechanism}-comment`}
-                        label={`${mechanism} comments`}
-                        name={`${mechanism}Comment`}
-                        placeholder={`Add details about the ${mechanism.toLowerCase()}`}
-                        multiline
-                        rows={3}
-                      />
-                    </>
-                  ) : null
-                )}
-              </div>
-            </>
+          {symptom.requiresSite && typedKey !== "poisoning" && (
+            <TextInputField
+              id={`${symptom.name}_site`}
+              label="Specify Site"
+              name={`${symptom.name}_site`}
+              placeholder="Specify the site"
+            />
           )}
+
+          {typedKey === "poisoning" && (
+            <RadioGroupInput
+              row
+              name="poisoningIntentional"
+              options={[
+                { value: "Yes", label: "Yes" },
+                { value: "No", label: "No" },
+              ]}
+              label="Was the poisoning intentional?"
+            />
+          )}
+        </div>
+      )}
+    </div>
+  ) : null;
+})}
+
+<div
+  style={{
+    border: "1px dashed #aaa",
+    borderRadius: "8px",
+    padding: "16px",
+    marginTop: "24px",
+  }}
+>
+  <LabelledCheckbox name="other" label="Other" />
+
+  {showOther && (
+    <TextInputField
+      id="otherSymptom"
+      label="Specify other symptom"
+      name="otherSymptom"
+      placeholder="Provide details of the symptom"
+      sx={{ width: "100%", marginTop: "12px" }}
+    />
+  )}
+</div>
+
+<h3
+  style={{
+    fontSize: "1.25rem",
+    fontWeight: 600,
+    marginBottom: "1rem",
+    borderBottom: "2px solid #ccc",
+    paddingBottom: "0.5rem",
+    marginTop: "2rem",
+  }}
+>
+  Trauma/Injury History
+</h3>
+
+<RadioGroupInput
+  row
+  name="wasInjured"
+  options={[
+    { value: "Yes", label: "Yes" },
+    { value: "No", label: "No" },
+  ]}
+  label="Was the patient injured?"
+/>
+
+{showTraumaFields && (
+  <div
+    style={{
+      border: "1px solid #e0e0e0",
+      borderRadius: "8px",
+      padding: "16px",
+      marginTop: "16px",
+      backgroundColor: "#f9f9f9",
+    }}
+  >
+    <FormFieldContainer direction="row">
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateTimePicker
+          name="timeOfInjury"
+          label="Select Date/Time of Injury"
+          onChange={(newValue: any) => {
+            formValues["timeOfInjury"] = newValue;
+          }}
+          sx={{ mb: "1ch", mt: "1ch", backgroundColor: "white" }}
+        />
+      </LocalizationProvider>
+    </FormFieldContainer>
+
+    <div style={{ marginTop: "1rem" }}>
+      <RadioGroupInput
+        row
+        name="lostConsciousness"
+        options={[
+          { value: "Yes", label: "Yes" },
+          { value: "No", label: "No" },
+          { value: "Unknown", label: "Unknown" },
+        ]}
+        label="Did the patient lose consciousness on the scene?"
+      />
+
+      <RadioGroupInput
+        row
+        name="occupationalInjury"
+        options={[
+          { value: "Yes", label: "Yes" },
+          { value: "No", label: "No" },
+          { value: "Unknown", label: "Unknown" },
+        ]}
+        label="Was this injury work-related?"
+      />
+    </div>
+
+    <div style={{ marginTop: "1.5rem" }}>
+      <h4 style={{ marginBottom: "1ch" }}>Mechanism of Injury</h4>
+      <div style={{backgroundColor:"white", marginBlock:"1rem", padding:"1rem", borderRadius:"8px"}}>
+      {Object.keys(injuryMechanismList).map((key) => {
+        const mechanism = injuryMechanismList[key as keyof typeof injuryMechanismList];
+        return (
+         
+          <LabelledCheckbox
+            key={key}
+            name={mechanism.name}
+            label={mechanism.label}
+          />
+          
+        );
+      })}
+      </div>
+      <div style={{ color: "red", fontSize: "0.875rem" }}>
+        <ErrorMessage name={"injuryMechanism"} />
+      </div>
+
+      {showAssaultOptions && (
+        <div
+          style={{
+            marginTop: "1rem",
+            marginLeft: "1em",
+            padding: "1rem",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            border: "1px dashed #ccc",
+          }}
+        >
+          <RadioGroupInput
+            name="assaultType"
+            label="Type of assault"
+            options={injuryMechanismList.assault.subOptions}
+            row={true}
+          />
+          <TextInputField
+            id="assaultComment"
+            label="Assault comments"
+            name="assaultComment"
+            placeholder="Add details about the assault"
+            multiline
+            rows={3}
+          />
+          <div style={{ color: "red", fontSize: "0.875rem" }}>
+            <ErrorMessage name={"assaultComment"} />
+          </div>
+        </div>
+      )}
+
+      {Object.keys(selectedMechanism).map((mechanism: string) =>
+        selectedMechanism[mechanism] && mechanism !== "assault" ? (
+          <TextInputField
+            key={`comment-${mechanism}`}
+            id={`${mechanism}-comment`}
+            label={`${mechanism} comments`}
+            name={`${mechanism}Comment`}
+            placeholder={`Add details about the ${mechanism.toLowerCase()}`}
+            multiline
+            rows={3}
+            sx={{ mt: "1rem" }}
+          />
+        ) : null
+      )}
+    </div>
+  </div>
+)}
         </WrapperBox>
-      </FormFieldContainer>
+
       <TextInputField
   id={symptomList.events.name}
   label={symptomList.events.label}
