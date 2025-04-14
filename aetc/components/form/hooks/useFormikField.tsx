@@ -39,8 +39,6 @@ export const useFormikField = <T extends FormikValues = FormikValues>(
     setFieldValue(fieldName as string, value);
   };
 
-  // console.log({ errors });
-
   return {
     value,
     errorMessage,

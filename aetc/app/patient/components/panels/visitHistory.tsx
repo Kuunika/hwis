@@ -1,4 +1,4 @@
-import { Paper, Typography } from "@mui/material";
+import { Paper, Typography, Box } from "@mui/material";
 import { VisitTable } from "../visits";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
@@ -10,8 +10,27 @@ import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { useVisitDates } from "@/contexts/visitDatesContext";
+// import { useExposureAssessment } from "../clinicalNotes/ExposureAssessment";
+// import { useDisabilityAssessment } from "../clinicalNotes/DisabilityAssessment";
+// import { useCirculationAssessment } from "../clinicalNotes/CirculationAssessment";
+import { ClinicalNotes } from "./clinicalNotes";
+import { AirwayAssessment } from "../clinicalNotes/airwayAssement";
+import { BreathingAssessment } from "../clinicalNotes/breathingAssement";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useInvestigations } from "../clinicalNotes/Investigations";
+import { useDifferentialDiagnosis } from "../clinicalNotes/DifferentialDiagnosis";
+import { usePatientManagementPlan } from "../clinicalNotes/PatientManagmentPlan";
+import { GeneralInformation } from "../clinicalNotes/generalInformation";
+import { HeadAndNeck } from "../clinicalNotes/headAndNeck";
+import { ChestAssessment } from "../clinicalNotes/chestAssement";
+import { AbdomenAndPelvisAssessment } from "../clinicalNotes/abdomenAndPelvisAssessment";
+//import { NeurogicalExamination } from "../clinicalNotes/neurogicalExamination";
 
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+import { CirculationAssessment } from "../clinicalNotes/CirculationAssessment";
+import { DisabilityAssessment } from "../clinicalNotes/DisabilityAssessment";
+import { ExposureAssessment } from "../clinicalNotes/ExposureAssessment";
+import { useFinalDiagnosis } from "../clinicalNotes/FinalDiagnosis";
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -46,10 +65,19 @@ export const VisitHistory = () => {
   const { patientId }: { patientId: any } = getActivePatientDetails();
   const { data: patientHistory, isLoading: historyLoading } =
     getPatientsEncounters(patientId);
-
   const { visitDate } = useVisitDates();
   const [filteredEncounters, setFilteredEncounter] = useState([]);
   const [expanded, setExpanded] = useState("panel1");
+  const [expandedAccordion, setExpandedAccordion] = useState<string | false>(
+    false
+  );
+
+  const investigationsMessage = useInvestigations(filteredEncounters);
+  const differentialDiagnosisMessage =
+    useDifferentialDiagnosis(filteredEncounters);
+  const patientManagementPlanMessage =
+    usePatientManagementPlan(filteredEncounters);
+  const finalDiagnosisMessage = useFinalDiagnosis(filteredEncounters);
 
   // Filter encounters when patientHistory or visitDate changes
   useEffect(() => {
@@ -60,6 +88,11 @@ export const VisitHistory = () => {
       setFilteredEncounter(filtered);
     }
   }, [patientHistory, visitDate, historyLoading]);
+
+  // Loading state check must come AFTER all hooks
+  if (historyLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
 
   // Get the most recent observations for each concept
   const processObservations = (obs: any) => {
@@ -126,158 +159,162 @@ export const VisitHistory = () => {
       title: "Financing",
       data: getEncountersByType(encounters.FINANCING),
     },
-    panel6: {
-      title: "Presenting Complaints",
-      data: getEncountersByType(encounters.PRESENTING_COMPLAINTS),
-    },
+    // panel6: {
+    //   title: "Presenting Complaints",
+    //   data: getEncountersByType(encounters.PRESENTING_COMPLAINTS),
+    // },
     panel7: {
       title: "Vitals",
       data: getEncountersByType(encounters.VITALS),
     },
-    panel8: {
-      title: "Airway Assessment",
-      data: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
-    },
-    panel9: {
-      title: "Blood Circulation",
-      data: getEncountersByType(encounters.BLOOD_CIRCULATION),
-    },
-    panel10: {
-      title: "Disability Assessment",
-      data: getEncountersByType(encounters.DISABILITY_ASSESSMENT),
-    },
-    panel11: {
-      title: "Persistent Pain",
-      data: getEncountersByType(encounters.PERSISTENT_PAIN),
-    },
-    panel12: {
-      title: "Triage Result",
-      data: getEncountersByType(encounters.TRIAGE_RESULT),
-    },
-    panel13: {
-      title: "Chest Assessment",
-      data: getEncountersByType(encounters.CHEST_ASSESSMENT),
-    },
-    panel14: {
-      title: "Abdomen and Pelvis Assessment",
-      data: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
-    },
-    panel15: {
-      title: "Extremities Assessment",
-      data: getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
-    },
-    panel16: {
-      title: "Neurological Examination",
-      data: getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
-    },
-    panel17: {
-      title: "General Information",
-      data: getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
-    },
-    panel18: {
-      title: "Head and Neck Assessment",
-      data: getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
-    },
-    panel19: {
-      title: "Medical History",
-      data: getEncountersByType(encounters.MEDICAL_HISTORY),
-    },
-    panel20: {
-      title: "Obstetric History",
-      data: getEncountersByType(encounters.OBSTETRIC_HISTORY),
-    },
-    panel21: {
-      title: "Prescriptions",
-      data: getEncountersByType(encounters.PRESCRIPTIONS),
-    },
-    panel22: {
-      title: "Allergies",
-      data: getEncountersByType(encounters.ALLERGIES),
-    },
-    panel23: {
-      title: "Diagnosis",
-      data: getEncountersByType(encounters.DIAGNOSIS),
-    },
-    panel24: {
-      title: "Surgical History",
-      data: getEncountersByType(encounters.SURGICAL_HISTORY),
-    },
-    panel25: {
-      title: "Patient Admissions",
-      data: getEncountersByType(encounters.PATIENT_ADMISSIONS),
-    },
-    panel26: {
-      title: "Summary Assessment",
-      data: getEncountersByType(encounters.SUMMARY_ASSESSMENT),
-    },
-    panel27: {
-      title: "CPR",
-      data: getEncountersByType(encounters.CPR),
-    },
-    panel28: {
-      title: "Bedside Test",
-      data: getEncountersByType(encounters.BED_SIDE_TEST),
-    },
-    panel29: {
-      title: "Discharge Patient",
-      data: getEncountersByType(encounters.DISCHARGE_PATIENT),
-    },
-    panel30: {
-      title: "Treatment",
-      data: getEncountersByType(encounters.TREATMENT),
-    },
-    panel31: {
-      title: "Non-Pharmacological Treatment",
-      data: getEncountersByType(encounters.NON_PHARMACOLOGICAL),
-    },
-    panel32: {
-      title: "Patient Care Area",
-      data: getEncountersByType(encounters.PATIENT_CARE_AREA),
-    },
-    panel33: {
-      title: "Dispensing",
-      data: getEncountersByType(encounters.DISPENSING),
-    },
-    panel34: {
-      title: "Family Medical History",
-      data: getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY),
-    },
-    panel35: {
-      title: "Review of Systems",
-      data: getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
-    },
-    panel36: {
-      title: "Airway and Breathing",
-      data: getEncountersByType(encounters.AIRWAY_BREATHING),
-    },
-    panel37: {
-      title: "Consciousness",
-      data: getEncountersByType(encounters.CONSCIOUSNESS),
-    },
-    panel38: {
-      title: "Clinical Notes",
-      data: getEncountersByType(encounters.CLINICAL_NOTES),
-    },
-    panel39: {
-      title: "Procedures Done",
-      data: getEncountersByType(encounters.PROCEDURES_DONE),
-    },
-    panel40: {
-      title: "Nursing Notes",
-      data: getEncountersByType(encounters.NURSING_NOTES),
-    },
-    panel41: {
-      title: "Diagnosis",
-      data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
-    },
-    panel42: {
-      title: "Circulation Assessment",
-      data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
-    },
-    panel43: {
-      title: "Nursing Care Notes",
-      data: getEncountersByType(encounters.NURSING_CARE_NOTES),
-    },
+    // panel8:{
+    //   title:"Differential",
+    //   data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS)
+    // },
+    // panel8: {
+    //   title: "Airway Assessment",
+    //   data: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+    // },
+    // panel9: {
+    //   title: "Blood Circulation",
+    //   data: getEncountersByType(encounters.BLOOD_CIRCULATION),
+    // },
+    // panel10: {
+    //   title: "Disability Assessment",
+    //   data: getEncountersByType(encounters.DISABILITY_ASSESSMENT),
+    // },
+    // panel11: {
+    //   title: "Persistent Pain",
+    //   data: getEncountersByType(encounters.PERSISTENT_PAIN),
+    // },
+    // panel12: {
+    //   title: "Triage Result",
+    //   data: getEncountersByType(encounters.TRIAGE_RESULT),
+    // },
+    // panel13: {
+    //   title: "Chest Assessment",
+    //   data: getEncountersByType(encounters.CHEST_ASSESSMENT),
+    // },
+    // panel14: {
+    //   title: "Abdomen and Pelvis Assessment",
+    //   data: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
+    // },
+    // panel15: {
+    //   title: "Extremities Assessment",
+    //   data: getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
+    // },
+    // panel16: {
+    //   title: "Neurological Examination",
+    //   data: getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
+    // },
+    // panel17: {
+    //   title: "General Information",
+    //   data: getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
+    // },
+    // panel18: {
+    //   title: "Head and Neck Assessment",
+    //   data: getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
+    // },
+    // panel19: {
+    //   title: "Medical History",
+    //   data: getEncountersByType(encounters.MEDICAL_HISTORY),
+    // },
+    // panel20: {
+    //   title: "Obstetric History",
+    //   data: getEncountersByType(encounters.OBSTETRIC_HISTORY),
+    // },
+    // panel21: {
+    //   title: "Prescriptions",
+    //   data: getEncountersByType(encounters.PRESCRIPTIONS),
+    // },
+    // panel22: {
+    //   title: "Allergies",
+    //   data: getEncountersByType(encounters.ALLERGIES),
+    // },
+    // panel23: {
+    //   title: "Diagnosis",
+    //   data: getEncountersByType(encounters.DIAGNOSIS),
+    // },
+    // panel24: {
+    //   title: "Surgical History",
+    //   data: getEncountersByType(encounters.SURGICAL_HISTORY),
+    // },
+    // panel25: {
+    //   title: "Patient Admissions",
+    //   data: getEncountersByType(encounters.PATIENT_ADMISSIONS),
+    // },
+    // panel26: {
+    //   title: "Summary Assessment",
+    //   data: getEncountersByType(encounters.SUMMARY_ASSESSMENT),
+    // },
+    // panel27: {
+    //   title: "CPR",
+    //   data: getEncountersByType(encounters.CPR),
+    // },
+    // panel28: {
+    //   title: "Bedside Test",
+    //   data: getEncountersByType(encounters.BED_SIDE_TEST),
+    // },
+    // panel29: {
+    //   title: "Discharge Patient",
+    //   data: getEncountersByType(encounters.DISCHARGE_PATIENT),
+    // },
+    // panel30: {
+    //   title: "Treatment",
+    //   data: getEncountersByType(encounters.TREATMENT),
+    // },
+    // panel31: {
+    //   title: "Non-Pharmacological Treatment",
+    //   data: getEncountersByType(encounters.NON_PHARMACOLOGICAL),
+    // },
+    // panel32: {
+    //   title: "Patient Care Area",
+    //   data: getEncountersByType(encounters.PATIENT_CARE_AREA),
+    // },
+    // panel33: {
+    //   title: "Dispensing",
+    //   data: getEncountersByType(encounters.DISPENSING),
+    // },
+    // panel34: {
+    //   title: "Family Medical History",
+    //   data: getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY),
+    // },
+    // panel35: {
+    //   title: "Review of Systems",
+    //   data: getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
+    // },
+    // panel36: {
+    //   title: "Airway and Breathing",
+    //   data: getEncountersByType(encounters.AIRWAY_BREATHING),
+    // },
+    // panel37: {
+    //   title: "Consciousness",
+    //   data: getEncountersByType(encounters.CONSCIOUSNESS),
+    // },
+    // panel38: {
+    //   title: "Clinical Notes",
+    //   data: getEncountersByType(encounters.CLINICAL_NOTES),
+    // },
+    // panel39: {
+    //   title: "Procedures Done",
+    //   data: getEncountersByType(encounters.PROCEDURES_DONE),
+    // },
+    // panel40: {
+    //   title: "Nursing Notes",
+    //   data: getEncountersByType(encounters.NURSING_NOTES),
+    // },
+    // panel41: {
+    //   title: "Outpatient Diagnosis",
+    //   data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+    // },
+    // panel42: {
+    //   title: "Circulation Assessment",
+    //   data: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+    // },
+    // panel43: {
+    //   title: "Exposure Assessment",
+    //   data: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+    // },
   };
 
   // Handle accordion expansion
@@ -285,21 +322,12 @@ export const VisitHistory = () => {
     setExpanded(isExpanded ? panel : false);
   };
 
+  const handleAccordionChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpandedAccordion(isExpanded ? panel : false);
+    };
   return (
     <>
-      <style>
-        {`
-         .noData {
-            border: #a3a1a1 solid 1px;
-            border-style: dashed;
-            border-radius: 5px;
-            padding: 10px;
-            text-align: center;
-            margin: 10px 10px 10px 0;
-        }
-        `}
-      </style>
-
       <Paper style={{ marginTop: "10px" }}>
         {Object.entries(encounterData).map(
           ([panelId, { title, data }]) =>
@@ -320,13 +348,255 @@ export const VisitHistory = () => {
                     {title}
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
-                  <VisitTable data={data} />
-                </AccordionDetails>
               </Accordion>
             )
         )}
       </Paper>
+
+      <Accordion
+        expanded={expandedAccordion === "primary-assessment"}
+        onChange={handleAccordionChange("primary-assessment")}
+        sx={{ backgroundColor: "white", marginTop: "" }}
+      >
+        <AccordionSummary
+          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+          aria-controls="primary-assessment-content"
+          id="primary-assessment-header"
+        >
+          <Typography sx={{ fontWeight: 700 }}>Primary Assessment</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <AirwayAssessment />
+          <BreathingAssessment />
+          <CirculationAssessment />
+          <DisabilityAssessment />
+          <ExposureAssessment />
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        expanded={expandedAccordion === "breathing-assessment"}
+        onChange={handleAccordionChange("breathing-assessment")}
+        sx={{
+          backgroundColor: "white",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+          aria-controls="breathing-assessment-content"
+          id="breathing-assessment-header"
+        >
+          <Typography sx={{ fontWeight: 700 }}>Secondary Assessment</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <GeneralInformation />
+          <HeadAndNeck />
+          <ChestAssessment />
+          <AbdomenAndPelvisAssessment />
+          {/* <NeurogicalExamination/> */}
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Differetiatial */}
+
+      <Accordion
+        expanded={expandedAccordion === "differential-diagnosis-notes"}
+        onChange={handleAccordionChange("differential-diagnosis-notes")}
+        sx={{
+          backgroundColor: "white",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+          aria-controls="differential-diagnosis-content"
+          id="differential-diagnosis-header"
+        >
+          <Typography sx={{ fontWeight: 700 }}>
+            Differential Diagnosis
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box sx={{ p: 2 }}>
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{ fontWeight: "700" }}
+            >
+              {" "}
+              Differential Diagnosis
+            </Typography>
+            {differentialDiagnosisMessage ? (
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "primary.main", fontWeight: "700" }}
+                >
+                  {differentialDiagnosisMessage.split("\n")[0]}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
+                >
+                  {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                </Typography>
+              </Box>
+            ) : (
+              <Typography
+                variant="body2"
+                sx={{ fontStyle: "italic", color: "secondary.main" }}
+              >
+                No Differential Diagnosis Data available.
+              </Typography>
+            )}
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        expanded={expandedAccordion === "investigations-notes"}
+        onChange={handleAccordionChange("investigations-notes")}
+        sx={{
+          backgroundColor: "white",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+          aria-controls="investigations-content"
+          id="investigations-header"
+        >
+          <Typography sx={{ fontWeight: 700 }}>Investigations</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box sx={{ p: 2 }}>
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{ fontWeight: "700" }}
+            >
+              Investigations
+            </Typography>
+            {investigationsMessage ? (
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "primary.main", fontWeight: "700" }}
+                >
+                  {investigationsMessage.split("\n")[0]}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
+                >
+                  {investigationsMessage.split("\n").slice(1).join("\n")}
+                </Typography>
+              </Box>
+            ) : (
+              <Typography
+                variant="body2"
+                sx={{ fontStyle: "italic", color: "secondary.main" }}
+              >
+                No Investigations Data available.
+              </Typography>
+            )}
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Final Diagnosis */}
+
+      <Accordion
+        expanded={expandedAccordion === "final-diagnosis-notes"}
+        onChange={handleAccordionChange("final-diagnosis-notes")}
+        sx={{
+          backgroundColor: "white",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+          aria-controls="final-diagnosis-content"
+          id="final-diagnosis-header"
+        >
+          <Typography sx={{ fontWeight: 700 }}>Final Diagnosis</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box sx={{ p: 2 }}>
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{ fontWeight: "700" }}
+            >
+              {" "}
+              Final Diagnosis
+            </Typography>
+            {finalDiagnosisMessage ? (
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "primary.main", fontWeight: "700" }}
+                >
+                  {finalDiagnosisMessage.split("\n")[0]}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
+                >
+                  {finalDiagnosisMessage.split("\n").slice(1).join("\n")}
+                </Typography>
+              </Box>
+            ) : (
+              <Typography
+                variant="body2"
+                sx={{ fontStyle: "italic", color: "secondary.main" }}
+              >
+                No Final Diagnosis Data available.
+              </Typography>
+            )}
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        expanded={expandedAccordion === "patient-management-plan-notes"}
+        onChange={handleAccordionChange("patient-management-plan-notes")}
+        sx={{
+          backgroundColor: "white",
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+          aria-controls="patient-management-plan-content"
+          id="patient-management-plan-header"
+        >
+          <Typography sx={{ fontWeight: 700 }}>
+            Patient Management Plan
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {patientManagementPlanMessage && (
+            <Box sx={{ mb: 3 }}>
+              {patientManagementPlanMessage.split("\n").map((line, index) => {
+                const isHeader =
+                  /^(Non-Pharmacological Management Plan recorded on|Patient Care Area recorded on|Medication recorded on)/.test(
+                    line.trim()
+                  );
+                return (
+                  <Typography
+                    key={index}
+                    variant="body2"
+                    sx={{
+                      color: isHeader ? "primary.main" : "text.primary",
+                      fontWeight: isHeader ? "700" : "normal",
+                      whiteSpace: "pre-line",
+                    }}
+                  >
+                    {line}
+                  </Typography>
+                );
+              })}
+            </Box>
+          )}
+        </AccordionDetails>
+      </Accordion>
     </>
   );
 };

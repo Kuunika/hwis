@@ -26,6 +26,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getDateTime } from "@/helpers/dateTime";
 import dayjs from "dayjs";
 import { Field, getIn } from "formik";
+import SocialHistoryPanel from "../../medicalInpatient-/components/socialHistory";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -217,6 +218,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   }>({});
   const [genitourinaryOther, setGenitourinaryOther] = useState(false);
   const [updateSocial, setUpdateSocial] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const generateValidationSchema = (
     symptomList: Record<string, any>
@@ -655,18 +657,16 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
           )}
         </WrapperBox>
       </FormFieldContainer>
-      <FormFieldContainer direction="row">
-
-<TextInputField
+      <TextInputField
   id={symptomList.events.name}
   label={symptomList.events.label}
   name={symptomList.events.name}
   placeholder="e.g., Started with mild abdominal pain 3 days ago..."
   multiline
   rows={4}
-  sx={{ width: "70%" }}
+  sx={{ width: "100%" }}
 />
-</FormFieldContainer>
+
       <FormFieldContainer direction="row">
         <SearchComboBox
           name="Gastrointenstinal_history"
@@ -724,9 +724,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
         />
         {updateSocial && (
           <>
-            <h3 style={{ marginTop: "2ch", marginBottom: "1ch" }}>
-              Social History
-            </h3>
+            <SocialHistoryPanel showForPrinting={showAll}toggleShow={setShowAll} />
             <RadioGroupInput
               row={true}
               name="occupation"

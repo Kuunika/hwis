@@ -32,8 +32,8 @@ interface PastSurgicalHistoryPanelProps {
 
 
     const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type.name === "SOCIAL HISTORY");
- 
-  useEffect(() => {
+  console.log("sampleHistoryEncounters", sampleHistoryEncounters)
+    useEffect(() => {
     if (!historyLoading && sampleHistoryEncounters && sampleHistoryEncounters.length > 0) {
         const socialObs = sampleHistoryEncounters[0].obs;
         const socialObsArray = Object.values(socialObs);
