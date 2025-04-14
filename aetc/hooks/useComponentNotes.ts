@@ -877,11 +877,11 @@ const createAdmissionNoteText = (admission: {
     const parts: string[] = [];
 
     if (admission.healthCenter) {
-        parts.push(`Admitted at ${admission.healthCenter}`);
+        parts.push(`The patient was admitted at ${admission.healthCenter}`);
     }
 
     if (admission.admissionSection) {
-        parts.push(`Ward: ${admission.admissionSection}`);
+        parts.push(`Admission section/ward: ${admission.admissionSection}`);
     }
 
     if (admission.admissionDate) {
