@@ -134,10 +134,9 @@ export const VisitHistory = () => {
     return encounter ? processObservations(encounter.obs || []) : [];
   };
 
-
-    if (historyLoading) {
-      return <ProfilePanelSkeletonLoader />;
-    }
+  if (historyLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
 
   // Define encounter data for each accordion panel
   const encounterData = {

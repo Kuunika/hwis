@@ -322,6 +322,15 @@ export const ChestForm = ({ onSubmit }: Prop) => {
       // },
     ];
 
+    // console.log(
+    //   "formValues[form.abnormalities.name]",
+    //   formValues[form.abnormalities.name]
+    // );
+    // console.log(
+    //   "formValues[form.chestWall.name]",
+    //   formValues[form.chestWallAbnormalities.name]
+    // );
+
     const abnormalitiesObs =
       formValues &&
       typeof formValues === "object" &&
@@ -332,15 +341,19 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         obsDatetime,
       }));
 
-    const chestWallAbnormalitiesObs = formValues[
-      form.chestWallAbnormalities.name
-    ].map((opt: any) => {
-      return {
-        concept: form.chestWallAbnormalities.name,
-        value: opt.id,
-        obsDatetime,
-      };
-    });
+    // const chestWallAbnormalitiesObs =
+    //   formValues &&
+    //   typeof formValues === "object" &&
+    //   Array.isArray(formValues[form.chestWallAbnormalities.name]) &&
+    //   formValues[form.chestWallAbnormalities.name].map((opt: any) => {
+    //     return {
+    //       concept: form.chestWallAbnormalities.name,
+    //       value: opt.id,
+    //       obsDatetime,
+    //     };
+    //   });
+
+    // console.log({ chestWallAbnormalitiesObs, abnormalitiesObs });
 
     delete formValues[form.abnormalities.name];
     delete formValues[form.chestWallAbnormalities.name];
@@ -357,8 +370,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     await handleSubmit([
       ...getObservations(formValues, obsDatetime),
       ...obs,
-      ...abnormalitiesObs,
-      ...chestWallAbnormalitiesObs,
+      ...(abnormalitiesObs || []),
+      // ...chestWallAbnormalitiesObs,
     ]);
   };
 
