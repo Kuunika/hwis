@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,8 +13,15 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { FaPlus } from "react-icons/fa6";
-import { checkPatientIfOnWaitingAssessment, useNavigation } from "@/hooks";
+import {
+  checkPatientIfOnWaitingAssessment,
+  getActivePatientDetails,
+  useNavigation,
+} from "@/hooks";
 import { ConsultationContext, ConsultationContextType } from "@/contexts";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { encounters } from "@/constants";
 
 // Define types for menu items
 interface MenuItemConfig {
@@ -39,6 +46,10 @@ interface FlowStarterProps {
 }
 
 const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
+  const [cprDialog, setCprDialog] = useState(false);
+  const { patientId }: { patientId: any } = getActivePatientDetails();
+  const { data: patientHistory, isLoading: historyLoading } =
+    getPatientsEncounters(patientId);
   const { navigateTo } = useNavigation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { isOnList } = checkPatientIfOnWaitingAssessment(patient?.id);
@@ -51,6 +62,36 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
     templateForms: false,
     consultation: false,
   });
+  const [recentDiagnosis, setRecentDiagnosis] = useState<string>("");
+
+  const getEncountersByType = (encounterTypeUuid: any) => {
+    const encounter: any = patientHistory?.find(
+      (d: any) => d?.encounter_type?.uuid === encounterTypeUuid
+    );
+    if (!encounter) return [];
+    const latestObsMap = new Map();
+    const obs = encounter.obs || [];
+    // Find the most recent observation for each concept_id
+    obs.forEach((observation: any) => {
+      const { concept_id, obs_datetime } = observation;
+      const currentLatest = latestObsMap.get(concept_id);
+
+      if (
+        !currentLatest ||
+        new Date(obs_datetime) > new Date(currentLatest.obs_datetime)
+      ) {
+        latestObsMap.set(concept_id, observation);
+      }
+    });
+    const data = Array.from(latestObsMap.values());
+    setRecentDiagnosis(data[0].value);
+  };
+
+  useEffect(() => {
+    if (!historyLoading && patientHistory) {
+      getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS);
+    }
+  }, [historyLoading, patientHistory]);
 
   // Handle button click to open menu
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -139,6 +180,53 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         `}
       </style>
 
+      <Button
+        sx={{
+          backgroundColor: "#FECDCA",
+          color: "#B42318",
+          borderRadius: "9999px",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          fontSize: "14px",
+          marginRight: "10px",
+          flexGrow: 1,
+          textTransform: "none",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          maxWidth: "calc(100% - 40px)", // Ensure text doesn't overlap with dropdown
+          "&:hover": {
+            backgroundColor: "# FFA6A0",
+          },
+        }}
+      >
+        <span style={{ fontWeight: "bold", marginRight: "5px" }}>
+          Final Diagnosis:{" "}
+        </span>{" "}
+        {recentDiagnosis}
+      </Button>
+      <Button
+        onClick={() => setCprDialog(true)}
+        sx={{
+          backgroundColor: "rgb(221, 238, 221)",
+          color: "rgb(0, 70, 0)",
+          borderRadius: "9999px",
+          border: "1px solid currentColor",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          fontSize: "14px",
+          marginRight: "10px",
+          flexGrow: 1,
+          textTransform: "none",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          maxWidth: "calc(100% - 40px)", // Ensure text doesn't overlap with dropdown
+          "&:hover": {
+            backgroundColor: "rgb(197, 231, 197)",
+          },
+        }}
+      >
+        Start CPR
+      </Button>
       {/* Assessment Button Group */}
       <ButtonGroup
         variant="contained"
@@ -225,6 +313,12 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           ))}
         </List>
       </Menu>
+      <CPRDialogForm
+        open={cprDialog}
+        onClose={() => {
+          setCprDialog(false);
+        }}
+      />
     </Box>
   );
 };
