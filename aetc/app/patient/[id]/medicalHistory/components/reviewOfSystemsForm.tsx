@@ -652,7 +652,7 @@ const displayedSymptoms = showAllSymptoms ? visibleSymptoms : visibleSymptoms.sl
         marginTop: "24px",
       }}
     >
-      <LabelledCheckbox name="other" label="Other" />
+      <LabelledCheckbox name="other" label="Other symptom" />
 
       {showOther && (
         <TextInputField

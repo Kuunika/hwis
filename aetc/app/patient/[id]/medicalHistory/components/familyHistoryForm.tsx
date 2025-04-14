@@ -43,7 +43,7 @@ const familyHistoryFormConfig = {
   epilepsy: { name: "epilepsy", label: "Epilepsy" },
   cancer: { name: "cancer", label: "Cancer" },
   tuberculosis: { name: "tuberculosis", label: "Tuberculosis" },
-  other: { name: "other", label: "Other (Specify)" },
+  other: { name: "other", label: "Other Condition" },
 };
 
 const ErrorMessage = ({ name }: { name: string }) => (
