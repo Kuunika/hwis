@@ -26,6 +26,7 @@ import { ChestAssessment } from "../clinicalNotes/chestAssement";
 import { AbdomenAndPelvisAssessment } from "../clinicalNotes/abdomenAndPelvisAssessment";
 //import { NeurogicalExamination } from "../clinicalNotes/neurogicalExamination";
 
+
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
 import { CirculationAssessment } from "../clinicalNotes/CirculationAssessment";
 import { DisabilityAssessment } from "../clinicalNotes/DisabilityAssessment";
@@ -61,6 +62,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
+
 export const VisitHistory = () => {
   const { patientId }: { patientId: any } = getActivePatientDetails();
   const { data: patientHistory, isLoading: historyLoading } =
@@ -68,16 +70,14 @@ export const VisitHistory = () => {
   const { visitDate } = useVisitDates();
   const [filteredEncounters, setFilteredEncounter] = useState([]);
   const [expanded, setExpanded] = useState("panel1");
-  const [expandedAccordion, setExpandedAccordion] = useState<string | false>(
-    false
-  );
-
+  const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
+  
+ 
   const investigationsMessage = useInvestigations(filteredEncounters);
-  const differentialDiagnosisMessage =
-    useDifferentialDiagnosis(filteredEncounters);
-  const patientManagementPlanMessage =
-    usePatientManagementPlan(filteredEncounters);
+  const differentialDiagnosisMessage = useDifferentialDiagnosis(filteredEncounters);
+  const patientManagementPlanMessage = usePatientManagementPlan(filteredEncounters);
   const finalDiagnosisMessage = useFinalDiagnosis(filteredEncounters);
+
 
   // Filter encounters when patientHistory or visitDate changes
   useEffect(() => {
@@ -89,10 +89,11 @@ export const VisitHistory = () => {
     }
   }, [patientHistory, visitDate, historyLoading]);
 
-  // Loading state check must come AFTER all hooks
-  if (historyLoading) {
-    return <ProfilePanelSkeletonLoader />;
-  }
+    // Loading state check must come AFTER all hooks
+    if (historyLoading) {
+      return <ProfilePanelSkeletonLoader />;
+    }
+  
 
   // Get the most recent observations for each concept
   const processObservations = (obs: any) => {
@@ -315,288 +316,242 @@ export const VisitHistory = () => {
     //   title: "Exposure Assessment",
     //   data: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
     // },
-  };
+  } 
 
   // Handle accordion expansion
   const handleChange = (panel: any) => (_: any, isExpanded: any) => {
     setExpanded(isExpanded ? panel : false);
   };
 
-  const handleAccordionChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpandedAccordion(isExpanded ? panel : false);
-    };
+  const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedAccordion(isExpanded ? panel : false);
+};
   return (
     <>
-      <Paper style={{ marginTop: "10px" }}>
-        {Object.entries(encounterData).map(
-          ([panelId, { title, data }]) =>
-            data.length > 0 && (
-              <Accordion
-                key={panelId}
-                expanded={expanded === panelId}
-                onChange={handleChange(panelId)}
-              >
+        <Paper style={{ marginTop: "10px" }}>
+            {Object.entries(encounterData).map(
+              ([panelId, { title, data, }]) =>
+                data.length > 0 && (
+                    <Accordion
+                     key={panelId} 
+                     expanded={expanded === panelId} 
+                     onChange={handleChange(panelId)}
+                     >
+                        <AccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />} aria-controls={`${panelId}-content`} id={`${panelId}-header`}>
+                            <Typography sx={{ fontWeight: 700 }} component="span">{title}</Typography>
+                        </AccordionSummary>
+                    </Accordion>
+                )
+            )}
+        </Paper>
+
+        <Accordion
+            expanded={expandedAccordion === 'primary-assessment'}
+            onChange={handleAccordionChange('primary-assessment')}
+            sx={{ backgroundColor: 'white', marginTop: '' }}
+        >
+            <AccordionSummary
+                expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                aria-controls="primary-assessment-content"
+                id="primary-assessment-header"
+            >
+                <Typography  sx={{ fontWeight: 700 }}>Primary Assessment</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <AirwayAssessment />
+                <BreathingAssessment />
+                <CirculationAssessment/>
+                <DisabilityAssessment/>
+                <ExposureAssessment/>           
+            </AccordionDetails>
+        </Accordion>
+        
+        <Accordion
+                expanded={expandedAccordion === 'breathing-assessment'}
+                onChange={handleAccordionChange('breathing-assessment')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
                 <AccordionSummary
-                  expandIcon={
-                    <ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />
-                  }
-                  aria-controls={`${panelId}-content`}
-                  id={`${panelId}-header`}
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="breathing-assessment-content"
+                    id="breathing-assessment-header"
                 >
-                  <Typography sx={{ fontWeight: 700 }} component="span">
-                    {title}
-                  </Typography>
+                    <Typography  sx={{ fontWeight: 700 }}>
+                        Secondary Assessment
+                    </Typography>
                 </AccordionSummary>
-              </Accordion>
-            )
-        )}
-      </Paper>
+                <AccordionDetails>
+                    <GeneralInformation />
+                    <HeadAndNeck />
+                    <ChestAssessment />
+                    <AbdomenAndPelvisAssessment/>
+                    {/* <NeurogicalExamination/> */}
+                </AccordionDetails>
+            </Accordion>
 
-      <Accordion
-        expanded={expandedAccordion === "primary-assessment"}
-        onChange={handleAccordionChange("primary-assessment")}
-        sx={{ backgroundColor: "white", marginTop: "" }}
-      >
-        <AccordionSummary
-          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-          aria-controls="primary-assessment-content"
-          id="primary-assessment-header"
-        >
-          <Typography sx={{ fontWeight: 700 }}>Primary Assessment</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <AirwayAssessment />
-          <BreathingAssessment />
-          <CirculationAssessment />
-          <DisabilityAssessment />
-          <ExposureAssessment />
-        </AccordionDetails>
-      </Accordion>
+            {/* Differetiatial */}
 
-      <Accordion
-        expanded={expandedAccordion === "breathing-assessment"}
-        onChange={handleAccordionChange("breathing-assessment")}
-        sx={{
-          backgroundColor: "white",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-          aria-controls="breathing-assessment-content"
-          id="breathing-assessment-header"
-        >
-          <Typography sx={{ fontWeight: 700 }}>Secondary Assessment</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <GeneralInformation />
-          <HeadAndNeck />
-          <ChestAssessment />
-          <AbdomenAndPelvisAssessment />
-          {/* <NeurogicalExamination/> */}
-        </AccordionDetails>
-      </Accordion>
-
-      {/* Differetiatial */}
-
-      <Accordion
-        expanded={expandedAccordion === "differential-diagnosis-notes"}
-        onChange={handleAccordionChange("differential-diagnosis-notes")}
-        sx={{
-          backgroundColor: "white",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-          aria-controls="differential-diagnosis-content"
-          id="differential-diagnosis-header"
-        >
-          <Typography sx={{ fontWeight: 700 }}>
-            Differential Diagnosis
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Box sx={{ p: 2 }}>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{ fontWeight: "700" }}
+            <Accordion
+                expanded={expandedAccordion === 'differential-diagnosis-notes'}
+                onChange={handleAccordionChange('differential-diagnosis-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
             >
-              {" "}
-              Differential Diagnosis
-            </Typography>
-            {differentialDiagnosisMessage ? (
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "primary.main", fontWeight: "700" }}
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="differential-diagnosis-content"
+                    id="differential-diagnosis-header"
                 >
-                  {differentialDiagnosisMessage.split("\n")[0]}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
-                >
-                  {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
-                </Typography>
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", color: "secondary.main" }}
-              >
-                No Differential Diagnosis Data available.
-              </Typography>
-            )}
-          </Box>
-        </AccordionDetails>
-      </Accordion>
+                    <Typography  sx={{ fontWeight: 700 }}>
+                    Differential Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Differential Diagnosis</Typography>
+                    {differentialDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
+                                {differentialDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {differentialDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No  Differential Diagnosis Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+            </Accordion>
 
-      <Accordion
-        expanded={expandedAccordion === "investigations-notes"}
-        onChange={handleAccordionChange("investigations-notes")}
-        sx={{
-          backgroundColor: "white",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-          aria-controls="investigations-content"
-          id="investigations-header"
-        >
-          <Typography sx={{ fontWeight: 700 }}>Investigations</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Box sx={{ p: 2 }}>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{ fontWeight: "700" }}
+        <Accordion
+                expanded={expandedAccordion === 'investigations-notes'}
+                onChange={handleAccordionChange('investigations-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
             >
-              Investigations
-            </Typography>
-            {investigationsMessage ? (
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "primary.main", fontWeight: "700" }}
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="investigations-content"
+                    id="investigations-header"
                 >
-                  {investigationsMessage.split("\n")[0]}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
-                >
-                  {investigationsMessage.split("\n").slice(1).join("\n")}
-                </Typography>
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", color: "secondary.main" }}
-              >
-                No Investigations Data available.
-              </Typography>
-            )}
-          </Box>
-        </AccordionDetails>
-      </Accordion>
+                    <Typography  sx={{ fontWeight: 700 }}>
+                        Investigations
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}>Investigations</Typography>
+                    {investigationsMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
+                                {investigationsMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {investigationsMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Investigations Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+            </Accordion>
 
-      {/* Final Diagnosis */}
 
-      <Accordion
-        expanded={expandedAccordion === "final-diagnosis-notes"}
-        onChange={handleAccordionChange("final-diagnosis-notes")}
-        sx={{
-          backgroundColor: "white",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-          aria-controls="final-diagnosis-content"
-          id="final-diagnosis-header"
-        >
-          <Typography sx={{ fontWeight: 700 }}>Final Diagnosis</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Box sx={{ p: 2 }}>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{ fontWeight: "700" }}
+            {/* Final Diagnosis */}
+
+        <Accordion
+                expanded={expandedAccordion === 'final-diagnosis-notes'}
+                onChange={handleAccordionChange('final-diagnosis-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
             >
-              {" "}
-              Final Diagnosis
-            </Typography>
-            {finalDiagnosisMessage ? (
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "primary.main", fontWeight: "700" }}
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="final-diagnosis-content"
+                    id="final-diagnosis-header"
                 >
-                  {finalDiagnosisMessage.split("\n")[0]}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.primary", whiteSpace: "pre-line" }}
-                >
-                  {finalDiagnosisMessage.split("\n").slice(1).join("\n")}
-                </Typography>
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", color: "secondary.main" }}
-              >
-                No Final Diagnosis Data available.
-              </Typography>
-            )}
-          </Box>
-        </AccordionDetails>
-      </Accordion>
+                    <Typography  sx={{ fontWeight: 700 }}>
+                    Final Diagnosis
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "700" }}> Final Diagnosis</Typography>
+                    {finalDiagnosisMessage ? (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "700" }}>
+                                {finalDiagnosisMessage.split("\n")[0]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
+                                {finalDiagnosisMessage.split("\n").slice(1).join("\n")}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>No Final Diagnosis Data available.</Typography>
+                    )}
+                </Box>
+                </AccordionDetails>
+                
+            </Accordion>
 
-      <Accordion
-        expanded={expandedAccordion === "patient-management-plan-notes"}
-        onChange={handleAccordionChange("patient-management-plan-notes")}
-        sx={{
-          backgroundColor: "white",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-          aria-controls="patient-management-plan-content"
-          id="patient-management-plan-header"
-        >
-          <Typography sx={{ fontWeight: 700 }}>
-            Patient Management Plan
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {patientManagementPlanMessage && (
-            <Box sx={{ mb: 3 }}>
-              {patientManagementPlanMessage.split("\n").map((line, index) => {
-                const isHeader =
-                  /^(Non-Pharmacological Management Plan recorded on|Patient Care Area recorded on|Medication recorded on)/.test(
-                    line.trim()
-                  );
-                return (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    sx={{
-                      color: isHeader ? "primary.main" : "text.primary",
-                      fontWeight: isHeader ? "700" : "normal",
-                      whiteSpace: "pre-line",
-                    }}
-                  >
-                    {line}
-                  </Typography>
-                );
-              })}
-            </Box>
-          )}
-        </AccordionDetails>
-      </Accordion>
+
+            <Accordion
+                expanded={expandedAccordion === 'patient-management-plan-notes'}
+                onChange={handleAccordionChange('patient-management-plan-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="patient-management-plan-content"
+                    id="patient-management-plan-header"
+                >
+                    <Typography  sx={{ fontWeight: 700 }}>
+                    Patient Management Plan
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>        
+
+                  {patientManagementPlanMessage && (
+                    <Box sx={{ mb: 3 }}>
+                      {patientManagementPlanMessage
+                        .split("\n")
+                        .map((line, index) => {
+                          const isHeader = /^(Non-Pharmacological Management Plan recorded on|Patient Care Area recorded on|Medication recorded on)/.test(line.trim());
+                          return (
+                            <Typography
+                              key={index}
+                              variant="body2"
+                              sx={{
+                                color: isHeader ? "primary.main" : "text.primary",
+                                fontWeight: isHeader ? "700" : "normal",
+                                whiteSpace: "pre-line",
+                              }}
+                            >
+                              {line}
+                            </Typography>
+                          );
+                        })}
+                    </Box>
+                  )}
+
+
+                </AccordionDetails>
+                
+            </Accordion>
+
     </>
-  );
+);
+
+
 };
+
