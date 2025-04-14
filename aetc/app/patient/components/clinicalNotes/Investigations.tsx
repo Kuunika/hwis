@@ -33,12 +33,20 @@ export const useInvestigations = (pData: any) => {
       return message;
     };
 
+    // const observationDates = fieldsEncounter.obs
+    //   .map((ob: Obs) => ob.obs_datetime)
+    //   .filter(Boolean);
+
+    // const latestDate = observationDates.length > 0
+    //   ? new Date(Math.max(...observationDates.map(d => new Date(d).getTime())))
+    //   : new Date();
+
     const observationDates = fieldsEncounter.obs
       .map((ob: Obs) => ob.obs_datetime)
-      .filter(Boolean);
+      .filter((d: string | null | undefined): d is string => Boolean(d));
 
     const latestDate = observationDates.length > 0
-      ? new Date(Math.max(...observationDates.map(d => new Date(d).getTime())))
+      ? new Date(Math.max(...observationDates.map((d: string) => new Date(d).getTime())))
       : new Date();
 
     const formattedDate = latestDate.toLocaleString();
