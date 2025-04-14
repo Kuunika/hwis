@@ -80,13 +80,13 @@ export const Exposure = ({ onSubmit }: Props) => {
     const obs = [
       {
         concept: concepts.IMAGE_PART_NAME,
-        value: "full body front",
+        value: "full body anterior",
         obsDatetime,
         groupMembers: [...flattenImagesObs(fullImageFront)],
       },
       {
         concept: concepts.IMAGE_PART_NAME,
-        value: "full body back",
+        value: "full body posterior",
         obsDatetime,
         groupMembers: [...flattenImagesObs(fullImageBack)],
       },

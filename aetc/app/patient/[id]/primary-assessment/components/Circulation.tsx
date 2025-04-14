@@ -337,13 +337,11 @@ export const Circulation = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
         obsDatetime,
-        coded: true,
         groupMembers: flattenImagesObs(abdomenOtherImage),
       },
       {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
-        coded: true,
         obsDatetime,
         groupMembers: flattenImagesObs(legImage),
       },
