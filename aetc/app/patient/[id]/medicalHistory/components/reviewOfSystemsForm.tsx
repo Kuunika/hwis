@@ -220,6 +220,20 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [updateSocial, setUpdateSocial] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [showOther, setShowOther] = useState(false);
+  const [showAllSymptoms, setShowAllSymptoms] = useState(false);
+
+const visibleSymptoms = Object.keys(symptomList).filter((key) => {
+  const typedKey = key as keyof typeof symptomList;
+  const shouldRenderCheckbox =
+    typedKey !== "poisoningIntentional" &&
+    typedKey !== "lastMeal" &&
+    typedKey !== "events";
+  const shouldRenderExtras = showExtraFields[typedKey] && typedKey !== "poisoningIntentional";
+  return shouldRenderCheckbox || shouldRenderExtras;
+});
+
+const displayedSymptoms = showAllSymptoms ? visibleSymptoms : visibleSymptoms.slice(0, 6);
+
 
   const generateValidationSchema = (
     symptomList: Record<string, any>
@@ -508,6 +522,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
     onSubmit(formValues);
   };
 
+  
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -522,113 +538,132 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
           sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%", borderRadius: "5px" }}
         >
                <h3
-  style={{
-    fontSize: "1.25rem",
-    fontWeight: 600,
-    marginBottom: "1rem",
-    borderBottom: "2px solid #ccc",
-    paddingBottom: "0.5rem",
-  }}
->
-  General History
-</h3>
-
-{Object.keys(symptomList).map((key) => {
-  const typedKey = key as keyof typeof symptomList;
-  const symptom = symptomList[typedKey];
-
-  const shouldRenderCheckbox =
-    typedKey !== "poisoningIntentional" &&
-    typedKey !== "lastMeal" &&
-    typedKey !== "events";
-
-  const shouldRenderExtras = showExtraFields[typedKey] && typedKey !== "poisoningIntentional";
-
-  const shouldRenderBlock = shouldRenderCheckbox || shouldRenderExtras;
-
-  return shouldRenderBlock ? (
-    <div
-      key={typedKey}
       style={{
-        border: "1px solid #e0e0e0",
-        borderRadius: "8px",
-        padding: "16px",
-        marginBottom: "16px",
-        backgroundColor: "#f9f9f9",
+        fontSize: "1.25rem",
+        fontWeight: 600,
+        marginBottom: "1rem",
+        borderBottom: "2px solid #ccc",
+        paddingBottom: "0.5rem",
       }}
     >
-      {shouldRenderCheckbox && (
-        <LabelledCheckbox
-          name={symptomList[typedKey].name}
-          label={symptomList[typedKey].label}
-        />
-      )}
+      General History
+    </h3>
 
-      {shouldRenderExtras && (
+    {displayedSymptoms.map((key) => {
+      const typedKey = key as keyof typeof symptomList;
+      const symptom = symptomList[typedKey];
+
+      const shouldRenderCheckbox =
+        typedKey !== "poisoningIntentional" &&
+        typedKey !== "lastMeal" &&
+        typedKey !== "events";
+
+      const shouldRenderExtras =
+        showExtraFields[typedKey] && typedKey !== "poisoningIntentional";
+
+      return (
         <div
+          key={typedKey}
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-            marginTop: "8px",
+            border: "1px solid #e0e0e0",
+            borderRadius: "8px",
+            padding: "16px",
+            marginBottom: "16px",
+            backgroundColor: "#f9f9f9",
           }}
         >
-          <UnitInputField
-            id={`${typedKey}Duration`}
-            name={`${typedKey}Duration`}
-            unitName={`${typedKey}DurationUnit`}
-            label="Duration"
-            unitOptions={durationOptions}
-            placeholder="e.g. 7"
-            inputIcon={<IoTimeOutline />}
-          />
-
-          {symptom.requiresSite && typedKey !== "poisoning" && (
-            <TextInputField
-              id={`${symptom.name}_site`}
-              label="Specify Site"
-              name={`${symptom.name}_site`}
-              placeholder="Specify the site"
+          {shouldRenderCheckbox && (
+            <LabelledCheckbox
+              name={symptomList[typedKey].name}
+              label={symptomList[typedKey].label}
             />
           )}
 
-          {typedKey === "poisoning" && (
-            <RadioGroupInput
-              row
-              name="poisoningIntentional"
-              options={[
-                { value: "Yes", label: "Yes" },
-                { value: "No", label: "No" },
-              ]}
-              label="Was the poisoning intentional?"
-            />
+          {shouldRenderExtras && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                marginTop: "8px",
+              }}
+            >
+              <UnitInputField
+                id={`${typedKey}Duration`}
+                name={`${typedKey}Duration`}
+                unitName={`${typedKey}DurationUnit`}
+                label="Duration"
+                unitOptions={durationOptions}
+                placeholder="e.g. 7"
+                inputIcon={<IoTimeOutline />}
+              />
+
+              {symptom.requiresSite && typedKey !== "poisoning" && (
+                <TextInputField
+                  id={`${symptom.name}_site`}
+                  label="Specify Site"
+                  name={`${symptom.name}_site`}
+                  placeholder="Specify the site"
+                />
+              )}
+
+              {typedKey === "poisoning" && (
+                <RadioGroupInput
+                  row
+                  name="poisoningIntentional"
+                  options={[
+                    { value: "Yes", label: "Yes" },
+                    { value: "No", label: "No" },
+                  ]}
+                  label="Was the poisoning intentional?"
+                />
+              )}
+            </div>
           )}
         </div>
+      );
+    })}
+
+    {visibleSymptoms.length > 6 && (
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
+        <button
+          type="button"
+          onClick={() => setShowAllSymptoms((prev) => !prev)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#1976d2",
+            cursor: "pointer",
+            fontSize: "0.95rem",
+            padding: 0,
+            textDecoration: "underline",
+          }}
+        >
+          {showAllSymptoms ? "View Less" : "View More"}
+        </button>
+      </div>
+    )}
+
+    <div
+      style={{
+        border: "1px dashed #aaa",
+        borderRadius: "8px",
+        padding: "16px",
+        marginTop: "24px",
+      }}
+    >
+      <LabelledCheckbox name="other" label="Other" />
+
+      {showOther && (
+        <TextInputField
+          id="otherSymptom"
+          label="Specify other symptom"
+          name="otherSymptom"
+          placeholder="Provide details of the symptom"
+          sx={{ width: "100%", marginTop: "12px" }}
+        />
       )}
     </div>
-  ) : null;
-})}
-
-<div
-  style={{
-    border: "1px dashed #aaa",
-    borderRadius: "8px",
-    padding: "16px",
-    marginTop: "24px",
-  }}
->
-  <LabelledCheckbox name="other" label="Other" />
-
-  {showOther && (
-    <TextInputField
-      id="otherSymptom"
-      label="Specify other symptom"
-      name="otherSymptom"
-      placeholder="Provide details of the symptom"
-      sx={{ width: "100%", marginTop: "12px" }}
-    />
-  )}
-</div>
 
 <h3
   style={{

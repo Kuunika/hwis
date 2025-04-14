@@ -202,11 +202,11 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         <div
           key={typedKey}
           style={{
-            border: "1px solid #e0e0e0",
+            border: typedKey === "other"  ? "1px dashed #aaa" : "1px solid #e0e0e0",
             borderRadius: "8px",
             padding: "16px",
             marginBottom: "16px",
-            backgroundColor: "#f9f9f9",
+            backgroundColor: typedKey === "other"  ? "white" : "#f9f9f9",
           }}
         >
           <LabelledCheckbox
