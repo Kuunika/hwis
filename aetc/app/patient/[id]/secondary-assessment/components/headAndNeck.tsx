@@ -72,25 +72,25 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
         groupMembers: flattenImagesObs(headNeckImageEncounter),
-        value: "Front",
+        value: "anterior",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
         groupMembers: flattenImagesObs(leftHeadNeckImageEncounter),
-        value: "Left",
+        value: "left lateral",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
         groupMembers: flattenImagesObs(rightHeadNeckImageEncounter),
-        value: "Right",
+        value: "right lateral",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
         groupMembers: flattenImagesObs(backHeadNeckImageEncounter),
-        value: "Back",
+        value: "posterior",
       },
       {
         concept: concepts.NOTES,
@@ -105,7 +105,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   const slides = [
     {
       id: 1,
-      label: "Left",
+      label: "Left Lateral",
       content: (
         <>
           {/* <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} /> */}
@@ -122,7 +122,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     },
     {
       id: 2,
-      label: "Front",
+      label: "Anterior",
       content: (
         <>
           {/* <HeadNeckImage onValueChange={setHeadNeckImageEncounter} /> */}
@@ -143,7 +143,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     },
     {
       id: 3,
-      label: "Right",
+      label: "Right Lateral",
       content: (
         <>
           {/* <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} /> */}
@@ -167,7 +167,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     },
     {
       id: 4,
-      label: "Back",
+      label: "Posterior",
       content: (
         <>
           {/* <HeadBackImage onValueChange={setBackHeadNeckImageEncounter} /> */}
