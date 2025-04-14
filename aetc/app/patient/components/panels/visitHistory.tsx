@@ -100,10 +100,9 @@ export const VisitHistory = () => {
     return encounter ? processObservations(encounter.obs || []) : [];
   };
 
-
-    if (historyLoading) {
-      return <ProfilePanelSkeletonLoader />;
-    }
+  if (historyLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
 
   // Define encounter data for each accordion panel
   const encounterData = {
@@ -268,7 +267,7 @@ export const VisitHistory = () => {
       data: getEncountersByType(encounters.NURSING_NOTES),
     },
     panel41: {
-      title: "Outpatient Diagnosis",
+      title: "Diagnosis",
       data: getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
     },
     panel42: {
@@ -300,7 +299,7 @@ export const VisitHistory = () => {
         }
         `}
       </style>
-    
+
       <Paper style={{ marginTop: "10px" }}>
         {Object.entries(encounterData).map(
           ([panelId, { title, data }]) =>
