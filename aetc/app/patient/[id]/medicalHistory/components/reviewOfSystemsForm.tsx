@@ -219,6 +219,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [genitourinaryOther, setGenitourinaryOther] = useState(false);
   const [updateSocial, setUpdateSocial] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [showOther, setShowOther] = useState(false);
 
   const generateValidationSchema = (
     symptomList: Record<string, any>
@@ -228,7 +229,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
     Object.keys(symptomList).forEach((key) => {
       const symptom = symptomList[key];
 
-      if (!(key === "lastMeal" || key === "events")) {
+      if (!(key === "lastMeal" || key === "events" || key === "poisoningIntentional")) {
         if (typeof symptom === "object") {
           const symptomName = symptom.name;
 
@@ -243,6 +244,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
               return schema.notRequired();
             });
 
+
+
           if (symptom.requiresSite) {
             shape[`${symptomName}_site`] = yup
               .string()
@@ -255,12 +258,29 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                 return schema.notRequired();
               });
           }
+
         }
       }
     });
 
     shape["events"] = yup.string().required("Events field is required.");
     shape["timeOfInjury"] = yup.date().required("Time of injury is required.");
+    shape["poisoningIntentional"] = yup
+    .string()
+    .when("poisoning", (poisoned, schema) => {
+      return poisoned[0]
+        ? schema.required("Intentional poisoning is required")
+        : schema.notRequired();
+    });
+
+    shape["otherSymptom"] = yup
+    .string()
+    .when("other", (poisoned, schema) => {
+      return poisoned[0] 
+        ? schema.required("Symptom details are required")
+        : schema.notRequired();
+    });
+
 
     shape["wasInjured"] = yup
       .string()
@@ -426,11 +446,12 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
     fatigueDuration: "",
     poisoning: false,
     poisoningDuration: "",
-    poisoningIntentional: false,
-    poisoningIntentionalDuration: "",
+    poisoningIntentional: "",
     ulcerWound: false,
     ulcerWoundDuration: "",
     ulcerWound_site: "",
+    other: false,
+    otherSymptom: "",
     timeOfInjury: dayjs(dateTime),
     injuryMechanism: [],
     showSocialHistory: false,
@@ -471,6 +492,8 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
 
     setSelectedMechanism(updatedMechanism);
 
+    setShowOther(!!formValues["other"]);
+
     const hasInjuryMechanism = Object.values(updatedMechanism).some(Boolean);
     hasInjuryMechanism
       ? (formValues["injuryMechanism"] = true)
@@ -482,7 +505,6 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   }, [formValues, symptomList, formValues["showSocialHistory"]]);
 
   const handleSubmit = async () => {
-    await schema.validate(formValues);
     onSubmit(formValues);
   };
 
@@ -541,17 +563,34 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                       )}
 
                       {typedKey == "poisoning" && (
-                        <LabelledCheckbox
-                          name="poisoningIntentional"
-                          label={symptomList["poisoningIntentional"].label}
-                        />
+                                  <RadioGroupInput
+                                  row
+                                  name="poisoningIntentional"
+                                  options={[
+                                    { value: "Yes", label: "Yes" },
+                                    { value: "No", label: "No" },
+                                  ]}
+                                  label="Was the poisoning intentional?"
+                                />
                       )}
                     </>
                   )}
               </div>
             );
           })}
+              <LabelledCheckbox
+                      name="other"
+                      label="Other"
+                    />
 
+                    {showOther && (
+                      <TextInputField 
+                        id="otherSymptom"
+                        label="Specify other symptom"
+                        name="otherSymptom"
+                        placeholder="Provide details of the symptom"
+                        sx={{width: "100%", marginTop: "1ch"}}
+                        />)}
           <h3>Trauma/Injury History</h3>
           <RadioGroupInput
             row
