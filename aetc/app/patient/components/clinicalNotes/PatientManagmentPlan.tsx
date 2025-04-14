@@ -106,7 +106,7 @@ export const usePatientManagementPlan = (pData: any) => {
 
     // === 3. Prescription Encounter ===
     const prescriptionEncounter = pData.find(
-      (d: any) => d.encounter_type.uuid === encounters.PRESCRIPTION
+      (d: any) => d.encounter_type.uuid === encounters.PRESCRIPTIONS
     );
     if (prescriptionEncounter?.obs) {
       const observations = prescriptionEncounter.obs
