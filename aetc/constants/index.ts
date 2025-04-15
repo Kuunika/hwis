@@ -1277,7 +1277,7 @@ export const concepts = {
   COORDINATION: "coordination",
   GAIT: "gait",
   GLOBAL_CHEST_WALL_ABNORMALITY: "global chest wall abnormality",
-  ADDED_BREATH_SOUNDS: 'added breath sounds',
+  ADDED_BREATH_SOUNDS: "added breath sounds",
   BREATH_SOUNDS: "breath sounds",
   CPR_RECORD: "cpr record",
   INTERVENTION_LIST: "intervention list",
@@ -1318,7 +1318,8 @@ export const concepts = {
 
   SKIN_PREP: "Skin Prep",
   TUBERCULOSIS: "Tuberculosis (TB)",
-  CHRONIC_OBSTRUCTIVE_PULMONARY_DISEASE: "Chronic Obstructive Pulmonary Disease (COPD)",
+  CHRONIC_OBSTRUCTIVE_PULMONARY_DISEASE:
+    "Chronic Obstructive Pulmonary Disease (COPD)",
   DIABETES_MELLITUS: "Diabetes Mellitus",
   ASTHMA: "Asthma",
   EPILEPSY: "Epilepsy",
@@ -1337,7 +1338,8 @@ export const concepts = {
   NO_MOVEMENT: "No movement",
   ABNORMAL_EXTENSION: "Abnormal extension (decerebrate posture)",
   ABNORMAL_FLEXION: "Abnormal flexion (decorticate posture)",
-  FLEXION_WITHDRAWAL_FROM_PAINFUL_STIMULI: "Flexion/Withdrawal from painful stimuli",
+  FLEXION_WITHDRAWAL_FROM_PAINFUL_STIMULI:
+    "Flexion/Withdrawal from painful stimuli",
   MOVES_TO_LOCALIZE_PAIN: "Moves to localize pain",
   OBEYS_COMMANDS: "Obeys commands",
   NO_SOUND: "No sound",
@@ -1406,7 +1408,8 @@ export const concepts = {
   NEVER_SMOKED: "Never smoked",
   PUPIL_REACTION: "Pupil reaction",
   GENETELIA_EXAMINATION_REQUIRED: "Genetelia examination required",
-
+  SERVICE_AREAS: "Service areas",
+  AETC_SERVICE_AREAS: "AETC service areas",
 };
 
 export const conceptNames = {
