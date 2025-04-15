@@ -38,8 +38,8 @@ const form = {
     label: "Pulse Rate",
   },
   respiratoryRate: {
-    name: concepts.PULSE_RATE,
-    label: "Pulse Rate",
+    name: concepts.RESPIRATORY_RATE,
+    label: "Respiratory Rate",
   },
   temperature: {
     name: concepts.TEMPERATURE,
@@ -194,10 +194,25 @@ const form = {
 
 const schema = Yup.object().shape({
   [form.general.name]: Yup.string().label(form.general.label).required(),
-  [form.systolic.name]: Yup.string().label(form.systolic.label).required(),
-  [form.diastolic.name]: Yup.string().label(form.diastolic.label).required(),
+  [form.systolic.name]: Yup.number()
+    .min(0)
+    .max(300)
+    .label(form.systolic.label)
+    .required(),
+  [form.diastolic.name]: Yup.number()
+    .min(0)
+    .max(300)
+    .label(form.diastolic.label)
+    .required(),
   [form.pulseRate.name]: Yup.string().label(form.pulseRate.label).required(),
-  [form.temperature.name]: Yup.string()
+  [form.respiratoryRate.name]: Yup.number()
+    .min(0)
+    .max(90)
+    .label(form.respiratoryRate.label)
+    .required(),
+  [form.temperature.name]: Yup.number()
+    .min(20)
+    .max(45)
     .label(form.temperature.label)
     .required(),
   [form.pupilSymmetrical.name]: Yup.string()
@@ -350,11 +365,13 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
             name={form.pulseRate.name}
             label={form.pulseRate.label}
             id={form.pulseRate.name}
+            unitOfMeasure="bpm"
           />
           <TextInputField
             name={form.respiratoryRate.name}
             label={form.respiratoryRate.label}
             id={form.respiratoryRate.name}
+            unitOfMeasure="bs/m"
           />
         </FormFieldContainerMultiple>
         <TextInputField
@@ -362,6 +379,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
           label={form.temperature.label}
           id={form.temperature.name}
           sx={{ width: "100%" }}
+          unitOfMeasure="°C"
         />
       </FormFieldContainerLayout>
 
@@ -386,9 +404,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
             row
           />
         </FormFieldContainerMultiple>
-      </FormFieldContainerLayout>
 
-      <FormFieldContainerLayout title="Chest">
         <FormFieldContainerMultiple>
           <RadioGroupInput
             name={form.oralThrush.name}
@@ -423,6 +439,9 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
           label={form.other.label}
           id={form.other.label}
         />
+      </FormFieldContainerLayout>
+
+      <FormFieldContainerLayout title="Chest">
         <RadioGroupInput
           name={form.symmetricalExpansion.name}
           label={form.symmetricalExpansion.label}

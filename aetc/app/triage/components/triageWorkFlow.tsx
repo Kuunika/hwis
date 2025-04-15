@@ -320,7 +320,6 @@ export default function TriageWorkFlow() {
       setShowModal(true);
       return;
     }
-
     triggerSubmission();
   };
 
