@@ -75,7 +75,7 @@ export default function TransferForm() {
                 concept: concepts.TRANSFER_TO_ANOTHER_FACILITY,
                 value: concepts.TRANSFER_TO_ANOTHER_FACILITY,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.FACILITY_NAME, value: values.facilityName, obsDatetime: currentDateTime },
                     { concept: concepts.REASON_FOR_TRANSFER, value: values.reason, obsDatetime: currentDateTime },
                     // { concept: concepts.TRANSFER_NOTES, value: values.transferNotes, obsDatetime: currentDateTime },

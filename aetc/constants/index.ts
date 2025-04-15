@@ -314,6 +314,7 @@ export const concepts = {
   FEEDING: "Feeding",
   OXYGENATION: "Oxygenation",
   TAPID_SPONGING: "Tapid Sponging",
+  TEPID_SPONGING: "Tepid Sponging",
   ELECTROCARDIOGRAPHY_MONITORING: "Electrocardiography Monitoring",
   TURNING_PATIENTS: "Turning Patients",
   ORAL_CARE: "Oral Care",
@@ -1403,9 +1404,9 @@ export const concepts = {
   SMOKING_HISTORY: "Smoking History",
   QUIT_OVER_A_MONTH_AGO: "Quit over a month ago",
   NEVER_SMOKED: "Never smoked",
-  PUPIL_REACTION:"Pupil reaction",
-  GENETELIA_EXAMINATION_REQUIRED:"Genetelia examination required",
- 
+  PUPIL_REACTION: "Pupil reaction",
+  GENETELIA_EXAMINATION_REQUIRED: "Genetelia examination required",
+
 };
 
 export const conceptNames = {
