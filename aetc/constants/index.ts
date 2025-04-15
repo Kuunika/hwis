@@ -313,6 +313,7 @@ export const concepts = {
   COUNSELLING: "Counselling",
   FEEDING: "Feeding",
   OXYGENATION: "Oxygenation",
+  TAPID_SPONGING: "Tapid Sponging",
   TEPID_SPONGING: "Tepid Sponging",
   ELECTROCARDIOGRAPHY_MONITORING: "Electrocardiography Monitoring",
   TURNING_PATIENTS: "Turning Patients",
