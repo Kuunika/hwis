@@ -50,10 +50,12 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatMedicationsNotes(obs);
             case encounters.DIAGNOSIS:
                 return formatExistingConditionsNotes(obs);
-            // case encounters.SURGICAL_HISTORY:
-            //     return formatSurgicalHistoryNotes(obs)
-            // case encounters.PATIENT_ADMISSIONS:
-            //     return formatAdmissionNotes(obs);
+            case encounters.SURGICAL_HISTORY:
+                return formatSurgicalHistoryNotes(obs)
+            case encounters.PATIENT_ADMISSIONS:
+                return formatAdmissionNotes(obs);
+            case encounters.REVIEW_OF_SYSTEMS:
+                return formatSystemsReviewData(obs);
             case encounters.GENERAL_INFORMATION_ASSESSMENT:
                 return formatGeneralInformationNotes(obs);
             case encounters.HEAD_AND_NECK_ASSESSMENT:
@@ -512,9 +514,9 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Dose In Iu":
                         doseInInternationalUnits = memberValue;
                         break;
-                        case"Duration On Medication Hours":
-                            durationInHours = memberValue;
-                            break;
+                    case "Duration On Medication Hours":
+                        durationInHours = memberValue;
+                        break;
                     case "Duration On Medication Days":
                         durationInDays = memberValue;
                         break;
@@ -524,9 +526,9 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Duration On Medication Months":
                         durationInMonths = memberValue;
                         break;
-                        case "Duration On Medication Years":
-                            durationInYears = memberValue;
-                            break;
+                    case "Duration On Medication Years":
+                        durationInYears = memberValue;
+                        break;
                     case "Medication Formulation":
                         medicationFormulation = memberValue;
                         break;
@@ -543,7 +545,7 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         if (doseInMicrograms) parts.push(`Dose: ${doseInMicrograms} micrograms`);
         if (doseInMilliliters) parts.push(`Dose: ${doseInMilliliters} millimeters`);
         if (doseInInternationalUnits) parts.push(`Dose: ${doseInInternationalUnits} international units`);
-        if (durationInDays) parts.push(`Duration: ${durationInHours} hours`);
+        if (durationInHours) parts.push(`Duration: ${durationInHours} hours`);
         if (durationInDays) parts.push(`Duration: ${durationInDays} days`);
         if (durationInWeeks) parts.push(`Duration: ${durationInWeeks} weeks`);
         if (durationInMonths) parts.push(`Duration: ${durationInMonths} months`);
@@ -565,242 +567,305 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
     return medicationNotes;
 };
 const formatExistingConditionsNotes = (obs: any[]): ComponentNote[] => {
-    const assessments: ComponentNote[] = [];
-    let currentAssessment: {
-        diagnosisDate?: string;
-        icd11Diagnosis?: string;
-        onTreatment?: string;
-        additionalDetails?: string;
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    const groupedAssessments: {
+        time: string;
         creator: string;
-    } = {
-        creator: "Unknown"
-    };
+        conditions: {
+            diagnosisDate?: string;
+            icd11Diagnosis?: string;
+            onTreatment?: string;
+            additionalDetails?: string;
+        }[];
+    }[] = [];
 
-    obs.forEach((ob: any) => {
-        const name = ob.names?.[0]?.name;
-        const value = ob.value;
-        const creator = ob.creator || ob.created_by || "Unknown";
+    let currentGroup: {
+        time: string;
+        creator: string;
+        conditions: any[];
+    } | null = null;
 
-        switch (name) {
-            case "Diagnosis date":
-                if (currentAssessment.icd11Diagnosis) {
-                    assessments.push(createExistingConditionAssessment(currentAssessment));
+    // Process all observations to group by 3-minute intervals
+    sortedObs.forEach((parentOb: any) => {
+        if (parentOb.names?.[0]?.name === "Diagnosis date") {
+            const itemTime = parentOb.obs_datetime || new Date().toISOString();
+            const itemCreator = parentOb.created_by || "Unknown";
+
+            const assessment: any = {
+                diagnosisDate: parentOb.value,
+                creator: itemCreator
+            };
+            parentOb.children?.forEach((child: any) => {
+                const name = child.names?.[0]?.name;
+                const value = child.value;
+
+                switch (name) {
+                    case "ICD11 Diagnosis":
+                        assessment.icd11Diagnosis = value;
+                        break;
+                    case "On treatment":
+                        assessment.onTreatment = value === "Yes"
+                            ? "The patient is on treatment"
+                            : value === "No"
+                                ? "The patient is not on treatment"
+                                : "The treatment status is not known";
+                        break;
+                    case "Additional Diagnosis Details":
+                        assessment.additionalDetails = value;
+                        break;
                 }
-                currentAssessment = {
-                    diagnosisDate: value,
-                    creator: creator
+            });
+
+            // Check if we need a new time group (3 minute interval)
+            if (!currentGroup ||
+                new Date(itemTime).getTime() - new Date(currentGroup.time).getTime() > 3 * 60 * 1000) {
+                currentGroup = {
+                    time: itemTime,
+                    creator: itemCreator,
+                    conditions: []
                 };
-                break;
-            case "ICD11 Diagnosis":
-                currentAssessment.icd11Diagnosis = value;
-                currentAssessment.creator = creator;
-                break;
-            case "On treatment":
-                currentAssessment.onTreatment = value;
-                break;
-            case "Additional Diagnosis Details":
-                currentAssessment.additionalDetails = value;
-                break;
+                groupedAssessments.push(currentGroup);
+            }
+
+            if (assessment.icd11Diagnosis) {
+                currentGroup.conditions.push(assessment);
+                currentGroup.time = itemTime;
+                currentGroup.creator = itemCreator;
+            }
         }
     });
 
-    if (currentAssessment.icd11Diagnosis) {
-        assessments.push(createExistingConditionAssessment(currentAssessment));
-    }
-
-    return assessments.sort((a, b) => b.rawTime - a.rawTime);
+    // Convert grouped assessments to ComponentNote format
+    return groupedAssessments.map(group => ({
+        paragraph: group.conditions.map(condition =>
+            createExistingConditionText(condition)).join(' '),
+        time: group.time,
+        creator: group.creator,
+        rawTime: new Date(group.time).getTime()
+    })).sort((a, b) => b.rawTime - a.rawTime); // Sort newest first
 };
 
-const createExistingConditionAssessment = (assessment: {
+const createExistingConditionText = (assessment: {
     diagnosisDate?: string;
     icd11Diagnosis?: string;
     onTreatment?: string;
     additionalDetails?: string;
-    creator: string;
-}): ComponentNote => {
+}): string => {
     const parts: string[] = [];
 
     if (assessment.icd11Diagnosis) {
         parts.push(`Diagnosis: ${assessment.icd11Diagnosis}`);
     }
-
     if (assessment.diagnosisDate) {
-        parts.push(`Diagnosed on ${new Date(assessment.diagnosisDate).toLocaleDateString()}`);
+        const date = new Date(assessment.diagnosisDate);
+        parts.push(`Diagnosed on ${date.toLocaleDateString()}`);
     }
-
     if (assessment.onTreatment) {
-        switch (assessment.onTreatment.toLowerCase()) {
-            case 'yes':
-                parts.push(`Currently on treatment`);
-                break;
-            case 'no':
-                parts.push(`Not currently on treatment`);
-                break;
-            case 'unknown':
-                parts.push(`Treatment status unknown`);
-                break;
-            default:
-                parts.push(`Treatment status: ${assessment.onTreatment}`);
-        }
+        parts.push(assessment.onTreatment);
     }
 
     if (assessment.additionalDetails) {
-        parts.push(`Additional notes: ${assessment.additionalDetails}`);
+        parts.push(`Details: ${assessment.additionalDetails}.`);
     }
 
-    const time = assessment.diagnosisDate || new Date().toISOString();
-
-    return {
-        paragraph: parts.join(". ") + (parts.length > 0 ? '.' : ''),
-        time: time,
-        creator: assessment.creator,
-        rawTime: new Date(time).getTime()
-    };
+    return parts.join('. ');
 };
 const formatSurgicalHistoryNotes = (obs: any[]): ComponentNote[] => {
-    const surgicalNotes: ComponentNote[] = [];
-    let currentNote: {
-        surgeryDate?: string;
-        procedureName?: string;
-        indication?: string;
-        complications?: string;
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    const groupedNotes: {
+        time: string;
         creator: string;
-    } = {
-        creator: "Unknown"
-    };
+        surgeries: {
+            surgeryDate?: string;
+            procedureName?: string;
+            indication?: string;
+            complications?: string;
+        }[];
+    }[] = [];
 
-    obs.forEach((ob: any) => {
-        const name = ob.names?.[0]?.name;
-        const value = ob.value;
-        const creator = ob.creator || ob.created_by || "Unknown";
+    let currentGroup: {
+        time: string;
+        creator: string;
+        surgeries: any[];
+    } | null = null;
 
-        if (name === "Date of surgery") {
-            if (currentNote.surgeryDate) {
-                surgicalNotes.push(createSurgicalNote(currentNote));
-            }
-            currentNote = {
-                surgeryDate: value,
-                creator: creator
+    sortedObs.forEach((parentOb: any) => {
+        if (parentOb.names?.[0]?.name === "Date of surgery") {
+            const itemTime = parentOb.obs_datetime || new Date().toISOString();
+            const itemCreator = parentOb.created_by || "Unknown";
+
+            const surgery: any = {
+                surgeryDate: parentOb.value,
+                creator: itemCreator
             };
-        }
-        else if (name === "Indication For Surgery") {
-            currentNote.indication = value;
-        }
-        else if (name === "Complications") {
-            currentNote.complications = value;
-        }
-        else if (value === true || value === "true") {
-            currentNote.procedureName = name;
-            currentNote.creator = creator;
+            parentOb.children?.forEach((child: any) => {
+                const name = child.names?.[0]?.name;
+                const value = child.value;
+
+                if (name === "Indication For Surgery") {
+                    surgery.indication = value;
+                }
+                else if (name === "Complications") {
+                    surgery.complications = value;
+                }
+                else if (value === true || value === "true") {
+                    surgery.procedureName = name;
+                }
+            });
+            if (!currentGroup ||
+                new Date(itemTime).getTime() - new Date(currentGroup.time).getTime() > 3 * 60 * 1000) {
+                currentGroup = {
+                    time: itemTime,
+                    creator: itemCreator,
+                    surgeries: []
+                };
+                groupedNotes.push(currentGroup);
+            }
+
+            // Add the surgery to current group if we have a procedure name
+            if (surgery.procedureName) {
+                currentGroup.surgeries.push(surgery);
+                currentGroup.time = itemTime;
+                currentGroup.creator = itemCreator;
+            }
         }
     });
 
-    if (currentNote.surgeryDate) {
-        surgicalNotes.push(createSurgicalNote(currentNote));
-    }
-
-    return surgicalNotes.sort((a, b) => b.rawTime - a.rawTime);
+    // Convert grouped surgeries to ComponentNote format
+    return groupedNotes.map(group => ({
+        paragraph: group.surgeries.map(surgery =>
+            createSurgicalNoteText(surgery)).join(' '),
+        time: group.time,
+        creator: group.creator,
+        rawTime: new Date(group.time).getTime()
+    })).sort((a, b) => b.rawTime - a.rawTime); // Sort newest first
 };
 
-const createSurgicalNote = (note: {
+const createSurgicalNoteText = (surgery: {
     surgeryDate?: string;
     procedureName?: string;
     indication?: string;
     complications?: string;
-    creator: string;
-}): ComponentNote => {
+}): string => {
     const parts: string[] = [];
 
-    if (note.procedureName) {
-        parts.push(`Surgical procedure performed: ${note.procedureName}`);
-    } else {
-        parts.push("Surgical procedure performed");
+    if (surgery.procedureName) {
+        parts.push(`Surgery: ${surgery.procedureName}`);
     }
 
-    if (note.surgeryDate) {
-        parts.push(`Date of surgery: ${new Date(note.surgeryDate).toLocaleDateString()}`);
+    if (surgery.surgeryDate) {
+        parts.push(`Date performed: ${new Date(surgery.surgeryDate).toLocaleDateString()}`);
     }
 
-    if (note.indication) {
-        parts.push(`Indication: ${note.indication}`);
+    if (surgery.indication) {
+        parts.push(`Indication: ${surgery.indication}`);
     }
 
-    if (note.complications) {
-        if (note.complications.toLowerCase() === "none") {
-            parts.push(`No complications reported`);
+    if (surgery.complications) {
+        if (surgery.complications.toLowerCase() === "none") {
+            parts.push(`No complications`);
         } else {
-            parts.push(`Complications: ${note.complications}`);
+            parts.push(`Complications: ${surgery.complications}`);
         }
     }
 
-    const time = note.surgeryDate || new Date().toISOString();
-
-    return {
-        paragraph: parts.join(". ") + (parts.length > 0 ? '.' : ''),
-        time: time,
-        creator: note.creator,
-        rawTime: new Date(time).getTime()
-    };
+    return parts.join('. ') + (parts.length > 0 ? '.' : '');
 };
 const formatAdmissionNotes = (obs: any[]): ComponentNote[] => {
-    const admissionNotes: ComponentNote[] = [];
-    let currentAdmission: {
-        admissionDate?: string;
-        healthCenter?: string;
-        admissionSection?: string;
-        diagnosis?: string;
-        surgicalInterventions?: string;
-        dischargeInstructions?: string;
-        followUp?: string;
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    const groupedAdmissions: {
+        time: string;
         creator: string;
-    } = {
-        creator: "Unknown"
-    };
+        admissions: {
+            admissionDate?: string;
+            healthCenter?: string;
+            admissionSection?: string;
+            diagnosis?: string;
+            surgicalInterventions?: string;
+            dischargeInstructions?: string;
+            followUp?: string;
+        }[];
+    }[] = [];
 
-    obs.forEach((ob: any) => {
-        const name = ob.names?.[0]?.name;
-        const value = ob.value;
-        const creator =  ob.created_by || "Unknown";
+    let currentGroup: {
+        time: string;
+        creator: string;
+        admissions: any[];
+    } | null = null;
 
-        switch (name) {
-            case "Admission date":
-                if (currentAdmission.admissionDate) {
-                    admissionNotes.push(createAdmissionNote(currentAdmission));
+    // Process all observations to group by 3-minute intervals
+    sortedObs.forEach((parentOb: any) => {
+        if (parentOb.names?.[0]?.name === "Admission date") {
+            const itemTime = parentOb.obs_datetime || new Date().toISOString();
+            const itemCreator = parentOb.created_by || "Unknown";
+
+            const admission: any = {
+                admissionDate: parentOb.value,
+                creator: itemCreator
+            };
+
+            parentOb.children?.forEach((child: any) => {
+                const name = child.names?.[0]?.name;
+                const value = child.value;
+
+                if (name === "Health center hospitals") {
+                    admission.healthCenter = value;
                 }
-                currentAdmission = {
-                    admissionDate: value,
-                    creator: creator
+                else if (name === "Admission section") {
+                    admission.admissionSection = value;
+                }
+                else if (name === "ICD11 Diagnosis") {
+                    admission.diagnosis = value;
+                }
+                else if (name === "Surgical interventions for tuberculosis" ||
+                    name === "Surgical interventions" ||
+                    name === "Surgical interventions for TB") {
+                    admission.surgicalInterventions = value;
+                }
+                else if (name === "Discharge Instructions") {
+                    admission.dischargeInstructions = value;
+                }
+                else if (name === "Follow Up") {
+                    admission.followUp = value;
+                }
+            });
+
+            if (!currentGroup ||
+                new Date(itemTime).getTime() - new Date(currentGroup.time).getTime() > 3 * 60 * 1000) {
+                currentGroup = {
+                    time: itemTime,
+                    creator: itemCreator,
+                    admissions: []
                 };
-                break;
-            case "Health center hospitals":
-                currentAdmission.healthCenter = value;
-                break;
-            case "Admission section":
-                currentAdmission.admissionSection = value;
-                break;
-            case "ICD11 Diagnosis":
-                currentAdmission.diagnosis = value;
-                break;
-            case "Surgical interventions for tuberculosis":
-                currentAdmission.surgicalInterventions = value;
-                break;
-            case "Discharge Instructions":
-                currentAdmission.dischargeInstructions = value;
-                break;
-            case "Follow Up":
-                currentAdmission.followUp = value;
-                break;
+                groupedAdmissions.push(currentGroup);
+            }
+
+            currentGroup.admissions.push(admission);
+            currentGroup.time = itemTime;
+            currentGroup.creator = itemCreator;
         }
     });
 
-    if (currentAdmission.admissionDate) {
-        admissionNotes.push(createAdmissionNote(currentAdmission));
-    }
-
-    return admissionNotes.sort((a, b) => b.rawTime - a.rawTime);
+    // Convert grouped admissions to ComponentNote format
+    return groupedAdmissions.map(group => ({
+        paragraph: group.admissions.map(admission =>
+            createAdmissionNoteText(admission)).join(' '),
+        time: group.time,
+        creator: group.creator,
+        rawTime: new Date(group.time).getTime()
+    })).sort((a, b) => b.rawTime - a.rawTime); // Sort newest first
 };
 
-const createAdmissionNote = (admission: {
+const createAdmissionNoteText = (admission: {
     admissionDate?: string;
     healthCenter?: string;
     admissionSection?: string;
@@ -808,20 +873,19 @@ const createAdmissionNote = (admission: {
     surgicalInterventions?: string;
     dischargeInstructions?: string;
     followUp?: string;
-    creator: string;
-}): ComponentNote => {
+}): string => {
     const parts: string[] = [];
 
     if (admission.healthCenter) {
-        parts.push(`Admitted at ${admission.healthCenter}`);
+        parts.push(`The patient was admitted at ${admission.healthCenter}`);
     }
 
     if (admission.admissionSection) {
-        parts.push(`Ward name: ${admission.admissionSection}`);
+        parts.push(`Admission section/ward: ${admission.admissionSection}`);
     }
 
     if (admission.admissionDate) {
-        parts.push(`Date of admission ${new Date(admission.admissionDate).toLocaleDateString()}`);
+        parts.push(`Admission date: ${new Date(admission.admissionDate).toLocaleDateString()}`);
     }
 
     if (admission.diagnosis) {
@@ -840,13 +904,108 @@ const createAdmissionNote = (admission: {
         parts.push(`Follow-up: ${admission.followUp}`);
     }
 
-    const time = admission.admissionDate || new Date().toISOString();
+    return parts.join('. ') + (parts.length > 0 ? '.' : '');
+};
+const formatSystemsReviewData = (obs: any[]): ComponentNote[] => {
+    const systemsReviews: ComponentNote[] = [];
+    let currentSystem: {
+        systemName: string;
+        symptoms: {
+            name: string;
+            duration?: string;
+            location?: string;
+        }[];
+        creator: string;
+        time: string;
+    } | null = null;
+
+    obs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const creator = ob.creator || ob.created_by || "Unknown";
+        const obsTime = ob.obs_datetime || new Date().toISOString();
+
+        if (name.startsWith("Review Of Systems") || name.startsWith("Review of systems")) {
+            if (currentSystem && currentSystem.symptoms.length > 0) {
+                systemsReviews.push(createSystemReviewParagraph(currentSystem));
+            }
+            // Start new system
+            currentSystem = {
+                systemName: name.replace("Review Of Systems", "")
+                    .replace("Review of systems", "")
+                    .trim(),
+                symptoms: [],
+                creator: creator,
+                time: obsTime
+            };
+        }
+        else if (currentSystem) {
+            if (name === "Duration Of Symptoms Days") {
+                if (currentSystem.symptoms.length > 0) {
+                    currentSystem.symptoms[currentSystem.symptoms.length - 1].duration = value;
+                }
+            }
+            else if (name === "Anatomic locations") {
+                if (currentSystem.symptoms.length > 0) {
+                    currentSystem.symptoms[currentSystem.symptoms.length - 1].location = value;
+                }
+            }
+            else if (value === true || value === "true") {
+                // This is a symptom
+                currentSystem.symptoms.push({
+                    name: name,
+                    duration: undefined,
+                    location: undefined
+                });
+                currentSystem.creator = creator;
+                currentSystem.time = obsTime;
+            }
+        }
+    });
+
+    // Push the last system if it has data
+    // if (currentSystem && currentSystem.symptoms.length > 0) {
+    //     systemsReviews.push(createSystemReviewParagraph(currentSystem));
+    // }
+
+    return systemsReviews.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createSystemReviewParagraph = (system: {
+    systemName: string;
+    symptoms: {
+        name: string;
+        duration?: string;
+        location?: string;
+    }[];
+    creator: string;
+    time: string;
+}): ComponentNote => {
+    const parts: string[] = [];
+
+    // Add system name
+    parts.push(`${system.systemName} System:`);
+
+    // Add each symptom with details
+    system.symptoms.forEach(symptom => {
+        let symptomText = symptom.name;
+
+        if (symptom.duration) {
+            symptomText += ` (${symptom.duration} days)`;
+        }
+
+        if (symptom.location) {
+            symptomText += ` in ${symptom.location}`;
+        }
+
+        parts.push(symptomText);
+    });
 
     return {
-        paragraph: parts.join(". ") + (parts.length > 0 ? '.' : ''),
-        time: time,
-        creator: admission.creator,
-        rawTime: new Date(time).getTime()
+        paragraph: parts.join(". "),
+        time: system.time,
+        creator: system.creator,
+        rawTime: new Date(system.time).getTime()
     };
 };
 const formatGeneralInformationNotes = (obs: any[]): ComponentNote[] => {
@@ -922,9 +1081,7 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
         return abnormalities[abnormalities.length - 1];
     };
 
-    // Helper function to process observations recursively
     const processObservation = (ob: any) => {
-        // Get properties from either direct fields or children structure
         const name = ob.conceptName || ob.name || (ob.names && ob.names[0]?.name);
         const valueText = ob.value || ob.value_text;
         const creator = ob.creator || ob.created_by || "Unknown";
@@ -1010,7 +1167,6 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
 
     return assessments.sort((a, b) => b.rawTime - a.rawTime);
 };
-
 const formatHeadAndNeckAssessmentToParagraph = (assessment: any): ComponentNote => {
     let paragraphParts: string[] = [];
 
@@ -1585,15 +1741,25 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         sections: Record<string, string>;
         vitals: Record<string, string>;
         labs: Record<string, string>;
+        medications: Array<{
+            name: string;
+            formulation: string;
+            dose: string;
+            doseUnit: string;
+            frequency: string;
+            duration: string;
+            durationUnit: string;
+            description: string;
+        }>;
     } = {
         time: "",
         creator: "Unknown",
         sections: {},
         vitals: {},
-        labs: {}
+        labs: {},
+        medications: []
     };
 
-    // Sort observations by time
     const sortedObs = [...obs].sort((a, b) =>
         new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
     );
@@ -1605,14 +1771,14 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         const creator = ob.created_by || "Unknown";
 
         if (name === "Subjective" && currentNote.sections.Subjective) {
-            // Push the current note if we're starting a new subjective section
             soapNotes.push(createSoapierNote(currentNote));
             currentNote = {
                 time,
                 creator,
                 sections: {},
                 vitals: {},
-                labs: {}
+                labs: {},
+                medications: []
             };
         }
 
@@ -1627,14 +1793,12 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         ].includes(name)) {
             currentNote.sections[name] = value;
         }
-        // Handle vital signs
         else if ([
             "Systolic blood pressure", "Diastolic blood pressure",
             "Pulse Rate", "Respiratory Rate", "Spo2", "Temperature"
         ].includes(name)) {
             currentNote.vitals[name] = value;
         }
-        // Handle lab results
         else if ([
             "Malaria Rapid Diagnostic Test (MRDT)",
             "Blood glucose", "Serum glucose", "Investigations PT",
@@ -1643,11 +1807,55 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
             const labName = name === "Serum glucose" ? "Blood glucose" : name;
             currentNote.labs[labName] = value;
         }
+        else if (name === "Drug Given") {
+            const medication = {
+                name: value,
+                formulation: "",
+                dose: "",
+                doseUnit: "",
+                frequency: "",
+                duration: "",
+                durationUnit: "",
+                description: ""
+            };
+
+            ob.children?.forEach((child: any) => {
+                const childName = child.names?.[0]?.name;
+                const childValue = child.value;
+
+                switch (childName) {
+                    case "Medication Formulation":
+                        medication.formulation = childValue;
+                        break;
+                    case "Medication Dose":
+                        medication.dose = childValue;
+                        break;
+                    case "Medication Dose Unit":
+                        medication.doseUnit = childValue;
+                        break;
+                    case "Medication Frequency":
+                        medication.frequency = childValue;
+                        break;
+                    case "Medication Duration":
+                        medication.duration = childValue;
+                        break;
+                    case "Medication Duration Unit":
+                        medication.durationUnit = childValue;
+                        break;
+                    case "Description":
+                        medication.description = childValue;
+                        break;
+                }
+            });
+
+            currentNote.medications.push(medication);
+        }
     });
 
     if (Object.keys(currentNote.sections).length > 0 ||
         Object.keys(currentNote.vitals).length > 0 ||
-        Object.keys(currentNote.labs).length > 0) {
+        Object.keys(currentNote.labs).length > 0 ||
+        currentNote.medications.length > 0) {
         soapNotes.push(createSoapierNote(currentNote));
     }
 
@@ -1660,6 +1868,16 @@ const createSoapierNote = (note: {
     sections: Record<string, string>;
     vitals: Record<string, string>;
     labs: Record<string, string>;
+    medications: Array<{
+        name: string;
+        formulation: string;
+        dose: string;
+        doseUnit: string;
+        frequency: string;
+        duration: string;
+        durationUnit: string;
+        description: string;
+    }>;
 }): ComponentNote => {
     const paragraphParts: string[] = [];
 
@@ -1684,8 +1902,9 @@ const createSoapierNote = (note: {
             const displayName = sectionDisplayNames[section] || section;
             paragraphParts.push(`${displayName}: ${note.sections[section]}`);
 
-            // Insert vitals and labs after "Medical record observations" (which displays as "Objective")
+            // Insert vitals, labs, and medications after "Medical record observations" (which displays as "Objective")
             if (section === "Medical record observations") {
+                // Add vitals if available
                 if (Object.keys(note.vitals).length > 0) {
                     const vitalParts: string[] = [];
                     if (note.vitals["Systolic blood pressure"] && note.vitals["Diastolic blood pressure"]) {
@@ -1729,13 +1948,29 @@ const createSoapierNote = (note: {
                         paragraphParts.push(`Labs: ${labParts.join(", ")}`);
                     }
                 }
+
+                // Add medications if available
+                if (note.medications.length > 0) {
+                    const medParts = note.medications.map(med => {
+                        let medStr = `${med.name}`;
+                        if (med.formulation) medStr += ` (${med.formulation})`;
+                        if (med.dose && med.doseUnit) medStr += ` ${med.dose} ${med.doseUnit}`;
+                        if (med.frequency) medStr += ` ${med.frequency}`;
+                        if (med.duration && med.durationUnit) medStr += ` for ${med.duration} ${med.durationUnit}`;
+                        if (med.description) medStr += ` - ${med.description}`;
+                        return medStr;
+                    });
+                    paragraphParts.push(`Medications: ${medParts.join("; ")}`);
+                }
             }
         }
     });
 
-    // If we have vitals or labs but no "Medical record observations" section,
     if (!note.sections["Medical record observations"] &&
-        (Object.keys(note.vitals).length > 0 || Object.keys(note.labs).length > 0)) {
+        (Object.keys(note.vitals).length > 0 ||
+            Object.keys(note.labs).length > 0 ||
+            note.medications.length > 0)) {
+
         const objectiveParts: string[] = [];
 
         // Add vitals
@@ -1781,6 +2016,20 @@ const createSoapierNote = (note: {
             if (labParts.length > 0) {
                 objectiveParts.push(`Labs: ${labParts.join(", ")}`);
             }
+        }
+
+        // Add medications
+        if (note.medications.length > 0) {
+            const medParts = note.medications.map(med => {
+                let medStr = `${med.name}`;
+                if (med.formulation) medStr += ` (${med.formulation})`;
+                if (med.dose && med.doseUnit) medStr += ` ${med.dose} ${med.doseUnit}`;
+                if (med.frequency) medStr += ` ${med.frequency}`;
+                if (med.duration && med.durationUnit) medStr += ` for ${med.duration} ${med.durationUnit}`;
+                if (med.description) medStr += ` - ${med.description}`;
+                return medStr;
+            });
+            objectiveParts.push(`Medications: ${medParts.join("; ")}`);
         }
 
         // Insert before Assessment if we have objective data
@@ -2288,7 +2537,7 @@ const createExposureAssessmentNote = (note: {
 
     // Image Part Name
     if (obs[concepts.IMAGE_PART_NAME]?.value) {
-        messages.push(`Image Part Name: ${obs[concepts.IMAGE_PART_NAME].value}. `);
+        messages.push(`Body part: ${obs[concepts.IMAGE_PART_NAME].value}. `);
     }
     // Skin Rash
     if (obs[concepts.SKIN_RASH]?.value) {
