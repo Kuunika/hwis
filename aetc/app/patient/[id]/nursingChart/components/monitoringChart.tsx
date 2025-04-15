@@ -201,12 +201,12 @@ export const MonitoringChart = () => {
       ) {
         continue;
       }
-
+      
       const obsObject = (value as any[]).reduce((acc, item) => {
         acc[item.id] = true;
         return acc;
       }, {} as Record<string, boolean>);
-
+      console.log(obsObject, values);
       const obs = getObservations(obsObject, dateTime);
 
       obs.forEach((element) => {

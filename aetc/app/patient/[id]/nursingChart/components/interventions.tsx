@@ -12,10 +12,11 @@ import { getInitialValues } from "@/helpers";
 import { IconButton } from "@mui/material";
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import { useFormikContext } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { concepts } from "@/constants";
+import { getCirculationOptions } from "@/hooks/getCirculationOptions";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -54,6 +55,8 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
       },
     ],
   };
+ 
+
 
   return (
     <FormikInit
@@ -102,7 +105,7 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
     {
       label: "IV Fluids",
       options: [
-        { value: "Lingers Lactate", label: "Lingers Lactate" },
+        { value: "Ringers Lactate", label: "Ringers Lactate" },
         { value: "Saline 5%", label: "Saline 5%" },
         { value: "Saline 3%", label: "Saline 3%" },
         { value: "Saline 0.9%", label: "Saline 0.9%" },
@@ -152,6 +155,8 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
     setFieldValue("fluidEntries", newEntries);
   };
 
+  const { circulationOptions } = getCirculationOptions();
+
   const handleRemoveFluidEntry = (index: number) => {
     const newEntries = values.fluidEntries.filter((_, i) => i !== index);
     setFieldValue("fluidEntries", newEntries);
@@ -188,7 +193,7 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
       values[InterventionFormConfig.circulationIntervention.name]
     ) &&
     values[InterventionFormConfig.circulationIntervention.name]?.some(
-      (item: { id: string }) => item.id === concepts.INTAKE_FLUIDS
+      (item: { id: string }) => item.label === "IV fluids"
     );
   return (
     <>
@@ -229,16 +234,16 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
           sx={{ mb: "2ch" }}
           multiple={true}
         />
-
-        <SearchComboBox
+<SearchComboBox
           name={InterventionFormConfig.circulationIntervention.name}
-          options={circulationList}
+          options={circulationOptions}
           label={InterventionFormConfig.circulationIntervention.label}
           sx={{ mb: "2ch" }}
           multiple={true}
           getValue={(selected: any[]) => {
+            console.log(selected);
             const hasIV = selected.some(
-              (item) => item.id === concepts.INTAKE_FLUIDS
+              (item) => item.label === "IV fluids"
             );
             if (!hasIV) {
               setFieldValue("fluidEntries", [
@@ -253,6 +258,7 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
             }
           }}
         />
+      
 
         {ivFluidsSelected && (
           <WrapperBox>
