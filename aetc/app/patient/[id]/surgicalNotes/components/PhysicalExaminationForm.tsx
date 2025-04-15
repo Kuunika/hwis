@@ -20,118 +20,61 @@ type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
-//add:
-// Comfortable
-// Ill
-// Fit for age
-// Candida
-// Kaposi's Sarcoma (KS)
-// Hydration
-// Nodes
-// Submental
-// Epithrochlear
-// Thyroid
-// No movement
-// Abnormal extension (decerebrate posture)
-// Abnormal flexion (decorticate posture)
-// Flexion/Withdrawal from painful stimuli
-// Moves to localize pain
-// Obeys commands
-// No sound
-// Incomprehensible sounds
-// Inappropriate words
-// Confused and disoriented, but able to answer questions
-// Oriented to time, person, and place, converses normally
-// Does not open eyes
-// Opens eyes in response to pain
-// Opens eyes in response to voice
-// Opens eyes spontaneously
 
 // Define options for radio group fields
 const physicalExaminationOptions = {
-    general: ["In pain", "Comfortable", "Ill", "Fit for age"],
-    eyes: ["Pallor", "Jaundice"],
-    mouth: ["Candida", "Kaposi's Sarcoma (KS)", "Hydration"],
-    neck: ["Nodes", "Submental", "Epithrochlear"],
-    endocrine: ["Breast", "Thyroid"],
+    general: [
+        { value: concepts.SEVERE_PAIN, label: "In Pain" },
+        { value: concepts.COMFORTABLE, label: "Comfortable" },
+        { value: concepts.ILL, label: "Ill" },
+        { value: concepts.FIT_FOR_AGE, label: "Fit for age" },
+    ],
+    eyes: [
+        { value: concepts.PALLOR, label: "Pallor" },
+        { value: concepts.JAUNDICE, label: "Jaundice" },
+    ],
+    mouth: [
+        { value: concepts.CANDIDA, label: "Candida" },
+        { value: concepts.KAPOSI_SARCOMA, label: "Kaposi's Sarcoma (KS)" },
+        { value: concepts.HYDRATION, label: "Hydration" },
+    ],
+    neck: [
+        { value: concepts.NODES, label: "Nodes" },
+        { value: concepts.SUBMENTAL, label: "Submental" },
+        { value: concepts.EPITHROCHLEAR, label: "Epithrochlear" },
+    ],
+    endocrine: [
+        { value: concepts.BREAST, label: "Breast" },
+        { value: concepts.THYROID, label: "Thyroid" },
+
+    ]
 };
-const generalOptions = [
-    { value: concepts.PAIN, label: "In Pain" },
-    { value: concepts.COMFORTABLE, label: "Comfortable" },
-    { value: concepts.ILL, label: "Ill" },
-    { value: concepts.FIT_FOR_AGE, label: "Fit for age" },
-]
-
-const eyesOptions = [
-    { value: concepts.PALLOR, label: "Pallor" },
-    { value: concepts.JAUNDICE, label: "Jaundice" },
-]
-const mouthOptions = [
-    { value: concepts.CANDIDA, label: "Candida" },
-    { value: concepts.KAPOSI_SARCOMA, label: "Kaposi's Sarcoma (KS)" },
-    { value: concepts.HYDRATION, label: "Hydration" },
-]
-
-const neckOptions = [
-    { value: concepts.NODES, label: "Nodes" },
-    { value: concepts.SUBMENTAL, label: "Submental" },
-    { value: concepts.EPITHROCHLEAR, label: "Epithrochlear" },
-]
-
-const endocrineOptions = [
-    { value: concepts.BREAST, label: "Breast" },
-    { value: concepts.THYROID, label: "Thyroid" },
-
-]
 
 
 // Glasgow Coma Scale (GCS) options
 const gcsOptions = {
     motorResponse: [
-        "No movement",
-        "Abnormal extension (decerebrate posture)",
-        "Abnormal flexion (decorticate posture)",
-        "Flexion/Withdrawal from painful stimuli",
-        "Moves to localize pain",
-        "Obeys commands",
+        { value: concepts.NO_MOVEMENT, label: "No movement" },
+        { value: concepts.ABNORMAL_EXTENSION, label: "Abnormal extension (decerebrate posture)" },
+        { value: concepts.ABNORMAL_FLEXION, label: "Abnormal flexion (decorticate posture)" },
+        { value: concepts.FLEXION_WITHDRAWAL_FROM_PAINFUL_STIMULI, label: "Flexion/Withdrawal from painful stimuli" },
+        { value: concepts.MOVES_TO_LOCALIZE_PAIN, label: "Moves to localize pain" },
+        { value: concepts.OBEYS_COMMANDS, label: "Obeys commands" },
     ],
     verbalResponse: [
-        "No sound",
-        "Incomprehensible sounds",
-        "Inappropriate words",
-        "Confused and disoriented, but able to answer questions",
-        "Oriented to time, person, and place, converses normally",
+        { value: concepts.NO_SOUND, label: "No sound" },
+        { value: concepts.INCOMPREHENSIBLE_SOUNDS, label: "Incomprehensible sounds" },
+        { value: concepts.INAPPROPRIATE_WORDS, label: "Inappropriate words" },
+        { value: concepts.CONFUSED_AND_DISORIENTED, label: "Confused and disoriented, but able to answer questions" },
+        { value: concepts.ORIENTED_TO_TIME, label: "Oriented to time, person, and place, converses normally" },
     ],
     eyeResponse: [
-        "Does not open eyes",
-        "Opens eyes in response to pain",
-        "Opens eyes in response to voice",
-        "Opens eyes spontaneously",
+        { value: concepts.DOES_NOT_OPEN_EYES, label: "Does not open eyes" },
+        { value: concepts.OPENS_EYES_IN_RESPONSE_TO_PAIN, label: "Opens eyes in response to pain" },
+        { value: concepts.OPENS_EYES_IN_RESPONSE_TO_VOICE, label: "Opens eyes in response to voice" },
+        { value: concepts.OPENS_EYES_SPONTANEOUSLY, label: "Opens eyes spontaneously" },
     ],
 };
-const motorResponse = [
-    { value: concepts.NO_MOVEMENT, label: "No movement" },
-    { value: concepts.ABNORMAL_EXTENSION, label: "Abnormal extension (decerebrate posture)" },
-    { value: concepts.ABNORMAL_FLEXION, label: "Abnormal flexion (decorticate posture)" },
-    { value: concepts.FLEXION_WITHDRAWAL_FROM_PAINFUL_STIMULI, label: "Flexion/Withdrawal from painful stimuli" },
-    { value: concepts.MOVES_TO_LOCALIZE_PAIN, label: "Moves to localize pain" },
-    { value: concepts.OBEYS_COMMANDS, label: "Obeys commands" },
-]
-
-const verbalResponse = [
-    { value: concepts.NO_SOUND, label: "No sound" },
-    { value: concepts.INCOMPREHENSIBLE_SOUNDS, label: "Incomprehensible sounds" },
-    { value: concepts.INAPPROPRIATE_WORDS, label: "Inappropriate words" },
-    { value: concepts.CONFUSED_AND_DISORIENTED, label: "Confused and disoriented, but able to answer questions" },
-    { value: concepts.ORIENTED_TO_TIME, label: "Oriented to time, person, and place, converses normally" },
-]
-
-const eyeResponse = [
-    { value: concepts.DOES_NOT_OPEN_EYES, label: "Does not open eyes" },
-    { value: concepts.OPENS_EYES_IN_RESPONSE_TO_PAIN, label: "Opens eyes in response to pain" },
-    { value: concepts.OPENS_EYES_IN_RESPONSE_TO_VOICE, label: "Opens eyes in response to voice" },
-    { value: concepts.OPENS_EYES_SPONTANEOUSLY, label: "Opens eyes spontaneously" },
-]
 
 
 const validationSchema = Yup.object({});
@@ -161,38 +104,51 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
             return;
         }
 
-        const encounterPayload = {
-            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM, // Encounter type
-            patient: params.id, // Patient UUID
-            visit: activeVisit.uuid, // Visit UUID
-            encounterDatetime: getDateTime(), // Current timestamp
-            observations: [
-                { concept: concepts.GENERAL_CONDITION, value: values.general },
-                { concept: concepts.TEMPERATURE, value: values.temperature },
-                { concept: concepts.PULSE_RATE, value: values.pulse },
-                { concept: concepts.BLOOD_PRESSURE_MEASURED, value: values.bloodPressure },
-                { concept: concepts.RESPIRATORY_RATE, value: values.respiratoryRate },
-                { concept: concepts.EYES, value: values.eyes },
-                { concept: concepts.MOUTH, value: values.mouth },
-                { concept: concepts.NECK, value: values.neck },
-                { concept: concepts.CHEST_EXAMINATION, value: values.chest },
-                { concept: concepts.ENDOCRINE_EXAMINATION, value: values.endocrine },
-                { concept: concepts.ABDOMINAL_EXAMINATION, value: values.abdomen },
-                { concept: concepts.MOTOR_RESPONSE, value: values.motorResponse },
-                { concept: concepts.VERBAL_RESPONSE, value: values.verbalResponse },
-                { concept: concepts.EYE_OPENING_RESPONSE, value: values.eyeResponse },
-                { concept: concepts.CRANIAL_ERVES, value: values.cranialNerves },
-                { concept: concepts.GROSS_MOTOR, value: values.grossMotor },
-                { concept: concepts.SENSATION, value: values.sensation },
-                { concept: concepts.PULSATIONS, value: values.pulsations },
-                { concept: concepts.RECTAL_EXAMINATION, value: values.rectalExamination },
-                { concept: concepts.VAGINAL_EXAMINATION, value: values.vaginalExamination },
-            ].filter(obs => obs.value !== ""), // Exclude empty fields
+        const currentDateTime = getDateTime();
+
+        // Helper to create observation
+        const createObs = (concept: string, value: any) => ({
+            concept,
+            value,
+            obsDatetime: currentDateTime,
+        });
+
+        // Create the obs array
+        const obs = [
+            createObs(concepts.GENERAL_CONDITION, values.general),
+            createObs(concepts.TEMPERATURE, values.temperature),
+            createObs(concepts.PULSE_RATE, values.pulse),
+            createObs(concepts.BLOOD_PRESSURE_MEASURED, values.bloodPressure),
+            createObs(concepts.RESPIRATORY_RATE, values.respiratoryRate),
+            createObs(concepts.EYES, values.eyes),
+            createObs(concepts.MOUTH, values.mouth),
+            createObs(concepts.NECK, values.neck),
+            createObs(concepts.CHEST_EXAMINATION, values.chest),
+            createObs(concepts.ENDOCRINE_EXAMINATION, values.endocrine),
+            createObs(concepts.ABDOMINAL_EXAMINATION, values.abdomen),
+            createObs(concepts.MOTOR_RESPONSE, values.motorResponse),
+            createObs(concepts.VERBAL_RESPONSE, values.verbalResponse),
+            createObs(concepts.EYE_OPENING_RESPONSE, values.eyeResponse),
+            createObs(concepts.CRANIAL_ERVES, values.cranialNerves),
+            createObs(concepts.GROSS_MOTOR, values.grossMotor),
+            createObs(concepts.SENSATION, values.sensation),
+            createObs(concepts.PULSATIONS, values.pulsations),
+            createObs(concepts.RECTAL_EXAMINATION, values.rectalExamination),
+            createObs(concepts.VAGINAL_EXAMINATION, values.vaginalExamination),
+        ].filter((item) => item.value && item.value !== ""); // Filter out empty obs
+
+        const payload = {
+            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+            patient: params.id,
+            visit: activeVisit.uuid,
+            encounterDatetime: currentDateTime,
+            obs,
         };
 
         try {
-            await submitEncounter(encounterPayload);
-            onSubmit(values);
+            await submitEncounter(payload);
+            console.log("Physical Examination submitted successfully!");
+            onSubmit(values); // Proceed to the next step
         } catch (error) {
             console.error("Error submitting Physical Examination:", error);
         }
@@ -230,7 +186,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
 
                         {/* General */}
                         <FormFieldContainerLayout title="General Condition">
-                            <RadioGroupInput name="general" options={physicalExaminationOptions.general.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="general" options={physicalExaminationOptions.general} label={""} />
                         </FormFieldContainerLayout>
 
                         {/* Vitals */}
@@ -249,20 +205,19 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Eyes */}
                         <FormFieldContainerLayout title="Eyes">
 
-                            <RadioGroupInput name="eyes" options={physicalExaminationOptions.eyes.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="eyes" options={physicalExaminationOptions.eyes} label={""} />
                         </FormFieldContainerLayout>
 
                         {/* Mouth */}
                         <FormFieldContainerLayout title="Mouth">
 
-                            <RadioGroupInput name="mouth" options={physicalExaminationOptions.mouth.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="mouth" options={physicalExaminationOptions.mouth} label={""} />
                         </FormFieldContainerLayout>
 
                         {/* Neck */}
                         <FormFieldContainerLayout title="Neck">
 
-                            <RadioGroupInput name="neck" options={physicalExaminationOptions.neck.map((option) => ({ value: option, label: option }))} label={""} />
-                        </FormFieldContainerLayout>
+                            <RadioGroupInput name="neck" options={physicalExaminationOptions.neck} label={""} />                        </FormFieldContainerLayout>
 
                         {/* Chest */}
                         <FormFieldContainerLayout title="Chest Examination">
@@ -274,7 +229,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         {/* Endocrine */}
                         <FormFieldContainerLayout title="Endocrine Examination">
 
-                            <RadioGroupInput name="endocrine" options={physicalExaminationOptions.endocrine.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="endocrine" options={physicalExaminationOptions.endocrine} label={""} />
                         </FormFieldContainerLayout>
 
                         {/* Abdomen */}
@@ -288,13 +243,13 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         <FormFieldContainerLayout title="Glasgow Coma Scale (GCS)">
 
                             <h5>Motor Response</h5>
-                            <RadioGroupInput name="motorResponse" options={gcsOptions.motorResponse.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="motorResponse" options={gcsOptions.motorResponse} label={""} />
 
                             <h5>Verbal Response</h5>
-                            <RadioGroupInput name="verbalResponse" options={gcsOptions.verbalResponse.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="verbalResponse" options={gcsOptions.verbalResponse} label={""} />
 
                             <h5>Eye Response</h5>
-                            <RadioGroupInput name="eyeResponse" options={gcsOptions.eyeResponse.map((option) => ({ value: option, label: option }))} label={""} />
+                            <RadioGroupInput name="eyeResponse" options={gcsOptions.eyeResponse} label={""} />
 
                         </FormFieldContainerLayout>
 

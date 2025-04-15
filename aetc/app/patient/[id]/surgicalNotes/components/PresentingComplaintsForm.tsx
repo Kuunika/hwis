@@ -25,6 +25,7 @@ type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
+
 const presentingComplaintsConfig = [
     { value: concepts.FEELING_OF_A_MASS, label: "Feeling of a mass" },
     { value: concepts.DIFFICULTY_PAIN_ON_PASSING_STOOLS, label: "Difficulty/Pain on passing stools" },
@@ -81,7 +82,7 @@ const schema = yup.object().shape({
         .string()
         .nullable()
         .when("presentingComplaints", {
-            is: (complaints: any[]) => complaints.some((complaint) => complaint.key === "Other"),
+            is: (complaints: any[]) => complaints.some((complaint) => complaint.key === concepts.OTHER),
             then: (schema) => schema.required("Please specify the other complaint"),
         }),
 

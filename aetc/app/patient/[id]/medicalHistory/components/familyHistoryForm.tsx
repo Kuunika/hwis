@@ -43,7 +43,7 @@ const familyHistoryFormConfig = {
   epilepsy: { name: "epilepsy", label: "Epilepsy" },
   cancer: { name: "cancer", label: "Cancer" },
   tuberculosis: { name: "tuberculosis", label: "Tuberculosis" },
-  other: { name: "other", label: "Other (Specify)" },
+  other: { name: "other", label: "Other Condition" },
 };
 
 const ErrorMessage = ({ name }: { name: string }) => (
@@ -186,70 +186,83 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
       >
         <FormValuesListener getValues={setFormValues} />
         <FormFieldContainer direction="row">
-          <WrapperBox
-            sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%" }}
-          >
-            {Object.keys(familyHistoryFormConfig).map((key) => {
-              // Ensure TypeScript knows that `key` is one of the keys in `familyHistoryFormConfig`
-              const typedKey = key as keyof typeof familyHistoryFormConfig;
+  <WrapperBox
+    sx={{
+      bgcolor: "white",
+      borderRadius: "8px",
+      padding: "2ch",
+      mb: "2ch",
+      width: "100%",
+    }}
+  >
+    {Object.keys(familyHistoryFormConfig).map((key) => {
+      const typedKey = key as keyof typeof familyHistoryFormConfig;
 
-              return (
-                <div key={typedKey}>
-                  <LabelledCheckbox
-                    name={familyHistoryFormConfig[typedKey].name}
-                    label={familyHistoryFormConfig[typedKey].label}
-                    checked={formValues[typedKey]}
+      return (
+        <div
+          key={typedKey}
+          style={{
+            border: typedKey === "other"  ? "1px dashed #aaa" : "1px solid #e0e0e0",
+            borderRadius: "8px",
+            padding: "16px",
+            marginBottom: "16px",
+            backgroundColor: typedKey === "other"  ? "white" : "#f9f9f9",
+          }}
+        >
+          <LabelledCheckbox
+            name={familyHistoryFormConfig[typedKey].name}
+            label={familyHistoryFormConfig[typedKey].label}
+            checked={formValues[typedKey]}
+          />
+          {showRelationshipFields[typedKey] && (
+            <div style={{ marginTop: "1rem" }}>
+              {typedKey === "cancer" ? (
+                <>
+                  <TextInputField
+                    id="cancerType"
+                    label="Type of Cancer"
+                    name="cancerType"
+                    placeholder="Specify type of cancer"
+                    sx={{ mr: "2ch" }}
                   />
-                  {showRelationshipFields[typedKey] && (
-                    <>
-                      {typedKey === "cancer" ? (
-                        <>
-                          <TextInputField
-                            id="cancerType"
-                            label="Type of Cancer"
-                            name="cancerType"
-                            placeholder="Specify type of cancer"
-                            sx={{ mr: "2ch" }}
-                          />
-                          <TextInputField
-                            id="cancerRelationship"
-                            label="Relationship to family member"
-                            name="cancerRelationship"
-                            placeholder="e.g., Mother"
-                          />
-                        </>
-                      ) : typedKey === "other" ? (
-                        <>
-                          <TextInputField
-                            id="otherSpecify"
-                            label="Specify Other Condition"
-                            name="otherSpecify"
-                            placeholder="Specify the condition"
-                            sx={{ mr: "2ch" }}
-                          />
-                          <TextInputField
-                            id="otherRelationship"
-                            label="Relationship to family member"
-                            name="otherRelationship"
-                            placeholder="e.g., Mother"
-                          />
-                        </>
-                      ) : (
-                        <TextInputField
-                          id={`${typedKey}Relationship`}
-                          label="Relationship to family member"
-                          name={`${typedKey}Relationship`}
-                          placeholder="e.g., Mother"
-                        />
-                      )}
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </WrapperBox>
-        </FormFieldContainer>
-
+                  <TextInputField
+                    id="cancerRelationship"
+                    label="Relationship to family member"
+                    name="cancerRelationship"
+                    placeholder="e.g., Mother"
+                  />
+                </>
+              ) : typedKey === "other" ? (
+                <>
+                  <TextInputField
+                    id="otherSpecify"
+                    label="Specify Other Condition"
+                    name="otherSpecify"
+                    placeholder="Specify the condition"
+                    sx={{ mr: "2ch" }}
+                  />
+                  <TextInputField
+                    id="otherRelationship"
+                    label="Relationship to family member"
+                    name="otherRelationship"
+                    placeholder="e.g., Mother"
+                  />
+                </>
+              ) : (
+                <TextInputField
+                  id={`${typedKey}Relationship`}
+                  label="Relationship to family member"
+                  name={`${typedKey}Relationship`}
+                  placeholder="e.g., Mother"
+                />
+              )}
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </WrapperBox>
+</FormFieldContainer>
         <WrapperBox>
           <MainButton
             variant="secondary"

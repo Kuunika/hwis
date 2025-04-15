@@ -22,8 +22,8 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
   const [serviceAreaOptions, setServiceAreaOptions] = useState<{ label: string; id: string }[]>([]);
   const [externalAreas, setExternalAreas] = useState<{ label: string; id: string }[]>([]);
 
-  const { data: serviceAreas, isLoading: serviceAreaLoading } = getConceptSet("Service areas");
-  const { data: aetcServiceAreas, isLoading: aetcServiceAreaLoading } = getConceptSet("AETC service areas");
+  const { data: serviceAreas, isLoading: serviceAreaLoading } = getConceptSet(concepts.SERVICE_AREAS);
+  const { data: aetcServiceAreas, isLoading: aetcServiceAreaLoading } = getConceptSet(concepts.AETC_SERVICE_AREAS);
 
   const form = {
     Referred: {

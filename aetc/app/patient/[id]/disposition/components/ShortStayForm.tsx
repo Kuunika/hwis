@@ -76,7 +76,7 @@ export default function ShortStayForm() {
                 concept: concepts.SHORT_STAY,
                 value: concepts.SHORT_STAY,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.EXPECTED_DURATION, value: values.expectedDuration, obsDatetime: currentDateTime },
                     { concept: concepts.VITAL_SIGNS, value: values.vitalSignsMonitoring, obsDatetime: currentDateTime },
                     { concept: concepts.SOAP_NOTES, value: values.additionalNotes, obsDatetime: currentDateTime },

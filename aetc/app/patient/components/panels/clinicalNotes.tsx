@@ -34,11 +34,11 @@ import { MedicationsNotes } from "@/app/patient/components/clinicalNotes/medicat
 import { ExistingConditionsNotes } from "@/app/patient/components/clinicalNotes/existingConditionsNotes";
 import { SurgicalNotes } from "@/app/patient/components/clinicalNotes/surgicalNotes";
 import { PreviousAdmissionsNotes } from "@/app/patient/components/clinicalNotes/previousAdmissionsNotes";
-import { ReviewOfSystemsNotes } from "@/app/patient/components/clinicalNotes/reviewOfSystemsNotes";
 import { FamilyHistoryNotes } from "@/app/patient/components/clinicalNotes/familyHistory";
 import { useComponentNotes } from "@/hooks/useComponentNotes";
 import {useClinicalNotes} from "@/hooks/useClinicalNotes";
 import {CirculationAssessment} from "@/app/patient/components/clinicalNotes/CirculationAssessment";
+import {ReviewOfSystems} from "@/app/patient/components/clinicalNotes/reviewOfSystemsNotes";
 
 export const ClinicalNotes = () => {
     const { handleSubmit } = useSubmitEncounter(encounters.CLINICAL_NOTES, () => "");

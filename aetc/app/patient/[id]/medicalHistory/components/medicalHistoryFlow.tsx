@@ -877,7 +877,6 @@ export const MedicalHistoryFlow = () => {
 
 
         if (key == "otherSymptom") {
-          console.log(values[key])
           const otherSymptomObs = {
             concept: symptom_uuid[key],
             value: values[key],
