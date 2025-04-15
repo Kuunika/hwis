@@ -63,7 +63,7 @@ export const ShowUnderAgeDialog = ({ open, onClose }: Props) => {
       <ContainerLoaderOverlay loading={serviceAreaLoading || isLoading ||isPending}>
         <Typography variant="body1" gutterBottom>
           {" "}
-          The patient is below the age of 13. Do you want to proceed with the
+          The patient is below the age of 14. Do you want to proceed with the
           registration?
         </Typography>
         <Box>
