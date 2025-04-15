@@ -427,7 +427,7 @@ export const SoapForm = () => {
     });
 
     mutate({
-      encounterType: encounters.PRESCRIPTIONS,
+      encounterType: encounters.NURSING_CARE_NOTES,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
@@ -474,7 +474,7 @@ export const SoapForm = () => {
     ];
 
     mutate({
-      encounterType: encounters.NON_PHARMACOLOGICAL,
+      encounterType: encounters.NURSING_CARE_NOTES,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: currentDateTime,
