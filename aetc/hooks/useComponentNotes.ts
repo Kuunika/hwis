@@ -1741,15 +1741,25 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         sections: Record<string, string>;
         vitals: Record<string, string>;
         labs: Record<string, string>;
+        medications: Array<{
+            name: string;
+            formulation: string;
+            dose: string;
+            doseUnit: string;
+            frequency: string;
+            duration: string;
+            durationUnit: string;
+            description: string;
+        }>;
     } = {
         time: "",
         creator: "Unknown",
         sections: {},
         vitals: {},
-        labs: {}
+        labs: {},
+        medications: []
     };
 
-    // Sort observations by time
     const sortedObs = [...obs].sort((a, b) =>
         new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
     );
@@ -1761,14 +1771,14 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         const creator = ob.created_by || "Unknown";
 
         if (name === "Subjective" && currentNote.sections.Subjective) {
-            // Push the current note if we're starting a new subjective section
             soapNotes.push(createSoapierNote(currentNote));
             currentNote = {
                 time,
                 creator,
                 sections: {},
                 vitals: {},
-                labs: {}
+                labs: {},
+                medications: []
             };
         }
 
@@ -1783,14 +1793,12 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         ].includes(name)) {
             currentNote.sections[name] = value;
         }
-        // Handle vital signs
         else if ([
             "Systolic blood pressure", "Diastolic blood pressure",
             "Pulse Rate", "Respiratory Rate", "Spo2", "Temperature"
         ].includes(name)) {
             currentNote.vitals[name] = value;
         }
-        // Handle lab results
         else if ([
             "Malaria Rapid Diagnostic Test (MRDT)",
             "Blood glucose", "Serum glucose", "Investigations PT",
@@ -1799,11 +1807,55 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
             const labName = name === "Serum glucose" ? "Blood glucose" : name;
             currentNote.labs[labName] = value;
         }
+        else if (name === "Drug Given") {
+            const medication = {
+                name: value,
+                formulation: "",
+                dose: "",
+                doseUnit: "",
+                frequency: "",
+                duration: "",
+                durationUnit: "",
+                description: ""
+            };
+
+            ob.children?.forEach((child: any) => {
+                const childName = child.names?.[0]?.name;
+                const childValue = child.value;
+
+                switch (childName) {
+                    case "Medication Formulation":
+                        medication.formulation = childValue;
+                        break;
+                    case "Medication Dose":
+                        medication.dose = childValue;
+                        break;
+                    case "Medication Dose Unit":
+                        medication.doseUnit = childValue;
+                        break;
+                    case "Medication Frequency":
+                        medication.frequency = childValue;
+                        break;
+                    case "Medication Duration":
+                        medication.duration = childValue;
+                        break;
+                    case "Medication Duration Unit":
+                        medication.durationUnit = childValue;
+                        break;
+                    case "Description":
+                        medication.description = childValue;
+                        break;
+                }
+            });
+
+            currentNote.medications.push(medication);
+        }
     });
 
     if (Object.keys(currentNote.sections).length > 0 ||
         Object.keys(currentNote.vitals).length > 0 ||
-        Object.keys(currentNote.labs).length > 0) {
+        Object.keys(currentNote.labs).length > 0 ||
+        currentNote.medications.length > 0) {
         soapNotes.push(createSoapierNote(currentNote));
     }
 
@@ -1816,6 +1868,16 @@ const createSoapierNote = (note: {
     sections: Record<string, string>;
     vitals: Record<string, string>;
     labs: Record<string, string>;
+    medications: Array<{
+        name: string;
+        formulation: string;
+        dose: string;
+        doseUnit: string;
+        frequency: string;
+        duration: string;
+        durationUnit: string;
+        description: string;
+    }>;
 }): ComponentNote => {
     const paragraphParts: string[] = [];
 
@@ -1840,8 +1902,9 @@ const createSoapierNote = (note: {
             const displayName = sectionDisplayNames[section] || section;
             paragraphParts.push(`${displayName}: ${note.sections[section]}`);
 
-            // Insert vitals and labs after "Medical record observations" (which displays as "Objective")
+            // Insert vitals, labs, and medications after "Medical record observations" (which displays as "Objective")
             if (section === "Medical record observations") {
+                // Add vitals if available
                 if (Object.keys(note.vitals).length > 0) {
                     const vitalParts: string[] = [];
                     if (note.vitals["Systolic blood pressure"] && note.vitals["Diastolic blood pressure"]) {
@@ -1885,13 +1948,29 @@ const createSoapierNote = (note: {
                         paragraphParts.push(`Labs: ${labParts.join(", ")}`);
                     }
                 }
+
+                // Add medications if available
+                if (note.medications.length > 0) {
+                    const medParts = note.medications.map(med => {
+                        let medStr = `${med.name}`;
+                        if (med.formulation) medStr += ` (${med.formulation})`;
+                        if (med.dose && med.doseUnit) medStr += ` ${med.dose} ${med.doseUnit}`;
+                        if (med.frequency) medStr += ` ${med.frequency}`;
+                        if (med.duration && med.durationUnit) medStr += ` for ${med.duration} ${med.durationUnit}`;
+                        if (med.description) medStr += ` - ${med.description}`;
+                        return medStr;
+                    });
+                    paragraphParts.push(`Medications: ${medParts.join("; ")}`);
+                }
             }
         }
     });
 
-    // If we have vitals or labs but no "Medical record observations" section,
     if (!note.sections["Medical record observations"] &&
-        (Object.keys(note.vitals).length > 0 || Object.keys(note.labs).length > 0)) {
+        (Object.keys(note.vitals).length > 0 ||
+            Object.keys(note.labs).length > 0 ||
+            note.medications.length > 0)) {
+
         const objectiveParts: string[] = [];
 
         // Add vitals
@@ -1937,6 +2016,20 @@ const createSoapierNote = (note: {
             if (labParts.length > 0) {
                 objectiveParts.push(`Labs: ${labParts.join(", ")}`);
             }
+        }
+
+        // Add medications
+        if (note.medications.length > 0) {
+            const medParts = note.medications.map(med => {
+                let medStr = `${med.name}`;
+                if (med.formulation) medStr += ` (${med.formulation})`;
+                if (med.dose && med.doseUnit) medStr += ` ${med.dose} ${med.doseUnit}`;
+                if (med.frequency) medStr += ` ${med.frequency}`;
+                if (med.duration && med.durationUnit) medStr += ` for ${med.duration} ${med.durationUnit}`;
+                if (med.description) medStr += ` - ${med.description}`;
+                return medStr;
+            });
+            objectiveParts.push(`Medications: ${medParts.join("; ")}`);
         }
 
         // Insert before Assessment if we have objective data
