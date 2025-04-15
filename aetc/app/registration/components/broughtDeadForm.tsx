@@ -15,8 +15,42 @@ import * as Yup from "yup";
 import { addBroughtDead } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-
+//Add:
+//Name of Deceased : Firstname , Last Name
+// Date of Birth
+// Age
+//ID if available
+//Religion
+// Place of Residence
 const form = {
+  firstName: {
+    name: "first_name",
+    label: "First name",
+  },
+  surname: {
+    name: "surname",
+    label: "Surname",
+  },
+  dateOfBirth: {
+    name: "date_of_birth",
+    label: "Date of Birth",
+  },
+  age: {
+    name: "age",
+    label: "Age",
+  },
+  nationalID: {
+    name: "national_id",
+    label: "National ID",
+  },
+  religion: {
+    name: "religion",
+    label: "Religion",
+  },
+  placeOfResidence: {
+    name: "place_of_residence",
+    label: "Place of Residence",
+  },
   placeOfDeath: {
     name: "place_of_death",
     label: "Place of Death",
@@ -191,6 +225,7 @@ export const BroughtDeadForm = () => {
   const [formValues, setFormValues] = useState<any>({});
 
   const { mutate, isSuccess, isPending } = addBroughtDead();
+  const { navigateTo } = useNavigation(); // Initialize navigation
 
   useEffect(() => {
     // if (isSuccess) navigateBack();
@@ -198,6 +233,7 @@ export const BroughtDeadForm = () => {
 
   const onSubmit = (values: any) => {
     mutate(values);
+    navigateTo("/registration/death/list");
   };
 
   return (
@@ -209,6 +245,53 @@ export const BroughtDeadForm = () => {
         submitButtonText="Submit"
       >
         <FormValuesListener getValues={setFormValues} />
+        <FieldsContainer>
+          <TextInputField
+            name={form.firstName.name}
+            id={form.firstName.name}
+            label={form.firstName.label}
+            sx={{ width: "100%" }}
+          />
+          <TextInputField
+            name={form.surname.name}
+            id={form.surname.name}
+            label={form.surname.label}
+            sx={{ width: "100%" }}
+          />
+        </FieldsContainer>
+        <FormDatePicker
+          name={form.dateOfBirth.name}
+          label={form.dateOfBirth.label}
+          width="100%"
+          sx={{ mb: 2 }}
+        />
+        <FieldsContainer>
+          <TextInputField
+            name={form.age.name}
+            id={form.age.name}
+            label={form.age.label}
+            sx={{ width: "100%" }}
+          />
+          <TextInputField
+            name={form.nationalID.name}
+            id={form.nationalID.name}
+            label={form.nationalID.label}
+            sx={{ width: "100%" }}
+          />
+          <TextInputField
+            name={form.religion.name}
+            id={form.religion.name}
+            label={form.religion.label}
+            sx={{ width: "100%" }}
+          />
+        </FieldsContainer>
+        <TextInputField
+          name={form.placeOfResidence.name}
+          id={form.placeOfResidence.name}
+          label={form.placeOfResidence.label}
+          sx={{ width: "100%" }}
+        />
+
         <TextInputField
           name={form.placeOfDeath.name}
           id={form.placeOfDeath.name}

@@ -69,7 +69,7 @@ export default function RefusedTreatmentForm() {
                 concept: concepts.REFUSED_HOSPITAL_TREATMENT,
                 value: concepts.REFUSED_HOSPITAL_TREATMENT,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.REASON_FOR_REFUSAL, value: values.reasonForRefusal, obsDatetime: currentDateTime },
                     { concept: concepts.PLANS_TO_RETURN_FOR_TREATMENT, value: values.plansToReturn, obsDatetime: currentDateTime },
                     { concept: concepts.DATE_OF_REFUSAL, value: values.dateOfRefusal, obsDatetime: currentDateTime },

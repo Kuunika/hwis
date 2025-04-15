@@ -60,7 +60,7 @@ export default function AbscondedForm() {
                 concept: concepts.ABSCONDED,
                 value: concepts.ABSCONDED,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.LAST_SEEN_LOCATION, value: values.lastSeenLocation, obsDatetime: currentDateTime },
                     { concept: concepts.DATE_OF_ABSCONDING, value: values.dateAbsconded, obsDatetime: currentDateTime },
                     { concept: concepts.TIME_OF_ABSCONDING, value: values.timeAbsconded, obsDatetime: currentDateTime },
