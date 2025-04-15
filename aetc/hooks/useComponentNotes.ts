@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import {concepts, encounters} from "@/constants";
+import {push} from "micromark-util-chunked";
 
 export interface ComponentNote {
     paragraph: string;
@@ -288,81 +289,204 @@ const formatBreathingAssessmentNotes = (obs: any[]) => {
 };
 
 const formatPresentingComplaintsNotes = (obs: any[]): ComponentNote[] => {
-    const complaintDetails: string[] = [];
-    let assessmentTime = new Date().toISOString();
-    let creator = "Unknown";
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
 
-    obs?.forEach((item: any) => {
-        if (item.names?.[0]?.name && item.value) {
-            complaintDetails.push(item.value);
-        }
-        if (item.obs_datetime) {
-            assessmentTime = item.obs_datetime;
-        }
-        if (item.created_by) {
-            creator = item.created_by;
+    const groupedNotes: {
+        time: string;
+        creator: string;
+        complaints: string[];
+    }[] = [];
+
+    let currentGroup: {
+        time: string;
+        creator: string;
+        complaints: string[];
+    } | null = null;
+
+    const durationTypes = [
+        "Duration Of Symptoms Hours",
+        "Duration Of Symptoms Days",
+        "Duration Of Symptoms Weeks",
+        "Duration Of Symptoms Months",
+        "Duration Of Symptoms Years"
+    ];
+
+    sortedObs.forEach((item: any) => {
+        if (item.names?.[0]?.name === "Current complaints or symptoms" && item.value) {
+            const itemTime = item.obs_datetime || new Date().toISOString();
+            const itemCreator = item.created_by || "Unknown";
+            let complaintText = item.value;
+            let durationText = "";
+
+            for (const durationType of durationTypes) {
+                const durationChild = item.children?.find(
+                    (child: any) => child.names?.[0]?.name === durationType && child.value
+                );
+
+                if (durationChild) {
+                    const unit = durationType.toLowerCase().split(' ')[3];
+                    durationText = `${durationChild.value} ${unit}`;
+                    break;
+                }
+            }
+
+            if (durationText) {
+                complaintText += ` (${durationText})`;
+            }
+
+            if (!currentGroup ||
+                new Date(itemTime).getTime() - new Date(currentGroup.time).getTime() > 3 * 60 * 1000) {
+                currentGroup = {
+                    time: itemTime,
+                    creator: itemCreator,
+                    complaints: []
+                };
+                groupedNotes.push(currentGroup);
+            }
+
+            currentGroup.complaints.push(complaintText);
+
+            currentGroup.time = itemTime;
+            currentGroup.creator = itemCreator;
         }
     });
 
-    if (complaintDetails.length === 0) {
-        return [];
-    }
-
-    return [{
-        paragraph: `Presenting complaints: ${complaintDetails.join(', ')}.`,
-        time: assessmentTime,
-        creator: creator,
-        rawTime: new Date(assessmentTime).getTime()
-    }];
+    return groupedNotes.map(group => ({
+        paragraph: `Presenting complaints: ${group.complaints.join(', ')}.`,
+        time: group.time,
+        creator: group.creator,
+        rawTime: new Date(group.time).getTime()
+    }));
 };
 
 const formatAllergiesNotes = (obs: any[]): ComponentNote[] => {
-    const allergyNames: string[] = [];
-    let assessmentTime = new Date().toISOString();
-    let creator = "Unknown";
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
 
-    obs?.forEach(item => {
-        item.children?.forEach((child: any) => {
-            if (child.value && !allergyNames.includes(child.value)) {
-                allergyNames.push(child.value);
+    const groupedNotes: {
+        time: string;
+        creator: string;
+        allergyGroups: {
+            [category: string]: {
+                allergens: string[];
+                description?: string;
             }
-        });
-        if (item.obs_datetime) {
-            assessmentTime = item.obs_datetime;
         }
-        if (item.created_by) {
-            creator = item.created_by;
+    }[] = [];
+
+    let currentGroup: {
+        time: string;
+        creator: string;
+        allergyGroups: {
+            [category: string]: {
+                allergens: string[];
+                description?: string;
+            }
+        }
+    } | null = null;
+
+    sortedObs.forEach(item => {
+        if (item.names?.[0]?.name === "Allergen Category" && item.value) {
+            const itemTime = item.obs_datetime || new Date().toISOString();
+            const itemCreator = item.created_by || "Unknown";
+            const category = item.value;
+
+            const allergens: string[] = [];
+            let description: string | undefined;
+
+            item.children?.forEach((child: any) => {
+                if (child.names?.[0]?.name === "Allergen" && child.value) {
+                    allergens.push(child.value);
+                } else if (child.names?.[0]?.name === "Description" && child.value) {
+                    description = child.value;
+                }
+            });
+
+            if (allergens.length > 0) {
+                if (!currentGroup ||
+                    new Date(itemTime).getTime() - new Date(currentGroup.time).getTime() > 3 * 60 * 1000) {
+                    currentGroup = {
+                        time: itemTime,
+                        creator: itemCreator,
+                        allergyGroups: {}
+                    };
+                    groupedNotes.push(currentGroup);
+                }
+
+                if (!currentGroup.allergyGroups[category]) {
+                    currentGroup.allergyGroups[category] = {
+                        allergens: [],
+                        description
+                    };
+                }
+
+                currentGroup.allergyGroups[category].allergens.push(...allergens);
+
+                if (description) {
+                    currentGroup.allergyGroups[category].description = description;
+                }
+
+                currentGroup.time = itemTime;
+                currentGroup.creator = itemCreator;
+            }
         }
     });
 
-    return allergyNames.length > 0 ? [{
-        paragraph: `Allergies: ${allergyNames.join(', ')}.`,
-        time: assessmentTime,
-        creator,
-        rawTime: new Date(assessmentTime).getTime()
-    }] : [];
-};
+    const notes: ComponentNote[] = [];
+    groupedNotes.forEach(group => {
+        const categoryNotes: string[] = [];
 
+        Object.entries(group.allergyGroups).forEach(([category, details]) => {
+            let noteText = `${category}: ${details.allergens.join(', ')}`;
+            if (details.description) {
+                noteText += ` (${details.description})`;
+            }
+            categoryNotes.push(noteText);
+        });
+
+        if (categoryNotes.length > 0) {
+            notes.push({
+                paragraph: `ALLERGIES: ${categoryNotes.join('; ')}.`,
+                time: group.time,
+                creator: group.creator,
+                rawTime: new Date(group.time).getTime()
+            });
+        }
+    });
+
+    return notes;
+};
 const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
     const medicationNotes: ComponentNote[] = [];
 
     obs?.forEach((item: any) => {
-        // Skip if not a medication observation
         if (item.names?.[0]?.name !== "Drug Given") return;
 
         let drugGiven = item.value;
         let lastTaken = "";
         let lastPrescription = "";
         let frequency = "";
+        let doseInGrams="";
+        let doseInMilligrams="";
+        let doseInMicrograms="";
+        let doseInInternationalUnits="";
+        let doseInMilliliters="";
+        let durationInWeeks ="";
+        let durationInMonths = "";
+        let durationInYears="";
+        let durationInDays = "";
+        let durationInHours = "";
+        let medicationFormulation ="";
         let creator = item.created_by || "Unknown";
         let encounterTime = item.obs_datetime || new Date().toISOString();
 
-        // Process group members
-        if (item.groupMembers && item.groupMembers.length > 0) {
-            item.groupMembers.forEach((member: any) => {
-                const memberName = member.conceptName;
+        if (item.children && item.children.length > 0) {
+            item.children.forEach((member: any) => {
+                const memberName = member.names?.[0]?.name;
                 const memberValue = member.value;
-
                 switch (memberName) {
                     case "Medication Date Last Taken":
                         lastTaken = memberValue;
@@ -373,9 +497,40 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Medication Frequency":
                         frequency = memberValue;
                         break;
-                    case "Dose In Grams":
-                        // Handle dose if needed
+                    case "Dose in grams":
+                        doseInGrams = memberValue;
                         break;
+                        case "Dose in milligrams":
+                        doseInMilligrams = memberValue;
+                        break;
+                    case "Dose In Micrograms":
+                        doseInMicrograms = memberValue;
+                        break;
+                    case "Dose In Millimeter":
+                        doseInMilliliters = memberValue;
+                        break;
+                    case "Dose In Iu":
+                        doseInInternationalUnits = memberValue;
+                        break;
+                        case"Duration On Medication Hours":
+                            durationInHours = memberValue;
+                            break;
+                    case "Duration On Medication Days":
+                        durationInDays = memberValue;
+                        break;
+                    case "Duration On Medication Weeks":
+                        durationInWeeks=memberValue;
+                        break;
+                    case "Duration On Medication Months":
+                        durationInMonths = memberValue;
+                        break;
+                        case "Duration On Medication Years":
+                            durationInYears = memberValue;
+                            break;
+                    case "Medication Formulation":
+                        medicationFormulation = memberValue;
+                        break;
+
                 }
             });
         }
@@ -383,6 +538,17 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         const parts = [];
         if (drugGiven) parts.push(`${drugGiven}`);
         if (frequency) parts.push(`Frequency: ${frequency}`);
+        if (doseInGrams) parts.push(`Dose: ${doseInGrams} grams`);
+        if (doseInMilligrams) parts.push(`Dose: ${doseInMilligrams} milligrams`);
+        if (doseInMicrograms) parts.push(`Dose: ${doseInMicrograms} micrograms`);
+        if (doseInMilliliters) parts.push(`Dose: ${doseInMilliliters} millimeters`);
+        if (doseInInternationalUnits) parts.push(`Dose: ${doseInInternationalUnits} international units`);
+        if (durationInDays) parts.push(`Duration: ${durationInHours} hours`);
+        if (durationInDays) parts.push(`Duration: ${durationInDays} days`);
+        if (durationInWeeks) parts.push(`Duration: ${durationInWeeks} weeks`);
+        if (durationInMonths) parts.push(`Duration: ${durationInMonths} months`);
+        if (durationInYears) parts.push(`Duration: ${durationInYears} years`);
+        if(medicationFormulation) parts.push(`Medication formulation: ${medicationFormulation}`);
         if (lastTaken) parts.push(`Last taken: ${new Date(lastTaken).toLocaleDateString()}`);
         if (lastPrescription) parts.push(`Last prescribed: ${new Date(lastPrescription).toLocaleDateString()}`);
 
@@ -722,7 +888,6 @@ const formatGeneralInformationNotes = (obs: any[]): ComponentNote[] => {
 
     return paragraphs.sort((a, b) => b.rawTime - a.rawTime);
 };
-
 const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
     const assessments: ComponentNote[] = [];
     let currentAssessment: {
@@ -757,10 +922,17 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
         return abnormalities[abnormalities.length - 1];
     };
 
-    obs.forEach((ob: any) => {
-        const name = ob.names?.[0]?.name;
-        const valueText = ob.value;
-        const creator = ob.created_by || "Unknown";
+    // Helper function to process observations recursively
+    const processObservation = (ob: any) => {
+        // Get properties from either direct fields or children structure
+        const name = ob.conceptName || ob.name || (ob.names && ob.names[0]?.name);
+        const valueText = ob.value || ob.value_text;
+        const creator = ob.creator || ob.created_by || "Unknown";
+        const time = ob.obs_datetime || ob.obsDateTime || new Date().toISOString();
+        const children = ob.children || [];
+        console.log("Wisdom",name, valueText, children)
+
+        if (!name) return;
 
         if (name === "Image Part Name") {
             if (valueText === "Front") {
@@ -772,12 +944,11 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
                 currentAssessment = {
                     parts: [],
                     abnormalities: new Map(),
-                    time: ob.obs_datetime || new Date().toISOString(),
+                    time: time,
                     creator: creator
                 };
             }
 
-            // Track current image name if it's not a basic one
             if (!isBasicImageName(valueText)) {
                 currentImageName = valueText;
                 if (!currentAssessment.parts.includes(valueText)) {
@@ -817,7 +988,7 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
             const lastAbnormality = getLastAbnormality(currentAssessment, currentImageName);
             if (lastAbnormality) lastAbnormality.details.specify = valueText;
         }
-        else if (name === "Clinician notes") {
+        else if (name === "Clinician notes" || name === "Notes") {
             if (!currentAssessment.abnormalities.has("General")) {
                 currentAssessment.abnormalities.set("General", []);
             }
@@ -826,7 +997,11 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
                 details: { note: valueText }
             });
         }
-    });
+
+        children.forEach((child: any) => processObservation(child));
+    };
+
+    obs.forEach(processObservation);
 
     // Add the last assessment
     if (currentAssessment.parts.length > 0 || currentAssessment.abnormalities.size > 0) {
@@ -839,22 +1014,19 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
 const formatHeadAndNeckAssessmentToParagraph = (assessment: any): ComponentNote => {
     let paragraphParts: string[] = [];
 
-    // Add the assessed parts
     if (assessment.parts.length > 0) {
         paragraphParts.push(`Assessment of ${assessment.parts.join(", ")} was performed.`);
     }
 
-    // Add abnormalities for each part
     assessment.abnormalities.forEach((abnormalities: any, part: any) => {
         if (part === "General") {
             abnormalities.forEach((abnormality: any) => {
-                paragraphParts.push(`Clinician notes: ${abnormality.details.note}.`);
+                paragraphParts.push(`Head and neck assessment status: ${abnormality.details.note}.`);
             });
         } else {
             abnormalities.forEach((abnormality: any) => {
                 let description = `${part} showed ${abnormality.type}`;
 
-                // Add specific details based on abnormality type
                 switch (abnormality.type) {
                     case "Laceration":
                         if (abnormality.details.length) description += ` (Length: ${abnormality.details.length}`;
@@ -1199,67 +1371,94 @@ const formatExtremitiesNotes = (obs: any[]): ComponentNote[] => {
         const assessment: {
             findings: Record<string, string>,
             additionalNotes: string[],
-            upperLimbImages: string[],
-            lowerLimbImages: string[],
+            upperLimbImagesWithAbnormalities: Record<string, string[]>,
+            lowerLimbImagesWithAbnormalities: Record<string, string[]>,
             upperLimbAbnormalities: string[],
             lowerLimbAbnormalities: string[],
-            status: string
+            upperLimbStatus: string,
+            lowerLimbStatus: string
         } = {
             findings: {},
             additionalNotes: [],
-            upperLimbImages: [],
-            lowerLimbImages: [],
+            upperLimbImagesWithAbnormalities: {},
+            lowerLimbImagesWithAbnormalities: {},
             upperLimbAbnormalities: [],
             lowerLimbAbnormalities: [],
-            status: 'normal'
+            upperLimbStatus: 'normal',
+            lowerLimbStatus: 'normal'
         };
 
+        // First pass to handle abnormalities and image parts
         group.observations.forEach(ob => {
             const name = ob.names?.[0]?.name;
             const valueText = ob.value;
 
-            if (name === "Image Part Name" && valueText.includes("Upper Limb")) {
-                assessment.upperLimbImages.push(valueText.replace("Upper Limb - ", ""));
-            }
-            else if (name === "Image Part Name" && valueText.includes("Lower Limb")) {
-                assessment.lowerLimbImages.push(valueText.replace("Lower Limb - ", ""));
-            }
-            else if (extremityAbnormalities.includes(name)) {
-                if (valueText === "Yes") {
-                    assessment.status = 'abnormal';
-                    if (ob.concept?.name?.includes("Upper")) {
-                        assessment.upperLimbAbnormalities.push(name);
-                    } else if (ob.concept?.name?.includes("Lower")) {
-                        assessment.lowerLimbAbnormalities.push(name);
+            if (name === "Abnormalities upper limb") {
+                assessment.upperLimbStatus = valueText === "Yes" ? "abnormal" : "normal";
+            } else if (name === "Abnormalities lower limb") {
+                assessment.lowerLimbStatus = valueText === "Yes" ? "abnormal" : "normal";
+            } else if (name === "Image Part Name") {
+                const isUpperLimb = valueText.includes("upper limb");
+                const isLowerLimb = valueText.includes("lower limb");
+
+                if (isUpperLimb || isLowerLimb) {
+                    const imageName = valueText.replace(/(upper|lower) limb -? /, "");
+                    const abnormalities: string[] = [];
+
+                    // Check for abnormalities in children
+                    if (ob.children && ob.children.length > 0) {
+                        ob.children.forEach((child: any) => {
+                            if (child.children && child.children.length > 0) {
+                                child.children.forEach((grandChild: any) => {
+                                    const abnormalityName = grandChild.names?.[0]?.name;
+                                    if (extremityAbnormalities.includes(abnormalityName) && grandChild.value === "Yes") {
+                                        abnormalities.push(abnormalityName);
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    if (abnormalities.length > 0) {
+                        if (isUpperLimb) {
+                            assessment.upperLimbImagesWithAbnormalities[imageName] = abnormalities;
+                            assessment.upperLimbAbnormalities.push(...abnormalities);
+                        } else {
+                            assessment.lowerLimbImagesWithAbnormalities[imageName] = abnormalities;
+                            assessment.lowerLimbAbnormalities.push(...abnormalities);
+                        }
                     }
                 }
             }
-            else {
-                switch (name) {
-                    case "Edema":
-                        assessment.findings[name] = valueText === "Yes"
-                            ? "The patient has edema. "
-                            : "The patient has no edema. ";
-                        if (valueText === "Yes") assessment.status = 'abnormal';
-                        break;
+        });
 
-                    case "Oedema details":
-                        assessment.findings[name] = `Edema details: ${valueText}. `;
-                        break;
+        // Second pass to handle other observations
+        group.observations.forEach(ob => {
+            const name = ob.names?.[0]?.name;
+            const valueText = ob.value;
 
-                    case "Cold clammy":
-                        assessment.findings[name] = valueText === "Yes"
-                            ? "Cold clammy extremities present. "
-                            : "Cold clammy extremities not present. ";
-                        if (valueText === "Yes") assessment.status = 'abnormal';
-                        break;
+            switch (name) {
+                case "Edema":
+                    assessment.findings[name] = valueText === "Yes"
+                        ? "The patient has Edema. "
+                        : "The patient has no Edema. ";
+                    break;
 
-                    case "Additional Notes":
-                        if (valueText.trim()) {
-                            assessment.additionalNotes.push(valueText);
-                        }
-                        break;
-                }
+                case "Oedema details":
+                    assessment.findings[name] = `Edema details: ${valueText}. `;
+                    break;
+
+                case "Cold clammy":
+                    assessment.findings[name] = valueText === "Yes"
+                        ? "Cold clammy extremities present. "
+                        : "Cold clammy extremities not present. ";
+                    break;
+
+                case "Additional Notes":
+                    if (valueText.trim()) {
+                        assessment.additionalNotes.push(valueText);
+                    }
+                    break;
             }
         });
 
@@ -1275,41 +1474,57 @@ const formatExtremitiesNotes = (obs: any[]): ComponentNote[] => {
             paragraphParts.push(assessment.findings["Cold clammy"]);
         }
 
-        if (assessment.upperLimbImages.length > 0 || assessment.upperLimbAbnormalities.length > 0) {
-            let upperLimbText = "Upper limbs: ";
+        // Upper limb description
+        let upperLimbText = "Upper limbs: ";
+        if (assessment.upperLimbStatus === "normal") {
+            upperLimbText += "No abnormalities detected";
+        } else {
             const parts = [];
 
-            if (assessment.upperLimbImages.length > 0) {
-                parts.push(`images of ${assessment.upperLimbImages.join(", ")}`);
-            }
+            // Add abnormalities per image
+            Object.entries(assessment.upperLimbImagesWithAbnormalities).forEach(([image, abnormalities]) => {
+                parts.push(`Body part of ${image} shows ${abnormalities.join(", ")}`);
+            });
 
+            // Add any general abnormalities not tied to specific images
             if (assessment.upperLimbAbnormalities.length > 0) {
-                parts.push(`${assessment.upperLimbAbnormalities.join(", ")} present`);
-            } else {
-                parts.push("no abnormalities detected");
+                const generalAbnormalities = assessment.upperLimbAbnormalities.filter(
+                    ab => !Object.values(assessment.upperLimbImagesWithAbnormalities).flat().includes(ab)
+                );
+                if (generalAbnormalities.length > 0) {
+                    parts.push(`${generalAbnormalities.join(", ")} present`);
+                }
             }
 
-            upperLimbText += parts.join("; ") + ".";
-            paragraphParts.push(upperLimbText);
+            upperLimbText += parts.join("; ");
         }
+        paragraphParts.push(upperLimbText + ".");
 
-        if (assessment.lowerLimbImages.length > 0 || assessment.lowerLimbAbnormalities.length > 0) {
-            let lowerLimbText = "Lower limbs: ";
+        // Lower limb description
+        let lowerLimbText = "Lower limbs: ";
+        if (assessment.lowerLimbStatus === "normal") {
+            lowerLimbText += "No abnormalities detected";
+        } else {
             const parts = [];
 
-            if (assessment.lowerLimbImages.length > 0) {
-                parts.push(`images of ${assessment.lowerLimbImages.join(", ")}`);
-            }
+            // Add abnormalities per image
+            Object.entries(assessment.lowerLimbImagesWithAbnormalities).forEach(([image, abnormalities]) => {
+                parts.push(`Body part of ${image} shows ${abnormalities.join(", ")}`);
+            });
 
+            // Add any general abnormalities not tied to specific images
             if (assessment.lowerLimbAbnormalities.length > 0) {
-                parts.push(`${assessment.lowerLimbAbnormalities.join(", ")} present`);
-            } else {
-                parts.push("no abnormalities detected");
+                const generalAbnormalities = assessment.lowerLimbAbnormalities.filter(
+                    ab => !Object.values(assessment.lowerLimbImagesWithAbnormalities).flat().includes(ab)
+                );
+                if (generalAbnormalities.length > 0) {
+                    parts.push(`${generalAbnormalities.join(", ")} present`);
+                }
             }
 
-            lowerLimbText += parts.join("; ") + ".";
-            paragraphParts.push(lowerLimbText);
+            lowerLimbText += parts.join("; ");
         }
+        paragraphParts.push(lowerLimbText + ".");
 
         if (assessment.additionalNotes.length > 0) {
             paragraphParts.push(`Additional notes: ${assessment.additionalNotes.join('; ')}`);
@@ -1322,8 +1537,7 @@ const formatExtremitiesNotes = (obs: any[]): ComponentNote[] => {
             rawTime: new Date(group.time).getTime()
         };
     }).sort((a, b) => b.rawTime - a.rawTime);
-};
-const formatNeurologicalExaminationNotes = (obs: any[]): ComponentNote[] => {
+};const formatNeurologicalExaminationNotes = (obs: any[]): ComponentNote[] => {
     const paragraphs: ComponentNote[] = [];
     let currentParagraph: string[] = [];
     let currentTime = "";
@@ -1369,13 +1583,22 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         time: string;
         creator: string;
         sections: Record<string, string>;
+        vitals: Record<string, string>;
+        labs: Record<string, string>;
     } = {
         time: "",
         creator: "Unknown",
-        sections: {}
+        sections: {},
+        vitals: {},
+        labs: {}
     };
 
-    obs.forEach((ob: any) => {
+    // Sort observations by time
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    sortedObs.forEach((ob: any) => {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
         const time = ob.obs_datetime || new Date().toISOString();
@@ -1387,7 +1610,9 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
             currentNote = {
                 time,
                 creator,
-                sections: {}
+                sections: {},
+                vitals: {},
+                labs: {}
             };
         }
 
@@ -1397,15 +1622,32 @@ const formatSoapierNotes = (obs: any[]): ComponentNote[] => {
         }
 
         if ([
-            "Subjective", "Objective", "Assessment", "Plan",
+            "Subjective", "Medical record observations", "Assessment", "Plan",
             "Intervention", "Evaluation", "Replan", "Implementation"
         ].includes(name)) {
             currentNote.sections[name] = value;
         }
+        // Handle vital signs
+        else if ([
+            "Systolic blood pressure", "Diastolic blood pressure",
+            "Pulse Rate", "Respiratory Rate", "Spo2", "Temperature"
+        ].includes(name)) {
+            currentNote.vitals[name] = value;
+        }
+        // Handle lab results
+        else if ([
+            "Malaria Rapid Diagnostic Test (MRDT)",
+            "Blood glucose", "Serum glucose", "Investigations PT",
+            "Urine Dipstick Ketones"
+        ].includes(name)) {
+            const labName = name === "Serum glucose" ? "Blood glucose" : name;
+            currentNote.labs[labName] = value;
+        }
     });
 
-    // Push the last note if it has content
-    if (Object.keys(currentNote.sections).length > 0) {
+    if (Object.keys(currentNote.sections).length > 0 ||
+        Object.keys(currentNote.vitals).length > 0 ||
+        Object.keys(currentNote.labs).length > 0) {
         soapNotes.push(createSoapierNote(currentNote));
     }
 
@@ -1416,22 +1658,144 @@ const createSoapierNote = (note: {
     time: string;
     creator: string;
     sections: Record<string, string>;
+    vitals: Record<string, string>;
+    labs: Record<string, string>;
 }): ComponentNote => {
     const paragraphParts: string[] = [];
 
+    const sectionDisplayNames: Record<string, string> = {
+        "Subjective": "Subjective",
+        "Medical record observations": "Objective",
+        "Assessment": "Assessment",
+        "Plan": "Plan",
+        "Intervention": "Intervention",
+        "Evaluation": "Evaluation",
+        "Replan": "Replan",
+        "Implementation": "Implementation"
+    };
+
     const orderedSections = [
-        "Subjective", "Objective", "Assessment", "Plan",
+        "Subjective", "Medical record observations", "Assessment", "Plan",
         "Intervention", "Evaluation", "Replan", "Implementation"
     ];
 
     orderedSections.forEach(section => {
         if (note.sections[section]) {
-            paragraphParts.push(`${section}: ${note.sections[section]}`);
+            const displayName = sectionDisplayNames[section] || section;
+            paragraphParts.push(`${displayName}: ${note.sections[section]}`);
+
+            // Insert vitals and labs after "Medical record observations" (which displays as "Objective")
+            if (section === "Medical record observations") {
+                if (Object.keys(note.vitals).length > 0) {
+                    const vitalParts: string[] = [];
+                    if (note.vitals["Systolic blood pressure"] && note.vitals["Diastolic blood pressure"]) {
+                        vitalParts.push(`BP: ${note.vitals["Systolic blood pressure"]}/${note.vitals["Diastolic blood pressure"]} mmHg`);
+                    }
+                    if (note.vitals["Pulse Rate"]) {
+                        vitalParts.push(`Pulse: ${note.vitals["Pulse Rate"]} bpm`);
+                    }
+                    if (note.vitals["Respiratory Rate"]) {
+                        vitalParts.push(`Respiratory Rate: ${note.vitals["Respiratory Rate"]} breaths/min`);
+                    }
+                    if (note.vitals["Spo2"]) {
+                        vitalParts.push(`SpO2: ${note.vitals["Spo2"]}%`);
+                    }
+                    if (note.vitals["Temperature"]) {
+                        vitalParts.push(`Temp: ${note.vitals["Temperature"]}°C`);
+                    }
+
+                    if (vitalParts.length > 0) {
+                        paragraphParts.push(`Vitals: ${vitalParts.join(", ")}`);
+                    }
+                }
+
+                // Add labs if available
+                if (Object.keys(note.labs).length > 0) {
+                    const labParts: string[] = [];
+                    if (note.labs["Malaria Rapid Diagnostic Test (MRDT)"]) {
+                        labParts.push(`Malaria Test: ${note.labs["Malaria Rapid Diagnostic Test (MRDT)"]}`);
+                    }
+                    if (note.labs["Blood glucose"]) {
+                        labParts.push(`Blood Glucose: ${note.labs["Blood glucose"]} mg/dL`);
+                    }
+                    if (note.labs["Investigations PT"]) {
+                        labParts.push(`PT: ${note.labs["Investigations PT"]}`);
+                    }
+                    if (note.labs["Urine Dipstick Ketones"]) {
+                        labParts.push(`Urine Ketones: ${note.labs["Urine Dipstick Ketones"]}`);
+                    }
+
+                    if (labParts.length > 0) {
+                        paragraphParts.push(`Labs: ${labParts.join(", ")}`);
+                    }
+                }
+            }
         }
     });
 
+    // If we have vitals or labs but no "Medical record observations" section,
+    if (!note.sections["Medical record observations"] &&
+        (Object.keys(note.vitals).length > 0 || Object.keys(note.labs).length > 0)) {
+        const objectiveParts: string[] = [];
+
+        // Add vitals
+        if (Object.keys(note.vitals).length > 0) {
+            const vitalParts: string[] = [];
+            if (note.vitals["Systolic blood pressure"] && note.vitals["Diastolic blood pressure"]) {
+                vitalParts.push(`BP: ${note.vitals["Systolic blood pressure"]}/${note.vitals["Diastolic blood pressure"]} mmHg`);
+            }
+            if (note.vitals["Pulse Rate"]) {
+                vitalParts.push(`Pulse: ${note.vitals["Pulse Rate"]} bpm`);
+            }
+            if (note.vitals["Respiratory Rate"]) {
+                vitalParts.push(`Respiratory Rate: ${note.vitals["Respiratory Rate"]} breaths/min`);
+            }
+            if (note.vitals["Spo2"]) {
+                vitalParts.push(`SpO2: ${note.vitals["Spo2"]}%`);
+            }
+            if (note.vitals["Temperature"]) {
+                vitalParts.push(`Temp: ${note.vitals["Temperature"]}°C`);
+            }
+
+            if (vitalParts.length > 0) {
+                objectiveParts.push(`Vitals: ${vitalParts.join(", ")}`);
+            }
+        }
+
+        // Add labs
+        if (Object.keys(note.labs).length > 0) {
+            const labParts: string[] = [];
+            if (note.labs["Malaria Rapid Diagnostic Test (MRDT)"]) {
+                labParts.push(`Malaria Test: ${note.labs["Malaria Rapid Diagnostic Test (MRDT)"]}`);
+            }
+            if (note.labs["Blood glucose"]) {
+                labParts.push(`Blood Glucose: ${note.labs["Blood glucose"]} mg/dL`);
+            }
+            if (note.labs["Investigations PT"]) {
+                labParts.push(`PT: ${note.labs["Investigations PT"]}`);
+            }
+            if (note.labs["Urine Dipstick Ketones"]) {
+                labParts.push(`Urine Ketones: ${note.labs["Urine Dipstick Ketones"]}`);
+            }
+
+            if (labParts.length > 0) {
+                objectiveParts.push(`Labs: ${labParts.join(", ")}`);
+            }
+        }
+
+        // Insert before Assessment if we have objective data
+        if (objectiveParts.length > 0) {
+            const assessmentIndex = paragraphParts.findIndex(p => p.startsWith("Assessment:"));
+            if (assessmentIndex >= 0) {
+                paragraphParts.splice(assessmentIndex, 0, "Objective:", ...objectiveParts);
+            } else {
+                paragraphParts.push("Objective:", ...objectiveParts);
+            }
+        }
+    }
+
     return {
-        paragraph: paragraphParts.join(".  "),
+        paragraph: paragraphParts.join(". "),
         time: note.time,
         creator: note.creator,
         rawTime: new Date(note.time).getTime()

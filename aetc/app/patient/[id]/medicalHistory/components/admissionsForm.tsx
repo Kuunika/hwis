@@ -212,12 +212,23 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
 };
 
   return (
-    <>
-    <h2 style={{marginTop:'20px', paddingBottom:"20px"}}>Previous admissions:</h2>
+    <div style={{marginLeft:"100px", marginTop:"20px", borderTop:"1px solid rgba(0, 0, 0, 0.1)", paddingTop:"20px", paddingBottom:"20px"}}>
+
   <div style={{background:'white', padding:'20px', borderRadius:'5px', marginBottom:'20px'}}>
     
-    <h3 style={{color:'rgba(0, 0, 0, 0.6)', marginBottom:'10px'}}>Exisiting history:</h3>
-<div>
+  <MainTypography
+          variant="h5"
+          fontWeight={"700"}
+          sx={{
+            lineHeight: "24px",
+            letterSpacing: "0em",
+            textAlign: "left",
+            marginBottom: "1ch",
+          }}
+        >
+          Previous admissions
+        </MainTypography>
+<div>{displayedObservations.length === 0 ? ( <p>No admission history available</p>):(<>
             {displayedObservations.map(item => (
                 <div key={item.obs_id} style={{ marginBottom: "20px", color: "rgba(0, 0, 0, 0.6)" }}>
                     <h4>{item.value}</h4>
@@ -246,7 +257,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     style={{color:'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
                 >
                     View Less
-                </button>)}
+                </button>)}</>)}
         </div>
   </div>
     <FormikInit
@@ -321,7 +332,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px", padding:"1ch", marginTop: "" }}>
+                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px"}}>
                         <label style={{fontWeight: "bold" }}>
                         {formValues.admissions[index]["diagnosis"]}
                       </label>
@@ -345,7 +356,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         <ErrorMessage name={admissionsFormConfig.diagnosis(index).name} />
                       </MainTypography>
                   </FormFieldContainer>
-                  <FormFieldContainer direction="column">
+                  <div style={{ width: "100%" }}>
                       <div>
                       <TextInputField
                       disabled={formValues.none}
@@ -353,6 +364,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         name={admissionsFormConfig.interventions(index).name}
                         label={admissionsFormConfig.interventions(index).label}
                         multiline
+                        sx={{ width: "100%"}}
                         rows={4}
                       />
                       <MainTypography color="red" variant="subtitle2">
@@ -361,8 +373,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                  </FormFieldContainer>
-                  <FormFieldContainer direction="row">
+
                     <div>
                       <TextInputField
                       disabled={formValues.none}
@@ -370,6 +381,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         name={admissionsFormConfig.discharge_instructions(index).name}
                         label={admissionsFormConfig.discharge_instructions(index).label}
                         multiline
+                        sx={{ width: "100%"}}
                         rows={4}
                       />
                        <MainTypography color="red" variant="subtitle2">
@@ -378,8 +390,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                  </FormFieldContainer>
-                  <FormFieldContainer direction="row">
+                
                     <div>
                       <TextInputField
                       disabled={formValues.none}
@@ -387,6 +398,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                         name={admissionsFormConfig.follow_up_plans(index).name}
                         label={admissionsFormConfig.follow_up_plans(index).label}
                         multiline
+                        sx={{ width: "100%"}}
                         rows={4}
                       />
                        <MainTypography color="red" variant="subtitle2">
@@ -395,7 +407,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                    </FormFieldContainer>
+                  </div>
                     </>
                   )}
                 />
@@ -408,7 +420,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
         </>
       )}
     </FormikInit>
-    </>
+    </div>
   );
 }
 export default AdmissionsForm;

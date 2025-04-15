@@ -156,10 +156,13 @@ export const encounters = {
   SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
   PATIENT_ADMISSIONS: "ba0651ec-8d80-11d8-abbb-0024217bb78e",
   SUMMARY_ASSESSMENT: "e5fec87c-9bea-42bb-a276-0469addccf99",
+
   // CPR:"8576645e-1661-47fc-90b4-12420148da8b",
-  CPR: "8caec6aa-22c4-41f3-b81d-9454cac03b49",
+
   //TODO: replace this UUID with a bedside test
-  BED_SIDE_TEST: "27e4890f-1677-4098-aa85-c65cfe32359c",
+  CPR: "31582078-729a-45ca-935c-43bd7d4b382c",
+  //TODO: replace this UUID with a bedside test
+  BED_SIDE_TEST: "7d4400bf-534b-4c06-8b20-f6a424beb64",
   DISCHARGE_PATIENT: "ba06820c-8d80-11d8-abbb-0024217bb78e",
   TREATMENT: "ba05ed9c-8d80-11d8-abbb-0024217bb78e",
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",
@@ -171,10 +174,9 @@ export const encounters = {
   TEMPLATE_NOTES: "ba067294-8d80-11d8-abbb-0024217bb78e",
   CONTINUATION_SHEET: "dd12d7ad-f177-463a-9013-c135440c6cf9",
   PRIMARY_DISABILITY_ASSESSMENT: "d3608295-ea61-4864-b0c7-eb3bc062a0e2",
-  MEDICAL_IN_PATIENT: "",
+  MEDICAL_IN_PATIENT: "1aeb209d-8f1f-4367-8d9c-476134235545",
   SURGICAL_NOTES_TEMPLATE_FORM: "6c44a2d9-953d-41dd-9b99-03b4214f85ba",
   DISPOSED_PRESCRIPTIONS: "a9ebe09e-0296-40d1-a9fa-3efcce85ea9e ",
-
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -459,6 +461,7 @@ export const concepts = {
   TRIAGE_RESULT: "Triage Result",
   ELECTIVE: "Elective",
   CURRENT_COMPLAINTS_OR_SYMPTOMS: "Current Complaints Or Symptoms",
+  DURATION_OF_SYMPTOMS_HOURS: "Duration Of Symptoms Hours",
   DURATION_OF_SYMPTOMS_DAYS: "Duration Of Symptoms Days",
   DURATION_OF_SYMPTOMS_WEEKS: "Duration Of Symptoms Weeks",
   DURATION_OF_SYMPTOMS_MONTHS: "Duration Of Symptoms Months",
@@ -1187,6 +1190,7 @@ export const concepts = {
   HEADACHE: "Headache",
   STRIDOR: "Stridor",
   OTHER_CONDITION: "Other Condition",
+  DURATION_ON_MEDICATION_HOURS: "Duration On Medication Hours",
   DURATION_ON_MEDICATION_DAYS: "Duration On Medication Days",
   DURATION_ON_MEDICATION_WEEKS: "Duration On Medication Weeks",
   DURATION_ON_MEDICATION_MONTHS: "Duration On Medication Months",
@@ -1399,6 +1403,9 @@ export const concepts = {
   SMOKING_HISTORY: "Smoking History",
   QUIT_OVER_A_MONTH_AGO: "Quit over a month ago",
   NEVER_SMOKED: "Never smoked",
+  PUPIL_REACTION:"Pupil reaction",
+  GENETELIA_EXAMINATION_REQUIRED:"Genetelia examination required",
+ 
 };
 
 export const conceptNames = {

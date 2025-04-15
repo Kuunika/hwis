@@ -66,7 +66,7 @@ export const PrimaryAssessmentFlow = () => {
     <>
       <NewStepperContainer
         setActive={setActiveStep}
-        title="Primary Assessment"
+        title="Primary Survey"
         steps={steps}
         active={activeStep}
         onBack={() => navigateBackToProfile()}
