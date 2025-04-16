@@ -477,7 +477,7 @@ export const SoapForm = () => {
           },
           {
             concept: concepts.DESCRIPTION,
-            value: "current",
+            value: "soapier",
             obsDateTime,
           },
         ],
@@ -510,6 +510,11 @@ export const SoapForm = () => {
           {
             concept: concepts.MEDICATION_ROUTE,
             value: medication.medication_dose,
+            obsDateTime,
+          },
+          {
+            concept: concepts.DESCRIPTION,
+            value: "soapier",
             obsDateTime,
           },
         ]
