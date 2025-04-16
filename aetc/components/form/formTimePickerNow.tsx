@@ -59,6 +59,7 @@ export const FormTimePickerNow: FC<Prop> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <TimePicker
+        timeSteps={{ hours: 1, minutes: 1, seconds: 1 }}
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}

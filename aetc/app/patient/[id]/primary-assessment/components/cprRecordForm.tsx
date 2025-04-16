@@ -52,7 +52,7 @@ const form = {
   },
   occurrences: {
     name: concepts.OCCURRENCES,
-    label: "Occurrences",
+    label: "Occurrences (E.g., ROSC, Vomit)",
   },
   time: {
     name: concepts.TIME,
@@ -220,7 +220,10 @@ export const RecordForm = ({
 
   return (
     <FormikInit
-      initialValues={getInitialValues(form)}
+      initialValues={{
+        ...getInitialValues(form),
+        [form.interventions.name]: [],
+      }}
       validationSchema={recordValidationSchema}
       onSubmit={handleSubmitForm}
       submitButtonText="Add Record"

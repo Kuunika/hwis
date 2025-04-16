@@ -61,7 +61,7 @@ const sounds = [
   { id: concepts.CRACKLES, label: "Crackles" },
   { id: concepts.WHEEZES, label: "Wheezes" },
   { id: concepts.BRONCHIAL, label: "Bronchial" },
-  { id: concepts.OTHER, label: "other" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 
 const yesNoOptions = [
@@ -100,14 +100,6 @@ export const BreathingSoundsForm = (props: Props) => {
       submitButton={false}
       submitButtonText="next"
     >
-      {/* <Box
-        sx={{
-          maxHeight: "50vh",
-          overflow: "auto",
-          padding: "1rem",
-          backgroundColor: "white",
-        }}
-      > */}
       <FormValuesListener getValues={setFormValues} />
       <SearchComboBox
         multiple={false}
@@ -133,6 +125,7 @@ export const BreathingSoundsForm = (props: Props) => {
                 name={form.added.name}
                 label={form.added.label}
                 getValue={(values) => {
+                  console.log({ values });
                   if (values)
                     setShowAdded(
                       Boolean(values.find((v: any) => v.id == concepts.OTHER))
@@ -160,7 +153,6 @@ export const BreathingSoundsForm = (props: Props) => {
             sx={{ width: "100%" }}
             multiple={true}
             options={sounds}
-            coded
             name={form.reduced.name}
             label={form.reduced.label}
             getValue={(values) => {
