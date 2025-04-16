@@ -372,11 +372,14 @@ export const MedicalHistoryFlow = () => {
       {
           concept: concepts.MEDICATION_FORMULATION,
           value: medication.formulation,
-      } 
+      },
+      {
+        concept: concepts.SELF_MEDICATED,
+        value: medication.medication_self_medicated,
+    } ,
     ]as OutputObservation[]
     }});
 
-   console.log(observationsPayload)
       try {
         const response = await createEncounter({
           encounterType: encounters.PRESCRIPTIONS,

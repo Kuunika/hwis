@@ -1,5 +1,5 @@
 "use client";
-import { FormDatePicker, FormikInit, FormValuesListener, MainButton, MainTypography, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
+import { FormDatePicker, FormikInit, FormValuesListener, MainButton, MainTypography, RadioGroupInput, SearchComboBox, TextInputField, UnitInputField, WrapperBox } from "@/components";
 import React, { useEffect, useState } from "react";
 import { Field, FieldArray, getIn } from "formik";
 import * as yup from "yup";
@@ -29,6 +29,7 @@ type Medication = {
   medication_duration_unit: string;
   medication_date_last_taken: string;
   medication_date_of_last_prescription: string;
+  medication_self_medicated: string;
 };
 
 const medicationTemplate: Medication = {
@@ -41,6 +42,7 @@ const medicationTemplate: Medication = {
   medication_duration_unit: "",
   medication_date_last_taken: "",
   medication_date_of_last_prescription: "",
+  medication_self_medicated: "",
 };
 
 const initialValues = {
@@ -103,6 +105,10 @@ const medicationItemSchema = yup.object().shape({
       "Date of last prescription must be in the past",
       (value) => value && value <= new Date()
     ),
+    medication_self_medicated: yup
+    .string()
+    .required("Self-medication status is required")
+    .oneOf(["Yes", "No"], "Self-medication status must be either Yes or No"),
 });
 
 export const schema = yup.object().shape({
@@ -326,6 +332,23 @@ export const MedicationsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                       />
                     </MainTypography>
                       </div>
+                    <div style={{ marginTop: "24px" }}>
+                      <RadioGroupInput
+                        row
+                        name={`medications[${index}].medication_self_medicated`}
+                        options={[
+                          { value: "Yes", label: "Yes" },
+                          { value: "No", label: "No" },
+                        ]}
+                        label="Did the patient self medicate?"
+                        disabled={formValues["none"]}
+                      />
+                      <MainTypography color="red" variant="subtitle2">
+                      <ErrorMessage
+                        name={`medications[${index}].medication_self_medicated`}
+                      />
+                      </MainTypography>
+                    </div>
                   </>
                 )}
               />

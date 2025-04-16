@@ -122,8 +122,6 @@ export function NewStepperContainer({
     if (showSubmittedStatus) {
       const updatedTimes: { [key: number]: string } = {};
 
-      console.log({ steps });
-
       steps.forEach((step, index) => {
         const stepEncounter = data
           ?.filter((d) => d.encounter_type.uuid === step.encounter)
