@@ -313,6 +313,7 @@ const interventions = [
   { id: concepts.NG_INSERTION, label: "NG Insertion" },
   { id: concepts.SUTURING, label: "Suturing" },
   { id: concepts.KEEP_WARM, label: "Keep warm" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 const eyeOpeningResponses = [
   { label: "Spontaneous", value: "Spontaneous", weight: 4 },
@@ -341,9 +342,10 @@ const verbalResponses = [
 ];
 
 const routeOptions = [
+  { label: "Intraosseous", id: concepts.INTRAOSSEOUS },
+  { label: "Intravenous", id: concepts.INTRAVENOUS },
   { label: "Oral", id: concepts.ORAL },
   { label: "Suppository", id: concepts.SUPPOSITORY },
-  { label: "Intravenous", id: concepts.INTRAVENOUS },
   { label: "Intramuscular", id: concepts.INTRAMUSCULAR },
   { label: "Subcutaneous", id: concepts.SUBCUTANEOUS },
   { label: "Infiltration", id: concepts.INFILTRATION },

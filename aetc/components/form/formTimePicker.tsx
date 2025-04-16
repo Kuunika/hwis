@@ -38,6 +38,7 @@ export const FormTimePicker: FC<Prop> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <TimePicker
+        timeSteps={{ hours: 1, minutes: 1, seconds: 1 }}
         sx={{
           width,
           my: "1ch",

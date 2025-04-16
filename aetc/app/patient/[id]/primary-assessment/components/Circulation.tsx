@@ -830,6 +830,8 @@ export const Circulation = ({ onSubmit }: Prop) => {
               name={form.additionalNotes.name}
               label={form.additionalNotes.label}
               id={form.additionalNotes.name}
+              rows={5}
+              multiline
             />
           </FormFieldContainerLayout>
         </FormikInit>
