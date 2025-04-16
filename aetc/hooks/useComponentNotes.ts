@@ -83,78 +83,101 @@ export const useComponentNotes = (encounterType: string) => {
         let airwayReasons: string[] = [];
         let airwayInterventions: string[] = [];
 
-        obs.forEach((ob: any) => {
+        const sortedObs = [...obs].sort((a, b) =>
+            new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+        );
+
+        sortedObs.forEach((ob: any) => {
             const name = ob.names?.[0]?.name;
-            const valueText = ob.value;
+            const value = ob.value;
             const creator = ob.created_by || "Unknown";
 
-            if (name === "Airway Patent" && currentParagraph.length > 0) {
-                if (airwayReasons.length > 0) {
-                    currentParagraph.push(`The airway obstruction is attributed to ${airwayReasons.join(", ")}.`);
-                    airwayReasons = [];
-                }
-                if (airwayInterventions.length > 0) {
-                    currentParagraph.push(`Interventions performed: ${airwayInterventions.join(", ")}.`);
-                    airwayInterventions = [];
-                }
-
-                paragraphs.push({
-                    paragraph: currentParagraph.join(" "),
-                    time: currentTime,
-                    creator: currentCreator,
-                    rawTime: new Date(currentTime).getTime(),
-                });
-
-                currentParagraph = [];
-            }
-
             if (name === "Airway Patent") {
+                if (currentParagraph.length > 0) {
+                    if (airwayReasons.length > 0) {
+                        currentParagraph.push(
+                            airwayReasons.length === 1
+                                ? `The airway obstruction is attributed to ${airwayReasons[0]}.`
+                                : `The airway obstruction is attributed to: ${airwayReasons.join(", ")}.`
+                        );
+                        airwayReasons = [];
+                    }
+                    if (airwayInterventions.length > 0) {
+                        currentParagraph.push(
+                            airwayInterventions.length === 1
+                                ? `Intervention performed: ${airwayInterventions[0]}.`
+                                : `Interventions performed: ${airwayInterventions.join(", ")}.`
+                        );
+                        airwayInterventions = [];
+                    }
+
+                    paragraphs.push({
+                        paragraph: currentParagraph.join(" "),
+                        time: currentTime,
+                        creator: currentCreator,
+                        rawTime: new Date(currentTime).getTime(),
+                    });
+
+                    currentParagraph = [];
+                }
+
                 currentTime = ob.obs_datetime || new Date().toISOString();
                 currentCreator = creator;
-            }
 
-            if (name === "Airway Patent") {
-                if (valueText === "Yes") {
+                if (value === "Yes") {
                     currentParagraph.push("The airway is patent.");
-                } else if (valueText === "No") {
+                } else if (value === "No") {
                     currentParagraph.push("The airway is not patent.");
                 } else {
                     currentParagraph.push("The patient's airway is threatened.");
                 }
-            } else if (name === "Airway Reason") {
-                airwayReasons.push(valueText);
-            } else if (name === "Airway Opening Intervention") {
-                airwayInterventions.push(valueText);
-            } else if (name === "Patient Injured") {
-                if (valueText === "Yes") {
+            }
+            else if (name === "Airway Reason") {
+                airwayReasons.push(value);
+            }
+            else if (name === "Airway Opening Intervention") {
+                airwayInterventions.push(value);
+            }
+            else if (name === "Patient Injured") {
+                if (value === "Yes") {
                     currentParagraph.push("The patient has sustained injuries.");
-                } else if (valueText === "No") {
+                } else if (value === "No") {
                     currentParagraph.push("The patient is not injured.");
                 }
-            } else if (name === "Neck collar applied") {
-                if (valueText === "Yes") {
+            }
+            else if (name === "Neck collar applied") {
+                if (value === "Yes") {
                     currentParagraph.push("The patient was stabilised by applying the Neck Collar.");
-                } else if (valueText === "No") {
+                } else if (value === "No") {
                     currentParagraph.push("The Neck Collar was not applied.");
                 } else {
                     currentParagraph.push("Application of a Neck Collar was not indicated.");
                 }
-            } else if (name === "Head blocks applied") {
-                if (valueText === "Yes") {
+            }
+            else if (name === "Head blocks applied") {
+                if (value === "Yes") {
                     currentParagraph.push("Head blocks were applied to stabilize the C-Spine.");
                 } else {
                     currentParagraph.push("Head blocks were not applied as an Intervention to stabilize the C-Spine.");
                 }
             }
+
         });
 
         if (airwayReasons.length > 0) {
-            currentParagraph.push(`The airway obstruction is attributed to ${airwayReasons.join(", ")}.`);
+            currentParagraph.push(
+                airwayReasons.length === 1
+                    ? `The airway obstruction is attributed to ${airwayReasons[0]}.`
+                    : `The airway obstruction is attributed to: ${airwayReasons.join(", ")}.`
+            );
         }
         if (airwayInterventions.length > 0) {
-            currentParagraph.push(`Interventions performed: ${airwayInterventions.join(", ")}.`);
+            currentParagraph.push(
+                airwayInterventions.length === 1
+                    ? `Intervention performed: ${airwayInterventions[0]}.`
+                    : `Interventions performed: ${airwayInterventions.join(", ")}.`
+            );
         }
-
         if (currentParagraph.length > 0) {
             paragraphs.push({
                 paragraph: currentParagraph.join(" "),
@@ -169,28 +192,42 @@ export const useComponentNotes = (encounterType: string) => {
 
     return { notes, isLoading: historyLoading };
 };
-
-const formatBreathingAssessmentNotes = (obs: any[]) => {
+const formatBreathingAssessmentNotes = (obs: any[]): ComponentNote[] => {
     const paragraphs: ComponentNote[] = [];
     let currentParagraph: string[] = [];
-    let currentStatus = "normal";
     let currentTime = "";
     let currentCreator = "";
     let additionalNotes = "";
+    let oxygenDetails: string[] = [];
+    let chestAbnormalities: string[] = [];
+    let lungSites: Record<string, string[]> = {};
 
-    const addStatement = (statement: string, isAbnormal: boolean = false) => {
-        currentParagraph.push(statement);
-        if (isAbnormal) {
-            currentStatus = "abnormal";
-        }
-    };
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
 
-    obs.forEach((ob: any) => {
+    sortedObs.forEach((ob: any) => {
         const name = ob.names?.[0]?.name;
-        const valueText = ob.value;
-        const creator = ob.created_by;
+        const value = ob.value;
+        const creator = ob.created_by || "Unknown";
 
         if (name === "Is Breathing Abnormal" && currentParagraph.length > 0) {
+            if (oxygenDetails.length > 0) {
+                currentParagraph.push(oxygenDetails.join(" "));
+                oxygenDetails = [];
+            }
+            if (chestAbnormalities.length > 0) {
+                currentParagraph.push(`Chest abnormalities: ${chestAbnormalities.join(", ")}.`);
+                chestAbnormalities = [];
+            }
+
+            for (const [site, findings] of Object.entries(lungSites)) {
+                if (findings.length > 0) {
+                    currentParagraph.push(`${site}: ${findings.join(", ")}.`);
+                }
+            }
+            lungSites = {};
+
             if (additionalNotes) {
                 currentParagraph.push(additionalNotes);
                 additionalNotes = "";
@@ -201,95 +238,127 @@ const formatBreathingAssessmentNotes = (obs: any[]) => {
                 time: currentTime,
                 creator: currentCreator,
                 rawTime: new Date(currentTime).getTime(),
-
             });
 
             currentParagraph = [];
-            currentStatus = "normal";
         }
 
         if (name === "Is Breathing Abnormal") {
             currentTime = ob.obs_datetime || new Date().toISOString();
             currentCreator = creator;
+
+            if (value === "Yes") {
+                currentParagraph.push("Patient has abnormal breathing.");
+            } else if (value === "No") {
+                currentParagraph.push("Patient has normal breathing.");
+            }
         }
+        else if (name === "Patient Need Oxygen") {
+            if (value === "Yes") {
+                oxygenDetails.push("Supplemental oxygen required.");
+            } else {
+                oxygenDetails.push("Supplemental oxygen not required.");
+            }
+        }
+        else if (name === "Oxygen Given") {
+            oxygenDetails.push(`Oxygen given: ${value} L/min.`);
+        }
+        else if (name === "Oxygen Source") {
+            oxygenDetails.push(`Source: ${value}.`);
+        }
+        else if (name === "Chest wall abnormality") {
+            if (value === "Yes" && ob.children && ob.children.length > 0) {
+                ob.children.forEach((child: any) => {
+                    const childName = child.names?.[0]?.name;
+                    const childValue = child.value;
 
-        if (name === "Is Breathing Abnormal") {
-            if (valueText === "Yes") {
-                addStatement("The patient is breathing normally.", true);
-            } else if (valueText === "No") {
-                addStatement("The patient is breathing abnormally.", true);
-                const startTimeObs = obs.find((ob: any) => ob.names?.[0]?.name === "Start Time");
-                const endTimeObs = obs.find((ob: any) => ob.names?.[0]?.name === "End Time");
+                    if (childName === "Image Part Name") {
+                        if (child.children && child.children.length > 0) {
+                            child.children.forEach((grandChild: any) => {
+                                const grandChildName = grandChild.names?.[0]?.name;
+                                const grandChildValue = grandChild.value;
 
-                if (startTimeObs) {
-                    addStatement(`The patient was assisted with ventilation from ${startTimeObs.value}`, true);
-                }
-                if (endTimeObs) {
-                    addStatement(`to ${endTimeObs.value}.`, true);
-                }
+                                if (grandChildName === "Description") {
+                                    chestAbnormalities.push(`${childValue} - ${grandChildValue}`);
+                                } else if (grandChildName === "Additional Notes") {
+                                    chestAbnormalities.push(`${childValue} notes: ${grandChildValue}`);
+                                }
+                            });
+                        }
+                    }
+                });
             }
-        } else if (name === "Respiratory rate") {
-            addStatement(`The patient's respiratory rate is ${valueText} bpm.`, true);
-        } else if (name === "Oxygen Saturation") {
-            addStatement(`And oxygen saturation is ${valueText}%.`, true);
-        } else if (name === "Patient Need Oxygen") {
-            if (valueText === "Yes") {
-                addStatement("Supplemental oxygen required.", true);
+        }
+        else if (name === "Site") {
+            if (!lungSites[value]) {
+                lungSites[value] = [];
+            }
+        }
+        else if (name === "Respiratory rate") {
+            currentParagraph.push(`Respiratory rate: ${value} bpm.`);
+        }
+        else if (name === "Oxygen Saturation") {
+            currentParagraph.push(`Oxygen saturation: ${value}%.`);
+        }
+        else if (name === "Is Trachea Central") {
+            if (value === "Yes") {
+                currentParagraph.push("Trachea is central.");
             } else {
-                addStatement("Supplemental oxygen not required.");
+                currentParagraph.push("Trachea is not central.");
             }
-        } else if (name === "Is Trachea Central") {
-            if (valueText === "No") {
-                addStatement("The trachea is not central.", true);
+        }
+        else if (name === "Chest Expansion") {
+            if (value === "Normal") {
+                currentParagraph.push("Chest expansion is normal.");
             } else {
-                addStatement("The trachea is central.");
+                currentParagraph.push("Chest expansion is abnormal.");
             }
-        } else if (name === "Chest wall abnormality") {
-            if (valueText === "Yes") {
-                addStatement("The chest wall is abnormal.", true);
+        }
+        else if (name === "Percussion") {
+            if (value === "Normal") {
+                currentParagraph.push("Percussion findings are normal.");
             } else {
-                addStatement("The chest wall is normal.");
+                currentParagraph.push("Percussion findings are abnormal.");
             }
-        } else if (name === "Chest Expansion") {
-            if (valueText === "Reduced") {
-                addStatement("The patient's chest expansion is reduced.", true);
+        }
+        else if (name === "Breathing sounds") {
+            if (value === "Normal") {
+                currentParagraph.push("Breath sounds are normal.");
             } else {
-                addStatement("The patient's chest expansion is normal.");
+                currentParagraph.push("Breath sounds are abnormal.");
             }
-        } else if (name === "Percussion") {
-            if (valueText === "Abnormal") {
-                addStatement("Percussion findings are abnormal.", true);
-            } else {
-                addStatement("Percussion findings are normal.");
-            }
-        } else if (name === "Breathing sounds") {
-            if (valueText === "Abnormal") {
-                addStatement("Breath sounds are abnormal.", true);
-            } else {
-                addStatement("Breath sounds are normal.");
-            }
-        } else if (name === "Additional Notes") {
-            additionalNotes = `Additional Notes: ${valueText}`;
+        }
+        else if (name === "Additional Notes") {
+            additionalNotes = `Additional notes: ${value}`;
         }
     });
 
-    if (currentParagraph.length > 0) {
-        if (additionalNotes) {
-            currentParagraph.push(additionalNotes);
+    if (oxygenDetails.length > 0) {
+        currentParagraph.push(oxygenDetails.join(" "));
+    }
+    if (chestAbnormalities.length > 0) {
+        currentParagraph.push(`Chest abnormalities: ${chestAbnormalities.join(", ")}.`);
+    }
+    for (const [site, findings] of Object.entries(lungSites)) {
+        if (findings.length > 0) {
+            currentParagraph.push(`${site}: ${findings.join(", ")}.`);
         }
+    }
+    if (additionalNotes) {
+        currentParagraph.push(additionalNotes);
+    }
 
+    if (currentParagraph.length > 0) {
         paragraphs.push({
             paragraph: currentParagraph.join(" "),
             time: currentTime,
             creator: currentCreator,
             rawTime: new Date(currentTime).getTime(),
-
         });
     }
 
     return paragraphs.sort((a, b) => b.rawTime - a.rawTime);
 };
-
 const formatPresentingComplaintsNotes = (obs: any[]): ComponentNote[] => {
     const sortedObs = [...obs].sort((a, b) =>
         new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
@@ -362,7 +431,6 @@ const formatPresentingComplaintsNotes = (obs: any[]): ComponentNote[] => {
         rawTime: new Date(group.time).getTime()
     }));
 };
-
 const formatAllergiesNotes = (obs: any[]): ComponentNote[] => {
     const sortedObs = [...obs].sort((a, b) =>
         new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
@@ -983,10 +1051,8 @@ const createSystemReviewParagraph = (system: {
 }): ComponentNote => {
     const parts: string[] = [];
 
-    // Add system name
     parts.push(`${system.systemName} System:`);
 
-    // Add each symptom with details
     system.symptoms.forEach(symptom => {
         let symptomText = symptom.name;
 
@@ -2052,332 +2118,316 @@ const createSoapierNote = (note: {
 };
 
 const formatCirculationAssessmentNotes = (obs: any[]): ComponentNote[] => {
-    const notes: ComponentNote[] = [];
-    let currentNote: {
+    interface TempNote {
         time: string;
         creator: string;
-        observations: Record<string, any>;
-    } = {
-        time: "",
-        creator: "Unknown",
-        observations: {}
-    };
-    obs.forEach((ob: any) => {
+        observations: Record<string, {
+            value: any;
+            creator: string;
+            time: string;
+        }>;
+        abnormalities: Record<string, string[]>;
+    }
+
+    const notes: ComponentNote[] = [];
+    let currentNote: TempNote | null = null;
+
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    // Process each observation
+    for (const ob of sortedObs) {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
         const time = ob.obs_datetime || new Date().toISOString();
         const creator = ob.created_by || "Unknown";
 
-        if (!currentNote.time) {
-            currentNote.time = time;
-            currentNote.creator = creator;
+        if (name === "Is Patient Actively Bleeding") {
+            if (currentNote) {
+                const hasObservations = Object.keys(currentNote.observations).length > 0;
+                const hasAbnormalities = Object.keys(currentNote.abnormalities).length > 0;
+
+                if (hasObservations || hasAbnormalities) {
+                    notes.push(createComponentNote(currentNote));
+                }
+            }
+
+            // Initialize new note
+            currentNote = {
+                time,
+                creator,
+                observations: {},
+                abnormalities: {}
+            };
         }
 
-        currentNote.observations[name] = {
-            value,
-            creator,
-            time
-        };
-    });
+        if (!currentNote) continue;
 
-    if (Object.keys(currentNote.observations).length > 0) {
-        notes.push(createCirculationAssessmentNote(currentNote));
+        // Handle abnormalities
+        if ((name === "Is There Any Other Abnomalities" || name === "Is Femur Tibia Normal") &&
+            value === "Yes" && ob.children) {
+            for (const child of ob.children) {
+                const childName = child.names?.[0]?.name;
+                const childValue = child.value;
+
+                if (childName === "Image Part Name") {
+                    if (!currentNote.abnormalities[childValue]) {
+                        currentNote.abnormalities[childValue] = [];
+                    }
+                    if (child.children) {
+                        for (const grandChild of child.children) {
+                            const grandChildName = grandChild.names?.[0]?.name;
+                            const grandChildValue = grandChild.value;
+
+                            if (grandChildName === "Description" || grandChildName === "Abnormalities") {
+                                currentNote.abnormalities[childValue].push(grandChildValue);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (name) {
+            currentNote.observations[name] = { value, creator, time };
+        }
+    }
+
+    if (currentNote) {
+        const hasObservations = Object.keys(currentNote.observations).length > 0;
+        const hasAbnormalities = Object.keys(currentNote.abnormalities).length > 0;
+
+        if (hasObservations || hasAbnormalities) {
+            notes.push(createComponentNote(currentNote));
+        }
+    }
+
+    function createComponentNote(note: TempNote): ComponentNote {
+        const messages: string[] = [];
+        const obs = note.observations;
+        messages.push(obs["Is Patient Actively Bleeding"]?.value === "Yes"
+            ? "The patient is actively bleeding."
+            : "The patient is not actively bleeding.");
+
+        // Pulse status
+        if (obs["Is The Patient Have Pulse"]?.value === "No") {
+            messages.push("The patient has no palpable pulse.");
+        } else {
+            messages.push("The patient has a palpable pulse.");
+            if (obs["Pulse Rate"]?.value) {
+                messages.push(`Pulse rate: ${obs["Pulse Rate"].value} bpm.`);
+            }
+            if (obs["Pulse Rate Weak"]?.value) {
+                messages.push(`Pulse quality: ${obs["Pulse Rate Weak"].value}.`);
+            }
+        }
+
+        // Blood pressure
+        if (obs["Blood Pressure Measured"]) {
+            if (obs["Blood Pressure Measured"].value === "NOT done") {
+                messages.push("Blood pressure was not measured.");
+                if (obs["Description"]?.value === "Batteries Not Available") {
+                    messages.push("Reason: Batteries not available for the device.");
+                }
+            } else if (obs["Blood Pressure Measured"].value === "BP Not Recordable") {
+                messages.push("Blood pressure was not recordable.");
+                if (obs["Reason Not Recorded"]?.value) {
+                    messages.push(`Reason: ${obs["Reason Not Recorded"].value}.`);
+                }
+            } else if (obs["Systolic blood pressure"]?.value) {
+                messages.push(`Blood pressure: ${obs["Systolic blood pressure"].value}/${obs["Diastolic blood pressure"]?.value || '--'} mmHg.`);
+            }
+        }
+
+        // Capillary refill
+        if (obs["Capillary refill time"]?.value) {
+            messages.push(`Capillary refill time: ${obs["Capillary refill time"].value}.`);
+        }
+
+        // IV access
+        if (obs["Patient Intravenous"]?.value === "Yes") {
+            messages.push("IV access established.");
+            if (obs["Size Of Catheter"]?.value) {
+                messages.push(`Catheter size: ${obs["Size Of Catheter"].value}.`);
+            }
+            if (obs["Cannulation site"]?.value) {
+                messages.push(`Cannulation site: ${obs["Cannulation site"].value}.`);
+            }
+            if (obs["Diagram cannulation site"]?.value) {
+                messages.push(`Specific site: ${obs["Diagram cannulation site"].value}.`);
+            }
+        } else if (obs["Patient Intravenous"]?.value === "No") {
+            messages.push("No IV access established.");
+        }
+
+        // Trauma status
+        if (obs["Is Patient Traumatized"]?.value === "Yes") {
+            messages.push("The patient has traumatic injuries.");
+        } else if (obs["Is Patient Traumatized"]?.value === "No") {
+            messages.push("The patient has no traumatic injuries.");
+        }
+
+        // Pelvis stability
+        if (obs["Is Pelvis Stable"]?.value === "No") {
+            messages.push("The pelvis is unstable.");
+        } else if (obs["Is Pelvis Stable"]?.value === "Yes") {
+            messages.push("The pelvis is stable.");
+        }
+
+        // Femur/Tibia status
+        if (obs["Is Femur Tibia Normal"]?.value === "No") {
+            messages.push("Abnormal femur/tibia findings.");
+        } else if (obs["Is Femur Tibia Normal"]?.value === "Yes") {
+            messages.push("Femur/tibia appear normal.");
+        }
+
+        // Mucous membranes
+        if (obs["Mucous Membranes"]?.value === "Abnormal") {
+            messages.push("Mucous membranes appear abnormal.");
+            if (obs["Mucous abnormal"]?.value) {
+                messages.push(`Specific finding: ${obs["Mucous abnormal"].value}.`);
+            }
+        } else if (obs["Mucous Membranes"]?.value === "Normal") {
+            messages.push("Mucous membranes appear normal.");
+        }
+
+        // Peripheries
+        if (obs["Assess Peripheries"]?.value) {
+            messages.push(`Peripheral assessment: ${obs["Assess Peripheries"].value}.`);
+        }
+
+        // Headache
+        if (obs["Headache"]?.value === "Yes") {
+            messages.push("The patient reports headache.");
+        } else if (obs["Headache"]?.value === "No") {
+            messages.push("The patient reports no headache.");
+        }
+
+        // Skin color
+        if (obs["Skin Color"]?.value) {
+            messages.push(`Skin color: ${obs["Skin Color"].value}.`);
+        }
+
+        // Temperature
+        if (obs["Temperature"]?.value) {
+            messages.push(`Temperature: ${obs["Temperature"].value}.`);
+        }
+
+        // Heart sounds
+        if (obs["Heart Sounds"]?.value) {
+            messages.push(`Heart sounds: ${obs["Heart Sounds"].value}.`);
+        }
+
+        // Respiratory rate
+        if (obs["Respiratory Rate"]?.value) {
+            messages.push(`Respiratory rate: ${obs["Respiratory Rate"].value} breaths/min.`);
+        }
+
+        // Oxygen saturation
+        if (obs["Oxygen Saturation"]?.value) {
+            messages.push(`Oxygen saturation: ${obs["Oxygen Saturation"].value}%.`);
+        }
+
+        // Abnormalities
+        for (const [region, findings] of Object.entries(note.abnormalities)) {
+            if (findings.length > 0) {
+                messages.push(`${region} abnormalities: ${findings.join(", ")}.`);
+            }
+        }
+
+        // Additional notes
+        if (obs["Additional Notes"]?.value) {
+            messages.push(`Additional notes: ${obs["Additional Notes"].value}.`);
+        }
+
+        return {
+            paragraph: messages.join(" "),
+            time: note.time,
+            creator: note.creator,
+            rawTime: new Date(note.time).getTime()
+        };
     }
 
     return notes.sort((a, b) => b.rawTime - a.rawTime);
 };
-
-const createCirculationAssessmentNote = (note: {
-    time: string;
-    creator: string;
-    observations: Record<string, any>;
-}): ComponentNote => {
-    const messages: string[] = [];
-    const obs = note.observations;
-
-    if (obs[concepts.IS_PATIENT_ACTIVELY_BLEEDING]?.value == "Yes") {
-        messages.push("The patient is actively bleeding.");
-    } else {
-        messages.push("The patient is not actively bleeding.");
-    }
-
-    if (obs[concepts.ACTION_DONE]?.value) {
-        messages.push(`Action taken: ${obs[concepts.ACTION_DONE].value}.`);
-    }
-
-    // Pulse rate
-    if (obs[concepts.PULSE_RATE]?.value == "Weak") {
-        messages.push("The patient's pulse rate is weak.");
-    } else if (obs[concepts.PULSE_RATE]?.value == "Strong,Regular") {
-        messages.push("The patient's pulse rate is strong and regular.");
-    } else if (obs[concepts.PULSE_RATE]?.value) {
-        messages.push(`The patient's pulse rate is ${obs[concepts.PULSE_RATE].value}.`);
-    }
-
-    // Capillary refill
-    if (obs[concepts.CAPILLARY_REFILL_TIME]?.value == "Less than 3 seconds") {
-        messages.push("The patient's capillary refill time is less than 3 seconds.");
-    } else if (obs[concepts.CAPILLARY_REFILL_TIME]?.value == "3 seconds") {
-        messages.push("The patient's capillary refill time is 3 seconds.");
-    } else if (obs[concepts.CAPILLARY_REFILL_TIME]?.value) {
-        messages.push(`The patient's capillary refill time is ${obs[concepts.CAPILLARY_REFILL_TIME].value}.`);
-    }
-
-    // CPR details
-    if (obs[concepts.CARDIAC_ARREST]?.value == "Yes") {
-        messages.push("There is a witnessed cardiac arrest.");
-    } else if (obs[concepts.CARDIAC_ARREST]?.value == "No") {
-        messages.push("There is no witnessed cardiac arrest.");
-    }
-
-    if (obs[concepts.DATE_OF_CPR]?.value) {
-        messages.push(`CPR date of call: ${obs[concepts.DATE_OF_CPR].value}.`);
-    }
-
-    if (obs[concepts.SITE]?.value == "Rescitation") {
-        messages.push("The site is resuscitation.");
-    } else if (obs[concepts.SITE]?.value == "SSW") {
-        messages.push("The site is SSW.");
-    } else if (obs[concepts.SITE]?.value == "Priority") {
-        messages.push("The site is priority.");
-    }
-
-    if (obs[concepts.SPECIFY]?.value) {
-        messages.push(`Witnessed cardiac arrest specification: ${obs[concepts.SPECIFY].value}.`);
-    }
-
-    if (obs[concepts.TIME]?.value) {
-        messages.push(`Record time: ${obs[concepts.TIME].value}.`);
-    }
-
-    if (obs[concepts.RHYTHM]?.value) {
-        messages.push(`Rhythm: ${obs[concepts.RHYTHM].value}.`);
-    }
-
-    if (obs[concepts.SHOCK_ENERGY]?.value) {
-        messages.push(`Shock energy: ${obs[concepts.SHOCK_ENERGY].value}.`);
-    }
-
-    if (obs[concepts.MEDICATION]?.value) {
-        messages.push(`Medication name: ${obs[concepts.MEDICATION].value}.`);
-    }
-
-    if (obs[concepts.DOSE_IN_MILLIGRAMS]?.value) {
-        messages.push(`Dose: ${obs[concepts.DOSE_IN_MILLIGRAMS].value}.`);
-    }
-
-    if (obs[concepts.MEDICATION_ROUTE]?.value) {
-        messages.push(`Medication route: ${obs[concepts.MEDICATION_ROUTE].value}.`);
-    }
-
-    if (obs[concepts.INTERVENTION]?.value) {
-        messages.push(`Interventions: ${obs[concepts.INTERVENTION].value}.`);
-    }
-
-    if (obs[concepts.OCCURRENCES]?.value) {
-        messages.push(`Occurrences: ${obs[concepts.OCCURRENCES].value}.`);
-    }
-
-    if (obs[concepts.REVERSIBLE_CAUSES]?.value) {
-        messages.push(`Reversible causes: ${obs[concepts.REVERSIBLE_CAUSES].value}.`);
-    }
-
-    if (obs[concepts.SPO2]?.value) {
-        messages.push(`SPO2: ${obs[concepts.SPO2].value}.`);
-    }
-
-    if (obs[concepts.OXYGEN_GIVEN]?.value == "Yes") {
-        messages.push("Oxygen was administered.");
-    } else if (obs[concepts.OXYGEN_GIVEN]?.value == "No") {
-        messages.push("Oxygen was not administered.");
-    }
-
-    if (obs[concepts.SYSTOLIC_BLOOD_PRESSURE]?.value) {
-        messages.push(`Systolic blood pressure: ${obs[concepts.SYSTOLIC_BLOOD_PRESSURE].value}.`);
-    }
-
-    if (obs[concepts.DIASTOLIC_BLOOD_PRESSURE]?.value) {
-        messages.push(`Diastolic blood pressure: ${obs[concepts.DIASTOLIC_BLOOD_PRESSURE].value}.`);
-    }
-
-    if (obs[concepts.RESPIRATORY_RATE]?.value) {
-        messages.push(`Respiratory rate: ${obs[concepts.RESPIRATORY_RATE].value}.`);
-    }
-
-    if (obs[concepts.TEMPERATURE]?.value) {
-        messages.push(`Temperature: ${obs[concepts.TEMPERATURE].value}.`);
-    }
-
-    // Motor response
-    if (obs[concepts.MOTOR_RESPONSE]?.value == "Obeying Commands") {
-        messages.push("Motor response: obeying commands.");
-    } else if (obs[concepts.MOTOR_RESPONSE]?.value == "Localising") {
-        messages.push("Motor response: localising.");
-    } else if (obs[concepts.MOTOR_RESPONSE]?.value == "Withdraw") {
-        messages.push("Motor response: withdraw.");
-    } else if (obs[concepts.MOTOR_RESPONSE]?.value == "Normal Flexion") {
-        messages.push("Motor response: normal flexion.");
-    } else if (obs[concepts.MOTOR_RESPONSE]?.value == "Extension") {
-        messages.push("Motor response: extension.");
-    } else if (obs[concepts.MOTOR_RESPONSE]?.value == "None") {
-        messages.push("No motor response.");
-    }
-
-    // Verbal response
-    if (obs[concepts.VERBAL_RESPONSE]?.value == "Oriented") {
-        messages.push("Verbal response: oriented.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == "Confused") {
-        messages.push("Verbal response: confused.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == "Inappropriate Words") {
-        messages.push("Verbal response: inappropriate words.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == "Incomprehensible sounds") {
-        messages.push("Verbal response: incomprehensible sounds.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == "None") {
-        messages.push("No verbal response.");
-    }
-
-    // Eye opening response
-    if (obs[concepts.EYE_OPENING_RESPONSE]?.value == "Spontaneous") {
-        messages.push("Eye opening response: spontaneous.");
-    } else if (obs[concepts.EYE_OPENING_RESPONSE]?.value == "To Speech") {
-        messages.push("Eye opening response: to speech.");
-    } else if (obs[concepts.EYE_OPENING_RESPONSE]?.value == "To Pain") {
-        messages.push("Eye opening response: to pain.");
-    } else if (obs[concepts.EYE_OPENING_RESPONSE]?.value == "No Response") {
-        messages.push("No eye opening response.");
-    }
-
-    if (obs[concepts.CPR_TIME_STOPPED]?.value) {
-        messages.push(`CPR time stopped: ${obs[concepts.CPR_TIME_STOPPED].value}.`);
-    }
-
-    if (obs[concepts.REASON_CPR_STOPPED]?.value) {
-        messages.push(`Reason CPR stopped: ${obs[concepts.REASON_CPR_STOPPED].value}.`);
-    }
-
-    if (obs[concepts.DISPOSITION_AFTER_CPR]?.value) {
-        messages.push(`Disposition after CPR: ${obs[concepts.DISPOSITION_AFTER_CPR].value}.`);
-    }
-
-    if (obs[concepts.TEAM_LEADER]?.value) {
-        messages.push(`Team leader: ${obs[concepts.TEAM_LEADER].value}.`);
-    }
-
-    if (obs[concepts.TEAM_MEMBERS]?.value) {
-        messages.push(`Team members: ${obs[concepts.TEAM_MEMBERS].value}.`);
-    }
-
-    // Mucous membranes
-    if (obs[concepts.MUCOUS_MEMBRANES]?.value == "Normal") {
-        messages.push("Mucous membranes are normal.");
-    } else if (obs[concepts.MUCOUS_MEMBRANES]?.value) {
-        messages.push(`Mucous membranes: ${obs[concepts.MUCOUS_MEMBRANES].value}.`);
-    }
-
-    if (obs[concepts.MUCOUS_ABNORMAL]?.value) {
-        messages.push(`Mucous abnormality: ${obs[concepts.MUCOUS_ABNORMAL].value}.`);
-    }
-
-    // Peripheries
-    if (obs[concepts.ASSESS_PERIPHERIES]?.value == "Cold and clammy") {
-        messages.push("Peripheries are cold and clammy.");
-    } else if (obs[concepts.ASSESS_PERIPHERIES]?.value) {
-        messages.push(`Peripheries: ${obs[concepts.ASSESS_PERIPHERIES].value}.`);
-    }
-
-    // Blood pressure
-    if (obs[concepts.BLOOD_PRESSURE_MEASURED]?.value == "Done") {
-        messages.push("Blood pressure was measured.");
-        if (obs[concepts.BLOOD_PRESSURE_SYSTOLIC]?.value && obs[concepts.BLOOD_PRESSURE_DIASTOLIC]?.value) {
-            messages.push(`BP: ${obs[concepts.BLOOD_PRESSURE_SYSTOLIC].value}/${obs[concepts.BLOOD_PRESSURE_DIASTOLIC].value}.`);
-        }
-    } else if (obs[concepts.BLOOD_PRESSURE_MEASURED]?.value == "Not Done") {
-        messages.push("Blood pressure was not measured.");
-    } else if (obs[concepts.BP_NOT_RECORDABLE]?.value) {
-        messages.push("Blood pressure is unrecordable.");
-    }
-
-    if (obs[concepts.NOT_DONE]?.value) {
-        messages.push(`BP not done reason: ${obs[concepts.NOT_DONE].value}.`);
-    }
-
-    // Patient injury
-    if (obs[concepts.PATIENT_INJURED]?.value == "Yes") {
-        messages.push("The patient is injured.");
-    } else {
-        messages.push("The patient is not injured.");
-    }
-
-    // IV access
-    if (obs[concepts.INTRAVENOUS]?.value == "Yes") {
-        messages.push("The patient requires intravenous access.");
-        if (obs[concepts.SIZE_OF_CATHETER]?.value) {
-            messages.push(`IV catheter size: ${obs[concepts.SIZE_OF_CATHETER].value}.`);
-        }
-        if (obs[concepts.CANNULATION_SITE]?.value) {
-            messages.push(`Cannulation site: ${obs[concepts.CANNULATION_SITE].value}.`);
-        }
-    } else {
-        messages.push("The patient does not require intravenous access.");
-    }
-
-    if (obs[concepts.FEMORAL]?.value) {
-        messages.push(`Femoral assessment: ${obs[concepts.FEMORAL].value}.`);
-    }
-
-    // Abdominal assessment
-    if (obs[concepts.ABDOMINAL_DISTENSION]?.value == "Yes") {
-        messages.push("There is abdominal distention.");
-    } else {
-        messages.push("There is no abdominal distention.");
-    }
-
-    // Other abnormalities
-    if (obs[concepts.IS_THERE_OTHER_OBDONORMALITIES]?.value == "Yes") {
-        messages.push("There are other abnormalities.");
-    } else {
-        messages.push("There are no other abnormalities.");
-    }
-
-    return {
-        paragraph: messages.join(" "),
-        time: note.time,
-        creator: note.creator,
-        rawTime: new Date(note.time).getTime()
-    };
-};
-
 const formatDisabilityAssessmentNotes = (obs: any[]): ComponentNote[] => {
     const notes: ComponentNote[] = [];
     let currentNote: {
         time: string;
         creator: string;
         observations: Record<string, any>;
+        abnormalities: Record<string, any>;
     } = {
         time: "",
         creator: "Unknown",
-        observations: {}
+        observations: {},
+        abnormalities: {}
     };
 
-    // Group observations by encounter
-    obs.forEach((ob: any) => {
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    // Process each observation
+    sortedObs.forEach((ob: any) => {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
         const time = ob.obs_datetime || new Date().toISOString();
         const creator = ob.created_by || "Unknown";
 
-        if (!currentNote.time) {
-            currentNote.time = time;
-            currentNote.creator = creator;
+        console.log("Tiyese zidazi", name, value, time)
+
+        // Start new note when we find consciousness level observation
+        if (name === "Does the patient have a reduced Level of consciousness") {
+            // Push current note if it exists and has content
+            if (Object.keys(currentNote.observations).length > 0) {
+                notes.push(createDisabilityAssessmentNote(currentNote));
+            }
+
+            // Initialize new note
+            currentNote = {
+                time,
+                creator,
+                observations: {},
+                abnormalities: {}
+            };
         }
 
-        currentNote.observations[name] = {
-            value,
-            creator,
-            time
-        };
+        // Handle eye observations with children (pupil size and reaction)
+        if (name === "Eyes" && ob.children) {
+            const eyeSide = value; // "Left Eye" or "Right Eye"
+            for (const child of ob.children) {
+                const childName = child.names?.[0]?.name;
+                const childValue = child.value;
+
+                if (childName === "Pupil size") {
+                    currentNote.observations[`${eyeSide} Pupil size`] = {
+                        value: childValue,
+                        creator: child.created_by || creator,
+                        time: child.obs_datetime || time
+                    };
+                } else if (childName === "Pupil Reaction") {
+                    currentNote.observations[`${eyeSide} Pupil Reaction`] = {
+                        value: childValue === "Yes" ? "Reactive" : "Non-reactive",
+                        creator: child.created_by || creator,
+                        time: child.obs_datetime || time
+                    };
+                }
+            }
+        }
+        // Handle regular observations
+        else if (name) {
+            currentNote.observations[name] = {
+                value,
+                creator,
+                time
+            };
+        }
     });
 
+    // Push the last note if it has content
     if (Object.keys(currentNote.observations).length > 0) {
         notes.push(createDisabilityAssessmentNote(currentNote));
     }
@@ -2389,64 +2439,115 @@ const createDisabilityAssessmentNote = (note: {
     time: string;
     creator: string;
     observations: Record<string, any>;
+    abnormalities?: Record<string, any>;
 }): ComponentNote => {
     const messages: string[] = [];
     const obs = note.observations;
 
     // Level of Consciousness
-    if (obs[concepts.DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS]?.value === "No") {
-        messages.push("The patient is alert and does not exhibit a low level of consciousness.");
-    } else {
-        messages.push("The patient exhibits a low level of consciousness and requires further evaluation and monitoring.");
-    }
-    // GCS
-    if (obs[concepts.GCS]?.value === 15) {
-        messages.push("The GCS is 15: patient is fully conscious with normal neurological function.");
-    } else if (obs[concepts.GCS]?.value >= 13 && obs[concepts.GCS]?.value <= 14) {
-        messages.push("GCS is 13–14: Mild brain injury. Close monitoring advised.");
-    } else if (obs[concepts.GCS]?.value >= 9 && obs[concepts.GCS]?.value <= 12) {
-        messages.push("GCS is 9–12: Moderate brain injury. Further assessment required.");
-    } else if (obs[concepts.GCS]?.value >= 3 && obs[concepts.GCS]?.value <= 8) {
-        messages.push("GCS is 3–8: Severe brain injury or coma. Immediate intervention required.");
-    } else {
-        messages.push("GCS score not available or invalid.");
-    }
-    // Eye Opening Response
-    if (obs[concepts.EYE_OPENING_RESPONSE]?.value == 4) {
-        messages.push("Eyes open spontaneously: patient is fully conscious.");
-    } else if (obs[concepts.EYE_OPENING_RESPONSE]?.value == 3) {
-        messages.push("Eyes open to speech: mild impairment in consciousness.");
-    } else if (obs[concepts.EYE_OPENING_RESPONSE]?.value == 2) {
-        messages.push("Eyes open to pain: more significant impairment in consciousness.");
-    } else if (obs[concepts.EYE_OPENING_RESPONSE]?.value == 1) {
-        messages.push("No eye opening response: patient may be in a deep coma.");
-    } else {
-        messages.push("Eye opening response not available or invalid.");
+    if (obs["Does the patient have a reduced Level of consciousness"]) {
+        const locValue = obs["Does the patient have a reduced Level of consciousness"].value;
+        if (locValue === "No") {
+            messages.push("The patient is alert and does not exhibit a reduced level of consciousness.");
+        } else {
+            messages.push("The patient exhibits a reduced level of consciousness and requires further evaluation and monitoring.");
+        }
     }
 
-    // Verbal Response
-    if (obs[concepts.VERBAL_RESPONSE]?.value == 5) {
-        messages.push("Verbal response is 5: patient is oriented and converses normally.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == 4) {
-        messages.push("Verbal response is 4: patient is confused but able to speak.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == 3) {
-        messages.push("Verbal response is 3: inappropriate words, not making sense.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == 2) {
-        messages.push("Verbal response is 2: incomprehensible sounds, moaning or groaning.");
-    } else if (obs[concepts.VERBAL_RESPONSE]?.value == 1) {
-        messages.push("Verbal response is 1: no verbal response, patient is unresponsive.");
-    } else {
-        messages.push("Verbal response not available or invalid.");
+    // GCS components only if we have consciousness assessment
+    if (obs["Does the patient have a reduced Level of consciousness"]) {
+        const gcsTotal = parseInt(obs["Eye Opening response"]?.value || 0) +
+            parseInt(obs["Verbal Response"]?.value || 0) +
+            parseInt(obs["Motor response"]?.value || 0);
+
+        if (gcsTotal === 15) {
+            messages.push("GCS is 15: patient is fully conscious with normal neurological function.");
+        } else if (gcsTotal >= 13 && gcsTotal <= 14) {
+            messages.push(`GCS is ${gcsTotal}: Mild brain injury. Close monitoring advised.`);
+        } else if (gcsTotal >= 9 && gcsTotal <= 12) {
+            messages.push(`GCS is ${gcsTotal}: Moderate brain injury. Further assessment required.`);
+        } else if (gcsTotal >= 3 && gcsTotal <= 8) {
+            messages.push(`GCS is ${gcsTotal}: Severe brain injury or coma. Immediate intervention required.`);
+        }
+
+        // Eye Opening Response
+        if (obs["Eye Opening response"]?.value == 4) {
+            messages.push("Eyes open spontaneously: patient is fully conscious.");
+        } else if (obs["Eye Opening response"]?.value == 3) {
+            messages.push("Eyes open to speech: mild impairment in consciousness.");
+        } else if (obs["Eye Opening response"]?.value == 2) {
+            messages.push("Eyes open to pain: more significant impairment in consciousness.");
+        } else if (obs["Eye Opening response"]?.value == 1) {
+            messages.push("No eye opening response: patient may be in a deep coma.");
+        }
+
+        // Verbal Response
+        if (obs["Verbal Response"]?.value == 5) {
+            messages.push("Verbal response is 5: patient is oriented and converses normally.");
+        } else if (obs["Verbal Response"]?.value == 4) {
+            messages.push("Verbal response is 4: patient is confused but able to speak.");
+        } else if (obs["Verbal Response"]?.value == 3) {
+            messages.push("Verbal response is 3: inappropriate words, not making sense.");
+        } else if (obs["Verbal Response"]?.value == 2) {
+            messages.push("Verbal response is 2: incomprehensible sounds, moaning or groaning.");
+        } else if (obs["Verbal Response"]?.value == 1) {
+            messages.push("Verbal response is 1: no verbal response, patient is unresponsive.");
+        }
+
+        // Motor Response
+        if (obs["Motor response"]?.value == 6) {
+            messages.push("Motor response is 6: obeys commands normally.");
+        } else if (obs["Motor response"]?.value == 5) {
+            messages.push("Motor response is 5: localizes to pain.");
+        } else if (obs["Motor response"]?.value == 4) {
+            messages.push("Motor response is 4: withdraws from pain.");
+        } else if (obs["Motor response"]?.value == 3) {
+            messages.push("Motor response is 3: abnormal flexion to pain (decorticate posturing).");
+        } else if (obs["Motor response"]?.value == 2) {
+            messages.push("Motor response is 2: abnormal extension to pain (decerebrate posturing).");
+        } else if (obs["Motor response"]?.value == 1) {
+            messages.push("Motor response is 1: no motor response.");
+        }
     }
 
-    // Pupil Size
-    messages.push(`Pupil Size and Reaction to Light: ${obs[concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT]?.value || "Not available"}`);
+    // Pupil assessment
+    if (obs["Left Eye Pupil size"]?.value || obs["Right Eye Pupil size"]?.value) {
+        const leftSize = obs["Left Eye Pupil size"]?.value || "Not measured";
+        const leftReaction = obs["Left Eye Pupil Reaction"]?.value || "Not assessed";
+        const rightSize = obs["Right Eye Pupil size"]?.value || "Not measured";
+        const rightReaction = obs["Right Eye Pupil Reaction"]?.value || "Not assessed";
+
+        messages.push(`Pupil assessment - Left: ${leftSize}mm, ${leftReaction}; Right: ${rightSize}mm, ${rightReaction}.`);
+    }
 
     // Focal Neurology
-    messages.push(`Focal Neurology: ${obs[concepts.FOCAL_NEUROLOGY]?.value || "Not available"}`);
+    if (obs["Focal Neurology"]?.value) {
+        messages.push(`Focal neurological findings: ${obs["Focal Neurology"].value}.`);
+    }
 
     // Posture
-    messages.push(`Posture: ${obs[concepts.POSTURE]?.value || "Not available"}`);
+    if (obs["Posture"]?.value) {
+        messages.push(`Posture: ${obs["Posture"].value}.`);
+    }
+
+    // Serum glucose
+    if (obs["Serum glucose"]?.value) {
+        const glucose = parseFloat(obs["Serum glucose"].value);
+        if (glucose < 3.9) {
+            messages.push(`Low blood glucose (${glucose} mmol/L): risk of hypoglycemia.`);
+        } else if (glucose > 11.1) {
+            messages.push(`High blood glucose (${glucose} mmol/L): risk of hyperglycemia.`);
+        } else {
+            messages.push(`Blood glucose level: ${glucose} mmol/L (normal range).`);
+        }
+    }
+
+    // Active Seizures
+    if (obs["Active Seizures"]?.value === "Yes") {
+        messages.push("Patient has active seizures. Immediate intervention required.");
+    } else if (obs["Active Seizures"]?.value === "No") {
+        messages.push("No active seizures observed.");
+    }
 
     return {
         paragraph: messages.join(" "),
