@@ -342,7 +342,64 @@ export const SoapForm = () => {
     isSuccess,
   } = fetchConceptAndCreateEncounter();
   const [formValues, setFormValues] = useState<any>({ medications: [] });
-  const { medicationOptions, loadingDrugs } = useFetchMedications();
+  const medicationOptions = [
+    {
+    "id": "b8ba947e-8d80-11d8-abbb-0024217bb78e",
+    "label": "Paracetamol"
+    },
+      {
+    "id": "b8caf940-8d80-11d8-abbb-0024217bb78e",
+    "label": "Ibuprofen"
+    },
+       {
+    "id": "3a6cc329-12b9-4257-b80c-6de1fce95550",
+    "label": "Diclofenac sodium 75mg/ml, 3ml"
+    },
+        {
+    "id": "ad5768ae-7b63-425b-a9b6-f99b9a19a230",
+    "label": "Diclofenac sodium Slow Release"
+  },
+  {
+    "id": "b90fe5a0-8d80-11d8-abbb-0024217bb78e",
+    "label": "Diclofenac sodium"
+    },
+  {
+    "id": "b8c9affe-8d80-11d8-abbb-0024217bb78e",
+    "label": "Salbutamol"
+    },
+  {
+    "id": "a74b6c1a-6f4e-4ec3-b274-7f34f574843f",
+    "label": "Salbutamol sulphate"
+    },
+   {
+    "id": "f513a483-5afb-49bf-b29b-702ce3b9a202",
+    "label": "Salbutamol solution for nebulising 5mg/ml"
+  },
+  {
+    "id": "7dc1b649-eaac-4a52-aca6-68027838a553",
+    "label": "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses"
+    },
+   {
+    "id": "b900b4cc-8d80-11d8-abbb-0024217bb78e",
+    "label": "Oxytocin"
+    },
+   {
+    "id": "684ac072-0186-4b9e-8232-a7aeadf7d8b5",
+    "label": "Dextrose 50%,"
+    },
+   {
+    "id": "b8ba92d0-8d80-11d8-abbb-0024217bb78e",
+    "label": "Aspirin"
+    },
+    {
+    "id": "b8c86e5a-8d80-11d8-abbb-0024217bb78e",
+    "label": "Prednisolone"
+    },
+     {
+    "id": "b8c3963c-8d80-11d8-abbb-0024217bb78e",
+    "label": "Diazepam"
+  },
+  ];
   const [showTextFields, setShowTextFields] = useState({
     otherProcedure: false,
     otherSupportiveCare: false,
@@ -354,6 +411,7 @@ export const SoapForm = () => {
   );
 
   const handleSubmitForm = (values: any) => {
+    console.log("🚀 ~ handleSubmitForm ~ values:", values)
     submitMedications();
     submitProcedureSupportiveCares(values);
     handleSubmit(getObservations(values, getDateTime()));
@@ -377,7 +435,7 @@ export const SoapForm = () => {
     );
 
     if (medications.length === 0) return;
-
+    submitDispensedDrugs(medications)
     const obsDateTime = getDateTime();
     const obs = medications.map((medication: any) => {
       return {
@@ -425,9 +483,10 @@ export const SoapForm = () => {
         ],
       };
     });
+    
 
     mutate({
-      encounterType: encounters.NURSING_CARE_NOTES,
+      encounterType: encounters.PRESCRIPTIONS,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
@@ -435,9 +494,38 @@ export const SoapForm = () => {
     });
     formValues.medications = [medicationTemplate];
   };
+  const submitDispensedDrugs = (medications: any) => {
+    const obsDateTime = getDateTime();
+    const obs = medications.map((medication: any) => {
+      return {
+        concept: concepts.DRUG_GIVEN,
+        value: medication.name,
+        obsDateTime,
+        groupMembers: [
+          {
+            concept: concepts.MEDICATION_DOSE,
+            value: medication.medication_dose,
+            obsDateTime,
+          },
+          {
+            concept: concepts.MEDICATION_ROUTE,
+            value: medication.medication_dose,
+            obsDateTime,
+          },
+        ]
+      }
+    })
+     const payload = {
+      encounterType: encounters.DISPENSING,
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: obsDateTime,
+      obs
+    };
+
+    mutate(payload);
+  };
   const submitProcedureSupportiveCares = async (values: any) => {
-    console.log("Procedures Selected:", values.procedures);
-    console.log("Supportive Care Selected:", values.supportiveCare);
     const currentDateTime = getDateTime();
 
     const obs = [
@@ -483,9 +571,7 @@ export const SoapForm = () => {
   };
   return (
     <>
-      <ContainerLoaderOverlay loading={addingDrugs || loadingDrugs}>
-        <b>Prescribe Medication</b>
-        <br />
+      <ContainerLoaderOverlay loading={addingDrugs}>
         <FormikInit
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -613,14 +699,17 @@ export const SoapForm = () => {
                   />
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
-                  <Typography variant="h6">Intervention</Typography>
-                  <FormFieldContainer direction="row">
+                  <Typography variant="h6" sx={{mb: 2}}>Intervention</Typography>
+                  <span style={{ fontSize: "16px", fontWeight: "bold"}}> Non-pharmacological management </span>
+
+                  <div style={{maxWidth:"900px"}}>
+                  <FormFieldContainer direction="row" >
                     <WrapperBox
                       sx={{
                         bgcolor: "white",
-                        padding: "2ch",
+                        padding: "0.5ch",
                         mb: "2ch",
-                        width: "100%",
+                        width: "90%",
                       }}
                     >
                       <h4>Procedures</h4>
@@ -652,7 +741,7 @@ export const SoapForm = () => {
                         bgcolor: "white",
                         padding: "2ch",
                         mb: "2ch",
-                        width: "100%",
+                        width: "90%",
                       }}
                     >
                       <h4>Supportive Care</h4>
@@ -680,8 +769,10 @@ export const SoapForm = () => {
                       )}
                     </WrapperBox>
                   </FormFieldContainer>
+                  </div>
+                  
 
-                  <h4>Prescribe Medications</h4>
+                  <h4 style={{ marginBottom: "1ch" }}>Non-pharmacological management</h4>
                   <FormValuesListener getValues={setFormValues} />
                   <FieldArray name="medications">
                     {({ push, remove }) => (
@@ -698,6 +789,7 @@ export const SoapForm = () => {
                               alignItems: "center",
                               gap: 1,
                               flexWrap: "wrap",
+                              width: "100%",
                             }}
                           >
                             <SearchComboBox
@@ -776,21 +868,8 @@ export const SoapForm = () => {
                         )}
                       />
                     )}
-                  </FieldArray>
-
-                  <Button
-                    variant="contained"
-                    type="button"
-                    onClick={async () => {
-                      await submitMedications(); // This will run the form submission logic
-                    }}
-                  >
-                    {" "}
-                    Prescribe Medication
-                  </Button>
+                  </FieldArray> 
                   <br />
-                  <h4>Dispense Medications</h4>
-                  <PrescribedMedication />
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
                   <Typography variant="h6">{form.evaluation.label}</Typography>
