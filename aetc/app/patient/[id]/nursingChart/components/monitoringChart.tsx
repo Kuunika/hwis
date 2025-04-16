@@ -238,129 +238,6 @@ export const MonitoringChart = () => {
     setActiveStep(3);
   };
 
-  // const handleNursingNotesSubmit = (values: any) => {
-  //   const objectiveKey = concepts.OBJECTIVE_DATA;
-  //   const investigationsKey = concepts.BEDSIDE_INVESTIGATIONS;
-  //   const subjectiveKey = concepts.SUBJECTIVE_DATA;
-  //   const interventionsKey = concepts.INTERVENTION_NOTES;
-  //   const assessmentKey = concepts.ASSESSMENT_COMMENTS;
-  //   const planKey = concepts.TREATMENT_PLAN;
-
-  //   if (values.objective) {
-  //     values[objectiveKey] = values.objective;
-  //     delete values.objective;
-  //   }
-
-  //   if (values.investigations) {
-  //     values[investigationsKey] = values.investigations;
-  //     delete values.investigations;
-  //   }
-
-  //   if (values[investigationsKey]) {
-  //     const investigations = values[investigationsKey];
-
-  //     const investigationObs = Object.entries(investigations).map(
-  //       ([concept, value]) => ({
-  //         concept,
-  //         value,
-  //         dateTime,
-  //       })
-  //     );
-  //     const observations = [
-  //       {
-  //         concept: concepts.BEDSIDE_INVESTIGATIONS,
-  //         obsDatetime: dateTime,
-  //         value: true,
-  //         groupMembers: investigationObs,
-  //       },
-  //     ];
-
-  //     createNursingNotes({
-  //       encounterType: encounters.NURSING_NOTES,
-  //       visit: activeVisit?.uuid,
-  //       patient: params.id,
-  //       encounterDatetime: dateTime,
-  //       obs: observations,
-  //     });
-  //   }
-
-  //   if (values[objectiveKey]) {
-  //     const objective = values[objectiveKey];
-  //     const objectiveObs = Object.entries(objective).map(
-  //       ([concept, value]) => ({
-  //         concept,
-  //         value,
-  //         dateTime,
-  //       })
-  //     );
-
-  //     const observations = [
-  //       {
-  //         concept: concepts.OBJECTIVE_DATA,
-  //         obsDatetime: dateTime,
-  //         value: true,
-  //         groupMembers: objectiveObs,
-  //       },
-  //     ];
-
-  //     createNursingNotes({
-  //       encounterType: encounters.NURSING_NOTES,
-  //       visit: activeVisit?.uuid,
-  //       patient: params.id,
-  //       encounterDatetime: dateTime,
-  //       obs: observations,
-  //     });
-  //   }
-
-  //   if (
-  //     values[subjectiveKey] ||
-  //     values[assessmentKey] ||
-  //     values[planKey] ||
-  //     values[interventionsKey]
-  //   ) {
-  //     const groupMembers = [
-  //       {
-  //         concept: concepts.SUBJECTIVE_DATA,
-  //         obsDatetime: dateTime,
-  //         value: values[subjectiveKey],
-  //       },
-  //       {
-  //         concept: concepts.ASSESSMENT_COMMENTS,
-  //         obsDatetime: dateTime,
-  //         value: values[assessmentKey],
-  //       },
-  //       {
-  //         concept: concepts.TREATMENT_PLAN,
-  //         obsDatetime: dateTime,
-  //         value: values[planKey],
-  //       },
-  //       {
-  //         concept: concepts.INTERVENTION_NOTES,
-  //         obsDatetime: dateTime,
-  //         value: values[interventionsKey],
-  //       },
-  //     ].filter((member) => member.value);
-
-  //     if (groupMembers.length > 0) {
-  //       const observations = [
-  //         {
-  //           concept: concepts.OTHER_NURSING_NOTES,
-  //           obsDatetime: dateTime,
-  //           value: true,
-  //           groupMembers: groupMembers,
-  //         },
-  //       ];
-
-  //       createNursingNotes({
-  //         encounterType: encounters.NURSING_NOTES,
-  //         visit: activeVisit?.uuid,
-  //         patient: params.id,
-  //         encounterDatetime: dateTime,
-  //         obs: observations,
-  //       });
-  //     }
-  //   }
-  // };
   const handleSkip = () => {
     const nextStep = activeStep + 1;
 
@@ -408,10 +285,7 @@ export const MonitoringChart = () => {
           onSubmit={handleMedicationsSubmit}
           onSkip={handleSkip}
         />
-        {/* <NursingNotesForm
-          onSubmit={handleNursingNotesSubmit}
-          onSkip={handleSkip}
-        /> */}
+
       </NewStepperContainer>
     </>
   );
