@@ -79,8 +79,11 @@ import { PhysicalExaminationForm } from "./PhysicalExaminationForm";
 import { WorkingDifferentialDiagnosisForm } from "./WorkingDifferentialDiagnosisForm";
 import { InvestigationsForm } from "./InvestigationsForm";
 import { InitialManagementForm } from "./InitialManagementForm";
+import { getActivePatientDetails } from "@/hooks";
+
 
 export const SurgicalNotesFlow = () => {
+    const { gender } = getActivePatientDetails();
     const [activeStep, setActiveStep] = useState<number>(0);
     const { navigateBack } = useNavigation();
 
@@ -91,17 +94,12 @@ export const SurgicalNotesFlow = () => {
         { id: 3, label: "Family History" },
         { id: 4, label: "Allergies" },
         { id: 5, label: "Social History" },
-        { id: 6, label: "Gynae History" },
+        ...(gender === "Female" ? [{ id: 6, label: "Gynae History" }] : []),
         { id: 7, label: "Review of Systems" },
         { id: 8, label: "Physical Examination" },
         { id: 9, label: "Working Differential Diagnosis" },
         { id: 10, label: "Investigations" },
         { id: 11, label: "Initial Management" },
-
-
-
-
-
 
     ];
     useEffect(() => {
@@ -160,12 +158,11 @@ export const SurgicalNotesFlow = () => {
                 /> */}
             </>
 
-            <>
-                <GynaeObstetricHistoryForm onSkip={() => { }} onSubmit={() => setActiveStep(7)} />
-                {/* <StepButtons
-                    onNext={() => setActiveStep(7)}
-                /> */}
-            </>
+            {gender === "Female" && (
+                <>
+                    <GynaeObstetricHistoryForm onSkip={() => { }} onSubmit={() => setActiveStep(7)} />
+                </>
+            )}
 
             <>
                 <ReviewOfSystemsForm onSkip={() => { }} onSubmit={() => setActiveStep(8)} />
@@ -173,14 +170,12 @@ export const SurgicalNotesFlow = () => {
                     onNext={() => setActiveStep(8)}
                 /> */}
             </>
-
             <>
                 <PhysicalExaminationForm onSkip={() => { }} onSubmit={() => setActiveStep(9)} />
                 {/* <StepButtons
                     onNext={() => setActiveStep(9)}
                 /> */}
             </>
-
             <>
                 <WorkingDifferentialDiagnosisForm onSkip={() => { }} onSubmit={() => setActiveStep(10)} />
                 {/* <StepButtons
@@ -200,7 +195,6 @@ export const SurgicalNotesFlow = () => {
                     onNext={() => setActiveStep(11)}
                 /> */}
             </>
-
 
         </NewStepperContainer>
     );

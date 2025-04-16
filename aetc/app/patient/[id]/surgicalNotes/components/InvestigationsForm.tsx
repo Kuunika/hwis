@@ -15,12 +15,28 @@ type Prop = {
     onSkip: () => void;
 };
 
-export const InvestigationsForm = ({ onSubmit, onSkip }: Prop) => {
-    return (
-        <div>
-            <h2>Investigations</h2>
-            <LabOrderTable />
 
-        </div>
+export const InvestigationsForm = ({ onSubmit, onSkip }: Prop) => {
+    const handleSubmit = async (values: any) => {
+        onSubmit(values); //  This triggers navigation to the next step
+
+    }
+    return (
+        <FormikInit
+            initialValues={{
+            }}
+            validationSchema={''}
+            onSubmit={handleSubmit} // Call the function here
+        >
+            <FormFieldContainer direction="column">
+                <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
+                    <div>
+                        <h2>Investigations</h2>
+                        <LabOrderTable />
+
+                    </div>
+                    </WrapperBox>
+                </FormFieldContainer>
+        </FormikInit>
     );
 };

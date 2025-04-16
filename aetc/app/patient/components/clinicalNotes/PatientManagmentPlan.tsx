@@ -70,17 +70,27 @@ export const usePatientManagementPlan = (pData: any) => {
         }
       });
 
-      const appendGroup = (title: string, items: string[]) => {
-        if (items.length === 0) return;
-        messages.push(`\n${title}:\n`);
-        items.forEach(item => {
-          messages.push(`•${item}`);
-        });
-      };
+      // const appendGroup = (title: string, items: string[]) => {
+      //   if (items.length === 0) return;
+      //   messages.push(`\n${title}:\n`);
+      //   items.forEach(item => {
+      //     messages.push(`•${item}`);
+      //   });
+      // };
 
-      appendGroup("Procedures", grouped.Procedures);
-      appendGroup("Supportive Care", grouped["Supportive Care"]);
-      appendGroup("Other Observations", grouped.Others);
+      if (grouped.Procedures.length > 0) {
+        messages.push(`The Procedures are : ${grouped.Procedures.join(", ")}`);
+      }
+      if (grouped["Supportive Care"].length > 0) {
+        messages.push(`The Supportive Care done are: ${grouped["Supportive Care"].join(", ")}`);
+      }
+      if (grouped.Others.length > 0) {
+        messages.push(`Other Observations: ${grouped.Others.join(", ")}`);
+      }
+
+      // appendGroup("Procedures", grouped.Procedures);
+      // appendGroup("Supportive Care", grouped["Supportive Care"]);
+      // appendGroup("Other Observations", grouped.Others);
 
       allMessages.push(messages.join(""));
     }
@@ -96,10 +106,13 @@ export const usePatientManagementPlan = (pData: any) => {
 
       if (careAreas.length > 0) {
         const encounterDate = new Date(careAreaEncounter.encounter_datetime).toLocaleString();
-        const messages = [`Patient Care Area recorded on: ${encounterDate}:\n`];
-        careAreas.forEach((area: string) => {
-          messages.push(`• ${area}`);
-        });
+        const messages = [
+          `Patient Care Area recorded on: ${encounterDate}:\n`,
+          `The Patient Care Areas are: ${careAreas.join(", ")}` 
+        ];
+        // careAreas.forEach((area: string) => {
+        //   messages.push(`• ${area}`);
+        // });
         allMessages.push(messages.join("\n"));
       }
     }
@@ -115,10 +128,13 @@ export const usePatientManagementPlan = (pData: any) => {
 
       if (observations.length > 0) {
         const formattedDate = new Date(prescriptionEncounter.encounter_datetime).toLocaleString();
-        const messages = [`Medication recorded on ${formattedDate}:\n`];
-        observations.forEach((obs: any) => {
-          messages.push(`• ${obs}`);
-        });
+        const messages = [
+          `Medication recorded on ${formattedDate}:\n`,
+          `The medications are: ${observations.join(", ")}` 
+        ];
+        // observations.forEach((obs: any) => {
+        //   // messages.push(`• ${obs}`);
+        // });
         allMessages.push(messages.join("\n"));
       }
     }
