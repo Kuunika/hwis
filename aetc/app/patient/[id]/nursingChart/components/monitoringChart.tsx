@@ -15,7 +15,6 @@ import { getDateTime } from "@/helpers/dateTime";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { useFormLoading } from "@/hooks/formLoading";
-import { NursingNotesForm } from "./nursingNotes";
 import { Alert, Snackbar } from "@mui/material";
 
 export const MonitoringChart = () => {
@@ -41,7 +40,6 @@ export const MonitoringChart = () => {
     { id: 0, label: "Observations" },
     { id: 1, label: "Interventions" },
     { id: 2, label: "Medications" },
-    //{ id: 3, label: "Nursing Notes" },
   ];
 
   const {
@@ -58,13 +56,6 @@ export const MonitoringChart = () => {
     isError: interventionsError,
   } = fetchConceptAndCreateEncounter();
 
-  // const {
-  //   mutate: createNursingNotes,
-  //   isSuccess: nursingNotesCreated,
-  //   isPending: creatingNursingNotes,
-  //   isError: nursingNotesError,
-  // } = fetchConceptAndCreateEncounter();
-
   useEffect(() => {
     if (vitalsError) {
       setAlertMessage(`Error submitting vitals encounter`);
@@ -75,11 +66,6 @@ export const MonitoringChart = () => {
       setAlertMessage(`Error submitting interventions`);
       setAlertSeverity("error");
     }
-
-    // if (nursingNotesError) {
-    //   setAlertMessage(`Error submitting nursing notes`);
-    //   setAlertSeverity("error");
-    // }
 
     if (vitalsCreated) {
       setAlertMessage(`Vitals submitted successfully`);
@@ -92,22 +78,13 @@ export const MonitoringChart = () => {
       setAlertSeverity("success");
       handleSkip();
     }
-    // if (nursingNotesCreated) {
-    //   setAlertMessage(`All encounters submitted successfully`);
-    //   setAlertSeverity("success");
-    //   setTimeout(() => {
-    //     navigateBack();
-    //   }, 5000);
-    //}
 
     setVitalsSubmitting(creatingVitals);
   }, [
     vitalsError,
     interventionsError,
-    //nursingNotesError,
     vitalsCreated,
     interventionsCreated,
-    //nursingNotesCreated,
     creatingVitals,
   ]);
 

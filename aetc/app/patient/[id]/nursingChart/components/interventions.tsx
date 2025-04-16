@@ -38,7 +38,38 @@ export const InterventionFormConfig = {
   },
 };
 
-const schema = Yup.object().shape({});
+const schema = Yup.object().shape({
+  [InterventionFormConfig.airwayIntervention.name]: Yup.array()
+    .of(
+      Yup.object({
+        id: Yup.string().required(),
+        label: Yup.string().required(),
+      })
+    )
+    .min(1, "Please select at least one airway intervention")
+    .required("Required"),
+
+  [InterventionFormConfig.breathingIntervention.name]: Yup.array()
+    .of(
+      Yup.object({
+        id: Yup.string().required(),
+        label: Yup.string().required(),
+      })
+    )
+    .min(1, "Please select at least one breathing intervention")
+    .required("Required"),
+
+  [InterventionFormConfig.circulationIntervention.name]: Yup.array()
+    .of(
+      Yup.object({
+        id: Yup.string().required(),
+        label: Yup.string().required(),
+      })
+    )
+    .min(1, "Please select at least one circulation intervention")
+    .required("Required"),
+
+});
 
 export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
   const initialFormValues = {
@@ -56,7 +87,6 @@ export const InterventionsForm = ({ onSubmit, onSkip }: Prop) => {
     ],
   };
  
-
 
   return (
     <FormikInit
