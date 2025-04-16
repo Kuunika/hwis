@@ -12,9 +12,10 @@ import * as Yup from "yup";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
+import { useFormikContext } from "formik";
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -64,19 +65,46 @@ const schema = Yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
 });
-//encounter: SURGICAL_NOTES_TEMPLATE_FORM
-//concepts: ALLERGIC_REACTION, DESCRIPTION
+
+// Component to manage individual allergies with their detail fields
+const AllergyItem = ({ allergy }: { allergy: { value: string, label: string } }) => {
+    const { values } = useFormikContext<any>();
+
+    const isSelected = values.allergies?.some(
+        (item: any) => item.key === allergy.value && item.value
+    );
+
+    let detailFieldName = "";
+    if (allergy.value === concepts.RECREATIONAL_DRUG) detailFieldName = "drugsDetails";
+    else if (allergy.value === concepts.FOOD_ALLERGY) detailFieldName = "foodDetails";
+    else if (allergy.value === concepts.SKIN_PREP) detailFieldName = "skinPrepDetails";
+    else if (allergy.value === concepts.LATEX_ALLERGY) detailFieldName = "latexDetails";
+    else if (allergy.value === concepts.MEDICATION_ALLERGY) detailFieldName = "medicationsDetails";
+    else if (allergy.value === concepts.OTHER) detailFieldName = "otherDetails";
+
+    return (
+        <div key={allergy.value} style={{ marginBottom: "10px" }}>
+            <CheckboxesGroup
+                name="allergies"
+                allowFilter={false}
+                options={[allergy]}
+            />
+
+            {isSelected && (
+                <div style={{ marginLeft: "20px", marginTop: "5px" }}>
+                    <TextInputField
+                        name={detailFieldName}
+                        label={`Specify ${allergy.label.toLowerCase()} allergy`}
+                        placeholder={`Enter ${allergy.label.toLowerCase()} allergy details`}
+                        id={detailFieldName}
+                    />
+                </div>
+            )}
+        </div>
+    );
+};
+
 export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
-
-    const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
-    const [showOtherTextField, setShowOtherTextField] = useState(false);
-
-    const handleCheckboxChange = (values: any) => {
-        setSelectedAllergies(values.filter((item: any) => item.value).map((item: any) => item.key));
-        setShowOtherTextField(values.some((val: any) => val.key === "Other" && val.value));
-
-    };
-
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -95,51 +123,46 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
     const handleSubmit = async (values: any) => {
         const currentDateTime = getDateTime();
 
-        // Extract selected allergies and their details
-        const selectedAllergies = values.allergies
+        // Extract selected allergies from form values
+        const selectedAllergies = (values.allergies || [])
             .filter((item: any) => item.value)
             .map((item: any) => item.key);
 
         console.log("Selected allergies:", selectedAllergies);
 
-        // Create observations for each selected allergy with its details
-        const obs = selectedAllergies.map((allergyKey: string) => {
-            // Find the corresponding option to get its label
+        // Create an array to hold all our observations
+        const obs: { concept: string; value: string; obsDatetime: string; }[] = [];
+
+        // Process each allergy and add appropriate observations to the array
+        selectedAllergies.forEach((allergyKey: string) => {
+            let value = "";
             const option = allergyOptions.find(opt => opt.value === allergyKey);
             const label = option ? option.label : "Unknown";
 
-            // Get the detail field name and value based on the allergy type
-            let detailValue = "";
-
+            // Get details based on allergy type
             if (allergyKey === concepts.RECREATIONAL_DRUG) {
-                detailValue = values.drugsDetails || "";
+                value = `${label}: ${values.drugsDetails || ""}`;
             } else if (allergyKey === concepts.FOOD_ALLERGY) {
-                detailValue = values.foodDetails || "";
+                value = `${label}: ${values.foodDetails || ""}`;
             } else if (allergyKey === concepts.SKIN_PREP) {
-                detailValue = values.skinPrepDetails || "";
+                value = `${label}: ${values.skinPrepDetails || ""}`;
             } else if (allergyKey === concepts.LATEX_ALLERGY) {
-                detailValue = values.latexDetails || "";
+                value = `${label}: ${values.latexDetails || ""}`;
             } else if (allergyKey === concepts.MEDICATION_ALLERGY) {
-                detailValue = values.medicationsDetails || "";
+                value = `${label}: ${values.medicationsDetails || ""}`;
             } else if (allergyKey === concepts.OTHER) {
-                detailValue = values.otherDetails || "";
+                value = `${label}: ${values.otherDetails || ""}`;
             }
 
-            // Format the value to include both the allergy type and its details
-            const formattedValue = detailValue ? `${label}: ${detailValue}` : label;
-
-            return {
-                concept: allergyKey,
-                value: formattedValue,
+            // Add this observation to our array
+            obs.push({
+                concept: concepts.ALLERGIC_REACTION,
+                value,
                 obsDatetime: currentDateTime,
-            };
+            });
         });
 
-        // const obs = values.allergies.map((allergy: string) => ({
-        //     concept: concepts.ALLERGIC_REACTION,
-        //     value: allergy,
-        //     obsDatetime: currentDateTime,
-        // }));
+        console.log("Submitting observations:", obs);
 
         const payload = {
             encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
@@ -157,6 +180,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
             console.error("Error submitting Allergies:", error);
         }
     };
+
     return (
         <FormikInit
             validationSchema={schema}
@@ -169,37 +193,15 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
                 medicationsDetails: "",
                 otherDetails: "",
             }}
-            onSubmit={handleSubmit} // Call the updated function here
+            onSubmit={handleSubmit}
         >
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-
                     <FormFieldContainerLayout title="Allergies and Adverse Reactions">
                         {allergyOptions.map((allergy) => (
-                            <div key={allergy.value} style={{ marginBottom: "10px" }}>
-                                <CheckboxesGroup
-                                    name="allergies"
-                                    allowFilter={false}
-                                    options={[allergy]}
-                                    getValue={handleCheckboxChange}
-                                />
-
-                                {/* Show Text Input if specific allergy is selected */}
-                                {selectedAllergies.includes(allergy.value) && (
-                                    <div style={{ marginLeft: "20px", marginTop: "5px" }}>
-                                        <TextInputField
-                                            name={`${allergy.label.toLowerCase().replace(/\s+/g, '')}Details`}
-                                            label={`Specify ${allergy.label.toLowerCase()} allergy`}
-                                            placeholder={`Enter ${allergy.label.toLowerCase()} allergy details`}
-                                            id={`${allergy.label.toLowerCase().replace(/\s+/g, '')}Details`}
-                                        />
-
-                                    </div>
-                                )}
-                            </div>
+                            <AllergyItem key={allergy.value} allergy={allergy} />
                         ))}
                     </FormFieldContainerLayout>
-
                 </WrapperBox>
             </FormFieldContainer>
         </FormikInit>
