@@ -241,7 +241,6 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
           sx={{ mb: "2ch" }}
           multiple={true}
           getValue={(selected: any[]) => {
-            console.log(selected);
             const hasIV = selected.some(
               (item) => item.label === "IV fluids"
             );

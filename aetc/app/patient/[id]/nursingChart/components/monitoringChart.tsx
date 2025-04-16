@@ -202,13 +202,22 @@ export const MonitoringChart = () => {
         continue;
       }
       
-      const obsObject = (value as any[]).reduce((acc, item) => {
-        acc[item.id] = true;
-        return acc;
-      }, {} as Record<string, boolean>);
-      console.log(obsObject, values);
-      const obs = getObservations(obsObject, dateTime);
+      let obsObject;
+      if(key === "Circulation Interventions"){
+        obsObject = (value as any[]).reduce((acc, item) => {
+          acc[item.label] = true;
+          return acc;
+        }, {} as Record<string, boolean>);
+      } 
+      else{
+        obsObject = (value as any[]).reduce((acc, item) => {
+          acc[item.id] = true;
+          return acc;
+        }, {} as Record<string, boolean>);
+      }
 
+      
+      const obs = getObservations(obsObject, dateTime);
       obs.forEach((element) => {
         if (element.concept === concepts.OTHER_AIRWAY_INTERVENTION) {
           element.value = values[otherKey];
