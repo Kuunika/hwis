@@ -25,7 +25,7 @@ type Prop = {
 };
 
 const careAreaFormConfig: Record<
-    "gyno" | "surgical" | "medicalBench" | "shortStay" | "isolation" | "trauma",
+    "gyno" | "surgical" | "medicalBench" | "shortStay" | "isolation" | "trauma" | "resuscitation" | "priority",
     { name: string; label: string }
 > = {
     gyno: { name: concepts.GYNO, label: "Gynaecological Bench" },
@@ -34,6 +34,11 @@ const careAreaFormConfig: Record<
     shortStay: { name: concepts.SHORT_STAY_AREA, label: "Short Stay" },
     isolation: { name: concepts.ISOLATION, label: "Isolation" },
     trauma: { name: concepts.TRAUMA, label: "Trauma" },
+    resuscitation: { name: concepts.RESUSCITATION, label: "Resuscitation" },
+    priority: { name: concepts.PRIORITY, label: "Priority" },
+
+
+
     // other: { name: concepts.OTHER, label: "Other (Specify)" },
 };
 

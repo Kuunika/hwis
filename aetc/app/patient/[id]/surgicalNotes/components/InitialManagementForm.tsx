@@ -33,7 +33,6 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const [clerkInfo, setClerkInfo] = useState({
         clerkName: "",
-        designation: "",
     });
     // Ref for printing
     const contentRef = useRef<HTMLDivElement>(null);
@@ -51,7 +50,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
         if (surgicalEncounter) {
             setClerkInfo({
                 clerkName: surgicalEncounter.created_by || "Unknown",
-                designation: "Medical Officer", // Default or dynamic based on auth system
+                // designation: " ", // Default or dynamic based on auth system
             });
         }
     }, [encountersData]);
@@ -101,10 +100,11 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             await submitEncounter(payload);
             console.log("Initial Management submitted successfully!");
             onSubmit(values); // This triggers navigation to the next step
-            reactToPrintFn(); // Trigger printing after submission
         } catch (error) {
             console.error("Error submitting Initial Management:", error);
         }
+        reactToPrintFn(); // Trigger printing after submission
+
     };
     // Updated Print function using the new syntax
     const reactToPrintFn = useReactToPrint({ contentRef });
@@ -113,7 +113,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             initialValues={{
                 additionalNotes: "",
                 clerkName: clerkInfo.clerkName,
-                designation: clerkInfo.designation,
+                designation: "",
                 signature: "",
             }}
             validationSchema={validationSchema}
@@ -126,7 +126,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                     <PatientInfoTab />
                     <PrescribedMedicationList setRow={setRow} />
                     <p><strong>Clerk Name:</strong> {clerkInfo.clerkName}</p>
-                    <p><strong>Designation:</strong> {clerkInfo.designation}</p>
+                    <p><strong>Designation:</strong></p>
                     <p><strong>Additional Notes:</strong> {/* Dynamically filled value */}</p>
                 </div>
 
@@ -159,11 +159,13 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                             label="Clerked by (Name)" id={""} />
                         <TextInputField
                             name="designation"
-                            label="Designation" id={""} />
+                            label="Designation"
+
+                            id={""} />
                         <TextInputField
                             name="signature"
                             label="Signature"
-                            placeholder="Enter your signature"
+                            placeholder="E.g J.Smith"
                             id={""}
                         />
                     </FormFieldContainerLayout>

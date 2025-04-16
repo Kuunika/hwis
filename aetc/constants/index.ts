@@ -1406,6 +1406,8 @@ export const concepts = {
   NEVER_SMOKED: "Never smoked",
   PUPIL_REACTION: "Pupil reaction",
   GENETELIA_EXAMINATION_REQUIRED: "Genetelia examination required",
+  REVIEW_OF_SYSTEMS_ENT: "Review of systems ENT",
+
 
 };
 
