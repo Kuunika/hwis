@@ -1410,6 +1410,9 @@ export const concepts = {
   GENETELIA_EXAMINATION_REQUIRED: "Genetelia examination required",
   SERVICE_AREAS: "Service areas",
   AETC_SERVICE_AREAS: "AETC service areas",
+  AUSCULTATION:"Auscultation",
+  INTRAOSSEOUS:"Intraosseous",
+  
 };
 
 export const conceptNames = {

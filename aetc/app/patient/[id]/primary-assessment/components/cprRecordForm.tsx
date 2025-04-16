@@ -6,6 +6,7 @@ import {
   FormFieldContainerMultiple,
   UnitInputField,
   FormTimePickerNow,
+  FormValuesListener,
 } from "@/components";
 import { concepts, encounters } from "@/constants";
 import {
@@ -61,6 +62,10 @@ const form = {
     name: concepts.REVERSIBLE_CAUSES,
     label: "Reversible Causes",
   },
+  other: {
+    name: concepts.OTHER,
+    label: "Other Interventions",
+  },
 };
 
 const rhythmOptions = [
@@ -99,11 +104,12 @@ const interventions = [
   { id: concepts.NG_INSERTION, label: "NG Insertion" },
   { id: concepts.SUTURING, label: "Suturing" },
   { id: concepts.KEEP_WARM, label: "Keep warm" },
+  { id: concepts.OTHER, label: "Other" },
 ];
 const routeOptions = [
-  { label: "Oral", id: concepts.ORAL },
-  { label: "Suppository", id: concepts.SUPPOSITORY },
+  { label: "Intraosseous", id: concepts.INTRAOSSEOUS },
   { label: "Intravenous", id: concepts.INTRAVENOUS },
+  { label: "Oral", id: concepts.ORAL },
   { label: "Intramuscular", id: concepts.INTRAMUSCULAR },
   { label: "Subcutaneous", id: concepts.SUBCUTANEOUS },
   { label: "Infiltration", id: concepts.INFILTRATION },
@@ -145,6 +151,7 @@ const recordValidationSchema = Yup.object().shape({
   [form.reversibleCauses.name]: Yup.array()
     .required()
     .label(form.reversibleCauses.label),
+  [form.other.name]: Yup.string().label(form.other.label),
 });
 export const RecordForm = ({
   patientUuid,
@@ -155,6 +162,7 @@ export const RecordForm = ({
   visitUuid?: string;
   onSubmitRecord: (state: any) => void;
 }) => {
+  const [formInputValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.CPR,
     () => {},
@@ -209,6 +217,7 @@ export const RecordForm = ({
   useEffect(() => {
     onSubmitRecord(isLoading);
   }, [isLoading]);
+
   return (
     <FormikInit
       initialValues={getInitialValues(form)}
@@ -218,6 +227,8 @@ export const RecordForm = ({
     >
       <>
         <br />
+
+        <FormValuesListener getValues={setFormValues} />
         <FormTimePickerNow
           sx={{ my: "1ch" }}
           name={form.time.name}
@@ -272,6 +283,18 @@ export const RecordForm = ({
           options={interventions}
           sx={{ width: "100%" }}
         />
+        {formInputValues[form.interventions.name]?.find(
+          (option: any) => option.id == concepts.OTHER
+        ) && (
+          <TextInputField
+            name={form.other.name}
+            label={form.other.label}
+            id={form.other.name}
+            rows={5}
+            sx={{ width: "100%" }}
+            multiline
+          />
+        )}
         <br />
         <TextInputField
           multiline
