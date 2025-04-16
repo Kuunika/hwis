@@ -213,6 +213,9 @@ export const ClinicalNotes = () => {
             <Extremities />
             <NeurologicalExamination />
             <SoapierNotes />*/}
+            <DisabilityAssessment/>
+
+
         </Panel>
     );
 };
