@@ -77,7 +77,19 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
 
 return (
   <>
-  <Panel title="Family History">
+  <Panel title="">
+
+  <h3
+  style={{
+    fontSize: "1.25rem",
+    fontWeight: 600,
+    marginBottom: "1rem",
+    borderBottom: "2px solid #ccc",
+    paddingBottom: "0.5rem",
+  }}
+>
+  Family History
+</h3>
     <WrapperBox>
               {historyLoading ? (
                                   <div

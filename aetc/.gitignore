@@ -38,4 +38,4 @@ next.tar.gz
 package-lock.json
 
 #Jetbrains
-.idea
+.idea/

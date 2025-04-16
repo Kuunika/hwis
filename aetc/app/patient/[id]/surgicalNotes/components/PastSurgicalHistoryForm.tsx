@@ -48,19 +48,24 @@ export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        if (values.hasSurgicalHistory !== concepts.YES) {
-            return;
-        }
-
         const currentDateTime = getDateTime();
 
         const obs = [
             {
-                concept: concepts.PROCEDURES,
-                value: values.surgicalDetails,
+                concept: concepts.SURGICAL_PROCEDURE, // this captures YES or NO
+                value: values.hasSurgicalHistory,
                 obsDatetime: currentDateTime,
             },
         ];
+
+        // Only add procedures detail if user said YES
+        if (values.hasSurgicalHistory === concepts.YES && values.surgicalDetails) {
+            obs.push({
+                concept: concepts.PROCEDURES,
+                value: values.surgicalDetails,
+                obsDatetime: currentDateTime,
+            });
+        }
 
         const payload = {
             encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
