@@ -139,7 +139,7 @@ export default function AdmissionForm() {
                 concept: concepts.ADMISSION,
                 value: concepts.ADMISSION,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     {
                         concept: concepts.WARD,
                         value: values.wardName,

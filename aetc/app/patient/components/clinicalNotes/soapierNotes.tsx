@@ -31,7 +31,7 @@ export const SoapierNotes = () => {
                         <Typography variant="body2" sx={{
                             color: "text.primary",
                             mb: 0,
-                            whiteSpace: 'pre-line' // This preserves line breaks
+                            whiteSpace: 'pre-line'
                         }}>
                             {data.paragraph}
                         </Typography>

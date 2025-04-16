@@ -73,7 +73,7 @@ export default function AwaitingSpecialityReviewForm() {
                 concept: concepts.AWAITING_SPECIALITY_REVIEW,
                 value: concepts.AWAITING_SPECIALITY_REVIEW,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.SPECIALITY_DEPARTMENT, value: values.specialtyDepartment, obsDatetime: currentDateTime },
                     { concept: concepts.REASON_FOR_REQUEST, value: values.reasonForReview, obsDatetime: currentDateTime },
                     { concept: concepts.DATE, value: values.reviewDate, obsDatetime: currentDateTime },

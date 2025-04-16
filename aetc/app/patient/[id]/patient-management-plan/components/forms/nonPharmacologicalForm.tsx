@@ -51,7 +51,7 @@ const supportiveCareConfig = [
     { value: concepts.COUNSELLING, label: "Counselling" },
     { value: concepts.FEEDING, label: "Feeding" },
     { value: concepts.OXYGENATION, label: "Oxygenation" },
-    { value: concepts.TAPID_SPONGING, label: "Tapid Sponging" },
+    { value: concepts.TEPID_SPONGING, label: "Tepid Sponging" },
     { value: concepts.ELECTROCARDIOGRAPHY_MONITORING, label: "Electrocardiography (ECG) Monitoring" },
     { value: concepts.TURNING_PATIENTS, label: "Turning Patients" },
     { value: concepts.ORAL_CARE, label: "Oral Care" },

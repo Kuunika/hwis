@@ -39,7 +39,7 @@ import MedicationsNotes from "../clinicalNotes/medicationsNotes";
 import ExistingConditionsNotes from "../clinicalNotes/existingConditionsNotes";
 import SurgicalNotes from "../clinicalNotes/surgicalNotes";
 import { PreviousAdmissionsNotes } from "../clinicalNotes/previousAdmissionsNotes";
-import { ReviewOfSystemsNotes } from "../clinicalNotes/reviewOfSystemsNotes";
+import { ReviewOfSystems } from "../clinicalNotes/reviewOfSystemsNotes";
 import { FamilyHistoryNotes } from "../clinicalNotes/familyHistory";
 
 // Styled components for accordion
@@ -143,10 +143,9 @@ export const VisitHistory = () => {
     return encounter ? processObservations(encounter.obs || []) : [];
   };
 
-
-    if (historyLoading) {
-      return <ProfilePanelSkeletonLoader />;
-    }
+  if (historyLoading) {
+    return <ProfilePanelSkeletonLoader />;
+  }
 
   // Define encounter data for each accordion panel
   const encounterData = {
@@ -420,7 +419,7 @@ export const VisitHistory = () => {
                     <ExistingConditionsNotes />
                     <SurgicalNotes />
                     <PreviousAdmissionsNotes />
-                    <ReviewOfSystemsNotes />
+                    <ReviewOfSystems />
                     <FamilyHistoryNotes />
                 </AccordionDetails>
             </Accordion>

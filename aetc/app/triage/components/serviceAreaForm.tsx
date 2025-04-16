@@ -20,9 +20,10 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
   const [showOther, setShowOther] = useState(false);
   const [otherId, setOtherId] = useState<string | null>(null);
   const [serviceAreaOptions, setServiceAreaOptions] = useState<{ label: string; id: string }[]>([]);
+  const [externalAreas, setExternalAreas] = useState<{ label: string; id: string }[]>([]);
 
-  const { data: serviceAreas, isLoading: serviceAreaLoading } = getConceptSet("Service areas");
-  const { data: aetcServiceAreas, isLoading: aetcServiceAreaLoading } = getConceptSet("AETC service areas");
+  const { data: serviceAreas, isLoading: serviceAreaLoading } = getConceptSet(concepts.SERVICE_AREAS);
+  const { data: aetcServiceAreas, isLoading: aetcServiceAreaLoading } = getConceptSet(concepts.AETC_SERVICE_AREAS);
 
   const form = {
     Referred: {
@@ -39,7 +40,16 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
 
   useEffect(() => {
     if (triageStatus && (serviceAreas || aetcServiceAreas)) {
+
+      const opts = serviceAreas?.map((serviceArea: any) => ({
+        label: serviceArea.name,
+        id: serviceArea.uuid,
+      }));
+
+      setExternalAreas(opts);
+
       const selectedList = triageStatus === "yellow" ? aetcServiceAreas : serviceAreas;
+
 
       if (selectedList) {
         const options = selectedList.map((serviceArea: any) => ({
@@ -88,7 +98,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
           <SearchComboBox name={form.Referred.name} label={form.Referred.label} options={serviceAreaOptions} multiple={false} />
         )}
 
-        {showOther && <TextInputField id={form.Other_Area.name} name={form.Other_Area.name} label={form.Other_Area.label} />}
+        {showOther &&  <SearchComboBox name={form.Other_Area.name} label={form.Other_Area.label} options={externalAreas} multiple={false} />}
       </FormFieldContainer>
 
     </FormikInit>

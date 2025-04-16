@@ -323,34 +323,34 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       },
       {
         concept: concepts.SITE,
-        value: "Lung Left",
+        value: "Lung Lateral Left",
         obsDatetime,
         groupMembers: flattenImagesObs(lungLeft),
       },
       {
         concept: concepts.SITE,
-        value: "Lung Right",
+        value: "Lung Lateral Right",
         obsDatetime,
         groupMembers: flattenImagesObs(lungRight),
       },
       {
         concept: concepts.SITE,
-        value: "Lung Front",
+        value: "Lung Anterior",
         obsDatetime,
         groupMembers: flattenImagesObs(lungFront),
       },
       {
         concept: concepts.SITE,
-        value: "Lung Back",
+        value: "Lung Posterior",
         obsDatetime,
         groupMembers: flattenImagesObs(lungBack),
       },
-      {
-        concept: concepts.SITE,
-        value: "Lung Front",
-        obsDatetime,
-        groupMembers: flattenImagesObs(lungFront),
-      },
+      // {
+      //   concept: concepts.SITE,
+      //   value: "Lung Front",
+      //   obsDatetime,
+      //   groupMembers: flattenImagesObs(lungFront),
+      // },
     ];
 
     const devices = formValues[form.deviceForIntervention.name];
@@ -382,7 +382,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const breathSoundsSlides = [
     {
       id: 1,
-      label: "Lung Left",
+      label: "Lung Lateral Left",
       content:
         gender == "Female" ? (
           <LungLeftFemaleImage onValueChange={setLungLeft} />
@@ -392,7 +392,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     },
     {
       id: 2,
-      label: "Lung Right",
+      label: "Lung lateral right",
       content:
         gender == "Female" ? (
           <LungRightFemaleImage onValueChange={setLungRight} />
@@ -402,7 +402,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     },
     {
       id: 3,
-      label: "Lung Front",
+      label: "Lung Anterior",
       content:
         gender == "Female" ? (
           <LungFrontFemaleImage
@@ -418,7 +418,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     },
     {
       id: 4,
-      label: "Lung Back",
+      label: "Lung Posterior",
       content:
         gender == "Female" ? (
           <LungBackFemaleImage

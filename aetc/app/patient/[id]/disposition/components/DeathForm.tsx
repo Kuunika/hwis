@@ -91,7 +91,7 @@ export default function DeathForm() {
                 concept: concepts.DEATH,
                 value: "DISPOSITION TYPE DEATH",
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.CAUSE_OF_DEATH, value: values.causeOfDeath, obsDatetime: currentDateTime },
                     { concept: concepts.FAMILY_INFORMED, value: values.familyInformed, obsDatetime: currentDateTime },
                     { concept: concepts.RELATIONSHIP_TO_DECEASED, value: values.relationshipToDeceased, obsDatetime: currentDateTime },

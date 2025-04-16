@@ -4,11 +4,6 @@ import { encounters } from "@/constants";
 
 export const DisabilityAssessment = () => {
   const { notes, isLoading } = useComponentNotes(encounters.DISABILITY_ASSESSMENT);
-
-  const isValidDate = (dateString: string) => {
-    return !isNaN(new Date(dateString).getTime());
-  };
-
   if (isLoading) {
     return <Typography>Loading...</Typography>;
   }
@@ -26,7 +21,7 @@ export const DisabilityAssessment = () => {
             notes.map((data, index) => (
                 <Box key={index} sx={{ mb: 2, position: 'relative' }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}>
-                    {isValidDate(data.time) ? new Date(data.time).toLocaleString() : "Invalid Date"}
+                    {new Date(data.time).toLocaleString()}
                   </Typography>
                   <Typography
                       variant="body2"

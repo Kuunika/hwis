@@ -7,6 +7,14 @@ export const BroughtInDeadList = () => {
   const { data, isLoading } = getAllDeathReports();
 
   const columns = [
+    { field: "first_name", headerName: "First name", flex: 1 },
+    { field: "surname", headerName: "Surname", flex: 1 },
+    { field: "date_of_birth", headerName: "Date Of Birth", flex: 1 },
+    { field: "surname", headerName: "Surname", flex: 1 },
+    { field: "age", headerName: "Age", flex: 1 },
+    { field: "national_id", headerName: "National ID", flex: 1 },
+    { field: "religion", headerName: "Religion", flex: 1 },
+    { field: "place_of_residence", headerName: "Place Of Residence", flex: 1 },
     { field: "place_of_death", headerName: "Place Of Death", flex: 1 },
     { field: "date_of_death", headerName: "Date Of Death", flex: 1 },
     { field: "time_of_death", headerName: "Time Of Death" },

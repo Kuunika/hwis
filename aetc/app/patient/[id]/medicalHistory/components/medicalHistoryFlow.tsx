@@ -372,11 +372,14 @@ export const MedicalHistoryFlow = () => {
       {
           concept: concepts.MEDICATION_FORMULATION,
           value: medication.formulation,
-      } 
+      },
+      {
+        concept: concepts.SELF_MEDICATED,
+        value: medication.medication_self_medicated,
+    } ,
     ]as OutputObservation[]
     }});
 
-   console.log(observationsPayload)
       try {
         const response = await createEncounter({
           encounterType: encounters.PRESCRIPTIONS,
@@ -686,7 +689,6 @@ export const MedicalHistoryFlow = () => {
   }
 
   async function handleReviewSubmission(values: any): Promise<any> {
-    
     const historyOfComplaints = values["events"];
 
     const historyOfComplaintsObs = {
@@ -746,6 +748,7 @@ export const MedicalHistoryFlow = () => {
       poisoning: concepts.POISONING,
       poisoningIntentional: concepts.INTENTIONAL_POISONING,
       ulcerWound: concepts.ULCER_OR_WOUND,
+      otherSymptom: concepts.OTHER,
     };
 
     const symptomKeys = Object.keys(symptom_uuid);
@@ -842,7 +845,7 @@ export const MedicalHistoryFlow = () => {
       const duration = values[`${key}Duration`];
       const site = values[`${key}_site`];
 
-      if (durationUnit) {
+      if (durationUnit  || key === "otherSymptom") {
         const symptomConcept = {
           concept: symptom_uuid[key],
           value: true,
@@ -867,9 +870,20 @@ export const MedicalHistoryFlow = () => {
             concept: concepts.INTENTIONAL_POISONING,
             value: values["poisoningIntentional"],
           };
+          
 
           obsGroup.push(intentionalPoisoningObs);
         }
+
+
+        if (key == "otherSymptom") {
+          const otherSymptomObs = {
+            concept: symptom_uuid[key],
+            value: values[key],
+          };
+          obsGroup.push(otherSymptomObs);
+        }
+
         try {
           const response = await createEncounter({
             encounterType: encounters.REVIEW_OF_SYSTEMS,

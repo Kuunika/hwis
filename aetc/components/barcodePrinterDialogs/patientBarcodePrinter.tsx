@@ -91,23 +91,27 @@ export const PrinterBarcodeButton = ({
   const [open, setOpen] = useState(false);
   return (
     <>
-     { icon && <Tooltip title="Print" arrow>
-        <IconButton
+      {icon && (
+        <Tooltip title="Print" arrow>
+          <IconButton
+            onClick={() => setOpen(true)}
+            aria-label="Print"
+            sx={{ color: "#015E85" }}
+          >
+            <HiPrinter />
+          </IconButton>
+        </Tooltip>
+      )}
+      {!icon && (
+        <MainButton
+          size="small"
+          variant={variant}
+          sx={{ fontSize: "12px", ml: "1px", ...sx }}
+          title={title}
+          icon={icon}
           onClick={() => setOpen(true)}
-          aria-label="Print"
-          sx={{color:"#015E85"}}
-        >
-          <HiPrinter />
-        </IconButton>
-      </Tooltip>}
-   {   !icon&&<MainButton
-        size="small"
-        variant={variant}
-        sx={{ fontSize: "12px", ml: "1px", ...sx }}
-        title={title}
-        icon={icon}
-        onClick={() => setOpen(true)}
-      />}
+        />
+      )}
       <GenericDialog
         open={open}
         onClose={() => {
