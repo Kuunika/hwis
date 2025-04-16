@@ -113,31 +113,36 @@ export const ClinicalNotes = () => {
     isSuccess: encountersFetched,
   } = getPatientsEncounters(params.id as string);
 
-  console.log("🚀 ~ allNotes ~ soapierNotes:", soapierNotes);
   const allNotes = useMemo(() => {
-    return [
-      ...clinicalNotes,
-      ...airwayNotes,
-      ...breathingNotes,
-      ...circulationNotes,
-      ...disabilityNotes,
-      ...exposureNotes,
-      ...presentingComplaintsNotes,
-      ...allergiesNotes,
-      ...medicationsNotes,
-      ...existingConditionsNotes,
-      ...surgicalNotes,
-      ...previousAdmissionsNotes,
-      ...reviewOfSystemsNotes,
-      ...familyHistoryNotes,
-      ...generalInfoNotes,
-      ...headNeckNotes,
-      ...chestNotes,
-      ...abdomenPelvisNotes,
-      ...extremitiesNotes,
-      ...neurologicalNotes,
-      ...soapierNotes,
-    ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+    const combinedNotes = filterSoapierState
+      ? [...soapierNotes]
+      : [
+          ...clinicalNotes,
+          ...airwayNotes,
+          ...breathingNotes,
+          ...circulationNotes,
+          ...disabilityNotes,
+          ...exposureNotes,
+          ...presentingComplaintsNotes,
+          ...allergiesNotes,
+          ...medicationsNotes,
+          ...existingConditionsNotes,
+          ...surgicalNotes,
+          ...previousAdmissionsNotes,
+          ...reviewOfSystemsNotes,
+          ...familyHistoryNotes,
+          ...generalInfoNotes,
+          ...headNeckNotes,
+          ...chestNotes,
+          ...abdomenPelvisNotes,
+          ...extremitiesNotes,
+          ...neurologicalNotes,
+          ...soapierNotes,
+        ];
+
+    return combinedNotes.sort(
+      (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+    );
   }, [
     clinicalNotes,
     airwayNotes,
@@ -160,19 +165,8 @@ export const ClinicalNotes = () => {
     extremitiesNotes,
     neurologicalNotes,
     soapierNotes,
+    filterSoapierState, // respond to toggle change
   ]);
-
-  // Create filteredNotes based on filterSoapierState
-  const filteredNotes = useMemo(() => {
-    if (filterSoapierState) {
-      // Only show SOAPIER notes when filter is active
-      console.log("🚀 ~ filteredNotes ~ allNotes:", allNotes);
-      return allNotes.filter(
-        (note: any) => note.encounterType === encounters.NURSING_CARE_NOTES
-      );
-    }
-    return allNotes;
-  }, [allNotes, filterSoapierState]);
 
   useEffect(() => {
     refresh();
@@ -203,10 +197,10 @@ export const ClinicalNotes = () => {
           pl: "2ch",
         }}
       >
-        {filteredNotes.length === 0 ? (
+        {allNotes.length === 0 ? (
           <Typography>No clinical notes available</Typography>
         ) : (
-          filteredNotes.map((data, index) => (
+          allNotes.map((data, index) => (
             <Box
               key={`${data.time}-${index}`}
               sx={{
