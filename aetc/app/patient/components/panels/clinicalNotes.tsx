@@ -209,52 +209,63 @@ export const ClinicalNotes = () => {
           maxHeight: "40ch",
           pl: "2ch",
         }}
-        ref={contentRef}
       >
-        <div className="print-only">
-          <PatientInfoTab />
-          <div
-            style={{
-              fontWeight: 700,
-              fontSize: "20px",
-              marginTop: "10px",
-              textAlign: "center",
-            }}
-          >
-            Clinical Notes
-          </div>
-        </div>
-
-        {allNotes.length === 0 ? (
-          <Typography>No clinical notes available</Typography>
-        ) : (
-          allNotes.map((data, index) => (
-            <Box
-              key={`${data.time}-${index}`}
-              sx={{
-                my: "1ch",
-                py: "1ch",
-                borderBottom: "1px solid #E0E0E0",
+        <div
+          ref={contentRef}
+          style={{
+            margin: "10px",
+            alignItems: "center",
+            alignContent: "center",
+          }}
+        >
+          <div className="print-only">
+            <PatientInfoTab />
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "20px",
+                marginTop: "10px",
+                textAlign: "center",
               }}
             >
-              <Typography variant="body1" sx={{ color: "text.primary", mb: 0 }}>
-                {data.paragraph}
-              </Typography>
+              Clinical Notes
+            </div>
+          </div>
+
+          {allNotes.length === 0 ? (
+            <Typography>No clinical notes available</Typography>
+          ) : (
+            allNotes.map((data, index) => (
               <Box
+                key={`${data.time}-${index}`}
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  my: "1ch",
+                  py: "1ch",
+                  borderBottom: "1px solid #E0E0E0",
                 }}
               >
-                <Typography variant="caption">~ {data.creator}</Typography>
-                <Typography variant="caption">
-                  {getHumanReadableDateTime(data.time)}
+                <Typography
+                  variant="body1"
+                  sx={{ color: "text.primary", mb: 0 }}
+                >
+                  {data.paragraph}
                 </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="caption">~ {data.creator}</Typography>
+                  <Typography variant="caption">
+                    {getHumanReadableDateTime(data.time)}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </WrapperBox>
       <style jsx>{`
         @media print {
