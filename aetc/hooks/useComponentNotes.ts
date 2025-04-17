@@ -70,6 +70,8 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatNeurologicalExaminationNotes(obs);
             case encounters.NURSING_CARE_NOTES:
                 return formatSoapierNotes(obs)
+            case encounters.DISPOSED_PRESCRIPTIONS:
+                return formatDispositionNotes(obs);
             default:
                 return [];
         }
@@ -2655,6 +2657,196 @@ const createExposureAssessmentNote = (note: {
 
     return {
         paragraph: messages.join(" "),
+        time: note.time,
+        creator: note.creator,
+        rawTime: new Date(note.time).getTime()
+    };
+};
+const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentNote: {
+        dispositionType: string;
+        details: Record<string, any>;
+        time: string;
+        creator: string;
+    } | null = null;
+
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    // Process each observation
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const creator = ob.created_by || "Unknown";
+
+        // Check for disposition type observations
+        if ([
+            "Discharge Home",
+            "Referral",
+            "Admission",
+            "Death",
+            "Absconded",
+            "Transfer"
+        ].includes(name)) {
+            // Push current note if it exists
+            if (currentNote) {
+                notes.push(createDispositionNote(currentNote));
+            }
+
+            // Start new note
+            currentNote = {
+                dispositionType: name,
+                details: {},
+                time,
+                creator
+            };
+
+            // Process children for this disposition
+            if (currentNote && ob.children) {
+                ob.children.forEach((child: any) => {
+                    const childName = child.names?.[0]?.name;
+                    const childValue = child.value;
+
+                    if (childName) {
+                        currentNote!.details[childName] = childValue;
+                    }
+                });
+            }
+        }
+    });
+
+    // Push the last note if it exists
+    if (currentNote) {
+        notes.push(createDispositionNote(currentNote));
+    }
+
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createDispositionNote = (note: {
+    dispositionType: string;
+    details: Record<string, any>;
+    time: string;
+    creator: string;
+}): ComponentNote => {
+    const parts: string[] = [];
+    const details = note.details;
+
+    // Handle different disposition types
+    switch (note.dispositionType) {
+        case "Discharge Home":
+            parts.push("Patient was discharged home.");
+
+            if (details["Discharge Plan"]) {
+                parts.push(`Discharge plan: ${details["Discharge Plan"]}`);
+            }
+            if (details["Followup Plan"] === "Yes") {
+                parts.push("Follow-up is required.");
+                if (details["Followup Details"]) {
+                    parts.push(`Follow-up details: ${details["Followup Details"]}`);
+                }
+            } else if (details["Followup Plan"] === "No") {
+                parts.push("No follow-up required.");
+            }
+            if (details["Home Care Instructions"]) {
+                parts.push(`Home care instructions: ${details["Home Care Instructions"]}`);
+            }
+            if (details["Discharge Notes"]) {
+                parts.push(`Discharge notes: ${details["Discharge Notes"]}`);
+            }
+            if (details["Specialist clinic"]) {
+                parts.push(`Referred to specialist clinic: ${details["Specialist clinic"]}`);
+            }
+            break;
+
+        case "Referral":
+            parts.push("Patient was referred to another facility.");
+            if (details["Referral Facility"]) {
+                parts.push(`Referral facility: ${details["Referral Facility"]}`);
+            }
+            if (details["Referral Reason"]) {
+                parts.push(`Reason for referral: ${details["Referral Reason"]}`);
+            }
+            if (details["Referral Notes"]) {
+                parts.push(`Referral notes: ${details["Referral Notes"]}`);
+            }
+            break;
+
+        case "Admission":
+            parts.push("Patient was admitted to the hospital.");
+            if (details["Admission Ward"]) {
+                parts.push(`Admitted to: ${details["Admission Ward"]}`);
+            }
+            if (details["Admission Reason"]) {
+                parts.push(`Reason for admission: ${details["Admission Reason"]}`);
+            }
+            if (details["Admission Notes"]) {
+                parts.push(`Admission notes: ${details["Admission Notes"]}`);
+            }
+            break;
+
+        case "Death":
+            parts.push("Patient was declared deceased.");
+            if (details["Time of Death"]) {
+                parts.push(`Time of death: ${details["Time of Death"]}`);
+            }
+            if (details["Cause of Death"]) {
+                parts.push(`Cause of death: ${details["Cause of Death"]}`);
+            }
+            if (details["Death Notes"]) {
+                parts.push(`Notes: ${details["Death Notes"]}`);
+            }
+            break;
+
+        case "Absconded":
+            parts.push("Patient absconded from care.");
+            if (details["Last Seen"]) {
+                parts.push(`Last seen: ${details["Last Seen"]}`);
+            }
+            if (details["Absconded Notes"]) {
+                parts.push(`Notes: ${details["Absconded Notes"]}`);
+            }
+            break;
+
+        case "Transfer":
+            parts.push("Patient was transferred to another facility.");
+            if (details["Transfer Facility"]) {
+                parts.push(`Transfer facility: ${details["Transfer Facility"]}`);
+            }
+            if (details["Transfer Reason"]) {
+                parts.push(`Reason for transfer: ${details["Transfer Reason"]}`);
+            }
+            if (details["Transfer Notes"]) {
+                parts.push(`Transfer notes: ${details["Transfer Notes"]}`);
+            }
+            break;
+
+        default:
+            parts.push(`Patient disposition: ${note.dispositionType}`);
+            break;
+    }
+
+    // Add any additional details that weren't specifically handled
+    const handledDetails = [
+        "Discharge Plan", "Followup Plan", "Followup Details", "Home Care Instructions",
+        "Discharge Notes", "Specialist clinic", "Referral Facility", "Referral Reason",
+        "Referral Notes", "Admission Ward", "Admission Reason", "Admission Notes",
+        "Time of Death", "Cause of Death", "Death Notes", "Last Seen", "Absconded Notes",
+        "Transfer Facility", "Transfer Reason", "Transfer Notes"
+    ];
+
+    Object.entries(details).forEach(([key, value]) => {
+        if (!handledDetails.includes(key) && value) {
+            parts.push(`${key}: ${value}`);
+        }
+    });
+
+    return {
+        paragraph: parts.join(". "),
         time: note.time,
         creator: note.creator,
         rawTime: new Date(note.time).getTime()
