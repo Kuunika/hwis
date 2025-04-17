@@ -19,7 +19,7 @@ import {
 } from "@/hooks";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatient } from "@/services/patient";
-import { Box, Button, Typography, Paper } from "@mui/material";
+import { Box, Button, Typography, Paper, TextField } from "@mui/material";
 import * as Yup from "yup";
 import { useState } from "react";
 import {
@@ -41,6 +41,7 @@ type Medication = {
   name: string;
   formulation: string;
   medication_dose: number;
+  medication_route: string;
   medication_dose_unit: string;
   medication_frequency: string;
   medication_duration: number;
@@ -62,6 +63,7 @@ const medicationTemplate: Medication = {
   formulation: "",
   medication_dose: 0,
   medication_dose_unit: "",
+  medication_route: "",
   medication_frequency: "",
   medication_duration: 0,
   medication_duration_unit: "",
@@ -344,61 +346,61 @@ export const SoapForm = () => {
   const [formValues, setFormValues] = useState<any>({ medications: [] });
   const medicationOptions = [
     {
-    "id": "b8ba947e-8d80-11d8-abbb-0024217bb78e",
-    "label": "Paracetamol"
-    },
-      {
-    "id": "b8caf940-8d80-11d8-abbb-0024217bb78e",
-    "label": "Ibuprofen"
-    },
-       {
-    "id": "3a6cc329-12b9-4257-b80c-6de1fce95550",
-    "label": "Diclofenac sodium 75mg/ml, 3ml"
-    },
-        {
-    "id": "ad5768ae-7b63-425b-a9b6-f99b9a19a230",
-    "label": "Diclofenac sodium Slow Release"
-  },
-  {
-    "id": "b90fe5a0-8d80-11d8-abbb-0024217bb78e",
-    "label": "Diclofenac sodium"
-    },
-  {
-    "id": "b8c9affe-8d80-11d8-abbb-0024217bb78e",
-    "label": "Salbutamol"
-    },
-  {
-    "id": "a74b6c1a-6f4e-4ec3-b274-7f34f574843f",
-    "label": "Salbutamol sulphate"
-    },
-   {
-    "id": "f513a483-5afb-49bf-b29b-702ce3b9a202",
-    "label": "Salbutamol solution for nebulising 5mg/ml"
-  },
-  {
-    "id": "7dc1b649-eaac-4a52-aca6-68027838a553",
-    "label": "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses"
-    },
-   {
-    "id": "b900b4cc-8d80-11d8-abbb-0024217bb78e",
-    "label": "Oxytocin"
-    },
-   {
-    "id": "684ac072-0186-4b9e-8232-a7aeadf7d8b5",
-    "label": "Dextrose 50%,"
-    },
-   {
-    "id": "b8ba92d0-8d80-11d8-abbb-0024217bb78e",
-    "label": "Aspirin"
+      id: "b8ba947e-8d80-11d8-abbb-0024217bb78e",
+      label: "Paracetamol",
     },
     {
-    "id": "b8c86e5a-8d80-11d8-abbb-0024217bb78e",
-    "label": "Prednisolone"
+      id: "b8caf940-8d80-11d8-abbb-0024217bb78e",
+      label: "Ibuprofen",
     },
-     {
-    "id": "b8c3963c-8d80-11d8-abbb-0024217bb78e",
-    "label": "Diazepam"
-  },
+    {
+      id: "3a6cc329-12b9-4257-b80c-6de1fce95550",
+      label: "Diclofenac sodium 75mg/ml, 3ml",
+    },
+    {
+      id: "ad5768ae-7b63-425b-a9b6-f99b9a19a230",
+      label: "Diclofenac sodium Slow Release",
+    },
+    {
+      id: "b90fe5a0-8d80-11d8-abbb-0024217bb78e",
+      label: "Diclofenac sodium",
+    },
+    {
+      id: "b8c9affe-8d80-11d8-abbb-0024217bb78e",
+      label: "Salbutamol",
+    },
+    {
+      id: "a74b6c1a-6f4e-4ec3-b274-7f34f574843f",
+      label: "Salbutamol sulphate",
+    },
+    {
+      id: "f513a483-5afb-49bf-b29b-702ce3b9a202",
+      label: "Salbutamol solution for nebulising 5mg/ml",
+    },
+    {
+      id: "7dc1b649-eaac-4a52-aca6-68027838a553",
+      label: "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses",
+    },
+    {
+      id: "b900b4cc-8d80-11d8-abbb-0024217bb78e",
+      label: "Oxytocin",
+    },
+    {
+      id: "684ac072-0186-4b9e-8232-a7aeadf7d8b5",
+      label: "Dextrose 50%,",
+    },
+    {
+      id: "b8ba92d0-8d80-11d8-abbb-0024217bb78e",
+      label: "Aspirin",
+    },
+    {
+      id: "b8c86e5a-8d80-11d8-abbb-0024217bb78e",
+      label: "Prednisolone",
+    },
+    {
+      id: "b8c3963c-8d80-11d8-abbb-0024217bb78e",
+      label: "Diazepam",
+    },
   ];
   const [showTextFields, setShowTextFields] = useState({
     otherProcedure: false,
@@ -411,7 +413,7 @@ export const SoapForm = () => {
   );
 
   const handleSubmitForm = (values: any) => {
-    console.log("🚀 ~ handleSubmitForm ~ values:", values)
+    console.log("🚀 ~ handleSubmitForm ~ values:", values);
     submitMedications();
     submitProcedureSupportiveCares(values);
     handleSubmit(getObservations(values, getDateTime()));
@@ -421,6 +423,7 @@ export const SoapForm = () => {
       "name",
       "formulation",
       "medication_dose",
+      "medication_route",
       "medication_dose_unit",
       "medication_frequency",
       "medication_duration",
@@ -435,7 +438,7 @@ export const SoapForm = () => {
     );
 
     if (medications.length === 0) return;
-    submitDispensedDrugs(medications)
+    submitDispensedDrugs(medications);
     const obsDateTime = getDateTime();
     const obs = medications.map((medication: any) => {
       return {
@@ -483,7 +486,6 @@ export const SoapForm = () => {
         ],
       };
     });
-    
 
     mutate({
       encounterType: encounters.PRESCRIPTIONS,
@@ -509,23 +511,23 @@ export const SoapForm = () => {
           },
           {
             concept: concepts.MEDICATION_ROUTE,
-            value: medication.medication_dose,
-            obsDateTime,
+            value: medication.medication_route,
+            obsDatetime: getDateTime(),
           },
           {
             concept: concepts.DESCRIPTION,
             value: "soapier",
             obsDateTime,
           },
-        ]
-      }
-    })
-     const payload = {
+        ],
+      };
+    });
+    const payload = {
       encounterType: encounters.DISPENSING,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
-      obs
+      obs,
     };
 
     mutate(payload);
@@ -704,80 +706,86 @@ export const SoapForm = () => {
                   />
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
-                  <Typography variant="h6" sx={{mb: 2}}>Intervention</Typography>
-                  <span style={{ fontSize: "16px", fontWeight: "bold"}}> Non-pharmacological management </span>
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    Intervention
+                  </Typography>
+                  <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+                    {" "}
+                    Non-pharmacological management{" "}
+                  </span>
 
-                  <div style={{maxWidth:"900px"}}>
-                  <FormFieldContainer direction="row" >
-                    <WrapperBox
-                      sx={{
-                        bgcolor: "white",
-                        padding: "0.5ch",
-                        mb: "2ch",
-                        width: "90%",
-                      }}
-                    >
-                      <h4>Procedures</h4>
-                      <CheckboxesGroup
-                        name="procedures"
-                        allowFilter={false}
-                        options={proceduresConfig}
-                        getValue={(values) =>
-                          setShowTextFields((prev) => ({
-                            ...prev,
-                            otherProcedure: values.some(
-                              (val: any) =>
-                                val.key === concepts.OTHER && val.value
-                            ),
-                          }))
-                        }
-                      />
-                      {showTextFields.otherProcedure && (
-                        <TextInputField
-                          id="otherProcedureSpecify"
-                          label="Specify Other Procedure"
-                          name="otherProcedureSpecify"
-                          placeholder="Specify the procedure"
+                  <div style={{ maxWidth: "900px" }}>
+                    <FormFieldContainer direction="row">
+                      <WrapperBox
+                        sx={{
+                          bgcolor: "white",
+                          padding: "0.5ch",
+                          mb: "2ch",
+                          width: "90%",
+                        }}
+                      >
+                        <h4>Procedures</h4>
+                        <CheckboxesGroup
+                          name="procedures"
+                          allowFilter={false}
+                          options={proceduresConfig}
+                          getValue={(values) =>
+                            setShowTextFields((prev) => ({
+                              ...prev,
+                              otherProcedure: values.some(
+                                (val: any) =>
+                                  val.key === concepts.OTHER && val.value
+                              ),
+                            }))
+                          }
                         />
-                      )}
-                    </WrapperBox>
-                    <WrapperBox
-                      sx={{
-                        bgcolor: "white",
-                        padding: "2ch",
-                        mb: "2ch",
-                        width: "90%",
-                      }}
-                    >
-                      <h4>Supportive Care</h4>
-                      <CheckboxesGroup
-                        name="supportiveCare"
-                        allowFilter={false}
-                        options={supportiveCareConfig}
-                        getValue={(values) =>
-                          setShowTextFields((prev) => ({
-                            ...prev,
-                            otherSupportiveCare: values.some(
-                              (val: any) =>
-                                val.key === concepts.OTHER && val.value
-                            ),
-                          }))
-                        }
-                      />
-                      {showTextFields.otherSupportiveCare && (
-                        <TextInputField
-                          id="otherSupportiveCareSpecify"
-                          label="Specify Other Supportive Care"
-                          name="otherSupportiveCareSpecify"
-                          placeholder="Specify the care"
+                        {showTextFields.otherProcedure && (
+                          <TextInputField
+                            id="otherProcedureSpecify"
+                            label="Specify Other Procedure"
+                            name="otherProcedureSpecify"
+                            placeholder="Specify the procedure"
+                          />
+                        )}
+                      </WrapperBox>
+                      <WrapperBox
+                        sx={{
+                          bgcolor: "white",
+                          padding: "2ch",
+                          mb: "2ch",
+                          width: "90%",
+                        }}
+                      >
+                        <h4>Supportive Care</h4>
+                        <CheckboxesGroup
+                          name="supportiveCare"
+                          allowFilter={false}
+                          options={supportiveCareConfig}
+                          getValue={(values) =>
+                            setShowTextFields((prev) => ({
+                              ...prev,
+                              otherSupportiveCare: values.some(
+                                (val: any) =>
+                                  val.key === concepts.OTHER && val.value
+                              ),
+                            }))
+                          }
                         />
-                      )}
-                    </WrapperBox>
-                  </FormFieldContainer>
+                        {showTextFields.otherSupportiveCare && (
+                          <TextInputField
+                            id="otherSupportiveCareSpecify"
+                            label="Specify Other Supportive Care"
+                            name="otherSupportiveCareSpecify"
+                            placeholder="Specify the care"
+                          />
+                        )}
+                      </WrapperBox>
+                    </FormFieldContainer>
                   </div>
-                  
 
-                  <h4 style={{ marginBottom: "1ch" }}>Non-pharmacological management</h4>
+                  <h4 style={{ marginBottom: "1ch" }}>
+                    Pharmacological management
+                  </h4>
                   <FormValuesListener getValues={setFormValues} />
                   <FieldArray name="medications">
                     {({ push, remove }) => (
@@ -869,11 +877,19 @@ export const SoapForm = () => {
                                 sx={{ flex: 1 }}
                               />
                             )}
+
+                            <TextField
+                              id={`medications[${index}].medication_route`}
+                              name={`medications[${index}].medication_route`}
+                              label="Route"
+                              fullWidth
+                              variant="outlined"
+                            />
                           </Box>
                         )}
                       />
                     )}
-                  </FieldArray> 
+                  </FieldArray>
                   <br />
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
