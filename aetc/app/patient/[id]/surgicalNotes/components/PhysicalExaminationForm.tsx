@@ -14,6 +14,8 @@ import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
+import { getActivePatientDetails } from "@/hooks";
+
 import { Visit } from "@/interfaces";
 
 type Prop = {
@@ -83,6 +85,8 @@ const validationSchema = Yup.object({});
 // concepts:  CONDITION, TEMPERATURE, PULSE_RATE, BLOOD_PRESSURE_MEASURED, RESPIRATORY_RATE, PALLOR, JAUNDICE,  KAPOSI_SARCOMA_LESIONS, LYMPH_NODES,  MOTOR_RESPONSE, VERBAL_RESPONSE,  EYE_OPENING_RESPONSE  DIGITAL_VAGINAL_EXAMINATION
 // new concepts: GENERAL_CONDITION , TEMPERATURE,  PULSE_RATE,  BLOOD_PRESSURE_MEASURED,  RESPIRATORY_RATE,  EYES, MOUTH,  NECK, CHEST_EXAMINATION, ENDOCRINE_EXAMINATION, ABDOMINAL_EXAMINATION, MOTOR_RESPONSE, VERBAL_RESPONSE,  EYE_OPENING_RESPONSE,  CRANIAL_ERVES, GROSS_MOTOR, SENSATION, PULSATIONS, RECTAL_EXAMINATION, VAGINAL_EXAMINATION 
 export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
+    const { gender } = getActivePatientDetails();
+
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -272,8 +276,12 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                                 name="pulsations" label="Pulsations" type="text" id={""} />
                             <TextInputField sx={{ width: "100%" }}
                                 name="rectalExamination" label="Rectal Examination" type="text" id={""} />
-                            <TextInputField sx={{ width: "100%" }}
-                                name="vaginalExamination" label="Vaginal Examination (For Females Only)" type="text" id={""} />
+                            {gender == "Female" && (
+
+                                <TextInputField sx={{ width: "100%" }}
+                                    name="vaginalExamination" label="Vaginal Examination (For Females Only)" type="text" id={""} />
+                            )}
+
                         </FormFieldContainerLayout>
 
                     </FormFieldContainerLayout>

@@ -1167,6 +1167,7 @@ export const concepts = {
   MEDICATION_FREQUENCY: "Medication Frequency",
   MEDICATION_ROUTE: "Medication Route",
   MEDICATION_DURATION_UNIT: "Medication Duration Unit",
+  SELF_MEDICATED: "Self medicated",
   AGE_AT_MENARCHE: "Age At Menarche",
   FIRST_TRIMESTER_MISCARRIAGE: "First Trimester Miscarriage",
   FREQUENT_URINATION: "Frequent Urination",
@@ -1410,6 +1411,10 @@ export const concepts = {
   GENETELIA_EXAMINATION_REQUIRED: "Genetelia examination required",
   SERVICE_AREAS: "Service areas",
   AETC_SERVICE_AREAS: "AETC service areas",
+  AUSCULTATION:"Auscultation",
+  INTRAOSSEOUS:"Intraosseous",
+  REVIEW_OF_SYSTEMS_ENT: "Review of systems ENT",
+
 };
 
 export const conceptNames = {

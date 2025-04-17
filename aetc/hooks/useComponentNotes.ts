@@ -4,6 +4,7 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import {concepts, encounters} from "@/constants";
 import {push} from "micromark-util-chunked";
+import { useVisitDates } from "@/contexts/visitDatesContext";
 
 export interface ComponentNote {
     paragraph: string;
@@ -17,18 +18,32 @@ export const useComponentNotes = (encounterType: string) => {
     const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(patientId);
     const [notes, setNotes] = useState<ComponentNote[]>([]);
 
-    useEffect(() => {
-        if (!historyLoading && patientHistory) {
-            const encounter = patientHistory.find(
-                (enc: any) => enc?.encounter_type?.uuid === encounterType
-            );
+    const { visitDate } = useVisitDates();
 
-            if (encounter) {
-                const formattedNotes = formatComponentNotes(encounter.obs, encounterType);
-                setNotes(formattedNotes);
-            }
+    useEffect(() => {
+      if (!historyLoading && patientHistory && visitDate) {
+        // First, strictly filter encounters by the exact visit date
+        const encountersForVisitDate = patientHistory.filter(
+          (encounter: any) => encounter.visit.date_started === visitDate
+        );
+  
+        // Then find the encounter with the specific type from these date-filtered encounters
+        const targetEncounter = encountersForVisitDate.find(
+          (enc: any) => enc?.encounter_type?.uuid === encounterType
+        );
+  
+        if (targetEncounter) {
+          const formattedNotes = formatComponentNotes(
+            targetEncounter.obs,
+            encounterType
+          );
+          setNotes(formattedNotes);
+        } else {
+          // Clear notes if no matching encounter was found
+          setNotes([]);
         }
-    }, [patientHistory, historyLoading, encounterType]);
+      }
+    }, [patientHistory, visitDate, historyLoading, encounterType]);
 
     const formatComponentNotes = (obs: any[], encounterType: string): ComponentNote[] => {
         switch (encounterType) {

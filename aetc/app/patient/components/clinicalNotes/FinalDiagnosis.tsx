@@ -25,11 +25,14 @@ export const useFinalDiagnosis = (pData: any) => {
     if (observations.length === 0) return;
 
 
-    let messages = [`Final Diagnosis recorded on:\n`];
+    let messages = [
+        `Final Diagnosis recorded on:\n`,
+        `The Final Diagnosis are: ${observations.join(", ")}` 
+    ];
 
-    observations.forEach((obs:any) => {
-      messages.push(`The Final Diagnosis are: ${obs}. `);
-    });
+    // observations.forEach((obs:any) => {
+    //   messages.push(`The Final Diagnosis are: ${obs}. `);
+    // });
 
     setFinalDiagnosisMessage(messages.join(""));
   }, [pData]);
