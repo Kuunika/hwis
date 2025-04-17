@@ -299,6 +299,30 @@ const AddClinicalNotes = ({
           <Button
             onClick={() => setFilterSoapierState(true)}
             sx={{
+              color: "white",
+              backgroundColor: "primary.main",
+              border: "1px solid currentColor",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontSize: "14px",
+              marginRight: "10px",
+              flexGrow: 1,
+              textTransform: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "110px",
+              "&:hover": {
+                backgroundColor: "rgb(0, 70, 0)",
+              },
+            }}
+          >
+            Download PDF
+          </Button>
+          <span style={{ width: "10px",borderRight: "1px solid #000",marginRight: "10px",height: "30px",paddingTop: "5px",
+          paddingBottom: "5px" }}></span>
+            <Button
+            onClick={() => setFilterSoapierState(true)}
+            sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
               color: "rgb(0, 70, 0)",
               border: "1px solid currentColor",
