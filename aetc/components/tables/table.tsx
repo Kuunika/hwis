@@ -49,10 +49,10 @@ export interface ReusableTableProps<T extends DataRow> {
   onBulkAction?: (rows: T[]) => void;
   bulkActionLabel?: string;
   initialState?: any;
-  showGlobalFilter: boolean;
-  enableColumnActions: boolean;
-  enableColumnFilters: boolean;
-  enableSorting: boolean;
+  showGlobalFilter?: boolean;
+  enableColumnActions?: boolean;
+  enableColumnFilters?: boolean;
+  enableSorting?: boolean;
 }
 
 export const ReusableTable = <T extends DataRow>({
