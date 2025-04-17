@@ -26,12 +26,12 @@ export const useComponentNotes = (encounterType: string) => {
         const encountersForVisitDate = patientHistory.filter(
           (encounter: any) => encounter.visit.date_started === visitDate
         );
-  
+
         // Then find the encounter with the specific type from these date-filtered encounters
         const targetEncounter = encountersForVisitDate.find(
           (enc: any) => enc?.encounter_type?.uuid === encounterType
         );
-  
+
         if (targetEncounter) {
           const formattedNotes = formatComponentNotes(
             targetEncounter.obs,
@@ -85,7 +85,7 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatNeurologicalExaminationNotes(obs);
             case encounters.NURSING_CARE_NOTES:
                 return formatSoapierNotes(obs)
-            case encounters.DISPOSED_PRESCRIPTIONS:
+            case encounters.DISPOSITION:
                 return formatDispositionNotes(obs);
             default:
                 return [];
@@ -2698,6 +2698,8 @@ const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
         const time = ob.obs_datetime || new Date().toISOString();
         const creator = ob.created_by || "Unknown";
 
+        console.log("Hayayo", name, value, time)
+
         // Check for disposition type observations
         if ([
             "Discharge Home",
@@ -2705,9 +2707,11 @@ const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
             "Admission",
             "Death",
             "Absconded",
-            "Transfer"
+            "Awaiting Speciality Review",
+            "Short stay",
+            "Transfer To Another Facility",
+            "Refused Hospital Treatment"
         ].includes(name)) {
-            // Push current note if it exists
             if (currentNote) {
                 notes.push(createDispositionNote(currentNote));
             }
@@ -2720,7 +2724,6 @@ const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
                 creator
             };
 
-            // Process children for this disposition
             if (currentNote && ob.children) {
                 ob.children.forEach((child: any) => {
                     const childName = child.names?.[0]?.name;
@@ -2734,7 +2737,6 @@ const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
         }
     });
 
-    // Push the last note if it exists
     if (currentNote) {
         notes.push(createDispositionNote(currentNote));
     }
@@ -2751,7 +2753,6 @@ const createDispositionNote = (note: {
     const parts: string[] = [];
     const details = note.details;
 
-    // Handle different disposition types
     switch (note.dispositionType) {
         case "Discharge Home":
             parts.push("Patient was discharged home.");
@@ -2793,37 +2794,103 @@ const createDispositionNote = (note: {
 
         case "Admission":
             parts.push("Patient was admitted to the hospital.");
-            if (details["Admission Ward"]) {
-                parts.push(`Admitted to: ${details["Admission Ward"]}`);
+            if (details["Speciality Department"]) {
+                parts.push(`Department: ${details["Speciality Department"]}`);
             }
-            if (details["Admission Reason"]) {
-                parts.push(`Reason for admission: ${details["Admission Reason"]}`);
+            if (details["Bed number"]) {
+                parts.push(`Bed number: ${details["Bed number"]}`);
             }
-            if (details["Admission Notes"]) {
-                parts.push(`Admission notes: ${details["Admission Notes"]}`);
+            break;
+        case "Short stay":
+            parts.push("Patient was admitted for a short stay.");
+            if (details["Reason for short stay"]) {
+                parts.push(`Reason: ${details["Reason for short stay"]}`);
+            }
+            if (details["Expected duration"]) {
+                parts.push(`Expected duration: ${details["Expected duration"]}`);
+            }
+            if (details["Additional Notes"]) {
+                parts.push(`Additional notes: ${details["Additional Notes"]}`);
+            }
+            break;
+        case "Transfer To Another Facility":
+            parts.push("Patient was transferred to another facility.");
+            if (details["Facility Name"]) {
+                parts.push(`Transferred to: ${details["Facility Name"]}`);
+            }
+            if (details["Reason For Transfer"]) {
+                parts.push(`Reason for transfer: ${details["Reason For Transfer"]}`);
             }
             break;
 
         case "Death":
             parts.push("Patient was declared deceased.");
-            if (details["Time of Death"]) {
-                parts.push(`Time of death: ${details["Time of Death"]}`);
+            if (details["Cause of death"]) {
+                parts.push(`Cause of death: ${details["Cause of death"]}`);
             }
-            if (details["Cause of Death"]) {
-                parts.push(`Cause of death: ${details["Cause of Death"]}`);
+            if (details["Time of death"]) {
+                parts.push(`Time of death: ${details["Time of death"]}`);
             }
-            if (details["Death Notes"]) {
-                parts.push(`Notes: ${details["Death Notes"]}`);
+            if (details["Family Informed"]) {
+                if (details["Family Informed"] === "Yes") {
+                    parts.push("Family was informed.");
+                } else if (details["Family Informed"] === "No") {
+                    parts.push("Family was not informed.");
+                }
+            }
+            if (details["Relationship To Deceased"]) {
+                parts.push(`Reported by: ${details["Relationship To Deceased"]}`);
+            }
+            if (details["Mortuary"]) {
+                parts.push(`Body taken to: ${details["Mortuary"]}`);
+            }
+            if (details["Last Office Conducted"]) {
+                if (details["Last Office Conducted"] === "Yes") {
+                    parts.push("Last office was conducted.");
+                } else if (details["Last Office Conducted"] === "No") {
+                    parts.push("Last office was not conducted.");
+                }
+            }
+            if (details["Name Of Health Worker Who Conducted Last Office"]) {
+                parts.push(`Last office conducted by: ${details["Name Of Health Worker Who Conducted Last Office"]}`);
+            }
+            if (details["Date Of Last Office"]) {
+                parts.push(`Date of last office: ${details["Date Of Last Office"]}`);
+            }
+            if (details["Additional Notes"]) {
+                parts.push(`Additional notes: ${details["Additional Notes"]}`);
             }
             break;
 
         case "Absconded":
             parts.push("Patient absconded from care.");
-            if (details["Last Seen"]) {
-                parts.push(`Last seen: ${details["Last Seen"]}`);
+            if (details["Last Seen Location"]) {
+                parts.push(`Last seen at ${details["Last Seen Location"]}`);
             }
-            if (details["Absconded Notes"]) {
-                parts.push(`Notes: ${details["Absconded Notes"]}`);
+            if (details["Date Of Absconding"]) {
+                parts.push(`Date of absconding: ${details["Date Of Absconding"]}`);
+            }
+            if (details["Time Of Absconding"]) {
+                parts.push(`Time of absconding: ${details["Time Of Absconding"]}`);
+            }
+            break;
+        case "Refused Hospital Treatment":
+            parts.push("Patient refused hospital treatment.");
+            if (details["Date Of Refusal"]) {
+                parts.push(`Date of refusal: ${details["Date Of Refusal"]}`);
+            }
+            if (details["Witness Name"]) {
+                parts.push(`Witness name: ${details["Witness Name"]}`);
+            }
+            if (details["Reason For Refusal"]) {
+                parts.push(`Reason for refusal: ${details["Reason For Refusal"]}`);
+            }
+            if (details["Plans To Return For Treatment"]) {
+                if (details["Plans To Return For Treatment"] === "Yes") {
+                    parts.push("The patient plans to return for treatment.");
+                } else if (details["Plans To Return For Treatment"] === "No") {
+                    parts.push("The patient does not plan to return for treatment.");
+                }
             }
             break;
 
@@ -2840,18 +2907,33 @@ const createDispositionNote = (note: {
             }
             break;
 
+        case "Awaiting Speciality Review":
+            parts.push("Patient is awaiting specialty review.");
+
+            if (details["Speciality Department"]) {
+                parts.push(`Specialty department: ${details["Speciality Department"]}`);
+            }
+            if (details["Reason for request"]) {
+                parts.push(`Reason for review: ${details["Reason for request"]}`);
+            }
+            break;
+
         default:
             parts.push(`Patient disposition: ${note.dispositionType}`);
             break;
     }
 
-    // Add any additional details that weren't specifically handled
     const handledDetails = [
         "Discharge Plan", "Followup Plan", "Followup Details", "Home Care Instructions",
         "Discharge Notes", "Specialist clinic", "Referral Facility", "Referral Reason",
         "Referral Notes", "Admission Ward", "Admission Reason", "Admission Notes",
-        "Time of Death", "Cause of Death", "Death Notes", "Last Seen", "Absconded Notes",
-        "Transfer Facility", "Transfer Reason", "Transfer Notes"
+        "Cause of death", "Time of death", "Family Informed", "Relationship To Deceased",
+        "Mortuary", "Last Office Conducted", "Name Of Health Worker Who Conducted Last Office", "Date Of Last Office",
+         "Last Seen", "Absconded Notes", "Transfer Facility", "Transfer Reason", "Transfer Notes",
+        "Speciality Department", "Reason for request", "Speciality Department",
+        "Bed number",  "Reason for short stay", "Expected duration",  "Additional Notes","Facility Name",
+        "Reason For Transfer","Date Of Absconding", "Time Of Absconding", "Last Seen Location", "Date Of Refusal",
+        "Witness Name", "Reason For Refusal", "Plans To Return For Treatment",
     ];
 
     Object.entries(details).forEach(([key, value]) => {

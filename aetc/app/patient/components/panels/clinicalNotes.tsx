@@ -103,6 +103,9 @@ export const ClinicalNotes = () => {
   const { notes: soapierNotes } = useComponentNotes(
     encounters.NURSING_CARE_NOTES
   );
+  const { notes: dispositionNotes } = useComponentNotes(
+    encounters.DISPOSITION
+  );
 
   const { data: patient } = getOnePatient(params.id as string);
   const { data: pData } = getPatientsEncounters(params.id as string);
@@ -138,6 +141,7 @@ export const ClinicalNotes = () => {
           ...extremitiesNotes,
           ...neurologicalNotes,
           ...soapierNotes,
+            ...dispositionNotes,
         ];
 
     return combinedNotes.sort(
@@ -165,6 +169,7 @@ export const ClinicalNotes = () => {
     extremitiesNotes,
     neurologicalNotes,
     soapierNotes,
+      dispositionNotes,
     filterSoapierState, // respond to toggle change
   ]);
 
