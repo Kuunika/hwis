@@ -60,7 +60,7 @@ export const InitialRegistrationList = () => {
       renderCell: (cell: any) => {
         return (
           <>
-           <Tooltip title="Start assessment" arrow>
+           <Tooltip title="Start screening" arrow>
               <IconButton 
                 onClick={() => navigateTo(`/prescreening/${cell.id}`)} 
                 aria-label="start screening" 

@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { PastMedicalHistory, PresentingComplaints } from ".";
-
 import { useNavigation } from "@/hooks";
-import { encounters } from "@/constants";
 import { DrugList } from "./drugList";
 import { ReviewOfSystems } from "./reviewOfSystems";
+import { DifferentialDiagnosis } from "./differentialDiagnosis";
+
 
 export const MedicalInPatientFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -17,22 +17,27 @@ export const MedicalInPatientFlow = () => {
     {
       id: 1,
       label: "Presenting Complaints",
-      encounter: encounters.AIRWAY_ASSESSMENT,
+    
     },
     {
       id: 11,
       label: "Drug History",
-      encounter: encounters.BREATHING_ASSESSMENT,
+     
     },
     {
       id: 2,
       label: "Past medical history",
-      encounter: encounters.CIRCULATION_ASSESSMENT,
+ 
     },
     {
-      id: 2,
+      id: 23,
       label: "Review of Systems",
-      encounter: encounters.REVIEW_OF_SYSTEMS,
+   
+    },
+    {
+      id: 21,
+      label: "Differential Diagnosis",
+   
     },
   ];
 
@@ -48,7 +53,8 @@ export const MedicalInPatientFlow = () => {
         <PresentingComplaints onSubmit={() => setActiveStep(1)} />
         <DrugList onSubmit={() => setActiveStep(2)} />
         <PastMedicalHistory onSubmit={() => setActiveStep(3)} />
-        <ReviewOfSystems onSubmit={() => navigateBack()} />
+        <ReviewOfSystems onSubmit={() => setActiveStep(4)} />
+        <DifferentialDiagnosis onSubmit={()=>navigateBack()} />
       </NewStepperContainer>
     </>
   );

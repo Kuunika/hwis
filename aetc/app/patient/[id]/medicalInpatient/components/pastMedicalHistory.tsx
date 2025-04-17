@@ -147,6 +147,7 @@ export const PastMedicalHistory = ({ onSubmit }: { onSubmit: () => void }) => {
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={() => {}}
+      submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
       <RadioGroupInput

@@ -341,6 +341,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
       initialValues={initialValues}
       validationSchema={schema}
       onSubmit={() => {}}
+      submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="General">
