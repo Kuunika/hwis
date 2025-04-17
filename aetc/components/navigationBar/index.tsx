@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -22,6 +22,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useNavigation } from "@/hooks";
 import { searchDDEPatient } from "@/hooks/patientReg";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { ReusableTable } from "../tables/table";
+import { ObjectRow } from "@/app/patient/components/visits";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { MRT_ColumnDef } from "material-react-table";
 
 export function NavigationBar({
   onTitleClick,
@@ -109,6 +114,61 @@ export function NavigationBar({
       gender: payload.gender,
     });
   };
+
+  const transformedData: any = useMemo(() => {
+    if (!data) return [];
+    const patientRecords = [...data.locals, ...data.remotes];
+    console.log(
+      "🚀 ~ consttransformedData:any=useMemo ~ patientRecords:",
+      patientRecords
+    );
+    // onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
+    return patientRecords.map((item: any) => ({
+      fullname: item?.given_name + " " + item?.family_name,
+      birthday: item?.birthdate,
+      gender: item?.gender,
+      currentAddress: "",
+      homeAddress: "",
+      phone: "",
+    }));
+  }, [data]);
+
+  // Define columns for vitals
+  const columns = useMemo<MRT_ColumnDef<ObjectRow>[]>(
+    () => [
+      {
+        accessorKey: "fullname",
+        id: "fullname",
+        header: "Fullname",
+      },
+      {
+        accessorKey: "birthday",
+        header: "Birthday",
+        size: 100,
+      },
+      {
+        accessorKey: "gender",
+        header: "Gender",
+        size: 100,
+      },
+      {
+        accessorKey: "currentAddress",
+        header: "Current Address",
+        size: 100,
+      },
+      {
+        accessorKey: "homeAddress",
+        header: "Home Address",
+        size: 100,
+      },
+      {
+        accessorKey: "phone",
+        header: "Phone",
+        size: 100,
+      },
+    ],
+    []
+  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -206,53 +266,21 @@ export function NavigationBar({
               horizontal: "left",
             }}
             sx={{ mt: 1 }}
+            disableEnforceFocus
+            disableAutoFocus
           >
-            <Box sx={{ p: 2, minWidth: 300, maxWidth: 500 }}>
-              {isFetching ? (
-                <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-                  <CircularProgress size={24} />
-                </Box>
-              ) : isError ? (
-                <Typography color="error">
-                  Search error. Please try again.
-                </Typography>
-              ) : data && data.length > 0 ? (
-                <>
-                  <Typography variant="h6" sx={{ mb: 1 }}>
-                    Search Results
-                  </Typography>
-                  {Array.isArray(data) &&
-                    data.map((patient: any, index: number) => (
-                      <Box key={index} sx={{ mb: 1 }}>
-                        <Box
-                          sx={{
-                            p: 1,
-                            cursor: "pointer",
-                            "&:hover": { backgroundColor: "#f5f5f5" },
-                          }}
-                          onClick={() => {
-                            navigateTo(`/patient/${patient.id || patient._id}`);
-                            handleSearchPopoverClose();
-                          }}
-                        >
-                          <Typography variant="body1">
-                            {patient.given_name} {patient.family_name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {patient.gender || "Unknown gender"} • ID:{" "}
-                            {patient.id || patient._id || "N/A"}
-                          </Typography>
-                        </Box>
-                        {index < data.length - 1 && <Divider />}
-                      </Box>
-                    ))}
-                </>
-              ) : searchComplete ? (
-                <Typography>No patients found matching your search.</Typography>
-              ) : (
-                <Typography>Enter a search term to find patients.</Typography>
-              )}
-            </Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <ReusableTable<ObjectRow>
+                data={transformedData}
+                columns={columns}
+                title=""
+                showGlobalFilter={false}
+                enableColumnOrdering={false}
+                enableColumnActions={false}
+                enableColumnFilters={false}
+                enableSorting={false}
+              />
+            </LocalizationProvider>
           </Popover>
 
           <div style={{ display: "flex", alignItems: "center" }}>
