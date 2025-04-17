@@ -1,10 +1,9 @@
 import ECTReactComponent from "@/components/form/ECTReactComponent"
-import DiagnosisForm from "../../consultation/components/diagnosisForm"
 import { useState } from "react";
 import { MinimalTable } from "@/components/tables/minimalTable";
 import { Button } from "@mui/material";
 
-export const DifferentialDiagnosis = () => {
+export const DifferentialDiagnosis = ({onSubmit}:{onSubmit:()=>void}) => {
     const [selectedDiagnosis, setSelectedDiagnosis] = useState<any>([]);
     const handleAddDiagnosis = (selectedCondition: any) => {
         setSelectedDiagnosis((prevDiagnosis: any) => [
@@ -18,6 +17,6 @@ export const DifferentialDiagnosis = () => {
         <br />
         <ECTReactComponent iNo={0} label={"Diagnosis"} onICD11Selection={handleAddDiagnosis} />
         <br />
-        <Button variant="contained" onClick={()=>{}}>Finish and Submit</Button>
+        <Button variant="contained" onClick={onSubmit}>Finish and Submit</Button>
     </>
 }

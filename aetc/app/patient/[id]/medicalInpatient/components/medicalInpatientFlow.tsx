@@ -53,8 +53,8 @@ export const MedicalInPatientFlow = () => {
         <PresentingComplaints onSubmit={() => setActiveStep(1)} />
         <DrugList onSubmit={() => setActiveStep(2)} />
         <PastMedicalHistory onSubmit={() => setActiveStep(3)} />
-        <ReviewOfSystems onSubmit={() => navigateBack()} />
-        <DifferentialDiagnosis />
+        <ReviewOfSystems onSubmit={() => setActiveStep(4)} />
+        <DifferentialDiagnosis onSubmit={()=>navigateBack()} />
       </NewStepperContainer>
     </>
   );
