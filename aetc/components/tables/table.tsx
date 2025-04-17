@@ -49,6 +49,10 @@ export interface ReusableTableProps<T extends DataRow> {
   onBulkAction?: (rows: T[]) => void;
   bulkActionLabel?: string;
   initialState?: any;
+  showGlobalFilter: boolean;
+  enableColumnActions: boolean;
+  enableColumnFilters: boolean;
+  enableSorting: boolean;
 }
 
 export const ReusableTable = <T extends DataRow>({
@@ -58,11 +62,15 @@ export const ReusableTable = <T extends DataRow>({
   enableRowActions = false,
   enableRowSelection = false,
   enableExpanding = false,
-  enableColumnFilterModes = true,
+  enableColumnFilterModes = false,
   enableColumnOrdering = true,
   enableGrouping = false,
   enableColumnPinning = true,
   enableFacetedValues = true,
+  showGlobalFilter = true,
+  enableColumnActions = true,
+  enableColumnFilters = true,
+  enableSorting = true,
   getSubRows,
   onRowActionDelete,
   onRowActionEdit,
@@ -70,7 +78,7 @@ export const ReusableTable = <T extends DataRow>({
   bulkActionLabel = "Action",
   initialState = {
     showColumnFilters: false,
-    showGlobalFilter: true,
+    showGlobalFilter: showGlobalFilter,
     columnPinning: {
       left: ["mrt-row-expand", "mrt-row-select"],
       right: ["mrt-row-actions"],
@@ -94,6 +102,9 @@ export const ReusableTable = <T extends DataRow>({
     enableFacetedValues,
     enableRowActions,
     enableRowSelection,
+    enableColumnActions,
+    enableColumnFilters,
+    enableSorting,
     initialState,
     paginationDisplayMode: "pages",
     positionToolbarAlertBanner: "bottom",
@@ -186,11 +197,14 @@ export const ReusableTable = <T extends DataRow>({
               justifyContent: "space-between",
             })}
           >
-            <Box sx={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-              <MRT_GlobalFilterTextField table={table} />
-              <MRT_ToggleFiltersButton table={table} />
-            </Box>
-
+            {showGlobalFilter && (
+              <Box
+                sx={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
+              >
+                <MRT_GlobalFilterTextField table={table} />
+                <MRT_ToggleFiltersButton table={table} />
+              </Box>
+            )}
             {onBulkAction && (
               <Box>
                 <Box sx={{ display: "flex", gap: "0.5rem" }}>
