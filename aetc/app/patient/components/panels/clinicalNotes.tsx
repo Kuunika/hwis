@@ -1,9 +1,14 @@
-import { MainButton, MainTypography, WrapperBox } from "@/components";
+import {
+  MainButton,
+  MainTypography,
+  PatientInfoTab,
+  WrapperBox,
+} from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
@@ -37,6 +42,7 @@ import { useComponentNotes } from "@/hooks/useComponentNotes";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { CirculationAssessment } from "@/app/patient/components/clinicalNotes/CirculationAssessment";
 import { ReviewOfSystems } from "@/app/patient/components/clinicalNotes/reviewOfSystemsNotes";
+import { useReactToPrint } from "react-to-print";
 
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
@@ -181,6 +187,11 @@ export const ClinicalNotes = () => {
     return <ProfilePanelSkeletonLoader />;
   }
 
+  const contentRef = useRef<HTMLDivElement>(null); // <--- move here
+
+  const handlePrint = useReactToPrint({
+    contentRef: contentRef,
+  });
   return (
     <Panel title="">
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
@@ -188,15 +199,32 @@ export const ClinicalNotes = () => {
           onAddNote={addClinicalNote}
           filterSoapierState={filterSoapierState}
           setFilterSoapierState={setFilterSoapierState}
+          onDownload={handlePrint} // <--- pass handler to child
         />
       </WrapperBox>
+
       <WrapperBox
         sx={{
           overflow: "scroll",
           maxHeight: "40ch",
           pl: "2ch",
         }}
+        ref={contentRef}
       >
+        <div className="print-only">
+          <PatientInfoTab />
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: "20px",
+              marginTop: "10px",
+              textAlign: "center",
+            }}
+          >
+            Clinical Notes
+          </div>
+        </div>
+
         {allNotes.length === 0 ? (
           <Typography>No clinical notes available</Typography>
         ) : (
@@ -219,9 +247,7 @@ export const ClinicalNotes = () => {
                   alignItems: "center",
                 }}
               >
-                <Typography variant="caption" sx={{}}>
-                  ~ {data.creator}
-                </Typography>
+                <Typography variant="caption">~ {data.creator}</Typography>
                 <Typography variant="caption">
                   {getHumanReadableDateTime(data.time)}
                 </Typography>
@@ -230,6 +256,16 @@ export const ClinicalNotes = () => {
           ))
         )}
       </WrapperBox>
+      <style jsx>{`
+        @media print {
+          .print-only {
+            display: block !important; /* Ensure visibility in print */
+          }
+        }
+        .print-only {
+          display: none; /* Hide on screen */
+        }
+      `}</style>
     </Panel>
   );
 };
@@ -238,13 +274,16 @@ const AddClinicalNotes = ({
   onAddNote,
   filterSoapierState,
   setFilterSoapierState,
+  onDownload,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
   setFilterSoapierState: (value: boolean) => void;
+  onDownload: () => void;
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
+  // Ref for printing
+  const contentRef = useRef<HTMLDivElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -260,7 +299,6 @@ const AddClinicalNotes = ({
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
   return (
     <>
       <Box
@@ -297,7 +335,7 @@ const AddClinicalNotes = ({
 
         <div>
           <Button
-            onClick={() => setFilterSoapierState(true)}
+            onClick={onDownload}
             sx={{
               color: "white",
               backgroundColor: "primary.main",
@@ -318,9 +356,17 @@ const AddClinicalNotes = ({
           >
             Download PDF
           </Button>
-          <span style={{ width: "10px",borderRight: "1px solid #000",marginRight: "10px",height: "30px",paddingTop: "5px",
-          paddingBottom: "5px" }}></span>
-            <Button
+          <span
+            style={{
+              width: "10px",
+              borderRight: "1px solid #000",
+              marginRight: "10px",
+              height: "30px",
+              paddingTop: "5px",
+              paddingBottom: "5px",
+            }}
+          ></span>
+          <Button
             onClick={() => setFilterSoapierState(true)}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
