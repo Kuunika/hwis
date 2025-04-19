@@ -171,149 +171,157 @@ export function NavigationBar({
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="static"
-        sx={{
-          backgroundColor: "#006401",
-        }}
-      >
-        <Toolbar style={{ justifyContent: "space-between" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginRight: "10px",
-            }}
-          >
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              onClick={() => onTitleClick()}
-              sx={{
-                flexGrow: 1,
-                display: { xs: "none", sm: "block", cursor: "pointer" },
-              }}
-            >
-              <div style={{ lineHeight: "1em" }}>
-                <div style={{ fontSize: "16px" }}>MaHIS (AETC)</div>
-                <div>
-                  <span style={{ fontSize: "14px" }}>
-                    Queen Elizabeth Central Hospital |{" "}
-                    <span style={{ color: "rgb(116, 255, 21)" }}>
-                      {currentDateTime}{" "}
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </Typography>
-          </div>
-
-          <Paper
-            component="form"
-            id="search-input"
+    <>
+      {loggedIn && (
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar
+            position="static"
             sx={{
-              p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              minWidth: "45%",
+              backgroundColor: "#006401",
             }}
           >
-            <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              value={searchText}
-              onChange={handleSearchChange}
-              sx={{ ml: 1, flex: 1, width: "100%" }}
-              placeholder="Add or search for a client by MRN, name, or by scanning a barcode/QR code."
-              inputProps={{ "aria-label": "search patients" }}
-            />
+            <Toolbar style={{ justifyContent: "space-between" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginRight: "10px",
+                }}
+              >
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography
+                  variant="h6"
+                  noWrap
+                  component="div"
+                  onClick={() => onTitleClick()}
+                  sx={{
+                    flexGrow: 1,
+                    display: { xs: "none", sm: "block", cursor: "pointer" },
+                  }}
+                >
+                  <div style={{ lineHeight: "1em" }}>
+                    <div style={{ fontSize: "16px" }}>MaHIS (AETC)</div>
+                    <div>
+                      <span style={{ fontSize: "14px" }}>
+                        Queen Elizabeth Central Hospital |{" "}
+                        <span style={{ color: "rgb(116, 255, 21)" }}>
+                          {currentDateTime}{" "}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </Typography>
+              </div>
 
-            <IconButton
-              color="primary"
-              sx={{ p: "10px", color: "#000" }}
-              aria-label="add new patient"
-              onClick={() => {
-                navigateTo(`/registration/new`);
-              }}
-            >
-              <PersonAddAltIcon />
-            </IconButton>
-          </Paper>
+              <Paper
+                component="form"
+                id="search-input"
+                sx={{
+                  p: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  minWidth: "45%",
+                }}
+              >
+                <IconButton
+                  type="submit"
+                  sx={{ p: "10px" }}
+                  aria-label="search"
+                >
+                  <SearchIcon />
+                </IconButton>
+                <InputBase
+                  value={searchText}
+                  onChange={handleSearchChange}
+                  sx={{ ml: 1, flex: 1, width: "100%" }}
+                  placeholder="Add or search for a client by MRN, name, or by scanning a barcode/QR code."
+                  inputProps={{ "aria-label": "search patients" }}
+                />
 
-          {/* Search Results Popover */}
-          <Popover
-            id={searchPopoverId}
-            open={searchOpen}
-            anchorEl={searchAnchorEl}
-            onClose={handleSearchPopoverClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            sx={{ mt: 1 }}
-            disableEnforceFocus
-            disableAutoFocus
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <ReusableTable<ObjectRow>
-                data={transformedData}
-                columns={columns}
-                title=""
-                showGlobalFilter={false}
-                enableColumnOrdering={false}
-                enableColumnActions={false}
-                enableColumnFilters={false}
-                enableSorting={false}
-              />
-            </LocalizationProvider>
-          </Popover>
+                <IconButton
+                  color="primary"
+                  sx={{ p: "10px", color: "#000" }}
+                  aria-label="add new patient"
+                  onClick={() => {
+                    navigateTo(`/registration/new`);
+                  }}
+                >
+                  <PersonAddAltIcon />
+                </IconButton>
+              </Paper>
 
-          <div style={{ display: "flex", alignItems: "center" }}>
-            {loggedIn && (
-              <>
-                <MainTypography sx={{ mx: "1ch" }} variant="h5">
-                  <IconButton sx={{ color: "#fff" }}>
-                    <FaRegBell />
-                  </IconButton>
-                </MainTypography>
-                <MainTypography sx={{ cursor: "pointer" }} variant="h5">
-                  <IconButton sx={{ color: "#fff" }} onClick={handleClick}>
-                    <FaCircleUser />
-                  </IconButton>
-                  <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                      "aria-labelledby": "basic-button",
-                    }}
-                  >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={logout}>Logout</MenuItem>
-                  </Menu>
-                </MainTypography>
-              </>
-            )}
-          </div>
-        </Toolbar>
-      </AppBar>
-    </Box>
+              {/* Search Results Popover */}
+              <Popover
+                id={searchPopoverId}
+                open={searchOpen}
+                anchorEl={searchAnchorEl}
+                onClose={handleSearchPopoverClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                sx={{ mt: 1 }}
+                disableEnforceFocus
+                disableAutoFocus
+              >
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <ReusableTable<ObjectRow>
+                    data={transformedData}
+                    columns={columns}
+                    title=""
+                    showGlobalFilter={false}
+                    enableColumnOrdering={false}
+                    enableColumnActions={false}
+                    enableColumnFilters={false}
+                    enableSorting={false}
+                  />
+                </LocalizationProvider>
+              </Popover>
+
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {loggedIn && (
+                  <>
+                    <MainTypography sx={{ mx: "1ch" }} variant="h5">
+                      <IconButton sx={{ color: "#fff" }}>
+                        <FaRegBell />
+                      </IconButton>
+                    </MainTypography>
+                    <MainTypography sx={{ cursor: "pointer" }} variant="h5">
+                      <IconButton sx={{ color: "#fff" }} onClick={handleClick}>
+                        <FaCircleUser />
+                      </IconButton>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                      >
+                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                        <MenuItem onClick={logout}>Logout</MenuItem>
+                      </Menu>
+                    </MainTypography>
+                  </>
+                )}
+              </div>
+            </Toolbar>
+          </AppBar>
+        </Box>
+      )}
+    </>
   );
 }
