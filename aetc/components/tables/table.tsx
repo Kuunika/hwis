@@ -44,6 +44,7 @@ export interface ReusableTableProps<T extends DataRow> {
   enableColumnPinning?: boolean;
   enableFacetedValues?: boolean;
   getSubRows?: (row: T) => T[];
+  onRowClick?: (row: any) => void;
   onRowActionDelete?: (row: T) => void;
   onRowActionEdit?: (row: T) => void;
   onBulkAction?: (rows: T[]) => void;
@@ -75,6 +76,7 @@ export const ReusableTable = <T extends DataRow>({
   onRowActionDelete,
   onRowActionEdit,
   onBulkAction,
+  onRowClick,
   bulkActionLabel = "Action",
   initialState = {
     showColumnFilters: false,
@@ -118,6 +120,14 @@ export const ReusableTable = <T extends DataRow>({
       shape: "rounded",
       variant: "outlined",
     },
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: (event) => {
+        onRowClick?.({ row, event });
+      },
+      sx: {
+        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+      },
+    }),
     getSubRows: getSubRows ? (row) => getSubRows(row as T) : undefined,
     ...(enableRowActions && {
       renderRowActionMenuItems: ({

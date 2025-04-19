@@ -150,10 +150,6 @@ export function NavigationBar({
   //   }));
   // }, [data]);
   const transformedData: any = useMemo(() => {
-    console.log(
-      "🚀 ~ consttransformedData:any=useMemo ~ localData:",
-      localData
-    );
     if (!localData) return [];
 
     // onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
@@ -164,6 +160,7 @@ export function NavigationBar({
       currentAddress: `${item?.addresses[0]?.current_district ?? ""},${item?.addresses[0]?.current_traditional_authority ?? ""},${item?.addresses[0]?.address2 ?? ""} `,
       homeAddress: `${item?.addresses[0]?.address1 ?? ""},${item?.addresses[0]?.county_district ?? ""},${item?.addresses[1]?.address1 ?? ""} `,
       phone: "",
+      id: item.uuid,
     }));
   }, [localData]);
 
@@ -328,6 +325,12 @@ export function NavigationBar({
                       enableColumnActions={false}
                       enableColumnFilters={false}
                       enableSorting={false}
+                      onRowClick={(rowData) => {
+                        handleSearchPopoverClose();
+                        navigateTo(
+                          `/patient/${rowData.row.original.id}/profile`
+                        );
+                      }}
                     />
                   </LocalizationProvider>
                 </div>
