@@ -21,7 +21,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useNavigation } from "@/hooks";
-import { searchDDEPatient } from "@/hooks/patientReg";
+import { searchDDEPatient, searchLocalPatient } from "@/hooks/patientReg";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { ReusableTable } from "../tables/table";
 import { ObjectRow } from "@/app/patient/components/visits";
@@ -89,10 +89,23 @@ export function NavigationBar({
     isError,
   } = searchDDEPatient(search.firstName, search.lastName, search.gender);
 
+  const {
+    refetch: refetchLocal,
+    isFetching: isFetchingLocal,
+    isSuccess: searchLocalComplete,
+    data: localData,
+    isError: isErrorLocal,
+  } = searchLocalPatient(search.firstName, search.lastName, search.gender);
+
   useEffect(() => {
     if (!Boolean(search.firstName)) return;
     refetch();
   }, [search, refetch]);
+
+  useEffect(() => {
+    if (!Boolean(search.firstName)) return;
+    refetchLocal();
+  }, [search, refetchLocal]);
 
   const splitSearchText = (searchText: string) => {
     const splittedArray = searchText.split(" ");
@@ -115,23 +128,44 @@ export function NavigationBar({
     });
   };
 
+  // const transformedData: any = useMemo(() => {
+  //   console.log(
+  //     "🚀 ~ consttransformedData:any=useMemo ~ localData:",
+  //     localData
+  //   );
+  //   if (!data) return [];
+  //   const patientRecords = [...data.locals, ...data.remotes];
+  //   console.log(
+  //     "🚀 ~ consttransformedData:any=useMemo ~ patientRecords:",
+  //     patientRecords
+  //   );
+  //   // onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
+  //   return patientRecords.map((item: any) => ({
+  //     fullname: item?.given_name + " " + item?.family_name,
+  //     birthday: item?.birthdate,
+  //     gender: item?.gender,
+  //     currentAddress: "",
+  //     homeAddress: "",
+  //     phone: "",
+  //   }));
+  // }, [data]);
   const transformedData: any = useMemo(() => {
-    if (!data) return [];
-    const patientRecords = [...data.locals, ...data.remotes];
     console.log(
-      "🚀 ~ consttransformedData:any=useMemo ~ patientRecords:",
-      patientRecords
+      "🚀 ~ consttransformedData:any=useMemo ~ localData:",
+      localData
     );
+    if (!localData) return [];
+
     // onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
-    return patientRecords.map((item: any) => ({
+    return localData.map((item: any) => ({
       fullname: item?.given_name + " " + item?.family_name,
       birthday: item?.birthdate,
       gender: item?.gender,
-      currentAddress: "",
-      homeAddress: "",
+      currentAddress: `${item?.addresses[0]?.current_district ?? ""},${item?.addresses[0]?.current_traditional_authority ?? ""},${item?.addresses[0]?.address2 ?? ""} `,
+      homeAddress: `${item?.addresses[0]?.address1 ?? ""},${item?.addresses[0]?.county_district ?? ""},${item?.addresses[1]?.address1 ?? ""} `,
       phone: "",
     }));
-  }, [data]);
+  }, [localData]);
 
   // Define columns for vitals
   const columns = useMemo<MRT_ColumnDef<ObjectRow>[]>(
@@ -149,17 +183,15 @@ export function NavigationBar({
       {
         accessorKey: "gender",
         header: "Gender",
-        size: 100,
+        size: 40,
       },
       {
         accessorKey: "currentAddress",
         header: "Current Address",
-        size: 100,
       },
       {
         accessorKey: "homeAddress",
         header: "Home Address",
-        size: 100,
       },
       {
         accessorKey: "phone",
@@ -271,22 +303,34 @@ export function NavigationBar({
                   vertical: "top",
                   horizontal: "left",
                 }}
-                sx={{ mt: 1 }}
+                sx={{
+                  mt: 0.1,
+                }}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      width: "97.5vw",
+                      maxWidth: "none",
+                    },
+                  },
+                }}
                 disableEnforceFocus
                 disableAutoFocus
               >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <ReusableTable<ObjectRow>
-                    data={transformedData}
-                    columns={columns}
-                    title=""
-                    showGlobalFilter={false}
-                    enableColumnOrdering={false}
-                    enableColumnActions={false}
-                    enableColumnFilters={false}
-                    enableSorting={false}
-                  />
-                </LocalizationProvider>
+                <div style={{ width: "100%" }}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <ReusableTable<ObjectRow>
+                      data={transformedData}
+                      columns={columns}
+                      title=""
+                      showGlobalFilter={false}
+                      enableColumnOrdering={false}
+                      enableColumnActions={false}
+                      enableColumnFilters={false}
+                      enableSorting={false}
+                    />
+                  </LocalizationProvider>
+                </div>
               </Popover>
 
               <div style={{ display: "flex", alignItems: "center" }}>
