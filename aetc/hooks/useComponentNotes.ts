@@ -2574,107 +2574,256 @@ const createDisabilityAssessmentNote = (note: {
     };
 };
 const formatExposureAssessmentNotes = (obs: any[]): ComponentNote[] => {
-    const notes: ComponentNote[] = [];
-    let currentNote: {
-        time: string;
-        creator: string;
-        observations: Record<string, any>;
-    } = {
-        time: "",
-        creator: "Unknown",
-        observations: {}
+    type ExposureAbnormality = {
+        bodyPart: string;
+        skinRash?: string;
+        injury?: string;
+        abnormalities?: string;
+        descriptions: string[];
+        additionalNotes?: string;
     };
 
-    obs.forEach((ob: any) => {
+    type ExposureNote = {
+        time: string;
+        creator: string;
+        temperature?: string;
+        abnormalities: ExposureAbnormality[];
+        clinicianNotes?: string;
+        additionalNotes?: string;
+    };
+
+    const createExposureAssessmentNote = (note: ExposureNote): ComponentNote => {
+        const messages: string[] = [];
+
+        if (note.temperature) {
+            messages.push(`Temperature: ${note.temperature}°C.`);
+        }
+
+        if (note.abnormalities.length > 0) {
+            const bodyParts = note.abnormalities.map(ab => ab.bodyPart);
+            messages.push(`${bodyParts.join(' and ')} ${bodyParts.length > 1 ? 'were' : 'was'} assessed.`);
+        }
+
+        note.abnormalities.forEach(abnormality => {
+            const parts: string[] = [];
+            parts.push(`${abnormality.bodyPart} has`);
+            if (abnormality.skinRash === 'Present') {
+                const rashDesc = abnormality.descriptions.filter(d =>
+                    abnormality.skinRash === 'Present' &&
+                    (d.toLowerCase().includes('rash') || d.toLowerCase().includes('petechiae') || d.toLowerCase().includes('burns'))
+                ).join(', ');
+                parts.push(`skin rash (${rashDesc})`);
+            } else if (abnormality.skinRash === 'Absent') {
+                parts.push(`no skin rash`);
+            }
+            if (abnormality.injury === 'Present') {
+                const injuryDesc = abnormality.descriptions.filter(d =>
+                    abnormality.injury === 'Present' &&
+                    d.toLowerCase().includes('injury')
+                ).join(', ');
+                parts.push(injuryDesc ? `injury (${injuryDesc})` : 'injury');
+            } else if (abnormality.injury === 'Absent') {
+                parts.push(`no injury`);
+            }
+
+            if (abnormality.abnormalities === 'Present') {
+                const otherAbnormalities = abnormality.descriptions.filter(d =>
+                    abnormality.abnormalities === 'Present' &&
+                    !d.toLowerCase().includes('rash') &&
+                    !d.toLowerCase().includes('injury')
+                ).join(', ');
+                parts.push(otherAbnormalities ? `other abnormalities (${otherAbnormalities})` : 'other abnormalities');
+            } else if (abnormality.abnormalities === 'Absent') {
+                parts.push(`no other abnormalities`);
+            }
+
+            let description = parts.join(', ');
+            description = description.replace(/, ([^,]*)$/, ' and $1'); // Replace last comma with 'and'
+            messages.push(`${description}.`);
+        });
+
+        if (note.additionalNotes) {
+            messages.push(`Additional notes: ${note.additionalNotes}.`);
+        }
+
+
+        return {
+            paragraph: messages.join(' '),
+            time: note.time,
+            creator: note.creator,
+            rawTime: new Date(note.time).getTime()
+        };
+    };
+
+    const notes: ComponentNote[] = [];
+    let currentNote: Partial<ExposureNote> = {
+        abnormalities: []
+    };
+
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    sortedObs.forEach((ob: any) => {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
         const time = ob.obs_datetime || new Date().toISOString();
         const creator = ob.created_by || "Unknown";
 
-        if (!currentNote.time) {
-            currentNote.time = time;
-            currentNote.creator = creator;
+        if (name === "Temperature (c)") {
+            if (currentNote.time) {
+                notes.push(createExposureAssessmentNote(currentNote as ExposureNote));
+            }
+            currentNote = {
+                time,
+                creator,
+                abnormalities: []
+            };
         }
 
-        currentNote.observations[name] = {
-            value,
-            creator,
-            time
-        };
+        currentNote.time = time;
+        currentNote.creator = creator;
+
+        switch (name) {
+            case "Temperature (c)":
+                currentNote.temperature = value;
+                break;
+            case "Additional Notes":
+                currentNote.additionalNotes = value;
+                break;
+            case "Image Part Name":
+                if (value === "full body anterior" || value === "full body posterior") {
+                    ob.children?.forEach((child: any) => {
+                        const childName = child.names?.[0]?.name;
+                        if (childName === "Image Part Name") {
+                            const abnormality: ExposureAbnormality = {
+                                bodyPart: child.value,
+                                descriptions: []
+                            };
+
+                            child.children?.forEach((grandChild: any) => {
+                                const grandChildName = grandChild.names?.[0]?.name;
+                                const grandChildValue = grandChild.value;
+
+                                switch (grandChildName) {
+                                    case "Skin rash":
+                                        abnormality.skinRash = grandChildValue === "Yes" ? "Present" : "Absent";
+                                        if (grandChildValue === "Yes") {
+                                            grandChild.children?.forEach((descChild: any) => {
+                                                if (descChild.names?.[0]?.name === "Description") {
+                                                    abnormality.descriptions.push(descChild.value);
+                                                }
+                                            });
+                                        }
+                                        break;
+                                    case "Injury":
+                                        abnormality.injury = grandChildValue === "Yes" ? "Present" : "Absent";
+                                        if (grandChildValue === "Yes") {
+                                            grandChild.children?.forEach((descChild: any) => {
+                                                if (descChild.names?.[0]?.name === "Description of injury") {
+                                                    abnormality.descriptions.push(descChild.value);
+                                                }
+                                            });
+                                        }
+                                        break;
+                                    case "Abnormalities":
+                                        abnormality.abnormalities = grandChildValue === "Yes" ? "Present" : "Absent";
+                                        if (grandChildValue === "Yes") {
+                                            grandChild.children?.forEach((descChild: any) => {
+                                                if (descChild.names?.[0]?.name === "Abnormality description") {
+                                                    abnormality.descriptions.push(descChild.value);
+                                                }
+                                            });
+                                        }
+                                        break;
+                                    case "Description":
+                                        abnormality.descriptions.push(grandChildValue);
+                                        break;
+                                    case "Additional Notes":
+                                        abnormality.additionalNotes = grandChildValue;
+                                        break;
+                                    case "Image Part Name":
+                                        abnormality.bodyPart = grandChildValue;
+                                        break;
+                                }
+                            });
+
+                            if (abnormality.skinRash || abnormality.injury || abnormality.abnormalities || abnormality.descriptions.length > 0) {
+                                currentNote.abnormalities?.push(abnormality);
+                            }
+                        }
+                    });
+                } else {
+                    const abnormality: ExposureAbnormality = {
+                        bodyPart: value,
+                        descriptions: []
+                    };
+
+                    ob.children?.forEach((child: any) => {
+                        const childName = child.names?.[0]?.name;
+                        const childValue = child.value;
+
+                        switch (childName) {
+                            case "Skin rash":
+                                abnormality.skinRash = childValue === "Yes" ? "Present" : "Absent";
+                                if (childValue === "Yes") {
+                                    child.children?.forEach((descChild: any) => {
+                                        if (descChild.names?.[0]?.name === "Description") {
+                                            abnormality.descriptions.push(descChild.value);
+                                        }
+                                    });
+                                }
+                                break;
+                            case "Injury":
+                                abnormality.injury = childValue === "Yes" ? "Present" : "Absent";
+                                if (childValue === "Yes") {
+                                    child.children?.forEach((descChild: any) => {
+                                        if (descChild.names?.[0]?.name === "Description of injury") {
+                                            abnormality.descriptions.push(descChild.value);
+                                        }
+                                    });
+                                }
+                                break;
+                            case "Abnormalities":
+                                abnormality.abnormalities = childValue === "Yes" ? "Present" : "Absent";
+                                if (childValue === "Yes") {
+                                    child.children?.forEach((descChild: any) => {
+                                        if (descChild.names?.[0]?.name === "Abnormality description") {
+                                            abnormality.descriptions.push(descChild.value);
+                                        }
+                                    });
+                                }
+                                break;
+                            case "Description":
+                                abnormality.descriptions.push(childValue);
+                                break;
+                            case "Additional Notes":
+                                abnormality.additionalNotes = childValue;
+                                break;
+                        }
+                    });
+
+                    if (abnormality.skinRash || abnormality.injury || abnormality.abnormalities || abnormality.descriptions.length > 0) {
+                        currentNote.abnormalities?.push(abnormality);
+                    }
+                }
+                break;
+            case "Clinician notes":
+                currentNote.clinicianNotes = value;
+                break;
+        }
     });
 
-    if (Object.keys(currentNote.observations).length > 0) {
-        notes.push(createExposureAssessmentNote(currentNote));
+    if (currentNote.time && (
+        currentNote.temperature ||
+        (currentNote.abnormalities && currentNote.abnormalities.length > 0) ||
+        currentNote.clinicianNotes ||
+        currentNote.additionalNotes
+    )) {
+        notes.push(createExposureAssessmentNote(currentNote as ExposureNote));
     }
 
-    return notes.sort((a, b) => b.rawTime - a.rawTime);
-};
-
-const createExposureAssessmentNote = (note: {
-    time: string;
-    creator: string;
-    observations: Record<string, any>;
-}): ComponentNote => {
-    const messages: string[] = [];
-    const obs = note.observations;
-
-    // Temperature
-    if (obs[concepts.TEMPERATURE]?.value) {
-        messages.push(`Temperature (C): ${obs[concepts.TEMPERATURE].value}. `);
-    } else {
-        messages.push("Temperature (C) not recorded .");
-    }
-
-    // Additional Notes
-    if (obs[concepts.ADDITIONAL_NOTES]?.value) {
-        messages.push(`Additional Notes: ${obs[concepts.ADDITIONAL_NOTES].value}. `);
-    }
-
-    // Description
-    if (obs[concepts.DESCRIPTION]?.value) {
-        messages.push(`Description: ${obs[concepts.DESCRIPTION].value}. `);
-    }
-
-    // Cephalic Frontal Rash
-    if (obs[concepts.RASH]?.value) {
-        messages.push(`Rash on Cephalic: ${obs[concepts.RASH].value}. `);
-    }
-
-    // Cephalic Frontal Skin Abnormalities
-    if (obs[concepts.ABNORMALITIES]?.value) {
-        messages.push(`Skin abnormalities on Cephalic: ${obs[concepts.ABNORMALITIES].value}. `);
-    }
-
-    // Cephalic Frontal Injury
-    if (obs[concepts.INJURY]?.value) {
-        messages.push(`Injury on Cephalic: ${obs[concepts.INJURY].value}. `);
-    } else {
-        messages.push("Description of Injury: Not reported. ");
-    }
-
-    // Image Part Name
-    if (obs[concepts.IMAGE_PART_NAME]?.value) {
-        messages.push(`Body part: ${obs[concepts.IMAGE_PART_NAME].value}. `);
-    }
-    // Skin Rash
-    if (obs[concepts.SKIN_RASH]?.value) {
-        messages.push(`Skin Rash: ${obs[concepts.SKIN_RASH].value}. `);
-    }
-    // Abnormalities
-    if (obs[concepts.ABNORMALITIES]?.value) {
-        messages.push(`Abnormalities: ${obs[concepts.ABNORMALITIES].value}. `);
-    }
-    // Injury
-    if (obs[concepts.INJURY]?.value) {
-        messages.push(`Injury: ${obs[concepts.INJURY].value}. `);
-    }
-
-    return {
-        paragraph: messages.join(" "),
-        time: note.time,
-        creator: note.creator,
-        rawTime: new Date(note.time).getTime()
-    };
+    return notes;
 };
 const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
     const notes: ComponentNote[] = [];
