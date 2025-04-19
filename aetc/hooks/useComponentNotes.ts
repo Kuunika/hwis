@@ -2585,7 +2585,6 @@ const formatExposureAssessmentNotes = (obs: any[]): ComponentNote[] => {
         observations: {}
     };
 
-    // Group observations by encounter
     obs.forEach((ob: any) => {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
@@ -2697,8 +2696,6 @@ const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
         const value = ob.value;
         const time = ob.obs_datetime || new Date().toISOString();
         const creator = ob.created_by || "Unknown";
-
-        console.log("Hayayo", name, value, time)
 
         // Check for disposition type observations
         if ([
