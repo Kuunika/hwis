@@ -1378,7 +1378,7 @@ const formatFamilyHistoryNotes = (obs: any[]): ComponentNote[] => {
 
         lastObservationTime = currentTime;
 
-        if (name.startsWith("Family History") || name === "Review Of Systems Other") {
+        if (name.startsWith("Family History")) {
             const condition: FamilyHistoryCondition = {
                 name: name.replace("Family History", "").trim(),
                 // For cancer, include the type from the value
@@ -1434,7 +1434,7 @@ const createFamilyHistoryNote = (note: {
             conditionText += ` (${condition.relationship})`;
         }
 
-        // Special handling for cancer to include type
+        // Cancer to include type
         if (condition.name === "Cancer" && condition.details) {
             conditionText += `: ${condition.details}`;
         }
