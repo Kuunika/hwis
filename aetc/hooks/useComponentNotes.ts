@@ -71,6 +71,8 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatAdmissionNotes(obs);
             case encounters.REVIEW_OF_SYSTEMS:
                 return formatSystemsReviewData(obs);
+            case encounters.OBSTETRIC_HISTORY:
+                return formatGynecologyNotes(obs)
             case encounters.GENERAL_INFORMATION_ASSESSMENT:
                 return formatGeneralInformationNotes(obs);
             case encounters.HEAD_AND_NECK_ASSESSMENT:
@@ -567,6 +569,7 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         let durationInDays = "";
         let durationInHours = "";
         let medicationFormulation ="";
+        let selfMedication="";
         let creator = item.created_by || "Unknown";
         let encounterTime = item.obs_datetime || new Date().toISOString();
 
@@ -617,6 +620,9 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Medication Formulation":
                         medicationFormulation = memberValue;
                         break;
+                    case "Self medicated":
+                        selfMedication=memberValue;
+                        break;
 
                 }
             });
@@ -638,7 +644,11 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         if(medicationFormulation) parts.push(`Medication formulation: ${medicationFormulation}`);
         if (lastTaken) parts.push(`Last taken: ${new Date(lastTaken).toLocaleDateString()}`);
         if (lastPrescription) parts.push(`Last prescribed: ${new Date(lastPrescription).toLocaleDateString()}`);
-
+        if (selfMedication) {
+            parts.push(selfMedication === "Yes"
+                ? "The patient self-medicated."
+                : "The patient did not self-medicate.");
+        }
         if (parts.length > 0) {
             medicationNotes.push({
                 paragraph: `Medication: ${parts.join('; ')}.`,
@@ -991,6 +1001,235 @@ const createAdmissionNoteText = (admission: {
 
     return parts.join('. ') + (parts.length > 0 ? '.' : '');
 };
+
+const formatGynecologyNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentNote: {
+        time: string;
+        creator: string;
+        ageAtMenarche?: string;
+        gestationWeeks?: string;
+        previousPregnancies?: string;
+        contraceptives: string[];
+        pregnancyOutcomes: {
+            type: string;
+            details?: string;
+            parity?: number; // For live births
+        }[];
+        additionalNotes?: string;
+    } = {
+        time: "",
+        creator: "Unknown",
+        contraceptives: [],
+        pregnancyOutcomes: []
+    };
+
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const creator = ob.created_by || "Unknown";
+
+        if (!currentNote.time) {
+            currentNote.time = time;
+            currentNote.creator = creator;
+        }
+
+        switch (name) {
+            case "Age At Menarche":
+                // If we already have some data, push current note and start a new one
+                if (currentNote.ageAtMenarche ||
+                    currentNote.gestationWeeks ||
+                    currentNote.previousPregnancies ||
+                    currentNote.contraceptives.length > 0 ||
+                    currentNote.pregnancyOutcomes.length > 0) {
+                    notes.push(createGynecologyNote(currentNote));
+                    currentNote = {
+                        time: time,
+                        creator: creator,
+                        contraceptives: [],
+                        pregnancyOutcomes: []
+                    };
+                }
+                currentNote.ageAtMenarche = value;
+                break;
+
+            case "Gestation weeks":
+                currentNote.gestationWeeks = value;
+                break;
+
+            case "Previous Pregnancies":
+                currentNote.previousPregnancies = value;
+                break;
+
+            case "Levoplant":
+            case "Jadelle":
+            case "Implanon":
+                if (value === "true") {
+                    currentNote.contraceptives.push(name);
+                }
+                break;
+
+            case "Pregenancy Outcome":
+                // Handle pregnancy outcomes with children
+                if (ob.children && ob.children.length > 0) {
+                    const outcome: any = {};
+
+                    ob.children.forEach((child: any) => {
+                        const childName = child.names?.[0]?.name;
+                        if (childName === "Live birth" ||
+                            childName === "STILL BIRTH" ||
+                            childName === "Second Trimester Miscarriage" ||
+                            childName === "First Trimester Miscarriage") {
+                            outcome.type = childName;
+
+                            // Check for parity information with live births
+                            if (childName === "Live birth") {
+                                const parityChild = ob.children.find((c: any) =>
+                                    c.names?.some((n: any) =>
+                                        n.name === "Parity" ||
+                                        n.name === "Number of births" ||
+                                        n.name === "Number of delivered children"
+                                    )
+                                );
+                                if (parityChild) {
+                                    outcome.parity = parseFloat(parityChild.value);
+                                }
+                            }
+                        }
+                    });
+
+                    if (outcome.type) {
+                        currentNote.pregnancyOutcomes.push(outcome);
+                    }
+                }
+                break;
+            case "First Trimester Miscarriage":
+            case "Second Trimester Miscarriage":
+            case "STILL BIRTH":
+            case "Live birth":
+                const outcome: any = { type: name };
+
+                // Check for parity with live births
+                if (name === "Live birth" && ob.children) {
+                    const parityChild = ob.children.find((child: any) =>
+                        child.names?.some((n: any) =>
+                            n.name === "Parity" ||
+                            n.name === "Number of births" ||
+                            n.name === "Number of delivered children"
+                        )
+                    );
+                    if (parityChild) {
+                        outcome.parity = parseFloat(parityChild.value);
+                    }
+                }
+
+                currentNote.pregnancyOutcomes.push(outcome);
+                break;
+
+            case "Additional Notes":
+                currentNote.additionalNotes = value;
+                break;
+        }
+
+        // Update time and creator with latest observation
+        currentNote.time = time;
+        currentNote.creator = creator;
+    });
+
+    // Create the note if we have any data
+    if (currentNote.ageAtMenarche ||
+        currentNote.gestationWeeks ||
+        currentNote.previousPregnancies ||
+        currentNote.contraceptives.length > 0 ||
+        currentNote.pregnancyOutcomes.length > 0) {
+        notes.push(createGynecologyNote(currentNote));
+    }
+
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createGynecologyNote = (note: {
+    time: string;
+    creator: string;
+    ageAtMenarche?: string;
+    gestationWeeks?: string;
+    previousPregnancies?: string;
+    contraceptives: string[];
+    pregnancyOutcomes: {
+        type: string;
+        details?: string;
+        parity?: number;
+    }[];
+    additionalNotes?: string;
+}): ComponentNote => {
+    const paragraphs: string[] = [];
+
+    if (note.ageAtMenarche) {
+        paragraphs.push(`Menarche occurred at age ${note.ageAtMenarche}.`);
+    }
+
+    // Current pregnancy status
+    const currentPregnancyParts: string[] = [];
+    if (note.gestationWeeks) {
+        currentPregnancyParts.push(`currently ${note.gestationWeeks} gestation`);
+    }
+
+    // Previous pregnancies
+    if (note.previousPregnancies) {
+        const pregnancyCount = parseInt(note.previousPregnancies);
+        currentPregnancyParts.push(`${pregnancyCount} previous ${pregnancyCount === 1 ? 'pregnancy' : 'pregnancies'}`);
+    }
+
+    // Add current pregnancy status paragraph if we have info
+    if (currentPregnancyParts.length > 0) {
+        paragraphs.push(`Obstetric history: ${currentPregnancyParts.join(', ')}.`);
+    }
+
+    // Pregnancy outcomes with proper numbering and parity for live births
+    if (note.pregnancyOutcomes.length > 0) {
+        const outcomeDescriptions = note.pregnancyOutcomes.map((outcome, index) => {
+            const pregnancyNumber = index + 1;
+            let outcomeText = outcome.type;
+
+            // Add parity for live births
+            if (outcome.type === "Live birth" && outcome.parity !== undefined) {
+                outcomeText += ` (${outcome.parity} ${outcome.parity === 1 ? 'child' : 'children'})`;
+            }
+
+            return `Pregnancy ${pregnancyNumber}: ${outcomeText}`;
+        });
+        paragraphs.push(`Pregnancy outcomes: ${outcomeDescriptions.join('; ')}.`);
+    }
+
+    // Contraceptive use - handle multiple contraceptives
+    if (note.contraceptives.length > 0) {
+        if (note.contraceptives.length === 1) {
+            paragraphs.push(`Contraception: Currently using ${note.contraceptives[0]}.`);
+        } else {
+            const lastContraceptive = note.contraceptives.pop();
+            paragraphs.push(`Contraception: Currently using ${note.contraceptives.join(', ')} and ${lastContraceptive}.`);
+        }
+    }
+
+    // Additional notes
+    if (note.additionalNotes) {
+        paragraphs.push(`Notes: ${note.additionalNotes}.`);
+    }
+
+    return {
+        paragraph: paragraphs.join(' '),
+        time: note.time,
+        creator: note.creator,
+        rawTime: new Date(note.time).getTime()
+    };
+};
+
 const formatSystemsReviewData = (obs: any[]): ComponentNote[] => {
     const systemsReviews: ComponentNote[] = [];
     let currentSystem: {
@@ -2369,209 +2608,217 @@ const formatCirculationAssessmentNotes = (obs: any[]): ComponentNote[] => {
     return notes.sort((a, b) => b.rawTime - a.rawTime);
 };
 const formatDisabilityAssessmentNotes = (obs: any[]): ComponentNote[] => {
-    const notes: ComponentNote[] = [];
-    let currentNote: {
+    type DisabilityAssessment = {
         time: string;
         creator: string;
-        observations: Record<string, any>;
-        abnormalities: Record<string, any>;
-    } = {
-        time: "",
-        creator: "Unknown",
-        observations: {},
-        abnormalities: {}
+        consciousnessLevel?: string;
+        eyeOpening?: string;
+        verbalResponse?: string;
+        motorResponse?: string;
+        pupils?: {
+            leftSize?: string;
+            leftReaction?: string;
+            rightSize?: string;
+            rightReaction?: string;
+        };
+        focalNeurology?: string;
+        posture?: string;
+        serumGlucose?: string;
+        activeSeizures?: string;
+        additionalNotes?: string;
     };
 
-    // Sort observations by datetime
+    const createDisabilityAssessmentNote = (assessment: DisabilityAssessment): ComponentNote => {
+        const messages: string[] = [];
+
+        // Consciousness level
+        if (assessment.consciousnessLevel) {
+            messages.push(assessment.consciousnessLevel === "No"
+                ? "The patient is alert with no reduced level of consciousness."
+                : "The patient has a reduced level of consciousness requiring evaluation.");
+        }
+
+        // GCS components if available
+        if (assessment.eyeOpening && assessment.verbalResponse && assessment.motorResponse) {
+            const gcsTotal = parseInt(assessment.eyeOpening) + parseInt(assessment.verbalResponse) + parseInt(assessment.motorResponse);
+
+            // GCS summary
+            messages.push(`GCS score: ${gcsTotal} (E${assessment.eyeOpening}V${assessment.verbalResponse}M${assessment.motorResponse}).`);
+
+            // GCS interpretation
+            if (gcsTotal === 15) {
+                messages.push("Patient is fully conscious with normal neurological function.");
+            } else if (gcsTotal >= 13 && gcsTotal <= 14) {
+                messages.push("Mild brain injury - close monitoring advised.");
+            } else if (gcsTotal >= 9 && gcsTotal <= 12) {
+                messages.push("Moderate brain injury - requires further assessment.");
+            } else if (gcsTotal >= 3 && gcsTotal <= 8) {
+                messages.push("Severe brain injury/coma - needs immediate intervention.");
+            }
+        }
+
+        // Pupil assessment
+        if (assessment.pupils) {
+            const leftSize = assessment.pupils.leftSize || "not measured";
+            const leftReaction = assessment.pupils.leftReaction || "not assessed";
+            const rightSize = assessment.pupils.rightSize || "not measured";
+            const rightReaction = assessment.pupils.rightReaction || "not assessed";
+
+            messages.push(`Pupils: Left (${leftSize}mm, ${leftReaction}), Right (${rightSize}mm, ${rightReaction}).`);
+        }
+
+        // Focal neurology
+        if (assessment.focalNeurology) {
+            messages.push(`Focal neurology: ${assessment.focalNeurology}.`);
+        }
+
+        // Posture
+        if (assessment.posture) {
+            messages.push(`Posture: ${assessment.posture}.`);
+        }
+
+        // Serum glucose
+        if (assessment.serumGlucose) {
+            const glucose = parseFloat(assessment.serumGlucose);
+            if (glucose < 3.9) {
+                messages.push(`Hypoglycemia (${glucose} mmol/L).`);
+            } else if (glucose > 11.1) {
+                messages.push(`Hyperglycemia (${glucose} mmol/L).`);
+            } else {
+                messages.push(`Normal glucose (${glucose} mmol/L).`);
+            }
+        }
+
+        // Active seizures
+        if (assessment.activeSeizures) {
+            messages.push(assessment.activeSeizures === "Yes"
+                ? "Active seizures present - requires immediate intervention."
+                : "No active seizures observed.");
+        }
+
+        // Additional notes
+        if (assessment.additionalNotes) {
+            messages.push(`Notes: ${assessment.additionalNotes}.`);
+        }
+
+        return {
+            paragraph: messages.join(" "),
+            time: assessment.time,
+            creator: assessment.creator,
+            rawTime: new Date(assessment.time).getTime()
+        };
+    };
+
+    const notes: ComponentNote[] = [];
+    let currentAssessment: Partial<DisabilityAssessment> = {};
+
+    // Sort observations by datetime (newest first)
     const sortedObs = [...obs].sort((a, b) =>
-        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+        new Date(b.obs_datetime).getTime() - new Date(a.obs_datetime).getTime()
     );
 
     // Process each observation
-    sortedObs.forEach((ob: any) => {
+    for (const ob of sortedObs) {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
         const time = ob.obs_datetime || new Date().toISOString();
         const creator = ob.created_by || "Unknown";
 
-        console.log("Tiyese zidazi", name, value, time)
-
-        // Start new note when we find consciousness level observation
-        if (name === "Does the patient have a reduced Level of consciousness") {
-            // Push current note if it exists and has content
-            if (Object.keys(currentNote.observations).length > 0) {
-                notes.push(createDisabilityAssessmentNote(currentNote));
-            }
-
-            // Initialize new note
-            currentNote = {
-                time,
-                creator,
-                observations: {},
-                abnormalities: {}
-            };
+        // Initialize new assessment if we don't have one
+        if (!currentAssessment.time) {
+            currentAssessment = { time, creator };
         }
 
-        // Handle eye observations with children (pupil size and reaction)
-        if (name === "Eyes" && ob.children) {
-            const eyeSide = value; // "Left Eye" or "Right Eye"
-            for (const child of ob.children) {
-                const childName = child.names?.[0]?.name;
-                const childValue = child.value;
+        // Update current assessment time and creator with latest observation
+        currentAssessment.time = time;
+        currentAssessment.creator = creator;
 
-                if (childName === "Pupil size") {
-                    currentNote.observations[`${eyeSide} Pupil size`] = {
-                        value: childValue,
-                        creator: child.created_by || creator,
-                        time: child.obs_datetime || time
-                    };
-                } else if (childName === "Pupil Reaction") {
-                    currentNote.observations[`${eyeSide} Pupil Reaction`] = {
-                        value: childValue === "Yes" ? "Reactive" : "Non-reactive",
-                        creator: child.created_by || creator,
-                        time: child.obs_datetime || time
-                    };
+        // Handle observations
+        switch (name) {
+            case "Does the patient have a reduced Level of consciousness":
+                currentAssessment.consciousnessLevel = value;
+                break;
+
+            case "Eye Opening response":
+                currentAssessment.eyeOpening = value;
+                break;
+
+            case "Verbal Response":
+                currentAssessment.verbalResponse = value;
+                break;
+
+            case "Motor response":
+                currentAssessment.motorResponse = value;
+                break;
+
+            case "Focal Neurology":
+                currentAssessment.focalNeurology = value;
+                break;
+
+            case "Posture":
+                currentAssessment.posture = value;
+                break;
+
+            case "Serum glucose":
+                currentAssessment.serumGlucose = value;
+                break;
+
+            case "Active Seizures":
+                currentAssessment.activeSeizures = value;
+                break;
+
+            case "Additional Notes":
+                currentAssessment.additionalNotes = value;
+                break;
+
+            case "Eyes":
+                // Initialize pupils object if not exists
+                if (!currentAssessment.pupils) {
+                    currentAssessment.pupils = {};
                 }
-            }
+
+                const eyeSide = value; // "Left Eye" or "Right Eye"
+                for (const child of ob.children || []) {
+                    const childName = child.names?.[0]?.name;
+                    const childValue = child.value;
+
+                    if (childName === "Pupil size") {
+                        if (eyeSide === "Left Eye") {
+                            currentAssessment.pupils.leftSize = childValue;
+                        } else {
+                            currentAssessment.pupils.rightSize = childValue;
+                        }
+                    } else if (childName === "Pupil Reaction") {
+                        const reaction = childValue === "Yes" ? "reactive" : "non-reactive";
+                        if (eyeSide === "Left Eye") {
+                            currentAssessment.pupils.leftReaction = reaction;
+                        } else {
+                            currentAssessment.pupils.rightReaction = reaction;
+                        }
+                    }
+                }
+                break;
         }
-        // Handle regular observations
-        else if (name) {
-            currentNote.observations[name] = {
-                value,
-                creator,
-                time
-            };
-        }
-    });
 
-    // Push the last note if it has content
-    if (Object.keys(currentNote.observations).length > 0) {
-        notes.push(createDisabilityAssessmentNote(currentNote));
-    }
-
-    return notes.sort((a, b) => b.rawTime - a.rawTime);
-};
-
-const createDisabilityAssessmentNote = (note: {
-    time: string;
-    creator: string;
-    observations: Record<string, any>;
-    abnormalities?: Record<string, any>;
-}): ComponentNote => {
-    const messages: string[] = [];
-    const obs = note.observations;
-
-    // Level of Consciousness
-    if (obs["Does the patient have a reduced Level of consciousness"]) {
-        const locValue = obs["Does the patient have a reduced Level of consciousness"].value;
-        if (locValue === "No") {
-            messages.push("The patient is alert and does not exhibit a reduced level of consciousness.");
-        } else {
-            messages.push("The patient exhibits a reduced level of consciousness and requires further evaluation and monitoring.");
+        // Create note if we have enough data
+        if (currentAssessment.consciousnessLevel ||
+            currentAssessment.eyeOpening ||
+            currentAssessment.verbalResponse ||
+            currentAssessment.motorResponse ||
+            currentAssessment.pupils ||
+            currentAssessment.focalNeurology
+        ) {
+            notes.push(createDisabilityAssessmentNote(currentAssessment as DisabilityAssessment));
+            currentAssessment = {};
         }
     }
 
-    // GCS components only if we have consciousness assessment
-    if (obs["Does the patient have a reduced Level of consciousness"]) {
-        const gcsTotal = parseInt(obs["Eye Opening response"]?.value || 0) +
-            parseInt(obs["Verbal Response"]?.value || 0) +
-            parseInt(obs["Motor response"]?.value || 0);
+    const uniqueNotes = notes.reduce((acc: ComponentNote[], note) => {
+        const exists = acc.some(n => n.paragraph === note.paragraph && n.time === note.time);
+        return exists ? acc : [...acc, note];
+    }, []);
 
-        if (gcsTotal === 15) {
-            messages.push("GCS is 15: patient is fully conscious with normal neurological function.");
-        } else if (gcsTotal >= 13 && gcsTotal <= 14) {
-            messages.push(`GCS is ${gcsTotal}: Mild brain injury. Close monitoring advised.`);
-        } else if (gcsTotal >= 9 && gcsTotal <= 12) {
-            messages.push(`GCS is ${gcsTotal}: Moderate brain injury. Further assessment required.`);
-        } else if (gcsTotal >= 3 && gcsTotal <= 8) {
-            messages.push(`GCS is ${gcsTotal}: Severe brain injury or coma. Immediate intervention required.`);
-        }
-
-        // Eye Opening Response
-        if (obs["Eye Opening response"]?.value == 4) {
-            messages.push("Eyes open spontaneously: patient is fully conscious.");
-        } else if (obs["Eye Opening response"]?.value == 3) {
-            messages.push("Eyes open to speech: mild impairment in consciousness.");
-        } else if (obs["Eye Opening response"]?.value == 2) {
-            messages.push("Eyes open to pain: more significant impairment in consciousness.");
-        } else if (obs["Eye Opening response"]?.value == 1) {
-            messages.push("No eye opening response: patient may be in a deep coma.");
-        }
-
-        // Verbal Response
-        if (obs["Verbal Response"]?.value == 5) {
-            messages.push("Verbal response is 5: patient is oriented and converses normally.");
-        } else if (obs["Verbal Response"]?.value == 4) {
-            messages.push("Verbal response is 4: patient is confused but able to speak.");
-        } else if (obs["Verbal Response"]?.value == 3) {
-            messages.push("Verbal response is 3: inappropriate words, not making sense.");
-        } else if (obs["Verbal Response"]?.value == 2) {
-            messages.push("Verbal response is 2: incomprehensible sounds, moaning or groaning.");
-        } else if (obs["Verbal Response"]?.value == 1) {
-            messages.push("Verbal response is 1: no verbal response, patient is unresponsive.");
-        }
-
-        // Motor Response
-        if (obs["Motor response"]?.value == 6) {
-            messages.push("Motor response is 6: obeys commands normally.");
-        } else if (obs["Motor response"]?.value == 5) {
-            messages.push("Motor response is 5: localizes to pain.");
-        } else if (obs["Motor response"]?.value == 4) {
-            messages.push("Motor response is 4: withdraws from pain.");
-        } else if (obs["Motor response"]?.value == 3) {
-            messages.push("Motor response is 3: abnormal flexion to pain (decorticate posturing).");
-        } else if (obs["Motor response"]?.value == 2) {
-            messages.push("Motor response is 2: abnormal extension to pain (decerebrate posturing).");
-        } else if (obs["Motor response"]?.value == 1) {
-            messages.push("Motor response is 1: no motor response.");
-        }
-    }
-
-    // Pupil assessment
-    if (obs["Left Eye Pupil size"]?.value || obs["Right Eye Pupil size"]?.value) {
-        const leftSize = obs["Left Eye Pupil size"]?.value || "Not measured";
-        const leftReaction = obs["Left Eye Pupil Reaction"]?.value || "Not assessed";
-        const rightSize = obs["Right Eye Pupil size"]?.value || "Not measured";
-        const rightReaction = obs["Right Eye Pupil Reaction"]?.value || "Not assessed";
-
-        messages.push(`Pupil assessment - Left: ${leftSize}mm, ${leftReaction}; Right: ${rightSize}mm, ${rightReaction}.`);
-    }
-
-    // Focal Neurology
-    if (obs["Focal Neurology"]?.value) {
-        messages.push(`Focal neurological findings: ${obs["Focal Neurology"].value}.`);
-    }
-
-    // Posture
-    if (obs["Posture"]?.value) {
-        messages.push(`Posture: ${obs["Posture"].value}.`);
-    }
-
-    // Serum glucose
-    if (obs["Serum glucose"]?.value) {
-        const glucose = parseFloat(obs["Serum glucose"].value);
-        if (glucose < 3.9) {
-            messages.push(`Low blood glucose (${glucose} mmol/L): risk of hypoglycemia.`);
-        } else if (glucose > 11.1) {
-            messages.push(`High blood glucose (${glucose} mmol/L): risk of hyperglycemia.`);
-        } else {
-            messages.push(`Blood glucose level: ${glucose} mmol/L (normal range).`);
-        }
-    }
-
-    // Active Seizures
-    if (obs["Active Seizures"]?.value === "Yes") {
-        messages.push("Patient has active seizures. Immediate intervention required.");
-    } else if (obs["Active Seizures"]?.value === "No") {
-        messages.push("No active seizures observed.");
-    }
-
-    return {
-        paragraph: messages.join(" "),
-        time: note.time,
-        creator: note.creator,
-        rawTime: new Date(note.time).getTime()
-    };
+    return uniqueNotes.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 };
 const formatExposureAssessmentNotes = (obs: any[]): ComponentNote[] => {
     type ExposureAbnormality = {
