@@ -43,6 +43,7 @@ import { ReviewOfSystems } from "../clinicalNotes/reviewOfSystemsNotes";
 import { FamilyHistoryNotes } from "../clinicalNotes/familyHistory";
 import {DispositionNotes} from "@/app/patient/components/clinicalNotes/dispositionNotes";
 import {GynaecologyNotes} from "@/app/patient/components/clinicalNotes/gynaecologyNotes";
+import {LastMealNotes} from "@/app/patient/components/clinicalNotes/lastMealNotes";
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -422,6 +423,7 @@ export const VisitHistory = () => {
                     <SurgicalNotes />
                     <PreviousAdmissionsNotes />
                     <GynaecologyNotes/>
+                    <LastMealNotes/>
                     <ReviewOfSystems />
                     <FamilyHistoryNotes />
                 </AccordionDetails>
