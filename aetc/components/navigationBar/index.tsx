@@ -27,6 +27,7 @@ import { ReusableTable } from "../tables/table";
 import { ObjectRow } from "@/app/patient/components/visits";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MRT_ColumnDef } from "material-react-table";
+import { searchNPID } from "@/hooks/people";
 
 export function NavigationBar({
   onTitleClick,
@@ -143,9 +144,20 @@ export function NavigationBar({
     isError: any;
   } = searchLocalPatient(search.firstName, search.lastName, search.gender);
 
+  const {
+    refetch: refetchNPID,
+    isFetching: isFetchingNPID,
+    isSuccess: isSuccessNPID,
+    data: dataNPID,
+    isError: isErrorNPID,
+  } = searchNPID(search.firstName);
+
   // Trigger API search when search parameters change
   useEffect(() => {
     // Only run local search with first name
+    if (search.firstName.length > 12) {
+      refetchNPID();
+    }
     if (search.firstName) {
       refetchLocal();
     }
@@ -154,7 +166,7 @@ export function NavigationBar({
     if (search.firstName && search.lastName && search.gender) {
       refetchDDE();
     }
-  }, [search, refetchDDE, refetchLocal]);
+  }, [search, refetchDDE, refetchLocal, refetchNPID]);
 
   const splitSearchText = (searchText: string) => {
     const splittedArray = searchText.split(" ");
@@ -200,8 +212,28 @@ export function NavigationBar({
     }));
   }, [localData]);
 
+  const NPIDTransformData = useMemo(() => {
+    if (!dataNPID) return [];
+    const patientRecords = [
+      ...(dataNPID.locals || []),
+      ...(dataNPID.remotes || []),
+    ];
+    console.log("🚀 ~ returndataNPID.map ~ dataNPID:", patientRecords);
+    if (!patientRecords) return [];
+    return patientRecords.map((item: any) => ({
+      fullname: item?.given_name + " " + item?.family_name,
+      birthday: item?.birthdate,
+      gender: item?.gender,
+      currentAddress: `${item?.addresses?.[0]?.current_district ?? ""},${item?.addresses?.[0]?.current_traditional_authority ?? ""},${item?.addresses?.[0]?.address2 ?? ""} `,
+      homeAddress: `${item?.addresses?.[0]?.address1 ?? ""},${item?.addresses?.[0]?.county_district ?? ""},${item?.addresses?.[1]?.address1 ?? ""} `,
+      phone: "",
+      id: item.uuid,
+    }));
+  }, [dataNPID]);
+
   // Combine data with local taking priority
   const transformedData = useMemo(() => {
+    if (NPIDTransformData.length > 0) return NPIDTransformData;
     return DDETransformedData.length > 0
       ? DDETransformedData
       : localTransformData;
