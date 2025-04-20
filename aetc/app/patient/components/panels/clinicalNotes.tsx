@@ -87,6 +87,9 @@ export const ClinicalNotes = () => {
     const { notes: gyneacologyNotes } = useComponentNotes(
         encounters.OBSTETRIC_HISTORY
     );
+    const { notes: lastMealNotes } = useComponentNotes(
+        encounters.SUMMARY_ASSESSMENT
+    );
   const { notes: reviewOfSystemsNotes } = useComponentNotes(
     encounters.REVIEW_OF_SYSTEMS
   );
@@ -142,6 +145,7 @@ export const ClinicalNotes = () => {
           ...surgicalNotes,
           ...previousAdmissionsNotes,
             ...gyneacologyNotes,
+            ...lastMealNotes,
           ...reviewOfSystemsNotes,
           ...familyHistoryNotes,
           ...generalInfoNotes,
@@ -171,6 +175,7 @@ export const ClinicalNotes = () => {
     surgicalNotes,
     previousAdmissionsNotes,
       gyneacologyNotes,
+      lastMealNotes,
       reviewOfSystemsNotes,
     familyHistoryNotes,
     generalInfoNotes,

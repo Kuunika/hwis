@@ -73,6 +73,8 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatSystemsReviewData(obs);
             case encounters.OBSTETRIC_HISTORY:
                 return formatGynecologyNotes(obs)
+            case encounters.SUMMARY_ASSESSMENT:
+                return formatLastMealNotes(obs)
             case encounters.GENERAL_INFORMATION_ASSESSMENT:
                 return formatGeneralInformationNotes(obs);
             case encounters.HEAD_AND_NECK_ASSESSMENT:
@@ -1328,6 +1330,102 @@ const createSystemReviewParagraph = (system: {
         time: system.time,
         creator: system.creator,
         rawTime: new Date(system.time).getTime()
+    };
+};
+const formatLastMealNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentNote: {
+        time: string;
+        creator: string;
+        lastMealTime?: string;
+        lastMealDescription?: string;
+    } = {
+        time: "",
+        creator: "Unknown"
+    };
+
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const creator = ob.created_by || "Unknown";
+
+        if (!currentNote.time) {
+            currentNote.time = time;
+            currentNote.creator = creator;
+        }
+
+        switch (name) {
+            case "Time of last meal":
+                if (currentNote.lastMealTime || currentNote.lastMealDescription) {
+                    notes.push(createLastMealNote(currentNote));
+                    currentNote = {
+                        time: time,
+                        creator: creator
+                    };
+                }
+                currentNote.lastMealTime = value;
+
+                if (ob.children && ob.children.length > 0) {
+                    const mealDescriptionChild = ob.children.find((child: any) =>
+                        child.names?.some((n: any) => n.name === "Description of last meal")
+                    );
+                    if (mealDescriptionChild) {
+                        currentNote.lastMealDescription = mealDescriptionChild.value;
+                    }
+                }
+                break;
+
+            case "Description of last meal":
+                if (!currentNote.lastMealDescription) {
+                    currentNote.lastMealDescription = value;
+                }
+                break;
+        }
+
+        currentNote.time = time;
+        currentNote.creator = creator;
+    });
+
+    if (currentNote.lastMealTime || currentNote.lastMealDescription) {
+        notes.push(createLastMealNote(currentNote));
+    }
+
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createLastMealNote = (note: {
+    time: string;
+    creator: string;
+    lastMealTime?: string;
+    lastMealDescription?: string;
+}): ComponentNote => {
+    const parts: string[] = [];
+    parts.push("Last meal:");
+
+    if (note.lastMealTime) {
+        const formattedTime = note.lastMealTime.replace(',', ' at');
+        parts.push(`consumed on ${formattedTime}`);
+    }
+
+    if (note.lastMealDescription) {
+        if (note.lastMealTime) {
+            parts.push(`(${note.lastMealDescription})`);
+        } else {
+            parts.push(note.lastMealDescription);
+        }
+    }
+
+    return {
+        paragraph: parts.join(' '),
+        time: note.time,
+        creator: note.creator,
+        rawTime: new Date(note.time).getTime()
     };
 };
 const formatGeneralInformationNotes = (obs: any[]): ComponentNote[] => {
