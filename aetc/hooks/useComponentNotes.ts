@@ -1014,7 +1014,7 @@ const formatGynecologyNotes = (obs: any[]): ComponentNote[] => {
         pregnancyOutcomes: {
             type: string;
             details?: string;
-            parity?: number; // For live births
+            parity?: number;
         }[];
         additionalNotes?: string;
     } = {
