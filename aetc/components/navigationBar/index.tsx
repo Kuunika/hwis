@@ -40,15 +40,61 @@ export function NavigationBar({
   // Menu state
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   // Search state
   const [searchText, setSearchText] = useState("");
   const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(
     null
   );
-  const searchOpen = Boolean(searchAnchorEl);
+  const searchOpen = Boolean(searchAnchorEl) && searchText.trim() !== "";
   const searchPopoverId = searchOpen ? "search-popover" : undefined;
+  const [search, setSearch] = useState({
+    firstName: "",
+    lastName: "",
+    gender: "",
+  });
+
+  // Custom debounce hook
+  function useDebounce(value: any, delay: any) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }, [value, delay]);
+
+    return debouncedValue;
+  }
+
+  // Debounced search text
+  const debouncedSearch = useDebounce(searchText, 300);
+
+  // Update anchor element for popover when search text changes
+  useEffect(() => {
+    if (debouncedSearch && debouncedSearch.trim() !== "") {
+      const searchInput = document.getElementById("search-input");
+      setSearchAnchorEl(searchInput);
+    } else {
+      setSearchAnchorEl(null);
+    }
+  }, [debouncedSearch]);
+
+  // Update search parameters when debounced search text changes
+  useEffect(() => {
+    if (!debouncedSearch || debouncedSearch.trim() === "") return;
+
+    const payload = splitSearchText(debouncedSearch);
+    setSearch({
+      firstName: payload.given_name,
+      lastName: payload.family_name,
+      gender: payload.gender,
+    });
+  }, [debouncedSearch]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -75,18 +121,12 @@ export function NavigationBar({
     setCurrentDateTime(getHumanReadableShortDate(getDateTime()));
   }, []);
 
-  const [search, setSearch] = useState({
-    firstName: "",
-    lastName: "",
-    gender: "",
-  });
-
   const {
-    refetch,
-    isFetching,
-    isSuccess: searchComplete,
-    data,
-    isError,
+    refetch: refetchDDE,
+    isFetching: isFetchingDDE,
+    isSuccess: searchDDEComplete,
+    data: ddeData,
+    isError: isErrorDDE,
   } = searchDDEPatient(search.firstName, search.lastName, search.gender);
 
   const {
@@ -95,17 +135,26 @@ export function NavigationBar({
     isSuccess: searchLocalComplete,
     data: localData,
     isError: isErrorLocal,
+  }: {
+    refetch: any;
+    isFetching: any;
+    isSuccess: any;
+    data: any;
+    isError: any;
   } = searchLocalPatient(search.firstName, search.lastName, search.gender);
 
+  // Trigger API search when search parameters change
   useEffect(() => {
-    if (!Boolean(search.firstName)) return;
-    refetch();
-  }, [search, refetch]);
+    // Only run local search with first name
+    if (search.firstName) {
+      refetchLocal();
+    }
 
-  useEffect(() => {
-    if (!Boolean(search.firstName)) return;
-    refetchLocal();
-  }, [search, refetchLocal]);
+    // Only run DDE search when all required fields are available
+    if (search.firstName && search.lastName && search.gender) {
+      refetchDDE();
+    }
+  }, [search, refetchDDE, refetchLocal]);
 
   const splitSearchText = (searchText: string) => {
     const splittedArray = searchText.split(" ");
@@ -118,51 +167,45 @@ export function NavigationBar({
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
-    const searchInput = document.getElementById("search-input");
-    setSearchAnchorEl(searchInput);
-    const payload = splitSearchText(searchText);
-    setSearch({
-      firstName: payload.given_name,
-      lastName: payload.family_name,
-      gender: payload.gender,
-    });
   };
 
-  // const transformedData: any = useMemo(() => {
-  //   console.log(
-  //     "🚀 ~ consttransformedData:any=useMemo ~ localData:",
-  //     localData
-  //   );
-  //   if (!data) return [];
-  //   const patientRecords = [...data.locals, ...data.remotes];
-  //   console.log(
-  //     "🚀 ~ consttransformedData:any=useMemo ~ patientRecords:",
-  //     patientRecords
-  //   );
-  //   // onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
-  //   return patientRecords.map((item: any) => ({
-  //     fullname: item?.given_name + " " + item?.family_name,
-  //     birthday: item?.birthdate,
-  //     gender: item?.gender,
-  //     currentAddress: "",
-  //     homeAddress: "",
-  //     phone: "",
-  //   }));
-  // }, [data]);
-  const transformedData: any = useMemo(() => {
-    if (!localData) return [];
+  const DDETransformedData: any = useMemo(() => {
+    if (!ddeData) return [];
+    const patientRecords = [
+      ...(ddeData.locals || []),
+      ...(ddeData.remotes || []),
+    ];
 
-    // onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
+    return patientRecords.map((item: any) => ({
+      fullname: item?.given_name + " " + item?.family_name,
+      birthday: item?.birthdate,
+      gender: item?.gender,
+      currentAddress: `${item?.addresses?.[0]?.current_district ?? ""},${item?.addresses?.[0]?.current_traditional_authority ?? ""},${item?.addresses?.[0]?.address2 ?? ""} `,
+      homeAddress: `${item?.addresses?.[0]?.address1 ?? ""},${item?.addresses?.[0]?.county_district ?? ""},${item?.addresses?.[1]?.address1 ?? ""} `,
+      phone: "",
+      id: item.uuid,
+    }));
+  }, [ddeData]);
+
+  const localTransformData = useMemo(() => {
+    if (!localData) return [];
     return localData.map((item: any) => ({
       fullname: item?.given_name + " " + item?.family_name,
       birthday: item?.birthdate,
       gender: item?.gender,
-      currentAddress: `${item?.addresses[0]?.current_district ?? ""},${item?.addresses[0]?.current_traditional_authority ?? ""},${item?.addresses[0]?.address2 ?? ""} `,
-      homeAddress: `${item?.addresses[0]?.address1 ?? ""},${item?.addresses[0]?.county_district ?? ""},${item?.addresses[1]?.address1 ?? ""} `,
+      currentAddress: `${item?.addresses?.[0]?.current_district ?? ""},${item?.addresses?.[0]?.current_traditional_authority ?? ""},${item?.addresses?.[0]?.address2 ?? ""} `,
+      homeAddress: `${item?.addresses?.[0]?.address1 ?? ""},${item?.addresses?.[0]?.county_district ?? ""},${item?.addresses?.[1]?.address1 ?? ""} `,
       phone: "",
       id: item.uuid,
     }));
   }, [localData]);
+
+  // Combine data with local taking priority
+  const transformedData = useMemo(() => {
+    return DDETransformedData.length > 0
+      ? DDETransformedData
+      : localTransformData;
+  }, [localTransformData, DDETransformedData]);
 
   // Define columns for vitals
   const columns = useMemo<MRT_ColumnDef<ObjectRow>[]>(
@@ -250,7 +293,7 @@ export function NavigationBar({
               </div>
 
               <Paper
-                component="form"
+                component="div"
                 id="search-input"
                 sx={{
                   p: "2px 4px",
@@ -259,11 +302,7 @@ export function NavigationBar({
                   minWidth: "45%",
                 }}
               >
-                <IconButton
-                  type="submit"
-                  sx={{ p: "10px" }}
-                  aria-label="search"
-                >
+                <IconButton sx={{ p: "10px" }} aria-label="search">
                   <SearchIcon />
                 </IconButton>
                 <InputBase
@@ -315,24 +354,52 @@ export function NavigationBar({
                 disableAutoFocus
               >
                 <div style={{ width: "100%" }}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <ReusableTable<ObjectRow>
-                      data={transformedData}
-                      columns={columns}
-                      title=""
-                      showGlobalFilter={false}
-                      enableColumnOrdering={false}
-                      enableColumnActions={false}
-                      enableColumnFilters={false}
-                      enableSorting={false}
-                      onRowClick={(rowData) => {
-                        handleSearchPopoverClose();
-                        navigateTo(
-                          `/patient/${rowData.row.original.id}/profile`
-                        );
-                      }}
-                    />
-                  </LocalizationProvider>
+                  {(isFetchingDDE || isFetchingLocal) && (
+                    <Box
+                      sx={{ display: "flex", justifyContent: "center", p: 2 }}
+                    >
+                      <CircularProgress />
+                    </Box>
+                  )}
+
+                  {!isFetchingDDE &&
+                    !isFetchingLocal &&
+                    transformedData.length > 0 && (
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <ReusableTable<ObjectRow>
+                          data={transformedData}
+                          columns={columns}
+                          title=""
+                          showGlobalFilter={false}
+                          enableColumnOrdering={false}
+                          enableColumnActions={false}
+                          enableColumnFilters={false}
+                          enableSorting={false}
+                          initialState={{
+                            showColumnFilters: false,
+                            showGlobalFilter: false,
+                            columnPinning: {
+                              left: ["fullname"],
+                              right: ["mrt-row-actions"],
+                            },
+                          }}
+                          onRowClick={(rowData) => {
+                            handleSearchPopoverClose();
+                            navigateTo(
+                              `/patient/${rowData.row.original.id}/profile`
+                            );
+                          }}
+                        />
+                      </LocalizationProvider>
+                    )}
+
+                  {!isFetchingDDE &&
+                    !isFetchingLocal &&
+                    transformedData.length === 0 && (
+                      <Box sx={{ p: 3, textAlign: "center" }}>
+                        <Typography>No matching patients found</Typography>
+                      </Box>
+                    )}
                 </div>
               </Popover>
 
