@@ -75,6 +75,8 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatGynecologyNotes(obs)
             case encounters.SUMMARY_ASSESSMENT:
                 return formatLastMealNotes(obs)
+            case encounters.FAMILY_MEDICAL_HISTORY:
+                return formatFamilyHistoryNotes(obs)
             case encounters.GENERAL_INFORMATION_ASSESSMENT:
                 return formatGeneralInformationNotes(obs);
             case encounters.HEAD_AND_NECK_ASSESSMENT:
@@ -1332,6 +1334,125 @@ const createSystemReviewParagraph = (system: {
         rawTime: new Date(system.time).getTime()
     };
 };
+const formatFamilyHistoryNotes = (obs: any[]): ComponentNote[] => {
+    type FamilyHistoryCondition = {
+        name: string;
+        relationship?: string;
+        details?: string;
+    };
+
+    type FamilyHistoryNote = {
+        time: string;
+        creator: string;
+        conditions: FamilyHistoryCondition[];
+    };
+
+    const notes: ComponentNote[] = [];
+    let currentNote: FamilyHistoryNote | null = null;
+    let lastObservationTime: Date | null = null;
+
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const currentTime = new Date(time);
+        const creator = ob.created_by || "Unknown";
+
+        // Check if we need to start a new note (3-minute interval or first observation)
+        if (!currentNote || !lastObservationTime ||
+            (currentTime.getTime() - lastObservationTime.getTime()) > 180000) {
+
+            if (currentNote?.conditions?.length) {
+                notes.push(createFamilyHistoryNote(currentNote));
+            }
+
+            currentNote = {
+                time: time,
+                creator: creator,
+                conditions: []
+            };
+        }
+
+        lastObservationTime = currentTime;
+
+        if (name.startsWith("Family History") || name === "Review Of Systems Other") {
+            const condition: FamilyHistoryCondition = {
+                name: name.replace("Family History", "").trim(),
+                // For cancer, include the type from the value
+                details: name === "Family History Cancer" ? value : undefined
+            };
+
+            if (ob.children && ob.children.length > 0) {
+                const relationshipChild = ob.children.find((child: any) =>
+                    child.names?.some((n: any) => n.name === "Relationship To Patient")
+                );
+                if (relationshipChild) {
+                    condition.relationship = relationshipChild.value;
+                }
+            }
+
+            if (name === "Family History Other Condition" || name === "Review Of Systems Other") {
+                condition.details = value;
+            }
+
+            currentNote!.conditions.push(condition);
+        }
+        else if (name === "Relationship To Patient" && currentNote?.conditions?.length) {
+            currentNote.conditions[currentNote.conditions.length - 1].relationship = value;
+        }
+
+        currentNote!.time = time;
+        currentNote!.creator = creator;
+    });
+
+    if (currentNote) {
+        notes.push(createFamilyHistoryNote(currentNote));
+    }
+
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createFamilyHistoryNote = (note: {
+    time: string;
+    creator: string;
+    conditions: {
+        name: string;
+        relationship?: string;
+        details?: string;
+    }[];
+}): ComponentNote => {
+    const parts: string[] = [];
+    parts.push("Family History:");
+
+    note.conditions.forEach(condition => {
+        let conditionText = condition.name;
+
+        if (condition.relationship) {
+            conditionText += ` (${condition.relationship})`;
+        }
+
+        // Special handling for cancer to include type
+        if (condition.name === "Cancer" && condition.details) {
+            conditionText += `: ${condition.details}`;
+        }
+        // For other conditions with details
+        else if (condition.details && condition.name !== "Cancer") {
+            conditionText += `: ${condition.details}`;
+        }
+
+        parts.push(conditionText);
+    });
+
+    return {
+        paragraph: parts.join("; "), // Use semicolon for better separation
+        time: note.time,
+        creator: note.creator,
+        rawTime: new Date(note.time).getTime()
+    };
+};
 const formatLastMealNotes = (obs: any[]): ComponentNote[] => {
     const notes: ComponentNote[] = [];
     let currentNote: {
@@ -1344,7 +1465,6 @@ const formatLastMealNotes = (obs: any[]): ComponentNote[] => {
         creator: "Unknown"
     };
 
-    // Sort observations by datetime
     const sortedObs = [...obs].sort((a, b) =>
         new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
     );
