@@ -16,7 +16,7 @@ export const usePatientManagementPlan = (pData: any) => {
       (d: any) => d.encounter_type.uuid === encounters.NON_PHARMACOLOGICAL
     );
     
-    console.log("Tione za Pharma", nonPharmacologicalEncounter)
+    //console.log("Tione za Pharma", nonPharmacologicalEncounter)
     if (nonPharmacologicalEncounter?.obs) {
       const collectValues = (obs: Obs): string[] => {
         let values: string[] = [];
@@ -81,18 +81,6 @@ export const usePatientManagementPlan = (pData: any) => {
           grouped.Others.push(...values);
         }
       });
-    
-      // if (grouped.Procedures.length > 0) {
-      //   messages.push(`The Procedures are: ${grouped.Procedures.join(", ")}`);
-      // }
-      // if (grouped["Supportive Care"].length > 0) {
-      //   messages.push(`The Supportive Care done are: ${grouped["Supportive Care"].join(", ")}`);
-      // }
-      // // if (grouped.Others.length > 0) {
-      // //   messages.push(`Other Observations: ${grouped.Others.join(", ")}`);
-      // // }
-    
-      // allMessages.push(messages.join("\n"));
 
       const createdBy = nonPharmacologicalEncounter.created_by;
     
@@ -139,24 +127,65 @@ export const usePatientManagementPlan = (pData: any) => {
     }
 
     // === 3. Prescription Encounter ===
+
     const prescriptionEncounter = pData.find(
       (d: any) => d.encounter_type.uuid === encounters.PRESCRIPTIONS
     );
+    
+    console.log("Tione zamakhwala", prescriptionEncounter);
     if (prescriptionEncounter?.obs) {
-      const observations = prescriptionEncounter.obs
-        .map((ob: Obs) => ob.value)
-        .filter(Boolean);
-
-      if (observations.length > 0) {
-        const formattedDate = new Date(prescriptionEncounter.encounter_datetime).toLocaleString();
-        const createdBy = prescriptionEncounter.created_by
-        const messages = [
-          `Medication recorded on ${formattedDate}:\n`,
-          `The medications are: ${observations.join(", ")}`,
-          `\n\nCreated by: ${createdBy}` 
-        ];
-        allMessages.push(messages.join("\n"));
-      }
+      const formattedDate = new Date(prescriptionEncounter.encounter_datetime).toLocaleString();
+      const createdBy = prescriptionEncounter.created_by;
+    
+      // Process each medication observation
+      const medicationDetails = prescriptionEncounter.obs.map((med: any) => {
+        // Find children by their concept names instead of hardcoded IDs
+        const formulation = med.children?.find((c: any) => 
+          c.names?.some((n: any) => n.name?.toLowerCase().includes('formulation')))?.value;
+        
+        const doseValue = med.children?.find((c: any) => 
+          c.names?.some((n: any) => n.name?.toLowerCase().includes('dose') && 
+          !n.name?.toLowerCase().includes('unit')))?.value;
+        
+        const doseUnit = med.children?.find((c: any) => 
+          c.names?.some((n: any) => n.name?.toLowerCase().includes('dose unit')))?.value;
+        
+        const frequency = med.children?.find((c: any) => 
+          c.names?.some((n: any) => n.name?.toLowerCase().includes('frequency')))?.value;
+        
+        const durationValue = med.children?.find((c: any) => 
+          c.names?.some((n: any) => n.name?.toLowerCase().includes('duration') && 
+          !n.name?.toLowerCase().includes('unit')))?.value;
+        
+        const durationUnit = med.children?.find((c: any) => 
+          c.names?.some((n: any) => n.name?.toLowerCase().includes('duration unit')))?.value;
+    
+        return {
+          name: med.value,
+          formulation,
+          dose: doseValue && doseUnit ? `${doseValue} ${doseUnit}` : null,
+          frequency,
+          duration: durationValue && durationUnit ? `${durationValue} ${durationUnit}` : null
+        };
+      });
+    
+      let messages = [
+        `Prescriptions recorded on ${formattedDate}:\n`
+      ];
+    
+      // Add each medication's details
+      medicationDetails.forEach((med:any, index:any) => {
+        messages.push(`• ${med.name}${med.formulation ? ` (${med.formulation})` : ''}`);
+        if (med.dose) messages.push(`  - Dose: ${med.dose}`);
+        if (med.frequency) messages.push(`  - Frequency: ${med.frequency}`);
+        if (med.duration) messages.push(`  - Duration: ${med.duration}`);
+        messages.push(''); // Add empty line between medications
+      });
+    
+      // Add created by at the bottom
+      messages.push(`\n\nCreated by: ${createdBy}`);
+    
+      allMessages.push(messages.join("\n"));
     }
 
     // === Final message ===
