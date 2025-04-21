@@ -14,7 +14,7 @@ export const useFinalDiagnosis = (pData: any) => {
     );
 
 
-    console.log("Tione za Final:", additionalFieldsEncounter);
+    //console.log("Tione za Final:", additionalFieldsEncounter);
 
     if (!additionalFieldsEncounter?.obs) return;
 
@@ -23,11 +23,13 @@ export const useFinalDiagnosis = (pData: any) => {
       .filter(Boolean); 
 
     if (observations.length === 0) return;
-
+  
+    const createdBy = additionalFieldsEncounter.created_by
 
     let messages = [
         `Final Diagnosis recorded on:\n`,
-        `The Final Diagnosis are: ${observations.join(", ")}` 
+        `The Final Diagnosis are: ${observations.join(", ")}`,
+        `\n\nCreated by: ${createdBy}`
     ];
 
     // observations.forEach((obs:any) => {

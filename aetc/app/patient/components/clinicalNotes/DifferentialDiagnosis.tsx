@@ -24,12 +24,16 @@ export const useDifferentialDiagnosis = (pData: any) => {
 
     if (observations.length === 0) return;
 
+    const createdBy = additionalFieldsEncounter.created_by
+    let messages = [
+      `Differential Diagnosis recorded on:\n`,
+      `The Differential Diagnosis are: ${observations.join(", ")}`,
+      `\n\nCreated by: ${createdBy}`
+    ];
 
-    let messages = [`Differential Diagnosis recorded on:\n`];
-
-    observations.forEach((obs:any) => {
-      messages.push(`The Differential Diagnosis are: ${obs}. `);
-    });
+    // observations.forEach((obs:any) => {
+    //   messages.push(`The Differential Diagnosis are: ${obs}. `);
+    // });
 
     setDifferentialDiagnosisMessage(messages.join(""));
   }, [pData]);
