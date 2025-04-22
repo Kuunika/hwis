@@ -69,8 +69,8 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatSurgicalHistoryNotes(obs)
             case encounters.PATIENT_ADMISSIONS:
                 return formatAdmissionNotes(obs);
-            case encounters.REVIEW_OF_SYSTEMS:
-                return formatSystemsReviewData(obs);
+            // case encounters.REVIEW_OF_SYSTEMS:
+            //     return formatReviewOfSystemsNotes(obs);
             case encounters.OBSTETRIC_HISTORY:
                 return formatGynecologyNotes(obs)
             case encounters.SUMMARY_ASSESSMENT:
@@ -1221,7 +1221,6 @@ const createGynecologyNote = (note: {
         }
     }
 
-    // Additional notes
     if (note.additionalNotes) {
         paragraphs.push(`Notes: ${note.additionalNotes}.`);
     }
@@ -1233,105 +1232,71 @@ const createGynecologyNote = (note: {
         rawTime: new Date(note.time).getTime()
     };
 };
+const formatReviewOfSystemsNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentSystem: string | null = null;
+    let currentDetails: Record<string, any> = {};
+    let currentTime = "";
+    let currentCreator = "";
 
-const formatSystemsReviewData = (obs: any[]): ComponentNote[] => {
-    const systemsReviews: ComponentNote[] = [];
-    let currentSystem: {
-        systemName: string;
-        symptoms: {
-            name: string;
-            duration?: string;
-            location?: string;
-        }[];
-        creator: string;
-        time: string;
-    } | null = null;
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
 
-    obs.forEach((ob: any) => {
+    // Process each observation
+    sortedObs.forEach((ob: any) => {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
-        const creator = ob.creator || ob.created_by || "Unknown";
-        const obsTime = ob.obs_datetime || new Date().toISOString();
-
-        if (name.startsWith("Review Of Systems") || name.startsWith("Review of systems")) {
-            if (currentSystem && currentSystem.symptoms.length > 0) {
-                systemsReviews.push(createSystemReviewParagraph(currentSystem));
+        if (name === "Review of systems, general") {
+            if (currentSystem) {
+                notes.push(createSystemNote(currentSystem, currentDetails, currentTime, currentCreator));
             }
-            // Start new system
-            currentSystem = {
-                systemName: name.replace("Review Of Systems", "")
-                    .replace("Review of systems", "")
-                    .trim(),
-                symptoms: [],
-                creator: creator,
-                time: obsTime
-            };
+            currentSystem = "General";
+            currentDetails = {};
+            currentTime = ob.obs_datetime;
+            currentCreator = ob.created_by;
+        } else if (name.includes("Review Of Systems")) {
+            if (currentSystem) {
+                notes.push(createSystemNote(currentSystem, currentDetails, currentTime, currentCreator));
+            }
+            currentSystem = name.replace("Review Of Systems ", "");
+            currentDetails = {};
+            currentTime = ob.obs_datetime;
+            currentCreator = ob.created_by;
         }
-        else if (currentSystem) {
-            if (name === "Duration Of Symptoms Days") {
-                if (currentSystem.symptoms.length > 0) {
-                    currentSystem.symptoms[currentSystem.symptoms.length - 1].duration = value;
-                }
-            }
-            else if (name === "Anatomic locations") {
-                if (currentSystem.symptoms.length > 0) {
-                    currentSystem.symptoms[currentSystem.symptoms.length - 1].location = value;
-                }
-            }
-            else if (value === true || value === "true") {
-                // This is a symptom
-                currentSystem.symptoms.push({
-                    name: name,
-                    duration: undefined,
-                    location: undefined
-                });
-                currentSystem.creator = creator;
-                currentSystem.time = obsTime;
-            }
+
+        if (currentSystem) {
+            currentDetails[name] = value;
         }
     });
 
-    // Push the last system if it has data
-    // if (currentSystem && currentSystem.symptoms.length > 0) {
-    //     systemsReviews.push(createSystemReviewParagraph(currentSystem));
-    // }
+    // Add the last system note
+    if (currentSystem) {
+        notes.push(createSystemNote(currentSystem, currentDetails, currentTime, currentCreator));
+    }
 
-    return systemsReviews.sort((a, b) => b.rawTime - a.rawTime);
+    return notes;
 };
 
-const createSystemReviewParagraph = (system: {
-    systemName: string;
-    symptoms: {
-        name: string;
-        duration?: string;
-        location?: string;
-    }[];
-    creator: string;
-    time: string;
-}): ComponentNote => {
-    const parts: string[] = [];
-
-    parts.push(`${system.systemName} System:`);
-
-    system.symptoms.forEach(symptom => {
-        let symptomText = symptom.name;
-
-        if (symptom.duration) {
-            symptomText += ` (${symptom.duration} days)`;
-        }
-
-        if (symptom.location) {
-            symptomText += ` in ${symptom.location}`;
-        }
-
-        parts.push(symptomText);
-    });
+const createSystemNote = (
+    system: string,
+    details: Record<string, any>,
+    time: string,
+    creator: string
+): ComponentNote => {
+    const detailText = Object.entries(details)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
 
     return {
-        paragraph: parts.join(". "),
-        time: system.time,
-        creator: system.creator,
-        rawTime: new Date(system.time).getTime()
+        paragraph: `
+            Review of ${system} System:
+            ${detailText}
+        `.trim(),
+        creator: creator,
+        time: time,
+        rawTime: new Date(time).getTime(),
     };
 };
 const formatFamilyHistoryNotes = (obs: any[]): ComponentNote[] => {
