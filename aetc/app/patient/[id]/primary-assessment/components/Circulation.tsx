@@ -39,17 +39,14 @@ const form = {
   bleedingInfo: {
     name: concepts.IS_PATIENT_ACTIVELY_BLEEDING,
     label: "Is the patient actively bleeding",
-    coded: true,
   },
   pulseInfo: {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
     label: "Does the patient have a pulse",
-    coded: true,
   },
   pulseRate: {
     name: concepts.PULSE_RATE_WEAK,
     label: "Pulse rate",
-    coded: true,
   },
   bloodPressureSystolic: {
     name: concepts.SYSTOLIC_BLOOD_PRESSURE,
@@ -62,49 +59,41 @@ const form = {
   intravenousAccess: {
     name: concepts.PATIENT_INTRAVENOUS,
     label: "Does the patient need intravenous access",
-    coded: true,
   },
   traumatizedInfo: {
     name: concepts.IS_PATIENT_TRAUMATIZED,
     label: "Is the patient injured",
-    coded: true,
   },
 
   abnormalitiesInfo: {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is there any other abnormalities?",
-    coded: true,
   },
   capillaryInfo: {
     name: concepts.CAPILLARY_REFILL_TIME,
     label: "Capillary refill time",
-    coded: true,
   },
   pelvisInfo: {
     name: concepts.IS_PELVIS_STABLE,
     label: "Is the pelvis unstable?",
-    coded: true,
   },
   abdnomenDistention: {
     name: concepts.HEADACHE,
     label: "Is there abdominal distention?",
-    coded: true,
   },
 
   mucousMembranesInfo: {
     name: concepts.MUCOUS_MEMBRANES,
     label: "Mucous membranes",
-    coded: true,
   },
 
   catheterInfo: {
     name: concepts.SIZE_OF_CATHETER,
-    label: "Size of interaveneous catheter",
+    label: "Size of intravenous catheter",
   },
   femurAndTibiaNormalInfo: {
     name: concepts.IS_FEMUR_TIBIA_NORMAL,
     label: "is the femur and tibia normal?",
-    coded: true,
   },
   bleedingActionDone: {
     name: concepts.ACTION_DONE,
@@ -130,7 +119,6 @@ const form = {
   bloodPressureMeasured: {
     name: concepts.BLOOD_PRESSURE_MEASURED,
     label: "Blood pressure measured",
-    coded: true,
   },
   reasonNotRecorded: {
     name: concepts.REASON_NOT_RECORDED,
@@ -139,12 +127,10 @@ const form = {
   reasonNotDone: {
     name: concepts.DESCRIPTION,
     label: "Reason Not Done",
-    coded: true,
   },
   mucousAbnormal: {
     name: concepts.MUCOUS_ABNORMAL,
     label: "Mucous Abnormal",
-    coded: true,
   },
   bloodPressureNotDoneOther: {
     name: concepts.SPECIFY,
@@ -153,16 +139,18 @@ const form = {
   siteOfCannulation: {
     name: concepts.CANNULATION_SITE,
     label: "Cannulation Site",
-    coded: true,
   },
   diagramCannulationSite: {
     name: concepts.DIAGRAM_CANNULATION_SITE,
     label: "Cannulation Site",
-    coded: true,
   },
   pulse: {
     name: concepts.PULSE_RATE,
     label: "Pulse rate",
+  },
+  centralLineCannulationSite: {
+    name: concepts.CENTRAL_LINE_CANNULATION_SITE,
+    label: "Cannulation Site (Central Line)",
   },
 };
 
@@ -241,6 +229,7 @@ const schema = yup.object({
     .array()
     .label(form.diagramCannulationSite.label),
   [form.pulse.name]: yup.number().label(form.pulse.label),
+  [form.centralLineCannulationSite.name]: yup.string().label(form.centralLineCannulationSite.label),
 });
 
 const initialValues = getInitialValues(form);
@@ -307,11 +296,19 @@ const diagramSitesOfCannulation = [
   { label: "Antecubital fossa", id: concepts.ANTECUBITAL_FOSSA },
   { label: "Hand", id: concepts.HAND },
   { label: "Wrist", id: concepts.WRIST },
-  { label: "Forearm", id: concepts.WRIST },
+  { label: "Forearm", id: concepts.FOREARM },
   { label: "Foot", id: concepts.FOOT },
   { label: "External Jugular", id: concepts.EXTERNAL_JUGULAR },
 ];
 
+const centralLineCannulationSites = [
+  { id: concepts.FEMORAL, label: "Femoral" },
+  { id: concepts.SUBCLAVIAN, label: "Subclavian" },
+  {
+    id: concepts.INTERNAL_JUGULAR,
+    label: "Internal Jugular",
+  },
+]
 export const Circulation = ({ onSubmit }: Prop) => {
   const { gender } = getActivePatientDetails();
   const [formValues, setFormValues] = useState<any>({});
@@ -528,36 +525,36 @@ export const Circulation = ({ onSubmit }: Prop) => {
             </FieldsContainer>
             {formValues[form.bloodPressureMeasured.name] ==
               concepts.NOT_DONE && (
-              <>
-                <SearchComboBox
-                  multiple={false}
-                  name={form.reasonNotDone.name}
-                  label={form.reasonNotDone.label}
-                  options={notDoneReasons}
-                />
-                {formValues[form.reasonNotDone.name] == concepts.OTHER && (
-                  <TextInputField
-                    multiline
-                    rows={3}
-                    name={form.bloodPressureNotDoneOther.name}
-                    id={form.bloodPressureNotDoneOther.name}
-                    label={form.bloodPressureNotDoneOther.label}
-                    sx={{ width: "100%", mt: "1ch" }}
+                <>
+                  <SearchComboBox
+                    multiple={false}
+                    name={form.reasonNotDone.name}
+                    label={form.reasonNotDone.label}
+                    options={notDoneReasons}
                   />
-                )}
-              </>
-            )}
+                  {formValues[form.reasonNotDone.name] == concepts.OTHER && (
+                    <TextInputField
+                      multiline
+                      rows={3}
+                      name={form.bloodPressureNotDoneOther.name}
+                      id={form.bloodPressureNotDoneOther.name}
+                      label={form.bloodPressureNotDoneOther.label}
+                      sx={{ width: "100%", mt: "1ch" }}
+                    />
+                  )}
+                </>
+              )}
             {formValues[form.bloodPressureMeasured.name] ==
               concepts.BP_NOT_RECORDABLE && (
-              <>
-                <TextInputField
-                  sx={{ m: 0, width: "100%" }}
-                  name={form.reasonNotRecorded.name}
-                  label={form.reasonNotRecorded.label}
-                  id={form.reasonNotRecorded.name}
-                />
-              </>
-            )}
+                <>
+                  <TextInputField
+                    sx={{ m: 0, width: "100%" }}
+                    name={form.reasonNotRecorded.name}
+                    label={form.reasonNotRecorded.label}
+                    id={form.reasonNotRecorded.name}
+                  />
+                </>
+              )}
             {formValues[form.bloodPressureMeasured.name] == concepts.DONE && (
               <>
                 <br />
@@ -592,7 +589,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                                 Number(
                                   formValues[form.bloodPressureSystolic.name]
                                 )) /
-                                3
+                              3
                             ) < 65
                               ? "red"
                               : "inherit", // Use default text color if MAP is 65 or above
@@ -607,7 +604,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                             Number(
                               formValues[form.bloodPressureSystolic.name]
                             )) /
-                            3
+                          3
                         )}{" "}
                         mmHg
                       </Typography>
@@ -699,74 +696,63 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   label={form.catheterInfo.label}
                   options={sizeOfCatheter}
                 />
-                <br />
+             <br />
+                {checkCanulationSite(
+                  formValues[form.catheterInfo.name],
+                  concepts.CENTRAL_LINE
+                ) && (
+                    <>
+                      <Typography variant="h6">
+                        Central Line
+                      </Typography>
+                      <SearchComboBox
+                        multiple={false}
+                        name={form.centralLineCannulationSite.name}
+                        label={form.centralLineCannulationSite.label}
+                        options={centralLineCannulationSites}
+                      />
+                      <br />
+                    </>
+                  )}
+
                 <SearchComboBox
                   multiple
                   name={form.siteOfCannulation.name}
                   label={form.siteOfCannulation.label}
                   options={sitesOfCannulation}
                 />
+
                 {checkCanulationSite(
                   formValues[form.siteOfCannulation.name],
                   concepts.LEFT
                 ) && (
-                  <>
-                    <Typography my={2} variant="h6">
-                      Left
-                    </Typography>
-                    <SearchComboBox
-                      name={form.diagramCannulationSite.name}
-                      label={form.diagramCannulationSite.label}
-                      options={[
-                        ...diagramSitesOfCannulation,
-                        ...(checkCanulationSite(
-                          formValues[form.catheterInfo.name],
-                          concepts.CENTRAL_LINE
-                        )
-                          ? [
-                              { id: concepts.FEMORAL, label: "Femoral" },
-                              { id: concepts.SUBCLAVIAN, label: "Subclavian" },
-                              {
-                                id: concepts.INTERNAL_JUGULAR,
-                                label: "Internal Jugular",
-                              },
-                            ]
-                          : []),
-                      ]}
-                    />
-                  </>
-                )}
+                    <>
+                      <Typography my={2} variant="h6">
+                        Left
+                      </Typography>
+                      <SearchComboBox
+                        name={form.diagramCannulationSite.name}
+                        label={form.diagramCannulationSite.label}
+                        options={diagramSitesOfCannulation}
+                      />
+                    </>
+                  )}
 
                 {checkCanulationSite(
                   formValues[form.siteOfCannulation.name],
                   concepts.RIGHT
                 ) && (
-                  <>
-                    <Typography my={2} variant="h6">
-                      Right
-                    </Typography>
-                    <SearchComboBox
-                      name={form.diagramCannulationSite.name}
-                      label={form.diagramCannulationSite.label}
-                      options={[
-                        ...diagramSitesOfCannulation,
-                        ...(checkCanulationSite(
-                          formValues[form.catheterInfo.name],
-                          concepts.CENTRAL_LINE
-                        )
-                          ? [
-                              { id: concepts.FEMORAL, label: "Femoral" },
-                              { id: concepts.SUBCLAVIAN, label: "Subclavian" },
-                              {
-                                id: concepts.INTERNAL_JUGULAR,
-                                label: "Internal Jugular",
-                              },
-                            ]
-                          : []),
-                      ]}
-                    />
-                  </>
-                )}
+                    <>
+                      <Typography my={2} variant="h6">
+                        Right
+                      </Typography>
+                      <SearchComboBox
+                        name={form.diagramCannulationSite.name}
+                        label={form.diagramCannulationSite.label}
+                        options={diagramSitesOfCannulation}
+                      />
+                    </>
+                  )}
 
                 <br />
               </>
