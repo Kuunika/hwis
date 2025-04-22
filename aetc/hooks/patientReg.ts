@@ -19,6 +19,7 @@ import {
   initialRegistration,
   mergePatients,
   potentialDuplicates,
+  updateDeathReport,
   updatePatient,
 } from "@/services/patient";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -71,12 +72,12 @@ export const registerPatient = () => {
       patientData.identificationNumber == ""
         ? []
         : [
-            {
-              identifier: patientData.identificationNumber,
-              identifierType: nationalIdIdentifierType,
-              preferred: true,
-            },
-          ];
+          {
+            identifier: patientData.identificationNumber,
+            identifierType: nationalIdIdentifierType,
+            preferred: true,
+          },
+        ];
 
     const mappedPatient = {
       identifiers,
@@ -394,5 +395,17 @@ export const getAllDeathReports = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     refetchOnReconnect: false,
+  });
+};
+
+export const useUpdateDeathReport = () => {
+  const updateData = (params: { id: string | number; data: any }) => {
+    return updateDeathReport(params.id, params.data).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: updateData,
   });
 };
