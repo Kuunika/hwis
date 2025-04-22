@@ -12,7 +12,6 @@ export const BroughtInDeadList = () => {
     { field: "first_name", headerName: "First name", flex: 1 },
     { field: "surname", headerName: "Surname", flex: 1 },
     { field: "date_of_birth", headerName: "Date Of Birth", flex: 1 },
-    // { field: "surname", headerName: "Surname", flex: 1 },
     { field: "age", headerName: "Age", flex: 1 },
     { field: "national_id", headerName: "National ID", flex: 1 },
     // { field: "religion", headerName: "Religion", flex: 1 },
