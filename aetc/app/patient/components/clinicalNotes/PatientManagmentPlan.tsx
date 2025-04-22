@@ -127,7 +127,7 @@ export const usePatientManagementPlan = (pData: any) => {
     }
 
     // === 3. Prescription Encounter ===
-
+    
     const prescriptionEncounter = pData.find(
       (d: any) => d.encounter_type.uuid === encounters.PRESCRIPTIONS
     );
@@ -135,11 +135,11 @@ export const usePatientManagementPlan = (pData: any) => {
     console.log("Tione zamakhwala", prescriptionEncounter);
     if (prescriptionEncounter?.obs) {
       const formattedDate = new Date(prescriptionEncounter.encounter_datetime).toLocaleString();
-      const createdBy = prescriptionEncounter.created_by;
+      const createdBy = prescriptionEncounter.created_by || "Unknown";
     
-      // Process each medication observation
-      const medicationDetails = prescriptionEncounter.obs.map((med: any) => {
-        // Find children by their concept names instead of hardcoded IDs
+     
+      const medicationLines = prescriptionEncounter.obs.map((med: any) => {
+       
         const formulation = med.children?.find((c: any) => 
           c.names?.some((n: any) => n.name?.toLowerCase().includes('formulation')))?.value;
         
@@ -160,30 +160,22 @@ export const usePatientManagementPlan = (pData: any) => {
         const durationUnit = med.children?.find((c: any) => 
           c.names?.some((n: any) => n.name?.toLowerCase().includes('duration unit')))?.value;
     
-        return {
-          name: med.value,
-          formulation,
-          dose: doseValue && doseUnit ? `${doseValue} ${doseUnit}` : null,
-          frequency,
-          duration: durationValue && durationUnit ? `${durationValue} ${durationUnit}` : null
-        };
+      
+        const parts = [];
+        parts.push(med.value);
+        if (formulation) parts.push(`(${formulation})`);
+        if (doseValue && doseUnit) parts.push(`${doseValue}${doseUnit}`);
+        if (frequency) parts.push(frequency);
+        if (durationValue && durationUnit) parts.push(`for ${durationValue}${durationUnit}`);
+    
+        return parts.join(' ');
       });
     
       let messages = [
-        `Prescriptions recorded on ${formattedDate}:\n`
+        `Prescriptions recorded on ${formattedDate}:\n`,
+        `The Prescriptions are: ${medicationLines.join(", ")}`,
+        `\n\nCreated by: ${createdBy}`
       ];
-    
-      // Add each medication's details
-      medicationDetails.forEach((med:any, index:any) => {
-        messages.push(`• ${med.name}${med.formulation ? ` (${med.formulation})` : ''}`);
-        if (med.dose) messages.push(`  - Dose: ${med.dose}`);
-        if (med.frequency) messages.push(`  - Frequency: ${med.frequency}`);
-        if (med.duration) messages.push(`  - Duration: ${med.duration}`);
-        messages.push(''); // Add empty line between medications
-      });
-    
-      // Add created by at the bottom
-      messages.push(`\n\nCreated by: ${createdBy}`);
     
       allMessages.push(messages.join("\n"));
     }
