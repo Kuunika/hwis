@@ -94,7 +94,7 @@ const form = {
     label: "Specify",
   },
   auscultations: {
-    name: concepts.SPECIFY,
+    name: concepts.AUSCULTATION,
     label: "Auscultations",
   },
   other: {
@@ -190,6 +190,10 @@ const form = {
     name: concepts.GAIT,
     label: "Gait",
   },
+  auscultationLung: {
+    name: concepts.AUSCULTATION_LUNG,
+    label: "Auscultation",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -264,6 +268,8 @@ const schema = Yup.object().shape({
   [form.sensation.name]: Yup.string().label(form.sensation.label),
   [form.coordination.name]: Yup.string().label(form.coordination.label),
   [form.gait.name]: Yup.string().label(form.gait.label),
+  [form.auscultations.name]: Yup.string().label(form.auscultations.label),
+  [form.auscultationLung.name]: Yup.string().label(form.auscultationLung.label),
 });
 const initialValues = getInitialValues(form);
 
@@ -335,6 +341,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
       initialValues={initialValues}
       validationSchema={schema}
       onSubmit={() => {}}
+      submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="General">
@@ -482,6 +489,15 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
             id={form.specify.name}
           />
         )}
+
+        <TextInputField
+          rows={5}
+          multiline
+          sx={{ width: "100%" }}
+          name={form.auscultations.name}
+          id={form.auscultations.name}
+          label={form.auscultations.label}
+        />
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Lungs">
         {gender == "Male" && (
@@ -511,9 +527,9 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
         <TextInputField
           multiline
           rows={5}
-          name={form.auscultations.name}
-          label={form.auscultations.label}
-          id={form.auscultations.name}
+          name={form.auscultationLung.name}
+          label={form.auscultationLung.label}
+          id={form.auscultationLung.name}
           sx={{ width: "100%" }}
         />
       </FormFieldContainerLayout>

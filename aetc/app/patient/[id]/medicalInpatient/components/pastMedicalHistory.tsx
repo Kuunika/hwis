@@ -11,6 +11,7 @@ import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { getFacilities } from "@/hooks";
+import { getAllRegimenNames } from "@/hooks/drugs";
 import { useAllergyFormat } from "@/hooks/useAllergyFormat";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { useState } from "react";
@@ -139,12 +140,14 @@ export const PastMedicalHistory = ({ onSubmit }: { onSubmit: () => void }) => {
   const [formValues, setFormValues] = useState<any>({});
   const { medicationOptions } = useFetchMedications();
   const { allergyOptions } = useAllergyFormat();
+  const { data: regimenNames } = getAllRegimenNames();
 
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={() => {}}
+      submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
       <RadioGroupInput
@@ -161,13 +164,22 @@ export const PastMedicalHistory = ({ onSubmit }: { onSubmit: () => void }) => {
             label={form.arvStatus.label}
             row
           />
+          <br />
           {formValues[form.arvStatus.name] == concepts.YES && (
             <>
               <SearchComboBox
                 name={form.drugList.name}
                 label={form.drugList.label}
-                options={medicationOptions}
+                options={
+                  regimenNames
+                    ? regimenNames.map((name: any) => ({
+                        id: name,
+                        label: name,
+                      }))
+                    : []
+                }
               />
+              <br />
               <TextInputField
                 multiline
                 rows={4}

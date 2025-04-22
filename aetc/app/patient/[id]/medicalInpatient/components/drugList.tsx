@@ -33,6 +33,7 @@ export const DrugList = ({ onSubmit }: { onSubmit: () => void }) => {
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={handleSubmit}
+      submitButtonText="next"
     >
       <SearchComboBox
         name={form.drug.name}

@@ -37,6 +37,7 @@ export const PresentingComplaints = ({
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={handleSubmit}
+      submitButtonText="next"
     >
       <SearchComboBox
         name={form.complaints.name}
