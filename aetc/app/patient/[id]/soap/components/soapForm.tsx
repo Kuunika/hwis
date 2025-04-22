@@ -21,7 +21,7 @@ import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatient } from "@/services/patient";
 import { Box, Button, Typography, Paper, TextField } from "@mui/material";
 import * as Yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ErrorMessage,
   FieldArray,
@@ -220,7 +220,7 @@ const supportiveCareConfig = [
   { value: concepts.COUNSELLING, label: "Counselling" },
   { value: concepts.FEEDING, label: "Feeding" },
   { value: concepts.OXYGENATION, label: "Oxygenation" },
-  { value: concepts.TAPID_SPONGING, label: "Tapid Sponging" },
+  { value: concepts.TEPID_SPONGING, label: "Tepid Sponging" },
   {
     value: concepts.ELECTROCARDIOGRAPHY_MONITORING,
     label: "Electrocardiography (ECG) Monitoring",
@@ -344,63 +344,23 @@ export const SoapForm = () => {
     isSuccess,
   } = fetchConceptAndCreateEncounter();
   const [formValues, setFormValues] = useState<any>({ medications: [] });
-  const medicationOptions = [
-    {
-      id: "b8ba947e-8d80-11d8-abbb-0024217bb78e",
-      label: "Paracetamol",
-    },
-    {
-      id: "b8caf940-8d80-11d8-abbb-0024217bb78e",
-      label: "Ibuprofen",
-    },
-    {
-      id: "3a6cc329-12b9-4257-b80c-6de1fce95550",
-      label: "Diclofenac sodium 75mg/ml, 3ml",
-    },
-    {
-      id: "ad5768ae-7b63-425b-a9b6-f99b9a19a230",
-      label: "Diclofenac sodium Slow Release",
-    },
-    {
-      id: "b90fe5a0-8d80-11d8-abbb-0024217bb78e",
-      label: "Diclofenac sodium",
-    },
-    {
-      id: "b8c9affe-8d80-11d8-abbb-0024217bb78e",
-      label: "Salbutamol",
-    },
-    {
-      id: "a74b6c1a-6f4e-4ec3-b274-7f34f574843f",
-      label: "Salbutamol sulphate",
-    },
-    {
-      id: "f513a483-5afb-49bf-b29b-702ce3b9a202",
-      label: "Salbutamol solution for nebulising 5mg/ml",
-    },
-    {
-      id: "7dc1b649-eaac-4a52-aca6-68027838a553",
-      label: "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses",
-    },
-    {
-      id: "b900b4cc-8d80-11d8-abbb-0024217bb78e",
-      label: "Oxytocin",
-    },
-    {
-      id: "684ac072-0186-4b9e-8232-a7aeadf7d8b5",
-      label: "Dextrose 50%,",
-    },
-    {
-      id: "b8ba92d0-8d80-11d8-abbb-0024217bb78e",
-      label: "Aspirin",
-    },
-    {
-      id: "b8c86e5a-8d80-11d8-abbb-0024217bb78e",
-      label: "Prednisolone",
-    },
-    {
-      id: "b8c3963c-8d80-11d8-abbb-0024217bb78e",
-      label: "Diazepam",
-    },
+  const [medicationData, setMedicationOptionsValues] = useState<any>([]);
+  const { medicationOptions, loadingDrugs } = useFetchMedications();
+  const filterMedicationOptions = [
+    "Paracetamol",
+    "Ibuprofen",
+    "Diclofenac sodium 75mg/ml, 3ml",
+    "Diclofenac sodium Slow Release",
+    "Diclofenac sodium",
+    "Salbutamol",
+    "Salbutamol sulphate",
+    "Salbutamol solution for nebulising 5mg/ml",
+    "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses",
+    "Oxytocin",
+    "Dextrose 50%,",
+    "Aspirin",
+    "Prednisolone",
+    "Diazepam",
   ];
   const [showTextFields, setShowTextFields] = useState({
     otherProcedure: false,
@@ -411,9 +371,13 @@ export const SoapForm = () => {
     encounters.NURSING_CARE_NOTES,
     () => navigateBack()
   );
-
+  useEffect(() => {
+    const filteredOptions = medicationOptions.filter((med: any) =>
+      filterMedicationOptions.includes(med.label)
+    );
+    setMedicationOptionsValues(filteredOptions);
+  }, [medicationOptions]);
   const handleSubmitForm = (values: any) => {
-    console.log("🚀 ~ handleSubmitForm ~ values:", values);
     submitMedications();
     submitProcedureSupportiveCares(values);
     handleSubmit(getObservations(values, getDateTime()));
@@ -578,7 +542,7 @@ export const SoapForm = () => {
   };
   return (
     <>
-      <ContainerLoaderOverlay loading={addingDrugs}>
+      <ContainerLoaderOverlay loading={addingDrugs || loadingDrugs}>
         <FormikInit
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -808,7 +772,7 @@ export const SoapForm = () => {
                             <SearchComboBox
                               name={`medications[${index}].name`}
                               label="Medication Name"
-                              options={medicationOptions}
+                              options={medicationData}
                               getValue={(value) =>
                                 setFieldValue(
                                   `medications[${index}].name`,

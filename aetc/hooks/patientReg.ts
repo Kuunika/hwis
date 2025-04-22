@@ -7,6 +7,7 @@ import {
   findByDemographics,
   findByNPID,
   findByNameAndGender,
+  searchByNameAndGender,
   getDailyVisits,
   getDailyVisitsPaginated,
   getDeathReports,
@@ -126,7 +127,7 @@ export const getPatientsWaitingForPrescreening = () => {
     queryKey: ["screening"],
     queryFn: getall,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -139,7 +140,7 @@ export const getPatientsWaitingForRegistrations = () => {
     queryKey: ["registration"],
     queryFn: getall,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -152,7 +153,7 @@ export const getPatientsWaitingForTriage = () => {
     queryKey: ["triage"],
     queryFn: getall,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -164,7 +165,7 @@ export const getPatientsWaitingForAssessment = () => {
     queryKey: ["assessments"],
     queryFn: getall,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
     // enabled: true,
   });
@@ -189,7 +190,7 @@ export const getPatientsWaitingForAssessmentPaginated = (
     ],
     queryFn: getall,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -213,7 +214,7 @@ export const getPatientsWaitingForDispositionPaginated = (
     ],
     queryFn: getall,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -237,7 +238,7 @@ export const getOnePatient = (patientId: string) => {
     queryFn: getOne,
     enabled: !!patientId,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -253,6 +254,24 @@ export const searchDDEPatient = (
 
   return useQuery({
     queryKey: ["find_by_gender", firstName, lastName, gender],
+    queryFn: findAll,
+    enabled: false,
+    retry: false,
+  });
+};
+
+export const searchLocalPatient = (
+  firstName: string,
+  lastName: string,
+  gender: string
+) => {
+  const findAll = () =>
+    searchByNameAndGender(firstName, lastName, gender).then(
+      (response) => response.data
+    );
+
+  return useQuery({
+    queryKey: ["find_by_name", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
     retry: false,
@@ -337,7 +356,7 @@ export const getPatientVisitTypes = (id: string) => {
     queryFn: getAll,
     enabled: !!id,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -350,7 +369,7 @@ export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
     queryFn: getAll,
     enabled: !!id,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };
@@ -373,7 +392,7 @@ export const getAllDeathReports = () => {
     queryKey: ["death-reports"],
     queryFn: getAll,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, 
+    refetchOnMount: true,
     refetchOnReconnect: false,
   });
 };

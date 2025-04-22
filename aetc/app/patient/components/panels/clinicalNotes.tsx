@@ -402,7 +402,7 @@ const AddClinicalNotes = ({
               },
             }}
           >
-            Soapier Notes
+            SOAPIER Notes
           </Button>
           <Button
             onClick={() => setFilterSoapierState(false)}

@@ -55,6 +55,15 @@ export const findByNameAndGender = (
   getAll<DDESearch>(
     `/dde/patients/find_by_name_and_gender?given_name=${firstName}&family_name=${lastName}&gender=${gender}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`
   );
+
+export const searchByNameAndGender = (
+  firstName?: string,
+  lastName?: string,
+  gender?: string
+) =>
+  getAll<DDESearch>(
+    `/search/patients?given_name=${firstName}&family_name=${lastName}&gender=${gender}`
+  );
 export const findByNPID = (npid: string) =>
   getAll<DDESearch>(
     `/dde/patients/find_by_npid?npid=${npid}&visit_type_id=${process.env.NEXT_PUBLIC_DDEPROGRAMID}`
@@ -98,7 +107,7 @@ export const checkPatientIfOnAssessment = (id: string) => {
   return get(`/visits/${id}/eligible?category=assessment`);
 };
 
+export const addDeathReport = (data: any) =>
+  create<DeathReport>(data, "/death_reports");
 
-export const addDeathReport = (data:any)=> create<DeathReport>(data, "/death_reports");
-
-export const getDeathReports = ()=> get<DeathReport[]>("/death_reports");
+export const getDeathReports = () => get<DeathReport[]>("/death_reports");
