@@ -84,6 +84,12 @@ export const ClinicalNotes = () => {
   const { notes: previousAdmissionsNotes } = useComponentNotes(
     encounters.PATIENT_ADMISSIONS
   );
+    const { notes: gyneacologyNotes } = useComponentNotes(
+        encounters.OBSTETRIC_HISTORY
+    );
+    const { notes: lastMealNotes } = useComponentNotes(
+        encounters.SUMMARY_ASSESSMENT
+    );
   const { notes: reviewOfSystemsNotes } = useComponentNotes(
     encounters.REVIEW_OF_SYSTEMS
   );
@@ -138,6 +144,8 @@ export const ClinicalNotes = () => {
           ...existingConditionsNotes,
           ...surgicalNotes,
           ...previousAdmissionsNotes,
+            ...gyneacologyNotes,
+            ...lastMealNotes,
           ...reviewOfSystemsNotes,
           ...familyHistoryNotes,
           ...generalInfoNotes,
@@ -166,7 +174,9 @@ export const ClinicalNotes = () => {
     existingConditionsNotes,
     surgicalNotes,
     previousAdmissionsNotes,
-    reviewOfSystemsNotes,
+      gyneacologyNotes,
+      lastMealNotes,
+      reviewOfSystemsNotes,
     familyHistoryNotes,
     generalInfoNotes,
     headNeckNotes,
@@ -402,7 +412,7 @@ const AddClinicalNotes = ({
               },
             }}
           >
-            Soapier Notes
+            SOAPIER Notes
           </Button>
           <Button
             onClick={() => setFilterSoapierState(false)}

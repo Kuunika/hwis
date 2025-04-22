@@ -7,6 +7,7 @@ import {
   findByDemographics,
   findByNPID,
   findByNameAndGender,
+  searchByNameAndGender,
   getDailyVisits,
   getDailyVisitsPaginated,
   getDeathReports,
@@ -254,6 +255,24 @@ export const searchDDEPatient = (
 
   return useQuery({
     queryKey: ["find_by_gender", firstName, lastName, gender],
+    queryFn: findAll,
+    enabled: false,
+    retry: false,
+  });
+};
+
+export const searchLocalPatient = (
+  firstName: string,
+  lastName: string,
+  gender: string
+) => {
+  const findAll = () =>
+    searchByNameAndGender(firstName, lastName, gender).then(
+      (response) => response.data
+    );
+
+  return useQuery({
+    queryKey: ["find_by_name", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
     retry: false,
