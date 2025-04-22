@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import {
   FieldsContainer,
   FormDatePicker,
+  FormDatePickerToday,
   FormTimePicker,
+  FormTimePickerNow,
   FormValuesListener,
   FormikInit,
   MainTypography,
@@ -259,7 +261,7 @@ export const BroughtDeadForm = () => {
             sx={{ width: "100%" }}
           />
         </FieldsContainer>
-        <FormDatePicker
+        <FormDatePickerToday
           name={form.dateOfBirth.name}
           label={form.dateOfBirth.label}
           width="100%"
@@ -299,7 +301,7 @@ export const BroughtDeadForm = () => {
           sx={{ width: "100%" }}
         />
 
-        <FormDatePicker
+        <FormDatePickerToday
           name={form.dateOfDeath.name}
           label={form.dateOfDeath.label}
           width="100%"
@@ -307,12 +309,12 @@ export const BroughtDeadForm = () => {
         />
 
         <FieldsContainer sx={{ mb: 2 }}>
-          <FormTimePicker
+          <FormTimePickerNow
             name={form.timeOfDeath.name}
             label={form.timeOfDeath.label}
           />
 
-          <FormTimePicker
+          <FormTimePickerNow
             name={form.timeOfArrival.name}
             label={form.timeOfArrival.label}
           />

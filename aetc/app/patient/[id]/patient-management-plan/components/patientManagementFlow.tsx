@@ -27,6 +27,7 @@ export const PatientManagementFlow = () => {
             steps={steps}
             active={activeStep}
             setActive={setActiveStep}
+            onBack={() => navigateBackToProfile()}
         >
             {/* Non-Pharmacological Form */}
             <>

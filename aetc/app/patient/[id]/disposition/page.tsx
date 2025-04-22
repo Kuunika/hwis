@@ -85,11 +85,12 @@ function DispositionFeature() {
     return (
         <>
             <PatientInfoTab />
+            <BackButton />
 
             <MainGrid container spacing={2} mt={"2ch"} sx={{ ml: 16 }}>
                 {/* Main Content */}
                 <MainGrid item xs={12} lg={9} >
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    {/* <div style={{ display: "flex", alignItems: "center" }}>
                         <MainTypography
                             sx={{ width: "24px", height: "24px", fontSize: "20px", fontWeight: 400 }}
                         >
@@ -101,7 +102,7 @@ function DispositionFeature() {
                         >
                             Back
                         </MainTypography>
-                    </div>
+                    </div> */}
                     <MainPaper elevation={0} sx={{ p: "1ch" }}>
                         <h2>Disposition</h2>
                         {/* Dropdown */}

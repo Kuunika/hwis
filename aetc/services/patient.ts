@@ -99,6 +99,12 @@ export const checkPatientIfOnAssessment = (id: string) => {
 };
 
 
-export const addDeathReport = (data:any)=> create<DeathReport>(data, "/death_reports");
+export const addDeathReport = (data: any) => create<DeathReport>(data, "/death_reports");
 
-export const getDeathReports = ()=> get<DeathReport[]>("/death_reports");
+export const getDeathReports = () => get<DeathReport[]>("/death_reports");
+
+export const updateDeathReport = (id: string | number, data: any) => 
+  edit<DeathReport>(id, data, "/death_reports");
+
+// export const updateDeathReport = (id: string, data: any) =>
+//   edit<DeathReport>(id, data, "/death_reports");
