@@ -11,6 +11,7 @@ export default function DeathList() {
       leftGridSize={1}
       middleGridSize={10}
       title="Brought in Dead"
+      showBackButton={false}
     >
       <MainButton
         title={"create"}
