@@ -1574,9 +1574,10 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
 
     let currentImageName = "";
     let currentAbnormalityType = "";
+    let lastObservationTime: Date | null = null;
 
     const isBasicImageName = (name: string) => {
-        const basicNames = ["Front", "Back", "Left", "Right"];
+        const basicNames = ["left lateral", "right lateral", "Left", "Right", "Front", "Back", "anterior", "posterior"];
         return basicNames.includes(name);
     };
 
@@ -1586,23 +1587,26 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
         return abnormalities[abnormalities.length - 1];
     };
 
+    const shouldStartNewAssessment = (observationTime: Date): boolean => {
+        if (!lastObservationTime) return false;
+        const timeDiff = (observationTime.getTime() - lastObservationTime.getTime()) / (1000 * 60); // in minutes
+        return timeDiff > 3; // Start new assessment if more than 3 minutes apart
+    };
+
     const processObservation = (ob: any) => {
         const name = ob.conceptName || ob.name || (ob.names && ob.names[0]?.name);
         const valueText = ob.value || ob.value_text;
         const creator = ob.creator || ob.created_by || "Unknown";
         const time = ob.obs_datetime || ob.obsDateTime || new Date().toISOString();
         const children = ob.children || [];
-        console.log("Wisdom",name, valueText, children)
+        const observationTime = new Date(time);
 
         if (!name) return;
 
-        if (name === "Image Part Name") {
-            if (valueText === "Front") {
-                if (currentAssessment.parts.length > 0 || currentAssessment.abnormalities.size > 0) {
-                    assessments.push(formatHeadAndNeckAssessmentToParagraph(currentAssessment));
-                }
-
-                // Start new assessment
+        // Check if we should start a new assessment based on time difference
+        if (lastObservationTime && shouldStartNewAssessment(observationTime)) {
+            if (currentAssessment.parts.length > 0 || currentAssessment.abnormalities.size > 0) {
+                assessments.push(formatHeadAndNeckAssessmentToParagraph(currentAssessment));
                 currentAssessment = {
                     parts: [],
                     abnormalities: new Map(),
@@ -1610,7 +1614,10 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
                     creator: creator
                 };
             }
+        }
+        lastObservationTime = observationTime;
 
+        if (name === "Image Part Name") {
             if (!isBasicImageName(valueText)) {
                 currentImageName = valueText;
                 if (!currentAssessment.parts.includes(valueText)) {
@@ -1663,7 +1670,14 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
         children.forEach((child: any) => processObservation(child));
     };
 
-    obs.forEach(processObservation);
+    // Sort observations by datetime before processing
+    const sortedObs = [...obs].sort((a, b) => {
+        const timeA = new Date(a.obs_datetime || a.obsDateTime || new Date().toISOString()).getTime();
+        const timeB = new Date(b.obs_datetime || b.obsDateTime || new Date().toISOString()).getTime();
+        return timeA - timeB;
+    });
+
+    sortedObs.forEach(processObservation);
 
     // Add the last assessment
     if (currentAssessment.parts.length > 0 || currentAssessment.abnormalities.size > 0) {
@@ -1672,28 +1686,33 @@ const formatHeadAndNeckNotes = (obs: any[]): ComponentNote[] => {
 
     return assessments.sort((a, b) => b.rawTime - a.rawTime);
 };
+
 const formatHeadAndNeckAssessmentToParagraph = (assessment: any): ComponentNote => {
     let paragraphParts: string[] = [];
 
     if (assessment.parts.length > 0) {
         paragraphParts.push(`Assessment of ${assessment.parts.join(", ")} was performed.`);
     }
+    if (assessment.abnormalities.has("General")) {
+        assessment.abnormalities.get("General").forEach((abnormality: any) => {
+            paragraphParts.push(`Head and neck assessment status: ${abnormality.details.note}.`);
+        });
+    }
 
-    assessment.abnormalities.forEach((abnormalities: any, part: any) => {
-        if (part === "General") {
+    const partDescriptions: Map<string, string[]> = new Map();
+    assessment.abnormalities.forEach((abnormalities: any, part: string) => {
+        if (part !== "General") {
+            const descriptions: string[] = [];
+
             abnormalities.forEach((abnormality: any) => {
-                paragraphParts.push(`Head and neck assessment status: ${abnormality.details.note}.`);
-            });
-        } else {
-            abnormalities.forEach((abnormality: any) => {
-                let description = `${part} showed ${abnormality.type}`;
+                let description = abnormality.type;
 
                 switch (abnormality.type) {
                     case "Laceration":
-                        if (abnormality.details.length) description += ` (Length: ${abnormality.details.length}`;
+                        description += ` (Length: ${abnormality.details.length || 'unknown'}`;
                         if (abnormality.details.depth) description += `, Depth: ${abnormality.details.depth}`;
                         if (abnormality.details.other) description += `, Description: ${abnormality.details.other}`;
-                        if (abnormality.details.length) description += ")";
+                        description += ")";
                         break;
                     case "Bruise":
                         if (abnormality.details.description) description += ` (${abnormality.details.description})`;
@@ -1703,9 +1722,18 @@ const formatHeadAndNeckAssessmentToParagraph = (assessment: any): ComponentNote 
                         break;
                 }
 
-                paragraphParts.push(description + ".");
+                descriptions.push(description);
             });
+
+            if (descriptions.length > 0) {
+                partDescriptions.set(part, descriptions);
+            }
         }
+    });
+
+    partDescriptions.forEach((descriptions, part) => {
+        const joinedDescriptions = descriptions.join(" and ");
+        paragraphParts.push(`${part} showed ${joinedDescriptions}.`);
     });
 
     return {
