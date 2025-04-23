@@ -1414,6 +1414,7 @@ export const concepts = {
   AUSCULTATION:"Auscultation",
   INTRAOSSEOUS:"Intraosseous",
   REVIEW_OF_SYSTEMS_ENT: "Review of systems ENT",
+  CENTRAL_LINE_CANNULATION_SITE: "Central line cannulation site",
 
 };
 

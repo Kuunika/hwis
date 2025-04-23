@@ -42,11 +42,17 @@ export const PatientTableList = ({isLoading, columns,rows,formatForMobileView}:p
 
     export const PatientTableListServer = ({loading,searchText,setPaginationModel, setSearchString,paginationModel, columns,data,formatForMobileView}:PatientTableServerProps)=>{
       const { isMediumOrSmall } = checkScreenSize();
+
+
+  
   
       return isMediumOrSmall ? (
         <PatientCardListServer totalPages={data?.total_pages??0} searchText={searchText} setSearchString={setSearchString} rowCount={10} setPaginationModel={setPaginationModel} pagination={paginationModel} loading={loading} dataList={formatForMobileView? formatForMobileView: []} />
         ) : (
-          <ServerPaginationTable searchText={searchText} setSearchString={setSearchString} rowCount={data?.data? (data?.per_page * data?.total_pages) : 0} setPaginationModel={setPaginationModel} paginationModel={paginationModel} loading={loading} rows={data?.data? data?.data?.map(p=>({id:p.uuid,...p})): []} columns={columns}  />
+          <ServerPaginationTable searchText={searchText} setSearchString={setSearchString} rowCount={data?.data ? (data?.per_page * data?.total_pages) : 0} setPaginationModel={(model)=>{
+            console.log({model});
+            setPaginationModel(model)}
+          } paginationModel={paginationModel} loading={loading} rows={data?.data? data?.data?.map(p=>({id:p.uuid,...p})): []} columns={columns}  />
         );
       };
   

@@ -3,43 +3,75 @@
 import { useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { PastMedicalHistory, PresentingComplaints } from ".";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useSubmitEncounter } from "@/hooks";
 import { DrugList } from "./drugList";
 import { ReviewOfSystems } from "./reviewOfSystems";
 import { DifferentialDiagnosis } from "./differentialDiagnosis";
+import { encounters } from "@/constants";
 
 
 export const MedicalInPatientFlow = () => {
-  const [activeStep, setActiveStep] = useState<number>(0);
   const { navigateBack } = useNavigation();
+  const { handleSubmit } = useSubmitEncounter(encounters.MEDICAL_IN_PATIENT, () => {
+    // navigateBack()
+  })
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [obs, setObs] = useState<any[]>([])
 
   const steps = [
     {
       id: 1,
       label: "Presenting Complaints",
-    
+
     },
     {
       id: 11,
       label: "Drug History",
-     
+
     },
     {
       id: 2,
       label: "Past medical history",
- 
+
     },
     {
       id: 23,
       label: "Review of Systems",
-   
+
     },
     {
       id: 21,
       label: "Differential Diagnosis",
-   
+
     },
   ];
+
+
+  const handlePresentingComplaints = (values: any) => {
+    setObs(values)
+    setActiveStep(1)
+  }
+  const handleDrug = (values: any) => {
+    setObs((obs) => ([...obs, ...values]))
+    setActiveStep(2)
+  }
+  const handlePastMedical = (values: any) => {
+    setObs((obs) => ([...obs, ...values]))
+    setActiveStep(3)
+  }
+  const handleReview = (values: any) => {
+    setObs((obs) => ([...obs, ...values]))
+    setActiveStep(4);
+  }
+
+  const handleDifferentialSubmit = (values: any) => {
+
+    handleSubmit([...obs, ...values])
+
+
+  }
+
+
 
   return (
     <>
@@ -50,11 +82,11 @@ export const MedicalInPatientFlow = () => {
         active={activeStep}
         onBack={() => navigateBack()}
       >
-        <PresentingComplaints onSubmit={() => setActiveStep(1)} />
-        <DrugList onSubmit={() => setActiveStep(2)} />
-        <PastMedicalHistory onSubmit={() => setActiveStep(3)} />
-        <ReviewOfSystems onSubmit={() => setActiveStep(4)} />
-        <DifferentialDiagnosis onSubmit={()=>navigateBack()} />
+        <PresentingComplaints onSubmit={handlePresentingComplaints} />
+        <DrugList onSubmit={handleDrug} />
+        <PastMedicalHistory onSubmit={handlePastMedical} />
+        <ReviewOfSystems onSubmit={handleReview} />
+        <DifferentialDiagnosis onSubmit={handleDifferentialSubmit} />
       </NewStepperContainer>
     </>
   );
