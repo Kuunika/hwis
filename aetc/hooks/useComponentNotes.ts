@@ -1750,8 +1750,6 @@ const formatChestAssessmentNotes = (obs: any[]): ComponentNote[] => {
         const creator = ob.created_by || "Unknown";
         const time = ob.obs_datetime || new Date().toISOString();
 
-        console.log("Zutibwa", name, valueText)
-
         if (name === "Respiratory rate") {
             if (currentParagraph.length > 0) {
                 if (abnormalZones.size > 0) {
@@ -1852,7 +1850,6 @@ const formatChestAssessmentNotes = (obs: any[]): ComponentNote[] => {
             }
         }
         else if (name === "Image Part Name") {
-            console.log("Ziti", name, valueText);
             const validZones = [
                 "Right Upper Zone", "Left Upper Zone",
                 "Right Middle Zone", "Left Middle Zone",
@@ -1920,7 +1917,7 @@ const formatAbdomenPelvisNotes = (obs: any[]): ComponentNote[] => {
         .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
         .map(group => {
             const assessment: {
-                findings: Record<string, string>,
+                findings: Record<string, string[]>,
                 additionalNotes: string[],
                 status: string
             } = {
@@ -1929,91 +1926,85 @@ const formatAbdomenPelvisNotes = (obs: any[]): ComponentNote[] => {
                 status: 'normal'
             };
 
+            const addFinding = (name: string, value: string) => {
+                if (!assessment.findings[name]) {
+                    assessment.findings[name] = [];
+                }
+                assessment.findings[name].push(value);
+            };
+
             group.observations.forEach(ob => {
                 const name = ob.names?.[0]?.name;
                 const valueText = ob.value;
 
                 switch (name) {
                     case "Abdominal distention":
-                        assessment.findings[name] = valueText === "Yes"
-                            ? "The patient has abdominal distention."
-                            : "The patient has no abdominal distention.";
-                        break;
-
-                    case "Abnormalities present":
-                        assessment.findings[name] = valueText === "Yes"
-                            ? "Abnormality present."
-                            : "Abnormality not present.";
+                        addFinding(name, valueText === "Yes"
+                            ? "Abdominal distention present."
+                            : "No abdominal distention.");
                         break;
 
                     case "Shifting dullness":
-                        assessment.findings[name] = valueText === "Yes"
+                        addFinding(name, valueText === "Yes"
                             ? "Shifting dullness present."
-                            : "Shifting dullness not present.";
+                            : "Shifting dullness not present.");
                         break;
 
                     case "Fluid thrill":
-                        assessment.findings[name] = valueText === "Yes"
-                            ? "Fluid Thrill available."
-                            : "Fluid Thrill not available.";
-                        break;
-
-                    case "Tenderness":
-                        assessment.findings[name] = valueText === "No"
-                            ? "Tenderness not present."
-                            : "Tenderness present.";
-                        break;
-
-                    case "Bruit":
-                        assessment.findings[name] = valueText === "Yes"
-                            ? "Bruit present."
-                            : "Bruit not present.";
+                        addFinding(name, valueText === "Yes"
+                            ? "Fluid thrill present."
+                            : "Fluid thrill not present.");
                         break;
 
                     case "Bowel sounds":
-                        assessment.findings[name] = `Bowel sounds: ${valueText}.`;
+                        addFinding(name, `Bowel sounds: ${valueText}.`);
                         break;
 
-                    case "General":
-                    case "Prostate":
-                    case "Sphincter tone":
-                        assessment.findings[name] = `${name}: ${valueText}.`;
+                    case "Bruit":
+                        addFinding(name, valueText === "Yes"
+                            ? "Bruit present."
+                            : "Bruit not present.");
                         break;
 
                     case "Mass":
-                        assessment.findings[name] = valueText === "No"
-                            ? "Mass not present."
-                            : "Mass present.";
+                        if (valueText === "Yes") {
+                            const descriptions = ob.children?.filter(
+                                (child: any) => child.names?.[0]?.name === "Description"
+                            ).map((child: any) => child.value) || [];
+
+                            if (descriptions.length > 0) {
+                                addFinding(name, `Mass present (${descriptions.join(', ')}).`);
+                            } else {
+                                addFinding(name, "Mass present.");
+                            }
+                        } else {
+                            addFinding(name, "No mass present.");
+                        }
                         break;
 
+                    case "Tenderness":
+                    case "Abnormalities present":
                     case "Circumcision status":
-                        assessment.findings[name] = valueText === "No"
-                            ? "Patient is not circumcised."
-                            : "Patient is circumcised.";
-                        break;
-
                     case "Laceration":
-                        assessment.findings[name] = valueText === "No"
-                            ? "Ulcerations/lacerations, bite marks not present."
-                            : "Ulcerations/lacerations, bite marks present.";
-                        break;
-
                     case "Hematomas":
-                        assessment.findings[name] = valueText === "No"
-                            ? "Signs of oedema, Hematomas, discolourations not present."
-                            : "Signs of oedema, Hematomas, discolourations present.";
-                        break;
-
                     case "Inflammation":
-                        assessment.findings[name] = valueText === "No"
-                            ? "Signs of inflammation, edema, lesions around periurethral tissue, bleeding not present."
-                            : "Signs of inflammation, edema, lesions around periurethral tissue, bleeding present.";
+                    case "Testicles":
+                        addFinding(name, valueText === "Yes"
+                            ? `${name} present.`
+                            : `No ${name.toLowerCase()}.`);
                         break;
 
-                    case "Testicles":
-                        assessment.findings[name] = valueText === "No"
-                            ? "Both Testicles not present."
-                            : "Both Testicles present.";
+                    case "Sphincter tone":
+                    case "General":
+                    case "Prostate":
+                        addFinding(name, `${name}: ${valueText}.`);
+                        break;
+
+                    case "Pelvic examination":
+                        addFinding(name, `Pelvic examination: ${valueText}.`);
+                        break;
+
+                    case "Description":
                         break;
 
                     case "Additional Notes":
@@ -2021,31 +2012,55 @@ const formatAbdomenPelvisNotes = (obs: any[]): ComponentNote[] => {
                             assessment.additionalNotes.push(valueText);
                         }
                         break;
+
+                    case "Image Part Name":
+                        const description = ob.children?.find(
+                            (child: any) => child.names?.[0]?.name === "Description"
+                        )?.value;
+
+                        if (description) {
+                            addFinding("Imaging Findings", `${valueText}: ${description}.`);
+                        } else {
+                            addFinding("Imaging Findings", `${valueText} noted.`);
+                        }
+                        break;
+
+                    default:
+                        if (name && valueText) {
+                            addFinding(name, `${name}: ${valueText}.`);
+                        }
+                        break;
                 }
             });
 
-            const orderedFindings = [
+            const orderedFindingGroups = [
                 "Abdominal distention",
-                "Abnormalities present",
                 "Shifting dullness",
                 "Fluid thrill",
-                "Tenderness",
-                "Bruit",
                 "Bowel sounds",
+                "Bruit",
+                "Tenderness",
+                "Mass",
                 "General",
                 "Prostate",
-                "Mass",
                 "Sphincter tone",
+                "Pelvic examination",
                 "Circumcision status",
                 "Laceration",
                 "Hematomas",
                 "Inflammation",
-                "Testicles"
+                "Testicles",
+                "Image Part Name",
+                "Additional Notes"
             ];
 
-            const paragraphParts = orderedFindings
-                .filter(finding => assessment.findings[finding])
-                .map(finding => assessment.findings[finding]);
+            const paragraphParts: string[] = [];
+
+            orderedFindingGroups.forEach(group => {
+                if (assessment.findings[group]) {
+                    paragraphParts.push(assessment.findings[group].join(' '));
+                }
+            });
 
             if (assessment.additionalNotes.length > 0) {
                 const cleanNotes = assessment.additionalNotes
