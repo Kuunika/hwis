@@ -154,7 +154,7 @@ export const ClientWaitingForTriage = () => {
          columns={columns}
          data={
           rows?.length
-             ? { data: rows, page: patients?.page ? patients.page-1 : 0, per_page: patients?.per_page, total_pages: patients?.total_pages ?? 0 }
+             ? { data: rows, page: patients?.page ? patients.page-1 : 0, per_page: patients?.per_page ?? 10, total_pages: patients?.total_pages ?? 0 }
              : { data: [], page: 0, per_page: 10, total_pages: 0 }
          }
          searchText={searchText}
