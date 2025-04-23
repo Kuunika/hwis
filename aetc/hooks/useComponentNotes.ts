@@ -5,6 +5,7 @@ import { getActivePatientDetails } from "@/hooks/getActivePatientDetails";
 import {concepts, encounters} from "@/constants";
 import {push} from "micromark-util-chunked";
 import { useVisitDates } from "@/contexts/visitDatesContext";
+import {cosmiconfig} from "cosmiconfig";
 
 export interface ComponentNote {
     paragraph: string;
@@ -1749,6 +1750,8 @@ const formatChestAssessmentNotes = (obs: any[]): ComponentNote[] => {
         const creator = ob.created_by || "Unknown";
         const time = ob.obs_datetime || new Date().toISOString();
 
+        console.log("Zutibwa", name, valueText)
+
         if (name === "Respiratory rate") {
             if (currentParagraph.length > 0) {
                 if (abnormalZones.size > 0) {
@@ -1796,12 +1799,66 @@ const formatChestAssessmentNotes = (obs: any[]): ComponentNote[] => {
         else if (name === "Tactile fremitus") {
             currentParagraph.push(`Tactile fremitus is ${valueText.toLowerCase()}.`);
         }
+        else if (name === "Heart sounds") {
+            currentParagraph.push(`Heart sounds are ${valueText.toLowerCase()}.`);
+        }
+        else if (name === "Localised chest wall abnormality") {
+            if (valueText === "Yes") {
+                const descriptions: string[] = [];
+                const notes: string[] = [];
+
+                ob.children?.forEach((child: any) => {
+                    if (child.names?.[0]?.name === "Image Part Name") {
+                        child.children?.forEach((grandChild: any) => {
+                            if (grandChild.names?.[0]?.name === "Description") {
+                                descriptions.push(grandChild.value);
+                            } else if (grandChild.names?.[0]?.name === "Additional Notes") {
+                                notes.push(grandChild.value);
+                            }
+                        });
+                    }
+                });
+
+                let descText = "";
+                if (descriptions.length > 0) {
+                    descText = ` with ${formatList(descriptions)}`;
+                }
+                if (notes.length > 0) {
+                    descText += ` (${notes.join(", ")})`;
+                }
+
+                currentParagraph.push(`Localised chest wall abnormality present${descText}.`);
+            } else {
+                currentParagraph.push("No localised chest wall abnormality.");
+            }
+        }
+        else if (name === "Global Chest Wall Abnormality") {
+            if (valueText === "Yes") {
+                const abnormalities: string[] = [];
+
+                ob.children?.forEach((child: any) => {
+                    if (child.names?.[0]?.name === "Abnormalities") {
+                        abnormalities.push(child.value);
+                    }
+                });
+
+                if (abnormalities.length > 0) {
+                    currentParagraph.push(`Global chest wall abnormalities: ${formatList(abnormalities)}.`);
+                } else {
+                    currentParagraph.push("Global chest wall abnormality present.");
+                }
+            } else {
+                currentParagraph.push("No global chest wall abnormality.");
+            }
+        }
         else if (name === "Image Part Name") {
+            console.log("Ziti", name, valueText);
             const validZones = [
                 "Right Upper Zone", "Left Upper Zone",
                 "Right Middle Zone", "Left Middle Zone",
                 "Right Lower Zone", "Left Lower Zone"
             ];
+
 
             if (validZones.includes(valueText)) {
                 const notes = obs.find(o =>
