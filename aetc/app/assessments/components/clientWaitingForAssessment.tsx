@@ -2,7 +2,6 @@
 import { calculateAge } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
-import { getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
 import * as React from "react";
 
 import Menu from "@mui/material/Menu";
@@ -21,36 +20,27 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
 } from "@/components/barcodePrinterDialogs";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 import { HiPrinter } from "react-icons/hi2";
+import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 
 export const ClientWaitingForAssessment = () => {
   const [cpr, setCpr] = useState(false);
   const [patientId, setPatientId] = useState("");
   const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
-  const [paginationModel, setPaginationModel] = useState({
-    page: 1,
-    pageSize: 10,
-  });
   const { navigateTo } = useNavigation();
-
-  const [searchText, setSearchText] = useState("");
-  const { data, refetch, isPending } = getPatientsWaitingForAssessmentPaginated(
-    paginationModel,
-    searchText
-  );
-
+  const {refetch, paginationModel, data, searchText, setSearchText, setPaginationModel, isPending }=fetchPatientsTablePaginate('assessment')
   const [patientsData, setPatientsData] = useState<any>([]);
 
-  useEffect(() => {
-    refetch();
-  }, [paginationModel]);
+
+
+
 
   useEffect(() => {
     if (data?.data) {
@@ -220,7 +210,12 @@ export const ClientWaitingForAssessment = () => {
         columns={columns}
         data={
           patientsData?.length
-            ? { data: patientsData, page: 1, per_page: 10, total_pages: 0 }
+            ? { 
+                data: patientsData, 
+                page: data?.page ?? 1, 
+                per_page: data?.per_page ?? 10, 
+                total_pages: data?.total_pages ?? 0 
+              }
             : { data: [], page: 1, per_page: 10, total_pages: 0 }
         }
         searchText={searchText}
