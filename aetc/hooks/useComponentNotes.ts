@@ -1693,26 +1693,22 @@ const formatHeadAndNeckAssessmentToParagraph = (assessment: any): ComponentNote 
     if (assessment.parts.length > 0) {
         paragraphParts.push(`Assessment of ${assessment.parts.join(", ")} was performed.`);
     }
-    if (assessment.abnormalities.has("General")) {
-        assessment.abnormalities.get("General").forEach((abnormality: any) => {
-            paragraphParts.push(`Head and neck assessment status: ${abnormality.details.note}.`);
-        });
-    }
 
-    const partDescriptions: Map<string, string[]> = new Map();
-    assessment.abnormalities.forEach((abnormalities: any, part: string) => {
-        if (part !== "General") {
-            const descriptions: string[] = [];
-
+    assessment.abnormalities.forEach((abnormalities: any, part: any) => {
+        if (part === "General") {
             abnormalities.forEach((abnormality: any) => {
-                let description = abnormality.type;
+                paragraphParts.push(``);
+            });
+        } else {
+            abnormalities.forEach((abnormality: any) => {
+                let description = `${part} showed ${abnormality.type}`;
 
                 switch (abnormality.type) {
                     case "Laceration":
-                        description += ` (Length: ${abnormality.details.length || 'unknown'}`;
+                        if (abnormality.details.length) description += ` (Length: ${abnormality.details.length}`;
                         if (abnormality.details.depth) description += `, Depth: ${abnormality.details.depth}`;
                         if (abnormality.details.other) description += `, Description: ${abnormality.details.other}`;
-                        description += ")";
+                        if (abnormality.details.length) description += ")";
                         break;
                     case "Bruise":
                         if (abnormality.details.description) description += ` (${abnormality.details.description})`;
@@ -1722,18 +1718,9 @@ const formatHeadAndNeckAssessmentToParagraph = (assessment: any): ComponentNote 
                         break;
                 }
 
-                descriptions.push(description);
+                paragraphParts.push(description + ".");
             });
-
-            if (descriptions.length > 0) {
-                partDescriptions.set(part, descriptions);
-            }
         }
-    });
-
-    partDescriptions.forEach((descriptions, part) => {
-        const joinedDescriptions = descriptions.join(" and ");
-        paragraphParts.push(`${part} showed ${joinedDescriptions}.`);
     });
 
     return {
