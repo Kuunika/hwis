@@ -93,7 +93,7 @@ export default function TransferForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Transfer information submitted successfully!");
+            // toast.success("Transfer information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
@@ -103,7 +103,7 @@ export default function TransferForm() {
 
         } catch (error) {
             console.error("Error submitting Transfer information: ", error);
-            toast.error("Failed to submit Transfer information.");
+            // toast.error("Failed to submit Transfer information.");
         }
     };
 

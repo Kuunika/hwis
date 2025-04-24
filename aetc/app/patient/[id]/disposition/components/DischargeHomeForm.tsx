@@ -38,12 +38,12 @@ const followUpOptions = [
 
 // Define validationSchema outside the component
 const validationSchema = Yup.object({
-    dischargePlan: Yup.string().required("Discharge Plan is required"),
-    followUpPlan: Yup.string().required("Follow-Up Plan is required"),
-    homeCareInstructions: Yup.string().required(
-        "Home Care Instructions are required"
-    ),
-    dischargeNotes: Yup.string().required("Discharge Notes are required"),
+    // dischargePlan: Yup.string().required("Discharge Plan is required"),
+    // followUpPlan: Yup.string().required("Follow-Up Plan is required"),
+    // homeCareInstructions: Yup.string().required(
+    //     "Home Care Instructions are required"
+    // ),
+    // dischargeNotes: Yup.string().required("Discharge Notes are required"),
     specialistClinic: Yup.string().when('followUpPlan', {
         is: (followUpPlan: string) => followUpPlan === concepts.YES,
         then: (schema) => schema,

@@ -23,7 +23,6 @@ import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 
 export const ClientsAwaitingDisposition = () => {
   const [deleted, setDeleted] = useState("");
-  const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
   const {
     paginationModel,
     patients: data,
@@ -152,6 +151,14 @@ const DispositionActions = ({ patient }: { patient: any }) => {
   const { navigateTo } = useNavigation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { mutate: closeVisitMutation, isSuccess: visitClosed } =
+    closeCurrentVisit();
+
+  useEffect(() => {
+    if (visitClosed) {
+      navigateTo("/dispositions");
+    }
+  }, [visitClosed, navigateTo]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -161,14 +168,21 @@ const DispositionActions = ({ patient }: { patient: any }) => {
     setAnchorEl(null);
   };
 
-  const handleCloseVisit = async () => {
+  //   const handleCloseVisit = async () => {
+  //     if (patient.visit_uuid) {
+  //       try {
+  //         await closeVisit(patient.visit_uuid, patient.id);
+  //         navigateTo("/dispositions"); // Navigate after successful closure
+  //       } catch (error) {
+  //         console.error("Error closing visit:", error);
+  //       }
+  //     } else {
+  //       console.warn("No active visit UUID found for this patient.");
+  //     }
+  //   };
+  const handleCloseVisit = () => {
     if (patient.visit_uuid) {
-      try {
-        await closeVisit(patient.visit_uuid, patient.id);
-        navigateTo("/dispositions"); // Navigate after successful closure
-      } catch (error) {
-        console.error("Error closing visit:", error);
-      }
+      closeVisitMutation(patient.visit_uuid);
     } else {
       console.warn("No active visit UUID found for this patient.");
     }

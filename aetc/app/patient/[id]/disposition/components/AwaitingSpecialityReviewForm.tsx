@@ -92,7 +92,7 @@ export default function AwaitingSpecialityReviewForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Awaiting Speciality Review information submitted successfully!");
+            // toast.success("Awaiting Speciality Review information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
@@ -102,7 +102,7 @@ export default function AwaitingSpecialityReviewForm() {
 
         } catch (error) {
             console.error("Error submitting Awaiting Speciality Review information: ", error);
-            toast.error("Failed to submit Awaiting Speciality Review information.");
+            // toast.error("Failed to submit Awaiting Speciality Review information.");
         }
 
 
