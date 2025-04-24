@@ -23,7 +23,6 @@ import {
 } from "../../components/searchComponents";
 
 function RegistrationSearch() {
-  const { params } = useParameters();
   const { patient } = getActivePatientDetails();
   const { setInitialRegisteredPatient, setRegistrationType } = useContext(
     SearchRegistrationContext
@@ -34,6 +33,7 @@ function RegistrationSearch() {
   }, []);
 
   useEffect(() => {
+    console.log({ patient });
     if (patient) {
       setInitialRegisteredPatient(patient);
     }
