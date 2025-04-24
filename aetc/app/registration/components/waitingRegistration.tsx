@@ -36,6 +36,7 @@ export const WaitingRegistrationList = () => {
     searchText,
     setSearchText,
     totalPages,
+    setOnSwitch,
   } = fetchPatientsTablePaginate("registration");
 
   const rows = patients
@@ -179,6 +180,7 @@ export const WaitingRegistrationList = () => {
         // loading={isPending || isRefetching}
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
+        onSwitchChange={setOnSwitch}
       />
     </>
   );
