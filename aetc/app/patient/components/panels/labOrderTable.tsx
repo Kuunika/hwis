@@ -31,8 +31,10 @@ import {
 } from "@mui/material";
 import { BasicSelect } from "../basicSelect";
 import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
+import { getPrinters } from "@/hooks/loadStatic";
 
 export const LabOrderTable = () => {
+  const { data: printers, isLoading: printerLoading } = getPrinters();
   const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
 
   const { params } = useParameters();
@@ -241,16 +243,13 @@ export const LabOrderTable = () => {
               setPrinter(value);
             }}
             label="Select Printer"
-            options={[
-              {
-                value: "http://localhost:3000",
-                label: "Local",
-              },
-              {
-                value: `${process.env.NEXT_PUBLIC_PRINTER_IP}`,
-                label: "Network",
-              },
-            ]}
+            options={
+              !printers
+                ? []
+                : printers?.map((d) => {
+                    return { value: d.ip_address, label: d.name };
+                  })
+            }
           />
           <br />
           <MainButton

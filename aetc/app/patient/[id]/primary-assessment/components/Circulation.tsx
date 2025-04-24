@@ -229,7 +229,9 @@ const schema = yup.object({
     .array()
     .label(form.diagramCannulationSite.label),
   [form.pulse.name]: yup.number().label(form.pulse.label),
-  [form.centralLineCannulationSite.name]: yup.string().label(form.centralLineCannulationSite.label),
+  [form.centralLineCannulationSite.name]: yup
+    .string()
+    .label(form.centralLineCannulationSite.label),
 });
 
 const initialValues = getInitialValues(form);
@@ -308,7 +310,7 @@ const centralLineCannulationSites = [
     id: concepts.INTERNAL_JUGULAR,
     label: "Internal Jugular",
   },
-]
+];
 export const Circulation = ({ onSubmit }: Prop) => {
   const { gender } = getActivePatientDetails();
   const [formValues, setFormValues] = useState<any>({});
@@ -525,36 +527,36 @@ export const Circulation = ({ onSubmit }: Prop) => {
             </FieldsContainer>
             {formValues[form.bloodPressureMeasured.name] ==
               concepts.NOT_DONE && (
-                <>
-                  <SearchComboBox
-                    multiple={false}
-                    name={form.reasonNotDone.name}
-                    label={form.reasonNotDone.label}
-                    options={notDoneReasons}
+              <>
+                <SearchComboBox
+                  multiple={false}
+                  name={form.reasonNotDone.name}
+                  label={form.reasonNotDone.label}
+                  options={notDoneReasons}
+                />
+                {formValues[form.reasonNotDone.name] == concepts.OTHER && (
+                  <TextInputField
+                    multiline
+                    rows={3}
+                    name={form.bloodPressureNotDoneOther.name}
+                    id={form.bloodPressureNotDoneOther.name}
+                    label={form.bloodPressureNotDoneOther.label}
+                    sx={{ width: "100%", mt: "1ch" }}
                   />
-                  {formValues[form.reasonNotDone.name] == concepts.OTHER && (
-                    <TextInputField
-                      multiline
-                      rows={3}
-                      name={form.bloodPressureNotDoneOther.name}
-                      id={form.bloodPressureNotDoneOther.name}
-                      label={form.bloodPressureNotDoneOther.label}
-                      sx={{ width: "100%", mt: "1ch" }}
-                    />
-                  )}
-                </>
-              )}
+                )}
+              </>
+            )}
             {formValues[form.bloodPressureMeasured.name] ==
               concepts.BP_NOT_RECORDABLE && (
-                <>
-                  <TextInputField
-                    sx={{ m: 0, width: "100%" }}
-                    name={form.reasonNotRecorded.name}
-                    label={form.reasonNotRecorded.label}
-                    id={form.reasonNotRecorded.name}
-                  />
-                </>
-              )}
+              <>
+                <TextInputField
+                  sx={{ m: 0, width: "100%" }}
+                  name={form.reasonNotRecorded.name}
+                  label={form.reasonNotRecorded.label}
+                  id={form.reasonNotRecorded.name}
+                />
+              </>
+            )}
             {formValues[form.bloodPressureMeasured.name] == concepts.DONE && (
               <>
                 <br />
@@ -589,7 +591,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                                 Number(
                                   formValues[form.bloodPressureSystolic.name]
                                 )) /
-                              3
+                                3
                             ) < 65
                               ? "red"
                               : "inherit", // Use default text color if MAP is 65 or above
@@ -604,7 +606,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                             Number(
                               formValues[form.bloodPressureSystolic.name]
                             )) /
-                          3
+                            3
                         )}{" "}
                         mmHg
                       </Typography>
@@ -696,24 +698,22 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   label={form.catheterInfo.label}
                   options={sizeOfCatheter}
                 />
-             <br />
+                <br />
                 {checkCanulationSite(
                   formValues[form.catheterInfo.name],
                   concepts.CENTRAL_LINE
                 ) && (
-                    <>
-                      <Typography variant="h6">
-                        Central Line
-                      </Typography>
-                      <SearchComboBox
-                        multiple={false}
-                        name={form.centralLineCannulationSite.name}
-                        label={form.centralLineCannulationSite.label}
-                        options={centralLineCannulationSites}
-                      />
-                      <br />
-                    </>
-                  )}
+                  <>
+                    <Typography variant="h6">Central Line</Typography>
+                    <SearchComboBox
+                      multiple={false}
+                      name={form.centralLineCannulationSite.name}
+                      label={form.centralLineCannulationSite.label}
+                      options={centralLineCannulationSites}
+                    />
+                    <br />
+                  </>
+                )}
 
                 <SearchComboBox
                   multiple
@@ -726,33 +726,33 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   formValues[form.siteOfCannulation.name],
                   concepts.LEFT
                 ) && (
-                    <>
-                      <Typography my={2} variant="h6">
-                        Left
-                      </Typography>
-                      <SearchComboBox
-                        name={form.diagramCannulationSite.name}
-                        label={form.diagramCannulationSite.label}
-                        options={diagramSitesOfCannulation}
-                      />
-                    </>
-                  )}
+                  <>
+                    <Typography my={2} variant="h6">
+                      Left
+                    </Typography>
+                    <SearchComboBox
+                      name={form.diagramCannulationSite.name}
+                      label={form.diagramCannulationSite.label}
+                      options={diagramSitesOfCannulation}
+                    />
+                  </>
+                )}
 
                 {checkCanulationSite(
                   formValues[form.siteOfCannulation.name],
                   concepts.RIGHT
                 ) && (
-                    <>
-                      <Typography my={2} variant="h6">
-                        Right
-                      </Typography>
-                      <SearchComboBox
-                        name={form.diagramCannulationSite.name}
-                        label={form.diagramCannulationSite.label}
-                        options={diagramSitesOfCannulation}
-                      />
-                    </>
-                  )}
+                  <>
+                    <Typography my={2} variant="h6">
+                      Right
+                    </Typography>
+                    <SearchComboBox
+                      name={form.diagramCannulationSite.name}
+                      label={form.diagramCannulationSite.label}
+                      options={diagramSitesOfCannulation}
+                    />
+                  </>
+                )}
 
                 <br />
               </>

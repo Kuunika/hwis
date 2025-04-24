@@ -69,6 +69,13 @@ export const getPatientsFromCacheOrFetch = async (
     );
     queryClient.setQueryData(cacheKey, patientList);
 
+    setTimeout(() => {
+      //   console.log("object");
+      //   queryClient.invalidateQueries(cacheKey);
+      //   queryClient.invalidateQueries({ queryKey: cacheKey, exact: true });
+      queryClient.removeQueries({ queryKey: cacheKey, exact: true });
+    }, 5000);
+
     return patientList;
   }
 };
