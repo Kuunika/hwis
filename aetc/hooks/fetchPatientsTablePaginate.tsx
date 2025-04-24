@@ -72,25 +72,25 @@ export const getPatientsFromCacheOrFetch = async (
   date: string
 ): Promise<any> => {
   const cacheKey = [category, pageSize, searchString, page];
-  const cachedPatientList =
-    queryClient.getQueryData<DailyVisitPaginated>(cacheKey);
+  // const cachedPatientList =
+  //   queryClient.getQueryData<DailyVisitPaginated>(cacheKey);
 
-  if (cachedPatientList) {
-    console.log("using cached data", cachedPatientList);
-    return cachedPatientList;
-  } else {
-    const patientList = await getDailyVisitsPaginated(
-      `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`
-    );
-    queryClient.setQueryData(cacheKey, patientList);
+  // if (cachedPatientList) {
+  //   console.log("using cached data", cachedPatientList);
+  //   return cachedPatientList;
+  // } else {
+  const patientList = await getDailyVisitsPaginated(
+    `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`
+  );
+  // queryClient.setQueryData(cacheKey, patientList);
 
-    setTimeout(() => {
-      //   console.log("object");
-      //   queryClient.invalidateQueries(cacheKey);
-      //   queryClient.invalidateQueries({ queryKey: cacheKey, exact: true });
-      queryClient.removeQueries({ queryKey: cacheKey, exact: true });
-    }, 5000);
+  // setTimeout(() => {
+  //   //   console.log("object");
+  //   //   queryClient.invalidateQueries(cacheKey);
+  //   //   queryClient.invalidateQueries({ queryKey: cacheKey, exact: true });
+  //   queryClient.removeQueries({ queryKey: cacheKey, exact: true });
+  // }, 5000);
 
-    return patientList;
-  }
+  return patientList;
+  // }
 };
