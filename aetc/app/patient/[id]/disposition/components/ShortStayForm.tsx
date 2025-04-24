@@ -94,7 +94,7 @@ export default function ShortStayForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Short Stay information submitted successfully!");
+            // toast.success("Short Stay information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
@@ -103,7 +103,7 @@ export default function ShortStayForm() {
 
         } catch (error) {
             console.error("Error submitting Short Stay information: ", error);
-            toast.error("Failed to submit Short Stay information.");
+            // toast.error("Failed to submit Short Stay information.");
         }
     };
 

@@ -114,7 +114,7 @@ export default function DeathForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Death Form information submitted successfully!");
+            // toast.success("Death Form information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
@@ -123,7 +123,7 @@ export default function DeathForm() {
             navigateTo("/dispositions");
         } catch (error) {
             console.error("Error submitting Death form information: ", error);
-            toast.error("Failed to submit Death Form information.");
+            // toast.error("Failed to submit Death Form information.");
         }
     };
 

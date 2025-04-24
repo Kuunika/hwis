@@ -88,7 +88,7 @@ export default function RefusedTreatmentForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Refused Hospital Treatment information submitted successfully!");
+            // toast.success("Refused Hospital Treatment information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
@@ -98,7 +98,7 @@ export default function RefusedTreatmentForm() {
 
         } catch (error) {
             console.error("Error submittingRefused Hospital Treatment information: ", error);
-            toast.error("Failed to submit Refused Hospital Treatment  information.");
+            // toast.error("Failed to submit Refused Hospital Treatment  information.");
         }
     };
 
