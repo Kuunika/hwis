@@ -29,7 +29,7 @@ export const InitialRegistrationList = () => {
     searchText,
     setSearchText,
     totalPages,
-  } = fetchPatientsTablePaginate("triage");
+  } = fetchPatientsTablePaginate("screening");
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
   // const {

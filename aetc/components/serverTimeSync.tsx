@@ -1,13 +1,13 @@
-"use client";
-import { useServerTime } from "@/contexts/serverTimeProvider";
-import { useEffect } from "react";
+// "use client";
+// import { useServerTime } from "@/contexts/serverTimeProvider";
+// import { useEffect } from "react";
 
-export const ServerTimeInitializer = () => {
-  const { syncServerTime } = useServerTime();
+// export const ServerTimeInitializer = () => {
+//   const { syncServerTime } = useServerTime();
 
-  useEffect(() => {
-    syncServerTime();
-  }, [syncServerTime]);
+//   useEffect(() => {
+//     syncServerTime();
+//   }, [syncServerTime]);
 
-  return null;
-};
+//   return null;
+// };
