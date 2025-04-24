@@ -71,14 +71,7 @@ export const PatientTableListServer = ({
       searchText={searchText}
       setSearchString={setSearchString}
       rowCount={data?.data ? data?.per_page * data?.total_pages : 0}
-      setPaginationModel={(model) => {
-        const isNext = model.page > paginationModel.page;
-
-        if (isNext) {
-          console.log("User clicked NEXT page");
-        }
-        setPaginationModel(model);
-      }}
+      setPaginationModel={setPaginationModel}
       paginationModel={paginationModel}
       loading={loading}
       rows={data?.data ? data?.data?.map((p) => ({ id: p.uuid, ...p })) : []}
