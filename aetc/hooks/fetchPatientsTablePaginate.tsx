@@ -50,7 +50,6 @@ export const fetchPatientsTablePaginate = (category: Category) => {
   };
 };
 
-// Cache-aware fetch
 export const getPatientsFromCacheOrFetch = async (
   category: Category,
   pageSize: number,
