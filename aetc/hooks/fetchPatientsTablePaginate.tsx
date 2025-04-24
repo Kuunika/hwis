@@ -1,23 +1,75 @@
 import { useEffect, useState } from "react";
-import { getPatientCategoryListPaginated } from "./patientReg";
+import { getDailyVisitsPaginated } from "@/services/patient";
+import { queryClient } from "@/providers";
+import { DailyVisitPaginated, Patient } from "@/interfaces";
 
-export const fetchPatientsTablePaginate = (category:'assessment'|'triage') => {
-    const [searchText, setSearchText] = useState("");
-    const [paginationModel, setPaginationModel] = useState({
-        page: 0,
-        pageSize: 10,
-    });
-    const { data, refetch, isPending } = getPatientCategoryListPaginated(
-        paginationModel,
-        category,
-        searchText
+// Define types
+type Category = "assessment" | "triage";
+
+interface PaginationModel {
+  page: number;
+  pageSize: number;
+}
+
+export const fetchPatientsTablePaginate = (category: Category) => {
+  const [paginationModel, setPaginationModel] = useState<PaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
+  const [searchText, setSearchText] = useState<string>("");
+  const [patients, setPatients] = useState<Array<any>>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [totalPages, setTotalPages] = useState<number>(0);
+
+  useEffect(() => {
+    fetchData();
+  }, [paginationModel, searchText]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const response = await getPatientsFromCacheOrFetch(
+      category,
+      paginationModel.pageSize,
+      searchText,
+      paginationModel.page + 1
     );
 
-      useEffect(() => {
+    setPatients(response.data.data);
+    setTotalPages(response.data.total_pages);
+    setLoading(false);
+  };
 
-        refetch();
-      }, [paginationModel]);
-    
+  return {
+    loading,
+    patients,
+    paginationModel,
+    setPaginationModel,
+    searchText,
+    setSearchText,
+    totalPages,
+  };
+};
 
-    return { data, refetch, isPending, paginationModel, setPaginationModel, searchText, setSearchText }
-}
+// Cache-aware fetch
+export const getPatientsFromCacheOrFetch = async (
+  category: Category,
+  pageSize: number,
+  searchString: string,
+  page: number
+): Promise<any> => {
+  const cacheKey = [category, pageSize, searchString, page];
+  const cachedPatientList =
+    queryClient.getQueryData<DailyVisitPaginated>(cacheKey);
+
+  if (cachedPatientList) {
+    console.log("using cached data", cachedPatientList);
+    return cachedPatientList;
+  } else {
+    const patientList = await getDailyVisitsPaginated(
+      `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}`
+    );
+    queryClient.setQueryData(cacheKey, patientList);
+
+    return patientList;
+  }
+};
