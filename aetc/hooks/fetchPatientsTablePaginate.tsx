@@ -4,7 +4,7 @@ import { queryClient } from "@/providers";
 import { DailyVisitPaginated, Patient } from "@/interfaces";
 
 // Define types
-type Category = "assessment" | "triage";
+type Category = "assessment" | "triage" | "disposition";
 
 interface PaginationModel {
   page: number;

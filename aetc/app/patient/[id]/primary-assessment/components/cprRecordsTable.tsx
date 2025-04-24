@@ -25,6 +25,8 @@ export const CPRRecordTable = ({
       )
   );
 
+  console.log("records", records);
+
   const formatted = records.map(({ children }: Obs) => {
     const time = getObservationValue(children, concepts.TIME);
     const shockEnergy = getObservationValue(children, concepts.SHOCK_ENERGY);
