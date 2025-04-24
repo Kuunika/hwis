@@ -4,7 +4,7 @@ import { queryClient } from "@/providers";
 import { DailyVisitPaginated, Patient } from "@/interfaces";
 
 // Define types
-type Category = "assessment" | "triage";
+type Category = "assessment" | "triage" | "disposition" | "screening";
 
 interface PaginationModel {
   page: number;
@@ -68,6 +68,13 @@ export const getPatientsFromCacheOrFetch = async (
       `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}`
     );
     queryClient.setQueryData(cacheKey, patientList);
+
+    setTimeout(() => {
+      //   console.log("object");
+      //   queryClient.invalidateQueries(cacheKey);
+      //   queryClient.invalidateQueries({ queryKey: cacheKey, exact: true });
+      queryClient.removeQueries({ queryKey: cacheKey, exact: true });
+    }, 5000);
 
     return patientList;
   }

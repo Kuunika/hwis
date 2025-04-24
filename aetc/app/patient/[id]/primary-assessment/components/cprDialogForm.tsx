@@ -17,7 +17,7 @@ import {
   mapSearchComboOptionsToConcepts,
 } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
-import { useSubmitEncounter } from "@/hooks";
+import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { useRef, useState } from "react";
 import { RecordForm } from "./cprRecordForm";
 import { EndCPRForm } from "./endCprForm";
@@ -35,6 +35,7 @@ const CPRForm = ({
   patientuuid?: string;
   visituuid?: string;
 }) => {
+  const { patientId, activeVisit } = getActivePatientDetails();
   const [submittingRecord, setSubmittingRecord] = useState(false);
   const { handleSubmit } = useSubmitEncounter(
     encounters.CPR,
@@ -53,17 +54,23 @@ const CPRForm = ({
 
   const validateCprData = async () => {
     await basicFormRef?.current?.setTouched(
-      Object.keys(basicFormRef?.current?.values).reduce((acc, key) => {
-        acc[key] = true;
-        return acc;
-      }, {} as Record<string, boolean>)
+      Object.keys(basicFormRef?.current?.values).reduce(
+        (acc, key) => {
+          acc[key] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>
+      )
     );
 
     await endFormRef?.current?.setTouched(
-      Object.keys(endFormRef?.current?.values).reduce((acc, key) => {
-        acc[key] = true;
-        return acc;
-      }, {} as Record<string, boolean>)
+      Object.keys(endFormRef?.current?.values).reduce(
+        (acc, key) => {
+          acc[key] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>
+      )
     );
 
     // Validate both forms
@@ -143,12 +150,16 @@ const CPRForm = ({
       <br />
       <CPRRecordTable
         submittingRecord={submittingRecord}
-        patientId={patientuuid as string}
+        patientId={
+          patientuuid ? (patientuuid as string) : (patientId as string)
+        }
       />
       <RecordForm
         onSubmitRecord={setSubmittingRecord}
-        visitUuid={visituuid}
-        patientUuid={patientuuid}
+        visitUuid={visituuid ? visituuid : activeVisit}
+        patientUuid={
+          patientuuid ? (patientuuid as string) : (patientId as string)
+        }
       />
       <br />
       <EndCPRForm

@@ -10,6 +10,7 @@ import {
   MainButton,
   MainTypography,
   PatientTableList,
+  PatientTableListServer,
 } from "@/components";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
@@ -17,15 +18,25 @@ import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
+import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 
 export const InitialRegistrationList = () => {
+  const {
+    loading,
+    patients,
+    paginationModel,
+    setPaginationModel,
+    searchText,
+    setSearchText,
+    totalPages,
+  } = fetchPatientsTablePaginate("triage");
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
-  const {
-    data: patients,
-    isLoading,
-    isRefetching,
-  } = getPatientsWaitingForPrescreening();
+  // const {
+  //   data: patients,
+  //   isLoading,
+  //   isRefetching,
+  // } = getPatientsWaitingForPrescreening();
 
   const rows = patients
     ?.sort((p1, p2) => {
@@ -60,10 +71,10 @@ export const InitialRegistrationList = () => {
       renderCell: (cell: any) => {
         return (
           <>
-           <Tooltip title="Start screening" arrow>
-              <IconButton 
-                onClick={() => navigateTo(`/prescreening/${cell.id}`)} 
-                aria-label="start screening" 
+            <Tooltip title="Start screening" arrow>
+              <IconButton
+                onClick={() => navigateTo(`/prescreening/${cell.id}`)}
+                aria-label="start screening"
                 color="primary"
               >
                 <FaPlay />
@@ -128,11 +139,23 @@ export const InitialRegistrationList = () => {
   });
 
   return (
-    <PatientTableList
-      formatForMobileView={formatForMobileView}
-      isLoading={isLoading || isRefetching}
-      columns={columns}
-      rows={rows ? rows : []}
-    />
+    <>
+      <PatientTableListServer
+        columns={columns}
+        data={{
+          data: rows ?? [],
+          page: paginationModel.page,
+          per_page: paginationModel.pageSize,
+          total_pages: totalPages,
+        }}
+        searchText={searchText}
+        setSearchString={setSearchText}
+        setPaginationModel={setPaginationModel}
+        paginationModel={paginationModel}
+        // loading={isPending || isRefetching}
+        loading={loading}
+        formatForMobileView={formatForMobileView ? formatForMobileView : []}
+      />
+    </>
   );
 };

@@ -162,7 +162,7 @@ export const encounters = {
   //TODO: replace this UUID with a bedside test
   CPR: "31582078-729a-45ca-935c-43bd7d4b382c",
   //TODO: replace this UUID with a bedside test
-  BED_SIDE_TEST: "7d4400bf-534b-4c06-8b20-f6a424beb64",
+  BED_SIDE_TEST: "7d4400bf-534b-4c06-8b20-f6a424beb64c",
   DISCHARGE_PATIENT: "ba06820c-8d80-11d8-abbb-0024217bb78e",
   TREATMENT: "ba05ed9c-8d80-11d8-abbb-0024217bb78e",
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",

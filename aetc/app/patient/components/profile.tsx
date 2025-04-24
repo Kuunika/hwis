@@ -1,21 +1,12 @@
 "use client";
-import { MainGrid, WrapperBox } from "@/components";
-import { ConsultationCard, PersonalDetailsCard } from ".";
+import { MainGrid } from "@/components";
+import { PersonalDetailsCard } from ".";
 
 import React from "react";
-
-import Image from "next/image";
-
 import { VitalsPanel } from "./panels/vitalsDetails";
 
-import { checkPatientIfOnWaitingAssessment, useParameters } from "@/hooks";
-
-import FlowStarter from "./flowStarter";
-
-import { ConsultationContext, ConsultationContextType } from "@/contexts";
-
 import { TabsContainer } from "./tabsContainer";
-import { Charts } from "./charts";
+
 import { ListVisitDates } from "./listVisitDates";
 import { VisitDatesProvider } from "@/contexts/visitDatesContext";
 
