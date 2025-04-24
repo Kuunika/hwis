@@ -78,7 +78,7 @@ export default function AbscondedForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Absconded information submitted successfully!");
+            // toast.success("Absconded information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
@@ -87,7 +87,7 @@ export default function AbscondedForm() {
 
         } catch (error) {
             console.error("Error submitting Absconded information: ", error);
-            toast.error("Failed to submit Absconded information.");
+            // toast.error("Failed to submit Absconded information.");
         }
     };
 

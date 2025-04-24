@@ -173,7 +173,7 @@ export default function AdmissionForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Admission information submitted successfully!");
+            // toast.success("Admission information submitted successfully!");
             // Close the visit after successfully submitting the encounter
             //   if (activeVisit?.uuid) {
             //       closeVisit(activeVisit.uuid);
@@ -181,7 +181,7 @@ export default function AdmissionForm() {
             navigateTo("/dispositions");
         } catch (error) {
             console.error("Error submitting Admission information: ", error);
-            toast.error("Failed to submit Admission information.");
+            // toast.error("Failed to submit Admission information.");
         }
     };
     return (

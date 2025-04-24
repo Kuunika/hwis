@@ -117,6 +117,9 @@ export const SurgicalNotesFlow = () => {
             steps={steps}
             active={activeStep}
             setActive={setActiveStep}
+            onBack={() => navigateBack()}
+
+
         >
             <>
                 <PresentingComplaintsForm onSkip={() => { }} onSubmit={() => setActiveStep(1)} />
