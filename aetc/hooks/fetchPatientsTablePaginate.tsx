@@ -17,7 +17,7 @@ export const fetchPatientsTablePaginate = (category: Category) => {
     pageSize: 10,
   });
   const [searchText, setSearchText] = useState<string>("");
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patients, setPatients] = useState<Array<any>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
 
