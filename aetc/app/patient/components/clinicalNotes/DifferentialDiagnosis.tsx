@@ -14,7 +14,7 @@ export const useDifferentialDiagnosis = (pData: any) => {
     );
 
 
-    //console.log("Tione makhwala ali apa eti??:", additionalFieldsEncounter);
+    console.log("Tione za differential?:", additionalFieldsEncounter);
 
     if (!additionalFieldsEncounter?.obs) return;
 

@@ -14,7 +14,7 @@ export const useFinalDiagnosis = (pData: any) => {
     );
 
 
-    //console.log("Tione za Final:", additionalFieldsEncounter);
+    console.log("Tione za Final:", additionalFieldsEncounter);
 
     if (!additionalFieldsEncounter?.obs) return;
 
