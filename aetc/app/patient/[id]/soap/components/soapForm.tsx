@@ -314,10 +314,10 @@ const validationSchema = Yup.object().shape({
     .max(45)
     .required()
     .label(form.temperature.label),
-  [form.pulseRate.name]: Yup.number()
-    .min(60)
-    .max(100)
-    .label(form.pulseRate.label),
+  // [form.pulseRate.name]: Yup.number()
+  //   .min(60)
+  //   .max(100)
+  //   .label(form.pulseRate.label),
 });
 
 const initialValues = getInitialValues(form);
