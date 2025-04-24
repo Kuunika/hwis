@@ -89,7 +89,7 @@ export default function DeathForm() {
         const obs = [
             {
                 concept: concepts.DEATH,
-                value: "DISPOSITION TYPE DEATH",
+                value: concepts.DEATH,
                 obsDatetime: currentDateTime,
                 groupMembers: [
                     { concept: concepts.CAUSE_OF_DEATH, value: values.causeOfDeath, obsDatetime: currentDateTime },
