@@ -43,6 +43,7 @@ export const ClientWaitingForAssessment = () => {
     setPaginationModel,
     loading,
     totalPages,
+    setOnSwitch,
   } = fetchPatientsTablePaginate("assessment");
   const [patientsData, setPatientsData] = useState<any>([]);
 
@@ -228,6 +229,7 @@ export const ClientWaitingForAssessment = () => {
         paginationModel={paginationModel}
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
+        onSwitchChange={setOnSwitch}
       />
       <CPRDialogForm
         patientuuid={patientId}

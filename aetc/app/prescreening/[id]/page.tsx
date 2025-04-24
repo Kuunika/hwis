@@ -1,6 +1,6 @@
 "use client";
 import { PrescreeningForm } from "../components/preScreeningForm";
-import { useNavigation, useParameters } from "@/hooks";
+import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
@@ -13,7 +13,6 @@ import {
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useFormLoading } from "@/hooks/formLoading";
@@ -24,9 +23,9 @@ import { useEffect } from "react";
 import { Navigation } from "@/app/components/navigation";
 
 export default function Prescreening() {
+  const { activeVisit, patientId } = getActivePatientDetails();
   const { navigateTo } = useNavigation();
-  const { params } = useParameters();
-  const { data } = getPatientsWaitingForPrescreening();
+
   const {
     mutate: createEncounter,
     isPending,
@@ -55,14 +54,14 @@ export default function Prescreening() {
 
   const handleSubmit = (values: any) => {
     setShowForm(false);
-    const patient = data?.find((d) => d.uuid == params.id);
+
     setLoading(true);
     setMessage("add Screening data... ");
 
     createEncounter({
       encounterType: encounters.SCREENING_ENCOUNTER,
-      visit: patient?.visit_uuid,
-      patient: params.id,
+      visit: activeVisit,
+      patient: patientId,
       encounterDatetime: getDateTime(),
       obs: [
         {
@@ -86,7 +85,7 @@ export default function Prescreening() {
     });
 
     if (Boolean(values[concepts.PATIENT_REFERRED_TO])) {
-      patient && closeVisit(patient?.visit_uuid);
+      closeVisit(activeVisit as string);
     }
   };
   return (

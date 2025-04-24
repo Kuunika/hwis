@@ -29,6 +29,7 @@ export const InitialRegistrationList = () => {
     searchText,
     setSearchText,
     totalPages,
+    setOnSwitch,
   } = fetchPatientsTablePaginate("screening");
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
@@ -155,6 +156,7 @@ export const InitialRegistrationList = () => {
         // loading={isPending || isRefetching}
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
+        onSwitchChange={setOnSwitch}
       />
     </>
   );

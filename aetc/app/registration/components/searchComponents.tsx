@@ -22,6 +22,7 @@ export const DemographicsSearch = ({
   const { setSearchedPatient: setSearchedPatientContext } = useContext(
     SearchRegistrationContext
   ) as SearchRegistrationContextType;
+
   const [search, setSearch] = useState({
     firstName: "",
     lastName: "",

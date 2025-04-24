@@ -150,6 +150,8 @@ interface ServerPaginationTableProp {
   rowCount: number;
   searchText?: string;
   setSearchString: (values: any) => void;
+  showSearchSwitchButton?: boolean;
+  onSwitchChange?: (values: any) => void;
 }
 
 export const ServerPaginationTable = ({
@@ -161,12 +163,16 @@ export const ServerPaginationTable = ({
   rowCount,
   searchText,
   setSearchString,
+  onSwitchChange,
 }: ServerPaginationTableProp) => {
   return (
     <>
       <TopBarComponents
         searchText={searchText ?? ""}
         requestSearch={setSearchString}
+        handleSwitchChange={(value: any) => {
+          if (onSwitchChange) onSwitchChange(value.target.checked);
+        }}
       />
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
