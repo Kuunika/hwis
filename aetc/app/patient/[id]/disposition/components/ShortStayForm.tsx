@@ -64,10 +64,6 @@ export default function ShortStayForm() {
         }
     }, [patientVisits]);
 
-
-
-
-
     const handleSubmit = async (values: any) => {
         const currentDateTime = getDateTime();
 
