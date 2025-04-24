@@ -172,24 +172,28 @@ export const getPatientsWaitingForAssessment = () => {
   });
 };
 
-export const getPatientsWaitingForAssessmentPaginated = (
+export const getPatientCategoryListPaginated = (
   paginationDetails: PaginationModel,
-  search?: string
+  category: string,
+  search?: string,
 ) => {
-  const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
+  const page = paginationDetails.page + 1;
+ 
+
   const getall = () =>
     getDailyVisitsPaginated(
-      `category=assessment&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+      `category=${category}&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
     ).then((response) => response.data);
 
   return useQuery({
     queryKey: [
-      "assessment",
+      category,
       paginationDetails.page,
       paginationDetails.pageSize,
-      search,
+      search
     ],
     queryFn: getall,
+    enabled: false,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     refetchOnReconnect: false,
@@ -201,6 +205,7 @@ export const getPatientsWaitingForDispositionPaginated = (
   search?: string
 ) => {
   const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
+
   const getall = () =>
     getDailyVisitsPaginated(
       `category=disposition&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`

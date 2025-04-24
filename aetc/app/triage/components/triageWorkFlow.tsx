@@ -46,7 +46,6 @@ export default function TriageWorkFlow() {
   const { params } = useParameters();
   const [triageResult, setTriageResult] = useState<TriageResult>("");
   const [continueTriage, setContinueTriage] = useState(false);
-  const { data: triageList } = getPatientsWaitingForTriage();
   const [conceptTriageResult, setConceptTriageResult] = useState<any>({});
   const [submittedSteps, setSubmittedSteps] = useState<Array<number>>([]);
 

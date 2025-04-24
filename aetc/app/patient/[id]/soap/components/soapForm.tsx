@@ -150,9 +150,9 @@ const form = {
     name: concepts.MRDT,
     label: "MRDT",
   },
-  RBG: {
+  HB: {
     name: concepts.BLOOD_GLUCOSE,
-    label: "RBG",
+    label: "HB",
   },
   PT: {
     name: concepts.INVESTIGATIONS_PT,
@@ -238,7 +238,7 @@ const validationSchema = Yup.object().shape({
   [form.replan.name]: Yup.string().required(form.replan.label),
   [form.implementation.name]: Yup.string().required(form.implementation.label),
   [form.MRDT.name]: Yup.string(),
-  [form.RBG.name]: Yup.string(),
+  [form.HB.name]: Yup.string(),
   [form.PT.name]: Yup.string(),
   [form.urineDipstick.name]: Yup.string(),
   procedures: yup
@@ -314,10 +314,10 @@ const validationSchema = Yup.object().shape({
     .max(45)
     .required()
     .label(form.temperature.label),
-  [form.pulseRate.name]: Yup.number()
-    .min(60)
-    .max(100)
-    .label(form.pulseRate.label),
+  // [form.pulseRate.name]: Yup.number()
+  //   .min(60)
+  //   .max(100)
+  //   .label(form.pulseRate.label),
 });
 
 const initialValues = getInitialValues(form);
@@ -629,9 +629,9 @@ export const SoapForm = () => {
                         label={form.MRDT.label}
                       />
                       <TextInputField
-                        id={form.RBG.name}
-                        name={form.RBG.name}
-                        label={form.RBG.label}
+                        id={form.HB.name}
+                        name={form.HB.name}
+                        label={form.HB.label}
                       />
                       <TextInputField
                         id={form.PT.name}

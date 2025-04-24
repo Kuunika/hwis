@@ -170,9 +170,6 @@ export const ServerPaginationTable = ({
       />
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
-        initialState={{
-          pagination: { paginationModel: { page: 1, pageSize: 10 } },
-        }}
         loading={loading}
         rows={rows}
         columns={columns}

@@ -154,12 +154,9 @@ export function NavigationBar({
 
   // Trigger API search when search parameters change
   useEffect(() => {
-    // Only run local search with first name
-    if (search.firstName.length > 12) {
-      refetchNPID();
-    }
     if (search.firstName) {
       refetchLocal();
+      refetchNPID();
     }
 
     // Only run DDE search when all required fields are available

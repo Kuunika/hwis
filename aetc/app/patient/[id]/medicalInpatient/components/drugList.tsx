@@ -1,6 +1,7 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getInitialValues, mapSearchComboOptionsToConcepts } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
 import useFetchMedications from "@/hooks/useFetchMedications";
 
 import { useState } from "react";
@@ -18,16 +19,37 @@ const form = {
 };
 
 const schema = Yup.object().shape({
-  drug: Yup.array().required().label(form.drug.label),
-  other: Yup.string().label(form.other.label),
+  [form.drug.name]: Yup.array().required().label(form.drug.label),
+  [form.other.name]: Yup.string().label(form.other.label),
 });
 const initialValues = getInitialValues(form);
 
-export const DrugList = ({ onSubmit }: { onSubmit: () => void }) => {
+export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const [showOther, setShowOther] = useState(false);
   const { medicationOptions } = useFetchMedications();
 
-  const handleSubmit = () => {};
+  const handleSubmit = (values: any) => {
+    const formValues = { ...values }
+    const obsDatetime = getDateTime();
+    const drugObs = mapSearchComboOptionsToConcepts(formValues[form.drug.name], form.drug.name, obsDatetime);
+
+    const obs = [
+      {
+        concept: form.drug.name,
+        value: form.drug.name,
+        groupMembers: drugObs,
+        obsDatetime: obsDatetime,
+      },
+      {
+        concept: form.other.name,
+        value: formValues[form.other.name],
+        obsDatetime
+      }
+    ]
+    onSubmit(obs)
+
+
+  };
   return (
     <FormikInit
       validationSchema={schema}
