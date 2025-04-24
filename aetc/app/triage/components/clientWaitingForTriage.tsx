@@ -149,7 +149,7 @@ export const ClientWaitingForTriage = () => {
     <PatientTableListServer
       columns={columns}
       data={{
-        data: patients ?? [],
+        data: rows ?? [],
         page: paginationModel.page,
         per_page: paginationModel.pageSize,
         total_pages: totalPages,
