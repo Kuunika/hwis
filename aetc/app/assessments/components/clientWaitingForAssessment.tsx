@@ -35,16 +35,20 @@ export const ClientWaitingForAssessment = () => {
   const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
   const { navigateTo } = useNavigation();
-  const {refetch, paginationModel, data, searchText, setSearchText, setPaginationModel, isPending }=fetchPatientsTablePaginate('assessment')
+  const {
+    paginationModel,
+    patients: data,
+    searchText,
+    setSearchText,
+    setPaginationModel,
+    loading,
+    totalPages,
+  } = fetchPatientsTablePaginate("assessment");
   const [patientsData, setPatientsData] = useState<any>([]);
 
-
-
-
-
   useEffect(() => {
-    if (data?.data) {
-      setPatientsData(data.data);
+    if (data) {
+      setPatientsData(data);
     }
   }, [data]);
 
@@ -81,10 +85,10 @@ export const ClientWaitingForAssessment = () => {
                   cell.value == "red"
                     ? "#B42318"
                     : cell.value == "yellow"
-                    ? "#EDE207"
-                    : cell.value == "green"
-                    ? "#016302"
-                    : "transparent",
+                      ? "#EDE207"
+                      : cell.value == "green"
+                        ? "#016302"
+                        : "transparent",
               }}
             />
           </Box>
@@ -128,15 +132,15 @@ export const ClientWaitingForAssessment = () => {
         return (
           <Box display="flex" gap={1}>
             <Tooltip title="Start assessment" arrow>
-              <IconButton 
-                onClick={() => navigateTo(`/patient/${cell.id}/profile`)} 
-                aria-label="start assessment" 
+              <IconButton
+                onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
+                aria-label="start assessment"
                 color="primary"
               >
                 <FaPlay />
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Mark as absconded" arrow>
               <AbscondButton
                 onDelete={() => handleDelete(cell.id)}
@@ -144,20 +148,20 @@ export const ClientWaitingForAssessment = () => {
                 patientId={cell.id}
               />
             </Tooltip>
-            
+
             <Tooltip title="Print options" arrow>
               <BasicMenu patient={cell.row} />
             </Tooltip>
 
             {cell.row.triage_result == "red" && (
               <Tooltip title="Initiate CPR" arrow>
-                <IconButton 
+                <IconButton
                   onClick={() => {
                     setPatientId(cell.id);
                     setCpr(true);
                     setVisitUUID(cell.row.visit_uuid);
-                  }} 
-                  aria-label="initiate CPR" 
+                  }}
+                  aria-label="initiate CPR"
                   color="error"
                 >
                   <FaHeartbeat />
@@ -210,11 +214,11 @@ export const ClientWaitingForAssessment = () => {
         columns={columns}
         data={
           patientsData?.length
-            ? { 
-                data: patientsData, 
-                page: data?.page ?? 1, 
-                per_page: data?.per_page ?? 10, 
-                total_pages: data?.total_pages ?? 0 
+            ? {
+                data: patientsData,
+                page: paginationModel.page,
+                per_page: paginationModel.pageSize,
+                total_pages: totalPages,
               }
             : { data: [], page: 1, per_page: 10, total_pages: 0 }
         }
@@ -222,7 +226,7 @@ export const ClientWaitingForAssessment = () => {
         setSearchString={setSearchText}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
-        loading={isPending}
+        loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
       />
       <CPRDialogForm
@@ -261,10 +265,10 @@ const CardAction = ({
             triage == "red"
               ? "#B42318"
               : triage == "yellow"
-              ? "#ede207"
-              : triage == "green"
-              ? "#016302"
-              : "",
+                ? "#ede207"
+                : triage == "green"
+                  ? "#016302"
+                  : "",
           marginY: 1,
         }}
       ></WrapperBox>
@@ -276,7 +280,7 @@ const CardAction = ({
             onClick={() => navigateTo(`/patient/${id}/profile`)}
           />
         </Tooltip>
-        
+
         <Tooltip title="Mark as absconded" arrow>
           <AbscondButton
             sx={{ width: "30%" }}
@@ -285,7 +289,7 @@ const CardAction = ({
             patientId={id}
           />
         </Tooltip>
-        
+
         <Tooltip title="Print barcode" arrow>
           <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
         </Tooltip>
@@ -307,14 +311,14 @@ export function BasicMenu({ patient }: { patient: any }) {
   return (
     <>
       <Tooltip title="Print" arrow>
-            <IconButton
-              onClick={handleClick}
-              aria-label="Print"
-              sx={{color:"#015E85"}}
-            >
-              <HiPrinter />
-            </IconButton>
-          </Tooltip>
+        <IconButton
+          onClick={handleClick}
+          aria-label="Print"
+          sx={{ color: "#015E85" }}
+        >
+          <HiPrinter />
+        </IconButton>
+      </Tooltip>
       {/* <Button
         size="small"
         variant="text"

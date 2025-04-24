@@ -86,7 +86,7 @@ export interface DailyVisitPaginated {
   page: number;
   total_pages: number;
   per_page: number;
-  data: Person[];
+  data: any[];
 }
 
 export interface PaginationModel {

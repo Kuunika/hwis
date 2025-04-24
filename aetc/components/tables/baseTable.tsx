@@ -162,8 +162,6 @@ export const ServerPaginationTable = ({
   searchText,
   setSearchString,
 }: ServerPaginationTableProp) => {
-
-  console.log({paginationModel, rowCount});
   return (
     <>
       <TopBarComponents
@@ -172,13 +170,9 @@ export const ServerPaginationTable = ({
       />
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
-        initialState={{
-          pagination: { paginationModel: { page: 0, pageSize: 10 } },
-        }}
         loading={loading}
         rows={rows}
         columns={columns}
-      
         paginationModel={paginationModel}
         rowCount={rowCount}
         paginationMode="server"

@@ -1,8 +1,11 @@
 import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientCategoryListPaginated, getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import {
+  getPatientCategoryListPaginated,
+  getPatientsWaitingForTriage,
+} from "@/hooks/patientReg";
 import {
   BaseTable,
   CalculateWaitingTime,
@@ -22,22 +25,24 @@ import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
-    const {refetch, paginationModel, data:patients, searchText, setSearchText, setPaginationModel, isPending }=fetchPatientsTablePaginate('triage')
-
-
   const { navigateTo } = useNavigation();
+  const {
+    loading,
+    patients,
+    paginationModel,
+    setPaginationModel,
+    searchText,
+    setSearchText,
+    totalPages,
+  } = fetchPatientsTablePaginate("triage");
 
-
-
-  const rows = patients?.data
+  const rows = patients
     ?.map((p) => ({
       id: p?.uuid,
       ...p,
       patient_arrival_time: getTime(p.arrival_time),
     }))
     .filter((p) => p.id != deleted);
-
-   
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number" },
@@ -70,10 +75,10 @@ export const ClientWaitingForTriage = () => {
       renderCell: (cell: any) => {
         return (
           <>
-           <Tooltip title="Start Triage" arrow>
-              <IconButton 
-                onClick={() => navigateTo(`/triage/${cell.id}/start`)} 
-                aria-label="start Triage" 
+            <Tooltip title="Start Triage" arrow>
+              <IconButton
+                onClick={() => navigateTo(`/triage/${cell.id}/start`)}
+                aria-label="start Triage"
                 color="primary"
               >
                 <FaPlay />
@@ -140,28 +145,22 @@ export const ClientWaitingForTriage = () => {
     };
   });
 
-  // return (
-  //   <PatientTableList
-  //     formatForMobileView={formatForMobileView}
-  //     isLoading={isLoading || isRefetching}
-  //     columns={columns}
-  //     rows={rows ? rows : []}
-  //   />
-  // );
-
-
-  return <PatientTableListServer
-         columns={columns}
-         data={
-          rows?.length
-             ? { data: rows, page: patients?.page ? patients.page-1 : 0, per_page: patients?.per_page ?? 10, total_pages: patients?.total_pages ?? 0 }
-             : { data: [], page: 0, per_page: 10, total_pages: 0 }
-         }
-         searchText={searchText}
-         setSearchString={setSearchText}
-         setPaginationModel={setPaginationModel}
-         paginationModel={paginationModel}
-         loading={isPending}
-         formatForMobileView={formatForMobileView ? formatForMobileView : []}
-       />
+  return (
+    <PatientTableListServer
+      columns={columns}
+      data={{
+        data: patients ?? [],
+        page: paginationModel.page,
+        per_page: paginationModel.pageSize,
+        total_pages: totalPages,
+      }}
+      searchText={searchText}
+      setSearchString={setSearchText}
+      setPaginationModel={setPaginationModel}
+      paginationModel={paginationModel}
+      // loading={isPending || isRefetching}
+      loading={loading}
+      formatForMobileView={formatForMobileView ? formatForMobileView : []}
+    />
+  );
 };
