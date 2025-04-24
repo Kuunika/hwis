@@ -97,10 +97,11 @@ const reviewOfSystemsOptions = {
     ],
 };
 
+
 // Map category names to their corresponding concept IDs
 const categoryConceptMap = {
     general: concepts.REVIEW_OF_SYSTEMS_GENERAL,
-    ent: concepts.ENT,
+    ent: concepts.REVIEW_OF_SYSTEMS_ENT,
     endocrine: concepts.REVIEW_OF_SYSTEMS__ENDOCRINE,
     cardiac: concepts.REVIEW_OF_SYSTEMS_CARDIAC,
     respiratory: concepts.SEVERE_RESPIRATORY,
@@ -111,6 +112,7 @@ const categoryConceptMap = {
     psychiatric: concepts.REVIEW_OF_SYSTEMS_PSYCHIATRIC
 };
 
+// Create a validation schema
 const validationSchema = Yup.object({});
 
 export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: { onSubmit: (values: any) => void; onSkip: () => void }) => {
@@ -137,66 +139,43 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: { onSubmit: (values: a
             return;
         }
 
-        // Debug the incoming values to understand their structure
         console.log("Form values:", values);
 
         // Create an array to hold all observations
         const obs = [];
 
-        // Process each category of symptoms
-        for (const [category, selectedValues] of Object.entries(values)) {
-            // Skip empty categories
-            if (!selectedValues || !Array.isArray(selectedValues) || selectedValues.length === 0) {
-                continue;
-            }
+        // Process each category
+        for (const category in reviewOfSystemsOptions) {
+            const categoryValues = values[category] || [];
 
-            // Handle potential different formats of checkbox values
-            // This matches the pattern used in FamilyHistoryForm
-            let processedValues = selectedValues;
+            // Skip if no selections for this category
+            if (!categoryValues.length) continue;
 
-            // If the values are objects with key property, extract the keys
-            if (selectedValues.length > 0 && typeof selectedValues[0] === 'object') {
-                processedValues = selectedValues
-                    .filter((item: any) => item.value)
-                    .map((item: any) => item.key);
-            }
+            // Filter to get only selected items
+            const selectedItems = categoryValues
+                .filter((item: any) => item.value === true)
+                .map((item: any) => item.key);
 
-            // If still no values after processing, skip
-            if (!processedValues.length) {
-                continue;
-            }
+            // Skip if nothing selected after filtering
+            if (!selectedItems.length) continue;
 
-            // Get the concept ID for this category
+            // Get the concept for this category
             const categoryConcept = categoryConceptMap[category as keyof typeof categoryConceptMap];
-            if (!categoryConcept) {
-                console.warn(`No concept mapping found for category: ${category}`);
-                continue;
-            }
 
-            // Get the options for this category
-            const categoryOptions = reviewOfSystemsOptions[category as keyof typeof reviewOfSystemsOptions];
-            if (!categoryOptions) {
-                continue;
-            }
+            // Create group members for the selected symptoms
+            const groupMembers = selectedItems.map((symptomConcept: string) => {
+                // Find the option object to get the label
+                const optionList = reviewOfSystemsOptions[category as keyof typeof reviewOfSystemsOptions];
+                const option = optionList.find(opt => opt.value === symptomConcept);
 
-            // Debug the processed values for this category
-            console.log(`Processed values for ${category}:`, processedValues);
+                return {
+                    concept: symptomConcept,
+                    value: option?.label || symptomConcept,
+                    obsDatetime: currentDateTime
+                };
+            });
 
-            // Create group members array for this category
-            const groupMembers = processedValues.map(symptomValue => {
-                // Find the option object for this symptom
-                const option = categoryOptions.find(opt => opt.value === symptomValue);
-                if (option) {
-                    return {
-                        concept: option.value,
-                        value: option.label,
-                        obsDatetime: currentDateTime
-                    };
-                }
-                return null;
-            }).filter(Boolean); // Remove any null values
-
-            // Only add the category if it has group members
+            // Add observation for this category if it has group members
             if (groupMembers.length > 0) {
                 obs.push({
                     concept: categoryConcept,
@@ -207,10 +186,16 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: { onSubmit: (values: a
             }
         }
 
-        // Debug the final obs structure
         console.log("Final obs structure:", obs);
 
-        // Submit the encounter with all observations
+        // Only submit if we have observations
+        if (obs.length === 0) {
+            console.warn("No systems selected, moving to next step anyway");
+            onSubmit(values);
+            return;
+        }
+
+        // Create and submit the encounter
         const payload = {
             encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
             patient: params.id,
@@ -220,6 +205,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: { onSubmit: (values: a
         };
 
         try {
+            console.log("Submitting payload:", payload);
             await submitEncounter(payload);
             onSubmit(values);
         } catch (error) {
@@ -231,7 +217,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: { onSubmit: (values: a
         <FormikInit
             initialValues={{
                 general: [],
-                ent: [],
+                // ent: [],
                 endocrine: [],
                 cardiac: [],
                 respiratory: [],
@@ -255,6 +241,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip }: { onSubmit: (values: a
                                     name={category}
                                     allowFilter={false}
                                     options={options.map((item) => ({
+                                        key: item.value,  // Use key instead of value to match PresentingComplaintsForm
                                         value: item.value,
                                         label: item.label,
                                     }))}

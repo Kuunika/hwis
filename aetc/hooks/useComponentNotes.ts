@@ -26,12 +26,12 @@ export const useComponentNotes = (encounterType: string) => {
         const encountersForVisitDate = patientHistory.filter(
           (encounter: any) => encounter.visit.date_started === visitDate
         );
-  
+
         // Then find the encounter with the specific type from these date-filtered encounters
         const targetEncounter = encountersForVisitDate.find(
           (enc: any) => enc?.encounter_type?.uuid === encounterType
         );
-  
+
         if (targetEncounter) {
           const formattedNotes = formatComponentNotes(
             targetEncounter.obs,
@@ -69,8 +69,14 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatSurgicalHistoryNotes(obs)
             case encounters.PATIENT_ADMISSIONS:
                 return formatAdmissionNotes(obs);
-            case encounters.REVIEW_OF_SYSTEMS:
-                return formatSystemsReviewData(obs);
+            // case encounters.REVIEW_OF_SYSTEMS:
+            //     return formatReviewOfSystemsNotes(obs);
+            case encounters.OBSTETRIC_HISTORY:
+                return formatGynecologyNotes(obs)
+            case encounters.SUMMARY_ASSESSMENT:
+                return formatLastMealNotes(obs)
+            case encounters.FAMILY_MEDICAL_HISTORY:
+                return formatFamilyHistoryNotes(obs)
             case encounters.GENERAL_INFORMATION_ASSESSMENT:
                 return formatGeneralInformationNotes(obs);
             case encounters.HEAD_AND_NECK_ASSESSMENT:
@@ -85,6 +91,8 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatNeurologicalExaminationNotes(obs);
             case encounters.NURSING_CARE_NOTES:
                 return formatSoapierNotes(obs)
+            case encounters.DISPOSITION:
+                return formatDispositionNotes(obs);
             default:
                 return [];
         }
@@ -565,6 +573,7 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         let durationInDays = "";
         let durationInHours = "";
         let medicationFormulation ="";
+        let selfMedication="";
         let creator = item.created_by || "Unknown";
         let encounterTime = item.obs_datetime || new Date().toISOString();
 
@@ -615,6 +624,9 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
                     case "Medication Formulation":
                         medicationFormulation = memberValue;
                         break;
+                    case "Self medicated":
+                        selfMedication=memberValue;
+                        break;
 
                 }
             });
@@ -636,7 +648,11 @@ const formatMedicationsNotes = (obs: any[]): ComponentNote[] => {
         if(medicationFormulation) parts.push(`Medication formulation: ${medicationFormulation}`);
         if (lastTaken) parts.push(`Last taken: ${new Date(lastTaken).toLocaleDateString()}`);
         if (lastPrescription) parts.push(`Last prescribed: ${new Date(lastPrescription).toLocaleDateString()}`);
-
+        if (selfMedication) {
+            parts.push(selfMedication === "Yes"
+                ? "The patient self-medicated."
+                : "The patient did not self-medicate.");
+        }
         if (parts.length > 0) {
             medicationNotes.push({
                 paragraph: `Medication: ${parts.join('; ')}.`,
@@ -989,104 +1005,512 @@ const createAdmissionNoteText = (admission: {
 
     return parts.join('. ') + (parts.length > 0 ? '.' : '');
 };
-const formatSystemsReviewData = (obs: any[]): ComponentNote[] => {
-    const systemsReviews: ComponentNote[] = [];
-    let currentSystem: {
-        systemName: string;
-        symptoms: {
-            name: string;
-            duration?: string;
-            location?: string;
-        }[];
-        creator: string;
-        time: string;
-    } | null = null;
 
-    obs.forEach((ob: any) => {
+const formatGynecologyNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentNote: {
+        time: string;
+        creator: string;
+        ageAtMenarche?: string;
+        gestationWeeks?: string;
+        previousPregnancies?: string;
+        contraceptives: string[];
+        pregnancyOutcomes: {
+            type: string;
+            details?: string;
+            parity?: number;
+        }[];
+        additionalNotes?: string;
+    } = {
+        time: "",
+        creator: "Unknown",
+        contraceptives: [],
+        pregnancyOutcomes: []
+    };
+
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    sortedObs.forEach((ob: any) => {
         const name = ob.names?.[0]?.name;
         const value = ob.value;
-        const creator = ob.creator || ob.created_by || "Unknown";
-        const obsTime = ob.obs_datetime || new Date().toISOString();
+        const time = ob.obs_datetime || new Date().toISOString();
+        const creator = ob.created_by || "Unknown";
 
-        if (name.startsWith("Review Of Systems") || name.startsWith("Review of systems")) {
-            if (currentSystem && currentSystem.symptoms.length > 0) {
-                systemsReviews.push(createSystemReviewParagraph(currentSystem));
-            }
-            // Start new system
-            currentSystem = {
-                systemName: name.replace("Review Of Systems", "")
-                    .replace("Review of systems", "")
-                    .trim(),
-                symptoms: [],
-                creator: creator,
-                time: obsTime
-            };
+        if (!currentNote.time) {
+            currentNote.time = time;
+            currentNote.creator = creator;
         }
-        else if (currentSystem) {
-            if (name === "Duration Of Symptoms Days") {
-                if (currentSystem.symptoms.length > 0) {
-                    currentSystem.symptoms[currentSystem.symptoms.length - 1].duration = value;
+
+        switch (name) {
+            case "Age At Menarche":
+                // If we already have some data, push current note and start a new one
+                if (currentNote.ageAtMenarche ||
+                    currentNote.gestationWeeks ||
+                    currentNote.previousPregnancies ||
+                    currentNote.contraceptives.length > 0 ||
+                    currentNote.pregnancyOutcomes.length > 0) {
+                    notes.push(createGynecologyNote(currentNote));
+                    currentNote = {
+                        time: time,
+                        creator: creator,
+                        contraceptives: [],
+                        pregnancyOutcomes: []
+                    };
                 }
-            }
-            else if (name === "Anatomic locations") {
-                if (currentSystem.symptoms.length > 0) {
-                    currentSystem.symptoms[currentSystem.symptoms.length - 1].location = value;
+                currentNote.ageAtMenarche = value;
+                break;
+
+            case "Gestation weeks":
+                currentNote.gestationWeeks = value;
+                break;
+
+            case "Previous Pregnancies":
+                currentNote.previousPregnancies = value;
+                break;
+
+            case "Levoplant":
+            case "Jadelle":
+            case "Implanon":
+                if (value === "true") {
+                    currentNote.contraceptives.push(name);
                 }
+                break;
+
+            case "Pregenancy Outcome":
+                // Handle pregnancy outcomes with children
+                if (ob.children && ob.children.length > 0) {
+                    const outcome: any = {};
+
+                    ob.children.forEach((child: any) => {
+                        const childName = child.names?.[0]?.name;
+                        if (childName === "Live birth" ||
+                            childName === "STILL BIRTH" ||
+                            childName === "Second Trimester Miscarriage" ||
+                            childName === "First Trimester Miscarriage") {
+                            outcome.type = childName;
+
+                            // Check for parity information with live births
+                            if (childName === "Live birth") {
+                                const parityChild = ob.children.find((c: any) =>
+                                    c.names?.some((n: any) =>
+                                        n.name === "Parity" ||
+                                        n.name === "Number of births" ||
+                                        n.name === "Number of delivered children"
+                                    )
+                                );
+                                if (parityChild) {
+                                    outcome.parity = parseFloat(parityChild.value);
+                                }
+                            }
+                        }
+                    });
+
+                    if (outcome.type) {
+                        currentNote.pregnancyOutcomes.push(outcome);
+                    }
+                }
+                break;
+            case "First Trimester Miscarriage":
+            case "Second Trimester Miscarriage":
+            case "STILL BIRTH":
+            case "Live birth":
+                const outcome: any = { type: name };
+
+                // Check for parity with live births
+                if (name === "Live birth" && ob.children) {
+                    const parityChild = ob.children.find((child: any) =>
+                        child.names?.some((n: any) =>
+                            n.name === "Parity" ||
+                            n.name === "Number of births" ||
+                            n.name === "Number of delivered children"
+                        )
+                    );
+                    if (parityChild) {
+                        outcome.parity = parseFloat(parityChild.value);
+                    }
+                }
+
+                currentNote.pregnancyOutcomes.push(outcome);
+                break;
+
+            case "Additional Notes":
+                currentNote.additionalNotes = value;
+                break;
+        }
+
+        // Update time and creator with latest observation
+        currentNote.time = time;
+        currentNote.creator = creator;
+    });
+
+    // Create the note if we have any data
+    if (currentNote.ageAtMenarche ||
+        currentNote.gestationWeeks ||
+        currentNote.previousPregnancies ||
+        currentNote.contraceptives.length > 0 ||
+        currentNote.pregnancyOutcomes.length > 0) {
+        notes.push(createGynecologyNote(currentNote));
+    }
+
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createGynecologyNote = (note: {
+    time: string;
+    creator: string;
+    ageAtMenarche?: string;
+    gestationWeeks?: string;
+    previousPregnancies?: string;
+    contraceptives: string[];
+    pregnancyOutcomes: {
+        type: string;
+        details?: string;
+        parity?: number;
+    }[];
+    additionalNotes?: string;
+}): ComponentNote => {
+    const paragraphs: string[] = [];
+
+    if (note.ageAtMenarche) {
+        paragraphs.push(`Menarche occurred at age ${note.ageAtMenarche}.`);
+    }
+
+    // Current pregnancy status
+    const currentPregnancyParts: string[] = [];
+    if (note.gestationWeeks) {
+        currentPregnancyParts.push(`currently ${note.gestationWeeks} gestation`);
+    }
+
+    // Previous pregnancies
+    if (note.previousPregnancies) {
+        const pregnancyCount = parseInt(note.previousPregnancies);
+        currentPregnancyParts.push(`${pregnancyCount} previous ${pregnancyCount === 1 ? 'pregnancy' : 'pregnancies'}`);
+    }
+
+    // Add current pregnancy status paragraph if we have info
+    if (currentPregnancyParts.length > 0) {
+        paragraphs.push(`Obstetric history: ${currentPregnancyParts.join(', ')}.`);
+    }
+
+    // Pregnancy outcomes with proper numbering and parity for live births
+    if (note.pregnancyOutcomes.length > 0) {
+        const outcomeDescriptions = note.pregnancyOutcomes.map((outcome, index) => {
+            const pregnancyNumber = index + 1;
+            let outcomeText = outcome.type;
+
+            // Add parity for live births
+            if (outcome.type === "Live birth" && outcome.parity !== undefined) {
+                outcomeText += ` (${outcome.parity} ${outcome.parity === 1 ? 'child' : 'children'})`;
             }
-            else if (value === true || value === "true") {
-                // This is a symptom
-                currentSystem.symptoms.push({
-                    name: name,
-                    duration: undefined,
-                    location: undefined
-                });
-                currentSystem.creator = creator;
-                currentSystem.time = obsTime;
+
+            return `Pregnancy ${pregnancyNumber}: ${outcomeText}`;
+        });
+        paragraphs.push(`Pregnancy outcomes: ${outcomeDescriptions.join('; ')}.`);
+    }
+
+    // Contraceptive use - handle multiple contraceptives
+    if (note.contraceptives.length > 0) {
+        if (note.contraceptives.length === 1) {
+            paragraphs.push(`Contraception: Currently using ${note.contraceptives[0]}.`);
+        } else {
+            const lastContraceptive = note.contraceptives.pop();
+            paragraphs.push(`Contraception: Currently using ${note.contraceptives.join(', ')} and ${lastContraceptive}.`);
+        }
+    }
+
+    if (note.additionalNotes) {
+        paragraphs.push(`Notes: ${note.additionalNotes}.`);
+    }
+
+    return {
+        paragraph: paragraphs.join(' '),
+        time: note.time,
+        creator: note.creator,
+        rawTime: new Date(note.time).getTime()
+    };
+};
+const formatReviewOfSystemsNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentSystem: string | null = null;
+    let currentDetails: Record<string, any> = {};
+    let currentTime = "";
+    let currentCreator = "";
+
+    // Sort observations by datetime
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    // Process each observation
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        if (name === "Review of systems, general") {
+            if (currentSystem) {
+                notes.push(createSystemNote(currentSystem, currentDetails, currentTime, currentCreator));
             }
+            currentSystem = "General";
+            currentDetails = {};
+            currentTime = ob.obs_datetime;
+            currentCreator = ob.created_by;
+        } else if (name.includes("Review Of Systems")) {
+            if (currentSystem) {
+                notes.push(createSystemNote(currentSystem, currentDetails, currentTime, currentCreator));
+            }
+            currentSystem = name.replace("Review Of Systems ", "");
+            currentDetails = {};
+            currentTime = ob.obs_datetime;
+            currentCreator = ob.created_by;
+        }
+
+        if (currentSystem) {
+            currentDetails[name] = value;
         }
     });
 
-    // Push the last system if it has data
-    // if (currentSystem && currentSystem.symptoms.length > 0) {
-    //     systemsReviews.push(createSystemReviewParagraph(currentSystem));
-    // }
+    // Add the last system note
+    if (currentSystem) {
+        notes.push(createSystemNote(currentSystem, currentDetails, currentTime, currentCreator));
+    }
 
-    return systemsReviews.sort((a, b) => b.rawTime - a.rawTime);
+    return notes;
 };
 
-const createSystemReviewParagraph = (system: {
-    systemName: string;
-    symptoms: {
+const createSystemNote = (
+    system: string,
+    details: Record<string, any>,
+    time: string,
+    creator: string
+): ComponentNote => {
+    const detailText = Object.entries(details)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
+
+    return {
+        paragraph: `
+            Review of ${system} System:
+            ${detailText}
+        `.trim(),
+        creator: creator,
+        time: time,
+        rawTime: new Date(time).getTime(),
+    };
+};
+const formatFamilyHistoryNotes = (obs: any[]): ComponentNote[] => {
+    type FamilyHistoryCondition = {
         name: string;
-        duration?: string;
-        location?: string;
-    }[];
-    creator: string;
+        relationship?: string;
+        details?: string;
+    };
+
+    type FamilyHistoryNote = {
+        time: string;
+        creator: string;
+        conditions: FamilyHistoryCondition[];
+    };
+
+    const notes: ComponentNote[] = [];
+    let currentNote: FamilyHistoryNote | null = null;
+    let lastObservationTime: Date | null = null;
+
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const currentTime = new Date(time);
+        const creator = ob.created_by || "Unknown";
+
+        // Check if we need to start a new note (3-minute interval or first observation)
+        if (!currentNote || !lastObservationTime ||
+            (currentTime.getTime() - lastObservationTime.getTime()) > 180000) {
+
+            if (currentNote?.conditions?.length) {
+                notes.push(createFamilyHistoryNote(currentNote));
+            }
+
+            currentNote = {
+                time: time,
+                creator: creator,
+                conditions: []
+            };
+        }
+
+        lastObservationTime = currentTime;
+
+        if (name.startsWith("Family History")) {
+            const condition: FamilyHistoryCondition = {
+                name: name.replace("Family History", "").trim(),
+                // For cancer, include the type from the value
+                details: name === "Family History Cancer" ? value : undefined
+            };
+
+            if (ob.children && ob.children.length > 0) {
+                const relationshipChild = ob.children.find((child: any) =>
+                    child.names?.some((n: any) => n.name === "Relationship To Patient")
+                );
+                if (relationshipChild) {
+                    condition.relationship = relationshipChild.value;
+                }
+            }
+
+            if (name === "Family History Other Condition" || name === "Review Of Systems Other") {
+                condition.details = value;
+            }
+
+            currentNote!.conditions.push(condition);
+        }
+        else if (name === "Relationship To Patient" && currentNote?.conditions?.length) {
+            currentNote.conditions[currentNote.conditions.length - 1].relationship = value;
+        }
+
+        currentNote!.time = time;
+        currentNote!.creator = creator;
+    });
+
+    if (currentNote) {
+        notes.push(createFamilyHistoryNote(currentNote));
+    }
+
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createFamilyHistoryNote = (note: {
     time: string;
+    creator: string;
+    conditions: {
+        name: string;
+        relationship?: string;
+        details?: string;
+    }[];
 }): ComponentNote => {
     const parts: string[] = [];
+    parts.push("Family History:");
 
-    parts.push(`${system.systemName} System:`);
+    note.conditions.forEach(condition => {
+        let conditionText = condition.name;
 
-    system.symptoms.forEach(symptom => {
-        let symptomText = symptom.name;
-
-        if (symptom.duration) {
-            symptomText += ` (${symptom.duration} days)`;
+        if (condition.relationship) {
+            conditionText += ` (${condition.relationship})`;
         }
 
-        if (symptom.location) {
-            symptomText += ` in ${symptom.location}`;
+        // Cancer to include type
+        if (condition.name === "Cancer" && condition.details) {
+            conditionText += `: ${condition.details}`;
+        }
+        // For other conditions with details
+        else if (condition.details && condition.name !== "Cancer") {
+            conditionText += `: ${condition.details}`;
         }
 
-        parts.push(symptomText);
+        parts.push(conditionText);
     });
 
     return {
-        paragraph: parts.join(". "),
-        time: system.time,
-        creator: system.creator,
-        rawTime: new Date(system.time).getTime()
+        paragraph: parts.join("; "), // Use semicolon for better separation
+        time: note.time,
+        creator: note.creator,
+        rawTime: new Date(note.time).getTime()
+    };
+};
+const formatLastMealNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentNote: {
+        time: string;
+        creator: string;
+        lastMealTime?: string;
+        lastMealDescription?: string;
+    } = {
+        time: "",
+        creator: "Unknown"
+    };
+
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const creator = ob.created_by || "Unknown";
+
+        if (!currentNote.time) {
+            currentNote.time = time;
+            currentNote.creator = creator;
+        }
+
+        switch (name) {
+            case "Time of last meal":
+                if (currentNote.lastMealTime || currentNote.lastMealDescription) {
+                    notes.push(createLastMealNote(currentNote));
+                    currentNote = {
+                        time: time,
+                        creator: creator
+                    };
+                }
+                currentNote.lastMealTime = value;
+
+                if (ob.children && ob.children.length > 0) {
+                    const mealDescriptionChild = ob.children.find((child: any) =>
+                        child.names?.some((n: any) => n.name === "Description of last meal")
+                    );
+                    if (mealDescriptionChild) {
+                        currentNote.lastMealDescription = mealDescriptionChild.value;
+                    }
+                }
+                break;
+
+            case "Description of last meal":
+                if (!currentNote.lastMealDescription) {
+                    currentNote.lastMealDescription = value;
+                }
+                break;
+        }
+
+        currentNote.time = time;
+        currentNote.creator = creator;
+    });
+
+    if (currentNote.lastMealTime || currentNote.lastMealDescription) {
+        notes.push(createLastMealNote(currentNote));
+    }
+
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createLastMealNote = (note: {
+    time: string;
+    creator: string;
+    lastMealTime?: string;
+    lastMealDescription?: string;
+}): ComponentNote => {
+    const parts: string[] = [];
+    parts.push("Last meal:");
+
+    if (note.lastMealTime) {
+        const formattedTime = note.lastMealTime.replace(',', ' at');
+        parts.push(`consumed on ${formattedTime}`);
+    }
+
+    if (note.lastMealDescription) {
+        if (note.lastMealTime) {
+            parts.push(`(${note.lastMealDescription})`);
+        } else {
+            parts.push(note.lastMealDescription);
+        }
+    }
+
+    return {
+        paragraph: parts.join(' '),
+        time: note.time,
+        creator: note.creator,
+        rawTime: new Date(note.time).getTime()
     };
 };
 const formatGeneralInformationNotes = (obs: any[]): ComponentNote[] => {
@@ -2367,18 +2791,478 @@ const formatCirculationAssessmentNotes = (obs: any[]): ComponentNote[] => {
     return notes.sort((a, b) => b.rawTime - a.rawTime);
 };
 const formatDisabilityAssessmentNotes = (obs: any[]): ComponentNote[] => {
-    const notes: ComponentNote[] = [];
-    let currentNote: {
+    type DisabilityAssessment = {
         time: string;
         creator: string;
-        observations: Record<string, any>;
-        abnormalities: Record<string, any>;
-    } = {
-        time: "",
-        creator: "Unknown",
-        observations: {},
-        abnormalities: {}
+        consciousnessLevel?: string;
+        eyeOpening?: string;
+        verbalResponse?: string;
+        motorResponse?: string;
+        pupils?: {
+            leftSize?: string;
+            leftReaction?: string;
+            rightSize?: string;
+            rightReaction?: string;
+        };
+        focalNeurology?: string;
+        posture?: string;
+        serumGlucose?: string;
+        activeSeizures?: string;
+        additionalNotes?: string;
     };
+
+    const createDisabilityAssessmentNote = (assessment: DisabilityAssessment): ComponentNote => {
+        const messages: string[] = [];
+
+        // Consciousness level
+        if (assessment.consciousnessLevel) {
+            messages.push(assessment.consciousnessLevel === "No"
+                ? "The patient is alert with no reduced level of consciousness."
+                : "The patient has a reduced level of consciousness requiring evaluation.");
+        }
+
+        // GCS components if available
+        if (assessment.eyeOpening && assessment.verbalResponse && assessment.motorResponse) {
+            const gcsTotal = parseInt(assessment.eyeOpening) + parseInt(assessment.verbalResponse) + parseInt(assessment.motorResponse);
+
+            // GCS summary
+            messages.push(`GCS score: ${gcsTotal} (E${assessment.eyeOpening}V${assessment.verbalResponse}M${assessment.motorResponse}).`);
+
+            // GCS interpretation
+            if (gcsTotal === 15) {
+                messages.push("Patient is fully conscious with normal neurological function.");
+            } else if (gcsTotal >= 13 && gcsTotal <= 14) {
+                messages.push("Mild brain injury - close monitoring advised.");
+            } else if (gcsTotal >= 9 && gcsTotal <= 12) {
+                messages.push("Moderate brain injury - requires further assessment.");
+            } else if (gcsTotal >= 3 && gcsTotal <= 8) {
+                messages.push("Severe brain injury/coma - needs immediate intervention.");
+            }
+        }
+
+        // Pupil assessment
+        if (assessment.pupils) {
+            const leftSize = assessment.pupils.leftSize || "not measured";
+            const leftReaction = assessment.pupils.leftReaction || "not assessed";
+            const rightSize = assessment.pupils.rightSize || "not measured";
+            const rightReaction = assessment.pupils.rightReaction || "not assessed";
+
+            messages.push(`Pupils: Left (${leftSize}mm, ${leftReaction}), Right (${rightSize}mm, ${rightReaction}).`);
+        }
+
+        // Focal neurology
+        if (assessment.focalNeurology) {
+            messages.push(`Focal neurology: ${assessment.focalNeurology}.`);
+        }
+
+        // Posture
+        if (assessment.posture) {
+            messages.push(`Posture: ${assessment.posture}.`);
+        }
+
+        // Serum glucose
+        if (assessment.serumGlucose) {
+            const glucose = parseFloat(assessment.serumGlucose);
+            if (glucose < 3.9) {
+                messages.push(`Hypoglycemia (${glucose} mmol/L).`);
+            } else if (glucose > 11.1) {
+                messages.push(`Hyperglycemia (${glucose} mmol/L).`);
+            } else {
+                messages.push(`Normal glucose (${glucose} mmol/L).`);
+            }
+        }
+
+        // Active seizures
+        if (assessment.activeSeizures) {
+            messages.push(assessment.activeSeizures === "Yes"
+                ? "Active seizures present - requires immediate intervention."
+                : "No active seizures observed.");
+        }
+
+        // Additional notes
+        if (assessment.additionalNotes) {
+            messages.push(`Notes: ${assessment.additionalNotes}.`);
+        }
+
+        return {
+            paragraph: messages.join(" "),
+            time: assessment.time,
+            creator: assessment.creator,
+            rawTime: new Date(assessment.time).getTime()
+        };
+    };
+
+    const notes: ComponentNote[] = [];
+    let currentAssessment: Partial<DisabilityAssessment> = {};
+
+    // Sort observations by datetime (newest first)
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(b.obs_datetime).getTime() - new Date(a.obs_datetime).getTime()
+    );
+
+    // Process each observation
+    for (const ob of sortedObs) {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const creator = ob.created_by || "Unknown";
+
+        // Initialize new assessment if we don't have one
+        if (!currentAssessment.time) {
+            currentAssessment = { time, creator };
+        }
+
+        // Update current assessment time and creator with latest observation
+        currentAssessment.time = time;
+        currentAssessment.creator = creator;
+
+        // Handle observations
+        switch (name) {
+            case "Does the patient have a reduced Level of consciousness":
+                currentAssessment.consciousnessLevel = value;
+                break;
+
+            case "Eye Opening response":
+                currentAssessment.eyeOpening = value;
+                break;
+
+            case "Verbal Response":
+                currentAssessment.verbalResponse = value;
+                break;
+
+            case "Motor response":
+                currentAssessment.motorResponse = value;
+                break;
+
+            case "Focal Neurology":
+                currentAssessment.focalNeurology = value;
+                break;
+
+            case "Posture":
+                currentAssessment.posture = value;
+                break;
+
+            case "Serum glucose":
+                currentAssessment.serumGlucose = value;
+                break;
+
+            case "Active Seizures":
+                currentAssessment.activeSeizures = value;
+                break;
+
+            case "Additional Notes":
+                currentAssessment.additionalNotes = value;
+                break;
+
+            case "Eyes":
+                // Initialize pupils object if not exists
+                if (!currentAssessment.pupils) {
+                    currentAssessment.pupils = {};
+                }
+
+                const eyeSide = value; // "Left Eye" or "Right Eye"
+                for (const child of ob.children || []) {
+                    const childName = child.names?.[0]?.name;
+                    const childValue = child.value;
+
+                    if (childName === "Pupil size") {
+                        if (eyeSide === "Left Eye") {
+                            currentAssessment.pupils.leftSize = childValue;
+                        } else {
+                            currentAssessment.pupils.rightSize = childValue;
+                        }
+                    } else if (childName === "Pupil Reaction") {
+                        const reaction = childValue === "Yes" ? "reactive" : "non-reactive";
+                        if (eyeSide === "Left Eye") {
+                            currentAssessment.pupils.leftReaction = reaction;
+                        } else {
+                            currentAssessment.pupils.rightReaction = reaction;
+                        }
+                    }
+                }
+                break;
+        }
+
+        // Create note if we have enough data
+        if (currentAssessment.consciousnessLevel ||
+            currentAssessment.eyeOpening ||
+            currentAssessment.verbalResponse ||
+            currentAssessment.motorResponse ||
+            currentAssessment.pupils ||
+            currentAssessment.focalNeurology
+        ) {
+            notes.push(createDisabilityAssessmentNote(currentAssessment as DisabilityAssessment));
+            currentAssessment = {};
+        }
+    }
+
+    const uniqueNotes = notes.reduce((acc: ComponentNote[], note) => {
+        const exists = acc.some(n => n.paragraph === note.paragraph && n.time === note.time);
+        return exists ? acc : [...acc, note];
+    }, []);
+
+    return uniqueNotes.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+};
+const formatExposureAssessmentNotes = (obs: any[]): ComponentNote[] => {
+    type ExposureAbnormality = {
+        bodyPart: string;
+        skinRash?: string;
+        injury?: string;
+        abnormalities?: string;
+        descriptions: string[];
+        additionalNotes?: string;
+    };
+
+    type ExposureNote = {
+        time: string;
+        creator: string;
+        temperature?: string;
+        abnormalities: ExposureAbnormality[];
+        clinicianNotes?: string;
+        additionalNotes?: string;
+    };
+
+    const createExposureAssessmentNote = (note: ExposureNote): ComponentNote => {
+        const messages: string[] = [];
+
+        if (note.temperature) {
+            messages.push(`Temperature: ${note.temperature}°C.`);
+        }
+
+        if (note.abnormalities.length > 0) {
+            const bodyParts = note.abnormalities.map(ab => ab.bodyPart);
+            messages.push(`${bodyParts.join(' and ')} ${bodyParts.length > 1 ? 'were' : 'was'} assessed.`);
+        }
+
+        note.abnormalities.forEach(abnormality => {
+            const parts: string[] = [];
+            parts.push(`${abnormality.bodyPart} has`);
+            if (abnormality.skinRash === 'Present') {
+                const rashDesc = abnormality.descriptions.filter(d =>
+                    abnormality.skinRash === 'Present' &&
+                    (d.toLowerCase().includes('rash') || d.toLowerCase().includes('petechiae') || d.toLowerCase().includes('burns'))
+                ).join(', ');
+                parts.push(`skin rash (${rashDesc})`);
+            } else if (abnormality.skinRash === 'Absent') {
+                parts.push(`no skin rash`);
+            }
+            if (abnormality.injury === 'Present') {
+                const injuryDesc = abnormality.descriptions.filter(d =>
+                    abnormality.injury === 'Present' &&
+                    d.toLowerCase().includes('injury')
+                ).join(', ');
+                parts.push(injuryDesc ? `injury (${injuryDesc})` : 'injury');
+            } else if (abnormality.injury === 'Absent') {
+                parts.push(`no injury`);
+            }
+
+            if (abnormality.abnormalities === 'Present') {
+                const otherAbnormalities = abnormality.descriptions.filter(d =>
+                    abnormality.abnormalities === 'Present' &&
+                    !d.toLowerCase().includes('rash') &&
+                    !d.toLowerCase().includes('injury')
+                ).join(', ');
+                parts.push(otherAbnormalities ? `other abnormalities (${otherAbnormalities})` : 'other abnormalities');
+            } else if (abnormality.abnormalities === 'Absent') {
+                parts.push(`no other abnormalities`);
+            }
+
+            let description = parts.join(', ');
+            description = description.replace(/, ([^,]*)$/, ' and $1'); // Replace last comma with 'and'
+            messages.push(`${description}.`);
+        });
+
+        if (note.additionalNotes) {
+            messages.push(`Additional notes: ${note.additionalNotes}.`);
+        }
+
+
+        return {
+            paragraph: messages.join(' '),
+            time: note.time,
+            creator: note.creator,
+            rawTime: new Date(note.time).getTime()
+        };
+    };
+
+    const notes: ComponentNote[] = [];
+    let currentNote: Partial<ExposureNote> = {
+        abnormalities: []
+    };
+
+    const sortedObs = [...obs].sort((a, b) =>
+        new Date(a.obs_datetime).getTime() - new Date(b.obs_datetime).getTime()
+    );
+
+    sortedObs.forEach((ob: any) => {
+        const name = ob.names?.[0]?.name;
+        const value = ob.value;
+        const time = ob.obs_datetime || new Date().toISOString();
+        const creator = ob.created_by || "Unknown";
+
+        if (name === "Temperature (c)") {
+            if (currentNote.time) {
+                notes.push(createExposureAssessmentNote(currentNote as ExposureNote));
+            }
+            currentNote = {
+                time,
+                creator,
+                abnormalities: []
+            };
+        }
+
+        currentNote.time = time;
+        currentNote.creator = creator;
+
+        switch (name) {
+            case "Temperature (c)":
+                currentNote.temperature = value;
+                break;
+            case "Additional Notes":
+                currentNote.additionalNotes = value;
+                break;
+            case "Image Part Name":
+                if (value === "full body anterior" || value === "full body posterior") {
+                    ob.children?.forEach((child: any) => {
+                        const childName = child.names?.[0]?.name;
+                        if (childName === "Image Part Name") {
+                            const abnormality: ExposureAbnormality = {
+                                bodyPart: child.value,
+                                descriptions: []
+                            };
+
+                            child.children?.forEach((grandChild: any) => {
+                                const grandChildName = grandChild.names?.[0]?.name;
+                                const grandChildValue = grandChild.value;
+
+                                switch (grandChildName) {
+                                    case "Skin rash":
+                                        abnormality.skinRash = grandChildValue === "Yes" ? "Present" : "Absent";
+                                        if (grandChildValue === "Yes") {
+                                            grandChild.children?.forEach((descChild: any) => {
+                                                if (descChild.names?.[0]?.name === "Description") {
+                                                    abnormality.descriptions.push(descChild.value);
+                                                }
+                                            });
+                                        }
+                                        break;
+                                    case "Injury":
+                                        abnormality.injury = grandChildValue === "Yes" ? "Present" : "Absent";
+                                        if (grandChildValue === "Yes") {
+                                            grandChild.children?.forEach((descChild: any) => {
+                                                if (descChild.names?.[0]?.name === "Description of injury") {
+                                                    abnormality.descriptions.push(descChild.value);
+                                                }
+                                            });
+                                        }
+                                        break;
+                                    case "Abnormalities":
+                                        abnormality.abnormalities = grandChildValue === "Yes" ? "Present" : "Absent";
+                                        if (grandChildValue === "Yes") {
+                                            grandChild.children?.forEach((descChild: any) => {
+                                                if (descChild.names?.[0]?.name === "Abnormality description") {
+                                                    abnormality.descriptions.push(descChild.value);
+                                                }
+                                            });
+                                        }
+                                        break;
+                                    case "Description":
+                                        abnormality.descriptions.push(grandChildValue);
+                                        break;
+                                    case "Additional Notes":
+                                        abnormality.additionalNotes = grandChildValue;
+                                        break;
+                                    case "Image Part Name":
+                                        abnormality.bodyPart = grandChildValue;
+                                        break;
+                                }
+                            });
+
+                            if (abnormality.skinRash || abnormality.injury || abnormality.abnormalities || abnormality.descriptions.length > 0) {
+                                currentNote.abnormalities?.push(abnormality);
+                            }
+                        }
+                    });
+                } else {
+                    const abnormality: ExposureAbnormality = {
+                        bodyPart: value,
+                        descriptions: []
+                    };
+
+                    ob.children?.forEach((child: any) => {
+                        const childName = child.names?.[0]?.name;
+                        const childValue = child.value;
+
+                        switch (childName) {
+                            case "Skin rash":
+                                abnormality.skinRash = childValue === "Yes" ? "Present" : "Absent";
+                                if (childValue === "Yes") {
+                                    child.children?.forEach((descChild: any) => {
+                                        if (descChild.names?.[0]?.name === "Description") {
+                                            abnormality.descriptions.push(descChild.value);
+                                        }
+                                    });
+                                }
+                                break;
+                            case "Injury":
+                                abnormality.injury = childValue === "Yes" ? "Present" : "Absent";
+                                if (childValue === "Yes") {
+                                    child.children?.forEach((descChild: any) => {
+                                        if (descChild.names?.[0]?.name === "Description of injury") {
+                                            abnormality.descriptions.push(descChild.value);
+                                        }
+                                    });
+                                }
+                                break;
+                            case "Abnormalities":
+                                abnormality.abnormalities = childValue === "Yes" ? "Present" : "Absent";
+                                if (childValue === "Yes") {
+                                    child.children?.forEach((descChild: any) => {
+                                        if (descChild.names?.[0]?.name === "Abnormality description") {
+                                            abnormality.descriptions.push(descChild.value);
+                                        }
+                                    });
+                                }
+                                break;
+                            case "Description":
+                                abnormality.descriptions.push(childValue);
+                                break;
+                            case "Additional Notes":
+                                abnormality.additionalNotes = childValue;
+                                break;
+                        }
+                    });
+
+                    if (abnormality.skinRash || abnormality.injury || abnormality.abnormalities || abnormality.descriptions.length > 0) {
+                        currentNote.abnormalities?.push(abnormality);
+                    }
+                }
+                break;
+            case "Clinician notes":
+                currentNote.clinicianNotes = value;
+                break;
+        }
+    });
+
+    if (currentNote.time && (
+        currentNote.temperature ||
+        (currentNote.abnormalities && currentNote.abnormalities.length > 0) ||
+        currentNote.clinicianNotes ||
+        currentNote.additionalNotes
+    )) {
+        notes.push(createExposureAssessmentNote(currentNote as ExposureNote));
+    }
+
+    return notes;
+};
+const formatDispositionNotes = (obs: any[]): ComponentNote[] => {
+    const notes: ComponentNote[] = [];
+    let currentNote: {
+        dispositionType: string;
+        details: Record<string, any>;
+        time: string;
+        creator: string;
+    } | null = null;
 
     // Sort observations by datetime
     const sortedObs = [...obs].sort((a, b) =>
@@ -2392,284 +3276,250 @@ const formatDisabilityAssessmentNotes = (obs: any[]): ComponentNote[] => {
         const time = ob.obs_datetime || new Date().toISOString();
         const creator = ob.created_by || "Unknown";
 
-        console.log("Tiyese zidazi", name, value, time)
-
-        // Start new note when we find consciousness level observation
-        if (name === "Does the patient have a reduced Level of consciousness") {
-            // Push current note if it exists and has content
-            if (Object.keys(currentNote.observations).length > 0) {
-                notes.push(createDisabilityAssessmentNote(currentNote));
+        // Check for disposition type observations
+        if ([
+            "Discharge Home",
+            "Referral",
+            "Admission",
+            "Death",
+            "Absconded",
+            "Awaiting Speciality Review",
+            "Short stay",
+            "Transfer To Another Facility",
+            "Refused Hospital Treatment"
+        ].includes(name)) {
+            if (currentNote) {
+                notes.push(createDispositionNote(currentNote));
             }
 
-            // Initialize new note
+            // Start new note
             currentNote = {
+                dispositionType: name,
+                details: {},
                 time,
-                creator,
-                observations: {},
-                abnormalities: {}
+                creator
             };
+
+            if (currentNote && ob.children) {
+                ob.children.forEach((child: any) => {
+                    const childName = child.names?.[0]?.name;
+                    const childValue = child.value;
+
+                    if (childName) {
+                        currentNote!.details[childName] = childValue;
+                    }
+                });
+            }
         }
+    });
 
-        // Handle eye observations with children (pupil size and reaction)
-        if (name === "Eyes" && ob.children) {
-            const eyeSide = value; // "Left Eye" or "Right Eye"
-            for (const child of ob.children) {
-                const childName = child.names?.[0]?.name;
-                const childValue = child.value;
+    if (currentNote) {
+        notes.push(createDispositionNote(currentNote));
+    }
 
-                if (childName === "Pupil size") {
-                    currentNote.observations[`${eyeSide} Pupil size`] = {
-                        value: childValue,
-                        creator: child.created_by || creator,
-                        time: child.obs_datetime || time
-                    };
-                } else if (childName === "Pupil Reaction") {
-                    currentNote.observations[`${eyeSide} Pupil Reaction`] = {
-                        value: childValue === "Yes" ? "Reactive" : "Non-reactive",
-                        creator: child.created_by || creator,
-                        time: child.obs_datetime || time
-                    };
+    return notes.sort((a, b) => b.rawTime - a.rawTime);
+};
+
+const createDispositionNote = (note: {
+    dispositionType: string;
+    details: Record<string, any>;
+    time: string;
+    creator: string;
+}): ComponentNote => {
+    const parts: string[] = [];
+    const details = note.details;
+
+    switch (note.dispositionType) {
+        case "Discharge Home":
+            parts.push("Patient was discharged home.");
+
+            if (details["Discharge Plan"]) {
+                parts.push(`Discharge plan: ${details["Discharge Plan"]}`);
+            }
+            if (details["Followup Plan"] === "Yes") {
+                parts.push("Follow-up is required.");
+                if (details["Followup Details"]) {
+                    parts.push(`Follow-up details: ${details["Followup Details"]}`);
+                }
+            } else if (details["Followup Plan"] === "No") {
+                parts.push("No follow-up required.");
+            }
+            if (details["Home Care Instructions"]) {
+                parts.push(`Home care instructions: ${details["Home Care Instructions"]}`);
+            }
+            if (details["Discharge Notes"]) {
+                parts.push(`Discharge notes: ${details["Discharge Notes"]}`);
+            }
+            if (details["Specialist clinic"]) {
+                parts.push(`Referred to specialist clinic: ${details["Specialist clinic"]}`);
+            }
+            break;
+
+        case "Referral":
+            parts.push("Patient was referred to another facility.");
+            if (details["Referral Facility"]) {
+                parts.push(`Referral facility: ${details["Referral Facility"]}`);
+            }
+            if (details["Referral Reason"]) {
+                parts.push(`Reason for referral: ${details["Referral Reason"]}`);
+            }
+            if (details["Referral Notes"]) {
+                parts.push(`Referral notes: ${details["Referral Notes"]}`);
+            }
+            break;
+
+        case "Admission":
+            parts.push("Patient was admitted to the hospital.");
+            if (details["Speciality Department"]) {
+                parts.push(`Department: ${details["Speciality Department"]}`);
+            }
+            if (details["Bed number"]) {
+                parts.push(`Bed number: ${details["Bed number"]}`);
+            }
+            break;
+        case "Short stay":
+            parts.push("Patient was admitted for a short stay.");
+            if (details["Reason for short stay"]) {
+                parts.push(`Reason: ${details["Reason for short stay"]}`);
+            }
+            if (details["Expected duration"]) {
+                parts.push(`Expected duration: ${details["Expected duration"]}`);
+            }
+            if (details["Additional Notes"]) {
+                parts.push(`Additional notes: ${details["Additional Notes"]}`);
+            }
+            break;
+        case "Transfer To Another Facility":
+            parts.push("Patient was transferred to another facility.");
+            if (details["Facility Name"]) {
+                parts.push(`Transferred to: ${details["Facility Name"]}`);
+            }
+            if (details["Reason For Transfer"]) {
+                parts.push(`Reason for transfer: ${details["Reason For Transfer"]}`);
+            }
+            break;
+
+        case "Death":
+            parts.push("Patient was declared deceased.");
+            if (details["Cause of death"]) {
+                parts.push(`Cause of death: ${details["Cause of death"]}`);
+            }
+            if (details["Time of death"]) {
+                parts.push(`Time of death: ${details["Time of death"]}`);
+            }
+            if (details["Family Informed"]) {
+                if (details["Family Informed"] === "Yes") {
+                    parts.push("Family was informed.");
+                } else if (details["Family Informed"] === "No") {
+                    parts.push("Family was not informed.");
                 }
             }
-        }
-        // Handle regular observations
-        else if (name) {
-            currentNote.observations[name] = {
-                value,
-                creator,
-                time
-            };
+            if (details["Relationship To Deceased"]) {
+                parts.push(`Reported by: ${details["Relationship To Deceased"]}`);
+            }
+            if (details["Mortuary"]) {
+                parts.push(`Body taken to: ${details["Mortuary"]}`);
+            }
+            if (details["Last Office Conducted"]) {
+                if (details["Last Office Conducted"] === "Yes") {
+                    parts.push("Last office was conducted.");
+                } else if (details["Last Office Conducted"] === "No") {
+                    parts.push("Last office was not conducted.");
+                }
+            }
+            if (details["Name Of Health Worker Who Conducted Last Office"]) {
+                parts.push(`Last office conducted by: ${details["Name Of Health Worker Who Conducted Last Office"]}`);
+            }
+            if (details["Date Of Last Office"]) {
+                parts.push(`Date of last office: ${details["Date Of Last Office"]}`);
+            }
+            if (details["Additional Notes"]) {
+                parts.push(`Additional notes: ${details["Additional Notes"]}`);
+            }
+            break;
+
+        case "Absconded":
+            parts.push("Patient absconded from care.");
+            if (details["Last Seen Location"]) {
+                parts.push(`Last seen at ${details["Last Seen Location"]}`);
+            }
+            if (details["Date Of Absconding"]) {
+                parts.push(`Date of absconding: ${details["Date Of Absconding"]}`);
+            }
+            if (details["Time Of Absconding"]) {
+                parts.push(`Time of absconding: ${details["Time Of Absconding"]}`);
+            }
+            break;
+        case "Refused Hospital Treatment":
+            parts.push("Patient refused hospital treatment.");
+            if (details["Date Of Refusal"]) {
+                parts.push(`Date of refusal: ${details["Date Of Refusal"]}`);
+            }
+            if (details["Witness Name"]) {
+                parts.push(`Witness name: ${details["Witness Name"]}`);
+            }
+            if (details["Reason For Refusal"]) {
+                parts.push(`Reason for refusal: ${details["Reason For Refusal"]}`);
+            }
+            if (details["Plans To Return For Treatment"]) {
+                if (details["Plans To Return For Treatment"] === "Yes") {
+                    parts.push("The patient plans to return for treatment.");
+                } else if (details["Plans To Return For Treatment"] === "No") {
+                    parts.push("The patient does not plan to return for treatment.");
+                }
+            }
+            break;
+
+        case "Transfer":
+            parts.push("Patient was transferred to another facility.");
+            if (details["Transfer Facility"]) {
+                parts.push(`Transfer facility: ${details["Transfer Facility"]}`);
+            }
+            if (details["Transfer Reason"]) {
+                parts.push(`Reason for transfer: ${details["Transfer Reason"]}`);
+            }
+            if (details["Transfer Notes"]) {
+                parts.push(`Transfer notes: ${details["Transfer Notes"]}`);
+            }
+            break;
+
+        case "Awaiting Speciality Review":
+            parts.push("Patient is awaiting specialty review.");
+
+            if (details["Speciality Department"]) {
+                parts.push(`Specialty department: ${details["Speciality Department"]}`);
+            }
+            if (details["Reason for request"]) {
+                parts.push(`Reason for review: ${details["Reason for request"]}`);
+            }
+            break;
+
+        default:
+            parts.push(`Patient disposition: ${note.dispositionType}`);
+            break;
+    }
+
+    const handledDetails = [
+        "Discharge Plan", "Followup Plan", "Followup Details", "Home Care Instructions",
+        "Discharge Notes", "Specialist clinic", "Referral Facility", "Referral Reason",
+        "Referral Notes", "Admission Ward", "Admission Reason", "Admission Notes",
+        "Cause of death", "Time of death", "Family Informed", "Relationship To Deceased",
+        "Mortuary", "Last Office Conducted", "Name Of Health Worker Who Conducted Last Office", "Date Of Last Office",
+         "Last Seen", "Absconded Notes", "Transfer Facility", "Transfer Reason", "Transfer Notes",
+        "Speciality Department", "Reason for request", "Speciality Department",
+        "Bed number",  "Reason for short stay", "Expected duration",  "Additional Notes","Facility Name",
+        "Reason For Transfer","Date Of Absconding", "Time Of Absconding", "Last Seen Location", "Date Of Refusal",
+        "Witness Name", "Reason For Refusal", "Plans To Return For Treatment",
+    ];
+
+    Object.entries(details).forEach(([key, value]) => {
+        if (!handledDetails.includes(key) && value) {
+            parts.push(`${key}: ${value}`);
         }
     });
 
-    // Push the last note if it has content
-    if (Object.keys(currentNote.observations).length > 0) {
-        notes.push(createDisabilityAssessmentNote(currentNote));
-    }
-
-    return notes.sort((a, b) => b.rawTime - a.rawTime);
-};
-
-const createDisabilityAssessmentNote = (note: {
-    time: string;
-    creator: string;
-    observations: Record<string, any>;
-    abnormalities?: Record<string, any>;
-}): ComponentNote => {
-    const messages: string[] = [];
-    const obs = note.observations;
-
-    // Level of Consciousness
-    if (obs["Does the patient have a reduced Level of consciousness"]) {
-        const locValue = obs["Does the patient have a reduced Level of consciousness"].value;
-        if (locValue === "No") {
-            messages.push("The patient is alert and does not exhibit a reduced level of consciousness.");
-        } else {
-            messages.push("The patient exhibits a reduced level of consciousness and requires further evaluation and monitoring.");
-        }
-    }
-
-    // GCS components only if we have consciousness assessment
-    if (obs["Does the patient have a reduced Level of consciousness"]) {
-        const gcsTotal = parseInt(obs["Eye Opening response"]?.value || 0) +
-            parseInt(obs["Verbal Response"]?.value || 0) +
-            parseInt(obs["Motor response"]?.value || 0);
-
-        if (gcsTotal === 15) {
-            messages.push("GCS is 15: patient is fully conscious with normal neurological function.");
-        } else if (gcsTotal >= 13 && gcsTotal <= 14) {
-            messages.push(`GCS is ${gcsTotal}: Mild brain injury. Close monitoring advised.`);
-        } else if (gcsTotal >= 9 && gcsTotal <= 12) {
-            messages.push(`GCS is ${gcsTotal}: Moderate brain injury. Further assessment required.`);
-        } else if (gcsTotal >= 3 && gcsTotal <= 8) {
-            messages.push(`GCS is ${gcsTotal}: Severe brain injury or coma. Immediate intervention required.`);
-        }
-
-        // Eye Opening Response
-        if (obs["Eye Opening response"]?.value == 4) {
-            messages.push("Eyes open spontaneously: patient is fully conscious.");
-        } else if (obs["Eye Opening response"]?.value == 3) {
-            messages.push("Eyes open to speech: mild impairment in consciousness.");
-        } else if (obs["Eye Opening response"]?.value == 2) {
-            messages.push("Eyes open to pain: more significant impairment in consciousness.");
-        } else if (obs["Eye Opening response"]?.value == 1) {
-            messages.push("No eye opening response: patient may be in a deep coma.");
-        }
-
-        // Verbal Response
-        if (obs["Verbal Response"]?.value == 5) {
-            messages.push("Verbal response is 5: patient is oriented and converses normally.");
-        } else if (obs["Verbal Response"]?.value == 4) {
-            messages.push("Verbal response is 4: patient is confused but able to speak.");
-        } else if (obs["Verbal Response"]?.value == 3) {
-            messages.push("Verbal response is 3: inappropriate words, not making sense.");
-        } else if (obs["Verbal Response"]?.value == 2) {
-            messages.push("Verbal response is 2: incomprehensible sounds, moaning or groaning.");
-        } else if (obs["Verbal Response"]?.value == 1) {
-            messages.push("Verbal response is 1: no verbal response, patient is unresponsive.");
-        }
-
-        // Motor Response
-        if (obs["Motor response"]?.value == 6) {
-            messages.push("Motor response is 6: obeys commands normally.");
-        } else if (obs["Motor response"]?.value == 5) {
-            messages.push("Motor response is 5: localizes to pain.");
-        } else if (obs["Motor response"]?.value == 4) {
-            messages.push("Motor response is 4: withdraws from pain.");
-        } else if (obs["Motor response"]?.value == 3) {
-            messages.push("Motor response is 3: abnormal flexion to pain (decorticate posturing).");
-        } else if (obs["Motor response"]?.value == 2) {
-            messages.push("Motor response is 2: abnormal extension to pain (decerebrate posturing).");
-        } else if (obs["Motor response"]?.value == 1) {
-            messages.push("Motor response is 1: no motor response.");
-        }
-    }
-
-    // Pupil assessment
-    if (obs["Left Eye Pupil size"]?.value || obs["Right Eye Pupil size"]?.value) {
-        const leftSize = obs["Left Eye Pupil size"]?.value || "Not measured";
-        const leftReaction = obs["Left Eye Pupil Reaction"]?.value || "Not assessed";
-        const rightSize = obs["Right Eye Pupil size"]?.value || "Not measured";
-        const rightReaction = obs["Right Eye Pupil Reaction"]?.value || "Not assessed";
-
-        messages.push(`Pupil assessment - Left: ${leftSize}mm, ${leftReaction}; Right: ${rightSize}mm, ${rightReaction}.`);
-    }
-
-    // Focal Neurology
-    if (obs["Focal Neurology"]?.value) {
-        messages.push(`Focal neurological findings: ${obs["Focal Neurology"].value}.`);
-    }
-
-    // Posture
-    if (obs["Posture"]?.value) {
-        messages.push(`Posture: ${obs["Posture"].value}.`);
-    }
-
-    // Serum glucose
-    if (obs["Serum glucose"]?.value) {
-        const glucose = parseFloat(obs["Serum glucose"].value);
-        if (glucose < 3.9) {
-            messages.push(`Low blood glucose (${glucose} mmol/L): risk of hypoglycemia.`);
-        } else if (glucose > 11.1) {
-            messages.push(`High blood glucose (${glucose} mmol/L): risk of hyperglycemia.`);
-        } else {
-            messages.push(`Blood glucose level: ${glucose} mmol/L (normal range).`);
-        }
-    }
-
-    // Active Seizures
-    if (obs["Active Seizures"]?.value === "Yes") {
-        messages.push("Patient has active seizures. Immediate intervention required.");
-    } else if (obs["Active Seizures"]?.value === "No") {
-        messages.push("No active seizures observed.");
-    }
-
     return {
-        paragraph: messages.join(" "),
-        time: note.time,
-        creator: note.creator,
-        rawTime: new Date(note.time).getTime()
-    };
-};
-const formatExposureAssessmentNotes = (obs: any[]): ComponentNote[] => {
-    const notes: ComponentNote[] = [];
-    let currentNote: {
-        time: string;
-        creator: string;
-        observations: Record<string, any>;
-    } = {
-        time: "",
-        creator: "Unknown",
-        observations: {}
-    };
-
-    // Group observations by encounter
-    obs.forEach((ob: any) => {
-        const name = ob.names?.[0]?.name;
-        const value = ob.value;
-        const time = ob.obs_datetime || new Date().toISOString();
-        const creator = ob.created_by || "Unknown";
-
-        if (!currentNote.time) {
-            currentNote.time = time;
-            currentNote.creator = creator;
-        }
-
-        currentNote.observations[name] = {
-            value,
-            creator,
-            time
-        };
-    });
-
-    if (Object.keys(currentNote.observations).length > 0) {
-        notes.push(createExposureAssessmentNote(currentNote));
-    }
-
-    return notes.sort((a, b) => b.rawTime - a.rawTime);
-};
-
-const createExposureAssessmentNote = (note: {
-    time: string;
-    creator: string;
-    observations: Record<string, any>;
-}): ComponentNote => {
-    const messages: string[] = [];
-    const obs = note.observations;
-
-    // Temperature
-    if (obs[concepts.TEMPERATURE]?.value) {
-        messages.push(`Temperature (C): ${obs[concepts.TEMPERATURE].value}. `);
-    } else {
-        messages.push("Temperature (C) not recorded .");
-    }
-
-    // Additional Notes
-    if (obs[concepts.ADDITIONAL_NOTES]?.value) {
-        messages.push(`Additional Notes: ${obs[concepts.ADDITIONAL_NOTES].value}. `);
-    }
-
-    // Description
-    if (obs[concepts.DESCRIPTION]?.value) {
-        messages.push(`Description: ${obs[concepts.DESCRIPTION].value}. `);
-    }
-
-    // Cephalic Frontal Rash
-    if (obs[concepts.RASH]?.value) {
-        messages.push(`Rash on Cephalic: ${obs[concepts.RASH].value}. `);
-    }
-
-    // Cephalic Frontal Skin Abnormalities
-    if (obs[concepts.ABNORMALITIES]?.value) {
-        messages.push(`Skin abnormalities on Cephalic: ${obs[concepts.ABNORMALITIES].value}. `);
-    }
-
-    // Cephalic Frontal Injury
-    if (obs[concepts.INJURY]?.value) {
-        messages.push(`Injury on Cephalic: ${obs[concepts.INJURY].value}. `);
-    } else {
-        messages.push("Description of Injury: Not reported. ");
-    }
-
-    // Image Part Name
-    if (obs[concepts.IMAGE_PART_NAME]?.value) {
-        messages.push(`Body part: ${obs[concepts.IMAGE_PART_NAME].value}. `);
-    }
-    // Skin Rash
-    if (obs[concepts.SKIN_RASH]?.value) {
-        messages.push(`Skin Rash: ${obs[concepts.SKIN_RASH].value}. `);
-    }
-    // Abnormalities
-    if (obs[concepts.ABNORMALITIES]?.value) {
-        messages.push(`Abnormalities: ${obs[concepts.ABNORMALITIES].value}. `);
-    }
-    // Injury
-    if (obs[concepts.INJURY]?.value) {
-        messages.push(`Injury: ${obs[concepts.INJURY].value}. `);
-    }
-
-    return {
-        paragraph: messages.join(" "),
+        paragraph: parts.join(". "),
         time: note.time,
         creator: note.creator,
         rawTime: new Date(note.time).getTime()

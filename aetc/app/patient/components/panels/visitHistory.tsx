@@ -41,6 +41,9 @@ import SurgicalNotes from "../clinicalNotes/surgicalNotes";
 import { PreviousAdmissionsNotes } from "../clinicalNotes/previousAdmissionsNotes";
 import { ReviewOfSystems } from "../clinicalNotes/reviewOfSystemsNotes";
 import { FamilyHistoryNotes } from "../clinicalNotes/familyHistory";
+import {DispositionNotes} from "@/app/patient/components/clinicalNotes/dispositionNotes";
+import {GynaecologyNotes} from "@/app/patient/components/clinicalNotes/gynaecologyNotes";
+import {LastMealNotes} from "@/app/patient/components/clinicalNotes/lastMealNotes";
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -419,6 +422,8 @@ export const VisitHistory = () => {
                     <ExistingConditionsNotes />
                     <SurgicalNotes />
                     <PreviousAdmissionsNotes />
+                    <GynaecologyNotes/>
+                    <LastMealNotes/>
                     <ReviewOfSystems />
                     <FamilyHistoryNotes />
                 </AccordionDetails>
@@ -607,6 +612,26 @@ export const VisitHistory = () => {
                 </AccordionDetails>
                 
             </Accordion>
+        <Accordion
+            expanded={expandedAccordion === 'disposition'}
+            onChange={handleAccordionChange('disposition')}
+            sx={{
+                backgroundColor: 'white',
+            }}
+        >
+            <AccordionSummary
+                expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                aria-controls="disposition-content"
+                id="dispositiont-header"
+            >
+                <Typography  sx={{ fontWeight: 700 }}>
+                    Disposition
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <DispositionNotes/>
+            </AccordionDetails>
+        </Accordion>
 
     </>
 );

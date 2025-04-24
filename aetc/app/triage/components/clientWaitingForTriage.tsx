@@ -2,13 +2,14 @@ import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
 import { useState } from "react";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import { getPatientCategoryListPaginated, getPatientsWaitingForTriage } from "@/hooks/patientReg";
 import {
   BaseTable,
   CalculateWaitingTime,
   MainButton,
   MainTypography,
   PatientTableList,
+  PatientTableListServer,
 } from "@/components";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
@@ -17,27 +18,26 @@ import { encounters } from "@/constants";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
+import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
-  const {
-    data: patients,
-    isLoading,
-    isRefetching,
-  } = getPatientsWaitingForTriage();
+    const {refetch, paginationModel, data:patients, searchText, setSearchText, setPaginationModel, isPending }=fetchPatientsTablePaginate('triage')
+
+
   const { navigateTo } = useNavigation();
 
-  const rows = patients
-    ?.sort((p1, p2) => {
-      //@ts-ignore
-      return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-    })
-    .map((p) => ({
+
+
+  const rows = patients?.data
+    ?.map((p) => ({
       id: p?.uuid,
       ...p,
       patient_arrival_time: getTime(p.arrival_time),
     }))
     .filter((p) => p.id != deleted);
+
+   
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number" },
@@ -140,12 +140,28 @@ export const ClientWaitingForTriage = () => {
     };
   });
 
-  return (
-    <PatientTableList
-      formatForMobileView={formatForMobileView}
-      isLoading={isLoading || isRefetching}
-      columns={columns}
-      rows={rows ? rows : []}
-    />
-  );
+  // return (
+  //   <PatientTableList
+  //     formatForMobileView={formatForMobileView}
+  //     isLoading={isLoading || isRefetching}
+  //     columns={columns}
+  //     rows={rows ? rows : []}
+  //   />
+  // );
+
+
+  return <PatientTableListServer
+         columns={columns}
+         data={
+          rows?.length
+             ? { data: rows, page: patients?.page ? patients.page-1 : 0, per_page: patients?.per_page ?? 10, total_pages: patients?.total_pages ?? 0 }
+             : { data: [], page: 0, per_page: 10, total_pages: 0 }
+         }
+         searchText={searchText}
+         setSearchString={setSearchText}
+         setPaginationModel={setPaginationModel}
+         paginationModel={paginationModel}
+         loading={isPending}
+         formatForMobileView={formatForMobileView ? formatForMobileView : []}
+       />
 };

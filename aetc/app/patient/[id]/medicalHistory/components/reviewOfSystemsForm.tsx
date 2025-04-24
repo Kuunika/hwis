@@ -632,7 +632,7 @@ const displayedSymptoms = showAllSymptoms ? visibleSymptoms : visibleSymptoms.sl
           style={{
             background: "none",
             border: "none",
-            color: "#1976d2",
+            color: "Green",
             cursor: "pointer",
             fontSize: "0.95rem",
             padding: 0,
@@ -865,14 +865,29 @@ const displayedSymptoms = showAllSymptoms ? visibleSymptoms : visibleSymptoms.sl
         )}
       </FormFieldContainer>
 
-      <FormFieldContainer direction="column">
+      <FormFieldContainer direction="column" >
+        <div style={{ marginTop: "2rem" }}>
+        <SocialHistoryPanel showForPrinting={showAll}toggleShow={setShowAll} />
+        </div>
+      <div   
+        style={{
+          border: "1px solid #e0e0e0",
+          borderRadius: "8px",
+          padding: "16px",
+          marginBottom: "16px",
+          backgroundColor: "white",
+          width: "32%",
+          marginTop: "1rem",
+          }}>
         <LabelledCheckbox
           name="showSocialHistory"
           label="Update social history?"
+ 
         />
+        </div>
         {updateSocial && (
           <>
-            <SocialHistoryPanel showForPrinting={showAll}toggleShow={setShowAll} />
+            
             <RadioGroupInput
               row={true}
               name="occupation"

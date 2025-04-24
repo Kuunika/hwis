@@ -1,9 +1,14 @@
-import { MainButton, MainTypography, WrapperBox } from "@/components";
+import {
+  MainButton,
+  MainTypography,
+  PatientInfoTab,
+  WrapperBox,
+} from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
 import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
@@ -37,6 +42,7 @@ import { useComponentNotes } from "@/hooks/useComponentNotes";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { CirculationAssessment } from "@/app/patient/components/clinicalNotes/CirculationAssessment";
 import { ReviewOfSystems } from "@/app/patient/components/clinicalNotes/reviewOfSystemsNotes";
+import { useReactToPrint } from "react-to-print";
 
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
@@ -78,6 +84,12 @@ export const ClinicalNotes = () => {
   const { notes: previousAdmissionsNotes } = useComponentNotes(
     encounters.PATIENT_ADMISSIONS
   );
+    const { notes: gyneacologyNotes } = useComponentNotes(
+        encounters.OBSTETRIC_HISTORY
+    );
+    const { notes: lastMealNotes } = useComponentNotes(
+        encounters.SUMMARY_ASSESSMENT
+    );
   const { notes: reviewOfSystemsNotes } = useComponentNotes(
     encounters.REVIEW_OF_SYSTEMS
   );
@@ -102,6 +114,9 @@ export const ClinicalNotes = () => {
   );
   const { notes: soapierNotes } = useComponentNotes(
     encounters.NURSING_CARE_NOTES
+  );
+  const { notes: dispositionNotes } = useComponentNotes(
+    encounters.DISPOSITION
   );
 
   const { data: patient } = getOnePatient(params.id as string);
@@ -129,6 +144,8 @@ export const ClinicalNotes = () => {
           ...existingConditionsNotes,
           ...surgicalNotes,
           ...previousAdmissionsNotes,
+            ...gyneacologyNotes,
+            ...lastMealNotes,
           ...reviewOfSystemsNotes,
           ...familyHistoryNotes,
           ...generalInfoNotes,
@@ -138,6 +155,7 @@ export const ClinicalNotes = () => {
           ...extremitiesNotes,
           ...neurologicalNotes,
           ...soapierNotes,
+            ...dispositionNotes,
         ];
 
     return combinedNotes.sort(
@@ -156,7 +174,9 @@ export const ClinicalNotes = () => {
     existingConditionsNotes,
     surgicalNotes,
     previousAdmissionsNotes,
-    reviewOfSystemsNotes,
+      gyneacologyNotes,
+      lastMealNotes,
+      reviewOfSystemsNotes,
     familyHistoryNotes,
     generalInfoNotes,
     headNeckNotes,
@@ -165,6 +185,7 @@ export const ClinicalNotes = () => {
     extremitiesNotes,
     neurologicalNotes,
     soapierNotes,
+      dispositionNotes,
     filterSoapierState, // respond to toggle change
   ]);
 
@@ -181,6 +202,11 @@ export const ClinicalNotes = () => {
     return <ProfilePanelSkeletonLoader />;
   }
 
+  const contentRef = useRef<HTMLDivElement>(null); // <--- move here
+
+  const handlePrint = useReactToPrint({
+    contentRef: contentRef,
+  });
   return (
     <Panel title="">
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
@@ -188,8 +214,10 @@ export const ClinicalNotes = () => {
           onAddNote={addClinicalNote}
           filterSoapierState={filterSoapierState}
           setFilterSoapierState={setFilterSoapierState}
+          onDownload={handlePrint} // <--- pass handler to child
         />
       </WrapperBox>
+
       <WrapperBox
         sx={{
           overflow: "scroll",
@@ -197,39 +225,73 @@ export const ClinicalNotes = () => {
           pl: "2ch",
         }}
       >
-        {allNotes.length === 0 ? (
-          <Typography>No clinical notes available</Typography>
-        ) : (
-          allNotes.map((data, index) => (
-            <Box
-              key={`${data.time}-${index}`}
-              sx={{
-                my: "1ch",
-                py: "1ch",
-                borderBottom: "1px solid #E0E0E0",
+        <div
+          ref={contentRef}
+          style={{
+            margin: "10px",
+            alignItems: "center",
+            alignContent: "center",
+          }}
+        >
+          <div className="print-only">
+            <PatientInfoTab />
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "20px",
+                marginTop: "10px",
+                textAlign: "center",
               }}
             >
-              <Typography variant="body1" sx={{ color: "text.primary", mb: 0 }}>
-                {data.paragraph}
-              </Typography>
+              Clinical Notes
+            </div>
+          </div>
+
+          {allNotes.length === 0 ? (
+            <Typography>No clinical notes available</Typography>
+          ) : (
+            allNotes.map((data, index) => (
               <Box
+                key={`${data.time}-${index}`}
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  my: "1ch",
+                  py: "1ch",
+                  borderBottom: "1px solid #E0E0E0",
                 }}
               >
-                <Typography variant="caption" sx={{}}>
-                  ~ {data.creator}
+                <Typography
+                  variant="body1"
+                  sx={{ color: "text.primary", mb: 0 }}
+                >
+                  {data.paragraph}
                 </Typography>
-                <Typography variant="caption">
-                  {getHumanReadableDateTime(data.time)}
-                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="caption">~ {data.creator}</Typography>
+                  <Typography variant="caption">
+                    {getHumanReadableDateTime(data.time)}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </WrapperBox>
+      <style jsx>{`
+        @media print {
+          .print-only {
+            display: block !important; /* Ensure visibility in print */
+          }
+        }
+        .print-only {
+          display: none; /* Hide on screen */
+        }
+      `}</style>
     </Panel>
   );
 };
@@ -238,13 +300,16 @@ const AddClinicalNotes = ({
   onAddNote,
   filterSoapierState,
   setFilterSoapierState,
+  onDownload,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
   setFilterSoapierState: (value: boolean) => void;
+  onDownload: () => void;
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
+  // Ref for printing
+  const contentRef = useRef<HTMLDivElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -260,7 +325,6 @@ const AddClinicalNotes = ({
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
   return (
     <>
       <Box
@@ -297,6 +361,38 @@ const AddClinicalNotes = ({
 
         <div>
           <Button
+            onClick={onDownload}
+            sx={{
+              color: "white",
+              backgroundColor: "primary.main",
+              border: "1px solid currentColor",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontSize: "14px",
+              marginRight: "10px",
+              flexGrow: 1,
+              textTransform: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "110px",
+              "&:hover": {
+                backgroundColor: "rgb(0, 70, 0)",
+              },
+            }}
+          >
+            Download PDF
+          </Button>
+          <span
+            style={{
+              width: "10px",
+              borderRight: "1px solid #000",
+              marginRight: "10px",
+              height: "30px",
+              paddingTop: "5px",
+              paddingBottom: "5px",
+            }}
+          ></span>
+          <Button
             onClick={() => setFilterSoapierState(true)}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
@@ -316,7 +412,7 @@ const AddClinicalNotes = ({
               },
             }}
           >
-            Soapier Notes
+            SOAPIER Notes
           </Button>
           <Button
             onClick={() => setFilterSoapierState(false)}

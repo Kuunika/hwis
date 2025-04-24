@@ -27,6 +27,7 @@ export const PatientManagementFlow = () => {
             steps={steps}
             active={activeStep}
             setActive={setActiveStep}
+            onBack={() => navigateBackToProfile()}
         >
             {/* Non-Pharmacological Form */}
             <>
@@ -34,19 +35,19 @@ export const PatientManagementFlow = () => {
                     onSkip={() => { }}
                     onSubmit={() => setActiveStep(1)} //  Moves to Patient Care Area Form
                 />
-                <StepButtons onNext={() => setActiveStep(1)} />
+                {/* <StepButtons onNext={() => setActiveStep(1)} /> */}
             </>
 
             {/* Patient Care Area Form */}
             <>
                 <PatientCareAreaForm onSkip={() => { }} onSubmit={() => setActiveStep(2)} />
-                <StepButtons onNext={() => setActiveStep(2)} onPrevious={() => setActiveStep(0)} />
+                {/* <StepButtons onNext={() => setActiveStep(2)} onPrevious={() => setActiveStep(0)} /> */}
             </>
 
             {/* Medication Form */}
             <>
                 <MedicationsForm onSkip={() => { }} onSubmit={() => { }} />
-                <StepButtons onPrevious={() => setActiveStep(1)} />
+                {/* <StepButtons onPrevious={() => setActiveStep(1)} /> */}
             </>
         </NewStepperContainer>
     );

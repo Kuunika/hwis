@@ -129,6 +129,7 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
       options: [
         { value: "Water", label: "Water" },
         { value: "Juice", label: "Juice" },
+        { value: "ORS", label: "ORS" },
       ],
     },
   ];

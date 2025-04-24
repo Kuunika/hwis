@@ -13,7 +13,8 @@ import { LungBackMaleImage } from "@/components/svgImages/LungBackMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { concepts } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
 import { Box, Typography } from "@mui/material";
 import { Form } from "formik";
@@ -94,7 +95,7 @@ const form = {
     label: "Specify",
   },
   auscultations: {
-    name: concepts.SPECIFY,
+    name: concepts.AUSCULTATION,
     label: "Auscultations",
   },
   other: {
@@ -190,6 +191,10 @@ const form = {
     name: concepts.GAIT,
     label: "Gait",
   },
+  auscultationLung: {
+    name: concepts.AUSCULTATION_LUNG,
+    label: "Auscultation",
+  },
 };
 
 const schema = Yup.object().shape({
@@ -264,6 +269,8 @@ const schema = Yup.object().shape({
   [form.sensation.name]: Yup.string().label(form.sensation.label),
   [form.coordination.name]: Yup.string().label(form.coordination.label),
   [form.gait.name]: Yup.string().label(form.gait.label),
+  [form.auscultations.name]: Yup.string().label(form.auscultations.label),
+  [form.auscultationLung.name]: Yup.string().label(form.auscultationLung.label),
 });
 const initialValues = getInitialValues(form);
 
@@ -313,10 +320,13 @@ const verbalResponses = [
   { label: "None", value: "None", weight: 1 },
 ];
 
-export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
+export const ReviewOfSystems = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const [formValues, setFormValues] = useState<any>({});
   const { gender } = getActivePatientDetails();
-  const [percussionImageEnc, setPercussionImagesEnc] = useState({});
+  const [percussionImageEnc, setPercussionImageEnc] = useState([]);
+  const [abdomenImageEnc, setAbdomenImageEnc] = useState([]);
+
+  const [percussionPosteriorImageEnc, setPercussionPosteriorImagesEnc] = useState([]);
 
   const getWeight = (value: string, lists: any) => {
     const found = lists.find((l: any) => l.value == value);
@@ -330,11 +340,43 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
     eyeOpeningResponses
   );
 
+  const handleSubmit = (values: any) => {
+    const formValues = { ...values }
+    const obsDatetime = getDateTime();
+
+
+    const obs = [
+      {
+        concept: concepts.SITE,
+        values: 'Lung Anterior',
+        groupMembers: flattenImagesObs(percussionImageEnc),
+        obsDatetime
+      },
+      {
+        concept: concepts.SITE,
+        values: 'Lung Posterior',
+        groupMembers: flattenImagesObs(percussionPosteriorImageEnc),
+        obsDatetime
+      },
+      {
+        concept: concepts.SITE,
+        values: 'Abdomen',
+        groupMembers: flattenImagesObs(abdomenImageEnc),
+        obsDatetime
+      }
+    ]
+
+
+    onSubmit([...getObservations(formValues, obsDatetime),...obs])
+
+  }
+
   return (
     <FormikInit
       initialValues={initialValues}
       validationSchema={schema}
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
+      submitButtonText="next"
     >
       <FormValuesListener getValues={setFormValues} />
       <FormFieldContainerLayout title="General">
@@ -482,16 +524,25 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
             id={form.specify.name}
           />
         )}
+
+        <TextInputField
+          rows={5}
+          multiline
+          sx={{ width: "100%" }}
+          name={form.auscultations.name}
+          id={form.auscultations.name}
+          label={form.auscultations.label}
+        />
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Lungs">
         {gender == "Male" && (
           <FormFieldContainerMultiple>
             <LungFrontMaleImage
-              onValueChange={setPercussionImagesEnc}
+              onValueChange={setPercussionImageEnc}
               form="medicalInpatient"
             />
             <LungBackMaleImage
-              onValueChange={setPercussionImagesEnc}
+              onValueChange={setPercussionPosteriorImagesEnc}
               form="medicalInpatient"
             />
           </FormFieldContainerMultiple>
@@ -499,11 +550,11 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
         {gender == "Female" && (
           <Box>
             <LungFrontFemaleImage
-              onValueChange={setPercussionImagesEnc}
+              onValueChange={setPercussionImageEnc}
               form="medicalInpatient"
             />
             <LungBackFemaleImage
-              onValueChange={setPercussionImagesEnc}
+              onValueChange={setPercussionPosteriorImagesEnc}
               form="medicalInpatient"
             />
           </Box>
@@ -511,22 +562,22 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: () => void }) => {
         <TextInputField
           multiline
           rows={5}
-          name={form.auscultations.name}
-          label={form.auscultations.label}
-          id={form.auscultations.name}
+          name={form.auscultationLung.name}
+          label={form.auscultationLung.label}
+          id={form.auscultationLung.name}
           sx={{ width: "100%" }}
         />
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Abdomen">
         {gender == "Male" && (
           <NewAbdomenImage
-            onValueChange={setPercussionImagesEnc}
+            onValueChange={setAbdomenImageEnc}
             formNameSection="medicalInPatient"
           />
         )}
         {gender == "Female" && (
           <NewAbdomenFemaleImage
-            onValueChange={setPercussionImagesEnc}
+            onValueChange={setAbdomenImageEnc}
             formNameSection="medicalInPatient"
           />
         )}

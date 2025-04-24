@@ -19,9 +19,9 @@ import {
 } from "@/hooks";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatient } from "@/services/patient";
-import { Box, Button, Typography, Paper } from "@mui/material";
+import { Box, Button, Typography, Paper, TextField } from "@mui/material";
 import * as Yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ErrorMessage,
   FieldArray,
@@ -41,6 +41,7 @@ type Medication = {
   name: string;
   formulation: string;
   medication_dose: number;
+  medication_route: string;
   medication_dose_unit: string;
   medication_frequency: string;
   medication_duration: number;
@@ -62,6 +63,7 @@ const medicationTemplate: Medication = {
   formulation: "",
   medication_dose: 0,
   medication_dose_unit: "",
+  medication_route: "",
   medication_frequency: "",
   medication_duration: 0,
   medication_duration_unit: "",
@@ -218,7 +220,7 @@ const supportiveCareConfig = [
   { value: concepts.COUNSELLING, label: "Counselling" },
   { value: concepts.FEEDING, label: "Feeding" },
   { value: concepts.OXYGENATION, label: "Oxygenation" },
-  { value: concepts.TAPID_SPONGING, label: "Tapid Sponging" },
+  { value: concepts.TEPID_SPONGING, label: "Tepid Sponging" },
   {
     value: concepts.ELECTROCARDIOGRAPHY_MONITORING,
     label: "Electrocardiography (ECG) Monitoring",
@@ -342,7 +344,24 @@ export const SoapForm = () => {
     isSuccess,
   } = fetchConceptAndCreateEncounter();
   const [formValues, setFormValues] = useState<any>({ medications: [] });
+  const [medicationData, setMedicationOptionsValues] = useState<any>([]);
   const { medicationOptions, loadingDrugs } = useFetchMedications();
+  const filterMedicationOptions = [
+    "Paracetamol",
+    "Ibuprofen",
+    "Diclofenac sodium 75mg/ml, 3ml",
+    "Diclofenac sodium Slow Release",
+    "Diclofenac sodium",
+    "Salbutamol",
+    "Salbutamol sulphate",
+    "Salbutamol solution for nebulising 5mg/ml",
+    "Salbutamol sulphate aerosol inhalation, 100mcg/dose, 200 doses",
+    "Oxytocin",
+    "Dextrose 50%,",
+    "Aspirin",
+    "Prednisolone",
+    "Diazepam",
+  ];
   const [showTextFields, setShowTextFields] = useState({
     otherProcedure: false,
     otherSupportiveCare: false,
@@ -352,7 +371,12 @@ export const SoapForm = () => {
     encounters.NURSING_CARE_NOTES,
     () => navigateBack()
   );
-
+  useEffect(() => {
+    const filteredOptions = medicationOptions.filter((med: any) =>
+      filterMedicationOptions.includes(med.label)
+    );
+    setMedicationOptionsValues(filteredOptions);
+  }, [medicationOptions]);
   const handleSubmitForm = (values: any) => {
     submitMedications();
     submitProcedureSupportiveCares(values);
@@ -363,6 +387,7 @@ export const SoapForm = () => {
       "name",
       "formulation",
       "medication_dose",
+      "medication_route",
       "medication_dose_unit",
       "medication_frequency",
       "medication_duration",
@@ -377,7 +402,7 @@ export const SoapForm = () => {
     );
 
     if (medications.length === 0) return;
-
+    submitDispensedDrugs(medications);
     const obsDateTime = getDateTime();
     const obs = medications.map((medication: any) => {
       return {
@@ -419,7 +444,7 @@ export const SoapForm = () => {
           },
           {
             concept: concepts.DESCRIPTION,
-            value: "current",
+            value: "soapier",
             obsDateTime,
           },
         ],
@@ -427,7 +452,7 @@ export const SoapForm = () => {
     });
 
     mutate({
-      encounterType: encounters.NURSING_CARE_NOTES,
+      encounterType: encounters.PRESCRIPTIONS,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
@@ -435,9 +460,43 @@ export const SoapForm = () => {
     });
     formValues.medications = [medicationTemplate];
   };
+  const submitDispensedDrugs = (medications: any) => {
+    const obsDateTime = getDateTime();
+    const obs = medications.map((medication: any) => {
+      return {
+        concept: concepts.DRUG_GIVEN,
+        value: medication.name,
+        obsDateTime,
+        groupMembers: [
+          {
+            concept: concepts.MEDICATION_DOSE,
+            value: medication.medication_dose,
+            obsDateTime,
+          },
+          {
+            concept: concepts.MEDICATION_ROUTE,
+            value: medication.medication_route,
+            obsDatetime: getDateTime(),
+          },
+          {
+            concept: concepts.DESCRIPTION,
+            value: "soapier",
+            obsDateTime,
+          },
+        ],
+      };
+    });
+    const payload = {
+      encounterType: encounters.DISPENSING,
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: obsDateTime,
+      obs,
+    };
+
+    mutate(payload);
+  };
   const submitProcedureSupportiveCares = async (values: any) => {
-    console.log("Procedures Selected:", values.procedures);
-    console.log("Supportive Care Selected:", values.supportiveCare);
     const currentDateTime = getDateTime();
 
     const obs = [
@@ -484,8 +543,6 @@ export const SoapForm = () => {
   return (
     <>
       <ContainerLoaderOverlay loading={addingDrugs || loadingDrugs}>
-        <b>Prescribe Medication</b>
-        <br />
         <FormikInit
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -613,75 +670,86 @@ export const SoapForm = () => {
                   />
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
-                  <Typography variant="h6">Intervention</Typography>
-                  <FormFieldContainer direction="row">
-                    <WrapperBox
-                      sx={{
-                        bgcolor: "white",
-                        padding: "2ch",
-                        mb: "2ch",
-                        width: "100%",
-                      }}
-                    >
-                      <h4>Procedures</h4>
-                      <CheckboxesGroup
-                        name="procedures"
-                        allowFilter={false}
-                        options={proceduresConfig}
-                        getValue={(values) =>
-                          setShowTextFields((prev) => ({
-                            ...prev,
-                            otherProcedure: values.some(
-                              (val: any) =>
-                                val.key === concepts.OTHER && val.value
-                            ),
-                          }))
-                        }
-                      />
-                      {showTextFields.otherProcedure && (
-                        <TextInputField
-                          id="otherProcedureSpecify"
-                          label="Specify Other Procedure"
-                          name="otherProcedureSpecify"
-                          placeholder="Specify the procedure"
-                        />
-                      )}
-                    </WrapperBox>
-                    <WrapperBox
-                      sx={{
-                        bgcolor: "white",
-                        padding: "2ch",
-                        mb: "2ch",
-                        width: "100%",
-                      }}
-                    >
-                      <h4>Supportive Care</h4>
-                      <CheckboxesGroup
-                        name="supportiveCare"
-                        allowFilter={false}
-                        options={supportiveCareConfig}
-                        getValue={(values) =>
-                          setShowTextFields((prev) => ({
-                            ...prev,
-                            otherSupportiveCare: values.some(
-                              (val: any) =>
-                                val.key === concepts.OTHER && val.value
-                            ),
-                          }))
-                        }
-                      />
-                      {showTextFields.otherSupportiveCare && (
-                        <TextInputField
-                          id="otherSupportiveCareSpecify"
-                          label="Specify Other Supportive Care"
-                          name="otherSupportiveCareSpecify"
-                          placeholder="Specify the care"
-                        />
-                      )}
-                    </WrapperBox>
-                  </FormFieldContainer>
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    Intervention
+                  </Typography>
+                  <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+                    {" "}
+                    Non-pharmacological management{" "}
+                  </span>
 
-                  <h4>Prescribe Medications</h4>
+                  <div style={{ maxWidth: "900px" }}>
+                    <FormFieldContainer direction="row">
+                      <WrapperBox
+                        sx={{
+                          bgcolor: "white",
+                          padding: "0.5ch",
+                          mb: "2ch",
+                          width: "90%",
+                        }}
+                      >
+                        <h4>Procedures</h4>
+                        <CheckboxesGroup
+                          name="procedures"
+                          allowFilter={false}
+                          options={proceduresConfig}
+                          getValue={(values) =>
+                            setShowTextFields((prev) => ({
+                              ...prev,
+                              otherProcedure: values.some(
+                                (val: any) =>
+                                  val.key === concepts.OTHER && val.value
+                              ),
+                            }))
+                          }
+                        />
+                        {showTextFields.otherProcedure && (
+                          <TextInputField
+                            id="otherProcedureSpecify"
+                            label="Specify Other Procedure"
+                            name="otherProcedureSpecify"
+                            placeholder="Specify the procedure"
+                          />
+                        )}
+                      </WrapperBox>
+                      <WrapperBox
+                        sx={{
+                          bgcolor: "white",
+                          padding: "2ch",
+                          mb: "2ch",
+                          width: "90%",
+                        }}
+                      >
+                        <h4>Supportive Care</h4>
+                        <CheckboxesGroup
+                          name="supportiveCare"
+                          allowFilter={false}
+                          options={supportiveCareConfig}
+                          getValue={(values) =>
+                            setShowTextFields((prev) => ({
+                              ...prev,
+                              otherSupportiveCare: values.some(
+                                (val: any) =>
+                                  val.key === concepts.OTHER && val.value
+                              ),
+                            }))
+                          }
+                        />
+                        {showTextFields.otherSupportiveCare && (
+                          <TextInputField
+                            id="otherSupportiveCareSpecify"
+                            label="Specify Other Supportive Care"
+                            name="otherSupportiveCareSpecify"
+                            placeholder="Specify the care"
+                          />
+                        )}
+                      </WrapperBox>
+                    </FormFieldContainer>
+                  </div>
+
+                  <h4 style={{ marginBottom: "1ch" }}>
+                    Pharmacological management
+                  </h4>
                   <FormValuesListener getValues={setFormValues} />
                   <FieldArray name="medications">
                     {({ push, remove }) => (
@@ -698,12 +766,13 @@ export const SoapForm = () => {
                               alignItems: "center",
                               gap: 1,
                               flexWrap: "wrap",
+                              width: "100%",
                             }}
                           >
                             <SearchComboBox
                               name={`medications[${index}].name`}
                               label="Medication Name"
-                              options={medicationOptions}
+                              options={medicationData}
                               getValue={(value) =>
                                 setFieldValue(
                                   `medications[${index}].name`,
@@ -772,25 +841,20 @@ export const SoapForm = () => {
                                 sx={{ flex: 1 }}
                               />
                             )}
+
+                            <TextField
+                              id={`medications[${index}].medication_route`}
+                              name={`medications[${index}].medication_route`}
+                              label="Route"
+                              fullWidth
+                              variant="outlined"
+                            />
                           </Box>
                         )}
                       />
                     )}
                   </FieldArray>
-
-                  <Button
-                    variant="contained"
-                    type="button"
-                    onClick={async () => {
-                      await submitMedications(); // This will run the form submission logic
-                    }}
-                  >
-                    {" "}
-                    Prescribe Medication
-                  </Button>
                   <br />
-                  <h4>Dispense Medications</h4>
-                  <PrescribedMedication />
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
                   <Typography variant="h6">{form.evaluation.label}</Typography>
