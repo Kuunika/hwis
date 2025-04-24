@@ -19,6 +19,7 @@ import {
   initialRegistration,
   mergePatients,
   potentialDuplicates,
+  updateDeathReport,
   updatePatient,
 } from "@/services/patient";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -71,12 +72,12 @@ export const registerPatient = () => {
       patientData.identificationNumber == ""
         ? []
         : [
-            {
-              identifier: patientData.identificationNumber,
-              identifierType: nationalIdIdentifierType,
-              preferred: true,
-            },
-          ];
+          {
+            identifier: patientData.identificationNumber,
+            identifierType: nationalIdIdentifierType,
+            preferred: true,
+          },
+        ];
 
     const mappedPatient = {
       identifiers,
@@ -171,24 +172,28 @@ export const getPatientsWaitingForAssessment = () => {
   });
 };
 
-export const getPatientsWaitingForAssessmentPaginated = (
+export const getPatientCategoryListPaginated = (
   paginationDetails: PaginationModel,
-  search?: string
+  category: string,
+  search?: string,
 ) => {
-  const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
+  const page = paginationDetails.page + 1;
+ 
+
   const getall = () =>
     getDailyVisitsPaginated(
-      `category=assessment&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+      `category=${category}&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
     ).then((response) => response.data);
 
   return useQuery({
     queryKey: [
-      "assessment",
+      category,
       paginationDetails.page,
       paginationDetails.pageSize,
-      search,
+      search
     ],
     queryFn: getall,
+    enabled: false,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     refetchOnReconnect: false,
@@ -200,6 +205,7 @@ export const getPatientsWaitingForDispositionPaginated = (
   search?: string
 ) => {
   const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
+
   const getall = () =>
     getDailyVisitsPaginated(
       `category=disposition&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
@@ -394,5 +400,17 @@ export const getAllDeathReports = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     refetchOnReconnect: false,
+  });
+};
+
+export const useUpdateDeathReport = () => {
+  const updateData = (params: { id: string | number; data: any }) => {
+    return updateDeathReport(params.id, params.data).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: updateData,
   });
 };

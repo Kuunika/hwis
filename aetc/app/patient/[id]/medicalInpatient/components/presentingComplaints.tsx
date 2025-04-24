@@ -1,6 +1,8 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { concepts, encounters } from "@/constants";
-import { getInitialValues } from "@/helpers";
+import { getInitialValues, mapSearchComboOptionsToConcepts } from "@/helpers";
+import { getDateTime } from "@/helpers/dateTime";
+import { getObservation } from "@/helpers/emr";
 import { useSubmitEncounter } from "@/hooks";
 import { usePresentingComplaints } from "@/hooks/usePresentingComplaints";
 import { useState } from "react";
@@ -18,25 +20,51 @@ const form = {
 };
 
 const schema = Yup.object().shape({
-  complaints: Yup.array().required().label(form.complaints.label),
-  history: Yup.string().label(form.history.label),
+  [form.complaints.name]: Yup.array().required().label(form.complaints.label),
+  [form.history.name]: Yup.string().label(form.history.label),
 });
 const initialValues = getInitialValues(form);
 
 export const PresentingComplaints = ({
   onSubmit,
 }: {
-  onSubmit: () => void;
+  onSubmit: (values: any) => void;
+
 }) => {
-  const {} = useSubmitEncounter(encounters.MEDICAL_IN_PATIENT, onSubmit);
   const { presentingComplaints } = usePresentingComplaints();
 
-  const handleSubmit = () => {};
+  const handleSubmit = (values: any) => {
+
+    const formValues = { ...values }
+
+    const obsDatetime = getDateTime();
+
+    const complaintsObs = mapSearchComboOptionsToConcepts(formValues[form.complaints.name], form.complaints.name, obsDatetime);
+
+
+    const obs = [
+      {
+        concept: form.complaints.name,
+        value: form.complaints.name,
+        groupMembers: complaintsObs,
+        obsDatetime: obsDatetime,
+      },
+      {
+        concept: form.history.name,
+        value: formValues[form.history.name],
+        obsDatetime
+      }
+    ]
+
+    onSubmit(obs)
+
+  };
   return (
     <FormikInit
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={handleSubmit}
+      submitButtonText="next"
     >
       <SearchComboBox
         name={form.complaints.name}

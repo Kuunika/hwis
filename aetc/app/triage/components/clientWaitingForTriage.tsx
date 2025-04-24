@@ -1,14 +1,18 @@
 import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import {
+  getPatientCategoryListPaginated,
+  getPatientsWaitingForTriage,
+} from "@/hooks/patientReg";
 import {
   BaseTable,
   CalculateWaitingTime,
   MainButton,
   MainTypography,
   PatientTableList,
+  PatientTableListServer,
 } from "@/components";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
@@ -17,22 +21,23 @@ import { encounters } from "@/constants";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
+import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
-  const {
-    data: patients,
-    isLoading,
-    isRefetching,
-  } = getPatientsWaitingForTriage();
   const { navigateTo } = useNavigation();
+  const {
+    loading,
+    patients,
+    paginationModel,
+    setPaginationModel,
+    searchText,
+    setSearchText,
+    totalPages,
+  } = fetchPatientsTablePaginate("triage");
 
   const rows = patients
-    ?.sort((p1, p2) => {
-      //@ts-ignore
-      return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-    })
-    .map((p) => ({
+    ?.map((p) => ({
       id: p?.uuid,
       ...p,
       patient_arrival_time: getTime(p.arrival_time),
@@ -70,10 +75,10 @@ export const ClientWaitingForTriage = () => {
       renderCell: (cell: any) => {
         return (
           <>
-           <Tooltip title="Start Triage" arrow>
-              <IconButton 
-                onClick={() => navigateTo(`/triage/${cell.id}/start`)} 
-                aria-label="start Triage" 
+            <Tooltip title="Start Triage" arrow>
+              <IconButton
+                onClick={() => navigateTo(`/triage/${cell.id}/start`)}
+                aria-label="start Triage"
                 color="primary"
               >
                 <FaPlay />
@@ -141,11 +146,21 @@ export const ClientWaitingForTriage = () => {
   });
 
   return (
-    <PatientTableList
-      formatForMobileView={formatForMobileView}
-      isLoading={isLoading || isRefetching}
+    <PatientTableListServer
       columns={columns}
-      rows={rows ? rows : []}
+      data={{
+        data: rows ?? [],
+        page: paginationModel.page,
+        per_page: paginationModel.pageSize,
+        total_pages: totalPages,
+      }}
+      searchText={searchText}
+      setSearchString={setSearchText}
+      setPaginationModel={setPaginationModel}
+      paginationModel={paginationModel}
+      // loading={isPending || isRefetching}
+      loading={loading}
+      formatForMobileView={formatForMobileView ? formatForMobileView : []}
     />
   );
 };

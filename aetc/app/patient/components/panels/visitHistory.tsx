@@ -32,6 +32,18 @@ import { CirculationAssessment } from "../clinicalNotes/CirculationAssessment";
 import { DisabilityAssessment } from "../clinicalNotes/DisabilityAssessment";
 import { ExposureAssessment } from "../clinicalNotes/ExposureAssessment";
 import { useFinalDiagnosis } from "../clinicalNotes/FinalDiagnosis";
+import { SoapierNotes } from "../clinicalNotes/soapierNotes";
+import { PresentingComplaintsNotes } from "../clinicalNotes/presentingComplaintsNotes";
+import AllergiesNotes from "../clinicalNotes/allergies";
+import MedicationsNotes from "../clinicalNotes/medicationsNotes";
+import ExistingConditionsNotes from "../clinicalNotes/existingConditionsNotes";
+import SurgicalNotes from "../clinicalNotes/surgicalNotes";
+import { PreviousAdmissionsNotes } from "../clinicalNotes/previousAdmissionsNotes";
+import { ReviewOfSystems } from "../clinicalNotes/reviewOfSystemsNotes";
+import { FamilyHistoryNotes } from "../clinicalNotes/familyHistory";
+import {DispositionNotes} from "@/app/patient/components/clinicalNotes/dispositionNotes";
+import {GynaecologyNotes} from "@/app/patient/components/clinicalNotes/gynaecologyNotes";
+import {LastMealNotes} from "@/app/patient/components/clinicalNotes/lastMealNotes";
 
 // Styled components for accordion
 const Accordion = styled(MuiAccordion)(({ theme }) => ({
@@ -346,6 +358,27 @@ export const VisitHistory = () => {
         </Paper>
 
         <Accordion
+                expanded={expandedAccordion === 'soapier-notes'}
+                onChange={handleAccordionChange('soapier-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="soapier-notes-content"
+                    id="soapier-notes-header"
+                >
+                    <Typography  sx={{ fontWeight: 700 }}>
+                       Soapier Notes
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                <SoapierNotes />
+                </AccordionDetails>
+            </Accordion>
+
+        <Accordion
             expanded={expandedAccordion === 'primary-assessment'}
             onChange={handleAccordionChange('primary-assessment')}
             sx={{ backgroundColor: 'white', marginTop: '' }}
@@ -365,6 +398,36 @@ export const VisitHistory = () => {
                 <ExposureAssessment/>           
             </AccordionDetails>
         </Accordion>
+
+        <Accordion
+                expanded={expandedAccordion === 'sample-history-notes'}
+                onChange={handleAccordionChange('sample-history-notes')}
+                sx={{
+                    backgroundColor: 'white',
+                }}
+            >
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                    aria-controls="sample-history-notes-content"
+                    id="sample-history-notes-header"
+                >
+                    <Typography  sx={{ fontWeight: 700 }}>
+                       Sample History
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <PresentingComplaintsNotes />
+                    <AllergiesNotes />
+                    <MedicationsNotes />
+                    <ExistingConditionsNotes />
+                    <SurgicalNotes />
+                    <PreviousAdmissionsNotes />
+                    <GynaecologyNotes/>
+                    <LastMealNotes/>
+                    <ReviewOfSystems />
+                    <FamilyHistoryNotes />
+                </AccordionDetails>
+            </Accordion>
         
         <Accordion
                 expanded={expandedAccordion === 'breathing-assessment'}
@@ -390,6 +453,7 @@ export const VisitHistory = () => {
                     {/* <NeurogicalExamination/> */}
                 </AccordionDetails>
             </Accordion>
+            
 
             {/* Differetiatial */}
 
@@ -548,6 +612,26 @@ export const VisitHistory = () => {
                 </AccordionDetails>
                 
             </Accordion>
+        <Accordion
+            expanded={expandedAccordion === 'disposition'}
+            onChange={handleAccordionChange('disposition')}
+            sx={{
+                backgroundColor: 'white',
+            }}
+        >
+            <AccordionSummary
+                expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+                aria-controls="disposition-content"
+                id="dispositiont-header"
+            >
+                <Typography  sx={{ fontWeight: 700 }}>
+                    Disposition
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <DispositionNotes/>
+            </AccordionDetails>
+        </Accordion>
 
     </>
 );

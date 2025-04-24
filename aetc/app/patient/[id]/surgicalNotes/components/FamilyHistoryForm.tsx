@@ -15,7 +15,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
-import { useFormikContext, useField } from "formik";
+import { useFormikContext } from "formik";
 
 // Family History options
 const familyHistoryOptions = [
@@ -28,11 +28,11 @@ const familyHistoryOptions = [
 
 const schema = Yup.object().shape({
     familyHistory: Yup.array().min(1, "Please select at least one option"),
-    // cancerType: Yup.string().when("familyHistory", {
-    //     is: (values: string[]) => values?.includes(concepts.FAMILY_HISTORY_CANCER),
-    //     then: (schema) => schema.required("Please specify the type of cancer"),
-    //     otherwise: (schema) => schema.notRequired(),
-    // }),
+    cancerType: Yup.string().when("familyHistory", {
+        is: (values: any[]) => values?.some((item: { key: string; value: any; }) => item.key === concepts.FAMILY_HISTORY_CANCER && item.value),
+        then: (schema) => schema.required("Please specify the type of cancer"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
 });
 
 type Prop = {
@@ -54,31 +54,37 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
             }
         }
     }, [patientVisits]);
-    const handleSubmit = async (values: any) => {
 
+    const handleSubmit = async (values: any) => {
         const currentDateTime = getDateTime();
         const selectedFamilyOptions = (values.familyHistory || [])
             .filter((item: any) => item.value)
             .map((item: any) => item.key);
 
+        // Create observations array but exclude cancer if it's selected (we'll handle it separately)
+        let obs = selectedFamilyOptions
+            .filter((optionKey: string) => optionKey !== concepts.FAMILY_HISTORY_CANCER)
+            .map((optionKey: string) => {
+                // Find the corresponding option to get its label
+                const option = familyHistoryOptions.find(opt => opt.value === optionKey);
+                const label = option ? option.label : "Unknown";
 
-        // Map selected family history items into observations
-        // const obs = values.familyHistory.map((conceptValue: string) => ({
-        //     concept: conceptValue,
-        //     value: conceptValue,
-        //     obsDatetime: currentDateTime,
-        // }));
-        const obs = selectedFamilyOptions.map((optionKey: string) => {
-            // Find the corresponding option to get its label
-            const option = familyHistoryOptions.find(opt => opt.value === optionKey);
-            const label = option ? option.label : "Unknown";
+                return {
+                    concept: optionKey,
+                    value: label,
+                    obsDatetime: currentDateTime,
+                };
+            });
 
-            return {
-                concept: optionKey, // The concept UUID
-                value: label,      // The human-readable label as a string
+        // Add cancer observation with the cancer type as value
+        const hasCancer = selectedFamilyOptions.includes(concepts.FAMILY_HISTORY_CANCER);
+        if (hasCancer && values.cancerType) {
+            obs.push({
+                concept: concepts.FAMILY_HISTORY_CANCER,
+                value: values.cancerType, // Use the cancer type directly
                 obsDatetime: currentDateTime,
-            };
-        });
+            });
+        }
 
         const payload = {
             encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
@@ -96,22 +102,27 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         }
     };
 
-    // const CancerTypeField = () => {
-    //     const { values } = useFormikContext<any>();
+    const CancerTypeField = () => {
+        const { values } = useFormikContext<any>();
 
-    //     if (!values.familyHistory.includes(concepts.FAMILY_HISTORY_CANCER)) {
-    //         return null;
-    //     }
+        // Check if Cancer is selected in familyHistory
+        const isCancerSelected = values.familyHistory?.some(
+            (item: any) => item.key === concepts.FAMILY_HISTORY_CANCER && item.value
+        );
 
-    //     return (
-    //         <TextInputField
-    //             name="cancerType"
-    //             label="Type of Cancer"
-    //             placeholder="Specify cancer type"
-    //             id="cancerType"
-    //         />
-    //     );
-    // };
+        if (!isCancerSelected) {
+            return null;
+        }
+
+        return (
+            <TextInputField
+                name="cancerType"
+                label="Type of Cancer"
+                placeholder="Specify cancer type"
+                id="cancerType"
+            />
+        );
+    };
 
     return (
         <FormikInit
@@ -130,7 +141,7 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             allowFilter={false}
                             options={familyHistoryOptions}
                         />
-                        {/* <CancerTypeField /> */}
+                        <CancerTypeField />
                     </FormFieldContainerLayout>
                 </WrapperBox>
             </FormFieldContainer>

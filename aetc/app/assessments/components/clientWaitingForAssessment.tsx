@@ -2,7 +2,6 @@
 import { calculateAge } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
-import { getPatientsWaitingForAssessmentPaginated } from "@/hooks/patientReg";
 import * as React from "react";
 
 import Menu from "@mui/material/Menu";
@@ -21,40 +20,35 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
 } from "@/components/barcodePrinterDialogs";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 import { HiPrinter } from "react-icons/hi2";
+import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 
 export const ClientWaitingForAssessment = () => {
   const [cpr, setCpr] = useState(false);
   const [patientId, setPatientId] = useState("");
   const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
-  const [paginationModel, setPaginationModel] = useState({
-    page: 1,
-    pageSize: 10,
-  });
   const { navigateTo } = useNavigation();
-
-  const [searchText, setSearchText] = useState("");
-  const { data, refetch, isPending } = getPatientsWaitingForAssessmentPaginated(
+  const {
     paginationModel,
-    searchText
-  );
-
+    patients: data,
+    searchText,
+    setSearchText,
+    setPaginationModel,
+    loading,
+    totalPages,
+  } = fetchPatientsTablePaginate("assessment");
   const [patientsData, setPatientsData] = useState<any>([]);
 
   useEffect(() => {
-    refetch();
-  }, [paginationModel]);
-
-  useEffect(() => {
-    if (data?.data) {
-      setPatientsData(data.data);
+    if (data) {
+      setPatientsData(data);
     }
   }, [data]);
 
@@ -91,10 +85,10 @@ export const ClientWaitingForAssessment = () => {
                   cell.value == "red"
                     ? "#B42318"
                     : cell.value == "yellow"
-                    ? "#EDE207"
-                    : cell.value == "green"
-                    ? "#016302"
-                    : "transparent",
+                      ? "#EDE207"
+                      : cell.value == "green"
+                        ? "#016302"
+                        : "transparent",
               }}
             />
           </Box>
@@ -138,15 +132,15 @@ export const ClientWaitingForAssessment = () => {
         return (
           <Box display="flex" gap={1}>
             <Tooltip title="Start assessment" arrow>
-              <IconButton 
-                onClick={() => navigateTo(`/patient/${cell.id}/profile`)} 
-                aria-label="start assessment" 
+              <IconButton
+                onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
+                aria-label="start assessment"
                 color="primary"
               >
                 <FaPlay />
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Mark as absconded" arrow>
               <AbscondButton
                 onDelete={() => handleDelete(cell.id)}
@@ -154,20 +148,20 @@ export const ClientWaitingForAssessment = () => {
                 patientId={cell.id}
               />
             </Tooltip>
-            
+
             <Tooltip title="Print options" arrow>
               <BasicMenu patient={cell.row} />
             </Tooltip>
 
             {cell.row.triage_result == "red" && (
               <Tooltip title="Initiate CPR" arrow>
-                <IconButton 
+                <IconButton
                   onClick={() => {
                     setPatientId(cell.id);
                     setCpr(true);
                     setVisitUUID(cell.row.visit_uuid);
-                  }} 
-                  aria-label="initiate CPR" 
+                  }}
+                  aria-label="initiate CPR"
                   color="error"
                 >
                   <FaHeartbeat />
@@ -220,14 +214,19 @@ export const ClientWaitingForAssessment = () => {
         columns={columns}
         data={
           patientsData?.length
-            ? { data: patientsData, page: 1, per_page: 10, total_pages: 0 }
+            ? {
+                data: patientsData,
+                page: paginationModel.page,
+                per_page: paginationModel.pageSize,
+                total_pages: totalPages,
+              }
             : { data: [], page: 1, per_page: 10, total_pages: 0 }
         }
         searchText={searchText}
         setSearchString={setSearchText}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
-        loading={isPending}
+        loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
       />
       <CPRDialogForm
@@ -266,10 +265,10 @@ const CardAction = ({
             triage == "red"
               ? "#B42318"
               : triage == "yellow"
-              ? "#ede207"
-              : triage == "green"
-              ? "#016302"
-              : "",
+                ? "#ede207"
+                : triage == "green"
+                  ? "#016302"
+                  : "",
           marginY: 1,
         }}
       ></WrapperBox>
@@ -281,7 +280,7 @@ const CardAction = ({
             onClick={() => navigateTo(`/patient/${id}/profile`)}
           />
         </Tooltip>
-        
+
         <Tooltip title="Mark as absconded" arrow>
           <AbscondButton
             sx={{ width: "30%" }}
@@ -290,7 +289,7 @@ const CardAction = ({
             patientId={id}
           />
         </Tooltip>
-        
+
         <Tooltip title="Print barcode" arrow>
           <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
         </Tooltip>
@@ -312,14 +311,14 @@ export function BasicMenu({ patient }: { patient: any }) {
   return (
     <>
       <Tooltip title="Print" arrow>
-            <IconButton
-              onClick={handleClick}
-              aria-label="Print"
-              sx={{color:"#015E85"}}
-            >
-              <HiPrinter />
-            </IconButton>
-          </Tooltip>
+        <IconButton
+          onClick={handleClick}
+          aria-label="Print"
+          sx={{ color: "#015E85" }}
+        >
+          <HiPrinter />
+        </IconButton>
+      </Tooltip>
       {/* <Button
         size="small"
         variant="text"

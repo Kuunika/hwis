@@ -2,8 +2,8 @@ import { Typography, Box, CircularProgress } from "@mui/material";
 import { useComponentNotes } from "@/hooks/useComponentNotes";
 import { encounters } from "@/constants";
 
-export const FamilyHistoryNotes = () => {
-    const { notes, isLoading } = useComponentNotes(encounters.FAMILY_MEDICAL_HISTORY);
+export const DispositionNotes = () => {
+    const { notes, isLoading } = useComponentNotes(encounters.DISPOSITION);
 
     const isValidDate = (dateString: string) => {
         return !isNaN(new Date(dateString).getTime());
@@ -13,7 +13,7 @@ export const FamilyHistoryNotes = () => {
         return (
             <Box sx={{ p: 2 }}>
                 <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                    Family History
+                    Extremities
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
                     <CircularProgress size={40} />
@@ -25,7 +25,7 @@ export const FamilyHistoryNotes = () => {
     return (
         <Box sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: "bold" }}>
-                Family History
+                Disposition
             </Typography>
             {notes.length > 0 ? (
                 notes.map((data, index) => (
@@ -52,7 +52,7 @@ export const FamilyHistoryNotes = () => {
                 ))
             ) : (
                 <Typography variant="body2" sx={{ fontStyle: "italic", color: "secondary.main" }}>
-                    No Family history data available.
+                    No disposition data available.
                 </Typography>
             )}
         </Box>
