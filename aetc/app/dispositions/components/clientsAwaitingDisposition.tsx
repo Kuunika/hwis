@@ -32,6 +32,7 @@ export const ClientsAwaitingDisposition = () => {
     setPaginationModel,
     loading,
     totalPages,
+    setOnSwitch,
   } = fetchPatientsTablePaginate("disposition");
 
   const columns = [
@@ -120,6 +121,7 @@ export const ClientsAwaitingDisposition = () => {
       paginationModel={paginationModel}
       loading={loading}
       formatForMobileView={formatForMobileView ? formatForMobileView : []}
+      onSwitchChange={setOnSwitch}
     />
   );
 };
