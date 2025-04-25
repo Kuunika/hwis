@@ -28,6 +28,8 @@ import { ObjectRow } from "@/app/patient/components/visits";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MRT_ColumnDef } from "material-react-table";
 import { searchNPID } from "@/hooks/people";
+import { isAuthorizedForRoles } from "@/helpers/authguardcomponent";
+import { roles } from "@/constants";
 
 export function NavigationBar({
   onTitleClick,
@@ -414,9 +416,22 @@ export function NavigationBar({
                           }}
                           onRowClick={(rowData) => {
                             handleSearchPopoverClose();
-                            navigateTo(
-                              `/patient/${rowData.row.original.id}/profile`
-                            );
+                            const allowedRoles = [
+                              roles.REGISTRATION_CLERK,
+                              roles.ADMIN,
+                              roles.CLINICIAN,
+                              roles.NURSE,
+                            ];
+
+                            if (isAuthorizedForRoles(allowedRoles)) {
+                              navigateTo(
+                                `/patient/${rowData.row.original.id}/profile`
+                              );
+                            } else {
+                              alert(
+                                "You are not authorized to perform this action."
+                              );
+                            }
                           }}
                         />
                       </LocalizationProvider>
