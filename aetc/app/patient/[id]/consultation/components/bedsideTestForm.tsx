@@ -12,14 +12,59 @@ import {
   addEncounter,
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
-import { Typography } from "@mui/material";
+import React from "react";
 import * as yup from "yup";
+import {
+  Box,
+  Typography,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Collapse,
+} from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
+// Define type for section keys
+type SectionKey =
+  | "MRDT"
+  | "arterialBloodGas"
+  | "metabolicValues"
+  | "acidBaseStatus"
+  | "oximetryValues"
+  | "electrolyteValues"
+  | "temperatureCorrectedValues";
+
+// Define types for form field
+interface FormField {
+  name: string;
+  label: string;
+  // Add other properties as needed
+}
+
+// Define types for section state
+interface SectionState {
+  open: boolean;
+  // We no longer need checked at the section level
+  // Instead we'll track each field individually
+  selectedFields: Record<string, boolean>;
+}
 
 const formConfig = {
   mrdt: {
     name: concepts.MRDT,
     label: "MRDT",
     coded: true,
+  },
+  positive: {
+    name: concepts.POSITIVE,
+    label: "Positive",
+  },
+  negative: {
+    name: concepts.NEGATIVE,
+    label: "Negative",
+  },
+  indeterminate: {
+    name: concepts.INDETERMINATE,
+    label: "Indeterminate",
   },
   PH: {
     name: concepts.PH,
@@ -193,18 +238,16 @@ const validationSchema = yup.object({
     .number()
     .min(3)
     .max(7)
-    .label(formConfig.HCO3.label)
+    .label(formConfig.HCO3.label),
   // .required()
-  ,
   [formConfig.ANION_GAPC.name]: yup.number().label(formConfig.ANION_GAPC.label),
   [formConfig.MOSMC.name]: yup.number().label(formConfig.MOSMC.label),
   [formConfig.SO2E.name]: yup
     .number()
     .min(95)
     .max(100)
-    .label(formConfig.SO2E.label)
+    .label(formConfig.SO2E.label),
   // .required()
-  ,
   [formConfig.FO2HBE.name]: yup.number().label(formConfig.FO2HBE.label),
   [formConfig.FHHBE.name]: yup.number().label(formConfig.FHHBE.label),
   [formConfig.CK.name]: yup
@@ -226,71 +269,39 @@ const validationSchema = yup.object({
     .max(28),
   [formConfig.pregnancyTest.name]: yup
     .string()
-    .label(formConfig.pregnancyTest.label)
+    .label(formConfig.pregnancyTest.label),
   // .required()
-  ,
-  [formConfig.hiv.name]: yup.string().label(formConfig.hiv.label)
+  [formConfig.hiv.name]: yup.string().label(formConfig.hiv.label),
   // .required()
-  ,
-  [formConfig.vdrl.name]: yup.string().label(formConfig.vdrl.label)
+  [formConfig.vdrl.name]: yup.string().label(formConfig.vdrl.label),
   // .required()
-  ,
   [formConfig.urobilinogen.name]: yup
     .string()
     .label(formConfig.urobilinogen.label),
-  [formConfig.leukocytes.name]: yup
-    .string()
-    .label(formConfig.leukocytes.label)
+  [formConfig.leukocytes.name]: yup.string().label(formConfig.leukocytes.label),
   // .required()
-  ,
-  [formConfig.bilirubin.name]: yup
-    .string()
-    .label(formConfig.bilirubin.label)
+  [formConfig.bilirubin.name]: yup.string().label(formConfig.bilirubin.label),
   // .required()
-  ,
-  [formConfig.glucose.name]: yup
-    .string()
-    .label(formConfig.glucose.label)
+  [formConfig.glucose.name]: yup.string().label(formConfig.glucose.label),
   // .required()
-  ,
   [formConfig.specificGravity.name]: yup
     .string()
-    .label(formConfig.specificGravity.label)
+    .label(formConfig.specificGravity.label),
   // .required()
-  ,
-  [formConfig.protein.name]: yup
-    .string()
-    .label(formConfig.protein.label)
+  [formConfig.protein.name]: yup.string().label(formConfig.protein.label),
   // .required()
-  ,
-  [formConfig.nitrite.name]: yup
-    .string()
-    .label(formConfig.nitrite.label)
+  [formConfig.nitrite.name]: yup.string().label(formConfig.nitrite.label),
   // .required()
-  ,
-  [formConfig.ketones.name]: yup
-    .string()
-    .label(formConfig.ketones.label)
+  [formConfig.ketones.name]: yup.string().label(formConfig.ketones.label),
   // .required()
-  ,
-  [formConfig.blood.name]: yup
-    .string()
-    .label(formConfig.blood.label)
+  [formConfig.blood.name]: yup.string().label(formConfig.blood.label),
   // .required()
-  ,
-  [formConfig.pocus.name]: yup
-    .string()
-    .label(formConfig.pocus.label)
+  [formConfig.pocus.name]: yup.string().label(formConfig.pocus.label),
   // .required()
-  ,
-  [formConfig.ecg.name]: yup.string().label(formConfig.ecg.label)
+  [formConfig.ecg.name]: yup.string().label(formConfig.ecg.label),
   // .required()
-  ,
-  [formConfig.other.name]: yup
-    .string()
-    .label(formConfig.other.label)
+  [formConfig.other.name]: yup.string().label(formConfig.other.label),
   // .required()
-  ,
 });
 
 const testStatusOptions = [
@@ -565,304 +576,536 @@ export const BedsideTestForm = () => {
       obs,
     });
   };
+  // Initialize state for each section with all fields unchecked
+  const initializeSectionState = (fields: FormField[]): SectionState => {
+    const selectedFields: Record<string, boolean> = {};
+    fields.forEach((field) => {
+      selectedFields[field.name] = false;
+    });
+    return { open: false, selectedFields };
+  };
 
+  // Group fields by section for easier initialization
+  const fieldsBySection: Record<SectionKey, FormField[]> = {
+    MRDT: [formConfig.positive, formConfig.negative, formConfig.indeterminate],
+    arterialBloodGas: [
+      formConfig.PH,
+      formConfig.PCO2,
+      formConfig.PO2,
+      formConfig.BASE_EXCESS,
+    ],
+    metabolicValues: [formConfig.LACTATE, formConfig.glucose],
+    acidBaseStatus: [formConfig.HCO3, formConfig.ANION_GAPC, formConfig.MOSMC],
+    oximetryValues: [formConfig.SO2E, formConfig.FO2HBE, formConfig.FHHBE],
+    electrolyteValues: [
+      formConfig.CK,
+      formConfig.CNA,
+      formConfig.CA2,
+      formConfig.CCL,
+    ],
+    temperatureCorrectedValues: [
+      formConfig.PH,
+      formConfig.PCO2,
+      formConfig.PO2,
+      formConfig.P50E,
+    ],
+  };
+
+  // Initialize state
+  const initialSections: Record<SectionKey, SectionState> = {} as Record<
+    SectionKey,
+    SectionState
+  >;
+  (Object.keys(fieldsBySection) as SectionKey[]).forEach((section) => {
+    initialSections[section] = initializeSectionState(fieldsBySection[section]);
+  });
+
+  const [sections, setSections] =
+    React.useState<Record<SectionKey, SectionState>>(initialSections);
+
+  // Toggle section open/closed
+  const toggleSection = (section: SectionKey): void => {
+    setSections((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        open: !prev[section].open,
+      },
+    }));
+  };
+
+  // Toggle all fields in a section
+  const toggleAllFields = (section: SectionKey): void => {
+    const currentSection = sections[section];
+    const fieldsInSection = fieldsBySection[section];
+
+    // Check if all fields are selected
+    const allSelected = fieldsInSection.every(
+      (field) => currentSection.selectedFields[field.name]
+    );
+
+    // Toggle to opposite state (all selected -> none selected, or some/none selected -> all selected)
+    const newSelectedState = !allSelected;
+
+    const updatedSelectedFields = { ...currentSection.selectedFields };
+    fieldsInSection.forEach((field) => {
+      updatedSelectedFields[field.name] = newSelectedState;
+    });
+
+    // Update state
+    setSections((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        selectedFields: updatedSelectedFields,
+        open: true, // Always open when toggling all
+      },
+    }));
+  };
+
+  // Toggle a single field
+  const toggleField = (section: SectionKey, fieldName: string): void => {
+    setSections((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        selectedFields: {
+          ...prev[section].selectedFields,
+          [fieldName]: !prev[section].selectedFields[fieldName],
+        },
+      },
+    }));
+  };
+
+  // Check if all fields in a section are selected
+  const areAllFieldsSelected = (section: SectionKey): boolean => {
+    const sectionState = sections[section];
+    const fields = fieldsBySection[section];
+    return fields.every((field) => sectionState.selectedFields[field.name]);
+  };
+
+  // Check if some but not all fields are selected
+  const areSomeFieldsSelected = (section: SectionKey): boolean => {
+    const sectionState = sections[section];
+    const fields = fieldsBySection[section];
+    const selectedCount = fields.filter(
+      (field) => sectionState.selectedFields[field.name]
+    ).length;
+    return selectedCount > 0 && selectedCount < fields.length;
+  };
+
+  // Props for the CheckboxGroup component
+  interface CheckboxGroupProps {
+    title: string;
+    section: SectionKey;
+  }
+
+  // Checkbox Group Component
+  const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, section }) => {
+    const sectionState = sections[section];
+    const allSelected = areAllFieldsSelected(section);
+    const someSelected = areSomeFieldsSelected(section);
+    const fields = fieldsBySection[section];
+
+    return (
+      <Box sx={{ mt: 3, mb: 2 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={allSelected}
+              indeterminate={someSelected && !allSelected}
+              onChange={() => toggleAllFields(section)}
+              sx={{ color: "GrayText" }}
+            />
+          }
+          label={
+            <Typography
+              variant="h6"
+              color="GrayText"
+              onClick={() => toggleSection(section)}
+              sx={{
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+              }}
+            >
+              {title}
+              {sectionState.open ? (
+                <ExpandLess sx={{ ml: 1, fontSize: 20 }} />
+              ) : (
+                <ExpandMore sx={{ ml: 1, fontSize: 20 }} />
+              )}
+            </Typography>
+          }
+        />
+
+        <Collapse in={sectionState.open}>
+          <Box sx={{ pl: 4, mt: 1 }}>
+            {fields.map((field) => (
+              <FormControlLabel
+                key={field.name}
+                control={
+                  <Checkbox
+                    checked={sectionState.selectedFields[field.name]}
+                    onChange={() => toggleField(section, field.name)}
+                    name={field.name}
+                    id={field.name}
+                  />
+                }
+                label={field.label}
+              />
+            ))}
+          </Box>
+        </Collapse>
+      </Box>
+    );
+  };
   return (
-    <FormikInit
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      initialValues={formValues}
-    >
-      <RadioGroupInput
-        row
-        label={formConfig.mrdt.label}
-        options={testStatusOptions}
-        name={formConfig.mrdt.name}
-      />
-      <br />
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Arterial Blood Gas{" "}
-      </Typography>
+    <>
+      <FormGroup>
+        <CheckboxGroup title="MRDT" section="MRDT" />
+        <CheckboxGroup title="Arterial Blood Gas" section="arterialBloodGas" />
 
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PH.name}
-          label={formConfig.PH.label}
-          id={formConfig.PH.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PCO2.name}
-          label={formConfig.PCO2.label}
-          id={formConfig.PCO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PO2.name}
-          label={formConfig.PO2.label}
-          id={formConfig.PO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.BASE_EXCESS.name}
-          label={formConfig.BASE_EXCESS.label}
-          id={formConfig.BASE_EXCESS.name}
-        />
-      </FormFieldContainerMultiple>
+        <CheckboxGroup title="Metabolic Values" section="metabolicValues" />
 
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Metabolic Values
-      </Typography>
+        <CheckboxGroup title="Acid Base Status" section="acidBaseStatus" />
 
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.LACTATE.name}
-          label={formConfig.LACTATE.label}
-          id={formConfig.LACTATE.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.glucose.name}
-          label={formConfig.glucose.label}
-          id={formConfig.glucose.name}
-        />
-      </FormFieldContainerMultiple>
+        <CheckboxGroup title="Oximetry Values" section="oximetryValues" />
 
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Acid base status
-      </Typography>
+        <CheckboxGroup title="Electrolyte Values" section="electrolyteValues" />
 
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.HCO3.name}
-          label={formConfig.HCO3.label}
-          id={formConfig.HCO3.name}
+        <CheckboxGroup
+          title="Temperature Corrected Values"
+          section="temperatureCorrectedValues"
         />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.ANION_GAPC.name}
-          label={formConfig.ANION_GAPC.label}
-          id={formConfig.ANION_GAPC.name}
+      </FormGroup>
+      <FormikInit
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        initialValues={formValues}
+      >
+        <RadioGroupInput
+          row
+          label={formConfig.mrdt.label}
+          options={testStatusOptions}
+          name={formConfig.mrdt.name}
         />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.MOSMC.name}
-          label={formConfig.MOSMC.label}
-          id={formConfig.MOSMC.name}
-        />
-      </FormFieldContainerMultiple>
+        <br />
+        <Typography
+          sx={{ mt: "2ch", mb: "1ch" }}
+          variant="h6"
+          color={"GrayText"}
+        >
+          Arterial Blood Gas{" "}
+        </Typography>
 
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Oximetry values
-      </Typography>
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.PH.name}
+            label={formConfig.PH.label}
+            id={formConfig.PH.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.PCO2.name}
+            label={formConfig.PCO2.label}
+            id={formConfig.PCO2.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.PO2.name}
+            label={formConfig.PO2.label}
+            id={formConfig.PO2.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.BASE_EXCESS.name}
+            label={formConfig.BASE_EXCESS.label}
+            id={formConfig.BASE_EXCESS.name}
+          />
+        </FormFieldContainerMultiple>
 
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.SO2E.name}
-          label={formConfig.SO2E.label}
-          id={formConfig.SO2E.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.FO2HBE.name}
-          label={formConfig.FO2HBE.label}
-          id={formConfig.FO2HBE.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.FHHBE.name}
-          label={formConfig.FHHBE.label}
-          id={formConfig.FHHBE.name}
-        />
-      </FormFieldContainerMultiple>
+        <Typography
+          sx={{ mt: "2ch", mb: "1ch" }}
+          variant="h6"
+          color={"GrayText"}
+        >
+          Metabolic Values
+        </Typography>
 
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Electolyte Values
-      </Typography>
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.LACTATE.name}
+            label={formConfig.LACTATE.label}
+            id={formConfig.LACTATE.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.glucose.name}
+            label={formConfig.glucose.label}
+            id={formConfig.glucose.name}
+          />
+        </FormFieldContainerMultiple>
 
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CK.name}
-          label={formConfig.CK.label}
-          id={formConfig.CK.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CNA.name}
-          label={formConfig.CNA.label}
-          id={formConfig.CNA.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CA2.name}
-          label={formConfig.CA2.label}
-          id={formConfig.CA2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CCL.name}
-          label={formConfig.CCL.label}
-          id={formConfig.CCL.name}
-        />
-      </FormFieldContainerMultiple>
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Temperature Corrected Values
-      </Typography>
+        <Typography
+          sx={{ mt: "2ch", mb: "1ch" }}
+          variant="h6"
+          color={"GrayText"}
+        >
+          Acid base status
+        </Typography>
 
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PH.name}
-          label={formConfig.PH.label}
-          id={formConfig.PH.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PCO2.name}
-          label={formConfig.PCO2.label}
-          id={formConfig.PCO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PO2.name}
-          label={formConfig.PO2.label}
-          id={formConfig.PO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.P50E.name}
-          label={formConfig.P50E.label}
-          id={formConfig.P50E.name}
-        />
-      </FormFieldContainerMultiple>
-    {gender=='Female' &&  <RadioGroupInput
-        row
-        label={formConfig.pregnancyTest.label}
-        options={testStatusOptions}
-        name={formConfig.pregnancyTest.name}
-      />}
-      <RadioGroupInput
-        row
-        label={formConfig.hiv.label}
-        options={testStatusOptions}
-        name={formConfig.hiv.name}
-      />
-      <RadioGroupInput
-        row
-        label={formConfig.vdrl.label}
-        options={testStatusOptions}
-        name={formConfig.vdrl.name}
-      />
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.HCO3.name}
+            label={formConfig.HCO3.label}
+            id={formConfig.HCO3.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.ANION_GAPC.name}
+            label={formConfig.ANION_GAPC.label}
+            id={formConfig.ANION_GAPC.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.MOSMC.name}
+            label={formConfig.MOSMC.label}
+            id={formConfig.MOSMC.name}
+          />
+        </FormFieldContainerMultiple>
 
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Dipstick
-      </Typography>
+        <Typography
+          sx={{ mt: "2ch", mb: "1ch" }}
+          variant="h6"
+          color={"GrayText"}
+        >
+          Oximetry values
+        </Typography>
 
-      <FormFieldContainerMultiple>
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.SO2E.name}
+            label={formConfig.SO2E.label}
+            id={formConfig.SO2E.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.FO2HBE.name}
+            label={formConfig.FO2HBE.label}
+            id={formConfig.FO2HBE.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.FHHBE.name}
+            label={formConfig.FHHBE.label}
+            id={formConfig.FHHBE.name}
+          />
+        </FormFieldContainerMultiple>
+
+        <Typography
+          sx={{ mt: "2ch", mb: "1ch" }}
+          variant="h6"
+          color={"GrayText"}
+        >
+          Electolyte Values
+        </Typography>
+
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.CK.name}
+            label={formConfig.CK.label}
+            id={formConfig.CK.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.CNA.name}
+            label={formConfig.CNA.label}
+            id={formConfig.CNA.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.CA2.name}
+            label={formConfig.CA2.label}
+            id={formConfig.CA2.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.CCL.name}
+            label={formConfig.CCL.label}
+            id={formConfig.CCL.name}
+          />
+        </FormFieldContainerMultiple>
+        <Typography
+          sx={{ mt: "2ch", mb: "1ch" }}
+          variant="h6"
+          color={"GrayText"}
+        >
+          Temperature Corrected Values
+        </Typography>
+
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.PH.name}
+            label={formConfig.PH.label}
+            id={formConfig.PH.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.PCO2.name}
+            label={formConfig.PCO2.label}
+            id={formConfig.PCO2.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.PO2.name}
+            label={formConfig.PO2.label}
+            id={formConfig.PO2.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.P50E.name}
+            label={formConfig.P50E.label}
+            id={formConfig.P50E.name}
+          />
+        </FormFieldContainerMultiple>
+        {gender == "Female" && (
+          <RadioGroupInput
+            row
+            label={formConfig.pregnancyTest.label}
+            options={testStatusOptions}
+            name={formConfig.pregnancyTest.name}
+          />
+        )}
+        <RadioGroupInput
+          row
+          label={formConfig.hiv.label}
+          options={testStatusOptions}
+          name={formConfig.hiv.name}
+        />
+        <RadioGroupInput
+          row
+          label={formConfig.vdrl.label}
+          options={testStatusOptions}
+          name={formConfig.vdrl.name}
+        />
+
+        <Typography
+          sx={{ mt: "2ch", mb: "1ch" }}
+          variant="h6"
+          color={"GrayText"}
+        >
+          Dipstick
+        </Typography>
+
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.urobilinogen.name}
+            label={formConfig.urobilinogen.label}
+            id={formConfig.urobilinogen.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.PH.name}
+            label={formConfig.PH.label}
+            id={formConfig.PH.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.leukocytes.name}
+            label={formConfig.leukocytes.label}
+            id={formConfig.leukocytes.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.glucose.name}
+            label={formConfig.glucose.label}
+            id={formConfig.glucose.name}
+          />
+        </FormFieldContainerMultiple>
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.specificGravity.name}
+            label={formConfig.specificGravity.label}
+            id={formConfig.specificGravity.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.protein.name}
+            label={formConfig.protein.label}
+            id={formConfig.protein.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.nitrite.name}
+            label={formConfig.nitrite.label}
+            id={formConfig.nitrite.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.ketones.name}
+            label={formConfig.ketones.label}
+            id={formConfig.ketones.name}
+          />
+        </FormFieldContainerMultiple>
+        <FormFieldContainerMultiple>
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.bilirubin.name}
+            label={formConfig.bilirubin.label}
+            id={formConfig.bilirubin.name}
+          />
+          <TextInputField
+            sx={{ width: "100%" }}
+            name={formConfig.blood.name}
+            label={formConfig.blood.label}
+            id={formConfig.blood.name}
+          />
+        </FormFieldContainerMultiple>
+        <br />
+        <br />
+        <br />
         <TextInputField
           sx={{ width: "100%" }}
-          name={formConfig.urobilinogen.name}
-          label={formConfig.urobilinogen.label}
-          id={formConfig.urobilinogen.name}
+          multiline
+          rows={5}
+          name={formConfig.pocus.name}
+          label={formConfig.pocus.label}
+          id={formConfig.pocus.name}
         />
         <TextInputField
           sx={{ width: "100%" }}
-          name={formConfig.PH.name}
-          label={formConfig.PH.label}
-          id={formConfig.PH.name}
+          multiline
+          rows={5}
+          name={formConfig.ecg.name}
+          label={formConfig.ecg.label}
+          id={formConfig.ecg.name}
         />
         <TextInputField
           sx={{ width: "100%" }}
-          name={formConfig.leukocytes.name}
-          label={formConfig.leukocytes.label}
-          id={formConfig.leukocytes.name}
+          multiline
+          rows={5}
+          name={formConfig.pefr.name}
+          label={formConfig.pefr.label}
+          id={formConfig.pefr.name}
         />
         <TextInputField
           sx={{ width: "100%" }}
-          name={formConfig.glucose.name}
-          label={formConfig.glucose.label}
-          id={formConfig.glucose.name}
+          multiline
+          rows={5}
+          name={formConfig.other.name}
+          label={formConfig.other.label}
+          id={formConfig.other.name}
         />
-      </FormFieldContainerMultiple>
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.specificGravity.name}
-          label={formConfig.specificGravity.label}
-          id={formConfig.specificGravity.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.protein.name}
-          label={formConfig.protein.label}
-          id={formConfig.protein.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.nitrite.name}
-          label={formConfig.nitrite.label}
-          id={formConfig.nitrite.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.ketones.name}
-          label={formConfig.ketones.label}
-          id={formConfig.ketones.name}
-        />
-      </FormFieldContainerMultiple>
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.bilirubin.name}
-          label={formConfig.bilirubin.label}
-          id={formConfig.bilirubin.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.blood.name}
-          label={formConfig.blood.label}
-          id={formConfig.blood.name}
-        />
-      </FormFieldContainerMultiple>
-      <br />
-      <br />
-      <br />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.pocus.name}
-        label={formConfig.pocus.label}
-        id={formConfig.pocus.name}
-      />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.ecg.name}
-        label={formConfig.ecg.label}
-        id={formConfig.ecg.name}
-      />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.pefr.name}
-        label={formConfig.pefr.label}
-        id={formConfig.pefr.name}
-      />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.other.name}
-        label={formConfig.other.label}
-        id={formConfig.other.name}
-      />
-    </FormikInit>
+      </FormikInit>
+    </>
   );
 };
