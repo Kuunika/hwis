@@ -1,7 +1,7 @@
 "use client";
 
 import { BedsideTestPlanForm } from "./bedsideTestPlanForm";
-import { LabRequestForm } from "./labRequestForm";
+import { LabRequestPlanForm } from "./labRequestPlanForm";
 import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
 import { AccordionComponent } from "@/components/accordion";
 import { Radiology } from "./Radiology";
@@ -18,7 +18,7 @@ export function TestPlanAccordion() {
       title: "Lab",
       content: (
         <>
-          <LabRequestForm onClose={() => {}} addRequest={() => {}} />
+          <LabRequestPlanForm onClose={() => {}} addRequest={() => {}} />
           <LabOrderTable />
         </>
       ),
