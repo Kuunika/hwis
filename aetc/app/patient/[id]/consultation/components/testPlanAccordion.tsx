@@ -2,7 +2,7 @@
 
 import { BedsideTestPlanForm } from "./bedsideTestPlanForm";
 import { LabRequestPlanForm } from "./labRequestPlanForm";
-import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
+import { LabOrderPlanTable } from "@/app/patient/components/panels/labOrderPlanTable";
 import { AccordionComponent } from "@/components/accordion";
 import { Radiology } from "./Radiology";
 
@@ -19,7 +19,7 @@ export function TestPlanAccordion() {
       content: (
         <>
           <LabRequestPlanForm onClose={() => {}} addRequest={() => {}} />
-          <LabOrderTable />
+          <LabOrderPlanTable />
         </>
       ),
     },
