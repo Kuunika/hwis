@@ -187,6 +187,8 @@ export const NO = "No";
 
 export const concepts = {
   COMPLAINTS: "Complaints",
+  EMERGENCY: "Emergency",
+  URGENT: "Urgent",
   NOT_INDICATED: "Not Indicated",
   DONE: "Done",
   NOT_DONE: "Not Done",
