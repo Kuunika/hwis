@@ -161,35 +161,38 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
   };
 
   const handleLabSend = (values: any) => {
-    console.log("🚀 ~ handleLabSend ~ values:", values);
+    const specimenType = JSON.parse(values.sampleType);
     const dateTime = getDateTime();
     const group_members = values?.tests.map((test: any) => {
+      const group_members_data = [];
+      if (values?.emergency) {
+        group_members_data.push({
+          concept: concepts.EMERGENCY,
+          obsDatetime: dateTime,
+          value: values.emergency,
+        });
+      }
+      if (values?.urgentSample) {
+        group_members_data.push({
+          concept: concepts.URGENT,
+          obsDatetime: dateTime,
+          value: values.urgentSample,
+        });
+      }
       return {
         concept: test?.label,
         obsDatetime: dateTime,
         value: tests?.find((lab) => lab.concept_id === test.id)?.names[0]?.uuid,
+        groupMembers: group_members_data,
       };
     });
-    if (values?.emergency) {
-      group_members.push({
-        concept: concepts.EMERGENCY,
-        obsDatetime: dateTime,
-        value: values.emergency,
-      });
-    }
-    if (values?.urgentSample) {
-      group_members.push({
-        concept: concepts.URGENT,
-        obsDatetime: dateTime,
-        value: values.urgentSample,
-      });
-    }
+
     const obs = [
       {
-        concept: concepts.DESCRIPTION,
+        concept: specimenType.name,
         obsDatetime: dateTime,
-        value: values.sampleType,
-        group_members: group_members,
+        value: specimenType.uuid,
+        groupMembers: group_members,
       },
     ];
 
@@ -212,7 +215,8 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
   };
 
   const handleSampleTypeChange = (value: string) => {
-    setSampleName(value);
+    const specimenType = JSON.parse(value);
+    setSampleName(specimenType.uuid);
     setTestType(""); // Reset testType when sample type changes
     setRadioKey((prevKey) => prevKey + 1); // Force radio buttons to re-render
 
@@ -250,7 +254,10 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
           samples
             ? samples.map((sp) => ({
                 label: sp?.names[0]?.name,
-                id: sp.names[0].uuid,
+                id: JSON.stringify({
+                  name: sp.names[0].name,
+                  uuid: sp.names[0].uuid,
+                }),
               }))
             : []
         }
