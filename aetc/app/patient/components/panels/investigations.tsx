@@ -20,14 +20,12 @@ import { AccordionComponent } from "@/components/accordion"; // Import Accordion
 
 import { MinimalTable } from "@/components/tables/minimalTable"; // Import MinimalTable
 
-
 export const Investigations = () => {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [open, setOpen] = useState(false);
   const [labRequests, setLabRequests] = useState<LabRequest[]>([]);
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
-
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -62,12 +60,11 @@ export const Investigations = () => {
   return (
     <Panel
       title="Investigations"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
+      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => {}} />}
     >
       <WrapperBox>
         {/* <TestAccordion /> Replacing LabRequestModal with TestAccordion */}
         <BasicPopover />
-
       </WrapperBox>
 
       {/* Accordion with Lab Orders and Lab Results */}
@@ -82,8 +79,6 @@ export const Investigations = () => {
           <LabResultsTable rows={[]} />
         </Box>
       </Box> */}
-
-
     </Panel>
   );
 };
@@ -123,8 +118,8 @@ export default function BasicPopover() {
         <Box sx={{ padding: "2ch" }}>
           <Typography variant="h4">Lab Order</Typography>
           <br />
-          <TestAccordion /> {/* Replacing LabRequestModal with TestAccordion */}
-
+          <TestAccordion onClose={handleClose} />{" "}
+          {/* Replacing LabRequestModal with TestAccordion */}
         </Box>
       </Popover>
     </>

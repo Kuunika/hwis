@@ -24,7 +24,7 @@ const testStatusOptions = [
   { value: concepts.INDETERMINATE, label: "Indeterminate" },
 ];
 
-export const BedsideTestForm = () => {
+export const BedsideTestForm = ({ onClose }: { onClose: () => void }) => {
   const { activeVisit, patientId } = getActivePatientDetails();
 
   const { mutate } = fetchConceptAndCreateEncounter();
@@ -374,6 +374,7 @@ export const BedsideTestForm = () => {
         obs: transformedData,
       });
     }
+    onClose();
   };
 
   return (
