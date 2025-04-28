@@ -1,11 +1,12 @@
-import { getCATTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 export function CalculateWaitingTime({
   arrival_time,
 }: {
-  arrival_time: string; 
+  arrival_time: string;
 }) {
-  const currentTime: any = getCATTime();
+  const { ServerTime } = useServerTime();
+  const currentTime: any = Date.parse(ServerTime.getServerTimeString());
   const arrivalTime: number = Date.parse(arrival_time);
   const differenceInMilliseconds: number = currentTime - arrivalTime;
 
@@ -25,7 +26,10 @@ export function CalculateWaitingTime({
       } else {
         const days: number = Math.floor(hours / 24);
         const remainingHours: number = hours % 24;
-        waitingTime = remainingHours > 0 ? `${days} days ${remainingHours} hours` : `${days} days`;
+        waitingTime =
+          remainingHours > 0
+            ? `${days} days ${remainingHours} hours`
+            : `${days} days`;
       }
     }
   }
