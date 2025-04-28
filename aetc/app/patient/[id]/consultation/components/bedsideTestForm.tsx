@@ -380,17 +380,6 @@ export const BedsideTestForm = () => {
     >
       <Form>
         {formStructure.map((component) => renderFormComponent(component))}
-
-        <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-          >
-            Submit
-          </Button>
-        </Box>
       </Form>
     </FormikInit>
   );
