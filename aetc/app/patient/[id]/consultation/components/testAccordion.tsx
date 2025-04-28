@@ -6,7 +6,7 @@ import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
 import { AccordionComponent } from "@/components/accordion";
 import { Radiology } from "./Radiology";
 
-export function TestAccordion({ onClose }: { onClose: () => void }) {
+export function TestAccordion({ onClose }: { onClose?: () => void }) {
   const sections = [
     {
       id: "bedside",
@@ -14,7 +14,7 @@ export function TestAccordion({ onClose }: { onClose: () => void }) {
       content: (
         <BedsideTestForm
           onClose={() => {
-            onClose();
+            onClose?.();
           }}
         />
       ),
