@@ -21,7 +21,7 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   children,
   setTriggerFunc,
   printer,
-  orderDate
+  orderDate,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -64,14 +64,12 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   );
 };
 
-
-
 export const BarcodeComponent: React.FC<Props> = ({
   value,
   children,
   setTriggerFunc,
   printer,
-  orderDate
+  orderDate,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -97,7 +95,7 @@ export const BarcodeComponent: React.FC<Props> = ({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            paddingLeft: "13ch"
+            paddingLeft: "13ch",
           }}
           ref={ref}
         >
@@ -116,10 +114,6 @@ export const BarcodeComponent: React.FC<Props> = ({
     </WrapperBox>
   );
 };
-
-
-
-
 
 const downloadZplData = async (
   labelName: string,
@@ -166,10 +160,10 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
   arrivalTime,
   referredFrom,
   triageCategory,
-  triagedBy
+  triagedBy,
 }) => {
-  const [printer, setPrinter] = useState('')
-  const [reason, setReason] = useState('')
+  const [printer, setPrinter] = useState("");
+  const [reason, setReason] = useState("");
 
   const convertToCanvas = async () => {
     const element = document.getElementById("triage");
@@ -198,14 +192,20 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
               <Typography variant="body2" mr={"1ch"}>
                 Triage Date Time: {date}
               </Typography>
-              <Typography variant="body2">Referred From: {referredFrom}</Typography>
+              <Typography variant="body2">
+                Referred From: {referredFrom}
+              </Typography>
             </Box>
             <Box sx={{ display: "flex" }}>
-              <Typography mr={"1ch"} variant="body1">Category: {triageCategory}</Typography>
+              <Typography mr={"1ch"} variant="body1">
+                Category: {triageCategory}
+              </Typography>
               <Typography variant="body1">Reason: {reason}</Typography>
             </Box>
 
-            <Typography sx={{ mt: "1ch" }} variant="subtitle1">Presenting Complaints: {presentingComplaints} </Typography>
+            <Typography sx={{ mt: "1ch" }} variant="subtitle1">
+              Presenting Complaints: {presentingComplaints}{" "}
+            </Typography>
 
             <WrapperBox sx={{ display: "flex", border: "dashed", my: "1ch" }}>
               {vitals.map(({ name, value }: any) => (
@@ -213,33 +213,37 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
               ))}
             </WrapperBox>
 
-
             <Typography variant="body1">Triaged By: {triagedBy}</Typography>
           </Box>
         </WrapperBox>
       </div>
 
-      <BasicSelect getValue={(value: any) => setReason(value)} label={"Reasons for triage category:"} options={[{
-        value: "Vitals above/below threshold",
-        label: "Vitals above/below threshold"
-      },
-      {
-        value: "Airway/Breathing compromised",
-        label: "Airway/Breathing compromised"
-      },
-      {
-        value: "Blood circulation compromised",
-        label: "Blood circulation compromised"
-      },
-      {
-        value: "Disability",
-        label: "Disability"
-      },
-      {
-        value: "Persistent pain and other concerns ",
-        label: "Persistent pain and other concerns "
-      }
-      ]} />
+      <BasicSelect
+        getValue={(value: any) => setReason(value)}
+        label={"Reasons for triage category:"}
+        options={[
+          {
+            value: "Vitals above/below threshold",
+            label: "Vitals above/below threshold",
+          },
+          {
+            value: "Airway/Breathing compromised",
+            label: "Airway/Breathing compromised",
+          },
+          {
+            value: "Blood circulation compromised",
+            label: "Blood circulation compromised",
+          },
+          {
+            value: "Disability",
+            label: "Disability",
+          },
+          {
+            value: "Persistent pain and other concerns ",
+            label: "Persistent pain and other concerns ",
+          },
+        ]}
+      />
       <br />
       <br />
       <PrinterSelect getValue={(value: string) => setPrinter(value)} />
@@ -249,8 +253,6 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
     </Box>
   );
 };
-
-
 
 const Cell = ({ title, value }: { title: string; value: string }) => {
   return (
