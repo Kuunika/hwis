@@ -84,7 +84,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       }
     });
     const data = Array.from(latestObsMap.values());
-    setRecentDiagnosis(data[0].value);
+    setRecentDiagnosis(data[0]?.value);
   };
 
   useEffect(() => {
