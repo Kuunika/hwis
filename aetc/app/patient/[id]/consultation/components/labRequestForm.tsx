@@ -162,19 +162,26 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   const { params } = useParameters();
   const { activeVisit, patientId } = getActivePatientDetails();
   const { mutate, isPending, isSuccess: orderCreated } = createOrder();
-  const { data: labOrdersPlan } = getPatientsEncounters(
-    params?.id as string,
-    `encounter_type=${encounters.LAB_ORDERS_PLAN}`
-  );
-  const { data: labOrdersObs } = getPatientsEncounters(
-    params?.id as string,
-    `encounter_type=${encounters.LAB}`
-  );
+  const { data: labOrdersPlan, refetch: refetchLabOrdersPlan } =
+    getPatientsEncounters(
+      params?.id as string,
+      `encounter_type=${encounters.LAB_ORDERS_PLAN}`
+    );
+  const { data: labOrdersObs, refetch: refetchLabOrders } =
+    getPatientsEncounters(
+      params?.id as string,
+      `encounter_type=${encounters.LAB}`
+    );
 
   useEffect(() => {
     refetch();
   }, [sampleName]);
-
+  useEffect(() => {
+    refetchLabOrdersPlan();
+  });
+  useEffect(() => {
+    refetchLabOrders();
+  });
   useEffect(() => {
     reloadSamples();
   }, [sampleId]);
