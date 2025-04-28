@@ -1,31 +1,25 @@
 "use client";
 
-import { BedsideTestForm } from "./bedsideTestForm";
-import { LabRequestForm } from "./labRequestForm";
-import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
+import { BedsideTestPlanForm } from "./bedsideTestPlanForm";
+import { LabRequestPlanForm } from "./labRequestPlanForm";
+import { LabOrderPlanTable } from "@/app/patient/components/panels/labOrderPlanTable";
 import { AccordionComponent } from "@/components/accordion";
 import { Radiology } from "./Radiology";
 
-export function TestAccordion({ onClose }: { onClose?: () => void }) {
+export function TestPlanAccordion() {
   const sections = [
     {
       id: "bedside",
       title: "Bedside",
-      content: (
-        <BedsideTestForm
-          onClose={() => {
-            onClose?.();
-          }}
-        />
-      ),
+      content: <BedsideTestPlanForm />,
     },
     {
       id: "labForm",
       title: "Lab",
       content: (
         <>
-          <LabRequestForm onClose={() => {}} addRequest={() => {}} />
-          <LabOrderTable />
+          <LabRequestPlanForm onClose={() => {}} addRequest={() => {}} />
+          <LabOrderPlanTable />
         </>
       ),
     },
