@@ -11,8 +11,11 @@ import { getActivePatientDetails } from "@/hooks";
 import {
   addEncounter,
   fetchConceptAndCreateEncounter,
+  getPatientsEncounters,
 } from "@/hooks/encounter";
-import { Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import { Form } from "formik";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 
 const formConfig = {
@@ -270,565 +273,740 @@ export const BedsideTestForm = () => {
   const { activeVisit, patientId } = getActivePatientDetails();
 
   const { mutate } = fetchConceptAndCreateEncounter();
-  const handleSubmit = (values: any) => {
-    const dateTime = getDateTime();
+  const { data: encounterData } = getPatientsEncounters(
+    patientId as string,
+    `encounter_type=${encounters.BEDSIDE_INVESTIGATION_PLAN}`
+  );
+  console.log("🚀 ~ BedsideTestForm ~ bedsideTest:", encounterData);
 
-    const obs = [
-      {
-        concept: concepts.DESCRIPTION,
-        obsDatetime: dateTime,
-        value: "Arterial Blood Gas",
-        group_members: [
-          {
-            concept: formConfig.PH.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.PH.name],
-          },
-          {
-            concept: formConfig.PCO2.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.PCO2.name],
-          },
-          {
-            concept: formConfig.PO2.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.PO2.name],
-          },
-          {
-            concept: formConfig.BASE_EXCESS.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.BASE_EXCESS.name],
-          },
-        ],
-      },
-      {
-        concept: concepts.DESCRIPTION,
-        obsDatetime: dateTime,
-        value: "Metabolic Values",
-        group_members: [
-          {
-            concept: formConfig.LACTATE.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.LACTATE.name],
-          },
-          {
-            concept: formConfig.glucose.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.glucose.name],
-          },
-        ],
-      },
-      {
-        concept: concepts.DESCRIPTION,
-        obsDatetime: dateTime,
-        value: "Acid base status",
-        group_members: [
-          {
-            concept: formConfig.HCO3.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.HCO3.name],
-          },
-          {
-            concept: formConfig.ANION_GAPC.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.ANION_GAPC.name],
-          },
-          {
-            concept: formConfig.MOSMC.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.MOSMC.name],
-          },
-        ],
-      },
-      {
-        concept: concepts.DESCRIPTION,
-        obsDatetime: dateTime,
-        value: "Oximetry values",
-        group_members: [
-          {
-            concept: formConfig.SO2E.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.SO2E.name],
-          },
-          {
-            concept: formConfig.FO2HBE.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.FO2HBE.name],
-          },
-          {
-            concept: formConfig.FO2HBE.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.FO2HBE.name],
-          },
-        ],
-      },
-      {
-        concept: concepts.DESCRIPTION,
-        obsDatetime: dateTime,
-        value: "Electolyte values",
-        group_members: [
-          {
-            concept: formConfig.CK.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.CK.name],
-          },
-          {
-            concept: formConfig.CNA.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.CNA.name],
-          },
-          {
-            concept: formConfig.CA2.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.CA2.name],
-          },
-          {
-            concept: formConfig.CCL.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.CCL.name],
-          },
-        ],
-      },
-      {
-        concept: concepts.DESCRIPTION,
-        obsDatetime: dateTime,
-        value: "Temperature Corrected Values",
-        group_members: [
-          {
-            concept: formConfig.PH.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.PH.name],
-          },
-          {
-            concept: formConfig.PCO2.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.PCO2.name],
-          },
-          {
-            concept: formConfig.PO2.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.PO2.name],
-          },
-          {
-            concept: formConfig.P50E.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.P50E.name],
-          },
-        ],
-      },
-      {
-        concept: formConfig.pregnancyTest.name,
-        obsDatetime: dateTime,
-        value: values[formConfig.pregnancyTest.name],
-        coded: true,
-      },
-      {
-        concept: formConfig.hiv.name,
-        obsDatetime: dateTime,
-        value: values[formConfig.hiv.name],
-        coded: true,
-      },
-      {
-        concept: formConfig.vdrl.name,
-        obsDatetime: dateTime,
-        coded: true,
-        value: values[formConfig.vdrl.name],
-      },
-      {
-        concept: formConfig.mrdt.name,
-        obsDatetime: dateTime,
-        coded: true,
-        value: values[formConfig.mrdt.name],
-      },
-      {
-        concepts: concepts.DESCRIPTION,
-        obsDatetime: dateTime,
-        value: "Dipstick",
-        group_members: [
-          {
-            concept: formConfig.urobilinogen.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.urobilinogen.name],
-          },
-          {
-            concept: formConfig.PH.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.PH.name],
-          },
-          {
-            concept: formConfig.leukocytes.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.leukocytes.name],
-          },
-          {
-            concept: formConfig.glucose.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.glucose.name],
-          },
-          {
-            concept: formConfig.specificGravity.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.specificGravity.name],
-          },
-          {
-            concept: formConfig.specificGravity.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.specificGravity.name],
-          },
-          {
-            concept: formConfig.protein.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.protein.name],
-          },
-          {
-            concept: formConfig.nitrite.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.nitrite.name],
-          },
-          {
-            concept: formConfig.ketones.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.ketones.name],
-          },
-          {
-            concept: formConfig.bilirubin.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.bilirubin.name],
-          },
-          {
-            concept: formConfig.blood.name,
-            obsDatetime: dateTime,
-            value: values[formConfig.blood.name],
-          },
-        ],
-      },
-      {
-        concept: formConfig.pocus.name,
-        obsDatetime: dateTime,
-        value: values[formConfig.pocus.name],
-      },
-      {
-        concept: formConfig.other.name,
-        obsDatetime: dateTime,
-        value: values[formConfig.other.name],
-      },
-      {
-        concept: formConfig.ecg.name,
-        obsDatetime: dateTime,
-        value: values[formConfig.ecg.name],
-      },
-      {
-        concept: formConfig.pefr.name,
-        obsDatetime: dateTime,
-        value: values[formConfig.pefr.name],
-      },
-    ];
-    mutate({
-      encounterType: encounters.BED_SIDE_TEST,
-      visit: activeVisit,
-      patient: patientId,
-      encounterDatetime: dateTime,
-      obs,
-    });
+  const [formStructure, setFormStructure] = useState([]);
+  const [initialValues, setInitialValues] = useState({});
+  const [validationSchema, setValidationSchema] = useState({});
+  // Process the encounter data to build form structure
+  useEffect(() => {
+    if (encounterData) {
+      const structure: any = [];
+      const values: any = {};
+      const validationRules: any = {};
+
+      // Helper function to process individual obs
+      const processObs = (obs: any) => {
+        // Simple validity check
+        if (!obs) return null;
+
+        // If it's a standalone test (like MRDT, HIV)
+        if (!obs.children || obs.children.length === 0) {
+          const fieldName = `field_${obs.concept_id}`;
+          const label =
+            obs.names && obs.names[0]
+              ? obs.names[0].name
+              : `Field ${obs.concept_id}`;
+
+          // Add to values
+          values[fieldName] = obs.value || "";
+
+          // Add validation if needed
+          validationRules[fieldName] = yup.string();
+
+          // Return a radio group component for tests
+          if (
+            label.includes("HIV") ||
+            label.includes("Test") ||
+            label.includes("MRDT")
+          ) {
+            return {
+              type: "radio",
+              name: fieldName,
+              label: label,
+              options: testStatusOptions,
+            };
+          }
+
+          // Default to text field
+          return {
+            type: "text",
+            name: fieldName,
+            label: label,
+            multiline: label.includes("Notes") || label.includes("Description"),
+          };
+        }
+
+        // If it's a section with children
+        const sectionItems: any = [];
+
+        // Process each child in the section
+        obs.children.forEach((child: any) => {
+          const fieldName = `field_${child.concept_id}`;
+          const label =
+            child.names && child.names[0]
+              ? child.names[0].name
+              : `Field ${child.concept_id}`;
+
+          // Add to values
+          values[fieldName] = child.value || "";
+
+          // Add validation
+          validationRules[fieldName] = yup.string();
+
+          // Add field to section
+          sectionItems.push({
+            type: "text",
+            name: fieldName,
+            label: label,
+          });
+        });
+
+        // Return section with its children
+        return {
+          type: "section",
+          title: obs.value,
+          items: sectionItems,
+        };
+      };
+
+      // Process all observations
+      if (encounterData[0].obs && Array.isArray(encounterData[0].obs)) {
+        encounterData[0].obs.forEach((obs) => {
+          console.log("🚀 ~ encounterData.obs.forEach ~ obs:", obs);
+          const processedObs = processObs(obs);
+          if (processedObs) {
+            structure.push(processedObs);
+          }
+        });
+      }
+
+      console.log("🚀 ~ useEffect ~ structure:", structure);
+      // Set state with processed data
+      setFormStructure(structure);
+      setInitialValues(values);
+      setValidationSchema(yup.object().shape(validationRules));
+    }
+  }, [encounterData]);
+  // Render form components based on structure
+  const renderFormComponent = (component: any) => {
+    if (!component) return null;
+    switch (component.type) {
+      case "section":
+        return (
+          <Box key={component.title} sx={{ mb: 4 }}>
+            <Typography variant="h6" color="GrayText" sx={{ mb: 2 }}>
+              {component.title}
+            </Typography>
+            {component.items.length > 0 && (
+              <FormFieldContainerMultiple>
+                {component.items.map((item: any) => renderFormComponent(item))}
+              </FormFieldContainerMultiple>
+            )}
+          </Box>
+        );
+
+      case "text":
+        return (
+          <TextInputField
+            key={component.name}
+            id={component.name}
+            name={component.name}
+            label={component.label}
+            multiline={component.multiline}
+            rows={component.multiline ? 4 : 1}
+          />
+        );
+
+      case "radio":
+        return (
+          <RadioGroupInput
+            key={component.name}
+            name={component.name}
+            label={component.label}
+            options={component.options || testStatusOptions}
+          />
+        );
+
+      default:
+        return null;
+    }
   };
 
+  const handleSubmit = (values: any) => {
+    const dateTime = getDateTime();
+    console.log("Form submitted with values:", values);
+    // const obs = [
+    //   {
+    //     concept: concepts.DESCRIPTION,
+    //     obsDatetime: dateTime,
+    //     value: "Arterial Blood Gas",
+    //     group_members: [
+    //       {
+    //         concept: formConfig.PH.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.PH.name],
+    //       },
+    //       {
+    //         concept: formConfig.PCO2.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.PCO2.name],
+    //       },
+    //       {
+    //         concept: formConfig.PO2.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.PO2.name],
+    //       },
+    //       {
+    //         concept: formConfig.BASE_EXCESS.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.BASE_EXCESS.name],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     concept: concepts.DESCRIPTION,
+    //     obsDatetime: dateTime,
+    //     value: "Metabolic Values",
+    //     group_members: [
+    //       {
+    //         concept: formConfig.LACTATE.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.LACTATE.name],
+    //       },
+    //       {
+    //         concept: formConfig.glucose.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.glucose.name],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     concept: concepts.DESCRIPTION,
+    //     obsDatetime: dateTime,
+    //     value: "Acid base status",
+    //     group_members: [
+    //       {
+    //         concept: formConfig.HCO3.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.HCO3.name],
+    //       },
+    //       {
+    //         concept: formConfig.ANION_GAPC.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.ANION_GAPC.name],
+    //       },
+    //       {
+    //         concept: formConfig.MOSMC.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.MOSMC.name],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     concept: concepts.DESCRIPTION,
+    //     obsDatetime: dateTime,
+    //     value: "Oximetry values",
+    //     group_members: [
+    //       {
+    //         concept: formConfig.SO2E.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.SO2E.name],
+    //       },
+    //       {
+    //         concept: formConfig.FO2HBE.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.FO2HBE.name],
+    //       },
+    //       {
+    //         concept: formConfig.FO2HBE.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.FO2HBE.name],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     concept: concepts.DESCRIPTION,
+    //     obsDatetime: dateTime,
+    //     value: "Electolyte values",
+    //     group_members: [
+    //       {
+    //         concept: formConfig.CK.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.CK.name],
+    //       },
+    //       {
+    //         concept: formConfig.CNA.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.CNA.name],
+    //       },
+    //       {
+    //         concept: formConfig.CA2.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.CA2.name],
+    //       },
+    //       {
+    //         concept: formConfig.CCL.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.CCL.name],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     concept: concepts.DESCRIPTION,
+    //     obsDatetime: dateTime,
+    //     value: "Temperature Corrected Values",
+    //     group_members: [
+    //       {
+    //         concept: formConfig.PH.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.PH.name],
+    //       },
+    //       {
+    //         concept: formConfig.PCO2.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.PCO2.name],
+    //       },
+    //       {
+    //         concept: formConfig.PO2.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.PO2.name],
+    //       },
+    //       {
+    //         concept: formConfig.P50E.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.P50E.name],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     concept: formConfig.pregnancyTest.name,
+    //     obsDatetime: dateTime,
+    //     value: values[formConfig.pregnancyTest.name],
+    //     coded: true,
+    //   },
+    //   {
+    //     concept: formConfig.hiv.name,
+    //     obsDatetime: dateTime,
+    //     value: values[formConfig.hiv.name],
+    //     coded: true,
+    //   },
+    //   {
+    //     concept: formConfig.vdrl.name,
+    //     obsDatetime: dateTime,
+    //     coded: true,
+    //     value: values[formConfig.vdrl.name],
+    //   },
+    //   {
+    //     concept: formConfig.mrdt.name,
+    //     obsDatetime: dateTime,
+    //     coded: true,
+    //     value: values[formConfig.mrdt.name],
+    //   },
+    //   {
+    //     concepts: concepts.DESCRIPTION,
+    //     obsDatetime: dateTime,
+    //     value: "Dipstick",
+    //     group_members: [
+    //       {
+    //         concept: formConfig.urobilinogen.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.urobilinogen.name],
+    //       },
+    //       {
+    //         concept: formConfig.PH.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.PH.name],
+    //       },
+    //       {
+    //         concept: formConfig.leukocytes.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.leukocytes.name],
+    //       },
+    //       {
+    //         concept: formConfig.glucose.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.glucose.name],
+    //       },
+    //       {
+    //         concept: formConfig.specificGravity.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.specificGravity.name],
+    //       },
+    //       {
+    //         concept: formConfig.specificGravity.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.specificGravity.name],
+    //       },
+    //       {
+    //         concept: formConfig.protein.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.protein.name],
+    //       },
+    //       {
+    //         concept: formConfig.nitrite.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.nitrite.name],
+    //       },
+    //       {
+    //         concept: formConfig.ketones.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.ketones.name],
+    //       },
+    //       {
+    //         concept: formConfig.bilirubin.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.bilirubin.name],
+    //       },
+    //       {
+    //         concept: formConfig.blood.name,
+    //         obsDatetime: dateTime,
+    //         value: values[formConfig.blood.name],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     concept: formConfig.pocus.name,
+    //     obsDatetime: dateTime,
+    //     value: values[formConfig.pocus.name],
+    //   },
+    //   {
+    //     concept: formConfig.other.name,
+    //     obsDatetime: dateTime,
+    //     value: values[formConfig.other.name],
+    //   },
+    //   {
+    //     concept: formConfig.ecg.name,
+    //     obsDatetime: dateTime,
+    //     value: values[formConfig.ecg.name],
+    //   },
+    //   {
+    //     concept: formConfig.pefr.name,
+    //     obsDatetime: dateTime,
+    //     value: values[formConfig.pefr.name],
+    //   },
+    // ];
+    // mutate({
+    //   encounterType: encounters.BED_SIDE_TEST,
+    //   visit: activeVisit,
+    //   patient: patientId,
+    //   encounterDatetime: dateTime,
+    //   obs,
+    // });
+  };
   return (
     <FormikInit
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
       initialValues={formValues}
     >
-      <RadioGroupInput
-        row
-        label={formConfig.mrdt.label}
-        options={testStatusOptions}
-        name={formConfig.mrdt.name}
-      />
-      <br />
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Arterial Blood Gas{" "}
-      </Typography>
+      <Form>
+        {formStructure.map((component) => renderFormComponent(component))}
 
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PH.name}
-          label={formConfig.PH.label}
-          id={formConfig.PH.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PCO2.name}
-          label={formConfig.PCO2.label}
-          id={formConfig.PCO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PO2.name}
-          label={formConfig.PO2.label}
-          id={formConfig.PO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.BASE_EXCESS.name}
-          label={formConfig.BASE_EXCESS.label}
-          id={formConfig.BASE_EXCESS.name}
-        />
-      </FormFieldContainerMultiple>
-
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Metabolic Values
-      </Typography>
-
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.LACTATE.name}
-          label={formConfig.LACTATE.label}
-          id={formConfig.LACTATE.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.glucose.name}
-          label={formConfig.glucose.label}
-          id={formConfig.glucose.name}
-        />
-      </FormFieldContainerMultiple>
-
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Acid base status
-      </Typography>
-
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.HCO3.name}
-          label={formConfig.HCO3.label}
-          id={formConfig.HCO3.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.ANION_GAPC.name}
-          label={formConfig.ANION_GAPC.label}
-          id={formConfig.ANION_GAPC.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.MOSMC.name}
-          label={formConfig.MOSMC.label}
-          id={formConfig.MOSMC.name}
-        />
-      </FormFieldContainerMultiple>
-
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Oximetry values
-      </Typography>
-
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.SO2E.name}
-          label={formConfig.SO2E.label}
-          id={formConfig.SO2E.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.FO2HBE.name}
-          label={formConfig.FO2HBE.label}
-          id={formConfig.FO2HBE.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.FHHBE.name}
-          label={formConfig.FHHBE.label}
-          id={formConfig.FHHBE.name}
-        />
-      </FormFieldContainerMultiple>
-
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Electolyte Values
-      </Typography>
-
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CK.name}
-          label={formConfig.CK.label}
-          id={formConfig.CK.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CNA.name}
-          label={formConfig.CNA.label}
-          id={formConfig.CNA.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CA2.name}
-          label={formConfig.CA2.label}
-          id={formConfig.CA2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.CCL.name}
-          label={formConfig.CCL.label}
-          id={formConfig.CCL.name}
-        />
-      </FormFieldContainerMultiple>
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Temperature Corrected Values
-      </Typography>
-
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PH.name}
-          label={formConfig.PH.label}
-          id={formConfig.PH.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PCO2.name}
-          label={formConfig.PCO2.label}
-          id={formConfig.PCO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PO2.name}
-          label={formConfig.PO2.label}
-          id={formConfig.PO2.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.P50E.name}
-          label={formConfig.P50E.label}
-          id={formConfig.P50E.name}
-        />
-      </FormFieldContainerMultiple>
-      <RadioGroupInput
-        row
-        label={formConfig.pregnancyTest.label}
-        options={testStatusOptions}
-        name={formConfig.pregnancyTest.name}
-      />
-      <RadioGroupInput
-        row
-        label={formConfig.hiv.label}
-        options={testStatusOptions}
-        name={formConfig.hiv.name}
-      />
-      <RadioGroupInput
-        row
-        label={formConfig.vdrl.label}
-        options={testStatusOptions}
-        name={formConfig.vdrl.name}
-      />
-
-      <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
-        Dipstick
-      </Typography>
-
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.urobilinogen.name}
-          label={formConfig.urobilinogen.label}
-          id={formConfig.urobilinogen.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.PH.name}
-          label={formConfig.PH.label}
-          id={formConfig.PH.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.leukocytes.name}
-          label={formConfig.leukocytes.label}
-          id={formConfig.leukocytes.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.glucose.name}
-          label={formConfig.glucose.label}
-          id={formConfig.glucose.name}
-        />
-      </FormFieldContainerMultiple>
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.specificGravity.name}
-          label={formConfig.specificGravity.label}
-          id={formConfig.specificGravity.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.protein.name}
-          label={formConfig.protein.label}
-          id={formConfig.protein.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.nitrite.name}
-          label={formConfig.nitrite.label}
-          id={formConfig.nitrite.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.ketones.name}
-          label={formConfig.ketones.label}
-          id={formConfig.ketones.name}
-        />
-      </FormFieldContainerMultiple>
-      <FormFieldContainerMultiple>
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.bilirubin.name}
-          label={formConfig.bilirubin.label}
-          id={formConfig.bilirubin.name}
-        />
-        <TextInputField
-          sx={{ width: "100%" }}
-          name={formConfig.blood.name}
-          label={formConfig.blood.label}
-          id={formConfig.blood.name}
-        />
-      </FormFieldContainerMultiple>
-      <br />
-      <br />
-      <br />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.pocus.name}
-        label={formConfig.pocus.label}
-        id={formConfig.pocus.name}
-      />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.ecg.name}
-        label={formConfig.ecg.label}
-        id={formConfig.ecg.name}
-      />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.pefr.name}
-        label={formConfig.pefr.label}
-        id={formConfig.pefr.name}
-      />
-      <TextInputField
-        sx={{ width: "100%" }}
-        multiline
-        rows={5}
-        name={formConfig.other.name}
-        label={formConfig.other.label}
-        id={formConfig.other.name}
-      />
+        <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+          >
+            Submit
+          </Button>
+        </Box>
+      </Form>
     </FormikInit>
   );
+  // return (
+  //   <FormikInit
+  //     validationSchema={validationSchema}
+  //     onSubmit={handleSubmit}
+  //     initialValues={formValues}
+  //   >
+  //     <RadioGroupInput
+  //       row
+  //       label={formConfig.mrdt.label}
+  //       options={testStatusOptions}
+  //       name={formConfig.mrdt.name}
+  //     />
+  //     <br />
+  //     <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
+  //       Arterial Blood Gas{" "}
+  //     </Typography>
+
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.PH.name}
+  //         label={formConfig.PH.label}
+  //         id={formConfig.PH.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.PCO2.name}
+  //         label={formConfig.PCO2.label}
+  //         id={formConfig.PCO2.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.PO2.name}
+  //         label={formConfig.PO2.label}
+  //         id={formConfig.PO2.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.BASE_EXCESS.name}
+  //         label={formConfig.BASE_EXCESS.label}
+  //         id={formConfig.BASE_EXCESS.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+
+  //     <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
+  //       Metabolic Values
+  //     </Typography>
+
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.LACTATE.name}
+  //         label={formConfig.LACTATE.label}
+  //         id={formConfig.LACTATE.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.glucose.name}
+  //         label={formConfig.glucose.label}
+  //         id={formConfig.glucose.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+
+  //     <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
+  //       Acid base status
+  //     </Typography>
+
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.HCO3.name}
+  //         label={formConfig.HCO3.label}
+  //         id={formConfig.HCO3.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.ANION_GAPC.name}
+  //         label={formConfig.ANION_GAPC.label}
+  //         id={formConfig.ANION_GAPC.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.MOSMC.name}
+  //         label={formConfig.MOSMC.label}
+  //         id={formConfig.MOSMC.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+
+  //     <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
+  //       Oximetry values
+  //     </Typography>
+
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.SO2E.name}
+  //         label={formConfig.SO2E.label}
+  //         id={formConfig.SO2E.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.FO2HBE.name}
+  //         label={formConfig.FO2HBE.label}
+  //         id={formConfig.FO2HBE.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.FHHBE.name}
+  //         label={formConfig.FHHBE.label}
+  //         id={formConfig.FHHBE.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+
+  //     <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
+  //       Electolyte Values
+  //     </Typography>
+
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.CK.name}
+  //         label={formConfig.CK.label}
+  //         id={formConfig.CK.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.CNA.name}
+  //         label={formConfig.CNA.label}
+  //         id={formConfig.CNA.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.CA2.name}
+  //         label={formConfig.CA2.label}
+  //         id={formConfig.CA2.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.CCL.name}
+  //         label={formConfig.CCL.label}
+  //         id={formConfig.CCL.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+  //     <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
+  //       Temperature Corrected Values
+  //     </Typography>
+
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.PH.name}
+  //         label={formConfig.PH.label}
+  //         id={formConfig.PH.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.PCO2.name}
+  //         label={formConfig.PCO2.label}
+  //         id={formConfig.PCO2.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.PO2.name}
+  //         label={formConfig.PO2.label}
+  //         id={formConfig.PO2.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.P50E.name}
+  //         label={formConfig.P50E.label}
+  //         id={formConfig.P50E.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+  //     <RadioGroupInput
+  //       row
+  //       label={formConfig.pregnancyTest.label}
+  //       options={testStatusOptions}
+  //       name={formConfig.pregnancyTest.name}
+  //     />
+  //     <RadioGroupInput
+  //       row
+  //       label={formConfig.hiv.label}
+  //       options={testStatusOptions}
+  //       name={formConfig.hiv.name}
+  //     />
+  //     <RadioGroupInput
+  //       row
+  //       label={formConfig.vdrl.label}
+  //       options={testStatusOptions}
+  //       name={formConfig.vdrl.name}
+  //     />
+
+  //     <Typography sx={{ mt: "2ch", mb: "1ch" }} variant="h6" color={"GrayText"}>
+  //       Dipstick
+  //     </Typography>
+
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.urobilinogen.name}
+  //         label={formConfig.urobilinogen.label}
+  //         id={formConfig.urobilinogen.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.PH.name}
+  //         label={formConfig.PH.label}
+  //         id={formConfig.PH.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.leukocytes.name}
+  //         label={formConfig.leukocytes.label}
+  //         id={formConfig.leukocytes.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.glucose.name}
+  //         label={formConfig.glucose.label}
+  //         id={formConfig.glucose.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.specificGravity.name}
+  //         label={formConfig.specificGravity.label}
+  //         id={formConfig.specificGravity.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.protein.name}
+  //         label={formConfig.protein.label}
+  //         id={formConfig.protein.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.nitrite.name}
+  //         label={formConfig.nitrite.label}
+  //         id={formConfig.nitrite.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.ketones.name}
+  //         label={formConfig.ketones.label}
+  //         id={formConfig.ketones.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+  //     <FormFieldContainerMultiple>
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.bilirubin.name}
+  //         label={formConfig.bilirubin.label}
+  //         id={formConfig.bilirubin.name}
+  //       />
+  //       <TextInputField
+  //         sx={{ width: "100%" }}
+  //         name={formConfig.blood.name}
+  //         label={formConfig.blood.label}
+  //         id={formConfig.blood.name}
+  //       />
+  //     </FormFieldContainerMultiple>
+  //     <br />
+  //     <br />
+  //     <br />
+  //     <TextInputField
+  //       sx={{ width: "100%" }}
+  //       multiline
+  //       rows={5}
+  //       name={formConfig.pocus.name}
+  //       label={formConfig.pocus.label}
+  //       id={formConfig.pocus.name}
+  //     />
+  //     <TextInputField
+  //       sx={{ width: "100%" }}
+  //       multiline
+  //       rows={5}
+  //       name={formConfig.ecg.name}
+  //       label={formConfig.ecg.label}
+  //       id={formConfig.ecg.name}
+  //     />
+  //     <TextInputField
+  //       sx={{ width: "100%" }}
+  //       multiline
+  //       rows={5}
+  //       name={formConfig.pefr.name}
+  //       label={formConfig.pefr.label}
+  //       id={formConfig.pefr.name}
+  //     />
+  //     <TextInputField
+  //       sx={{ width: "100%" }}
+  //       multiline
+  //       rows={5}
+  //       name={formConfig.other.name}
+  //       label={formConfig.other.label}
+  //       id={formConfig.other.name}
+  //     />
+  //   </FormikInit>
+  // );
 };
