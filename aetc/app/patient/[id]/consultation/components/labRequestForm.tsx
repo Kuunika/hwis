@@ -108,7 +108,7 @@ const OrderedTestsCheckboxes: React.FC<OrderedTestsCheckboxesProps> = ({
                     onChange={() => handleCheckboxChange(test.id)}
                   />
                 }
-                label={`${test.test} (${test.date})`}
+                label={`${test.test} (${getHumanReadableDateTimeLab(test.date)})`}
               />
             ))}
           </FormGroup>
@@ -165,6 +165,10 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   const { data: labOrdersPlan } = getPatientsEncounters(
     params?.id as string,
     `encounter_type=${encounters.LAB_ORDERS_PLAN}`
+  );
+  const { data: labOrdersObs } = getPatientsEncounters(
+    params?.id as string,
+    `encounter_type=${encounters.LAB}`
   );
 
   useEffect(() => {
@@ -314,18 +318,40 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
     mutate(order);
     onClose();
   };
+  const filterTests = (tests: any, encounters: any) => {
+    const matchMap = new Map();
+    encounters.forEach((encounter: any) => {
+      encounter.obs.forEach((observation: any) => {
+        if (observation.value_coded !== null) {
+          const key = `${observation.value_coded}_${observation.obs_datetime}`;
+          matchMap.set(key, true);
+        }
+      });
+    });
 
+    // Filter out tests that match both criteria
+    return tests.filter((test: any) => {
+      const key = `${test.testConceptId}_${test.date}`;
+      return !matchMap.has(key);
+    });
+  };
   // Parse lab orders plan
   let flattenedLabOrdersPlan: LabOrderTest[] = [];
   if (labOrdersPlan && labOrdersPlan?.length > 0) {
     flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) =>
       obs.children.map((test: any) => ({
         test: test.names[0].name,
-        date: getHumanReadableDateTimeLab(obs.obs_datetime),
+        testConceptId: test.concept_id,
+        date: obs.obs_datetime,
         specimen: obs.names[0].name,
         id: test.obs_id,
       }))
     );
+    if (labOrdersObs && labOrdersObs?.length > 0)
+      flattenedLabOrdersPlan = filterTests(
+        flattenedLabOrdersPlan,
+        labOrdersObs
+      );
   }
   // Group tests by specimen type
   const groupedTests: GroupedTests = flattenedLabOrdersPlan.reduce(
@@ -358,20 +384,6 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
       {flattenedLabOrdersPlan.length > 0 && (
         <OrderedTestsCheckboxes groupedTests={groupedTests} />
       )}
-
-      <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          sx={{ mr: 2 }}
-        >
-          Submit
-        </Button>
-        <Button variant="outlined" onClick={onClose}>
-          Cancel
-        </Button>
-      </Box>
     </FormikInit>
   );
 };
