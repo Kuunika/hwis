@@ -28,10 +28,14 @@ export const BedsideTestForm = () => {
   const { activeVisit, patientId } = getActivePatientDetails();
 
   const { mutate } = fetchConceptAndCreateEncounter();
-  const { data: encounterData } = getPatientsEncounters(
+  const { data: encounterData, refetch } = getPatientsEncounters(
     patientId as string,
     `encounter_type=${encounters.BEDSIDE_INVESTIGATION_PLAN}`
   );
+
+  useEffect(() => {
+    refetch();
+  });
   console.log("🚀 ~ BedsideTestForm ~ bedsideTest:", encounterData);
 
   const [formStructure, setFormStructure] = useState([]);
