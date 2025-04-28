@@ -17,13 +17,114 @@ import {
 } from "@/hooks/labOrder";
 import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
-import { getDateTime } from "@/helpers/dateTime";
+import { getDateTime, getHumanReadableDateTimeLab } from "@/helpers/dateTime";
 import * as Yup from "yup";
-import { Typography } from "@mui/material";
+import {
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Box,
+  Button,
+} from "@mui/material";
+import { encounters } from "@/constants";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { useFormikContext } from "formik";
+import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
 
-export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
+// Types
+interface LabOrderTest {
+  test: string;
+  date: string;
+  specimen: string;
+  id: number;
+}
+
+interface GroupedTests {
+  [key: string]: LabOrderTest[];
+}
+
+interface FormValues {
+  testType: string;
+  sampleType: string;
+  selectedLabOrderIds: number[];
+}
+
+interface OrderedTestsCheckboxesProps {
+  groupedTests: GroupedTests;
+}
+
+interface ProcessedTest {
+  testName: string;
+  testId: number;
+  specimenType: string;
+  date: string;
+}
+
+// Component to handle checkboxes with Formik
+const OrderedTestsCheckboxes: React.FC<OrderedTestsCheckboxesProps> = ({
+  groupedTests,
+}) => {
+  const { values, setFieldValue } = useFormikContext<FormValues>();
+
+  // Initialize selected tests if not already in form values
+  useEffect(() => {
+    if (!values.selectedLabOrderIds) {
+      setFieldValue("selectedLabOrderIds", []);
+    }
+  }, []);
+
+  const handleCheckboxChange = (testId: number): void => {
+    const currentSelected = values.selectedLabOrderIds || [];
+    let newSelected: number[];
+
+    if (currentSelected.includes(testId)) {
+      newSelected = currentSelected.filter((id) => id !== testId);
+    } else {
+      newSelected = [...currentSelected, testId];
+    }
+
+    setFieldValue("selectedLabOrderIds", newSelected);
+  };
+
+  return (
+    <Box sx={{ mt: 3, mb: 2 }}>
+      <Typography variant="subtitle1" sx={{ mb: 1 }}>
+        Ordered Tests
+      </Typography>
+
+      {Object.entries(groupedTests).map(([specimen, testsArray]) => (
+        <Box key={specimen} sx={{ mb: 2 }}>
+          <Typography variant="subtitle2">{specimen}</Typography>
+          <FormGroup>
+            {testsArray.map((test) => (
+              <FormControlLabel
+                key={test.id}
+                control={
+                  <Checkbox
+                    checked={
+                      values.selectedLabOrderIds?.includes(test.id) || false
+                    }
+                    onChange={() => handleCheckboxChange(test.id)}
+                  />
+                }
+                label={`${test.test} (${test.date})`}
+              />
+            ))}
+          </FormGroup>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
+export const LabRequestForm: React.FC<LabFormProps> = ({
+  onClose,
+  addRequest,
+}) => {
   const [sampleName, setSampleName] = useState<string>("");
   const [request, setRequest] = useState<any>({});
+
   const {
     data: specimenTypes,
     isLoading,
@@ -38,9 +139,9 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
     refetch,
     isRefetching,
   } = getLabTestTypes(sampleName);
-  const [testType, setTestType] = useState("");
-  const [sampleId, setSampleId] = useState("");
-  const [bedsideTestId, setBedsideTestId] = useState("");
+  const [testType, setTestType] = useState<string>("");
+  const [sampleId, setSampleId] = useState<string>("");
+  const [bedsideTestId, setBedsideTestId] = useState<string>("");
   const {
     data: bedsideSampleTypes,
     isLoading: bedsideLoading,
@@ -59,9 +160,12 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
   const [tests, setTests] = useState<Concept[]>([]);
 
   const { params } = useParameters();
-  // const { data: patient } = getOnePatient(params.id as string);
   const { activeVisit, patientId } = getActivePatientDetails();
   const { mutate, isPending, isSuccess: orderCreated } = createOrder();
+  const { data: labOrdersPlan } = getPatientsEncounters(
+    params?.id as string,
+    `encounter_type=${encounters.LAB_ORDERS_PLAN}`
+  );
 
   useEffect(() => {
     refetch();
@@ -96,7 +200,7 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
     setTests(labTests);
   }, [labTests]);
 
-  const transformedBedsideSamples = () => {
+  const transformedBedsideSamples = (): Concept[] => {
     if (!bedsideSampleTypes) return [];
     return bedsideSampleTypes
       .map((c) => ({
@@ -107,7 +211,7 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
       .sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const transformBedsideTests = () => {
+  const transformBedsideTests = (): Concept[] => {
     if (!bedsideTests) return [];
     const bedSideTestTypes = [
       "Random Blood Glucose (RBS)",
@@ -133,93 +237,141 @@ export const LabRequestForm = ({ onClose, addRequest }: LabFormProps) => {
       .filter((bed) => bedSideTestTypes.includes(bed.name?.toLowerCase()));
   };
 
-  const handleLabSend = (values: any) => {
-    const mappedTests = values?.tests.map((test: any) => {
-      return {
-        concept: tests?.find((lab) => lab.concept_id === test.id)?.names[0]
-          ?.uuid,
-      };
-    });
+  const handleLabSend = async (values: FormValues) => {
+    const selectedLabOrderIds = values.selectedLabOrderIds || [];
+    const selectedOrderTests = flattenedLabOrdersPlan
+      .filter((test) => selectedLabOrderIds.includes(test.id))
+      .map((test) => ({
+        testName: test.test,
+        testId: test.id,
+        specimenType: test.specimen,
+        date: test.date,
+      }));
 
-    const order = {
-      orders: [
-        {
+    // Group tests by both specimen type AND date
+    const testsBySpecimenAndDate = selectedOrderTests.reduce(
+      (groups: Record<string, any[]>, test) => {
+        // Create a composite key using both specimen type and date
+        const key = `${test.specimenType}|${test.date}`;
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+        groups[key].push(test);
+        return groups;
+      },
+      {} as Record<string, any[]>
+    );
+
+    // Create orders for each specimen type and date combination
+    const orderPromises = Object.entries(testsBySpecimenAndDate).map(
+      async ([compositeKey, tests]) => {
+        // Add a type assertion to tell TypeScript that tests is an array
+        const testsArray = tests as any[];
+        // Extract specimen type and date from the composite key
+        const [specimenType, testDate] = compositeKey.split("|");
+        // Map tests for this specimen and date
+        const mappedTests = await Promise.all(
+          testsArray.map(async (test) => ({
+            concept: await getConceptFromCacheOrFetch(test.testName).then(
+              (res) => res.data[0].uuid
+            ),
+          }))
+        );
+
+        // Get specimen concept (using the first test in this group)
+        const specimenConcept = await getConceptFromCacheOrFetch(
+          testsArray[0].testName
+        ).then((res) => res.data[0].uuid);
+
+        return {
           patient: patientId,
           visit: activeVisit,
           tests: mappedTests,
           reason_for_test: "b998cdac-8d80-11d8-abbb-0024217bb78e",
           target_lab: "Blantyre Dream Project Clinic",
-          date: getDateTime(),
+          date: testDate, // Use the test date instead of getDateTime()
           requesting_clinician: "admin",
           specimen: {
-            concept: values.sampleType,
+            concept: specimenConcept,
+            specimenType: specimenType,
           },
-        },
-      ],
+        };
+      }
+    );
+
+    // Resolve all order promises
+    const orders = await Promise.all(orderPromises);
+
+    // Now you can use this data to send to your API
+    // Example of how you might create an order with the selected tests
+    const order = {
+      orders: orders,
     };
 
+    console.log("Order to be submitted:", order);
+
+    // Uncomment to actually submit the order
     mutate(order);
     onClose();
   };
 
+  // Parse lab orders plan
+  let flattenedLabOrdersPlan: LabOrderTest[] = [];
+  if (labOrdersPlan && labOrdersPlan?.length > 0) {
+    flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) =>
+      obs.children.map((test: any) => ({
+        test: test.names[0].name,
+        date: getHumanReadableDateTimeLab(obs.obs_datetime),
+        specimen: obs.names[0].name,
+        id: test.obs_id,
+      }))
+    );
+  }
+  // Group tests by specimen type
+  const groupedTests: GroupedTests = flattenedLabOrdersPlan.reduce(
+    (groups: GroupedTests, item: LabOrderTest) => {
+      const key = item.specimen;
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(item);
+      return groups;
+    },
+    {} as GroupedTests
+  );
+
   return (
     <FormikInit
-      initialValues={{ testType: "", sampleType: "" }}
+      initialValues={{
+        testType: "",
+        sampleType: "",
+        selectedLabOrderIds: [], // Initialize array to store selected checkbox IDs
+      }}
       onSubmit={handleLabSend}
       validationSchema={Yup.object().shape({
-        // testType: Yup.string().required().label("Test Type"),
-        tests: Yup.array().required().label("Tests"),
-        sampleType: Yup.string().required().label("Sample Type"),
+        selectedLabOrderIds: Yup.array().of(Yup.number()), // Add validation for array of numbers
       })}
     >
       <Typography variant="h6">Lab Order</Typography>
-      <SearchComboBox
-        getValue={setSampleName}
-        multiple={false}
-        label="Sample Type"
-        name="sampleType"
-        sx={{ mb: 2 }}
-        options={
-          samples
-            ? samples.map((sp) => ({
-                label: sp?.names[0]?.name,
-                id: sp.names[0].uuid,
-              }))
-            : []
-        }
-      />
-      <SearchComboBox
-        label="Tests"
-        name="tests"
-        options={
-          tests
-            ? tests.map((d) => ({ id: d.concept_id, label: d.names[0]?.name }))
-            : []
-        }
-      />
-      <br />
-      <WrapperBox sx={{ display: "flex", width: "50ch" }}>
-        <RadioGroupInput
-          getValue={(test) => setTestType(test)}
-          row
-          name="emergency"
-          options={[
-            { value: "Yes", label: "Yes" },
-            { value: "No", label: "No" },
-          ]}
-          label="Emergency"
-        />
-        <RadioGroupInput
-          getValue={(test) => setTestType(test)}
-          row
-          name="urgentSample"
-          options={[
-            { value: "Yes", label: "Yes" },
-            { value: "No", label: "No" },
-          ]}
-          label="Urgent Sample"
-        />
-      </WrapperBox>
+
+      {/* Lab Orders Plan Tests as Checkboxes */}
+      {flattenedLabOrdersPlan.length > 0 && (
+        <OrderedTestsCheckboxes groupedTests={groupedTests} />
+      )}
+
+      <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          sx={{ mr: 2 }}
+        >
+          Submit
+        </Button>
+        <Button variant="outlined" onClick={onClose}>
+          Cancel
+        </Button>
+      </Box>
     </FormikInit>
   );
 };
