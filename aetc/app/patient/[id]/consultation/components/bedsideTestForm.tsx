@@ -284,7 +284,7 @@ export const BedsideTestForm = () => {
   const [validationSchema, setValidationSchema] = useState({});
   // Process the encounter data to build form structure
   useEffect(() => {
-    if (encounterData) {
+    if (encounterData && encounterData?.length > 0) {
       const structure: any = [];
       const values: any = {};
       const validationRules: any = {};
@@ -296,11 +296,11 @@ export const BedsideTestForm = () => {
 
         // If it's a standalone test (like MRDT, HIV)
         if (!obs.children || obs.children.length === 0) {
-          const fieldName = `field_${obs.concept_id}`;
           const label =
             obs.names && obs.names[0]
               ? obs.names[0].name
               : `Field ${obs.concept_id}`;
+          const fieldName = `${label}`;
 
           // Add to values
           values[fieldName] = obs.value || "";
@@ -336,11 +336,11 @@ export const BedsideTestForm = () => {
 
         // Process each child in the section
         obs.children.forEach((child: any) => {
-          const fieldName = `field_${child.concept_id}`;
           const label =
             child.names && child.names[0]
               ? child.names[0].name
               : `Field ${child.concept_id}`;
+          const fieldName = `${obs.value}_${label}`;
 
           // Add to values
           values[fieldName] = child.value || "";
@@ -367,7 +367,6 @@ export const BedsideTestForm = () => {
       // Process all observations
       if (encounterData[0].obs && Array.isArray(encounterData[0].obs)) {
         encounterData[0].obs.forEach((obs) => {
-          console.log("🚀 ~ encounterData.obs.forEach ~ obs:", obs);
           const processedObs = processObs(obs);
           if (processedObs) {
             structure.push(processedObs);
@@ -375,7 +374,6 @@ export const BedsideTestForm = () => {
         });
       }
 
-      console.log("🚀 ~ useEffect ~ structure:", structure);
       // Set state with processed data
       setFormStructure(structure);
       setInitialValues(values);
@@ -426,10 +424,52 @@ export const BedsideTestForm = () => {
         return null;
     }
   };
+  const transformLabValues = (
+    inputObj: any,
+    dateTime = new Date().toISOString()
+  ) => {
+    // Extract concept groups from the keys
+    const groups: any = {};
 
+    for (const key in inputObj) {
+      // Split the key by underscore to get the group name and concept
+      const [groupName, ...conceptParts] = key.split("_");
+      const concept = conceptParts.join("_"); // Rejoin in case concept had underscores
+
+      // Initialize group if it doesn't exist
+      if (!groups[groupName]) {
+        groups[groupName] = [];
+      }
+
+      // Add the concept and value to the group
+      groups[groupName].push({
+        concept: concept,
+        obsDatetime: dateTime,
+        value: inputObj[key],
+      });
+    }
+
+    // Create the final structure
+    const result: any = {};
+
+    for (const groupName in groups) {
+      result[groupName.toLowerCase()] = {
+        concept: "DESCRIPTION", // This could be replaced with concepts.DESCRIPTION in your actual code
+        obsDatetime: dateTime,
+        value: groupName,
+        group_members: groups[groupName],
+      };
+    }
+
+    return result;
+  };
   const handleSubmit = (values: any) => {
     const dateTime = getDateTime();
     console.log("Form submitted with values:", values);
+    console.log(
+      "🚀 ~ handleSubmit ~ transformLabValues(values, dateTime):",
+      transformLabValues(values, dateTime)
+    );
     // const obs = [
     //   {
     //     concept: concepts.DESCRIPTION,
