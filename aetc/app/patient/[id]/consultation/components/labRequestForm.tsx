@@ -286,7 +286,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
 
         // Get specimen concept (using the first test in this group)
         const specimenConcept = await getConceptFromCacheOrFetch(
-          testsArray[0].testName
+          specimenType
         ).then((res) => res.data[0].uuid);
 
         return {
