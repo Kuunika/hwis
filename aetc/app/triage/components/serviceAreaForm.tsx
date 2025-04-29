@@ -61,7 +61,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
       setExternalAreas(opts);
 
       // AETC SERVICES TO BE INCLUDED WHEN TRIAGE IS GREEN
-      const aectTriageGreenServiceAreas = aetcServiceAreas.filter(
+      const aectTriageGreenServiceAreas = aetcServiceAreas?.filter(
         (service: any) =>
           service.name.toLowerCase() == concepts.GYNAE_BENCH.toLowerCase() ||
           service.name.toLowerCase() == concepts.SURGICAL_BENCH.toLowerCase() ||
