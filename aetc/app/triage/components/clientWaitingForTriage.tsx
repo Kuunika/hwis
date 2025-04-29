@@ -163,6 +163,7 @@ export const ClientWaitingForTriage = () => {
       loading={loading}
       formatForMobileView={formatForMobileView ? formatForMobileView : []}
       onSwitchChange={setOnSwitch}
+      onRowClick={(row: any) => navigateTo(`/triage/${row.id}/start`)}
     />
   );
 };

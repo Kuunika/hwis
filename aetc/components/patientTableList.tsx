@@ -42,6 +42,7 @@ interface PatientTableServerProps {
   formatForMobileView: any;
   columns: any;
   onSwitchChange?: (values: any) => void;
+  onRowClick?: (row: any) => void;
 }
 
 export const PatientTableListServer = ({
@@ -54,6 +55,7 @@ export const PatientTableListServer = ({
   data,
   formatForMobileView,
   onSwitchChange,
+  onRowClick,
 }: PatientTableServerProps) => {
   const { isMediumOrSmall } = checkScreenSize();
 
@@ -79,6 +81,7 @@ export const PatientTableListServer = ({
       rows={data?.data ? data?.data?.map((p) => ({ id: p.uuid, ...p })) : []}
       columns={columns}
       onSwitchChange={onSwitchChange}
+      onRowClick={onRowClick}
     />
   );
 };

@@ -152,6 +152,7 @@ interface ServerPaginationTableProp {
   setSearchString: (values: any) => void;
   showSearchSwitchButton?: boolean;
   onSwitchChange?: (values: any) => void;
+  onRowClick?: (row: any) => void;
 }
 
 export const ServerPaginationTable = ({
@@ -164,6 +165,7 @@ export const ServerPaginationTable = ({
   searchText,
   setSearchString,
   onSwitchChange,
+  onRowClick,
 }: ServerPaginationTableProp) => {
   return (
     <>
@@ -176,6 +178,9 @@ export const ServerPaginationTable = ({
       />
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
+        onCellClick={(cell) => {
+          if (onRowClick && cell.field != "action") onRowClick(cell);
+        }}
         loading={loading}
         rows={rows}
         columns={columns}
