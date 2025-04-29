@@ -149,27 +149,3 @@ export default function CustomizedDialogs() {
     </>
   );
 }
-//  <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-//         Add Investigation
-//       </Button>
-//       <Popover
-//         id={id}
-//         open={open}
-//         anchorEl={anchorEl}
-//         onClose={handleClose}
-//         anchorOrigin={{
-//           vertical: "top",
-//           horizontal: "left",
-//         }}
-//         transformOrigin={{
-//           vertical: "bottom",
-//           horizontal: "right",
-//         }}
-//       >
-//         <Box sx={{ padding: "2ch" }}>
-//           <Typography variant="h4">Lab Order</Typography>
-//           <br />
-//           <TestAccordion onClose={handleClose} />{" "}
-//           {/* Replacing LabRequestModal with TestAccordion */}
-//         </Box>
-//       </Popover>
