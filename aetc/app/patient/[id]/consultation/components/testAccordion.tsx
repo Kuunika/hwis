@@ -21,7 +21,7 @@ export function TestAccordion({ onClose }: { onClose?: () => void }) {
     },
     {
       id: "labForm",
-      title: "Lab",
+      title: "Lab orders",
       content: (
         <>
           <LabRequestForm onClose={() => {}} addRequest={() => {}} />

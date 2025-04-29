@@ -382,8 +382,6 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
         selectedLabOrderIds: Yup.array().of(Yup.number()), // Add validation for array of numbers
       })}
     >
-      <Typography variant="h6">Lab Order</Typography>
-
       {/* Lab Orders Plan Tests as Checkboxes */}
       {flattenedLabOrdersPlan.length > 0 && (
         <OrderedTestsCheckboxes groupedTests={groupedTests} />
