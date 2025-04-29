@@ -20,6 +20,7 @@ type Prop = {
   size?: "small" | "medium";
   showHelperText?: boolean;
   disabled?: boolean;
+  onBlur?: (values: any) => void;
 };
 
 export const FormDatePicker: FC<Prop> = ({
@@ -30,6 +31,7 @@ export const FormDatePicker: FC<Prop> = ({
   size = "medium",
   getValue,
   disabled = false,
+  onBlur,
 }) => {
   const { value, setFieldValue, initialValues, errorMessage } =
     useFormikField(name);
@@ -65,6 +67,16 @@ export const FormDatePicker: FC<Prop> = ({
             setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
           }
           disabled={disabled}
+          onClose={() => {
+            onBlur?.(value);
+          }}
+          slotProps={{
+            textField: {
+              onBlur: (values) => {
+                onBlur?.(value); // Call your onBlur prop
+              },
+            },
+          }}
         />
         <MainTypography color={"red"} variant="subtitle2">
           {errorMessage}
