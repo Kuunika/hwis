@@ -10,12 +10,12 @@ export function TestPlanAccordion() {
   const sections = [
     {
       id: "bedside",
-      title: "Bedside",
+      title: "Bedside plan",
       content: <BedsideTestPlanForm />,
     },
     {
       id: "labForm",
-      title: "Lab",
+      title: "Lab order plan",
       content: (
         <>
           <LabRequestPlanForm onClose={() => {}} addRequest={() => {}} />
@@ -34,5 +34,10 @@ export function TestPlanAccordion() {
     },
   ];
 
-  return <AccordionComponent sections={sections} />;
+  return (
+    <>
+      <h3 style={{ marginBottom: "20px" }}>Investigation Plan</h3>
+      <AccordionComponent sections={sections} />{" "}
+    </>
+  );
 }
