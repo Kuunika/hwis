@@ -1421,6 +1421,9 @@ export const concepts = {
   INTRAOSSEOUS: "Intraosseous",
   REVIEW_OF_SYSTEMS_ENT: "Review of systems ENT",
   CENTRAL_LINE_CANNULATION_SITE: "Central line cannulation site",
+  GYNAE_BENCH:"Gynae Bench",
+  SURGICAL_BENCH:"Surgical bench",
+ 
 };
 
 export const conceptNames = {
