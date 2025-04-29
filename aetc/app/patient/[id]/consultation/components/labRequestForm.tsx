@@ -176,12 +176,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   useEffect(() => {
     refetch();
   }, [sampleName]);
-  useEffect(() => {
-    refetchLabOrdersPlan();
-  });
-  useEffect(() => {
-    refetchLabOrders();
-  });
+
   useEffect(() => {
     reloadSamples();
   }, [sampleId]);
@@ -323,6 +318,8 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
 
     // Uncomment to actually submit the order
     mutate(order);
+    refetchLabOrdersPlan();
+    refetchLabOrders();
     onClose();
   };
   const filterTests = (tests: any, encounters: any) => {
