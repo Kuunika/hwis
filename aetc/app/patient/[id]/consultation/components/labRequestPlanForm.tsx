@@ -243,7 +243,6 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
       {/* Add the reset handler component */}
       <FormResetHandler sampleName={sampleName} />
 
-      <Typography variant="h6">Lab Order</Typography>
       <SearchComboBox
         getValue={handleSampleTypeChange}
         multiple={false}
