@@ -123,6 +123,7 @@ export default function CustomizedDialogs() {
           onClose={handleClose}
           aria-labelledby="customized-dialog-title"
           open={open}
+          maxWidth="xl"
         >
           <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
             Lab Order
