@@ -17,6 +17,8 @@ import * as Yup from "yup";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { concepts } from "@/constants";
 import { getCirculationOptions } from "@/hooks/getCirculationOptions";
+import { getDisabilityOptions } from "@/hooks/getDisabilityOptions";
+import { getExposureOptions } from "@/hooks/getExposureOptions";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -167,6 +169,8 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
   };
 
   const { circulationOptions } = getCirculationOptions();
+  const { disabilityOptions } = getDisabilityOptions();
+  const { exposureOptions } = getExposureOptions();
 
   const handleRemoveFluidEntry = (index: number) => {
     const newEntries = values.fluidEntries.filter((_, i) => i !== index);
@@ -271,7 +275,7 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
 
 <SearchComboBox
           name={InterventionFormConfig.disabilityIntervention.name}
-          options={circulationOptions}
+          options={disabilityOptions}
           label={InterventionFormConfig.disabilityIntervention.label}
           sx={{ mb: "2ch" }}
           multiple={true}
@@ -279,7 +283,7 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
 
 <SearchComboBox
           name={InterventionFormConfig.exposureIntervention.name}
-          options={circulationOptions}
+          options={exposureOptions}
           label={InterventionFormConfig.exposureIntervention.label}
           sx={{ mb: "2ch" }}
           multiple={true}
