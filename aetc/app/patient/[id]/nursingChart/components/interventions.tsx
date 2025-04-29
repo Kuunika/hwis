@@ -36,6 +36,14 @@ export const InterventionFormConfig = {
     name: concepts.CIRCULATION_INTERVENTIONS,
     label: "Circulation intervention(s)",
   },
+  disabilityIntervention: {
+    name: concepts.DISABILITY_INTERVENTIONS,
+    label: "Disability intervention(s)",
+  },
+  exposureIntervention: {
+    name: concepts.EXPOSURE_INTERVENTIONS,
+    label: "Exposure intervention(s)",
+  },
 };
 
 const schema = Yup.object().shape({});
@@ -100,6 +108,8 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
     { id: concepts.SUTURING, label: "Suturing" },
     { id: concepts.KEEP_WARM, label: "Keep warm" },
   ];
+
+
 
   const groupedOptions = [
     {
@@ -257,6 +267,22 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
               ]);
             }
           }}
+        />
+
+<SearchComboBox
+          name={InterventionFormConfig.disabilityIntervention.name}
+          options={circulationOptions}
+          label={InterventionFormConfig.disabilityIntervention.label}
+          sx={{ mb: "2ch" }}
+          multiple={true}
+        />
+
+<SearchComboBox
+          name={InterventionFormConfig.exposureIntervention.name}
+          options={circulationOptions}
+          label={InterventionFormConfig.exposureIntervention.label}
+          sx={{ mb: "2ch" }}
+          multiple={true}
         />
       
 
