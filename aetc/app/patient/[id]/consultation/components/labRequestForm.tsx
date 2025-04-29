@@ -180,7 +180,10 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   useEffect(() => {
     reloadSamples();
   }, [sampleId]);
-
+  useEffect(() => {
+    refetchLabOrdersPlan();
+    refetchLabOrders();
+  }, []);
   useEffect(() => {
     if (!bedsideSampleTypes) return;
     const transformed = transformedBedsideSamples();
