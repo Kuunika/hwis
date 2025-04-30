@@ -40,7 +40,7 @@ const initialValues = {
     witnessName: "",
 };
 
-export default function RefusedTreatmentForm() {
+export default function RefusedTreatmentForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -93,7 +93,8 @@ export default function RefusedTreatmentForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {

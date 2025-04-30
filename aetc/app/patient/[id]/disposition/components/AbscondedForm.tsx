@@ -34,7 +34,7 @@ const initialValues = {
     timeAbsconded: "",
 };
 
-export default function AbscondedForm() {
+export default function AbscondedForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -83,7 +83,8 @@ export default function AbscondedForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
         } catch (error) {
             console.error("Error submitting Absconded information: ", error);

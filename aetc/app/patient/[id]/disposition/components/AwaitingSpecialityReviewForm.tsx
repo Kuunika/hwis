@@ -48,7 +48,7 @@ const initialValues = {
     reviewDate: "",
 };
 
-export default function AwaitingSpecialityReviewForm() {
+export default function AwaitingSpecialityReviewForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -97,7 +97,8 @@ export default function AwaitingSpecialityReviewForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {

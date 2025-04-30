@@ -43,7 +43,7 @@ const initialValues = {
     additionalNotes: "",
 };
 
-export default function ShortStayForm() {
+export default function ShortStayForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -95,7 +95,8 @@ export default function ShortStayForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
         } catch (error) {
             console.error("Error submitting Short Stay information: ", error);

@@ -114,7 +114,7 @@ const initialValues = {
     specialtyInvolved: "",
 };
 
-export default function AdmissionForm() {
+export default function AdmissionForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -178,7 +178,8 @@ export default function AdmissionForm() {
             //   if (activeVisit?.uuid) {
             //       closeVisit(activeVisit.uuid);
             //   }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
         } catch (error) {
             console.error("Error submitting Admission information: ", error);
             // toast.error("Failed to submit Admission information.");

@@ -376,7 +376,7 @@ export default function TriageWorkFlow() {
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
-      obs: getObservations(formData.presentingComplaints, dateTime),
+      obs: formData.presentingComplaints,
     });
   };
 
