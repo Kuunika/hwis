@@ -203,6 +203,18 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
       (item: { id: string }) => item.id === concepts.OTHER_AIRWAY_INTERVENTION
     );
 
+    const disabilityOtherSelected =
+    Array.isArray(values[InterventionFormConfig.disabilityIntervention.name]) &&
+    values[InterventionFormConfig.disabilityIntervention.name]?.some(
+      (item: { id: string }) => item.label === "Other (free text)"
+    );
+
+    const exposureOtherSelected =
+    Array.isArray(values[InterventionFormConfig.exposureIntervention.name]) &&
+    values[InterventionFormConfig.exposureIntervention.name]?.some(
+      (item: { id: string }) => item.label === "Other"
+    );
+
   const ivFluidsSelected =
     Array.isArray(
       values[InterventionFormConfig.circulationIntervention.name]
@@ -279,7 +291,25 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
           label={InterventionFormConfig.disabilityIntervention.label}
           sx={{ mb: "2ch" }}
           multiple={true}
+          getValue={(selected: any[] = []) => {
+            const hasOther = selected.some(
+              (item) => item.label === "Other (free text)"
+            );
+            if (!hasOther) {
+              setFieldValue(
+                `${InterventionFormConfig.disabilityIntervention.name}_Other`,
+                ""
+              );
+            }
+          }}
         />
+                {disabilityOtherSelected && (
+          <TextInputField
+            name={`${InterventionFormConfig.disabilityIntervention.name}_Other`}
+            label="Please specify"
+            sx={{ mb: "2ch" }}
+          />
+        )}
 
 <SearchComboBox
           name={InterventionFormConfig.exposureIntervention.name}
@@ -287,8 +317,25 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
           label={InterventionFormConfig.exposureIntervention.label}
           sx={{ mb: "2ch" }}
           multiple={true}
+          getValue={(selected: any[] = []) => {
+            const hasOther = selected.some(
+              (item) => item.label === "Other"
+            );
+            if (!hasOther) {
+              setFieldValue(
+                `${InterventionFormConfig.exposureIntervention.name}_Other`,
+                ""
+              );
+            }
+          }}
         />
-      
+              {exposureOtherSelected && (
+          <TextInputField
+            name={`${InterventionFormConfig.exposureIntervention.name}_Other`}
+            label="Please specify"
+            sx={{ mb: "2ch" }}
+          />
+        )}
 
         {ivFluidsSelected && (
           <WrapperBox>
