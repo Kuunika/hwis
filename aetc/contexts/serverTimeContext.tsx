@@ -1,6 +1,7 @@
 "use client";
 import { ServerTime, ServerTimeService } from "@/helpers/dateTime";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { AuthContext, AuthContextType } from "./auth";
 
 interface ServerTimeContextValue {
   ServerTime: ServerTimeService;
@@ -15,6 +16,7 @@ export const ServerTimeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [initialized, setInitialized] = useState(false);
+  const { loggedIn } = useContext(AuthContext) as AuthContextType;
 
   const init = async () => {
     await ServerTime.initialize();
@@ -22,7 +24,7 @@ export const ServerTimeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (!initialized) {
+    if (!initialized && loggedIn) {
       init();
     }
   }, []);
