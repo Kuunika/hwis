@@ -163,6 +163,9 @@ export const encounters = {
   CPR: "31582078-729a-45ca-935c-43bd7d4b382c",
   //TODO: replace this UUID with a bedside test
   BED_SIDE_TEST: "7d4400bf-534b-4c06-8b20-f6a424beb64c",
+  BEDSIDE_INVESTIGATION_PLAN: "7168c660-552a-4855-b07e-95958d71948d",
+  LAB_ORDERS_PLAN: "b1183b2e-ffc5-4ec5-b035-7f8a0189e2c6",
+  LAB: "ba05c4c0-8d80-11d8-abbb-0024217bb78e",
   DISCHARGE_PATIENT: "ba06820c-8d80-11d8-abbb-0024217bb78e",
   TREATMENT: "ba05ed9c-8d80-11d8-abbb-0024217bb78e",
   NON_PHARMACOLOGICAL: "4b1f68fe-ea1b-4bde-bf97-e5f7a721c895",
@@ -186,6 +189,8 @@ export const NO = "No";
 
 export const concepts = {
   COMPLAINTS: "Complaints",
+  EMERGENCY: "Emergency",
+  URGENT: "Urgent",
   NOT_INDICATED: "Not Indicated",
   DONE: "Done",
   NOT_DONE: "Not Done",
@@ -1457,6 +1462,9 @@ export const concepts = {
   IMMEDIATE_INTERVENTION: "Immediate Intervention",
 
 
+  GYNAE_BENCH:"Gynae Bench",
+  SURGICAL_BENCH:"Surgical bench",
+ 
 };
 
 export const conceptNames = {

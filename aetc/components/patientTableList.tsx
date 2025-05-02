@@ -41,6 +41,8 @@ interface PatientTableServerProps {
   loading: boolean;
   formatForMobileView: any;
   columns: any;
+  onSwitchChange?: (values: any) => void;
+  onRowClick?: (row: any) => void;
 }
 
 export const PatientTableListServer = ({
@@ -52,6 +54,8 @@ export const PatientTableListServer = ({
   columns,
   data,
   formatForMobileView,
+  onSwitchChange,
+  onRowClick,
 }: PatientTableServerProps) => {
   const { isMediumOrSmall } = checkScreenSize();
 
@@ -71,18 +75,13 @@ export const PatientTableListServer = ({
       searchText={searchText}
       setSearchString={setSearchString}
       rowCount={data?.data ? data?.per_page * data?.total_pages : 0}
-      setPaginationModel={(model) => {
-        const isNext = model.page > paginationModel.page;
-
-        if (isNext) {
-          console.log("User clicked NEXT page");
-        }
-        setPaginationModel(model);
-      }}
+      setPaginationModel={setPaginationModel}
       paginationModel={paginationModel}
       loading={loading}
       rows={data?.data ? data?.data?.map((p) => ({ id: p.uuid, ...p })) : []}
       columns={columns}
+      onSwitchChange={onSwitchChange}
+      onRowClick={onRowClick}
     />
   );
 };

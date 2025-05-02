@@ -7,10 +7,10 @@ import * as React from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import {
-    CalculateWaitingTime,
-    MainButton,
-    PatientTableListServer,
-    WrapperBox,
+  CalculateWaitingTime,
+  MainButton,
+  PatientTableListServer,
+  WrapperBox,
 } from "../../../components";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
@@ -202,45 +202,46 @@ export const ClientsAwaitingDisposition = () => {
 
 // Dropdown for selecting care area
 const CareAreaDropdown = ({ patient }: { patient: any }) => {
-    const careAreas = ["ICU", "General Ward", "Surgical Unit"];
-    const [selectedArea, setSelectedArea] = useState(patient.care_area || "");
+  const careAreas = ["ICU", "General Ward", "Surgical Unit"];
+  const [selectedArea, setSelectedArea] = useState(patient.care_area || "");
 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedArea(event.target.value);
-        // Make API call to update care area
-    };
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedArea(event.target.value);
+    // Make API call to update care area
+  };
 
-    return (
-        <select value={selectedArea} onChange={handleChange}>
-            {careAreas.map((area) => (
-                <option key={area} value={area}>
-                    {area}
-                </option>
-            ))}
-        </select>
-    );
+  return (
+    <select value={selectedArea} onChange={handleChange}>
+      {careAreas.map((area) => (
+        <option key={area} value={area}>
+          {area}
+        </option>
+      ))}
+    </select>
+  );
 };
 
 // Actions: Select form or close visit
 const DispositionActions = ({ patient }: { patient: any }) => {
-    const { navigateTo } = useNavigation();
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const { mutate: closeVisitMutation, isSuccess: visitClosed } = closeCurrentVisit();
+  const { navigateTo } = useNavigation();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const { mutate: closeVisitMutation, isSuccess: visitClosed } =
+    closeCurrentVisit();
 
-    useEffect(() => {
-        if (visitClosed) {
-            navigateTo("/dispositions");
-        }
-    }, [visitClosed, navigateTo]);
+  useEffect(() => {
+    if (visitClosed) {
+      navigateTo("/dispositions");
+    }
+  }, [visitClosed, navigateTo]);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
     const handleCloseVisit = () => {
         if (patient.visit_uuid) {
@@ -289,9 +290,9 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                 {/* <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>
                     Form 3
                 </MenuItem> */}
-            </Menu>
-        </div>
-    );
+      </Menu>
+    </div>
+  );
 };
 
 const CardAction = ({

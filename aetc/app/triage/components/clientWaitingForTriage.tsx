@@ -34,6 +34,7 @@ export const ClientWaitingForTriage = () => {
     searchText,
     setSearchText,
     totalPages,
+    setOnSwitch,
   } = fetchPatientsTablePaginate("triage");
 
   const rows = patients
@@ -161,6 +162,8 @@ export const ClientWaitingForTriage = () => {
       // loading={isPending || isRefetching}
       loading={loading}
       formatForMobileView={formatForMobileView ? formatForMobileView : []}
+      onSwitchChange={setOnSwitch}
+      onRowClick={(row: any) => navigateTo(`/triage/${row.id}/start`)}
     />
   );
 };

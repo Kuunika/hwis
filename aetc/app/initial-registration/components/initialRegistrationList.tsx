@@ -29,14 +29,10 @@ export const InitialRegistrationList = () => {
     searchText,
     setSearchText,
     totalPages,
+    setOnSwitch,
   } = fetchPatientsTablePaginate("screening");
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
-  // const {
-  //   data: patients,
-  //   isLoading,
-  //   isRefetching,
-  // } = getPatientsWaitingForPrescreening();
 
   const rows = patients
     ?.sort((p1, p2) => {
@@ -155,6 +151,10 @@ export const InitialRegistrationList = () => {
         // loading={isPending || isRefetching}
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
+        onSwitchChange={setOnSwitch}
+        onRowClick={(row: any) => {
+          navigateTo(`/prescreening/${row.id}`);
+        }}
       />
     </>
   );

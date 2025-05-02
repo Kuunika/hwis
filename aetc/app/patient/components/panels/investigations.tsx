@@ -14,12 +14,30 @@ import { LabResultsTable } from "./labResults";
 
 import { LabOrderTable } from "./labOrderTable";
 import { LabRequest } from "@/interfaces";
-import { Box, Button, Popover, Typography } from "@mui/material";
+import { Box, Paper, Popover } from "@mui/material";
 import { TestAccordion } from "../../[id]/consultation/components/testAccordion";
 import { AccordionComponent } from "@/components/accordion"; // Import AccordionComponent
 
 import { MinimalTable } from "@/components/tables/minimalTable"; // Import MinimalTable
+import * as React from "react";
+import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Typography from "@mui/material/Typography";
 
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+}));
 
 export const Investigations = () => {
   const { navigateTo } = useNavigation();
@@ -27,7 +45,6 @@ export const Investigations = () => {
   const [open, setOpen] = useState(false);
   const [labRequests, setLabRequests] = useState<LabRequest[]>([]);
   const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
-
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -60,15 +77,14 @@ export const Investigations = () => {
   ];
 
   return (
-    <Panel
-      title="Investigations"
-      icon={<MainButton variant="text" icon={<FaPlus />} onClick={() => { }} />}
-    >
-      <WrapperBox>
-        {/* <TestAccordion /> Replacing LabRequestModal with TestAccordion */}
-        <BasicPopover />
-
+    <Paper sx={{ padding: "1ch" }} elevation={0}>
+      <WrapperBox sx={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ fontWeight: "bold", fontSize: "1.4rem" }}>
+          Investigations
+        </div>
+        <CustomizedDialogs />
       </WrapperBox>
+      <br />
 
       {/* Accordion with Lab Orders and Lab Results */}
       <AccordionComponent sections={sections} />
@@ -82,51 +98,55 @@ export const Investigations = () => {
           <LabResultsTable rows={[]} />
         </Box>
       </Box> */}
-
-
-    </Panel>
+    </Paper>
   );
 };
 
-export default function BasicPopover() {
+export default function CustomizedDialogs() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const [open, setOpen] = React.useState(false);
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpen(false);
   };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   return (
     <>
-      <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-        Add Investigation
-      </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-      >
-        <Box sx={{ padding: "2ch" }}>
-          <Typography variant="h4">Lab Order</Typography>
-          <br />
-          <TestAccordion /> {/* Replacing LabRequestModal with TestAccordion */}
-
-        </Box>
-      </Popover>
+      <React.Fragment>
+        <Button variant="outlined" onClick={handleClickOpen}>
+          Add Investigation
+        </Button>
+        <BootstrapDialog
+          onClose={handleClose}
+          aria-labelledby="customized-dialog-title"
+          open={open}
+          fullWidth
+          maxWidth="xl"
+        >
+          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+            Lab Order
+          </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={(theme) => ({
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: theme.palette.grey[500],
+            })}
+          >
+            <CloseIcon />
+          </IconButton>
+          <DialogContent dividers>
+            <TestAccordion onClose={handleClose} />{" "}
+          </DialogContent>
+          <DialogActions></DialogActions>
+        </BootstrapDialog>
+      </React.Fragment>
     </>
   );
 }

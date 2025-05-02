@@ -28,6 +28,11 @@ import { ObjectRow } from "@/app/patient/components/visits";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MRT_ColumnDef } from "material-react-table";
 import { searchNPID } from "@/hooks/people";
+import {
+  AuthGuardComp,
+  isAuthorizedForRoles,
+} from "@/helpers/authguardcomponent";
+import { roles } from "@/constants";
 
 export function NavigationBar({
   onTitleClick,
@@ -270,7 +275,7 @@ export function NavigationBar({
     ],
     []
   );
-
+  const allowedRoles = [roles.ADMIN, roles.CLINICIAN, roles.NURSE];
   return (
     <>
       {loggedIn && (
@@ -320,117 +325,131 @@ export function NavigationBar({
                   </div>
                 </Typography>
               </div>
+              {isAuthorizedForRoles(allowedRoles) && (
+                <>
+                  <Paper
+                    component="div"
+                    id="search-input"
+                    sx={{
+                      p: "2px 4px",
+                      display: "flex",
+                      alignItems: "center",
+                      minWidth: "45%",
+                    }}
+                  >
+                    <IconButton sx={{ p: "10px" }} aria-label="search">
+                      <SearchIcon />
+                    </IconButton>
+                    <InputBase
+                      value={searchText}
+                      onChange={handleSearchChange}
+                      sx={{ ml: 1, flex: 1, width: "100%" }}
+                      placeholder="Add or search for a client by MRN, name, or by scanning a barcode/QR code."
+                      inputProps={{ "aria-label": "search patients" }}
+                    />
 
-              <Paper
-                component="div"
-                id="search-input"
-                sx={{
-                  p: "2px 4px",
-                  display: "flex",
-                  alignItems: "center",
-                  minWidth: "45%",
-                }}
-              >
-                <IconButton sx={{ p: "10px" }} aria-label="search">
-                  <SearchIcon />
-                </IconButton>
-                <InputBase
-                  value={searchText}
-                  onChange={handleSearchChange}
-                  sx={{ ml: 1, flex: 1, width: "100%" }}
-                  placeholder="Add or search for a client by MRN, name, or by scanning a barcode/QR code."
-                  inputProps={{ "aria-label": "search patients" }}
-                />
-
-                <IconButton
-                  color="primary"
-                  sx={{ p: "10px", color: "#000" }}
-                  aria-label="add new patient"
-                  onClick={() => {
-                    navigateTo(`/registration/new`);
-                  }}
-                >
-                  <PersonAddAltIcon />
-                </IconButton>
-              </Paper>
-
-              {/* Search Results Popover */}
-              <Popover
-                id={searchPopoverId}
-                open={searchOpen}
-                anchorEl={searchAnchorEl}
-                onClose={handleSearchPopoverClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                sx={{
-                  mt: 0.1,
-                }}
-                slotProps={{
-                  paper: {
-                    sx: {
-                      width: "97.5vw",
-                      maxWidth: "none",
-                    },
-                  },
-                }}
-                disableEnforceFocus
-                disableAutoFocus
-              >
-                <div style={{ width: "100%" }}>
-                  {(isFetchingDDE || isFetchingLocal) && (
-                    <Box
-                      sx={{ display: "flex", justifyContent: "center", p: 2 }}
+                    <IconButton
+                      color="primary"
+                      sx={{ p: "10px", color: "#000" }}
+                      aria-label="add new patient"
+                      onClick={() => {
+                        navigateTo(`/registration/new`);
+                      }}
                     >
-                      <CircularProgress />
-                    </Box>
-                  )}
+                      <PersonAddAltIcon />
+                    </IconButton>
+                  </Paper>
 
-                  {!isFetchingDDE &&
-                    !isFetchingLocal &&
-                    transformedData.length > 0 && (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <ReusableTable<ObjectRow>
-                          data={transformedData}
-                          columns={columns}
-                          title=""
-                          showGlobalFilter={false}
-                          enableColumnOrdering={false}
-                          enableColumnActions={false}
-                          enableColumnFilters={false}
-                          enableSorting={false}
-                          initialState={{
-                            showColumnFilters: false,
-                            showGlobalFilter: false,
-                            columnPinning: {
-                              left: ["fullname"],
-                              right: ["mrt-row-actions"],
-                            },
+                  {/* Search Results Popover */}
+                  <Popover
+                    id={searchPopoverId}
+                    open={searchOpen}
+                    anchorEl={searchAnchorEl}
+                    onClose={handleSearchPopoverClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    sx={{
+                      mt: 0.1,
+                    }}
+                    slotProps={{
+                      paper: {
+                        sx: {
+                          width: "97.5vw",
+                          maxWidth: "none",
+                        },
+                      },
+                    }}
+                    disableEnforceFocus
+                    disableAutoFocus
+                  >
+                    <div style={{ width: "100%" }}>
+                      {(isFetchingDDE || isFetchingLocal) && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            p: 2,
                           }}
-                          onRowClick={(rowData) => {
-                            handleSearchPopoverClose();
-                            navigateTo(
-                              `/patient/${rowData.row.original.id}/profile`
-                            );
-                          }}
-                        />
-                      </LocalizationProvider>
-                    )}
+                        >
+                          <CircularProgress />
+                        </Box>
+                      )}
 
-                  {!isFetchingDDE &&
-                    !isFetchingLocal &&
-                    transformedData.length === 0 && (
-                      <Box sx={{ p: 3, textAlign: "center" }}>
-                        <Typography>No matching patients found</Typography>
-                      </Box>
-                    )}
-                </div>
-              </Popover>
+                      {!isFetchingDDE &&
+                        !isFetchingLocal &&
+                        transformedData.length > 0 && (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <ReusableTable<ObjectRow>
+                              data={transformedData}
+                              columns={columns}
+                              title=""
+                              showGlobalFilter={false}
+                              enableColumnOrdering={false}
+                              enableColumnActions={false}
+                              enableColumnFilters={false}
+                              enableSorting={false}
+                              initialState={{
+                                showColumnFilters: false,
+                                showGlobalFilter: false,
+                                columnPinning: {
+                                  left: ["fullname"],
+                                  right: ["mrt-row-actions"],
+                                },
+                              }}
+                              onRowClick={(rowData) => {
+                                handleSearchPopoverClose();
+
+                                if (isAuthorizedForRoles(allowedRoles)) {
+                                  navigateTo(
+                                    `/patient/${rowData.row.original.id}/profile`
+                                  );
+                                } else {
+                                  alert(
+                                    "You are not authorized to perform this action."
+                                  );
+                                }
+                              }}
+                            />
+                          </LocalizationProvider>
+                        )}
+
+                      {!isFetchingDDE &&
+                        !isFetchingLocal &&
+                        transformedData.length === 0 && (
+                          <Box sx={{ p: 3, textAlign: "center" }}>
+                            <Typography>No matching patients found</Typography>
+                          </Box>
+                        )}
+                    </div>
+                  </Popover>
+                </>
+              )}
 
               <div style={{ display: "flex", alignItems: "center" }}>
                 {loggedIn && (

@@ -20,5 +20,6 @@ export const getActivePatientDetails = () => {
     isLoading,
     isSuccess,
     gender: patient && patient?.gender,
+    patient,
   };
 };
