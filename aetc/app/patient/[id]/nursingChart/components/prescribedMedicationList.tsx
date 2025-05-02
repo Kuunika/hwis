@@ -2,9 +2,11 @@ import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { MinimalTable } from "@/components/tables/minimalTable";
 import { conceptNames, concepts, encounters } from "@/constants";
+import { generateMedicationLabelZPL } from "@/helpers/zpl";
 import { getActivePatientDetails } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
+import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export const PrescribedMedicationList = ({
@@ -24,7 +26,6 @@ export const PrescribedMedicationList = ({
     const value = ob?.children?.find(
       (b) => b.names && b.names[0].name == name
     )?.value;
-
     return value;
   };
 
@@ -35,8 +36,6 @@ export const PrescribedMedicationList = ({
         d.visit_id == activeVisitId
       );
     });
-
-    console.log({ prescriptionEncounter });
 
     if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
 
@@ -93,8 +92,16 @@ export const PrescribedMedicationList = ({
     setRows(formattedRows);
   }, [data]);
 
+
+  const handleMedicationPrint = ()=>{
+    const zpl =generateMedicationLabelZPL(rows);
+    console.log(zpl);
+  }
+
   return (
     <ContainerLoaderOverlay loading={fetchingEncounters}>
+      <Button onClick={handleMedicationPrint} variant="contained">Print Medications</Button>
+      <br />
       <MinimalTable
         getSelectedRow={setRow}
         columns={[

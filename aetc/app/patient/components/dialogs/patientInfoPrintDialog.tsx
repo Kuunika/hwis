@@ -1,4 +1,5 @@
 import { GenericDialog } from "@/components";
+import { SelectPrinter } from "@/components/selectPrinter";
 import { concepts, encounters } from "@/constants";
 import { generatePatientSummaryZPL } from "@/helpers/zpl";
 
@@ -8,6 +9,7 @@ import { getPatientLabOrder } from "@/hooks/labOrder";
 import { Obs } from "@/interfaces";
 
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 type Prop = {
@@ -20,6 +22,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const [diagnosis, setDiagnosis] = useState<Obs[]>([]);
   const [presentingComplaints, setPresentingComplaints] = useState<Obs[]>([]);
   const [patientLabOrders, setPatientLabOrders] = useState<Array<any>>([]);
+  const [printer, setPrinter]=useState('')
 
   const { data: presentingComplaintsData } = getPatientsEncounters(
     params?.id as string,
@@ -54,14 +57,15 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
     }
   }, [presentingComplaintsData]);
 
-  const handleOnPrint = () => {
+  const handleOnPrint = async () => {
     const zpl = generatePatientSummaryZPL({
       presentingComplaints,
       diagnosis,
       labOrders: patientLabOrders,
     });
 
-    console.log(zpl);
+    await axios.post(`${printer}/print`,{zpl})
+
     onClose();
   };
 
@@ -130,6 +134,8 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
             ))
           )}
         </Box>
+        <SelectPrinter setPrinter={setPrinter} />
+
       </Stack>
       <br />
       <Button variant="contained" onClick={handleOnPrint}>

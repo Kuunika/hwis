@@ -18,6 +18,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState, MouseEvent } from "react";
+import { PatientInfoPrintDialog } from "../dialogs";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   const { params } = useParameters();
@@ -28,6 +29,7 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const [openPatientSummary, setOpenPatientSummary] = useState(false);
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -176,6 +178,15 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
               Print patient identifier
             </MenuItem>
             <MenuItem
+              onClick={() => {
+                handleClose();
+                setOpenPatientSummary(true);
+              }}
+              style={{ borderBottom: "1px solid #ccc", padding: "10px" }}
+            >
+              Print patient summary
+            </MenuItem>
+            <MenuItem
               onClick={() => navigateTo(`/patient/${params.id}/view`)}
               sx={{ color: "blue", cursor: "pointer" }}
             >
@@ -240,6 +251,10 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
           />
         </div>
       </Paper>
+      <PatientInfoPrintDialog
+        onClose={() => setOpenPatientSummary(false)}
+        open={openPatientSummary}
+      />
     </>
   );
 };
