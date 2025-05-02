@@ -230,6 +230,7 @@ export const ClientWaitingForAssessment = () => {
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
         onSwitchChange={setOnSwitch}
+        onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
       />
       <CPRDialogForm
         patientuuid={patientId}

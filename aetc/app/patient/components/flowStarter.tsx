@@ -84,7 +84,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       }
     });
     const data = Array.from(latestObsMap.values());
-    setRecentDiagnosis(data[0].value);
+    setRecentDiagnosis(data[0]?.value);
   };
 
   useEffect(() => {
@@ -150,7 +150,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       path: `/patient/${patient.id}/differential-diagnosis`,
     },
     {
-      label: "Investigations",
+      label: "Investigations Plan",
       path: `/patient/${patient.id}/investigations`,
     },
     {

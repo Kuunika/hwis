@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
 import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
@@ -23,17 +23,13 @@ import {
 } from "./common";
 import { concepts } from "@/constants";
 import { countries } from "@/constants/contries";
-import { getInitialValues } from "@/helpers";
+import { debounceFn, getInitialValues } from "@/helpers";
 import { useParameters } from "@/hooks";
 import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import {
-  getDistricts,
-  getTraditionalAuthorities,
-  getVillages,
-} from "@/hooks/loadStatic";
+
 import { LocationContext, LocationContextType } from "@/contexts/location";
 import { getPatientRelationships } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
@@ -569,7 +565,7 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.age.name}
             id={form.age.name}
             label={form.age.label}
-            getValue={(value: any) => {
+            handleBlurEvent={(value: any) => {
               if (value && Number(value) < 14) {
                 setShowUnderAge(true);
               }
@@ -602,7 +598,7 @@ export const DemographicsForm: FC<Prop> = ({
             width={"100%"}
             label={form.dob.label}
             name={form.dob.name}
-            getValue={(value) => {
+            onBlur={(value) => {
               const isToday = dayjs().isSame(dayjs(value), "day");
               const isValid = value && value.trim?.() !== "";
 

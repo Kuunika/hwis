@@ -181,6 +181,7 @@ export const WaitingRegistrationList = () => {
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
         onSwitchChange={setOnSwitch}
+        onRowClick={(row: any) => navigateTo(`/registration/${row.id}/search`)}
       />
     </>
   );

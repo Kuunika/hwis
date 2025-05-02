@@ -176,16 +176,14 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   useEffect(() => {
     refetch();
   }, [sampleName]);
-  useEffect(() => {
-    refetchLabOrdersPlan();
-  });
-  useEffect(() => {
-    refetchLabOrders();
-  });
+
   useEffect(() => {
     reloadSamples();
   }, [sampleId]);
-
+  useEffect(() => {
+    refetchLabOrdersPlan();
+    refetchLabOrders();
+  }, []);
   useEffect(() => {
     if (!bedsideSampleTypes) return;
     const transformed = transformedBedsideSamples();
@@ -291,7 +289,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
 
         // Get specimen concept (using the first test in this group)
         const specimenConcept = await getConceptFromCacheOrFetch(
-          testsArray[0].testName
+          specimenType
         ).then((res) => res.data[0].uuid);
 
         return {
@@ -323,6 +321,8 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
 
     // Uncomment to actually submit the order
     mutate(order);
+    refetchLabOrdersPlan();
+    refetchLabOrders();
     onClose();
   };
   const filterTests = (tests: any, encounters: any) => {
@@ -385,8 +385,6 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
         selectedLabOrderIds: Yup.array().of(Yup.number()), // Add validation for array of numbers
       })}
     >
-      <Typography variant="h6">Lab Order</Typography>
-
       {/* Lab Orders Plan Tests as Checkboxes */}
       {flattenedLabOrdersPlan.length > 0 && (
         <OrderedTestsCheckboxes groupedTests={groupedTests} />
