@@ -17,13 +17,6 @@ import * as Yup from "yup";
 import { addBroughtDead } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-//Add:
-//Name of Deceased : Firstname , Last Name
-// Date of Birth
-// Age
-//ID if available
-//Religion
-// Place of Residence
 const form = {
   firstName: {
     name: "first_name",
@@ -162,7 +155,6 @@ const form = {
     label: "Time Confirming Death",
   },
 };
-
 const schema = Yup.object().shape({
   [form.placeOfDeath.name]: Yup.string().label(form.placeOfDeath.label),
   [form.dateOfDeath.name]: Yup.string().label(form.dateOfDeath.label),
@@ -220,7 +212,6 @@ const schema = Yup.object().shape({
     form.timeConfirmingDeath.label
   ),
 });
-
 const initialValues = getInitialValues(form);
 // const { navigateBack } = useNavigation();
 export const BroughtDeadForm = () => {
@@ -229,14 +220,19 @@ export const BroughtDeadForm = () => {
   const { mutate, isSuccess, isPending } = addBroughtDead();
   const { navigateTo } = useNavigation(); // Initialize navigation
 
-  useEffect(() => {
-    // if (isSuccess) navigateBack();
-  }, [isSuccess]);
+  // useEffect(() => {
+  //   // if (isSuccess) navigateBack();
+  // }, [isSuccess]);
 
   const onSubmit = (values: any) => {
     mutate(values);
-    navigateTo("/registration/death/list");
+    // navigateTo("/registration/death/list");
   };
+  useEffect(() => {
+    if (isSuccess) {
+      navigateTo("/registration/death/list");
+    }
+  }, [isSuccess, navigateTo]);
 
   return (
     <ContainerLoaderOverlay loading={isPending}>
@@ -261,7 +257,7 @@ export const BroughtDeadForm = () => {
             sx={{ width: "100%" }}
           />
         </FieldsContainer>
-        <FormDatePickerToday
+        <FormDatePicker
           name={form.dateOfBirth.name}
           label={form.dateOfBirth.label}
           width="100%"
@@ -320,7 +316,7 @@ export const BroughtDeadForm = () => {
           />
         </FieldsContainer>
 
-        <FormDatePicker
+        <FormDatePickerToday
           name={form.dateOfArrival.name}
           label={form.dateOfArrival.label}
           width="100%"
@@ -425,13 +421,13 @@ export const BroughtDeadForm = () => {
 
           {formValues[form.involvedInAccident.name] == "yes" && (
             <>
-              <FormDatePicker
+              <FormDatePickerToday
                 name={form.dateOfInjury.name}
                 label={form.dateOfInjury.label}
                 width={"100%"}
                 sx={{ mb: 2 }}
               />
-              <FormTimePicker
+              <FormTimePickerNow
                 name={form.timeOfInjury.name}
                 label={form.timeOfInjury.label}
               />
@@ -504,13 +500,13 @@ export const BroughtDeadForm = () => {
             sx={{ width: "100%" }}
           />
 
-          <FormDatePicker
+          <FormDatePickerToday
             name={form.dateConfirmingDeath.name}
             label={form.dateConfirmingDeath.label}
             width={"100%"}
             sx={{ mb: 2 }}
           />
-          <FormTimePicker
+          <FormTimePickerNow
             name={form.timeConfirmingDeath.name}
             label={form.timeConfirmingDeath.label}
           />
