@@ -12,90 +12,111 @@ export function generatePatientSummaryZPL({
     diagnosis: Obs[];
     labOrders: LabOrder[];
   }): string {
-    // Force multiple labels by limiting lines per label
-    const maxLinesPerLabel = 8; // Intentionally small to force pagination
-    
-    // Collect all the content as simple text lines
-    const allLines = [];
-    
-    // Title
-    allLines.push("Patient Summary");
-    
-    // Presenting complaints
-    allLines.push("Presenting Complaints:");
-    if (presentingComplaints && presentingComplaints.length > 0) {
-      presentingComplaints.forEach(obs => {
-        allLines.push(`- ${obs.value}`);
-      });
-    } else {
-      allLines.push("- None");
-    }
-    
-    // Diagnosis
-    allLines.push("Final Diagnosis:");
-    if (diagnosis && diagnosis.length > 0) {
-      diagnosis.forEach(obs => {
-        allLines.push(`- ${obs.value}`);
-      });
-    } else {
-      allLines.push("- None");
-    }
-    
-    // Investigations
-    allLines.push("Investigations:");
-    allLines.push("Specimen     Test       Result");
-    
-    if (labOrders && labOrders.length > 0) {
-      labOrders.forEach(order => {
-        if (order.tests && order.tests.length > 0) {
-          order.tests.forEach(test => {
-            const specimen = (order.specimen && order.specimen.name ? order.specimen.name : "").padEnd(12, " ");
-            const testName = (test.name || "").padEnd(10, " ");
-            const result = test.result || "";
-            allLines.push(`${specimen}${testName}${result}`);
-          });
-        }
-      });
-    } else {
-      allLines.push("- No investigations ordered");
-    }
-    
-    // Split lines into chunks for multiple labels
-    const chunks = [];
-    for (let i = 0; i < allLines.length; i += maxLinesPerLabel) {
-      chunks.push(allLines.slice(i, i + maxLinesPerLabel));
-    }
-    
-    // Generate ZPL for each chunk/label
-    const zplLabels:any = [];
-    
-    chunks.forEach((chunk, index) => {
-      let zpl = "^XA\n"; // Start label
-      
-      // Add continuation header if not the first label
-      let y = 30;
-      if (index > 0) {
-        zpl += `^CF0,30\n^FO50,${y}^FDPatient Summary (Continued)^FS\n`;
-        y += 40; // Extra space after header
+    // Constants
+    const MAX_LINES_PER_LABEL = 8; // Small to demonstrate multi-label behavior
+    const LINE_HEIGHT = 30;
+    const HEADER_HEIGHT = 40;
+  
+    // Define sections with their content
+    const sections = [
+      {
+        title: "Patient Summary",
+        lines: ["Patient Summary"]
+      },
+      {
+        title: "Presenting Complaints",
+        lines: [
+          "Presenting Complaints:",
+          ...(presentingComplaints.length > 0 
+            ? presentingComplaints.map(o => `- ${o.value}`)
+            : ["- None"])
+        ]
+      },
+      {
+        title: "Diagnosis",
+        lines: [
+          "Final Diagnosis:",
+          ...(diagnosis.length > 0 
+            ? diagnosis.map(o => `- ${o.value}`)
+            : ["- None"])
+        ]
+      },
+      {
+        title: "Investigations",
+        lines: [
+          "Investigations:",
+          "Specimen     Test       Result",
+          ...(labOrders.length > 0 
+            ? labOrders.flatMap(order => 
+                order.tests.map(test => {
+                  const specimen = (order.specimen?.name || "").padEnd(12, " ");
+                  const testName = (test.name || "").padEnd(10, " ");
+                  return `${specimen}${testName}${test.result || ""}`;
+                })
+              )
+            : ["- No investigations ordered"])
+        ]
       }
-      
-      // Add content lines
-      chunk.forEach(line => {
-        zpl += `^CF0,25\n^FO50,${y}^FD${line}^FS\n`;
-        y += 30; // Line height
+    ];
+  
+    // Group sections into labels
+    const labels: Array<Array<{title: string, lines: string[]}>> = [];
+    let currentLabel: Array<{title: string, lines: string[]}> = [];
+    let currentLineCount = 0;
+  
+    sections.forEach((section, index) => {
+      const sectionLines = section.lines.length;
+      const isFirstSection = index === 0;
+      const isLastSection = index === sections.length - 1;
+  
+      // Calculate lines needed: section lines + header (if first in label) + footer (if needed)
+      let neededLines = sectionLines;
+      if (currentLabel.length === 0) neededLines += 1; // Header
+      if (!isLastSection) neededLines += 1; // Footer
+  
+      if (currentLineCount + neededLines > MAX_LINES_PER_LABEL) {
+        // Start new label
+        if (currentLabel.length > 0) labels.push(currentLabel);
+        currentLabel = [section];
+        currentLineCount = sectionLines + 1 + (isLastSection ? 0 : 1);
+      } else {
+        currentLabel.push(section);
+        currentLineCount += neededLines;
+      }
+    });
+  
+    // Add final label
+    if (currentLabel.length > 0) labels.push(currentLabel);
+  
+    // Generate ZPL for each label
+    return labels.map((labelSections, labelIndex) => {
+      let zpl = "^XA\n";
+      let y = 30;
+      const isFirstLabel = labelIndex === 0;
+  
+      // Label header
+      if (isFirstLabel) {
+        zpl += `^CF0,30\n^FO50,${y}^FDPatient Summary^FS\n`;
+      } else {
+        zpl += `^CF0,30\n^FO50,${y}^FDPatient Summary (Cont.)^FS\n`;
+      }
+      y += HEADER_HEIGHT;
+  
+      // Add section content
+      labelSections.forEach(section => {
+        section.lines.forEach(line => {
+          zpl += `^CF0,25\n^FO50,${y}^FD${line}^FS\n`;
+          y += LINE_HEIGHT;
+        });
       });
-      
-      // Add continuation footer if not the last label
-      if (index < chunks.length - 1) {
+  
+      // Add continuation notice if needed
+      if (labelIndex < labels.length - 1) {
         zpl += `^CF0,20\n^FO50,550^FDContinued on next label...^FS\n`;
       }
-      
-      zpl += "^XZ"; // End label
-      zplLabels.push(zpl);
-    });
-    
-    // Return all labels joined with newlines
-    return zplLabels.join("\n");
+  
+      return zpl + "^XZ\n";
+    }).join("\n");
   }
 type Medication = {
     medicationName: string;
@@ -108,30 +129,61 @@ type Medication = {
   };
   
   export function generateMedicationLabelZPL(medications: Medication[]): string {
-    let zpl = "^XA\n"; // Start ZPL
-    let y = 30; // Start Y position
-    const lineHeight = 30;
+    // Constants
+    const COLUMN_WIDTH = 300; // Width for each medical record column
+    const LEFT_START = 30; // Starting X for left column
+    const RIGHT_START = 330; // Starting X for right column
+    const LINE_HEIGHT = 30;
+    const HEADER_HEIGHT = 60;
+    
+    let result = "";
   
-    const addText = (text: string, fontSize = 25) => {
-      zpl += `^CF0,${fontSize}\n`;
-      zpl += `^FO30,${y}^FD${text}^FS\n`;
-      y += lineHeight;
+    // Function to create a single medication entry
+    const createMedicationEntry = (med: Medication, x: number, y: number): string => {
+      return `
+  ^CF0,25
+  ^FO${x},${y}^FDName: ${med.medicationName}^FS
+  ^FO${x},${y + LINE_HEIGHT}^FDDose: ${med.dose} ${med.doseUnits}^FS
+  ^FO${x},${y + LINE_HEIGHT*2}^FDForm: ${med.formulation}^FS
+  ^FO${x},${y + LINE_HEIGHT*3}^FDFreq: ${med.frequency}^FS
+  ^FO${x},${y + LINE_HEIGHT*4}^FDDuration: ${med.duration}^FS
+  ^FO${x},${y + LINE_HEIGHT*5}^FDPrescriber: ${med.prescribedBy}^FS
+  `;
     };
   
-    addText("Medication Instructions", 30);
-    addText("------------------------------", 20);
+    // Group medications into pairs
+    const labelGroups: Medication[][] = [];
+    for (let i = 0; i < medications.length; i += 2) {
+      labelGroups.push(medications.slice(i, i + 2));
+    }
   
-    medications.forEach((med) => {
-      addText(`Name: ${med.medicationName}`);
-      addText(`Dose: ${med.dose} ${med.doseUnits}`);
-      addText(`Form: ${med.formulation}`);
-      addText(`Freq: ${med.frequency}`);
-      addText(`Duration: ${med.duration}`);
-      addText(`Prescriber: ${med.prescribedBy}`);
-      addText("------------------------------", 20);
+    // Generate ZPL for each label
+    labelGroups.forEach((group, index) => {
+      let zpl = "^XA\n"; // Start label
+      
+      // Label header
+      const headerText = index === 0 
+        ? "Medication Instructions" 
+        : `Medication Instructions (${index + 1})`;
+      
+      zpl += `^CF0,30\n^FO${LEFT_START},30^FD${headerText}^FS\n`;
+  
+      // Calculate starting Y position for medications
+      const medicationStartY = HEADER_HEIGHT;
+  
+      // Left column medication
+      if (group[0]) {
+        zpl += createMedicationEntry(group[0], LEFT_START, medicationStartY);
+      }
+  
+      // Right column medication
+      if (group[1]) {
+        zpl += createMedicationEntry(group[1], RIGHT_START, medicationStartY);
+      }
+  
+      zpl += "^XZ\n"; // End label
+      result += zpl;
     });
   
-    zpl += "^XZ"; // End ZPL
-    return zpl;
+    return result;
   }
-  

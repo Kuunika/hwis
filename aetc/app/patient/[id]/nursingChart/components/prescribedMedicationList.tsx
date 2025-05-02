@@ -2,6 +2,7 @@ import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { MinimalTable } from "@/components/tables/minimalTable";
 import { conceptNames, concepts, encounters } from "@/constants";
+import { usePrinterDialog } from "@/contexts/printer";
 import { generateMedicationLabelZPL } from "@/helpers/zpl";
 import { getActivePatientDetails } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
@@ -15,6 +16,7 @@ export const PrescribedMedicationList = ({
   setRow?: (row: any) => void;
 }) => {
   const { patientId, activeVisitId, activeVisit } = getActivePatientDetails();
+  const {setZpl, setOpen}=usePrinterDialog()
   const {
     data,
     isPending: fetchingEncounters,
@@ -95,7 +97,8 @@ export const PrescribedMedicationList = ({
 
   const handleMedicationPrint = ()=>{
     const zpl =generateMedicationLabelZPL(rows);
-    console.log(zpl);
+    setOpen(zpl)
+    setZpl(zpl)
   }
 
   return (
