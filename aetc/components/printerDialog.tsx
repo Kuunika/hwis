@@ -10,6 +10,8 @@ export const PrinterDialog = () => {
   return (
     <GenericDialog open={open} onClose={() => setOpen(false)} title="Printers">
       <SelectPrinter setPrinter={setPrinter} />
+      <br />
+      <br />
       <Button variant="contained" onClick={handlePrint} >Print</Button>
     </GenericDialog>
   );
