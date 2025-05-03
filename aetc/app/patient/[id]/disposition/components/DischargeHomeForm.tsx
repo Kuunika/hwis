@@ -61,7 +61,7 @@ const initialValues = {
     otherServiceArea: "",
 };
 
-export default function DischargeHomeForm() {
+export default function DischargeHomeForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -167,7 +167,8 @@ export default function DischargeHomeForm() {
 
         try {
             await submitEncounter(payload);
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
         } catch (error) {
             console.error("Error submitting Discharge Home information: ", error);
         }

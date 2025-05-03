@@ -40,29 +40,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export const Investigations = () => {
-  const { navigateTo } = useNavigation();
-  const { params } = useParameters();
-  const [open, setOpen] = useState(false);
-  const [labRequests, setLabRequests] = useState<LabRequest[]>([]);
-  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-  });
-
-  if (isLoading) {
-    return <ProfilePanelSkeletonLoader />;
-  }
-
-  const addRequest = (lab: LabRequest) => {
-    setLabRequests((requests) => [...requests, lab]);
-    setOpen(false);
-  };
-
   const sections = [
     {
       id: "labOrders",

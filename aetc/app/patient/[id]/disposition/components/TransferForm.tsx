@@ -45,7 +45,7 @@ const initialValues = {
     // transferNotes: "",
 };
 
-export default function TransferForm() {
+export default function TransferForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -98,7 +98,8 @@ export default function TransferForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {
