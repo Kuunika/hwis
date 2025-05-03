@@ -9,6 +9,7 @@ import { useSubmitEncounter } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 type Props = {
   onSubmit: () => void;
 };
@@ -29,13 +30,16 @@ const schema = yup.object({
 const initialValues = getInitialValues(form);
 
 export const NeurologicalExamination = ({ onSubmit }: Props) => {
+  const { ServerTime } = useServerTime();
   const [isChecked, setIsChecked] = useState(false);
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT,
     onSubmit
   );
   const handleSubmitForm = async (values: any) => {
-    await handleSubmit(getObservations(values, getDateTime()));
+    await handleSubmit(
+      getObservations(values, ServerTime.getServerTimeString())
+    );
   };
 
   return (
