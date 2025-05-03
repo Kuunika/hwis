@@ -63,6 +63,7 @@ export default function Prescreening() {
 
     const dateTime = ServerTime.getServerTimeString()
 
+
     createEncounter({
       encounterType: encounters.SCREENING_ENCOUNTER,
       visit: activeVisit,
