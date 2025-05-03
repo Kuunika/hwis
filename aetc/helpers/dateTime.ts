@@ -134,9 +134,6 @@ export function extractDateTime(dates: Date[]): string[] {
   });
 }
 
-
-
-
 // services/serverTime.ts
 let serverTimeOffset: number | null = null;
 let serverTimezoneOffset: number = 0;
@@ -162,15 +159,14 @@ export const ServerTime: ServerTimeService = {
 
       const timezoneMatch = originalServerTimeString.match(/[+-]\d{2}:\d{2}$/);
       if (timezoneMatch) {
-        const [hours, minutes] = timezoneMatch[0].split(':').map(Number);
+        const [hours, minutes] = timezoneMatch[0].split(":").map(Number);
         serverTimezoneOffset = hours * 60 + minutes;
       }
 
       const roundTripTime = end - start;
       serverTimeOffset = serverTime.getTime() - (start + roundTripTime / 2);
-
     } catch (error) {
-      console.error('Failed to get server time:', error);
+      console.error("Failed to get server time:", error);
       serverTimeOffset = 0;
       serverTimezoneOffset = new Date().getTimezoneOffset();
     }
@@ -178,8 +174,7 @@ export const ServerTime: ServerTimeService = {
 
   now: (): Date => {
     if (serverTimeOffset === null) {
-      throw new Error('Server time not initialized. Call initialize() first.');
-  
+      throw new Error("Server time not initialized. Call initialize() first.");
     }
     return new Date(Date.now() + serverTimeOffset);
   },
@@ -188,31 +183,36 @@ export const ServerTime: ServerTimeService = {
 
   getServerTimeString: (): string => {
     if (serverTimeOffset === null) {
-      throw new Error('Server time not initialized');
+      throw new Error("Server time not initialized");
     }
-  
+
     // Get current server time in UTC milliseconds
     const utcNow = Date.now() + serverTimeOffset;
-    
+
     // Apply server timezone offset to get local server time
-    const serverNow = new Date(utcNow + (serverTimezoneOffset * 60 * 1000));
-  
+    const serverNow = new Date(utcNow + serverTimezoneOffset * 60 * 1000);
+
     // Format components using server's local time
     const year = serverNow.getUTCFullYear();
-    const month = (serverNow.getUTCMonth() + 1).toString().padStart(2, '0');
-    const day = serverNow.getUTCDate().toString().padStart(2, '0');
-    const hours = serverNow.getUTCHours().toString().padStart(2, '0');
-    const minutes = serverNow.getUTCMinutes().toString().padStart(2, '0');
-    const seconds = serverNow.getUTCSeconds().toString().padStart(2, '0');
-    const milliseconds = serverNow.getUTCMilliseconds().toString().padStart(3, '0');
-  
+    const month = (serverNow.getUTCMonth() + 1).toString().padStart(2, "0");
+    const day = serverNow.getUTCDate().toString().padStart(2, "0");
+    const hours = serverNow.getUTCHours().toString().padStart(2, "0");
+    const minutes = serverNow.getUTCMinutes().toString().padStart(2, "0");
+    const seconds = serverNow.getUTCSeconds().toString().padStart(2, "0");
+    const milliseconds = serverNow
+      .getUTCMilliseconds()
+      .toString()
+      .padStart(3, "0");
+
     // Format timezone offset
     const tzHours = Math.abs(Math.floor(serverTimezoneOffset / 60))
-      .toString().padStart(2, '0');
+      .toString()
+      .padStart(2, "0");
     const tzMinutes = Math.abs(serverTimezoneOffset % 60)
-      .toString().padStart(2, '0');
-    const tzSign = serverTimezoneOffset >= 0 ? '+' : '-';
-  
+      .toString()
+      .padStart(2, "0");
+    const tzSign = serverTimezoneOffset >= 0 ? "+" : "-";
+
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${tzSign}${tzHours}:${tzMinutes}`;
   },
   isInitialized: (): boolean => serverTimeOffset !== null,
