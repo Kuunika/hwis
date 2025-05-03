@@ -24,6 +24,7 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   respiratoryRate: {
@@ -234,6 +235,7 @@ const abnormalities = [
   { id: concepts.OTHER, label: "Other" },
 ];
 export const ChestForm = ({ onSubmit }: Prop) => {
+  const { ServerTime } = useServerTime();
   const [isChecked, setIsChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [showSpecify, setShowSpecify] = useState(false);
@@ -267,7 +269,7 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues: any = { ...values };
 
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
 
     const obs = [
       {
