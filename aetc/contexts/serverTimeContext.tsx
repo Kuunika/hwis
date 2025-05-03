@@ -24,14 +24,16 @@ export const ServerTimeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
+
+    console.log({initialized});
+    console.log({loggedIn});
+
     if (!initialized && loggedIn) {
+      // console.log("initialized+++++++++");
       init();
     }
-  }, []);
+  }, [loggedIn]);
 
-  //   if (!initialized) {
-  //     return null; // or loading spinner
-  //   }
 
   const value: ServerTimeContextValue = {
     ServerTime,
