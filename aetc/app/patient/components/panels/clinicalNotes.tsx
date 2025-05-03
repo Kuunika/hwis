@@ -84,12 +84,12 @@ export const ClinicalNotes = () => {
   const { notes: previousAdmissionsNotes } = useComponentNotes(
     encounters.PATIENT_ADMISSIONS
   );
-    const { notes: gyneacologyNotes } = useComponentNotes(
-        encounters.OBSTETRIC_HISTORY
-    );
-    const { notes: lastMealNotes } = useComponentNotes(
-        encounters.SUMMARY_ASSESSMENT
-    );
+  const { notes: gyneacologyNotes } = useComponentNotes(
+    encounters.OBSTETRIC_HISTORY
+  );
+  const { notes: lastMealNotes } = useComponentNotes(
+    encounters.SUMMARY_ASSESSMENT
+  );
   const { notes: reviewOfSystemsNotes } = useComponentNotes(
     encounters.REVIEW_OF_SYSTEMS
   );
@@ -115,9 +115,7 @@ export const ClinicalNotes = () => {
   const { notes: soapierNotes } = useComponentNotes(
     encounters.NURSING_CARE_NOTES
   );
-  const { notes: dispositionNotes } = useComponentNotes(
-    encounters.DISPOSITION
-  );
+  const { notes: dispositionNotes } = useComponentNotes(encounters.DISPOSITION);
 
   const { data: patient } = getOnePatient(params.id as string);
   const { data: pData } = getPatientsEncounters(params.id as string);
@@ -144,8 +142,8 @@ export const ClinicalNotes = () => {
           ...existingConditionsNotes,
           ...surgicalNotes,
           ...previousAdmissionsNotes,
-            ...gyneacologyNotes,
-            ...lastMealNotes,
+          ...gyneacologyNotes,
+          ...lastMealNotes,
           ...reviewOfSystemsNotes,
           ...familyHistoryNotes,
           ...generalInfoNotes,
@@ -155,7 +153,7 @@ export const ClinicalNotes = () => {
           ...extremitiesNotes,
           ...neurologicalNotes,
           ...soapierNotes,
-            ...dispositionNotes,
+          ...dispositionNotes,
         ];
 
     return combinedNotes.sort(
@@ -174,9 +172,9 @@ export const ClinicalNotes = () => {
     existingConditionsNotes,
     surgicalNotes,
     previousAdmissionsNotes,
-      gyneacologyNotes,
-      lastMealNotes,
-      reviewOfSystemsNotes,
+    gyneacologyNotes,
+    lastMealNotes,
+    reviewOfSystemsNotes,
     familyHistoryNotes,
     generalInfoNotes,
     headNeckNotes,
@@ -185,7 +183,7 @@ export const ClinicalNotes = () => {
     extremitiesNotes,
     neurologicalNotes,
     soapierNotes,
-      dispositionNotes,
+    dispositionNotes,
     filterSoapierState, // respond to toggle change
   ]);
 
@@ -197,16 +195,14 @@ export const ClinicalNotes = () => {
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
   };
-
+  const contentRef = useRef<HTMLDivElement>(null); // <--- move here
+  const handlePrint = useReactToPrint({
+    contentRef: contentRef,
+  });
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;
   }
 
-  const contentRef = useRef<HTMLDivElement>(null); // <--- move here
-
-  const handlePrint = useReactToPrint({
-    contentRef: contentRef,
-  });
   return (
     <Panel title="">
       <WrapperBox display={"flex"} justifyContent={"space-between"}>

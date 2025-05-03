@@ -18,7 +18,6 @@ import { useNavigation, useParameters } from "@/hooks";
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
 import {
-  addEncounter,
   fetchConceptAndCreateEncounter,
   getPatientsEncounters,
 } from "@/hooks/encounter";
@@ -27,10 +26,7 @@ import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
-import {
-  getPatientsWaitingForTriage,
-  getPatientVisitTypes,
-} from "@/hooks/patientReg";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { ServiceAreaForm } from "./serviceAreaForm";
 import { Encounter, TriageResult } from "@/interfaces";
 import { Bounce, toast } from "react-toastify";
@@ -273,6 +269,16 @@ export default function TriageWorkFlow() {
       });
     }
     if (triageResult == "green") {
+      const referredTo = formData.serviceArea?.[concepts.PATIENT_REFERRED_TO];
+
+      if (
+        referredTo == concepts.GYNAE_BENCH ||
+        referredTo == concepts.MEDICAL_BENCH ||
+        referredTo == concepts.SURGICAL_BENCH
+      ) {
+        return;
+      }
+
       setMessage("closing visit...");
       closeVisit(activeVisit?.uuid as string);
     }
@@ -370,7 +376,7 @@ export default function TriageWorkFlow() {
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
-      obs: getObservations(formData.presentingComplaints, dateTime),
+      obs: formData.presentingComplaints,
     });
   };
 
@@ -620,8 +626,9 @@ export default function TriageWorkFlow() {
           }}
         />
       )}
-
+      {/* TODO: please revert the show modal */}
       <GenericDialog
+        // open={true}
         open={showModal}
         onClose={closeModal}
         title="Triage Decision"

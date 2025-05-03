@@ -30,16 +30,16 @@ export const addEncounter = () => {
   });
 };
 
-export const getPatientsEncounters = (patientId: string, params?:string) => {
+export const getPatientsEncounters = (patientId: string, params?: string) => {
   const getall = (patientId: string) =>
-    getPatientEncounters(patientId,params).then((response) => response.data);
+    getPatientEncounters(patientId, params).then((response) => response.data);
 
   return useQuery({
     queryKey: ["encounters", patientId, params],
     queryFn: () => getall(patientId),
     enabled: !!patientId,
     refetchOnWindowFocus: false,
-    refetchOnMount: false, 
+    refetchOnMount: false,
     refetchOnReconnect: false,
   });
 };
@@ -56,7 +56,6 @@ export const removeObservation = () => {
 };
 
 export const fetchConceptAndCreateEncounter = () => {
-
   const addData = async (encounter: any) => {
     const filteredEncounter = {
       ...encounter,
@@ -64,16 +63,16 @@ export const fetchConceptAndCreateEncounter = () => {
     };
 
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
-    
+
     return createEncounter(filteredEncounter).then((response) => response.data);
   };
 
   return useMutation({
     mutationFn: addData,
     onSuccess: (data) => {
-      console.log({data});
+      console.log({ data });
       queryClient.invalidateQueries({
-        queryKey: ["encounters", data.person_uuid]
+        queryKey: ["encounters", data.person_uuid],
       });
     },
   });
@@ -85,107 +84,113 @@ const getConceptIds: any = async (obs: Obs[]) => {
   try {
     for (const observation of obs) {
       const conceptName = observation.concept as unknown as string;
-     
-      let concept:any = await getConceptFromCacheOrFetch(conceptName);
 
+      let concept: any = await getConceptFromCacheOrFetch(conceptName);
 
-      let value= observation.value;
+      let value = observation.value;
 
-      if(concept?.data?.length==0) {
-        console.warn(`couldn't find concept "${conceptName}" 😥`)
+      if (concept?.data?.length == 0) {
+        console.warn(`couldn't find concept "${conceptName}" 😥`);
         continue;
       }
 
-      if(observation.coded || concept?.data[0]?.datatype=='Coded'){
+      if (observation.coded || concept?.data[0]?.datatype == "Coded") {
+        const valueConcept = await getConceptFromCacheOrFetch(
+          observation.value
+        );
 
-        const valueConcept = await getConceptFromCacheOrFetch(observation.value)
-
-        if(valueConcept?.data.length==0) {
-          console.warn(`couldn't find concept "${observation.value}" 😥`)
+        if (valueConcept?.data.length == 0) {
+          console.warn(`couldn't find concept "${observation.value}" 😥`);
           continue;
         }
 
-        value =  valueConcept?.data[0].uuid
+        value = valueConcept?.data[0].uuid;
       }
 
-      
- 
       const groupMembers = Array.isArray(observation.groupMembers)
         ? await getConceptIds(observation.groupMembers)
         : [];
-  
+
       if (concept.data.length > 0) {
         obsWithUUIDs.push({
           ...observation,
           concept: concept?.data[0]?.uuid,
           value,
           groupMembers,
-          conceptName
+          conceptName,
         });
       }
-
-
     }
   } catch (error) {
-    console.error({error});
+    console.error({ error });
   }
 
   return obsWithUUIDs;
 };
 
-
-export const getConceptFromCacheOrFetch = async (conceptName:string)=>{
+export const getConceptFromCacheOrFetch = async (conceptName: string) => {
   const cachedConcept = queryClient.getQueryData(["concepts", conceptName]);
   let concept;
   if (cachedConcept) {
-    concept = cachedConcept 
-   console.log("using cached data",cachedConcept);
+    concept = cachedConcept;
+    console.log("using cached data", cachedConcept);
   } else {
-  
     concept = await getConcept(conceptName);
     queryClient.setQueryData(["concepts", conceptName], concept);
     queryClient.setQueryData([concept.data[0].uuid], conceptName);
   }
-  return concept
-}
+  return concept;
+};
 
+export const getConcept: any = async (conceptName: string) => {
 
-
-export const getConcept:any = async (conceptName:string)=>{
+  
+  if (!conceptName) return null;
   return await getAll<Concept[]>(
-  `/concepts?name=${conceptName}&paginate=false&exact_match=true`
-);
-}
-
+    `/concepts?name=${encodeURI(conceptName)}&paginate=false&exact_match=true`
+  );
+};
 
 type ConceptOption = { id: string; label: string };
 type RadioOption = { value: any; label: string };
 
-const fetchConcepts = async (options: Array<{ key: string; label: string }>, useValueKey: boolean) => {
+const fetchConcepts = async (
+  options: Array<{ key: string; label: string }>,
+  useValueKey: boolean
+) => {
   const mappedOptions = [];
 
   for (const option of options) {
     const cachedConcept = queryClient.getQueryData(["concepts", option.key]);
 
-    let conceptData = cachedConcept ? cachedConcept : await getConcept(option.key);
+    let conceptData = cachedConcept
+      ? cachedConcept
+      : await getConcept(option.key);
 
     if (!cachedConcept) {
       queryClient.setQueryData(["concepts", option.key], conceptData);
       queryClient.setQueryData([conceptData.data[0]?.uuid], option.key);
-
     }
 
     if (conceptData.data.length) {
-      mappedOptions.push({ [useValueKey ? "value" : "id"]: conceptData.data[0]?.uuid, label: option.label });
+      mappedOptions.push({
+        [useValueKey ? "value" : "id"]: conceptData.data[0]?.uuid,
+        label: option.label,
+      });
     }
   }
 
   return mappedOptions;
 };
 
-export const fetchConceptsSelectOptions = (options: ConceptOption[]) => 
-  fetchConcepts(options.map(({ id, label }) => ({ key: id, label })), false);
+export const fetchConceptsSelectOptions = (options: ConceptOption[]) =>
+  fetchConcepts(
+    options.map(({ id, label }) => ({ key: id, label })),
+    false
+  );
 
-export const fetchConceptsRadioOptions = (options: RadioOption[]) => 
-  fetchConcepts(options.map(({ value, label }) => ({ key: value, label })), true);
-
+export const fetchConceptsRadioOptions = (options: RadioOption[]) =>
+  fetchConcepts(
+    options.map(({ value, label }) => ({ key: value, label })),
+    true
+  );

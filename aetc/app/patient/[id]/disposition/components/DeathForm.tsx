@@ -63,7 +63,7 @@ const initialValues = {
 };
 
 
-export default function DeathForm() {
+export default function DeathForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -120,7 +120,8 @@ export default function DeathForm() {
             //     closeVisit(activeVisit.uuid);
             // }
             // Redirect to assessments page
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
         } catch (error) {
             console.error("Error submitting Death form information: ", error);
             // toast.error("Failed to submit Death Form information.");

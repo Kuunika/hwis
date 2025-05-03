@@ -7,14 +7,14 @@ import {
     CheckboxesGroup,
     RadioGroupInput,
     TextInputField,
+    FormValuesListener,
 } from "@/components";
 import * as yup from "yup";
 import React, { useState, useEffect } from "react";
-import { FormikProps } from "formik";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
-import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 
@@ -37,14 +37,29 @@ const pastMedicalHistoryOptions = [
 
 // Validation schema
 const schema = yup.object().shape({
-    pastMedicalHistory: yup.array().min(1, "Select at least one condition"),
+    pastMedicalHistory: yup
+        .array()
+        .of(
+            yup.object().shape({
+                key: yup.string().required(),
+                value: yup.boolean().required(),
+            })
+        )
+        .transform((value) =>
+            Array.isArray(value) ? value.filter((item: any) => item.value === true) : []
+        )
+        .min(1, "Select at least one condition"),
 });
 
 export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
+    const [formValues, setFormValues] = useState<any>({});
     const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
 
     const handleCheckboxChange = (values: any) => {
-        setSelectedConditions(values.filter((item: any) => item.value).map((item: any) => item.key));
+        const selected = values
+            .filter((item: any) => item.value)
+            .map((item: any) => item.key);
+        setSelectedConditions(selected);
     };
 
     const { params } = useParameters();
@@ -61,17 +76,31 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         }
     }, [patientVisits]);
 
+    // Watch for changes in form values
+    useEffect(() => {
+        if (formValues.pastMedicalHistory) {
+            const selected = formValues.pastMedicalHistory
+                .filter((item: any) => item.value)
+                .map((item: any) => item.key);
+            setSelectedConditions(selected);
+        }
+    }, [formValues.pastMedicalHistory]);
+
     const handleSubmit = async (values: any) => {
-        console.log("pastMedicalHistory", values.pastMedicalHistory);
         const currentDateTime = getDateTime();
 
+        // Extract the selected conditions
+        const selectedConditions = (values.pastMedicalHistory || [])
+            .filter((item: any) => item.value)
+            .map((item: any) => item.key);
+
         // Construct observations for selected conditions
-        const obs = values.pastMedicalHistory.map((condition: string) => {
+        const obs = selectedConditions.map((condition: string) => {
             const isOnTreatment = values.onTreatment[condition] === concepts.YES;
 
             return {
                 concept: concepts.CONDITION,
-                value: condition,
+                value: condition, // Use the condition UUID directly as the value
                 obsDatetime: currentDateTime,
                 groupMembers: [
                     {
@@ -83,22 +112,22 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                         ? [
                             {
                                 concept: concepts.MEDICATION,
-                                value: values.medications[condition]?.currentMedication || "",
+                                value: values.medications?.[condition]?.currentMedication || "",
                                 obsDatetime: currentDateTime,
                             },
                             {
                                 concept: concepts.MEDICATION_DOSE,
-                                value: values.medications[condition]?.dose || "",
+                                value: values.medications?.[condition]?.dose || "",
                                 obsDatetime: currentDateTime,
                             },
                             {
                                 concept: concepts.REASON_FOR_REQUEST,
-                                value: values.medications[condition]?.reason || "",
+                                value: values.medications?.[condition]?.reason || "",
                                 obsDatetime: currentDateTime,
                             },
                             {
                                 concept: concepts.MEDICATION_DURATION,
-                                value: values.medications[condition]?.duration || "",
+                                value: values.medications?.[condition]?.duration || "",
                                 obsDatetime: currentDateTime,
                             },
                         ]
@@ -137,16 +166,25 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         >
             {(formik) => (
                 <FormFieldContainer direction="column">
+                    <FormValuesListener getValues={setFormValues} />
                     <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
                         <FormFieldContainerLayout title="Past Medical History">
                             {pastMedicalHistoryOptions.map((condition) => (
-                                <div key={condition.label} style={{ marginBottom: "10px" }}>
+                                <div key={condition.value} style={{ marginBottom: "10px" }}>
                                     {/* Checkbox for each condition */}
                                     <CheckboxesGroup
                                         name="pastMedicalHistory"
                                         allowFilter={false}
                                         options={[{ value: condition.value, label: condition.label }]}
-                                        getValue={(values) => handleCheckboxChange(values)}
+                                        getValue={(values) => {
+                                            // Update formik values with the checked state
+                                            const updatedValues = formik.values.pastMedicalHistory.map((c: any) =>
+                                                c.key === condition.value
+                                                    ? { key: c.key, value: values[0].value }
+                                                    : c
+                                            );
+                                            handleCheckboxChange(updatedValues);
+                                        }}
                                     />
 
                                     {/* If the condition is selected, show treatment options */}
@@ -170,19 +208,23 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                                                     <TextInputField
                                                         name={`medications.${condition.value}.currentMedication`}
                                                         label="Current Medication"
-                                                        type="text" id={""} />
+                                                        type="text"
+                                                        id={`med-${condition.value}`} />
                                                     <TextInputField
                                                         name={`medications.${condition.value}.dose`}
                                                         label="Dose"
-                                                        type="text" id={""} />
+                                                        type="text"
+                                                        id={`dose-${condition.value}`} />
                                                     <TextInputField
                                                         name={`medications.${condition.value}.reason`}
                                                         label="Reason for Taking"
-                                                        type="text" id={""} />
+                                                        type="text"
+                                                        id={`reason-${condition.value}`} />
                                                     <TextInputField
                                                         name={`medications.${condition.value}.duration`}
                                                         label="How long have you been taking it?"
-                                                        type="text" id={""} />
+                                                        type="text"
+                                                        id={`duration-${condition.value}`} />
                                                 </div>
                                             )}
                                         </div>

@@ -19,14 +19,13 @@ import { concepts, encounters } from "@/constants";
 import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getDateTime } from "@/helpers/dateTime";
 import { Visit } from "@/interfaces";
+import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
 
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
-
 const validationSchema = Yup.object({});
-
 export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
     const [row, setRow] = useState<any>(null);
     const { params } = useParameters();
@@ -48,6 +47,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
         surgicalProcedure: "",
         familyHistory: [] as string[], // Explicitly type as string array
         allergies: "",// Add this line for allergies
+        differentialDiagnosis: "",
         smoking: {
             status: "",
             duration: ""
@@ -55,7 +55,6 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
         alcoholIntake: "",
         recreationalDrugs: "",
     });
-
     // Add state for review of systems
     const [reviewOfSystems, setReviewOfSystems] = useState({
         general: [] as string[],
@@ -89,12 +88,17 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
         sensation: "",
         pulsations: "",
         rectalExamination: "",
-
-
-
-
-
     });
+
+    // Add state for past medical history
+    const [pastMedicalHistory, setPastMedicalHistory] = useState<Array<{
+        condition: string;
+        onTreatment: string;
+        medication: string;
+        medicationDose: string;
+        reasonForRequest: string;
+        medicationDuration: string;
+    }>>([]);
 
     // Ref for printing
     const contentRef = useRef<HTMLDivElement>(null);
@@ -121,6 +125,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                 surgicalProcedure: "",
                 familyHistory: [] as string[], // Explicitly type as string array
                 allergies: "",// Add this line for allergies
+                differentialDiagnosis: "",
                 smoking: {
                     status: "",
                     duration: ""
@@ -165,8 +170,6 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                 rectalExamination: "",
 
             };
-
-
             // Loop through all observations to find our target concepts
             surgicalEncounter.obs.forEach(obs => {
                 // Check the concept name from the names array
@@ -203,6 +206,9 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                 } else if (conceptName === "Allergic reaction") {
                     // Add this condition to capture allergic reactions
                     newPresentingInfo.allergies = obs.value || obs.value_text || "";
+                } else if (conceptName === "Attempted/ Differential Diagnosis") {
+                    // Add this condition to capture differential diagnosis
+                    newPresentingInfo.differentialDiagnosis = obs.value || obs.value_text || "";
                 }
                 else if (conceptName === "Patient smokes") {
                     newPresentingInfo.smoking.status = obs.value || obs.value_text || "";
@@ -384,15 +390,64 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             if (!newClerkInfo.clerkName && surgicalEncounter.created_by) {
                 newClerkInfo.clerkName = surgicalEncounter.created_by;
             }
-
             setClerkInfo(newClerkInfo);
             setPresentingInfo(newPresentingInfo);
             setReviewOfSystems(newReviewOfSystems);
             setPhysicalExam(newPhysicalExam); // Add this line to update physical exam state
-
-
-
         }
+
+        // Find and process past medical history data from all encounters
+        const pastMedicalHistoryData: Array<{
+            condition: string;
+            onTreatment: string;
+            medication: string;
+            medicationDose: string;
+            reasonForRequest: string;
+            medicationDuration: string;
+        }> = [];
+        // Loop through all encounters to find condition records
+        encountersData.forEach(encounter => {
+            if (encounter.obs) {
+                encounter.obs.forEach(obs => {
+                    // Check for Condition concept (7828)
+                    const conceptName = obs.names && obs.names.length > 0 ? obs.names[0].name : null;
+                    if (conceptName === "Condition" && obs.children && obs.children.length > 0) {
+                        // Create a new condition entry
+                        const conditionEntry = {
+                            condition: obs.value || obs.value_text || "",
+                            onTreatment: "",
+                            medication: "",
+                            medicationDose: "",
+                            reasonForRequest: "",
+                            medicationDuration: ""
+                        };
+
+                        // Extract details from children
+                        obs.children.forEach(child => {
+                            const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
+
+                            if (childName === "On treatment") {
+                                conditionEntry.onTreatment = child.value || child.value_text || "";
+                            } else if (childName === "Medication") {
+                                conditionEntry.medication = child.value || child.value_text || "";
+                            } else if (childName === "Medication Dose") {
+                                conditionEntry.medicationDose = child.value || child.value_text || "";
+                            } else if (childName === "Reason for request") {
+                                conditionEntry.reasonForRequest = child.value || child.value_text || "";
+                            } else if (childName === "Medication Duration") {
+                                conditionEntry.medicationDuration = child.value || child.value_text || "";
+                            }
+                        });
+
+                        pastMedicalHistoryData.push(conditionEntry);
+                    }
+                });
+            }
+        });
+
+        setPastMedicalHistory(pastMedicalHistoryData);
+
+
     }, [encountersData]);
 
     useEffect(() => {
@@ -430,7 +485,6 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                 obsDatetime: currentDateTime,
             },
         ];
-
         const payload = {
             encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
             visit: activeVisit?.uuid,
@@ -469,28 +523,64 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             <div ref={contentRef} className="printable-content">
                 <div className="print-only">
                     <PatientInfoTab />
-                    <PrescribedMedicationList setRow={setRow} />
-                    <p><strong>Clerk Name:</strong> {clerkInfo.clerkName}</p>
-                    <p><strong>Designation:</strong> {clerkInfo.designation}</p>
-                    <p><strong>Signature:</strong> {clerkInfo.signature}</p>
-                    <p><strong>Additional Notes:</strong> {clerkInfo.additionalNotes}</p>
+
+                    <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Surgical Notes</h1>
+
                     <p><strong>Presenting Complaints:</strong> {presentingInfo.complaints}</p>
                     <p><strong>Presenting History:</strong> {presentingInfo.history}</p>
+
+                    <hr />
+
+                    <h2>Past Medical History</h2>
+                    {pastMedicalHistory.length > 0 ? (
+                        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                            <thead>
+                                <tr>
+                                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Condition</th>
+                                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>On Treatment</th>
+                                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Medication</th>
+                                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Medication Dose</th>
+                                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Reason for Request</th>
+                                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Medication Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pastMedicalHistory.map((history, index) => (
+                                    <tr key={index}>
+                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>{history.condition}</td>
+                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>{history.onTreatment}</td>
+                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>{history.medication}</td>
+                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>{history.medicationDose}</td>
+                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>{history.reasonForRequest}</td>
+                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>{history.medicationDuration}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p>No past medical history recorded.</p>
+                    )}
+
                     <p><strong>Surgical History:</strong> {presentingInfo.surgicalHistory}</p>
                     <p><strong>Surgical Procedure:</strong> {presentingInfo.surgicalProcedure}</p>
+
                     <p><strong>Family History:</strong> {presentingInfo.familyHistory.length > 0 ?
                         presentingInfo.familyHistory.join(", ") : "None"}</p>
                     <p><strong>Allergies:</strong> {presentingInfo.allergies || "None"}</p>
-                    {/* Social History Section */}
-                    <h3>Social History</h3>
+
+                    <hr />
+
+                    <h2>Social History</h2>
                     <p><strong>Smoking Status:</strong> {presentingInfo.smoking.status || "Unknown"}</p>
                     {presentingInfo.smoking.status === "Yes" && (
                         <p><strong>Cigarettes per day:</strong> {presentingInfo.smoking.duration || "Unknown"}</p>
                     )}
                     <p><strong>Alcohol Intake:</strong> {presentingInfo.alcoholIntake ? `${presentingInfo.alcoholIntake} units per day` : "None"}</p>
                     <p><strong>Recreational Drugs:</strong> {presentingInfo.recreationalDrugs || "None"}</p>
-                    {/* Review of Systems Section */}
-                    <h3>Review of Systems</h3>
+
+                    <hr />
+
+                    <h2>Review of Systems</h2>
                     <p><strong>General:</strong> {reviewOfSystems.general.length > 0 ?
                         reviewOfSystems.general.join(", ") : "None"}</p>
                     <p><strong>ENT:</strong> {reviewOfSystems.ent.length > 0 ?
@@ -511,15 +601,18 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                         reviewOfSystems.neurologic.join(", ") : "None"}</p>
                     <p><strong>Psychiatric:</strong> {reviewOfSystems.psychiatric.length > 0 ?
                         reviewOfSystems.psychiatric.join(", ") : "None"}</p>
-                    {/* Add Physical Examination Section */}
-                    <h3>Physical Examination</h3>
+                    <hr />
+
+                    <h2>Physical Examination</h2>
                     <p><strong>General Condition:</strong> {physicalExam.generalCondition || "Not recorded"}</p>
 
-                    <h4>Vitals</h4>
-                    <p><strong>Temperature:</strong> {physicalExam.temperature || "Not recorded"}</p>
-                    <p><strong>Pulse Rate:</strong> {physicalExam.pulseRate || "Not recorded"} bpm</p>
-                    <p><strong>Blood Pressure:</strong> {physicalExam.bloodPressure || "Not recorded"} mmHg</p>
-                    <p><strong>Respiratory Rate:</strong> {physicalExam.respiratoryRate || "Not recorded"} breaths/min</p>
+                    <h3>Vitals</h3>
+                    <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+                        <p><strong>Temperature:</strong> {physicalExam.temperature || "Not recorded"}</p>
+                        <p><strong>Pulse Rate:</strong> {physicalExam.pulseRate || "Not recorded"} bpm</p>
+                        <p><strong>Blood Pressure:</strong> {physicalExam.bloodPressure || "Not recorded"} mmHg</p>
+                        <p><strong>Respiratory Rate:</strong> {physicalExam.respiratoryRate || "Not recorded"} breaths/min</p>
+                    </div>
 
                     <p><strong>Eyes:</strong> {physicalExam.eyes || "Not recorded"}</p>
                     <p><strong>Mouth:</strong> {physicalExam.mouth || "Not recorded"}</p>
@@ -528,20 +621,37 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                     <p><strong>Endocrine Examination:</strong> {physicalExam.endocrine || "Not recorded"}</p>
                     <p><strong>Abdominal Examination:</strong> {physicalExam.abdominal || "Not recorded"}</p>
 
-                    <h4>Glasgow Coma Scale (GCS)</h4>
+                    <h3>Glasgow Coma Scale (GCS)</h3>
                     <p><strong>Motor Response:</strong> {physicalExam.motorResponse || "Not recorded"}</p>
                     <p><strong>Verbal Response:</strong> {physicalExam.verbalResponse || "Not recorded"}</p>
                     <p><strong>Eye Response:</strong> {physicalExam.eyeResponse || "Not recorded"}</p>
 
-                    <h4>Additional Examinations</h4>
-                    <p><strong>Cranial Nerves  :</strong> {physicalExam.cranialNerves || "Not recorded"}</p>
-                    <p><strong>Gross Motor    :</strong> {physicalExam.grossMotor || "Not recorded"}</p>
+                    <h3>Additional Examinations</h3>
+                    <p><strong>Cranial Nerves:</strong> {physicalExam.cranialNerves || "Not recorded"}</p>
+                    <p><strong>Gross Motor:</strong> {physicalExam.grossMotor || "Not recorded"}</p>
                     <p><strong>Sensation:</strong> {physicalExam.sensation || "Not recorded"}</p>
 
-
-                    <h4>Extremities</h4>
+                    <h3>Extremities</h3>
                     <p><strong>Pulsations:</strong> {physicalExam.pulsations || "Not recorded"}</p>
-                    <p><strong>Rectal Examination  :</strong> {physicalExam.rectalExamination || "Not recorded"}</p>
+                    <p><strong>Rectal Examination:</strong> {physicalExam.rectalExamination || "Not recorded"}</p>
+
+                    <hr />
+
+                    <p><strong>Working Differential Diagnosis:</strong> {presentingInfo.differentialDiagnosis || "None"}</p>
+
+                    <h2>Investigations</h2>
+                    <LabOrderTable />
+
+                    <h2>Medications</h2>
+                    <PrescribedMedicationList setRow={setRow} />
+
+                    <hr />
+
+                    <h2>Clerking Details</h2>
+                    <p><strong>Additional Notes:</strong> {clerkInfo.additionalNotes}</p>
+                    <p><strong>Clerk Name:</strong> {clerkInfo.clerkName}</p>
+                    <p><strong>Designation:</strong> {clerkInfo.designation}</p>
+                    <p><strong>Signature:</strong> {clerkInfo.signature}</p>
 
                 </div>
             </div>
