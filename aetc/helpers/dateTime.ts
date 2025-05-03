@@ -37,13 +37,11 @@ export function getCATTime() {
 }
 
 export const getTime = (dateString: string) => {
-  const date = new Date(dateString);
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  const seconds = date.getUTCSeconds();
-
-  return `${hours}:${minutes}:${seconds}`;
+  // Match the time part directly from the ISO string
+  const match = dateString.match(/T(\d{2}:\d{2}:\d{2})/);
+  return match ? match[1] : '';
 };
+
 
 export const estimateBirthdate = (years: number) => {
   const estimate = dayjs().subtract(years, "year");
