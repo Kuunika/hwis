@@ -145,6 +145,8 @@ function InitialRegistration() {
 
     const dateTime = ServerTime.getServerTimeString();
 
+    console.log({dateTime});
+
     createEncounter({
       encounterType: encounters.INITIAL_REGISTRATION,
       visit: visit?.uuid,
