@@ -17,6 +17,8 @@ import * as Yup from "yup";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { concepts } from "@/constants";
 import { getCirculationOptions } from "@/hooks/getCirculationOptions";
+import { getDisabilityOptions } from "@/hooks/getDisabilityOptions";
+import { getExposureOptions } from "@/hooks/getExposureOptions";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -35,6 +37,14 @@ export const InterventionFormConfig = {
   circulationIntervention: {
     name: concepts.CIRCULATION_INTERVENTIONS,
     label: "Circulation intervention(s)",
+  },
+  disabilityIntervention: {
+    name: concepts.DISABILITY_INTERVENTIONS,
+    label: "Disability intervention(s)",
+  },
+  exposureIntervention: {
+    name: concepts.EXPOSURE_INTERVENTIONS,
+    label: "Exposure intervention(s)",
   },
 };
 
@@ -101,6 +111,8 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
     { id: concepts.KEEP_WARM, label: "Keep warm" },
   ];
 
+
+
   const groupedOptions = [
     {
       label: "IV Fluids",
@@ -157,6 +169,8 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
   };
 
   const { circulationOptions } = getCirculationOptions();
+  const { disabilityOptions } = getDisabilityOptions();
+  const { exposureOptions } = getExposureOptions();
 
   const handleRemoveFluidEntry = (index: number) => {
     const newEntries = values.fluidEntries.filter((_, i) => i !== index);
@@ -187,6 +201,18 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
     Array.isArray(values[InterventionFormConfig.airwayIntervention.name]) &&
     values[InterventionFormConfig.airwayIntervention.name]?.some(
       (item: { id: string }) => item.id === concepts.OTHER_AIRWAY_INTERVENTION
+    );
+
+    const disabilityOtherSelected =
+    Array.isArray(values[InterventionFormConfig.disabilityIntervention.name]) &&
+    values[InterventionFormConfig.disabilityIntervention.name]?.some(
+      (item: { id: string }) => item.label === "Other (free text)"
+    );
+
+    const exposureOtherSelected =
+    Array.isArray(values[InterventionFormConfig.exposureIntervention.name]) &&
+    values[InterventionFormConfig.exposureIntervention.name]?.some(
+      (item: { id: string }) => item.label === "Other"
     );
 
   const ivFluidsSelected =
@@ -258,7 +284,58 @@ const FormContent = ({ onSkip }: { onSkip: () => void }) => {
             }
           }}
         />
-      
+
+<SearchComboBox
+          name={InterventionFormConfig.disabilityIntervention.name}
+          options={disabilityOptions}
+          label={InterventionFormConfig.disabilityIntervention.label}
+          sx={{ mb: "2ch" }}
+          multiple={true}
+          getValue={(selected: any[] = []) => {
+            const hasOther = selected.some(
+              (item) => item.label === "Other (free text)"
+            );
+            if (!hasOther) {
+              setFieldValue(
+                `${InterventionFormConfig.disabilityIntervention.name}_Other`,
+                ""
+              );
+            }
+          }}
+        />
+                {disabilityOtherSelected && (
+          <TextInputField
+            name={`${InterventionFormConfig.disabilityIntervention.name}_Other`}
+            label="Please specify"
+            sx={{ mb: "2ch" }}
+          />
+        )}
+
+<SearchComboBox
+          name={InterventionFormConfig.exposureIntervention.name}
+          options={exposureOptions}
+          label={InterventionFormConfig.exposureIntervention.label}
+          sx={{ mb: "2ch" }}
+          multiple={true}
+          getValue={(selected: any[] = []) => {
+            const hasOther = selected.some(
+              (item) => item.label === "Other"
+            );
+            if (!hasOther) {
+              setFieldValue(
+                `${InterventionFormConfig.exposureIntervention.name}_Other`,
+                ""
+              );
+            }
+          }}
+        />
+              {exposureOtherSelected && (
+          <TextInputField
+            name={`${InterventionFormConfig.exposureIntervention.name}_Other`}
+            label="Please specify"
+            sx={{ mb: "2ch" }}
+          />
+        )}
 
         {ivFluidsSelected && (
           <WrapperBox>

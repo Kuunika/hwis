@@ -380,6 +380,8 @@ export const concepts = {
   DEHYDRATION_SKIN: "Dehydration Skin",
   HEART_RATE_50: "Heart Rate 50",
   CIRCULATION_INTERVENTIONS: "Circulation Interventions",
+  DISABILITY_INTERVENTIONS: "Disability Interventions",
+  EXPOSURE_INTERVENTIONS: "Exposure Interventions",
   DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS: "Does Patient Low Level Consciousness",
   BLOOD_GLUCOSE: "Blood glucose",
   GCS: "Gcs",
