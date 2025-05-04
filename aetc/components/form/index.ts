@@ -17,3 +17,4 @@ export * from "./dynamicFormList";
 export * from "./labelledCheckBox";
 export * from "./unitInputField";
 export * from "./ECTReactComponent";
+export * from"./offLineICD11Diagnosis";
