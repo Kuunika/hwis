@@ -16,6 +16,8 @@ import ECTReactComponent from "@/components/form/ECTReactComponent";
 import { MinimalTable } from "@/components/tables/minimalTable";
 import { Button } from "@mui/material";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
+
 
 
 type Prop = {
@@ -90,11 +92,18 @@ export const WorkingDifferentialDiagnosisForm = ({ onSubmit, onSkip }: Prop) => 
                         data={selectedDiagnosis}
                     />
                     <br />
-                    <ECTReactComponent
+                    {/* <ECTReactComponent
                         iNo={0}
                         label="Search ICD-11 Diagnosis"
                         onICD11Selection={handleAddDiagnosis}
+                    /> */}
+                    <OfflineICD11Selection
+                        label="Diagnosis"
+                        initialValue=""
+                        onSelection={handleAddDiagnosis}
+                        placeholder="Start typing to search diagnoses..."
                     />
+
                     <br />
                     <Button variant="contained" color="primary" onClick={handleSubmit}>
                         Finish and Submit
