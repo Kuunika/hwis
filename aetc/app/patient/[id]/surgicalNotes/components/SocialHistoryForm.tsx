@@ -15,6 +15,8 @@ import { getDateTime } from "@/helpers/dateTime";
 import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -56,6 +58,8 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -68,7 +72,7 @@ export const SocialHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         // Construct observations for Social History
         const obs = [

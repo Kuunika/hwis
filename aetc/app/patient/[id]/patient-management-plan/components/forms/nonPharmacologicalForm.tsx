@@ -16,6 +16,8 @@ import { toast } from "react-toastify";
 import { useParameters } from "@/hooks";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
@@ -112,6 +114,8 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -125,7 +129,9 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
     const handleSubmit = async (values: any) => {
         console.log("Procedures Selected:", values.procedures);
         console.log("Supportive Care Selected:", values.supportiveCare);
-        const currentDateTime = getDateTime();
+        // const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
+
 
         const obs = [
             {

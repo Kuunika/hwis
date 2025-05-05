@@ -17,6 +17,8 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getActivePatientDetails } from "@/hooks";
 
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -91,6 +93,8 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -108,7 +112,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
             return;
         }
 
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         // Helper to create observation
         const createObs = (concept: string, value: any) => ({

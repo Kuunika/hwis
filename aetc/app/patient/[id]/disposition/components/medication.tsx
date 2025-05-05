@@ -28,6 +28,8 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { AccordionComponent } from "@/components/accordion";
 import useFetchMedications from "@/hooks/useFetchMedications";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -148,6 +150,8 @@ export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
     }>({});
     const [formValues, setFormValues] = useState<any>({ medications: [] });
     const { activeVisit, patientId } = getActivePatientDetails();
+    const { init, ServerTime } = useServerTime();
+
 
     const handleUpdateFrequency = (index: number, value: boolean) => {
         setOtherFrequency((prevState) => ({
@@ -165,7 +169,7 @@ export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
     }, [isSuccess]);
 
     const handleSubmit = () => {
-        const obsDateTime = getDateTime();
+        const obsDateTime = ServerTime.getServerTimeString();
         const obs = formValues.medications.map((medication: any) => {
             return {
                 concept: concepts.DRUG_GIVEN,

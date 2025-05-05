@@ -29,6 +29,8 @@ import { FaPlus } from "react-icons/fa";
 import { Panel } from "../../../../patient/components/panels";
 import { AccordionWithMedication } from "./AccordionWithMedication";
 import { getConceptSet } from "@/hooks/getConceptSet";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 const followUpOptions = [
     { id: concepts.HEALTH_CENTER, label: "Health Center" },
@@ -61,7 +63,7 @@ const initialValues = {
     otherServiceArea: "",
 };
 
-export default function DischargeHomeForm({openPatientSummary}:{openPatientSummary:()=>void}) {
+export default function DischargeHomeForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -69,6 +71,8 @@ export default function DischargeHomeForm({openPatientSummary}:{openPatientSumma
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation();
     const { data: facilities } = getFacilities();
+    const { init, ServerTime } = useServerTime();
+
 
     // Service Areas state
     const [serviceAreaOptions, setServiceAreaOptions] = useState<{ label: string; id: string }[]>([]);
@@ -109,7 +113,7 @@ export default function DischargeHomeForm({openPatientSummary}:{openPatientSumma
     }, [serviceAreas]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         // Prepare service area information
         let serviceAreaValue = values.specialistClinic;

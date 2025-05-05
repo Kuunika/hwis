@@ -17,6 +17,8 @@ import { getDateTime } from "@/helpers/dateTime";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -66,6 +68,8 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -87,7 +91,7 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     }, [formValues.pastMedicalHistory]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         // Extract the selected conditions
         const selectedConditions = (values.pastMedicalHistory || [])

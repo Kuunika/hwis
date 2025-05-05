@@ -18,6 +18,8 @@ import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter"
 import { getDateTime } from "@/helpers/dateTime";
 import { concepts, encounters } from "@/constants";
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -66,6 +68,8 @@ export const PatientCareAreaForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -77,7 +81,7 @@ export const PatientCareAreaForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         // Determine selected care area
         let selectedCareArea = careAreaFormConfig[values.careArea as keyof typeof careAreaFormConfig]?.name;

@@ -15,6 +15,8 @@ import { Visit } from "@/interfaces";
 import ECTReactComponent from "@/components/form/ECTReactComponent";
 import { MinimalTable } from "@/components/tables/minimalTable";
 import { Button } from "@mui/material";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -27,6 +29,8 @@ export const WorkingDifferentialDiagnosisForm = ({ onSubmit, onSkip }: Prop) => 
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const [selectedDiagnosis, setSelectedDiagnosis] = useState<any[]>([]);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -42,7 +46,7 @@ export const WorkingDifferentialDiagnosisForm = ({ onSubmit, onSkip }: Prop) => 
     };
 
     const handleSubmit = async () => {
-        const obsDatetime = getDateTime();
+        const obsDatetime = ServerTime.getServerTimeString();
 
         const diagnosisObs = selectedDiagnosis.map((item) => ({
             concept: concepts.DIFFERENTIAL_DIAGNOSIS,
