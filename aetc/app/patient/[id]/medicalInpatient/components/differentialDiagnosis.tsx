@@ -34,7 +34,6 @@ export const DifferentialDiagnosis = ({
     ]);
   };
   const handleAddDiagnosis = (selectedCondition: any) => {
-    console.log({ selectedCondition });
     setSelectedDiagnosis((prevDiagnosis: any) => [
       ...prevDiagnosis,
       selectedCondition,
