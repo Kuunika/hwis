@@ -7,10 +7,10 @@ import * as React from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import {
-  CalculateWaitingTime,
-  MainButton,
-  PatientTableListServer,
-  WrapperBox,
+    CalculateWaitingTime,
+    MainButton,
+    PatientTableListServer,
+    WrapperBox,
 } from "../../../components";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
@@ -21,7 +21,7 @@ import { closeVisit } from "@/services/visit";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 import Tooltip from "@mui/material/Tooltip";
-import { FaPlay, FaSignOutAlt, FaHeartbeat } from "react-icons/fa";
+import { FaPlay, FaSignOutAlt, FaHeartbeat, FaUser, FaFileAlt } from "react-icons/fa";
 
 export const ClientsAwaitingDisposition = () => {
     const [cpr, setCpr] = useState(false);
@@ -96,9 +96,14 @@ export const ClientsAwaitingDisposition = () => {
         },
         {
             field: "disposition_type",
-            headerName: "Disposition Type",
+            headerName: "Awaiting Speciality",
             flex: 1,
             // renderCell: (cell: any) => <CareAreaDropdown patient={cell.row} />,
+        },
+        {
+            field: "patient_referred_to",
+            flex: 1,
+            headerName: "Patient Care Area",
         },
         {
             field: "action",
@@ -202,46 +207,46 @@ export const ClientsAwaitingDisposition = () => {
 
 // Dropdown for selecting care area
 const CareAreaDropdown = ({ patient }: { patient: any }) => {
-  const careAreas = ["ICU", "General Ward", "Surgical Unit"];
-  const [selectedArea, setSelectedArea] = useState(patient.care_area || "");
+    const careAreas = ["ICU", "General Ward", "Surgical Unit"];
+    const [selectedArea, setSelectedArea] = useState(patient.care_area || "");
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedArea(event.target.value);
-    // Make API call to update care area
-  };
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedArea(event.target.value);
+        // Make API call to update care area
+    };
 
-  return (
-    <select value={selectedArea} onChange={handleChange}>
-      {careAreas.map((area) => (
-        <option key={area} value={area}>
-          {area}
-        </option>
-      ))}
-    </select>
-  );
+    return (
+        <select value={selectedArea} onChange={handleChange}>
+            {careAreas.map((area) => (
+                <option key={area} value={area}>
+                    {area}
+                </option>
+            ))}
+        </select>
+    );
 };
 
 // Actions: Select form or close visit
 const DispositionActions = ({ patient }: { patient: any }) => {
-  const { navigateTo } = useNavigation();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const { mutate: closeVisitMutation, isSuccess: visitClosed } =
-    closeCurrentVisit();
+    const { navigateTo } = useNavigation();
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const { mutate: closeVisitMutation, isSuccess: visitClosed } =
+        closeCurrentVisit();
 
-  useEffect(() => {
-    if (visitClosed) {
-      navigateTo("/dispositions");
-    }
-  }, [visitClosed, navigateTo]);
+    useEffect(() => {
+        if (visitClosed) {
+            navigateTo("/dispositions");
+        }
+    }, [visitClosed, navigateTo]);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const handleCloseVisit = () => {
         if (patient.visit_uuid) {
@@ -252,22 +257,28 @@ const DispositionActions = ({ patient }: { patient: any }) => {
     };
 
     return (
-        <div>
-            {/* Close Visit Button */}
-            <MainButton
-                size="small"
-                sx={{ fontSize: "12px", ml: "5px" }}
-                title={"Close Visit"}
-                onClick={handleCloseVisit}
-            />
+        <Box display="flex" gap={1}>
+            {/* Close Visit Icon Button */}
+            <Tooltip title="Close Visit" arrow>
+                <IconButton
+                    onClick={handleCloseVisit}
+                    aria-label="close visit"
+                    sx={{ color: "#015E85" }}
+                >
+                    <FaSignOutAlt />
+                </IconButton>
+            </Tooltip>
 
-            {/* Dropdown for template forms */}
-            <MainButton
-                size="small"
-                sx={{ fontSize: "12px", ml: "5px", mr: "5px" }}
-                title={"Template Forms"}
-                onClick={handleClick}
-            />
+            {/* Template Forms Icon Button */}
+            <Tooltip title="Template Forms" arrow>
+                <IconButton
+                    onClick={handleClick}
+                    aria-label="template forms"
+                    sx={{ color: "#015E85" }}
+                >
+                    <FaFileAlt />
+                </IconButton>
+            </Tooltip>
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
@@ -290,9 +301,20 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                 {/* <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>
                     Form 3
                 </MenuItem> */}
-      </Menu>
-    </div>
-  );
+            </Menu>
+
+            {/* View Profile Icon Button */}
+            <Tooltip title="View Profile" arrow>
+                <IconButton
+                    onClick={() => navigateTo(`/patient/${patient.id}/profile`)}
+                    aria-label="view profile"
+                    sx={{ color: "#015E85" }}
+                >
+                    <FaUser />
+                </IconButton>
+            </Tooltip>
+        </Box>
+    );
 };
 
 const CardAction = ({
@@ -313,13 +335,39 @@ const CardAction = ({
     onCPR?: () => void;
 }) => {
     const { navigateTo } = useNavigation();
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const { mutate: closeVisitMutation, isSuccess: visitClosed } = closeCurrentVisit();
+
+    useEffect(() => {
+        if (visitClosed) {
+            navigateTo("/dispositions");
+        }
+    }, [visitClosed, navigateTo]);
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleCloseVisit = () => {
+        if (patient.visit_uuid) {
+            closeVisitMutation(patient.visit_uuid);
+        } else {
+            console.warn("No active visit UUID found for this patient.");
+        }
+    };
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", flex: "1" }}>
             <WrapperBox
                 sx={{
                     borderRadius: "2px",
                     width: "100%",
-                    height: "80%",
+                    height: "5ch",
                     backgroundColor:
                         triage == "red"
                             ? "#B42318"
@@ -331,17 +379,85 @@ const CardAction = ({
                     marginY: 1,
                 }}
             ></WrapperBox>
-            {showCPR && (
-                <Tooltip title="Initiate CPR" arrow>
+            <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
+                {/* Close Visit Icon Button */}
+                <Tooltip title="Close Visit" arrow>
                     <IconButton
-                        onClick={onCPR}
-                        aria-label="initiate CPR"
-                        color="error"
+                        onClick={handleCloseVisit}
+                        aria-label="close visit"
+                        size="small"
+                        sx={{ color: "#015E85" }}
                     >
-                        <FaHeartbeat />
+                        <FaSignOutAlt />
                     </IconButton>
                 </Tooltip>
-            )}
+
+                {/* Template Forms Icon Button */}
+                <Tooltip title="Template Forms" arrow>
+                    <IconButton
+                        onClick={handleClick}
+                        aria-label="template forms"
+                        size="small"
+                        sx={{ color: "#015E85" }}
+                    >
+                        <FaFileAlt />
+                    </IconButton>
+                </Tooltip>
+
+                {/* View Profile Icon Button */}
+                <Tooltip title="View Profile" arrow>
+                    <IconButton
+                        onClick={() => navigateTo(`/patient/${patient.id}/profile`)}
+                        aria-label="view profile"
+                        size="small"
+                        sx={{ color: "#015E85" }}
+                    >
+                        <FaUser />
+                    </IconButton>
+                </Tooltip>
+
+                {showCPR && (
+                    <Tooltip title="Initiate CPR" arrow>
+                        <IconButton
+                            onClick={onCPR}
+                            aria-label="initiate CPR"
+                            size="small"
+                            color="error"
+                        >
+                            <FaHeartbeat />
+                        </IconButton>
+                    </Tooltip>
+                )}
+            </Box>
+            <Menu
+                id="card-action-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+            >
+                <MenuItem
+                    onClick={() => {
+                        navigateTo(`/patient/${id}/medicalInpatient`);
+                        handleClose();
+                    }}
+                >
+                    Medical Inpatient
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        navigateTo(`/patient/${id}/surgicalNotes`);
+                        handleClose();
+                    }}
+                >
+                    Surgical Notes
+                </MenuItem>
+                <MenuItem onClick={() => {
+                    navigateTo(`/patient/${id}/gyneacology`);
+                    handleClose();
+                }}>
+                    Gyneacology Ward Admission
+                </MenuItem>
+            </Menu>
         </Box>
     );
 };
