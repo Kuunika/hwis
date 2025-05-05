@@ -1,9 +1,4 @@
-import {
-  MainButton,
-  MainTypography,
-  PatientInfoTab,
-  WrapperBox,
-} from "@/components";
+import { MainButton, WrapperBox } from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
@@ -12,180 +7,116 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
-import { Box, Button } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+} from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters, useSubmitEncounter } from "@/hooks";
-import { getOnePatient } from "@/hooks/patientReg";
 import { encounters } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
-import { Obs } from "@/interfaces";
-import { AirwayAssessment } from "@/app/patient/components/clinicalNotes/airwayAssement";
-import { BreathingAssessment } from "@/app/patient/components/clinicalNotes/breathingAssement";
-import { SoapierNotes } from "@/app/patient/components/clinicalNotes/soapierNotes";
-import { ChestAssessment } from "@/app/patient/components/clinicalNotes/chestAssement";
-import { GeneralInformation } from "@/app/patient/components/clinicalNotes/generalInformation";
-import { HeadAndNeck } from "@/app/patient/components/clinicalNotes/headAndNeck";
-import { DisabilityAssessment } from "@/app/patient/components/clinicalNotes/DisabilityAssessment";
-import { ExposureAssessment } from "@/app/patient/components/clinicalNotes/ExposureAssessment";
-import { AbdomenAndPelvisAssessment } from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
 import { getObservations } from "@/helpers";
-import { Extremities } from "@/app/patient/components/clinicalNotes/extremities";
-import { NeurologicalExamination } from "@/app/patient/components/clinicalNotes/neurogicalExamination";
-import { PresentingComplaintsNotes } from "@/app/patient/components/clinicalNotes/presentingComplaintsNotes";
-import AllergiesNotes from "@/app/patient/components/clinicalNotes/allergies";
-import { MedicationsNotes } from "@/app/patient/components/clinicalNotes/medicationsNotes";
-import { ExistingConditionsNotes } from "@/app/patient/components/clinicalNotes/existingConditionsNotes";
-import { SurgicalNotes } from "@/app/patient/components/clinicalNotes/surgicalNotes";
-import { PreviousAdmissionsNotes } from "@/app/patient/components/clinicalNotes/previousAdmissionsNotes";
-import { FamilyHistoryNotes } from "@/app/patient/components/clinicalNotes/familyHistory";
-import { useComponentNotes } from "@/hooks/useComponentNotes";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
-import { CirculationAssessment } from "@/app/patient/components/clinicalNotes/CirculationAssessment";
-import { ReviewOfSystems } from "@/app/patient/components/clinicalNotes/reviewOfSystemsNotes";
 import { useReactToPrint } from "react-to-print";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import { getPatientLabOrder } from "@/hooks/labOrder";
 
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
+  const [filterAETCState, setFilterAETCState] = useState(false);
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
     () => ""
   );
+  const [expanded, setExpanded] = useState("panel1");
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
-  const { notes: airwayNotes } = useComponentNotes(
-    encounters.AIRWAY_ASSESSMENT
-  );
-  const { notes: breathingNotes } = useComponentNotes(
-    encounters.BREATHING_ASSESSMENT
-  );
-  const { notes: circulationNotes } = useComponentNotes(
-    encounters.CIRCULATION_ASSESSMENT
-  );
-  const { notes: disabilityNotes } = useComponentNotes(
-    encounters.DISABILITY_ASSESSMENT
-  );
-  const { notes: exposureNotes } = useComponentNotes(
-    encounters.EXPOSURE_ASSESSMENT
-  );
-  const { notes: presentingComplaintsNotes } = useComponentNotes(
-    encounters.PRESENTING_COMPLAINTS
-  );
-  const { notes: allergiesNotes } = useComponentNotes(encounters.ALLERGIES);
-  const { notes: medicationsNotes } = useComponentNotes(
-    encounters.PRESCRIPTIONS
-  );
-  const { notes: existingConditionsNotes } = useComponentNotes(
-    encounters.DIAGNOSIS
-  );
-  const { notes: surgicalNotes } = useComponentNotes(
-    encounters.SURGICAL_HISTORY
-  );
-  const { notes: previousAdmissionsNotes } = useComponentNotes(
-    encounters.PATIENT_ADMISSIONS
-  );
-  const { notes: gyneacologyNotes } = useComponentNotes(
-    encounters.OBSTETRIC_HISTORY
-  );
-  const { notes: lastMealNotes } = useComponentNotes(
-    encounters.SUMMARY_ASSESSMENT
-  );
-  const { notes: reviewOfSystemsNotes } = useComponentNotes(
-    encounters.REVIEW_OF_SYSTEMS
-  );
-  const { notes: familyHistoryNotes } = useComponentNotes(
-    encounters.FAMILY_MEDICAL_HISTORY
-  );
-  const { notes: generalInfoNotes } = useComponentNotes(
-    encounters.GENERAL_INFORMATION_ASSESSMENT
-  );
-  const { notes: headNeckNotes } = useComponentNotes(
-    encounters.HEAD_AND_NECK_ASSESSMENT
-  );
-  const { notes: chestNotes } = useComponentNotes(encounters.CHEST_ASSESSMENT);
-  const { notes: abdomenPelvisNotes } = useComponentNotes(
-    encounters.ABDOMEN_AND_PELVIS_ASSESSMENT
-  );
-  const { notes: extremitiesNotes } = useComponentNotes(
-    encounters.EXTREMITIES_ASSESSMENT
-  );
-  const { notes: neurologicalNotes } = useComponentNotes(
-    encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT
-  );
-  const { notes: soapierNotes } = useComponentNotes(
-    encounters.NURSING_CARE_NOTES
-  );
-  const { notes: dispositionNotes } = useComponentNotes(encounters.DISPOSITION);
-
-  const { data: patient } = getOnePatient(params.id as string);
-  const { data: pData } = getPatientsEncounters(params.id as string);
-
   const {
-    data: patientEncounters,
-    isLoading,
-    isSuccess: encountersFetched,
-  } = getPatientsEncounters(params.id as string);
-
-  const allNotes = useMemo(() => {
-    const combinedNotes = filterSoapierState
-      ? [...soapierNotes]
-      : [
-          ...clinicalNotes,
-          ...airwayNotes,
-          ...breathingNotes,
-          ...circulationNotes,
-          ...disabilityNotes,
-          ...exposureNotes,
-          ...presentingComplaintsNotes,
-          ...allergiesNotes,
-          ...medicationsNotes,
-          ...existingConditionsNotes,
-          ...surgicalNotes,
-          ...previousAdmissionsNotes,
-          ...gyneacologyNotes,
-          ...lastMealNotes,
-          ...reviewOfSystemsNotes,
-          ...familyHistoryNotes,
-          ...generalInfoNotes,
-          ...headNeckNotes,
-          ...chestNotes,
-          ...abdomenPelvisNotes,
-          ...extremitiesNotes,
-          ...neurologicalNotes,
-          ...soapierNotes,
-          ...dispositionNotes,
-        ];
-
-    return combinedNotes.sort(
-      (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+    data: labOrders,
+    isPending,
+    isSuccess,
+  } = getPatientLabOrder(params?.id as string);
+  const getEncountersByType = (encounterTypeUuid: any) => {
+    const {
+      data: patientHistory,
+      isLoading: historyLoading,
+    }: { data: any; isLoading: any } = getPatientsEncounters(
+      patientId,
+      `encounter_type=${encounterTypeUuid}`
     );
-  }, [
-    clinicalNotes,
-    airwayNotes,
-    breathingNotes,
-    circulationNotes,
-    disabilityNotes,
-    exposureNotes,
-    presentingComplaintsNotes,
-    allergiesNotes,
-    medicationsNotes,
-    existingConditionsNotes,
-    surgicalNotes,
-    previousAdmissionsNotes,
-    gyneacologyNotes,
-    lastMealNotes,
-    reviewOfSystemsNotes,
-    familyHistoryNotes,
-    generalInfoNotes,
-    headNeckNotes,
-    chestNotes,
-    abdomenPelvisNotes,
-    extremitiesNotes,
-    neurologicalNotes,
-    soapierNotes,
-    dispositionNotes,
-    filterSoapierState, // respond to toggle change
-  ]);
+    if (!patientHistory) return [];
+    console.log(
+      "🚀 ~ getEncountersByType ~ patientHistory:",
+      patientHistory[0]?.obs
+    );
+    return patientHistory[0]?.obs || [];
+  };
+
+  const encounterData = {
+    panel1: {
+      title: "Triage",
+      data: [
+        ...getEncountersByType(encounters.TRIAGE_RESULT),
+        ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
+      ],
+    },
+    panel2: {
+      title: "History of presenting complain",
+      data: [getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM)],
+    },
+    panel3: {
+      title: "Vitals",
+      data: getEncountersByType(encounters.VITALS),
+    },
+    panel4: {
+      title: "Past Medical History",
+      data: getEncountersByType(encounters.MEDICAL_IN_PATIENT),
+    },
+    panel5: {
+      title: "Drug History",
+      data: getEncountersByType(encounters.MEDICAL_IN_PATIENT),
+    },
+    panel7: {
+      title: "Plan",
+      data: [
+        // ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
+        ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
+      ],
+    },
+    panel8: {
+      title: "Primary Survey",
+      data: [
+        ...getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+        ...getEncountersByType(encounters.BREATHING_ASSESSMENT),
+        ...getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+        ...getEncountersByType(encounters.PRIMARY_DISABILITY_ASSESSMENT),
+        ...getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+      ],
+    },
+    panel9: {
+      title: "Secondary Survey",
+      data: getEncountersByType(encounters.FINANCING),
+    },
+    panel10: {
+      title: "Diagnosis",
+      data: [
+        ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+        ...getEncountersByType(encounters.DIAGNOSIS),
+      ],
+    },
+    panel11: {
+      title: "Laboratory or Radiology finding",
+      data: getEncountersByType(encounters.FINANCING),
+    },
+    panel12: {
+      title: "Outcome/Disposition",
+      data: getEncountersByType(encounters.DISPOSITION),
+    },
+  };
 
   useEffect(() => {
     refresh();
@@ -199,9 +130,128 @@ export const ClinicalNotes = () => {
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
   });
-  if (isLoading) {
-    return <ProfilePanelSkeletonLoader />;
-  }
+  // if (historyLoading) {
+  //   return <ProfilePanelSkeletonLoader />;
+  // }
+
+  // Handle accordion expansion
+  const handleChange = (panel: any) => (_: any, isExpanded: any) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  // Function to render grouped items by heading
+  const renderGroupedItems = (data: any[]) => {
+    if (!data || data.length === 0) return null;
+
+    // Group items by their heading
+    const groupedItems: Record<string, any[]> = {};
+
+    data.forEach((item) => {
+      const headingName =
+        item?.names && item.names[0]?.name ? item.names[0].name : "Other";
+      if (!groupedItems[headingName]) {
+        groupedItems[headingName] = [];
+      }
+      groupedItems[headingName].push(item);
+    });
+
+    // Render each group with heading appearing only once
+    return Object.entries(groupedItems).map(([heading, items], groupIndex) => (
+      <Box
+        key={`group-${groupIndex}`}
+        className="clinical-note-group"
+        sx={{
+          marginBottom: "16px",
+          borderBottom:
+            groupIndex < Object.keys(groupedItems).length - 1
+              ? "1px solid #e0e0e0"
+              : "none",
+          paddingBottom: "16px",
+          display: "flex",
+        }}
+      >
+        {/* Left side: Heading appears only once */}
+        <Typography
+          variant="subtitle2"
+          sx={{
+            fontWeight: 600,
+            color: "#3a3a3a",
+            width: "30%",
+            paddingRight: "8px",
+            display: "flex",
+            alignItems: "center",
+            height: "24px", // Set fixed height to align with first value
+          }}
+        >
+          <Box component="span" sx={{ flexGrow: 1 }}>
+            {heading}
+          </Box>
+        </Typography>
+
+        {/* Center separator with increased size */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "40px",
+            height: "24px", // Match the height of the heading
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#777",
+              fontWeight: 400,
+              fontSize: "1.5rem",
+              lineHeight: 1,
+            }}
+          >
+            :
+          </Typography>
+        </Box>
+
+        {/* Right side: Values */}
+        <Box sx={{ width: "calc(70% - 40px)" }}>
+          {items.map((item, itemIndex) => (
+            <Box
+              key={`item-${groupIndex}-${itemIndex}`}
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                marginBottom: itemIndex < items.length - 1 ? "10px" : 0,
+                height: itemIndex === 0 ? "24px" : "auto", // First item aligned with heading
+              }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  minWidth: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  background: "#3f51b5",
+                  marginRight: "10px",
+                  marginTop: itemIndex === 0 ? "10px" : "8px",
+                  display: items.length > 1 ? "block" : "none",
+                }}
+              />
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#555",
+                  textAlign: "left",
+                  lineHeight: "1.5",
+                  paddingTop: itemIndex === 0 ? "2px" : 0, // First item aligned with heading
+                }}
+              >
+                {item?.value}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    ));
+  };
 
   return (
     <Panel title="">
@@ -209,75 +259,51 @@ export const ClinicalNotes = () => {
         <AddClinicalNotes
           onAddNote={addClinicalNote}
           filterSoapierState={filterSoapierState}
+          filterAETCState={filterAETCState}
           setFilterSoapierState={setFilterSoapierState}
+          setFilterAETCState={setFilterAETCState}
           onDownload={handlePrint} // <--- pass handler to child
         />
       </WrapperBox>
-
-      <WrapperBox
-        sx={{
-          overflow: "scroll",
-          maxHeight: "40ch",
-          pl: "2ch",
-        }}
-      >
-        <div
-          ref={contentRef}
-          style={{
-            margin: "10px",
-            alignItems: "center",
-            alignContent: "center",
-          }}
-        >
-          <div className="print-only">
-            <PatientInfoTab />
-            <div
-              style={{
-                fontWeight: 700,
-                fontSize: "20px",
-                marginTop: "10px",
-                textAlign: "center",
-              }}
+      {Object.entries(encounterData).map(
+        ([panelId, { title, data }]) =>
+          data.length > 0 && (
+            <Accordion
+              key={panelId}
+              expanded={expanded === panelId}
+              onChange={handleChange(panelId)}
             >
-              Clinical Notes
-            </div>
-          </div>
-
-          {allNotes.length === 0 ? (
-            <Typography>No clinical notes available</Typography>
-          ) : (
-            allNotes.map((data, index) => (
-              <Box
-                key={`${data.time}-${index}`}
+              <AccordionSummary
+                expandIcon={
+                  <ArrowForwardIosSharpIcon
+                    sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
+                  />
+                }
+                aria-controls={`${panelId}-content`}
+                id={`${panelId}-header`}
                 sx={{
-                  my: "1ch",
-                  py: "1ch",
-                  borderBottom: "1px solid #E0E0E0",
+                  minHeight: "54px",
+                  "&.Mui-expanded": { minHeight: "54px" },
                 }}
               >
                 <Typography
-                  variant="body1"
-                  sx={{ color: "text.primary", mb: 0 }}
-                >
-                  {data.paragraph}
-                </Typography>
-                <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    fontWeight: 700,
+                    color: "#2c3e50",
+                    fontSize: "1.05rem",
+                    letterSpacing: "0.2px",
                   }}
+                  component="span"
                 >
-                  <Typography variant="caption">~ {data.creator}</Typography>
-                  <Typography variant="caption">
-                    {getHumanReadableDateTime(data.time)}
-                  </Typography>
-                </Box>
-              </Box>
-            ))
-          )}
-        </div>
-      </WrapperBox>
+                  {title}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {renderGroupedItems(data.flat())}
+              </AccordionDetails>
+            </Accordion>
+          )
+      )}
       <style jsx>{`
         @media print {
           .print-only {
@@ -287,6 +313,27 @@ export const ClinicalNotes = () => {
         .print-only {
           display: none; /* Hide on screen */
         }
+
+        /* Additional global styles */
+        :global(.MuiAccordionDetails-root) {
+          padding: 16px 20px 24px;
+        }
+
+        :global(.clinical-note-group) {
+          margin-bottom: 12px;
+        }
+
+        :global(.MuiAccordion-root) {
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+          border-radius: 6px !important;
+          overflow: hidden;
+          margin-bottom: 12px;
+        }
+
+        :global(.MuiAccordionSummary-root) {
+          background-color: #f7f9fc;
+          border-bottom: 1px solid #e0e0e0;
+        }
       `}</style>
     </Panel>
   );
@@ -295,12 +342,16 @@ export const ClinicalNotes = () => {
 const AddClinicalNotes = ({
   onAddNote,
   filterSoapierState,
+  filterAETCState,
   setFilterSoapierState,
+  setFilterAETCState,
   onDownload,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
+  filterAETCState: boolean;
   setFilterSoapierState: (value: boolean) => void;
+  setFilterAETCState: (value: boolean) => void;
   onDownload: () => void;
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -389,9 +440,37 @@ const AddClinicalNotes = ({
             }}
           ></span>
           <Button
-            onClick={() => setFilterSoapierState(true)}
+            onClick={() => {
+              setFilterSoapierState(true);
+              setFilterAETCState(false);
+            }}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
+              color: "rgb(0, 70, 0)",
+              border: "1px solid currentColor",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontSize: "14px",
+              marginRight: "10px",
+              flexGrow: 1,
+              textTransform: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "120px",
+              "&:hover": {
+                backgroundColor: "rgb(197, 231, 197)",
+              },
+            }}
+          >
+            SOAPIER Notes
+          </Button>
+          <Button
+            onClick={() => {
+              setFilterAETCState(true);
+              setFilterSoapierState(false);
+            }}
+            sx={{
+              backgroundColor: filterAETCState ? "rgb(221, 238, 221)" : "",
               color: "rgb(0, 70, 0)",
               border: "1px solid currentColor",
               fontFamily: "system-ui, -apple-system, sans-serif",
@@ -408,12 +487,18 @@ const AddClinicalNotes = ({
               },
             }}
           >
-            SOAPIER Notes
+            AETC
           </Button>
           <Button
-            onClick={() => setFilterSoapierState(false)}
+            onClick={() => {
+              setFilterSoapierState(false);
+              setFilterAETCState(false);
+            }}
             sx={{
-              backgroundColor: !filterSoapierState ? "rgb(221, 238, 221)" : "",
+              backgroundColor:
+                !filterSoapierState && !filterAETCState
+                  ? "rgb(221, 238, 221)"
+                  : "",
               color: "rgb(0, 70, 0)",
               border: "1px solid currentColor",
               fontFamily: "system-ui, -apple-system, sans-serif",
