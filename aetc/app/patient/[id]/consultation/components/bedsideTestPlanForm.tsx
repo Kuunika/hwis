@@ -228,7 +228,7 @@ export const BedsideTestPlanForm = () => {
       // Only add section if it has selected fields
       if (selectedFields.length > 0) {
         observations.push({
-          concept: concepts.DESCRIPTION,
+          concept: concepts.BEDSIDE_INVESTIGATIONS,
           obsDatetime: dateTime,
           value: sectionTitle,
           groupMembers: selectedFields.map((field) => ({
