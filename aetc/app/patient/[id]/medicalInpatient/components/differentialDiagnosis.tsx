@@ -39,8 +39,8 @@ export const DifferentialDiagnosis = ({ onSubmit }: { onSubmit: (values: any) =>
     return <>
         <MinimalTable columns={[{ label: "Code", field: "code" }, { label: "Diagnosis", field: "diagnosis" }]} data={selectedDiagnosis} />
         <br />
-        {/* <ECTReactComponent iNo={0} label={"Diagnosis"} onICD11Selection={handleAddDiagnosis} /> */}
-        <OfflineICD11Selection label={"Diagnosis"} onSelection={handleAddDiagnosis} />
+        <ECTReactComponent iNo={0} label={"Diagnosis"} onICD11Selection={handleAddDiagnosis} />
+        {/* <OfflineICD11Selection label={"Diagnosis"} onSelection={handleAddDiagnosis} /> */}
         <br />
         <Button variant="contained" onClick={handleClick}>Finish and Submit</Button>
     </>
