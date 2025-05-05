@@ -213,7 +213,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
     formValues.admissions[index]["diagnosis"]  = selectedEntity.code +","+ selectedEntity.diagnosis;
     setFormValues(updatedValues);
 };
-console.log(formValues)
+
   return (
     <div style={{marginLeft:"100px", marginTop:"20px", borderTop:"1px solid rgba(0, 0, 0, 0.1)", paddingTop:"20px", paddingBottom:"20px"}}>
 

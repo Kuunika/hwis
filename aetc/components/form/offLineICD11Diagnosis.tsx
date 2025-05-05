@@ -137,8 +137,8 @@ const OfflineICD11Selection: React.FC<OfflineICD11SelectionProps> = ({
           <IoSearch
             style={{
               position: "absolute",
-              left: "10px",
-              top: "50%",
+              right: "10px",
+              top: "45%",
               transform: "translateY(-50%)",
               cursor: "pointer",
               color: "gray",
@@ -153,7 +153,7 @@ const OfflineICD11Selection: React.FC<OfflineICD11SelectionProps> = ({
             placeholder={placeholder}
             style={{
               marginBottom: "1ch",
-              paddingInline: "3ch",
+              paddingInline: "1ch",
               fontSize: ".96rem",
               color: "#333",
               height: "48px",
