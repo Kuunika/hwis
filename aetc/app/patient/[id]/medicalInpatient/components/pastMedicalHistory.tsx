@@ -9,8 +9,8 @@ import {
 } from "@/components";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { concepts } from "@/constants";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getInitialValues, getObservations, mapSearchComboOptionsToConcepts } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
 import { getFacilities } from "@/hooks";
 import { getAllRegimenNames } from "@/hooks/drugs";
 import { useAllergyFormat } from "@/hooks/useAllergyFormat";
@@ -142,13 +142,14 @@ export const PastMedicalHistory = ({ onSubmit }: { onSubmit: (values: any) => vo
   const { medicationOptions } = useFetchMedications();
   const { allergyOptions } = useAllergyFormat();
   const { data: regimenNames } = getAllRegimenNames();
+    const { ServerTime } = useServerTime();
 
 
   const handleSubmit = (values: any) => {
 
     const formValues = { ...values }
 
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
 
     const drugGivenObs = mapSearchComboOptionsToConcepts(formValues[form.drugList.name], form.drugList.name, obsDatetime);
     const allergiesObs = mapSearchComboOptionsToConcepts(formValues[form.allergy.name], form.allergy.name, obsDatetime);

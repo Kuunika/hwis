@@ -16,11 +16,12 @@ import {
 import { getFacilities, useParameters } from "@/hooks";
 import { TrackFormikContext } from ".";
 import { concepts, encounters } from "@/constants";
-import { getPatientEncounters } from "@/services/encounter";
+
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getObservationValue } from "@/helpers/emr";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Box, Button, Typography } from "@mui/material";
+import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
 
 const schema = Yup.object().shape({
   [concepts.REFERRED_FROM]: Yup.string().label("Referee Medical Facility"),
@@ -65,6 +66,10 @@ export const ReferralForm: FC<Props> = ({
   useEffect(() => {
     reloadDiagnosis();
   }, []);
+
+  const handleAddDiagnosis = ()=>{
+
+  }
 
   return (
     <>
@@ -149,6 +154,12 @@ export const ReferralForm: FC<Props> = ({
               id={concepts.REFERRED_FROM}
             />
           )}
+
+          {/* <OfflineICD11Selection
+            width="100%"
+            label={"Diagnosis"}
+            onSelection={handleAddDiagnosis}
+          /> */}
           <SearchComboBox
             sx={{ mt: "1ch" }}
             options={

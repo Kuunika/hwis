@@ -13,6 +13,7 @@ import { LungBackMaleImage } from "@/components/svgImages/LungBackMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { concepts } from "@/constants";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
@@ -325,6 +326,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: (values: any) => void 
   const { gender } = getActivePatientDetails();
   const [percussionImageEnc, setPercussionImageEnc] = useState([]);
   const [abdomenImageEnc, setAbdomenImageEnc] = useState([]);
+    const { ServerTime } = useServerTime();
 
   const [percussionPosteriorImageEnc, setPercussionPosteriorImagesEnc] = useState([]);
 
@@ -342,7 +344,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: (values: any) => void 
 
   const handleSubmit = (values: any) => {
     const formValues = { ...values }
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
 
 
     const obs = [
