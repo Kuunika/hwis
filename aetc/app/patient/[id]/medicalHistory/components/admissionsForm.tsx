@@ -10,6 +10,7 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { MdOutlineClose } from "react-icons/md";
 import ECTReactComponent from "@/components/form/ECTReactComponent";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
+import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
 
 interface Observation {
   obs_id: number | null;
@@ -159,6 +160,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   
   
   const handleSubmit = async () => {
+    console.log(formValues)
     if(formValues.none){
       onSkip();
       return;
@@ -207,8 +209,9 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   }, [patientHistory]);
 
   const handleICD11Selection = (selectedEntity: any, index: number) => {
-    setShowSelection((prev) => ({ ...prev, [index]: true }));
-    formValues.admissions[index]["diagnosis"] = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`
+    const updatedValues = { ...formValues };
+    formValues.admissions[index]["diagnosis"]  = selectedEntity.code +","+ selectedEntity.diagnosis;
+    setFormValues(updatedValues);
 };
 
   return (
@@ -332,26 +335,12 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                     />
                   </MainTypography>
                   </div>
-                  {showSelection[index] ? (<div style={{ backgroundColor: "white", display: 'flex', flexDirection: 'row', gap: '1rem', borderRadius:"5px"}}>
-                        <label style={{fontWeight: "bold" }}>
-                        {formValues.admissions[index]["diagnosis"]}
-                      </label>
-                      <MdOutlineClose 
-                            color={"red"} 
-                            onClick={() => {
-                              setShowSelection((prev) => ({ ...prev, [index]: false }));
-                              formValues.admissions[index]["diagnosis"] ="";
-                            }} 
-                            style={{ cursor: "pointer" }} 
-                          />
-                      </div>
-                        ) : (
-                          <ECTReactComponent
-                          onICD11Selection={(selectedEntity: any) => handleICD11Selection(selectedEntity, index)}
-                          label={'Condition'}
-                          iNo={100+index}
-                        />
-                        )}
+                  <OfflineICD11Selection
+            label="Diagnosis"
+            initialValue=""
+            onSelection={(entity: any) => handleICD11Selection(entity, index)}
+            placeholder="Start typing to search diagnoses..."
+          />
                       <MainTypography color="red" variant="subtitle2">
                         <ErrorMessage name={admissionsFormConfig.diagnosis(index).name} />
                       </MainTypography>

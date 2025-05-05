@@ -22,9 +22,8 @@ import { Field, FieldArray, getIn } from "formik";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
-import ECTReactComponent from "@/components/form/ECTReactComponent";
-import { MdOutlineClose } from "react-icons/md";
 import LabelledCheckbox from "@/components/form/labelledCheckBox";
+import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -113,11 +112,6 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [formValues, setFormValues] = useState<any>({});
   const [existingHistory, setExistingHistory] = useState<string[]>();
-  interface ShowSelectionState {
-    [key: number]: boolean;
-  }
-
-  const [showSelection, setShowSelection] = useState<ShowSelectionState>({});
 
   useEffect(() => {
     if (!isLoading) {
@@ -154,11 +148,13 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   };
 
   const handleICD11Selection = (selectedEntity: any, index: number) => {
-    setShowSelection((prev) => ({ ...prev, [index]: true }));
-    formValues.conditions[index][
-      "name"
-    ] = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`;
+    const updatedValues = { ...formValues };
+    updatedValues.conditions[index].name = selectedEntity.code +","+ selectedEntity.diagnosis;
+
+    setFormValues(updatedValues);
   };
+
+
 
   return (
     <>
@@ -239,41 +235,12 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                                 }
                               />
                             </MainTypography>
-                            {showSelection[index] ? (
-                            <div
-                              style={{
-                                backgroundColor: "white",
-                                display: "flex",
-                                flexDirection: "row",
-                                gap: "1rem",
-                                borderRadius: "5px",
-                                padding: "1ch",
-                              }}
-                            >
-                              <label style={{ fontWeight: "bold" }}>
-                                {formValues.conditions[index]["name"]}
-                              </label>
-                              <MdOutlineClose
-                                color={"red"}
-                                onClick={() => {
-                                  setShowSelection((prev) => ({
-                                    ...prev,
-                                    [index]: false,
-                                  }));
-                                  formValues.conditions[index]["name"] = "";
-                                }}
-                                style={{ cursor: "pointer" }}
-                              />
-                            </div>
-                          ) : (
-                            <ECTReactComponent
-                              onICD11Selection={(selectedEntity: any) =>
-                                handleICD11Selection(selectedEntity, index)
-                              }
-                              label={"Condition"}
-                              iNo={index + 1}
-                            />
-                          )}
+                              <OfflineICD11Selection
+            label="Diagnosis"
+            initialValue=""
+            onSelection={(entity: any) => handleICD11Selection(entity, index)}
+            placeholder="Start typing to search diagnoses..."
+          />
                           <MainTypography color="red" variant="subtitle2">
                             <ErrorMessage
                               name={
