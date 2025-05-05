@@ -24,6 +24,8 @@ import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
 import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 
 const mortuaryOptions = [
@@ -63,13 +65,14 @@ const initialValues = {
 };
 
 
-export default function DeathForm({openPatientSummary}:{openPatientSummary:()=>void}) {
+export default function DeathForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
 
 
     useEffect(() => {
@@ -84,7 +87,7 @@ export default function DeathForm({openPatientSummary}:{openPatientSummary:()=>v
 
     const handleSubmit = async (values: any) => {
 
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {

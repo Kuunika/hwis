@@ -19,6 +19,7 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { concepts, encounters } from "@/constants";
 import ECTReactComponent from "@/components/form/ECTReactComponent"; // Import ICD-11 component
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 interface Diagnosis {
     id: string;
@@ -44,6 +45,8 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { data: patientEncounters, refetch } = getPatientsEncounters(params.id as string);
     const { mutate: deleteDiagnosis } = removeObservation();
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -83,7 +86,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
     };
 
     const handleAddDiagnosis = (selectedCondition: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         if (selectedCondition && activeVisit?.uuid) {
             createDiagnosis(

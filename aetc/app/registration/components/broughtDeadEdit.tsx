@@ -19,7 +19,8 @@ import { useNavigation } from "@/hooks";
 import { FaAngleLeft } from "react-icons/fa6";
 import { RadioGroupInput } from "@/components"; // Import your custom RadioGroupInput
 import { FormDatePickerToday } from "@/components"; // Import your custom FormDatePicker
-import { FormTimePicker } from "@/components"; // Import your custom FormTimePicker
+import { SelectInputField } from "@/components";
+
 import { Formik, Form, Field } from "formik";
 
 export const BroughtDeadEdit = () => {
@@ -72,6 +73,26 @@ export const BroughtDeadEdit = () => {
                     label={key.replace(/_/g, " ").toUpperCase()}
                     width="100%"
                 />
+            );
+        }
+        else if (key === "religion") {
+            return (
+                <SelectInputField
+
+                    name={key}
+                    selectItems={[
+                        { name: "Christianity", value: "Christianity" },
+                        { name: "Muslim", value: "Muslim" },
+                        { name: "Buddhism", value: "Buddhism" },
+                        { name: "Rastafarian", value: "Rastafarian" },
+                        { name: "Atheist", value: "Atheist" },
+                        { name: "Traditional", value: "Traditional" },
+                        { name: "Other", value: "Other" },
+                    ]}
+                    label={key.replace(/_/g, " ").toUpperCase()}
+                    id={key}
+                />
+
             );
         }
         // Special handling for time fields

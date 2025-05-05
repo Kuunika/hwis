@@ -20,6 +20,9 @@ import { addEncounter, fetchConceptAndCreateEncounter } from "@/hooks/encounter"
 import { getDateTime } from "@/helpers/dateTime";
 import { Visit } from "@/interfaces";
 import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -34,6 +37,8 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
     const { data: encountersData } = getPatientsEncounters(params.id as string);
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { init, ServerTime } = useServerTime();
+
     const [clerkInfo, setClerkInfo] = useState({
         clerkName: "",
         designation: "",
@@ -461,7 +466,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
         // Create observations
         const obs = [
             {

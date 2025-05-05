@@ -16,6 +16,8 @@ import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
 import { Visit } from "@/interfaces";
 import { useParameters } from "@/hooks";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 // add concepts: Gravidity, Number of living children, Menarche,  Menstrual cycle, Duration, Prev Abortion ,  Prev Ectopic,  Consistency, color, odour, amount, Previous Contraceptive, side effects, Cancer Screening, Date of screening, Result, History of STIs
 //concepts available: LNMP, GESTATIONAL_AGE, PARITY, STRONG_REGULAR, IRREGULAR, ABNORMAL_VAGINAL_DISCHARGE , SPECIFY
@@ -42,6 +44,8 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -53,7 +57,9 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
+        const dateTime = ServerTime.getServerTimeString();
+
 
         const obs = [
             {

@@ -14,6 +14,8 @@ import { getDateTime } from "@/helpers/dateTime";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 const habitOptions = [
     { value: concepts.ALCOHOL_INTAKE, label: "Use of Alcohol" },
@@ -35,6 +37,8 @@ export const HabitsForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -46,7 +50,7 @@ export const HabitsForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
         const selectedHabits = (values.habits || [])
             .filter((item: any) => item.value)
             .map((item: any) => item.key);

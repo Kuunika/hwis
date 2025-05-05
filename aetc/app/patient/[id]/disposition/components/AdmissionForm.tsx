@@ -23,6 +23,8 @@ import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
 import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 const wardOptions = [
     {
@@ -121,6 +123,8 @@ export default function AdmissionForm({openPatientSummary}:{openPatientSummary:(
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
+
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
         if (patientVisits) {
@@ -132,7 +136,7 @@ export default function AdmissionForm({openPatientSummary}:{openPatientSummary:(
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {

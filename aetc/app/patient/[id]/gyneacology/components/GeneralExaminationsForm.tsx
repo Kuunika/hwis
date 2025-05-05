@@ -17,6 +17,8 @@ import { concepts, encounters } from "@/constants";
 import { Visit } from "@/interfaces";
 import { useParameters } from "@/hooks";
 import { useNavigation } from "@/hooks";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 
 // Add concepts: Stable, Sick, Critical, Mild, Moderate, Severe, Stats, RBS, Weight, Height , Abdomen, Vaginal Inspection, extremities, impression, Immediate Intervention
@@ -47,6 +49,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { navigateTo } = useNavigation();
+    const { init, ServerTime } = useServerTime();
+
 
 
     useEffect(() => {
@@ -64,7 +68,9 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
             return;
         }
 
-        const currentDateTime = getDateTime();
+        // const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
+
         const createObs = (concept: string, value: any) => ({
             concept,
             value,

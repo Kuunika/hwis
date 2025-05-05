@@ -12,6 +12,7 @@ import {
   MainTypography,
   RadioGroupInput,
   TextInputField,
+  SelectInputField,
 } from "@/components";
 import * as Yup from "yup";
 import { addBroughtDead } from "@/hooks/patientReg";
@@ -276,11 +277,28 @@ export const BroughtDeadForm = () => {
             label={form.nationalID.label}
             sx={{ width: "100%" }}
           />
-          <TextInputField
+          {/* <TextInputField
             name={form.religion.name}
             id={form.religion.name}
             label={form.religion.label}
             sx={{ width: "100%" }}
+          /> */}
+          <SelectInputField
+
+            name={form.religion.name}
+            selectItems={[
+              { name: "Christianity", value: "Christianity" },
+              { name: "Muslim", value: "Muslim" },
+              { name: "Buddhism", value: "Buddhism" },
+              { name: "Rastafarian", value: "Rastafarian" },
+              { name: "Atheist", value: "Atheist" },
+              { name: "Traditional", value: "Traditional" },
+              { name: "Other", value: "Other" },
+            ]}
+            label={form.religion.label}
+            id={form.religion.name}
+            sx={{ width: "100%" }}
+
           />
         </FieldsContainer>
         <TextInputField
