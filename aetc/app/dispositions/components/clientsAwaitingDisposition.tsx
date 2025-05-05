@@ -310,7 +310,7 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                     aria-label="view profile"
                     sx={{ color: "#015E85" }}
                 >
-                    <FaUser />
+                    <FaPlay />
                 </IconButton>
             </Tooltip>
         </Box>
@@ -412,7 +412,7 @@ const CardAction = ({
                         size="small"
                         sx={{ color: "#015E85" }}
                     >
-                        <FaUser />
+                        <FaPlay />
                     </IconButton>
                 </Tooltip>
 

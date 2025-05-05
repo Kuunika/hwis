@@ -16,6 +16,9 @@ import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { useFormikContext } from "formik";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
+
 
 // Family History options
 const familyHistoryOptions = [
@@ -45,6 +48,8 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -56,7 +61,7 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
         const selectedFamilyOptions = (values.familyHistory || [])
             .filter((item: any) => item.value)
             .map((item: any) => item.key);

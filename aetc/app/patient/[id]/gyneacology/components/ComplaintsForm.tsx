@@ -14,6 +14,8 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
@@ -24,6 +26,8 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
     useEffect(() => {
         if (patientVisits) {
             const active = patientVisits.find((visit) => !visit.date_stopped);
@@ -33,7 +37,7 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
         }
     }, [patientVisits]);
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
         const obs = [
             {
                 concept: concepts.CHIEF_COMPLAINT, // Replace with actual concept UUID
