@@ -16,6 +16,7 @@ interface OfflineICD11SelectionProps {
   onSelection?: (selectedEntity: ICD11Entity) => void;
   initialValue?: string;
   placeholder?: string;
+  width?:string
 }
 
 /**
@@ -27,6 +28,7 @@ const OfflineICD11Selection: React.FC<OfflineICD11SelectionProps> = ({
   onSelection,
   initialValue = "",
   placeholder = "Search for a diagnosis...",
+  width="300px"
 }) => {
   // State for the input field
   const [inputValue, setInputValue] = useState("");
@@ -124,7 +126,7 @@ const OfflineICD11Selection: React.FC<OfflineICD11SelectionProps> = ({
               fontSize: ".96rem",
               color: "#333",
               height: "48px",
-              width: "300px",
+              width,
               borderRadius: "5px",
               border: '1px solid #e0e0e0',
               outline: 'none',
