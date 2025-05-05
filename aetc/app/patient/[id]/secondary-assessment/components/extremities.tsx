@@ -31,6 +31,7 @@ import { UpperLimbFemalePosteriorImage } from "@/components/svgImages/upperLimbF
 import { UpperLimbMaleAnteriorImage } from "@/components/svgImages/upperLimbMaleAnterior";
 import { UpperLimbMalePosteriorImage } from "@/components/svgImages/upperLimbMalePosterior";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   oedama: {
@@ -91,6 +92,7 @@ const radioOptions = [
 ];
 
 export const ExtremitiesForm = ({ onSubmit }: Prop) => {
+  const { ServerTime } = useServerTime();
   const [isChecked, setIsChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
 
@@ -108,7 +110,7 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
 
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
     const obs = [
       {
         concept: concepts.IMAGE_PART_NAME,

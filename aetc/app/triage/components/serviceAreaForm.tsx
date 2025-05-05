@@ -72,7 +72,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
         triageStatus === "yellow"
           ? aetcServiceAreas
           : [
-              ...aectTriageGreenServiceAreas,
+              ... (Array.isArray(aectTriageGreenServiceAreas) ? aectTriageGreenServiceAreas : []),
               ...(Array.isArray(serviceAreas) ? serviceAreas : []),
             ];
 

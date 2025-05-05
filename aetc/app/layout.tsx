@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigation } from "@/hooks";
 import { OverlayLoader } from "@/components/backdrop";
 import CssBaseline from '@mui/material/CssBaseline';
+import { PrinterDialog } from "@/components/printerDialog";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -77,6 +78,7 @@ export default function RootLayout({
             <CssBaseline />
               <NavBar />
               {children}
+              <PrinterDialog />
               <OverlayLoader open={false} />
               <ToastContainer limit={1} />
             </ProviderTheme>

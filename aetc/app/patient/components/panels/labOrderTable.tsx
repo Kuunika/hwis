@@ -8,7 +8,7 @@ import {
   WrapperBox,
 } from "@/components";
 import { FaPrint } from "react-icons/fa6";
-import { BarcodeComponent } from "@/components/barcode";
+import { BarcodeComponent, LabBarcodeComponentPrintTemplate } from "@/components/barcode";
 import {
   getOnePatient,
   getPatientsWaitingForAssessment,
@@ -226,7 +226,7 @@ export const LabOrderTable = () => {
             alignItems: "center",
           }}
         >
-          <BarcodeComponent
+          <LabBarcodeComponentPrintTemplate
             printer={printer}
             orderDate={selectedTest.orderDate}
             setTriggerFunc={(test) => setTriggerPrintFunc(test)}
@@ -236,7 +236,7 @@ export const LabOrderTable = () => {
             <MainTypography variant="caption">
               {selectedTest.tests}
             </MainTypography>
-          </BarcodeComponent>
+          </LabBarcodeComponentPrintTemplate>
           <br />
           <BasicSelect
             getValue={(value: any) => {

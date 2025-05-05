@@ -20,11 +20,10 @@ import {
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
 import {
-  addEncounter,
+
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { getDateTime } from "@/helpers/dateTime";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
@@ -36,6 +35,7 @@ import {
 } from "@/contexts";
 import { FaPrint } from "react-icons/fa6";
 import { PatientBarcodePrinter } from "@/components/barcodePrinterDialogs";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 export const NewRegistrationFlow = () => {
   const [active, setActive] = useState(1);
@@ -54,6 +54,8 @@ export const NewRegistrationFlow = () => {
     errors: any;
   }>({ hasError: false, errors: "" });
   const scrollableRef = useRef<any>({});
+
+  const {ServerTime}=useServerTime();
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
@@ -148,16 +150,7 @@ export const NewRegistrationFlow = () => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
-  const [printer, setPrinter] = useState("http://localhost:3000");
-  const trigger = () => (
-    <MainButton
-      variant="text"
-      sx={{ color: "#000", ml: 0.5, fontSize: "2em" }}
-      title={<FaPrint />}
-      onClick={() => {}}
-    />
-  );
-
+ 
   useEffect(() => {
     if (!Boolean(patientValues.firstName)) return;
 
@@ -193,7 +186,7 @@ export const NewRegistrationFlow = () => {
       setCompleted(3);
       setMessage("adding social history...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
-      const dateTime = getDateTime();
+      const dateTime = ServerTime.getServerTimeString()
       createSocialHistory({
         encounterType: encounters.SOCIAL_HISTORY,
         visit: patient?.visit_uuid,
@@ -210,7 +203,7 @@ export const NewRegistrationFlow = () => {
       setCompleted(4);
       setMessage("adding referral...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
-      const dateTime = getDateTime();
+      const dateTime = ServerTime.getServerTimeString()
 
       const diagnosis = formData.referral[concepts.DIAGNOSIS];
 
@@ -241,7 +234,7 @@ export const NewRegistrationFlow = () => {
       setCompleted(5);
       setMessage("adding financing data...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
-      const dateTime = getDateTime();
+      const dateTime = ServerTime.getServerTimeString()
 
       const payments = formData.financing[concepts.PAYMENT_OPTIONS];
 

@@ -11,12 +11,11 @@ import { concepts, encounters } from "@/constants";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getOnePatient } from "@/hooks/patientReg";
-import { getActivePatientDetails, useParameters } from "@/hooks";
-import { CheckBox } from "@mui/icons-material";
+import { useParameters } from "@/hooks";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 type Props = {
   onSubmit: () => void;
@@ -57,6 +56,7 @@ const schema = yup.object({
 const initialValues = getInitialValues(form);
 
 export const Exposure = ({ onSubmit }: Props) => {
+  const {ServerTime}=useServerTime()
   const { params } = useParameters();
 
   const { data: patient, isLoading: patientLoading } = getOnePatient(
@@ -75,7 +75,7 @@ export const Exposure = ({ onSubmit }: Props) => {
   const handleFormSubmit = (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
 
     const obs = [
       {

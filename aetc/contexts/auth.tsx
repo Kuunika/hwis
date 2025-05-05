@@ -15,6 +15,8 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     useEffect(() => {
+
+     
         if (localStorage) {
             setLoggedIn(Boolean(localStorage.getItem("accessToken")));
         }

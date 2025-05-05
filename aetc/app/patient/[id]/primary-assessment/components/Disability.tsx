@@ -17,9 +17,9 @@ import {
   mapSubmissionToCodedArray,
 } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 type Props = {
   onSubmit: () => void;
 };
@@ -161,6 +161,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const Disability = ({ onSubmit }: Props) => {
+  const {ServerTime}=useServerTime()
   const [eyeOpeningValue, setEyeOpeningValue] = useState();
   const [verbalResponseValue, setVerbalResponseValue] = useState();
   const [motorResponseValue, setMotorResponseValue] = useState();
@@ -171,7 +172,7 @@ export const Disability = ({ onSubmit }: Props) => {
   );
 
   const handleFormSubmit = (values: any) => {
-    const obsDateTime = getDateTime();
+    const obsDateTime = ServerTime.getServerTimeString()
 
     const eyes = [
       {

@@ -143,9 +143,11 @@ export const getConceptFromCacheOrFetch = async (conceptName: string) => {
 };
 
 export const getConcept: any = async (conceptName: string) => {
+
+  
   if (!conceptName) return null;
   return await getAll<Concept[]>(
-    `/concepts?name=${conceptName}&paginate=false&exact_match=true`
+    `/concepts?name=${encodeURI(conceptName)}&paginate=false&exact_match=true`
   );
 };
 
