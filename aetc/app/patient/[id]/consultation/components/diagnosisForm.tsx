@@ -20,6 +20,8 @@ import { Visit } from "@/interfaces";
 import { concepts, encounters } from "@/constants";
 import ECTReactComponent from "@/components/form/ECTReactComponent"; // Import ICD-11 component
 import { useServerTime } from "@/contexts/serverTimeContext";
+import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
+
 
 interface Diagnosis {
     id: string;
@@ -179,12 +181,20 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                         {showICD11 ? "- Cancel New Diagnosis" : "+ Add New Diagnosis"}
                     </Typography>
 
-                    {showICD11 && (
+                    {/* {showICD11 && (
                         <ECTReactComponent
                             iNo={1}  // Provide a unique number (adjust as needed)
                             // name="diagnosis" // Give an appropriate name
                             label="Select Diagnosis" // Set a meaningful label
                             onICD11Selection={(selectedCondition: any) => handleAddDiagnosis(selectedCondition)}
+                        />
+                    )} */}
+                    {showICD11 && (
+                        <OfflineICD11Selection
+                            label="Select Diagnosis" // Set a meaningful label
+                            initialValue=""
+                            onSelection={(selectedCondition: any) => handleAddDiagnosis(selectedCondition)}
+                            placeholder="Start typing to search diagnoses..."
                         />
                     )}
 
