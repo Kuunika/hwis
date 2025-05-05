@@ -134,25 +134,65 @@ export function generateMedicationLabelZPL(medications: Medication[]): string {
   const HEADER_HEIGHT = 60;
   const LINE_HEIGHT = 30;
   const MAX_LINE_WIDTH = 750; // Maximum width for a single line in dots
-  const CHARS_PER_LINE = 60; // Estimated characters per line before wrapping
+  const MAX_CONTENT_HEIGHT = 600; // Maximum height available for content on a label
   
   let result = "";
+  let currentLabelGroup: Medication[] = [];
+  let currentLabelHeight = HEADER_HEIGHT;
+  let medCounter = 0; // Counter for medication numbering
   
-  // Group medications into sets per label
-  const MEDS_PER_LABEL = 6; // Adjust as needed based on your label size
-  const labelGroups: Medication[][] = [];
-  for (let i = 0; i < medications.length; i += MEDS_PER_LABEL) {
-    labelGroups.push(medications.slice(i, i + MEDS_PER_LABEL));
+  // Process each medication and create new labels as needed
+  for (let i = 0; i < medications.length; i++) {
+    const med = medications[i];
+    medCounter++;
+    
+    // Make sure to escape any special characters in the medication data
+    const medName = med.medicationName?.replace(/[\\^]/g, '') || '';
+    const dose = med.dose?.toString() || '';
+    const doseUnits = med.doseUnits?.replace(/[\\^]/g, '') || '';
+    const frequency = med.frequency?.replace(/[\\^]/g, '') || '';
+    const duration = med.duration?.replace(/[\\^]/g, '') || '';
+    const formulation = med.formulation?.replace(/[\\^]/g, '') || '';
+    const prescriber = med.prescribedBy?.replace(/[\\^]/g, '') || '';
+    
+    // Format the medication line
+    const medLine = `${medCounter}. ${medName}|${dose} ${doseUnits}|${frequency}|${duration}|${formulation}|(${prescriber})`;
+    
+    // Estimate the height this medication will take
+    // Longer text may need more lines (wrapped), so estimate space requirements
+    const textLength = medLine.length;
+    const estimatedLines = Math.ceil(textLength / 50); // Rough estimate: 50 chars per line
+    const estimatedHeight = estimatedLines * LINE_HEIGHT + 10; // Add small gap between meds
+    
+    // Check if this medication would fit on the current label
+    if (currentLabelHeight + estimatedHeight > MAX_CONTENT_HEIGHT && currentLabelGroup.length > 0) {
+      // Generate the current label before starting a new one
+      result += generateLabel(currentLabelGroup, result.length === 0 ? 0 : Math.ceil(medCounter / 6));
+      // Reset for new label
+      currentLabelGroup = [];
+      currentLabelHeight = HEADER_HEIGHT;
+    }
+    
+    // Add medication to current group
+    currentLabelGroup.push(med);
+    currentLabelHeight += estimatedHeight;
   }
   
-  // Generate ZPL for each label
-  labelGroups.forEach((group, groupIndex) => {
+  // Generate the final label if there are any remaining medications
+  if (currentLabelGroup.length > 0) {
+    result += generateLabel(currentLabelGroup, result.length === 0 ? 0 : Math.ceil(medCounter / 6));
+  }
+  
+  return result;
+  
+  // Helper function to generate a label with a group of medications
+  function generateLabel(medGroup: Medication[], labelIndex: number): string {
     let zpl = "^XA\n"; // Start label
     
     // Label header
-    const headerText = groupIndex === 0 
+    const headerText = labelIndex === 0 
       ? "Medication Instructions" 
-      : `Medication Instructions (${groupIndex + 1})`;
+      : `Medication Instructions (${labelIndex + 1})`;
     
     zpl += `^CF0,30\n^FO${LEFT_MARGIN},30^FD${headerText}^FS\n`;
     
@@ -160,8 +200,9 @@ export function generateMedicationLabelZPL(medications: Medication[]): string {
     let currentY = HEADER_HEIGHT;
     
     // Add each medication in horizontal format with automatic wrapping
-    group.forEach((med, index) => {
-      const medNumber = index + 1 + (groupIndex * MEDS_PER_LABEL);
+    medGroup.forEach((med, index) => {
+      // Calculate the global medication number
+      const medNumber = medCounter - (medGroup.length - 1 - index);
       
       // Make sure to escape any special characters in the medication data
       const medName = med.medicationName?.replace(/[\\^]/g, '') || '';
@@ -175,20 +216,19 @@ export function generateMedicationLabelZPL(medications: Medication[]): string {
       // Format the medication line
       const medLine = `${medNumber}. ${medName}|${dose} ${doseUnits}|${frequency}|${duration}|${formulation}|(${prescriber})`;
       
-      // Use ZPL's built-in text wrapping with maximum line width
-      // FB command enables automatic text wrapping
-      zpl += `^CF0,25\n^FO${LEFT_MARGIN},${currentY}^FB${MAX_LINE_WIDTH},3,0,L,0^FD${medLine}^FS\n`;
+      // Estimate number of lines needed
+      const textLength = medLine.length;
+      const estimatedLines = Math.ceil(textLength / 50); // Rough estimate: 50 chars per line
+      const maxLines = Math.max(1, Math.min(5, estimatedLines)); // Between 1 and 5 lines
       
-      // Move to next position, accounting for potential wrapped lines
-      // Allow up to 3 lines for each medication entry
-      const lineCount = Math.ceil(medLine.length / CHARS_PER_LINE);
-      const linesNeeded = Math.min(3, Math.max(1, lineCount)); // At least 1 line, max 3 lines
-      currentY += LINE_HEIGHT * linesNeeded + 10; // Add a small gap between medications
+      // Use ZPL's built-in text wrapping with maximum line width
+      zpl += `^CF0,25\n^FO${LEFT_MARGIN},${currentY}^FB${MAX_LINE_WIDTH},${maxLines},0,L,0^FD${medLine}^FS\n`;
+      
+      // Move to next position, accounting for wrapped lines
+      currentY += LINE_HEIGHT * maxLines + 10; // Add a small gap between medications
     });
     
     zpl += "^XZ\n"; // End label
-    result += zpl;
-  });
-  
-  return result;
+    return zpl;
+  }
 }
