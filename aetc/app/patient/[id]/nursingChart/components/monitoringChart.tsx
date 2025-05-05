@@ -5,7 +5,7 @@ import { ObservationsForm } from "./observations";
 import { InterventionsForm } from "./interventions";
 import { MedicationsForm } from "./medications";
 
-import { concepts, encounters, triageResult } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { useNavigation, useParameters } from "@/hooks";
 import {
   addEncounter,
@@ -14,9 +14,8 @@ import {
 import { getDateTime } from "@/helpers/dateTime";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
-import { useFormLoading } from "@/hooks/formLoading";
-import { NursingNotesForm } from "./nursingNotes";
 import { Alert, Snackbar } from "@mui/material";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 export const MonitoringChart = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -27,8 +26,9 @@ export const MonitoringChart = () => {
   const [alertSeverity, setAlertSeverity] = useState<
     "error" | "success" | null
   >(null);
-  const dateTime = getDateTime();
+  let dateTime: string;
   const [vitalsSubmitting, setVitalsSubmitting] = useState<boolean>(false);
+  const { init, ServerTime } = useServerTime();
 
   const {
     data: patientVisits,
@@ -41,7 +41,6 @@ export const MonitoringChart = () => {
     { id: 0, label: "Observations" },
     { id: 1, label: "Interventions" },
     { id: 2, label: "Medications" },
-    //{ id: 3, label: "Nursing Notes" },
   ];
 
   const {
@@ -66,6 +65,7 @@ export const MonitoringChart = () => {
   // } = fetchConceptAndCreateEncounter();
 
   useEffect(() => {
+    
     if (vitalsError) {
       setAlertMessage(`Error submitting vitals encounter`);
       setAlertSeverity("error");
@@ -112,6 +112,7 @@ export const MonitoringChart = () => {
   ]);
 
   const handleObservationsSubmit = async (values: any) => {
+    dateTime = ServerTime.getServerTimeString();
     if (values["Triage Result"] === "No Score") {
       setAlertMessage(values["Triage Result"]);
       setAlertSeverity("error");
@@ -146,6 +147,7 @@ export const MonitoringChart = () => {
   };
 
   const handleInterventionsSubmit = (values: any) => {
+    dateTime = ServerTime.getServerTimeString();
     for (const [key, value] of Object.entries(values)) {
       if (key === "fluidEntries") {
       if (Array.isArray(value)) {

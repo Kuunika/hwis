@@ -17,7 +17,6 @@ import {
 import { concepts, encounters, durationOptions } from "@/constants";
 import { useNavigation } from "@/hooks";
 import {
-  addEncounter,
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
@@ -28,6 +27,7 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { date } from "yup";
 import { getConceptSet } from "@/hooks/getConceptSet";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 
 type Complaint = {
@@ -87,16 +87,19 @@ export const MedicalHistoryFlow = () => {
   const { navigateBack, navigateBackToProfile, navigateTo } = useNavigation();
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
-  const dateTime = getDateTime();
+
   const { data: allergenCats } = getConceptSet("Allergen Category");
   const surgeriesFormRef = useRef<HTMLDivElement | null>(null);
   const admissionsFormRef = useRef<HTMLDivElement | null>(null);
   const conditionsFormRef = useRef<HTMLDivElement | null>(null);
   const familyHistoryFormRef = useRef<HTMLDivElement | null>(null);
   const [readyToSubmit, setReadyToSubmit] = useState(false);
+  const { init, ServerTime } = useServerTime();
+  let dateTime: string;
 
   useEffect(() => {
     if (readyToSubmit) {
+      dateTime = ServerTime.getServerTimeString();
       handleSubmitAll(0);
       setReadyToSubmit(false);
     }
