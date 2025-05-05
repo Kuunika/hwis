@@ -56,16 +56,7 @@ const OfflineICD11Selection: React.FC<OfflineICD11SelectionProps> = ({
     }
   };
 
-  // Handle clearing the selection
-  const handleClear = () => {
-    setSelectedDiagnosis("");
-    setInputValue("");
-    
-    if (onSelection) {
-      // Pass an empty entity to clear
-      onSelection({ code: "", diagnosis: "" });
-    }
-  };
+
 
   // Handle input focus
   const handleFocus = () => {
@@ -108,31 +99,7 @@ const OfflineICD11Selection: React.FC<OfflineICD11SelectionProps> = ({
         {label}
       </InputLabel>
 
-      {selectedDiagnosis ? (
-        <div 
-          style={{ 
-            backgroundColor: "white", 
-            display: 'flex', 
-            flexDirection: 'row', 
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '12px',
-            gap: '1rem', 
-            borderRadius: "5px",
-            border: '1px solid #e0e0e0',
-            minHeight: '48px'
-          }}
-        >
-          <label style={{ fontWeight: "bold" }}>
-            {selectedDiagnosis}
-          </label>
-          <MdOutlineClose 
-            color={"red"} 
-            onClick={handleClear} 
-            style={{ cursor: "pointer" }} 
-          />
-        </div>
-      ) : (
+  
         <div style={{ position: "relative", width: "100%" }}>
           <IoSearch
             style={{
@@ -216,7 +183,7 @@ const OfflineICD11Selection: React.FC<OfflineICD11SelectionProps> = ({
             </div>
           )}
         </div>
-      )}
+      
     </div>
   );
 };
