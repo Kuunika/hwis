@@ -40,8 +40,9 @@ export const getAllObservations = (patientId: any, conceptName: any) => {
     queryKey: ["observations", patientId, conceptName],
     queryFn: getAll,
     enabled: !!patientId && !!conceptName, // only run if both are present
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
     refetchOnReconnect: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 };
