@@ -43,6 +43,9 @@ import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { CirculationAssessment } from "@/app/patient/components/clinicalNotes/CirculationAssessment";
 import { ReviewOfSystems } from "@/app/patient/components/clinicalNotes/reviewOfSystemsNotes";
 import { useReactToPrint } from "react-to-print";
+import ReactMarkdown from "react-markdown";
+
+
 
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
@@ -117,8 +120,6 @@ export const ClinicalNotes = () => {
   );
   const { notes: dispositionNotes } = useComponentNotes(encounters.DISPOSITION);
 
-  const { data: patient } = getOnePatient(params.id as string);
-  const { data: pData } = getPatientsEncounters(params.id as string);
 
   const {
     data: patientEncounters,
@@ -259,7 +260,9 @@ export const ClinicalNotes = () => {
                   variant="body1"
                   sx={{ color: "text.primary", mb: 0 }}
                 >
-                  {data.paragraph}
+                  <ReactMarkdown className="preserve-breaks">
+                    {data.paragraph}
+                  </ReactMarkdown>
                 </Typography>
                 <Box
                   sx={{

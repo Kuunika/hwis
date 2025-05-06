@@ -67,9 +67,7 @@ export const ReferralForm: FC<Props> = ({
     reloadDiagnosis();
   }, []);
 
-  const handleAddDiagnosis = ()=>{
-
-  }
+  const handleAddDiagnosis = () => {};
 
   return (
     <>
@@ -155,20 +153,17 @@ export const ReferralForm: FC<Props> = ({
             />
           )}
 
-          {/* <OfflineICD11Selection
-            width="100%"
-            label={"Diagnosis"}
-            onSelection={handleAddDiagnosis}
-          /> */}
           <SearchComboBox
             sx={{ mt: "1ch" }}
             options={
-              diagnosis?.map((d) => {
-                return {
-                  id: d?.names[0]?.uuid as string,
-                  label: d?.names[0]?.name as string,
-                };
-              }) ?? []
+              diagnosis
+                ? [...diagnosis?.map((d) => {
+                    return {
+                      id: d?.names[0]?.uuid as string,
+                      label: d?.names[0]?.name as string,
+                    };
+                  }), {id: concepts.OTHER, label: "Other"}]
+                : []
             }
             label="Diagnosis"
             disabled={referred == "No"}
