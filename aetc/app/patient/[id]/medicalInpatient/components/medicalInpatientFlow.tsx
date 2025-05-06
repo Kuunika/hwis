@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NewStepperContainer } from "@/components";
 import { PastMedicalHistory, PresentingComplaints } from ".";
 import { useNavigation, useSubmitEncounter } from "@/hooks";
@@ -13,7 +13,7 @@ import { Investigations } from "./investigations";
 
 export const MedicalInPatientFlow = () => {
   const { navigateBack } = useNavigation();
-  const { handleSubmit } = useSubmitEncounter(encounters.MEDICAL_IN_PATIENT, () => {
+  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(encounters.MEDICAL_IN_PATIENT, () => {
     // navigateBack()
   })
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -50,6 +50,12 @@ export const MedicalInPatientFlow = () => {
     },
   ];
 
+  useEffect(() => {
+    if (isSuccess) {
+      setActiveStep(5)
+    }
+  }, [isSuccess]);
+
 
   const handlePresentingComplaints = (values: any) => {
     setObs(values)
@@ -70,7 +76,6 @@ export const MedicalInPatientFlow = () => {
 
   const handleDifferentialSubmit = (values: any) => {
     handleSubmit([...obs, ...values])
-    setActiveStep(5);
   }
 
 
@@ -91,7 +96,7 @@ export const MedicalInPatientFlow = () => {
         <DrugList onSubmit={handleDrug} />
         <PastMedicalHistory onSubmit={handlePastMedical} />
         <ReviewOfSystems onSubmit={handleReview} />
-        <DifferentialDiagnosis onSubmit={handleDifferentialSubmit} />
+        <DifferentialDiagnosis loading={isLoading} onSubmit={handleDifferentialSubmit} />
         <Investigations onClose={handleInvestigationSubmit} />
       </NewStepperContainer>
     </>

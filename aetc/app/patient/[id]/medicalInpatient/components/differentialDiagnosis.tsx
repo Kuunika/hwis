@@ -5,11 +5,14 @@ import { Button } from "@mui/material";
 import { concepts } from "@/constants";
 import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 export const DifferentialDiagnosis = ({
   onSubmit,
+  loading,
 }: {
   onSubmit: (values: any) => void;
+  loading: boolean;
 }) => {
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<any>([]);
   const { ServerTime } = useServerTime();
@@ -42,23 +45,25 @@ export const DifferentialDiagnosis = ({
 
   return (
     <>
-      <MinimalTable
-        columns={[
-          { label: "Code", field: "code" },
-          { label: "Diagnosis", field: "diagnosis" },
-        ]}
-        data={selectedDiagnosis}
-      />
-      <br />
-      <OfflineICD11Selection
-        width="100%"
-        label={"Diagnosis"}
-        onSelection={handleAddDiagnosis}
-      />
-      <br />
-      <Button variant="contained" onClick={handleClick}>
-        Finish and Submit
-      </Button>
+      <ContainerLoaderOverlay loading={loading}>
+        <MinimalTable
+          columns={[
+            { label: "Code", field: "code" },
+            { label: "Diagnosis", field: "diagnosis" },
+          ]}
+          data={selectedDiagnosis}
+        />
+        <br />
+        <OfflineICD11Selection
+          width="100%"
+          label={"Diagnosis"}
+          onSelection={handleAddDiagnosis}
+        />
+        <br />
+        <Button variant="contained" onClick={handleClick}>
+        Submit
+        </Button>
+      </ContainerLoaderOverlay>
     </>
   );
 };
