@@ -3,11 +3,28 @@ import { formatAllVitalsToObject } from "@/helpers/emr";
 import { useState, useEffect } from "react";
 import { getPatientsEncounters } from "./encounter";
 import { getActivePatientDetails } from "./getActivePatientDetails";
+import { getAllObservations } from "./obs";
+import { getShortDate } from "@/helpers/dateTime";
+export const getObsGraphData = (conceptName = "") => {
+  const { patientId }: { patientId: any } = getActivePatientDetails();
+  const { data: obsData }: any = getAllObservations(patientId, conceptName);
 
+  const values = obsData?.data?.map((item: any) => Number(item.value)) ?? [];
+  const dateTimes =
+    obsData?.data?.map((item: any) => getShortDate(item.obs_datetime)) ?? [];
+
+  return {
+    values,
+    dateTimes,
+  };
+};
 export const useVitalsGraphData = () => {
   const { activeVisitId } = getActivePatientDetails();
   const { patientId } = getActivePatientDetails();
-  const { data, isLoading } = getPatientsEncounters(patientId as string, `encounter_type=${encounters.VITALS}`);
+  const { data, isLoading } = getPatientsEncounters(
+    patientId as string,
+    `encounter_type=${encounters.VITALS}`
+  );
   const [formattedVitals, setFormattedVitals] = useState<any>({});
   const [chartLoading, setChartLoading] = useState(true);
   const [chartData, setChartData] = useState<any>({
