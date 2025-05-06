@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { encounters } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { Obs } from "@/interfaces";
 
 export const useFinalDiagnosis = (pData: any) => {
@@ -17,7 +17,7 @@ export const useFinalDiagnosis = (pData: any) => {
     // Filter observations to only include those with name "Final Diagnosis"
     const finalDiagnosisObservations = additionalFieldsEncounter.obs
       .filter((ob: Obs) => 
-        ob.names?.some((name: any) => name.name === "Final Diagnosis")
+        ob.names?.some((name: any) => name.name === concepts.FINAL_DIAGNOSIS ) //"Final Diagnosis"
       )
       .map((ob: Obs) => ob.value)
       .filter(Boolean);

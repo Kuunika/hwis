@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { encounters } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { Obs } from "@/interfaces";
 
 export const useDifferentialDiagnosis = (pData: any) => {
@@ -17,7 +17,7 @@ export const useDifferentialDiagnosis = (pData: any) => {
     // Filter observations to only include those with name "Attempted/ Differential Diagnosis"
     const differentialDiagnosisObservations = additionalFieldsEncounter.obs
       .filter((ob: Obs) => 
-        ob.names?.some((name: any) => name.name === "Attempted/ Differential Diagnosis")
+        ob.names?.some((name: any) => name.name === concepts.DIFFERENTIAL_DIAGNOSIS ) //"Attempted/ Differential Diagnosis"
       )
       .map((ob: Obs) => ob.value)
       .filter(Boolean);
