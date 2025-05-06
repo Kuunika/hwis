@@ -8,6 +8,7 @@ import { DrugList } from "./drugList";
 import { ReviewOfSystems } from "./reviewOfSystems";
 import { DifferentialDiagnosis } from "./differentialDiagnosis";
 import { encounters } from "@/constants";
+import { Investigations } from "./investigations";
 
 
 export const MedicalInPatientFlow = () => {
@@ -42,7 +43,10 @@ export const MedicalInPatientFlow = () => {
     {
       id: 21,
       label: "Differential Diagnosis",
-
+    },
+    {
+      id: 24,
+      label: "Investigation Plan",
     },
   ];
 
@@ -65,13 +69,14 @@ export const MedicalInPatientFlow = () => {
   }
 
   const handleDifferentialSubmit = (values: any) => {
-
     handleSubmit([...obs, ...values])
-
-
+    setActiveStep(5);
   }
 
 
+  const handleInvestigationSubmit = () => {
+   navigateBack();
+  }
 
   return (
     <>
@@ -87,6 +92,7 @@ export const MedicalInPatientFlow = () => {
         <PastMedicalHistory onSubmit={handlePastMedical} />
         <ReviewOfSystems onSubmit={handleReview} />
         <DifferentialDiagnosis onSubmit={handleDifferentialSubmit} />
+        <Investigations onClose={handleInvestigationSubmit} />
       </NewStepperContainer>
     </>
   );
