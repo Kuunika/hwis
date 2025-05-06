@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { encounters } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { Obs } from "@/interfaces";
 
 export const useDifferentialDiagnosis = (pData: any) => {
@@ -8,32 +8,31 @@ export const useDifferentialDiagnosis = (pData: any) => {
   useEffect(() => {
     if (!pData) return;
 
-   
     const additionalFieldsEncounter = pData.find(
       (d: any) => d.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS
     );
 
-
-    //console.log("Tione makhwala ali apa eti??:", additionalFieldsEncounter);
-
     if (!additionalFieldsEncounter?.obs) return;
 
-    const observations = additionalFieldsEncounter.obs
-      .map((ob: Obs) => ob.value) 
-      .filter(Boolean); 
+    // Filter observations to only include those with name "Attempted/ Differential Diagnosis"
+    const differentialDiagnosisObservations = additionalFieldsEncounter.obs
+      .filter((ob: Obs) => 
+        ob.names?.some((name: any) => name.name === concepts.DIFFERENTIAL_DIAGNOSIS ) //"Attempted/ Differential Diagnosis"
+      )
+      .map((ob: Obs) => ob.value)
+      .filter(Boolean);
 
-    if (observations.length === 0) return;
+    if (differentialDiagnosisObservations.length === 0) return;
 
-
-    let messages = [`Differential Diagnosis recorded on:\n`];
-
-    observations.forEach((obs:any) => {
-      messages.push(`The Differential Diagnosis are: ${obs}. `);
-    });
+    const createdBy = additionalFieldsEncounter.created_by;
+    let messages = [
+      `Differential Diagnosis recorded on:\n`,
+      `The Differential Diagnosis are: ${differentialDiagnosisObservations.join(", ")}`,
+      `\n\nCreated by: ${createdBy}`
+    ];
 
     setDifferentialDiagnosisMessage(messages.join(""));
   }, [pData]);
 
   return differentialDiagnosisMessage;
 };
-
