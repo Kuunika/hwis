@@ -149,6 +149,7 @@ const schema = yup.object({
     .label(VitalFormConfig.verbalResponse.label),
   [VitalFormConfig.glucose.name]: yup
     .number()
+    .typeError("Glucose must be a number")
     .min(0)
     .max(1000)
     .label(VitalFormConfig.glucose.label),

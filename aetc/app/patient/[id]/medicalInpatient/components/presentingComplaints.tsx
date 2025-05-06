@@ -1,5 +1,6 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { concepts, encounters } from "@/constants";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getInitialValues, mapSearchComboOptionsToConcepts } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { getObservation } from "@/helpers/emr";
@@ -30,12 +31,13 @@ export const PresentingComplaints = ({
 }: {
   onSubmit: (values: any) => void;
 }) => {
+    const { ServerTime } = useServerTime();
   const { presentingComplaints } = usePresentingComplaints();
 
   const handleSubmit = (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString()
 
     const complaintsObs = mapSearchComboOptionsToConcepts(
       formValues[form.complaints.name],
