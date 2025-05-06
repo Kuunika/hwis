@@ -1,9 +1,13 @@
-import { createObservation } from "@/services/observationService";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import {
+  createObservation,
+  getObservation,
+} from "@/services/observationService";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { getAll } from "@/services/httpService";
 
 export const addObsChildren = () => {
   const queryClient = useQueryClient();
-  
+
   const addData = async (obs: any) => {
     try {
       const response = await createObservation(obs);
@@ -21,5 +25,23 @@ export const addObsChildren = () => {
         queryKey: ["observations"],
       });
     },
+  });
+};
+
+export const getAllObservations = (patientId: any, conceptName: any) => {
+  const getAll = async () => {
+    const response = await getObservation(
+      `person=${patientId}&conceptName=${conceptName}`
+    );
+    return response.data;
+  };
+
+  return useQuery({
+    queryKey: ["observations", patientId, conceptName],
+    queryFn: getAll,
+    enabled: !!patientId && !!conceptName, // only run if both are present
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 };
