@@ -180,7 +180,7 @@ export const encounters = {
   MEDICAL_IN_PATIENT: "1aeb209d-8f1f-4367-8d9c-476134235545",
   SURGICAL_NOTES_TEMPLATE_FORM: "6c44a2d9-953d-41dd-9b99-03b4214f85ba",
   DISPOSED_PRESCRIPTIONS: "a9ebe09e-0296-40d1-a9fa-3efcce85ea9e ",
-  GYNEACOLOGY_WARD: "d1888b10-cc26-4580-ac7c-24434b7e13a2",
+  GYNEACOLOGY_WARD: "59514a38-a019-4833-b180-480d1bbf2dfe",
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -325,7 +325,7 @@ export const concepts = {
   TURNING_PATIENTS: "Turning Patients",
   ORAL_CARE: "Oral Care",
   TRAUMA: "Trauma",
-  CARE_AREA: "Care Area",
+  CARE_AREA: "Patient care area",
   GYNO: "Gyno",
   SURGICAL: "Surgical",
   MEDICAL_BENCH: "Medical Bench",
@@ -1425,7 +1425,7 @@ export const concepts = {
   REVIEW_OF_SYSTEMS_ENT: "Review of systems ENT",
   CENTRAL_LINE_CANNULATION_SITE: "Central line cannulation site",
   //Gyneacology ward template form concepts
-  CHIEF_COMPLAINT: "Chief Complaint",
+  CHIEF_COMPLAINT: "Chief complaint",
   HISTORY_OF_PRESENT_ILLNESS: "History of present illness",
   GRAVIDITY: "Gravidity",
   NUMBER_OF_LIVING_CHILDREN: "Number of living children",

@@ -101,7 +101,7 @@ export const ClientsAwaitingDisposition = () => {
             // renderCell: (cell: any) => <CareAreaDropdown patient={cell.row} />,
         },
         {
-            field: "patient_referred_to",
+            field: "patient_care_area",
             flex: 1,
             headerName: "Patient Care Area",
         },
@@ -258,12 +258,22 @@ const DispositionActions = ({ patient }: { patient: any }) => {
 
     return (
         <Box display="flex" gap={1}>
+            {/* View Profile Icon Button */}
+            <Tooltip title="View Profile" arrow>
+                <IconButton
+                    onClick={() => navigateTo(`/patient/${patient.id}/profile`)}
+                    aria-label="view profile"
+                    sx={{ color: "green" }}
+                >
+                    <FaPlay />
+                </IconButton>
+            </Tooltip>
             {/* Close Visit Icon Button */}
             <Tooltip title="Close Visit" arrow>
                 <IconButton
                     onClick={handleCloseVisit}
                     aria-label="close visit"
-                    sx={{ color: "#015E85" }}
+                    sx={{ color: "grey" }}
                 >
                     <FaSignOutAlt />
                 </IconButton>
@@ -303,16 +313,7 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                 </MenuItem> */}
             </Menu>
 
-            {/* View Profile Icon Button */}
-            <Tooltip title="View Profile" arrow>
-                <IconButton
-                    onClick={() => navigateTo(`/patient/${patient.id}/profile`)}
-                    aria-label="view profile"
-                    sx={{ color: "#015E85" }}
-                >
-                    <FaPlay />
-                </IconButton>
-            </Tooltip>
+
         </Box>
     );
 };
