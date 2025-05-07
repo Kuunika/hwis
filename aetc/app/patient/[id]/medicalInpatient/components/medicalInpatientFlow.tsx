@@ -80,7 +80,7 @@ export const MedicalInPatientFlow = () => {
 
 
   const handleInvestigationSubmit = () => {
-   navigateBack();
+  //  navigateBack();
   }
 
   return (
