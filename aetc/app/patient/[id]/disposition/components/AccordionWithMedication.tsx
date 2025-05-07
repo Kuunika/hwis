@@ -18,6 +18,7 @@ export const AccordionWithMedication = () => {
       title: "Prescribe Medications",
       content: (
         <MedicationsForm
+           medicationLabelTitle="Medication to Pharmacy"
           medicationTitle="Medication to Pharmacy"
           onSubmissionSuccess={handleCloseAccordion}
           encounterType={encounters.DISPOSED_PRESCRIPTIONS}

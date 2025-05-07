@@ -12,17 +12,19 @@ import { useEffect, useState } from "react";
 
 export const PrescribedMedicationList = ({
   setRow,
-  encounterType=encounters.PRESCRIPTIONS,
+  encounterType = encounters.PRESCRIPTIONS,
+  medicationLabelTitle,
 }: {
   encounterType?: string;
   setRow?: (row: any) => void;
+  medicationLabelTitle?: string;
 }) => {
   const { patientId, activeVisitId } = getActivePatientDetails();
-  const {setZpl, setOpen}=usePrinterDialog()
-  const {
-    data,
-    isPending: fetchingEncounters,
-  } = getPatientsEncounters(patientId as string, `encounter_type=${encounterType}`);
+  const { setZpl, setOpen } = usePrinterDialog();
+  const { data, isPending: fetchingEncounters } = getPatientsEncounters(
+    patientId as string,
+    `encounter_type=${encounterType}`
+  );
   const [rows, setRows] = useState<Array<any>>([]);
 
   const getValue = (ob: Obs, name: string) => {
@@ -34,9 +36,7 @@ export const PrescribedMedicationList = ({
 
   useEffect(() => {
     const prescriptionEncounter = data?.filter((d) => {
-      return (
-        d.visit_id == activeVisitId
-      );
+      return d.visit_id == activeVisitId;
     });
 
     if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
@@ -89,20 +89,20 @@ export const PrescribedMedicationList = ({
       })
       .filter((medication) => medication.description == "current");
 
-  
     setRows(formattedRows);
   }, [data]);
 
-
-  const handleMedicationPrint = ()=>{
-    const zpl =generateMedicationLabelZPL(rows);
-    setOpen(zpl)
-    setZpl(zpl)
-  }
+  const handleMedicationPrint = () => {
+    const zpl = generateMedicationLabelZPL(rows, medicationLabelTitle);
+    setOpen(zpl);
+    setZpl(zpl);
+  };
 
   return (
     <ContainerLoaderOverlay loading={fetchingEncounters}>
-      <Button onClick={handleMedicationPrint} variant="contained">Print Medications</Button>
+      <Button onClick={handleMedicationPrint} variant="contained">
+        Print Medications
+      </Button>
       <br />
       <MinimalTable
         getSelectedRow={setRow}

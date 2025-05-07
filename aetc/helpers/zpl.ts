@@ -167,7 +167,7 @@ type Medication = {
   prescribedBy: string;
 };
 
-export function generateMedicationLabelZPL(medications: Medication[]): string {
+export function generateMedicationLabelZPL(medications: Medication[], title='Medication Instructions'): string {
   // Constants (Zebra ZPL measurements in dots)
   const DPI = 203; // Standard printer resolution
   const LABEL_WIDTH = 5 * DPI; // 4" wide
@@ -209,7 +209,7 @@ export function generateMedicationLabelZPL(medications: Medication[]): string {
   }
 
   function formatMedication(med: Medication, n: number): string {
-    
+
     const parts = [
       med.medicationName,
       `${med.dose} ${med.doseUnits}`,
@@ -233,7 +233,7 @@ export function generateMedicationLabelZPL(medications: Medication[]): string {
         "^XA",
         "^CF0,25",
         // Header
-        `^FO${LEFT_MARGIN},30^FDMedication Instructions${labelNo > 1 ? ` (Cont. ${labelNo})` : ""}^FS`,
+        `^FO${LEFT_MARGIN},30^${title}${labelNo > 1 ? ` (Cont. ${labelNo})` : ""}^FS`,
         `^FO${LEFT_MARGIN},${HEADER_HEIGHT}^GB${MAX_LINE_WIDTH},${BORDER_THICKNESS},${BORDER_THICKNESS}^FS`,
       ].join("\n") + "\n";
 

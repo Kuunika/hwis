@@ -36,7 +36,8 @@ type Prop = {
   onSkip: () => void;
   encounterType?: string;
   onSubmissionSuccess: () => void;
-  medicationTitle?:string
+  medicationTitle?: string;
+  medicationLabelTitle?:string
 };
 type Medication = {
   name: string;
@@ -145,7 +146,8 @@ export const MedicationsForm = ({
   onSkip,
   encounterType = encounters.PRESCRIPTIONS,
   onSubmissionSuccess,
-  medicationTitle="Prescribed Medication",
+  medicationTitle = "Prescribed Medication",
+  medicationLabelTitle,
 }: Prop) => {
   const { ServerTime } = useServerTime();
   const {
@@ -235,7 +237,12 @@ export const MedicationsForm = ({
     {
       id: "prescribed",
       title: medicationTitle,
-      content: <PrescribedMedicationList encounterType={encounterType} />,
+      content: (
+        <PrescribedMedicationList
+          medicationLabelTitle={medicationLabelTitle}
+          encounterType={encounterType}
+        />
+      ),
     },
   ];
   return (
