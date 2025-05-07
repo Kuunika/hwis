@@ -21,12 +21,12 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { getObservationValue } from "@/helpers/emr";
 import { getConceptSetMembers } from "@/hooks/labOrder";
 import { Box, Button, Typography } from "@mui/material";
-import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
 
 const schema = Yup.object().shape({
   [concepts.REFERRED_FROM]: Yup.string().label("Referee Medical Facility"),
   [concepts.ADDITIONAL_NOTES]: Yup.string().label("Additional Notes"),
   [concepts.DIAGNOSIS]: Yup.array().label("Diagnosis"),
+  [concepts.OTHER]: Yup.string().label("Other Diagnosis"),
 });
 
 type Props = {
@@ -67,8 +67,6 @@ export const ReferralForm: FC<Props> = ({
     reloadDiagnosis();
   }, []);
 
-  const handleAddDiagnosis = () => {};
-
   return (
     <>
       <RegistrationMainHeader id="3">Referral</RegistrationMainHeader>
@@ -82,94 +80,118 @@ export const ReferralForm: FC<Props> = ({
           [concepts.ADDITIONAL_NOTES]: "yes",
           [concepts.REFERRED_FROM]: "",
           [concepts.DIAGNOSIS]: "",
+          [concepts.OTHER]: "",
           ...initialValues,
         }}
         onSubmit={onSubmit}
         submitButton={false}
         submitButtonText="next"
       >
-        <TrackFormikContext setFormContext={setContext} />
-        <RegistrationCard>
-          <RegistrationCardTitle>Health Facilities</RegistrationCardTitle>
+        {({ values }) => (
+          <>
+            <TrackFormikContext setFormContext={setContext} />
+            <RegistrationCard>
+              <RegistrationCardTitle>Health Facilities</RegistrationCardTitle>
 
-          {referred == "No" && (
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="subtitle1">
-                Patient Was not referred
-              </Typography>
-              <Button
-                onClick={() => {
-                  onSubmit({
-                    [concepts.ADDITIONAL_NOTES]: "N/A",
-                    [concepts.REFERRED_FROM]: "N/A",
-                    [concepts.DIAGNOSIS]: "",
-                  });
-                  if (onSkip) onSkip();
-                }}
-              >
-                skip step
-              </Button>
-            </Box>
-          )}
-          {isLoading ? (
-            <>loading facilities...</>
-          ) : (
-            <SearchComboBox
-              label="Referral Medical Facility"
-              name={concepts.REFERRED_FROM}
-              multiple={false}
-              getValue={setSelectedValue}
-              disabled={isAvailable == "no" || referred == "No"}
-              options={
-                data
-                  ? data.map((d: any) => ({
-                      id: d.facility_name,
-                      label: d.facility_name,
-                    }))
-                  : []
-              }
-            />
-          )}
-          {selectedValue == "" && (
-            <RadioGroupInput
-              disabled={referred == "No"}
-              name={concepts.ADDITIONAL_NOTES}
-              getValue={(value: any) => {
-                setIsAvailable(value);
-              }}
-              label={"Is the facility you are looking for available?"}
-              options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
-              ]}
-            />
-          )}
+              {referred == "No" && (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Typography variant="subtitle1">
+                    Patient Was not referred
+                  </Typography>
+                  <Button
+                    onClick={() => {
+                      onSubmit({
+                        [concepts.ADDITIONAL_NOTES]: "N/A",
+                        [concepts.REFERRED_FROM]: "N/A",
+                        [concepts.DIAGNOSIS]: "",
+                      });
+                      if (onSkip) onSkip();
+                    }}
+                  >
+                    skip step
+                  </Button>
+                </Box>
+              )}
+              {isLoading ? (
+                <>loading facilities...</>
+              ) : (
+                <SearchComboBox
+                  label="Referral Medical Facility"
+                  name={concepts.REFERRED_FROM}
+                  multiple={false}
+                  getValue={setSelectedValue}
+                  disabled={isAvailable == "no" || referred == "No"}
+                  options={
+                    data
+                      ? data.map((d: any) => ({
+                          id: d.facility_name,
+                          label: d.facility_name,
+                        }))
+                      : []
+                  }
+                />
+              )}
+              {selectedValue == "" && (
+                <RadioGroupInput
+                  disabled={referred == "No"}
+                  name={concepts.ADDITIONAL_NOTES}
+                  getValue={(value: any) => {
+                    setIsAvailable(value);
+                  }}
+                  label={"Is the facility you are looking for available?"}
+                  options={[
+                    { label: "Yes", value: "yes" },
+                    { label: "No", value: "no" },
+                  ]}
+                />
+              )}
 
-          {isAvailable == "no" && (
-            <TextInputField
-              name={concepts.REFERRED_FROM}
-              label="Other Facility"
-              id={concepts.REFERRED_FROM}
-            />
-          )}
+              {isAvailable == "no" && (
+                <TextInputField
+                  name={concepts.REFERRED_FROM}
+                  label="Other Facility"
+                  id={concepts.REFERRED_FROM}
+                />
+              )}
 
-          <SearchComboBox
-            sx={{ mt: "1ch" }}
-            options={
-              diagnosis
-                ? [...diagnosis?.map((d) => {
-                    return {
-                      id: d?.names[0]?.uuid as string,
-                      label: d?.names[0]?.name as string,
-                    };
-                  }), {id: concepts.OTHER, label: "Other"}]
-                : []
-            }
-            label="Diagnosis"
-            disabled={referred == "No"}
-            name={concepts.DIAGNOSIS}
-          />
-        </RegistrationCard>
+              <SearchComboBox
+                sx={{ mt: "1ch" }}
+                options={
+                  diagnosis
+                    ? [
+                        ...diagnosis?.map((d) => {
+                          return {
+                            id: d?.names[0]?.uuid as string,
+                            label: d?.names[0]?.name as string,
+                          };
+                        }),
+                        { id: concepts.OTHER, label: "Other" },
+                      ]
+                    : []
+                }
+                label="Diagnosis"
+                disabled={referred == "No"}
+                name={concepts.DIAGNOSIS}
+              />
+
+              {values[concepts.DIAGNOSIS]?.find(
+                (d: any) => d.id == concepts.OTHER
+              ) && (
+                <>
+                <br />
+                <TextInputField
+                  multiline={true}
+                  rows={5}
+                  sx={{ width: "100%" }}
+                  name={concepts.OTHER}
+                  label="Other Diagnosis"
+                  id={concepts.OTHER}
+                  />
+                  </>
+              )}
+            </RegistrationCard>
+          </>
+        )}
       </FormikInit>
     </>
   );
