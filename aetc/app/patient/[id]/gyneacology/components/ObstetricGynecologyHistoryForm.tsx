@@ -72,16 +72,16 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.gestationAge,
                 obsDatetime: currentDateTime,
             },
-            {
-                concept: concepts.GRAVIDITY,
-                value: values.gravidity,
-                obsDatetime: currentDateTime,
-            },
-            {
-                concept: concepts.PARITY,
-                value: values.parity,
-                obsDatetime: currentDateTime,
-            },
+            // {
+            //     concept: concepts.GRAVIDITY,
+            //     value: values.gravidity,
+            //     obsDatetime: currentDateTime,
+            // },
+            // {
+            //     concept: concepts.PARITY,
+            //     value: values.parity,
+            //     obsDatetime: currentDateTime,
+            // },
             {
                 concept: concepts.NUMBER_OF_LIVING_CHILDREN,
                 value: values.numberOfLivingChildren,
@@ -97,11 +97,11 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.menstrualCycle,
                 obsDatetime: currentDateTime,
             },
-            {
-                concept: concepts.DURATION,
-                value: values.duration,
-                obsDatetime: currentDateTime,
-            },
+            // {
+            //     concept: concepts.DURATION,
+            //     value: values.duration,
+            //     obsDatetime: currentDateTime,
+            // },
             {
                 concept: concepts.PREV_ABORTION,
                 value: values.prevAbortions,
@@ -142,16 +142,16 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.previousContraceptiveUse,
                 obsDatetime: currentDateTime,
             },
-            // {
-            //     concept: concepts.CURRENTLY_ON_CONTRACEPTIVE,
-            //     value: values.currentlyOnContraceptive,
-            //     obsDatetime: currentDateTime,
-            // },
             {
-                concept: concepts.SIDE_EFFECTS,
-                value: values.anySideEffects,
+                concept: concepts.CURRENTLY_ON_CONTRACEPTIVE,
+                value: values.currentlyOnContraceptive,
                 obsDatetime: currentDateTime,
             },
+            // {
+            //     concept: concepts.SIDE_EFFECTS,
+            //     value: values.anySideEffects,
+            //     obsDatetime: currentDateTime,
+            // },
             {
                 concept: concepts.CANCER_SCREENING,
                 value: values.cancerScreening,
@@ -162,11 +162,11 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.historyOfSTIs,
                 obsDatetime: currentDateTime,
             },
-            // {
-            //     concept: concepts.EDD,
-            //     value: values.edd,
-            //     obsDatetime: currentDateTime,
-            // },
+            {
+                concept: concepts.EDD,
+                value: values.edd,
+                obsDatetime: currentDateTime,
+            },
         ];
 
         const payload = {
@@ -220,8 +220,8 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                         <TextInputField name="lnmp" label="LNMP" type="text" id="" />
                         <TextInputField name="edd" label="EDD" type="text" id="" />
                         <TextInputField name="gestationAge" label="Gestation Age" type="text" id="" />
-                        <TextInputField name="gravidity" label="Gravidity" type="text" id="" />
-                        <TextInputField name="parity" label="Parity" type="text" id="" />
+                        <TextInputField name="gravidity" label="Gravidity" type="number" id="" />
+                        <TextInputField name="parity" label="Parity" type="number" id="" />
                         <TextInputField name="numberOfLivingChildren" label="Number of Living Children" type="text" id="" />
                         <TextInputField name="menarche" label="Menarche" type="text" id="" />
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     FormikInit,
     WrapperBox,
@@ -18,6 +18,8 @@ import { Visit } from "@/interfaces";
 import { useParameters } from "@/hooks";
 import { useNavigation } from "@/hooks";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { useReactToPrint } from "react-to-print";
+
 
 
 
@@ -30,14 +32,14 @@ type Prop = {
 };
 
 const conditionOptions = [
-    { value: "Stable", label: "Stable" },
-    { value: "Sick", label: "Sick" },
-    { value: "Critical", label: "Critical" },
+    { value: concepts.STABLE, label: "Stable" },
+    { value: concepts.SICK, label: "Sick" },
+    { value: concepts.CRITICAL, label: "Critical" },
 ];
 
 const yesNoOptions = [
-    { value: "true", label: "Yes" },
-    { value: "false", label: "No" },
+    { value: concepts.YES, label: "Yes" },
+    { value: concepts.NO, label: "No" },
 ];
 
 const validationSchema = Yup.object({});
@@ -51,7 +53,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
     const { navigateTo } = useNavigation();
     const { init, ServerTime } = useServerTime();
 
-
+    // Ref for printing
+    const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (patientVisits) {
@@ -77,24 +80,28 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
             obsDatetime: currentDateTime,
         });
 
+        //PLAN  DATA TYPE : N/A
+        //PALLOR  DATA TYPE : N/A
+
+
         const obs = [
-            createObs(concepts.CONDITION, values.condition),
-            createObs(concepts.PALLOR, values.pallor),
+            // createObs(concepts.CONDITION, values.condition),
+            // createObs(concepts.PALLOR, values.pallor),
             createObs(concepts.TEMPERATURE, values.temperature),
             createObs(concepts.PULSE_RATE, values.pulse),
             createObs(concepts.RESPIRATORY_RATE, values.respiratoryRate),
             createObs(concepts.BLOOD_PRESSURE_MEASURED, values.bloodPressure),
             createObs(concepts.STATS, values.stats),
             createObs(concepts.RBS, values.rbs),
-            createObs(concepts.WEIGHT, values.weight),
+            // createObs(concepts.WEIGHT, values.weight),
             createObs(concepts.HEIGHT, values.height),
             createObs(concepts.CHEST_EXAMINATION, values.chest),
             createObs(concepts.ABDOMINAL_EXAMINATION, values.abdomen),
             createObs(concepts.VAGINAL_INSPECTION, values.vaginalInspection),
             createObs(concepts.VAGINAL_EXAMINATION, values.vaginalExamination),
-            createObs(concepts.EXTREMITIES, values.extremities),
+            // createObs(concepts.EXTREMITIES, values.extremities),
             createObs(concepts.IMPRESSION, values.impression),
-            createObs(concepts.PLAN, values.plan),
+            // createObs(concepts.PLAN, values.plan),
             createObs(concepts.IMMEDIATE_INTERVENTION, values.immediateIntervention),
         ].filter((item) => item.value && item.value !== "");
 
@@ -115,6 +122,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
             console.error("Error submitting General Examination:", error);
         }
     };
+    // Updated Print function using the new syntax
+    const reactToPrintFn = useReactToPrint({ contentRef });
 
     return (
         <FormikInit

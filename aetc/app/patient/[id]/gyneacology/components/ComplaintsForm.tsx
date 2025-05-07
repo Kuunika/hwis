@@ -20,6 +20,7 @@ type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
+//BACKEND: Replace datatype for chief complaint to text
 const validationSchema = Yup.object({});
 export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const { params } = useParameters();
@@ -39,11 +40,11 @@ export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const handleSubmit = async (values: any) => {
         const currentDateTime = ServerTime.getServerTimeString();
         const obs = [
-            {
-                concept: concepts.CHIEF_COMPLAINT, // Replace with actual concept UUID
-                value: values.chiefComplaint,
-                obsDatetime: currentDateTime,
-            },
+            // {
+            //     concept: concepts.CHIEF_COMPLAINT, // Replace with actual concept UUID
+            //     value: values.chiefComplaint,
+            //     obsDatetime: currentDateTime,
+            // },
             {
                 concept: concepts.HISTORY_OF_PRESENT_ILLNESS, // Replace with actual concept UUID
                 value: values.historyOfPresentIllness,

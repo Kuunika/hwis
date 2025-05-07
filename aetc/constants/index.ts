@@ -1427,11 +1427,11 @@ export const concepts = {
   //Gyneacology ward template form concepts
   CHIEF_COMPLAINT: "Chief complaint",
   HISTORY_OF_PRESENT_ILLNESS: "History of present illness",
-  GRAVIDITY: "Gravidity",
+  GRAVIDITY: "Gravidity", // DATA TYPE NUMERIC
   NUMBER_OF_LIVING_CHILDREN: "Number of living children",
   MENARCHE: "Menarche",
   MENSTRUAL_CYCLE: "Menstrual cycle",
-  DURATION: "Duration",
+  DURATION: "Duration", //NOT FOUND
   PREV_ABORTION: "Prev Abortion",
   PREV_ECTOPIC: "Prev Ectopic",
   CONSISTENCY: "Consistency",
@@ -1439,27 +1439,27 @@ export const concepts = {
   ODOUR: "Odour",
   AMOUNT: "Amount",
   PREVIOUS_CONTRACEPTIVE: "Previous Contraceptive",
-  SIDE_EFFECTS: "Side effects",
+  SIDE_EFFECTS: "Side effects", //BOOLEAN
   CANCER_SCREENING: "Cancer Screening",
   DATE_OF_SCREENING: "Date of screening",
-  RESULT: "Result",
+  RESULT: "Results", //UPDATED "Result" TO "Results"
   HISTORY_OF_STIS: "History of STIs",
-  MENTAL_ILLNESS: "Mental Illness",
-  BLOOD_TRANSFUSION: "Blood Transfusion",
+  MENTAL_ILLNESS: "Mental Illness", // NOT FOUND
+  BLOOD_TRANSFUSION: "Blood Transfusion", // DATA TYPE: N/A
   DRUG_ALLERGIES: "Drug Allergies",
-  STABLE: "Stable",
+  STABLE: "Stable", // DATA TYPE: NUMERIC
   SICK: "Sick",
-  CRITICAL: "Critical",
-  MILD: "Mild",
-  MODERATE: "Moderate",
-  SEVERE: "Severe",
+  CRITICAL: "Critical", // DATA TYPE: NUMERIC
+  MILD: "Mild", // DATA TYPE : N/A
+  MODERATE: "Moderate", // DATA TYPE : N/A
+  SEVERE: "Severe", // DATA TYPE : N/A
   STATS: "Stats",
-  RBS: "RBS",
-  WEIGHT: "Weight",
+  RBS: "Random Blood Glucose (RBS)", //UPDATED RBS TO "Random Blood Glucose (RBS)"
+  WEIGHT: "Weight", // DATA TYPE: NUMERIC
   HEIGHT: "Height",
-  ABDOMEN: "Abdomen",
+  ABDOMEN: "Abdomen", // DATA TYPE : N/A
   VAGINAL_INSPECTION: "Vaginal Inspection",
-  EXTREMITIES: "Extremities",
+  EXTREMITIES: "Extremities", // not found
   IMPRESSION: "Impression",
   IMMEDIATE_INTERVENTION: "Immediate Intervention",
   EDD: "EDD",
