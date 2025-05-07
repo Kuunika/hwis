@@ -209,6 +209,7 @@ export function generateMedicationLabelZPL(medications: Medication[]): string {
   }
 
   function formatMedication(med: Medication, n: number): string {
+    
     const parts = [
       med.medicationName,
       `${med.dose} ${med.doseUnits}`,

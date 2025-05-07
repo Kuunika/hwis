@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { AccordionComponent } from "@/components/accordion";
-import { MedicationsForm } from "./medication";
+import { MedicationsForm } from "../../consultation/components/medication";
+import { encounters } from "@/constants";
+
 
 export const AccordionWithMedication = () => {
   const [accordionKey, setAccordionKey] = useState(Date.now());
@@ -16,14 +18,21 @@ export const AccordionWithMedication = () => {
       title: "Prescribe Medications",
       content: (
         <MedicationsForm
-          onSubmit={() => {
-            throw new Error("Function not implemented.");
-          }}
-          onSkip={() => {
-            throw new Error("Function not implemented.");
-          }}
-          onSuccess={handleCloseAccordion}
+          medicationTitle="Medication to Pharmacy"
+          onSubmissionSuccess={handleCloseAccordion}
+          encounterType={encounters.DISPOSED_PRESCRIPTIONS}
+          onSkip={() => {}}
+          onSubmit={() => {}}
         />
+        // <MedicationsForm
+        //   onSubmit={() => {
+        //     throw new Error("Function not implemented.");
+        //   }}
+        //   onSkip={() => {
+        //     throw new Error("Function not implemented.");
+        //   }}
+        //   onSuccess={handleCloseAccordion}
+        // />
       ),
     },
   ];

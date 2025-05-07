@@ -12,16 +12,17 @@ import { useEffect, useState } from "react";
 
 export const PrescribedMedicationList = ({
   setRow,
+  encounterType=encounters.PRESCRIPTIONS,
 }: {
+  encounterType?: string;
   setRow?: (row: any) => void;
 }) => {
-  const { patientId, activeVisitId, activeVisit } = getActivePatientDetails();
+  const { patientId, activeVisitId } = getActivePatientDetails();
   const {setZpl, setOpen}=usePrinterDialog()
   const {
     data,
     isPending: fetchingEncounters,
-    isRefetching,
-  } = getPatientsEncounters(patientId as string);
+  } = getPatientsEncounters(patientId as string, `encounter_type=${encounterType}`);
   const [rows, setRows] = useState<Array<any>>([]);
 
   const getValue = (ob: Obs, name: string) => {
@@ -34,7 +35,6 @@ export const PrescribedMedicationList = ({
   useEffect(() => {
     const prescriptionEncounter = data?.filter((d) => {
       return (
-        d?.encounter_type?.uuid == encounters.PRESCRIPTIONS &&
         d.visit_id == activeVisitId
       );
     });
@@ -89,8 +89,7 @@ export const PrescribedMedicationList = ({
       })
       .filter((medication) => medication.description == "current");
 
-    console.log({ formattedRows });
-
+  
     setRows(formattedRows);
   }, [data]);
 
