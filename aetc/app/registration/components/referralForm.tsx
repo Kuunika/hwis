@@ -104,6 +104,8 @@ export const ReferralForm: FC<Props> = ({
                         [concepts.ADDITIONAL_NOTES]: "N/A",
                         [concepts.REFERRED_FROM]: "N/A",
                         [concepts.DIAGNOSIS]: "",
+                        [concepts.OTHER]: "",
+                      
                       });
                       if (onSkip) onSkip();
                     }}
@@ -174,8 +176,8 @@ export const ReferralForm: FC<Props> = ({
                 name={concepts.DIAGNOSIS}
               />
 
-              {values[concepts.DIAGNOSIS]?.find(
-                (d: any) => d.id == concepts.OTHER
+              { Array.isArray(values[concepts.DIAGNOSIS]) && values[concepts.DIAGNOSIS]?.find(
+                (d: any) => d?.id == concepts.OTHER
               ) && (
                 <>
                 <br />
