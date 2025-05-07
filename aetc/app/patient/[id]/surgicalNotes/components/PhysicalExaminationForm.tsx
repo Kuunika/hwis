@@ -142,6 +142,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
             createObs(concepts.SENSATION, values.sensation),
             createObs(concepts.PULSATIONS, values.pulsations),
             createObs(concepts.RECTAL_EXAMINATION, values.rectalExamination),
+            createObs(concepts.EXTREMITIES, values.extremities),
             createObs(concepts.VAGINAL_EXAMINATION, values.vaginalExamination),
         ].filter((item) => item.value && item.value !== ""); // Filter out empty obs
 
@@ -183,6 +184,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                 sensation: "",
                 pulsations: "",
                 rectalExamination: "",
+                extremities: "",
                 vaginalExamination: "",
             }}
             validationSchema={validationSchema}
@@ -280,6 +282,8 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                                 name="pulsations" label="Pulsations" type="text" id={""} />
                             <TextInputField sx={{ width: "100%" }}
                                 name="rectalExamination" label="Rectal Examination" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="extremities" label="Extremities Examination" type="text" id={""} />
                             {gender == "Female" && (
 
                                 <TextInputField sx={{ width: "100%" }}
