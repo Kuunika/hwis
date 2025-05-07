@@ -24,7 +24,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const [presentingComplaints, setPresentingComplaints] = useState<Obs[]>([]);
   const [patientLabOrders, setPatientLabOrders] = useState<Array<any>>([]);
   const [printer, setPrinter]=useState('');
-  const [notes, setNotes]=useState<any>({})
+  const [notes, setNotes]=useState<any>({dischargeNotes:"",dischargePlan:""})
   
   const { data: presentingComplaintsData } = getPatientsEncounters(
     params?.id as string,
@@ -66,18 +66,15 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
 
   useEffect(()=>{
-
     if(disposition){
-      const dischargedOb=disposition[0].obs.find((d:Obs)=>d.names.find(n=>n.name==concepts.DISCHARGE_HOME));
-      
-      const dischargeNotes = getObservationValue(dischargedOb?.groupMembers,concepts.DISCHARGE_NOTES)
-      const dischargePlan = getObservationValue(dischargedOb?.groupMembers,concepts.DISCHARGE_PLAN)
+      const dischargedOb=disposition[0]?.obs.find((d:Obs)=>d.names.find(n=>n.name==concepts.DISCHARGE_HOME));
+      const dischargeNotes = getObservationValue(dischargedOb?.children,concepts.DISCHARGE_NOTES)
+      const dischargePlan = getObservationValue(dischargedOb?.children,concepts.DISCHARGE_PLAN)
 
       setNotes({
         dischargeNotes,
         dischargePlan
       })
-
     }
 
 
@@ -88,6 +85,8 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
       presentingComplaints,
       diagnosis,
       labOrders: patientLabOrders,
+      dischargeNotes: notes.dischargeNotes,
+      dischargePlan: notes.dischargePlan,
     });
 
     await axios.post(`${printer}/print`,{zpl})
@@ -96,7 +95,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   };
 
   return (
-    <GenericDialog title="Patient Summary" onClose={() => { }} open={open}>
+    <GenericDialog title="Patient Summary" onClose={() => {}} open={open}>
       <Stack spacing={3}>
         {/* Presenting Complaints */}
         <Box>
@@ -160,8 +159,26 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
             ))
           )}
         </Box>
-        <SelectPrinter setPrinter={setPrinter} />
 
+        {Boolean(notes.dischargeNotes) && (
+          <Box>
+        
+            <Typography variant="h6" gutterBottom>
+              Discharge Notes
+            </Typography>
+            <Typography>{notes.dischargeNotes}</Typography>
+          </Box>
+        )}
+        {Boolean(notes.dischargePlan) && (
+          <Box>
+        
+            <Typography variant="h6" gutterBottom>
+              Discharge Plan
+            </Typography>
+            <Typography>{notes.dischargePlan}</Typography>
+          </Box>
+        )}
+        <SelectPrinter setPrinter={setPrinter} />
       </Stack>
       <br />
       <Button variant="contained" onClick={handleOnPrint}>

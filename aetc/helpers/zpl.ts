@@ -14,10 +14,14 @@ export function generatePatientSummaryZPL({
   presentingComplaints,
   diagnosis,
   labOrders,
+  dischargeNotes,
+  dischargePlan,
 }: {
   presentingComplaints: Obs[];
   diagnosis: Obs[];
   labOrders: LabOrder[];
+  dischargeNotes?:string;
+  dischargePlan?:string;
 }): string {
   // Constants
   const DPI = 203; // printer resolution
@@ -79,6 +83,14 @@ export function generatePatientSummaryZPL({
     {
       title: "Investigations",
       lines: [`Investigations: ${investigationsText}`],
+    },
+    {
+      title: "Discharge Notes",
+      lines: [`Discharge Notes: ${dischargeNotes || "N/A"}`],
+    },
+    {
+      title: "Discharge Plan",
+      lines: [`Discharge Plan: ${dischargePlan || "N/A"}`],
     },
   ];
 
