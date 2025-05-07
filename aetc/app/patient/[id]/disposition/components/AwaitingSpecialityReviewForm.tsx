@@ -54,8 +54,6 @@ export default function AwaitingSpecialityReviewForm({openPatientSummary}:{openP
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
-    const { navigateTo } = useNavigation(); // Initialize navigation
     const { init, ServerTime } = useServerTime();
 
 

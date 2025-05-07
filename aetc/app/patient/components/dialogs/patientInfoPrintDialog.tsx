@@ -1,6 +1,7 @@
 import { GenericDialog } from "@/components";
 import { SelectPrinter } from "@/components/selectPrinter";
 import { concepts, encounters } from "@/constants";
+import { getObservationValue } from "@/helpers/emr";
 import { generatePatientSummaryZPL } from "@/helpers/zpl";
 
 import { useParameters } from "@/hooks";
@@ -22,8 +23,9 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const [diagnosis, setDiagnosis] = useState<Obs[]>([]);
   const [presentingComplaints, setPresentingComplaints] = useState<Obs[]>([]);
   const [patientLabOrders, setPatientLabOrders] = useState<Array<any>>([]);
-  const [printer, setPrinter]=useState('')
-
+  const [printer, setPrinter]=useState('');
+  const [notes, setNotes]=useState<any>({})
+  
   const { data: presentingComplaintsData } = getPatientsEncounters(
     params?.id as string,
     `encounter_type=${encounters.PRESENTING_COMPLAINTS}`
@@ -32,6 +34,10 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const { data } = getPatientsEncounters(
     params?.id as string,
     `encounter_type=${encounters.OUTPATIENT_DIAGNOSIS}`
+  );
+  const { data:disposition } = getPatientsEncounters(
+    params?.id as string,
+    `encounter_type=${encounters.DISPOSITION}`
   );
 
   const { data: ordersData } = getPatientLabOrder(params?.id as string);
@@ -56,6 +62,26 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
       setPresentingComplaints(presentingComplaintsData[0].obs);
     }
   }, [presentingComplaintsData]);
+
+
+
+  useEffect(()=>{
+
+    if(disposition){
+      const dischargedOb=disposition[0].obs.find((d:Obs)=>d.names.find(n=>n.name==concepts.DISCHARGE_HOME));
+      
+      const dischargeNotes = getObservationValue(dischargedOb?.groupMembers,concepts.DISCHARGE_NOTES)
+      const dischargePlan = getObservationValue(dischargedOb?.groupMembers,concepts.DISCHARGE_PLAN)
+
+      setNotes({
+        dischargeNotes,
+        dischargePlan
+      })
+
+    }
+
+
+  },[disposition])
 
   const handleOnPrint = async () => {
     const zpl = generatePatientSummaryZPL({

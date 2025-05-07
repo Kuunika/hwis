@@ -88,7 +88,7 @@ const openPatientSummaryDialog = ()=>{
       <PatientInfoTab />
       <BackButton />
       <MainGrid container spacing={2} mt={"2ch"} sx={{ ml: 16 }}>
-            <PatientInfoPrintDialog onClose={() => navigateTo("/dispositions")} open={openPatientSummary} />
+            <PatientInfoPrintDialog onClose={() => navigateTo("/dispositions")} open={true} />
         {/* Main Content */}
         <MainGrid item xs={12} lg={9}>
           {/* <div style={{ display: "flex", alignItems: "center" }}>
