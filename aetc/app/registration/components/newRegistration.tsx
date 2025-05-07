@@ -33,7 +33,7 @@ import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import { FaPrint } from "react-icons/fa6";
+
 import { PatientBarcodePrinter } from "@/components/barcodePrinterDialogs";
 import { useServerTime } from "@/contexts/serverTimeContext";
 

@@ -50,8 +50,6 @@ const FormResetHandler = ({ sampleName }: { sampleName: any }) => {
 export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
   const { ServerTime } = useServerTime();
   const [sampleName, setSampleName] = useState<string>("");
-  const [request, setRequest] = useState<any>({});
-  const formikRef = useRef(null);
   const {
     data: specimenTypes,
     isLoading,

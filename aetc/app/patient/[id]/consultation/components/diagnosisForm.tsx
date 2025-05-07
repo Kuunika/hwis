@@ -45,7 +45,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
 
     const [showICD11, setShowICD11] = useState(false);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { data: patientEncounters, refetch } = getPatientsEncounters(params.id as string);
+    const { data: patientEncounters, refetch } = getPatientsEncounters(params.id as string, `encounter_type=${encounters.OUTPATIENT_DIAGNOSIS}`);
     const { mutate: deleteDiagnosis } = removeObservation();
     const { init, ServerTime } = useServerTime();
 
@@ -62,7 +62,6 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
     useEffect(() => {
         if (patientEncounters) {
             const diagnosisRecords = patientEncounters
-                .filter((encounter) => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
                 .flatMap((encounter) =>
                     encounter.obs
                         .filter((obs) => obs.names[0]?.name === conceptType)
@@ -76,20 +75,11 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
         }
     }, [patientEncounters, conceptType]);
 
-    const initialValues = { condition: "" };
 
-    const validationSchema = Yup.object().shape({
-        condition: Yup.string().required("Condition is required"),
-    });
-
-    const handleICD11Selection = (selectedEntity: any, index: number) => {
-        setShowSelection((prev) => ({ ...prev, [index]: true }));
-        initialValues.condition = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`;
-    };
+  
 
     const handleAddDiagnosis = (selectedCondition: any) => {
         const currentDateTime = ServerTime.getServerTimeString();
-
         if (selectedCondition && activeVisit?.uuid) {
             createDiagnosis(
                 {
@@ -100,7 +90,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                     obs: [
                         {
                             concept: conceptType,
-                            value: `${selectedCondition.code} - ${selectedCondition.bestMatchText}`, // Use ICD-11 code
+                            value: `${selectedCondition.code} - ${selectedCondition.diagnosis}`, // Use ICD-11 code
                             obsDatetime: currentDateTime,
                         },
                     ],
@@ -193,7 +183,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                         <OfflineICD11Selection
                             label="Select Diagnosis" // Set a meaningful label
                             initialValue=""
-                            onSelection={(selectedCondition: any) => handleAddDiagnosis(selectedCondition)}
+                            onSelection={handleAddDiagnosis}
                             placeholder="Start typing to search diagnoses..."
                         />
                     )}
