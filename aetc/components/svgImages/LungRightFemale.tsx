@@ -1,7 +1,7 @@
 import { SVGPopover } from "./svgPopover";
 import { Box } from "@mui/material";
 
-import { DataBox, RushForm } from "./forms";
+import { BreathingSoundsChestLungForm, DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 
 import { concepts } from "@/constants";
@@ -15,12 +15,18 @@ interface Props {
   onValueChange: (values: any) => void;
   imageEncounter?: string;
   imageSection?: string;
+  form?:
+    | "breathingSoundChest"
+    | "breathSounds"
+    | "breathLungs"
+    | "medicalInpatient";
 }
 
 export function LungRightFemaleImage({
   onValueChange,
   imageEncounter,
   imageSection,
+  form = "breathSounds",
 }: Props) {
   const {
     handleClose,
@@ -60,16 +66,30 @@ export function LungRightFemaleImage({
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <BreathingSoundsForm
-          onCancel={handleClose}
-          onSubmit={(values, formConceptsLabels) =>
-            handleDataSubmission(
-              selectedSection.label as string,
-              values,
-              formConceptsLabels
-            )
-          }
-        />
+        {form == "breathSounds" && (
+          <BreathingSoundsForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {form == "breathingSoundChest" && (
+          <BreathingSoundsChestLungForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
       </SVGPopover>
     </div>
   );
