@@ -16,14 +16,20 @@ import {
 } from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters, useSubmitEncounter } from "@/hooks";
-import { encounters } from "@/constants";
+import { encounters, concepts } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { getObservations } from "@/helpers";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { useReactToPrint } from "react-to-print";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { getPatientLabOrder } from "@/hooks/labOrder";
-
+import { getAllObservations } from "@/hooks/obs";
+import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
+type PanelData = {
+  title: string;
+  data: any[];
+  useValue?: boolean;
+};
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
@@ -49,14 +55,48 @@ export const ClinicalNotes = () => {
       `encounter_type=${encounterTypeUuid}`
     );
     if (!patientHistory) return [];
-    console.log(
-      "🚀 ~ getEncountersByType ~ patientHistory:",
-      patientHistory[0]?.obs
-    );
     return patientHistory[0]?.obs || [];
   };
+  const getLatestValue = (obsData: any) => {
+    if (!obsData?.length) return null;
+    const latestObsMap = new Map();
 
-  const encounterData = {
+    // Find the most recent observation for each concept_id
+    obsData.forEach((observation: any) => {
+      const { concept_id, obs_datetime } = observation;
+      const currentLatest = latestObsMap.get(concept_id);
+
+      if (
+        !currentLatest ||
+        new Date(obs_datetime) > new Date(currentLatest.obs_datetime)
+      ) {
+        latestObsMap.set(concept_id, observation);
+      }
+    });
+
+    // Get the full observation objects, not just the keys
+    const latestObservations = Array.from(latestObsMap.values());
+
+    return latestObservations;
+  };
+  const getObsByConceptName = (obsData: any) => {
+    const { data: obs }: any = getAllObservations(patientId, obsData);
+    return obs?.data || [];
+  };
+  const getNewVitalSigns = () => {
+    const allObs: any = [
+      ...getObsByConceptName(concepts.HEART_RATE),
+      ...getObsByConceptName(concepts.RESPIRATORY_RATE),
+      ...getObsByConceptName(concepts.BLOOD_OXYGEN_SATURATION),
+      ...getObsByConceptName(concepts.TEMPERATURE),
+      ...getObsByConceptName(concepts.GLUCOSE),
+      ...getObsByConceptName(concepts.AVPU),
+      ...getObsByConceptName(concepts.SYSTOLIC_BLOOD_PRESSURE),
+      ...getObsByConceptName(concepts.DIASTOLIC_BLOOD_PRESSURE),
+    ];
+    return getLatestValue(allObs) || [];
+  };
+  const encounterData: Record<string, PanelData> = {
     panel1: {
       title: "Triage",
       data: [
@@ -70,7 +110,7 @@ export const ClinicalNotes = () => {
     },
     panel3: {
       title: "Vitals",
-      data: getEncountersByType(encounters.VITALS),
+      data: getNewVitalSigns(),
     },
     panel4: {
       title: "Past Medical History",
@@ -83,8 +123,8 @@ export const ClinicalNotes = () => {
     panel7: {
       title: "Plan",
       data: [
-        // ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
         ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
+        ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
       ],
     },
     panel8: {
@@ -99,7 +139,14 @@ export const ClinicalNotes = () => {
     },
     panel9: {
       title: "Secondary Survey",
-      data: getEncountersByType(encounters.FINANCING),
+      data: [
+        ...getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
+        ...getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
+        ...getEncountersByType(encounters.CHEST_ASSESSMENT),
+        ...getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
+        ...getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
+        ...getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
+      ],
     },
     panel10: {
       title: "Diagnosis",
@@ -110,7 +157,10 @@ export const ClinicalNotes = () => {
     },
     panel11: {
       title: "Laboratory or Radiology finding",
-      data: getEncountersByType(encounters.FINANCING),
+      data: [
+        ...getEncountersByType(encounters.BED_SIDE_TEST),
+        ...getEncountersByType(encounters.LAB),
+      ],
     },
     panel12: {
       title: "Outcome/Disposition",
@@ -126,13 +176,10 @@ export const ClinicalNotes = () => {
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
   };
-  const contentRef = useRef<HTMLDivElement>(null); // <--- move here
+  const contentRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
   });
-  // if (historyLoading) {
-  //   return <ProfilePanelSkeletonLoader />;
-  // }
 
   // Handle accordion expansion
   const handleChange = (panel: any) => (_: any, isExpanded: any) => {
@@ -143,10 +190,176 @@ export const ClinicalNotes = () => {
   const renderGroupedItems = (data: any[]) => {
     if (!data || data.length === 0) return null;
 
+    // First, separate items with children and those without
+    let itemsWithChildren: any = [];
+    itemsWithChildren = data.filter(
+      (item) => Array.isArray(item.children) && item.children.length > 0
+    );
+
+    const regularItems = data.filter(
+      (item) => !item.children || item.children.length === 0
+    );
+
+    // Process items with children
+    const parentElements = itemsWithChildren.map(
+      (parentItem: any, index: number) => {
+        // Add parent reference to children for use in renderChildrenByHeading
+        const childrenWithParentRef = parentItem.children.map((child: any) => ({
+          ...child,
+          parent: {
+            value: parentItem.value,
+            names: parentItem.names,
+          },
+        }));
+
+        return (
+          <Box key={`parent-item-${index}`} sx={{ marginBottom: "24px" }}>
+            {/* Render children with parent reference */}
+            {renderChildrenByHeading(childrenWithParentRef)}
+          </Box>
+        );
+      }
+    );
+
+    // Render regular items (without children)
+    const regularItemsElement =
+      regularItems.length > 0 ? renderRegularItems(regularItems, 0) : null;
+
+    // Combine both types of elements
+    return (
+      <>
+        {parentElements}
+        {regularItemsElement}
+      </>
+    );
+  };
+
+  // Function to group and render children by their headings
+  const renderChildrenByHeading = (children: any[]) => {
+    // Group children by their parent value
+    const groupedChildren: Record<string, any[]> = {};
+
+    children.forEach((child) => {
+      const parentValue = child.parent?.value || "Other";
+      if (!groupedChildren[parentValue]) {
+        groupedChildren[parentValue] = [];
+      }
+      groupedChildren[parentValue].push(child);
+    });
+
+    // Render each parent value as a group
+    return Object.entries(groupedChildren).map(
+      ([parentValue, childItems], index) => (
+        <Box
+          key={`child-group-${index}`}
+          className="clinical-note-group"
+          sx={{
+            marginBottom: "16px",
+            borderBottom:
+              index < Object.keys(groupedChildren).length - 1
+                ? "1px solid #e0e0e0"
+                : "none",
+            paddingBottom: "16px",
+            display: "flex",
+          }}
+        >
+          {/* Left side: Parent Value */}
+          <Typography
+            variant="subtitle2"
+            sx={{
+              fontWeight: 600,
+              color: "#3a3a3a",
+              width: "30%",
+              paddingRight: "8px",
+              display: "flex",
+              alignItems: "center",
+              height: "24px",
+            }}
+          >
+            <Box component="span" sx={{ flexGrow: 1 }}>
+              {parentValue}
+            </Box>
+          </Typography>
+
+          {/* Center separator */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "40px",
+              height: "24px",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: "#777",
+                fontWeight: 400,
+                fontSize: "1.5rem",
+                lineHeight: 1,
+              }}
+            >
+              :
+            </Typography>
+          </Box>
+
+          {/* Right side: Child names and values */}
+          <Box sx={{ width: "calc(70% - 40px)" }}>
+            {childItems.map((child, itemIndex) => {
+              const childName =
+                child.names && child.names[0]?.name ? child.names[0].name : "";
+              return (
+                <Box
+                  key={`child-value-${index}-${itemIndex}`}
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    marginBottom:
+                      itemIndex < childItems.length - 1 ? "10px" : 0,
+                    height: itemIndex === 0 ? "24px" : "auto",
+                  }}
+                >
+                  <Box
+                    component="span"
+                    sx={{
+                      minWidth: "6px",
+                      height: "6px",
+                      borderRadius: "50%",
+                      background: "#3f51b5",
+                      marginRight: "10px",
+                      marginTop: itemIndex === 0 ? "10px" : "8px",
+                      display: childItems.length > 1 ? "block" : "none",
+                    }}
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#555",
+                      textAlign: "left",
+                      lineHeight: "1.5",
+                      paddingTop: itemIndex === 0 ? "2px" : 0,
+                      fontWeight: "600",
+                      display: "inline",
+                    }}
+                  >
+                    {childName}
+                  </Typography>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+      )
+    );
+  };
+
+  // Helper function to handle regular items (without children)
+  const renderRegularItems = (items: any[], groupIndex: number) => {
     // Group items by their heading
     const groupedItems: Record<string, any[]> = {};
 
-    data.forEach((item) => {
+    items.forEach((item) => {
       const headingName =
         item?.names && item.names[0]?.name ? item.names[0].name : "Other";
       if (!groupedItems[headingName]) {
@@ -156,101 +369,103 @@ export const ClinicalNotes = () => {
     });
 
     // Render each group with heading appearing only once
-    return Object.entries(groupedItems).map(([heading, items], groupIndex) => (
-      <Box
-        key={`group-${groupIndex}`}
-        className="clinical-note-group"
-        sx={{
-          marginBottom: "16px",
-          borderBottom:
-            groupIndex < Object.keys(groupedItems).length - 1
-              ? "1px solid #e0e0e0"
-              : "none",
-          paddingBottom: "16px",
-          display: "flex",
-        }}
-      >
-        {/* Left side: Heading appears only once */}
-        <Typography
-          variant="subtitle2"
-          sx={{
-            fontWeight: 600,
-            color: "#3a3a3a",
-            width: "30%",
-            paddingRight: "8px",
-            display: "flex",
-            alignItems: "center",
-            height: "24px", // Set fixed height to align with first value
-          }}
-        >
-          <Box component="span" sx={{ flexGrow: 1 }}>
-            {heading}
-          </Box>
-        </Typography>
-
-        {/* Center separator with increased size */}
+    return Object.entries(groupedItems).map(
+      ([heading, groupItems], subGroupIndex) => (
         <Box
+          key={`group-${groupIndex}-${subGroupIndex}`}
+          className="clinical-note-group"
           sx={{
+            marginBottom: "16px",
+            borderBottom:
+              subGroupIndex < Object.keys(groupedItems).length - 1
+                ? "1px solid #e0e0e0"
+                : "none",
+            paddingBottom: "16px",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "40px",
-            height: "24px", // Match the height of the heading
           }}
         >
+          {/* Left side: Heading appears only once */}
           <Typography
-            variant="h6"
+            variant="subtitle2"
             sx={{
-              color: "#777",
-              fontWeight: 400,
-              fontSize: "1.5rem",
-              lineHeight: 1,
+              fontWeight: 600,
+              color: "#3a3a3a",
+              width: "30%",
+              paddingRight: "8px",
+              display: "flex",
+              alignItems: "center",
+              height: "24px",
             }}
           >
-            :
+            <Box component="span" sx={{ flexGrow: 1 }}>
+              {heading}
+            </Box>
           </Typography>
-        </Box>
 
-        {/* Right side: Values */}
-        <Box sx={{ width: "calc(70% - 40px)" }}>
-          {items.map((item, itemIndex) => (
-            <Box
-              key={`item-${groupIndex}-${itemIndex}`}
+          {/* Center separator */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "40px",
+              height: "24px",
+            }}
+          >
+            <Typography
+              variant="h6"
               sx={{
-                display: "flex",
-                alignItems: "flex-start",
-                marginBottom: itemIndex < items.length - 1 ? "10px" : 0,
-                height: itemIndex === 0 ? "24px" : "auto", // First item aligned with heading
+                color: "#777",
+                fontWeight: 400,
+                fontSize: "1.5rem",
+                lineHeight: 1,
               }}
             >
+              :
+            </Typography>
+          </Box>
+
+          {/* Right side: Values */}
+          <Box sx={{ width: "calc(70% - 40px)" }}>
+            {groupItems.map((item, itemIndex) => (
               <Box
-                component="span"
+                key={`item-${groupIndex}-${itemIndex}`}
                 sx={{
-                  minWidth: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  background: "#3f51b5",
-                  marginRight: "10px",
-                  marginTop: itemIndex === 0 ? "10px" : "8px",
-                  display: items.length > 1 ? "block" : "none",
-                }}
-              />
-              <Typography
-                variant="body2"
-                sx={{
-                  color: "#555",
-                  textAlign: "left",
-                  lineHeight: "1.5",
-                  paddingTop: itemIndex === 0 ? "2px" : 0, // First item aligned with heading
+                  display: "flex",
+                  alignItems: "flex-start",
+                  marginBottom: itemIndex < groupItems.length - 1 ? "10px" : 0,
+                  height: itemIndex === 0 ? "24px" : "auto",
                 }}
               >
-                {item?.value}
-              </Typography>
-            </Box>
-          ))}
+                <Box
+                  component="span"
+                  sx={{
+                    minWidth: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    background: "#3f51b5",
+                    marginRight: "10px",
+                    marginTop: itemIndex === 0 ? "10px" : "8px",
+                    display: groupItems.length > 1 ? "block" : "none",
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#555",
+                    textAlign: "left",
+                    lineHeight: "1.5",
+                    paddingTop: itemIndex === 0 ? "2px" : 0,
+                  }}
+                >
+                  {item?.value}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
         </Box>
-      </Box>
-    ));
+      )
+    );
   };
 
   return (
@@ -262,17 +477,13 @@ export const ClinicalNotes = () => {
           filterAETCState={filterAETCState}
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
-          onDownload={handlePrint} // <--- pass handler to child
+          onDownload={handlePrint}
         />
       </WrapperBox>
       {Object.entries(encounterData).map(
         ([panelId, { title, data }]) =>
           data.length > 0 && (
-            <Accordion
-              key={panelId}
-              expanded={expanded === panelId}
-              onChange={handleChange(panelId)}
-            >
+            <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={
                   <ArrowForwardIosSharpIcon
@@ -300,7 +511,14 @@ export const ClinicalNotes = () => {
               </AccordionSummary>
               <AccordionDetails>
                 {renderGroupedItems(data.flat())}
+                {/* {title === "Plan" && (
+                  <InvestigationPlanNotes children={data.flat()} />
+                )} */}
               </AccordionDetails>
+              <div>
+                <div></div>
+                <div></div>
+              </div>
             </Accordion>
           )
       )}
