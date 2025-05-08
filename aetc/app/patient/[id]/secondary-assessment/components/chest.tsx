@@ -387,6 +387,18 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             value:'Auscultation Lung Posterior',
             obsDatetime,
             groupMembers: flattenImagesObs(breathingSoundsPosteriorImagesEnc),
+          },
+          {
+            concept: concepts.SITE,
+            value:'Auscultation Lung Lateral Left',
+            obsDatetime,
+            groupMembers: flattenImagesObs(breathingSoundsLateralLeftImagesEnc),
+          },
+          {
+            concept: concepts.SITE,
+            value:'Auscultation Lung Lateral Right',
+            obsDatetime,
+            groupMembers: flattenImagesObs(breathingSoundsLateralRightImagesEnc),
           }
         ],
       },
