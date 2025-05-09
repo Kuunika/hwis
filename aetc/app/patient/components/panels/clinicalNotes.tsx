@@ -1,4 +1,4 @@
-import { MainButton, WrapperBox } from "@/components";
+import { MainButton, PatientInfoTab, WrapperBox } from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
@@ -97,6 +97,22 @@ export const ClinicalNotes = () => {
     return getLatestValue(allObs) || [];
   };
   const encounterData: Record<string, PanelData> = {
+    panel14: {
+      title: "Clinical Notes",
+      data: !filterAETCState
+        ? getEncountersByType(encounters.CLINICAL_NOTES)
+        : [],
+    },
+    panel13: {
+      title: "SOAPIER Notes",
+      data: filterSoapierState
+        ? [
+            ...getEncountersByType(encounters.NURSING_CARE_NOTES),
+            ...getEncountersByType(encounters.PRESCRIPTIONS),
+            ...getEncountersByType(encounters.DISPENSING),
+          ]
+        : [],
+    },
     panel1: {
       title: "Triage",
       data: [
@@ -480,48 +496,84 @@ export const ClinicalNotes = () => {
           onDownload={handlePrint}
         />
       </WrapperBox>
-      {Object.entries(encounterData).map(
-        ([panelId, { title, data }]) =>
-          data.length > 0 && (
-            <Accordion defaultExpanded>
-              <AccordionSummary
-                expandIcon={
-                  <ArrowForwardIosSharpIcon
-                    sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
-                  />
-                }
-                aria-controls={`${panelId}-content`}
-                id={`${panelId}-header`}
-                sx={{
-                  minHeight: "54px",
-                  "&.Mui-expanded": { minHeight: "54px" },
-                }}
-              >
-                <Typography
+      <div ref={contentRef}>
+        <div className="print-only">
+          <PatientInfoTab />
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: "20px",
+              marginTop: "10px",
+              textAlign: "center",
+            }}
+          >
+            Clinical Notes
+          </div>
+        </div>
+        {Object.entries(encounterData).map(
+          ([panelId, { title, data }]) =>
+            data.length > 0 && (
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={
+                    <ArrowForwardIosSharpIcon
+                      sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
+                    />
+                  }
+                  aria-controls={`${panelId}-content`}
+                  id={`${panelId}-header`}
                   sx={{
-                    fontWeight: 700,
-                    color: "#2c3e50",
-                    fontSize: "1.05rem",
-                    letterSpacing: "0.2px",
+                    minHeight: "54px",
+                    "&.Mui-expanded": { minHeight: "54px" },
                   }}
-                  component="span"
                 >
-                  {title}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {renderGroupedItems(data.flat())}
-                {/* {title === "Plan" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "98%",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        color: "#2c3e50",
+                        fontSize: "1.05rem",
+                        letterSpacing: "0.2px",
+                      }}
+                      component="span"
+                    >
+                      {title}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: "#7f8c8d",
+                        fontSize: "14px",
+                        letterSpacing: "0.2px",
+                      }}
+                    >
+                      ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
+                      {getHumanReadableDateTime(
+                        encounterData[panelId]?.data[0]?.obs_datetime
+                      )}
+                    </Typography>
+                  </div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {renderGroupedItems(data.flat())}
+                  {/* {title === "Plan" && (
                   <InvestigationPlanNotes children={data.flat()} />
                 )} */}
-              </AccordionDetails>
-              <div>
-                <div></div>
-                <div></div>
-              </div>
-            </Accordion>
-          )
-      )}
+                </AccordionDetails>
+                <div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </Accordion>
+            )
+        )}
+      </div>
+
       <style jsx>{`
         @media print {
           .print-only {
