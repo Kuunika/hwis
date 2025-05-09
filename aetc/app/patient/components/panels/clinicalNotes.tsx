@@ -25,11 +25,13 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { getPatientLabOrder } from "@/hooks/labOrder";
 import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
+
 type PanelData = {
   title: string;
   data: any[];
   useValue?: boolean;
 };
+
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
@@ -46,6 +48,12 @@ export const ClinicalNotes = () => {
     isPending,
     isSuccess,
   } = getPatientLabOrder(params?.id as string);
+
+  // Refresh encounter data when component mounts or filters change
+  useEffect(() => {
+    refresh();
+  }, [refresh, filterSoapierState, filterAETCState]);
+
   const getEncountersByType = (encounterTypeUuid: any) => {
     const {
       data: patientHistory,
@@ -57,6 +65,7 @@ export const ClinicalNotes = () => {
     if (!patientHistory) return [];
     return patientHistory[0]?.obs || [];
   };
+
   const getLatestValue = (obsData: any) => {
     if (!obsData?.length) return null;
     const latestObsMap = new Map();
@@ -79,10 +88,12 @@ export const ClinicalNotes = () => {
 
     return latestObservations;
   };
+
   const getObsByConceptName = (obsData: any) => {
     const { data: obs }: any = getAllObservations(patientId, obsData);
     return obs?.data || [];
   };
+
   const getNewVitalSigns = () => {
     const allObs: any = [
       ...getObsByConceptName(concepts.HEART_RATE),
@@ -96,22 +107,20 @@ export const ClinicalNotes = () => {
     ];
     return getLatestValue(allObs) || [];
   };
-  const encounterData: Record<string, PanelData> = {
+
+  // Generate base encounter data with all possible panels
+  const baseEncounterData: Record<string, PanelData> = {
     panel14: {
       title: "Clinical Notes",
-      data: !filterAETCState
-        ? getEncountersByType(encounters.CLINICAL_NOTES)
-        : [],
+      data: getEncountersByType(encounters.CLINICAL_NOTES),
     },
     panel13: {
       title: "SOAPIER Notes",
-      data: filterSoapierState
-        ? [
-            ...getEncountersByType(encounters.NURSING_CARE_NOTES),
-            ...getEncountersByType(encounters.PRESCRIPTIONS),
-            ...getEncountersByType(encounters.DISPENSING),
-          ]
-        : [],
+      data: [
+        ...getEncountersByType(encounters.NURSING_CARE_NOTES),
+        ...getEncountersByType(encounters.PRESCRIPTIONS),
+        ...getEncountersByType(encounters.DISPENSING),
+      ],
     },
     panel1: {
       title: "Triage",
@@ -184,14 +193,30 @@ export const ClinicalNotes = () => {
     },
   };
 
-  useEffect(() => {
-    refresh();
-  }, []);
+  // Filter encounter data based on filter states
+  const encounterData = useMemo(() => {
+    if (filterSoapierState) {
+      // Only show SOAPIER Notes when filterSoapierState is true
+      return {
+        panel13: baseEncounterData.panel13,
+      };
+    } else if (filterAETCState) {
+      // Remove Clinical Notes and SOAPIER Notes when filterAETCState is true
+      const filteredData = { ...baseEncounterData };
+      delete filteredData.panel14;
+      delete filteredData.panel13;
+      return filteredData;
+    } else {
+      // Show all panels when no filters are active
+      return baseEncounterData;
+    }
+  }, [filterSoapierState, filterAETCState, baseEncounterData]);
 
   const addClinicalNote = (note: string) => {
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
   };
+
   const contentRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
@@ -513,7 +538,7 @@ export const ClinicalNotes = () => {
         {Object.entries(encounterData).map(
           ([panelId, { title, data }]) =>
             data.length > 0 && (
-              <Accordion defaultExpanded>
+              <Accordion defaultExpanded key={panelId}>
                 <AccordionSummary
                   expandIcon={
                     <ArrowForwardIosSharpIcon
@@ -552,9 +577,13 @@ export const ClinicalNotes = () => {
                         letterSpacing: "0.2px",
                       }}
                     >
-                      ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
-                      {getHumanReadableDateTime(
-                        encounterData[panelId]?.data[0]?.obs_datetime
+                      {encounterData[panelId]?.data[0]?.created_by && (
+                        <>
+                          ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
+                          {getHumanReadableDateTime(
+                            encounterData[panelId]?.data[0]?.obs_datetime
+                          )}
+                        </>
                       )}
                     </Typography>
                   </div>
@@ -562,8 +591,8 @@ export const ClinicalNotes = () => {
                 <AccordionDetails>
                   {renderGroupedItems(data.flat())}
                   {/* {title === "Plan" && (
-                  <InvestigationPlanNotes children={data.flat()} />
-                )} */}
+                    <InvestigationPlanNotes children={data.flat()} />
+                  )} */}
                 </AccordionDetails>
                 <div>
                   <div></div>
