@@ -773,13 +773,14 @@ export const ClinicalNotes = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   {/* Use custom component for Laboratory/Radiology panel */}
-                  {title === "Laboratory or Radiology finding" ? (
-                    <LaboratoryRadiologyFindings
-                      data={Array.isArray(data) ? data.flat() : []}
-                    />
-                  ) : (
-                    renderGroupedItems(Array.isArray(data) ? data.flat() : [])
-                  )}
+                  {title === "Laboratory or Radiology finding"
+                    ? // <LaboratoryRadiologyFindings
+                      //   data={Array.isArray(data) ? data.flat() : []}
+                      // />
+                      ""
+                    : renderGroupedItems(
+                        Array.isArray(data) ? data.flat() : []
+                      )}
                 </AccordionDetails>
                 <div>
                   <div></div>
