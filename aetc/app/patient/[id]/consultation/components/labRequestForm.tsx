@@ -299,7 +299,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
           reason_for_test: "b998cdac-8d80-11d8-abbb-0024217bb78e",
           target_lab: "Blantyre Dream Project Clinic",
           date: testDate, // Use the test date instead of getDateTime()
-          requesting_clinician: "admin",
+          requesting_clinician: localStorage.getItem("userName"),
           specimen: {
             concept: specimenConcept,
             specimenType: specimenType,
