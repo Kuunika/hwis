@@ -33,6 +33,78 @@ type PanelData = {
   removeObs?: string[]; // Add removeObs property to PanelData type
 };
 
+// New component for Laboratory or Radiology finding
+const LaboratoryRadiologyFindings = ({ data }) => {
+  if (!data || !Array.isArray(data) || data.length === 0) return null;
+
+  // Ensure data is actually an array before processing
+  const safeData = Array.isArray(data) ? data : [];
+
+  // Group lab results by test type
+  const groupedResults = safeData.reduce((acc, item) => {
+    // Skip null or undefined items
+    if (!item) return acc;
+
+    const testName = item?.names?.[0]?.name || "Other";
+    if (!acc[testName]) {
+      acc[testName] = [];
+    }
+    acc[testName].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <Box sx={{ padding: "10px 0" }}>
+      {Object.entries(groupedResults).map(([testName, results], index) => (
+        <Box
+          key={`lab-group-${index}`}
+          sx={{
+            marginBottom: "20px",
+            padding: "10px",
+            backgroundColor: "#f9f9f9",
+            borderRadius: "4px",
+            border: "1px solid #e0e0e0",
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 600,
+              color: "#2c3e50",
+              borderBottom: "1px solid #e0e0e0",
+              paddingBottom: "8px",
+              marginBottom: "10px",
+            }}
+          >
+            {testName}
+          </Typography>
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            {Array.isArray(results) &&
+              results.map((result, idx) => (
+                <Box
+                  key={`result-${idx}`}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "4px 0",
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    {result.value}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                    {getHumanReadableDateTime(result.obs_datetime)}
+                  </Typography>
+                </Box>
+              ))}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
 const filterObservationsByName = (observations: any, filterNames = []) => {
   if (!observations || !Array.isArray(observations)) return [];
 
@@ -60,6 +132,7 @@ const filterObservationsByName = (observations: any, filterNames = []) => {
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
+  const [expandedPanels, setExpandedPanels] = useState({});
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
     () => ""
@@ -295,8 +368,31 @@ export const ClinicalNotes = () => {
   };
 
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Function to expand all accordions before printing
+  const expandAllAccordions = () => {
+    const panelIds = Object.keys(encounterData);
+    const expanded = {};
+
+    panelIds.forEach((id) => {
+      expanded[id] = true;
+    });
+
+    console.log("🚀 ~ expandAllAccordions ~ expanded:", expanded);
+    setExpandedPanels(expanded);
+
+    // Short delay to ensure UI updates before printing
+    setTimeout(() => {
+      handlePrint();
+    }, 100);
+  };
+
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
+    onAfterPrint: () => {
+      // Reset expanded panels state after printing
+      setExpandedPanels({});
+    },
   });
 
   // Handle accordion expansion
@@ -306,12 +402,12 @@ export const ClinicalNotes = () => {
 
   // Function to render grouped items by heading
   const renderGroupedItems = (data: any[]) => {
-    if (!data || data.length === 0) return null;
+    if (!data || !Array.isArray(data) || data.length === 0) return null;
 
     // First, separate items with children and those without
     let itemsWithChildren: any = [];
     itemsWithChildren = data.filter(
-      (item) => Array.isArray(item.children) && item.children.length > 0
+      (item) => item && Array.isArray(item.children) && item.children.length > 0
     );
 
     const regularItems = data.filter(
@@ -354,10 +450,16 @@ export const ClinicalNotes = () => {
 
   // Function to group and render children by their headings
   const renderChildrenByHeading = (children: any[]) => {
+    // Ensure children is an array
+    if (!children || !Array.isArray(children)) {
+      return null;
+    }
+
     // Group children by their parent value
     const groupedChildren: Record<string, any[]> = {};
 
     children.forEach((child) => {
+      if (!child) return; // Skip null or undefined children
       const parentValue = child.parent?.value || "Other";
       if (!groupedChildren[parentValue]) {
         groupedChildren[parentValue] = [];
@@ -595,7 +697,7 @@ export const ClinicalNotes = () => {
           filterAETCState={filterAETCState}
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
-          onDownload={handlePrint}
+          onDownload={expandAllAccordions} // Changed from handlePrint to expandAllAccordions
         />
       </WrapperBox>
       <div ref={contentRef}>
@@ -615,7 +717,11 @@ export const ClinicalNotes = () => {
         {Object.entries(encounterData).map(
           ([panelId, { title, data }]: any) =>
             data.length > 0 && (
-              <Accordion defaultExpanded key={panelId}>
+              <Accordion
+                defaultExpanded={expanded === panelId}
+                expanded={expandedPanels[panelId] === true || undefined}
+                key={panelId}
+              >
                 <AccordionSummary
                   expandIcon={
                     <ArrowForwardIosSharpIcon
@@ -666,10 +772,14 @@ export const ClinicalNotes = () => {
                   </div>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {renderGroupedItems(data.flat())}
-                  {/* {title === "Plan" && (
-                    <InvestigationPlanNotes children={data.flat()} />
-                  )} */}
+                  {/* Use custom component for Laboratory/Radiology panel */}
+                  {title === "Laboratory or Radiology finding" ? (
+                    <LaboratoryRadiologyFindings
+                      data={Array.isArray(data) ? data.flat() : []}
+                    />
+                  ) : (
+                    renderGroupedItems(Array.isArray(data) ? data.flat() : [])
+                  )}
                 </AccordionDetails>
                 <div>
                   <div></div>
@@ -685,7 +795,19 @@ export const ClinicalNotes = () => {
           .print-only {
             display: block !important; /* Ensure visibility in print */
           }
+
+          /* Make sure accordions are visible in print */
+          :global(.MuiCollapse-hidden) {
+            visibility: visible !important;
+            display: block !important;
+            height: auto !important;
+          }
+
+          :global(.MuiAccordionSummary-content) {
+            margin: 12px 0 !important; /* Ensure proper spacing */
+          }
         }
+
         .print-only {
           display: none; /* Hide on screen */
         }
