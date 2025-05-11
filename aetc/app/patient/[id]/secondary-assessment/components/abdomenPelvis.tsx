@@ -24,6 +24,7 @@ import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   abdominalDistention: {
@@ -373,6 +374,7 @@ const bowelSounds = [
   { id: concepts.ABSENT, label: "Absent" },
 ];
 export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
+     const {ServerTime}=useServerTime();
   const [isChecked, setIsChecked] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const [showSpecify, setShowSpecify] = useState(false);
@@ -394,7 +396,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
 
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
     const obs = [
       {
         concept: form.abnormalitiesPresent.name,

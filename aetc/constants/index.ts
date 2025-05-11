@@ -180,6 +180,7 @@ export const encounters = {
   MEDICAL_IN_PATIENT: "1aeb209d-8f1f-4367-8d9c-476134235545",
   SURGICAL_NOTES_TEMPLATE_FORM: "6c44a2d9-953d-41dd-9b99-03b4214f85ba",
   DISPOSED_PRESCRIPTIONS: "a9ebe09e-0296-40d1-a9fa-3efcce85ea9e ",
+  GYNEACOLOGY_WARD: "59514a38-a019-4833-b180-480d1bbf2dfe",
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -324,7 +325,7 @@ export const concepts = {
   TURNING_PATIENTS: "Turning Patients",
   ORAL_CARE: "Oral Care",
   TRAUMA: "Trauma",
-  CARE_AREA: "Care Area",
+  CARE_AREA: "Patient care area",
   GYNO: "Gyno",
   SURGICAL: "Surgical",
   MEDICAL_BENCH: "Medical Bench",
@@ -379,6 +380,8 @@ export const concepts = {
   DEHYDRATION_SKIN: "Dehydration Skin",
   HEART_RATE_50: "Heart Rate 50",
   CIRCULATION_INTERVENTIONS: "Circulation Interventions",
+  DISABILITY_INTERVENTIONS: "Disability Interventions",
+  EXPOSURE_INTERVENTIONS: "Exposure Interventions",
   DOES_PATIENT_LOW_LEVEL_CONSCIOUSNESS: "Does Patient Low Level Consciousness",
   BLOOD_GLUCOSE: "Blood glucose",
   GCS: "Gcs",
@@ -1421,9 +1424,53 @@ export const concepts = {
   INTRAOSSEOUS: "Intraosseous",
   REVIEW_OF_SYSTEMS_ENT: "Review of systems ENT",
   CENTRAL_LINE_CANNULATION_SITE: "Central line cannulation site",
-  GYNAE_BENCH:"Gynae Bench",
-  SURGICAL_BENCH:"Surgical bench",
- 
+  //Gyneacology ward template form concepts
+  CHIEF_COMPLAINT: "Chief complaint",
+  HISTORY_OF_PRESENT_ILLNESS: "History of present illness",
+  GRAVIDITY: "Gravidity",
+  NUMBER_OF_LIVING_CHILDREN: "Number of living children",
+  MENARCHE: "Menarche",
+  MENSTRUAL_CYCLE: "Menstrual cycle",
+  DURATION: "Duration",
+  PREV_ABORTION: "Prev Abortion",
+  PREV_ECTOPIC: "Prev Ectopic",
+  CONSISTENCY: "Consistency",
+  COLOR: "Color",
+  ODOUR: "Odour",
+  AMOUNT: "Amount",
+  PREVIOUS_CONTRACEPTIVE: "Previous Contraceptive",
+  SIDE_EFFECTS: "Side effects",
+  CANCER_SCREENING: "Cancer Screening",
+  DATE_OF_SCREENING: "Date of screening",
+  RESULT: "Result",
+  HISTORY_OF_STIS: "History of STIs",
+  MENTAL_ILLNESS: "Mental Illness",
+  BLOOD_TRANSFUSION: "Blood Transfusion",
+  DRUG_ALLERGIES: "Drug Allergies",
+  STABLE: "Stable",
+  SICK: "Sick",
+  CRITICAL: "Critical",
+  MILD: "Mild",
+  MODERATE: "Moderate",
+  SEVERE: "Severe",
+  STATS: "Stats",
+  RBS: "RBS",
+  WEIGHT: "Weight",
+  HEIGHT: "Height",
+  ABDOMEN: "Abdomen",
+  VAGINAL_INSPECTION: "Vaginal Inspection",
+  EXTREMITIES: "Extremities",
+  IMPRESSION: "Impression",
+  IMMEDIATE_INTERVENTION: "Immediate Intervention",
+  EDD: "EDD",
+  CURRENTLY_ON_CONTRACEPTIVE: "Currently on Contraceptive",
+
+
+
+
+  GYNAE_BENCH: "Gynae Bench",
+  SURGICAL_BENCH: "Surgical bench",
+
 };
 
 export const conceptNames = {

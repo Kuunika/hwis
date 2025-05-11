@@ -19,6 +19,9 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { concepts, encounters } from "@/constants";
 import ECTReactComponent from "@/components/form/ECTReactComponent"; // Import ICD-11 component
+import { useServerTime } from "@/contexts/serverTimeContext";
+import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
+
 
 interface Diagnosis {
     id: string;
@@ -42,8 +45,10 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
 
     const [showICD11, setShowICD11] = useState(false);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { data: patientEncounters, refetch } = getPatientsEncounters(params.id as string);
+    const { data: patientEncounters, refetch } = getPatientsEncounters(params.id as string, `encounter_type=${encounters.OUTPATIENT_DIAGNOSIS}`);
     const { mutate: deleteDiagnosis } = removeObservation();
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -57,7 +62,6 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
     useEffect(() => {
         if (patientEncounters) {
             const diagnosisRecords = patientEncounters
-                .filter((encounter) => encounter.encounter_type.uuid === encounters.OUTPATIENT_DIAGNOSIS)
                 .flatMap((encounter) =>
                     encounter.obs
                         .filter((obs) => obs.names[0]?.name === conceptType)
@@ -71,20 +75,11 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
         }
     }, [patientEncounters, conceptType]);
 
-    const initialValues = { condition: "" };
 
-    const validationSchema = Yup.object().shape({
-        condition: Yup.string().required("Condition is required"),
-    });
-
-    const handleICD11Selection = (selectedEntity: any, index: number) => {
-        setShowSelection((prev) => ({ ...prev, [index]: true }));
-        initialValues.condition = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`;
-    };
+  
 
     const handleAddDiagnosis = (selectedCondition: any) => {
-        const currentDateTime = getDateTime();
-
+        const currentDateTime = ServerTime.getServerTimeString();
         if (selectedCondition && activeVisit?.uuid) {
             createDiagnosis(
                 {
@@ -95,7 +90,7 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                     obs: [
                         {
                             concept: conceptType,
-                            value: `${selectedCondition.code} - ${selectedCondition.bestMatchText}`, // Use ICD-11 code
+                            value: `${selectedCondition.code} - ${selectedCondition.diagnosis}`, // Use ICD-11 code
                             obsDatetime: currentDateTime,
                         },
                     ],
@@ -176,12 +171,20 @@ function DiagnosisForm({ conceptType }: DiagnosisFormProps) {
                         {showICD11 ? "- Cancel New Diagnosis" : "+ Add New Diagnosis"}
                     </Typography>
 
-                    {showICD11 && (
+                    {/* {showICD11 && (
                         <ECTReactComponent
                             iNo={1}  // Provide a unique number (adjust as needed)
                             // name="diagnosis" // Give an appropriate name
                             label="Select Diagnosis" // Set a meaningful label
                             onICD11Selection={(selectedCondition: any) => handleAddDiagnosis(selectedCondition)}
+                        />
+                    )} */}
+                    {showICD11 && (
+                        <OfflineICD11Selection
+                            label="Select Diagnosis" // Set a meaningful label
+                            initialValue=""
+                            onSelection={handleAddDiagnosis}
+                            placeholder="Start typing to search diagnoses..."
                         />
                     )}
 

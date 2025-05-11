@@ -25,7 +25,7 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
-import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { ServiceAreaForm } from "./serviceAreaForm";
 import { Encounter, TriageResult } from "@/interfaces";
@@ -35,8 +35,10 @@ import { closeCurrentVisit } from "@/hooks/visit";
 
 import { getObservationValue } from "@/helpers/emr";
 import { PatientTriageBarcodePrinter } from "@/components/barcodePrinterDialogs";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 export default function TriageWorkFlow() {
+  const { ServerTime } = useServerTime();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [formData, setFormData] = useState<any>({});
   const { params } = useParameters();
@@ -142,7 +144,7 @@ export default function TriageWorkFlow() {
       .find((d) => d.visit_id == activeVisit?.visit_id);
   };
 
-  const dateTime = getDateTime();
+  //getDateTime();
 
   useEffect(() => {
     setReferral(getEncounterActiveVisit(encounters.REFERRAL));
@@ -160,6 +162,7 @@ export default function TriageWorkFlow() {
     if (presentingCreated) {
       setCompleted(1);
       setMessage("adding vitals...");
+      const dateTime = ServerTime.getServerTimeString();
 
       createVitals({
         encounterType: encounters.VITALS,
@@ -173,6 +176,7 @@ export default function TriageWorkFlow() {
 
   useEffect(() => {
     if (vitalsCreated) {
+      const dateTime = ServerTime.getServerTimeString();
       setCompleted(2);
       setMessage("adding airway...");
       createAirway({
@@ -187,6 +191,7 @@ export default function TriageWorkFlow() {
 
   useEffect(() => {
     if (airwayCreated) {
+      const dateTime = ServerTime.getServerTimeString();
       setCompleted(3);
       setMessage("adding blood circulation data...");
       createBlood({
@@ -201,6 +206,7 @@ export default function TriageWorkFlow() {
 
   useEffect(() => {
     if (bloodCreated) {
+      const dateTime = ServerTime.getServerTimeString();
       setCompleted(4);
       setMessage("adding disability...");
 
@@ -217,6 +223,7 @@ export default function TriageWorkFlow() {
   useEffect(() => {
     if (disabilityCreated) {
       setCompleted(5);
+      const dateTime = ServerTime.getServerTimeString();
       setMessage("adding pain and persistent...");
 
       createPain({
@@ -241,6 +248,7 @@ export default function TriageWorkFlow() {
               ([key]) => key !== concepts.PATIENT_REFERRED_TO
             )?.[1];
 
+      const dateTime = ServerTime.getServerTimeString();
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,
@@ -258,12 +266,12 @@ export default function TriageWorkFlow() {
               triageResult === "green" || triageResult === "yellow"
                 ? formData.serviceArea?.[concepts.PATIENT_REFERRED_TO] || ""
                 : "",
-            obsDatetime: getDateTime(),
+            obsDatetime: dateTime,
           },
           {
             concept: concepts.OTHER_AETC_SERVICE_AREA,
             value: otherAETCArea ? otherAETCArea : "",
-            obsDatetime: getDateTime(),
+            obsDatetime: dateTime,
           },
         ],
       });
@@ -367,16 +375,18 @@ export default function TriageWorkFlow() {
     triggerSubmission();
     setShowModal(false);
   };
+  const dateTime = ServerTime.getServerTimeString();
 
   const triggerSubmission = () => {
     setLoading(true);
+    const dateTime = ServerTime.getServerTimeString();
     setMessage("adding complaints...");
     createPresenting({
       encounterType: encounters.PRESENTING_COMPLAINTS,
       visit: activeVisit?.uuid,
       patient: params.id,
       encounterDatetime: dateTime,
-      obs: getObservations(formData.presentingComplaints, dateTime),
+      obs: formData.presentingComplaints,
     });
   };
 

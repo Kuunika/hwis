@@ -22,6 +22,7 @@ import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFe
 import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
 import { getDateTime } from "@/helpers/dateTime";
 import { Checkbox, FormControlLabel } from "@mui/material";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 type Props = {
   onSubmit: () => void;
@@ -45,6 +46,7 @@ const initialValues = {
   rashDescription: "",
 };
 export const HeadAndNeck = ({ onSubmit }: Props) => {
+   const {ServerTime}=useServerTime();
   const [headNeckImageEncounter, setHeadNeckImageEncounter] = useState<
     Array<any>
   >([]);
@@ -65,7 +67,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   );
 
   const handleSubmitForm = async (values: any) => {
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
 
     const obs = [
       {

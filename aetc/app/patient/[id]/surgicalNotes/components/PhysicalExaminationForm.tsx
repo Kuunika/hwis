@@ -17,6 +17,8 @@ import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getActivePatientDetails } from "@/hooks";
 
 import { Visit } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -91,6 +93,8 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -108,7 +112,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
             return;
         }
 
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         // Helper to create observation
         const createObs = (concept: string, value: any) => ({
@@ -138,6 +142,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
             createObs(concepts.SENSATION, values.sensation),
             createObs(concepts.PULSATIONS, values.pulsations),
             createObs(concepts.RECTAL_EXAMINATION, values.rectalExamination),
+            createObs(concepts.EXTREMITIES, values.extremities),
             createObs(concepts.VAGINAL_EXAMINATION, values.vaginalExamination),
         ].filter((item) => item.value && item.value !== ""); // Filter out empty obs
 
@@ -179,6 +184,7 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                 sensation: "",
                 pulsations: "",
                 rectalExamination: "",
+                extremities: "",
                 vaginalExamination: "",
             }}
             validationSchema={validationSchema}
@@ -276,6 +282,8 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                                 name="pulsations" label="Pulsations" type="text" id={""} />
                             <TextInputField sx={{ width: "100%" }}
                                 name="rectalExamination" label="Rectal Examination" type="text" id={""} />
+                            <TextInputField sx={{ width: "100%" }}
+                                name="extremities" label="Extremities Examination" type="text" id={""} />
                             {gender == "Female" && (
 
                                 <TextInputField sx={{ width: "100%" }}

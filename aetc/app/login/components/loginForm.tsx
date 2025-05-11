@@ -15,6 +15,7 @@ import { useNavigation } from "@/hooks";
 import { useContext, useEffect } from "react";
 import { OverlayLoader } from "@/components/backdrop";
 import { AuthContext, AuthContextType } from "@/contexts";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 const schema = yup.object({
   username: yup.string().label("Username"),
@@ -29,10 +30,12 @@ export const LoginForm = () => {
   const { mutate, isPending, isError, isSuccess, data } = Login();
   const { navigateTo } = useNavigation();
   const { setLoggedIn } = useContext(AuthContext) as AuthContextType;
+  const { init, ServerTime } = useServerTime();
 
   useEffect(() => {
     if (isSuccess) {
       setLoggedIn(true);
+      init();
       navigateTo("/dashboard");
     }
   }, [isSuccess]);
@@ -56,7 +59,7 @@ export const LoginForm = () => {
           <Image src={"/logo.png"} alt="logo" width={100} height={100} />
           <br />
           <MainTypography variant="h3">Mahis</MainTypography>
-          <br />
+
           <OverlayLoader open={isPending} />
           <FormikInit
             initialValues={{ username: "", password: "" }}
@@ -81,9 +84,12 @@ export const LoginForm = () => {
                 label="Password"
                 type="password"
               />
-              {isError && <MainTypography variant="body2" color={"#FF0000"}>Invalid Credentials</MainTypography>}
-              <MainButton type="submit" title={"Login"} onClick={() => { }} />
-
+              {isError && (
+                <MainTypography variant="body2" color={"#FF0000"}>
+                  Invalid Credentials
+                </MainTypography>
+              )}
+              <MainButton type="submit" title={"Login"} onClick={() => {}} />
             </WrapperBox>
           </FormikInit>
         </WrapperBox>

@@ -4,7 +4,7 @@ import {
   NotificationContainer,
 } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -23,7 +23,6 @@ import {
   mapSubmissionToCodedArray,
 } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
@@ -36,6 +35,7 @@ import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   isPatientBreathing: {
@@ -273,6 +273,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
+  const {ServerTime}=useServerTime()
   const { gender } = getActivePatientDetails();
   const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
     Array<any>
@@ -297,7 +298,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = getDateTime();
+  const obsDatetime = ServerTime.getServerTimeString();
 
     const obs = [
       {

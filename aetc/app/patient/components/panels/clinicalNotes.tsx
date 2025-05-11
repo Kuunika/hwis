@@ -132,7 +132,7 @@ const filterObservationsByName = (observations: any, filterNames = []) => {
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
-  const [expandedPanels, setExpandedPanels] = useState({});
+  const [expandedPanels, setExpandedPanels]: any = useState({});
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
     () => ""
@@ -372,7 +372,7 @@ export const ClinicalNotes = () => {
   // Function to expand all accordions before printing
   const expandAllAccordions = () => {
     const panelIds = Object.keys(encounterData);
-    const expanded = {};
+    const expanded: any = {};
 
     panelIds.forEach((id) => {
       expanded[id] = true;

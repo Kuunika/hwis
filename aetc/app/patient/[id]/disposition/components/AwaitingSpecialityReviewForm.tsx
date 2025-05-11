@@ -20,6 +20,7 @@ import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
 import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 
 const specialtyOptions = [
@@ -48,13 +49,13 @@ const initialValues = {
     reviewDate: "",
 };
 
-export default function AwaitingSpecialityReviewForm() {
+export default function AwaitingSpecialityReviewForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
-    const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -67,7 +68,7 @@ export default function AwaitingSpecialityReviewForm() {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
         const obs = [
             {
                 concept: concepts.AWAITING_SPECIALITY_REVIEW,
@@ -97,7 +98,8 @@ export default function AwaitingSpecialityReviewForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {

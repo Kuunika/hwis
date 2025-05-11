@@ -29,8 +29,6 @@ const schema = Yup.object().shape({
 
 const initialValues = getInitialValues(form);
 
-
-
 export const PresentingComplaintsForm = ({
   onSubmit,
   setTriageResult,

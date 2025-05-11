@@ -23,6 +23,7 @@ import { Typography } from "@mui/material";
 import { concepts, encounters } from "@/constants";
 import { useFormikContext } from "formik";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 // This is a component to handle form resets when sample type changes
 const FormResetHandler = ({ sampleName }: { sampleName: any }) => {
@@ -47,9 +48,8 @@ const FormResetHandler = ({ sampleName }: { sampleName: any }) => {
 };
 
 export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
+  const { ServerTime } = useServerTime();
   const [sampleName, setSampleName] = useState<string>("");
-  const [request, setRequest] = useState<any>({});
-  const formikRef = useRef(null);
   const {
     data: specimenTypes,
     isLoading,
@@ -162,7 +162,7 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
 
   const handleLabSend = (values: any) => {
     const specimenType = JSON.parse(values.sampleType);
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString()
     const group_members = values?.tests.map((test: any) => {
       const group_members_data = [];
       if (values?.emergency) {

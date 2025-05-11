@@ -16,4 +16,4 @@ function Triage() {
   );
 }
 
-export default AuthGuard(Triage, [roles.CLINICIAN, roles.NURSE, roles.ADMIN])
+export default AuthGuard(Triage, [roles.CLINICIAN, roles.NURSE, roles.ADMIN]);

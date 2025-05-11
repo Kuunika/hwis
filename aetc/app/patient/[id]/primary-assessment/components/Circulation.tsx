@@ -25,12 +25,12 @@ import {
 } from "@/components/svgImages";
 import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CPRDialogForm } from "./cprDialogForm";
 import { getActivePatientDetails } from "@/hooks";
 import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 type Prop = {
   onSubmit: () => void;
@@ -312,6 +312,7 @@ const centralLineCannulationSites = [
   },
 ];
 export const Circulation = ({ onSubmit }: Prop) => {
+  const {ServerTime}=useServerTime()
   const { gender } = getActivePatientDetails();
   const [formValues, setFormValues] = useState<any>({});
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
@@ -329,7 +330,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString()
 
     const obs = [
       {

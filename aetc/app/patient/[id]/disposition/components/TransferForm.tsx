@@ -20,6 +20,7 @@ import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
 import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 
 
@@ -45,13 +46,14 @@ const initialValues = {
     // transferNotes: "",
 };
 
-export default function TransferForm() {
+export default function TransferForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
 
 
 
@@ -68,7 +70,7 @@ export default function TransferForm() {
 
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {
@@ -98,7 +100,8 @@ export default function TransferForm() {
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {

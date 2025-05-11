@@ -134,8 +134,6 @@ export function NewStepperContainer({
         }
       });
 
-      console.log({ updatedTimes });
-
       setEncounterTimes(updatedTimes);
     }
   }, [data, steps, showSubmittedStatus]);

@@ -9,7 +9,6 @@ import React from "react";
 import { concepts } from "@/constants";
 import { TestPlanAccordion } from "../consultation/components/testPlanAccordion";
 
-import DiagnosisForm from "../consultation/components/diagnosisForm";
 import { useParameters } from "@/hooks";
 
 export default function FinalDiagnosis() {

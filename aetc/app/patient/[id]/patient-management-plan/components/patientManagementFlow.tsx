@@ -9,7 +9,7 @@ import { PatientCareAreaForm } from "./forms/patientCareAreaForm";
 import { useNavigation } from "@/hooks";
 export const PatientManagementFlow = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
-    const { navigateBackToProfile } = useNavigation();
+    const { navigateBackToProfile, navigateBack } = useNavigation();
 
     const steps = [
         { id: 1, label: "Non-Pharmacological" },
@@ -22,34 +22,41 @@ export const PatientManagementFlow = () => {
     }, [activeStep]);
 
     return (
-        <NewStepperContainer
-            title="Patient Management Plan"
-            steps={steps}
-            active={activeStep}
-            setActive={setActiveStep}
-            onBack={() => navigateBackToProfile()}
-        >
-            {/* Non-Pharmacological Form */}
-            <>
-                <NonPharmacologicalForm
-                    onSkip={() => { }}
-                    onSubmit={() => setActiveStep(1)} //  Moves to Patient Care Area Form
-                />
-                {/* <StepButtons onNext={() => setActiveStep(1)} /> */}
-            </>
+      <NewStepperContainer
+        title="Patient Management Plan"
+        steps={steps}
+        active={activeStep}
+        setActive={setActiveStep}
+        onBack={() => navigateBackToProfile()}
+      >
+        {/* Non-Pharmacological Form */}
+        <>
+          <NonPharmacologicalForm
+            onSkip={() => {}}
+            onSubmit={() => setActiveStep(1)} //  Moves to Patient Care Area Form
+          />
+          {/* <StepButtons onNext={() => setActiveStep(1)} /> */}
+        </>
 
-            {/* Patient Care Area Form */}
-            <>
-                <PatientCareAreaForm onSkip={() => { }} onSubmit={() => setActiveStep(2)} />
-                {/* <StepButtons onNext={() => setActiveStep(2)} onPrevious={() => setActiveStep(0)} /> */}
-            </>
+        {/* Patient Care Area Form */}
+        <>
+          <PatientCareAreaForm
+            onSkip={() => {}}
+            onSubmit={() => setActiveStep(2)}
+          />
+          {/* <StepButtons onNext={() => setActiveStep(2)} onPrevious={() => setActiveStep(0)} /> */}
+        </>
 
-            {/* Medication Form */}
-            <>
-                <MedicationsForm onSkip={() => { }} onSubmit={() => { }} />
-                {/* <StepButtons onPrevious={() => setActiveStep(1)} /> */}
-            </>
-        </NewStepperContainer>
+        {/* Medication Form */}
+        <>
+          <MedicationsForm
+            onSubmissionSuccess={navigateBack}
+            onSkip={() => {}}
+            onSubmit={() => {}}
+          />
+          {/* <StepButtons onPrevious={() => setActiveStep(1)} /> */}
+        </>
+      </NewStepperContainer>
     );
 };
 const StepButtons = ({

@@ -23,6 +23,8 @@ import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
 import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 const wardOptions = [
     {
@@ -114,13 +116,15 @@ const initialValues = {
     specialtyInvolved: "",
 };
 
-export default function AdmissionForm() {
+export default function AdmissionForm({openPatientSummary}:{openPatientSummary:()=>void}) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
+
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
         if (patientVisits) {
@@ -132,7 +136,7 @@ export default function AdmissionForm() {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {
@@ -178,7 +182,8 @@ export default function AdmissionForm() {
             //   if (activeVisit?.uuid) {
             //       closeVisit(activeVisit.uuid);
             //   }
-            navigateTo("/dispositions");
+            // navigateTo("/dispositions");
+            openPatientSummary()
         } catch (error) {
             console.error("Error submitting Admission information: ", error);
             // toast.error("Failed to submit Admission information.");

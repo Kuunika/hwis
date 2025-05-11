@@ -111,3 +111,14 @@ a {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.barcode-lab {
+  width: "100px";
+  height: "20px";
+
+}
+
+
+.preserve-breaks {
+  white-space: pre-line;
+}

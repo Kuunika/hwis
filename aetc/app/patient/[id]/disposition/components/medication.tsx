@@ -8,7 +8,6 @@ import {
     UnitInputField,
     WrapperBox,
 } from "@/components";
-
 import React, { useEffect, useState } from "react";
 import { FieldArray } from "formik";
 import * as yup from "yup";
@@ -29,6 +28,8 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { AccordionComponent } from "@/components/accordion";
 import useFetchMedications from "@/hooks/useFetchMedications";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
     onSubmit: (values: any) => void;
@@ -44,8 +45,7 @@ type Medication = {
     medication_frequency: string;
     medication_duration: number;
     medication_duration_unit: string;
-    // medication_date_last_taken: string;
-    // medication_date_of_last_prescription: string;
+
 };
 
 const medicationTemplate: Medication = {
@@ -56,8 +56,7 @@ const medicationTemplate: Medication = {
     medication_frequency: "",
     medication_duration: 0,
     medication_duration_unit: "",
-    // medication_date_last_taken: "",
-    // medication_date_of_last_prescription: "",
+  
 };
 
 const initialValues = {
@@ -137,18 +136,6 @@ const medicationUnits = [
     "Milliliters (ml)",
     "Millimoles (mmol)",
 ];
-// const routeOptions = [
-//   { label: "Oral", id: "Oral" },
-//   { label: "Suppository", id: "Suppository" },
-//   { label: "Intravenous", id: "Intravenous" },
-//   { label: "Intramuscular", id: "Intramuscular" },
-//   { label: "Subcutaneous", id: "Subcutaneous" },
-//   { label: "Infiltration", id: "Infiltration" },
-//   { label: "Intrathecal", id: "Intrathecal" },
-//   { label: "Dermal", id: "Dermal" },
-//   { label: "Inhaled", id: "Inhaled" },
-// ];
-
 export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
     const {
         mutate,
@@ -163,6 +150,8 @@ export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
     }>({});
     const [formValues, setFormValues] = useState<any>({ medications: [] });
     const { activeVisit, patientId } = getActivePatientDetails();
+    const { init, ServerTime } = useServerTime();
+
 
     const handleUpdateFrequency = (index: number, value: boolean) => {
         setOtherFrequency((prevState) => ({
@@ -180,7 +169,7 @@ export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
     }, [isSuccess]);
 
     const handleSubmit = () => {
-        const obsDateTime = getDateTime();
+        const obsDateTime = ServerTime.getServerTimeString();
         const obs = formValues.medications.map((medication: any) => {
             return {
                 concept: concepts.DRUG_GIVEN,
@@ -237,13 +226,6 @@ export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
         });
     };
 
-    // const sections = [
-    //     {
-    //         id: "prescribed",
-    //         title: "Prescribed Medication",
-    //         content: <PrescribedMedicationList />,
-    //     },
-    // ];
     return (
         <ContainerLoaderOverlay loading={addingDrugs || loadingDrugs}>
             {/* <AccordionComponent sections={sections} /> */}
@@ -344,16 +326,7 @@ export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
                                                         sx={{ flex: 1 }}
                                                     />
                                                 )}
-                                            {/* <FormDatePicker
-                        name={`medications[${index}].medication_date_last_taken`}
-                        label="Last Taken"
-                        // sx={{ width: "150px" }}
-                      />
-                      <FormDatePicker
-                        name={`medications[${index}].medication_date_of_last_prescription`}
-                        label="Last Prescribed"
-                        sx={{ width: "150px" }}
-                      /> */}
+                     
                                         </Box>
                                     )}
                                 />
