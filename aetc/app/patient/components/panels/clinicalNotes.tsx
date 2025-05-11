@@ -34,7 +34,7 @@ type PanelData = {
 };
 
 // New component for Laboratory or Radiology finding
-const LaboratoryRadiologyFindings = ({ data }) => {
+const LaboratoryRadiologyFindings = ({ data }: any) => {
   if (!data || !Array.isArray(data) || data.length === 0) return null;
 
   // Ensure data is actually an array before processing
