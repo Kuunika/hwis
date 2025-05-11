@@ -30,6 +30,31 @@ type PanelData = {
   title: string;
   data: any[];
   useValue?: boolean;
+  removeObs?: string[]; // Add removeObs property to PanelData type
+};
+
+const filterObservationsByName = (observations: any, filterNames = []) => {
+  if (!observations || !Array.isArray(observations)) return [];
+
+  return observations.filter((obs) => {
+    // Check if observation's name is in the filter list
+    const obsName = obs?.names?.[0]?.name || "";
+    const shouldKeep = !filterNames.some((filterName: any) =>
+      obsName.toLowerCase().includes(filterName.toLowerCase())
+    );
+
+    // If observation has children, filter those too
+    if (
+      shouldKeep &&
+      obs.children &&
+      Array.isArray(obs.children) &&
+      obs.children.length > 0
+    ) {
+      obs.children = filterObservationsByName(obs.children, filterNames);
+    }
+
+    return shouldKeep;
+  });
 };
 
 export const ClinicalNotes = () => {
@@ -108,11 +133,12 @@ export const ClinicalNotes = () => {
     return getLatestValue(allObs) || [];
   };
 
-  // Generate base encounter data with all possible panels
+  // Generate base encounter data with all possible panels and their removeObs arrays
   const baseEncounterData: Record<string, PanelData> = {
     panel14: {
       title: "Clinical Notes",
       data: getEncountersByType(encounters.CLINICAL_NOTES),
+      removeObs: ["image part", "image part 2"], // Example headings to remove
     },
     panel13: {
       title: "SOAPIER Notes",
@@ -121,6 +147,7 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.PRESCRIPTIONS),
         ...getEncountersByType(encounters.DISPENSING),
       ],
+      removeObs: ["nursing chart", "medication chart"], // Example headings to remove
     },
     panel1: {
       title: "Triage",
@@ -128,22 +155,27 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.TRIAGE_RESULT),
         ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
       ],
+      removeObs: [], // No specific headings to remove
     },
     panel2: {
       title: "History of presenting complain",
       data: [getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM)],
+      removeObs: [], // No specific headings to remove
     },
     panel3: {
       title: "Vitals",
       data: getNewVitalSigns(),
+      removeObs: [], // No specific headings to remove
     },
     panel4: {
       title: "Past Medical History",
       data: getEncountersByType(encounters.MEDICAL_IN_PATIENT),
+      removeObs: [], // No specific headings to remove
     },
     panel5: {
       title: "Drug History",
       data: getEncountersByType(encounters.MEDICAL_IN_PATIENT),
+      removeObs: [], // No specific headings to remove
     },
     panel7: {
       title: "Plan",
@@ -151,6 +183,7 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
         ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
       ],
+      removeObs: [], // No specific headings to remove
     },
     panel8: {
       title: "Primary Survey",
@@ -161,6 +194,7 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.PRIMARY_DISABILITY_ASSESSMENT),
         ...getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
       ],
+      removeObs: ["Image Part Name"], // No specific headings to remove
     },
     panel9: {
       title: "Secondary Survey",
@@ -172,6 +206,12 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
         ...getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
       ],
+      removeObs: [
+        "Image Part Name",
+        "Abnormalities",
+        "Clinician notes",
+        "Other",
+      ], // No specific headings to remove
     },
     panel10: {
       title: "Diagnosis",
@@ -179,6 +219,7 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
         ...getEncountersByType(encounters.DIAGNOSIS),
       ],
+      removeObs: [], // No specific headings to remove
     },
     panel11: {
       title: "Laboratory or Radiology finding",
@@ -186,31 +227,67 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.BED_SIDE_TEST),
         ...getEncountersByType(encounters.LAB),
       ],
+      removeObs: [], // No specific headings to remove
     },
     panel12: {
       title: "Outcome/Disposition",
       data: getEncountersByType(encounters.DISPOSITION),
+      removeObs: [], // No specific headings to remove
     },
   };
 
-  // Filter encounter data based on filter states
-  const encounterData = useMemo(() => {
-    if (filterSoapierState) {
+  // Process encounter data based on filters and removeObs arrays
+  const getFilteredEncounterData = (
+    baseData: any,
+    showSoapierOnly: any,
+    showAETC: any
+  ) => {
+    // Start with a copy of the base data
+    const filteredData = { ...baseData };
+
+    // Apply panel-specific filters to all panels based on removeObs property
+    Object.keys(filteredData).forEach((panelId) => {
+      const panel = filteredData[panelId];
+      if (panel && Array.isArray(panel.data) && panel.data.length > 0) {
+        // If panel has removeObs property, filter out those observation names
+        if (
+          panel.removeObs &&
+          Array.isArray(panel.removeObs) &&
+          panel.removeObs.length > 0
+        ) {
+          filteredData[panelId].data = filterObservationsByName(
+            panel.data,
+            panel.removeObs
+          );
+        }
+      }
+    });
+
+    // Apply global filters
+    if (showSoapierOnly) {
       // Only show SOAPIER Notes when filterSoapierState is true
-      return {
-        panel13: baseEncounterData.panel13,
-      };
-    } else if (filterAETCState) {
-      // Remove Clinical Notes and SOAPIER Notes when filterAETCState is true
-      const filteredData = { ...baseEncounterData };
+      const result: any = {};
+      if (filteredData.panel13) {
+        result.panel13 = filteredData.panel13;
+      }
+      return result;
+    } else if (showAETC) {
+      // Remove Clinical Notes and SOAPIER Notes panels when filterAETCState is true
       delete filteredData.panel14;
       delete filteredData.panel13;
-      return filteredData;
-    } else {
-      // Show all panels when no filters are active
-      return baseEncounterData;
     }
-  }, [filterSoapierState, filterAETCState, baseEncounterData]);
+
+    return filteredData;
+  };
+
+  // Filter encounter data based on filter states and removeObs arrays
+  const encounterData = useMemo(() => {
+    return getFilteredEncounterData(
+      baseEncounterData,
+      filterSoapierState,
+      filterAETCState
+    );
+  }, [baseEncounterData, filterSoapierState, filterAETCState]);
 
   const addClinicalNote = (note: string) => {
     const data = { "Clinical notes construct": note };
@@ -536,7 +613,7 @@ export const ClinicalNotes = () => {
           </div>
         </div>
         {Object.entries(encounterData).map(
-          ([panelId, { title, data }]) =>
+          ([panelId, { title, data }]: any) =>
             data.length > 0 && (
               <Accordion defaultExpanded key={panelId}>
                 <AccordionSummary
