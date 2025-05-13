@@ -957,7 +957,7 @@ function SurgicalNotesTemplate() {
         pointOfCareUltrasound: obsMap.get(11716) || "Not Recorded", // Concept ID for Point of Care Ultrasound
         ecg: obsMap.get(3403) || "Not Recorded", // Concept ID for ECG
         other: obsMap.get(8) || "Not Recorded", // Concept ID for Other
-        obsDatetime: obsRecords.length ? obsRecords[0].obs_datetime : "No Date",
+        obsDatetime: obsRecords.length ? obsRecords[0]?.obs_datetime : "No Date",
       };
 
       setBedsideAssessment(assessment);
