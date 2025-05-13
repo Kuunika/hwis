@@ -41,7 +41,7 @@ export const PrescribedMedicationList = ({
 
     if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
 
-    const formattedRows = prescriptionEncounter[0].obs
+    const formattedRows = prescriptionEncounter[0]?.obs
       .filter((ob) => ob?.names && ob?.names[0].name == concepts.DRUG_GIVEN)
       .map((childObs) => {
         const durationUnit = getValue(
