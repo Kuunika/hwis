@@ -221,7 +221,7 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
         return new Date(item.obs_datetime) > new Date(latest)
           ? item.obs_datetime
           : latest;
-      }, encounterData[0].obs[0].obs_datetime);
+      }, encounterData[0]?.obs[0]?.obs_datetime);
 
       // Step 2: Filter all objects that have that latest obs_datetime
       const latestItems = encounterData[0].obs.filter(

@@ -59,7 +59,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   useEffect(() => {
     if (presentingComplaintsData) {
-      setPresentingComplaints(presentingComplaintsData[0].obs);
+      setPresentingComplaints(presentingComplaintsData[0]?.obs);
     }
   }, [presentingComplaintsData]);
 
