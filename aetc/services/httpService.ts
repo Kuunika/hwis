@@ -52,8 +52,6 @@ export async function remove<T>(
   return apiClient.delete(endPoint, { data });
 }
 
-
-
 export async function login(
   credentials: any,
   apiClient: AxiosInstance = emrApiClient()
@@ -64,12 +62,15 @@ export async function login(
     response = await apiClient.post("/auth/login", credentials);
     setCookie("accessToken", response.data.jwt);
     localStorage.setItem("accessToken", response.data.jwt);
-    localStorage.setItem('loginTime', new Date().getTime().toString())
-
-
-    const roles = response.data.user.user_roles.map((r: any) => r.role.role);
+    localStorage.setItem("loginTime", new Date().getTime().toString());
+    const data = response.data.user;
+    const roles = data.user_roles.map((r: any) => r.role.role);
+    const names = data.person?.names?.[0];
+    const givenName = names?.given_name || null;
+    const familyName = names?.family_name || null;
 
     localStorage.setItem("roles", roles);
+    localStorage.setItem("userName", givenName + " " + familyName);
 
     return {
       status: response.status,
@@ -77,7 +78,6 @@ export async function login(
       message: response.statusText,
     };
   } catch (error: any) {
-
     throw new Error(error.response.message);
   }
 }

@@ -1,9 +1,4 @@
-import {
-  MainButton,
-  MainTypography,
-  PatientInfoTab,
-  WrapperBox,
-} from "@/components";
+import { MainButton, PatientInfoTab, WrapperBox } from "@/components";
 import { Panel } from ".";
 import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
@@ -12,197 +7,686 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
-import { Box, Button } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+} from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
 import { useParameters, useSubmitEncounter } from "@/hooks";
-import { getOnePatient } from "@/hooks/patientReg";
-import { encounters } from "@/constants";
+import { encounters, concepts } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
-import { Obs } from "@/interfaces";
-import { AirwayAssessment } from "@/app/patient/components/clinicalNotes/airwayAssement";
-import { BreathingAssessment } from "@/app/patient/components/clinicalNotes/breathingAssement";
-import { SoapierNotes } from "@/app/patient/components/clinicalNotes/soapierNotes";
-import { ChestAssessment } from "@/app/patient/components/clinicalNotes/chestAssement";
-import { GeneralInformation } from "@/app/patient/components/clinicalNotes/generalInformation";
-import { HeadAndNeck } from "@/app/patient/components/clinicalNotes/headAndNeck";
-import { DisabilityAssessment } from "@/app/patient/components/clinicalNotes/DisabilityAssessment";
-import { ExposureAssessment } from "@/app/patient/components/clinicalNotes/ExposureAssessment";
-import { AbdomenAndPelvisAssessment } from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
 import { getObservations } from "@/helpers";
-import { Extremities } from "@/app/patient/components/clinicalNotes/extremities";
-import { NeurologicalExamination } from "@/app/patient/components/clinicalNotes/neurogicalExamination";
-import { PresentingComplaintsNotes } from "@/app/patient/components/clinicalNotes/presentingComplaintsNotes";
-import AllergiesNotes from "@/app/patient/components/clinicalNotes/allergies";
-import { MedicationsNotes } from "@/app/patient/components/clinicalNotes/medicationsNotes";
-import { ExistingConditionsNotes } from "@/app/patient/components/clinicalNotes/existingConditionsNotes";
-import { SurgicalNotes } from "@/app/patient/components/clinicalNotes/surgicalNotes";
-import { PreviousAdmissionsNotes } from "@/app/patient/components/clinicalNotes/previousAdmissionsNotes";
-import { FamilyHistoryNotes } from "@/app/patient/components/clinicalNotes/familyHistory";
-import { useComponentNotes } from "@/hooks/useComponentNotes";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
-import { CirculationAssessment } from "@/app/patient/components/clinicalNotes/CirculationAssessment";
-import { ReviewOfSystems } from "@/app/patient/components/clinicalNotes/reviewOfSystemsNotes";
 import { useReactToPrint } from "react-to-print";
-import ReactMarkdown from "react-markdown";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import { getPatientLabOrder } from "@/hooks/labOrder";
+import { getAllObservations } from "@/hooks/obs";
+import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 
+type PanelData = {
+  title: string;
+  data: any[];
+  useValue?: boolean;
+  removeObs?: string[]; // Add removeObs property to PanelData type
+};
 
+// New component for Laboratory or Radiology finding
+const LaboratoryRadiologyFindings = ({ data }: any) => {
+  if (!data || !Array.isArray(data) || data.length === 0) return null;
+
+  // Ensure data is actually an array before processing
+  const safeData = Array.isArray(data) ? data : [];
+
+  // Group lab results by test type
+  const groupedResults = safeData.reduce((acc, item) => {
+    // Skip null or undefined items
+    if (!item) return acc;
+
+    const testName = item?.names?.[0]?.name || "Other";
+    if (!acc[testName]) {
+      acc[testName] = [];
+    }
+    acc[testName].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <Box sx={{ padding: "10px 0" }}>
+      {Object.entries(groupedResults).map(([testName, results], index) => (
+        <Box
+          key={`lab-group-${index}`}
+          sx={{
+            marginBottom: "20px",
+            padding: "10px",
+            backgroundColor: "#f9f9f9",
+            borderRadius: "4px",
+            border: "1px solid #e0e0e0",
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 600,
+              color: "#2c3e50",
+              borderBottom: "1px solid #e0e0e0",
+              paddingBottom: "8px",
+              marginBottom: "10px",
+            }}
+          >
+            {testName}
+          </Typography>
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            {Array.isArray(results) &&
+              results.map((result, idx) => (
+                <Box
+                  key={`result-${idx}`}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "4px 0",
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    {result.value}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                    {getHumanReadableDateTime(result.obs_datetime)}
+                  </Typography>
+                </Box>
+              ))}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
+const filterObservationsByName = (observations: any, filterNames = []) => {
+  if (!observations || !Array.isArray(observations)) return [];
+
+  return observations.filter((obs) => {
+    // Check if observation's name is in the filter list
+    const obsName = obs?.names?.[0]?.name || "";
+    const shouldKeep = !filterNames.some((filterName: any) =>
+      obsName.toLowerCase().includes(filterName.toLowerCase())
+    );
+
+    // If observation has children, filter those too
+    if (
+      shouldKeep &&
+      obs.children &&
+      Array.isArray(obs.children) &&
+      obs.children.length > 0
+    ) {
+      obs.children = filterObservationsByName(obs.children, filterNames);
+    }
+
+    return shouldKeep;
+  });
+};
 
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
+  const [filterAETCState, setFilterAETCState] = useState(false);
+  const [expandedPanels, setExpandedPanels]: any = useState({});
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
     () => ""
   );
+  const [expanded, setExpanded] = useState("panel1");
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
-  const { notes: airwayNotes } = useComponentNotes(
-    encounters.AIRWAY_ASSESSMENT
-  );
-  const { notes: breathingNotes } = useComponentNotes(
-    encounters.BREATHING_ASSESSMENT
-  );
-  const { notes: circulationNotes } = useComponentNotes(
-    encounters.CIRCULATION_ASSESSMENT
-  );
-  const { notes: disabilityNotes } = useComponentNotes(
-    encounters.DISABILITY_ASSESSMENT
-  );
-  const { notes: exposureNotes } = useComponentNotes(
-    encounters.EXPOSURE_ASSESSMENT
-  );
-  const { notes: presentingComplaintsNotes } = useComponentNotes(
-    encounters.PRESENTING_COMPLAINTS
-  );
-  const { notes: allergiesNotes } = useComponentNotes(encounters.ALLERGIES);
-  const { notes: medicationsNotes } = useComponentNotes(
-    encounters.PRESCRIPTIONS
-  );
-  const { notes: existingConditionsNotes } = useComponentNotes(
-    encounters.DIAGNOSIS
-  );
-  const { notes: surgicalNotes } = useComponentNotes(
-    encounters.SURGICAL_HISTORY
-  );
-  const { notes: previousAdmissionsNotes } = useComponentNotes(
-    encounters.PATIENT_ADMISSIONS
-  );
-  const { notes: gyneacologyNotes } = useComponentNotes(
-    encounters.OBSTETRIC_HISTORY
-  );
-  const { notes: lastMealNotes } = useComponentNotes(
-    encounters.SUMMARY_ASSESSMENT
-  );
-  const { notes: reviewOfSystemsNotes } = useComponentNotes(
-    encounters.REVIEW_OF_SYSTEMS
-  );
-  const { notes: familyHistoryNotes } = useComponentNotes(
-    encounters.FAMILY_MEDICAL_HISTORY
-  );
-  const { notes: generalInfoNotes } = useComponentNotes(
-    encounters.GENERAL_INFORMATION_ASSESSMENT
-  );
-  const { notes: headNeckNotes } = useComponentNotes(
-    encounters.HEAD_AND_NECK_ASSESSMENT
-  );
-  const { notes: chestNotes } = useComponentNotes(encounters.CHEST_ASSESSMENT);
-  const { notes: abdomenPelvisNotes } = useComponentNotes(
-    encounters.ABDOMEN_AND_PELVIS_ASSESSMENT
-  );
-  const { notes: extremitiesNotes } = useComponentNotes(
-    encounters.EXTREMITIES_ASSESSMENT
-  );
-  const { notes: neurologicalNotes } = useComponentNotes(
-    encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT
-  );
-  const { notes: soapierNotes } = useComponentNotes(
-    encounters.NURSING_CARE_NOTES
-  );
-  const { notes: dispositionNotes } = useComponentNotes(encounters.DISPOSITION);
-
-
   const {
-    data: patientEncounters,
-    isLoading,
-    isSuccess: encountersFetched,
-  } = getPatientsEncounters(params.id as string);
+    data: labOrders,
+    isPending,
+    isSuccess,
+  } = getPatientLabOrder(params?.id as string);
 
-  const allNotes = useMemo(() => {
-    const combinedNotes = filterSoapierState
-      ? [...soapierNotes]
-      : [
-          ...clinicalNotes,
-          ...airwayNotes,
-          ...breathingNotes,
-          ...circulationNotes,
-          ...disabilityNotes,
-          ...exposureNotes,
-          ...presentingComplaintsNotes,
-          ...allergiesNotes,
-          ...medicationsNotes,
-          ...existingConditionsNotes,
-          ...surgicalNotes,
-          ...previousAdmissionsNotes,
-          ...gyneacologyNotes,
-          ...lastMealNotes,
-          ...reviewOfSystemsNotes,
-          ...familyHistoryNotes,
-          ...generalInfoNotes,
-          ...headNeckNotes,
-          ...chestNotes,
-          ...abdomenPelvisNotes,
-          ...extremitiesNotes,
-          ...neurologicalNotes,
-          ...soapierNotes,
-          ...dispositionNotes,
-        ];
-
-    return combinedNotes.sort(
-      (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
-    );
-  }, [
-    clinicalNotes,
-    airwayNotes,
-    breathingNotes,
-    circulationNotes,
-    disabilityNotes,
-    exposureNotes,
-    presentingComplaintsNotes,
-    allergiesNotes,
-    medicationsNotes,
-    existingConditionsNotes,
-    surgicalNotes,
-    previousAdmissionsNotes,
-    gyneacologyNotes,
-    lastMealNotes,
-    reviewOfSystemsNotes,
-    familyHistoryNotes,
-    generalInfoNotes,
-    headNeckNotes,
-    chestNotes,
-    abdomenPelvisNotes,
-    extremitiesNotes,
-    neurologicalNotes,
-    soapierNotes,
-    dispositionNotes,
-    filterSoapierState, // respond to toggle change
-  ]);
-
+  // Refresh encounter data when component mounts or filters change
   useEffect(() => {
     refresh();
-  }, []);
+  }, [refresh, filterSoapierState, filterAETCState]);
+
+  const getEncountersByType = (encounterTypeUuid: any) => {
+    const {
+      data: patientHistory,
+      isLoading: historyLoading,
+    }: { data: any; isLoading: any } = getPatientsEncounters(
+      patientId,
+      `encounter_type=${encounterTypeUuid}`
+    );
+    if (!patientHistory) return [];
+    return patientHistory[0]?.obs || [];
+  };
+
+  const getLatestValue = (obsData: any) => {
+    if (!obsData?.length) return null;
+    const latestObsMap = new Map();
+
+    // Find the most recent observation for each concept_id
+    obsData.forEach((observation: any) => {
+      const { concept_id, obs_datetime } = observation;
+      const currentLatest = latestObsMap.get(concept_id);
+
+      if (
+        !currentLatest ||
+        new Date(obs_datetime) > new Date(currentLatest.obs_datetime)
+      ) {
+        latestObsMap.set(concept_id, observation);
+      }
+    });
+
+    // Get the full observation objects, not just the keys
+    const latestObservations = Array.from(latestObsMap.values());
+
+    return latestObservations;
+  };
+
+  const getObsByConceptName = (obsData: any) => {
+    const { data: obs }: any = getAllObservations(patientId, obsData);
+    return obs?.data || [];
+  };
+
+  const getNewVitalSigns = () => {
+    const allObs: any = [
+      ...getObsByConceptName(concepts.HEART_RATE),
+      ...getObsByConceptName(concepts.RESPIRATORY_RATE),
+      ...getObsByConceptName(concepts.BLOOD_OXYGEN_SATURATION),
+      ...getObsByConceptName(concepts.TEMPERATURE),
+      ...getObsByConceptName(concepts.GLUCOSE),
+      ...getObsByConceptName(concepts.AVPU),
+      ...getObsByConceptName(concepts.SYSTOLIC_BLOOD_PRESSURE),
+      ...getObsByConceptName(concepts.DIASTOLIC_BLOOD_PRESSURE),
+    ];
+    return getLatestValue(allObs) || [];
+  };
+
+  // Generate base encounter data with all possible panels and their removeObs arrays
+  const baseEncounterData: Record<string, PanelData> = {
+    panel14: {
+      title: "Clinical Notes",
+      data: getEncountersByType(encounters.CLINICAL_NOTES),
+      removeObs: ["image part", "image part 2"], // Example headings to remove
+    },
+    panel13: {
+      title: "SOAPIER Notes",
+      data: [
+        ...getEncountersByType(encounters.NURSING_CARE_NOTES),
+        ...getEncountersByType(encounters.PRESCRIPTIONS),
+        ...getEncountersByType(encounters.DISPENSING),
+      ],
+      removeObs: ["nursing chart", "medication chart"], // Example headings to remove
+    },
+    panel1: {
+      title: "Triage",
+      data: [
+        ...getEncountersByType(encounters.TRIAGE_RESULT),
+        ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
+      ],
+      removeObs: [], // No specific headings to remove
+    },
+    panel2: {
+      title: "History of presenting complain",
+      data: [getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM)],
+      removeObs: [], // No specific headings to remove
+    },
+    panel3: {
+      title: "Vitals",
+      data: getNewVitalSigns(),
+      removeObs: [], // No specific headings to remove
+    },
+    panel4: {
+      title: "Past Medical History",
+      data: getEncountersByType(encounters.MEDICAL_IN_PATIENT),
+      removeObs: [], // No specific headings to remove
+    },
+    panel5: {
+      title: "Drug History",
+      data: getEncountersByType(encounters.MEDICAL_IN_PATIENT),
+      removeObs: [], // No specific headings to remove
+    },
+    panel7: {
+      title: "Plan",
+      data: [
+        ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
+        ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
+      ],
+      removeObs: [], // No specific headings to remove
+    },
+    panel8: {
+      title: "Primary Survey",
+      data: [
+        ...getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+        ...getEncountersByType(encounters.BREATHING_ASSESSMENT),
+        ...getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+        ...getEncountersByType(encounters.PRIMARY_DISABILITY_ASSESSMENT),
+        ...getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+      ],
+      removeObs: ["Image Part Name"], // No specific headings to remove
+    },
+    panel9: {
+      title: "Secondary Survey",
+      data: [
+        ...getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
+        ...getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
+        ...getEncountersByType(encounters.CHEST_ASSESSMENT),
+        ...getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
+        ...getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
+        ...getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
+      ],
+      removeObs: [
+        "Image Part Name",
+        "Abnormalities",
+        "Clinician notes",
+        "Other",
+      ], // No specific headings to remove
+    },
+    panel10: {
+      title: "Diagnosis",
+      data: [
+        ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+        ...getEncountersByType(encounters.DIAGNOSIS),
+      ],
+      removeObs: [], // No specific headings to remove
+    },
+    panel11: {
+      title: "Laboratory or Radiology finding",
+      data: [
+        ...getEncountersByType(encounters.BED_SIDE_TEST),
+        ...getEncountersByType(encounters.LAB),
+      ],
+      removeObs: [], // No specific headings to remove
+    },
+    panel12: {
+      title: "Outcome/Disposition",
+      data: getEncountersByType(encounters.DISPOSITION),
+      removeObs: [], // No specific headings to remove
+    },
+  };
+
+  // Process encounter data based on filters and removeObs arrays
+  const getFilteredEncounterData = (
+    baseData: any,
+    showSoapierOnly: any,
+    showAETC: any
+  ) => {
+    // Start with a copy of the base data
+    const filteredData = { ...baseData };
+
+    // Apply panel-specific filters to all panels based on removeObs property
+    Object.keys(filteredData).forEach((panelId) => {
+      const panel = filteredData[panelId];
+      if (panel && Array.isArray(panel.data) && panel.data.length > 0) {
+        // If panel has removeObs property, filter out those observation names
+        if (
+          panel.removeObs &&
+          Array.isArray(panel.removeObs) &&
+          panel.removeObs.length > 0
+        ) {
+          filteredData[panelId].data = filterObservationsByName(
+            panel.data,
+            panel.removeObs
+          );
+        }
+      }
+    });
+
+    // Apply global filters
+    if (showSoapierOnly) {
+      // Only show SOAPIER Notes when filterSoapierState is true
+      const result: any = {};
+      if (filteredData.panel13) {
+        result.panel13 = filteredData.panel13;
+      }
+      return result;
+    } else if (showAETC) {
+      // Remove Clinical Notes and SOAPIER Notes panels when filterAETCState is true
+      delete filteredData.panel14;
+      delete filteredData.panel13;
+    }
+
+    return filteredData;
+  };
+
+  // Filter encounter data based on filter states and removeObs arrays
+  const encounterData = useMemo(() => {
+    return getFilteredEncounterData(
+      baseEncounterData,
+      filterSoapierState,
+      filterAETCState
+    );
+  }, [baseEncounterData, filterSoapierState, filterAETCState]);
 
   const addClinicalNote = (note: string) => {
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
   };
-  const contentRef = useRef<HTMLDivElement>(null); // <--- move here
+
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Function to expand all accordions before printing
+  const expandAllAccordions = () => {
+    const panelIds = Object.keys(encounterData);
+    const expanded: any = {};
+
+    panelIds.forEach((id) => {
+      expanded[id] = true;
+    });
+
+    console.log("🚀 ~ expandAllAccordions ~ expanded:", expanded);
+    setExpandedPanels(expanded);
+
+    // Short delay to ensure UI updates before printing
+    setTimeout(() => {
+      handlePrint();
+    }, 100);
+  };
+
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
+    onAfterPrint: () => {
+      // Reset expanded panels state after printing
+      setExpandedPanels({});
+    },
   });
-  if (isLoading) {
-    return <ProfilePanelSkeletonLoader />;
-  }
+
+  // Handle accordion expansion
+  const handleChange = (panel: any) => (_: any, isExpanded: any) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  // Function to render grouped items by heading
+  const renderGroupedItems = (data: any[]) => {
+    if (!data || !Array.isArray(data) || data.length === 0) return null;
+
+    // First, separate items with children and those without
+    let itemsWithChildren: any = [];
+    itemsWithChildren = data.filter(
+      (item) => item && Array.isArray(item.children) && item.children.length > 0
+    );
+
+    const regularItems = data.filter(
+      (item) => !item.children || item.children.length === 0
+    );
+
+    // Process items with children
+    const parentElements = itemsWithChildren.map(
+      (parentItem: any, index: number) => {
+        // Add parent reference to children for use in renderChildrenByHeading
+        const childrenWithParentRef = parentItem.children.map((child: any) => ({
+          ...child,
+          parent: {
+            value: parentItem.value,
+            names: parentItem.names,
+          },
+        }));
+
+        return (
+          <Box key={`parent-item-${index}`} sx={{ marginBottom: "24px" }}>
+            {/* Render children with parent reference */}
+            {renderChildrenByHeading(childrenWithParentRef)}
+          </Box>
+        );
+      }
+    );
+
+    // Render regular items (without children)
+    const regularItemsElement =
+      regularItems.length > 0 ? renderRegularItems(regularItems, 0) : null;
+
+    // Combine both types of elements
+    return (
+      <>
+        {parentElements}
+        {regularItemsElement}
+      </>
+    );
+  };
+
+  // Function to group and render children by their headings
+  const renderChildrenByHeading = (children: any[]) => {
+    // Ensure children is an array
+    if (!children || !Array.isArray(children)) {
+      return null;
+    }
+
+    // Group children by their parent value
+    const groupedChildren: Record<string, any[]> = {};
+
+    children.forEach((child) => {
+      if (!child) return; // Skip null or undefined children
+      const parentValue = child.parent?.value || "Other";
+      if (!groupedChildren[parentValue]) {
+        groupedChildren[parentValue] = [];
+      }
+      groupedChildren[parentValue].push(child);
+    });
+
+    // Render each parent value as a group
+    return Object.entries(groupedChildren).map(
+      ([parentValue, childItems], index) => (
+        <Box
+          key={`child-group-${index}`}
+          className="clinical-note-group"
+          sx={{
+            marginBottom: "16px",
+            borderBottom:
+              index < Object.keys(groupedChildren).length - 1
+                ? "1px solid #e0e0e0"
+                : "none",
+            paddingBottom: "16px",
+            display: "flex",
+          }}
+        >
+          {/* Left side: Parent Value */}
+          <Typography
+            variant="subtitle2"
+            sx={{
+              fontWeight: 600,
+              color: "#3a3a3a",
+              width: "30%",
+              paddingRight: "8px",
+              display: "flex",
+              alignItems: "center",
+              height: "24px",
+            }}
+          >
+            <Box component="span" sx={{ flexGrow: 1 }}>
+              {parentValue}
+            </Box>
+          </Typography>
+
+          {/* Center separator */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "40px",
+              height: "24px",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: "#777",
+                fontWeight: 400,
+                fontSize: "1.5rem",
+                lineHeight: 1,
+              }}
+            >
+              :
+            </Typography>
+          </Box>
+
+          {/* Right side: Child names and values */}
+          <Box sx={{ width: "calc(70% - 40px)" }}>
+            {childItems.map((child, itemIndex) => {
+              const childName =
+                child.names && child.names[0]?.name ? child.names[0].name : "";
+              return (
+                <Box
+                  key={`child-value-${index}-${itemIndex}`}
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    marginBottom:
+                      itemIndex < childItems.length - 1 ? "10px" : 0,
+                    height: itemIndex === 0 ? "24px" : "auto",
+                  }}
+                >
+                  <Box
+                    component="span"
+                    sx={{
+                      minWidth: "6px",
+                      height: "6px",
+                      borderRadius: "50%",
+                      background: "#3f51b5",
+                      marginRight: "10px",
+                      marginTop: itemIndex === 0 ? "10px" : "8px",
+                      display: childItems.length > 1 ? "block" : "none",
+                    }}
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#555",
+                      textAlign: "left",
+                      lineHeight: "1.5",
+                      paddingTop: itemIndex === 0 ? "2px" : 0,
+                      fontWeight: "600",
+                      display: "inline",
+                    }}
+                  >
+                    {childName}
+                  </Typography>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+      )
+    );
+  };
+
+  // Helper function to handle regular items (without children)
+  const renderRegularItems = (items: any[], groupIndex: number) => {
+    // Group items by their heading
+    const groupedItems: Record<string, any[]> = {};
+
+    items.forEach((item) => {
+      const headingName =
+        item?.names && item.names[0]?.name ? item.names[0].name : "Other";
+      if (!groupedItems[headingName]) {
+        groupedItems[headingName] = [];
+      }
+      groupedItems[headingName].push(item);
+    });
+
+    // Render each group with heading appearing only once
+    return Object.entries(groupedItems).map(
+      ([heading, groupItems], subGroupIndex) => (
+        <Box
+          key={`group-${groupIndex}-${subGroupIndex}`}
+          className="clinical-note-group"
+          sx={{
+            marginBottom: "16px",
+            borderBottom:
+              subGroupIndex < Object.keys(groupedItems).length - 1
+                ? "1px solid #e0e0e0"
+                : "none",
+            paddingBottom: "16px",
+            display: "flex",
+          }}
+        >
+          {/* Left side: Heading appears only once */}
+          <Typography
+            variant="subtitle2"
+            sx={{
+              fontWeight: 600,
+              color: "#3a3a3a",
+              width: "30%",
+              paddingRight: "8px",
+              display: "flex",
+              alignItems: "center",
+              height: "24px",
+            }}
+          >
+            <Box component="span" sx={{ flexGrow: 1 }}>
+              {heading}
+            </Box>
+          </Typography>
+
+          {/* Center separator */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "40px",
+              height: "24px",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: "#777",
+                fontWeight: 400,
+                fontSize: "1.5rem",
+                lineHeight: 1,
+              }}
+            >
+              :
+            </Typography>
+          </Box>
+
+          {/* Right side: Values */}
+          <Box sx={{ width: "calc(70% - 40px)" }}>
+            {groupItems.map((item, itemIndex) => (
+              <Box
+                key={`item-${groupIndex}-${itemIndex}`}
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  marginBottom: itemIndex < groupItems.length - 1 ? "10px" : 0,
+                  height: itemIndex === 0 ? "24px" : "auto",
+                }}
+              >
+                <Box
+                  component="span"
+                  sx={{
+                    minWidth: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    background: "#3f51b5",
+                    marginRight: "10px",
+                    marginTop: itemIndex === 0 ? "10px" : "8px",
+                    display: groupItems.length > 1 ? "block" : "none",
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#555",
+                    textAlign: "left",
+                    lineHeight: "1.5",
+                    paddingTop: itemIndex === 0 ? "2px" : 0,
+                  }}
+                >
+                  {item?.value}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      )
+    );
+  };
 
   return (
     <Panel title="">
@@ -210,85 +694,144 @@ export const ClinicalNotes = () => {
         <AddClinicalNotes
           onAddNote={addClinicalNote}
           filterSoapierState={filterSoapierState}
+          filterAETCState={filterAETCState}
           setFilterSoapierState={setFilterSoapierState}
-          onDownload={handlePrint} // <--- pass handler to child
+          setFilterAETCState={setFilterAETCState}
+          onDownload={expandAllAccordions} // Changed from handlePrint to expandAllAccordions
         />
       </WrapperBox>
-
-      <WrapperBox
-        sx={{
-          overflow: "scroll",
-          maxHeight: "40ch",
-          pl: "2ch",
-        }}
-      >
-        <div
-          ref={contentRef}
-          style={{
-            margin: "10px",
-            alignItems: "center",
-            alignContent: "center",
-          }}
-        >
-          <div className="print-only">
-            <PatientInfoTab />
-            <div
-              style={{
-                fontWeight: 700,
-                fontSize: "20px",
-                marginTop: "10px",
-                textAlign: "center",
-              }}
-            >
-              Clinical Notes
-            </div>
+      <div ref={contentRef}>
+        <div className="print-only">
+          <PatientInfoTab />
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: "20px",
+              marginTop: "10px",
+              textAlign: "center",
+            }}
+          >
+            Clinical Notes
           </div>
-
-          {allNotes.length === 0 ? (
-            <Typography>No clinical notes available</Typography>
-          ) : (
-            allNotes.map((data, index) => (
-              <Box
-                key={`${data.time}-${index}`}
-                sx={{
-                  my: "1ch",
-                  py: "1ch",
-                  borderBottom: "1px solid #E0E0E0",
-                }}
+        </div>
+        {Object.entries(encounterData).map(
+          ([panelId, { title, data }]: any) =>
+            data.length > 0 && (
+              <Accordion
+                defaultExpanded={expanded === panelId}
+                expanded={expandedPanels[panelId] === true || undefined}
+                key={panelId}
               >
-                <Typography
-                  variant="body1"
-                  sx={{ color: "text.primary", mb: 0 }}
-                >
-                  <ReactMarkdown className="preserve-breaks">
-                    {data.paragraph}
-                  </ReactMarkdown>
-                </Typography>
-                <Box
+                <AccordionSummary
+                  expandIcon={
+                    <ArrowForwardIosSharpIcon
+                      sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
+                    />
+                  }
+                  aria-controls={`${panelId}-content`}
+                  id={`${panelId}-header`}
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    minHeight: "54px",
+                    "&.Mui-expanded": { minHeight: "54px" },
                   }}
                 >
-                  <Typography variant="caption">~ {data.creator}</Typography>
-                  <Typography variant="caption">
-                    {getHumanReadableDateTime(data.time)}
-                  </Typography>
-                </Box>
-              </Box>
-            ))
-          )}
-        </div>
-      </WrapperBox>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "98%",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        color: "#2c3e50",
+                        fontSize: "1.05rem",
+                        letterSpacing: "0.2px",
+                      }}
+                      component="span"
+                    >
+                      {title}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: "#7f8c8d",
+                        fontSize: "14px",
+                        letterSpacing: "0.2px",
+                      }}
+                    >
+                      {encounterData[panelId]?.data[0]?.created_by && (
+                        <>
+                          ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
+                          {getHumanReadableDateTime(
+                            encounterData[panelId]?.data[0]?.obs_datetime
+                          )}
+                        </>
+                      )}
+                    </Typography>
+                  </div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {/* Use custom component for Laboratory/Radiology panel */}
+                  {title === "Laboratory or Radiology finding"
+                    ? // <LaboratoryRadiologyFindings
+                      //   data={Array.isArray(data) ? data.flat() : []}
+                      // />
+                      ""
+                    : renderGroupedItems(
+                        Array.isArray(data) ? data.flat() : []
+                      )}
+                </AccordionDetails>
+                <div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </Accordion>
+            )
+        )}
+      </div>
+
       <style jsx>{`
         @media print {
           .print-only {
             display: block !important; /* Ensure visibility in print */
           }
+
+          /* Make sure accordions are visible in print */
+          :global(.MuiCollapse-hidden) {
+            visibility: visible !important;
+            display: block !important;
+            height: auto !important;
+          }
+
+          :global(.MuiAccordionSummary-content) {
+            margin: 12px 0 !important; /* Ensure proper spacing */
+          }
         }
+
         .print-only {
           display: none; /* Hide on screen */
+        }
+
+        /* Additional global styles */
+        :global(.MuiAccordionDetails-root) {
+          padding: 16px 20px 24px;
+        }
+
+        :global(.clinical-note-group) {
+          margin-bottom: 12px;
+        }
+
+        :global(.MuiAccordion-root) {
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+          border-radius: 6px !important;
+          overflow: hidden;
+          margin-bottom: 12px;
+        }
+
+        :global(.MuiAccordionSummary-root) {
+          background-color: #f7f9fc;
+          border-bottom: 1px solid #e0e0e0;
         }
       `}</style>
     </Panel>
@@ -298,12 +841,16 @@ export const ClinicalNotes = () => {
 const AddClinicalNotes = ({
   onAddNote,
   filterSoapierState,
+  filterAETCState,
   setFilterSoapierState,
+  setFilterAETCState,
   onDownload,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
+  filterAETCState: boolean;
   setFilterSoapierState: (value: boolean) => void;
+  setFilterAETCState: (value: boolean) => void;
   onDownload: () => void;
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -392,9 +939,37 @@ const AddClinicalNotes = ({
             }}
           ></span>
           <Button
-            onClick={() => setFilterSoapierState(true)}
+            onClick={() => {
+              setFilterSoapierState(true);
+              setFilterAETCState(false);
+            }}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
+              color: "rgb(0, 70, 0)",
+              border: "1px solid currentColor",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontSize: "14px",
+              marginRight: "10px",
+              flexGrow: 1,
+              textTransform: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "120px",
+              "&:hover": {
+                backgroundColor: "rgb(197, 231, 197)",
+              },
+            }}
+          >
+            SOAPIER Notes
+          </Button>
+          <Button
+            onClick={() => {
+              setFilterAETCState(true);
+              setFilterSoapierState(false);
+            }}
+            sx={{
+              backgroundColor: filterAETCState ? "rgb(221, 238, 221)" : "",
               color: "rgb(0, 70, 0)",
               border: "1px solid currentColor",
               fontFamily: "system-ui, -apple-system, sans-serif",
@@ -411,12 +986,18 @@ const AddClinicalNotes = ({
               },
             }}
           >
-            SOAPIER Notes
+            AETC
           </Button>
           <Button
-            onClick={() => setFilterSoapierState(false)}
+            onClick={() => {
+              setFilterSoapierState(false);
+              setFilterAETCState(false);
+            }}
             sx={{
-              backgroundColor: !filterSoapierState ? "rgb(221, 238, 221)" : "",
+              backgroundColor:
+                !filterSoapierState && !filterAETCState
+                  ? "rgb(221, 238, 221)"
+                  : "",
               color: "rgb(0, 70, 0)",
               border: "1px solid currentColor",
               fontFamily: "system-ui, -apple-system, sans-serif",

@@ -1,22 +1,26 @@
-import { useVitalsGraphData } from "@/hooks";
+import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-import { extractDateTime } from "@/helpers/dateTime";
 export function BP() {
-  const { chartData } = useVitalsGraphData();
+  const { values: systolic, dateTimes: systolicDates } = getObsGraphData(
+    "Systolic blood pressure"
+  );
+  const { values: diastolic, dateTimes: diastolicDates } = getObsGraphData(
+    "Diastolic blood pressure"
+  );
   return (
     <LineChart
       chartConfig={{
         series: [
           {
             name: "Systolic",
-            data: chartData.systolicbpData,
+            data: systolic,
           },
           {
             name: "Diastolic",
-            data: chartData.diastolicbpData,
+            data: diastolic,
           },
         ],
-        xAxisCategories: extractDateTime(chartData.datetimeSystolicbp),
+        xAxisCategories: systolicDates,
         title: "",
         height: 350,
         yAxisMin: 0,
