@@ -163,6 +163,10 @@ export const ClinicalNotes = () => {
   }, [refresh, filterSoapierState, filterAETCState]);
 
   const getEncountersByType = (encounterTypeUuid: any) => {
+    console.log(
+      "🚀 ~ getEncountersByType ~ encounterTypeUuid:",
+      encounterTypeUuid
+    );
     const {
       data: patientHistory,
       isLoading: historyLoading,
