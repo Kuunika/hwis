@@ -133,12 +133,11 @@ const filterObservationsByName = (observations: any, filterNames = []) => {
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
-  const [expandedPanels, setExpandedPanels]: any = useState({});
+  const [expanded, setExpanded] = useState<string | false>(false); // Changed to false initially
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
     () => ""
   );
-  const [expanded, setExpanded] = useState("panel1");
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
@@ -148,9 +147,19 @@ export const ClinicalNotes = () => {
     isSuccess,
   } = getPatientLabOrder(params?.id as string);
 
+  const contentRef = useRef<HTMLDivElement>(null);
+
   // Refresh encounter data when component mounts or filters change
   useEffect(() => {
+    // Fetch data whenever component mounts
     refresh();
+
+    // Also refreshes when filters change
+    const intervalId = setInterval(() => {
+      refresh();
+    }, 5000); // Refresh every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, [refresh, filterSoapierState, filterAETCState]);
 
   const getEncountersByType = (encounterTypeUuid: any) => {
@@ -368,38 +377,20 @@ export const ClinicalNotes = () => {
     handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
   };
 
-  const contentRef = useRef<HTMLDivElement>(null);
+  // Handle accordion expansion
+  const handleChange =
+    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
 
-  // Function to expand all accordions before printing
-  const expandAllAccordions = () => {
-    const panelIds = Object.keys(encounterData);
-    const expanded: any = {};
-
-    panelIds.forEach((id) => {
-      expanded[id] = true;
-    });
-
-    console.log("🚀 ~ expandAllAccordions ~ expanded:", expanded);
-    setExpandedPanels(expanded);
-
-    // Short delay to ensure UI updates before printing
-    setTimeout(() => {
-      handlePrint();
-    }, 100);
-  };
+      // Refresh data when accordion is opened
+      if (isExpanded) {
+        refresh();
+      }
+    };
 
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
-    onAfterPrint: () => {
-      // Reset expanded panels state after printing
-      setExpandedPanels({});
-    },
   });
-
-  // Handle accordion expansion
-  const handleChange = (panel: any) => (_: any, isExpanded: any) => {
-    setExpanded(isExpanded ? panel : false);
-  };
 
   // Function to render grouped items by heading
   const renderGroupedItems = (data: any[]) => {
@@ -698,7 +689,7 @@ export const ClinicalNotes = () => {
           filterAETCState={filterAETCState}
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
-          onDownload={expandAllAccordions} // Changed from handlePrint to expandAllAccordions
+          onDownload={handlePrint}
         />
       </WrapperBox>
       <div ref={contentRef} className="print-only">
@@ -721,9 +712,9 @@ export const ClinicalNotes = () => {
         ([panelId, { title, data }]: any) =>
           data.length > 0 && (
             <Accordion
-              defaultExpanded={expanded === panelId}
-              expanded={expandedPanels[panelId] === true || undefined}
               key={panelId}
+              expanded={expanded === panelId}
+              onChange={handleChange(panelId)}
             >
               <AccordionSummary
                 expandIcon={
@@ -783,10 +774,6 @@ export const ClinicalNotes = () => {
                     ""
                   : renderGroupedItems(Array.isArray(data) ? data.flat() : [])}
               </AccordionDetails>
-              <div>
-                <div></div>
-                <div></div>
-              </div>
             </Accordion>
           )
       )}
