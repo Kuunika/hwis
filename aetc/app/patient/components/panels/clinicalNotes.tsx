@@ -25,6 +25,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { getPatientLabOrder } from "@/hooks/labOrder";
 import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
+import { PrintClinicalNotes } from "./printClinicalNotes";
 
 type PanelData = {
   title: string;
@@ -700,8 +701,8 @@ export const ClinicalNotes = () => {
           onDownload={expandAllAccordions} // Changed from handlePrint to expandAllAccordions
         />
       </WrapperBox>
-      <div ref={contentRef}>
-        <div className="print-only">
+      <div ref={contentRef} className="print-only">
+        <div>
           <PatientInfoTab />
           <div
             style={{
@@ -714,82 +715,81 @@ export const ClinicalNotes = () => {
             Clinical Notes
           </div>
         </div>
-        {Object.entries(encounterData).map(
-          ([panelId, { title, data }]: any) =>
-            data.length > 0 && (
-              <Accordion
-                defaultExpanded={expanded === panelId}
-                expanded={expandedPanels[panelId] === true || undefined}
-                key={panelId}
+        <PrintClinicalNotes data={encounterData} />
+      </div>
+      {Object.entries(encounterData).map(
+        ([panelId, { title, data }]: any) =>
+          data.length > 0 && (
+            <Accordion
+              defaultExpanded={expanded === panelId}
+              expanded={expandedPanels[panelId] === true || undefined}
+              key={panelId}
+            >
+              <AccordionSummary
+                expandIcon={
+                  <ArrowForwardIosSharpIcon
+                    sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
+                  />
+                }
+                aria-controls={`${panelId}-content`}
+                id={`${panelId}-header`}
+                sx={{
+                  minHeight: "54px",
+                  "&.Mui-expanded": { minHeight: "54px" },
+                }}
               >
-                <AccordionSummary
-                  expandIcon={
-                    <ArrowForwardIosSharpIcon
-                      sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
-                    />
-                  }
-                  aria-controls={`${panelId}-content`}
-                  id={`${panelId}-header`}
-                  sx={{
-                    minHeight: "54px",
-                    "&.Mui-expanded": { minHeight: "54px" },
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "98%",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "98%",
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                      color: "#2c3e50",
+                      fontSize: "1.05rem",
+                      letterSpacing: "0.2px",
+                    }}
+                    component="span"
+                  >
+                    {title}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: "#7f8c8d",
+                      fontSize: "14px",
+                      letterSpacing: "0.2px",
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: 700,
-                        color: "#2c3e50",
-                        fontSize: "1.05rem",
-                        letterSpacing: "0.2px",
-                      }}
-                      component="span"
-                    >
-                      {title}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#7f8c8d",
-                        fontSize: "14px",
-                        letterSpacing: "0.2px",
-                      }}
-                    >
-                      {encounterData[panelId]?.data[0]?.created_by && (
-                        <>
-                          ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
-                          {getHumanReadableDateTime(
-                            encounterData[panelId]?.data[0]?.obs_datetime
-                          )}
-                        </>
-                      )}
-                    </Typography>
-                  </div>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {/* Use custom component for Laboratory/Radiology panel */}
-                  {title === "Laboratory or Radiology finding"
-                    ? // <LaboratoryRadiologyFindings
-                      //   data={Array.isArray(data) ? data.flat() : []}
-                      // />
-                      ""
-                    : renderGroupedItems(
-                        Array.isArray(data) ? data.flat() : []
-                      )}
-                </AccordionDetails>
-                <div>
-                  <div></div>
-                  <div></div>
+                    {encounterData[panelId]?.data[0]?.created_by && (
+                      <>
+                        ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
+                        {getHumanReadableDateTime(
+                          encounterData[panelId]?.data[0]?.obs_datetime
+                        )}
+                      </>
+                    )}
+                  </Typography>
                 </div>
-              </Accordion>
-            )
-        )}
-      </div>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* Use custom component for Laboratory/Radiology panel */}
+                {title === "Laboratory or Radiology finding"
+                  ? // <LaboratoryRadiologyFindings
+                    //   data={Array.isArray(data) ? data.flat() : []}
+                    // />
+                    ""
+                  : renderGroupedItems(Array.isArray(data) ? data.flat() : [])}
+              </AccordionDetails>
+              <div>
+                <div></div>
+                <div></div>
+              </div>
+            </Accordion>
+          )
+      )}
 
       <style jsx>{`
         @media print {
