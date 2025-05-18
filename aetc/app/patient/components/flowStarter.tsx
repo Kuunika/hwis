@@ -188,22 +188,34 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           fontFamily: "system-ui, -apple-system, sans-serif",
           fontSize: "14px",
           marginRight: "10px",
-          flexGrow: 1,
           textTransform: "none",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          maxWidth: "calc(100% - 40px)", // Ensure text doesn't overlap with dropdown
+          maxWidth: 300, // You can adjust this
+          justifyContent: "flex-start",
+          paddingRight: "20px",
           "&:hover": {
-            backgroundColor: "# FFA6A0",
+            backgroundColor: "#FFA6A0",
           },
         }}
       >
-        <span style={{ fontWeight: "bold", marginRight: "5px" }}>
-          Final Diagnosis:{" "}
-        </span>{" "}
-        {recentDiagnosis}
+        <Typography component="span" fontWeight="bold" mr={0.5} noWrap>
+          Final Diagnosis:
+        </Typography>
+        <Box
+          component="span"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            display: "inline-block",
+            maxWidth: "calc(100% - 130px)", // Adjust based on label length
+            verticalAlign: "bottom",
+          }}
+          title={recentDiagnosis} // Show full text on hover
+        >
+          {recentDiagnosis}
+        </Box>
       </Button>
+
       <Button
         onClick={() => setCprDialog(true)}
         sx={{
