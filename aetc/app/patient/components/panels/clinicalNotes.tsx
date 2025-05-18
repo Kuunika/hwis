@@ -25,6 +25,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { getPatientLabOrder } from "@/hooks/labOrder";
 import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
+import { PrintClinicalNotes } from "./printClinicalNotes";
 
 type PanelData = {
   title: string;
@@ -132,12 +133,11 @@ const filterObservationsByName = (observations: any, filterNames = []) => {
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
-  const [expandedPanels, setExpandedPanels]: any = useState({});
+  const [expanded, setExpanded] = useState<string | false>(false); // Changed to false initially
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
     () => ""
   );
-  const [expanded, setExpanded] = useState("panel1");
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
@@ -147,9 +147,19 @@ export const ClinicalNotes = () => {
     isSuccess,
   } = getPatientLabOrder(params?.id as string);
 
+  const contentRef = useRef<HTMLDivElement>(null);
+
   // Refresh encounter data when component mounts or filters change
   useEffect(() => {
+    // Fetch data whenever component mounts
     refresh();
+
+    // Also refreshes when filters change
+    const intervalId = setInterval(() => {
+      refresh();
+    }, 5000); // Refresh every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, [refresh, filterSoapierState, filterAETCState]);
 
   const getEncountersByType = (encounterTypeUuid: any) => {
@@ -367,38 +377,20 @@ export const ClinicalNotes = () => {
     handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
   };
 
-  const contentRef = useRef<HTMLDivElement>(null);
+  // Handle accordion expansion
+  const handleChange =
+    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
 
-  // Function to expand all accordions before printing
-  const expandAllAccordions = () => {
-    const panelIds = Object.keys(encounterData);
-    const expanded: any = {};
-
-    panelIds.forEach((id) => {
-      expanded[id] = true;
-    });
-
-    console.log("🚀 ~ expandAllAccordions ~ expanded:", expanded);
-    setExpandedPanels(expanded);
-
-    // Short delay to ensure UI updates before printing
-    setTimeout(() => {
-      handlePrint();
-    }, 100);
-  };
+      // Refresh data when accordion is opened
+      if (isExpanded) {
+        refresh();
+      }
+    };
 
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
-    onAfterPrint: () => {
-      // Reset expanded panels state after printing
-      setExpandedPanels({});
-    },
   });
-
-  // Handle accordion expansion
-  const handleChange = (panel: any) => (_: any, isExpanded: any) => {
-    setExpanded(isExpanded ? panel : false);
-  };
 
   // Function to render grouped items by heading
   const renderGroupedItems = (data: any[]) => {
@@ -697,11 +689,11 @@ export const ClinicalNotes = () => {
           filterAETCState={filterAETCState}
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
-          onDownload={expandAllAccordions} // Changed from handlePrint to expandAllAccordions
+          onDownload={handlePrint}
         />
       </WrapperBox>
-      <div ref={contentRef}>
-        <div className="print-only">
+      <div ref={contentRef} className="print-only">
+        <div>
           <PatientInfoTab />
           <div
             style={{
@@ -714,82 +706,77 @@ export const ClinicalNotes = () => {
             Clinical Notes
           </div>
         </div>
-        {Object.entries(encounterData).map(
-          ([panelId, { title, data }]: any) =>
-            data.length > 0 && (
-              <Accordion
-                defaultExpanded={expanded === panelId}
-                expanded={expandedPanels[panelId] === true || undefined}
-                key={panelId}
+        <PrintClinicalNotes data={encounterData} />
+      </div>
+      {Object.entries(encounterData).map(
+        ([panelId, { title, data }]: any) =>
+          data.length > 0 && (
+            <Accordion
+              key={panelId}
+              expanded={expanded === panelId}
+              onChange={handleChange(panelId)}
+            >
+              <AccordionSummary
+                expandIcon={
+                  <ArrowForwardIosSharpIcon
+                    sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
+                  />
+                }
+                aria-controls={`${panelId}-content`}
+                id={`${panelId}-header`}
+                sx={{
+                  minHeight: "54px",
+                  "&.Mui-expanded": { minHeight: "54px" },
+                }}
               >
-                <AccordionSummary
-                  expandIcon={
-                    <ArrowForwardIosSharpIcon
-                      sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
-                    />
-                  }
-                  aria-controls={`${panelId}-content`}
-                  id={`${panelId}-header`}
-                  sx={{
-                    minHeight: "54px",
-                    "&.Mui-expanded": { minHeight: "54px" },
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "98%",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "98%",
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                      color: "#2c3e50",
+                      fontSize: "1.05rem",
+                      letterSpacing: "0.2px",
+                    }}
+                    component="span"
+                  >
+                    {title}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: "#7f8c8d",
+                      fontSize: "14px",
+                      letterSpacing: "0.2px",
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: 700,
-                        color: "#2c3e50",
-                        fontSize: "1.05rem",
-                        letterSpacing: "0.2px",
-                      }}
-                      component="span"
-                    >
-                      {title}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#7f8c8d",
-                        fontSize: "14px",
-                        letterSpacing: "0.2px",
-                      }}
-                    >
-                      {encounterData[panelId]?.data[0]?.created_by && (
-                        <>
-                          ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
-                          {getHumanReadableDateTime(
-                            encounterData[panelId]?.data[0]?.obs_datetime
-                          )}
-                        </>
-                      )}
-                    </Typography>
-                  </div>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {/* Use custom component for Laboratory/Radiology panel */}
-                  {title === "Laboratory or Radiology finding"
-                    ? // <LaboratoryRadiologyFindings
-                      //   data={Array.isArray(data) ? data.flat() : []}
-                      // />
-                      ""
-                    : renderGroupedItems(
-                        Array.isArray(data) ? data.flat() : []
-                      )}
-                </AccordionDetails>
-                <div>
-                  <div></div>
-                  <div></div>
+                    {encounterData[panelId]?.data[0]?.created_by && (
+                      <>
+                        ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
+                        {getHumanReadableDateTime(
+                          encounterData[panelId]?.data[0]?.obs_datetime
+                        )}
+                      </>
+                    )}
+                  </Typography>
                 </div>
-              </Accordion>
-            )
-        )}
-      </div>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* Use custom component for Laboratory/Radiology panel */}
+                {title === "Laboratory or Radiology finding"
+                  ? // <LaboratoryRadiologyFindings
+                    //   data={Array.isArray(data) ? data.flat() : []}
+                    // />
+                    ""
+                  : renderGroupedItems(Array.isArray(data) ? data.flat() : [])}
+              </AccordionDetails>
+            </Accordion>
+          )
+      )}
 
       <style jsx>{`
         @media print {
