@@ -141,11 +141,8 @@ export const ClinicalNotes = () => {
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
-  const {
-    data: labOrders,
-    isPending,
-    isSuccess,
-  } = getPatientLabOrder(params?.id as string);
+  const [printoutTitle, setPrintoutTitle] = useState("All");
+
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -690,6 +687,7 @@ export const ClinicalNotes = () => {
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
           onDownload={handlePrint}
+          onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
       <div ref={contentRef} className="print-only">
@@ -703,7 +701,7 @@ export const ClinicalNotes = () => {
               textAlign: "center",
             }}
           >
-            Clinical Notes
+            Clinical Notes ({printoutTitle})
           </div>
         </div>
         <PrintClinicalNotes data={encounterData} />
@@ -832,6 +830,7 @@ const AddClinicalNotes = ({
   setFilterSoapierState,
   setFilterAETCState,
   onDownload,
+  onClickFilterButton
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
@@ -839,10 +838,10 @@ const AddClinicalNotes = ({
   setFilterSoapierState: (value: boolean) => void;
   setFilterAETCState: (value: boolean) => void;
   onDownload: () => void;
+  onClickFilterButton: (value: string) => void;
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   // Ref for printing
-  const contentRef = useRef<HTMLDivElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -929,6 +928,7 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterSoapierState(true);
               setFilterAETCState(false);
+              onClickFilterButton("SOAPIER Notes");
             }}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
@@ -954,6 +954,7 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterAETCState(true);
               setFilterSoapierState(false);
+              onClickFilterButton("AETC");
             }}
             sx={{
               backgroundColor: filterAETCState ? "rgb(221, 238, 221)" : "",
@@ -979,6 +980,7 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterSoapierState(false);
               setFilterAETCState(false);
+              onClickFilterButton("All");
             }}
             sx={{
               backgroundColor:
