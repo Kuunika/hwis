@@ -68,8 +68,6 @@ export default function DischargeHomeForm({ openPatientSummary }: { openPatientS
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
-    const { navigateTo } = useNavigation();
     const { data: facilities } = getFacilities();
     const { init, ServerTime } = useServerTime();
 

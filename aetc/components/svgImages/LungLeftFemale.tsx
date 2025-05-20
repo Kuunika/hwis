@@ -1,7 +1,7 @@
 import { SVGPopover } from "./svgPopover";
 import { Box } from "@mui/material";
 
-import { DataBox, RushForm } from "./forms";
+import { BreathingSoundsChestLungForm, DataBox, RushForm } from "./forms";
 import { useImageFormTransform } from "@/hooks";
 
 import { concepts } from "@/constants";
@@ -13,9 +13,17 @@ import { LungLeftFemale } from "@/assets";
 import { BreathingSoundsForm } from "./forms/chest/breathSoundsForm";
 interface Props {
   onValueChange: (values: any) => void;
+  form?:
+    | "breathingSoundChest"
+    | "breathSounds"
+    | "breathLungs"
+    | "medicalInpatient";
 }
 
-export function LungLeftFemaleImage({ onValueChange }: Props) {
+export function LungLeftFemaleImage({
+  onValueChange,
+  form = "breathSounds",
+}: Props) {
   const {
     handleClose,
     handleFormSubmit,
@@ -53,16 +61,30 @@ export function LungLeftFemaleImage({ onValueChange }: Props) {
         anchorEl={anchorEl}
         handleClose={handleClose}
       >
-        <BreathingSoundsForm
-          onCancel={handleClose}
-          onSubmit={(values, formConceptsLabels) =>
-            handleDataSubmission(
-              selectedSection.label as string,
-              values,
-              formConceptsLabels
-            )
-          }
-        />
+        {form == "breathSounds" && (
+          <BreathingSoundsForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
+        {form == "breathingSoundChest" && (
+          <BreathingSoundsChestLungForm
+            onCancel={handleClose}
+            onSubmit={(values, formConceptsLabels) =>
+              handleDataSubmission(
+                selectedSection.label as string,
+                values,
+                formConceptsLabels
+              )
+            }
+          />
+        )}
       </SVGPopover>
     </div>
   );

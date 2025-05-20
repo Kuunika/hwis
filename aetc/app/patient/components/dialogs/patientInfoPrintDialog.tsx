@@ -1,6 +1,7 @@
 import { GenericDialog } from "@/components";
 import { SelectPrinter } from "@/components/selectPrinter";
 import { concepts, encounters } from "@/constants";
+import { getObservationValue } from "@/helpers/emr";
 import { generatePatientSummaryZPL } from "@/helpers/zpl";
 
 import { useParameters } from "@/hooks";
@@ -22,8 +23,9 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const [diagnosis, setDiagnosis] = useState<Obs[]>([]);
   const [presentingComplaints, setPresentingComplaints] = useState<Obs[]>([]);
   const [patientLabOrders, setPatientLabOrders] = useState<Array<any>>([]);
-  const [printer, setPrinter]=useState('')
-
+  const [printer, setPrinter]=useState('');
+  const [notes, setNotes]=useState<any>({dischargeNotes:"",dischargePlan:""})
+  
   const { data: presentingComplaintsData } = getPatientsEncounters(
     params?.id as string,
     `encounter_type=${encounters.PRESENTING_COMPLAINTS}`
@@ -32,6 +34,10 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const { data } = getPatientsEncounters(
     params?.id as string,
     `encounter_type=${encounters.OUTPATIENT_DIAGNOSIS}`
+  );
+  const { data:disposition } = getPatientsEncounters(
+    params?.id as string,
+    `encounter_type=${encounters.DISPOSITION}`
   );
 
   const { data: ordersData } = getPatientLabOrder(params?.id as string);
@@ -53,15 +59,34 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   useEffect(() => {
     if (presentingComplaintsData) {
-      setPresentingComplaints(presentingComplaintsData[0].obs);
+      setPresentingComplaints(presentingComplaintsData[0]?.obs);
     }
   }, [presentingComplaintsData]);
+
+
+
+  useEffect(()=>{
+    if(disposition){
+      const dischargedOb=disposition[0]?.obs.find((d:Obs)=>d.names.find(n=>n.name==concepts.DISCHARGE_HOME));
+      const dischargeNotes = getObservationValue(dischargedOb?.children,concepts.DISCHARGE_NOTES)
+      const dischargePlan = getObservationValue(dischargedOb?.children,concepts.DISCHARGE_PLAN)
+
+      setNotes({
+        dischargeNotes,
+        dischargePlan
+      })
+    }
+
+
+  },[disposition])
 
   const handleOnPrint = async () => {
     const zpl = generatePatientSummaryZPL({
       presentingComplaints,
       diagnosis,
       labOrders: patientLabOrders,
+      dischargeNotes: notes.dischargeNotes,
+      dischargePlan: notes.dischargePlan,
     });
 
     await axios.post(`${printer}/print`,{zpl})
@@ -70,7 +95,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   };
 
   return (
-    <GenericDialog title="Patient Summary" onClose={() => { }} open={open}>
+    <GenericDialog title="Patient Summary" onClose={() => {}} open={open}>
       <Stack spacing={3}>
         {/* Presenting Complaints */}
         <Box>
@@ -134,8 +159,26 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
             ))
           )}
         </Box>
-        <SelectPrinter setPrinter={setPrinter} />
 
+        {Boolean(notes.dischargeNotes) && (
+          <Box>
+        
+            <Typography variant="h6" gutterBottom>
+              Discharge Notes
+            </Typography>
+            <Typography>{notes.dischargeNotes}</Typography>
+          </Box>
+        )}
+        {Boolean(notes.dischargePlan) && (
+          <Box>
+        
+            <Typography variant="h6" gutterBottom>
+              Discharge Plan
+            </Typography>
+            <Typography>{notes.dischargePlan}</Typography>
+          </Box>
+        )}
+        <SelectPrinter setPrinter={setPrinter} />
       </Stack>
       <br />
       <Button variant="contained" onClick={handleOnPrint}>

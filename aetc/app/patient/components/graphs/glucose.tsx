@@ -1,18 +1,17 @@
-import { useVitalsGraphData } from "@/hooks";
+import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-import { extractDateTime } from "@/helpers/dateTime";
 export function Glucose() {
-  const { chartData } = useVitalsGraphData();
+  const { values, dateTimes } = getObsGraphData("Glucose");
   return (
     <LineChart
       chartConfig={{
         series: [
           {
             name: "Glucose",
-            data: chartData.glucoseData,
+            data: values,
           },
         ],
-        xAxisCategories: extractDateTime(chartData.datetimeGlucose),
+        xAxisCategories: dateTimes,
         title: "",
         height: 350,
         yAxisMin: 0,

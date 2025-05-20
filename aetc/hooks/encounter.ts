@@ -38,9 +38,9 @@ export const getPatientsEncounters = (patientId: string, params?: string) => {
     queryKey: ["encounters", patientId, params],
     queryFn: () => getall(patientId),
     enabled: !!patientId,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
   });
 };
 
@@ -143,8 +143,6 @@ export const getConceptFromCacheOrFetch = async (conceptName: string) => {
 };
 
 export const getConcept: any = async (conceptName: string) => {
-
-  
   if (!conceptName) return null;
   return await getAll<Concept[]>(
     `/concepts?name=${encodeURI(conceptName)}&paginate=false&exact_match=true`

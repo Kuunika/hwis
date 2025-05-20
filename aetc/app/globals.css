@@ -117,3 +117,8 @@ a {
   height: "20px";
 
 }
+
+
+.preserve-breaks {
+  white-space: pre-line;
+}
