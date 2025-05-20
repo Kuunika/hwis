@@ -928,7 +928,7 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterSoapierState(true);
               setFilterAETCState(false);
-              onClickFilterButton("SOAPIER Notes");
+              onClickFilterButton("SOAPIER");
             }}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
