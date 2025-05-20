@@ -1,8 +1,8 @@
+import React from "react";
 import { MainButton, PatientInfoTab, WrapperBox } from "@/components";
 import { Panel } from ".";
-import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
-import { FaRegSquare } from "react-icons/fa6";
-import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+import { FaPlus } from "react-icons/fa";
+
 import { useState, useEffect, useMemo, useRef } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
@@ -26,6 +26,8 @@ import { getPatientLabOrder } from "@/hooks/labOrder";
 import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 import { PrintClinicalNotes } from "./printClinicalNotes";
+import { get } from "http";
+import { MedicalAllegyNotes, MedicationNotes, PresentingComplaintsNotes } from "./sampleHistory";
 
 type PanelData = {
   title: string;
@@ -142,7 +144,6 @@ export const ClinicalNotes = () => {
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
   const [printoutTitle, setPrintoutTitle] = useState("All");
-
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -314,6 +315,21 @@ export const ClinicalNotes = () => {
       data: getEncountersByType(encounters.DISPOSITION),
       removeObs: [], // No specific headings to remove
     },
+    panel15: {
+      title: "Sample History",
+      data: [
+        <PresentingComplaintsNotes
+          obs={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+        />,
+        <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
+        <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
+        ...getEncountersByType(encounters.DIAGNOSIS),
+        ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
+        ...getEncountersByType(encounters.SUMMARY_ASSESSMENT),
+        ...getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
+      ],
+      removeObs: [],
+    },
   };
 
   // Process encounter data based on filters and removeObs arrays
@@ -403,6 +419,8 @@ export const ClinicalNotes = () => {
       (item) => !item.children || item.children.length === 0
     );
 
+    const componentItems = data.filter(item=> React.isValidElement(item)).map((item)=>item);
+
     // Process items with children
     const parentElements = itemsWithChildren.map(
       (parentItem: any, index: number) => {
@@ -431,6 +449,7 @@ export const ClinicalNotes = () => {
     // Combine both types of elements
     return (
       <>
+        {componentItems}
         {parentElements}
         {regularItemsElement}
       </>
@@ -693,7 +712,7 @@ export const ClinicalNotes = () => {
       <div ref={contentRef} className="print-only">
         <div>
           <PatientInfoTab />
-          <div style={{paddingTop:"10px"}}>
+          <div style={{ paddingTop: "10px" }}>
             <p
               style={{
                 marginLeft: "10px",
@@ -774,12 +793,14 @@ export const ClinicalNotes = () => {
               </AccordionSummary>
               <AccordionDetails>
                 {/* Use custom component for Laboratory/Radiology panel */}
-                {title === "Laboratory or Radiology finding"
-                  ? // <LaboratoryRadiologyFindings
-                    //   data={Array.isArray(data) ? data.flat() : []}
-                    // />
-                    ""
-                  : renderGroupedItems(Array.isArray(data) ? data.flat() : [])}
+                {title === "Laboratory or Radiology finding" ? (
+                  // <LaboratoryRadiologyFindings
+                  //   data={Array.isArray(data) ? data.flat() : []}
+                  // />
+                  ""
+                ) :  (
+                  renderGroupedItems(Array.isArray(data) ? data.flat() : [])
+                )}
               </AccordionDetails>
             </Accordion>
           )
@@ -839,7 +860,7 @@ const AddClinicalNotes = ({
   setFilterSoapierState,
   setFilterAETCState,
   onDownload,
-  onClickFilterButton
+  onClickFilterButton,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
