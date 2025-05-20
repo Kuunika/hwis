@@ -693,15 +693,24 @@ export const ClinicalNotes = () => {
       <div ref={contentRef} className="print-only">
         <div>
           <PatientInfoTab />
-          <div
-            style={{
-              fontWeight: 700,
-              fontSize: "20px",
-              marginTop: "10px",
-              textAlign: "center",
-            }}
-          >
-            Clinical Notes ({printoutTitle})
+          <div style={{paddingTop:"10px"}}>
+            <p
+              style={{
+                marginLeft: "10px",
+              }}
+            >
+              Report type: {printoutTitle}
+            </p>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "20px",
+                // marginTop: "10px",
+                textAlign: "center",
+              }}
+            >
+              Clinical Notes
+            </div>
           </div>
         </div>
         <PrintClinicalNotes data={encounterData} />
