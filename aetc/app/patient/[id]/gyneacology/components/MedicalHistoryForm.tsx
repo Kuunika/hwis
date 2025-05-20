@@ -27,8 +27,8 @@ const medicalHistoryOptions = [
     { value: concepts.FAMILY_HISTORY_TUBERCULOSIS, label: "Tuberculosis (TB)" },
     { value: concepts.FAMILY_HISTORY_EPILEPSY, label: "Epilepsy" },
     { value: concepts.FAMILY_HISTORY_ASTHMA, label: "Asthma" },
-    // { value: concepts.MENTAL_ILLNESS, label: "Mental Illness" },
-    // { value: concepts.BLOOD_TRANSFUSION, label: "Blood Transfusion" },
+    { value: concepts.MENTAL_ILLNESS, label: "Mental Illness" },
+    { value: concepts.BLOOD_TRANSFUSION, label: "Blood Transfusion" },
     { value: concepts.DRUG_ALLERGIES, label: "Drug Allergies" },
 ];
 

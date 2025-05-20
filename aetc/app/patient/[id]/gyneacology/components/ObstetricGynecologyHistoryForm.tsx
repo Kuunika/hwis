@@ -72,11 +72,11 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.gestationAge,
                 obsDatetime: currentDateTime,
             },
-            // {
-            //     concept: concepts.GRAVIDITY,
-            //     value: values.gravidity,
-            //     obsDatetime: currentDateTime,
-            // },
+            {
+                concept: concepts.GRAVIDITY,
+                value: values.gravidity,
+                obsDatetime: currentDateTime,
+            },
             // {
             //     concept: concepts.PARITY,
             //     value: values.parity,
@@ -97,11 +97,11 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.menstrualCycle,
                 obsDatetime: currentDateTime,
             },
-            // {
-            //     concept: concepts.DURATION,
-            //     value: values.duration,
-            //     obsDatetime: currentDateTime,
-            // },
+            {
+                concept: concepts.DURATION,
+                value: values.duration,
+                obsDatetime: currentDateTime,
+            },
             {
                 concept: concepts.PREV_ABORTION,
                 value: values.prevAbortions,
@@ -142,31 +142,31 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.previousContraceptiveUse,
                 obsDatetime: currentDateTime,
             },
-            {
-                concept: concepts.CURRENTLY_ON_CONTRACEPTIVE,
-                value: values.currentlyOnContraceptive,
-                obsDatetime: currentDateTime,
-            },
             // {
-            //     concept: concepts.SIDE_EFFECTS,
-            //     value: values.anySideEffects,
+            //     concept: concepts.CURRENTLY_ON_CONTRACEPTIVE,
+            //     value: values.currentlyOnContraceptive,
             //     obsDatetime: currentDateTime,
             // },
             {
-                concept: concepts.CANCER_SCREENING,
+                concept: concepts.SIDE_EFFECTS, //not sendinfg
+                value: values.anySideEffects,
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.CANCER_SCREENING, // not sending
                 value: values.cancerScreening,
                 obsDatetime: currentDateTime,
             },
             {
-                concept: concepts.HISTORY_OF_STIS,
+                concept: concepts.HISTORY_OF_STIS, // not sending
                 value: values.historyOfSTIs,
                 obsDatetime: currentDateTime,
             },
-            {
-                concept: concepts.EDD,
-                value: values.edd,
-                obsDatetime: currentDateTime,
-            },
+            // {
+            //     concept: concepts.EDD,
+            //     value: values.edd,
+            //     obsDatetime: currentDateTime,
+            // },
         ];
 
         const payload = {
