@@ -24,6 +24,7 @@ export const MedicationNotes = ({ obs }: { obs: Obs[] }) => {
           </li>
         ))}
       </ul>
+      <br />
     </>
   );
 };

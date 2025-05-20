@@ -27,7 +27,7 @@ import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 import { PrintClinicalNotes } from "./printClinicalNotes";
 import { get } from "http";
-import { MedicalAllegyNotes, MedicationNotes, PresentingComplaintsNotes } from "./sampleHistory";
+import { MedicalAllegyNotes, MedicationNotes, PresentingComplaintsNotes, PriorConditionsNotes } from "./sampleHistory";
 
 type PanelData = {
   title: string;
@@ -323,7 +323,7 @@ export const ClinicalNotes = () => {
         />,
         <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
         <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
-        ...getEncountersByType(encounters.DIAGNOSIS),
+        <PriorConditionsNotes obs={getEncountersByType(encounters.DIAGNOSIS)} />,
         ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
         ...getEncountersByType(encounters.SUMMARY_ASSESSMENT),
         ...getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
