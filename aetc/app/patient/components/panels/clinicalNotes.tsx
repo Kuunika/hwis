@@ -27,7 +27,7 @@ import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 import { PrintClinicalNotes } from "./printClinicalNotes";
 import { get } from "http";
-import { MedicalAllegyNotes, MedicationNotes, PresentingComplaintsNotes, PriorConditionsNotes } from "./sampleHistory";
+import { MedicalAllegyNotes, MedicationNotes, PresentingComplaintsNotes, PriorConditionsNotes, SurgicalNotes } from "./sampleHistory";
 
 type PanelData = {
   title: string;
@@ -323,9 +323,14 @@ export const ClinicalNotes = () => {
         />,
         <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
         <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
-        <PriorConditionsNotes obs={getEncountersByType(encounters.DIAGNOSIS)} />,
+        <PriorConditionsNotes
+          obs={getEncountersByType(encounters.DIAGNOSIS)}
+        />,
+        <SurgicalNotes obs={getEncountersByType(encounters.SURGICAL_HISTORY)} />,
+        ...getEncountersByType(encounters.PATIENT_ADMISSIONS),
         ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
         ...getEncountersByType(encounters.SUMMARY_ASSESSMENT),
+        ...getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY),
         ...getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
       ],
       removeObs: [],
