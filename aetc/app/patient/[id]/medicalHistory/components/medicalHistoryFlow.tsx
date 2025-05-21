@@ -448,27 +448,26 @@ export const MedicalHistoryFlow = () => {
   }
 
   async function handleSurgeriesSubmission(values: any): Promise<any> {
+    console.log(values);
     const observationsPayload = values.surgeries.map((surgery: any) => {
       return {
-        concept: concepts.DATE_OF_SURGERY,
+        concept: concepts.SURGICAL_PROCEDURE,
         obsDatetime: dateTime,
-        value: surgery.date,
+        value: surgery.procedure,
         groupMembers: [
           {
-            concept:
-              surgery.procedure === "other_surgical_procedure"
-                ? concepts.OTHER
-                : surgery.procedure,
-            value:
-              surgery.procedure === "other_surgical_procedure"
-                ? surgery.other
-                : true,
+            concept: concepts.DATE_OF_SURGERY,
+            value: surgery.date,
           },
           {
             concept: concepts.INDICATION_FOR_SURGERY,
             value: surgery.indication,
           },
           { concept: concepts.COMPLICATIONS, value: surgery.complication },
+          surgery.procedure === "Other Surgical Procedure"?{
+            concept: concepts.OTHER,
+            value: surgery.other
+          }: null,
         ] as OutputObservation[],
       };
     });
