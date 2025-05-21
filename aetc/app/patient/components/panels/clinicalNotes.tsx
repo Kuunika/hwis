@@ -27,7 +27,15 @@ import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 import { PrintClinicalNotes } from "./printClinicalNotes";
 import { get } from "http";
-import { MedicalAllegyNotes, MedicationNotes, PresentingComplaintsNotes, PriorConditionsNotes, SurgicalNotes } from "./sampleHistory";
+import {
+  MealNotes,
+  MedicalAllegyNotes,
+  MedicationNotes,
+  PatientAdmissionNotes,
+  PresentingComplaintsNotes,
+  PriorConditionsNotes,
+  SurgicalNotes,
+} from "./sampleHistory";
 
 type PanelData = {
   title: string;
@@ -326,10 +334,14 @@ export const ClinicalNotes = () => {
         <PriorConditionsNotes
           obs={getEncountersByType(encounters.DIAGNOSIS)}
         />,
-        <SurgicalNotes obs={getEncountersByType(encounters.SURGICAL_HISTORY)} />,
-        ...getEncountersByType(encounters.PATIENT_ADMISSIONS),
+        <SurgicalNotes
+          obs={getEncountersByType(encounters.SURGICAL_HISTORY)}
+        />,
+        <PatientAdmissionNotes
+          obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+        />,
+        <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
         ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
-        ...getEncountersByType(encounters.SUMMARY_ASSESSMENT),
         ...getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY),
         ...getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
       ],
@@ -424,7 +436,9 @@ export const ClinicalNotes = () => {
       (item) => !item.children || item.children.length === 0
     );
 
-    const componentItems = data.filter(item=> React.isValidElement(item)).map((item)=>item);
+    const componentItems = data
+      .filter((item) => React.isValidElement(item))
+      .map((item) => item);
 
     // Process items with children
     const parentElements = itemsWithChildren.map(
@@ -798,14 +812,12 @@ export const ClinicalNotes = () => {
               </AccordionSummary>
               <AccordionDetails>
                 {/* Use custom component for Laboratory/Radiology panel */}
-                {title === "Laboratory or Radiology finding" ? (
-                  // <LaboratoryRadiologyFindings
-                  //   data={Array.isArray(data) ? data.flat() : []}
-                  // />
-                  ""
-                ) :  (
-                  renderGroupedItems(Array.isArray(data) ? data.flat() : [])
-                )}
+                {title === "Laboratory or Radiology finding"
+                  ? // <LaboratoryRadiologyFindings
+                    //   data={Array.isArray(data) ? data.flat() : []}
+                    // />
+                    ""
+                  : renderGroupedItems(Array.isArray(data) ? data.flat() : [])}
               </AccordionDetails>
             </Accordion>
           )
