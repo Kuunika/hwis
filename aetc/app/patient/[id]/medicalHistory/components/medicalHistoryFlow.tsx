@@ -448,7 +448,6 @@ export const MedicalHistoryFlow = () => {
   }
 
   async function handleSurgeriesSubmission(values: any): Promise<any> {
-    console.log(values);
     const observationsPayload = values.surgeries.map((surgery: any) => {
       return {
         concept: concepts.SURGICAL_PROCEDURE,

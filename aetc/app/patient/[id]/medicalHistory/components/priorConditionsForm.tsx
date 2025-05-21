@@ -148,7 +148,6 @@ export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   };
 
   const handleICD11Selection = (selectedEntity: any, index: number) => {
-    console.log("Selected entity:", selectedEntity);
     const updatedSelections = { ...selectedDiagnosis };
     updatedSelections[index] = selectedEntity.diagnosis + " - " + selectedEntity.code;
 
