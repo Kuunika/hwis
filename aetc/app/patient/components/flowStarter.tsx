@@ -123,6 +123,22 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
     }));
   };
 
+  // Define template forms menu items
+  const templateFormsItems: MenuItemConfig[] = [
+    {
+      label: "Medical Inpatient",
+      path: `/patient/${patient.id}/medicalInpatient`,
+    },
+    {
+      label: "Surgical Notes",
+      path: `/patient/${patient.id}/surgicalNotes`,
+    },
+    {
+      label: "Gynaecology Ward Admission",
+      path: `/patient/${patient.id}/gyneacology`,
+    },
+  ];
+
   // Define main menu items
   const mainMenuItems: MenuItemConfig[] = [
     {
@@ -177,6 +193,9 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
             line-height: 1 !important;
             border-bottom: 1px solid #ccc !important;
           } 
+          .nestedMenuItem {
+            padding-left: 32px !important;
+          }
         `}
       </style>
 
@@ -312,6 +331,8 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
+
+
           {/* Main menu items */}
           {mainMenuItems.map((item, index) => (
             <ListItemButton
@@ -323,6 +344,32 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
               <ListItemText primary={item.label} />
             </ListItemButton>
           ))}
+
+          {/* Template Forms collapsible section */}
+          <ListItemButton
+            onClick={() => toggleSection("templateForms")}
+            className="listItemButton"
+          >
+            <FaPlus />
+            <ListItemText primary="Template Forms" />
+            {openSections.templateForms ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openSections.templateForms} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {templateFormsItems.map((item, index) => (
+                <ListItemButton
+                  key={`template-${index}`}
+                  onClick={() => startFlow(item.path)}
+                  className="listItemButton nestedMenuItem"
+                >
+                  <FaPlus />
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              ))}
+            </List>
+          </Collapse>
+
+
         </List>
       </Menu>
       <CPRDialogForm

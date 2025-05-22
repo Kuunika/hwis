@@ -20,8 +20,11 @@ import { FaAngleLeft } from "react-icons/fa6";
 import { RadioGroupInput } from "@/components"; // Import your custom RadioGroupInput
 import { FormDatePickerToday } from "@/components"; // Import your custom FormDatePicker
 import { SelectInputField } from "@/components";
+import { FormTimePickerNow } from "@/components";
+
 
 import { Formik, Form, Field } from "formik";
+import dayjs from "dayjs";
 
 export const BroughtDeadEdit = () => {
     const { params } = useParameters();
@@ -93,6 +96,21 @@ export const BroughtDeadEdit = () => {
                     id={key}
                 />
 
+            );
+        }
+        // Special handling for time fields
+        else if (
+            key === "time_of_death" ||
+            key === "time_of_arrival" ||
+            key === "time_of_injury" ||
+            key === "time_confirming_death"
+        ) {
+            return (
+                <FormTimePickerNow
+                    name={key}
+                    label={key.replace(/_/g, " ").toUpperCase()}
+                    width="100%"
+                />
             );
         }
         // Special handling for time fields
@@ -172,8 +190,21 @@ export const BroughtDeadEdit = () => {
                 </Typography>
 
                 <Formik
-                    initialValues={deathReport}
-                    onSubmit={handleSubmit}
+                    initialValues={{
+                        ...deathReport,
+                        time_of_death: deathReport.time_of_death
+                            ? dayjs(deathReport.time_of_death).format("HH:mm:ss")
+                            : "",
+                        time_of_arrival: deathReport.time_of_arrival
+                            ? dayjs(deathReport.time_of_arrival).format("HH:mm:ss")
+                            : "",
+                        time_of_injury: deathReport.time_of_injury
+                            ? dayjs(deathReport.time_of_injury).format("HH:mm:ss")
+                            : "",
+                        time_confirming_death: deathReport.time_confirming_death
+                            ? dayjs(deathReport.time_confirming_death).format("HH:mm:ss")
+                            : "",
+                    }} onSubmit={handleSubmit}
                     enableReinitialize
                 >
                     {({ isSubmitting }) => (
