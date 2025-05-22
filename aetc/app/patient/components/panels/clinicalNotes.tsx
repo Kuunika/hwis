@@ -28,6 +28,7 @@ import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 import { PrintClinicalNotes } from "./printClinicalNotes";
 import { get } from "http";
 import {
+  FamilyMedicalHistoryNotes,
   MealNotes,
   MedicalAllegyNotes,
   MedicationNotes,
@@ -341,8 +342,12 @@ export const ClinicalNotes = () => {
           obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
         />,
         <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
+
+        <FamilyMedicalHistoryNotes
+          obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+        />,
         ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
-        ...getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY),
+        ,
         ...getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
       ],
       removeObs: [],
