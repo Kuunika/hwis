@@ -35,6 +35,7 @@ import {
   PatientAdmissionNotes,
   PresentingComplaintsNotes,
   PriorConditionsNotes,
+  ReviewOfSystemsNotes,
   SurgicalNotes,
 } from "./sampleHistory";
 
@@ -346,9 +347,11 @@ export const ClinicalNotes = () => {
         <FamilyMedicalHistoryNotes
           obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
         />,
+        <ReviewOfSystemsNotes
+          obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
+        />,
         ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
         ,
-        ...getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
       ],
       removeObs: [],
     },
