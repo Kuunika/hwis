@@ -8,6 +8,10 @@ export const SurgicalNotes = ({ obs }: { obs: Obs[] }) => {
   const surgicalList = obs.map((ob) => [
     { label: "Procedure Date", value: getHumanReadableDate(ob.value) },
     {
+      label: "Procedure",
+      value: ob.value,
+    },
+    {
       label: "Complications",
       value: getObservationValue(ob.children, concepts.COMPLICATIONS),
     },
