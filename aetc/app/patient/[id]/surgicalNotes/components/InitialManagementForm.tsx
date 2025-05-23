@@ -112,7 +112,8 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
         if (!encountersData) return;
 
         const surgicalEncounter = encountersData
-            ?.filter((encounter) => encounter.encounter_type.uuid === encounters.SURGICAL_NOTES_TEMPLATE_FORM)
+            ?.filter((encounter) => encounter.encounter_type &&
+                encounter.encounter_type.uuid === encounters.SURGICAL_NOTES_TEMPLATE_FORM)
             .sort((a, b) => new Date(b.encounter_datetime).getTime() - new Date(a.encounter_datetime).getTime())[0];
 
         if (surgicalEncounter && surgicalEncounter.obs) {

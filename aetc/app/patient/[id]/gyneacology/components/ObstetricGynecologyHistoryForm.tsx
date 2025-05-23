@@ -77,11 +77,11 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.gravidity,
                 obsDatetime: currentDateTime,
             },
-            {
-                concept: concepts.PARITY,
-                value: values.parity,
-                obsDatetime: currentDateTime,
-            },
+            // {
+            //     concept: concepts.PARITY,
+            //     value: values.parity,
+            //     obsDatetime: currentDateTime,
+            // },
             {
                 concept: concepts.NUMBER_OF_LIVING_CHILDREN,
                 value: values.numberOfLivingChildren,
@@ -148,17 +148,17 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
             //     obsDatetime: currentDateTime,
             // },
             {
-                concept: concepts.SIDE_EFFECTS,
+                concept: concepts.SIDE_EFFECTS, //not sendinfg
                 value: values.anySideEffects,
                 obsDatetime: currentDateTime,
             },
             {
-                concept: concepts.CANCER_SCREENING,
+                concept: concepts.CANCER_SCREENING, // not sending
                 value: values.cancerScreening,
                 obsDatetime: currentDateTime,
             },
             {
-                concept: concepts.HISTORY_OF_STIS,
+                concept: concepts.HISTORY_OF_STIS, // not sending
                 value: values.historyOfSTIs,
                 obsDatetime: currentDateTime,
             },
@@ -220,8 +220,8 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                         <TextInputField name="lnmp" label="LNMP" type="text" id="" />
                         <TextInputField name="edd" label="EDD" type="text" id="" />
                         <TextInputField name="gestationAge" label="Gestation Age" type="text" id="" />
-                        <TextInputField name="gravidity" label="Gravidity" type="text" id="" />
-                        <TextInputField name="parity" label="Parity" type="text" id="" />
+                        <TextInputField name="gravidity" label="Gravidity" type="number" id="" />
+                        <TextInputField name="parity" label="Parity" type="number" id="" />
                         <TextInputField name="numberOfLivingChildren" label="Number of Living Children" type="text" id="" />
                         <TextInputField name="menarche" label="Menarche" type="text" id="" />
 

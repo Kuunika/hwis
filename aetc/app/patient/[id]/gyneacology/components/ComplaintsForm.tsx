@@ -20,6 +20,7 @@ type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
+//BACKEND: Replace datatype for chief complaint to text
 const validationSchema = Yup.object({});
 export const ComplaintsForm = ({ onSubmit, onSkip }: Prop) => {
     const { params } = useParameters();
