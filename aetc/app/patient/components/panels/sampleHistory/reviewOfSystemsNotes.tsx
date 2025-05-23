@@ -1,81 +1,108 @@
 import { concepts } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
 import { Obs } from "@/interfaces";
-import { get } from "http";
+import { ListWithLabelValue } from "./components";
 
 export const ReviewOfSystemsNotes = ({ obs }: { obs: Obs[] }) => {
-  const general = obs.filter((ob) => {
-    return (
-      ob.names[0].name.toLowerCase() ==
+  const general = obs.filter(
+    (ob) =>
+      ob.names[0].name.toLowerCase() ===
       concepts.REVIEW_OF_SYSTEMS_GENERAL.toLowerCase()
-    );
-  });
-  const trauma = obs.filter((ob) => {
-    return (
-      ob.names[0].name.toLowerCase() ==
+  );
+
+  const trauma = obs.filter(
+    (ob) =>
+      ob.names[0].name.toLowerCase() ===
       concepts.REVIEW_OF_SYSTEMS_TRAUMA.toLowerCase()
+  );
+
+  // Format general symptoms list
+  const generalList = general.map((ob) => {
+    const symptomName = generalSymptomConceptName(ob.children) || "";
+    const durationObs = partialMatch(ob.children, "Duration");
+    const durationLabel = durationObs?.names[0].name || "";
+    const durationValue = durationObs?.value || "";
+    const locationValue = getObservationValue(
+      ob.children,
+      concepts.ANATOMIC_LOCATIONS
     );
+
+    return [
+      { label: symptomName, value: "" },
+      { label: durationLabel, value: durationValue },
+      { label: "Location", value: locationValue },
+    ];
   });
 
-  const mechanismOfInjury = trauma[0]?.children.map((ob) => {
-    if (
-      ob.names[0].name.toLowerCase() == concepts.TIME_OF_INJURY.toLowerCase() ||
-      ob.names[0].name.toLowerCase() ==
-        concepts.LOSS_OF_CONSCIOUSNESS.toLowerCase() ||
-      ob.names[0].name.toLowerCase() ==
-        concepts.OCCUPATIONAL_INJURY.toLowerCase()
-    ) {
-      return null;
-    }
-    return (
-      <li key={ob.names[0].name}>
-        <strong>Mechanism of injury:</strong>
-        {ob.names[0].name} ~ <strong>Comment:</strong> {ob.value}
-      </li>
-    );
-  });
+  // Format other systems (non-general) list
+  const otherSystemsList = obs
+    .filter(
+      (ob) =>
+        ob.names[0].name.toLowerCase() !==
+        concepts.REVIEW_OF_SYSTEMS_GENERAL.toLowerCase()
+    )
+    .map((ob) => {
+      return [
+        {
+          label: ob.names[0].name,
+          value: ob.children.map((child) => child.names[0].name).join(", "),
+        },
+      ];
+    });
+
+  // Trauma details list
+  const traumaDetails = [
+    {
+      label: "Date Time of Injury",
+      value:
+        getObservationValue(trauma[0]?.children, concepts.TIME_OF_INJURY) || "",
+    },
+    {
+      label: "Did the patient lose consciousness on the scene",
+      value:
+        getObservationValue(
+          trauma[0]?.children,
+          concepts.LOSS_OF_CONSCIOUSNESS
+        ) || "",
+    },
+    {
+      label: "Was this injury work-related",
+      value:
+        getObservationValue(
+          trauma[0]?.children,
+          concepts.OCCUPATIONAL_INJURY
+        ) || "",
+    },
+  ];
+
+  // Mechanism of Injury list as label-value pairs
+  const mechanismOfInjuryList =
+    trauma[0]?.children
+      .filter(
+        (ob) =>
+          ![
+            concepts.TIME_OF_INJURY.toLowerCase(),
+            concepts.LOSS_OF_CONSCIOUSNESS.toLowerCase(),
+            concepts.OCCUPATIONAL_INJURY.toLowerCase(),
+          ].includes(ob.names[0].name.toLowerCase())
+      )
+      .map((ob) => [
+        { label: "Mechanism of injury", value: ob.names[0].name },
+        { label: "Comment", value: ob.value },
+      ]) || [];
 
   return (
     <>
-      <h5>Review of systems</h5>
-      <ul>
-        {general.map((ob, index) => {
-          return (
-            <li key={index}>
-              <strong>{generalSymptomConceptName(ob.children)}</strong>~
-              {partialMatch(ob.children, "Duration")?.names[0].name}:
-              {partialMatch(ob.children, "Duration")?.value} ~ location:
-              {getObservationValue(ob.children, concepts.ANATOMIC_LOCATIONS)}
-            </li>
-          );
-        })}
-      </ul>
-      <ul>
-        {obs.map((ob, index) => {
-          if (
-            ob.names[0].name.toLowerCase() ==
-            concepts.REVIEW_OF_SYSTEMS_GENERAL.toLowerCase()
-          ) {
-            return null;
-          }
-          return (
-            <li key={index}>
-              <strong>{ob.names[0].name}:</strong>
-              {ob.children.map((child) => child.names[0].name).join(", ")}
-            </li>
-          );
-        })}
-      </ul>
-      <br />
-      <p>Date Time of Injury</p>:{" "}
-      {getObservationValue(trauma[0]?.children, concepts.TIME_OF_INJURY)} <br />
-      <p>Did the patient lose consciousness on the scene</p>:{" "}
-      {getObservationValue(trauma[0]?.children, concepts.LOSS_OF_CONSCIOUSNESS)}{" "}
-      <br />
-      <p>Was this injury work-related</p>:{" "}
-      {getObservationValue(trauma[0]?.children, concepts.OCCUPATIONAL_INJURY)}{" "}
-      <br />
-      <ul>{mechanismOfInjury}</ul>
+      <ListWithLabelValue
+        title="General Review of Systems"
+        list={generalList}
+      />
+      <ListWithLabelValue title="Other Systems" list={otherSystemsList} />
+      <ListWithLabelValue title="Trauma Details" list={[traumaDetails]} />
+      <ListWithLabelValue
+        title="Mechanism of Injury"
+        list={mechanismOfInjuryList}
+      />
     </>
   );
 };

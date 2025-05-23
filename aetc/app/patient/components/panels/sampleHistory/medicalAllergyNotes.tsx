@@ -3,7 +3,7 @@ import { Obs } from "@/interfaces";
 export const MedicalAllegyNotes = ({ obs }: { obs: Obs[] }) => {
   return (
     <>
-      <h5>Medication Allergy</h5>
+      <h4>Medication Allergy</h4>
       <ul style={{ paddingLeft: "1.2rem", listStyleType: "disc" }}>
         {obs.map((ob, index) =>
           ob.children.map((childOb, childIndex) => (
@@ -11,6 +11,7 @@ export const MedicalAllegyNotes = ({ obs }: { obs: Obs[] }) => {
           ))
         )}
       </ul>
+      <br />
     </>
   );
 };

@@ -2,24 +2,25 @@ import { concepts } from "@/constants";
 import { getHumanReadableDate } from "@/helpers/dateTime";
 import { getObservationValue } from "@/helpers/emr";
 import { Obs } from "@/interfaces";
+import { ListWithLabelValue } from "./components";
 
 export const SurgicalNotes = ({ obs }: { obs: Obs[] }) => {
+  const surgicalList = obs.map((ob) => [
+    { label: "Procedure Date", value: getHumanReadableDate(ob.value) },
+    {
+      label: "Complications",
+      value: getObservationValue(ob.children, concepts.COMPLICATIONS),
+    },
+    {
+      label: "Indication for surgery",
+      value: getObservationValue(ob.children, concepts.INDICATION_FOR_SURGERY),
+    },
+  ]);
+
   return (
     <>
-      <h5>Surgical Notes</h5>
-      <ul>
-        {obs.map((ob, index) => {
-          return (
-            <li key={index}>
-              <strong>Procedure Date:</strong>
-              {getHumanReadableDate(ob.value)} ~ <strong>Procedure:</strong> ~{" "}
-              <strong>Complications:</strong>
-              {getObservationValue(ob.children, concepts.COMPLICATIONS)}
-              ~ <strong>Indication for surgery:</strong> {getObservationValue(ob.children, concepts.INDICATION_FOR_SURGERY)}
-            </li>
-          );
-        })}
-      </ul>
+      <ListWithLabelValue title="Surgical Notes" list={surgicalList} />
+      <br />
     </>
   );
 };

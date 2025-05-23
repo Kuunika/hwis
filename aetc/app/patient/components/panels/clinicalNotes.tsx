@@ -343,7 +343,6 @@ export const ClinicalNotes = () => {
           obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
         />,
         <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
-
         <FamilyMedicalHistoryNotes
           obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
         />,
@@ -351,7 +350,6 @@ export const ClinicalNotes = () => {
           obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
         />,
         ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
-        ,
       ],
       removeObs: [],
     },
@@ -437,11 +435,17 @@ export const ClinicalNotes = () => {
     // First, separate items with children and those without
     let itemsWithChildren: any = [];
     itemsWithChildren = data.filter(
-      (item) => item && Array.isArray(item.children) && item.children.length > 0
+      (item) =>
+        item &&
+        Array.isArray(item.children) &&
+        item.children.length > 0 &&
+        !React.isValidElement(item)
     );
 
     const regularItems = data.filter(
-      (item) => !item.children || item.children.length === 0
+      (item) =>
+        (!item.children || item.children.length === 0) &&
+        !React.isValidElement(item)
     );
 
     const componentItems = data

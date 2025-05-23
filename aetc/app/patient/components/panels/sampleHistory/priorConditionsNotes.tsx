@@ -2,26 +2,27 @@ import { concepts } from "@/constants";
 import { getHumanReadableDate } from "@/helpers/dateTime";
 import { getObservationValue } from "@/helpers/emr";
 import { Obs } from "@/interfaces";
+import { ListWithLabelValue } from "./components";
 
 export const PriorConditionsNotes = ({ obs }: { obs: Obs[] }) => {
-  return (
-    <>
-      <h5>Prior Conditions</h5>
-      <ul style={{ paddingLeft: "1.2rem", listStyleType: "disc" }}>
-        {obs.map((ob, index) => {
-            return (
-            <li key={index}>
-              <strong>Diagnosis Date:</strong> { getHumanReadableDate(ob.value)} ~ <strong>Diagnosis:</strong>{" "}
-              {getObservationValue(ob.children, concepts.ICD11_DIAGNOSIS)} ~ <strong>On Treatment:</strong>{" "}
-              {getObservationValue(ob.children, concepts.ON_TREATMENT)} ~ <strong>Additional Details:</strong>{" "}
-              {getObservationValue(
-              ob.children,
-              concepts.ADDITIONAL_DIAGNOSIS_DETAILS
-              )}
-            </li>
-            );
-        })}
-      </ul>
-    </>
-  );
+  const formattedList = obs.map((ob) => [
+    { label: "Diagnosis Date", value: getHumanReadableDate(ob.value) },
+    {
+      label: "Diagnosis",
+      value: getObservationValue(ob.children, concepts.ICD11_DIAGNOSIS),
+    },
+    {
+      label: "On Treatment",
+      value: getObservationValue(ob.children, concepts.ON_TREATMENT),
+    },
+    {
+      label: "Additional Details",
+      value: getObservationValue(
+        ob.children,
+        concepts.ADDITIONAL_DIAGNOSIS_DETAILS
+      ),
+    },
+  ]);
+
+  return <ListWithLabelValue title="Prior Conditions" list={formattedList} />;
 };
