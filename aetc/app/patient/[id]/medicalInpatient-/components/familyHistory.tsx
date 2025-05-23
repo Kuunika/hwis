@@ -36,20 +36,17 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
     const [observations, setObservations] = useState<ProcessedObservation[]>([]);
     const displayedObservations = showForPrinting ? observations : observations.slice(0, 4);
 
-    const familyHistoryEncounters = historicData?.filter(
+   useEffect(() => {
+  if (!historyLoading && historicData) {
+    const familyHistoryEncounters = historicData.filter(
       (item) => item.encounter_type?.name === "FAMILY MEDICAL HISTORY"
-    )
-    
-  useEffect(() => {
-    if (!historyLoading) {
-      const observations: ProcessedObservation[] = [];
-      
-     
-      familyHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-      
-        encounter.obs.forEach((observation) => {
+    );
+
+    const processed: ProcessedObservation[] = [];
+
+    familyHistoryEncounters.forEach((encounter: { obs: Observation[] }) => {
+      encounter.obs.forEach((observation) => {
         const value = observation.value;
-      
 
         const obsData: ProcessedObservation = {
           obs_id: observation.obs_id,
@@ -64,16 +61,17 @@ function FamilyHistoryPanel({ showForPrinting , toggleShow}: familyHistoryPanelP
               }))
             : [],
         };
-        observations.push(obsData);
-
-      })
-      const filtered = observations.filter(item => item.children && item.children.length > 0);
-          setObservations(filtered)
+        processed.push(obsData);
       });
+    });
 
-      }
+    const filtered = processed.filter(
+      (item) => item.children && item.children.length > 0
+    );
 
-  },[[historicData, historyLoading, familyHistoryEncounters]])
+    setObservations(filtered);
+  }
+}, [historicData, historyLoading]);
 
 return (
   <>
