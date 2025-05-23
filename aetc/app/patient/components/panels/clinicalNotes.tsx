@@ -1,8 +1,8 @@
+import React from "react";
 import { MainButton, PatientInfoTab, WrapperBox } from "@/components";
 import { Panel } from ".";
-import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
-import { FaRegSquare } from "react-icons/fa6";
-import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+import { FaPlus } from "react-icons/fa";
+
 import { useState, useEffect, useMemo, useRef } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
@@ -26,6 +26,18 @@ import { getPatientLabOrder } from "@/hooks/labOrder";
 import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 import { PrintClinicalNotes } from "./printClinicalNotes";
+import { get } from "http";
+import {
+  FamilyMedicalHistoryNotes,
+  MealNotes,
+  MedicalAllegyNotes,
+  MedicationNotes,
+  PatientAdmissionNotes,
+  PresentingComplaintsNotes,
+  PriorConditionsNotes,
+  ReviewOfSystemsNotes,
+  SurgicalNotes,
+} from "./sampleHistory";
 
 type PanelData = {
   title: string;
@@ -141,11 +153,7 @@ export const ClinicalNotes = () => {
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
-  const {
-    data: labOrders,
-    isPending,
-    isSuccess,
-  } = getPatientLabOrder(params?.id as string);
+  const [printoutTitle, setPrintoutTitle] = useState("All");
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -317,6 +325,34 @@ export const ClinicalNotes = () => {
       data: getEncountersByType(encounters.DISPOSITION),
       removeObs: [], // No specific headings to remove
     },
+    panel15: {
+      title: "Sample History",
+      data: [
+        <PresentingComplaintsNotes
+          obs={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+        />,
+        <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
+        <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
+        <PriorConditionsNotes
+          obs={getEncountersByType(encounters.DIAGNOSIS)}
+        />,
+        <SurgicalNotes
+          obs={getEncountersByType(encounters.SURGICAL_HISTORY)}
+        />,
+        <PatientAdmissionNotes
+          obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+        />,
+        <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
+        <FamilyMedicalHistoryNotes
+          obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+        />,
+        <ReviewOfSystemsNotes
+          obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
+        />,
+        ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
+      ],
+      removeObs: [],
+    },
   };
 
   // Process encounter data based on filters and removeObs arrays
@@ -399,12 +435,22 @@ export const ClinicalNotes = () => {
     // First, separate items with children and those without
     let itemsWithChildren: any = [];
     itemsWithChildren = data.filter(
-      (item) => item && Array.isArray(item.children) && item.children.length > 0
+      (item) =>
+        item &&
+        Array.isArray(item.children) &&
+        item.children.length > 0 &&
+        !React.isValidElement(item)
     );
 
     const regularItems = data.filter(
-      (item) => !item.children || item.children.length === 0
+      (item) =>
+        (!item.children || item.children.length === 0) &&
+        !React.isValidElement(item)
     );
+
+    const componentItems = data
+      .filter((item) => React.isValidElement(item))
+      .map((item) => item);
 
     // Process items with children
     const parentElements = itemsWithChildren.map(
@@ -434,6 +480,7 @@ export const ClinicalNotes = () => {
     // Combine both types of elements
     return (
       <>
+        {componentItems}
         {parentElements}
         {regularItemsElement}
       </>
@@ -690,20 +737,30 @@ export const ClinicalNotes = () => {
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
           onDownload={handlePrint}
+          onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
       <div ref={contentRef} className="print-only">
         <div>
           <PatientInfoTab />
-          <div
-            style={{
-              fontWeight: 700,
-              fontSize: "20px",
-              marginTop: "10px",
-              textAlign: "center",
-            }}
-          >
-            Clinical Notes
+          <div style={{ paddingTop: "10px" }}>
+            <p
+              style={{
+                marginLeft: "10px",
+              }}
+            >
+              Report type: {printoutTitle}
+            </p>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "20px",
+                // marginTop: "10px",
+                textAlign: "center",
+              }}
+            >
+              Clinical Notes
+            </div>
           </div>
         </div>
         <PrintClinicalNotes data={encounterData} />
@@ -832,6 +889,7 @@ const AddClinicalNotes = ({
   setFilterSoapierState,
   setFilterAETCState,
   onDownload,
+  onClickFilterButton,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
@@ -839,10 +897,10 @@ const AddClinicalNotes = ({
   setFilterSoapierState: (value: boolean) => void;
   setFilterAETCState: (value: boolean) => void;
   onDownload: () => void;
+  onClickFilterButton: (value: string) => void;
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   // Ref for printing
-  const contentRef = useRef<HTMLDivElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -929,6 +987,7 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterSoapierState(true);
               setFilterAETCState(false);
+              onClickFilterButton("SOAPIER");
             }}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
@@ -954,6 +1013,7 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterAETCState(true);
               setFilterSoapierState(false);
+              onClickFilterButton("AETC");
             }}
             sx={{
               backgroundColor: filterAETCState ? "rgb(221, 238, 221)" : "",
@@ -979,6 +1039,7 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterSoapierState(false);
               setFilterAETCState(false);
+              onClickFilterButton("All");
             }}
             sx={{
               backgroundColor:
