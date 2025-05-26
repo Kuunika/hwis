@@ -9,10 +9,33 @@ import { TabsContainer } from "./tabsContainer";
 
 import { ListVisitDates } from "./listVisitDates";
 import { VisitDatesProvider } from "@/contexts/visitDatesContext";
+import { Box, Typography } from "@mui/material";
+import { getActivePatientDetails } from "@/hooks";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
 
 export const DesktopView = () => {
+  const { hasActiveVisit, recentVisitCloseDateTime } =
+    getActivePatientDetails();
   return (
     <VisitDatesProvider>
+      {!hasActiveVisit && (
+        <Box
+          sx={{
+            width: "100%",
+            backgroundColor: "#FF2400",
+            textAlign: "center",
+            color: "white",
+            padding: "10px",
+          }}
+        >
+          <Typography>
+            This patient doesnt have an active visit.{" "}
+            {recentVisitCloseDateTime
+              ? `The most recent visit was closed on ${getHumanReadableDateTime(recentVisitCloseDateTime)}`
+              : null}{" "}
+          </Typography>
+        </Box>
+      )}
       <MainGrid
         container
         style={{

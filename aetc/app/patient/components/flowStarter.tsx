@@ -47,9 +47,9 @@ interface FlowStarterProps {
 
 const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   const [cprDialog, setCprDialog] = useState(false);
-  const { patientId }: { patientId: any } = getActivePatientDetails();
+  const { patientId, hasActiveVisit } = getActivePatientDetails();
   const { data: patientHistory, isLoading: historyLoading } =
-    getPatientsEncounters(patientId);
+    getPatientsEncounters(patientId as string);
   const { navigateTo } = useNavigation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { isOnList } = checkPatientIfOnWaitingAssessment(patient?.id);
@@ -236,6 +236,8 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       </Button>
 
       <Button
+        disabled={!hasActiveVisit}
+        variant="outlined"
         onClick={() => setCprDialog(true)}
         sx={{
           backgroundColor: "rgb(221, 238, 221)",
@@ -261,6 +263,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       {/* Assessment Button Group */}
       <ButtonGroup
         variant="contained"
+        disabled={!hasActiveVisit}
         sx={{
           borderRadius: "9999px",
           overflow: "hidden",
@@ -331,8 +334,6 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
-
-
           {/* Main menu items */}
           {mainMenuItems.map((item, index) => (
             <ListItemButton
@@ -354,7 +355,11 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
             <ListItemText primary="Template Forms" />
             {openSections.templateForms ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
-          <Collapse in={openSections.templateForms} timeout="auto" unmountOnExit>
+          <Collapse
+            in={openSections.templateForms}
+            timeout="auto"
+            unmountOnExit
+          >
             <List component="div" disablePadding>
               {templateFormsItems.map((item, index) => (
                 <ListItemButton
@@ -368,8 +373,6 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
               ))}
             </List>
           </Collapse>
-
-
         </List>
       </Menu>
       <CPRDialogForm

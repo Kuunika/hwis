@@ -15,7 +15,11 @@ import {
   Button,
 } from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-import { useParameters, useSubmitEncounter } from "@/hooks";
+import {
+  getActivePatientDetails,
+  useParameters,
+  useSubmitEncounter,
+} from "@/hooks";
 import { encounters, concepts } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { getObservations } from "@/helpers";
@@ -899,6 +903,7 @@ const AddClinicalNotes = ({
   onDownload: () => void;
   onClickFilterButton: (value: string) => void;
 }) => {
+  const { hasActiveVisit } = getActivePatientDetails();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   // Ref for printing
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -927,12 +932,12 @@ const AddClinicalNotes = ({
           width: "100%",
         }}
       >
-        <MainButton
+        <Button
           aria-describedby={id}
-          title="Add Notes"
           variant="contained"
           onClick={handleClick}
           startIcon={<FaPlus />}
+          disabled={!hasActiveVisit}
           sx={{
             backgroundColor: "primary.main",
             color: "white",
@@ -948,7 +953,9 @@ const AddClinicalNotes = ({
               },
             },
           }}
-        />
+        >
+          Add Notes
+        </Button>
 
         <div>
           <Button
