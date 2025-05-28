@@ -13,6 +13,11 @@ export const getActivePatientDetails = () => {
     params?.id as string
   );
 
+  const recentVisitCloseDateTime =
+    patientVisits && patientVisits?.length > 0
+      ? patientVisits[patientVisits.length - 1]?.date_stopped
+      : null;
+
   return {
     activeVisit: activeVisit?.uuid,
     patientId: params?.id,
@@ -21,5 +26,7 @@ export const getActivePatientDetails = () => {
     isSuccess,
     gender: patient && patient?.gender,
     patient,
+    hasActiveVisit: Boolean(activeVisit),
+    recentVisitCloseDateTime,
   };
 };
