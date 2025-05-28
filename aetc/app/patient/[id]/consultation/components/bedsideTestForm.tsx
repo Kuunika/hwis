@@ -4,6 +4,7 @@ import {
   RadioGroupInput,
   TextInputField,
 } from "@/components";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
@@ -16,6 +17,7 @@ import {
 import { Box, Button, Typography } from "@mui/material";
 import { Form } from "formik";
 import { useEffect, useState } from "react";
+import { Bounce, toast } from "react-toastify";
 import * as yup from "yup";
 
 const testStatusOptions = [
@@ -27,7 +29,7 @@ const testStatusOptions = [
 export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
   const { activeVisit, patientId } = getActivePatientDetails();
 
-  const { mutate } = fetchConceptAndCreateEncounter();
+  const { mutate, isPending, isSuccess } = fetchConceptAndCreateEncounter();
   const { data: encounterData, refetch } = getPatientsEncounters(
     patientId as string,
     `encounter_type=${encounters.BEDSIDE_INVESTIGATION_PLAN}`
@@ -361,7 +363,20 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
 
     return result;
   };
-
+  useEffect(() => {
+    if (!isSuccess) return;
+    toast.success("Bedside test submitted successfully!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+  }, [isSuccess]);
   const handleSubmit = (values: any) => {
     const dateTime = getDateTime();
     const transformedData = transformLabValues(values, dateTime);
@@ -378,14 +393,16 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
   };
 
   return (
-    <FormikInit
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      initialValues={initialValues} // Fixed: pass actual object not empty string
-    >
-      <Form>
-        {formStructure.map((component) => renderFormComponent(component))}
-      </Form>
-    </FormikInit>
+    <ContainerLoaderOverlay loading={isPending}>
+      <FormikInit
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        initialValues={initialValues} // Fixed: pass actual object not empty string
+      >
+        <Form>
+          {formStructure.map((component) => renderFormComponent(component))}
+        </Form>
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };
