@@ -8,11 +8,12 @@ import { concepts, encounters } from "@/constants";
 import { getInitialValues } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
+import { Bounce, toast } from "react-toastify";
 import {
   addEncounter,
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
-import React from "react";
+import React, { use, useEffect } from "react";
 import * as yup from "yup";
 import {
   Box,
@@ -24,6 +25,7 @@ import {
   Button,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 // Define type for section keys
 type SectionKey =
   | "arterialBloodGas"
@@ -305,35 +307,32 @@ export const BedsideTestPlanForm = () => {
 
     // Special handling for pregnancy test if gender is Female
     if (gender === "Female") {
-      const pregnancyTestOptions = Object.entries(
-        sections.pregnancyTest.selectedFields
-      )
-        .filter(
-          ([key, isSelected]) =>
-            isSelected && key.startsWith(`${formConfig.pregnancyTest.name}-`)
-        )
-        .map(([key]) => {
-          // Extract the option value from the key (e.g., "pregnancyTest-positive" → "positive")
-          const optionValue = key.split("-")[1];
-          return {
-            concept: `${formConfig.pregnancyTest.name}-${optionValue}`,
-            obsDatetime: dateTime,
-            value: true,
-          };
-        });
-
-      if (pregnancyTestOptions.length > 0) {
+      if (pregnancyTestChecked) {
         observations.push({
-          concept: concepts.DESCRIPTION,
+          concept: formConfig.pregnancyTest.name,
           obsDatetime: dateTime,
-          value: "Pregnancy Test",
-          groupMembers: pregnancyTestOptions,
+          value: true,
         });
       }
     }
 
     return observations;
   };
+
+  useEffect(() => {
+    if (!isSuccess) return;
+    toast.success("Bedside test plan submitted successfully!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+  }, [isSuccess]);
 
   const handleSubmit = (event: any): void => {
     if (event) {
@@ -358,6 +357,7 @@ export const BedsideTestPlanForm = () => {
     setMRDTChecked(false);
     setHivChecked(false);
     setVdrlChecked(false);
+    setPregnancyTestChecked(false);
 
     // Reset all section states to initial values
     setSections((prev) => {
@@ -439,6 +439,7 @@ export const BedsideTestPlanForm = () => {
   const [hivChecked, setHivChecked] = React.useState(false);
   const [mrdtChecked, setMRDTChecked] = React.useState(false);
   const [vdrlChecked, setVdrlChecked] = React.useState(false);
+  const [pregnancyTestChecked, setPregnancyTestChecked] = React.useState(false);
   const [sections, setSections] =
     React.useState<Record<SectionKey, SectionState>>(initialSections);
   // const [gender, setGender] = React.useState<string>(""); // For gender-specific fields
@@ -616,165 +617,130 @@ export const BedsideTestPlanForm = () => {
   };
 
   // Additional component for pregnancy test field that had radio options
-  const PregnancyTestField: React.FC<{ conditionalRender?: boolean }> = ({
-    conditionalRender = true,
-  }) => {
-    if (!conditionalRender) return null;
-
-    const section = "pregnancyTest";
-    const field = formConfig.pregnancyTest;
-    const sectionState = sections[section];
-
-    return (
-      <Box sx={{ mb: 1, pl: 4 }}>
-        <Box sx={{ display: "flex", gap: 2, ml: 2 }}>
-          {testStatusOptions.map((option) => (
-            <TestStatusOption
-              key={`${field.name}-${option.value}`}
-              section={section}
-              field={field}
-              optionValue={option.value}
-              label={option.label}
-            />
-          ))}
-        </Box>
-      </Box>
-    );
-  };
   return (
     <>
-      <FormGroup>
-        <Box sx={{ mb: 1 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={mrdtChecked}
-                onChange={() => setMRDTChecked(!mrdtChecked)}
-                sx={{ color: "GrayText" }}
-                name={formConfig.mrdt.name}
-                id={formConfig.mrdt.name}
-              />
-            }
-            label={
-              <Typography sx={{ fontSize: 16 }} color="GrayText">
-                {formConfig.mrdt.label}
-              </Typography>
-            }
-          />
-        </Box>
-        <CheckboxGroup title="Arterial Blood Gas" section="arterialBloodGas" />
-
-        <CheckboxGroup title="Metabolic Values" section="metabolicValues" />
-
-        <CheckboxGroup title="Acid Base Status" section="acidBaseStatus" />
-
-        <CheckboxGroup title="Oximetry Values" section="oximetryValues" />
-
-        <CheckboxGroup title="Electrolyte Values" section="electrolyteValues" />
-
-        <CheckboxGroup
-          title="Temperature Corrected Values"
-          section="temperatureCorrectedValues"
-        />
-
-        {/* HIV as a main checkbox */}
-        <Box sx={{ mb: 1 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={hivChecked}
-                onChange={() => setHivChecked(!hivChecked)}
-                sx={{ color: "GrayText" }}
-                name={formConfig.hiv.name}
-                id={formConfig.hiv.name}
-              />
-            }
-            label={
-              <Typography sx={{ fontSize: 16 }} color="GrayText">
-                {formConfig.hiv.label}
-              </Typography>
-            }
-          />
-        </Box>
-
-        {/* VDRL as a main checkbox */}
-        <Box sx={{ mb: 1 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={vdrlChecked}
-                onChange={() => setVdrlChecked(!vdrlChecked)}
-                sx={{ color: "GrayText", fontSize: 16 }}
-                name={formConfig.vdrl.name}
-                id={formConfig.vdrl.name}
-              />
-            }
-            label={
-              <Typography sx={{ fontSize: 16 }} color="GrayText">
-                {formConfig.vdrl.label}
-              </Typography>
-            }
-          />
-        </Box>
-
-        {/* Pregnancy Test as a main checkbox with options */}
-        {gender === "Female" && (
+      <ContainerLoaderOverlay loading={isPending}>
+        <FormGroup>
           <Box sx={{ mb: 1 }}>
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={areAllFieldsSelected("pregnancyTest")}
-                  indeterminate={
-                    areSomeFieldsSelected("pregnancyTest") &&
-                    !areAllFieldsSelected("pregnancyTest")
-                  }
-                  onChange={() => toggleAllFields("pregnancyTest")}
+                  checked={mrdtChecked}
+                  onChange={() => setMRDTChecked(!mrdtChecked)}
                   sx={{ color: "GrayText" }}
+                  name={formConfig.mrdt.name}
+                  id={formConfig.mrdt.name}
                 />
               }
               label={
-                <Typography
-                  variant="h6"
-                  color="GrayText"
-                  onClick={() => toggleSection("pregnancyTest")}
-                  sx={{
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }}
-                >
-                  {formConfig.pregnancyTest.label}
-                  {sections.pregnancyTest.open ? (
-                    <ExpandLess sx={{ ml: 1, fontSize: 20 }} />
-                  ) : (
-                    <ExpandMore sx={{ ml: 1, fontSize: 20 }} />
-                  )}
+                <Typography sx={{ fontSize: 16 }} color="GrayText">
+                  {formConfig.mrdt.label}
                 </Typography>
               }
             />
-
-            <Collapse in={sections.pregnancyTest.open}>
-              <PregnancyTestField />
-            </Collapse>
           </Box>
-        )}
+          <CheckboxGroup
+            title="Arterial Blood Gas"
+            section="arterialBloodGas"
+          />
 
-        <CheckboxGroup title="Dipstick" section="dipstick" />
+          <CheckboxGroup title="Metabolic Values" section="metabolicValues" />
 
-        <CheckboxGroup title="Additional Tests" section="additionalTests" />
-      </FormGroup>
-      <Box sx={{ mb: 1 }}>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            handleSubmit("");
-          }}
-        >
-          Submit
-        </Button>
-      </Box>
+          <CheckboxGroup title="Acid Base Status" section="acidBaseStatus" />
+
+          <CheckboxGroup title="Oximetry Values" section="oximetryValues" />
+
+          <CheckboxGroup
+            title="Electrolyte Values"
+            section="electrolyteValues"
+          />
+
+          <CheckboxGroup
+            title="Temperature Corrected Values"
+            section="temperatureCorrectedValues"
+          />
+
+          {/* HIV as a main checkbox */}
+          <Box sx={{ mb: 1 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={hivChecked}
+                  onChange={() => setHivChecked(!hivChecked)}
+                  sx={{ color: "GrayText" }}
+                  name={formConfig.hiv.name}
+                  id={formConfig.hiv.name}
+                />
+              }
+              label={
+                <Typography sx={{ fontSize: 16 }} color="GrayText">
+                  {formConfig.hiv.label}
+                </Typography>
+              }
+            />
+          </Box>
+
+          {/* VDRL as a main checkbox */}
+          <Box sx={{ mb: 1 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={vdrlChecked}
+                  onChange={() => setVdrlChecked(!vdrlChecked)}
+                  sx={{ color: "GrayText", fontSize: 16 }}
+                  name={formConfig.vdrl.name}
+                  id={formConfig.vdrl.name}
+                />
+              }
+              label={
+                <Typography sx={{ fontSize: 16 }} color="GrayText">
+                  {formConfig.vdrl.label}
+                </Typography>
+              }
+            />
+          </Box>
+
+          {/* Pregnancy Test as a main checkbox with options */}
+          {gender === "Female" && (
+            <Box sx={{ mb: 1 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={pregnancyTestChecked}
+                    onChange={() =>
+                      setPregnancyTestChecked(!pregnancyTestChecked)
+                    }
+                    sx={{ color: "GrayText", fontSize: 16 }}
+                    name={formConfig.pregnancyTest.name}
+                    id={formConfig.pregnancyTest.name}
+                  />
+                }
+                label={
+                  <Typography sx={{ fontSize: 16 }} color="GrayText">
+                    {formConfig.pregnancyTest.label}
+                  </Typography>
+                }
+              />
+            </Box>
+          )}
+
+          <CheckboxGroup title="Dipstick" section="dipstick" />
+
+          <CheckboxGroup title="Additional Tests" section="additionalTests" />
+        </FormGroup>
+        <Box sx={{ mb: 1 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleSubmit("");
+            }}
+          >
+            Submit
+          </Button>
+        </Box>
+      </ContainerLoaderOverlay>
     </>
   );
 };

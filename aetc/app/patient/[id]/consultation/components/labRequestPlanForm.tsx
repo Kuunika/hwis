@@ -24,6 +24,8 @@ import { concepts, encounters } from "@/constants";
 import { useFormikContext } from "formik";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { Bounce, toast } from "react-toastify";
 
 // This is a component to handle form resets when sample type changes
 const FormResetHandler = ({ sampleName }: { sampleName: any }) => {
@@ -160,9 +162,23 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
       .filter((bed) => bedSideTestTypes.includes(bed.name?.toLowerCase()));
   };
 
+  useEffect(() => {
+    if (!orderCreated) return;
+    toast.success("Test plan submitted successfully!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+  }, [orderCreated]);
   const handleLabSend = (values: any) => {
     const specimenType = JSON.parse(values.sampleType);
-    const dateTime = ServerTime.getServerTimeString()
+    const dateTime = ServerTime.getServerTimeString();
     const group_members = values?.tests.map((test: any) => {
       const group_members_data = [];
       if (values?.emergency) {
@@ -224,79 +240,84 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
   };
 
   return (
-    <FormikInit
-      key={formKey} // Add key to force re-render and reset the form
-      initialValues={{
-        testType: "",
-        sampleType: "",
-        tests: [],
-        emergency: undefined,
-        urgentSample: undefined,
-      }}
-      onSubmit={handleLabSend}
-      validationSchema={Yup.object().shape({
-        tests: Yup.array().required().label("Tests"),
-        sampleType: Yup.string().required().label("Sample Type"),
-      })}
-      enableReinitialize={true}
-    >
-      {/* Add the reset handler component */}
-      <FormResetHandler sampleName={sampleName} />
-
-      <SearchComboBox
-        getValue={handleSampleTypeChange}
-        multiple={false}
-        label="Sample Type"
-        name="sampleType"
-        sx={{ mb: 2 }}
-        options={
-          samples
-            ? samples.map((sp) => ({
-                label: sp?.names[0]?.name,
-                id: JSON.stringify({
-                  name: sp.names[0].name,
-                  uuid: sp.names[0].uuid,
-                }),
-              }))
-            : []
-        }
-      />
-      <SearchComboBox
-        key={`tests-${sampleName}`} // Add key to force re-render when sampleName changes
-        label="Tests"
-        name="tests"
-        options={
-          tests
-            ? tests.map((d) => ({ id: d.concept_id, label: d.names[0]?.name }))
-            : []
-        }
-      />
-      <br />
-      <WrapperBox
-        key={`radio-buttons-${radioKey}`}
-        sx={{ display: "flex", width: "50ch" }}
+    <ContainerLoaderOverlay loading={isPending}>
+      <FormikInit
+        key={formKey} // Add key to force re-render and reset the form
+        initialValues={{
+          testType: "",
+          sampleType: "",
+          tests: [],
+          emergency: undefined,
+          urgentSample: undefined,
+        }}
+        onSubmit={handleLabSend}
+        validationSchema={Yup.object().shape({
+          tests: Yup.array().required().label("Tests"),
+          sampleType: Yup.string().required().label("Sample Type"),
+        })}
+        enableReinitialize={true}
       >
-        <RadioGroupInput
-          getValue={(value) => setTestType(value)}
-          row
-          name="emergency"
-          options={[
-            { value: "Yes", label: "Yes" },
-            { value: "No", label: "No" },
-          ]}
-          label="Emergency"
+        {/* Add the reset handler component */}
+        <FormResetHandler sampleName={sampleName} />
+
+        <SearchComboBox
+          getValue={handleSampleTypeChange}
+          multiple={false}
+          label="Sample Type"
+          name="sampleType"
+          sx={{ mb: 2 }}
+          options={
+            samples
+              ? samples.map((sp) => ({
+                  label: sp?.names[0]?.name,
+                  id: JSON.stringify({
+                    name: sp.names[0].name,
+                    uuid: sp.names[0].uuid,
+                  }),
+                }))
+              : []
+          }
         />
-        <RadioGroupInput
-          getValue={(value) => setTestType(value)}
-          row
-          name="urgentSample"
-          options={[
-            { value: "Yes", label: "Yes" },
-            { value: "No", label: "No" },
-          ]}
-          label="Urgent Sample"
+        <SearchComboBox
+          key={`tests-${sampleName}`} // Add key to force re-render when sampleName changes
+          label="Tests"
+          name="tests"
+          options={
+            tests
+              ? tests.map((d) => ({
+                  id: d.concept_id,
+                  label: d.names[0]?.name,
+                }))
+              : []
+          }
         />
-      </WrapperBox>
-    </FormikInit>
+        <br />
+        <WrapperBox
+          key={`radio-buttons-${radioKey}`}
+          sx={{ display: "flex", width: "50ch" }}
+        >
+          <RadioGroupInput
+            getValue={(value) => setTestType(value)}
+            row
+            name="emergency"
+            options={[
+              { value: "Yes", label: "Yes" },
+              { value: "No", label: "No" },
+            ]}
+            label="Emergency"
+          />
+          <RadioGroupInput
+            getValue={(value) => setTestType(value)}
+            row
+            name="urgentSample"
+            options={[
+              { value: "Yes", label: "Yes" },
+              { value: "No", label: "No" },
+            ]}
+            label="Urgent Sample"
+          />
+        </WrapperBox>
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };

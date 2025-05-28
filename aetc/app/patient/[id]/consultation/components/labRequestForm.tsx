@@ -31,6 +31,8 @@ import { encounters } from "@/constants";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useFormikContext } from "formik";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
+import { Bounce, toast } from "react-toastify";
+import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 // Types
 interface LabOrderTest {
@@ -245,7 +247,21 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
       .sort((a, b) => a.name.localeCompare(b.name))
       .filter((bed) => bedSideTestTypes.includes(bed.name?.toLowerCase()));
   };
-
+  useEffect(() => {
+    if (!orderCreated) return;
+    toast.success("Test submitted successfully!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+    onClose();
+  }, [orderCreated]);
   const handleLabSend = async (values: FormValues) => {
     const selectedLabOrderIds = values.selectedLabOrderIds || [];
     const selectedOrderTests = flattenedLabOrdersPlan
@@ -323,7 +339,6 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
     mutate(order);
     refetchLabOrdersPlan();
     refetchLabOrders();
-    onClose();
   };
   const filterTests = (tests: any, encounters: any) => {
     const matchMap = new Map();
@@ -374,21 +389,23 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   );
 
   return (
-    <FormikInit
-      initialValues={{
-        testType: "",
-        sampleType: "",
-        selectedLabOrderIds: [], // Initialize array to store selected checkbox IDs
-      }}
-      onSubmit={handleLabSend}
-      validationSchema={Yup.object().shape({
-        selectedLabOrderIds: Yup.array().of(Yup.number()), // Add validation for array of numbers
-      })}
-    >
-      {/* Lab Orders Plan Tests as Checkboxes */}
-      {flattenedLabOrdersPlan.length > 0 && (
-        <OrderedTestsCheckboxes groupedTests={groupedTests} />
-      )}
-    </FormikInit>
+    <ContainerLoaderOverlay loading={isPending}>
+      <FormikInit
+        initialValues={{
+          testType: "",
+          sampleType: "",
+          selectedLabOrderIds: [], // Initialize array to store selected checkbox IDs
+        }}
+        onSubmit={handleLabSend}
+        validationSchema={Yup.object().shape({
+          selectedLabOrderIds: Yup.array().of(Yup.number()), // Add validation for array of numbers
+        })}
+      >
+        {/* Lab Orders Plan Tests as Checkboxes */}
+        {flattenedLabOrdersPlan.length > 0 && (
+          <OrderedTestsCheckboxes groupedTests={groupedTests} />
+        )}
+      </FormikInit>
+    </ContainerLoaderOverlay>
   );
 };
