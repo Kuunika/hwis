@@ -305,29 +305,11 @@ export const BedsideTestPlanForm = () => {
 
     // Special handling for pregnancy test if gender is Female
     if (gender === "Female") {
-      const pregnancyTestOptions = Object.entries(
-        sections.pregnancyTest.selectedFields
-      )
-        .filter(
-          ([key, isSelected]) =>
-            isSelected && key.startsWith(`${formConfig.pregnancyTest.name}-`)
-        )
-        .map(([key]) => {
-          // Extract the option value from the key (e.g., "pregnancyTest-positive" → "positive")
-          const optionValue = key.split("-")[1];
-          return {
-            concept: `${formConfig.pregnancyTest.name}-${optionValue}`,
-            obsDatetime: dateTime,
-            value: true,
-          };
-        });
-
-      if (pregnancyTestOptions.length > 0) {
+      if (pregnancyTestChecked) {
         observations.push({
-          concept: concepts.DESCRIPTION,
+          concept: formConfig.pregnancyTest.name,
           obsDatetime: dateTime,
-          value: "Pregnancy Test",
-          groupMembers: pregnancyTestOptions,
+          value: true,
         });
       }
     }
@@ -358,6 +340,7 @@ export const BedsideTestPlanForm = () => {
     setMRDTChecked(false);
     setHivChecked(false);
     setVdrlChecked(false);
+    setPregnancyTestChecked(false);
 
     // Reset all section states to initial values
     setSections((prev) => {
@@ -439,6 +422,7 @@ export const BedsideTestPlanForm = () => {
   const [hivChecked, setHivChecked] = React.useState(false);
   const [mrdtChecked, setMRDTChecked] = React.useState(false);
   const [vdrlChecked, setVdrlChecked] = React.useState(false);
+  const [pregnancyTestChecked, setPregnancyTestChecked] = React.useState(false);
   const [sections, setSections] =
     React.useState<Record<SectionKey, SectionState>>(initialSections);
   // const [gender, setGender] = React.useState<string>(""); // For gender-specific fields
@@ -616,31 +600,6 @@ export const BedsideTestPlanForm = () => {
   };
 
   // Additional component for pregnancy test field that had radio options
-  const PregnancyTestField: React.FC<{ conditionalRender?: boolean }> = ({
-    conditionalRender = true,
-  }) => {
-    if (!conditionalRender) return null;
-
-    const section = "pregnancyTest";
-    const field = formConfig.pregnancyTest;
-    const sectionState = sections[section];
-
-    return (
-      <Box sx={{ mb: 1, pl: 4 }}>
-        <Box sx={{ display: "flex", gap: 2, ml: 2 }}>
-          {testStatusOptions.map((option) => (
-            <TestStatusOption
-              key={`${field.name}-${option.value}`}
-              section={section}
-              field={field}
-              optionValue={option.value}
-              label={option.label}
-            />
-          ))}
-        </Box>
-      </Box>
-    );
-  };
   return (
     <>
       <FormGroup>
@@ -723,39 +682,21 @@ export const BedsideTestPlanForm = () => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={areAllFieldsSelected("pregnancyTest")}
-                  indeterminate={
-                    areSomeFieldsSelected("pregnancyTest") &&
-                    !areAllFieldsSelected("pregnancyTest")
+                  checked={pregnancyTestChecked}
+                  onChange={() =>
+                    setPregnancyTestChecked(!pregnancyTestChecked)
                   }
-                  onChange={() => toggleAllFields("pregnancyTest")}
-                  sx={{ color: "GrayText" }}
+                  sx={{ color: "GrayText", fontSize: 16 }}
+                  name={formConfig.pregnancyTest.name}
+                  id={formConfig.pregnancyTest.name}
                 />
               }
               label={
-                <Typography
-                  variant="h6"
-                  color="GrayText"
-                  onClick={() => toggleSection("pregnancyTest")}
-                  sx={{
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }}
-                >
+                <Typography sx={{ fontSize: 16 }} color="GrayText">
                   {formConfig.pregnancyTest.label}
-                  {sections.pregnancyTest.open ? (
-                    <ExpandLess sx={{ ml: 1, fontSize: 20 }} />
-                  ) : (
-                    <ExpandMore sx={{ ml: 1, fontSize: 20 }} />
-                  )}
                 </Typography>
               }
             />
-
-            <Collapse in={sections.pregnancyTest.open}>
-              <PregnancyTestField />
-            </Collapse>
           </Box>
         )}
 

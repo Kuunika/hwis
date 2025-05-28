@@ -111,7 +111,7 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
           label.includes("HIV") ||
           label.includes("Test") ||
           label.includes("MRDT") ||
-          fieldName.includes("pregnancyTest") ||
+          fieldName.includes("Pregnancy test") ||
           fieldName.includes("vdrl") ||
           fieldName.includes("pocus") ||
           fieldName.includes("ecg")
@@ -145,7 +145,7 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
         if (!obs.children || obs.children.length === 0) {
           const label =
             obs.names && obs.names[0]
-              ? obs.names[0].name
+              ? obs.names[obs.names.length - 1].name
               : `Field ${obs.concept_id}`;
           const fieldName = `${label}`;
 
