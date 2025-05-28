@@ -19,7 +19,7 @@ import { useServerTime } from "@/contexts/serverTimeContext";
 
 const habitOptions = [
     { value: concepts.ALCOHOL_INTAKE, label: "Use of Alcohol" },
-    { value: concepts.SMOKING_HISTORY, label: "Smoking" },
+    { value: concepts.SMOKING_HISTORY, label: "Smoking" }, //concept data type is coded, create new concept:
     { value: concepts.RECREATIONAL_DRUG, label: "Drugs" },
 ];
 

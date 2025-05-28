@@ -219,14 +219,14 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
           items: sectionItems,
         };
       };
-      const latestDatetime = encounterData[0].obs.reduce((latest, item) => {
+      const latestDatetime = encounterData[0]?.obs.reduce((latest, item) => {
         return new Date(item.obs_datetime) > new Date(latest)
           ? item.obs_datetime
           : latest;
-      }, encounterData[0].obs[0].obs_datetime);
+      }, encounterData[0]?.obs[0]?.obs_datetime);
 
       // Step 2: Filter all objects that have that latest obs_datetime
-      const latestItems = encounterData[0].obs.filter(
+      const latestItems = encounterData[0]?.obs.filter(
         (item) => item.obs_datetime === latestDatetime
       );
       console.log("🚀 ~ useEffect ~ latestItems:", latestItems);

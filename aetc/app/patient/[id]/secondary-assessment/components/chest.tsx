@@ -25,6 +25,14 @@ import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { Box } from "@mui/material";
+import { LungBackMaleImage } from "@/components/svgImages/LungBackMale";
+import { LungBackFemaleImage } from "@/components/svgImages/LungBackFemale";
+import { LungLeftFemaleImage } from "@/components/svgImages/LungLeftFemale";
+import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
+import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
+import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
+import ComponentSlider from "@/components/slider/slider";
 
 const form = {
   respiratoryRate: {
@@ -234,6 +242,9 @@ const abnormalities = [
   { id: concepts.MURMUR, label: "Murmur" },
   { id: concepts.OTHER, label: "Other" },
 ];
+
+
+
 export const ChestForm = ({ onSubmit }: Prop) => {
   const { ServerTime } = useServerTime();
   const [isChecked, setIsChecked] = useState(false);
@@ -256,6 +267,15 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   const [breathingSoundsImagesEnc, setBreathingSoundsImagesEnc] = useState<
     Array<any>
   >([]);
+  const [breathingSoundsPosteriorImagesEnc, setBreathingSoundsPosteriorImagesEnc] = useState<
+    Array<any>
+  >([]);
+  const [breathingSoundsLateralRightImagesEnc, setBreathingSoundsLateralRightImagesEnc] = useState<
+    Array<any>
+  >([]);
+  const [breathingSoundsLateralLeftImagesEnc, setBreathingSoundsLateralLeftImagesEnc] = useState<
+    Array<any>
+  >([]);
   const [vocalFremitusImagesEnc, setVocalFremitusImagesEnc] = useState<
     Array<any>
   >([]);
@@ -265,6 +285,73 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     encounters.CHEST_ASSESSMENT,
     onSubmit
   );
+
+    const auscultationSlides = [
+      {
+        id: 1,
+        label: "Lung Lateral Left",
+        content:
+          gender == "Female" ? (
+            <LungLeftFemaleImage
+              form="breathingSoundChest"
+              onValueChange={setBreathingSoundsLateralLeftImagesEnc}
+            />
+          ) : (
+            <LungLeftMaleImage
+              form="breathingSoundChest"
+              onValueChange={setBreathingSoundsLateralLeftImagesEnc}
+            />
+          ),
+      },
+      {
+        id: 2,
+        label: "Lung lateral right",
+        content:
+          gender == "Female" ? (
+            <LungRightFemaleImage
+              form="breathingSoundChest"
+              onValueChange={setBreathingSoundsLateralRightImagesEnc}
+            />
+          ) : (
+            <LungRightMaleImage
+              form="breathingSoundChest"
+              onValueChange={setBreathingSoundsLateralRightImagesEnc}
+            />
+          ),
+      },
+      {
+        id: 3,
+        label: "Lung Anterior",
+        content:
+          gender == "Female" ? (
+            <LungFrontFemaleImage
+              onValueChange={setBreathingSoundsImagesEnc}
+              form="breathingSoundChest"
+            />
+          ) : (
+            <LungFrontMaleImage
+              onValueChange={setBreathingSoundsImagesEnc}
+              form="breathingSoundChest"
+            />
+          ),
+      },
+      {
+        id: 4,
+        label: "Lung Posterior",
+        content:
+          gender == "Female" ? (
+            <LungBackFemaleImage
+              onValueChange={setBreathingSoundsPosteriorImagesEnc}
+              form="breathingSoundChest"
+            />
+          ) : (
+            <LungBackMaleImage
+              onValueChange={setBreathingSoundsPosteriorImagesEnc}
+              form="breathingSoundChest"
+            />
+          ),
+      },
+    ];
 
   const handleSubmitForm = async (values: any) => {
     const formValues: any = { ...values };
@@ -288,7 +375,32 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         concept: concepts.AUSCULTATION_LUNG,
         value: concepts.AUSCULTATION_LUNG,
         obsDatetime,
-        groupMembers: flattenImagesObs(breathingSoundsImagesEnc),
+        groupMembers: [
+          {
+            concept: concepts.SITE,
+            value:'Auscultation Lung Anterior',
+            obsDatetime,
+            groupMembers: flattenImagesObs(breathingSoundsImagesEnc),
+          },
+          {
+            concept: concepts.SITE,
+            value:'Auscultation Lung Posterior',
+            obsDatetime,
+            groupMembers: flattenImagesObs(breathingSoundsPosteriorImagesEnc),
+          },
+          {
+            concept: concepts.SITE,
+            value:'Auscultation Lung Lateral Left',
+            obsDatetime,
+            groupMembers: flattenImagesObs(breathingSoundsLateralLeftImagesEnc),
+          },
+          {
+            concept: concepts.SITE,
+            value:'Auscultation Lung Lateral Right',
+            obsDatetime,
+            groupMembers: flattenImagesObs(breathingSoundsLateralRightImagesEnc),
+          }
+        ],
       },
       {
         concept: form.percussion.name,
@@ -319,22 +431,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           },
         ],
       },
-      // {
-      //   concept: form.vocalFremitus.name,
-      //   value: formValues[form.vocalFremitus.name],
-      //   obsDatetime,
-      //   groupMembers: flattenImagesObs(vocalFremitusImagesEnc),
-      // },
+    
     ];
-
-    // console.log(
-    //   "formValues[form.abnormalities.name]",
-    //   formValues[form.abnormalities.name]
-    // );
-    // console.log(
-    //   "formValues[form.chestWall.name]",
-    //   formValues[form.chestWallAbnormalities.name]
-    // );
 
     const abnormalitiesObs =
       formValues &&
@@ -345,20 +443,6 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         value: opt.id,
         obsDatetime,
       }));
-
-    // const chestWallAbnormalitiesObs =
-    //   formValues &&
-    //   typeof formValues === "object" &&
-    //   Array.isArray(formValues[form.chestWallAbnormalities.name]) &&
-    //   formValues[form.chestWallAbnormalities.name].map((opt: any) => {
-    //     return {
-    //       concept: form.chestWallAbnormalities.name,
-    //       value: opt.id,
-    //       obsDatetime,
-    //     };
-    //   });
-
-    // console.log({ chestWallAbnormalitiesObs, abnormalitiesObs });
 
     delete formValues[form.abnormalities.name];
     delete formValues[form.chestWallAbnormalities.name];
@@ -596,23 +680,8 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             )}
           </FormFieldContainerLayout>
           <FormFieldContainerLayout title="Auscultation (Lungs)">
-            {gender == "Male" && (
-              <LungFrontMaleImage
-                onValueChange={setBreathingSoundsImagesEnc}
-                imageEncounter={encounters.CHEST_ASSESSMENT}
-                imageSection={form.localizedChestAbnormality.name}
-                form="breathingSoundChest"
-              />
-            )}
-            {gender == "Female" && (
-              // <></>
-              <LungFrontFemaleImage
-                onValueChange={setBreathingSoundsImagesEnc}
-                imageEncounter={encounters.CHEST_ASSESSMENT}
-                imageSection={form.localizedChestAbnormality.name}
-                form="breathingSoundChest"
-              />
-            )}
+       
+            <ComponentSlider slides={auscultationSlides} />
             {/* <BreathingSoundsChestLung
             imageEncounter={encounters.CHEST_ASSESSMENT}
             // imageSection={form.breathingSounds.name}

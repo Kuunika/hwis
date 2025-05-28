@@ -123,6 +123,22 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
     }));
   };
 
+  // Define template forms menu items
+  const templateFormsItems: MenuItemConfig[] = [
+    {
+      label: "Medical Inpatient",
+      path: `/patient/${patient.id}/medicalInpatient`,
+    },
+    {
+      label: "Surgical Notes",
+      path: `/patient/${patient.id}/surgicalNotes`,
+    },
+    {
+      label: "Gynaecology Ward Admission",
+      path: `/patient/${patient.id}/gyneacology`,
+    },
+  ];
+
   // Define main menu items
   const mainMenuItems: MenuItemConfig[] = [
     {
@@ -177,6 +193,9 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
             line-height: 1 !important;
             border-bottom: 1px solid #ccc !important;
           } 
+          .nestedMenuItem {
+            padding-left: 32px !important;
+          }
         `}
       </style>
 
@@ -188,22 +207,34 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
           fontFamily: "system-ui, -apple-system, sans-serif",
           fontSize: "14px",
           marginRight: "10px",
-          flexGrow: 1,
           textTransform: "none",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          maxWidth: "calc(100% - 40px)", // Ensure text doesn't overlap with dropdown
+          maxWidth: 300, // You can adjust this
+          justifyContent: "flex-start",
+          paddingRight: "20px",
           "&:hover": {
-            backgroundColor: "# FFA6A0",
+            backgroundColor: "#FFA6A0",
           },
         }}
       >
-        <span style={{ fontWeight: "bold", marginRight: "5px" }}>
-          Final Diagnosis:{" "}
-        </span>{" "}
-        {recentDiagnosis}
+        <Typography component="span" fontWeight="bold" mr={0.5} noWrap>
+          Final Diagnosis:
+        </Typography>
+        <Box
+          component="span"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            display: "inline-block",
+            maxWidth: "calc(100% - 130px)", // Adjust based on label length
+            verticalAlign: "bottom",
+          }}
+          title={recentDiagnosis} // Show full text on hover
+        >
+          {recentDiagnosis}
+        </Box>
       </Button>
+
       <Button
         onClick={() => setCprDialog(true)}
         sx={{
@@ -300,6 +331,8 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
+
+
           {/* Main menu items */}
           {mainMenuItems.map((item, index) => (
             <ListItemButton
@@ -311,6 +344,32 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
               <ListItemText primary={item.label} />
             </ListItemButton>
           ))}
+
+          {/* Template Forms collapsible section */}
+          <ListItemButton
+            onClick={() => toggleSection("templateForms")}
+            className="listItemButton"
+          >
+            <FaPlus />
+            <ListItemText primary="Template Forms" />
+            {openSections.templateForms ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openSections.templateForms} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {templateFormsItems.map((item, index) => (
+                <ListItemButton
+                  key={`template-${index}`}
+                  onClick={() => startFlow(item.path)}
+                  className="listItemButton nestedMenuItem"
+                >
+                  <FaPlus />
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              ))}
+            </List>
+          </Collapse>
+
+
         </List>
       </Menu>
       <CPRDialogForm

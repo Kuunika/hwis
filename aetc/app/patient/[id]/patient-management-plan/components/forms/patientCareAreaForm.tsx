@@ -27,10 +27,10 @@ type Prop = {
 };
 
 const careAreaFormConfig: Record<
-    "gyno" | "surgical" | "medicalBench" | "shortStay" | "isolation" | "trauma" | "resuscitation" | "priority",
+    "gynaecological" | "surgical" | "medicalBench" | "shortStay" | "isolation" | "trauma" | "resuscitation" | "priority",
     { name: string; label: string }
 > = {
-    gyno: { name: concepts.GYNO, label: "Gynaecological Bench" },
+    gynaecological: { name: concepts.GYNO, label: "Gynaecological Bench" },
     surgical: { name: concepts.SURGICAL, label: "Surgical" },
     medicalBench: { name: concepts.MEDICAL_BENCH, label: "Medical Bench" },
     shortStay: { name: concepts.SHORT_STAY_AREA, label: "Short Stay" },

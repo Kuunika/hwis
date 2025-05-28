@@ -7,6 +7,7 @@ import { useParameters } from "@/hooks";
 import { BackButton } from "@/components";
 import { FaAngleLeft } from "react-icons/fa6";
 import { useNavigation } from "@/hooks";
+import dayjs from "dayjs";
 
 export const BroughtDeadView = () => {
   const { params } = useParameters();
@@ -45,7 +46,7 @@ export const BroughtDeadView = () => {
           >
             Back to List
           </Typography>
-        </Box>        
+        </Box>
         <Typography variant="h5" gutterBottom>
           Death Report Details
         </Typography>
@@ -64,7 +65,11 @@ export const BroughtDeadView = () => {
                       ? value
                         ? "Yes"
                         : "No"
-                      : value?.toString()}
+                      : key.includes("time") && value
+                        ? dayjs(value, "HH:mm:ss").format("hh:mm A")
+                        : key.includes("date") && value
+                          ? dayjs(value).format("DD MMM YYYY")
+                          : value?.toString()}
                   </Typography>
                 </Grid>
               )

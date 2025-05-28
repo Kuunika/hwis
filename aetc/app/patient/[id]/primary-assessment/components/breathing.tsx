@@ -423,11 +423,11 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       content:
         gender == "Female" ? (
           <LungBackFemaleImage
-            onValueChange={setLungFront}
+            onValueChange={setLungBack}
             form="breathSounds"
           />
         ) : (
-          <LungBackMaleImage onValueChange={setLungFront} form="breathSounds" />
+          <LungBackMaleImage onValueChange={setLungBack} form="breathSounds" />
         ),
     },
   ];

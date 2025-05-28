@@ -35,7 +35,7 @@ interface PastSurgicalHistoryPanelProps {
   console.log("sampleHistoryEncounters", sampleHistoryEncounters)
     useEffect(() => {
     if (!historyLoading && sampleHistoryEncounters && sampleHistoryEncounters.length > 0) {
-        const socialObs = sampleHistoryEncounters[0].obs;
+        const socialObs = sampleHistoryEncounters[0]?.obs;
         const socialObsArray = Object.values(socialObs);
 
         const mostRecentObs: Record<string, any> = {};
