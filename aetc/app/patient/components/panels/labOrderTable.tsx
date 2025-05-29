@@ -8,7 +8,10 @@ import {
   WrapperBox,
 } from "@/components";
 import { FaPrint } from "react-icons/fa6";
-import { BarcodeComponent, LabBarcodeComponentPrintTemplate } from "@/components/barcode";
+import {
+  BarcodeComponent,
+  LabBarcodeComponentPrintTemplate,
+} from "@/components/barcode";
 import {
   getOnePatient,
   getPatientsWaitingForAssessment,
@@ -51,6 +54,7 @@ export const LabOrderTable = () => {
     ascension: "",
     tests: "",
     orderDate: "",
+    requestingTechnician: "",
   });
   const [printer, setPrinter] = useState("http://localhost:3000");
   const [openDialog, setOpenDialog] = useState(false);
@@ -176,6 +180,7 @@ export const LabOrderTable = () => {
                     ascension: cell.row.accession_number,
                     orderDate: getHumanReadableDateTimeLab(cell.row.order_date),
                     tests: cell.row.test.name,
+                    requestingTechnician: cell.row.requesting_clinician,
                   });
                 }}
                 sx={{
@@ -231,11 +236,20 @@ export const LabOrderTable = () => {
             orderDate={selectedTest.orderDate}
             setTriggerFunc={(test) => setTriggerPrintFunc(test)}
             value={selectedTest.ascension}
+            test={`${selectedTest.tests}|${selectedTest.ascension}|${selectedTest.requestingTechnician.split(" ")[1]}`}
           >
             <MainTypography variant="caption">{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
-            <MainTypography variant="caption">
+            <Box>
+              <MainTypography sx={{ mr: 1 }} variant="caption">
+                {selectedTest.orderDate}
+              </MainTypography>
+              <MainTypography variant="caption">
+                {patient?.gender}
+              </MainTypography>
+            </Box>
+            {/* <MainTypography variant="caption">
               {selectedTest.tests}
-            </MainTypography>
+            </MainTypography> */}
           </LabBarcodeComponentPrintTemplate>
           <br />
           <BasicSelect
