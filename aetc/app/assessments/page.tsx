@@ -50,4 +50,5 @@ export default AuthGuard(AssessmentPage, [
   roles.ADMIN,
   roles.CLINICIAN,
   roles.NURSE,
+  roles.STUDENT_CLINICIAN,
 ]);

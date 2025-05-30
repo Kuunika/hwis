@@ -90,10 +90,24 @@ function Home() {
               title="Registration List"
             />
           </AuthGuardComp>
-          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.STUDENT_CLINICIAN,
+            ]}
+          >
             <Card icon={<FcTodoList />} link="/triage" title="Triage List" />
           </AuthGuardComp>
-          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.STUDENT_CLINICIAN,
+            ]}
+          >
             <Card
               icon={<FcTodoList />}
               link="/assessments"
@@ -197,4 +211,5 @@ export default AuthGuard(Home, [
   roles.CLINICIAN,
   roles.NURSE,
   roles.INITIAL_REGISTRATION_CLERK,
+  roles.STUDENT_CLINICIAN,
 ]);
