@@ -15,6 +15,7 @@ interface Props {
   setTriggerFunc: (func: any) => void;
   printer: string;
   orderDate?: string;
+  test?: string;
 }
 export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   value,
@@ -70,6 +71,7 @@ export const BarcodeComponent: React.FC<Props> = ({
   setTriggerFunc,
   printer,
   orderDate,
+  test,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -278,6 +280,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
   setTriggerFunc,
   printer,
   orderDate,
+  test,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -286,63 +289,61 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
       const element = document.getElementById("barcode");
       if (element) {
         const originalCanvas = await htmlToImage.toCanvas(element);
-    
-        // Fixed size
-        const fixedWidth = 700;
-        const fixedHeight = 300;
-    
-        // Create a new canvas with fixed size
+
+        // Adjusted for 3cm x 6cm label at 300 DPI
+        const fixedWidth = 709;
+        const fixedHeight = 354;
+
         const resizedCanvas = document.createElement("canvas");
         resizedCanvas.width = fixedWidth;
         resizedCanvas.height = fixedHeight;
-    
+
         const ctx = resizedCanvas.getContext("2d");
-    
+
         if (ctx) {
-          // Optional: Fill background white to avoid transparency
+          // Fill background white
           ctx.fillStyle = "#ffffff";
           ctx.fillRect(0, 0, fixedWidth, fixedHeight);
-    
-          // Draw original canvas onto resized canvas, scaling it
+
+          // Scale original canvas to fixed size
           ctx.drawImage(
             originalCanvas,
-            0, 0, originalCanvas.width, originalCanvas.height, // source
-            0, 0, fixedWidth, fixedHeight                      // destination
+            0,
+            0,
+            originalCanvas.width,
+            originalCanvas.height,
+            0,
+            0,
+            fixedWidth,
+            fixedHeight
           );
-    
-          // Now pass the resized canvas to your printer function
+
+          // Send to printer
           downloadZplData("test", resizedCanvas, printer);
         }
       }
     };
+
     setTriggerFunc(() => convertToCanvas);
-  }, [printer]);
+  }, [printer, setTriggerFunc]);
 
   return (
-      <div id="barcode">
-        <Box
-          sx={{
-          
-            pb: "2px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          
-          }}
-          ref={ref}
-        >
-          {children}
-          <Barcode
-            height={50}
-            margin={0}
-            displayValue={false}
-            value={value}
-           
-          />
-          <Typography variant="caption">{value}</Typography>
-          <Typography variant="caption">Order date: {orderDate}</Typography>
-        </Box>
-      </div>
+    <div id="barcode">
+      <Box
+        sx={{
+          pb: "2px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          justifyContent: "center",
+        }}
+        ref={ref}
+      >
+        {children}
+        <Barcode height={50} margin={0} displayValue={false} value={value} />
+        <Typography variant="caption">{test}</Typography>
+        {/* <Typography variant="caption">Order date: {orderDate}</Typography> */}
+      </Box>
+    </div>
   );
 };

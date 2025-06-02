@@ -3,6 +3,7 @@ import { FaPlus } from "react-icons/fa";
 import { Panel } from ".";
 import {
   checkPatientIfOnWaitingAssessment,
+  getActivePatientDetails,
   useNavigation,
   useParameters,
 } from "@/hooks";
@@ -82,6 +83,7 @@ export const Investigations = () => {
 export default function CustomizedDialogs() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = React.useState(false);
+  const { hasActiveVisit } = getActivePatientDetails();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -93,7 +95,11 @@ export default function CustomizedDialogs() {
   return (
     <>
       <React.Fragment>
-        <Button variant="outlined" onClick={handleClickOpen}>
+        <Button
+          disabled={!hasActiveVisit}
+          variant="outlined"
+          onClick={handleClickOpen}
+        >
           Add Investigation
         </Button>
         <BootstrapDialog

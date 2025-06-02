@@ -173,7 +173,7 @@ export const FamilyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
 
       return updatedFields;
     });
-  }, [formValues, familyHistoryFormConfig]);
+  }, [formValues]);
 
   return (
     <>

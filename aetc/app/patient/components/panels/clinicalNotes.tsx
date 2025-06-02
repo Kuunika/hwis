@@ -1,8 +1,8 @@
+import React from "react";
 import { MainButton, PatientInfoTab, WrapperBox } from "@/components";
 import { Panel } from ".";
-import { FaExpandAlt, FaPlus, FaRegChartBar } from "react-icons/fa";
-import { FaRegSquare } from "react-icons/fa6";
-import { ProfilePanelSkeletonLoader } from "@/components/loadingSkeletons";
+import { FaPlus } from "react-icons/fa";
+
 import { useState, useEffect, useMemo, useRef } from "react";
 import MarkdownEditor from "@/components/markdownEditor";
 import Popover from "@mui/material/Popover";
@@ -15,7 +15,11 @@ import {
   Button,
 } from "@mui/material";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
-import { useParameters, useSubmitEncounter } from "@/hooks";
+import {
+  getActivePatientDetails,
+  useParameters,
+  useSubmitEncounter,
+} from "@/hooks";
 import { encounters, concepts } from "@/constants";
 import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
 import { getObservations } from "@/helpers";
@@ -29,6 +33,20 @@ import { PrintClinicalNotes } from "./printClinicalNotes";
 import { GenerateSurgicalNotesPDF, SurgicalNotesPDFRef } from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
 import { GenerateGyneacologyNotesPDF, GyneacologyNotesPDFRef } from "../../[id]/gyneacology/components/generateGyneacologyNotesPDF";
 import { GenerateMedicalInpatientlNotesPDF, MedicalInpatientNotesPDFRef } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
+
+import { get } from "http";
+import {
+  FamilyMedicalHistoryNotes,
+  MealNotes,
+  MedicalAllegyNotes,
+  MedicationNotes,
+  PatientAdmissionNotes,
+  PresentingComplaintsNotes,
+  PriorConditionsNotes,
+  ReviewOfSystemsNotes,
+  SurgicalNotes,
+} from "./sampleHistory";
+
 type PanelData = {
   title: string;
   data: any[];
@@ -146,11 +164,7 @@ export const ClinicalNotes = () => {
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
-  const {
-    data: labOrders,
-    isPending,
-    isSuccess,
-  } = getPatientLabOrder(params?.id as string);
+  const [printoutTitle, setPrintoutTitle] = useState("All");
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -242,7 +256,7 @@ export const ClinicalNotes = () => {
       ],
       removeObs: ["nursing chart", "medication chart"], // Example headings to remove
     },
-    panel15: {
+    panel18: {
       title: "Surgical Notes",
       data: [
         ...getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM),
@@ -351,6 +365,34 @@ export const ClinicalNotes = () => {
       data: getEncountersByType(encounters.DISPOSITION),
       removeObs: [], // No specific headings to remove
     },
+    panel15: {
+      title: "Sample History",
+      data: [
+        <PresentingComplaintsNotes
+          obs={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+        />,
+        <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
+        <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
+        <PriorConditionsNotes
+          obs={getEncountersByType(encounters.DIAGNOSIS)}
+        />,
+        <SurgicalNotes
+          obs={getEncountersByType(encounters.SURGICAL_HISTORY)}
+        />,
+        <PatientAdmissionNotes
+          obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+        />,
+        <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
+        <FamilyMedicalHistoryNotes
+          obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+        />,
+        <ReviewOfSystemsNotes
+          obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
+        />,
+        ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
+      ],
+      removeObs: [],
+    },
   };
 
   // Process encounter data based on filters and removeObs arrays
@@ -394,8 +436,8 @@ export const ClinicalNotes = () => {
     } else if (showSurgicalOnly) {
       // Only show Surgical Notes when filterSurgicalState is true
       const result: any = {};
-      if (filteredData.panel15) {
-        result.panel15 = filteredData.panel15;
+      if (filteredData.panel18) {
+        result.panel18 = filteredData.panel18;
       }
       return result;
     } else if (showGyneacologyOnly) {
@@ -416,7 +458,7 @@ export const ClinicalNotes = () => {
       // Remove Clinical Notes, SOAPIER Notes, and Surgical Notes panels when filterAETCState is true
       delete filteredData.panel14;
       delete filteredData.panel13;
-      delete filteredData.panel15;
+      delete filteredData.panel18;
       delete filteredData.panel16;
       delete filteredData.panel17;
 
@@ -489,12 +531,22 @@ export const ClinicalNotes = () => {
     // First, separate items with children and those without
     let itemsWithChildren: any = [];
     itemsWithChildren = data.filter(
-      (item) => item && Array.isArray(item.children) && item.children.length > 0
+      (item) =>
+        item &&
+        Array.isArray(item.children) &&
+        item.children.length > 0 &&
+        !React.isValidElement(item)
     );
 
     const regularItems = data.filter(
-      (item) => !item.children || item.children.length === 0
+      (item) =>
+        (!item.children || item.children.length === 0) &&
+        !React.isValidElement(item)
     );
+
+    const componentItems = data
+      .filter((item) => React.isValidElement(item))
+      .map((item) => item);
 
     // Process items with children
     const parentElements = itemsWithChildren.map(
@@ -524,6 +576,7 @@ export const ClinicalNotes = () => {
     // Combine both types of elements
     return (
       <>
+        {componentItems}
         {parentElements}
         {regularItemsElement}
       </>
@@ -786,24 +839,33 @@ export const ClinicalNotes = () => {
           setFilterGyneacologyState={setFilterGyneacologyState}
           setFilterMedicalInpatientState={setFilterMedicalInpatientState}
           onDownload={handlePrint}
-          surgicalData={encounterData.panel15?.data} // ADD THIS LINE
+          surgicalData={encounterData.panel18?.data} // ADD THIS LINE
           gyneacologyData={encounterData.panel16?.data}
           medicalInpatientData={encounterData.panel17?.data}
-
+          onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
       <div ref={contentRef} className="print-only">
         <div>
           <PatientInfoTab />
-          <div
-            style={{
-              fontWeight: 700,
-              fontSize: "20px",
-              marginTop: "10px",
-              textAlign: "center",
-            }}
-          >
-            Clinical Notes
+          <div style={{ paddingTop: "10px" }}>
+            <p
+              style={{
+                marginLeft: "10px",
+              }}
+            >
+              Report type: {printoutTitle}
+            </p>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "20px",
+                // marginTop: "10px",
+                textAlign: "center",
+              }}
+            >
+              Clinical Notes
+            </div>
           </div>
         </div>
         <PrintClinicalNotes data={encounterData} />
@@ -955,6 +1017,8 @@ const AddClinicalNotes = ({
   gyneacologyData,
   medicalInpatientData,
 
+
+  onClickFilterButton,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
@@ -972,10 +1036,11 @@ const AddClinicalNotes = ({
   gyneacologyData?: any;
   medicalInpatientData?: any;
 
+  onClickFilterButton: (value: string) => void;
 }) => {
+  const { hasActiveVisit } = getActivePatientDetails();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   // Ref for printing
-  const contentRef = useRef<HTMLDivElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -1002,12 +1067,12 @@ const AddClinicalNotes = ({
           width: "100%",
         }}
       >
-        <MainButton
+        <Button
           aria-describedby={id}
-          title="Add Notes"
           variant="contained"
           onClick={handleClick}
           startIcon={<FaPlus />}
+          disabled={!hasActiveVisit}
           sx={{
             backgroundColor: "primary.main",
             color: "white",
@@ -1023,7 +1088,9 @@ const AddClinicalNotes = ({
               },
             },
           }}
-        />
+        >
+          Add Notes
+        </Button>
 
         <div>
           <Button
@@ -1065,6 +1132,8 @@ const AddClinicalNotes = ({
               setFilterSurgicalState(false); // Reset surgical filter
               setFilterGyneacologyState(false);
               setFilterMedicalInpatientState(false);
+
+              onClickFilterButton("SOAPIER");
             }}
             sx={{
               backgroundColor: filterSoapierState ? "rgb(221, 238, 221)" : "",
@@ -1095,6 +1164,7 @@ const AddClinicalNotes = ({
               setFilterMedicalInpatientState(false);
 
 
+              onClickFilterButton("AETC");
             }}
             sx={{
               backgroundColor: filterAETCState ? "rgb(221, 238, 221)" : "",
@@ -1213,6 +1283,7 @@ const AddClinicalNotes = ({
               setFilterGyneacologyState(false);
               setFilterMedicalInpatientState(false);
 
+              onClickFilterButton("All");
             }}
             sx={{
               backgroundColor:

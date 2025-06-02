@@ -20,6 +20,7 @@ const theme = createTheme({
 });
 
 export const PrintClinicalNotes = (props: any) => {
+  console.log({ props });
   // Make sure we have data object
   const data = props?.data || props;
 
