@@ -166,7 +166,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 "Alcohol intake",
                 "Smoking history",
                 "Recreational drug",
-            ]
+            ];
 
             gyneacologyEncounter.obs.forEach(obs => {
                 const conceptName = obs.names && obs.names.length > 0 ? obs.names[0].name : null;
