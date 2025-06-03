@@ -19,4 +19,5 @@ export default AuthGuard(NursingChart, [
   roles.CLINICIAN,
   roles.NURSE,
   roles.ADMIN,
+  roles.STUDENT_CLINICIAN,
 ]);

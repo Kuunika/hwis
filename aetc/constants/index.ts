@@ -1754,6 +1754,7 @@ export const roles = {
   INITIAL_REGISTRATION_CLERK: process.env
     .NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE as string,
   DATA_MANAGER: process.env.NEXT_PUBLIC_DATA_MANAGER as string,
+  STUDENT_CLINICIAN: process.env.NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE as string,
 };
 
 // username: registration, clinician, nurse
