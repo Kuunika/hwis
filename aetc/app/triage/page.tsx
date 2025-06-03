@@ -24,7 +24,7 @@ function Triage() {
           sx={{
             display: "flex",
             flexDirection: "column",
-            mx:"2ch"
+            mx: "2ch",
           }}
           item
         >
@@ -37,7 +37,7 @@ function Triage() {
             This is a list of all patients that went through registration
             successfully and waiting for triage.
           </RegistrationDescriptionText>
-          <RegistrationCard sx={{ p: 0,}}>
+          <RegistrationCard sx={{ p: 0 }}>
             <ClientWaitingForTriage />
           </RegistrationCard>
         </MainGrid>
@@ -47,4 +47,9 @@ function Triage() {
   );
 }
 
-export default AuthGuard(Triage, [roles.CLINICIAN, roles.NURSE, roles.ADMIN])
+export default AuthGuard(Triage, [
+  roles.CLINICIAN,
+  roles.NURSE,
+  roles.ADMIN,
+  roles.STUDENT_CLINICIAN,
+]);

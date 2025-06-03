@@ -15,4 +15,5 @@ export default AuthGuard(PatientProfile, [
   roles.CLINICIAN,
   roles.ADMIN,
   roles.NURSE,
+  roles.STUDENT_CLINICIAN,
 ]);

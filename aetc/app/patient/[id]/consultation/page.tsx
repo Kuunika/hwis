@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { FormContainer } from "@/components";
 import { PatientInfoTab } from "@/components";
 import { roles } from "@/constants";
@@ -21,4 +21,5 @@ export default AuthGuard(Consultation, [
   roles.CLINICIAN,
   roles.NURSE,
   roles.ADMIN,
+  roles.STUDENT_CLINICIAN,
 ]);
