@@ -8,6 +8,7 @@ import { useParameters } from "@/hooks";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Visit } from "@/interfaces";
+import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
 // Define the interface for the component's exposed methods
 export interface SurgicalNotesPDFRef {
     generatePDF: () => void;
@@ -17,30 +18,6 @@ export interface SurgicalNotesPDFRef {
 interface GenerateSurgicalNotesPDFProps {
     onPrintComplete?: () => void;
 }
-
-// Create the LabOrderTable component (you'll need to import or define this)
-const LabOrderTable = () => {
-    // This should be your actual LabOrderTable component
-    // For now, returning a placeholder
-    return (
-        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
-            <thead>
-                <tr>
-                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Investigation</th>
-                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Status</th>
-                    <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Results</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>No investigations ordered</td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>-</td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>-</td>
-                </tr>
-            </tbody>
-        </table>
-    );
-};
 
 export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, GenerateSurgicalNotesPDFProps>(
     ({ onPrintComplete }, ref) => {
@@ -106,6 +83,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
             sensation: "",
             pulsations: "",
             rectalExamination: "",
+            extremities: "",
         });
 
         const [pastMedicalHistory, setPastMedicalHistory] = useState<Array<{
@@ -198,8 +176,8 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     sensation: "",
                     pulsations: "",
                     rectalExamination: "",
+                    extremities: "",
                 };
-
                 // Loop through all observations to find our target concepts
                 surgicalEncounter.obs.forEach(obs => {
                     const conceptName = obs.names && obs.names.length > 0 ? obs.names[0].name : null;
@@ -378,6 +356,8 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                         newPhysicalExam.pulsations = obs.value_text || obs.value || "";
                     } else if (conceptName === "Rectal examination") {
                         newPhysicalExam.rectalExamination = obs.value_text || obs.value || "";
+                    } else if (conceptName === "Extremities") {
+                        newPhysicalExam.extremities = obs.value_text || obs.value || "";
                     }
                 });
 
@@ -448,8 +428,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Surgical Notes</h1>
 
                     <p><strong>Presenting Complaints:</strong> {presentingInfo.complaints}</p>
-                    <p><strong>Presenting History:</strong> {presentingInfo.history}</p>
-
+                    <p><strong>Additonal Complaints:</strong> {presentingInfo.history}</p>
                     <hr />
                     <h2>Past Medical History</h2>
                     {pastMedicalHistory.length > 0 ? (
@@ -480,49 +459,105 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     ) : (
                         <p>No past medical history recorded.</p>
                     )}
-
                     <p><strong>Surgical History:</strong> {presentingInfo.surgicalHistory}</p>
                     <p><strong>Surgical Procedure:</strong> {presentingInfo.surgicalProcedure}</p>
 
                     <p><strong>Family History:</strong> {presentingInfo.familyHistory.length > 0 ?
-                        presentingInfo.familyHistory.join(", ") : "None"}</p>
+                        presentingInfo.familyHistory.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                        : "None"}                </p>
                     <p><strong>Allergies:</strong> {presentingInfo.allergies || "None"}</p>
-
                     <hr />
 
-                    <h2>Social History</h2>
-                    <p><strong>Smoking Status:</strong> {presentingInfo.smoking.status || "Unknown"}</p>
-                    {presentingInfo.smoking.status === "Yes" && (
-                        <p><strong>Cigarettes per day:</strong> {presentingInfo.smoking.duration || "Unknown"}</p>
-                    )}
-                    <p><strong>Alcohol Intake:</strong> {presentingInfo.alcoholIntake ? `${presentingInfo.alcoholIntake} units per day` : "None"}</p>
-                    <p><strong>Recreational Drugs:</strong> {presentingInfo.recreationalDrugs || "None"}</p>
-
-                    <hr />
-
-                    <h2>Review of Systems</h2>
-                    <p><strong>General:</strong> {reviewOfSystems.general.length > 0 ?
-                        reviewOfSystems.general.join(", ") : "None"}</p>
-                    <p><strong>ENT:</strong> {reviewOfSystems.ent.length > 0 ?
-                        reviewOfSystems.ent.join(", ") : "None"}</p>
-                    <p><strong>Endocrine:</strong> {reviewOfSystems.endocrine.length > 0 ?
-                        reviewOfSystems.endocrine.join(", ") : "None"}</p>
-                    <p><strong>Cardiac:</strong> {reviewOfSystems.cardiac.length > 0 ?
-                        reviewOfSystems.cardiac.join(", ") : "None"}</p>
-                    <p><strong>Respiratory:</strong> {reviewOfSystems.respiratory.length > 0 ?
-                        reviewOfSystems.respiratory.join(", ") : "None"}</p>
-                    <p><strong>Gastrointestinal:</strong> {reviewOfSystems.gastrointestinal.length > 0 ?
-                        reviewOfSystems.gastrointestinal.join(", ") : "None"}</p>
-                    <p><strong>Genitourinary:</strong> {reviewOfSystems.genitourinary.length > 0 ?
-                        reviewOfSystems.genitourinary.join(", ") : "None"}</p>
-                    <p><strong>Musculoskeletal:</strong> {reviewOfSystems.musculoskeletal.length > 0 ?
-                        reviewOfSystems.musculoskeletal.join(", ") : "None"}</p>
-                    <p><strong>Neurologic:</strong> {reviewOfSystems.neurologic.length > 0 ?
-                        reviewOfSystems.neurologic.join(", ") : "None"}</p>
-                    <p><strong>Psychiatric:</strong> {reviewOfSystems.psychiatric.length > 0 ?
-                        reviewOfSystems.psychiatric.join(", ") : "None"}</p>
-                    <hr />
-
+                    <h2>Social History & Review of Systems</h2>
+                    <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                        <thead>
+                            <tr>
+                                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Social History</th>
+                                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Review of Systems</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Smoking Status:</strong> {presentingInfo.smoking.status || "Unknown"}
+                                </td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>General:</strong> {reviewOfSystems.general.length > 0 ? reviewOfSystems.general.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                        : "None"}
+                                </td>
+                            </tr>
+                            {presentingInfo.smoking.status === "Yes" && (
+                                <tr>
+                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                        <strong>Cigarettes per day:</strong> {presentingInfo.smoking.duration || "Unknown"}
+                                    </td>
+                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                        <strong>ENT:</strong>{" "}
+                                        {reviewOfSystems.ent.length > 0
+                                            ? reviewOfSystems.ent.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                            : "None"}                                    </td>
+                                </tr>
+                            )}
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Alcohol Intake:</strong> {presentingInfo.alcoholIntake ? `${presentingInfo.alcoholIntake} units per day` : "None"}
+                                </td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Endocrine:</strong> {reviewOfSystems.endocrine.length > 0 ? reviewOfSystems.endocrine.join(", ") : "None"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Recreational Drugs:</strong> {presentingInfo.recreationalDrugs || "None"}
+                                </td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Cardiac:</strong> {reviewOfSystems.cardiac.length > 0 ? reviewOfSystems.cardiac.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                        : "None"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}></td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Respiratory:</strong> {reviewOfSystems.respiratory.length > 0 ? reviewOfSystems.respiratory.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                        : "None"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}></td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Gastrointestinal:</strong> {reviewOfSystems.gastrointestinal.length > 0 ? reviewOfSystems.gastrointestinal.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                        : "None"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}></td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Genitourinary:</strong> {reviewOfSystems.genitourinary.length > 0 ? reviewOfSystems.genitourinary.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                        : "None"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}></td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Musculoskeletal:</strong> {reviewOfSystems.musculoskeletal.length > 0 ? reviewOfSystems.musculoskeletal.join(", ") : "None"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}></td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Neurologic:</strong> {reviewOfSystems.neurologic.length > 0 ? reviewOfSystems.neurologic.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                        : "None"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}></td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Psychiatric:</strong> {reviewOfSystems.psychiatric.length > 0 ? reviewOfSystems.psychiatric.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                                        : "None"}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <h2>Physical Examination</h2>
                     <p><strong>General Condition:</strong> {physicalExam.generalCondition || "Not recorded"}</p>
 
@@ -533,42 +568,79 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                         <p><strong>Blood Pressure:</strong> {physicalExam.bloodPressure || "Not recorded"} mmHg</p>
                         <p><strong>Respiratory Rate:</strong> {physicalExam.respiratoryRate || "Not recorded"} breaths/min</p>
                     </div>
+                    <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+                        <p><strong>Eyes:</strong> {physicalExam.eyes || "Not recorded"}</p>
+                        <p><strong>Mouth:</strong> {physicalExam.mouth || "Not recorded"}</p>
+                        <p><strong>Neck:</strong> {physicalExam.neck || "Not recorded"}</p>
+                    </div>
 
-                    <p><strong>Eyes:</strong> {physicalExam.eyes || "Not recorded"}</p>
-                    <p><strong>Mouth:</strong> {physicalExam.mouth || "Not recorded"}</p>
-                    <p><strong>Neck:</strong> {physicalExam.neck || "Not recorded"}</p>
                     <p><strong>Chest Examination:</strong> {physicalExam.chest || "Not recorded"}</p>
                     <p><strong>Endocrine Examination:</strong> {physicalExam.endocrine || "Not recorded"}</p>
                     <p><strong>Abdominal Examination:</strong> {physicalExam.abdominal || "Not recorded"}</p>
+                    <hr />
 
                     <h3>Glasgow Coma Scale (GCS)</h3>
+
                     <p><strong>Motor Response:</strong> {physicalExam.motorResponse || "Not recorded"}</p>
                     <p><strong>Verbal Response:</strong> {physicalExam.verbalResponse || "Not recorded"}</p>
                     <p><strong>Eye Response:</strong> {physicalExam.eyeResponse || "Not recorded"}</p>
-
-                    <h3>Additional Examinations</h3>
-                    <p><strong>Cranial Nerves:</strong> {physicalExam.cranialNerves || "Not recorded"}</p>
-                    <p><strong>Gross Motor:</strong> {physicalExam.grossMotor || "Not recorded"}</p>
-                    <p><strong>Sensation:</strong> {physicalExam.sensation || "Not recorded"}</p>
-
-                    <h3>Extremities</h3>
-                    <p><strong>Pulsations:</strong> {physicalExam.pulsations || "Not recorded"}</p>
-                    <p><strong>Rectal Examination:</strong> {physicalExam.rectalExamination || "Not recorded"}</p>
+                    <hr />
+                    <h3>Additional Examinations & Extremities</h3>
+                    <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                        <thead>
+                            <tr>
+                                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Additional Examinations</th>
+                                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Extremities</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Cranial Nerves:</strong> {physicalExam.cranialNerves || "Not recorded"}
+                                </td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Pulsations:</strong> {physicalExam.pulsations || "Not recorded"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Gross Motor:</strong> {physicalExam.grossMotor || "Not recorded"}
+                                </td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Rectal Examination:</strong> {physicalExam.rectalExamination || "Not recorded"}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Sensation:</strong> {physicalExam.sensation || "Not recorded"}
+                                </td>
+                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                    <strong>Extremities:</strong> {physicalExam.extremities || "Not recorded"}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <hr />
                     <p><strong>Working Differential Diagnosis:</strong> {presentingInfo.differentialDiagnosis || "None"}</p>
+                    <hr />
 
                     <h2>Investigations</h2>
                     <LabOrderTable />
+                    <hr />
+
                     <h2>Medications</h2>
                     <PrescribedMedicationList setRow={setRow} />
-
                     <hr />
                     <h2>Clerking Details</h2>
                     <p><strong>Additional Notes:</strong> {clerkInfo.additionalNotes}</p>
-                    <p><strong>Clerk Name:</strong> {clerkInfo.clerkName}</p>
-                    <p><strong>Designation:</strong> {clerkInfo.designation}</p>
-                    <p><strong>Signature:</strong> {clerkInfo.signature}</p>
+                    <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+
+                        <p><strong>Clerk Name:</strong> {clerkInfo.clerkName}</p>
+                        <p><strong>Designation:</strong> {clerkInfo.designation}</p>
+                        <p><strong>Signature:</strong> {clerkInfo.signature}</p>
+                    </div>
+
                 </div>
                 {/* CSS for Print Handling */}
                 <style jsx>{`
