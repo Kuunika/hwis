@@ -30,6 +30,10 @@ import { getPatientLabOrder } from "@/hooks/labOrder";
 import { getAllObservations } from "@/hooks/obs";
 import { InvestigationPlanNotes } from "../clinicalNotes/InvestigationPlan";
 import { PrintClinicalNotes } from "./printClinicalNotes";
+import { GenerateSurgicalNotesPDF, SurgicalNotesPDFRef } from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
+import { GenerateGyneacologyNotesPDF, GyneacologyNotesPDFRef } from "../../[id]/gyneacology/components/generateGyneacologyNotesPDF";
+import { GenerateMedicalInpatientlNotesPDF, MedicalInpatientNotesPDFRef } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
+
 import { get } from "http";
 import {
   FamilyMedicalHistoryNotes,
@@ -149,6 +153,9 @@ const filterObservationsByName = (observations: any, filterNames = []) => {
 export const ClinicalNotes = () => {
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
+  const [filterSurgicalState, setFilterSurgicalState] = useState(false); // New state for surgical notes
+  const [filterGyneacologyState, setFilterGyneacologyState] = useState(false); // New state for gyneacology notes
+  const [filterMedicalInpatientState, setFilterMedicalInpatientState] = useState(false); // New state for Medical inpatient notes
   const [expanded, setExpanded] = useState<string | false>(false); // Changed to false initially
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
@@ -161,6 +168,11 @@ export const ClinicalNotes = () => {
 
   const contentRef = useRef<HTMLDivElement>(null);
 
+  const pdfRef = useRef<SurgicalNotesPDFRef>(null);
+  const gyneacologyRef = useRef<GyneacologyNotesPDFRef>(null);
+  const medicalInpatientRef = useRef<MedicalInpatientNotesPDFRef>(null);
+
+
   // Refresh encounter data when component mounts or filters change
   useEffect(() => {
     // Fetch data whenever component mounts
@@ -172,7 +184,7 @@ export const ClinicalNotes = () => {
     }, 5000); // Refresh every 5 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on unmount
-  }, [refresh, filterSoapierState, filterAETCState]);
+  }, [refresh, filterSoapierState, filterAETCState, filterSurgicalState, filterGyneacologyState, filterMedicalInpatientState]); // Added filterSurgicalState to dependencies
 
   const getEncountersByType = (encounterTypeUuid: any) => {
     const {
@@ -243,6 +255,30 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.DISPENSING),
       ],
       removeObs: ["nursing chart", "medication chart"], // Example headings to remove
+    },
+    panel18: {
+      title: "Surgical Notes",
+      data: [
+        ...getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM),
+
+      ],
+      removeObs: [],
+    },
+    panel16: {
+      title: "Gyneacology",
+      data: [
+        ...getEncountersByType(encounters.GYNEACOLOGY_WARD),
+
+      ],
+      removeObs: [],
+    },
+    panel17: {
+      title: "Medical Inpatient",
+      data: [
+        ...getEncountersByType(encounters.MEDICAL_IN_PATIENT),
+
+      ],
+      removeObs: [],
     },
     panel1: {
       title: "Triage",
@@ -363,7 +399,10 @@ export const ClinicalNotes = () => {
   const getFilteredEncounterData = (
     baseData: any,
     showSoapierOnly: any,
-    showAETC: any
+    showAETC: any,
+    showSurgicalOnly: any, // New parameter for surgical notes filter
+    showGyneacologyOnly: any,
+    showMedicalInpatientOnly: any,
   ) => {
     // Start with a copy of the base data
     const filteredData = { ...baseData };
@@ -394,10 +433,36 @@ export const ClinicalNotes = () => {
         result.panel13 = filteredData.panel13;
       }
       return result;
+    } else if (showSurgicalOnly) {
+      // Only show Surgical Notes when filterSurgicalState is true
+      const result: any = {};
+      if (filteredData.panel18) {
+        result.panel18 = filteredData.panel18;
+      }
+      return result;
+    } else if (showGyneacologyOnly) {
+      // Only show Gyneacology Notes when filterGyneacolgyState is true
+      const result: any = {};
+      if (filteredData.panel16) {
+        result.panel16 = filteredData.panel16;
+      }
+      return result;
+    } else if (showMedicalInpatientOnly) {
+      // Only show Medical Inpatient Notes when filterMedicalInpatientState is true
+      const result: any = {};
+      if (filteredData.panel17) {
+        result.panel17 = filteredData.panel17;
+      }
+      return result;
     } else if (showAETC) {
-      // Remove Clinical Notes and SOAPIER Notes panels when filterAETCState is true
+      // Remove Clinical Notes, SOAPIER Notes, and Surgical Notes panels when filterAETCState is true
       delete filteredData.panel14;
       delete filteredData.panel13;
+      delete filteredData.panel18;
+      delete filteredData.panel16;
+      delete filteredData.panel17;
+
+
     }
 
     return filteredData;
@@ -408,9 +473,12 @@ export const ClinicalNotes = () => {
     return getFilteredEncounterData(
       baseEncounterData,
       filterSoapierState,
-      filterAETCState
+      filterAETCState,
+      filterSurgicalState, // Added surgical filter parameter
+      filterGyneacologyState,
+      filterMedicalInpatientState,
     );
-  }, [baseEncounterData, filterSoapierState, filterAETCState]);
+  }, [baseEncounterData, filterSoapierState, filterAETCState, filterSurgicalState, filterGyneacologyState, filterMedicalInpatientState]); // Added filterSurgicalState to dependencies
 
   const addClinicalNote = (note: string) => {
     const data = { "Clinical notes construct": note };
@@ -428,9 +496,33 @@ export const ClinicalNotes = () => {
       }
     };
 
-  const handlePrint = useReactToPrint({
+  // const handlePrint = useReactToPrint({
+  //   contentRef: contentRef,
+  // });
+  const printFunction = useReactToPrint({
     contentRef: contentRef,
   });
+
+  // 2. REPLACE your current handlePrint function with this:
+  const handlePrint = () => {
+    // Check if surgical notes filter is active
+    if (filterSurgicalState && pdfRef.current) {
+      pdfRef.current.generatePDF();
+    } else if (filterGyneacologyState && gyneacologyRef.current) {
+      gyneacologyRef.current.generatePDF();
+    } else if (filterMedicalInpatientState && medicalInpatientRef.current) {
+      medicalInpatientRef.current.generatePDF();
+    } else {
+      // Use regular print for other cases (All, AETC, SOAPIER)
+      printFunction();
+    }
+  };
+
+
+  const handleSurgicalPrintComplete = () => {
+    console.log("Surgical notes PDF generated successfully!");
+  };
+
 
   // Function to render grouped items by heading
   const renderGroupedItems = (data: any[]) => {
@@ -738,9 +830,18 @@ export const ClinicalNotes = () => {
           onAddNote={addClinicalNote}
           filterSoapierState={filterSoapierState}
           filterAETCState={filterAETCState}
+          filterSurgicalState={filterSurgicalState} // Pass surgical filter state
+          filterGyneacologyState={filterGyneacologyState}
+          filterMedicalInpatientState={filterMedicalInpatientState}
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
+          setFilterSurgicalState={setFilterSurgicalState} // Pass surgical filter setter
+          setFilterGyneacologyState={setFilterGyneacologyState}
+          setFilterMedicalInpatientState={setFilterMedicalInpatientState}
           onDownload={handlePrint}
+          surgicalData={encounterData.panel18?.data} // ADD THIS LINE
+          gyneacologyData={encounterData.panel16?.data}
+          medicalInpatientData={encounterData.panel17?.data}
           onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
@@ -830,9 +931,9 @@ export const ClinicalNotes = () => {
                 {/* Use custom component for Laboratory/Radiology panel */}
                 {title === "Laboratory or Radiology finding"
                   ? // <LaboratoryRadiologyFindings
-                    //   data={Array.isArray(data) ? data.flat() : []}
-                    // />
-                    ""
+                  //   data={Array.isArray(data) ? data.flat() : []}
+                  // />
+                  ""
                   : renderGroupedItems(Array.isArray(data) ? data.flat() : [])}
               </AccordionDetails>
             </Accordion>
@@ -882,6 +983,19 @@ export const ClinicalNotes = () => {
           border-bottom: 1px solid #e0e0e0;
         }
       `}</style>
+      <GenerateSurgicalNotesPDF
+        ref={pdfRef}
+        onPrintComplete={handleSurgicalPrintComplete}
+      // data={encounterData.panel15?.data}
+      />
+      <GenerateGyneacologyNotesPDF
+        ref={gyneacologyRef}
+        onPrintComplete={handleSurgicalPrintComplete}
+      />
+      <GenerateMedicalInpatientlNotesPDF
+        ref={medicalInpatientRef}
+        onPrintComplete={handleSurgicalPrintComplete}
+      />
     </Panel>
   );
 };
@@ -890,17 +1004,38 @@ const AddClinicalNotes = ({
   onAddNote,
   filterSoapierState,
   filterAETCState,
+  filterSurgicalState, // New prop for surgical filter state
+  filterGyneacologyState,
+  filterMedicalInpatientState,
   setFilterSoapierState,
   setFilterAETCState,
+  setFilterSurgicalState, // New prop for surgical filter setter
+  setFilterGyneacologyState,
+  setFilterMedicalInpatientState,
   onDownload,
+  surgicalData, // ADD THIS NEW PROP
+  gyneacologyData,
+  medicalInpatientData,
+
+
   onClickFilterButton,
 }: {
   onAddNote: (value: any) => any;
   filterSoapierState: boolean;
   filterAETCState: boolean;
+  filterSurgicalState: boolean; // New prop type
+  filterGyneacologyState: boolean;
+  filterMedicalInpatientState: boolean;
   setFilterSoapierState: (value: boolean) => void;
   setFilterAETCState: (value: boolean) => void;
+  setFilterSurgicalState: (value: boolean) => void; // New prop type
+  setFilterGyneacologyState: (value: boolean) => void;
+  setFilterMedicalInpatientState: (value: boolean) => void;
   onDownload: () => void;
+  surgicalData?: any; // ADD THIS NEW PROP TYPE
+  gyneacologyData?: any;
+  medicalInpatientData?: any;
+
   onClickFilterButton: (value: string) => void;
 }) => {
   const { hasActiveVisit } = getActivePatientDetails();
@@ -994,6 +1129,10 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterSoapierState(true);
               setFilterAETCState(false);
+              setFilterSurgicalState(false); // Reset surgical filter
+              setFilterGyneacologyState(false);
+              setFilterMedicalInpatientState(false);
+
               onClickFilterButton("SOAPIER");
             }}
             sx={{
@@ -1020,6 +1159,11 @@ const AddClinicalNotes = ({
             onClick={() => {
               setFilterAETCState(true);
               setFilterSoapierState(false);
+              setFilterSurgicalState(false); // Reset surgical filter
+              setFilterGyneacologyState(false);
+              setFilterMedicalInpatientState(false);
+
+
               onClickFilterButton("AETC");
             }}
             sx={{
@@ -1042,15 +1186,108 @@ const AddClinicalNotes = ({
           >
             AETC
           </Button>
+          {/* New Surgical Notes Button */}
+          <Button
+            onClick={() => {
+              setFilterSurgicalState(true);
+              setFilterSoapierState(false);
+              setFilterAETCState(false); // Reset other filters
+              setFilterGyneacologyState(false);
+              setFilterMedicalInpatientState(false);
+
+
+            }}
+            sx={{
+              backgroundColor: filterSurgicalState ? "rgb(221, 238, 221)" : "",
+              color: "rgb(0, 70, 0)",
+              border: "1px solid currentColor",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontSize: "14px",
+              marginRight: "10px",
+              flexGrow: 1,
+              textTransform: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "120px",
+              "&:hover": {
+                backgroundColor: "rgb(197, 231, 197)",
+              },
+            }}
+          >
+            Surgical Notes
+          </Button>
+          {/* New Gyneacology Button */}
+          <Button
+            onClick={() => {
+              setFilterGyneacologyState(true);
+              setFilterSurgicalState(false);
+              setFilterMedicalInpatientState(false);
+              setFilterSoapierState(false);
+              setFilterAETCState(false); // Reset other filters
+
+            }}
+            sx={{
+              backgroundColor: filterGyneacologyState ? "rgb(221, 238, 221)" : "",
+              color: "rgb(0, 70, 0)",
+              border: "1px solid currentColor",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontSize: "14px",
+              marginRight: "10px",
+              flexGrow: 1,
+              textTransform: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "120px",
+              "&:hover": {
+                backgroundColor: "rgb(197, 231, 197)",
+              },
+            }}
+          >
+            Gyneacology          </Button>
+          {/* New Medical Inpatient Button */}
+          <Button
+            onClick={() => {
+              setFilterMedicalInpatientState(true);
+              setFilterGyneacologyState(false);
+              setFilterSurgicalState(false);
+              setFilterSoapierState(false);
+              setFilterAETCState(false); // Reset other filters
+
+            }}
+            sx={{
+              backgroundColor: filterMedicalInpatientState ? "rgb(221, 238, 221)" : "",
+              color: "rgb(0, 70, 0)",
+              border: "1px solid currentColor",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+              fontSize: "14px",
+              marginRight: "10px",
+              flexGrow: 1,
+              textTransform: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "120px",
+              "&:hover": {
+                backgroundColor: "rgb(197, 231, 197)",
+              },
+            }}
+          >
+            Medical Inpatient   </Button>
           <Button
             onClick={() => {
               setFilterSoapierState(false);
               setFilterAETCState(false);
+              setFilterSurgicalState(false); // Reset surgical filter
+              setFilterGyneacologyState(false);
+              setFilterMedicalInpatientState(false);
+
               onClickFilterButton("All");
             }}
             sx={{
               backgroundColor:
-                !filterSoapierState && !filterAETCState
+                !filterSoapierState && !filterAETCState && !filterSurgicalState && !filterGyneacologyState && !filterMedicalInpatientState
                   ? "rgb(221, 238, 221)"
                   : "",
               color: "rgb(0, 70, 0)",

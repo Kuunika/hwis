@@ -21,6 +21,8 @@ import { getDateTime } from "@/helpers/dateTime";
 import { Visit } from "@/interfaces";
 import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { GenerateSurgicalNotesPDF, SurgicalNotesPDFRef } from "./generateSurgicalNotesPDF";
+
 
 
 
@@ -38,6 +40,8 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { init, ServerTime } = useServerTime();
+    const pdfRef = useRef<SurgicalNotesPDFRef>(null);
+
 
     const [clerkInfo, setClerkInfo] = useState({
         clerkName: "",
@@ -465,6 +469,11 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             }
         }
     }, [patientVisits]);
+    // Optional callback when print is complete
+    const handlePrintComplete = () => {
+        console.log("Surgical notes PDF generated successfully!");
+        // Add any additional logic you need after printing
+    };
 
     const handleSubmit = async (values: any) => {
         const currentDateTime = ServerTime.getServerTimeString();
@@ -503,7 +512,11 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             await submitEncounter(payload);
             console.log("Initial Management submitted successfully!");
             onSubmit(values); // This triggers navigation to the next step
-            reactToPrintFn(); // Trigger printing after submission
+            // reactToPrintFn(); // Trigger printing after submission
+            if (pdfRef.current) {
+                pdfRef.current.generatePDF();
+            }
+
             navigateTo(`/dispositions`);
         } catch (error) {
             console.error("Error submitting Initial Management:", error);
@@ -700,6 +713,11 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                         />
                     </FormFieldContainerLayout>
                 </WrapperBox>
+                {/* Include the PDF component - it will be hidden but ready to print */}
+                <GenerateSurgicalNotesPDF
+                    ref={pdfRef}
+                    onPrintComplete={handlePrintComplete}
+                />
             </FormFieldContainer>
 
             {/* CSS for Print Handling */}
