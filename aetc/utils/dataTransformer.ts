@@ -21,12 +21,10 @@ export const transformLabValues = (
   formStructure: any,
   dateTime = new Date().toISOString()
 ) => {
-  console.log("🚀 ~ formStructure:", formStructure);
   // Extract concept groups from the keys
   const groups: any = {};
 
   for (const key in inputObj) {
-    console.log("🚀 ~ inputObj=======:", inputObj);
     // Split the key by underscore to get the group name and concept
     const [groupName, ...conceptParts] = key.split("_");
     const concept = conceptParts.join("_"); // Rejoin in case concept had underscores
@@ -43,7 +41,7 @@ export const transformLabValues = (
       value: inputObj[key],
       groupMembers: [
         {
-          concept: concept || key,
+          concept: concepts.DESCRIPTION,
           obsDatetime: dateTime,
           value: getFieldObsId(key, formStructure),
         },
