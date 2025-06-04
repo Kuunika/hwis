@@ -252,48 +252,75 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                         <h2>Complaints</h2>
                         <p><strong>Chief Complaints: </strong>{complaintsInfo.chiefComplaint}</p>
                         <p><strong>History of Present Illness: </strong>{complaintsInfo.illnessHistory}</p>
+                        <hr />
 
                         <h2>Obstetric and Gyneacology History</h2>
-                        <p><strong>LNMP: </strong>{complaintsInfo.lnmp}</p>
-                        <p><strong>Gestational Age: </strong>{complaintsInfo.gestationalAge}</p>
-                        <p><strong>Gravidity: </strong>{complaintsInfo.gravidity}</p>
-                        <p><strong>Number of Living Children: </strong>{complaintsInfo.numberOfLivingChildren}</p>
-                        <p><strong>Menarche: </strong>{complaintsInfo.menarche}</p>
-                        <p><strong>Menstrual cycle: </strong>{complaintsInfo.menstralCycle}</p>
-                        <p><strong>Duration: </strong>{complaintsInfo.duration}</p>
-                        <p><strong>Prev Abortion: </strong>{complaintsInfo.prevAbortion}</p>
-                        <p><strong>Prev Ectopic: </strong>{complaintsInfo.prevEctopic}</p>
-                        <p><strong>Abnormal Vaginal Discharge: </strong>{complaintsInfo.abnormalVaginalDischarge}</p>
-                        <p><strong>Consistency: </strong>{complaintsInfo.consistency}</p>
-                        <p><strong>Color: </strong>{complaintsInfo.color}</p>
-                        <p><strong>Odour: </strong>{complaintsInfo.odour}</p>
-                        <p><strong>Amount: </strong>{complaintsInfo.amount}</p>
-                        <p><strong>Previous Contraceptive: </strong>{complaintsInfo.previousContraceptive}</p>
-                        <p><strong>Side effects: </strong>{complaintsInfo.sideEffects}</p>
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+
+                            <p><strong>LNMP: </strong>{complaintsInfo.lnmp}</p>
+                            <p><strong>Gestational Age: </strong>{complaintsInfo.gestationalAge}</p>
+                            <p><strong>Gravidity: </strong>{complaintsInfo.gravidity}</p>
+                            <p><strong>Number of Living Children: </strong>{complaintsInfo.numberOfLivingChildren}</p>
+                        </div>
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+
+                            <p><strong>Menarche: </strong>{complaintsInfo.menarche}</p>
+                            <p><strong>Menstrual cycle: </strong>{complaintsInfo.menstralCycle}</p>
+                            <p><strong>Duration: </strong>{complaintsInfo.duration}</p>
+                            <p><strong>Prev Abortion: </strong>{complaintsInfo.prevAbortion}</p>
+                        </div>
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+                            <p><strong>Prev Ectopic: </strong>{complaintsInfo.prevEctopic}</p>
+                            <p><strong>Abnormal Vaginal Discharge: </strong>{complaintsInfo.abnormalVaginalDischarge}</p>
+                            <p><strong>Consistency: </strong>{complaintsInfo.consistency}</p>
+                            <p><strong>Color: </strong>{complaintsInfo.color}</p>
+                        </div>
+
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+
+                            <p><strong>Odour: </strong>{complaintsInfo.odour}</p>
+                            <p><strong>Amount: </strong>{complaintsInfo.amount}</p>
+                            <p><strong>Previous Contraceptive: </strong>{complaintsInfo.previousContraceptive}</p>
+                            <p><strong>Side effects: </strong>{complaintsInfo.sideEffects}</p>
+                        </div>
+
                         <p><strong>Cancer Screening: </strong>{complaintsInfo.cancerScreening}</p>
                         <p><strong>History of STIs: </strong>{complaintsInfo.historyOfStis}</p>
 
+                        <hr />
 
                         <h2>Medical History</h2>
                         <p><strong> Condition: </strong>{complaintsInfo.medicalHistory.length > 0 ?
-                            complaintsInfo.medicalHistory.join(",") : "None"}</p>
+                            complaintsInfo.medicalHistory.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                            : "None"}</p>
+                        <hr />
 
                         <h2>Habits</h2>
                         <p><strong> Condition: </strong>{complaintsInfo.habits.length > 0 ?
-                            complaintsInfo.habits.join(",") : "None"}</p>
+                            complaintsInfo.habits.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                            : "None"}</p>
+                        <hr />
 
                         <h2>Condition & Pallor</h2>
                         <p><strong>Condition: </strong></p>
                         <p><strong>Pallor: </strong></p>
+                        <hr />
 
                         <h2>Vital Signs</h2>
-                        <p><strong>Temperature: </strong>{complaintsInfo.temperature}</p>
-                        <p><strong>Pulse: </strong>{complaintsInfo.pulse}</p>
-                        <p><strong>Respiratory: </strong>{complaintsInfo.respiratory}</p>
-                        <p><strong>Blood Pressure: </strong>{complaintsInfo.bloodPressure}</p>
-                        <p><strong>Stats: </strong>{complaintsInfo.stats}</p>
-                        <p><strong>RBS: </strong>{complaintsInfo.rbs}</p>
-                        <p><strong>Weight: </strong>{complaintsInfo.weight}</p>
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+                            <p><strong>Temperature: </strong>{complaintsInfo.temperature}</p>
+                            <p><strong>Pulse: </strong>{complaintsInfo.pulse}</p>
+                            <p><strong>Respiratory: </strong>{complaintsInfo.respiratory}</p>
+                            <p><strong>Blood Pressure: </strong>{complaintsInfo.bloodPressure}</p>
+                        </div>
+
+                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+
+                            <p><strong>Stats: </strong>{complaintsInfo.stats}</p>
+                            <p><strong>RBS: </strong>{complaintsInfo.rbs}</p>
+                            <p><strong>Weight: </strong>{complaintsInfo.weight}</p>
+                        </div>
+                        <hr />
 
                         <h2>Examinations</h2>
                         <p><strong>Chest Examination: </strong>{complaintsInfo.chestExamination}</p>
@@ -301,6 +328,7 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                         <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
                         <p><strong>Extremities: </strong>{complaintsInfo.extremities}</p>
                         <p><strong>Impression: </strong>{complaintsInfo.impression}</p>
+                        <hr />
 
                     </div>
                 </div>
