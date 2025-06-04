@@ -173,7 +173,13 @@ export const useBedsideFormData = (
 
       // Only filter if BedSideResults is available and not loading
       let itemsToProcess = latestItems;
-      if (!bedsideLoading && BedSideResults && Array.isArray(BedSideResults)) {
+      if (
+        !bedsideLoading &&
+        BedSideResults &&
+        Array.isArray(BedSideResults) &&
+        BedSideResults.length > 0
+      ) {
+        console.log("🚀 ~ useEffect ~ BedSideResults:", BedSideResults);
         itemsToProcess = filterFirstArrayUsingSecond(
           latestItems,
           BedSideResults[0].obs
