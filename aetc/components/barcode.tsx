@@ -16,6 +16,8 @@ interface Props {
   printer: string;
   orderDate?: string;
   test?: string;
+  fullName?: string;
+  gender?: string;
 }
 export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   value,
@@ -281,6 +283,8 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
   printer,
   orderDate,
   test,
+  fullName,
+  gender,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -291,8 +295,8 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
         const originalCanvas = await htmlToImage.toCanvas(element);
 
         // Adjusted for 3cm x 6cm label at 300 DPI
-        const fixedWidth = 709;
-        const fixedHeight = 354;
+        const fixedWidth = 400;
+        const fixedHeight = 200;
 
         const resizedCanvas = document.createElement("canvas");
         resizedCanvas.width = fixedWidth;
@@ -328,22 +332,22 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
   }, [printer, setTriggerFunc]);
 
   return (
-    <div id="barcode">
-      <Box
-        sx={{
-          pb: "2px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          justifyContent: "center",
-        }}
-        ref={ref}
-      >
-        {children}
-        <Barcode height={50} margin={0} displayValue={false} value={value} />
-        <Typography variant="caption">{test}</Typography>
-        {/* <Typography variant="caption">Order date: {orderDate}</Typography> */}
-      </Box>
+    <div
+      id="barcode"
+      ref={ref}
+      style={{ display: "flex", flexDirection: "column" }}
+    >
+      <span style={{ fontSize: "0.75rem" }}>{fullName}</span>
+      <div style={{ display: "flex" }}>
+        <span style={{ fontSize: "0.75rem", marginRight: "0.5rem" }}>
+          {orderDate}
+        </span>
+        <span style={{ fontSize: "0.75rem" }}>{gender}</span>
+      </div>
+
+      <Barcode height={30} margin={0} displayValue={false} value={value} />
+
+      <span style={{ fontSize: "0.75rem" }}>{test}</span>
     </div>
   );
 };
