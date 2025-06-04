@@ -16,6 +16,9 @@ import { getHumanReadableDateTime } from "@/helpers/dateTime";
 export const DesktopView = () => {
   const { hasActiveVisit, recentVisitCloseDateTime } =
     getActivePatientDetails();
+
+  console.log({ hasActiveVisit });
+
   return (
     <VisitDatesProvider>
       {!hasActiveVisit && (

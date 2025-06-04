@@ -237,19 +237,10 @@ export const LabOrderTable = () => {
             setTriggerFunc={(test) => setTriggerPrintFunc(test)}
             value={selectedTest.ascension}
             test={`${selectedTest.tests}|${selectedTest.ascension}|${selectedTest.requestingTechnician.split(" ")[1]}`}
+            fullName={`${patient?.given_name} ${patient?.family_name}`}
+            gender={patient?.gender}
           >
-            <MainTypography variant="caption">{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
-            <Box>
-              <MainTypography sx={{ mr: 1 }} variant="caption">
-                {selectedTest.orderDate}
-              </MainTypography>
-              <MainTypography variant="caption">
-                {patient?.gender}
-              </MainTypography>
-            </Box>
-            {/* <MainTypography variant="caption">
-              {selectedTest.tests}
-            </MainTypography> */}
+            <></>
           </LabBarcodeComponentPrintTemplate>
           <br />
           <BasicSelect
