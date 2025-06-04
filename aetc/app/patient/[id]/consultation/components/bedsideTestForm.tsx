@@ -25,7 +25,11 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
       patientId as string,
       `encounter_type=${encounters.BED_SIDE_TEST}`
     );
-  const { data: encounterData, refetch } = getPatientsEncounters(
+  const {
+    data: encounterData,
+    refetch,
+    isLoading: bedsidePlanLoading,
+  } = getPatientsEncounters(
     patientId as string,
     `encounter_type=${encounters.BEDSIDE_INVESTIGATION_PLAN}`
   );
@@ -73,7 +77,9 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
   };
 
   return (
-    <ContainerLoaderOverlay loading={isPending}>
+    <ContainerLoaderOverlay
+      loading={isPending || bedsideLoading || bedsidePlanLoading}
+    >
       <FormikInit
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
