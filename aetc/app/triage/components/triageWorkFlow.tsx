@@ -280,9 +280,9 @@ export default function TriageWorkFlow() {
       const referredTo = formData.serviceArea?.[concepts.PATIENT_REFERRED_TO];
 
       if (
-        referredTo == concepts.GYNAE_BENCH ||
-        referredTo == concepts.MEDICAL_BENCH ||
-        referredTo == concepts.SURGICAL_BENCH
+        referredTo.toLowerCase() == concepts.GYNAE_BENCH.toLowerCase() ||
+        referredTo.toLowerCase() == concepts.MEDICAL_BENCH.toLowerCase() ||
+        referredTo.toLowerCase() == concepts.SURGICAL_BENCH.toLowerCase()
       ) {
         return;
       }
