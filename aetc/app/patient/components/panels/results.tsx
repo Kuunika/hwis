@@ -12,8 +12,9 @@ export const Results = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { params } = useParameters();
   const patientId = params.id as string;
-  const { data: BedSideResults, isLoading: bedsideLoading } = getPatientsEncounters( patientId, `encounter_type=${encounters.BEDSIDE_INVESTIGATION_PLAN}`);
+  const { data: BedSideResults, isLoading: bedsideLoading } = getPatientsEncounters( patientId, `encounter_type=${encounters.BED_SIDE_TEST}` );
   const [bedsideResults, setBedsideResults] = useState<any[]>([]);
+
   useEffect(() => {
 
     if (!bedsideLoading && BedSideResults) {
