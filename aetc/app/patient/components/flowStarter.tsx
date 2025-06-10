@@ -47,6 +47,7 @@ interface FlowStarterProps {
 
 const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   const [cprDialog, setCprDialog] = useState(false);
+  const { gender } = getActivePatientDetails();
   const { patientId, hasActiveVisit } = getActivePatientDetails();
   const { data: patientHistory, isLoading: historyLoading } =
     getPatientsEncounters(patientId as string);
@@ -133,10 +134,14 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       label: "Surgical Notes",
       path: `/patient/${patient.id}/surgicalNotes`,
     },
-    {
-      label: "Gynaecology Ward Admission",
-      path: `/patient/${patient.id}/gyneacology`,
-    },
+    ...(gender === "Female"
+      ? [
+        {
+          label: "Gynaecology Ward Admission",
+          path: `/patient/${patient.id}/gyneacology`,
+        },
+      ]
+      : []),
   ];
 
   // Define main menu items

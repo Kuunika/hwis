@@ -1056,6 +1056,7 @@ const AddClinicalNotes = ({
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+  const { gender } = getActivePatientDetails();
   return (
     <>
       <Box
@@ -1218,34 +1219,37 @@ const AddClinicalNotes = ({
             Surgical Notes
           </Button>
           {/* New Gyneacology Button */}
-          <Button
-            onClick={() => {
-              setFilterGyneacologyState(true);
-              setFilterSurgicalState(false);
-              setFilterMedicalInpatientState(false);
-              setFilterSoapierState(false);
-              setFilterAETCState(false); // Reset other filters
+          {gender === "Female" && (
 
-            }}
-            sx={{
-              backgroundColor: filterGyneacologyState ? "rgb(221, 238, 221)" : "",
-              color: "rgb(0, 70, 0)",
-              border: "1px solid currentColor",
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              fontSize: "14px",
-              marginRight: "10px",
-              flexGrow: 1,
-              textTransform: "none",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              maxWidth: "120px",
-              "&:hover": {
-                backgroundColor: "rgb(197, 231, 197)",
-              },
-            }}
-          >
-            Gyneacology          </Button>
+            <Button
+              onClick={() => {
+                setFilterGyneacologyState(true);
+                setFilterSurgicalState(false);
+                setFilterMedicalInpatientState(false);
+                setFilterSoapierState(false);
+                setFilterAETCState(false); // Reset other filters
+
+              }}
+              sx={{
+                backgroundColor: filterGyneacologyState ? "rgb(221, 238, 221)" : "",
+                color: "rgb(0, 70, 0)",
+                border: "1px solid currentColor",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontSize: "14px",
+                marginRight: "10px",
+                flexGrow: 1,
+                textTransform: "none",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: "120px",
+                "&:hover": {
+                  backgroundColor: "rgb(197, 231, 197)",
+                },
+              }}
+            >
+              Gyneacology          </Button>
+          )}
           {/* New Medical Inpatient Button */}
           <Button
             onClick={() => {

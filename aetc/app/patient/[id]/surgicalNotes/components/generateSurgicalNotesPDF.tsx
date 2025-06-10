@@ -35,7 +35,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
         });
 
         const [presentingInfo, setPresentingInfo] = useState({
-            complaints: "",
+            complaints: [] as string[],
             history: "",
             surgicalHistory: "",
             surgicalProcedure: "",
@@ -128,7 +128,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     additionalNotes: "",
                 };
                 const newPresentingInfo = {
-                    complaints: "",
+                    complaints: [] as string[],
                     history: "",
                     surgicalHistory: "",
                     surgicalProcedure: "",
@@ -191,8 +191,9 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     } else if (conceptName === "Additional Notes") {
                         newClerkInfo.additionalNotes = obs.value || obs.value_text || "";
                     } else if (conceptName === "Presenting Complaints") {
-                        if (obs.children && obs.children.length > 0) {
-                            newPresentingInfo.complaints = obs.children[0].value_text || "";
+                        const condition = obs.value || obs.value_text || "";
+                        if (condition) {
+                            newPresentingInfo.complaints.push(condition);
                         }
                     } else if (conceptName === "Presenting history") {
                         newPresentingInfo.history = obs.value || obs.value_text || "";
@@ -244,7 +245,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                                 }
                             });
                         }
-                    } else if (conceptName === "Review of systems endocrine") {
+                    } else if (conceptName === "Review of systems  endocrine") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
                                 const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
@@ -289,7 +290,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                                 }
                             });
                         }
-                    } else if (conceptName === "Review Of Systems musculoskeletal") {
+                    } else if (conceptName === "Review of systems musculoskeletal") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
                                 const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
@@ -298,7 +299,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                                 }
                             });
                         }
-                    } else if (conceptName === "Review Of Systems neurologic") {
+                    } else if (conceptName === "Review of systems neurologic") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
                                 const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
@@ -427,7 +428,9 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
 
                     <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Surgical Notes</h1>
 
-                    <p><strong>Presenting Complaints:</strong> {presentingInfo.complaints}</p>
+                    <p><strong>Presenting Complaints:</strong> {presentingInfo.complaints.length > 0 ?
+                        presentingInfo.complaints.map((item, index) => `(${index + 1}) ${item}`).join(", ")
+                        : "None"}</p>
                     <p><strong>Additonal Complaints:</strong> {presentingInfo.history}</p>
                     <hr />
                     <h2>Past Medical History</h2>
