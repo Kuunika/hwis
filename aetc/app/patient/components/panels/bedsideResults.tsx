@@ -44,7 +44,7 @@ export const BedsideResults = ({ data }: BedsideResultsProps) => {
     return (
       <div key={obs.obs_id} style={{ marginLeft: indent }}>
         <Typography>
-          <b>{obs.names?.[0]?.name}</b>{" "}
+          <b>{obs.names?.[0]?.name}:</b>{" "}
           {obs.value ?? obs.value_text ?? obs.value_numeric ?? "N/A"}
         </Typography>
         {obs.children?.length > 0 &&
