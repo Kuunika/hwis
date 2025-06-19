@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { useParameters } from "./navigation";
 import { getOnePatient, getPatientVisitTypes } from "./patientReg";
 
 export const getActivePatientDetails = () => {
+  const [hasActiveVisit, setHasActiveVisit] = useState(true);
   const { params } = useParameters();
   const {
     data: patientVisits,
@@ -18,6 +20,10 @@ export const getActivePatientDetails = () => {
       ? patientVisits[patientVisits.length - 1]?.date_stopped
       : null;
 
+  useEffect(() => {
+    if (isSuccess) setHasActiveVisit(Boolean(activeVisit));
+  }, [activeVisit, isSuccess]);
+
   return {
     activeVisit: activeVisit?.uuid,
     patientId: params?.id,
@@ -26,7 +32,7 @@ export const getActivePatientDetails = () => {
     isSuccess,
     gender: patient && patient?.gender,
     patient,
-    hasActiveVisit: Boolean(activeVisit),
+    hasActiveVisit,
     recentVisitCloseDateTime,
   };
 };
