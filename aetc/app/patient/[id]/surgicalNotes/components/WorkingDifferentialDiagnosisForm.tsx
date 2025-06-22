@@ -48,27 +48,20 @@ export const WorkingDifferentialDiagnosisForm = ({ onSubmit, onSkip }: Prop) => 
     };
 
     const handleSubmit = async () => {
-        const obsDatetime = ServerTime.getServerTimeString();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const diagnosisObs = selectedDiagnosis.map((item) => ({
             concept: concepts.DIFFERENTIAL_DIAGNOSIS,
-            value: `${item.code}-${item.bestMatchText}`,
-            obsDatetime,
+            value: `${item.code}-${item.diagnosis}`,
+            obsDatetime: currentDateTime,
         }));
 
         const payload = {
             encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
             visit: activeVisit?.uuid,
             patient: params.id,
-            encounterDatetime: obsDatetime,
-            obs: [
-                {
-                    concept: concepts.DIFFERENTIAL_DIAGNOSIS,
-                    value: concepts.DIFFERENTIAL_DIAGNOSIS,
-                    obsDatetime,
-                    groupMembers: diagnosisObs,
-                },
-            ],
+            encounterDatetime: currentDateTime,
+            obs: diagnosisObs, // No groupMembers, just a flat list
         };
 
         try {

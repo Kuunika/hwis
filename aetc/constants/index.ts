@@ -1428,10 +1428,10 @@ export const concepts = {
   CENTRAL_LINE_CANNULATION_SITE: "Central line cannulation site",
   //Gyneacology ward template form concepts
   CHIEF_COMPLAINT: "Chief complaint",
-  HISTORY_OF_PRESENT_ILLNESS: "History of present illness", 
+  HISTORY_OF_PRESENT_ILLNESS: "History of present illness",
   GRAVIDITY: "Gravidity",
-  NUMBER_OF_LIVING_CHILDREN: "Number of living children", 
-  MENARCHE: "Menarche", 
+  NUMBER_OF_LIVING_CHILDREN: "Number of living children",
+  MENARCHE: "Menarche",
   MENSTRUAL_CYCLE: "Menstrual cycle", // not found
   DURATION: "Duration",
   PREV_ABORTION: "Prev Abortion", // not found

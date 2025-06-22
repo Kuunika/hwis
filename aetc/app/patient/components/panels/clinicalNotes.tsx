@@ -33,7 +33,7 @@ import { PrintClinicalNotes } from "./printClinicalNotes";
 import { GenerateSurgicalNotesPDF, SurgicalNotesPDFRef } from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
 import { GenerateGyneacologyNotesPDF, GyneacologyNotesPDFRef } from "../../[id]/gyneacology/components/generateGyneacologyNotesPDF";
 import { GenerateMedicalInpatientlNotesPDF, MedicalInpatientNotesPDFRef } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
-
+import { SurgicalNotesContent } from "../../[id]/surgicalNotes/components/SurgicalNotesContent";
 import { get } from "http";
 import {
   FamilyMedicalHistoryNotes,
@@ -845,157 +845,56 @@ export const ClinicalNotes = () => {
           onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
-      <div ref={contentRef} className="print-only">
-        <div>
-          <PatientInfoTab />
-          <div style={{ paddingTop: "10px" }}>
-            <p
-              style={{
-                marginLeft: "10px",
-              }}
-            >
-              Report type: {printoutTitle}
-            </p>
-            <div
-              style={{
-                fontWeight: 700,
-                fontSize: "20px",
-                // marginTop: "10px",
-                textAlign: "center",
-              }}
-            >
-              Clinical Notes
-            </div>
-          </div>
-        </div>
-        <PrintClinicalNotes data={encounterData} />
-      </div>
-      {Object.entries(encounterData).map(
-        ([panelId, { title, data }]: any) =>
-          data.length > 0 && (
-            <Accordion
-              key={panelId}
-              expanded={expanded === panelId}
-              onChange={handleChange(panelId)}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <ArrowForwardIosSharpIcon
-                    sx={{ fontSize: "0.9rem", color: "#3f51b5" }}
-                  />
-                }
-                aria-controls={`${panelId}-content`}
-                id={`${panelId}-header`}
-                sx={{
-                  minHeight: "54px",
-                  "&.Mui-expanded": { minHeight: "54px" },
+      {!filterSurgicalState && !filterGyneacologyState && !filterMedicalInpatientState && (
+        <div ref={contentRef} >
+          <div>
+            <PatientInfoTab />
+            <div style={{ paddingTop: "10px" }}>
+              <p
+                style={{
+                  marginLeft: "10px",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: "98%",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                      color: "#2c3e50",
-                      fontSize: "1.05rem",
-                      letterSpacing: "0.2px",
-                    }}
-                    component="span"
-                  >
-                    {title}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: "#7f8c8d",
-                      fontSize: "14px",
-                      letterSpacing: "0.2px",
-                    }}
-                  >
-                    {encounterData[panelId]?.data[0]?.created_by && (
-                      <>
-                        ~ {encounterData[panelId]?.data[0]?.created_by} -{" "}
-                        {getHumanReadableDateTime(
-                          encounterData[panelId]?.data[0]?.obs_datetime
-                        )}
-                      </>
-                    )}
-                  </Typography>
-                </div>
-              </AccordionSummary>
-              <AccordionDetails>
-                {/* Use custom component for Laboratory/Radiology panel */}
-                {title === "Laboratory or Radiology finding"
-                  ? // <LaboratoryRadiologyFindings
-                  //   data={Array.isArray(data) ? data.flat() : []}
-                  // />
-                  ""
-                  : renderGroupedItems(Array.isArray(data) ? data.flat() : [])}
-              </AccordionDetails>
-            </Accordion>
-          )
+                Report type: {printoutTitle}
+              </p>
+              <div
+                style={{
+                  fontWeight: 700,
+                  fontSize: "20px",
+                  // marginTop: "10px",
+                  textAlign: "center",
+                }}
+              >
+                Clinical Notes
+              </div>
+            </div>
+          </div>
+          <PrintClinicalNotes data={encounterData} />
+        </div>)}
+
+
+      {filterSurgicalState && (
+        <GenerateSurgicalNotesPDF
+          ref={pdfRef}
+          onPrintComplete={handleSurgicalPrintComplete}
+          showPreview={true} // Pass this prop to control preview visibility
+        />
+      )}
+      {filterGyneacologyState && (
+        <GenerateGyneacologyNotesPDF
+          ref={gyneacologyRef}
+          onPrintComplete={handleSurgicalPrintComplete}
+          showPreview={true} // Pass this prop to control preview visibility
+        />
+      )}
+      {filterMedicalInpatientState && (
+        <GenerateMedicalInpatientlNotesPDF
+          ref={medicalInpatientRef}
+          onPrintComplete={handleSurgicalPrintComplete}
+          showPreview={true} // Pass this prop to control preview visibility
+        />
       )}
 
-      <style jsx>{`
-        @media print {
-          .print-only {
-            display: block !important; /* Ensure visibility in print */
-          }
-
-          /* Make sure accordions are visible in print */
-          :global(.MuiCollapse-hidden) {
-            visibility: visible !important;
-            display: block !important;
-            height: auto !important;
-          }
-
-          :global(.MuiAccordionSummary-content) {
-            margin: 12px 0 !important; /* Ensure proper spacing */
-          }
-        }
-
-        .print-only {
-          display: none; /* Hide on screen */
-        }
-
-        /* Additional global styles */
-        :global(.MuiAccordionDetails-root) {
-          padding: 16px 20px 24px;
-        }
-
-        :global(.clinical-note-group) {
-          margin-bottom: 12px;
-        }
-
-        :global(.MuiAccordion-root) {
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-          border-radius: 6px !important;
-          overflow: hidden;
-          margin-bottom: 12px;
-        }
-
-        :global(.MuiAccordionSummary-root) {
-          background-color: #f7f9fc;
-          border-bottom: 1px solid #e0e0e0;
-        }
-      `}</style>
-      <GenerateSurgicalNotesPDF
-        ref={pdfRef}
-        onPrintComplete={handleSurgicalPrintComplete}
-      // data={encounterData.panel15?.data}
-      />
-      <GenerateGyneacologyNotesPDF
-        ref={gyneacologyRef}
-        onPrintComplete={handleSurgicalPrintComplete}
-      />
-      <GenerateMedicalInpatientlNotesPDF
-        ref={medicalInpatientRef}
-        onPrintComplete={handleSurgicalPrintComplete}
-      />
     </Panel>
   );
 };
@@ -1056,6 +955,7 @@ const AddClinicalNotes = ({
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+  const { gender } = getActivePatientDetails();
   return (
     <>
       <Box
@@ -1218,34 +1118,37 @@ const AddClinicalNotes = ({
             Surgical Notes
           </Button>
           {/* New Gyneacology Button */}
-          <Button
-            onClick={() => {
-              setFilterGyneacologyState(true);
-              setFilterSurgicalState(false);
-              setFilterMedicalInpatientState(false);
-              setFilterSoapierState(false);
-              setFilterAETCState(false); // Reset other filters
+          {gender === "Female" && (
 
-            }}
-            sx={{
-              backgroundColor: filterGyneacologyState ? "rgb(221, 238, 221)" : "",
-              color: "rgb(0, 70, 0)",
-              border: "1px solid currentColor",
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              fontSize: "14px",
-              marginRight: "10px",
-              flexGrow: 1,
-              textTransform: "none",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              maxWidth: "120px",
-              "&:hover": {
-                backgroundColor: "rgb(197, 231, 197)",
-              },
-            }}
-          >
-            Gyneacology          </Button>
+            <Button
+              onClick={() => {
+                setFilterGyneacologyState(true);
+                setFilterSurgicalState(false);
+                setFilterMedicalInpatientState(false);
+                setFilterSoapierState(false);
+                setFilterAETCState(false); // Reset other filters
+
+              }}
+              sx={{
+                backgroundColor: filterGyneacologyState ? "rgb(221, 238, 221)" : "",
+                color: "rgb(0, 70, 0)",
+                border: "1px solid currentColor",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontSize: "14px",
+                marginRight: "10px",
+                flexGrow: 1,
+                textTransform: "none",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: "120px",
+                "&:hover": {
+                  backgroundColor: "rgb(197, 231, 197)",
+                },
+              }}
+            >
+              Gyneacology          </Button>
+          )}
           {/* New Medical Inpatient Button */}
           <Button
             onClick={() => {

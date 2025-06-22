@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
-// import { getPatientsAwaitingDisposition } from "@/hooks/patientReg";
 import { getPatientsWaitingForDispositionPaginated } from "@/hooks/patientReg";
 import * as React from "react";
 import Menu from "@mui/material/Menu";
@@ -22,14 +21,17 @@ import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 import Tooltip from "@mui/material/Tooltip";
 import { FaPlay, FaSignOutAlt, FaHeartbeat, FaUser, FaFileAlt } from "react-icons/fa";
+import { getActivePatientDetails } from "@/hooks";
+
 
 export const ClientsAwaitingDisposition = () => {
     const [cpr, setCpr] = useState(false);
     const [patientId, setPatientId] = useState("");
     const [visitUUID, setVisitUUID] = useState("");
-
     const [deleted, setDeleted] = useState("");
     const { navigateTo } = useNavigation();
+    const { gender } = getActivePatientDetails();
+
 
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const {
@@ -40,10 +42,20 @@ export const ClientsAwaitingDisposition = () => {
         setPaginationModel,
         loading,
         totalPages,
+        refetch, // Add refetch function from your hook
     } = fetchPatientsTablePaginate("disposition");
 
+    // Handle visit closure success
+    useEffect(() => {
+        if (visitClosed) {
+            // Refresh the data after successful visit closure
+            refetch();
+            // Optional: Show success message
+            console.log("Visit closed successfully, refreshing data...");
+        }
+    }, [visitClosed, refetch]);
+
     const columns = [
-        // { field: "aetc_visit_number", headerName: "Visit" },
         {
             field: "triage_result",
             headerName: "Triage Cat",
@@ -77,7 +89,6 @@ export const ClientsAwaitingDisposition = () => {
                 );
             },
         },
-
         { field: "given_name", headerName: "First Name", flex: 1 },
         { field: "family_name", headerName: "Last Name", flex: 1 },
         { field: "gender", headerName: "Gender" },
@@ -98,7 +109,6 @@ export const ClientsAwaitingDisposition = () => {
             field: "disposition_type",
             headerName: "Awaiting Speciality",
             flex: 1,
-            // renderCell: (cell: any) => <CareAreaDropdown patient={cell.row} />,
         },
         {
             field: "patient_care_area",
@@ -111,8 +121,10 @@ export const ClientsAwaitingDisposition = () => {
             flex: 1.2,
             renderCell: (cell: any) => (
                 <Box display="flex" gap={1}>
-                    <DispositionActions patient={cell.row} />
-
+                    <DispositionActions
+                        patient={cell.row}
+                        onVisitClosed={refetch} // Pass refetch function
+                    />
                     {cell.row.triage_result == "red" && (
                         <Tooltip title="Initiate CPR" arrow>
                             <IconButton
@@ -142,7 +154,7 @@ export const ClientsAwaitingDisposition = () => {
             gender: row.gender,
             arrivalTime: row.patient_arrival_time,
             arrivalDateTime: row.arrival_time,
-            dispositionType: row.disposition_type, //
+            dispositionType: row.disposition_type,
             actor: (
                 <DisplayEncounterCreator
                     encounterType={encounters.DISPOSITION}
@@ -167,6 +179,7 @@ export const ClientsAwaitingDisposition = () => {
                         setCpr(true);
                         setVisitUUID(row.visit_uuid);
                     }}
+                    onVisitClosed={refetch} // Pass refetch function
                 />
             ),
             age: `${calculateAge(row.birthdate)}yrs`,
@@ -205,40 +218,21 @@ export const ClientsAwaitingDisposition = () => {
     );
 };
 
-// Dropdown for selecting care area
-const CareAreaDropdown = ({ patient }: { patient: any }) => {
-    const careAreas = ["ICU", "General Ward", "Surgical Unit"];
-    const [selectedArea, setSelectedArea] = useState(patient.care_area || "");
-
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedArea(event.target.value);
-        // Make API call to update care area
-    };
-
-    return (
-        <select value={selectedArea} onChange={handleChange}>
-            {careAreas.map((area) => (
-                <option key={area} value={area}>
-                    {area}
-                </option>
-            ))}
-        </select>
-    );
-};
-
 // Actions: Select form or close visit
-const DispositionActions = ({ patient }: { patient: any }) => {
+const DispositionActions = ({ patient, onVisitClosed }: { patient: any; onVisitClosed: () => void }) => {
     const { navigateTo } = useNavigation();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const { mutate: closeVisitMutation, isSuccess: visitClosed } =
-        closeCurrentVisit();
+    const { mutate: closeVisitMutation, isSuccess: visitClosed } = closeCurrentVisit();
+    const { gender } = getActivePatientDetails();
+
 
     useEffect(() => {
         if (visitClosed) {
-            navigateTo("/dispositions");
+            // Call the refresh function passed from parent
+            onVisitClosed();
         }
-    }, [visitClosed, navigateTo]);
+    }, [visitClosed, onVisitClosed]);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -258,7 +252,6 @@ const DispositionActions = ({ patient }: { patient: any }) => {
 
     return (
         <Box display="flex" gap={1}>
-            {/* View Profile Icon Button */}
             <Tooltip title="View Profile" arrow>
                 <IconButton
                     onClick={() => navigateTo(`/patient/${patient.id}/profile`)}
@@ -268,7 +261,6 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                     <FaPlay />
                 </IconButton>
             </Tooltip>
-            {/* Close Visit Icon Button */}
             <Tooltip title="Close Visit" arrow>
                 <IconButton
                     onClick={handleCloseVisit}
@@ -278,8 +270,6 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                     <FaSignOutAlt />
                 </IconButton>
             </Tooltip>
-
-            {/* Template Forms Icon Button */}
             <Tooltip title="Template Forms" arrow>
                 <IconButton
                     onClick={handleClick}
@@ -305,15 +295,15 @@ const DispositionActions = ({ patient }: { patient: any }) => {
                 >
                     Surgical Notes
                 </MenuItem>
-                <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/gyneacology`)}>
-                    Gyneacology Ward Admission
-                </MenuItem>
-                {/* <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/forms`)}>
-                    Form 3
-                </MenuItem> */}
+                {gender === "Female" && (
+
+                    <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/gyneacology`)}>
+                        Gyneacology Ward Admission
+                    </MenuItem>
+                )}
+
+
             </Menu>
-
-
         </Box>
     );
 };
@@ -325,7 +315,8 @@ const CardAction = ({
     setDeleted,
     patient,
     showCPR,
-    onCPR
+    onCPR,
+    onVisitClosed
 }: {
     id: string;
     visitId: string;
@@ -334,6 +325,7 @@ const CardAction = ({
     patient: any;
     showCPR?: boolean;
     onCPR?: () => void;
+    onVisitClosed: () => void;
 }) => {
     const { navigateTo } = useNavigation();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -342,9 +334,10 @@ const CardAction = ({
 
     useEffect(() => {
         if (visitClosed) {
-            navigateTo("/dispositions");
+            // Call the refresh function passed from parent
+            onVisitClosed();
         }
-    }, [visitClosed, navigateTo]);
+    }, [visitClosed, onVisitClosed]);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -381,7 +374,6 @@ const CardAction = ({
                 }}
             ></WrapperBox>
             <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
-                {/* Close Visit Icon Button */}
                 <Tooltip title="Close Visit" arrow>
                     <IconButton
                         onClick={handleCloseVisit}
@@ -392,8 +384,6 @@ const CardAction = ({
                         <FaSignOutAlt />
                     </IconButton>
                 </Tooltip>
-
-                {/* Template Forms Icon Button */}
                 <Tooltip title="Template Forms" arrow>
                     <IconButton
                         onClick={handleClick}
@@ -404,8 +394,6 @@ const CardAction = ({
                         <FaFileAlt />
                     </IconButton>
                 </Tooltip>
-
-                {/* View Profile Icon Button */}
                 <Tooltip title="View Profile" arrow>
                     <IconButton
                         onClick={() => navigateTo(`/patient/${patient.id}/profile`)}
@@ -416,7 +404,6 @@ const CardAction = ({
                         <FaPlay />
                     </IconButton>
                 </Tooltip>
-
                 {showCPR && (
                     <Tooltip title="Initiate CPR" arrow>
                         <IconButton
