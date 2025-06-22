@@ -13,7 +13,7 @@ type Props = {
   firstName: string;
   lastName: string;
   identifiers: Identifier[];
-  addresses: Address[];
+  addresses?: Address[];
 };
 
 export const PatientBarcodePrinter = ({
@@ -39,9 +39,11 @@ export const PatientBarcodePrinter = ({
         >{`${firstName} ${lastName} ~ ${getPatientId(
           identifiers
         )}`}</MainTypography>
-        <MainTypography
-          fontSize={30}
-        >{`${addresses[0]?.address1}, ${addresses[0]?.address2}, ${addresses[0]?.address3}`}</MainTypography>
+        <MainTypography fontSize={30}>
+          {addresses && addresses[0]
+            ? `${addresses[0]?.address1}, ${addresses[0]?.address2}, ${addresses[0]?.address3}`
+            : ""}
+        </MainTypography>
       </PatientRegistrationBarcodeTemplate>
       <br />
       <BasicSelect
