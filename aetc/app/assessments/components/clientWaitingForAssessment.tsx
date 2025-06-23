@@ -28,6 +28,7 @@ import {
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 import { HiPrinter } from "react-icons/hi2";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const ClientWaitingForAssessment = () => {
   const [cpr, setCpr] = useState(false);
@@ -45,6 +46,12 @@ export const ClientWaitingForAssessment = () => {
     totalPages,
     setOnSwitch,
   } = fetchPatientsTablePaginate("assessment");
+  const [inputText, setInputText] = useState("");
+  const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+
+  useEffect(() => {
+    setSearchText(debouncedSearch);
+  }, [debouncedSearch, setSearchText]);
   const [patientsData, setPatientsData] = useState<any>([]);
 
   useEffect(() => {
@@ -223,8 +230,8 @@ export const ClientWaitingForAssessment = () => {
               }
             : { data: [], page: 1, per_page: 10, total_pages: 0 }
         }
-        searchText={searchText}
-        setSearchString={setSearchText}
+        searchText={inputText}
+        setSearchString={setInputText}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
         loading={loading}
