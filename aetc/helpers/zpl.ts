@@ -16,7 +16,7 @@ export function generatePatientSummaryZPL({
   labOrders,
   dischargeNotes,
   dischargePlan,
-  prescribedMedications, // Add this parameter
+  // prescribedMedications, // Add this parameter
 
 }: {
   presentingComplaints: Obs[];
@@ -24,7 +24,7 @@ export function generatePatientSummaryZPL({
   labOrders: LabOrder[];
   dischargeNotes?: string;
   dischargePlan?: string;
-  prescribedMedications?: any[]; // Add this type definition
+  // prescribedMedications?: any[]; // Add this type definition
 
 }): string {
   // Constants
@@ -77,11 +77,11 @@ export function generatePatientSummaryZPL({
     : "No investigations ordered";
 
   // Add prescribed medications text
-  const medicationsText = prescribedMedications?.length
-    ? prescribedMedications
-      .map((med) => `${med.medicationName || med.name}: ${med.dose || ''} ${med.doseUnits || ''} ${med.frequency || ''}`)
-      .join(" | ")
-    : "No medications prescribed";
+  // const medicationsText = prescribedMedications?.length
+  //   ? prescribedMedications
+  //     .map((med) => `${med.medicationName || med.name}: ${med.dose || ''} ${med.doseUnits || ''} ${med.frequency || ''}`)
+  //     .join(" | ")
+  //   : "No medications prescribed";
 
 
   // Define raw sections
@@ -96,10 +96,10 @@ export function generatePatientSummaryZPL({
       title: "Investigations",
       lines: [`Investigations: ${investigationsText}`],
     },
-    {
-      title: "Prescribed Medications", // Add this section
-      lines: [`Prescribed Medications: ${medicationsText}`],
-    },
+    // {
+    //   title: "Prescribed Medications", // Add this section
+    //   lines: [`Prescribed Medications: ${medicationsText}`],
+    // },
     {
       title: "Discharge Notes",
       lines: [`Discharge Notes: ${dischargeNotes || "N/A"}`],

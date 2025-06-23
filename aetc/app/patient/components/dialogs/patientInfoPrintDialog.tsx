@@ -12,7 +12,7 @@ import { Obs } from "@/interfaces";
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { PrescribedMedicationList } from "../../[id]/disposition/components/prescribedMedicationList";
+// import { PrescribedMedicationList } from "../../[id]/disposition/components/prescribedMedicationList";
 
 type Prop = {
   onClose: () => void;
@@ -26,7 +26,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const [patientLabOrders, setPatientLabOrders] = useState<Array<any>>([]);
   const [printer, setPrinter] = useState('');
   const [notes, setNotes] = useState<any>({ dischargeNotes: "", dischargePlan: "" })
-  const [prescribedMedicationRows, setPrescribedMedicationRows] = useState<Array<any>>([]);
+  // const [prescribedMedicationRows, setPrescribedMedicationRows] = useState<Array<any>>([]);
 
 
   const { data: presentingComplaintsData } = getPatientsEncounters(
@@ -90,7 +90,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
       labOrders: patientLabOrders,
       dischargeNotes: notes.dischargeNotes,
       dischargePlan: notes.dischargePlan,
-      prescribedMedications: prescribedMedicationRows, // ✅ include this
+      // prescribedMedications: prescribedMedicationRows, // ✅ include this
 
     });
 
@@ -184,12 +184,12 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
             <Typography>{notes.dischargePlan}</Typography>
           </Box>
         )}
-        <Box>
+        {/* <Box>
           <Typography variant="h6" gutterBottom>
             Prescribed Medication
           </Typography>
           <PrescribedMedicationList onDataChange={setPrescribedMedicationRows} />
-        </Box>
+        </Box> */}
         <SelectPrinter setPrinter={setPrinter} />
       </Stack>
       <br />
