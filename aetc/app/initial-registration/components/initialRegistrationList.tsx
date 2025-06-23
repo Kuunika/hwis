@@ -37,7 +37,7 @@ export const InitialRegistrationList = () => {
 
   useEffect(() => {
     setSearchText(debouncedSearch);
-  }, [debouncedSearch, setSearchText]);
+  }, [debouncedSearch]);
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
 

@@ -54,7 +54,7 @@ export const ClientsAwaitingDisposition = () => {
 
   useEffect(() => {
     setSearchText(debouncedSearch);
-  }, [debouncedSearch, setSearchText]);
+  }, [debouncedSearch]);
 
   // Handle visit closure success
   useEffect(() => {

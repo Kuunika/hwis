@@ -44,7 +44,7 @@ export const WaitingRegistrationList = () => {
 
   useEffect(() => {
     setSearchText(debouncedSearch);
-  }, [debouncedSearch, setSearchText]);
+  }, [debouncedSearch]);
 
   const rows = patients
     ?.sort((p1, p2) => {

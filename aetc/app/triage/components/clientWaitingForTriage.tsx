@@ -43,7 +43,7 @@ export const ClientWaitingForTriage = () => {
 
   useEffect(() => {
     setSearchText(debouncedSearch);
-  }, [debouncedSearch, setSearchText]);
+  }, [debouncedSearch]);
 
   const rows = patients
     ?.map((p) => ({

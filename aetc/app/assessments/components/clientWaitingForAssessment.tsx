@@ -51,7 +51,7 @@ export const ClientWaitingForAssessment = () => {
 
   useEffect(() => {
     setSearchText(debouncedSearch);
-  }, [debouncedSearch, setSearchText]);
+  }, [debouncedSearch]);
   const [patientsData, setPatientsData] = useState<any>([]);
 
   useEffect(() => {
