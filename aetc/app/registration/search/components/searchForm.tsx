@@ -77,7 +77,7 @@ const initialValues = getInitialValues(form);
 export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
   const spacing = {
     display: "flex",
-    "& > :first-child": {
+    "& > :first-of-type": {
       mr: "5px",
     },
   };

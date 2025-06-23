@@ -14,7 +14,10 @@ const Complaints = () => {
 
   let dataObs: any = [];
 
-  if (presentingComplaintsEncounter) {
+  if (
+    presentingComplaintsEncounter &&
+    presentingComplaintsEncounter.length > 0
+  ) {
     dataObs = presentingComplaintsEncounter[
       presentingComplaintsEncounter?.length - 1
     ].obs.map((ob) => {

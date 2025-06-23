@@ -17,10 +17,12 @@ export interface GyneacologyNotesPDFRef {
 // Define props interface
 interface GenerateGyneacologyNotesPDFProps {
     onPrintComplete?: () => void;
+    showPreview?: boolean; // Add this new prop
+
 }
 
 export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, GenerateGyneacologyNotesPDFProps>(
-    ({ onPrintComplete }, ref) => {
+    ({ onPrintComplete, showPreview = false }, ref) => {
         const [row, setRow] = useState<any>(null);
         const { params } = useParameters();
         const { data: patientVisits } = getPatientVisitTypes(params.id as string);
@@ -243,7 +245,7 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
 
         return (
             <div ref={contentRef} className="printable-content">
-                <div className="print-only">
+                <div className={showPreview ? "print-preview" : "print-only"}>
                     <PatientInfoTab />
                     <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Gyneacology Ward</h1>
 
@@ -342,6 +344,16 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                 .print-only {
                     display: none; /* Hide on screen */
                 }
+
+                     .print-preview {
+            display: block; /* show on screen when preview is active */
+            border: 1px solid #e0e0e0;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          }
             `}</style>
 
             </div>
