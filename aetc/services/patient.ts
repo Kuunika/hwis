@@ -112,7 +112,7 @@ export const addDeathReport = (data: any) =>
 
 export const getDeathReports = () => get<DeathReport[]>("/death_reports");
 
-export const updateDeathReport = (id: string | number, data: any) => 
+export const updateDeathReport = (id: string | number, data: any) =>
   edit<DeathReport>(id, data, "/death_reports");
 
 // export const updateDeathReport = (id: string, data: any) =>
