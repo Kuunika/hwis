@@ -305,12 +305,20 @@ export const ResultBox = ({
           <Label label="Gender" value={person?.gender} />
         </WrapperBox>
         <WrapperBox sx={{ display: "flex" }}>
-          <Label label="Home district" value={person?.addresses[0]?.address1} />
+          <Label
+            label="Home district"
+            value={person && person.addresses && person?.addresses[0]?.address1}
+          />
           <Label
             label="Home traditional authority"
-            value={person?.addresses[0]?.cityVillage}
+            value={
+              person && person.addresses && person?.addresses[0]?.cityVillage
+            }
           />
-          <Label label="Home village" value={person?.addresses[0]?.address2} />
+          <Label
+            label="Home village"
+            value={person && person.addresses && person?.addresses[0]?.address2}
+          />
         </WrapperBox>
       </WrapperBox>
       <WrapperBox sx={{ ml: "1ch" }}>
@@ -536,6 +544,7 @@ const ViewPatientDialog = ({
 
   const triggerMerge = () => {
     const uuid = patient?.uuid;
+    const initialUuid = initialPatient?.uuid;
 
     mergePatients({
       primary: {
@@ -543,7 +552,7 @@ const ViewPatientDialog = ({
       },
       secondary: [
         {
-          patient_id: initialPatient.uuid,
+          patient_id: initialUuid,
         },
       ],
     });

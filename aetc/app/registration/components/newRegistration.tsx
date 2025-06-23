@@ -19,10 +19,7 @@ import {
   searchByDemographics,
 } from "@/hooks/patientReg";
 import { addPerson, addRelationship } from "@/hooks/people";
-import {
-
-  fetchConceptAndCreateEncounter,
-} from "@/hooks/encounter";
+import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
 import { OperationSuccess } from "@/components/operationSuccess";
 import { CustomizedProgressBars } from "@/components/loader";
@@ -55,7 +52,7 @@ export const NewRegistrationFlow = () => {
   }>({ hasError: false, errors: "" });
   const scrollableRef = useRef<any>({});
 
-  const {ServerTime}=useServerTime();
+  const { ServerTime } = useServerTime();
 
   const [demographicsContext, setDemographicsContext] = useState<any>();
   const [socialHistoryContext, setSocialHistoryContext] = useState<any>();
@@ -150,7 +147,6 @@ export const NewRegistrationFlow = () => {
     isError: guardianRelationshipError,
   } = addRelationship();
 
- 
   useEffect(() => {
     if (!Boolean(patientValues.firstName)) return;
 
@@ -185,11 +181,11 @@ export const NewRegistrationFlow = () => {
     if (relationshipCreated) {
       setCompleted(3);
       setMessage("adding social history...");
-      const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
-      const dateTime = ServerTime.getServerTimeString()
+      const person = initialRegistrationList?.find((d) => d.uuid == params.id);
+      const dateTime = ServerTime.getServerTimeString();
       createSocialHistory({
         encounterType: encounters.SOCIAL_HISTORY,
-        visit: patient?.visit_uuid,
+        visit: person?.visit_uuid,
         patient: params.id,
         encounterDatetime: dateTime,
         obs: getObservations(formData.socialHistory, dateTime),
@@ -203,7 +199,7 @@ export const NewRegistrationFlow = () => {
       setCompleted(4);
       setMessage("adding referral...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
-      const dateTime = ServerTime.getServerTimeString()
+      const dateTime = ServerTime.getServerTimeString();
 
       const diagnosis = formData.referral[concepts.DIAGNOSIS];
 
@@ -234,7 +230,7 @@ export const NewRegistrationFlow = () => {
       setCompleted(5);
       setMessage("adding financing data...");
       const patient = initialRegistrationList?.find((d) => d.uuid == params.id);
-      const dateTime = ServerTime.getServerTimeString()
+      const dateTime = ServerTime.getServerTimeString();
 
       const payments = formData.financing[concepts.PAYMENT_OPTIONS];
 
@@ -525,7 +521,7 @@ export const NewRegistrationFlow = () => {
                   firstName={patient.names[0].given_name}
                   lastName={patient.names[0].family_name}
                   addresses={patient.addresses}
-                  identifiers={patient?.patient?.identifiers}
+                  identifiers={patient?.identifiers}
                 />
               </>
             </>

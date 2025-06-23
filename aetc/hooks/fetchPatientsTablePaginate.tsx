@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getDailyVisitsPaginated } from "@/services/patient";
 import { queryClient } from "@/providers";
 import { DailyVisitPaginated, Patient } from "@/interfaces";
@@ -27,11 +27,7 @@ export const fetchPatientsTablePaginate = (category: Category) => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [onSwitch, setOnSwitch] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchData();
-  }, [paginationModel, searchText, onSwitch]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     let date;
 
@@ -39,18 +35,33 @@ export const fetchPatientsTablePaginate = (category: Category) => {
       date = new Date().toISOString().split("T")[0];
     }
 
-    const response = await getPatientsFromCacheOrFetch(
-      category,
-      paginationModel.pageSize,
-      searchText,
-      paginationModel.page + 1,
-      date || ""
-    );
+    try {
+      const response = await getPatientsFromCacheOrFetch(
+        category,
+        paginationModel.pageSize,
+        searchText,
+        paginationModel.page + 1,
+        date || ""
+      );
 
-    setPatients(response.data.data);
-    setTotalPages(response.data.total_pages);
-    setLoading(false);
-  };
+      setPatients(response.data.data);
+      setTotalPages(response.data.total_pages);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+      // Optionally set error state here
+    } finally {
+      setLoading(false);
+    }
+  }, [category, paginationModel.pageSize, searchText, paginationModel.page, onSwitch]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Create a refetch function that can be called manually
+  const refetch = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   return {
     loading,
@@ -61,6 +72,7 @@ export const fetchPatientsTablePaginate = (category: Category) => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    refetch, // Add refetch to the returned object
   };
 };
 

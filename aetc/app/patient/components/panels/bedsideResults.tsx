@@ -7,19 +7,34 @@ interface BedsideResultsProps {
 }
 
 export const BedsideResults = ({ data }: BedsideResultsProps) => {
-  const [standaloneObservations, setStandaloneObservations] = useState<Obs[]>([]);
   const [groupedObservations, setGroupedObservations] = useState<Obs[]>([]);
 
   useEffect(() => {
     if (data.length > 0) {
-
-
       const finalObsArray = Object.values(data);
-      const grouped = finalObsArray.filter((obs) => obs.children && obs.children.length > 0);
-      const standalone = finalObsArray.filter((obs) => !obs.children || obs.children.length === 0);
+
+      const filterObservations = (observations: Obs[]): Obs[] => {
+        return observations
+          .filter((obs) => {
+            const isDescription = obs.names?.[0]?.name === "Description";
+            const val = obs.value ?? obs.value_text ?? obs.value_numeric;
+            const isNumeric = !isNaN(Number(val)) && val !== null && val !== undefined && val !== "";
+            return !(isDescription && isNumeric);
+          })
+          .map((obs) => ({
+            ...obs,
+            children: obs.children ? filterObservations(obs.children) : [],
+          }));
+      };
+
+      const grouped = finalObsArray
+        .filter((obs) => obs.children && obs.children.length > 0)
+        .map((obs) => ({
+          ...obs,
+          children: obs.children ? filterObservations(obs.children) : [],
+        }));
 
       setGroupedObservations(grouped);
-      setStandaloneObservations(standalone);
     }
   }, [data]);
 
@@ -39,23 +54,18 @@ export const BedsideResults = ({ data }: BedsideResultsProps) => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.2rem" }}>
-      {standaloneObservations.length === 0 && groupedObservations.length === 0 ? (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: "0.2rem",
+      }}
+    >
+      {groupedObservations.length === 0 ? (
         <Typography>No results available</Typography>
       ) : (
-        <>
-          {standaloneObservations.length > 0 && (
-            <>
-              {standaloneObservations.map((obs) => renderObservation(obs, 1))}
-            </>
-          )}
-
-          {groupedObservations.length > 0 && (
-            <>
-              {groupedObservations.map((obs) => renderObservation(obs, 1))}
-            </>
-          )}
-        </>
+        groupedObservations.map((obs) => renderObservation(obs, 1))
       )}
     </div>
   );
