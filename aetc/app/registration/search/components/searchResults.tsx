@@ -544,6 +544,7 @@ const ViewPatientDialog = ({
 
   const triggerMerge = () => {
     const uuid = patient?.uuid;
+    const initialUuid = initialPatient?.uuid;
 
     mergePatients({
       primary: {
@@ -551,7 +552,7 @@ const ViewPatientDialog = ({
       },
       secondary: [
         {
-          patient_id: initialPatient.uuid,
+          patient_id: initialUuid,
         },
       ],
     });

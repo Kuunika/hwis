@@ -22,6 +22,7 @@ import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
@@ -36,6 +37,13 @@ export const ClientWaitingForTriage = () => {
     totalPages,
     setOnSwitch,
   } = fetchPatientsTablePaginate("triage");
+
+  const [inputText, setInputText] = useState("");
+  const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+
+  useEffect(() => {
+    setSearchText(debouncedSearch);
+  }, [debouncedSearch]);
 
   const rows = patients
     ?.map((p) => ({
@@ -155,8 +163,8 @@ export const ClientWaitingForTriage = () => {
         per_page: paginationModel.pageSize,
         total_pages: totalPages,
       }}
-      searchText={searchText}
-      setSearchString={setSearchText}
+      searchText={inputText}
+      setSearchString={setInputText}
       setPaginationModel={setPaginationModel}
       paginationModel={paginationModel}
       // loading={isPending || isRefetching}
