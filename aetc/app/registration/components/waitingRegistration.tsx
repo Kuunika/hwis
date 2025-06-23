@@ -13,7 +13,7 @@ import {
 
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Identifier } from "@/interfaces";
 import {
   SearchRegistrationContext,
@@ -24,6 +24,7 @@ import { encounters } from "@/constants";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const WaitingRegistrationList = () => {
   const [deleted, setDeleted] = useState("");
@@ -38,6 +39,12 @@ export const WaitingRegistrationList = () => {
     totalPages,
     setOnSwitch,
   } = fetchPatientsTablePaginate("registration");
+  const [inputText, setInputText] = useState("");
+  const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+
+  useEffect(() => {
+    setSearchText(debouncedSearch);
+  }, [debouncedSearch, setSearchText]);
 
   const rows = patients
     ?.sort((p1, p2) => {
@@ -173,8 +180,8 @@ export const WaitingRegistrationList = () => {
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
         }}
-        searchText={searchText}
-        setSearchString={setSearchText}
+        searchText={inputText}
+        setSearchString={setInputText}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
         // loading={isPending || isRefetching}
