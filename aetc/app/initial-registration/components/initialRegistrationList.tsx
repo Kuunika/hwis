@@ -19,6 +19,7 @@ import { encounters } from "@/constants";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const InitialRegistrationList = () => {
   const {
@@ -31,6 +32,12 @@ export const InitialRegistrationList = () => {
     totalPages,
     setOnSwitch,
   } = fetchPatientsTablePaginate("screening");
+  const [inputText, setInputText] = useState("");
+  const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+
+  useEffect(() => {
+    setSearchText(debouncedSearch);
+  }, [debouncedSearch, setSearchText]);
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
 
@@ -144,8 +151,8 @@ export const InitialRegistrationList = () => {
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
         }}
-        searchText={searchText}
-        setSearchString={setSearchText}
+        searchText={inputText}
+        setSearchString={setInputText}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
         // loading={isPending || isRefetching}
