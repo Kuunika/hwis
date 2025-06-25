@@ -32,7 +32,7 @@ export const EditReferralForm: FC<Props> = ({
   submitButton = true,
   setContext = (values) => {},
 }) => {
-  const { data, isLoading } = getFacilities();
+  const { data } = getFacilities();
   const [isAvailable, setIsAvailable] = useState("yes");
   const [selectedValue, setSelectedValue] = useState("");
 
