@@ -1,5 +1,5 @@
 import { concepts } from "@/constants";
-import { PaginationModel } from "@/interfaces";
+import { PaginationModel, Person } from "@/interfaces";
 import {
   addDeathReport,
   checkPatientIfOnAssessment,
@@ -135,7 +135,11 @@ export const getPatientsWaitingForPrescreening = () => {
 
 export const getPatientsWaitingForRegistrations = () => {
   const getall = () =>
-    getDailyVisits("registration").then((response) => response.data);
+    getDailyVisits("registration").then((response: any) => {
+      const { data } = response as {data: any};
+
+      return Array.isArray(data) ? data : data.data as Person[];
+    });
 
   return useQuery({
     queryKey: ["registration"],

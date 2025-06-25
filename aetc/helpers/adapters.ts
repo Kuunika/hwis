@@ -16,12 +16,13 @@ export const demographicSearchDDEAdaptor = (
   const remotes = data?.remotes?.map((d) => {
     // findByNPID(d.patient_identifiers[0].identifier).then(response=>console.log(response))
     return {
+      ...d.person,
       identifiers: d.identifiers,
       patient_id: d.identifiers[0]?.identifier,
-      uuid: d.identifiers[1]?.identifier,
       given_name: d.person.names[0].given_name,
       family_name: d.person.names[0].family_name,
-      ...d.person,
+      addresses: d.addresses,
+      uuid: d.identifiers[1]?.identifier,
     };
   });
 
