@@ -173,7 +173,7 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   };
 
   useEffect(() => {
-    const hospitalOptions = facilitiesData.map((facility: any) => ({
+    const hospitalOptions: any = facilitiesData.map((facility: any) => ({
       id: facility.facility_code,
       label: facility.facility_name,
     }));
