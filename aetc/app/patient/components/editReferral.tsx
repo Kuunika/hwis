@@ -50,25 +50,23 @@ export const EditReferralForm: FC<Props> = ({
       >
         <TrackFormikContext setFormContext={setContext} />
         <RegistrationCardTitle>Health Facilities</RegistrationCardTitle>
-        {isLoading ? (
-          <>loading facilities...</>
-        ) : (
-          <SearchComboBox
-            label="Referral Medical Facility"
-            name={concepts.REFERRED_FROM}
-            getValue={setSelectedValue}
-            multiple={false}
-            disabled={isAvailable == "no"}
-            options={
-              data
-                ? data.map((d: any) => ({
-                    id: d.facility_name,
-                    label: d.facility_name,
-                  }))
-                : []
-            }
-          />
-        )}
+
+        <SearchComboBox
+          label="Referral Medical Facility"
+          name={concepts.REFERRED_FROM}
+          getValue={setSelectedValue}
+          multiple={false}
+          disabled={isAvailable == "no"}
+          options={
+            data
+              ? data.map((d: any) => ({
+                  id: d.facility_name,
+                  label: d.facility_name,
+                }))
+              : []
+          }
+        />
+
         {selectedValue == "" && (
           <RadioGroupInput
             name={concepts.ADDITIONAL_NOTES}
