@@ -113,25 +113,22 @@ export const ReferralForm: FC<Props> = ({
                   </Button>
                 </Box>
               )}
-              {isLoading ? (
-                <>loading facilities...</>
-              ) : (
-                <SearchComboBox
-                  label="Referral Medical Facility"
-                  name={concepts.REFERRED_FROM}
-                  multiple={false}
-                  getValue={setSelectedValue}
-                  disabled={isAvailable == "no" || referred == "No"}
-                  options={
-                    data
-                      ? data.map((d: any) => ({
-                          id: d.facility_name,
-                          label: d.facility_name,
-                        }))
-                      : []
-                  }
-                />
-              )}
+
+              <SearchComboBox
+                label="Referral Medical Facility"
+                name={concepts.REFERRED_FROM}
+                multiple={false}
+                getValue={setSelectedValue}
+                disabled={isAvailable == "no" || referred == "No"}
+                options={
+                  data
+                    ? data.map((d: any) => ({
+                        id: d.facility_name,
+                        label: d.facility_name,
+                      }))
+                    : []
+                }
+              />
               {selectedValue == "" && (
                 <RadioGroupInput
                   disabled={referred == "No"}

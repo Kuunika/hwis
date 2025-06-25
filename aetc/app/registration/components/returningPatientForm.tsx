@@ -73,23 +73,19 @@ export const ReturningPatientDialog: FC<Props> = ({
           id={form.methodOfTransportation.name}
         />
 
-        {loadingFacilities ? (
-          <>Loading facilities...</>
-        ) : (
-          <SearchComboBox
-            label="Referral Medical Facility"
-            name={concepts.REFERRED_FROM}
-            multiple={false}
-            options={
-              facilities
-                ? facilities.map((facility: any) => ({
-                    id: facility.facility_name,
-                    label: facility.facility_name,
-                  }))
-                : []
-            }
-          />
-        )}
+        <SearchComboBox
+          label="Referral Medical Facility"
+          name={concepts.REFERRED_FROM}
+          multiple={false}
+          options={
+            facilities
+              ? facilities.map((facility: any) => ({
+                  id: facility.facility_name,
+                  label: facility.facility_name,
+                }))
+              : []
+          }
+        />
 
         <button type="submit">Submit</button>
       </FormikInit>
