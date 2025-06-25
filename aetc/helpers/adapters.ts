@@ -21,6 +21,7 @@ export const demographicSearchDDEAdaptor = (
       uuid: d.identifiers[1]?.identifier,
       given_name: d.person.names[0].given_name,
       family_name: d.person.names[0].family_name,
+      addresses: d.addresses,
       ...d.person,
     };
   });
