@@ -479,7 +479,7 @@ const ViewPatientDialog = ({
   useEffect(() => {
     createSocialHistoryEncounter({
       encounterType: encounters.SOCIAL_HISTORY,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: mergedResponse?.active_visit?.uuid,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: socialHistory?.obs?.map((ob: any) => ({

@@ -40,8 +40,10 @@ export const ActivePatientProvider = ({
     isSuccess,
   } = getPatientVisitTypes(params?.id as string);
 
-  const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
   const { data: patient } = getOnePatient(params?.id as string);
+  const activeVisit = patient?.active_visit;
+
+  console.log({ patient });
 
   const recentClosedVisit =
     patientVisits && patientVisits.length > 0

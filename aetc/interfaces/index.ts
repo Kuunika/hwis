@@ -80,6 +80,7 @@ export interface Person {
     given_name: string;
     family_name: string;
   }>;
+  active_visit?: ActiveVisit 
 }
 
 export interface DailyVisitPaginated {
