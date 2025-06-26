@@ -301,7 +301,7 @@ const CardAction = ({
         </Tooltip>
 
         <Tooltip title="Print barcode" arrow>
-          <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
+          <PrinterBarcodeButton sx={{ width: "30%" }} uuid={patient?.uuid} />
         </Tooltip>
       </Box>
     </Box>
@@ -348,7 +348,7 @@ export function BasicMenu({ patient }: { patient: any }) {
             sx={{ color: "ButtonText" }}
             variant="text"
             onClose={handleClose}
-            patient={patient}
+            uuid={patient?.uuid}
           />
         </MenuItem>
         <MenuItem sx={{ justifyContent: "flex-start" }}>
