@@ -102,10 +102,10 @@ export const PrinterBarcodeButton = ({
   };
 
   useEffect(() => {
-    if (uuid) {
+    if (open) {
       setPatientObj();
     }
-  }, [uuid]);
+  }, [open]);
 
   return (
     <>
