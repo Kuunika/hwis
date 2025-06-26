@@ -10,7 +10,11 @@ import {
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import { concepts } from "@/constants";
 import { useServerTime } from "@/contexts/serverTimeContext";
-import { getInitialValues, getObservations, mapSearchComboOptionsToConcepts } from "@/helpers";
+import {
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
 import { getFacilities } from "@/hooks";
 import { getAllRegimenNames } from "@/hooks/drugs";
 import { useAllergyFormat } from "@/hooks/useAllergyFormat";
@@ -136,29 +140,42 @@ const intoxications = [
   { id: concepts.OTHER, label: "Other" },
 ];
 
-export const PastMedicalHistory = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
-  const { data, isLoading } = getFacilities();
+export const PastMedicalHistory = ({
+  onSubmit,
+}: {
+  onSubmit: (values: any) => void;
+}) => {
+  const { data } = getFacilities();
   const [formValues, setFormValues] = useState<any>({});
   const { medicationOptions } = useFetchMedications();
   const { allergyOptions } = useAllergyFormat();
   const { data: regimenNames } = getAllRegimenNames();
-    const { ServerTime } = useServerTime();
-
+  const { ServerTime } = useServerTime();
 
   const handleSubmit = (values: any) => {
-
-    const formValues = { ...values }
+    const formValues = { ...values };
 
     const obsDatetime = ServerTime.getServerTimeString();
 
-    const drugGivenObs = mapSearchComboOptionsToConcepts(formValues[form.drugList.name], form.drugList.name, obsDatetime);
-    const allergiesObs = mapSearchComboOptionsToConcepts(formValues[form.allergy.name], form.allergy.name, obsDatetime);
-    const intoxicationObs = mapSearchComboOptionsToConcepts(formValues[form.intoxication.name], form.intoxication.name, obsDatetime);
+    const drugGivenObs = mapSearchComboOptionsToConcepts(
+      formValues[form.drugList.name],
+      form.drugList.name,
+      obsDatetime
+    );
+    const allergiesObs = mapSearchComboOptionsToConcepts(
+      formValues[form.allergy.name],
+      form.allergy.name,
+      obsDatetime
+    );
+    const intoxicationObs = mapSearchComboOptionsToConcepts(
+      formValues[form.intoxication.name],
+      form.intoxication.name,
+      obsDatetime
+    );
 
     delete formValues[form.drugList.name];
     delete formValues[form.allergy.name];
     delete formValues[form.intoxication.name];
-
 
     const obsFormatted = [
       {
@@ -178,14 +195,13 @@ export const PastMedicalHistory = ({ onSubmit }: { onSubmit: (values: any) => vo
         value: form.intoxication.name,
         groupMembers: intoxicationObs,
         obsDatetime: obsDatetime,
-      }
-    ]
+      },
+    ];
 
     const obs = getObservations(formValues, obsDatetime);
 
-
     onSubmit([...obs, ...obsFormatted]);
-  }
+  };
 
   return (
     <FormikInit
@@ -218,9 +234,9 @@ export const PastMedicalHistory = ({ onSubmit }: { onSubmit: (values: any) => vo
                 options={
                   regimenNames
                     ? regimenNames.map((name: any) => ({
-                      id: name,
-                      label: name,
-                    }))
+                        id: name,
+                        label: name,
+                      }))
                     : []
                 }
               />
@@ -247,9 +263,9 @@ export const PastMedicalHistory = ({ onSubmit }: { onSubmit: (values: any) => vo
                 options={
                   data
                     ? data.map((d: any) => ({
-                      id: d.facility_name,
-                      label: d.facility_name,
-                    }))
+                        id: d.facility_name,
+                        label: d.facility_name,
+                      }))
                     : []
                 }
               />
