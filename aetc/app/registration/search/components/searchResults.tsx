@@ -19,11 +19,7 @@ import {
 } from "@/contexts";
 import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import {
-  getPatientRelationships,
-  getPatientsWaitingForRegistrations,
-  merge,
-} from "@/hooks/patientReg";
+import { getPatientRelationships, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ViewPatient } from "@/app/patient/components/viewPatient";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
@@ -427,9 +423,6 @@ const ViewPatientDialog = ({
     isError: referralErrored,
   } = addEncounter();
 
-  const { data: patientsWaitingForRegistration } =
-    getPatientsWaitingForRegistrations();
-
   const {
     mutate: mergePatients,
     isPending: merging,
@@ -458,12 +451,8 @@ const ViewPatientDialog = ({
   });
 
   useEffect(() => {
-    const initialPatient = patientsWaitingForRegistration?.find(
-      (p) => p.uuid == params?.id
-    );
-
-    if (initialPatient) setInitialPatient(initialPatient);
-  }, [patientsWaitingForRegistration]);
+    setInitialPatient(patient);
+  }, [patient]);
 
   useEffect(() => {
     if (ddeMerged) {

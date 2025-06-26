@@ -1,7 +1,6 @@
 import { getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
-import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
+
 import {
   BaseTable,
   CalculateWaitingTime,
