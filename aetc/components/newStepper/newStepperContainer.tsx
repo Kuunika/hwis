@@ -60,7 +60,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: "1px solid rgba(0, 0, 0, .125)",
-
 }));
 
 interface IProps {
@@ -93,17 +92,19 @@ export function NewStepperContainer({
   const subChildren = React.Children.toArray(children).filter((obj, key) => {
     if (React.isValidElement(obj) && obj.type === SubSteps) {
       indexToDelete.push(key);
-      return true; 
+      return true;
     }
     return false;
   });
 
-  indexToDelete.sort((a, b) => b - a).forEach((index) => {
-    filteredChildren.splice(index, 1);
-  });
-  
+  indexToDelete
+    .sort((a, b) => b - a)
+    .forEach((index) => {
+      filteredChildren.splice(index, 1);
+    });
+
   const subStepData = new Map<number, string[]>();
-  
+
   subChildren.forEach((subChild) => {
     if (React.isValidElement(subChild)) {
       const parent = subChild.props.parent;
@@ -125,9 +126,10 @@ export function NewStepperContainer({
       steps.forEach((step, index) => {
         const stepEncounter = data
           ?.filter((d) => d.encounter_type.uuid === step.encounter)
-          .filter((d) => d.visit_id === activeVisitId)?.[0]
-     
-        const latestObsDatetime = stepEncounter ?.obs?.[stepEncounter .obs.length - 1]?.obs_datetime;
+          .filter((d) => d.visit_id === Number(activeVisitId))?.[0];
+
+        const latestObsDatetime =
+          stepEncounter?.obs?.[stepEncounter.obs.length - 1]?.obs_datetime;
 
         if (latestObsDatetime) {
           updatedTimes[index] = latestObsDatetime;
@@ -283,10 +285,15 @@ export function NewStepperContainer({
                 </Box>
               </AccordionSummary>
               <AccordionDetails>{filteredChildren[key]}</AccordionDetails>
-                {subStepData.has(key) &&
-                  subStepData.get(key)?.map((substep, index) => (
-                    <AccordionDetails style={{ borderTop: "1px solid rgba(0, 0, 0, .125)"}} key={index}>{substep}</AccordionDetails>
-                  ))}
+              {subStepData.has(key) &&
+                subStepData.get(key)?.map((substep, index) => (
+                  <AccordionDetails
+                    style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                    key={index}
+                  >
+                    {substep}
+                  </AccordionDetails>
+                ))}
             </Accordion>
           ))}
         </WrapperBox>
