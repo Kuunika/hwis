@@ -1,13 +1,14 @@
 import { Address, Identifier, Person } from "@/interfaces";
 import { GenericDialog, MainButton, MainTypography } from "..";
 import { PatientRegistrationBarcodeTemplate } from "../barcode";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BasicSelect } from "@/app/patient/components/basicSelect";
 import { getPatientId } from "@/helpers/emr";
 import { IconButton, SxProps, Tooltip } from "@mui/material";
 import { getPrinters } from "@/hooks/loadStatic";
 import { HiPrinter } from "react-icons/hi2";
 import { FaPlay } from "react-icons/fa";
+import { getPatient } from '@/services/patient';
 
 type Props = {
   firstName: string;
@@ -76,14 +77,14 @@ export const PatientBarcodePrinter = ({
 };
 
 export const PrinterBarcodeButton = ({
-  patient,
+  uuid,
   sx,
   onClose,
   variant = "secondary",
   title = "Print",
   icon,
 }: {
-  patient: Person;
+  uuid: string;
   sx?: SxProps;
   onClose?: () => void;
   variant?: "secondary" | "text" | "primary";
@@ -91,6 +92,21 @@ export const PrinterBarcodeButton = ({
   icon?: any;
 }) => {
   const [open, setOpen] = useState(false);
+  const [patient, setPatient] = useState<Person | null>(null);
+
+  const setPatientObj = async () => {
+    if (uuid) {
+      const patientData = await getPatient(uuid);
+      setPatient(patientData?.data);
+    }
+  };
+
+  useEffect(() => {
+    if (uuid) {
+      setPatientObj();
+    }
+  }, [uuid]);
+
   return (
     <>
       {icon && (
@@ -124,12 +140,12 @@ export const PrinterBarcodeButton = ({
         }}
         title="Print Patient Barcode"
       >
-        <PatientBarcodePrinter
-          firstName={patient?.given_name}
-          lastName={patient?.family_name}
-          addresses={patient?.addresses}
-          identifiers={patient?.identifiers}
-        />
+       { patient && <PatientBarcodePrinter
+          firstName={patient.given_name}
+          lastName={patient.family_name}
+          addresses={patient.addresses}
+          identifiers={patient.identifiers}
+        />}
       </GenericDialog>
     </>
   );
