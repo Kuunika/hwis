@@ -14,7 +14,7 @@ import { roles } from "@/constants";
 function AssessmentPage() {
   return (
     <>
-      <Navigation title="Patients Waiting For Assessments" link="/dashboard" />
+      <Navigation title="Waiting For Assessment" link="/dashboard" />
 
       <MainGrid container>
         <MainGrid xs={0} lg={0} item></MainGrid>
