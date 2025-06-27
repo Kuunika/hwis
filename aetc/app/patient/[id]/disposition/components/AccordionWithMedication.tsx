@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { AccordionComponent } from "@/components/accordion";
-import { MedicationsForm } from "../../consultation/components/medication";
+// import { MedicationsForm } from "../../consultation/components/medication";
+import { MedicationsForm } from "./medication";
+
 import { encounters } from "@/constants";
 
 
@@ -18,12 +20,12 @@ export const AccordionWithMedication = () => {
       title: "Prescribe Medications",
       content: (
         <MedicationsForm
-           medicationLabelTitle="Medication to Pharmacy"
+          medicationLabelTitle="Medication to Pharmacy"
           medicationTitle="Medication to Pharmacy"
           onSubmissionSuccess={handleCloseAccordion}
           encounterType={encounters.DISPOSED_PRESCRIPTIONS}
-          onSkip={() => {}}
-          onSubmit={() => {}}
+          onSkip={() => { }}
+          onSubmit={() => { }}
         />
         // <MedicationsForm
         //   onSubmit={() => {
