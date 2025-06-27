@@ -8,7 +8,6 @@ import {
     UnitInputField,
     WrapperBox,
 } from "@/components";
-
 import React, { useEffect, useState } from "react";
 import { FieldArray } from "formik";
 import * as yup from "yup";
@@ -31,13 +30,12 @@ import { AccordionComponent } from "@/components/accordion";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
+
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
-    encounterType?: string;
-    onSubmissionSuccess: () => void;
-    medicationTitle?: string;
-    medicationLabelTitle?: string
+    onSuccess?: () => void; // ✅ new prop
+
 };
 type Medication = {
     name: string;
@@ -47,8 +45,7 @@ type Medication = {
     medication_frequency: string;
     medication_duration: number;
     medication_duration_unit: string;
-    // medication_date_last_taken: string;
-    // medication_date_of_last_prescription: string;
+
 };
 
 const medicationTemplate: Medication = {
@@ -59,8 +56,7 @@ const medicationTemplate: Medication = {
     medication_frequency: "",
     medication_duration: 0,
     medication_duration_unit: "",
-    // medication_date_last_taken: "",
-    // medication_date_of_last_prescription: "",
+  
 };
 
 const initialValues = {
@@ -140,28 +136,22 @@ const medicationUnits = [
     "Milliliters (ml)",
     "Millimoles (mmol)",
 ];
-
-export const MedicationsForm = ({
-    onSubmit,
-    onSkip,
-    encounterType = encounters.DISPOSED_PRESCRIPTIONS,
-    onSubmissionSuccess,
-    medicationTitle = "Prescribed Medication",
-    medicationLabelTitle,
-}: Prop) => {
-    const { ServerTime } = useServerTime();
+export const MedicationsForm = ({ onSubmit, onSkip, onSuccess }: Prop) => {
     const {
         mutate,
         isPending: addingDrugs,
         isSuccess,
     } = fetchConceptAndCreateEncounter();
     const { medicationOptions, loadingDrugs } = useFetchMedications();
+    const { navigateBack } = useNavigation();
 
     const [otherFrequency, setOtherFrequency] = useState<{
         [key: number]: boolean;
     }>({});
     const [formValues, setFormValues] = useState<any>({ medications: [] });
     const { activeVisit, patientId } = getActivePatientDetails();
+    const { init, ServerTime } = useServerTime();
+
 
     const handleUpdateFrequency = (index: number, value: boolean) => {
         setOtherFrequency((prevState) => ({
@@ -172,13 +162,14 @@ export const MedicationsForm = ({
 
     useEffect(() => {
         if (isSuccess) {
-            onSubmissionSuccess();
+            // navigateBack();
+            onSuccess?.();
+
         }
     }, [isSuccess]);
 
     const handleSubmit = () => {
         const obsDateTime = ServerTime.getServerTimeString();
-
         const obs = formValues.medications.map((medication: any) => {
             return {
                 concept: concepts.DRUG_GIVEN,
@@ -189,6 +180,7 @@ export const MedicationsForm = ({
                         concept: concepts.MEDICATION_FORMULATION,
                         value: medication.formulation,
                         obsDateTime,
+                        coded: true,
                     },
                     {
                         concept: concepts.MEDICATION_DOSE,
@@ -203,6 +195,7 @@ export const MedicationsForm = ({
                     {
                         concept: concepts.MEDICATION_FREQUENCY,
                         value: medication.medication_frequency,
+                        coded: true,
                         obsDateTime,
                     },
                     {
@@ -225,7 +218,7 @@ export const MedicationsForm = ({
         });
 
         mutate({
-            encounterType: encounterType,
+            encounterType: encounters.DISPOSED_PRESCRIPTIONS,
             visit: activeVisit,
             patient: patientId,
             encounterDatetime: obsDateTime,
@@ -233,21 +226,9 @@ export const MedicationsForm = ({
         });
     };
 
-    const sections = [
-        {
-            id: "prescribed",
-            title: medicationTitle,
-            content: (
-                <PrescribedMedicationList
-                    medicationLabelTitle={medicationLabelTitle}
-                    encounterType={encounterType}
-                />
-            ),
-        },
-    ];
     return (
         <ContainerLoaderOverlay loading={addingDrugs || loadingDrugs}>
-            <AccordionComponent sections={sections} />
+            {/* <AccordionComponent sections={sections} /> */}
             <br />
             <FormikInit
                 initialValues={initialValues}
@@ -345,6 +326,7 @@ export const MedicationsForm = ({
                                                         sx={{ flex: 1 }}
                                                     />
                                                 )}
+                     
                                         </Box>
                                     )}
                                 />

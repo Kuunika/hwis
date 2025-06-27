@@ -16,12 +16,16 @@ export function generatePatientSummaryZPL({
   labOrders,
   dischargeNotes,
   dischargePlan,
+  // prescribedMedications, // Add this parameter
+
 }: {
   presentingComplaints: Obs[];
   diagnosis: Obs[];
   labOrders: LabOrder[];
-  dischargeNotes?:string;
-  dischargePlan?:string;
+  dischargeNotes?: string;
+  dischargePlan?: string;
+  // prescribedMedications?: any[]; // Add this type definition
+
 }): string {
   // Constants
   const DPI = 203; // printer resolution
@@ -66,11 +70,19 @@ export function generatePatientSummaryZPL({
 
   const investigationsText = labOrders.length
     ? labOrders
-        .flatMap((order) =>
-          order.tests.map((t) => `${t.name}:${t.result || ""}`)
-        )
-        .join(" | ")
+      .flatMap((order) =>
+        order.tests.map((t) => `${t.name}:${t.result || ""}`)
+      )
+      .join(" | ")
     : "No investigations ordered";
+
+  // Add prescribed medications text
+  // const medicationsText = prescribedMedications?.length
+  //   ? prescribedMedications
+  //     .map((med) => `${med.medicationName || med.name}: ${med.dose || ''} ${med.doseUnits || ''} ${med.frequency || ''}`)
+  //     .join(" | ")
+  //   : "No medications prescribed";
+
 
   // Define raw sections
   const rawSections = [
@@ -84,6 +96,10 @@ export function generatePatientSummaryZPL({
       title: "Investigations",
       lines: [`Investigations: ${investigationsText}`],
     },
+    // {
+    //   title: "Prescribed Medications", // Add this section
+    //   lines: [`Prescribed Medications: ${medicationsText}`],
+    // },
     {
       title: "Discharge Notes",
       lines: [`Discharge Notes: ${dischargeNotes || "N/A"}`],
@@ -167,7 +183,7 @@ type Medication = {
   prescribedBy: string;
 };
 
-export function generateMedicationLabelZPL(medications: Medication[], title='Medication Instructions'): string {
+export function generateMedicationLabelZPL(medications: Medication[], title = 'Medication Instructions'): string {
   // Constants (Zebra ZPL measurements in dots)
   const DPI = 203; // Standard printer resolution
   const LABEL_WIDTH = 5 * DPI; // 4" wide
