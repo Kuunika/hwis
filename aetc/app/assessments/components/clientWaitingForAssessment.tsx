@@ -127,7 +127,7 @@ export const ClientWaitingForAssessment = () => {
     },
     { field: "last_encounter_creator", headerName: "Triaged By", flex: 1 },
     {
-      field: "patient_referred_to",
+      field: "patient_care_area",
       flex: 1,
       headerName: "Patient Care Area",
     },
