@@ -51,59 +51,56 @@ export const ViewPatient = ({ patient, disabled }: IProps) => {
     closeLandMark: "",
   });
 
+  // useEffect(() => {
+  //   setPatient(initialPatient);
+  // }, [initialPatient]);
+
   useEffect(() => {
     mapPatientDemographics(patient);
     mapCurrentLocation(patient);
     mapHomeLocation(patient);
   }, [patient]);
 
+  // TODO: undo
   useEffect(() => {
     if (isSuccess && updatedPatient) {
-      mapPatientDemographics(updatedPatient.patient);
-      mapHomeLocation(updatedPatient.patient);
-      mapCurrentLocation(updatedPatient.patient);
+      mapPatientDemographics(updatedPatient);
+      mapHomeLocation(updatedPatient);
+      mapCurrentLocation(updatedPatient);
     }
   }, [updatedPatient]);
 
-  const mapPatientDemographics = (patient: Person) => {
-    if (!patient) return;
+  const mapPatientDemographics = (patientPerson: Person) => {
+    if (!patientPerson) return;
     setDemographics({
-      firstName: patient?.given_name,
-      lastName: patient?.family_name,
-      birthDate: patient?.birthdate,
-      gender: patient?.gender,
-      birthDateEstimated: Boolean(patient?.birthdateEstimated),
+      firstName: patientPerson?.given_name,
+      lastName: patientPerson?.family_name,
+      birthDate: patientPerson?.birthdate,
+      gender: patientPerson?.gender,
+      birthDateEstimated: Boolean(patientPerson?.birthdateEstimated),
     });
   };
 
-  const mapHomeLocation = (patient: Person) => {
-    if (!patient) return;
+  const mapHomeLocation = (patientPerson: Person) => {
+    if (!patientPerson) return;
     setHomeLocationAddress({
-      nationality: patient?.addresses[0]?.country ?? "",
-      district: patient?.addresses[0]?.address1 ?? "",
-      village: patient?.addresses[0]?.address2 ?? "",
-      traditionalAuthority: patient?.addresses[0]?.county_district ?? "",
+      nationality: patientPerson?.addresses[0]?.country ?? "",
+      district: patientPerson?.addresses[0]?.address1 ?? "",
+      village: patientPerson?.addresses[0]?.address2 ?? "",
+      traditionalAuthority: patientPerson?.addresses[0]?.county_district ?? "",
     });
   };
 
-  const mapCurrentLocation = (patient: Person) => {
-    if (!patient) return;
+  const mapCurrentLocation = (patientPerson: Person) => {
+    if (!patientPerson) return;
     setCurrentLocationAddress({
-      district: patient?.addresses[0]?.current_district ?? "",
+      district: patientPerson?.addresses[0]?.current_district ?? "",
       traditionalAuthority:
-        patient?.addresses[0]?.current_traditional_authority ?? "",
-      village: patient?.addresses[1]?.address1 ?? "",
-      closeLandMark: patient?.addresses[1]?.address2 ?? "",
+        patientPerson?.addresses[0]?.current_traditional_authority ?? "",
+      village: patientPerson?.addresses[1]?.address1 ?? "",
+      closeLandMark: patientPerson?.addresses[1]?.address2 ?? "",
     });
   };
-
-  // useEffect(() => {
-  //     setPatient(loadedPatient)
-  // }, [loadedPatient])
-
-  // useEffect(() => {
-  //     setPatient(data);
-  // }, [isSuccess])
 
   const updateDemographics = (demographics: any) => {
     const mappedPatient = {
@@ -140,18 +137,18 @@ export const ViewPatient = ({ patient, disabled }: IProps) => {
       {
         address1: values.district,
         address2: values.village,
-        address3: patient?.addresses[0]?.current_traditional_authority,
-        stateProvince: patient?.addresses[0]?.current_traditional_authority,
+        address3: currentLocationAddress.district,
+        stateProvince: currentLocationAddress.traditionalAuthority,
         countyDistrict: values.traditionalAuthority,
         cityVillage: values.traditionalAuthority,
         country: values.nationality,
         preferred: true,
       },
       {
-        address1: patient?.addresses[0]?.current_village,
-        address2: patient?.addresses[1]?.address2,
-        countryDistrict: patient?.addresses[0]?.current_district,
-        cityVillage: patient?.addresses[0]?.current_traditional_authority,
+        address1: currentLocationAddress.village,
+        address2: currentLocationAddress.closeLandMark,
+        countryDistrict: currentLocationAddress.district,
+        cityVillage: currentLocationAddress.traditionalAuthority,
         preferred: false,
       },
     ];
@@ -160,17 +157,15 @@ export const ViewPatient = ({ patient, disabled }: IProps) => {
   };
 
   const handleCurrentLocationSubmit = (values: any) => {
-    // console.log({values})
-
     const addresses = [
       {
-        address1: patient?.addresses[0]?.address1,
-        address2: patient?.addresses[0]?.address2,
+        address1: homeLocationAddress.district,
+        address2: homeLocationAddress.village,
         address3: values.district,
         stateProvince: values.traditionalAuthority,
-        countyDistrict: patient?.addresses[0]?.county_district,
-        cityVillage: patient?.addresses[0]?.county_district,
-        country: patient?.addresses[0]?.country,
+        countyDistrict: homeLocationAddress.traditionalAuthority,
+        cityVillage: homeLocationAddress.traditionalAuthority,
+        country: homeLocationAddress.nationality,
         preferred: true,
       },
       {

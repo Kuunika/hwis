@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  BaseTable,
   MainButton,
   MainPaper,
   MainTypography,
@@ -10,7 +9,7 @@ import {
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
-import { useNavigation, useParameters } from "@/hooks";
+import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import { FaUser, FaBarcode } from "react-icons/fa6";
 
 import {
@@ -438,6 +437,8 @@ const ViewPatientDialog = ({
     data: ddeMergedResponse,
   } = merge();
 
+  const { activeVisit } = getActivePatientDetails();
+
   const loading =
     merging ||
     creatingReferralEncounter ||
@@ -474,12 +475,12 @@ const ViewPatientDialog = ({
 
     setIsReferred(referred);
   }, [patientEncounters]);
-
+  // 5550aa4e-59f4-4948-a0ad-e750431a07b1
   // create social history
   useEffect(() => {
     createSocialHistoryEncounter({
       encounterType: encounters.SOCIAL_HISTORY,
-      visit: mergedResponse?.active_visit?.uuid,
+      visit: activeVisit,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: socialHistory?.obs?.map((ob: any) => ({
@@ -494,7 +495,7 @@ const ViewPatientDialog = ({
   useEffect(() => {
     createFinancingEncounter({
       encounterType: encounters.FINANCING,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: activeVisit,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: financing?.obs?.map((ob) => ({
@@ -509,7 +510,7 @@ const ViewPatientDialog = ({
   useEffect(() => {
     createReferralEncounter({
       encounterType: encounters.REFERRAL,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: activeVisit,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: [
