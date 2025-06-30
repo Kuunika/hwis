@@ -105,7 +105,7 @@ export const ClientWaitingForTriage = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
-            <PrinterBarcodeButton icon={true} patient={cell.row} />
+            <PrinterBarcodeButton icon={true} uuid={cell.row.uuid} />
           </>
         );
       },
@@ -146,7 +146,7 @@ export const ClientWaitingForTriage = () => {
             visitId={row.visit_uuid}
             patientId={row.id}
           />
-          <PrinterBarcodeButton sx={{ width: "30%" }} patient={row} />
+          <PrinterBarcodeButton sx={{ width: "30%" }} uuid={row.uuid} />
         </>
       ),
       age: calculateAge(row.birthdate),

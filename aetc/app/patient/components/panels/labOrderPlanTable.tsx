@@ -5,6 +5,20 @@ import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { encounters } from "@/constants";
 
+function getAvailableFlags(obs: any) {
+  const flags = [];
+
+  if (Array.isArray(obs.children)) {
+    for (const child of obs.children) {
+      const name = child.names?.[0]?.name;
+      if (name === "Emergency" || name === "Urgent") {
+        flags.push(name);
+      }
+    }
+  }
+
+  return flags.join(", ");
+}
 export const LabOrderPlanTable = () => {
   const { params } = useParameters();
   const { data: labOrdersPlan } = getPatientsEncounters(
@@ -29,18 +43,29 @@ export const LabOrderPlanTable = () => {
         return cell.row.test.name;
       },
     },
+    {
+      field: "priority",
+      headerName: "Priority",
+      flex: 1,
+      renderCell: (cell: any) => {
+        return cell.row.test.priority;
+      },
+    },
     { field: "date", headerName: "Date", flex: 1 },
   ];
 
   let flattenedLabOrdersPlan = [];
   if (labOrdersPlan && labOrdersPlan?.length > 0) {
     flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) =>
-      obs.children.map((test: any) => ({
-        test: test.names[0].name,
-        date: getHumanReadableDateTimeLab(obs.obs_datetime),
-        specimen: obs.names[0].name,
-        id: test.obs_id,
-      }))
+      obs.children.map((test: any) => {
+        return {
+          test: test.names[0].name,
+          date: getHumanReadableDateTimeLab(obs.obs_datetime),
+          specimen: obs.names[0].name,
+          priority: getAvailableFlags(test),
+          id: test.obs_id,
+        };
+      })
     );
   }
 
