@@ -251,7 +251,6 @@ export const ResultBox = ({
         )}
         {type == "Local" && genericSearch && (
           <>
-            {console.log({ person })}
             <Button
               onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
               sx={{ mb: "1ch" }}
@@ -470,7 +469,7 @@ const ViewPatientDialog = ({
     //TODO: remove the hard coded concept
     const referred = getObservationValue(
       referralEncounter?.obs,
-      "618c7457-9442-43c4-93a0-80686b3bca5f"
+      concepts.IS_PATIENT_REFERRED
     );
 
     setIsReferred(referred);
@@ -549,7 +548,8 @@ const ViewPatientDialog = ({
   };
 
   const handleContinue = () => {
-    if (isReferred == "Yes") {
+    console.log({ isReferred });
+    if (isReferred == concepts.YES) {
       setOpenReferralDialog(true);
       return;
     }
