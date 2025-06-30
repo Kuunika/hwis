@@ -246,7 +246,7 @@ export const ResultBox = ({
               </Typography>
             }
             variant="primary"
-            patient={person}
+            uuid={person?.uuid}
           />
         )}
         {type == "Local" && genericSearch && (

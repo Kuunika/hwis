@@ -69,7 +69,7 @@ export const TabsContainer = () => {
           }}
         >
           <Tab
-            label="Patient Chart"
+            label="Monitoring Chart"
             sx={{
               flexGrow: 1,
               textTransform: "none",
@@ -181,7 +181,7 @@ export const TabsContainer = () => {
         <PatientChart />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <VisitHistory /> 
+        <VisitHistory />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <Investigations />
