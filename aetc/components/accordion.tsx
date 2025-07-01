@@ -8,7 +8,7 @@ import { FaAngleUp } from "react-icons/fa6";
 
 interface AccordionSection {
   id: string;
-  title: string;
+  title: string | JSX.Element; // ✅ This allows both strings and JSX
   content: React.ReactNode;
 }
 

@@ -117,15 +117,16 @@ export const ClientsAwaitingDisposition = () => {
       flex: 1,
     },
     {
-      field: "disposition_type",
-      headerName: "Awaiting Speciality",
-      flex: 1,
-    },
-    {
       field: "patient_care_area",
       flex: 1,
       headerName: "Patient Care Area",
     },
+    {
+      field: "disposition_type",
+      headerName: "Awaiting Speciality",
+      flex: 1,
+    },
+
     {
       field: "action",
       headerName: "Actions",
@@ -205,11 +206,11 @@ export const ClientsAwaitingDisposition = () => {
         data={
           data?.length
             ? {
-                data: data.map((row: any) => ({ id: row.uuid, ...row })),
-                page: paginationModel.page,
-                per_page: paginationModel.pageSize,
-                total_pages: totalPages,
-              }
+              data: data.map((row: any) => ({ id: row.uuid, ...row })),
+              page: paginationModel.page,
+              per_page: paginationModel.pageSize,
+              total_pages: totalPages,
+            }
             : { data: [], page: 1, per_page: 10, total_pages: 0 }
         }
         searchText={inputText}

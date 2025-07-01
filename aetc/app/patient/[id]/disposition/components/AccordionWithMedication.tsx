@@ -17,7 +17,11 @@ export const AccordionWithMedication = () => {
   const sections = [
     {
       id: "medications",
-      title: "Prescribe Medications",
+      title: (
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 600, margin: 0 }}>
+          1. Prescribe Medications
+        </h2>
+      ),      
       content: (
         <MedicationsForm
           medicationLabelTitle="Medication to Pharmacy"

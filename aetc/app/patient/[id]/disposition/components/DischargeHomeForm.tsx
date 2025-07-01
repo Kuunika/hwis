@@ -201,7 +201,7 @@ export default function DischargeHomeForm({ openPatientSummary }: { openPatientS
             <MainGrid item xs={12} lg={8}>
                 <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Discharge Home Form</h2>
+                    <h2>2. Discharge Home Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={getValidationSchema()}
@@ -258,116 +258,106 @@ export default function DischargeHomeForm({ openPatientSummary }: { openPatientS
                                     </div>
 
                                     <MainGrid container spacing={2}>
-                                        {/* Discharge Plan */}
-                                        <MainGrid item xs={6}>
-                                            <TextInputField
-                                                id="dischargePlan"
-                                                name="dischargePlan"
-                                                label="Discharge Plan"
-                                                sx={{ width: "100%" }}
-                                                multiline
-                                                rows={3}
-                                                placeholder="Write the discharge plan"
-                                            />
+                                        {/* LEFT COLUMN - Discharge Information */}
+                                        <MainGrid item xs={12} md={6}>
+                                            {/* Discharge Notes */}
+                                            <MainGrid item xs={12} sx={{ mb: 2 }}>
+                                                <TextInputField
+                                                    id="dischargeNotes"
+                                                    name="dischargeNotes"
+                                                    label="Discharge Notes"
+                                                    sx={{ width: "100%" }}
+                                                    multiline
+                                                    rows={3}
+                                                    placeholder="Write discharge notes"
+                                                />
+                                            </MainGrid>
+
+                                            {/* Discharge Plan */}
+                                            <MainGrid item xs={12} sx={{ mb: 2 }}>
+                                                <TextInputField
+                                                    id="dischargePlan"
+                                                    name="dischargePlan"
+                                                    label="Discharge Plan"
+                                                    sx={{ width: "100%" }}
+                                                    multiline
+                                                    rows={3}
+                                                    placeholder="Write the discharge plan"
+                                                />
+                                            </MainGrid>
+
+                                            {/* Home Care Instructions */}
+                                            <MainGrid item xs={12}>
+                                                <TextInputField
+                                                    id="homeCareInstructions"
+                                                    name="homeCareInstructions"
+                                                    label="Home Care Instructions"
+                                                    sx={{ width: "100%" }}
+                                                    multiline
+                                                    rows={3}
+                                                    placeholder="Write specific home care instructions"
+                                                />
+                                            </MainGrid>
                                         </MainGrid>
 
-                                        {/* Follow-Up Plan */}
-                                        <MainGrid item xs={6}>
-                                            <RadioGroupInput
-                                                name="followUpPlan"
-                                                label="Follow-Up Plan"
-                                                options={[
-                                                    { value: concepts.YES, label: "Yes" },
-                                                    { value: concepts.NO, label: "No" },
-                                                ]}
-                                            />
-                                        </MainGrid>
+                                        {/* RIGHT COLUMN - Follow-up Information */}
+                                        <MainGrid item xs={12} md={6}>
+                                            {/* Follow-Up Plan */}
+                                            <MainGrid item xs={12} sx={{ mb: 2 }}>
+                                                <RadioGroupInput
+                                                    name="followUpPlan"
+                                                    label="Follow-Up Plan"
+                                                    options={[
+                                                        { value: concepts.YES, label: "Yes" },
+                                                        { value: concepts.NO, label: "No" },
+                                                    ]}
+                                                />
+                                            </MainGrid>
 
-                                        {/* Home Care Instructions */}
-                                        <MainGrid item xs={6}>
-                                            <TextInputField
-                                                id="homeCareInstructions"
-                                                name="homeCareInstructions"
-                                                label="Home Care Instructions"
-                                                sx={{ width: "100%" }}
-                                                multiline
-                                                rows={3}
-                                                placeholder="Write specific home care instructions"
-                                            />
-                                        </MainGrid>
-
-                                        {/* Conditionally render Follow-Up Details and Service Area fields */}
-                                        {values.followUpPlan === concepts.YES && (
-                                            <>
-                                                <MainGrid item xs={6}>
-                                                    <SearchComboBox
-                                                        name="followUpDetails"
-                                                        label="Follow-Up Details"
-                                                        options={
-                                                            facilities
-                                                                ? facilities.map((f: any) => ({
-                                                                    id: f.facility_name,
-                                                                    label: f.facility_name,
-                                                                }))
-                                                                : []
-                                                        }
-                                                        multiple={false}
-                                                    />
-                                                </MainGrid>
-
-                                                <MainGrid item xs={6}>
-                                                    {serviceAreaOptions.length > 0 && (
+                                            {/* Conditionally render Follow-Up Details and Service Area fields */}
+                                            {values.followUpPlan === concepts.YES && (
+                                                <>
+                                                    {/* Follow-Up Details */}
+                                                    <MainGrid item xs={12} sx={{ mb: 2 }}>
                                                         <SearchComboBox
-                                                            name="specialistClinic"
-                                                            label=" Clinics (If applicable)"
-                                                            options={serviceAreaOptions}
+                                                            name="followUpDetails"
+                                                            label="Follow-Up Details"
+                                                            options={
+                                                                facilities
+                                                                    ? facilities.map((f: any) => ({
+                                                                        id: f.facility_name,
+                                                                        label: f.facility_name,
+                                                                    }))
+                                                                    : []
+                                                            }
                                                             multiple={false}
                                                         />
-                                                    )}
+                                                    </MainGrid>
 
-                                                    {/* Only show "Other Service Area" field if "Other" is selected */}
-                                                    {showOther && (
-                                                        <TextInputField
-                                                            id="otherServiceArea"
-                                                            name="otherServiceArea"
-                                                            label="Other Service Area"
-                                                            sx={{ mt: 2 }}
-                                                        />
-                                                    )}
-                                                </MainGrid>
-                                            </>
-                                        )}
 
-                                        {/* Discharge Notes */}
-                                        <MainGrid item xs={6}>
-                                            <TextInputField
-                                                id="dischargeNotes"
-                                                name="dischargeNotes"
-                                                label="Discharge Notes"
-                                                sx={{ width: "100%" }}
-                                                multiline
-                                                rows={4}
-                                                placeholder="Write discharge notes"
-                                            />
-                                        </MainGrid>
+                                                </>
+                                            )}
+                                            {/* Clinics (If applicable) */}
+                                            <MainGrid item xs={12}>
+                                                <SearchComboBox
+                                                    name="specialistClinic"
+                                                    label="Clinics (If applicable)"
+                                                    options={serviceAreaOptions}
+                                                    multiple={false}
+                                                />
 
-                                        {/* Submit & Print */}
-                                        <MainGrid item xs={12}>
-                                            <button
-                                                type="button"
-                                                onClick={() => reactToPrintFn()}
-                                                style={{
-                                                    marginRight: "10px",
-                                                    padding: "10px 20px",
-                                                    backgroundColor: "#007bff",
-                                                    color: "#fff",
-                                                    border: "none",
-                                                    borderRadius: "4px",
-                                                    cursor: "pointer",
-                                                }}
-                                            >
-                                                Print Discharge Notes
-                                            </button>
+                                                {/* Only show "Other Service Area" field if "Other" is selected */}
+                                                {showOther && (
+                                                    <TextInputField
+                                                        id="otherServiceArea"
+                                                        name="otherServiceArea"
+                                                        label="Other Service Area"
+                                                        sx={{ mt: 2, width: "100%" }}
+                                                    />
+                                                )}
+                                            </MainGrid>
+
+
                                         </MainGrid>
                                     </MainGrid>
                                 </>

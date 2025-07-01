@@ -249,90 +249,157 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                     <PatientInfoTab />
                     <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Gyneacology Ward</h1>
 
-                    {/* Display all collected data in a structured format */}
-                    <div className="patient-examination-data">
-                        <h2>Complaints</h2>
-                        <p><strong>Chief Complaints: </strong>{complaintsInfo.chiefComplaint}</p>
-                        <p><strong>History of Present Illness: </strong>{complaintsInfo.illnessHistory}</p>
-                        <hr />
+                    {Object.values(complaintsInfo).every(
+                        (val) => (typeof val === "string" ? !val.trim() : val.length === 0)
+                    ) ? (
+                        <p style={{ fontStyle: "italic", color: "gray" }}>
+                            Gyneacology Ward not recorded.
+                        </p>
+                    ) : (
+                        <div className="patient-examination-data">
 
-                        <h2>Obstetric and Gyneacology History</h2>
-                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+                            {/* Complaints Section */}
+                            {(complaintsInfo.chiefComplaint || complaintsInfo.illnessHistory) && (
+                                <>
+                                    <h2>Complaints</h2>
+                                    {complaintsInfo.chiefComplaint && (
+                                        <p><strong>Chief Complaints: </strong>{complaintsInfo.chiefComplaint}</p>
+                                    )}
+                                    {complaintsInfo.illnessHistory && (
+                                        <p><strong>History of Present Illness: </strong>{complaintsInfo.illnessHistory}</p>
+                                    )}
+                                    <hr />
+                                </>
+                            )}
 
-                            <p><strong>LNMP: </strong>{complaintsInfo.lnmp}</p>
-                            <p><strong>Gestational Age: </strong>{complaintsInfo.gestationalAge}</p>
-                            <p><strong>Gravidity: </strong>{complaintsInfo.gravidity}</p>
-                            <p><strong>Number of Living Children: </strong>{complaintsInfo.numberOfLivingChildren}</p>
+                            {/* Obstetric and Gyneacology History */}
+                            {[
+                                complaintsInfo.lnmp,
+                                complaintsInfo.gestationalAge,
+                                complaintsInfo.gravidity,
+                                complaintsInfo.numberOfLivingChildren,
+                                complaintsInfo.menarche,
+                                complaintsInfo.menstralCycle,
+                                complaintsInfo.duration,
+                                complaintsInfo.prevAbortion,
+                                complaintsInfo.prevEctopic,
+                                complaintsInfo.abnormalVaginalDischarge,
+                                complaintsInfo.consistency,
+                                complaintsInfo.color,
+                                complaintsInfo.odour,
+                                complaintsInfo.amount,
+                                complaintsInfo.previousContraceptive,
+                                complaintsInfo.sideEffects,
+                                complaintsInfo.cancerScreening,
+                                complaintsInfo.historyOfStis
+                            ].some(Boolean) && (
+                                    <>
+                                        <h2>Obstetric and Gyneacology History</h2>
+                                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px", flexWrap: "wrap" }}>
+                                            {complaintsInfo.lnmp && <p><strong>LNMP: </strong>{complaintsInfo.lnmp}</p>}
+                                            {complaintsInfo.gestationalAge && <p><strong>Gestational Age: </strong>{complaintsInfo.gestationalAge}</p>}
+                                            {complaintsInfo.gravidity && <p><strong>Gravidity: </strong>{complaintsInfo.gravidity}</p>}
+                                            {complaintsInfo.numberOfLivingChildren && <p><strong>Number of Living Children: </strong>{complaintsInfo.numberOfLivingChildren}</p>}
+                                            {complaintsInfo.menarche && <p><strong>Menarche: </strong>{complaintsInfo.menarche}</p>}
+                                            {complaintsInfo.menstralCycle && <p><strong>Menstrual Cycle: </strong>{complaintsInfo.menstralCycle}</p>}
+                                            {complaintsInfo.duration && <p><strong>Duration: </strong>{complaintsInfo.duration}</p>}
+                                            {complaintsInfo.prevAbortion && <p><strong>Prev Abortion: </strong>{complaintsInfo.prevAbortion}</p>}
+                                            {complaintsInfo.prevEctopic && <p><strong>Prev Ectopic: </strong>{complaintsInfo.prevEctopic}</p>}
+                                            {complaintsInfo.abnormalVaginalDischarge && <p><strong>Abnormal Vaginal Discharge: </strong>{complaintsInfo.abnormalVaginalDischarge}</p>}
+                                            {complaintsInfo.consistency && <p><strong>Consistency: </strong>{complaintsInfo.consistency}</p>}
+                                            {complaintsInfo.color && <p><strong>Color: </strong>{complaintsInfo.color}</p>}
+                                            {complaintsInfo.odour && <p><strong>Odour: </strong>{complaintsInfo.odour}</p>}
+                                            {complaintsInfo.amount && <p><strong>Amount: </strong>{complaintsInfo.amount}</p>}
+                                            {complaintsInfo.previousContraceptive && <p><strong>Previous Contraceptive: </strong>{complaintsInfo.previousContraceptive}</p>}
+                                            {complaintsInfo.sideEffects && <p><strong>Side Effects: </strong>{complaintsInfo.sideEffects}</p>}
+                                            {complaintsInfo.cancerScreening && <p><strong>Cancer Screening: </strong>{complaintsInfo.cancerScreening}</p>}
+                                            {complaintsInfo.historyOfStis && <p><strong>History of STIs: </strong>{complaintsInfo.historyOfStis}</p>}
+                                        </div>
+                                        <hr />
+                                    </>
+                                )}
+
+                            {/* Medical History */}
+                            {(complaintsInfo.medicalHistory.length > 0 || complaintsInfo.habits.length > 0) && (
+                                <>
+                                    {complaintsInfo.medicalHistory.length > 0 && (
+                                        <>
+                                            <h2>Medical History</h2>
+                                            <p>
+                                                <strong>Condition: </strong>
+                                                {complaintsInfo.medicalHistory.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
+                                            </p>
+                                            <hr />
+                                        </>
+                                    )}
+                                    {complaintsInfo.habits.length > 0 && (
+                                        <>
+                                            <h2>Habits</h2>
+                                            <p>
+                                                <strong>Condition: </strong>
+                                                {complaintsInfo.habits.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
+                                            </p>
+                                            <hr />
+                                        </>
+                                    )}
+                                </>
+                            )}
+
+                            {/* Vital Signs */}
+                            {[
+                                complaintsInfo.temperature,
+                                complaintsInfo.pulse,
+                                complaintsInfo.respiratory,
+                                complaintsInfo.bloodPressure,
+                                complaintsInfo.stats,
+                                complaintsInfo.rbs,
+                                complaintsInfo.weight
+                            ].some(Boolean) && (
+                                    <>
+                                        <h2>Vital Signs</h2>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
+                                            {complaintsInfo.temperature && <p><strong>Temperature: </strong>{complaintsInfo.temperature}</p>}
+                                            {complaintsInfo.pulse && <p><strong>Pulse: </strong>{complaintsInfo.pulse}</p>}
+                                            {complaintsInfo.respiratory && <p><strong>Respiratory: </strong>{complaintsInfo.respiratory}</p>}
+                                            {complaintsInfo.bloodPressure && <p><strong>Blood Pressure: </strong>{complaintsInfo.bloodPressure}</p>}
+                                            {complaintsInfo.stats && <p><strong>Stats: </strong>{complaintsInfo.stats}</p>}
+                                            {complaintsInfo.rbs && <p><strong>RBS: </strong>{complaintsInfo.rbs}</p>}
+                                            {complaintsInfo.weight && <p><strong>Weight: </strong>{complaintsInfo.weight}</p>}
+                                        </div>
+                                        <hr />
+                                    </>
+                                )}
+
+                            {/* Examinations */}
+                            {[
+                                complaintsInfo.chestExamination,
+                                complaintsInfo.abdomenExamination,
+                                complaintsInfo.vaginalExamination,
+                                complaintsInfo.extremities,
+                                complaintsInfo.impression
+                            ].some(Boolean) && (
+                                    <>
+                                        <h2>Examinations</h2>
+                                        {complaintsInfo.chestExamination && (
+                                            <p><strong>Chest Examination: </strong>{complaintsInfo.chestExamination}</p>
+                                        )}
+                                        {complaintsInfo.abdomenExamination && (
+                                            <p><strong>Abdominal Examination: </strong>{complaintsInfo.abdomenExamination}</p>
+                                        )}
+                                        {complaintsInfo.vaginalExamination && (
+                                            <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
+                                        )}
+                                        {complaintsInfo.extremities && (
+                                            <p><strong>Extremities: </strong>{complaintsInfo.extremities}</p>
+                                        )}
+                                        {complaintsInfo.impression && (
+                                            <p><strong>Impression: </strong>{complaintsInfo.impression}</p>
+                                        )}
+                                        <hr />
+                                    </>
+                                )}
                         </div>
-                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-
-                            <p><strong>Menarche: </strong>{complaintsInfo.menarche}</p>
-                            <p><strong>Menstrual cycle: </strong>{complaintsInfo.menstralCycle}</p>
-                            <p><strong>Duration: </strong>{complaintsInfo.duration}</p>
-                            <p><strong>Prev Abortion: </strong>{complaintsInfo.prevAbortion}</p>
-                        </div>
-                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-                            <p><strong>Prev Ectopic: </strong>{complaintsInfo.prevEctopic}</p>
-                            <p><strong>Abnormal Vaginal Discharge: </strong>{complaintsInfo.abnormalVaginalDischarge}</p>
-                            <p><strong>Consistency: </strong>{complaintsInfo.consistency}</p>
-                            <p><strong>Color: </strong>{complaintsInfo.color}</p>
-                        </div>
-
-                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-
-                            <p><strong>Odour: </strong>{complaintsInfo.odour}</p>
-                            <p><strong>Amount: </strong>{complaintsInfo.amount}</p>
-                            <p><strong>Previous Contraceptive: </strong>{complaintsInfo.previousContraceptive}</p>
-                            <p><strong>Side effects: </strong>{complaintsInfo.sideEffects}</p>
-                        </div>
-
-                        <p><strong>Cancer Screening: </strong>{complaintsInfo.cancerScreening}</p>
-                        <p><strong>History of STIs: </strong>{complaintsInfo.historyOfStis}</p>
-
-                        <hr />
-
-                        <h2>Medical History</h2>
-                        <p><strong> Condition: </strong>{complaintsInfo.medicalHistory.length > 0 ?
-                            complaintsInfo.medicalHistory.map((item, index) => `(${index + 1}) ${item}`).join(", ")
-                            : "None"}</p>
-                        <hr />
-
-                        <h2>Habits</h2>
-                        <p><strong> Condition: </strong>{complaintsInfo.habits.length > 0 ?
-                            complaintsInfo.habits.map((item, index) => `(${index + 1}) ${item}`).join(", ")
-                            : "None"}</p>
-                        <hr />
-
-                        <h2>Condition & Pallor</h2>
-                        <p><strong>Condition: </strong></p>
-                        <p><strong>Pallor: </strong></p>
-                        <hr />
-
-                        <h2>Vital Signs</h2>
-                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-                            <p><strong>Temperature: </strong>{complaintsInfo.temperature}</p>
-                            <p><strong>Pulse: </strong>{complaintsInfo.pulse}</p>
-                            <p><strong>Respiratory: </strong>{complaintsInfo.respiratory}</p>
-                            <p><strong>Blood Pressure: </strong>{complaintsInfo.bloodPressure}</p>
-                        </div>
-
-                        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-
-                            <p><strong>Stats: </strong>{complaintsInfo.stats}</p>
-                            <p><strong>RBS: </strong>{complaintsInfo.rbs}</p>
-                            <p><strong>Weight: </strong>{complaintsInfo.weight}</p>
-                        </div>
-                        <hr />
-
-                        <h2>Examinations</h2>
-                        <p><strong>Chest Examination: </strong>{complaintsInfo.chestExamination}</p>
-                        <p><strong>Abdominal Examination: </strong>{complaintsInfo.abdomenExamination}</p>
-                        <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
-                        <p><strong>Extremities: </strong>{complaintsInfo.extremities}</p>
-                        <p><strong>Impression: </strong>{complaintsInfo.impression}</p>
-                        <hr />
-
-                    </div>
+                    )}
                 </div>
                 {/* CSS for Print Handling */}
                 <style jsx>{`
