@@ -51,6 +51,7 @@ export const LabOrderTable = () => {
     tests: "",
     orderDate: "",
     requestingTechnician: "",
+    description: "",
   });
   const [printer, setPrinter] = useState("http://localhost:3000");
   const [openDialog, setOpenDialog] = useState(false);
@@ -177,7 +178,7 @@ export const LabOrderTable = () => {
                     orderDate: getHumanReadableDateTimeLab(cell.row.order_date),
                     tests: cell.row.test.name,
                     requestingTechnician: cell.row.requesting_clinician,
-                    description: cell.row.comment_to_fulfiller
+                    description: cell.row.comment_to_fulfiller,
                   });
                 }}
                 sx={{
