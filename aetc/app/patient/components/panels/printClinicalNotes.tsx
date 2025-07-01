@@ -472,9 +472,10 @@ export const PrintClinicalNotes = (props: any) => {
       <Box sx={{ ml: 1 }}>
         {/* Airway Status */}
         {airwayPatent && (
+
           <>
             <Typography variant="body2" sx={{ mb: 0.5 }}>
-              Airway: {airwayPatent}
+              {/* Airway: {airwayPatent === 'Yes' ? 'Patent' : airwayPatent === 'No' ? 'Not Patent' : airwayPatent} */}
             </Typography>
             
             {/* If airway is not patent or threatened, show reasons and interventions */}
@@ -482,7 +483,10 @@ export const PrintClinicalNotes = (props: any) => {
               <>
                 {airwayReasons.length > 0 && (
                   <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    The airway was not {airwayPatent.toLowerCase()} due to: {airwayReasons.map(r => r.value).join(', ')}
+                    {airwayPatent.toLowerCase() === 'no' 
+                      ? 'The airway was not patent due to:' 
+                      : 'The airway was threatened due to:'} 
+                    {airwayReasons.map(r => r.value).join(', ')}
                   </Typography>
                 )}
                 
