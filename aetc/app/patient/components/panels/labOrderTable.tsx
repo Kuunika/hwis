@@ -37,16 +37,12 @@ import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
 import { getPrinters } from "@/hooks/loadStatic";
 
 export const LabOrderTable = () => {
-  const { data: printers, isLoading: printerLoading } = getPrinters();
+  const { data: printers } = getPrinters();
   const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
 
   const { params } = useParameters();
-  const { data: patient, isLoading } = getOnePatient(params.id as string);
-  const {
-    data: labOrders,
-    isPending,
-    isSuccess,
-  } = getPatientLabOrder(params?.id as string);
+  const { data: patient } = getOnePatient(params.id as string);
+  const { data: labOrders } = getPatientLabOrder(params?.id as string);
 
   const [showDialog, setShowDialog] = useState(false);
   const [selectedTest, setSelectedTest] = useState({
@@ -181,6 +177,7 @@ export const LabOrderTable = () => {
                     orderDate: getHumanReadableDateTimeLab(cell.row.order_date),
                     tests: cell.row.test.name,
                     requestingTechnician: cell.row.requesting_clinician,
+                    description: cell.row.comment_to_fulfiller
                   });
                 }}
                 sx={{
@@ -239,6 +236,7 @@ export const LabOrderTable = () => {
             test={`${selectedTest.tests}|${selectedTest.ascension}|${selectedTest.requestingTechnician.split(" ")[1]}`}
             fullName={`${patient?.given_name} ${patient?.family_name}`}
             gender={patient?.gender}
+            description={selectedTest.description}
           >
             <></>
           </LabBarcodeComponentPrintTemplate>

@@ -18,6 +18,7 @@ interface Props {
   test?: string;
   fullName?: string;
   gender?: string;
+  description?:string
 }
 export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   value,
@@ -288,6 +289,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
   test,
   fullName,
   gender,
+  description
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -364,7 +366,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
       }}
     >
       <b style={{ fontSize: "0.5rem", lineHeight: "1" }}>
-        {fullName}({gender})|notes
+        {fullName}({gender})~{description}
       </b>
       <b style={{ fontSize: "0.5rem", lineHeight: "1" }}>{orderDate}</b>
       <Barcode

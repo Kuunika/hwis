@@ -1,4 +1,3 @@
-import { getPatientEncounters } from "@/services/encounter";
 import { TriagePrintTemplate } from "../barcode";
 import { GenericDialog } from "../dialog";
 import { getPatientsEncounters } from "@/hooks/encounter";
@@ -8,8 +7,9 @@ import { concepts, encounters } from "@/constants";
 import { useEffect, useState } from "react";
 import { VitalFormConfig } from "@/app/vitals/components/vitalsForm";
 import { getObservationValue } from "@/helpers/emr";
-import { Obs } from "@/interfaces";
+import { Encounter, Obs } from "@/interfaces";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import { get } from "http";
 
 type Props = {
   open: boolean;
@@ -54,6 +54,21 @@ export const FetchAndDisplayTriageBarcode = ({
   arrivalDateTime: string;
 }) => {
   const { data } = getPatientsEncounters(patientId);
+  const { data: referralData, isLoading } = getPatientsEncounters(
+    patientId as string,
+    `encounter_type=${encounters.REFERRAL}`
+  );
+  const { data: presentingComplaintsData, isLoading: presentingLoading } =
+    getPatientsEncounters(
+      patientId as string,
+      `encounter_type=${encounters.PRESENTING_COMPLAINTS}`
+    );
+  const { data: triageResultData, isLoading: triageResultLoading } =
+    getPatientsEncounters(
+      patientId as string,
+      `encounter_type=${encounters.TRIAGE_RESULT}`
+    );
+
   const [vitals, setVitals] = useState<Array<{ name: string; value: string }>>(
     []
   );
@@ -69,11 +84,15 @@ export const FetchAndDisplayTriageBarcode = ({
   }, [data]);
 
   const extractTriageEncounters = () => {
-    const referral = getEncounterActiveVisit(encounters.REFERRAL);
-    setReferred(getObservationValue(referral?.obs, concepts.REFERRED_FROM));
-    const presentingComplaints = getEncounterActiveVisit(
-      encounters.PRESENTING_COMPLAINTS
+    const referral = getActiveEncounter(referralData as Encounter[]);
+
+    setReferred(
+      referral ? getObservationValue(referral?.obs, concepts.REFERRED_FROM) : ""
     );
+    const presentingComplaints = getActiveEncounter(
+      presentingComplaintsData as Encounter[]
+    );
+
     setPresentingComplaints(
       presentingComplaints?.obs.reduce((prev: any, current: Obs) => {
         return prev == ""
@@ -81,8 +100,7 @@ export const FetchAndDisplayTriageBarcode = ({
           : prev + "," + current.value_text;
       }, "") as string
     );
-
-    const triage = getEncounterActiveVisit(encounters.TRIAGE_RESULT);
+    const triage = getActiveEncounter(triageResultData as Encounter[]);
 
     setTriageCategory(triage?.obs[0].value);
     setDateTime(getHumanReadableDateTime(triage?.encounter_datetime));
@@ -127,6 +145,9 @@ export const FetchAndDisplayTriageBarcode = ({
     return data
       ?.filter((d) => d?.encounter_type.uuid == encounterType)
       .find((d) => d.visit_id == activeVisitId);
+  };
+  const getActiveEncounter = (data: Encounter[]) => {
+    return data?.find((d) => d.visit_id == activeVisitId);
   };
 
   return (

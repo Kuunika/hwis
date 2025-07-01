@@ -6,6 +6,7 @@ import {
   RadioGroupInput,
   SearchComboBox,
   Header,
+  TextInputField,
 } from "@/components";
 import { Concept, LabFormProps, LabRequest, TestType } from "@/interfaces";
 import {
@@ -176,6 +177,7 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
       transition: Bounce,
     });
   }, [orderCreated]);
+
   const handleLabSend = (values: any) => {
     const specimenType = JSON.parse(values.sampleType);
     const dateTime = ServerTime.getServerTimeString();
@@ -195,6 +197,15 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
           value: values.urgentSample,
         });
       }
+
+      if (values?.description) {
+        group_members_data.push({
+          concept: concepts.DESCRIPTION,
+          obsDatetime: dateTime,
+          value: values.description,
+        });
+      }
+
       return {
         concept: test?.label,
         obsDatetime: dateTime,
@@ -249,11 +260,13 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
           tests: [],
           emergency: undefined,
           urgentSample: undefined,
+          description: "",
         }}
         onSubmit={handleLabSend}
         validationSchema={Yup.object().shape({
           tests: Yup.array().required().label("Tests"),
           sampleType: Yup.string().required().label("Sample Type"),
+          description: Yup.string().max(15).label("Description"),
         })}
         enableReinitialize={true}
       >
@@ -317,6 +330,12 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
             label="Urgent Sample"
           />
         </WrapperBox>
+        <TextInputField
+          name="description"
+          label="Description"
+          id="description"
+          sx={{ width: "100%" }}
+        />
       </FormikInit>
     </ContainerLoaderOverlay>
   );
