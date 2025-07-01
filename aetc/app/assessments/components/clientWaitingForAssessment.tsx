@@ -90,11 +90,11 @@ export const ClientWaitingForAssessment = () => {
                 height: 20,
                 borderRadius: "50%",
                 backgroundColor:
-                  cell.value == "red"
+                  cell.value == "red" || cell.value == "Emergency"
                     ? "#B42318"
-                    : cell.value == "yellow"
+                    : cell.value == "yellow" || cell.value == "Priority"
                       ? "#EDE207"
-                      : cell.value == "green"
+                      : cell.value == "green" || cell.value == "Queue"
                         ? "#016302"
                         : "transparent",
               }}
@@ -127,7 +127,7 @@ export const ClientWaitingForAssessment = () => {
     },
     { field: "last_encounter_creator", headerName: "Triaged By", flex: 1 },
     {
-      field: "patient_referred_to",
+      field: "patient_care_area",
       flex: 1,
       headerName: "Patient Care Area",
     },
@@ -301,7 +301,7 @@ const CardAction = ({
         </Tooltip>
 
         <Tooltip title="Print barcode" arrow>
-          <PrinterBarcodeButton sx={{ width: "30%" }} patient={patient} />
+          <PrinterBarcodeButton sx={{ width: "30%" }} uuid={patient?.uuid} />
         </Tooltip>
       </Box>
     </Box>
@@ -348,7 +348,7 @@ export function BasicMenu({ patient }: { patient: any }) {
             sx={{ color: "ButtonText" }}
             variant="text"
             onClose={handleClose}
-            patient={patient}
+            uuid={patient?.uuid}
           />
         </MenuItem>
         <MenuItem sx={{ justifyContent: "flex-start" }}>

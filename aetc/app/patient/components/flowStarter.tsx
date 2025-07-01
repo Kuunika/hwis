@@ -136,22 +136,22 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
     },
     ...(gender === "Female"
       ? [
-        {
-          label: "Gynaecology Ward Admission",
-          path: `/patient/${patient.id}/gyneacology`,
-        },
-      ]
+          {
+            label: "Gynaecology Ward Admission",
+            path: `/patient/${patient.id}/gyneacology`,
+          },
+        ]
       : []),
   ];
 
   // Define main menu items
   const mainMenuItems: MenuItemConfig[] = [
     {
-      label: "Continue monitoring",
+      label: "Monitoring Chart",
       path: `/patient/${patient.id}/nursingChart`,
     },
     {
-      label: "Nursing Care Notes",
+      label: "Nursing Care Notes (SOAPIER)",
       path: `/patient/${patient.id}/soap`,
     },
     {

@@ -87,11 +87,11 @@ export const ClientsAwaitingDisposition = () => {
                 height: 20,
                 borderRadius: "50%",
                 backgroundColor:
-                  cell.value == "red"
+                  cell.value == "red" || cell.value == "Emergency"
                     ? "#B42318"
-                    : cell.value == "yellow"
+                    : cell.value == "yellow" || cell.value == "Priority"
                       ? "#EDE207"
-                      : cell.value == "green"
+                      : cell.value == "green" || cell.value == "Queue"
                         ? "#016302"
                         : "transparent",
               }}
@@ -114,6 +114,12 @@ export const ClientsAwaitingDisposition = () => {
     {
       field: "last_encounter_creator",
       headerName: "Disposed By",
+      flex: 1,
+    },
+    {
+
+      field: "disposition_type",
+      headerName: "Disposition/Speciality",
       flex: 1,
     },
     {
