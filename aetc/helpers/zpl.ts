@@ -9,7 +9,8 @@ export function generatePatientSummaryZPL({
   labOrders,
   dischargeNotes,
   dischargePlan,
-  followUpPlan
+  followUpPlan,
+  homeCareInstructions
 }: {
   presentingComplaints: Obs[];
   diagnosis: Obs[];
@@ -17,6 +18,7 @@ export function generatePatientSummaryZPL({
   dischargeNotes?: string;
   dischargePlan?: string;
   followUpPlan?: string;
+  homeCareInstructions?: string;
 }): string {
   // Constants for 10cm x 4cm label (203 DPI)
   const DPI = 203;
@@ -100,8 +102,12 @@ export function generatePatientSummaryZPL({
       content: dischargePlan || "N/A"
     },
     {
-      title: "Follow Up Plan",
-      content: followUpPlan || "N/A"
+      title: "",
+      content: `Follow up plan: ${followUpPlan}` || "N/A"
+    },
+    {
+      title: "Home Care Instructions",
+      content: homeCareInstructions || "N/A"
     }
   ];
 
@@ -218,7 +224,7 @@ export function generatePatientSummaryZPL({
         yPosition += TITLE_HEIGHT;
       } else {
         zpl += `
-^CFA,20
+^CF0,20
 ^FO${MARGIN_X},${yPosition}^FD${line.text}^FS`;
         yPosition += LINE_HEIGHT;
       }
@@ -230,6 +236,8 @@ export function generatePatientSummaryZPL({
     return zpl;
   }).join("\n");
 }
+
+
 type Medication = {
   medicationName: string;
   dose: string;
