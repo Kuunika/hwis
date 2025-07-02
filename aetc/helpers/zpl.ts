@@ -77,10 +77,8 @@ export function generatePatientSummaryZPL({
   // Prepare all content sections
   const sections = [
     {
-      title: "Final Diagnosis",
-      content: diagnosis?.length 
-        ? diagnosis.map(o => o.value).join(SEPARATOR)
-        : "None"
+      title: "Discharge Notes",
+      content: dischargeNotes || "N/A"
     },
     {
       title: "Investigations",
@@ -91,9 +89,12 @@ export function generatePatientSummaryZPL({
         : "No investigations ordered"
     },
     {
-      title: "Discharge Notes",
-      content: dischargeNotes || "N/A"
+      title: "Final Diagnosis",
+      content: diagnosis?.length 
+        ? diagnosis.map(o => o.value).join(SEPARATOR)
+        : "None"
     },
+  
     {
       title: "Discharge Plan",
       content: dischargePlan || "N/A"

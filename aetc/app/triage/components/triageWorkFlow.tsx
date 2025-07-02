@@ -245,7 +245,7 @@ export default function TriageWorkFlow() {
         triageResult === "red"
           ? null
           : Object.entries(formData?.serviceArea ?? {}).find(
-              ([key]) => key !== concepts.CARE_AREA
+              ([key]) => key !== concepts.OTHER_AETC_SERVICE_AREA
             )?.[1];
 
       const dateTime = ServerTime.getServerTimeString();
@@ -274,7 +274,7 @@ export default function TriageWorkFlow() {
             concept: concepts.CARE_AREA,
             value:
               triageResult === "green" || triageResult === "yellow"
-                ? formData.serviceArea || ""
+                ? formData?.serviceArea?.[concepts.CARE_AREA] || ""
                 : "",
             obsDatetime: dateTime,
           },
@@ -286,13 +286,14 @@ export default function TriageWorkFlow() {
         ],
       });
     }
+
     if (triageResult == "green") {
-      const referredTo = formData.serviceArea?.[concepts.CARE_AREA];
+      const referredTo = formData?.serviceArea?.[concepts.CARE_AREA];
 
       if (
-        referredTo.toLowerCase() == concepts.GYNAE_BENCH.toLowerCase() ||
-        referredTo.toLowerCase() == concepts.MEDICAL_BENCH.toLowerCase() ||
-        referredTo.toLowerCase() == concepts.SURGICAL_BENCH.toLowerCase()
+        referredTo?.toLowerCase() == concepts?.GYNAE_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.MEDICAL_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.SURGICAL_BENCH.toLowerCase()
       ) {
         return;
       }

@@ -11,6 +11,7 @@ import {
 import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
+import Link from "next/link";
 
 function Triage() {
   return (
@@ -38,6 +39,9 @@ function Triage() {
             successfully and waiting for triage.
           </RegistrationDescriptionText>
           <RegistrationCard sx={{ p: 0 }}>
+            {/* <Link href="/triage/b5f1fcf8-0a36-4527-87ac-ac0d969934b1/start">
+              move to triage
+            </Link> */}
             <ClientWaitingForTriage />
           </RegistrationCard>
         </MainGrid>
