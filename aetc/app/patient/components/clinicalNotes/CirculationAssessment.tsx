@@ -4,6 +4,7 @@ import { encounters } from "@/constants";
 
 export const CirculationAssessment = () => {
   const { notes, isLoading } = useComponentNotes(encounters.CIRCULATION_ASSESSMENT);
+  console.log("Circulation Assessment Notes:====>", notes);
 
   if (isLoading) {
     return <Typography>Loading...</Typography>;

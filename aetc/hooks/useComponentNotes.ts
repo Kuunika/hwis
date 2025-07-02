@@ -54,7 +54,7 @@ export const useComponentNotes = (encounterType: string) => {
                 return formatBreathingAssessmentNotes(obs);
             case encounters.CIRCULATION_ASSESSMENT:
                 return formatCirculationAssessmentNotes(obs);
-            case encounters.DISABILITY_ASSESSMENT:
+            case encounters.PRIMARY_DISABILITY_ASSESSMENT:
                 return formatDisabilityAssessmentNotes(obs);
             case encounters.EXPOSURE_ASSESSMENT:
                 return formatExposureAssessmentNotes(obs);
