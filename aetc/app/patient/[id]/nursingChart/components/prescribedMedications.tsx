@@ -46,7 +46,7 @@ export const PrescribedMedication = () => {
   const dispensationEncounter = data?.find(
     (encounter) =>
       encounter?.encounter_type?.uuid === encounters.DISPENSING &&
-      encounter.visit_id === activeVisitId
+      encounter.visit_id === Number(activeVisitId)
   );
 
   const medicationDispensed = formatDispensed(

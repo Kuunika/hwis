@@ -18,7 +18,6 @@ import { useNavigation, useParameters } from "@/hooks";
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
 import {
-  addEncounter,
   fetchConceptAndCreateEncounter,
   getPatientsEncounters,
 } from "@/hooks/encounter";
@@ -26,11 +25,8 @@ import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { FormError } from "@/components/formError";
 import { OperationSuccess } from "@/components/operationSuccess";
-import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
-import {
-  getPatientsWaitingForTriage,
-  getPatientVisitTypes,
-} from "@/hooks/patientReg";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { ServiceAreaForm } from "./serviceAreaForm";
 import { Encounter, TriageResult } from "@/interfaces";
 import { Bounce, toast } from "react-toastify";
@@ -39,14 +35,15 @@ import { closeCurrentVisit } from "@/hooks/visit";
 
 import { getObservationValue } from "@/helpers/emr";
 import { PatientTriageBarcodePrinter } from "@/components/barcodePrinterDialogs";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 export default function TriageWorkFlow() {
+  const { ServerTime } = useServerTime();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [formData, setFormData] = useState<any>({});
   const { params } = useParameters();
   const [triageResult, setTriageResult] = useState<TriageResult>("");
   const [continueTriage, setContinueTriage] = useState(false);
-  const { data: triageList } = getPatientsWaitingForTriage();
   const [conceptTriageResult, setConceptTriageResult] = useState<any>({});
   const [submittedSteps, setSubmittedSteps] = useState<Array<number>>([]);
 
@@ -147,7 +144,7 @@ export default function TriageWorkFlow() {
       .find((d) => d.visit_id == activeVisit?.visit_id);
   };
 
-  const dateTime = getDateTime();
+  //getDateTime();
 
   useEffect(() => {
     setReferral(getEncounterActiveVisit(encounters.REFERRAL));
@@ -165,6 +162,7 @@ export default function TriageWorkFlow() {
     if (presentingCreated) {
       setCompleted(1);
       setMessage("adding vitals...");
+      const dateTime = ServerTime.getServerTimeString();
 
       createVitals({
         encounterType: encounters.VITALS,
@@ -178,10 +176,11 @@ export default function TriageWorkFlow() {
 
   useEffect(() => {
     if (vitalsCreated) {
+      const dateTime = ServerTime.getServerTimeString();
       setCompleted(2);
       setMessage("adding airway...");
       createAirway({
-        encounterType: encounters.AIRWAY_ASSESSMENT,
+        encounterType: encounters.AIRWAY_BREATHING,
         visit: activeVisit?.uuid,
         patient: params.id,
         encounterDatetime: dateTime,
@@ -192,6 +191,7 @@ export default function TriageWorkFlow() {
 
   useEffect(() => {
     if (airwayCreated) {
+      const dateTime = ServerTime.getServerTimeString();
       setCompleted(3);
       setMessage("adding blood circulation data...");
       createBlood({
@@ -206,6 +206,7 @@ export default function TriageWorkFlow() {
 
   useEffect(() => {
     if (bloodCreated) {
+      const dateTime = ServerTime.getServerTimeString();
       setCompleted(4);
       setMessage("adding disability...");
 
@@ -222,6 +223,7 @@ export default function TriageWorkFlow() {
   useEffect(() => {
     if (disabilityCreated) {
       setCompleted(5);
+      const dateTime = ServerTime.getServerTimeString();
       setMessage("adding pain and persistent...");
 
       createPain({
@@ -239,6 +241,24 @@ export default function TriageWorkFlow() {
       setCompleted(6);
       setMessage("finalizing...");
 
+      const otherAETCArea =
+        triageResult === "red"
+          ? null
+          : Object.entries(formData?.serviceArea ?? {}).find(
+              ([key]) => key !== concepts.OTHER_AETC_SERVICE_AREA
+            )?.[1];
+
+      const dateTime = ServerTime.getServerTimeString();
+
+      // console.log({
+      //   concept: concepts.CARE_AREA,
+      //   value:
+      //     triageResult === "green" || triageResult === "yellow"
+      //       ? formData.serviceArea || ""
+      //       : "",
+      //   obsDatetime: dateTime,
+      // });
+
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,
@@ -251,17 +271,33 @@ export default function TriageWorkFlow() {
             obsDatetime: dateTime,
           },
           {
-            concept: concepts.PATIENT_REFERRED_TO,
+            concept: concepts.CARE_AREA,
             value:
-              triageResult == "green"
-                ? formData.serviceArea[concepts.PATIENT_REFERRED_TO]
+              triageResult === "green" || triageResult === "yellow"
+                ? formData?.serviceArea?.[concepts.CARE_AREA] || ""
                 : "",
-            obsDatetime: getDateTime(),
+            obsDatetime: dateTime,
+          },
+          {
+            concept: concepts.OTHER_AETC_SERVICE_AREA,
+            value: otherAETCArea ? otherAETCArea : "",
+            obsDatetime: dateTime,
           },
         ],
       });
     }
+
     if (triageResult == "green") {
+      const referredTo = formData?.serviceArea?.[concepts.CARE_AREA];
+
+      if (
+        referredTo?.toLowerCase() == concepts?.GYNAE_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.MEDICAL_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.SURGICAL_BENCH.toLowerCase()
+      ) {
+        return;
+      }
+
       setMessage("closing visit...");
       closeVisit(activeVisit?.uuid as string);
     }
@@ -304,7 +340,7 @@ export default function TriageWorkFlow() {
   const handlePersistentPain = (values: any) => {
     formData["pain"] = values;
     setShowForm(false);
-    if (triageResult == "green") {
+    if (triageResult == "green" || triageResult == "yellow") {
       setShowModal(true);
       return;
     }
@@ -312,13 +348,16 @@ export default function TriageWorkFlow() {
   };
 
   const handleVitalsSubmit = (values: any) => {
+    values[concepts.GLUCOSE] = `${values[concepts.GLUCOSE]} ${
+      values[concepts.ADDITIONAL_NOTES]
+    }`;
     formData["vitals"] = values;
+
     setActiveStep(2);
     setSubmittedSteps((steps) => [...steps, 1]);
   };
 
   const handleAirwaySubmit = (values: any) => {
-    console.log({ values });
     formData["airway"] = values;
     setActiveStep(3);
     setSubmittedSteps((steps) => [...steps, 2]);
@@ -347,9 +386,11 @@ export default function TriageWorkFlow() {
     triggerSubmission();
     setShowModal(false);
   };
+  const dateTime = ServerTime.getServerTimeString();
 
   const triggerSubmission = () => {
     setLoading(true);
+    const dateTime = ServerTime.getServerTimeString();
     setMessage("adding complaints...");
     createPresenting({
       encounterType: encounters.PRESENTING_COMPLAINTS,
@@ -606,17 +647,26 @@ export default function TriageWorkFlow() {
           }}
         />
       )}
-
+      {/* TODO: please revert the show modal */}
       <GenericDialog
+        // open={true}
         open={showModal}
         onClose={closeModal}
         title="Triage Decision"
       >
         <p>
-          Triage status is <span style={{ color: "green" }}>GREEN</span>. Where
-          should this patient go next?
+          Triage status is (
+          {triageResult === "green" ? (
+            <span style={{ color: "green" }}>{triageResult}</span>
+          ) : (
+            <span style={{ color: "#cc9900" }}>{triageResult}</span>
+          )}
+          ). Where should this patient go next?
         </p>
-        <ServiceAreaForm onSubmit={handleServiceArea} />
+        <ServiceAreaForm
+          onSubmit={handleServiceArea}
+          triageStatus={triageResult}
+        />
       </GenericDialog>
 
       {loading && !error && (

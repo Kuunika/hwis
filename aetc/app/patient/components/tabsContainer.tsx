@@ -7,6 +7,7 @@ import {
   Results,
   PatientChart,
   VisitHistory,
+  PresentingComplaint,
 } from "./panels";
 
 interface TabPanelProps {
@@ -51,7 +52,6 @@ export const TabsContainer = () => {
           alignItems: "center",
           backgroundColor: "#f4f4f4",
           borderRadius: "4px 4px 0 0",
-
           marginRight: "2px",
           borderBottom: "none",
         }}
@@ -60,14 +60,16 @@ export const TabsContainer = () => {
           value={value}
           onChange={handleChange}
           sx={{
+            overflow: "scroll",
             width: "100%", // Ensure tabs fill the entire container width
             "& .MuiTabs-flexContainer": {
-              justifyContent: "space-evenly", // Ensure tabs are spaced evenly
+              justifyContent: "space-evenly",
+              overflow: "scroll", // Ensure tabs are spaced evenly
             },
           }}
         >
           <Tab
-            label="Patient Chart"
+            label="Monitoring Chart"
             sx={{
               flexGrow: 1,
               textTransform: "none",
@@ -131,7 +133,7 @@ export const TabsContainer = () => {
             }}
           />
           <Tab
-            label="Results"
+            label="Presenting Complaint"
             sx={{
               flexGrow: 1,
               textTransform: "none",
@@ -147,13 +149,29 @@ export const TabsContainer = () => {
             }}
           />
           <Tab
-            label="Medications"
+            label="Results"
             sx={{
               flexGrow: 1,
               textTransform: "none",
               padding: "12px",
               background: value === 5 ? "#DDEEDD" : "#FFFFFF",
               fontWeight: value === 5 ? "bold" : "normal",
+              borderBottom: "none",
+              marginRight: "2px",
+              borderRight: "none",
+              "&:last-child": {
+                borderRight: "1px solid #ccc",
+              },
+            }}
+          />
+          <Tab
+            label="Medications"
+            sx={{
+              flexGrow: 1,
+              textTransform: "none",
+              padding: "12px",
+              background: value === 6 ? "#DDEEDD" : "#FFFFFF",
+              fontWeight: value === 6 ? "bold" : "normal",
               borderBottom: "none",
             }}
           />
@@ -172,9 +190,12 @@ export const TabsContainer = () => {
         <ClinicalNotes />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
-        <Results />
+        <PresentingComplaint />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
+        <Results />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={6}>
         <Medications />
       </CustomTabPanel>
     </Box>

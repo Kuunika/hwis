@@ -10,20 +10,36 @@ import {
   MainButton,
   MainTypography,
   PatientTableList,
+  PatientTableListServer,
 } from "@/components";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
+import { Tooltip, IconButton } from "@mui/material";
+import { FaPlay } from "react-icons/fa";
+import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const InitialRegistrationList = () => {
+  const {
+    loading,
+    patients,
+    paginationModel,
+    setPaginationModel,
+    searchText,
+    setSearchText,
+    totalPages,
+    setOnSwitch,
+  } = fetchPatientsTablePaginate("screening");
+  const [inputText, setInputText] = useState("");
+  const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+
+  useEffect(() => {
+    setSearchText(debouncedSearch);
+  }, [debouncedSearch]);
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
-  const {
-    data: patients,
-    isLoading,
-    isRefetching,
-  } = getPatientsWaitingForPrescreening();
 
   const rows = patients
     ?.sort((p1, p2) => {
@@ -50,7 +66,7 @@ export const InitialRegistrationList = () => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
-    { field: "last_encounter_creator", headerName: "Registered By", flex: 1 },
+    { field: "last_encounter_creator", headerName: "Attended By", flex: 1 },
     {
       field: "action",
       flex: 1,
@@ -58,12 +74,21 @@ export const InitialRegistrationList = () => {
       renderCell: (cell: any) => {
         return (
           <>
-            <MainButton
+            <Tooltip title="Start screening" arrow>
+              <IconButton
+                onClick={() => navigateTo(`/prescreening/${cell.id}`)}
+                aria-label="start screening"
+                color="primary"
+              >
+                <FaPlay />
+              </IconButton>
+            </Tooltip>
+            {/* <MainButton
               size="small"
               sx={{ fontSize: "12px", mr: "1px" }}
               title={"screen"}
               onClick={() => navigateTo(`/prescreening/${cell.id}`)}
-            />
+            /> */}
             <AbscondButton
               onDelete={() => setDeleted(cell.id)}
               visitId={cell.row.visit_uuid}
@@ -117,9 +142,27 @@ export const InitialRegistrationList = () => {
   });
 
   return (
-    <PatientTableList formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching}
-      columns={columns}
-      rows={rows ? rows : []} />
+    <>
+      <PatientTableListServer
+        columns={columns}
+        data={{
+          data: rows ?? [],
+          page: paginationModel.page,
+          per_page: paginationModel.pageSize,
+          total_pages: totalPages,
+        }}
+        searchText={inputText}
+        setSearchString={setInputText}
+        setPaginationModel={setPaginationModel}
+        paginationModel={paginationModel}
+        // loading={isPending || isRefetching}
+        loading={loading}
+        formatForMobileView={formatForMobileView ? formatForMobileView : []}
+        onSwitchChange={setOnSwitch}
+        onRowClick={(row: any) => {
+          navigateTo(`/prescreening/${row.id}`);
+        }}
+      />
+    </>
   );
 };
-

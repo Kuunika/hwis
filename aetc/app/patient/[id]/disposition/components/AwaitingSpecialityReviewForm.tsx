@@ -19,6 +19,8 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 
 const specialtyOptions = [
@@ -47,13 +49,13 @@ const initialValues = {
     reviewDate: "",
 };
 
-export default function AwaitingSpecialityReviewForm() {
+export default function AwaitingSpecialityReviewForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
-    const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -66,13 +68,13 @@ export default function AwaitingSpecialityReviewForm() {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
         const obs = [
             {
                 concept: concepts.AWAITING_SPECIALITY_REVIEW,
                 value: concepts.AWAITING_SPECIALITY_REVIEW,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.SPECIALITY_DEPARTMENT, value: values.specialtyDepartment, obsDatetime: currentDateTime },
                     { concept: concepts.REASON_FOR_REQUEST, value: values.reasonForReview, obsDatetime: currentDateTime },
                     { concept: concepts.DATE, value: values.reviewDate, obsDatetime: currentDateTime },
@@ -82,7 +84,7 @@ export default function AwaitingSpecialityReviewForm() {
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -91,17 +93,18 @@ export default function AwaitingSpecialityReviewForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Awaiting Speciality Review information submitted successfully!");
+            // toast.success("Awaiting Speciality Review information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {
             console.error("Error submitting Awaiting Speciality Review information: ", error);
-            toast.error("Failed to submit Awaiting Speciality Review information.");
+            // toast.error("Failed to submit Awaiting Speciality Review information.");
         }
 
 
@@ -111,8 +114,9 @@ export default function AwaitingSpecialityReviewForm() {
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Awaiting Specialty Review Form</h2>
+                    <h2>2. Awaiting Specialty Review Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

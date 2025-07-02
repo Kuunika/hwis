@@ -7,13 +7,12 @@ import {
   FormikInit,
   FormValuesListener,
   MainButton,
+  MainTypography,
   RadioGroupInput,
   SearchComboBox,
   TextInputField,
   WrapperBox,
 } from "@/components";
-import { Checkbox, IconButton, RadioGroup, TableCell } from "@mui/material";
-import { FaPlus, FaMinus } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
@@ -21,12 +20,14 @@ import { Field, FieldArray, getIn } from "formik";
 import { useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Obs } from "@/interfaces";
-import ECTReactComponent from "@/components/form/ECTReactComponent";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
+import OfflineICD11Selection from "@/components/form/offLineICD11Diagnosis";
 import { MdOutlineClose } from "react-icons/md";
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: ()=>void;
 };
 
 type Condition = {
@@ -45,6 +46,7 @@ const conditionTemplate: Condition = {
 
 const initialValues = {
   conditions: [conditionTemplate],
+  none: false
 };
 
 const priorConditionsFormConfig = {
@@ -66,9 +68,7 @@ const priorConditionsFormConfig = {
   }),
 };
 
-const schema = Yup.object().shape({
-  conditions: Yup.array().of(
-    Yup.object().shape({
+const conditionsSchema = Yup.object().shape({
       name: Yup.string().required("Condition name is required"),
 
       date: Yup.date()
@@ -80,8 +80,19 @@ const schema = Yup.object().shape({
       onTreatment: Yup.string().required("Treatment status is required"),
 
       additionalDetails: Yup.string().optional(),
-    })
-  ),
+
+});
+
+const schema = Yup.object().shape({
+  none: Yup.boolean().required(),
+  conditions: Yup.array().when("none", {
+    is: false,
+    then: (schema) =>
+      schema
+        .of(conditionsSchema)
+        .min(1, "At least one condition must be added"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 const ErrorMessage = ({ name }: { name: string }) => (
@@ -95,16 +106,12 @@ const ErrorMessage = ({ name }: { name: string }) => (
   />
 );
 
-export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
+export const PriorConditionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const { params } = useParameters();
   const { data, isLoading } = getPatientsEncounters(params?.id as string);
   const [formValues, setFormValues] = useState<any>({});
   const [existingHistory, setExistingHistory] = useState<string[]>();
-  interface ShowSelectionState {
-    [key: number]: boolean;
-  }
-
-  const [showSelection, setShowSelection] = useState<ShowSelectionState>({});
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -133,16 +140,33 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
   }, [data]);
 
   const handleSubmit = async () => {
-    await schema.validate(formValues);
+    if(formValues.none){
+      onSkip();
+      return;
+    }
     onSubmit(formValues);
   };
 
   const handleICD11Selection = (selectedEntity: any, index: number) => {
-    setShowSelection((prev) => ({ ...prev, [index]: true }));
-    formValues.conditions[index][
-      "name"
-    ] = `${selectedEntity.code}, ${selectedEntity.bestMatchText}`;
+    const updatedSelections = { ...selectedDiagnosis };
+    updatedSelections[index] = selectedEntity.diagnosis + " - " + selectedEntity.code;
+
+    setSelectedDiagnosis(updatedSelections);
+
+    const updatedValues = { ...formValues };
+    updatedValues.conditions[index].name = selectedEntity.code +","+ selectedEntity.diagnosis;
+
+    setFormValues(updatedValues);
   };
+
+  const handleClear = (index: number) => {
+      const updatedSelections = { ...selectedDiagnosis };
+      updatedSelections[index] = "";
+
+      setSelectedDiagnosis(updatedSelections);
+      
+    };
+
 
   return (
     <>
@@ -168,12 +192,18 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
       <FormikInit
         initialValues={initialValues}
         validationSchema={schema}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         enableReinitialize
         submitButton={false}
       >
         {({ values, setFieldValue }) => (
           <>
+                  <div style={{marginBottom:"2ch"}}>
+        <LabelledCheckbox
+          name="none"
+          label="Patient has no prior/existing conditions"
+        />
+        </div>
             <FormValuesListener getValues={setFormValues} />
             <FieldArray name="conditions">
               {({ push, remove }) => (
@@ -193,56 +223,14 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                             gap: "1rem",
                           }}
                         >
-                          {showSelection[index] ? (
-                            <div
-                              style={{
-                                backgroundColor: "white",
-                                display: "flex",
-                                flexDirection: "row",
-                                gap: "1rem",
-                                borderRadius: "5px",
-                                padding: "1ch",
-                              }}
-                            >
-                              <label style={{ fontWeight: "bold" }}>
-                                {formValues.conditions[index]["name"]}
-                              </label>
-                              <MdOutlineClose
-                                color={"red"}
-                                onClick={() => {
-                                  setShowSelection((prev) => ({
-                                    ...prev,
-                                    [index]: false,
-                                  }));
-                                  formValues.conditions[index]["name"] = "";
-                                }}
-                                style={{ cursor: "pointer" }}
-                              />
-                            </div>
-                          ) : (
-                            <ECTReactComponent
-                              onICD11Selection={(selectedEntity: any) =>
-                                handleICD11Selection(selectedEntity, index)
-                              }
-                              label={"Condition"}
-                              iNo={index + 1}
-                            />
-                          )}
-                          <div style={{ color: "red", fontSize: "0.875rem" }}>
-                            <ErrorMessage
-                              name={
-                                priorConditionsFormConfig.conditions_name(index)
-                                  .name
-                              }
-                            />
-                          </div>
-                          <div>
+                          
                             <FormDatePicker
                               name={
                                 priorConditionsFormConfig.conditions_diagnosis_date(
                                   index
                                 ).name
                               }
+                              disabled={formValues.none}
                               label={
                                 priorConditionsFormConfig.conditions_diagnosis_date(
                                   index
@@ -250,13 +238,7 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                               }
                               sx={{ background: "white", width: "100%" }}
                             />
-                            <div
-                              style={{
-                                color: "red",
-                                fontSize: "0.875rem",
-                                marginTop: "0.5rem",
-                              }}
-                            >
+                           <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
                                 name={
                                   priorConditionsFormConfig.conditions_diagnosis_date(
@@ -264,9 +246,51 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                                   ).name
                                 }
                               />
-                            </div>
+                            </MainTypography>
+                                {selectedDiagnosis[index] !=="" && selectedDiagnosis[index] ? (
+                                    <div 
+                                      style={{ 
+                                        backgroundColor: "white", 
+                                        display: 'flex', 
+                                        flexDirection: 'row', 
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: '12px',
+                                        gap: '1rem', 
+                                        borderRadius: "5px",
+                                        border: '1px solid #e0e0e0',
+                                        minHeight: '48px'
+                                      }}
+                                    >
+                                      <label style={{ fontWeight: "bold" }}>
+                                        {selectedDiagnosis[index]}
+                                      </label>
+                                      <MdOutlineClose 
+                                        color={"red"} 
+                                        onClick={()=>handleClear(index)} 
+                                        style={{ cursor: "pointer" }} 
+                                      />
+                                    </div>
+                                  ) : (<>
+                              <OfflineICD11Selection
+            label="Diagnosis"
+            initialValue=""
+            onSelection={(entity: any) => handleICD11Selection(entity, index)}
+            placeholder="Start typing to search diagnoses..."
+          />
+                                    <MainTypography color="red" variant="subtitle2">
+                            <ErrorMessage
+                              name={
+                                priorConditionsFormConfig.conditions_name(index)
+                                  .name
+                              }
+                            />
+                          </MainTypography>
+          </>)}
 
+                          <div>
                             <RadioGroupInput
+                            disabled={formValues.none}
                               name={
                                 priorConditionsFormConfig.conditions_on_treatment(
                                   index
@@ -283,7 +307,7 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                                 ).label
                               }
                             />
-                            <div style={{ color: "red", fontSize: "0.875rem" }}>
+                            <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
                                 name={
                                   priorConditionsFormConfig.conditions_on_treatment(
@@ -291,11 +315,12 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                                   ).name
                                 }
                               />
-                            </div>
+                            </MainTypography>
                           </div>
                         </div>
 
                         <TextInputField
+                        disabled={formValues.none}
                           id={
                             priorConditionsFormConfig.conditions_additional_details(
                               index
@@ -332,11 +357,11 @@ export const PriorConditionsForm = ({ onSubmit, onSkip }: Prop) => {
                       variant="secondary"
                       title="Previous"
                       type="button"
-                      onClick={onSkip}
+                      onClick={onPrevious}
                       sx={{ flex: 1, marginRight: "8px" }}
                     />
                     <MainButton
-                      onClick={handleSubmit}
+                      onClick={() => {}}
                       variant="primary"
                       title="Next"
                       type="submit"

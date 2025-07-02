@@ -1,21 +1,14 @@
-"use client";
+"use client";;
 import { useEffect, useState } from "react";
 import DynamicFormList from "@/components/form/dynamicFormList"; // Import the updated component
-import {
-  FormikInit,
-  FormValuesListener,
-  MainButton,
-  SearchComboBox,
-  UnitInputField,
-  WrapperBox,
-} from "@/components";
+import { FormikInit, FormValuesListener, MainTypography, SearchComboBox, UnitInputField } from "@/components";
 import * as Yup from "yup";
 import { IoTimeOutline } from "react-icons/io5";
 import { concepts, durationOptions } from "@/constants";
 import { FieldArray } from "formik";
 import { Field, getIn } from "formik";
-import { getConceptSetMembers } from "@/hooks/labOrder";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
+import { DetailsPresentingComplaintsAccordion } from "./detailsPresentingComplaintAccordion";
 const ErrorMessage = ({ name }: { name: string }) => (
   <Field
     name={name}
@@ -54,7 +47,7 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
         concepts.PRESENTING_COMPLAINTS
       );
       complaints = complaints.data[0].set_members.map((complaint: any) => {
-        return { id: complaint.uuid, label: complaint.names[0].name };
+        return { id: complaint.names[0].uuid, label: complaint.names[0].name };
       });
       setPresentingComplaints(complaints);
     })();
@@ -76,7 +69,7 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
   };
 
   const initialValues = {
-    complaints: [complaintsTemplate],
+    complaints: [complaintsTemplate]
   };
 
   const schema = Yup.object().shape({
@@ -90,85 +83,95 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
       })
     ),
   });
-
+  
   const handleSubmit = () => {
+    
     onSubmit(formValues);
   };
 
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      enableReinitialize={true}
-      submitButton={true}
-      submitButtonText="Next"
-    >
-      {({ values, setFieldValue }) => (
-        <>
-          <FormValuesListener getValues={setFormValues} />
-          <FieldArray name="complaints">
-            {({}) => (
-              <DynamicFormList
-                items={values.complaints}
-                setItems={(newItems) => setFieldValue("complaints", newItems)}
-                newItem={complaintsTemplate}
-                renderFields={(item, index) => (
-                  <>
-                    {/* Complaint Name Field */}
-                    <div style={{ display: "flex-column", width: "100%" }}>
-                      <SearchComboBox
-                        name={complaintsFormConfig.complaints_name(index).name}
-                        label={
-                          complaintsFormConfig.complaints_name(index).label
-                        }
-                        options={presentingComplaints}
-                        multiple={false}
-                        sx={{ width: "100%" }}
-                      />
-                      <div style={{ color: "red", fontSize: "0.875rem" }}>
-                        <ErrorMessage name={`complaints[${index}].complaint`} />
-                      </div>
+    <>
+      <DetailsPresentingComplaintsAccordion />
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        enableReinitialize={true}
+        submitButton={true}
+        submitButtonText="Next"
+      >
+        {({ values, setFieldValue }) => (
+          <>
+            <FormValuesListener getValues={setFormValues} />
+            <FieldArray name="complaints">
+              {({}) => (
+                <DynamicFormList
+                  items={values.complaints}
+                  setItems={(newItems) => setFieldValue("complaints", newItems)}
+                  newItem={complaintsTemplate}
+                  renderFields={(item, index) => (
+                    <>
+                      {/* Complaint Name Field */}
+                      <div style={{ display: "flex-column", width: "100%" }}>
+                        <SearchComboBox
+                          name={
+                            complaintsFormConfig.complaints_name(index).name
+                          }
+                          label={
+                            complaintsFormConfig.complaints_name(index).label
+                          }
+                          options={presentingComplaints}
+                          multiple={false}
+                          sx={{ width: "100%" }}
+                        />
+                        <MainTypography
+                          color="red" variant="subtitle2"
+                        >
+                          <ErrorMessage
+                            name={`complaints[${index}].complaint`}
+                          />
+                        </MainTypography>
 
-                      {/* Duration and Unit Field */}
+                        {/* Duration and Unit Field */}
 
-                      <UnitInputField
-                        id={
-                          complaintsFormConfig.complaints_duration(index).name
-                        }
-                        name={
-                          complaintsFormConfig.complaints_duration(index).name
-                        }
-                        unitName={
-                          complaintsFormConfig.complaints_duration_units(index)
-                            .name
-                        }
-                        label={
-                          complaintsFormConfig.complaints_duration(index).label
-                        }
-                        sx={{ width: "50%" }}
-                        unitOptions={durationOptions}
-                        placeholder="e.g., 3"
-                        inputIcon={<IoTimeOutline />} // Optional icon
-                      />
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "0.875rem",
-                          marginTop: "0.5em",
-                        }}
-                      >
-                        <ErrorMessage name={`complaints[${index}].duration`} />
+                        <UnitInputField
+                          id={
+                            complaintsFormConfig.complaints_duration(index).name
+                          }
+                          name={
+                            complaintsFormConfig.complaints_duration(index).name
+                          }
+                          unitName={
+                            complaintsFormConfig.complaints_duration_units(
+                              index
+                            ).name
+                          }
+                          label={
+                            complaintsFormConfig.complaints_duration(index)
+                              .label
+                          }
+                          sx={{ width: "50%" }}
+                          unitOptions={durationOptions}
+                          placeholder="e.g., 3"
+                          inputIcon={<IoTimeOutline />} // Optional icon
+                        />
+                        <MainTypography
+                          color="red" variant="subtitle2"
+                        >
+                          <ErrorMessage
+                            name={`complaints[${index}].duration`}
+                          />
+                        </MainTypography>
                       </div>
-                    </div>
-                  </>
-                )}
-              />
-            )}
-          </FieldArray>
-        </>
-      )}
-    </FormikInit>
+                    </>
+                  )}
+                />
+              )}
+            </FieldArray>
+          </>
+        )}
+      </FormikInit>
+    </>
   );
 };
 

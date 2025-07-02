@@ -15,13 +15,17 @@ interface Props {
   setTriggerFunc: (func: any) => void;
   printer: string;
   orderDate?: string;
+  test?: string;
+  fullName?: string;
+  gender?: string;
+  description?:string
 }
 export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   value,
   children,
   setTriggerFunc,
   printer,
-  orderDate
+  orderDate,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -64,14 +68,13 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   );
 };
 
-
-
 export const BarcodeComponent: React.FC<Props> = ({
   value,
   children,
   setTriggerFunc,
   printer,
-  orderDate
+  orderDate,
+  test,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -97,7 +100,7 @@ export const BarcodeComponent: React.FC<Props> = ({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            paddingLeft: "13ch"
+            paddingLeft: "13ch",
           }}
           ref={ref}
         >
@@ -117,10 +120,6 @@ export const BarcodeComponent: React.FC<Props> = ({
   );
 };
 
-
-
-
-
 const downloadZplData = async (
   labelName: string,
   canvas: HTMLCanvasElement,
@@ -130,6 +129,9 @@ const downloadZplData = async (
   try {
     const gfa = await zplImageConvert.encode(base64);
     const zpl = `^XA^FO20,20${gfa}^XZ`;
+
+    // console.log(zpl);
+    // return;
 
     await axios.post(`${printer}/print`, { zpl });
 
@@ -166,10 +168,10 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
   arrivalTime,
   referredFrom,
   triageCategory,
-  triagedBy
+  triagedBy,
 }) => {
-  const [printer, setPrinter] = useState('')
-  const [reason, setReason] = useState('')
+  const [printer, setPrinter] = useState("");
+  const [reason, setReason] = useState("");
 
   const convertToCanvas = async () => {
     const element = document.getElementById("triage");
@@ -198,14 +200,20 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
               <Typography variant="body2" mr={"1ch"}>
                 Triage Date Time: {date}
               </Typography>
-              <Typography variant="body2">Referred From: {referredFrom}</Typography>
+              <Typography variant="body2">
+                Referred From: {referredFrom}
+              </Typography>
             </Box>
             <Box sx={{ display: "flex" }}>
-              <Typography mr={"1ch"} variant="body1">Category: {triageCategory}</Typography>
+              <Typography mr={"1ch"} variant="body1">
+                Category: {triageCategory}
+              </Typography>
               <Typography variant="body1">Reason: {reason}</Typography>
             </Box>
 
-            <Typography sx={{ mt: "1ch" }} variant="subtitle1">Presenting Complaints: {presentingComplaints} </Typography>
+            <Typography sx={{ mt: "1ch" }} variant="subtitle1">
+              Presenting Complaints: {presentingComplaints}{" "}
+            </Typography>
 
             <WrapperBox sx={{ display: "flex", border: "dashed", my: "1ch" }}>
               {vitals.map(({ name, value }: any) => (
@@ -213,33 +221,37 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
               ))}
             </WrapperBox>
 
-
             <Typography variant="body1">Triaged By: {triagedBy}</Typography>
           </Box>
         </WrapperBox>
       </div>
 
-      <BasicSelect getValue={(value: any) => setReason(value)} label={"Reasons for triage category:"} options={[{
-        value: "Vitals above/below threshold",
-        label: "Vitals above/below threshold"
-      },
-      {
-        value: "Airway/Breathing compromised",
-        label: "Airway/Breathing compromised"
-      },
-      {
-        value: "Blood circulation compromised",
-        label: "Blood circulation compromised"
-      },
-      {
-        value: "Disability",
-        label: "Disability"
-      },
-      {
-        value: "Persistent pain and other concerns ",
-        label: "Persistent pain and other concerns "
-      }
-      ]} />
+      <BasicSelect
+        getValue={(value: any) => setReason(value)}
+        label={"Reasons for triage category:"}
+        options={[
+          {
+            value: "Vitals above/below threshold",
+            label: "Vitals above/below threshold",
+          },
+          {
+            value: "Airway/Breathing compromised",
+            label: "Airway/Breathing compromised",
+          },
+          {
+            value: "Blood circulation compromised",
+            label: "Blood circulation compromised",
+          },
+          {
+            value: "Disability",
+            label: "Disability",
+          },
+          {
+            value: "Persistent pain and other concerns ",
+            label: "Persistent pain and other concerns ",
+          },
+        ]}
+      />
       <br />
       <br />
       <PrinterSelect getValue={(value: string) => setPrinter(value)} />
@@ -249,8 +261,6 @@ export const TriagePrintTemplate: React.FC<TriagePrintTempProp> = ({
     </Box>
   );
 };
-
-
 
 const Cell = ({ title, value }: { title: string; value: string }) => {
   return (
@@ -269,3 +279,128 @@ const Cell = ({ title, value }: { title: string; value: string }) => {
     </WrapperBox>
   );
 };
+
+export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
+  value,
+  children,
+  setTriggerFunc,
+  printer,
+  orderDate,
+  test,
+  fullName,
+  gender,
+  description
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const convertToCanvas = async () => {
+      const element = document.getElementById("barcode");
+      if (element) {
+        // Convert HTML element to a canvas
+        const originalCanvas = await htmlToImage.toCanvas(element);
+
+        // Your fixed label size: 500px (width) x 100px (height)
+        const fixedWidth = 700;
+        const fixedHeight = 160;
+
+        const resizedCanvas = document.createElement("canvas");
+        resizedCanvas.width = fixedWidth;
+        resizedCanvas.height = fixedHeight;
+
+        const ctx = resizedCanvas.getContext("2d");
+
+        if (ctx) {
+          // Fill background white
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, fixedWidth, fixedHeight);
+
+          // Compute original aspect ratio
+          const aspectRatio = originalCanvas.width / originalCanvas.height;
+
+          // Calculate target dimensions preserving aspect ratio within fixedWidth/fixedHeight
+          let targetWidth = fixedWidth;
+          let targetHeight = targetWidth / aspectRatio;
+
+          if (targetHeight > fixedHeight) {
+            targetHeight = fixedHeight;
+            targetWidth = targetHeight * aspectRatio;
+          }
+
+          // Calculate offsets to center the scaled image on the resized canvas
+          const offsetX = (fixedWidth - targetWidth) / 2;
+          const offsetY = (fixedHeight - targetHeight) / 2;
+
+          // Draw the original canvas into the resized canvas with proper scaling and centering
+          ctx.drawImage(
+            originalCanvas,
+            0,
+            0,
+            originalCanvas.width,
+            originalCanvas.height,
+            offsetX,
+            offsetY,
+            targetWidth,
+            targetHeight
+          );
+
+          // Send to printer
+          downloadZplData("test", resizedCanvas, printer);
+        }
+      }
+    };
+
+    setTriggerFunc(() => convertToCanvas);
+  }, [printer, setTriggerFunc]);
+
+  return (
+    <div
+      id="barcode"
+      ref={ref}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        // border: "1px solid black",
+        paddingLeft: "1ch", // Increased padding to move content right
+        // marginLeft: "8ch", // This will push the entire content to the right
+      }}
+    >
+      <b style={{ fontSize: "0.5rem", lineHeight: "1" }}>
+        {fullName}({gender})~{description}
+      </b>
+      <b style={{ fontSize: "0.5rem", lineHeight: "1" }}>{orderDate}</b>
+      <Barcode
+        width={1}
+        height={45}
+        margin={0}
+        displayValue={false}
+        value={value}
+      />
+      <b style={{ fontSize: "0.5rem" }}>{test}</b>
+    </div>
+  );
+};
+
+function generatePatientZpl({
+  name,
+  sex,
+  datetime,
+  barcodeData,
+  testInfo,
+}: {
+  name: string;
+  sex: string;
+  datetime: string;
+  barcodeData: string;
+  testInfo: string;
+}) {
+  return `^XA
+^CF0,20
+^FO100,30^FB400,2,0,L,0^FD${name} (${sex})^FS
+^CF0,20
+^FO100,65^FD${datetime}^FS
+^FO100,110^BY10,3,200^FH_^FD${barcodeData}^FS
+^CF0,20
+^FO100,320^FB400,3,0,L,0^FD${testInfo}^FS
+^XZ`;
+}

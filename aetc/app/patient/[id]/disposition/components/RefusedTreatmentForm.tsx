@@ -22,6 +22,9 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 
 
@@ -39,13 +42,15 @@ const initialValues = {
     witnessName: "",
 };
 
-export default function RefusedTreatmentForm() {
+export default function RefusedTreatmentForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
+
 
 
 
@@ -61,14 +66,14 @@ export default function RefusedTreatmentForm() {
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {
                 concept: concepts.REFUSED_HOSPITAL_TREATMENT,
                 value: concepts.REFUSED_HOSPITAL_TREATMENT,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.REASON_FOR_REFUSAL, value: values.reasonForRefusal, obsDatetime: currentDateTime },
                     { concept: concepts.PLANS_TO_RETURN_FOR_TREATMENT, value: values.plansToReturn, obsDatetime: currentDateTime },
                     { concept: concepts.DATE_OF_REFUSAL, value: values.dateOfRefusal, obsDatetime: currentDateTime },
@@ -78,7 +83,7 @@ export default function RefusedTreatmentForm() {
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -87,25 +92,27 @@ export default function RefusedTreatmentForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Refused Hospital Treatment information submitted successfully!");
+            // toast.success("Refused Hospital Treatment information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {
             console.error("Error submittingRefused Hospital Treatment information: ", error);
-            toast.error("Failed to submit Refused Hospital Treatment  information.");
+            // toast.error("Failed to submit Refused Hospital Treatment  information.");
         }
     };
 
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Refused Treatment Form</h2>
+                    <h2>2. Refused Treatment Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

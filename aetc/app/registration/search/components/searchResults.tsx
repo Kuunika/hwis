@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  BaseTable,
   MainButton,
   MainPaper,
   MainTypography,
@@ -10,7 +9,7 @@ import {
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
-import { useNavigation, useParameters } from "@/hooks";
+import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import { FaUser, FaBarcode } from "react-icons/fa6";
 
 import {
@@ -19,11 +18,7 @@ import {
 } from "@/contexts";
 import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import {
-  getPatientRelationships,
-  getPatientsWaitingForRegistrations,
-  merge,
-} from "@/hooks/patientReg";
+import { getPatientRelationships, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ViewPatient } from "@/app/patient/components/viewPatient";
 import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
@@ -251,12 +246,11 @@ export const ResultBox = ({
               </Typography>
             }
             variant="primary"
-            patient={person}
+            uuid={person?.uuid}
           />
         )}
         {type == "Local" && genericSearch && (
           <>
-            {console.log({ person })}
             <Button
               onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
               sx={{ mb: "1ch" }}
@@ -305,12 +299,20 @@ export const ResultBox = ({
           <Label label="Gender" value={person?.gender} />
         </WrapperBox>
         <WrapperBox sx={{ display: "flex" }}>
-          <Label label="Home district" value={person?.addresses[0]?.address1} />
+          <Label
+            label="Home district"
+            value={person && person.addresses && person?.addresses[0]?.address1}
+          />
           <Label
             label="Home traditional authority"
-            value={person?.addresses[0]?.cityVillage}
+            value={
+              person && person.addresses && person?.addresses[0]?.cityVillage
+            }
           />
-          <Label label="Home village" value={person?.addresses[0]?.address2} />
+          <Label
+            label="Home village"
+            value={person && person.addresses && person?.addresses[0]?.address2}
+          />
         </WrapperBox>
       </WrapperBox>
       <WrapperBox sx={{ ml: "1ch" }}>
@@ -419,9 +421,6 @@ const ViewPatientDialog = ({
     isError: referralErrored,
   } = addEncounter();
 
-  const { data: patientsWaitingForRegistration } =
-    getPatientsWaitingForRegistrations();
-
   const {
     mutate: mergePatients,
     isPending: merging,
@@ -437,6 +436,8 @@ const ViewPatientDialog = ({
     data: ddeMergedResponse,
   } = merge();
 
+  const { activeVisit } = getActivePatientDetails();
+
   const loading =
     merging ||
     creatingReferralEncounter ||
@@ -450,12 +451,8 @@ const ViewPatientDialog = ({
   });
 
   useEffect(() => {
-    const initialPatient = patientsWaitingForRegistration?.find(
-      (p) => p.uuid == params?.id
-    );
-
-    if (initialPatient) setInitialPatient(initialPatient);
-  }, [patientsWaitingForRegistration]);
+    setInitialPatient(patient);
+  }, [patient]);
 
   useEffect(() => {
     if (ddeMerged) {
@@ -472,17 +469,17 @@ const ViewPatientDialog = ({
     //TODO: remove the hard coded concept
     const referred = getObservationValue(
       referralEncounter?.obs,
-      "618c7457-9442-43c4-93a0-80686b3bca5f"
+      concepts.IS_PATIENT_REFERRED
     );
 
     setIsReferred(referred);
   }, [patientEncounters]);
-
+  // 5550aa4e-59f4-4948-a0ad-e750431a07b1
   // create social history
   useEffect(() => {
     createSocialHistoryEncounter({
       encounterType: encounters.SOCIAL_HISTORY,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: activeVisit,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: socialHistory?.obs?.map((ob: any) => ({
@@ -497,7 +494,7 @@ const ViewPatientDialog = ({
   useEffect(() => {
     createFinancingEncounter({
       encounterType: encounters.FINANCING,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: activeVisit,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: financing?.obs?.map((ob) => ({
@@ -512,7 +509,7 @@ const ViewPatientDialog = ({
   useEffect(() => {
     createReferralEncounter({
       encounterType: encounters.REFERRAL,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: activeVisit,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: [
@@ -536,6 +533,7 @@ const ViewPatientDialog = ({
 
   const triggerMerge = () => {
     const uuid = patient?.uuid;
+    const initialUuid = initialPatient?.uuid;
 
     mergePatients({
       primary: {
@@ -543,14 +541,15 @@ const ViewPatientDialog = ({
       },
       secondary: [
         {
-          patient_id: initialPatient.uuid,
+          patient_id: initialUuid,
         },
       ],
     });
   };
 
   const handleContinue = () => {
-    if (isReferred == "Yes") {
+    console.log({ isReferred });
+    if (isReferred == concepts.YES) {
       setOpenReferralDialog(true);
       return;
     }

@@ -2,25 +2,19 @@ import { useContext, useEffect, useState } from "react";
 
 import {
   FieldsContainer,
-  FormFieldContainer,
   FormFieldContainerLayout,
   FormValuesListener,
   FormikInit,
   MainButton,
   MainTypography,
-  MultlineInput,
   RadioGroupInput,
   SearchComboBox,
-  SelectInputField,
   TextInputField,
   WrapperBox,
 } from "@/components";
 import * as yup from "yup";
 import { concepts, triageResult } from "@/constants";
-import { TriageContainer } from "@/app/triage/components/";
 import { TriageResult } from "@/interfaces";
-import { notify } from "@/helpers";
-import { useNavigation } from "@/hooks";
 import { TriageContext, TriageContextType } from "@/contexts";
 
 export const VitalFormConfig = {
@@ -41,7 +35,7 @@ export const VitalFormConfig = {
     short: "RR",
   },
   saturationRate: {
-    name: concepts.SATURATION_RATE,
+    name: concepts.BLOOD_OXYGEN_SATURATION,
     label: "Oxygen Saturation",
     short: "SPO2",
   },
@@ -155,13 +149,11 @@ const schema = yup.object({
     .label(VitalFormConfig.verbalResponse.label),
   [VitalFormConfig.glucose.name]: yup
     .number()
+    .typeError("Glucose must be a number")
     .min(0)
     .max(1000)
     .label(VitalFormConfig.glucose.label),
-  [VitalFormConfig.avpu.name]: yup
-    .string()
-    .required()
-    .label(VitalFormConfig.avpu.label),
+  [VitalFormConfig.avpu.name]: yup.string().label(VitalFormConfig.avpu.label),
   [VitalFormConfig.units.name]: yup
     .string()
     .required()

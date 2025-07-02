@@ -1,18 +1,18 @@
-import { extractTimes } from "@/helpers/dateTime";
-import { useVitalsGraphData } from "@/hooks";
+import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
+
 export function RespiratoryRate() {
-  const { chartData } = useVitalsGraphData();
+  const { values, dateTimes } = getObsGraphData("Respiratory Rate");
   return (
     <LineChart
       chartConfig={{
         series: [
           {
             name: "Respiratory Rate",
-            data: chartData.rrData,
+            data: values,
           },
         ],
-        xAxisCategories: extractTimes(chartData.xAxisData),
+        xAxisCategories: dateTimes,
         title: "",
         height: 350,
         yAxisMin: 0,

@@ -1,46 +1,41 @@
 "use client";
+import { MainTypography, WrapperBox } from "@/components";
 
-import {
+import { useContext, useEffect } from "react";
+import { getActivePatientDetails } from "@/hooks";
 
-  MainTypography,
-  WrapperBox,
-
-} from "@/components";
-
-import { useContext, useEffect, useState } from "react";
-import { useParameters } from "@/hooks";
-
-import {
-  getPatientsWaitingForRegistrations
-} from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
 import { Navigation } from "@/app/components/navigation";
 
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
-import { SearchRegistrationContext, SearchRegistrationContextType } from "@/contexts";
+import {
+  SearchRegistrationContext,
+  SearchRegistrationContextType,
+} from "@/contexts";
 import { Person } from "@/interfaces";
 
-import { DemographicsSearch, NPIDSearch } from "../../components/searchComponents";
+import {
+  DemographicsSearch,
+  NPIDSearch,
+} from "../../components/searchComponents";
 
 function RegistrationSearch() {
-  const { params } = useParameters();
-  const { setInitialRegisteredPatient, setRegistrationType } = useContext(SearchRegistrationContext) as SearchRegistrationContextType
-  const { data } = getPatientsWaitingForRegistrations();
-
-  const patient = data?.find((p) => p.uuid == params.id);
-
+  const { patient } = getActivePatientDetails();
+  const { setInitialRegisteredPatient, setRegistrationType } = useContext(
+    SearchRegistrationContext
+  ) as SearchRegistrationContextType;
 
   useEffect(() => {
-    setRegistrationType('')
-  }, [])
-
+    setRegistrationType("");
+  }, []);
 
   useEffect(() => {
+    console.log({ patient });
     if (patient) {
       setInitialRegisteredPatient(patient);
     }
-  }, [patient])
+  }, [patient]);
 
   return (
     <>
@@ -92,7 +87,11 @@ function RegistrationSearch() {
           }}
         >
           <SearchTab
-            demographics={<DemographicsSearch patient={patient ? patient : {} as Person} />}
+            demographics={
+              <DemographicsSearch
+                patient={patient ? patient : ({} as Person)}
+              />
+            }
             npid={<NPIDSearch genericSearch={false} />}
           />
         </WrapperBox>
@@ -101,6 +100,9 @@ function RegistrationSearch() {
   );
 }
 
-
-
-export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN, roles.REGISTRATION_CLERK, roles.NURSE])
+export default AuthGuard(RegistrationSearch, [
+  roles.ADMIN,
+  roles.CLINICIAN,
+  roles.REGISTRATION_CLERK,
+  roles.NURSE,
+]);

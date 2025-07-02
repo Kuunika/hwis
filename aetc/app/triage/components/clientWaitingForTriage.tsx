@@ -1,36 +1,52 @@
 import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientsWaitingForTriage } from "@/hooks/patientReg";
+import {
+  getPatientCategoryListPaginated,
+  getPatientsWaitingForTriage,
+} from "@/hooks/patientReg";
 import {
   BaseTable,
   CalculateWaitingTime,
   MainButton,
   MainTypography,
   PatientTableList,
+  PatientTableListServer,
 } from "@/components";
 import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { Tooltip, IconButton } from "@mui/material";
+import { FaPlay } from "react-icons/fa";
+import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const ClientWaitingForTriage = () => {
   const [deleted, setDeleted] = useState("");
-  const {
-    data: patients,
-    isLoading,
-    isRefetching,
-  } = getPatientsWaitingForTriage();
   const { navigateTo } = useNavigation();
+  const {
+    loading,
+    patients,
+    paginationModel,
+    setPaginationModel,
+    searchText,
+    setSearchText,
+    totalPages,
+    setOnSwitch,
+  } = fetchPatientsTablePaginate("triage");
+
+  const [inputText, setInputText] = useState("");
+  const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+
+  useEffect(() => {
+    setSearchText(debouncedSearch);
+  }, [debouncedSearch]);
 
   const rows = patients
-    ?.sort((p1, p2) => {
-      //@ts-ignore
-      return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-    })
-    .map((p) => ({
+    ?.map((p) => ({
       id: p?.uuid,
       ...p,
       patient_arrival_time: getTime(p.arrival_time),
@@ -68,18 +84,28 @@ export const ClientWaitingForTriage = () => {
       renderCell: (cell: any) => {
         return (
           <>
-            <MainButton
+            <Tooltip title="Start Triage" arrow>
+              <IconButton
+                onClick={() => navigateTo(`/triage/${cell.id}/start`)}
+                aria-label="start Triage"
+                color="primary"
+              >
+                <FaPlay />
+              </IconButton>
+            </Tooltip>
+
+            {/* <MainButton
               size="small"
               sx={{ fontSize: "12px", mr: "1px" }}
               title={"start"}
               onClick={() => navigateTo(`/triage/${cell.id}/start`)}
-            />
+            /> */}
             <AbscondButton
               onDelete={() => setDeleted(cell.id)}
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
-            <PrinterBarcodeButton patient={cell.row} />
+            <PrinterBarcodeButton icon={true} uuid={cell.row.uuid} />
           </>
         );
       },
@@ -120,7 +146,7 @@ export const ClientWaitingForTriage = () => {
             visitId={row.visit_uuid}
             patientId={row.id}
           />
-          <PrinterBarcodeButton sx={{ width: "30%" }} patient={row} />
+          <PrinterBarcodeButton sx={{ width: "30%" }} uuid={row.uuid} />
         </>
       ),
       age: calculateAge(row.birthdate),
@@ -129,11 +155,23 @@ export const ClientWaitingForTriage = () => {
   });
 
   return (
-    <PatientTableList
-      formatForMobileView={formatForMobileView}
-      isLoading={isLoading || isRefetching}
+    <PatientTableListServer
       columns={columns}
-      rows={rows ? rows : []}
+      data={{
+        data: rows ?? [],
+        page: paginationModel.page,
+        per_page: paginationModel.pageSize,
+        total_pages: totalPages,
+      }}
+      searchText={inputText}
+      setSearchString={setInputText}
+      setPaginationModel={setPaginationModel}
+      paginationModel={paginationModel}
+      // loading={isPending || isRefetching}
+      loading={loading}
+      formatForMobileView={formatForMobileView ? formatForMobileView : []}
+      onSwitchChange={setOnSwitch}
+      onRowClick={(row: any) => navigateTo(`/triage/${row.id}/start`)}
     />
   );
 };

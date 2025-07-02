@@ -1,18 +1,18 @@
-import { extractTimes } from "@/helpers/dateTime";
-import { useVitalsGraphData } from "@/hooks";
+import { extractDateTime } from "@/helpers/dateTime";
 import { LineChart } from "./lineChart";
+import { getObsGraphData } from "@/hooks";
 export function O_2Sat() {
-  const { chartData } = useVitalsGraphData();
+  const { values, dateTimes } = getObsGraphData("Blood oxygen saturation");
   return (
     <LineChart
       chartConfig={{
         series: [
           {
             name: "O₂ Sat",
-            data: chartData.O_2SatData,
+            data: values,
           },
         ],
-        xAxisCategories: extractTimes(chartData.xAxisData),
+        xAxisCategories: dateTimes,
         title: "",
         height: 350,
         yAxisMin: 0,

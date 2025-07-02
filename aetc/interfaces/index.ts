@@ -6,6 +6,7 @@ export interface Set {
   names: Name[];
 }
 export interface Name {
+  locale: string;
   concept_id: number;
   name: string;
   uuid: string;
@@ -28,6 +29,7 @@ export interface Address {
   countyDistrict?: string;
   county_district?: string;
   cityVillage?: string;
+  city_village?: string;
   country?: string;
   postalCode?: string;
   preferred?: boolean;
@@ -59,6 +61,7 @@ export interface Patient {
 }
 
 export interface Person {
+  latest_encounter_type: string;
   patient_id: number;
   identifiers: Identifier[];
   given_name: string;
@@ -77,13 +80,14 @@ export interface Person {
     given_name: string;
     family_name: string;
   }>;
+  active_visit?: ActiveVisit 
 }
 
 export interface DailyVisitPaginated {
   page: number;
   total_pages: number;
   per_page: number;
-  data: Person[];
+  data: any[];
 }
 
 export interface PaginationModel {
@@ -99,6 +103,7 @@ interface EncounterType {
   name: string;
   description: string;
   uuid: string;
+
 }
 
 export interface Obs {
@@ -126,9 +131,9 @@ export interface Obs {
   value_coded_uuid: any;
   names: Name[];
   created_by: string;
-  children: Obs[]
+  children: Obs[];
   groupMembers: Obs[];
-  coded?:boolean
+  coded?: boolean;
 }
 
 export interface Encounter {
@@ -141,6 +146,8 @@ export interface Encounter {
   uuid: string;
   obs: Obs[];
   created_by: string;
+  person_uuid?: string;
+  visit: Visit
 }
 
 export interface Visit {
@@ -193,9 +200,9 @@ export type TriageResult = "" | "yellow" | "red" | "green";
 export type DDESearch = {
   locals: Person[] | Patient[];
   remotes:
-  | Person[]
-  | Patient[]
-  | Array<{ patient_identifiers: Array<any>; person: Person }>;
+    | Person[]
+    | Patient[]
+    | Array<{ patient_identifiers: Array<any>; person: Person }>;
 };
 
 export type DDEScore = {
@@ -319,7 +326,6 @@ export interface ActiveVisit {
   date_stopped: Date;
 }
 
-
 export interface Drugs {
   drug_id: number;
   concept_id: number;
@@ -345,19 +351,23 @@ export interface LabFormProps {
   addRequest: (value: LabRequest) => void;
 }
 
-export interface FormValueLabel {
-  section: string,
-  formValues: Array<{
-    label: string | undefined,
-    value: string | undefined
-  }>
+export interface BedsideFormProps {
+  onClose: () => void;
+  addRequest: (value: LabRequest) => void;
 }
 
+export interface FormValueLabel {
+  section: string;
+  formValues: Array<{
+    label: string | undefined;
+    value: string | undefined;
+  }>;
+}
 
 export interface Printer {
   id: number;
   name: string;
-  ip_address: string
+  ip_address: string;
 }
 
 export interface DeathReport {

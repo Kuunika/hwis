@@ -4,10 +4,8 @@ import { FormValuesListener, FormikInit } from "@/components";
 import * as yup from "yup";
 import { concepts } from "@/constants";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
-import { getPatientsEncounters } from "@/hooks/encounter";
-import { useParameters } from "@/hooks";
-import AllergiesPanel from "../../medicalInpatient/components/allergies";
-import { getConceptSet } from "@/hooks/getConceptSet";
+import AllergiesPanel from "../../medicalInpatient-/components/allergies";
+import { useAllergyFormat } from "@/hooks/useAllergyFormat";
 
 interface Observation {
   obs_id: number | null;
@@ -27,6 +25,7 @@ interface ProcessedObservation {
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  onPrevious: () => void;
 };
 
 type Allergy = {
@@ -62,8 +61,7 @@ const allergiesFormConfig = {
   },
 };
 
-export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
-  const { params } = useParameters();
+export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const [formValues, setFormValues] = useState<any>({});
   const [allergySelected, setAllergySelected] = useState<Allergy[]>([]);
   const [showFoodOther, setShowFoodOther] = useState<boolean | null>(null);
@@ -76,88 +74,17 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
   const [showSubstanceOther, setShowSubstanceOther] = useState<boolean | null>(
     null
   );
-  const { data, isLoading } = getPatientsEncounters(params?.id as string);
-  const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-  const { data: allergenCats } = getConceptSet("Allergen Category");
-  const { data: medicationAllergens } = getConceptSet("Medication Allergens");
-  const { data: medicalSubstanceAllergens } = getConceptSet(
-    "Medical Substance Allergens"
-  );
-  const { data: substanceAllergens } = getConceptSet("Substance Allergens");
-  const { data: foodAllergens } = getConceptSet("Food Allergens");
-  const [allergyOptions, setAllergyOptions] = useState<any[]>([]);
-  const allergiesEncounters = data?.filter(
-    (item) => item.encounter_type?.name === "Allergies"
-  );
+
+  const {
+    foodAllergens,
+    medicalSubstanceAllergens,
+    medicationAllergens,
+    substanceAllergens,
+    allergyOptions,
+    allergenCats,
+  } = useAllergyFormat();
 
   useEffect(() => {
-    let medicationOptions: { value: string; label: string }[] = [];
-    let foodOptions: { value: string; label: string }[] = [];
-    let substanceOptions: { value: string; label: string }[] = [];
-    let medicalSubstanceOptions: { value: string; label: string }[] = [];
-
-    if (
-      medicationAllergens &&
-      foodAllergens &&
-      substanceAllergens &&
-      medicalSubstanceAllergens
-    ) {
-      foodOptions = foodAllergens.map(
-        ({ name, uuid }: { name: string; uuid: string }) => ({
-          value: uuid,
-          label: name,
-        })
-      );
-
-      substanceOptions = substanceAllergens.map(
-        ({ name, uuid }: { name: string; uuid: string }) => ({
-          value: uuid,
-          label: name,
-        })
-      );
-
-      medicalSubstanceOptions = medicalSubstanceAllergens.map(
-        ({ name, uuid }: { name: string; uuid: string }) => ({
-          value: uuid,
-          label: name,
-        })
-      );
-
-      medicationOptions = medicationAllergens.map(
-        ({ name, uuid }: { name: string; uuid: string }) => ({
-          value: uuid,
-          label: name,
-        })
-      );
-    }
-
-    if (allergenCats) {
-      const allergyOptions = [
-        {
-          label: allergenCats[0].name,
-          value: allergenCats[0].uuid,
-          options: medicationOptions,
-        },
-        {
-          label: allergenCats[1].name,
-          value: allergenCats[1].uuid,
-          options: medicalSubstanceOptions,
-        },
-        {
-          label: allergenCats[2].name,
-          value: allergenCats[2].uuid,
-          options: substanceOptions,
-        },
-        {
-          label: allergenCats[3].name,
-          value: allergenCats[3].uuid,
-          options: foodOptions,
-        },
-      ];
-
-      setAllergyOptions(allergyOptions);
-    }
-
     if (allergySelected.length > 0) {
       setShowFoodOther(
         allergySelected.some(
@@ -212,7 +139,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherFoodAllergy = flatAllergies.some(
-          (allergy: any) => allergy.value === allergiesFormConfig.otherFood.name
+          (allergy: any) => allergy.label === concepts.OTHER_FOOD_ALLERGEN
         );
 
         return hasOtherFoodAllergy
@@ -227,7 +154,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherMedicationAllergy = flatAllergies.some(
-          (allergy: any) => allergy.value === concepts.OTHER_MEDICATION_ALLERGY
+          (allergy: any) => allergy.label === concepts.OTHER_MEDICATION_ALLERGEN
         );
 
         return hasOtherMedicationAllergy
@@ -241,7 +168,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherMedicalSubstanceAllergy = flatAllergies.some(
           (allergy: any) =>
-            allergy.value === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGY
+            allergy.label === concepts.OTHER_MEDICAL_SUBSTANCE_ALLERGEN
         );
 
         return hasOtherMedicalSubstanceAllergy
@@ -256,7 +183,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       .when(allergiesFormConfig.allergy.name, (allergies, schema) => {
         const flatAllergies = allergies?.flat() || [];
         const hasOtherSubstanceAllergy = flatAllergies.some(
-          (allergy: any) => allergy.value === concepts.OTHER_SUBSTANCE_ALLERGY
+          (allergy: any) => allergy.label === concepts.OTHER_SUBSTANCE_ALLERGEN
         );
 
         return hasOtherSubstanceAllergy
@@ -275,6 +202,7 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
   };
 
   const handleSubmit = async () => {
+  
     await schema.validate(formValues);
 
     const allergyListKey = concepts.ALLERGY;
@@ -301,10 +229,15 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
       }
     });
 
+    
     onSubmit(formValues);
   };
 
-  useEffect(() => {}, [allergySelected]);
+  useEffect(() => {
+      const isNone = allergySelected.find((allergy: any) => allergy.value === "None");
+      
+      if(isNone) onSkip();
+  }, [allergySelected]);
 
   return (
     <>
@@ -414,11 +347,11 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
             variant="secondary"
             title="Previous"
             type="button"
-            onClick={onSkip}
+            onClick={onPrevious}
             sx={{ flex: 1, marginRight: "8px" }}
           />
           <MainButton
-            onClick={handleSubmit}
+            onClick={() => {}}
             variant="primary"
             title="Next"
             type="submit"

@@ -16,12 +16,13 @@ import { concepts, encounters } from "@/constants";
 import { flattenImagesObs } from "@/helpers";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
-import { HeadLeftImage } from "@/components/svgImages/headLeft";
-import { HeadRightImage } from "@/components/svgImages/headRight";
-import { HeadBackImage } from "@/components/svgImages/headBack";
+
 import { HeadNeckLeftFemaleImage } from "@/components/svgImages/headNeckLeftFemale";
 import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFemale";
 import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
+import { getDateTime } from "@/helpers/dateTime";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 type Props = {
   onSubmit: () => void;
@@ -45,6 +46,7 @@ const initialValues = {
   rashDescription: "",
 };
 export const HeadAndNeck = ({ onSubmit }: Props) => {
+   const {ServerTime}=useServerTime();
   const [headNeckImageEncounter, setHeadNeckImageEncounter] = useState<
     Array<any>
   >([]);
@@ -57,6 +59,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     Array<any>
   >([]);
   const { gender } = getActivePatientDetails();
+  const [isChecked, setIsChecked] = useState(false);
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.HEAD_AND_NECK_ASSESSMENT,
@@ -64,30 +67,37 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   );
 
   const handleSubmitForm = async (values: any) => {
+    const obsDatetime = ServerTime.getServerTimeString();
+
     const obs = [
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(headNeckImageEncounter),
-        value: "Front",
+        value: "anterior",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(leftHeadNeckImageEncounter),
-        value: "Left",
+        value: "left lateral",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(rightHeadNeckImageEncounter),
-        value: "Right",
+        value: "right lateral",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
-        obsDatetime: new Date(),
+        obsDatetime,
         groupMembers: flattenImagesObs(backHeadNeckImageEncounter),
-        value: "Back",
+        value: "posterior",
+      },
+      {
+        concept: concepts.NOTES,
+        value: isChecked ? "Normal" : "Abnormalities",
+        obsDatetime,
       },
     ];
 
@@ -97,7 +107,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
   const slides = [
     {
       id: 1,
-      label: "Left",
+      label: "Left Lateral",
       content: (
         <>
           {/* <HeadLeftImage onValueChange={setLeftHeadNeckImageEncounter} /> */}
@@ -114,7 +124,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     },
     {
       id: 2,
-      label: "Front",
+      label: "Anterior",
       content: (
         <>
           {/* <HeadNeckImage onValueChange={setHeadNeckImageEncounter} /> */}
@@ -135,7 +145,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     },
     {
       id: 3,
-      label: "Right",
+      label: "Right Lateral",
       content: (
         <>
           {/* <HeadRightImage onValueChange={setRightHeadNeckImageEncounter} /> */}
@@ -159,7 +169,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
     },
     {
       id: 4,
-      label: "Back",
+      label: "Posterior",
       content: (
         <>
           {/* <HeadBackImage onValueChange={setBackHeadNeckImageEncounter} /> */}
@@ -177,7 +187,19 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
         onSubmit={handleSubmitForm}
         submitButtonText="Next"
       >
-        <ComponentSlider slides={slides} />
+        <FormControlLabel
+          label="Tick if the Head and Neck is normal and there are no abnormalities"
+          control={
+            <Checkbox
+              checked={isChecked}
+              onChange={(event) => {
+                setIsChecked(event.currentTarget.checked);
+              }}
+            />
+          }
+        />
+        <br />
+        {!isChecked && <ComponentSlider slides={slides} />}
       </FormikInit>
     </ContainerLoaderOverlay>
   );

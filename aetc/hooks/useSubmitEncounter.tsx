@@ -3,11 +3,15 @@ import { addEncounter, fetchConceptAndCreateEncounter } from "./encounter";
 import { useParameters } from "./navigation";
 import { getPatientVisitTypes } from "./patientReg";
 import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 export const useSubmitEncounter = (
   encounterType: string,
-  onDataSubmitComplete: () => void
+  onDataSubmitComplete: () => void,
+  patientuuid?: string,
+  visitId?: string
 ) => {
+  const {ServerTime}=useServerTime()
   const { mutate, isSuccess, isPending, data } =
     fetchConceptAndCreateEncounter();
   const { params } = useParameters();
@@ -17,12 +21,13 @@ export const useSubmitEncounter = (
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
   const handleSubmit = async (obs: Array<any>) => {
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString();
+
 
     await mutate({
       encounterType,
-      visit: activeVisit?.uuid,
-      patient: params.id,
+      patient: patientuuid ? patientuuid : params.id,
+      visit: visitId ? visitId : activeVisit?.uuid,
       encounterDatetime: dateTime,
       obs,
     });

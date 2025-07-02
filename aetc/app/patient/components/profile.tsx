@@ -1,231 +1,62 @@
 "use client";
-import { MainGrid, WrapperBox } from "@/components";
-import { ConsultationCard, PersonalDetailsCard } from ".";
+import { MainGrid } from "@/components";
+import { PersonalDetailsCard } from ".";
 
 import React from "react";
-
-import Image from "next/image";
-
 import { VitalsPanel } from "./panels/vitalsDetails";
 
-import { checkPatientIfOnWaitingAssessment, useParameters } from "@/hooks";
-
-import FlowStarter from "./flowStarter";
-
-import { ConsultationContext, ConsultationContextType } from "@/contexts";
-
 import { TabsContainer } from "./tabsContainer";
-import { Charts } from "./charts";
+
+import { ListVisitDates } from "./listVisitDates";
+import { VisitDatesProvider } from "@/contexts/visitDatesContext";
+import { Box, Typography } from "@mui/material";
+import { getActivePatientDetails } from "@/hooks";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
 
 export const DesktopView = () => {
-  const { params } = useParameters();
-  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
-
-  const { setActiveStep } = React.useContext(
-    ConsultationContext
-  ) as ConsultationContextType;
+  const { hasActiveVisit, recentVisitCloseDateTime } =
+    getActivePatientDetails();
 
   return (
-    <MainGrid
-      container
-      style={{ justifyContent: "center", marginTop: "10px", gap: "10px" }}
-    >
-      <MainGrid item lg={2} sm={2}>
-        <PersonalDetailsCard />
-        <WrapperBox sx={{ my: "1ch" }}>
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Assessments"
-            links={[
-              {
-                title: "Primary Assessment",
-                link: `/patient/${params.id}/primary-assessment`,
-              },
-            ]}
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Sample History"
-            links={[
-              {
-                title: "Sample History",
-                link: `/patient/${params.id}/medicalHistory`,
-              },
-            ]}
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Assessments"
-            links={[
-              {
-                title: "Secondary Assessment",
-                link: `/patient/${params.id}/secondary-assessment`,
-              },
-            ]}
-          />
-          <ConsultationCard
-            disabled={!isOnList}
-            onClick={setActiveStep}
-            links={[
-              {
-                id: 0,
-                title: "Differential Diagnosis",
-                link: `/patient/${params.id}/consultation`,
-              },
-              {
-                id: 1,
-                title: "Investigations",
-                link: `/patient/${params.id}/consultation`,
-              },
-              {
-                id: 2,
-                title: "Final Diagnosis",
-                link: `/patient/${params.id}/consultation`,
-              },
-              // {
-              //   id: 3,
-              //   title: "Medication",
-              //   link: `/patient/${params.id}/consultation`,
-              // },
-            ]}
-            title="Consultation"
-          />
-          {/* New Button */}
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Patient Management Plan"
-            links={[
-              {
-                title: "Patient Management Plan",
-                link: `/patient/${params.id}/patient-management-plan`,
-              },
-            ]}
-          />
-
-          {/* New Button */}
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Disposition"
-            links={[
-              {
-                title: "Disposition",
-                link: `/patient/${params.id}/disposition`,
-              },
-            ]}
-          />
-
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Disposition"
-            links={[
-              {
-                title: "Nursing Care Notes (SOAP)",
-                link: `/patient/${params.id}/soap`,
-              },
-            ]}
-          />
-
-          <ConsultationCard
-            disabled={!isOnList}
-            title="Template Forms"
-            links={[
-              {
-                title: "Medical Inpatient",
-                link: `/patient/${params.id}/medicalInpatient`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src={"/icons/medicalInpatient.svg"}
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Surgical Notes",
-                // link: `/patient/${params.id}/surgicalNotes`,
-                link: `/patient/${params.id}/template-forms`,
-
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/surgicalnotes.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Gynacological",
-                link: `/patient/${params.id}/gynacological`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/gynacology.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Monitoring Chart",
-                link: `/patient/${params.id}/nursingChart`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/monitoring.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Referral",
-                link: `/patient/${params.id}/referral`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/referral.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Trauma Specialty Review",
-                link: `/patient/${params.id}/trauma-specialty-review`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/surgicalnotes.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-              {
-                title: "Orthopaedic Specialty Review",
-                link: `/patient/${params.id}/orthopaedic-specialty-review`,
-                icon: (
-                  <Image
-                    width={20}
-                    height={20}
-                    src="/icons/surgicalnotes.svg"
-                    alt="AETC Form icon"
-                  />
-                ),
-              },
-            ]}
-          />
-        </WrapperBox>
-        {/* <BasicAccordion /> */}
+    <VisitDatesProvider>
+      {!hasActiveVisit && (
+        <Box
+          sx={{
+            width: "100%",
+            backgroundColor: "#FF2400",
+            textAlign: "center",
+            color: "white",
+            padding: "10px",
+          }}
+        >
+          <Typography>
+            This patient doesnt have an active visit.{" "}
+            {recentVisitCloseDateTime
+              ? `The most recent visit was closed on ${getHumanReadableDateTime(recentVisitCloseDateTime)}`
+              : null}{" "}
+          </Typography>
+        </Box>
+      )}
+      <MainGrid
+        container
+        style={{
+          justifyContent: "center",
+          marginTop: "15px",
+          gap: "15px",
+          margin: "5px",
+          width: "unset",
+        }}
+      >
+        <MainGrid item lg={2.2} sm={12}>
+          <PersonalDetailsCard />
+          <br />
+          <ListVisitDates />
+        </MainGrid>
+        <MainGrid item lg={8.5} sm={12} style={{ minWidth: "300px" }}>
+          <VitalsPanel />
+          <TabsContainer />
+        </MainGrid>
       </MainGrid>
-      <MainGrid item lg={9} sm={9}>
-        <VitalsPanel />
-        {/* <Charts /> */}
-        <TabsContainer />
-      </MainGrid>
-      <FlowStarter patient={params} />
-    </MainGrid>
+    </VisitDatesProvider>
   );
 };

@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
 import * as Yup from "yup";
 import { useFormikContext } from "formik";
 import Checkbox from "@mui/material/Checkbox";
@@ -23,21 +23,19 @@ import {
 } from "./common";
 import { concepts } from "@/constants";
 import { countries } from "@/constants/contries";
-import { getInitialValues } from "@/helpers";
+import { debounceFn, getInitialValues } from "@/helpers";
 import { useParameters } from "@/hooks";
 import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
 } from "@/contexts";
-import {
-  getDistricts,
-  getTraditionalAuthorities,
-  getVillages,
-} from "@/hooks/loadStatic";
+
 import { LocationContext, LocationContextType } from "@/contexts/location";
 import { getPatientRelationships } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { estimateBirthdate } from "@/helpers/dateTime";
+import { ShowUnderAgeDialog } from "./showUnderAgeDialog";
+import dayjs from "dayjs";
 
 const form = {
   identificationNumber: {
@@ -142,6 +140,20 @@ const form = {
     label: "Estimated Age",
   },
 };
+
+const calculateAge = (value: any) => {
+  const selectedDate = new Date(value);
+  const today = new Date();
+  let age = today.getFullYear() - selectedDate.getFullYear();
+  const monthDiff = today.getMonth() - selectedDate.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < selectedDate.getDate())
+  ) {
+    age--;
+  }
+  return age;
+};
 const phoneRegex =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const schema = Yup.object().shape({
@@ -165,17 +177,9 @@ const schema = Yup.object().shape({
       function (value) {
         if (!value) return true;
 
-        const selectedDate = new Date(value);
-        const today = new Date();
-        let age = today.getFullYear() - selectedDate.getFullYear();
-        const monthDiff = today.getMonth() - selectedDate.getMonth();
-        if (
-          monthDiff < 0 ||
-          (monthDiff === 0 && today.getDate() < selectedDate.getDate())
-        ) {
-          age--;
-        }
-        return age >= 14 && age >= 0;
+        const age = calculateAge(value);
+
+        return age >= 0;
       }
     ),
 
@@ -210,7 +214,10 @@ const schema = Yup.object().shape({
   ),
 
   [form.homeDistrict.name]: Yup.string()
-    .required()
+    .when(form.nationality.name, {
+      is: (value: string) => value == "Malawian",
+      then: () => Yup.string().required(),
+    })
     .label(form.homeDistrict.label),
   [form.homeTraditionalAuthority.name]: Yup.string()
     .when(form.nationality.name, {
@@ -295,6 +302,7 @@ export const DemographicsForm: FC<Prop> = ({
   setContext,
 }) => {
   const [guardianAvailable, setGuardianAvailable] = useState("");
+  const [showUnderAge, setShowUnderAge] = useState(false);
 
   const {
     initialRegisteredPatient,
@@ -498,6 +506,7 @@ export const DemographicsForm: FC<Prop> = ({
           [form.gender.name]: searchedPatient.gender == "M" ? "Male" : "Female",
           ...nextOfKinInitialValues,
           [form.birthDateEstimated.name]: false,
+          [form.dob.name]: null,
         }}
         onSubmit={onSubmit}
         submitButtonText="next"
@@ -556,6 +565,11 @@ export const DemographicsForm: FC<Prop> = ({
             name={form.age.name}
             id={form.age.name}
             label={form.age.label}
+            handleBlurEvent={(value: any) => {
+              if (value && Number(value) < 14) {
+                setShowUnderAge(true);
+              }
+            }}
           />
 
           {formValues[form.age.name] > 0 &&
@@ -584,6 +598,19 @@ export const DemographicsForm: FC<Prop> = ({
             width={"100%"}
             label={form.dob.label}
             name={form.dob.name}
+            onBlur={(value) => {
+              const isToday = dayjs().isSame(dayjs(value), "day");
+              const isValid = value && value.trim?.() !== "";
+
+              if (!isValid || isToday) return; // 🛑 Ignore today's date or invalid
+
+              const age = calculateAge(value);
+              console.log({ value, age });
+
+              if (age < 14) {
+                setShowUnderAge(true);
+              }
+            }}
           />
 
           {/* <ErrorMessage
@@ -616,6 +643,10 @@ export const DemographicsForm: FC<Prop> = ({
           />
           <SearchComboBox
             name={form.homeDistrict.name}
+            sx={{
+              display:
+                nationality.toLowerCase() == "malawian" ? "block" : "none",
+            }}
             label={form.homeDistrict.label}
             multiple={false}
             getValue={(value) => {
@@ -697,12 +728,16 @@ export const DemographicsForm: FC<Prop> = ({
 
         <RegistrationCard>
           <RegistrationCardTitle>Current Location</RegistrationCardTitle>
-          <WrapperBox>
-            <FormControlLabel
-              control={<Checkbox checked={checked} onChange={handleChecked} />}
-              label="same as home location"
-            />
-          </WrapperBox>
+          {formValues[form.nationality.name] == "Malawian" && (
+            <WrapperBox>
+              <FormControlLabel
+                control={
+                  <Checkbox checked={checked} onChange={handleChecked} />
+                }
+                label="same as home location"
+              />
+            </WrapperBox>
+          )}
           <SearchComboBox
             name={form.currentDistrict.name}
             label={form.currentDistrict.label}
@@ -863,6 +898,10 @@ export const DemographicsForm: FC<Prop> = ({
           <OverlayLoader open={isRefetching} />
         </RegistrationCard>
       </FormikInit>
+      <ShowUnderAgeDialog
+        onClose={() => setShowUnderAge(false)}
+        open={showUnderAge}
+      />
     </>
   );
 };

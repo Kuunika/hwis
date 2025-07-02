@@ -4,7 +4,7 @@ import {
   NotificationContainer,
 } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -17,20 +17,12 @@ import {
 import * as Yup from "yup";
 
 import {
-  LungImage,
-  LungBackImage,
-  LungRightSideImage,
-  LungLeftSideImage,
-  ChestLung,
-} from "@/components/svgImages";
-import {
   flattenImagesObs,
   getInitialValues,
   getObservations,
   mapSubmissionToCodedArray,
 } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
@@ -42,6 +34,8 @@ import { LungLeftFemaleImage } from "@/components/svgImages/LungLeftFemale";
 import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
+import { CheckBoxNext } from "@/components/form/checkBoxNext";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   isPatientBreathing: {
@@ -147,6 +141,8 @@ const schema = Yup.object().shape({
     form.deviceForIntervention.label
   ),
   [form.respiratoryRate.name]: Yup.number()
+    .min(0)
+    .max(90)
     .when(form.isPatientBreathing.name, (values: any, schema: any) => {
       if (values[0] == concepts.YES) {
         return schema.required();
@@ -157,6 +153,8 @@ const schema = Yup.object().shape({
     .min(1)
     .max(70),
   [form.oxygenSaturation.name]: Yup.number()
+    .min(20)
+    .max(100)
     .when(form.isPatientBreathing.name, (values: any, schema: any) => {
       if (values[0] == concepts.YES) {
         return schema.required();
@@ -275,6 +273,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
+  const {ServerTime}=useServerTime()
   const { gender } = getActivePatientDetails();
   const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
     Array<any>
@@ -289,6 +288,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     encounters.BREATHING_ASSESSMENT,
     onSubmit
   );
+  const [isChecked, setIsChecked] = useState(false);
 
   const [lungLeft, setLungLeft] = useState<Array<any>>([]);
   const [lungRight, setLungRight] = useState<Array<any>>([]);
@@ -298,18 +298,20 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
+  const obsDatetime = ServerTime.getServerTimeString();
+
     const obs = [
       {
         concept: form.chestWallAbnormality.name,
         value: formValues[form.chestWallAbnormality.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         coded: true,
         groupMembers: flattenImagesObs(chestAbnormalitiesImage),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
-        obsDatetime: getDateTime(),
+        obsDatetime,
         coded: true,
         groupMembers: flattenImagesObs(percussionImage),
       },
@@ -317,39 +319,39 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
         coded: true,
-        obsDatetime: getDateTime(),
+        obsDatetime,
         groupMembers: flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: concepts.SITE,
-        value: "Lung Left",
-        obsDatetime: getDateTime(),
+        value: "Lung Lateral Left",
+        obsDatetime,
         groupMembers: flattenImagesObs(lungLeft),
       },
       {
         concept: concepts.SITE,
-        value: "Lung Right",
-        obsDatetime: getDateTime(),
+        value: "Lung Lateral Right",
+        obsDatetime,
         groupMembers: flattenImagesObs(lungRight),
       },
       {
         concept: concepts.SITE,
-        value: "Lung Front",
-        obsDatetime: getDateTime(),
+        value: "Lung Anterior",
+        obsDatetime,
         groupMembers: flattenImagesObs(lungFront),
       },
       {
         concept: concepts.SITE,
-        value: "Lung Back",
-        obsDatetime: getDateTime(),
+        value: "Lung Posterior",
+        obsDatetime,
         groupMembers: flattenImagesObs(lungBack),
       },
-      {
-        concept: concepts.SITE,
-        value: "Lung Front",
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(lungFront),
-      },
+      // {
+      //   concept: concepts.SITE,
+      //   value: "Lung Front",
+      //   obsDatetime,
+      //   groupMembers: flattenImagesObs(lungFront),
+      // },
     ];
 
     const devices = formValues[form.deviceForIntervention.name];
@@ -360,7 +362,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.deviceForIntervention.name,
           value: device.id,
-          obsDateTime: getDateTime(),
+          obsDatetime,
           coded: true,
         };
       });
@@ -372,7 +374,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.chestExpansion.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues),
+      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
       ...obs,
       ...devicesObs,
     ]);
@@ -381,7 +383,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const breathSoundsSlides = [
     {
       id: 1,
-      label: "Lung Left",
+      label: "Lung Lateral Left",
       content:
         gender == "Female" ? (
           <LungLeftFemaleImage onValueChange={setLungLeft} />
@@ -391,7 +393,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     },
     {
       id: 2,
-      label: "Lung Right",
+      label: "Lung lateral right",
       content:
         gender == "Female" ? (
           <LungRightFemaleImage onValueChange={setLungRight} />
@@ -401,7 +403,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     },
     {
       id: 3,
-      label: "Lung Front",
+      label: "Lung Anterior",
       content:
         gender == "Female" ? (
           <LungFrontFemaleImage
@@ -417,293 +419,304 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     },
     {
       id: 4,
-      label: "Lung Back",
+      label: "Lung Posterior",
       content:
         gender == "Female" ? (
           <LungBackFemaleImage
-            onValueChange={setLungFront}
+            onValueChange={setLungBack}
             form="breathSounds"
           />
         ) : (
-          <LungBackMaleImage onValueChange={setLungFront} form="breathSounds" />
+          <LungBackMaleImage onValueChange={setLungBack} form="breathSounds" />
         ),
     },
   ];
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <FormikInit
-        validationSchema={schema}
-        initialValues={initialsValues}
-        onSubmit={handleSubmitForm}
-      >
-        <FormValuesListener getValues={setFormValues} />
+      <CheckBoxNext
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
+        onNext={(obs: any) => handleSubmit(obs)}
+        title="Tick if breathing is normal and there are no abnormalities"
+      />
+      {!isChecked && (
+        <FormikInit
+          validationSchema={schema}
+          initialValues={initialsValues}
+          onSubmit={handleSubmitForm}
+          submitButtonText="Next"
+        >
+          <FormValuesListener getValues={setFormValues} />
 
-        <FormFieldContainerLayout title="Breathing">
-          <FieldsContainer>
-            <RadioGroupInput
-              row
-              name={form.isPatientBreathing.name}
-              label={form.isPatientBreathing.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-        </FormFieldContainerLayout>
-
-        {formValues[form.isPatientBreathing.name] == NO && (
-          <FormFieldContainerLayout title="">
-            <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
-
-            <FieldsContainer mr="1ch">
-              {/* <FormDatePicker  /> */}
-              <FormTimePicker
-                sx={{ width: "100%", my: "1ch" }}
-                name={form.startTimeIntervention.name}
-                label={form.startTimeIntervention.label}
-                // id={form.startTimeIntervention.name}
-              />
-              <FormTimePicker
-                sx={{ width: "100%", my: "1ch" }}
-                name={form.finishTimeIntervention.name}
-                label={form.finishTimeIntervention.label}
-                // id={form.finishTimeIntervention.name}
+          <FormFieldContainerLayout title="Breathing">
+            <FieldsContainer>
+              <RadioGroupInput
+                row
+                name={form.isPatientBreathing.name}
+                label={form.isPatientBreathing.label}
+                options={radioOptions}
               />
             </FieldsContainer>
-
-            <SearchComboBox
-              name={form.deviceForIntervention.name}
-              label={form.deviceForIntervention.label}
-              sx={{ width: "100%" }}
-              options={[
-                { label: "Bag and mask", id: concepts.BAG_AND_MASK },
-                {
-                  label: "Laryngeal Mask Airway and bag",
-                  id: concepts.LARYNGEAL_MASK_AIRWAY_AND_BAG,
-                },
-                {
-                  label: "Endotracheal tube (ETT)",
-                  id: concepts.ENDOTRACHEAL,
-                },
-              ]}
-            />
           </FormFieldContainerLayout>
-        )}
 
-        {formValues[form.isPatientBreathing.name] == YES && (
-          <>
-            <FormFieldContainerLayout title="Respiratory and Oxygen">
+          {formValues[form.isPatientBreathing.name] == NO && (
+            <FormFieldContainerLayout title="">
+              <NotificationContainer message="Assist with ventilation, Manually assist patient breathing" />
+
               <FieldsContainer mr="1ch">
-                <TextInputField
-                  sx={{ width: "100%" }}
-                  unitOfMeasure="bpm"
-                  name={form.respiratoryRate.name}
-                  label={form.respiratoryRate.label}
-                  id={form.respiratoryRate.name}
+                {/* <FormDatePicker  /> */}
+                <FormTimePicker
+                  sx={{ width: "100%", my: "1ch" }}
+                  name={form.startTimeIntervention.name}
+                  label={form.startTimeIntervention.label}
+                  // id={form.startTimeIntervention.name}
                 />
-                <TextInputField
-                  sx={{ width: "100%" }}
-                  unitOfMeasure="%"
-                  name={form.oxygenSaturation.name}
-                  label={form.oxygenSaturation.label}
-                  id={form.oxygenSaturation.name}
+                <FormTimePicker
+                  sx={{ width: "100%", my: "1ch" }}
+                  name={form.finishTimeIntervention.name}
+                  label={form.finishTimeIntervention.label}
+                  // id={form.finishTimeIntervention.name}
                 />
-              </FieldsContainer>
-              <br />
-              <FieldsContainer>
-                <RadioGroupInput
-                  name={form.oxygenNeeded.name}
-                  label={form.oxygenNeeded.label}
-                  options={radioOptions}
-                />
-                {formValues[form.oxygenNeeded.name] == YES && (
-                  <RadioGroupInput
-                    name={form.oxygenSource.name}
-                    label={form.oxygenSource.label}
-                    options={sourceOxygen}
-                  />
-                )}
               </FieldsContainer>
 
-              {formValues[form.oxygenNeeded.name] == YES && (
-                <>
-                  <TextInputField
-                    name={form.oxygenGiven.name}
-                    label={form.oxygenGiven.label}
-                    id={form.oxygenGiven.name}
-                    sx={{ width: "100%", m: 0 }}
-                    unitOfMeasure="L/min"
-                  />
-                  <br />
-                  <br />
-                  <SearchComboBox
-                    name={form.deviceUsed.name}
-                    label={form.deviceUsed.label}
-                    options={deviceUsed}
-                    multiple={false}
-                  />
-                  <br />
-                </>
-              )}
+              <SearchComboBox
+                name={form.deviceForIntervention.name}
+                label={form.deviceForIntervention.label}
+                sx={{ width: "100%" }}
+                options={[
+                  { label: "Bag and mask", id: concepts.BAG_AND_MASK },
+                  {
+                    label: "Laryngeal Mask Airway and bag",
+                    id: concepts.LARYNGEAL_MASK_AIRWAY_AND_BAG,
+                  },
+                  {
+                    label: "Endotracheal tube (ETT)",
+                    id: concepts.ENDOTRACHEAL,
+                  },
+                ]}
+              />
             </FormFieldContainerLayout>
+          )}
 
-            <FormFieldContainerLayout last={true} title="Trachea and Chest">
-              <FieldsContainer>
-                <RadioGroupInput
-                  name={form.isTracheaCentral.name}
-                  label={form.isTracheaCentral.label}
-                  options={radioOptions}
-                />
-                <RadioGroupInput
-                  name={form.chestWallAbnormality.name}
-                  label={form.chestWallAbnormality.label}
-                  options={radioOptions}
-                />
-              </FieldsContainer>
-              {formValues[form.isTracheaCentral.name] == NO && (
-                <FieldsContainer>
-                  <>
-                    <RadioGroupInput
-                      name={form.deviationSide.name}
-                      label={form.deviationSide.label}
-                      options={[
-                        { label: "Left", value: concepts.LEFT },
-                        { label: "Right", value: concepts.RIGHT },
-                      ]}
-                    />
-                  </>
+          {formValues[form.isPatientBreathing.name] == YES && (
+            <>
+              <FormFieldContainerLayout title="Respiratory and Oxygen">
+                <FieldsContainer mr="1ch">
+                  <TextInputField
+                    sx={{ width: "100%" }}
+                    unitOfMeasure="bpm"
+                    name={form.respiratoryRate.name}
+                    label={form.respiratoryRate.label}
+                    id={form.respiratoryRate.name}
+                  />
+                  <TextInputField
+                    sx={{ width: "100%" }}
+                    unitOfMeasure="%"
+                    name={form.oxygenSaturation.name}
+                    label={form.oxygenSaturation.label}
+                    id={form.oxygenSaturation.name}
+                  />
                 </FieldsContainer>
-              )}
-              {formValues[form.chestWallAbnormality.name] == YES && (
-                <>
-                  <br />
-                  <NotificationContainer message="Diagram to select area" />
-
-                  {gender == "Male" && (
-                    <LungFrontMaleImage
-                      imageSection={form.chestWallAbnormality.name}
-                      onValueChange={setChestAbnormalitiesImage}
-                      form="breathingLung"
+                <br />
+                <FieldsContainer>
+                  <RadioGroupInput
+                    name={form.oxygenNeeded.name}
+                    label={form.oxygenNeeded.label}
+                    options={radioOptions}
+                    row
+                  />
+                  {formValues[form.oxygenNeeded.name] == YES && (
+                    <RadioGroupInput
+                      name={form.oxygenSource.name}
+                      label={form.oxygenSource.label}
+                      options={sourceOxygen}
+                      row
                     />
                   )}
-                  {gender == "Female" && (
-                    <LungFrontFemaleImage
-                      imageSection={form.chestWallAbnormality.name}
-                      onValueChange={setChestAbnormalitiesImage}
-                      form="breathingLung"
-                    />
-                  )}
+                </FieldsContainer>
 
-                  <br />
+                {formValues[form.oxygenNeeded.name] == YES && (
+                  <>
+                    <TextInputField
+                      name={form.oxygenGiven.name}
+                      label={form.oxygenGiven.label}
+                      id={form.oxygenGiven.name}
+                      sx={{ width: "100%", m: 0 }}
+                      unitOfMeasure="L/min"
+                    />
+                    <br />
+                    <br />
+                    <SearchComboBox
+                      name={form.deviceUsed.name}
+                      label={form.deviceUsed.label}
+                      options={deviceUsed}
+                      multiple={false}
+                    />
+                    <br />
+                  </>
+                )}
+              </FormFieldContainerLayout>
+
+              <FormFieldContainerLayout last={true} title="Trachea and Chest">
+                <FieldsContainer>
+                  <RadioGroupInput
+                    name={form.isTracheaCentral.name}
+                    label={form.isTracheaCentral.label}
+                    options={radioOptions}
+                    row
+                  />
+                  <RadioGroupInput
+                    name={form.chestWallAbnormality.name}
+                    label={form.chestWallAbnormality.label}
+                    options={radioOptions}
+                    row
+                  />
+                </FieldsContainer>
+                {formValues[form.isTracheaCentral.name] == NO && (
                   <FieldsContainer>
-                    {/* <SearchComboBox
+                    <>
+                      <RadioGroupInput
+                        name={form.deviationSide.name}
+                        label={form.deviationSide.label}
+                        row
+                        options={[
+                          { label: "Left", value: concepts.LEFT },
+                          { label: "Right", value: concepts.RIGHT },
+                        ]}
+                      />
+                    </>
+                  </FieldsContainer>
+                )}
+                {formValues[form.chestWallAbnormality.name] == YES && (
+                  <>
+                    <br />
+                    <NotificationContainer message="Diagram to select area" />
+
+                    {gender == "Male" && (
+                      <LungFrontMaleImage
+                        imageSection={form.chestWallAbnormality.name}
+                        onValueChange={setChestAbnormalitiesImage}
+                        form="breathingLung"
+                      />
+                    )}
+                    {gender == "Female" && (
+                      <LungFrontFemaleImage
+                        imageSection={form.chestWallAbnormality.name}
+                        onValueChange={setChestAbnormalitiesImage}
+                        form="breathingLung"
+                      />
+                    )}
+
+                    <br />
+                    <FieldsContainer>
+                      {/* <SearchComboBox
                     name={form.descriptionAbnormality.name}
                     label={form.descriptionAbnormality.label}
                     options={descriptionOfAbnormality}
                   /> */}
-                    {formValues[form.descriptionAbnormality.name] ==
-                      concepts.OTHER && (
-                      <FieldsContainer>
-                        <TextInputField
-                          multiline
-                          rows={3}
-                          name={form.descriptionAbnormality.name}
-                          label={form.descriptionAbnormality.label}
-                          id={form.descriptionAbnormality.name}
-                        />
-                      </FieldsContainer>
-                    )}
-                  </FieldsContainer>
-                </>
-              )}
-              <br />
-              <FieldsContainer>
+                      {formValues[form.descriptionAbnormality.name] ==
+                        concepts.OTHER && (
+                        <FieldsContainer>
+                          <TextInputField
+                            multiline
+                            rows={3}
+                            name={form.descriptionAbnormality.name}
+                            label={form.descriptionAbnormality.label}
+                            id={form.descriptionAbnormality.name}
+                          />
+                        </FieldsContainer>
+                      )}
+                    </FieldsContainer>
+                  </>
+                )}
+                <br />
+
                 <RadioGroupInput
                   name={form.chestExpansion.name}
                   label={form.chestExpansion.label}
+                  row
                   options={[
                     { label: "Normal", value: concepts.NORMAL },
                     { label: "Reduced", value: concepts.REDUCED },
                   ]}
                 />
+                {formValues[form.chestExpansion.name] == concepts.REDUCED && (
+                  <>
+                    {gender == "Male" && (
+                      <LungFrontMaleImage
+                        onValueChange={setChestExpansionImagesEnc}
+                        form="selectable"
+                      />
+                    )}
+                    {gender == "Female" && (
+                      <LungFrontFemaleImage
+                        imageEncounter={encounters.BREATHING_ASSESSMENT}
+                        onValueChange={setChestExpansionImagesEnc}
+                        form="selectable"
+                      />
+                    )}
+                  </>
+                )}
+                <br />
                 <RadioGroupInput
                   name={form.percussion.name}
                   label={form.percussion.label}
+                  row
                   options={[
                     { label: "Normal", value: concepts.NORMAL },
                     { label: "Abnormal", value: concepts.ABNORMAL },
                   ]}
                 />
-              </FieldsContainer>
-              {formValues[form.chestExpansion.name] == concepts.REDUCED && (
-                <>
-                  {gender == "Male" && (
-                    <LungFrontMaleImage
-                      onValueChange={setChestExpansionImagesEnc}
-                      form="selectable"
-                    />
-                  )}
-                  {gender == "Female" && (
-                    <LungFrontFemaleImage
-                      imageEncounter={encounters.BREATHING_ASSESSMENT}
-                      onValueChange={setChestExpansionImagesEnc}
-                      form="selectable"
-                    />
-                  )}
-                  {/* <ChestLung
-                    onValueChange={setChestExpansionImagesEnc}
-                    imageEncounter={encounters.CHEST_ASSESSMENT}
-                    imageSection={form.chestExpansion.name}
-                    selectable={true}
-                  /> */}
-                </>
-              )}
-              <br />
-              {formValues[form.percussion.name] == concepts.ABNORMAL && (
-                <>
-                  {gender == "Male" && (
-                    <LungBackMaleImage
-                      form="percussion"
-                      onValueChange={setPercussionImage}
-                    />
-                  )}
-                  {gender == "Female" && (
-                    <LungBackFemaleImage
-                      form="percussion"
-                      onValueChange={setPercussionImage}
-                    />
-                  )}
-                </>
-              )}
-              <FieldsContainer>
-                <RadioGroupInput
-                  name={form.breathSounds.name}
-                  label={form.breathSounds.label}
-                  options={[
-                    { label: "Normal", value: concepts.NORMAL },
-                    { label: "Abnormal", value: concepts.ABNORMAL },
-                  ]}
-                />
-              </FieldsContainer>
-              {formValues[form.breathSounds.name] == concepts.ABNORMAL && (
-                <>
-                  <br />
-                  <ComponentSlider slides={breathSoundsSlides} />
-                </>
-              )}
-              <FieldsContainer>
-                <TextInputField
-                  multiline
-                  rows={3}
-                  sx={{ m: 0, width: "100%" }}
-                  name={form.additionalNotes.name}
-                  label={form.additionalNotes.label}
-                  id={form.additionalNotes.name}
-                />
-              </FieldsContainer>
-            </FormFieldContainerLayout>
-          </>
-        )}
-      </FormikInit>
+
+                {formValues[form.percussion.name] == concepts.ABNORMAL && (
+                  <>
+                    {gender == "Male" && (
+                      <LungBackMaleImage
+                        form="percussion"
+                        onValueChange={setPercussionImage}
+                      />
+                    )}
+                    {gender == "Female" && (
+                      <LungBackFemaleImage
+                        form="percussion"
+                        onValueChange={setPercussionImage}
+                      />
+                    )}
+                  </>
+                )}
+                <FieldsContainer>
+                  <RadioGroupInput
+                    name={form.breathSounds.name}
+                    label={form.breathSounds.label}
+                    row
+                    options={[
+                      { label: "Normal", value: concepts.NORMAL },
+                      { label: "Abnormal", value: concepts.ABNORMAL },
+                    ]}
+                  />
+                </FieldsContainer>
+                {formValues[form.breathSounds.name] == concepts.ABNORMAL && (
+                  <>
+                    <br />
+                    <ComponentSlider slides={breathSoundsSlides} />
+                  </>
+                )}
+                <FieldsContainer>
+                  <TextInputField
+                    multiline
+                    rows={3}
+                    sx={{ m: 0, width: "100%" }}
+                    name={form.additionalNotes.name}
+                    label={form.additionalNotes.label}
+                    id={form.additionalNotes.name}
+                  />
+                </FieldsContainer>
+              </FormFieldContainerLayout>
+            </>
+          )}
+        </FormikInit>
+      )}
     </ContainerLoaderOverlay>
   );
 };

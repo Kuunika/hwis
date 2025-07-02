@@ -1,24 +1,30 @@
-import { useParameters } from "./navigation";
-import { getOnePatient, getPatientVisitTypes } from "./patientReg";
+import { usePatientContext } from "@/contexts/activePatientContext";
 
 export const getActivePatientDetails = () => {
-  const { params } = useParameters();
   const {
-    data: patientVisits,
+    activeVisit,
+    patientId,
+    activeVisitId,
     isLoading,
     isSuccess,
-  } = getPatientVisitTypes(params?.id as string);
-  const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
-  const { data: patient, isLoading: patientLoading } = getOnePatient(
-    params?.id as string
-  );
+    patient,
+    hasActiveVisit,
+    recentVisitCloseDateTime,
+    closedVisitId,
+    openClosedVisit,
+  } = usePatientContext();
 
   return {
-    activeVisit: activeVisit?.uuid,
-    patientId: params?.id,
-    activeVisitId: activeVisit?.visit_id,
+    activeVisit,
+    patientId,
+    activeVisitId,
     isLoading,
     isSuccess,
     gender: patient && patient?.gender,
+    patient,
+    hasActiveVisit,
+    recentVisitCloseDateTime,
+    closedVisitId,
+    openClosedVisit,
   };
 };

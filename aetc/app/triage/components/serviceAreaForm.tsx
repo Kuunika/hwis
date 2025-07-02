@@ -1,83 +1,153 @@
-import { SelectInputField, FormikInit, MainButton } from "@/components";
+"use client";
+import {
+  SelectInputField,
+  FormikInit,
+  MainButton,
+  FormValuesListener,
+  TextInputField,
+  FormContainer,
+  FormFieldContainer,
+  SearchComboBox,
+} from "@/components";
 import * as Yup from "yup";
 import { concepts } from "@/constants";
-
 import { getInitialValues } from "@/helpers";
+import { useEffect, useState } from "react";
+import { getConceptSet } from "@/hooks/getConceptSet";
+import { CircularProgress } from "@mui/material";
 
 type Prop = {
   onSubmit: (values: any) => void;
+  triageStatus: string;
 };
 
-const form = {
-  Referred: {
-    name: concepts.PATIENT_REFERRED_TO,
-    label: "Patient Referred to",
-  },
-};
+export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
+  const [formValues, setFormValues] = useState<Record<string, any>>({});
+  const [showOther, setShowOther] = useState(false);
+  const [otherId, setOtherId] = useState<string | null>(null);
+  const [serviceAreaOptions, setServiceAreaOptions] = useState<
+    { label: string; id: string }[]
+  >([]);
+  const [externalAreas, setExternalAreas] = useState<
+    { label: string; id: string }[]
+  >([]);
 
-const schema = Yup.object().shape({
-  [form.Referred.name]: Yup.string().label(form.Referred.label),
-});
+  const { data: serviceAreas, isLoading: serviceAreaLoading } = getConceptSet(
+    concepts.SERVICE_AREAS
+  );
+  const { data: aetcServiceAreas, isLoading: aetcServiceAreaLoading } =
+    getConceptSet(concepts.AETC_SERVICE_AREAS);
 
-const initialValues = getInitialValues(form);
+  const form = {
+    Referred: {
+      name: concepts.CARE_AREA,
+      label: "Patient Referred to",
+    },
+    Other_Area: {
+      name: concepts.OTHER_AETC_SERVICE_AREA,
+      label: "Other Area",
+    },
+  };
 
-const serviceAreas = 
-[
-  { "name": "OPD 1", "value": "OPD 1" },
-  { "name": "STI clinic/Room 4", "value": "STI clinic/Room 4" },
-  { "name": "Dermatology/LEPRA", "value": "Dermatology/LEPRA" },
-  { "name": "Paediatric A&E", "value": "Paediatric A&E" },
-  { "name": "Local health centre", "value": "Local health centre" },
-  { "name": "Physiotherapy", "value": "Physiotherapy" },
-  { "name": "Diabetic clinic", "value": "Diabetic clinic" },
-  { "name": "KS clinic", "value": "KS clinic" },
-  { "name": "Neurology clinic", "value": "Neurology clinic" },
-  { "name": "General medical clinic", "value": "General medical clinic" },
-  { "name": "Haematology clinic", "value": "Haematology clinic" },
-  { "name": "Palliative clinic", "value": "Palliative clinic" },
-  { "name": "Chest clinic", "value": "Chest clinic" },
-  { "name": "Hypertensive clinic", "value": "Hypertensive clinic" },
-  { "name": "Epileptic clinic", "value": "Epileptic clinic" },
-  { "name": "Renal clinic", "value": "Renal clinic" },
-  { "name": "Umodzi/ light house", "value": "Umodzi/ light house" },
-  { "name": "Psychiatry (Room 6)", "value": "Psychiatry (Room 6)" },
-  { "name": "Ophthalmology (Eye)", "value": "Ophthalmology (Eye)" },
-  { "name": "male general surgical", "value": "male general surgical" },
-  { "name": "female general surgical", "value": "female general surgical" },
-  { "name": "Plastic surgery", "value": "Plastic surgery" },
-  { "name": "Breast clinic", "value": "Breast clinic" },
-  { "name": "Orthopaedic specialist clinic", "value": "Orthopaedic specialist clinic" },
-  { "name": "Orthopaedic OPD/Room 8", "value": "Orthopaedic OPD/Room 8" },
-  { "name": "Oncology OPD (4B)", "value": "Oncology OPD (4B)" },
-  { "name": "Oncology Ward(2A)", "value": "Oncology Ward(2A)" },
-  { "name": "Gynae Oncology OPD (4C)", "value": "Gynae Oncology OPD (4C)" },
-  { "name": "Ear Nose and Throat (ENT)", "value": "Ear Nose and Throat (ENT)" },
-  { "name": "Dental", "value": "Dental" },
-  { "name": "General gynecology", "value": "General gynecology" },
-  { "name": "Gynecology oncology", "value": "Gynecology oncology" },
-  { "name": "High risk antenatal", "value": "High risk antenatal" },
-  { "name": "Family planning", "value": "Family planning" },
-  { "name": "VIA", "value": "VIA" }
-];
+  const initialValues = getInitialValues(form);
 
+  useEffect(() => {
+    if (triageStatus && (serviceAreas || aetcServiceAreas)) {
+      const opts = serviceAreas?.map((serviceArea: any) => ({
+        label: serviceArea.name,
+        id: serviceArea.id,
+      }));
 
-export const ServiceAreaForm = ({ onSubmit }: Prop) => {
+      setExternalAreas(opts);
+
+      // AETC SERVICES TO BE INCLUDED WHEN TRIAGE IS GREEN
+      const aectTriageGreenServiceAreas = aetcServiceAreas?.filter(
+        (service: any) =>
+          service.name.toLowerCase() == concepts.GYNAE_BENCH.toLowerCase() ||
+          service.name.toLowerCase() == concepts.SURGICAL_BENCH.toLowerCase() ||
+          service.name.toLowerCase() == concepts.MEDICAL_BENCH.toLowerCase()
+      );
+
+      const selectedList =
+        triageStatus === "yellow"
+          ? aetcServiceAreas
+          : [
+              ...(Array.isArray(aectTriageGreenServiceAreas)
+                ? aectTriageGreenServiceAreas
+                : []),
+              ...(Array.isArray(serviceAreas) ? serviceAreas : []),
+            ];
+
+      if (selectedList) {
+        const options = selectedList.map((serviceArea: any) => ({
+          label: serviceArea.name,
+          id: serviceArea.name,
+        }));
+        setServiceAreaOptions(options);
+        const otherOption = options.find(
+          (option: { id: string; label: string }) => option.label === "Other"
+        );
+        setOtherId(otherOption ? otherOption.id : null);
+      }
+    }
+  }, [triageStatus, serviceAreas, aetcServiceAreas]);
+
+  useEffect(() => {
+    if (formValues && otherId !== null) {
+      const showOther =
+        formValues[form.Referred.name] &&
+        formValues[form.Referred.name] === otherId;
+      setShowOther(showOther);
+      if (!showOther) {
+        setFormValues((prev) => {
+          delete prev[form.Other_Area.name];
+          return prev;
+        });
+      }
+    }
+  }, [formValues, otherId]);
+
+  const schema = Yup.object().shape({
+    [form.Referred.name]: Yup.string()
+      .label(form.Referred.label)
+      .required("This field is required"),
+    [form.Other_Area.name]: Yup.string().when(form.Referred.name, {
+      is: (serviceArea: string) => serviceArea === otherId,
+      then: (schema) => schema.required("This field is required"),
+      otherwise: (schema) => schema.optional(),
+    }),
+  });
+
   return (
-    <FormikInit
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      submitButton={false}
-      submitButtonText="Next"
-    >
-      <SelectInputField
-      id={form.Referred.name}
-        name={form.Referred.name}
-        label={form.Referred.label}
-        selectItems={serviceAreas}
-      />
+    <>
+      {(aetcServiceAreaLoading || serviceAreaLoading) && <CircularProgress />}
+      <FormikInit
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        submitButton={true}
+      >
+        <FormValuesListener getValues={setFormValues} />
+        <FormFieldContainer direction="column">
+          {serviceAreaOptions.length > 0 && (
+            <SearchComboBox
+              name={form.Referred.name}
+              label={form.Referred.label}
+              options={serviceAreaOptions}
+              multiple={false}
+            />
+          )}
 
-      <MainButton sx={{ m: 0.5 }} title="Next" type="submit" onClick={() => { }} />
-    </FormikInit>
+          {showOther && (
+            <SearchComboBox
+              name={form.Other_Area.name}
+              label={form.Other_Area.label}
+              options={externalAreas}
+              multiple={false}
+            />
+          )}
+        </FormFieldContainer>
+      </FormikInit>
+    </>
   );
 };

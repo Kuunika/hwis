@@ -69,6 +69,75 @@ function Home() {
           </AuthGuardComp>
           <AuthGuardComp
             roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.DATA_MANAGER,
+            ]}
+          >
+            <Card
+              icon={<FcTodoList />}
+              link="/initial-registration/list"
+              title="Awaiting Screening List"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN]}
+          >
+            <Card
+              icon={<FcTodoList />}
+              link="/registration/list"
+              title="Awaiting Registration List"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.STUDENT_CLINICIAN,
+            ]}
+          >
+            <Card icon={<FcTodoList />} link="/triage" title="Awaiting Triage List" />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.STUDENT_CLINICIAN,
+            ]}
+          >
+            <Card
+              icon={<FcTodoList />}
+              link="/assessments"
+              title="Assessment List"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.STUDENT_CLINICIAN,
+            ]}
+          >
+            <Card
+              icon={<FcTodoList />}
+              link="/test-results"
+              title="Awaiting Test Results List"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
+            <Card
+              icon={<FcTodoList />}
+              link="/dispositions"
+              title="Awaiting Specialty/Dispositiion"
+            />
+          </AuthGuardComp>
+
+          <AuthGuardComp
+            roles={[
               roles.REGISTRATION_CLERK,
               roles.ADMIN,
               roles.CLINICIAN,
@@ -81,44 +150,11 @@ function Home() {
               title="Brought In Dead"
             />
           </AuthGuardComp>
-          <AuthGuardComp
-            roles={[
-              roles.ADMIN,
-              roles.CLINICIAN,
-              roles.NURSE,
-              roles.DATA_MANAGER,
-            ]}
-          >
-            <Card
-              icon={<FcTodoList />}
-              link="/initial-registration/list"
-              title="Screening List"
-            />
-          </AuthGuardComp>
-          <AuthGuardComp
-            roles={[roles.REGISTRATION_CLERK, roles.ADMIN, roles.CLINICIAN]}
-          >
-            <Card
-              icon={<FcTodoList />}
-              link="/registration/list"
-              title="Registration List"
-            />
-          </AuthGuardComp>
-          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
-            <Card icon={<FcTodoList />} link="/triage" title="Triage List" />
-          </AuthGuardComp>
-          <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
-            <Card
-              icon={<FcTodoList />}
-              link="/assessments"
-              title="Assessment List"
-            />
+          <AuthGuardComp roles={[roles.ADMIN, roles.REGISTRATION_CLERK]}>
+            <Card icon={<FcAreaChart />} link="/reports" title="Reports" />
           </AuthGuardComp>
           <AuthGuardComp roles={[roles.ADMIN, roles.DATA_MANAGER]}>
             <Card icon={<FcSettings />} link="/config" title="Config" />
-          </AuthGuardComp>
-          <AuthGuardComp roles={[roles.ADMIN, roles.REGISTRATION_CLERK]}>
-            <Card icon={<FcAreaChart />} link="/reports" title="Reports" />
           </AuthGuardComp>
         </MainGrid>
         <MainGrid item xs={1} sm={1} md={1} lg={3}></MainGrid>
@@ -189,4 +225,5 @@ export default AuthGuard(Home, [
   roles.CLINICIAN,
   roles.NURSE,
   roles.INITIAL_REGISTRATION_CLERK,
+  roles.STUDENT_CLINICIAN,
 ]);

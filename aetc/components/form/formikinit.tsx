@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { SxProps } from "@mui/material";
 import { Formik, Form } from "formik";
@@ -7,7 +7,9 @@ import { MainButton } from "../buttons";
 
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
-  children: ReactNode | ((props: { values: any; setFieldValue: any }) => ReactNode);
+  children:
+  | ReactNode
+  | ((props: { values: any; setFieldValue: any, submitCount: any }) => ReactNode);
   validationSchema: any;
   initialValues: any;
   width?: string;
@@ -20,6 +22,7 @@ type Prop = {
   submitVariant?: "primary" | "secondary" | "text";
   enableReinitialize?: boolean;
   getFormValues?: (values: any) => void;
+  ref?: any;
 };
 
 export const FormikInit: FC<Prop> = ({
@@ -32,7 +35,8 @@ export const FormikInit: FC<Prop> = ({
   submitVariant = "primary",
   loading,
   enableReinitialize = false,
-  getFormValues = (values) => {}
+  getFormValues = (values) => { },
+  ref,
 }) => {
   return (
     <Formik
@@ -40,11 +44,14 @@ export const FormikInit: FC<Prop> = ({
       onSubmit={onSubmit}
       validationSchema={validationSchema}
       enableReinitialize={enableReinitialize}
+      innerRef={ref}
     >
-      {({ values, setFieldValue }) => (
+      {({ values, setFieldValue, errors, submitCount }) => (
         <Form>
           <ListenToValueChanges getFormValues={getFormValues} values={values} />
-          {typeof children === "function" ? children({ values, setFieldValue }) : children}
+          {typeof children === "function"
+            ? children({ values, setFieldValue, submitCount })
+            : children}
           {submitButton && (
             <MainButton
               sx={{ mt: 3 }}
@@ -57,7 +64,7 @@ export const FormikInit: FC<Prop> = ({
                   submitButtonText
                 )
               }
-              onClick={() => {}}
+              onClick={() => { }}
             />
           )}
         </Form>
@@ -68,7 +75,7 @@ export const FormikInit: FC<Prop> = ({
 
 const ListenToValueChanges = ({
   values,
-  getFormValues
+  getFormValues,
 }: {
   values: any;
   getFormValues: (values: any) => void;

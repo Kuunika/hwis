@@ -19,6 +19,8 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 
 
@@ -44,13 +46,14 @@ const initialValues = {
     // transferNotes: "",
 };
 
-export default function TransferForm() {
+export default function TransferForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
 
 
 
@@ -67,14 +70,14 @@ export default function TransferForm() {
 
 
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {
                 concept: concepts.TRANSFER_TO_ANOTHER_FACILITY,
                 value: concepts.TRANSFER_TO_ANOTHER_FACILITY,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.FACILITY_NAME, value: values.facilityName, obsDatetime: currentDateTime },
                     { concept: concepts.REASON_FOR_TRANSFER, value: values.reason, obsDatetime: currentDateTime },
                     // { concept: concepts.TRANSFER_NOTES, value: values.transferNotes, obsDatetime: currentDateTime },
@@ -83,7 +86,7 @@ export default function TransferForm() {
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -92,25 +95,27 @@ export default function TransferForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Transfer information submitted successfully!");
+            // toast.success("Transfer information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
 
         } catch (error) {
             console.error("Error submitting Transfer information: ", error);
-            toast.error("Failed to submit Transfer information.");
+            // toast.error("Failed to submit Transfer information.");
         }
     };
 
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Transfer Form</h2>
+                    <h2>2. Transfer Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

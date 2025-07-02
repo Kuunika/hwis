@@ -28,12 +28,13 @@ import { FormError } from "@/components/formError";
 import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { BarcodeDialog } from "./components/barcodeScanner";
-import { getDateTime } from "@/helpers/dateTime";
 import { FaBarcode } from "react-icons/fa6";
 import { PatientSearchResultsDialog } from "./components/patientsSearch";
 import { DDESearch } from "@/interfaces";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 function InitialRegistration() {
+  const { init, ServerTime } = useServerTime();
   const [showDialog, setShowDialog] = useState(false);
   const [npid, setNpid] = useState("");
   const { refresh, navigateTo } = useNavigation();
@@ -116,11 +117,13 @@ function InitialRegistration() {
     if (isSuccess) {
       setCompleted(1);
       setMessage("creating visit");
+      const dateTime = ServerTime.getServerTimeString();
+
       const uuid = createdUser?.uuid;
       createVisit({
         patient: uuid,
         visitType: AETC_VISIT_TYPE,
-        startDatetime: new Date().toISOString(),
+        startDatetime: dateTime,
       });
     }
   }, [isPending]);
@@ -140,7 +143,10 @@ function InitialRegistration() {
     setCompleted(3);
     setMessage("creating an encounter...");
 
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString();
+
+    console.log({dateTime});
+
     createEncounter({
       encounterType: encounters.INITIAL_REGISTRATION,
       visit: visit?.uuid,
@@ -177,7 +183,6 @@ function InitialRegistration() {
     window.location.hostname === "localhost";
 
   const handleSubmit = async (values: any, options: any) => {
-    // options.resetForm();
     setMessage("creating patient");
     setShowForm(false);
     setLoading(true);

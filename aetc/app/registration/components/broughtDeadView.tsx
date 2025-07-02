@@ -5,11 +5,15 @@ import { getAllDeathReports } from "@/hooks/patientReg";
 import { DeathReport } from "@/interfaces";
 import { useParameters } from "@/hooks";
 import { BackButton } from "@/components";
+import { FaAngleLeft } from "react-icons/fa6";
+import { useNavigation } from "@/hooks";
+import dayjs from "dayjs";
 
 export const BroughtDeadView = () => {
   const { params } = useParameters();
   const [deathReport, setDeathReport] = useState<DeathReport | null>(null);
   const { data } = getAllDeathReports();
+  const { navigateTo } = useNavigation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +28,25 @@ export const BroughtDeadView = () => {
   return (
     <Card sx={{ maxWidth: 800, margin: "auto", mt: 4, p: 2 }}>
       <CardContent>
-        <BackButton />
+        <Box
+          onClick={() => navigateTo(`/registration/death/list`)
+          } sx={{ display: "flex", alignItems: "center", mb: 2, cursor: "pointer" }}
+        >
+          <Box sx={{ width: "24px", height: "24px", fontSize: "20px" }}>
+            <FaAngleLeft />
+          </Box>
+          <Typography
+            sx={{
+              fontSize: "14px",
+              fontWeight: 400,
+              lineHeight: "21px",
+              letterSpacing: "0em",
+              ml: 1,
+            }}
+          >
+            Back to List
+          </Typography>
+        </Box>
         <Typography variant="h5" gutterBottom>
           Death Report Details
         </Typography>
@@ -43,7 +65,11 @@ export const BroughtDeadView = () => {
                       ? value
                         ? "Yes"
                         : "No"
-                      : value?.toString()}
+                      : key.includes("time") && value
+                        ? dayjs(value, "HH:mm:ss").format("hh:mm A")
+                        : key.includes("date") && value
+                          ? dayjs(value).format("DD MMM YYYY")
+                          : value?.toString()}
                   </Typography>
                 </Grid>
               )

@@ -1,6 +1,6 @@
 "use client";
 import { PrescreeningForm } from "../components/preScreeningForm";
-import { useNavigation, useParameters } from "@/hooks";
+import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import {
   RegistrationMainHeader,
   RegistrationDescriptionText,
@@ -13,7 +13,6 @@ import {
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
 import { getDateTime } from "@/helpers/dateTime";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useFormLoading } from "@/hooks/formLoading";
@@ -22,11 +21,13 @@ import { FormError } from "@/components/formError";
 import { CustomizedProgressBars } from "@/components/loader";
 import { useEffect } from "react";
 import { Navigation } from "@/app/components/navigation";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 export default function Prescreening() {
+  const {ServerTime}=useServerTime()
+  const { activeVisit, patientId } = getActivePatientDetails();
   const { navigateTo } = useNavigation();
-  const { params } = useParameters();
-  const { data } = getPatientsWaitingForPrescreening();
+
   const {
     mutate: createEncounter,
     isPending,
@@ -55,38 +56,42 @@ export default function Prescreening() {
 
   const handleSubmit = (values: any) => {
     setShowForm(false);
-    const patient = data?.find((d) => d.uuid == params.id);
+
     setLoading(true);
     setMessage("add Screening data... ");
 
+
+    const dateTime = ServerTime.getServerTimeString()
+
+
     createEncounter({
       encounterType: encounters.SCREENING_ENCOUNTER,
-      visit: patient?.visit_uuid,
-      patient: params.id,
-      encounterDatetime: getDateTime(),
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: dateTime,
       obs: [
         {
           concept: concepts.IS_PATIENT_REFERRED,
           value: values[concepts.IS_PATIENT_REFERRED],
-          obsDatetime: getDateTime(),
-          coded: true,
+          obsDatetime: dateTime,
+    
         },
         {
           concept: concepts.IS_SITUATION_URGENT,
           value: values[concepts.IS_SITUATION_URGENT],
-          obsDatetime: getDateTime(),
-          coded: true,
+          obsDatetime: dateTime,
+    
         },
         {
           concept: concepts.PATIENT_REFERRED_TO,
           value: values[concepts.PATIENT_REFERRED_TO],
-          obsDatetime: getDateTime(),
+          obsDatetime: dateTime,
         },
       ],
     });
 
     if (Boolean(values[concepts.PATIENT_REFERRED_TO])) {
-      patient && closeVisit(patient?.visit_uuid);
+      closeVisit(activeVisit as string);
     }
   };
   return (

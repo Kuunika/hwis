@@ -10,7 +10,6 @@ import {
 import { concepts, NO, YES } from "@/constants";
 import { getFormLabels, getInitialValues } from "@/helpers";
 import { useState } from "react";
-import { getCachedConcept } from "@/helpers/data";
 
 const form = {
   deformity: {
@@ -153,20 +152,18 @@ export const ExtremitiesLegForm = (props: Props) => {
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.deformity.name}
           label={form.deformity.label}
         />
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.fracture.name}
           label={form.fracture.label}
         />
       </FormFieldContainerMultiple>
 
-      {formValues[form.deformity.name] == getCachedConcept(YES)?.uuid && (
+      {formValues[form.deformity.name] == YES && (
         <TextInputField
           multiline
           rows={4}
@@ -177,7 +174,7 @@ export const ExtremitiesLegForm = (props: Props) => {
         />
       )}
 
-      {formValues[form.fracture.name] == getCachedConcept(YES)?.uuid && (
+      {formValues[form.fracture.name] == YES && (
         <TextInputField
           multiline
           rows={4}
@@ -191,14 +188,12 @@ export const ExtremitiesLegForm = (props: Props) => {
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.crepitus.name}
           label={form.crepitus.label}
         />
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.tenderness.name}
           label={form.tenderness.label}
         />
@@ -207,20 +202,18 @@ export const ExtremitiesLegForm = (props: Props) => {
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.rash.name}
           label={form.rash.label}
         />
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.scars.name}
           label={form.scars.label}
         />
       </FormFieldContainerMultiple>
 
-      {formValues[form.rash.name] == getCachedConcept(YES)?.uuid && (
+      {formValues[form.rash.name] == YES && (
         <TextInputField
           multiline
           rows={4}
@@ -235,20 +228,18 @@ export const ExtremitiesLegForm = (props: Props) => {
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.burns.name}
           label={form.burns.label}
         />
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.mass.name}
           label={form.mass.label}
         />
       </FormFieldContainerMultiple>
 
-      {formValues[form.burns.name] == getCachedConcept(YES)?.uuid && (
+      {formValues[form.burns.name] == YES && (
         <RadioGroupInput
           row
           options={burnsOptions}
@@ -257,7 +248,7 @@ export const ExtremitiesLegForm = (props: Props) => {
         />
       )}
 
-      {formValues[form.mass.name] == getCachedConcept(YES)?.uuid && (
+      {formValues[form.mass.name] == YES && (
         <TextInputField
           multiline
           rows={4}
@@ -271,14 +262,12 @@ export const ExtremitiesLegForm = (props: Props) => {
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.wound.name}
           label={form.wound.label}
         />
         <RadioGroupInput
           row
           options={radioOptions}
-          coded
           name={form.swelling.name}
           label={form.swelling.label}
         />
@@ -287,11 +276,10 @@ export const ExtremitiesLegForm = (props: Props) => {
       <RadioGroupInput
         row
         options={radioOptions}
-        coded
         name={form.laceration.name}
         label={form.laceration.label}
       />
-      {formValues[form.laceration.name] == getCachedConcept(YES)?.uuid && (
+      {formValues[form.laceration.name] == YES && (
         <>
           <TextInputField
             sx={{ width: "100%" }}

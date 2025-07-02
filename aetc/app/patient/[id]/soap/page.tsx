@@ -13,11 +13,11 @@ export default function Page() {
     <>
       <PatientInfoTab />
       <FormContainer>
-        <Box>
+        <Box sx={{ ml: 2, mr: 2 }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <BackButton />
           </Box>
-          <Typography variant="h4">SOAP</Typography>
+          <Typography variant="h4">SOAPIER</Typography>
           <br />
           <SoapForm />
         </Box>

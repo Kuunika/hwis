@@ -1,17 +1,13 @@
 "use client";
-import React, { useState } from "react";
-import {
-  FieldsContainer,
-  FormValuesListener,
-  FormikInit,
-  TextInputField,
-} from "@/components";
+import React from "react";
+import { FormikInit, TextInputField } from "@/components";
 import * as yup from "yup";
 import { concepts, encounters } from "@/constants";
 import { useSubmitEncounter } from "@/hooks";
 import { getInitialValues, getObservations } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { useServerTime } from "@/contexts/serverTimeContext";
 type Props = {
   onSubmit: () => void;
 };
@@ -32,6 +28,7 @@ const schema = yup.object({
 const initialValues = getInitialValues(form);
 
 export const GeneralInformation = ({ onSubmit }: Props) => {
+  const {ServerTime}=useServerTime();
   // const [formValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.GENERAL_INFORMATION_ASSESSMENT,
@@ -39,7 +36,7 @@ export const GeneralInformation = ({ onSubmit }: Props) => {
   );
 
   const handleSubmitForm = async (values: any) => {
-    await handleSubmit(getObservations(values, getDateTime()));
+    await handleSubmit(getObservations(values, ServerTime.getServerTimeString()));
   };
 
   return (

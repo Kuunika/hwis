@@ -21,4 +21,5 @@ export default AuthGuard(Consultation, [
   roles.CLINICIAN,
   roles.NURSE,
   roles.ADMIN,
+  roles.STUDENT_CLINICIAN,
 ]);

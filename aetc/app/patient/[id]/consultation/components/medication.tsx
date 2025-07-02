@@ -29,10 +29,15 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { AccordionComponent } from "@/components/accordion";
 import useFetchMedications from "@/hooks/useFetchMedications";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 type Prop = {
   onSubmit: (values: any) => void;
   onSkip: () => void;
+  encounterType?: string;
+  onSubmissionSuccess: () => void;
+  medicationTitle?: string;
+  medicationLabelTitle?:string
 };
 type Medication = {
   name: string;
@@ -135,26 +140,22 @@ const medicationUnits = [
   "Milliliters (ml)",
   "Millimoles (mmol)",
 ];
-// const routeOptions = [
-//   { label: "Oral", id: "Oral" },
-//   { label: "Suppository", id: "Suppository" },
-//   { label: "Intravenous", id: "Intravenous" },
-//   { label: "Intramuscular", id: "Intramuscular" },
-//   { label: "Subcutaneous", id: "Subcutaneous" },
-//   { label: "Infiltration", id: "Infiltration" },
-//   { label: "Intrathecal", id: "Intrathecal" },
-//   { label: "Dermal", id: "Dermal" },
-//   { label: "Inhaled", id: "Inhaled" },
-// ];
 
-export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
+export const MedicationsForm = ({
+  onSubmit,
+  onSkip,
+  encounterType = encounters.PRESCRIPTIONS,
+  onSubmissionSuccess,
+  medicationTitle = "Prescribed Medication",
+  medicationLabelTitle,
+}: Prop) => {
+  const { ServerTime } = useServerTime();
   const {
     mutate,
     isPending: addingDrugs,
     isSuccess,
   } = fetchConceptAndCreateEncounter();
   const { medicationOptions, loadingDrugs } = useFetchMedications();
-  const { navigateBack } = useNavigation();
 
   const [otherFrequency, setOtherFrequency] = useState<{
     [key: number]: boolean;
@@ -171,12 +172,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigateBack();
+      onSubmissionSuccess();
     }
   }, [isSuccess]);
 
   const handleSubmit = () => {
-    const obsDateTime = getDateTime();
+    const obsDateTime = ServerTime.getServerTimeString();
+
     const obs = formValues.medications.map((medication: any) => {
       return {
         concept: concepts.DRUG_GIVEN,
@@ -187,7 +189,6 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
             concept: concepts.MEDICATION_FORMULATION,
             value: medication.formulation,
             obsDateTime,
-            coded: true,
           },
           {
             concept: concepts.MEDICATION_DOSE,
@@ -202,7 +203,6 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
           {
             concept: concepts.MEDICATION_FREQUENCY,
             value: medication.medication_frequency,
-            coded: true,
             obsDateTime,
           },
           {
@@ -225,7 +225,7 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
     });
 
     mutate({
-      encounterType: encounters.PRESCRIPTIONS,
+      encounterType: encounterType,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
@@ -236,8 +236,13 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
   const sections = [
     {
       id: "prescribed",
-      title: "Prescribed Medication",
-      content: <PrescribedMedicationList />,
+      title: medicationTitle,
+      content: (
+        <PrescribedMedicationList
+          medicationLabelTitle={medicationLabelTitle}
+          encounterType={encounterType}
+        />
+      ),
     },
   ];
   return (
@@ -340,16 +345,6 @@ export const MedicationsForm = ({ onSubmit, onSkip }: Prop) => {
                           sx={{ flex: 1 }}
                         />
                       )}
-                      {/* <FormDatePicker
-                      name={`medications[${index}].medication_date_last_taken`}
-                      label="Last Taken"
-                      // sx={{ width: "150px" }}
-                    />
-                    <FormDatePicker
-                      name={`medications[${index}].medication_date_of_last_prescription`}
-                      label="Last Prescribed"
-                      sx={{ width: "150px" }}
-                    /> */}
                     </Box>
                   )}
                 />

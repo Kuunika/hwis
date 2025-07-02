@@ -23,6 +23,9 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 
 const mortuaryOptions = [
@@ -62,13 +65,14 @@ const initialValues = {
 };
 
 
-export default function DeathForm() {
+export default function DeathForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
+    const { init, ServerTime } = useServerTime();
 
 
     useEffect(() => {
@@ -83,14 +87,14 @@ export default function DeathForm() {
 
     const handleSubmit = async (values: any) => {
 
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {
                 concept: concepts.DEATH,
-                value: "DISPOSITION TYPE DEATH",
+                value: concepts.DEATH,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.CAUSE_OF_DEATH, value: values.causeOfDeath, obsDatetime: currentDateTime },
                     { concept: concepts.FAMILY_INFORMED, value: values.familyInformed, obsDatetime: currentDateTime },
                     { concept: concepts.RELATIONSHIP_TO_DECEASED, value: values.relationshipToDeceased, obsDatetime: currentDateTime },
@@ -104,7 +108,7 @@ export default function DeathForm() {
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -113,24 +117,26 @@ export default function DeathForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Death Form information submitted successfully!");
+            // toast.success("Death Form information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
             // Redirect to assessments page
-            navigateTo("/assessments");
+            // navigateTo("/dispositions");
+            openPatientSummary()
         } catch (error) {
             console.error("Error submitting Death form information: ", error);
-            toast.error("Failed to submit Death Form information.");
+            // toast.error("Failed to submit Death Form information.");
         }
     };
 
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Death Form</h2>
+                    <h2>2. Death Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

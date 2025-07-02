@@ -1,18 +1,17 @@
-import { useVitalsGraphData } from "@/hooks";
+import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-import { extractTimes } from "@/helpers/dateTime";
 export function HeartRate() {
-  const { chartData } = useVitalsGraphData();
+  const { values, dateTimes } = getObsGraphData("Heart Rate");
   return (
     <LineChart
       chartConfig={{
         series: [
           {
             name: "Heart Rate",
-            data: chartData.heartRateData,
+            data: values,
           },
         ],
-        xAxisCategories: extractTimes(chartData.xAxisData),
+        xAxisCategories: dateTimes,
         title: "",
         height: 350,
         yAxisMin: 0,

@@ -16,7 +16,8 @@ import { toast } from "react-toastify";
 import { useParameters } from "@/hooks";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
-import { Button } from "@mui/material";
+import { useServerTime } from "@/contexts/serverTimeContext";
+
 type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
@@ -52,40 +53,13 @@ const supportiveCareConfig = [
     { value: concepts.COUNSELLING, label: "Counselling" },
     { value: concepts.FEEDING, label: "Feeding" },
     { value: concepts.OXYGENATION, label: "Oxygenation" },
-    { value: concepts.TAPID_SPONGING, label: "Rapid Sponging" },
+    { value: concepts.TEPID_SPONGING, label: "Tepid Sponging" },
     { value: concepts.ELECTROCARDIOGRAPHY_MONITORING, label: "Electrocardiography (ECG) Monitoring" },
     { value: concepts.TURNING_PATIENTS, label: "Turning Patients" },
     { value: concepts.ORAL_CARE, label: "Oral Care" },
     { value: concepts.OTHER, label: "Other (Specify)" },
 ];
 
-
-// const schema = yup.object().shape({
-//     procedures: yup
-//         .array()
-//         .of(
-//             yup.object().shape({
-//                 key: yup.string().required(),
-//                 value: yup.boolean(),
-//             })
-//         )
-//         .transform((value) =>
-//             value ? value.filter((item: any) => item.value === true).map((item: any) => item.key) : []
-//         )
-//         .min(1, "At least one procedure must be selected"),
-//     supportiveCare: yup
-//         .array()
-//         .of(
-//             yup.object().shape({
-//                 key: yup.string().required(),
-//                 value: yup.boolean(),
-//             })
-//         )
-//         .transform((value) =>
-//             value ? value.filter((item: any) => item.value === true).map((item: any) => item.key) : []
-//         )
-//         .min(1, "At least one supportive care option must be selected"),
-// });
 const schema = yup.object().shape({
     procedures: yup
         .array()
@@ -130,20 +104,18 @@ const schema = yup.object().shape({
         }),
 });
 
-
 export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
     const [formValues, setFormValues] = useState<any>({});
     const [showTextFields, setShowTextFields] = useState({
         otherProcedure: false,
         otherSupportiveCare: false,
     });
-
-
-
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { init, ServerTime } = useServerTime();
+
 
     useEffect(() => {
         if (patientVisits) {
@@ -157,36 +129,34 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
     const handleSubmit = async (values: any) => {
         console.log("Procedures Selected:", values.procedures);
         console.log("Supportive Care Selected:", values.supportiveCare);
+        // const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
-
-        const currentDateTime = getDateTime();
 
         const obs = [
             {
                 concept: concepts.PROCEDURES,
                 value: concepts.PROCEDURES,
                 obsDatetime: currentDateTime,
-                group_members: (values.procedures || [])
-                    .filter((procedure: any) => procedure.value === true) // Keep only selected procedures
+                groupMembers: (values.procedures || [])
+                    .filter((procedure: any) => procedure.value === true)
                     .map((procedure: any) => ({
-                        concept: procedure.key, // Use key as the UUID
+                        concept: procedure.key,
                         value: procedure.key === concepts.OTHER ? values.otherProcedureSpecify : procedure.key,
                         obsDatetime: currentDateTime,
                     })),
-
             },
             {
                 concept: concepts.SUPPORTIVE_CARE,
                 value: concepts.SUPPORTIVE_CARE,
                 obsDatetime: currentDateTime,
-                group_members: (values.supportiveCare || [])
-                    .filter((care: any) => care.value === true) // Keep only selected supportive care options
+                groupMembers: (values.supportiveCare || [])
+                    .filter((care: any) => care.value === true)
                     .map((care: any) => ({
-                        concept: care.key, // Use key as the UUID
+                        concept: care.key,
                         value: care.key === concepts.OTHER ? values.otherSupportiveCareSpecify : null,
                         obsDatetime: currentDateTime,
                     })),
-
             },
         ];
 
@@ -200,10 +170,11 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
 
         try {
             await submitEncounter(payload);
-            toast.success("Non-Pharmacological Form submitted successfully!");
+            // toast.success("Non-Pharmacological Form submitted successfully!");
+            onSubmit(values); //  This triggers navigation to the next step
         } catch (error) {
             console.error("Error submitting Non-Pharmacological form: ", error);
-            toast.error("Failed to submit the form.");
+            // toast.error("Failed to submit the form.");
         }
     };
 
@@ -217,7 +188,6 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
                 otherSupportiveCareSpecify: "",
             }}
             onSubmit={handleSubmit}
-        // submitButton={false}
         >
             <FormValuesListener getValues={setFormValues} />
             <FormFieldContainer direction="row">
@@ -270,11 +240,6 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
                     )}
                 </WrapperBox>
             </FormFieldContainer>
-            <WrapperBox>
-                {/* <Button sx={{ m: 0.5 }} type="submit">
-                    Submit
-                </Button> */}
-            </WrapperBox>
         </FormikInit>
     );
 };

@@ -1,5 +1,5 @@
 import { concepts } from "@/constants";
-import { PaginationModel } from "@/interfaces";
+import { PaginationModel, Person } from "@/interfaces";
 import {
   addDeathReport,
   checkPatientIfOnAssessment,
@@ -7,6 +7,7 @@ import {
   findByDemographics,
   findByNPID,
   findByNameAndGender,
+  searchByNameAndGender,
   getDailyVisits,
   getDailyVisitsPaginated,
   getDeathReports,
@@ -18,6 +19,7 @@ import {
   initialRegistration,
   mergePatients,
   potentialDuplicates,
+  updateDeathReport,
   updatePatient,
 } from "@/services/patient";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -60,23 +62,22 @@ export const patchPatient = () => {
   });
 };
 
-export const registerPatient =  () => {
+export const registerPatient = () => {
   const addData = async (patientData: any) => {
     const getAddress = (address: any) => (address !== "" ? address : "N/A");
 
-
-    const nationalIdIdentifierType ='dc047ea8-e9ce-4fd0-af93-a2ade6b14b42'
+    const nationalIdIdentifierType = "dc047ea8-e9ce-4fd0-af93-a2ade6b14b42";
 
     const identifiers =
       patientData.identificationNumber == ""
         ? []
         : [
-            {
-              identifier: patientData.identificationNumber,
-              identifierType: nationalIdIdentifierType,
-              preferred: true,
-            },
-          ];
+          {
+            identifier: patientData.identificationNumber,
+            identifierType: nationalIdIdentifierType,
+            preferred: true,
+          },
+        ];
 
     const mappedPatient = {
       identifiers,
@@ -126,20 +127,26 @@ export const getPatientsWaitingForPrescreening = () => {
   return useQuery({
     queryKey: ["screening"],
     queryFn: getall,
-    enabled: true,
-    // refetchInterval: 1000 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
   });
 };
 
 export const getPatientsWaitingForRegistrations = () => {
   const getall = () =>
-    getDailyVisits("registration").then((response) => response.data);
+    getDailyVisits("registration").then((response: any) => {
+      const { data } = response as {data: any};
+
+      return Array.isArray(data) ? data : data.data as Person[];
+    });
 
   return useQuery({
     queryKey: ["registration"],
     queryFn: getall,
-    enabled: true,
-    // refetchInterval: 1000 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
   });
 };
 
@@ -150,8 +157,9 @@ export const getPatientsWaitingForTriage = () => {
   return useQuery({
     queryKey: ["triage"],
     queryFn: getall,
-    enabled: true,
-    // refetchInterval: 1000 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
   });
 };
 export const getPatientsWaitingForAssessment = () => {
@@ -161,23 +169,63 @@ export const getPatientsWaitingForAssessment = () => {
   return useQuery({
     queryKey: ["assessments"],
     queryFn: getall,
-    enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
+    // enabled: true,
   });
 };
 
-export const getPatientsWaitingForAssessmentPaginated = (
-  paginationDetails: PaginationModel, search?:string
+export const getPatientCategoryListPaginated = (
+  paginationDetails: PaginationModel,
+  category: string,
+  search?: string,
 ) => {
-  const page = paginationDetails.page==0 ? 1 :paginationDetails.page;
+  const page = paginationDetails.page + 1;
+ 
+
   const getall = () =>
     getDailyVisitsPaginated(
-      `category=assessment&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+      `category=${category}&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
     ).then((response) => response.data);
 
   return useQuery({
-    queryKey: ["assessment",paginationDetails.page, paginationDetails.pageSize, search],
+    queryKey: [
+      category,
+      paginationDetails.page,
+      paginationDetails.pageSize,
+      search
+    ],
     queryFn: getall,
-    enabled: true,
+    enabled: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
+  });
+};
+
+export const getPatientsWaitingForDispositionPaginated = (
+  paginationDetails: PaginationModel,
+  search?: string
+) => {
+  const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
+
+  const getall = () =>
+    getDailyVisitsPaginated(
+      `category=disposition&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+    ).then((response) => response.data);
+
+  return useQuery({
+    queryKey: [
+      "disposition",
+      paginationDetails.page,
+      paginationDetails.pageSize,
+      search,
+    ],
+    queryFn: getall,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
   });
 };
 
@@ -198,7 +246,10 @@ export const getOnePatient = (patientId: string) => {
   return useQuery({
     queryKey: ["patients", patientId],
     queryFn: getOne,
-    enabled: true,
+    enabled: !!patientId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
   });
 };
 export const searchDDEPatient = (
@@ -213,6 +264,24 @@ export const searchDDEPatient = (
 
   return useQuery({
     queryKey: ["find_by_gender", firstName, lastName, gender],
+    queryFn: findAll,
+    enabled: false,
+    retry: false,
+  });
+};
+
+export const searchLocalPatient = (
+  firstName: string,
+  lastName: string,
+  gender: string
+) => {
+  const findAll = () =>
+    searchByNameAndGender(firstName, lastName, gender).then(
+      (response) => response.data
+    );
+
+  return useQuery({
+    queryKey: ["find_by_name", firstName, lastName, gender],
     queryFn: findAll,
     enabled: false,
     retry: false,
@@ -295,19 +364,25 @@ export const getPatientVisitTypes = (id: string) => {
   return useQuery({
     queryKey: ["patient", id, "visits"],
     queryFn: getAll,
-    enabled: true,
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
   });
 };
 
 export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
-  const getAll = () => checkPatientIfOnAssessment(id).then((response) => response?.data);
+  const getAll = () =>
+    checkPatientIfOnAssessment(id).then((response) => response?.data);
   return useQuery({
     queryKey: ["visits", id, "eligible"],
     queryFn: getAll,
-    enabled: true,
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
   });
 };
-
 
 export const addBroughtDead = () => {
   const addData = (patientData: any) => {
@@ -319,12 +394,27 @@ export const addBroughtDead = () => {
   return useMutation({
     mutationFn: addData,
   });
-}
+};
 
 export const getAllDeathReports = () => {
   const getAll = () => getDeathReports().then((response) => response?.data);
   return useQuery({
     queryKey: ["death-reports"],
-    queryFn: getAll, 
+    queryFn: getAll,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
+  });
+};
+
+export const useUpdateDeathReport = () => {
+  const updateData = (params: { id: string | number; data: any }) => {
+    return updateDeathReport(params.id, params.data).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: updateData,
   });
 };

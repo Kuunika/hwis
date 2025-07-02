@@ -8,7 +8,10 @@ import {
   WrapperBox,
 } from "@/components";
 import { FaPrint } from "react-icons/fa6";
-import { BarcodeComponent } from "@/components/barcode";
+import {
+  BarcodeComponent,
+  LabBarcodeComponentPrintTemplate,
+} from "@/components/barcode";
 import {
   getOnePatient,
   getPatientsWaitingForAssessment,
@@ -31,17 +34,15 @@ import {
 } from "@mui/material";
 import { BasicSelect } from "../basicSelect";
 import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
+import { getPrinters } from "@/hooks/loadStatic";
 
 export const LabOrderTable = () => {
+  const { data: printers } = getPrinters();
   const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
 
   const { params } = useParameters();
-  const { data: patient, isLoading } = getOnePatient(params.id as string);
-  const {
-    data: labOrders,
-    isPending,
-    isSuccess,
-  } = getPatientLabOrder(params?.id as string);
+  const { data: patient } = getOnePatient(params.id as string);
+  const { data: labOrders } = getPatientLabOrder(params?.id as string);
 
   const [showDialog, setShowDialog] = useState(false);
   const [selectedTest, setSelectedTest] = useState({
@@ -49,6 +50,8 @@ export const LabOrderTable = () => {
     ascension: "",
     tests: "",
     orderDate: "",
+    requestingTechnician: "",
+    description: "",
   });
   const [printer, setPrinter] = useState("http://localhost:3000");
   const [openDialog, setOpenDialog] = useState(false);
@@ -174,6 +177,8 @@ export const LabOrderTable = () => {
                     ascension: cell.row.accession_number,
                     orderDate: getHumanReadableDateTimeLab(cell.row.order_date),
                     tests: cell.row.test.name,
+                    requestingTechnician: cell.row.requesting_clinician,
+                    description: cell.row.comment_to_fulfiller,
                   });
                 }}
                 sx={{
@@ -224,33 +229,31 @@ export const LabOrderTable = () => {
             alignItems: "center",
           }}
         >
-          <BarcodeComponent
+          <LabBarcodeComponentPrintTemplate
             printer={printer}
             orderDate={selectedTest.orderDate}
             setTriggerFunc={(test) => setTriggerPrintFunc(test)}
             value={selectedTest.ascension}
+            test={`${selectedTest.tests}|${selectedTest.ascension}|${selectedTest.requestingTechnician.split(" ")[1]}`}
+            fullName={`${patient?.given_name} ${patient?.family_name}`}
+            gender={patient?.gender}
+            description={selectedTest.description}
           >
-            <MainTypography variant="caption">{`${patient?.given_name} ${patient?.family_name}`}</MainTypography>
-            <MainTypography variant="caption">
-              {selectedTest.tests}
-            </MainTypography>
-          </BarcodeComponent>
+            <></>
+          </LabBarcodeComponentPrintTemplate>
           <br />
           <BasicSelect
             getValue={(value: any) => {
               setPrinter(value);
             }}
             label="Select Printer"
-            options={[
-              {
-                value: "http://localhost:3000",
-                label: "Local",
-              },
-              {
-                value: `${process.env.NEXT_PUBLIC_PRINTER_IP}`,
-                label: "Network",
-              },
-            ]}
+            options={
+              !printers
+                ? []
+                : printers?.map((d) => {
+                    return { value: d.ip_address, label: d.name };
+                  })
+            }
           />
           <br />
           <MainButton

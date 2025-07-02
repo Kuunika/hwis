@@ -72,7 +72,6 @@ return Array.isArray(options)
     concept,
     value: opt.id,
     obsDatetime,
-    coded
   }))
 : [];
 }
@@ -85,7 +84,8 @@ type SubmissionType = { [key: string]: any };
 
 export const mapSubmissionToCodedArray = (
   formDefinition: FormType,
-  submission: SubmissionType
+  submission: SubmissionType,
+  obsDateTime?:string
 ) => {
   return Object.entries(submission)
     .map(([key, value]) => {
@@ -113,7 +113,7 @@ export const mapSubmissionToCodedArray = (
         concept: conceptName,
         value,
         coded,
-        obsDatetime: getDateTime(),
+        obsDatetime: obsDateTime ? obsDateTime : getDateTime()
       };
     })
     .flat() // Flatten in case of nested arrays
@@ -121,3 +121,15 @@ export const mapSubmissionToCodedArray = (
 
  
 };
+
+
+export function debounceFn<T extends (...args: any[]) => void>(
+  func: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+}

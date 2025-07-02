@@ -38,25 +38,18 @@ export const FormTimePicker: FC<Prop> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <TimePicker
+        timeSteps={{ hours: 1, minutes: 1, seconds: 1 }}
         sx={{
-          width: width,
-          backgroundColor: "white",
-          // "label + &": {
-          //   marginTop: "2.3ch",
-          // },
-          // "& .MuiInputBase-input": {
-          //   width: "100%",
-          //   borderRadius: "5px",
-          // },
-          // "& .MuiFormHelperText-root": {
-          //   // width: helperTextWidth,
-          // },
-          // "& fieldset": { borderRadius: "5px" },
+          width,
+          my: "1ch",
+          mr: "1ch",
+          "& fieldset": { borderRadius: "10px" },
           ...sx,
         }}
         label={label}
         // value={value}
         onChange={(dateValue: any) => {
+          //   console.log(dayjs(dateValue).format("HH:mm:ss"));
           setFieldValue(name, dayjs(dateValue).format("HH:mm:ss"));
         }}
         disabled={disabled}

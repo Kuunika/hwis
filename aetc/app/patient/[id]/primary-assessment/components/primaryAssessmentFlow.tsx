@@ -10,26 +10,46 @@ import {
   Exposure,
 } from ".";
 
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
+import { encounters } from "@/constants";
 
 export const PrimaryAssessmentFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const { navigateBack } = useNavigation();
+  const { navigateBackToProfile, navigateTo } = useNavigation();
+  const { params } = useParameters();
 
   const steps = [
-    { id: 1, label: "Airway Assessment" },
-    { id: 11, label: "Breathing Assessment" },
-    { id: 2, label: "Circulation Assessment" },
-    { id: 3, label: "Disability Assessment" },
-    { id: 4, label: "Exposure Assessment" },
+    {
+      id: 1,
+      label: "Airway Assessment",
+      encounter: encounters.AIRWAY_ASSESSMENT,
+    },
+    {
+      id: 11,
+      label: "Breathing Assessment",
+      encounter: encounters.BREATHING_ASSESSMENT,
+    },
+    {
+      id: 2,
+      label: "Circulation Assessment",
+      encounter: encounters.CIRCULATION_ASSESSMENT,
+    },
+    {
+      id: 3,
+      label: "Disability Assessment",
+      encounter: encounters.PRIMARY_DISABILITY_ASSESSMENT,
+    },
+    {
+      id: 4,
+      label: "Exposure Assessment",
+      encounter: encounters.EXPOSURE_ASSESSMENT,
+    },
   ];
 
   const handleAirwaySubmit = () => {
-    // mutate({ encounter: encounters.AIRWAY_ASSESSMENT, obs: values });
     setActiveStep(1);
   };
   const handleBreathingSubmit = () => {
-    // mutate({ encounter: encounters.BREATHING_ASSESSMENT, obs: values });
     setActiveStep(2);
   };
 
@@ -37,24 +57,26 @@ export const PrimaryAssessmentFlow = () => {
     setActiveStep(3);
   };
   const handleDisabilitySubmit = () => {
-    // mutate({ encounter: encounters.DISABILITY_ASSESSMENT, obs: values });
     setActiveStep(4);
   };
-
+  const redirectToSampleHistory = () => {
+    navigateTo(`/patient/${params.id}/medicalHistory`);
+  };
   return (
     <>
       <NewStepperContainer
         setActive={setActiveStep}
-        title="Primary Assessment"
+        title="Primary Survey"
         steps={steps}
         active={activeStep}
-        onBack={() => navigateBack()}
+        onBack={() => navigateBackToProfile()}
+        showSubmittedStatus
       >
         <AirwayForm onSubmit={handleAirwaySubmit} />
         <BreathingForm onSubmit={handleBreathingSubmit} />
         <Circulation onSubmit={handleCirculationSubmit} />
         <Disability onSubmit={handleDisabilitySubmit} />
-        <Exposure onSubmit={navigateBack} />
+        <Exposure onSubmit={redirectToSampleHistory} />
       </NewStepperContainer>
     </>
   );

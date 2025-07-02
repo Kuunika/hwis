@@ -10,6 +10,8 @@ type Prop = {
   rightGridSize?: number;
   leftChildComponent?: ReactNode;
   rightChildComponent?: ReactNode;
+  showBackButton?: boolean; // New prop with default value of true
+
 };
 
 export function MiddlePageLayout({
@@ -20,6 +22,8 @@ export function MiddlePageLayout({
   leftGridSize = 2,
   middleGridSize = 7,
   rightGridSize = 3,
+  showBackButton = true, // Default to true for backward compatibility
+
 }: Prop) {
   return (
     <MainGrid container spacing={1}>
@@ -43,8 +47,8 @@ export function MiddlePageLayout({
             mt: "2ch",
           }}
         >
-          <BackButton />
-          <br />
+          {showBackButton && <BackButton />}
+          {showBackButton && <br />}
           <MainTypography variant="h4" color={"gray"}>
             {title}
           </MainTypography>

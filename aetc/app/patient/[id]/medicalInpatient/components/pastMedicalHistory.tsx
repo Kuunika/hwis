@@ -1,168 +1,340 @@
-"use client";;
-import { Panel } from "@/app/patient/components/panels";
-import { WrapperBox } from "@/components";
-import { concepts, encounters } from "@/constants";
-import { useParameters } from "@/hooks";
-import { getPatientsEncounters } from "@/hooks/encounter";
-import { CircularProgress } from "@mui/material";
-import { useEffect, useState } from "react";
+import {
+  DatePickerInput,
+  FormDatePicker,
+  FormikInit,
+  FormValuesListener,
+  RadioGroupInput,
+  SearchComboBox,
+  TextInputField,
+} from "@/components";
+import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
+import { concepts } from "@/constants";
+import { useServerTime } from "@/contexts/serverTimeContext";
+import {
+  getInitialValues,
+  getObservations,
+  mapSearchComboOptionsToConcepts,
+} from "@/helpers";
+import { getFacilities } from "@/hooks";
+import { getAllRegimenNames } from "@/hooks/drugs";
+import { useAllergyFormat } from "@/hooks/useAllergyFormat";
+import useFetchMedications from "@/hooks/useFetchMedications";
+import { useState } from "react";
+import * as Yup from "yup";
 
-interface Observation {
-  obs_id: number | null;
-  obs_group_id: number | null;
-  value: any;
-  names: { name: string }[];
-  children?: Observation[]; // To support nested children
-}
+const form = {
+  hivStatus: {
+    name: concepts.HIV,
+    label: "HIV status",
+  },
+  arvStatus: {
+    name: concepts.ARV,
+    label: "on antiretrovirals (ARVs)",
+  },
+  drugList: {
+    name: concepts.DRUG_GIVEN,
+    label: "ARVs given",
+  },
+  otherArvMedication: {
+    name: concepts.OTHER_MEDICATION,
+    label: "Other Medication",
+  },
+  sinceWhen: {
+    name: concepts.DATE,
+    label: "Since When",
+  },
+  clinic: {
+    name: concepts.HEALTH_CENTER,
+    label: "Clinic",
+  },
+  other: {
+    name: concepts.OTHER,
+    label: "Other",
+  },
+  surgicalHistory: {
+    name: concepts.SURGICAL_HISTORY,
+    label: "Surgical History",
+  },
+  allergy: {
+    name: concepts.ALLERGY,
+    label: "Allergy",
+  },
+  allergyDetails: {
+    name: concepts.ALLERGY_DETAILS,
+    label: "Other",
+  },
+  intoxication: {
+    name: concepts.INTOXICATION,
+    label: "Intoxication",
+  },
+  intoxicationDescription: {
+    name: concepts.INTOXICATION_DESCRIPTION,
+    label: "Intoxication description",
+  },
+  socialHistory: {
+    name: concepts.SOCIAL_HISTORY,
+    label: "Social History",
+  },
+  familyHistory: {
+    name: concepts.FAMILY_HISTORY,
+    label: "Family History",
+  },
+};
 
-interface ProcessedObservation {
-  obs_id: number | null;
-  name: string | undefined;
-  value: any;
-  children: ProcessedObservation[];
-}
+const initialValues = getInitialValues(form);
 
-function PastMedicalHistoryPanel() {
-    const { params } = useParameters();
-    const { data: historicData, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
-    const [observations, setObservations] = useState<ProcessedObservation[]>([]);
-    const [HIVInfo, setHIVInfo] = useState({
-      status: 'Unknown',
-      onTreatment: 'Unknown'
-    });
-    
+const schema = Yup.object().shape({});
 
-    const updateHIVStatus = (status: string) => {
-      setHIVInfo(prev => ({ ...prev, status }));
-    };
-    
-    const updateOnHIVTreatment = (onTreatment: string) => {
-      setHIVInfo(prev => ({ ...prev, onTreatment }));
-    };
-    
+const hivOptions = [
+  { value: concepts.POSITIVE, label: "Positive" },
+  { value: concepts.NEGATIVE, label: "Negative" },
+  { value: concepts.UNKNOWN, label: "unknown" },
+];
 
-    
+const radioOptions = [
+  { value: concepts.YES, label: "YES" },
+  { value: concepts.NO, label: "NO" },
+];
 
-    const sampleHistoryEncounters = historicData?.filter((item) => item.encounter_type?.name === 'DIAGNOSIS' || item.encounter_type.name === "SURGICAL HISTORY");
- 
+const intoxications = [
+  { id: "ethanol", label: "Ethanol (Beer, Wine, Spirits)" },
+  { id: "methanol", label: "Methanol" },
+  { id: "isopropanol", label: "Isopropanol (Rubbing alcohol)" },
+  { id: "cannabis", label: "Cannabis (Marijuana, THC products)" },
+  { id: "cocaine", label: "Cocaine" },
+  { id: "heroin", label: "Heroin" },
+  { id: "methamphetamine", label: "Methamphetamine" },
+  { id: "mdma", label: "MDMA (Ecstasy)" },
+  { id: "lsd", label: "LSD (Acid)" },
+  { id: "pcp", label: "PCP (Phencyclidine)" },
+  { id: "ketamine", label: "Ketamine" },
+  {
+    id: "opioids",
+    label: "Opioids (Morphine, Codeine, Oxycodone, Fentanyl, Tramadol)",
+  },
+  {
+    id: "benzodiazepines",
+    label: "Benzodiazepines (Diazepam, Lorazepam, Alprazolam)",
+  },
+  { id: "barbiturates", label: "Barbiturates (Phenobarbital, Secobarbital)" },
+  {
+    id: "antidepressants",
+    label: "Antidepressants (Amitriptyline, Fluoxetine, Sertraline)",
+  },
+  { id: "antipsychotics", label: "Antipsychotics (Haloperidol, Olanzapine)" },
+  { id: "acetaminophen", label: "Acetaminophen (Paracetamol)" },
+  { id: "nsaids", label: "NSAIDs (Ibuprofen, Diclofenac)" },
+  { id: "carbon_monoxide", label: "Carbon Monoxide" },
+  { id: "cyanide", label: "Cyanide" },
+  { id: "pesticides", label: "Pesticides (Organophosphates, Carbamates)" },
+  { id: "heavy_metals", label: "Heavy Metals (Lead, Mercury, Arsenic)" },
+  { id: "antifreeze", label: "Antifreeze (Ethylene glycol)" },
+  { id: "paint_thinners", label: "Paint thinners, Glue (Toluene, Xylene)" },
+  { id: "mushrooms", label: "Mushrooms (Amanita, Psilocybin)" },
+  { id: "aflatoxins", label: "Aflatoxins (Contaminated grains, nuts)" },
+  { id: "strychnine", label: "Strychnine" },
+  { id: "poisonous_plants", label: "Poisonous berries or plants" },
+  { id: "synthetic_cannabinoids", label: "Synthetic Cannabinoids (Spice, K2)" },
+  { id: "bath_salts", label: "Bath salts (Synthetic cathinones)" },
+  { id: "inhalants", label: "Inhalants (Nitrous oxide, Butane, Freon)" },
+  { id: concepts.OTHER, label: "Other" },
+];
 
-  useEffect(() => {
-    if (!historyLoading) {
-        const observations: ProcessedObservation[] = [];
-        const hasAIDS = sampleHistoryEncounters?.filter(encounter =>
-          encounter.obs.some(observation => 
-              observation.value?.includes("1C62.Z") 
-          )
-      );
+export const PastMedicalHistory = ({
+  onSubmit,
+}: {
+  onSubmit: (values: any) => void;
+}) => {
+  const { data } = getFacilities();
+  const [formValues, setFormValues] = useState<any>({});
+  const { medicationOptions } = useFetchMedications();
+  const { allergyOptions } = useAllergyFormat();
+  const { data: regimenNames } = getAllRegimenNames();
+  const { ServerTime } = useServerTime();
 
-        if(hasAIDS && hasAIDS.length > 0) updateHIVStatus("Positive");
-        
-        
+  const handleSubmit = (values: any) => {
+    const formValues = { ...values };
 
-        const hasAIDSObservations = sampleHistoryEncounters
-  ?.flatMap(encounter => 
-      encounter.obs.filter(observation => 
-          observation.value?.includes("HIV")
-      )
+    const obsDatetime = ServerTime.getServerTimeString();
+
+    const drugGivenObs = mapSearchComboOptionsToConcepts(
+      formValues[form.drugList.name],
+      form.drugList.name,
+      obsDatetime
+    );
+    const allergiesObs = mapSearchComboOptionsToConcepts(
+      formValues[form.allergy.name],
+      form.allergy.name,
+      obsDatetime
+    );
+    const intoxicationObs = mapSearchComboOptionsToConcepts(
+      formValues[form.intoxication.name],
+      form.intoxication.name,
+      obsDatetime
+    );
+
+    delete formValues[form.drugList.name];
+    delete formValues[form.allergy.name];
+    delete formValues[form.intoxication.name];
+
+    const obsFormatted = [
+      {
+        concept: form.drugList.name,
+        value: form.drugList.name,
+        groupMembers: drugGivenObs,
+        obsDatetime: obsDatetime,
+      },
+      {
+        concept: form.allergy.name,
+        value: form.allergy.name,
+        groupMembers: allergiesObs,
+        obsDatetime: obsDatetime,
+      },
+      {
+        concept: form.intoxication.name,
+        value: form.intoxication.name,
+        groupMembers: intoxicationObs,
+        obsDatetime: obsDatetime,
+      },
+    ];
+
+    const obs = getObservations(formValues, obsDatetime);
+
+    onSubmit([...obs, ...obsFormatted]);
+  };
+
+  return (
+    <FormikInit
+      validationSchema={schema}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      submitButtonText="next"
+    >
+      <FormValuesListener getValues={setFormValues} />
+      <RadioGroupInput
+        name={form.hivStatus.name}
+        label={form.hivStatus.label}
+        options={hivOptions}
+        row
+      />
+      {formValues[form.hivStatus.name] == concepts.POSITIVE && (
+        <>
+          <RadioGroupInput
+            options={radioOptions}
+            name={form.arvStatus.name}
+            label={form.arvStatus.label}
+            row
+          />
+          <br />
+          {formValues[form.arvStatus.name] == concepts.YES && (
+            <>
+              <SearchComboBox
+                name={form.drugList.name}
+                label={form.drugList.label}
+                options={
+                  regimenNames
+                    ? regimenNames.map((name: any) => ({
+                        id: name,
+                        label: name,
+                      }))
+                    : []
+                }
+              />
+              <br />
+              <TextInputField
+                multiline
+                rows={4}
+                name={form.otherArvMedication.name}
+                label={form.otherArvMedication.label}
+                id={form.otherArvMedication.name}
+                sx={{ width: "100%" }}
+              />
+              <br />
+              <FormDatePicker
+                name={form.sinceWhen.name}
+                label={form.sinceWhen.label}
+                width={"100%"}
+              />
+              <br />
+              <SearchComboBox
+                label="Referral Medical Facility"
+                name={form.clinic.name}
+                multiple={false}
+                options={
+                  data
+                    ? data.map((d: any) => ({
+                        id: d.facility_name,
+                        label: d.facility_name,
+                      }))
+                    : []
+                }
+              />
+            </>
+          )}
+        </>
+      )}
+      <TextInputField
+        multiline
+        rows={5}
+        name={form.other.name}
+        label={form.other.label}
+        id={form.other.name}
+        sx={{ width: "100%" }}
+      />
+      <TextInputField
+        multiline
+        rows={5}
+        name={form.surgicalHistory.name}
+        label={form.surgicalHistory.label}
+        id={form.surgicalHistory.name}
+        sx={{ width: "100%" }}
+      />
+      <br />
+      <GroupedSearchComboBox
+        options={allergyOptions}
+        multiple={true}
+        name={form.allergy.name}
+        label={form.allergy.label}
+      />
+      <br />
+      <SearchComboBox
+        options={intoxications}
+        name={form.intoxication.name}
+        label={form.intoxication.label}
+      />
+      {formValues[form.intoxication.name] &&
+        formValues[form.intoxication.name]?.find(
+          (opt: any) => opt.id == concepts.OTHER
+        ) && (
+          <>
+            <TextInputField
+              multiline
+              rows={5}
+              sx={{ width: "100%" }}
+              name={form.intoxicationDescription.name}
+              label={form.intoxicationDescription.label}
+              id={form.intoxicationDescription.name}
+            />
+          </>
+        )}
+      <br />
+      <TextInputField
+        multiline
+        rows={5}
+        sx={{ width: "100%" }}
+        id={form.socialHistory.name}
+        label={form.socialHistory.label}
+        name={form.socialHistory.name}
+      />
+      <br />
+      <TextInputField
+        multiline
+        rows={5}
+        sx={{ width: "100%" }}
+        id={form.familyHistory.name}
+        label={form.familyHistory.label}
+        name={form.familyHistory.name}
+      />
+    </FormikInit>
   );
-
-const latestObsGroupId = hasAIDSObservations ? Math.max(...hasAIDSObservations.map(obs => obs.obs_group_id).filter(id => id !== null)) : null;
-
-const onTreatmentObservation = sampleHistoryEncounters
-  ?.flatMap(encounter => 
-      encounter.obs.filter(observation => 
-          observation.obs_group_id === latestObsGroupId && 
-          observation.names?.[0]?.uuid === concepts.ON_TREATMENT
-      )
-  )?.[0]; 
-
-const onTreatmentValue = onTreatmentObservation?.value || null;
-
-if(onTreatmentValue) updateOnHIVTreatment(onTreatmentValue);
-
-       
-        sampleHistoryEncounters?.forEach((encounter: { obs: Observation[] }) => {
-        
-          encounter.obs.forEach((observation) => {
-          const value = observation.value;
-        
-          
-          const obsData: ProcessedObservation = {
-            obs_id: observation.obs_id,
-            name: observation.names?.[0]?.name,
-            value,
-            children: [],
-          };
-      
-          if (observation.obs_group_id) {
-            const parent = observations.find((o) => o.obs_id === observation.obs_group_id);
-            if (parent) {
-              parent.children.push(obsData);
-            }
-          } else {
-            observations.push(obsData);
-          }
-        })
-            setObservations(observations)
-        });
-
-        }
-
-  },[historicData])
-
-return (
-    <>
-        <Panel title="Past Medical History">
-            <WrapperBox >
-            {historyLoading ? (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: "180px",
-                                  }}
-                                >
-                                  <CircularProgress size={40} />
-                                </div>
-                              ) : (
-                                <>
-            <div>
-            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
-                HIV Status:
-                </b>
-            {HIVInfo.status}
-            </p>
-            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
-                On antiretroviral treatment:
-                </b>
-            {HIVInfo.onTreatment}
-            </p>
-            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
-              HIV Drug(s) used:
-                </b>
-                ??
-            </p>
-            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
-              Start of HIV Drug usage:
-                </b>
-                ??
-            </p>
-            <p><b style={{color: "rgba(0, 0, 0, 0.6)"}}>
-             HIV Clinic:
-                </b>
-??
-            </p>
-            </div> 
-            </>)}
-            </WrapperBox>
-        </Panel>
-    </>
-  );
-
-
-
-}
-
-
-export default PastMedicalHistoryPanel;
+};

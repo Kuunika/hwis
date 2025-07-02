@@ -17,7 +17,7 @@ export const FieldsContainer = ({ children, sx, mr = "1ch" }: Prop) => {
       sx={{
         ...sx,
 
-        "& > :first-child": {
+        "& > :first-of-type": {
           mr,
         },
       }}

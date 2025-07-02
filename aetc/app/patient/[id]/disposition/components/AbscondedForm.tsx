@@ -1,5 +1,4 @@
 "use client";
-
 import {
     MainGrid,
     MainPaper,
@@ -21,7 +20,8 @@ import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
-
+import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 
 const validationSchema = Yup.object({
@@ -36,14 +36,14 @@ const initialValues = {
     timeAbsconded: "",
 };
 
-export default function AbscondedForm() {
+export default function AbscondedForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
-
+    const { init, ServerTime } = useServerTime();
 
 
     useEffect(() => {
@@ -56,27 +56,24 @@ export default function AbscondedForm() {
         }
     }, [patientVisits]);
 
-
-
     const handleSubmit = async (values: any) => {
-        const currentDateTime = getDateTime();
+        const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
             {
                 concept: concepts.ABSCONDED,
                 value: concepts.ABSCONDED,
                 obsDatetime: currentDateTime,
-                group_members: [
+                groupMembers: [
                     { concept: concepts.LAST_SEEN_LOCATION, value: values.lastSeenLocation, obsDatetime: currentDateTime },
                     { concept: concepts.DATE_OF_ABSCONDING, value: values.dateAbsconded, obsDatetime: currentDateTime },
                     { concept: concepts.TIME_OF_ABSCONDING, value: values.timeAbsconded, obsDatetime: currentDateTime },
-
                 ],
             },
         ];
 
         const payload = {
-            encounterType: encounters.DISCHARGE_PATIENT,
+            encounterType: encounters.DISPOSITION,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -85,24 +82,27 @@ export default function AbscondedForm() {
 
         try {
             await submitEncounter(payload);
-            toast.success("Absconded information submitted successfully!");
+            // toast.success("Absconded information submitted successfully!");
             // Close the visit after successfully submitting the encounter
-            if (activeVisit?.uuid) {
-                closeVisit(activeVisit.uuid);
-            }
-            navigateTo("/assessments");
+            // if (activeVisit?.uuid) {
+            //     closeVisit(activeVisit.uuid);
+            // }
+            // navigateTo("/dispositions");
+            openPatientSummary()
 
         } catch (error) {
             console.error("Error submitting Absconded information: ", error);
-            toast.error("Failed to submit Absconded information.");
+            // toast.error("Failed to submit Absconded information.");
         }
     };
 
     return (
         <MainGrid container spacing={2}>
             <MainGrid item xs={12} lg={8}>
+                {/* Include the Accordion with Medication Form */}
+                <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Absconded Form</h2>
+                    <h2>2. Absconded Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

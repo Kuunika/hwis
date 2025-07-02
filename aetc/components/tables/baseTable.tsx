@@ -130,9 +130,7 @@ const Table: React.FC<IProp> = ({
         rows={filteredRows}
         columns={columns}
         hideFooterPagination={hidePagination}
-        paginationModel={{ page: 0, pageSize: 10 }}
-        paginationMode="server"
-        onPaginationModelChange={(pagination) => console.log({ pagination })}
+        paginationMode="client"
         initialState={{
           columns: {
             columnVisibilityModel,
@@ -152,6 +150,9 @@ interface ServerPaginationTableProp {
   rowCount: number;
   searchText?: string;
   setSearchString: (values: any) => void;
+  showSearchSwitchButton?: boolean;
+  onSwitchChange?: (values: any) => void;
+  onRowClick?: (row: any) => void;
 }
 
 export const ServerPaginationTable = ({
@@ -163,17 +164,22 @@ export const ServerPaginationTable = ({
   rowCount,
   searchText,
   setSearchString,
+  onSwitchChange,
+  onRowClick,
 }: ServerPaginationTableProp) => {
   return (
     <>
       <TopBarComponents
         searchText={searchText ?? ""}
         requestSearch={setSearchString}
+        handleSwitchChange={(value: any) => {
+          if (onSwitchChange) onSwitchChange(value.target.checked);
+        }}
       />
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
-        initialState={{
-          pagination: { paginationModel: { page: 1, pageSize: 10 } },
+        onCellClick={(cell) => {
+          if (onRowClick && cell.field != "action") onRowClick(cell);
         }}
         loading={loading}
         rows={rows}

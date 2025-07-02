@@ -17,7 +17,7 @@ import { districts, malawiVillages, traditionalAuthorities } from "@/constants";
 
 type Prop = {
   onSubmit: (values: any) => void;
-  fullForm?: boolean,
+  fullForm?: boolean;
   init?: any;
 };
 const form = {
@@ -77,7 +77,7 @@ const initialValues = getInitialValues(form);
 export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
   const spacing = {
     display: "flex",
-    "& > :first-child": {
+    "& > :first-of-type": {
       mr: "5px",
     },
   };
@@ -87,6 +87,7 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
       initialValues={{ ...initialValues, ...init }}
       onSubmit={onSubmit}
       submitButton={false}
+      enableReinitialize={true}
     >
       <WrapperBox>
         <WrapperBox sx={{ ...spacing, alignItems: "end", py: "1ch" }}>
@@ -119,73 +120,75 @@ export const SearchForm = ({ onSubmit, init, fullForm = true }: Prop) => {
           />
         </WrapperBox>
 
-        {fullForm && <><WrapperBox sx={{ ...spacing }}>
-          <SearchComboBox
-            width="30%"
-            name={form.gender.name}
-            label={form.gender.label}
-            multiple={false}
-            size="small"
-            options={[
-              { label: "Male", id: "Male" },
-              { label: "Female", id: "Female" },
-            ]}
-          />
+        {fullForm && (
+          <>
+            <WrapperBox sx={{ ...spacing }}>
+              <SearchComboBox
+                width="30%"
+                name={form.gender.name}
+                label={form.gender.label}
+                multiple={false}
+                size="small"
+                options={[
+                  { label: "Male", id: "Male" },
+                  { label: "Female", id: "Female" },
+                ]}
+              />
 
-          <TextInputField
-            sx={{ width: "100%", my: 0 }}
-            name={form.dob.name}
-            id={form.dob.name}
-            size="small"
-            label={form.dob.label}
-          />
-          {/* <FormDatePicker
+              <TextInputField
+                sx={{ width: "100%", my: 0 }}
+                name={form.dob.name}
+                id={form.dob.name}
+                size="small"
+                label={form.dob.label}
+              />
+              {/* <FormDatePicker
             width={"100%"}
             name={form.dob.name}
             label={form.dob.label}
             size="small"
           /> */}
-        </WrapperBox>
-          <WrapperBox display={"flex"}>
-            <SearchComboBox
-              sx={{ mr: "0.5ch" }}
-              width="45%"
-              size="small"
-              name={form.homeDistrict.name}
-              label={form.homeDistrict.label}
-              multiple={false}
-              options={districts.map((d) => ({
-                id: d.district_name,
-                label: d.district_name,
-              }))}
-            />
+            </WrapperBox>
+            <WrapperBox display={"flex"}>
+              <SearchComboBox
+                sx={{ mr: "0.5ch" }}
+                width="45%"
+                size="small"
+                name={form.homeDistrict.name}
+                label={form.homeDistrict.label}
+                multiple={false}
+                options={districts.map((d) => ({
+                  id: d.district_name,
+                  label: d.district_name,
+                }))}
+              />
 
-            <SearchComboBox
-              width="100%"
-              size="small"
-              name={form.homeTraditionalAuthority.name}
-              label={form.homeTraditionalAuthority.label}
-              multiple={false}
-              options={traditionalAuthorities}
-            />
-          </WrapperBox>
-          <WrapperBox>
-            <SearchComboBox
-              width="100%"
-              size="small"
-              name={form.homeVillage.name}
-              label={form.homeVillage.label}
-              multiple={false}
-              options={malawiVillages}
-            />
-          </WrapperBox>
-
-        </>}
+              <SearchComboBox
+                width="100%"
+                size="small"
+                name={form.homeTraditionalAuthority.name}
+                label={form.homeTraditionalAuthority.label}
+                multiple={false}
+                options={traditionalAuthorities}
+              />
+            </WrapperBox>
+            <WrapperBox>
+              <SearchComboBox
+                width="100%"
+                size="small"
+                name={form.homeVillage.name}
+                label={form.homeVillage.label}
+                multiple={false}
+                options={malawiVillages}
+              />
+            </WrapperBox>
+          </>
+        )}
 
         <MainButton
           sx={{ width: "100%", height: "5ch", borderRadius: "10px", mt: "1ch" }}
           type="submit"
-          onClick={() => { }}
+          onClick={() => {}}
           title={"search"}
         />
       </WrapperBox>

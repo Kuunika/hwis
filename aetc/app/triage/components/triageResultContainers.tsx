@@ -1,7 +1,6 @@
 import { confirmationDialog } from "@/helpers";
 import { TriageResult } from "@/interfaces";
 import { MainButton, MainPaper, MainTypography } from "@/components";
-import { Button } from "@mui/material";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 import { useState } from "react";
 
@@ -47,8 +46,8 @@ export const TriageContainer = ({
         {result == "yellow"
           ? "Continue Triage"
           : result == "red"
-          ? "Proceed to interventions"
-          : ""}
+            ? "Proceed to interventions"
+            : ""}
       </MainTypography>
 
       {result == "red" && (

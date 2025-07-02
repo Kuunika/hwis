@@ -1,6 +1,6 @@
 "use client";
 
-import { FormContainer } from "@/components";
+import { FormContainer, BackButton } from "@/components";
 import { PatientInfoTab } from "@/components";
 import { roles } from "@/constants";
 import AuthGuard from "@/helpers/authguard";
@@ -21,4 +21,5 @@ export default AuthGuard(PatientManagementPlan, [
   roles.CLINICIAN,
   roles.NURSE,
   roles.ADMIN,
+  roles.STUDENT_CLINICIAN,
 ]);

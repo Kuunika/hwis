@@ -1,14 +1,14 @@
 "use client";
 import { SearchContainer } from "@/app/registration/search/components";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useParameters } from "@/hooks";
 import { NavigationBar, WrapperBox } from "@/components";
 import { useContext, useEffect } from "react";
 import { AuthContext, AuthContextType } from "@/contexts";
+import { usePathname } from "next/navigation";
 
 export const NavBar = () => {
   const { navigateTo } = useNavigation();
-  const { loggedIn, setLoggedIn } = useContext(AuthContext) as AuthContextType
-
+  const { loggedIn, setLoggedIn } = useContext(AuthContext) as AuthContextType;
 
   useEffect(() => {
     if (localStorage) {
@@ -16,17 +16,14 @@ export const NavBar = () => {
         // navigateTo("/")
       }
     }
-  }, [])
-
-
-
+  }, []);
+  const pathname = usePathname();
 
   const handleLogout = () => {
-    localStorage.clear()
-    setLoggedIn(false)
-    navigateTo("/")
-  }
-
+    localStorage.clear();
+    setLoggedIn(false);
+    navigateTo("/");
+  };
   const search = (
     <WrapperBox
       sx={{
@@ -42,7 +39,15 @@ export const NavBar = () => {
   );
 
   // return <NavigationBar onTitleClick={() => navigateTo("/")} search={search} />;
-  return <>
-    <NavigationBar loggedIn={loggedIn} handleLogout={handleLogout} onTitleClick={() => navigateTo("/dashboard")} />
-  </>
+  return (
+    <>
+      {pathname === "/" ? null : (
+        <NavigationBar
+          loggedIn={loggedIn}
+          handleLogout={handleLogout}
+          onTitleClick={() => navigateTo("/dashboard")}
+        />
+      )}
+    </>
+  );
 };
