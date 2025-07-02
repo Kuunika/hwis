@@ -83,7 +83,7 @@ export const ClientsWaitingForTestResults = () => {
           <>
             <Tooltip title="Start Triage" arrow>
               <IconButton
-                onClick={() => navigateTo(`/triage/${cell.id}/start`)}
+                onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
                 aria-label="start Triage"
                 color="primary"
               >
