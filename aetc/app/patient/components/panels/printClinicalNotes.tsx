@@ -451,92 +451,192 @@ export const PrintClinicalNotes = (props: any) => {
   };
 
   // Function to render airway section with clinical logic
-  const renderAirwaySection = (airwayFields: any[]) => {
-    // Find specific airway-related fields
-    const airwayPatent = airwayFields.find(f => f.name.toLowerCase().includes('airway patent'))?.value;
-    const airwayReasons = airwayFields.filter(f => 
-      f.name.toLowerCase().includes('airway reason') || 
-      f.name.toLowerCase().includes('tongue') || 
-      f.name.toLowerCase().includes('swelling')
-    );
-    const airwayInterventions = airwayFields.filter(f => 
-      f.name.toLowerCase().includes('airway opening intervention') ||
-      f.name.toLowerCase().includes('suction') ||
-      f.name.toLowerCase().includes('jaw thrust') ||
-      f.name.toLowerCase().includes('head tilt')
-    );
-    const neckCollar = airwayFields.find(f => f.name.toLowerCase().includes('neck collar'))?.value;
-    const headBlocks = airwayFields.find(f => f.name.toLowerCase().includes('head blocks'))?.value;
+  // const renderAirwaySection = (airwayFields: any[]) => {
+  //   // Find specific airway-related fields
+  //   const airwayPatent = airwayFields.find(f => f.name.toLowerCase().includes('airway patent'))?.value;
+  //   const airwayReasons = airwayFields.filter(f => 
+  //     f.name.toLowerCase().includes('airway reason') || 
+  //     f.name.toLowerCase().includes('tongue') || 
+  //     f.name.toLowerCase().includes('swelling')
+  //   );
+  //   const airwayInterventions = airwayFields.filter(f => 
+  //     f.name.toLowerCase().includes('airway opening intervention') ||
+  //     f.name.toLowerCase().includes('suction') ||
+  //     f.name.toLowerCase().includes('jaw thrust') ||
+  //     f.name.toLowerCase().includes('head tilt')
+  //   );
+  //   const neckCollar = airwayFields.find(f => f.name.toLowerCase().includes('neck collar'))?.value;
+  //   const headBlocks = airwayFields.find(f => f.name.toLowerCase().includes('head blocks'))?.value;
     
+  //   return (
+  //     <Box sx={{ ml: 1 }}>
+  //       {/* Airway Status */}
+  //       {airwayPatent && (
+
+  //         <>
+  //           <Typography variant="body2" sx={{ mb: 0.5 }}>
+  //             {/* Airway: {airwayPatent === 'Yes' ? 'Patent' : airwayPatent === 'No' ? 'Not Patent' : airwayPatent} */}
+  //           </Typography>
+            
+  //           {/* If airway is not patent or threatened, show reasons and interventions */}
+  //           {(airwayPatent.toLowerCase() === 'no' || airwayPatent.toLowerCase() === 'threatened') && (
+  //             <>
+  //               {airwayReasons.length > 0 && (
+  //                 <Typography variant="body2" sx={{ mb: 0.5 }}>
+  //                   {airwayPatent.toLowerCase() === 'no' 
+  //                     ? 'The airway was not patent due to:' 
+  //                     : 'The airway was threatened due to:'} 
+  //                   {airwayReasons.map(r => r.value).join(', ')}
+  //                 </Typography>
+  //               )}
+                
+  //               {airwayInterventions.length > 0 && (
+  //                 <Typography variant="body2" sx={{ mb: 0.5 }}>
+  //                   Airway Opening Intervention: {airwayInterventions.map(i => i.value).join(', ')}
+  //                 </Typography>
+  //               )}
+  //             </>
+  //           )}
+  //         </>
+  //       )}
+        
+  //       {/* C-Spine Protection */}
+  //       {(neckCollar === 'Yes' || headBlocks === 'Yes') ? (
+  //         <Typography variant="body2" sx={{ mb: 0.5 }}>
+  //           C-Spine: Manual in-line stabilization applied
+  //           {neckCollar === 'Yes' && headBlocks === 'Yes' 
+  //             ? ' - Neck Collar Applied and Head Blocks Applied'
+  //             : neckCollar === 'Yes' 
+  //             ? ' - Neck Collar Applied'
+  //             : ' - Head Blocks Applied'
+  //           }
+  //         </Typography>
+  //       ) : (neckCollar === 'No' && headBlocks === 'No') ? (
+  //         <Typography variant="body2" sx={{ mb: 0.5 }}>
+  //           No C-spine immobilization required
+  //         </Typography>
+  //       ) : null}
+        
+  //       {/* Show any other airway-related fields that don't fit the main categories */}
+  //       {airwayFields.filter(f => 
+  //         !f.name.toLowerCase().includes('airway patent') &&
+  //         !f.name.toLowerCase().includes('airway reason') &&
+  //         !f.name.toLowerCase().includes('airway opening intervention') &&
+  //         !f.name.toLowerCase().includes('neck collar') &&
+  //         !f.name.toLowerCase().includes('head blocks') &&
+  //         !f.name.toLowerCase().includes('tongue') &&
+  //         !f.name.toLowerCase().includes('swelling') &&
+  //         !f.name.toLowerCase().includes('suction') &&
+  //         !f.name.toLowerCase().includes('jaw thrust') &&
+  //         !f.name.toLowerCase().includes('head tilt')
+  //       ).map((field: any, index: number) => (
+  //         <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
+  //           {field.name}: {field.value}
+  //         </Typography>
+  //       ))}
+  //     </Box>
+  //   );
+  // };
+
+  const renderAirwaySection = (airwayFields: any[]) => {
+    const airwayStatus = airwayFields.find(f =>
+      f.name.toLowerCase().includes("airway patent")
+    )?.value;
+  
+    const airwayReasons = airwayFields.filter(f =>
+      f.name.toLowerCase().includes("reason") ||
+      f.name.toLowerCase().includes("tongue") ||
+      f.name.toLowerCase().includes("swelling")
+    );
+  
+    const airwayInterventions = airwayFields.filter(f =>
+      f.name.toLowerCase().includes("intervention") ||
+      f.name.toLowerCase().includes("suction") ||
+      f.name.toLowerCase().includes("jaw thrust") ||
+      f.name.toLowerCase().includes("head tilt")
+    );
+  
+    const patientInjured = airwayFields.find(f =>
+      f.name.toLowerCase().includes("patient injured")
+    )?.value;
+  
+    const neckCollar = airwayFields.find(f =>
+      f.name.toLowerCase().includes("neck collar")
+    )?.value;
+  
+    const headBlocks = airwayFields.find(f =>
+      f.name.toLowerCase().includes("head blocks")
+    )?.value;
+  
     return (
       <Box sx={{ ml: 1 }}>
         {/* Airway Status */}
-        {airwayPatent && (
-
+        {airwayStatus && (
+          <Typography variant="body2" sx={{ mb: 0.5 }}>
+            {/* Airway: {airwayStatus} */}
+            Airway is  {
+                airwayStatus.toLowerCase() === "yes"
+                  ? "Patent"
+                  : airwayStatus.toLowerCase() === "no"
+                  ? "Not Patent"
+                  : airwayStatus.charAt(0).toUpperCase() + airwayStatus.slice(1).toLowerCase()
+              }
+          </Typography>
+        )}
+  
+        {/* If Threatened or Not Patent, show more */}
+        {airwayStatus && ['no', 'not patent', 'threatened'].includes(airwayStatus.toLowerCase()) && (
           <>
-            <Typography variant="body2" sx={{ mb: 0.5 }}>
-              {/* Airway: {airwayPatent === 'Yes' ? 'Patent' : airwayPatent === 'No' ? 'Not Patent' : airwayPatent} */}
-            </Typography>
-            
-            {/* If airway is not patent or threatened, show reasons and interventions */}
-            {(airwayPatent.toLowerCase() === 'no' || airwayPatent.toLowerCase() === 'threatened') && (
+            {/* Reasons */}
+            {airwayReasons.length > 0 && (
+              <Typography variant="body2" sx={{ mb: 0.5, ml: 2 }}>
+                - Reason: {airwayReasons.map(r => r.value).join(", ")}
+              </Typography>
+            )}
+  
+            {/* Interventions */}
+            {airwayInterventions.length > 0 && (
+              <Typography variant="body2" sx={{ mb: 0.5, ml: 2 }}>
+                - Interventions: {airwayInterventions.map(i => i.value).join(", ")}
+              </Typography>
+            )}
+  
+            {/* Patient Injury Status */}
+            {patientInjured && (
+              <Typography variant="body2" sx={{ mb: 0.5, ml: 2 }}>
+                - Patient {patientInjured}
+              </Typography>
+            )}
+  
+            {/* If Injured */}
+            {patientInjured?.toLowerCase() === "injured" && (
               <>
-                {airwayReasons.length > 0 && (
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    {airwayPatent.toLowerCase() === 'no' 
-                      ? 'The airway was not patent due to:' 
-                      : 'The airway was threatened due to:'} 
-                    {airwayReasons.map(r => r.value).join(', ')}
+                {neckCollar && (
+                  <Typography variant="body2" sx={{ mb: 0.5, ml: 3 }}>
+                    - Neck Collar: {neckCollar}
                   </Typography>
                 )}
-                
-                {airwayInterventions.length > 0 && (
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    Airway Opening Intervention: {airwayInterventions.map(i => i.value).join(', ')}
+                {headBlocks && (
+                  <Typography variant="body2" sx={{ mb: 0.5, ml: 3 }}>
+                    - Head Blocks: {headBlocks}
+                  </Typography>
+                )}
+  
+                {/* If both NOT or NOT INDICATED */}
+                {(neckCollar?.toLowerCase().includes("not") &&
+                  headBlocks?.toLowerCase().includes("not")) && (
+                  <Typography variant="body2" sx={{ mb: 0.5, ml: 4 }}>
+                    No visible obstructions
                   </Typography>
                 )}
               </>
             )}
           </>
         )}
-        
-        {/* C-Spine Protection */}
-        {(neckCollar === 'Yes' || headBlocks === 'Yes') ? (
-          <Typography variant="body2" sx={{ mb: 0.5 }}>
-            C-Spine: Manual in-line stabilization applied
-            {neckCollar === 'Yes' && headBlocks === 'Yes' 
-              ? ' - Neck Collar Applied and Head Blocks Applied'
-              : neckCollar === 'Yes' 
-              ? ' - Neck Collar Applied'
-              : ' - Head Blocks Applied'
-            }
-          </Typography>
-        ) : (neckCollar === 'No' && headBlocks === 'No') ? (
-          <Typography variant="body2" sx={{ mb: 0.5 }}>
-            No C-spine immobilization required
-          </Typography>
-        ) : null}
-        
-        {/* Show any other airway-related fields that don't fit the main categories */}
-        {airwayFields.filter(f => 
-          !f.name.toLowerCase().includes('airway patent') &&
-          !f.name.toLowerCase().includes('airway reason') &&
-          !f.name.toLowerCase().includes('airway opening intervention') &&
-          !f.name.toLowerCase().includes('neck collar') &&
-          !f.name.toLowerCase().includes('head blocks') &&
-          !f.name.toLowerCase().includes('tongue') &&
-          !f.name.toLowerCase().includes('swelling') &&
-          !f.name.toLowerCase().includes('suction') &&
-          !f.name.toLowerCase().includes('jaw thrust') &&
-          !f.name.toLowerCase().includes('head tilt')
-        ).map((field: any, index: number) => (
-          <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
-            {field.name}: {field.value}
-          </Typography>
-        ))}
       </Box>
     );
   };
+  
 
   // Function to categorize fields dynamically
   const categorizeField = (fieldName: string) => {
@@ -630,85 +730,113 @@ export const PrintClinicalNotes = (props: any) => {
     const fields = extractAllFields(panelData);
 
     return (
-      <Box sx={{ p: 2, minHeight: "60px" }}>
-        <Typography
-          variant="subtitle1"
-          fontWeight="bold"
-          sx={{ textDecoration: "underline", marginBottom: 1 }}
-        >
-          Primary Survey
-        </Typography>
-        
-        <Box sx={{ ml: 1 }}>
-          {/* A - Airway with C-Spine Protection */}
-          {fields.airway.length > 0 && (
-            <>
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
-                A – Airway with C-Spine Protection
-              </Typography>
-              {renderAirwaySection(fields.airway)}
-            </>
-          )}
 
-          {/* B - Breathing */}
-          {fields.breathing.length > 0 && (
-            <>
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
-                B – Breathing
-              </Typography>
-              {fields.breathing.map((field: any, index: number) => (
-                <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
-                  {field.name}: {field.value}
-                </Typography>
-              ))}
-            </>
-          )}
+        <Box sx={{ p: 2, minHeight: "60px" }}>
+          <Typography
+            variant="subtitle1"
+            fontWeight="bold"
+            sx={{ textDecoration: "underline", marginBottom: 1 }}
+          >
+            Primary Survey
+          </Typography>
 
-          {/* C - Circulation */}
-          {fields.circulation.length > 0 && (
-            <>
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
-                C – Circulation
-              </Typography>
-              {fields.circulation.map((field: any, index: number) => (
-                <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
-                  {field.name}: {field.value}
-                </Typography>
-              ))}
-            </>
-          )}
+          <Grid container spacing={2}>
+            {/* Column 1: A & B */}
+            <Grid item xs={12} md={4}>
+              {/* A – Airway */}
+              {fields.airway.length > 0 && (
+                <>
+                  <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
+                    A – Airway with C-Spine Protection
+                  </Typography>
+                  {renderAirwaySection(fields.airway)}
+                </>
+              )}
 
-          {/* D - Disability */}
-          {fields.disability.length > 0 && (
-            <>
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
-                D – Disability
-              </Typography>
-              {fields.disability.map((field: any, index: number) => (
-                <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
-                  {field.name}: {field.value}
-                </Typography>
-              ))}
-            </>
-          )}
+              {/* B – Breathing */}
+              {fields.breathing.length > 0 && (
+                <>
+                  <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}>
+                    B – Breathing
+                  </Typography>
+                  {fields.breathing.map((field: any, index: number) => {
+                    const name = field.name?.toLowerCase();
+                    const value = field.value;
 
-          {/* E - Exposure/Environment */}
-          {fields.exposure.length > 0 && (
-            <>
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
-                E – Exposure/Environment
-              </Typography>
-              {fields.exposure.map((field: any, index: number) => (
-                <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
-                  {field.name}: {field.value}
-                </Typography>
-              ))}
-            </>
-          )}
+                    if (name.includes("abnormal")) {
+                      return (
+                        <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                          {value?.toLowerCase() === "no"
+                            ? "Breathing is Patent"
+                            : value?.toLowerCase() === "yes"
+                            ? "Breathing is Not Patent"
+                            : "Breathing status unknown"}
+                        </Typography>
+                      );
+                    }
+
+                    return (
+                      <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                        {field.name}: {field.value}
+                      </Typography>
+                    );
+                  })}
+                </>
+              )}
+            </Grid>
+
+            {/* Column 2: C & D */}
+            <Grid item xs={12} md={4}>
+              {/* C – Circulation */}
+              {fields.circulation.length > 0 && (
+                <>
+                  <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
+                    C – Circulation
+                  </Typography>
+                  {fields.circulation.map((field: any, index: number) => (
+                    <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                      {field.name}: {field.value}
+                    </Typography>
+                  ))}
+                </>
+              )}
+
+              {/* D – Disability */}
+              {fields.disability.length > 0 && (
+                <>
+                  <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}>
+                    D – Disability
+                  </Typography>
+                  {fields.disability.map((field: any, index: number) => (
+                    <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                      {field.name}: {field.value}
+                    </Typography>
+                  ))}
+                </>
+              )}
+            </Grid>
+
+            {/* Column 3: E only */}
+            <Grid item xs={12} md={4}>
+              {/* E – Exposure/Environment */}
+              {fields.exposure.length > 0 && (
+                <>
+                  <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}>
+                    E – Exposure/Environment
+                  </Typography>
+                  {fields.exposure.map((field: any, index: number) => (
+                    <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                      {field.name}: {field.value}
+                    </Typography>
+                  ))}
+                </>
+              )}
+            </Grid>
+          </Grid>
+
+          {renderTimestamp(panelData)}
         </Box>
-        
-        {renderTimestamp(panelData)}
-      </Box>
+
     );
   };
 
@@ -974,7 +1102,7 @@ export const PrintClinicalNotes = (props: any) => {
                         sx={{ textDecoration: "underline" }}
                         gutterBottom
                       >
-                        Triage Information
+                        Triage Information 
                       </Typography>
                       {renderGroupedItems(
                         Array.isArray(panelData.triage)
