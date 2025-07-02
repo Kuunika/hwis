@@ -78,7 +78,7 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/initial-registration/list"
-              title="Screening List"
+              title="Awaiting Screening List"
             />
           </AuthGuardComp>
           <AuthGuardComp
@@ -87,7 +87,7 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/registration/list"
-              title="Registration List"
+              title="Awaiting Registration List"
             />
           </AuthGuardComp>
           <AuthGuardComp
@@ -98,7 +98,7 @@ function Home() {
               roles.STUDENT_CLINICIAN,
             ]}
           >
-            <Card icon={<FcTodoList />} link="/triage" title="Triage List" />
+            <Card icon={<FcTodoList />} link="/triage" title="Awaiting Triage List" />
           </AuthGuardComp>
           <AuthGuardComp
             roles={[
@@ -118,7 +118,7 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/dispositions"
-              title="Disposition/Specialty"
+              title="Awaiting Specialty/Dispositiion"
             />
           </AuthGuardComp>
 

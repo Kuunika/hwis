@@ -117,12 +117,6 @@ export const ClientsAwaitingDisposition = () => {
       flex: 1,
     },
     {
-
-      field: "disposition_type",
-      headerName: "Disposition/Speciality",
-      flex: 1,
-    },
-    {
       field: "patient_care_area",
       flex: 1,
       headerName: "Patient Care Area",
@@ -130,6 +124,11 @@ export const ClientsAwaitingDisposition = () => {
     {
       field: "disposition_type",
       headerName: "Awaiting Speciality",
+      flex: 1,
+    },
+    {
+      field: "department",
+      headerName: "Department/Facilities",
       flex: 1,
     },
 

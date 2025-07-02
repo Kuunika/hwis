@@ -34,10 +34,10 @@ const dispositionOptions = [
     label: "Awaiting specialty review",
   },
   { id: concepts.ADMISSION, label: "Admission" },
-  { id: concepts.SHORT_STAY, label: "Short stay" },
+  // { id: concepts.SHORT_STAY, label: "Short stay" },
   {
     id: concepts.TRANSFER_TO_ANOTHER_FACILITY,
-    label: "Transfer to another facility",
+    label: "Transfer to other facilities",
   },
   { id: concepts.DEATH, label: "Death" },
   { id: concepts.ABSCONDED, label: "Absconded" },
@@ -49,15 +49,15 @@ const dispositionOptions = [
 
 function DispositionFeature() {
   const { navigateTo } = useNavigation();
-  const [openPatientSummary, setOpenPatientSummary]=useState(false)
+  const [openPatientSummary, setOpenPatientSummary] = useState(false)
   const [selectedDisposition, setSelectedDisposition] = useState<string | null>(
     null
   );
 
 
-const openPatientSummaryDialog = ()=>{
+  const openPatientSummaryDialog = () => {
     setOpenPatientSummary(true)
-}
+  }
 
 
   const renderForm = () => {
@@ -65,19 +65,19 @@ const openPatientSummaryDialog = ()=>{
       case concepts.DISCHARGE_HOME:
         return <DischargeHomeForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.AWAITING_SPECIALITY_REVIEW:
-        return <AwaitingSpecialityReviewForm openPatientSummary={openPatientSummaryDialog}  />;
+        return <AwaitingSpecialityReviewForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.ADMISSION:
-        return <AdmissionForm openPatientSummary={openPatientSummaryDialog}  />;
+        return <AdmissionForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.SHORT_STAY:
-        return <ShortStayForm openPatientSummary={openPatientSummaryDialog}  />;
+        return <ShortStayForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.TRANSFER_TO_ANOTHER_FACILITY:
-        return <TransferForm openPatientSummary={openPatientSummaryDialog}  />;
+        return <TransferForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.DEATH:
-        return <DeathForm openPatientSummary={openPatientSummaryDialog}  />;
+        return <DeathForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.ABSCONDED:
-        return <AbscondedForm openPatientSummary={openPatientSummaryDialog}  />;
+        return <AbscondedForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.REFUSED_HOSPITAL_TREATMENT:
-        return <RefusedTreatmentForm openPatientSummary={openPatientSummaryDialog}  />;
+        return <RefusedTreatmentForm openPatientSummary={openPatientSummaryDialog} />;
       default:
         return null;
     }
@@ -88,7 +88,7 @@ const openPatientSummaryDialog = ()=>{
       <PatientInfoTab />
       <BackButton />
       <MainGrid container spacing={2} mt={"2ch"} sx={{ ml: 16 }}>
-            <PatientInfoPrintDialog onClose={() => navigateTo("/dispositions")} open={openPatientSummary} />
+        <PatientInfoPrintDialog onClose={() => navigateTo("/dispositions")} open={openPatientSummary} />
         {/* Main Content */}
         <MainGrid item xs={12} lg={9}>
           {/* <div style={{ display: "flex", alignItems: "center" }}>
