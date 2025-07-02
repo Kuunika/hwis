@@ -103,6 +103,7 @@ interface EncounterType {
   name: string;
   description: string;
   uuid: string;
+
 }
 
 export interface Obs {
@@ -146,6 +147,7 @@ export interface Encounter {
   obs: Obs[];
   created_by: string;
   person_uuid?: string;
+  visit: Visit
 }
 
 export interface Visit {
