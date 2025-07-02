@@ -15,7 +15,10 @@ import { ClientsWaitingForTestResults } from "./components/testResultsList";
 function Triage() {
   return (
     <>
-      <Navigation title="Patients waiting for Test Results" link="/dashboard" />
+      <Navigation
+        title="Patients waiting for Test & Results"
+        link="/dashboard"
+      />
       <MainGrid container>
         <MainGrid xs={0} lg={0} item></MainGrid>
         <MainGrid
@@ -31,11 +34,11 @@ function Triage() {
           <br />
           <br />
           <RegistrationMainHeader>
-            Patients waiting for Test Results
+            Patients waiting for Test & Results
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
-            This is a list of all patients that went through registration
-            successfully and waiting for triage.
+            This is a list of all patients that are waiting for their test
+            results
           </RegistrationDescriptionText>
           <RegistrationCard sx={{ p: 0 }}>
             <ClientsWaitingForTestResults />

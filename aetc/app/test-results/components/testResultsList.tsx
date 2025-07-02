@@ -29,7 +29,7 @@ export const ClientsWaitingForTestResults = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
-  } = fetchPatientsTablePaginate("triage");
+  } = fetchPatientsTablePaginate("investigations");
 
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -69,7 +69,11 @@ export const ClientsWaitingForTestResults = () => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
-    { field: "last_encounter_creator", headerName: "Registered By", flex: 1 },
+    {
+      field: "last_encounter_creator",
+      headerName: "Planned By",
+      flex: 1,
+    },
     {
       field: "action",
       headerName: "Action",
