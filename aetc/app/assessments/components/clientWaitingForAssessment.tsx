@@ -355,7 +355,7 @@ export function BasicMenu({ patient }: { patient: any }) {
           <FetchAndDisplayTriageBarcode
             arrivalDateTime={patient.arrival_time}
             patientId={patient.id}
-            activeVisitId={patient?.active_visit?.visit_id}
+            activeVisitId={patient?.visit_uuid}
           />
         </MenuItem>
       </Menu>

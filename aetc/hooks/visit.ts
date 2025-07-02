@@ -27,3 +27,20 @@ export const closeCurrentVisit = () => {
 
   });
 };
+
+export const reOpenRecentClosedVisit = (patientId:string) => {
+  const queryClient = useQueryClient();
+  const updateVisit = (visitUuid: string) =>
+    closeVisit(visitUuid, { stopDatetime: 'null' }).then(
+      (response) => response.data
+    );
+
+  return useMutation({
+    mutationFn: updateVisit,
+    onSuccess: ()=>{
+      queryClient.invalidateQueries({
+        queryKey: ["patients",patientId,"visits"],
+      });
+    }
+  });
+};

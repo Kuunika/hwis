@@ -11,6 +11,7 @@ import { ServerTimeProvider } from "@/contexts/serverTimeContext";
 import { PrinterProvider } from "@/contexts/printer";
 import { VisitDatesProvider } from "@/contexts/visitDatesContext";
 import { ReactNode } from "react";
+import { ActivePatientProvider } from "@/contexts/activePatientContext";
 
 export const ContextProviders = ({ children }: { children: ReactNode }) => {
   return (
@@ -23,7 +24,11 @@ export const ContextProviders = ({ children }: { children: ReactNode }) => {
                 <ConsultationProvider>
                   <SearchRegistrationProvider>
                     <ServerTimeProvider>
-                      <PrinterProvider>{children}</PrinterProvider>
+                      <PrinterProvider>
+                        <ActivePatientProvider>
+                          {children}
+                        </ActivePatientProvider>
+                      </PrinterProvider>
                     </ServerTimeProvider>
                   </SearchRegistrationProvider>
                 </ConsultationProvider>

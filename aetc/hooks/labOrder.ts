@@ -72,7 +72,6 @@ export const getConceptSetMembers = (id: string) => {
 
 export const createOrder = (id?: string) => {
     const queryClient = useQueryClient()
-
     const addData = (patientData: any) => {
         return createLabOrder(patientData).then((response) => {
             return response.data;

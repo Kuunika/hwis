@@ -1,31 +1,23 @@
-import { getCATTime, getTime } from "@/helpers/dateTime";
+import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
 
 import {
-  BaseTable,
   CalculateWaitingTime,
   MainButton,
-  MainTypography,
-  PatientTableList,
   PatientTableListServer,
 } from "@/components";
 
-import Image from "next/image";
 import { AbscondButton } from "@/components/abscondButton";
-import { useContext, useEffect, useState } from "react";
-import { Identifier } from "@/interfaces";
-import {
-  SearchRegistrationContext,
-  SearchRegistrationContextType,
-} from "@/contexts";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
+import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
 
-export const WaitingRegistrationList = () => {
+export const ClientsWaitingForTestResults = () => {
   const [deleted, setDeleted] = useState("");
   const { navigateTo } = useNavigation();
   const {
@@ -37,7 +29,8 @@ export const WaitingRegistrationList = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
-  } = fetchPatientsTablePaginate("registration");
+  } = fetchPatientsTablePaginate("triage");
+
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
 
@@ -46,25 +39,18 @@ export const WaitingRegistrationList = () => {
   }, [debouncedSearch]);
 
   const rows = patients
-    ?.sort((p1, p2) => {
-      //@ts-ignore
-      return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-    })
-    .map((p) => ({
+    ?.map((p) => ({
       id: p?.uuid,
       ...p,
       patient_arrival_time: getTime(p.arrival_time),
     }))
     .filter((p) => p.id != deleted);
-  const { setPatient, setRegistrationType, setSearchedPatient } = useContext(
-    SearchRegistrationContext
-  ) as SearchRegistrationContextType;
 
   const columns = [
     { field: "aetc_visit_number", headerName: "Visit Number" },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
-    { field: "patient_arrival_time", headerName: "Arrival Time", flex: 1 },
+    { field: "patient_arrival_time", headerName: "Arrival Time" },
     {
       field: "waiting",
       headerName: "WaitingTime",
@@ -83,44 +69,36 @@ export const WaitingRegistrationList = () => {
         return <CalculateWaitingTime arrival_time={cell.row.arrival_time} />;
       },
     },
-
-    { field: "last_encounter_creator", headerName: "Screened By", flex: 1 },
-
+    { field: "last_encounter_creator", headerName: "Registered By", flex: 1 },
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
+      flex: 1.2,
       renderCell: (cell: any) => {
-        // const link = cell.row.gender != 'N/A' ? `/registration/${cell.id}/new` : `/registration/${cell.id}/search`;
-        const link = `/registration/${cell.id}/search`;
-
         return (
           <>
-            <Tooltip title="Start Registration" arrow>
+            <Tooltip title="Start Triage" arrow>
               <IconButton
-                onClick={() => {
-                  if (cell.row.gender != "N/A") {
-                    setSearchedPatient({
-                      firstName: cell.row.given_name,
-                      lastName: cell.row.family_name,
-                      gender: cell.row.gender,
-                    });
-                    setPatient(cell.row);
-                    setRegistrationType("local");
-                  }
-                  navigateTo(link);
-                }}
-                aria-label="start screening"
+                onClick={() => navigateTo(`/triage/${cell.id}/start`)}
+                aria-label="start Triage"
                 color="primary"
               >
                 <FaPlay />
               </IconButton>
             </Tooltip>
+
+            {/* <MainButton
+              size="small"
+              sx={{ fontSize: "12px", mr: "1px" }}
+              title={"start"}
+              onClick={() => navigateTo(`/triage/${cell.id}/start`)}
+            /> */}
             <AbscondButton
               onDelete={() => setDeleted(cell.id)}
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+            <PrinterBarcodeButton icon={true} uuid={cell.row.uuid} />
           </>
         );
       },
@@ -134,11 +112,11 @@ export const WaitingRegistrationList = () => {
       firstName: row.given_name,
       lastName: row.family_name,
       gender: row.gender,
-      arrivalDateTime: row.arrival_time,
       arrivalTime: row.patient_arrival_time,
+      arrivalDateTime: row.arrival_time,
       actor: (
         <DisplayEncounterCreator
-          encounterType={encounters.SCREENING_ENCOUNTER}
+          encounterType={encounters.SOCIAL_HISTORY}
           patientId={row.id}
         />
       ),
@@ -146,49 +124,47 @@ export const WaitingRegistrationList = () => {
       waitingTime: (
         <CalculateWaitingTime arrival_time={row?.latest_encounter_time} />
       ),
-      actionName: "screened by",
+      actionName: "Registered by",
       action: (
         <>
-          {" "}
           <MainButton
-            sx={{ fontSize: "12px", width: "49%", mr: "1px" }}
+            size="small"
+            sx={{ fontSize: "12px", width: "30%", mr: "1px", mb: "1px" }}
             title={"start"}
-            onClick={() => navigateTo(`/registration/${row.id}/search`)}
+            onClick={() => navigateTo(`/triage/${row.id}/start`)}
           />
           <AbscondButton
-            sx={{ width: "49%" }}
+            sx={{ width: "30%" }}
             onDelete={() => setDeleted(row.id)}
             visitId={row.visit_uuid}
             patientId={row.id}
           />
+          <PrinterBarcodeButton sx={{ width: "30%" }} uuid={row.uuid} />
         </>
       ),
-      age: "N/A",
+      age: calculateAge(row.birthdate),
       triageResult: row.triage_result,
     };
   });
 
   return (
-    <>
-      {/* <PatientTableList formatForMobileView={formatForMobileView} isLoading={isLoading || isRefetching} columns={columns} rows={rows ? rows : []} /> */}
-      <PatientTableListServer
-        columns={columns}
-        data={{
-          data: rows ?? [],
-          page: paginationModel.page,
-          per_page: paginationModel.pageSize,
-          total_pages: totalPages,
-        }}
-        searchText={inputText}
-        setSearchString={setInputText}
-        setPaginationModel={setPaginationModel}
-        paginationModel={paginationModel}
-        // loading={isPending || isRefetching}
-        loading={loading}
-        formatForMobileView={formatForMobileView ? formatForMobileView : []}
-        onSwitchChange={setOnSwitch}
-        onRowClick={(row: any) => navigateTo(`/registration/${row.id}/search`)}
-      />
-    </>
+    <PatientTableListServer
+      columns={columns}
+      data={{
+        data: rows ?? [],
+        page: paginationModel.page,
+        per_page: paginationModel.pageSize,
+        total_pages: totalPages,
+      }}
+      searchText={inputText}
+      setSearchString={setInputText}
+      setPaginationModel={setPaginationModel}
+      paginationModel={paginationModel}
+      // loading={isPending || isRefetching}
+      loading={loading}
+      formatForMobileView={formatForMobileView ? formatForMobileView : []}
+      onSwitchChange={setOnSwitch}
+      onRowClick={(row: any) => navigateTo(`/triage/${row.id}/start`)}
+    />
   );
 };

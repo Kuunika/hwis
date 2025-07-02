@@ -80,6 +80,7 @@ export interface Person {
     given_name: string;
     family_name: string;
   }>;
+  active_visit?: ActiveVisit 
 }
 
 export interface DailyVisitPaginated {
@@ -102,6 +103,7 @@ interface EncounterType {
   name: string;
   description: string;
   uuid: string;
+
 }
 
 export interface Obs {
@@ -145,6 +147,7 @@ export interface Encounter {
   obs: Obs[];
   created_by: string;
   person_uuid?: string;
+  visit: Visit
 }
 
 export interface Visit {

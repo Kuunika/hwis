@@ -9,9 +9,8 @@ import {
 } from "@/components";
 
 import { useEffect, useState } from "react";
-import { useNavigation, useParameters } from "@/hooks";
+import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 
-import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { Navigation } from "@/app/components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
@@ -21,16 +20,12 @@ function RegistrationSearch() {
   const { navigateTo } = useNavigation();
   const { params } = useParameters();
   const [searchName, setSearchName] = useState("");
-  const { data: patients } = getPatientsWaitingForRegistrations();
+  const { patient } = getActivePatientDetails();
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const found = patients?.find((p) => p.uuid == params.id);
-
-    if (found) {
-      setSearch(`${found.given_name} ${found.family_name}`);
-    }
-  }, []);
+    setSearch(`${patient.given_name} ${patient.family_name}`);
+  }, [patient]);
 
   return (
     <>
@@ -120,8 +115,7 @@ function RegistrationSearch() {
   );
 }
 
-
-export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN])
+export default AuthGuard(RegistrationSearch, [roles.ADMIN, roles.CLINICIAN]);
 
 // export const AddPatientButton = () => (
 //   <WrapperBox
