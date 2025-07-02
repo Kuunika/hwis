@@ -1,10 +1,14 @@
 // components/surgicalNotes/SurgicalNotesContent.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PatientInfoTab } from "@/components";
 import { LabOrderTable } from "@/app/patient/components/panels/labOrderTable";
-
+import { BedsideResults } from "@/app/patient/components/panels/bedsideResults";
+import { LabResultsTable } from "@/app/patient/components/panels/labResults";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { Results } from "@/app/patient/components/panels";
+import { getPatientsEncounters } from "@/hooks/encounter";
+import { useParameters } from "@/hooks";
+import { encounters } from "@/constants";
 
 interface Props {
     presentingInfo: {
@@ -83,6 +87,57 @@ export const SurgicalNotesContent: React.FC<Props> = ({
     setRow,
     showPatientInfo = false
 }) => {
+    // State for bedside results
+    const [bedsideResults, setBedsideResults] = useState<any[]>([]);
+    const { params } = useParameters();
+    const patientId = params.id as string;
+
+    // Fetch bedside results
+    const { data: BedSideResults, isLoading: bedsideLoading } = getPatientsEncounters(
+        patientId,
+        `encounter_type=${encounters.BED_SIDE_TEST}`
+    );
+
+    useEffect(() => {
+        if (!bedsideLoading && BedSideResults) {
+            setBedsideResults(BedSideResults?.[0]?.obs ?? []);
+        }
+    }, [BedSideResults, bedsideLoading]);
+
+    const isEmpty = [
+        ...presentingInfo.complaints,
+        presentingInfo.history,
+        presentingInfo.surgicalHistory,
+        presentingInfo.surgicalProcedure,
+        ...presentingInfo.familyHistory,
+        presentingInfo.allergies,
+        presentingInfo.differentialDiagnosis,
+        presentingInfo.smoking.status,
+        presentingInfo.smoking.duration,
+        presentingInfo.alcoholIntake,
+        presentingInfo.recreationalDrugs,
+        ...pastMedicalHistory,
+        ...Object.values(reviewOfSystems).flat(),
+        ...Object.values(physicalExam),
+        clerkInfo.additionalNotes,
+        clerkInfo.clerkName,
+        clerkInfo.designation,
+        clerkInfo.signature
+    ].every((val: any) => Array.isArray(val) ? val.length === 0 : typeof val === 'string' ? !val.trim() : false);
+
+    if (isEmpty) {
+        return (
+            <>
+                {showPatientInfo && <PatientInfoTab />}
+
+                <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Surgical Notes</h1>
+                <p style={{ fontStyle: "italic", color: "gray" }}>
+                    Surgical Notes not recorded.
+                </p>
+            </>
+        );
+    }
+
     return (
         <div>
             {showPatientInfo && <PatientInfoTab />}
@@ -293,12 +348,12 @@ export const SurgicalNotesContent: React.FC<Props> = ({
             <hr />
 
             <h2>Investigations</h2>
-            {/* <h3>Bed side Reults</h3> */}
-            <Results />
 
+            <h3>Bedside Results</h3>
+            <BedsideResults data={bedsideResults} />
 
-            {/* <h3>Lab Order Results</h3>
-            <LabOrderTable /> */}
+            <h3>Lab Results</h3>
+            <LabResultsTable rows={[]} />
             <hr />
 
             <h2>Medications</h2>

@@ -16,7 +16,6 @@ import {
 } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import * as Yup from "yup";
-
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { Visit } from "@/interfaces";
@@ -24,7 +23,7 @@ import { closeCurrentVisit } from "@/hooks/visit";
 import { useNavigation } from "@/hooks"; // Import navigation hook
 import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
 import { useServerTime } from "@/contexts/serverTimeContext";
-
+import { getActivePatientDetails } from "@/hooks";
 
 const wardOptions = [
     {
@@ -116,7 +115,7 @@ const initialValues = {
     specialtyInvolved: "",
 };
 
-export default function AdmissionForm({openPatientSummary}:{openPatientSummary:()=>void}) {
+export default function AdmissionForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -124,6 +123,27 @@ export default function AdmissionForm({openPatientSummary}:{openPatientSummary:(
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const { navigateTo } = useNavigation(); // Initialize navigation
     const { init, ServerTime } = useServerTime();
+    const { gender } = getActivePatientDetails();
+
+    const filteredWardOptions = wardOptions.filter((ward) => {
+        const femaleOnlyLabels = [
+            "6A Female Orthopaedic Ward",
+            "4A Female Medical Ward (General ward/High Dependency Unit)",
+            "Gynecology Ward (General ward/High Dependency Unit)",
+            "Labour Ward (General ward/High Dependency Unit)",
+            "3B Female Medical Ward (General ward/High Dependency Unit)",
+            "5B Female Surgical Ward (General ward/High Dependency Unit)",
+        ];
+
+        // If Male, remove female-only wards
+        if (gender === "Male") {
+            return !femaleOnlyLabels.includes(ward.label);
+        }
+
+        return true; // Show all for Female/Other
+    });
+
+
 
     useEffect(() => {
         // Finds the active visit for the patient from their visit history
@@ -177,16 +197,10 @@ export default function AdmissionForm({openPatientSummary}:{openPatientSummary:(
 
         try {
             await submitEncounter(payload);
-            // toast.success("Admission information submitted successfully!");
-            // Close the visit after successfully submitting the encounter
-            //   if (activeVisit?.uuid) {
-            //       closeVisit(activeVisit.uuid);
-            //   }
-            // navigateTo("/dispositions");
+
             openPatientSummary()
         } catch (error) {
             console.error("Error submitting Admission information: ", error);
-            // toast.error("Failed to submit Admission information.");
         }
     };
     return (
@@ -194,7 +208,7 @@ export default function AdmissionForm({openPatientSummary}:{openPatientSummary:(
             <MainGrid item xs={12} lg={8}>
                 <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Admission Form</h2>
+                    <h2>2. Admission Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}
@@ -207,7 +221,7 @@ export default function AdmissionForm({openPatientSummary}:{openPatientSummary:(
                                 <SearchComboBox
                                     name="wardName"
                                     label="Ward Name"
-                                    options={wardOptions}
+                                    options={filteredWardOptions} // <-- use filtered options
                                     multiple={false}
                                 />
                             </MainGrid>

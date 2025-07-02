@@ -15,6 +15,7 @@ import { Bounce, toast } from "react-toastify";
 import { useBedsideFormData } from "@/hooks/useBedsideFormData";
 import { FormRenderer } from "@/components/FormRenderer";
 import { transformLabValues } from "@/utils/dataTransformer";
+import { Button } from "@mui/material";
 
 export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
   const { activeVisit, patientId } = getActivePatientDetails();
@@ -76,6 +77,25 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
     // onClose?.();
   };
 
+
+  const handleSubmitAnyway = (values: any) => {
+    console.log({ values })
+    const dateTime = getDateTime();
+    const transformedData = transformLabValues(values, formStructure, dateTime);
+    console.log("🚀 ~ handleSubmit ~ transformedData:", transformedData);
+
+    if (transformedData.length > 0) {
+      mutate({
+        encounterType: encounters.BED_SIDE_TEST,
+        visit: activeVisit,
+        patient: patientId,
+        encounterDatetime: dateTime,
+        obs: transformedData,
+      });
+    }
+
+  }
+
   return (
     <ContainerLoaderOverlay
       loading={isPending || bedsideLoading || bedsidePlanLoading}
@@ -84,10 +104,17 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
         initialValues={{ ...initialValues }}
-      >
-        <Form>
-          <FormRenderer formStructure={formStructure} />
-        </Form>
+        submitButton={false}
+      >{({ values, submitCount }) => {
+
+        // console.log(submitCount)
+        return <>
+          <Form>
+            <FormRenderer formStructure={formStructure} />
+          </Form>
+          {submitCount > 0 ? <Button variant="contained" onClick={() => handleSubmitAnyway(values)}>submit anyway</Button> : <Button variant="contained" type="submit">submit</Button>}
+        </>
+      }}
       </FormikInit>
     </ContainerLoaderOverlay>
   );

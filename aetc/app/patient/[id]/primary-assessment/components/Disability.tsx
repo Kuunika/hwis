@@ -7,6 +7,8 @@ import {
   MainTypography,
   RadioGroupInput,
   TextInputField,
+  SearchComboBox,
+  FormValuesListener, // Add this import
 } from "@/components";
 import * as yup from "yup";
 import { Box, Typography } from "@mui/material";
@@ -20,9 +22,11 @@ import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
+
 type Props = {
   onSubmit: () => void;
 };
+
 const form = {
   eyeOpening: {
     name: concepts.EYE_OPENING_RESPONSE,
@@ -36,11 +40,6 @@ const form = {
     name: concepts.MOTOR_RESPONSE,
     label: "Best Motor Response",
   },
-
-  // reactionToLight: {
-  //   name: concepts.PUPIL_SIZE_AND_REACTION_TO_LIGHT,
-  //   label: "Pupil Size and Reaction To Light",
-  // },
   focalNeurology: {
     name: concepts.FOCAL_NEUROLOGY,
     label: "Focal Neurology",
@@ -51,7 +50,7 @@ const form = {
   },
   bloodGlocose: {
     name: concepts.BLOOD_GLUCOSE,
-    label: "Patient’s Random Blood Glucose",
+    label: "Patient's Random Blood Glucose",
   },
   seizureInfo: {
     name: concepts.ACTIVE_SEIZURES,
@@ -73,6 +72,11 @@ const form = {
     name: "Right Pupil Reaction",
     label: "Right Pupil Reaction",
   },
+  // Add units field
+  units: {
+    name: "units",
+    label: "Units",
+  },
 };
 
 const schema = yup.object({
@@ -85,11 +89,6 @@ const schema = yup.object({
     .string()
     .required()
     .label(form.motorResponse.label),
-
-  // [form.reactionToLight.name]: yup
-  //   .string()
-  //   .required()
-  //   .label(form.reactionToLight.label),
   [form.focalNeurology.name]: yup
     .string()
     .required()
@@ -115,9 +114,14 @@ const schema = yup.object({
     .string()
     .label(form.leftPupilReaction.label),
   [form.leftPupilSize.name]: yup.string().label(form.leftPupilSize.label),
+  [form.units.name]: yup.string().label(form.units.label),
 });
 
-const initialValues = getInitialValues(form);
+const initialValues = {
+  ...getInitialValues(form),
+  [form.units.name]: "mmol/l", // Set default unit
+};
+
 const sizeOfEyeOpeningResponse = [
   { label: "Spontaneously", value: "4" },
   { label: "To Speech", value: "3" },
@@ -156,23 +160,32 @@ const sizeOfMotorResponse = [
     value: "1",
   },
 ];
+
 const radioOptions = [
   { label: "Yes", value: YES },
   { label: "No", value: NO },
 ];
+
+const unitOptions = [
+  { id: "mmol/l", label: "mmol/l" },
+  { id: "mg/dl", label: "mg/dl" },
+];
+
 export const Disability = ({ onSubmit }: Props) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const [eyeOpeningValue, setEyeOpeningValue] = useState();
   const [verbalResponseValue, setVerbalResponseValue] = useState();
   const [motorResponseValue, setMotorResponseValue] = useState();
   const [isChecked, setIsChecked] = useState(false);
+  const [formValues, setFormValues] = useState<any>({}); // Add form values state
+
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.PRIMARY_DISABILITY_ASSESSMENT,
     onSubmit
   );
 
   const handleFormSubmit = (values: any) => {
-    const obsDateTime = ServerTime.getServerTimeString()
+    const obsDateTime = ServerTime.getServerTimeString();
 
     const eyes = [
       {
@@ -242,6 +255,7 @@ export const Disability = ({ onSubmit }: Props) => {
           onSubmit={handleFormSubmit}
           submitButtonText="next"
         >
+          <FormValuesListener getValues={setFormValues} />
           <FormFieldContainerLayout title="GCS">
             <FieldsContainer sx={{ alignItems: "start" }}>
               <RadioGroupInput
@@ -339,14 +353,26 @@ export const Disability = ({ onSubmit }: Props) => {
                 label={form.postureInfo.label}
                 id={form.postureInfo.name}
               />
+
+            </FieldsContainer>
+            <FieldsContainer mr="1ch">
+              <SearchComboBox
+                sx={{ m: 0, width: "30%" }}
+                multiple={false}
+                name={form.units.name}
+                options={unitOptions}
+                label={form.units.label}
+              />
               <TextInputField
                 sx={{ m: 0, width: "100%" }}
                 name={form.bloodGlocose.name}
                 label={form.bloodGlocose.label}
                 id={form.bloodGlocose.name}
-                unitOfMeasure="mmol/L"
+                unitOfMeasure={formValues[form.units.name] || "mmol/l"}
               />
             </FieldsContainer>
+
+
             <FieldsContainer>
               <RadioGroupInput
                 name={form.seizureInfo.name}

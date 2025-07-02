@@ -112,7 +112,7 @@ export default function RefusedTreatmentForm({ openPatientSummary }: { openPatie
             <MainGrid item xs={12} lg={8}>
                 <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Refused Treatment Form</h2>
+                    <h2>2. Refused Treatment Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

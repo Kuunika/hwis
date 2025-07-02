@@ -313,8 +313,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
         try {
             await submitEncounter(payload);
             onSubmit(values);
-            reactToPrintFn(); // Trigger printing after submission
-            navigateTo(`/dispositions`);
+            // reactToPrintFn(); // Trigger printing after submission
+            navigateTo(`/patient/${params.id}/profile`);
         } catch (error) {
             console.error("Error submitting General Examination:", error);
         }

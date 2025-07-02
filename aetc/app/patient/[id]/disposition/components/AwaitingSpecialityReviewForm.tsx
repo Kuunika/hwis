@@ -49,7 +49,7 @@ const initialValues = {
     reviewDate: "",
 };
 
-export default function AwaitingSpecialityReviewForm({openPatientSummary}:{openPatientSummary:()=>void}) {
+export default function AwaitingSpecialityReviewForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -116,7 +116,7 @@ export default function AwaitingSpecialityReviewForm({openPatientSummary}:{openP
             <MainGrid item xs={12} lg={8}>
                 <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Awaiting Specialty Review Form</h2>
+                    <h2>2. Awaiting Specialty Review Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}
