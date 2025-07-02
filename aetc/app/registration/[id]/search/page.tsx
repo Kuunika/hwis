@@ -1,11 +1,9 @@
 "use client";
-
 import { MainTypography, WrapperBox } from "@/components";
 
-import { useContext, useEffect, useState } from "react";
-import { getActivePatientDetails, useParameters } from "@/hooks";
+import { useContext, useEffect } from "react";
+import { getActivePatientDetails } from "@/hooks";
 
-import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
 import { SearchTab } from "../../components/searchTabs";
 import { Navigation } from "@/app/components/navigation";
 

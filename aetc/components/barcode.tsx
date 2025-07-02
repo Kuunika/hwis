@@ -18,6 +18,7 @@ interface Props {
   test?: string;
   fullName?: string;
   gender?: string;
+  description?:string
 }
 export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   value,
@@ -128,6 +129,9 @@ const downloadZplData = async (
   try {
     const gfa = await zplImageConvert.encode(base64);
     const zpl = `^XA^FO20,20${gfa}^XZ`;
+
+    // console.log(zpl);
+    // return;
 
     await axios.post(`${printer}/print`, { zpl });
 
@@ -285,6 +289,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
   test,
   fullName,
   gender,
+  description
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -292,11 +297,12 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
     const convertToCanvas = async () => {
       const element = document.getElementById("barcode");
       if (element) {
+        // Convert HTML element to a canvas
         const originalCanvas = await htmlToImage.toCanvas(element);
 
-        // Adjusted for 3cm x 6cm label at 300 DPI
-        const fixedWidth = 400;
-        const fixedHeight = 200;
+        // Your fixed label size: 500px (width) x 100px (height)
+        const fixedWidth = 700;
+        const fixedHeight = 160;
 
         const resizedCanvas = document.createElement("canvas");
         resizedCanvas.width = fixedWidth;
@@ -309,17 +315,33 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
           ctx.fillStyle = "#ffffff";
           ctx.fillRect(0, 0, fixedWidth, fixedHeight);
 
-          // Scale original canvas to fixed size
+          // Compute original aspect ratio
+          const aspectRatio = originalCanvas.width / originalCanvas.height;
+
+          // Calculate target dimensions preserving aspect ratio within fixedWidth/fixedHeight
+          let targetWidth = fixedWidth;
+          let targetHeight = targetWidth / aspectRatio;
+
+          if (targetHeight > fixedHeight) {
+            targetHeight = fixedHeight;
+            targetWidth = targetHeight * aspectRatio;
+          }
+
+          // Calculate offsets to center the scaled image on the resized canvas
+          const offsetX = (fixedWidth - targetWidth) / 2;
+          const offsetY = (fixedHeight - targetHeight) / 2;
+
+          // Draw the original canvas into the resized canvas with proper scaling and centering
           ctx.drawImage(
             originalCanvas,
             0,
             0,
             originalCanvas.width,
             originalCanvas.height,
-            0,
-            0,
-            fixedWidth,
-            fixedHeight
+            offsetX,
+            offsetY,
+            targetWidth,
+            targetHeight
           );
 
           // Send to printer
@@ -335,19 +357,50 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
     <div
       id="barcode"
       ref={ref}
-      style={{ display: "flex", flexDirection: "column" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        // border: "1px solid black",
+        paddingLeft: "1ch", // Increased padding to move content right
+        // marginLeft: "8ch", // This will push the entire content to the right
+      }}
     >
-      <span style={{ fontSize: "0.75rem" }}>{fullName}</span>
-      <div style={{ display: "flex" }}>
-        <span style={{ fontSize: "0.75rem", marginRight: "0.5rem" }}>
-          {orderDate}
-        </span>
-        <span style={{ fontSize: "0.75rem" }}>{gender}</span>
-      </div>
-
-      <Barcode height={30} margin={0} displayValue={false} value={value} />
-
-      <span style={{ fontSize: "0.75rem" }}>{test}</span>
+      <b style={{ fontSize: "0.5rem", lineHeight: "1" }}>
+        {fullName}({gender})~{description}
+      </b>
+      <b style={{ fontSize: "0.5rem", lineHeight: "1" }}>{orderDate}</b>
+      <Barcode
+        width={1}
+        height={45}
+        margin={0}
+        displayValue={false}
+        value={value}
+      />
+      <b style={{ fontSize: "0.5rem" }}>{test}</b>
     </div>
   );
 };
+
+function generatePatientZpl({
+  name,
+  sex,
+  datetime,
+  barcodeData,
+  testInfo,
+}: {
+  name: string;
+  sex: string;
+  datetime: string;
+  barcodeData: string;
+  testInfo: string;
+}) {
+  return `^XA
+^CF0,20
+^FO100,30^FB400,2,0,L,0^FD${name} (${sex})^FS
+^CF0,20
+^FO100,65^FD${datetime}^FS
+^FO100,110^BY10,3,200^FH_^FD${barcodeData}^FS
+^CF0,20
+^FO100,320^FB400,3,0,L,0^FD${testInfo}^FS
+^XZ`;
+}

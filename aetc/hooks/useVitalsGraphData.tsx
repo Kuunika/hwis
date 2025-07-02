@@ -42,7 +42,7 @@ export const useVitalsGraphData = () => {
   const [selectedChartBottom, setSelectedChartBottom] = useState("glu");
 
   useEffect(() => {
-    if (data && activeVisitId !== 0) {
+    if (data && Number(activeVisitId) !== 0) {
       const filteredEncounters = data.filter(
         (d) => d?.encounter_type?.uuid === encounters.VITALS
       );

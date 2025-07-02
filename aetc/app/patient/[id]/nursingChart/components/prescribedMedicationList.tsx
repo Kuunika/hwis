@@ -36,7 +36,7 @@ export const PrescribedMedicationList = ({
 
   useEffect(() => {
     const prescriptionEncounter = data?.filter((d) => {
-      return d.visit_id == activeVisitId;
+      return d.visit_id == Number(activeVisitId);
     });
 
     if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;

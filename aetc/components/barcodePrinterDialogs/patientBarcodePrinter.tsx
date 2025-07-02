@@ -8,7 +8,7 @@ import { IconButton, SxProps, Tooltip } from "@mui/material";
 import { getPrinters } from "@/hooks/loadStatic";
 import { HiPrinter } from "react-icons/hi2";
 import { FaPlay } from "react-icons/fa";
-import { getPatient } from '@/services/patient';
+import { getPatient } from "@/services/patient";
 
 type Props = {
   firstName: string;
@@ -140,12 +140,14 @@ export const PrinterBarcodeButton = ({
         }}
         title="Print Patient Barcode"
       >
-       { patient && <PatientBarcodePrinter
-          firstName={patient.given_name}
-          lastName={patient.family_name}
-          addresses={patient.addresses}
-          identifiers={patient.identifiers}
-        />}
+        {patient && (
+          <PatientBarcodePrinter
+            firstName={patient.given_name}
+            lastName={patient.family_name}
+            addresses={patient.addresses}
+            identifiers={patient.identifiers}
+          />
+        )}
       </GenericDialog>
     </>
   );

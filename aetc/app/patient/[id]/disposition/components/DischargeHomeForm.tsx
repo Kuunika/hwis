@@ -333,29 +333,30 @@ export default function DischargeHomeForm({ openPatientSummary }: { openPatientS
                                                             multiple={false}
                                                         />
                                                     </MainGrid>
+                                                    {/* Clinics (If applicable) */}
+                                                    <MainGrid item xs={12}>
+                                                        <SearchComboBox
+                                                            name="specialistClinic"
+                                                            label="Clinics (If applicable)"
+                                                            options={serviceAreaOptions}
+                                                            multiple={false}
+                                                        />
+
+                                                        {/* Only show "Other Service Area" field if "Other" is selected */}
+                                                        {showOther && (
+                                                            <TextInputField
+                                                                id="otherServiceArea"
+                                                                name="otherServiceArea"
+                                                                label="Other Service Area"
+                                                                sx={{ mt: 2, width: "100%" }}
+                                                            />
+                                                        )}
+                                                    </MainGrid>
 
 
                                                 </>
                                             )}
-                                            {/* Clinics (If applicable) */}
-                                            <MainGrid item xs={12}>
-                                                <SearchComboBox
-                                                    name="specialistClinic"
-                                                    label="Clinics (If applicable)"
-                                                    options={serviceAreaOptions}
-                                                    multiple={false}
-                                                />
 
-                                                {/* Only show "Other Service Area" field if "Other" is selected */}
-                                                {showOther && (
-                                                    <TextInputField
-                                                        id="otherServiceArea"
-                                                        name="otherServiceArea"
-                                                        label="Other Service Area"
-                                                        sx={{ mt: 2, width: "100%" }}
-                                                    />
-                                                )}
-                                            </MainGrid>
 
 
                                         </MainGrid>

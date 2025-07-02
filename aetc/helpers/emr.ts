@@ -14,7 +14,7 @@ export const getObservationValue = (obs: any, uuid: string) => {
   }
   const ob = obs.find((ob: any) => {
     const results = ob?.names?.find(
-      (n: any) => n.name.toLowerCase() == uuid.toLowerCase()
+      (n: any) => n?.name?.toLowerCase() == uuid?.toLowerCase()
     );
 
     return results;
@@ -235,7 +235,7 @@ export const filterObservations = (obs: Obs[], name: string): Obs[] | null => {
   return obs
     .filter((ob: any) => {
       return ob.names.find(
-        (n: any) => n.name.toLowerCase() == name.toLowerCase()
+        (n: any) => n?.name?.toLowerCase() == name?.toLowerCase()
       );
     })
     .sort((a: Obs, b: Obs) =>

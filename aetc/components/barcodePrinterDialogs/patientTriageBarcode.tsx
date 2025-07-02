@@ -1,14 +1,12 @@
-import { getPatientEncounters } from "@/services/encounter";
 import { TriagePrintTemplate } from "../barcode";
 import { GenericDialog } from "../dialog";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { Button } from "@mui/material";
-import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { concepts, encounters } from "@/constants";
 import { useEffect, useState } from "react";
 import { VitalFormConfig } from "@/app/vitals/components/vitalsForm";
 import { getObservationValue } from "@/helpers/emr";
-import { Obs } from "@/interfaces";
+import { Encounter, Obs } from "@/interfaces";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
 
 type Props = {
@@ -50,13 +48,31 @@ export const FetchAndDisplayTriageBarcode = ({
   arrivalDateTime,
 }: {
   patientId: string;
-  activeVisitId: number;
+  activeVisitId: any;
   arrivalDateTime: string;
 }) => {
-  const { data } = getPatientsEncounters(patientId);
+  const { data: referralData, isLoading } = getPatientsEncounters(
+    patientId as string,
+    `encounter_type=${encounters.REFERRAL}`
+  );
+  const { data: vitalsData, isLoading: loadingVitals } = getPatientsEncounters(
+    patientId as string,
+    `encounter_type=${encounters.VITALS}`
+  );
+  const { data: presentingComplaintsData, isLoading: presentingLoading } =
+    getPatientsEncounters(
+      patientId as string,
+      `encounter_type=${encounters.PRESENTING_COMPLAINTS}`
+    );
+  const { data: triageResultData, isLoading: triageResultLoading } =
+    getPatientsEncounters(
+      patientId as string,
+      `encounter_type=${encounters.TRIAGE_RESULT}`
+    );
   const [vitals, setVitals] = useState<Array<{ name: string; value: string }>>(
     []
   );
+
   const [presentingComplaints, setPresentingComplaints] = useState<string>("");
   const [referred, setReferred] = useState("");
   const [triageCategory, setTriageCategory] = useState("");
@@ -66,30 +82,32 @@ export const FetchAndDisplayTriageBarcode = ({
 
   useEffect(() => {
     extractTriageEncounters();
-  }, [data]);
+  }, [referralData, presentingComplaintsData, triageResultData, vitalsData]);
 
   const extractTriageEncounters = () => {
-    const referral = getEncounterActiveVisit(encounters.REFERRAL);
-    setReferred(getObservationValue(referral?.obs, concepts.REFERRED_FROM));
-    const presentingComplaints = getEncounterActiveVisit(
-      encounters.PRESENTING_COMPLAINTS
+    const referral = getActiveEncounter(referralData as Encounter[]);
+
+    setReferred(
+      referral ? getObservationValue(referral?.obs, concepts.REFERRED_FROM) : ""
     );
-    setPresentingComplaints(
-      presentingComplaints?.obs.reduce((prev: any, current: Obs) => {
-        return prev == ""
-          ? current.value_text
-          : prev + "," + current.value_text;
-      }, "") as string
+    const presentingComplaints = getActiveEncounter(
+      presentingComplaintsData as Encounter[]
     );
 
-    const triage = getEncounterActiveVisit(encounters.TRIAGE_RESULT);
+    console.log({ presentingComplaints });
+
+    setPresentingComplaints(
+      presentingComplaints?.obs.reduce((prev: any, current: Obs) => {
+        return prev == "" ? current.value : prev + "," + current.value;
+      }, "") as string
+    );
+    const triage = getActiveEncounter(triageResultData as Encounter[]);
 
     setTriageCategory(triage?.obs[0].value);
     setDateTime(getHumanReadableDateTime(triage?.encounter_datetime));
     setTriagedBy(triage?.created_by as string);
 
-    const encounter = getEncounterActiveVisit(encounters.VITALS);
-    const obs = encounter?.obs ?? [];
+    const obs = getActiveEncounter(vitalsData as Encounter[])?.obs ?? [];
     const vitals = [
       {
         name: VitalFormConfig.saturationRate.short,
@@ -123,10 +141,8 @@ export const FetchAndDisplayTriageBarcode = ({
     setVitals(vitals);
   };
 
-  const getEncounterActiveVisit = (encounterType: string) => {
-    return data
-      ?.filter((d) => d?.encounter_type.uuid == encounterType)
-      .find((d) => d.visit_id == activeVisitId);
+  const getActiveEncounter = (data: Encounter[]) => {
+    return data?.find((d) => d.visit.uuid == activeVisitId);
   };
 
   return (

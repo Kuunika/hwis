@@ -245,10 +245,20 @@ export default function TriageWorkFlow() {
         triageResult === "red"
           ? null
           : Object.entries(formData?.serviceArea ?? {}).find(
-              ([key]) => key !== concepts.PATIENT_REFERRED_TO
+              ([key]) => key !== concepts.OTHER_AETC_SERVICE_AREA
             )?.[1];
 
       const dateTime = ServerTime.getServerTimeString();
+
+      // console.log({
+      //   concept: concepts.CARE_AREA,
+      //   value:
+      //     triageResult === "green" || triageResult === "yellow"
+      //       ? formData.serviceArea || ""
+      //       : "",
+      //   obsDatetime: dateTime,
+      // });
+
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,
@@ -261,10 +271,10 @@ export default function TriageWorkFlow() {
             obsDatetime: dateTime,
           },
           {
-            concept: concepts.PATIENT_REFERRED_TO,
+            concept: concepts.CARE_AREA,
             value:
               triageResult === "green" || triageResult === "yellow"
-                ? formData.serviceArea?.[concepts.PATIENT_REFERRED_TO] || ""
+                ? formData?.serviceArea?.[concepts.CARE_AREA] || ""
                 : "",
             obsDatetime: dateTime,
           },
@@ -276,13 +286,14 @@ export default function TriageWorkFlow() {
         ],
       });
     }
+
     if (triageResult == "green") {
-      const referredTo = formData.serviceArea?.[concepts.PATIENT_REFERRED_TO];
+      const referredTo = formData?.serviceArea?.[concepts.CARE_AREA];
 
       if (
-        referredTo.toLowerCase() == concepts.GYNAE_BENCH.toLowerCase() ||
-        referredTo.toLowerCase() == concepts.MEDICAL_BENCH.toLowerCase() ||
-        referredTo.toLowerCase() == concepts.SURGICAL_BENCH.toLowerCase()
+        referredTo?.toLowerCase() == concepts?.GYNAE_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.MEDICAL_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.SURGICAL_BENCH.toLowerCase()
       ) {
         return;
       }

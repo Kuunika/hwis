@@ -40,7 +40,7 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
 
   const form = {
     Referred: {
-      name: concepts.PATIENT_REFERRED_TO,
+      name: concepts.CARE_AREA,
       label: "Patient Referred to",
     },
     Other_Area: {
@@ -72,7 +72,9 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
         triageStatus === "yellow"
           ? aetcServiceAreas
           : [
-              ... (Array.isArray(aectTriageGreenServiceAreas) ? aectTriageGreenServiceAreas : []),
+              ...(Array.isArray(aectTriageGreenServiceAreas)
+                ? aectTriageGreenServiceAreas
+                : []),
               ...(Array.isArray(serviceAreas) ? serviceAreas : []),
             ];
 

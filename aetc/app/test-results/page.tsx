@@ -1,6 +1,5 @@
 "use client";
 
-import { ClientWaitingForTriage } from "./components";
 import { MainGrid } from "@/components";
 
 import {
@@ -11,12 +10,15 @@ import {
 import { Navigation } from "../components/navigation";
 import AuthGuard from "@/helpers/authguard";
 import { roles } from "@/constants";
-import Link from "next/link";
+import { ClientsWaitingForTestResults } from "./components/testResultsList";
 
 function Triage() {
   return (
     <>
-      <Navigation title="Patients waiting for Triage" link="/dashboard" />
+      <Navigation
+        title="Patients waiting for Test & Results"
+        link="/dashboard"
+      />
       <MainGrid container>
         <MainGrid xs={0} lg={0} item></MainGrid>
         <MainGrid
@@ -32,17 +34,14 @@ function Triage() {
           <br />
           <br />
           <RegistrationMainHeader>
-            Patients waiting for Triage
+            Patients waiting for Test & Results
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
-            This is a list of all patients that went through registration
-            successfully and waiting for triage.
+            This is a list of all patients that are waiting for their test
+            results
           </RegistrationDescriptionText>
           <RegistrationCard sx={{ p: 0 }}>
-            {/* <Link href="/triage/b5f1fcf8-0a36-4527-87ac-ac0d969934b1/start">
-              move to triage
-            </Link> */}
-            <ClientWaitingForTriage />
+            <ClientsWaitingForTestResults />
           </RegistrationCard>
         </MainGrid>
         <MainGrid lg={0} item></MainGrid>

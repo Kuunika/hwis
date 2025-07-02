@@ -111,7 +111,21 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/assessments"
-              title="Waiting For Assessment List"
+              title="Assessment List"
+            />
+          </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.STUDENT_CLINICIAN,
+            ]}
+          >
+            <Card
+              icon={<FcTodoList />}
+              link="/test-results"
+              title="Awaiting Test Results List"
             />
           </AuthGuardComp>
           <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>

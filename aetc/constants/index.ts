@@ -1467,6 +1467,7 @@ export const concepts = {
   IMMEDIATE_INTERVENTION: "Immediate Intervention", // concept not found
   EDD: "EDD", // not found
   CURRENTLY_ON_CONTRACEPTIVE: "Currently on Contraceptive", // not found
+  DIGITAL_RECTAL_EXAMINATION_REQUIRED: "Digital Rectal Examination Required", // not found
 
 
 
