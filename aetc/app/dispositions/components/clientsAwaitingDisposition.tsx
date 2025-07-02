@@ -128,7 +128,7 @@ export const ClientsAwaitingDisposition = () => {
     },
     {
       field: "department",
-      headerName: "Department/Facilities",
+      headerName: "Destination",
       flex: 1,
     },
 

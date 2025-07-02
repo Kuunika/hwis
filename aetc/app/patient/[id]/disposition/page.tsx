@@ -37,7 +37,7 @@ const dispositionOptions = [
   // { id: concepts.SHORT_STAY, label: "Short stay" },
   {
     id: concepts.TRANSFER_TO_ANOTHER_FACILITY,
-    label: "Transfer to other facilities",
+    label: "Transfer Out",
   },
   { id: concepts.DEATH, label: "Death" },
   { id: concepts.ABSCONDED, label: "Absconded" },
