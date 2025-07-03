@@ -8,7 +8,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 
-import { FaPlay, FaSignOutAlt, FaHeartbeat } from "react-icons/fa";
+import { FaPlay, FaHeartbeat } from "react-icons/fa";
 
 import {
   CalculateWaitingTime,
