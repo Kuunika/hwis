@@ -115,7 +115,7 @@ export default function TransferForm({ openPatientSummary }: { openPatientSummar
             <MainGrid item xs={12} lg={8}>
                 <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Transfer Form</h2>
+                    <h2>2. Transfer Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

@@ -169,41 +169,184 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             <div ref={contentRef} className="printable-content">
                 <div className={showPreview ? "print-preview" : "print-only"}>
                     <PatientInfoTab />
-                    <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Medical Inpatient</h1>
+                    <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+                        Medical Inpatient
+                    </h1>
 
-                    {/* Display all collected data in a structured format */}
-                    <div className="patient-examination-data">
-                        <h2>Complaints</h2>
-                        <p><strong>Presenting Complaints: </strong>{medicalInpatientInfo.presentingComplaint}</p>
-                        <p><strong>History of Presenting Complaints: </strong>{medicalInpatientInfo.presentingHistory}</p>
+                    {Object.values(medicalInpatientInfo).every((val) => !val) ? (
+                        <p style={{ fontStyle: "italic", color: "gray" }}>
+                            Medical Inpatient not recorded.
+                        </p>
+                    ) : (
+                        <div className="patient-examination-data">
+                            {medicalInpatientInfo.presentingComplaint && (
+                                <>
+                                    <h2>Complaints</h2>
+                                    <p>
+                                        <strong>Presenting Complaints: </strong>
+                                        {medicalInpatientInfo.presentingComplaint}
+                                    </p>
+                                </>
+                            )}
 
-                        <h2>Medical History</h2>
-                        <p><strong>Drug: </strong>{medicalInpatientInfo.medication}</p>
+                            {medicalInpatientInfo.presentingHistory && (
+                                <p>
+                                    <strong>History of Presenting Complaints: </strong>
+                                    {medicalInpatientInfo.presentingHistory}
+                                </p>
+                            )}
 
-                        <h2>Past Medical History</h2>
-                        <p><strong>HIV Status: </strong>{medicalInpatientInfo.hivProgram}</p>
-                        <p><strong>Other: </strong>{medicalInpatientInfo.other}</p>
-                        <p><strong>Surgical History: </strong>{medicalInpatientInfo.surgicalHistory}</p>
-                        <p><strong>Social History: </strong>{medicalInpatientInfo.socialHistory}</p>
-                        <p><strong>Family History: </strong>{medicalInpatientInfo.familyHistory}</p>
-                        <p><strong>Allergy: </strong>{medicalInpatientInfo.allergicReaction}</p>
-                        <p><strong>Intoxication: </strong>{medicalInpatientInfo.intoxication}</p>
+                            {(medicalInpatientInfo.medication ||
+                                medicalInpatientInfo.hivProgram ||
+                                medicalInpatientInfo.other ||
+                                medicalInpatientInfo.surgicalHistory ||
+                                medicalInpatientInfo.socialHistory ||
+                                medicalInpatientInfo.familyHistory ||
+                                medicalInpatientInfo.allergicReaction ||
+                                medicalInpatientInfo.intoxication) && (
+                                    <>
+                                        <h2>Medical History</h2>
+                                        {medicalInpatientInfo.medication && (
+                                            <p>
+                                                <strong>Drug: </strong>
+                                                {medicalInpatientInfo.medication}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.hivProgram && (
+                                            <p>
+                                                <strong>HIV Status: </strong>
+                                                {medicalInpatientInfo.hivProgram}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.other && (
+                                            <p>
+                                                <strong>Other: </strong>
+                                                {medicalInpatientInfo.other}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.surgicalHistory && (
+                                            <p>
+                                                <strong>Surgical History: </strong>
+                                                {medicalInpatientInfo.surgicalHistory}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.socialHistory && (
+                                            <p>
+                                                <strong>Social History: </strong>
+                                                {medicalInpatientInfo.socialHistory}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.familyHistory && (
+                                            <p>
+                                                <strong>Family History: </strong>
+                                                {medicalInpatientInfo.familyHistory}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.allergicReaction && (
+                                            <p>
+                                                <strong>Allergy: </strong>
+                                                {medicalInpatientInfo.allergicReaction}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.intoxication && (
+                                            <p>
+                                                <strong>Intoxication: </strong>
+                                                {medicalInpatientInfo.intoxication}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
 
-                        <h2>Review of Systems</h2>
-                        <p><strong>General Impression: </strong>{medicalInpatientInfo.general}</p>
-                        <p><strong>Systolic: </strong>{medicalInpatientInfo.systolicBloodpressure}</p>
-                        <p><strong>Diastolic: </strong>{medicalInpatientInfo.diastolicBloodPressure}</p>
-                        <p><strong>Pulse Rate: </strong>{medicalInpatientInfo.pulseRate}</p>
-                        <p><strong>Respiratory Rate: </strong>{medicalInpatientInfo.respiratoryRate}</p>
-                        <p><strong>Temperature: </strong>{medicalInpatientInfo.temperature}</p>
-                        <p><strong>Pupils Symmetrical: </strong>{medicalInpatientInfo.pupilsSymmetrical}</p>
-                        <p><strong>Conjunctiva: </strong>{medicalInpatientInfo.conjunctiva}</p>
-                        <p><strong>Oral KS: </strong>{medicalInpatientInfo.oralKS}</p>
-                        <p><strong>JVP raised: </strong>{medicalInpatientInfo.jvpRaised}</p>
-                        <p><strong>Lymphadenopathy: </strong>{medicalInpatientInfo.lymphadenopathy}</p>
-
-
-                    </div>
+                            {(medicalInpatientInfo.general ||
+                                medicalInpatientInfo.systolicBloodpressure ||
+                                medicalInpatientInfo.diastolicBloodPressure ||
+                                medicalInpatientInfo.pulseRate ||
+                                medicalInpatientInfo.respiratoryRate ||
+                                medicalInpatientInfo.temperature ||
+                                medicalInpatientInfo.pupilsSymmetrical ||
+                                medicalInpatientInfo.conjunctiva ||
+                                medicalInpatientInfo.oralKS ||
+                                medicalInpatientInfo.oralCandidiasis ||
+                                medicalInpatientInfo.jvpRaised ||
+                                medicalInpatientInfo.lymphadenopathy) && (
+                                    <>
+                                        <h2>Review of Systems</h2>
+                                        {medicalInpatientInfo.general && (
+                                            <p>
+                                                <strong>General Impression: </strong>
+                                                {medicalInpatientInfo.general}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.systolicBloodpressure && (
+                                            <p>
+                                                <strong>Systolic: </strong>
+                                                {medicalInpatientInfo.systolicBloodpressure}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.diastolicBloodPressure && (
+                                            <p>
+                                                <strong>Diastolic: </strong>
+                                                {medicalInpatientInfo.diastolicBloodPressure}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.pulseRate && (
+                                            <p>
+                                                <strong>Pulse Rate: </strong>
+                                                {medicalInpatientInfo.pulseRate}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.respiratoryRate && (
+                                            <p>
+                                                <strong>Respiratory Rate: </strong>
+                                                {medicalInpatientInfo.respiratoryRate}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.temperature && (
+                                            <p>
+                                                <strong>Temperature: </strong>
+                                                {medicalInpatientInfo.temperature}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.pupilsSymmetrical && (
+                                            <p>
+                                                <strong>Pupils Symmetrical: </strong>
+                                                {medicalInpatientInfo.pupilsSymmetrical}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.conjunctiva && (
+                                            <p>
+                                                <strong>Conjunctiva: </strong>
+                                                {medicalInpatientInfo.conjunctiva}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.oralKS && (
+                                            <p>
+                                                <strong>Oral KS: </strong>
+                                                {medicalInpatientInfo.oralKS}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.oralCandidiasis && (
+                                            <p>
+                                                <strong>Oral Candidiasis: </strong>
+                                                {medicalInpatientInfo.oralCandidiasis}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.jvpRaised && (
+                                            <p>
+                                                <strong>JVP raised: </strong>
+                                                {medicalInpatientInfo.jvpRaised}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.lymphadenopathy && (
+                                            <p>
+                                                <strong>Lymphadenopathy: </strong>
+                                                {medicalInpatientInfo.lymphadenopathy}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                        </div>
+                    )}
 
                 </div>
                 {/* CSS for Print Handling */}

@@ -36,7 +36,7 @@ const initialValues = {
     timeAbsconded: "",
 };
 
-export default function AbscondedForm({openPatientSummary}:{openPatientSummary:()=>void}) {
+export default function AbscondedForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
     const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -102,7 +102,7 @@ export default function AbscondedForm({openPatientSummary}:{openPatientSummary:(
                 {/* Include the Accordion with Medication Form */}
                 <AccordionWithMedication />
                 <MainPaper sx={{ p: 3 }}>
-                    <h2>Absconded Form</h2>
+                    <h2>2. Absconded Form</h2>
                     <FormikInit
                         initialValues={initialValues}
                         validationSchema={validationSchema}

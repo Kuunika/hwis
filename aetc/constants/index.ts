@@ -683,6 +683,7 @@ export const concepts = {
   WEAK: "Weak",
   STRONG_REGULAR: "Strong Regular",
   IRREGULAR: "Irregular",
+  REGULAR_RHYTHM: "Regular rhythm",
   LESS_THAN_3_SECONDS: "Less Than 3 Seconds",
   THREE_SECONDS: "Three Seconds",
   MORE_THAN_THREE_SECONDS: "More Than Three Seconds",

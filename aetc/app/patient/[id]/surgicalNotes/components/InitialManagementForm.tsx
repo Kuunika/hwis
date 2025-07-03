@@ -517,7 +517,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                 pdfRef.current.generatePDF();
             }
 
-            navigateTo(`/dispositions`);
+            navigateTo(`/patient/${params.id}/profile`);
         } catch (error) {
             console.error("Error submitting Initial Management:", error);
         }
