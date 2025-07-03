@@ -57,9 +57,11 @@ export const removeObservation = () => {
 
 export const fetchConceptAndCreateEncounter = () => {
   const addData = async (encounter: any) => {
+
+    console.log({encounter});
     const filteredEncounter = {
       ...encounter,
-      obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
+      obs: encounter?.obs?.filter((ob: any) => Boolean(ob.value)),
     };
 
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
