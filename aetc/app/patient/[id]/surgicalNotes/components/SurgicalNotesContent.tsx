@@ -147,7 +147,7 @@ export const SurgicalNotesContent: React.FC<Props> = ({
             <p><strong>Presenting Complaints:</strong> {presentingInfo.complaints.length > 0 ?
                 presentingInfo.complaints.map((item, index) => `(${index + 1}) ${item}`).join(", ")
                 : "None"}</p>
-            <p><strong>Additional Complaints:</strong> {presentingInfo.history}</p>
+            <p><strong>History of Presenting Complaint:</strong> {presentingInfo.history}</p>
             <hr />
 
             <h2>Past Medical History</h2>

@@ -8,6 +8,7 @@ type Category =
   | "assessment"
   | "triage"
   | "disposition"
+  | "awaiting_speciality"
   | "screening"
   | "registration"
   | "investigations";

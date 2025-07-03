@@ -128,6 +128,20 @@ function Home() {
               title="Awaiting Test Results List"
             />
           </AuthGuardComp>
+          <AuthGuardComp
+            roles={[
+              roles.ADMIN,
+              roles.CLINICIAN,
+              roles.NURSE,
+              roles.STUDENT_CLINICIAN,
+            ]}
+          >
+            <Card
+              icon={<FcTodoList />}
+              link="/awaiting-specialty"
+              title="Awaiting Specialty List "
+            />
+          </AuthGuardComp>
           <AuthGuardComp roles={[roles.ADMIN, roles.CLINICIAN, roles.NURSE]}>
             <Card
               icon={<FcTodoList />}
