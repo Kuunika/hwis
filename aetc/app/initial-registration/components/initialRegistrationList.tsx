@@ -1,7 +1,10 @@
 import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
+import {
+  deletePatient,
+  getPatientsWaitingForPrescreening,
+} from "@/hooks/patientReg";
 import { getVisitNum } from "@/hooks/visitNumber";
 import { useEffect, useState } from "react";
 import {
@@ -40,6 +43,7 @@ export const InitialRegistrationList = () => {
   }, [debouncedSearch]);
   const { navigateTo } = useNavigation();
   const [deleted, setDeleted] = useState("");
+  const { mutate } = deletePatient();
 
   const rows = patients
     ?.sort((p1, p2) => {
@@ -90,7 +94,13 @@ export const InitialRegistrationList = () => {
               onClick={() => navigateTo(`/prescreening/${cell.id}`)}
             /> */}
             <AbscondButton
-              onDelete={() => setDeleted(cell.id)}
+              onDelete={() => {
+                setDeleted(cell.id);
+                mutate({
+                  id: cell.row.patient_id,
+                  void_reason: "Absconded",
+                });
+              }}
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
