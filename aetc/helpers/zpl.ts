@@ -10,7 +10,7 @@ export function generatePatientSummaryZPL({
   dischargeNotes,
   dischargePlan,
   followUpPlan,
-  homeCareInstructions
+  homeCareInstructions,
 }: {
   presentingComplaints: Obs[];
   diagnosis: Obs[];
@@ -22,23 +22,23 @@ export function generatePatientSummaryZPL({
 }): string {
   // Constants for 10cm x 4cm label (203 DPI)
   const DPI = 203;
-  const LABEL_WIDTH_MM = 100;   // 100mm = 10cm
-  const LABEL_HEIGHT_MM = 40;   // 40mm = 4cm
-  const MM_TO_DOTS = (mm: number) => Math.round(mm * DPI / 25.4);
-  
-  const LABEL_WIDTH = MM_TO_DOTS(LABEL_WIDTH_MM);  // ~799 dots
+  const LABEL_WIDTH_MM = 100; // 100mm = 10cm
+  const LABEL_HEIGHT_MM = 40; // 40mm = 4cm
+  const MM_TO_DOTS = (mm: number) => Math.round((mm * DPI) / 25.4);
+
+  const LABEL_WIDTH = MM_TO_DOTS(LABEL_WIDTH_MM); // ~799 dots
   const LABEL_HEIGHT = MM_TO_DOTS(LABEL_HEIGHT_MM); // ~320 dots
-  
+
   // Layout constants
-  const TOP_OFFSET = 20;         // Top offset to prevent cutting
-  const MARGIN_X = 20;           // Left/right margin
-  const HEADER_HEIGHT = 50;      // Space for header section
-  const TITLE_HEIGHT = 30;       // Height for section titles
-  const LINE_HEIGHT = 25;        // Height per text line
-  const SECTION_SPACING = 10;    // Space between sections
-  const MAX_LINE_WIDTH = LABEL_WIDTH - (2 * MARGIN_X); // Adjusted width with margins
+  const TOP_OFFSET = 20; // Top offset to prevent cutting
+  const MARGIN_X = 20; // Left/right margin
+  const HEADER_HEIGHT = 50; // Space for header section
+  const TITLE_HEIGHT = 30; // Height for section titles
+  const LINE_HEIGHT = 25; // Height per text line
+  const SECTION_SPACING = 10; // Space between sections
+  const MAX_LINE_WIDTH = LABEL_WIDTH - 2 * MARGIN_X; // Adjusted width with margins
   const MAX_CHARS_PER_LINE = Math.floor(MAX_LINE_WIDTH / 8); // Conservative estimate
-  const SEPARATOR = " ! ";       // Content separator
+  const SEPARATOR = " ! "; // Content separator
 
   // Helper: wrap text to fit within label width
   function wrapText(text: string): string[] {
@@ -46,7 +46,7 @@ export function generatePatientSummaryZPL({
     const words = text.split(" ");
     const lines: string[] = [];
     let currentLine = "";
-    
+
     for (const word of words) {
       // Handle very long words by breaking them
       if (word.length > MAX_CHARS_PER_LINE) {
@@ -61,9 +61,9 @@ export function generatePatientSummaryZPL({
         }
         continue;
       }
-      
+
       const testLine = currentLine ? `${currentLine} ${word}` : word;
-      
+
       if (testLine.length <= MAX_CHARS_PER_LINE) {
         currentLine = testLine;
       } else {
@@ -71,7 +71,7 @@ export function generatePatientSummaryZPL({
         currentLine = word;
       }
     }
-    
+
     if (currentLine) lines.push(currentLine);
     return lines;
   }
@@ -80,67 +80,73 @@ export function generatePatientSummaryZPL({
   const sections = [
     {
       title: "Discharge Notes",
-      content: dischargeNotes || "N/A"
+      content: dischargeNotes || "N/A",
     },
     {
       title: "Investigations",
       content: labOrders.length
-        ? labOrders.flatMap(order => 
-            order.tests.map(t => `${t.name}:${t.result || "pending"}`)
-          ).join(SEPARATOR)
-        : "No investigations ordered"
+        ? labOrders
+            .flatMap((order) =>
+              order.tests.map((t) => `${t.name}:${t.result || "pending"}`)
+            )
+            .join(SEPARATOR)
+        : "No investigations ordered",
     },
     {
       title: "Final Diagnosis",
-      content: diagnosis?.length 
-        ? diagnosis.map(o => o.value).join(SEPARATOR)
-        : "None"
+      content: diagnosis?.length
+        ? diagnosis.map((o) => o.value).join(SEPARATOR)
+        : "None",
     },
-  
+
     {
       title: "Discharge Plan",
-      content: dischargePlan || "N/A"
+      content: dischargePlan || "N/A",
     },
     {
-      title: "",
-      content: `Follow up plan: ${followUpPlan}` || "N/A"
+      title: "Follow Up Plan",
+      content: `${followUpPlan}` || "N/A",
     },
     {
       title: "Home Care Instructions",
-      content: homeCareInstructions || "N/A"
-    }
+      content: homeCareInstructions || "N/A",
+    },
   ];
 
   // Flatten all content into lines with section markers
-  const allLines: Array<{text: string, isTitle: boolean, sectionIndex: number}> = [];
-  
+  const allLines: Array<{
+    text: string;
+    isTitle: boolean;
+    sectionIndex: number;
+  }> = [];
+
   sections.forEach((section, index) => {
     // Add section title
     allLines.push({
       text: section.title,
       isTitle: true,
-      sectionIndex: index
+      sectionIndex: index,
     });
-    
+
     // Add wrapped content lines
     const contentLines = wrapText(section.content);
-    contentLines.forEach(line => {
+    contentLines.forEach((line) => {
       allLines.push({
         text: line,
         isTitle: false,
-        sectionIndex: index
+        sectionIndex: index,
       });
     });
   });
 
   // Paginate content across multiple labels
-  const labels: Array<Array<typeof allLines[0]>> = [];
-  let currentLabelLines: Array<typeof allLines[0]> = [];
+  const labels: Array<Array<(typeof allLines)[0]>> = [];
+  let currentLabelLines: Array<(typeof allLines)[0]> = [];
   let currentY = TOP_OFFSET + HEADER_HEIGHT; // Start below header with top offset
-  
+
   for (let i = 0; i < allLines.length; i++) {
     const line = allLines[i];
-    
+
     // Calculate spacing between sections
     let spacing = 0;
     if (currentLabelLines.length > 0) {
@@ -149,10 +155,10 @@ export function generatePatientSummaryZPL({
         spacing = SECTION_SPACING;
       }
     }
-    
+
     const lineHeight = line.isTitle ? TITLE_HEIGHT : LINE_HEIGHT;
     const requiredHeight = spacing + lineHeight;
-    
+
     // Check if we need a new label
     if (currentY + requiredHeight > LABEL_HEIGHT - TOP_OFFSET) {
       // If we can't even fit one line, force new label
@@ -164,79 +170,80 @@ export function generatePatientSummaryZPL({
         currentY = TOP_OFFSET;
         continue;
       }
-      
+
       // Save current label and start new one
       labels.push(currentLabelLines);
       currentLabelLines = [];
       currentY = TOP_OFFSET;
-      
+
       // Re-process this line in new label context
       i--;
       continue;
     }
-    
+
     // Add line to current label
     currentLabelLines.push(line);
     currentY += requiredHeight;
   }
-  
+
   // Add any remaining lines
   if (currentLabelLines.length > 0) {
     labels.push(currentLabelLines);
   }
 
   // Generate ZPL for each label
-  return labels.map((labelLines, labelIndex) => {
-    let yPosition = TOP_OFFSET;
-    let zpl = `^XA
+  return labels
+    .map((labelLines, labelIndex) => {
+      let yPosition = TOP_OFFSET;
+      let zpl = `^XA
 ^PW${LABEL_WIDTH}
 ^LL${LABEL_HEIGHT}
 ^CF0,25`; // Default font
 
-    // Add header only to first label
-    if (labelIndex === 0) {
-      zpl += `
+      // Add header only to first label
+      if (labelIndex === 0) {
+        zpl += `
 ^FO${MARGIN_X},${TOP_OFFSET}^FDPatient Summary-QUECH AETC^FS
 ^FO${MARGIN_X},${TOP_OFFSET + 40}^GB${MAX_LINE_WIDTH},3,3^FS`;
-      yPosition = TOP_OFFSET + HEADER_HEIGHT;
-    } else {
-      // For subsequent labels, start at top offset
-      yPosition = TOP_OFFSET;
-    }
-
-    // Track current section to avoid repeating titles
-    let currentSection = -1;
-    
-    for (const line of labelLines) {
-      // Add spacing between sections
-      if (line.sectionIndex !== currentSection) {
-        if (currentSection !== -1) {
-          yPosition += SECTION_SPACING;
-        }
-        currentSection = line.sectionIndex;
+        yPosition = TOP_OFFSET + HEADER_HEIGHT;
+      } else {
+        // For subsequent labels, start at top offset
+        yPosition = TOP_OFFSET;
       }
-      
-      // Set appropriate font and format
-      if (line.isTitle) {
-        zpl += `
+
+      // Track current section to avoid repeating titles
+      let currentSection = -1;
+
+      for (const line of labelLines) {
+        // Add spacing between sections
+        if (line.sectionIndex !== currentSection) {
+          if (currentSection !== -1) {
+            yPosition += SECTION_SPACING;
+          }
+          currentSection = line.sectionIndex;
+        }
+
+        // Set appropriate font and format
+        if (line.isTitle) {
+          zpl += `
 ^CF0,25
 ^FO${MARGIN_X},${yPosition}^FD${line.text}^FS`;
-        yPosition += TITLE_HEIGHT;
-      } else {
-        zpl += `
+          yPosition += TITLE_HEIGHT;
+        } else {
+          zpl += `
 ^CF0,20
 ^FO${MARGIN_X},${yPosition}^FD${line.text}^FS`;
-        yPosition += LINE_HEIGHT;
+          yPosition += LINE_HEIGHT;
+        }
       }
-    }
-    
-    zpl += `
-^XZ`;
-    
-    return zpl;
-  }).join("\n");
-}
 
+      zpl += `
+^XZ`;
+
+      return zpl;
+    })
+    .join("\n");
+}
 
 type Medication = {
   medicationName: string;
@@ -248,7 +255,10 @@ type Medication = {
   prescribedBy: string;
 };
 
-export function generateMedicationLabelZPL(medications: Medication[], title = 'Medication Instructions'): string {
+export function generateMedicationLabelZPL(
+  medications: Medication[],
+  title = "Medication Instructions"
+): string {
   // Constants (Zebra ZPL measurements in dots)
   const DPI = 203; // Standard printer resolution
   const LABEL_WIDTH = 5 * DPI; // 4" wide
@@ -290,7 +300,6 @@ export function generateMedicationLabelZPL(medications: Medication[], title = 'M
   }
 
   function formatMedication(med: Medication, n: number): string {
-
     const parts = [
       med.medicationName,
       `${med.dose} ${med.doseUnits}`,
