@@ -124,11 +124,7 @@ export default function TriageWorkFlow() {
     { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
-  const {
-    data: patientVisits,
-    isLoading,
-    isSuccess,
-  } = getPatientVisitTypes(params?.id as string);
+  const { data: patientVisits } = getPatientVisitTypes(params?.id as string);
 
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
@@ -172,6 +168,8 @@ export default function TriageWorkFlow() {
         obs: getObservations(formData.vitals, dateTime),
       });
     }
+
+    return;
   }, [presentingCreated]);
 
   useEffect(() => {
@@ -351,7 +349,12 @@ export default function TriageWorkFlow() {
     values[concepts.GLUCOSE] = `${values[concepts.GLUCOSE]} ${
       values[concepts.ADDITIONAL_NOTES]
     }`;
+
     formData["vitals"] = values;
+
+    // console.log(formData["vitals"]);
+
+    // return;
 
     setActiveStep(2);
     setSubmittedSteps((steps) => [...steps, 1]);
