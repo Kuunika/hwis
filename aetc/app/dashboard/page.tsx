@@ -111,7 +111,7 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/assessments"
-              title="Assessment List"
+              title="Awaiting Assessment List"
             />
           </AuthGuardComp>
           <AuthGuardComp
@@ -132,7 +132,7 @@ function Home() {
             <Card
               icon={<FcTodoList />}
               link="/dispositions"
-              title="Awaiting Specialty/Dispositiion"
+              title="Disposition List"
             />
           </AuthGuardComp>
 

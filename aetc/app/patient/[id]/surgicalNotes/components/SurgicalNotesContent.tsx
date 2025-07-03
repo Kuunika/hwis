@@ -224,7 +224,7 @@ export const SurgicalNotesContent: React.FC<Props> = ({
                             <strong>Alcohol Intake:</strong> {presentingInfo.alcoholIntake ? `${presentingInfo.alcoholIntake} units per day` : "None"}
                         </td>
                         <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                            <strong>Endocrine:</strong> {reviewOfSystems.endocrine.length > 0 ? reviewOfSystems.endocrine.join(", ") : "None"}
+                            <strong>Endocrine:</strong> {reviewOfSystems.endocrine.length > 0 ? reviewOfSystems.endocrine.map((item, index) => `(${index + 1}) ${item}`).join(", ") : "None"}
                         </td>
                     </tr>
                     <tr>
@@ -260,7 +260,7 @@ export const SurgicalNotesContent: React.FC<Props> = ({
                     <tr>
                         <td style={{ border: "1px solid #ddd", padding: "8px" }}></td>
                         <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                            <strong>Musculoskeletal:</strong> {reviewOfSystems.musculoskeletal.length > 0 ? reviewOfSystems.musculoskeletal.join(", ") : "None"}
+                            <strong>Musculoskeletal:</strong> {reviewOfSystems.musculoskeletal.length > 0 ? reviewOfSystems.musculoskeletal.map((item, index) => `(${index + 1}) ${item}`).join(", ") : "None"}
                         </td>
                     </tr>
                     <tr>

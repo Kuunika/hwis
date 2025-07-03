@@ -67,39 +67,39 @@ export const ClientsAwaitingDisposition = () => {
   }, [visitClosed, refetch]);
 
   const columns = [
-    {
-      field: "triage_result",
-      headerName: "Triage Cat",
-      renderCell: (cell: any) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <Box
-              sx={{
-                width: 20,
-                height: 20,
-                borderRadius: "50%",
-                backgroundColor:
-                  cell.value == "red" || cell.value == "Emergency"
-                    ? "#B42318"
-                    : cell.value == "yellow" || cell.value == "Priority"
-                      ? "#EDE207"
-                      : cell.value == "green" || cell.value == "Queue"
-                        ? "#016302"
-                        : "transparent",
-              }}
-            />
-          </Box>
-        );
-      },
-    },
+    // {
+    //   field: "triage_result",
+    //   headerName: "Triage Cat",
+    //   renderCell: (cell: any) => {
+    //     return (
+    //       <Box
+    //         sx={{
+    //           display: "flex",
+    //           justifyContent: "center",
+    //           alignItems: "center",
+    //           width: "100%",
+    //           height: "100%",
+    //         }}
+    //       >
+    //         <Box
+    //           sx={{
+    //             width: 20,
+    //             height: 20,
+    //             borderRadius: "50%",
+    //             backgroundColor:
+    //               cell.value == "red" || cell.value == "Emergency"
+    //                 ? "#B42318"
+    //                 : cell.value == "yellow" || cell.value == "Priority"
+    //                   ? "#EDE207"
+    //                   : cell.value == "green" || cell.value == "Queue"
+    //                     ? "#016302"
+    //                     : "transparent",
+    //           }}
+    //         />
+    //       </Box>
+    //     );
+    //   },
+    // },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "gender", headerName: "Gender" },
@@ -123,7 +123,7 @@ export const ClientsAwaitingDisposition = () => {
     },
     {
       field: "disposition_type",
-      headerName: "Awaiting Speciality",
+      headerName: "Disposition Type",
       flex: 1,
     },
     {
@@ -142,7 +142,7 @@ export const ClientsAwaitingDisposition = () => {
             patient={cell.row}
             onVisitClosed={refetch} // Pass refetch function
           />
-          {cell.row.triage_result == "red" && (
+          {/* {cell.row.triage_result == "red" && (
             <Tooltip title="Initiate CPR" arrow>
               <IconButton
                 onClick={() => {
@@ -156,7 +156,7 @@ export const ClientsAwaitingDisposition = () => {
                 <FaHeartbeat />
               </IconButton>
             </Tooltip>
-          )}
+          )} */}
         </Box>
       ),
     },
@@ -190,12 +190,12 @@ export const ClientsAwaitingDisposition = () => {
           triage={row.triage_result}
           visitId={row.visit_uuid}
           id={row.uuid}
-          showCPR={row.triage_result === "red"}
-          onCPR={() => {
-            setPatientId(row.id);
-            setCpr(true);
-            setVisitUUID(row.visit_uuid);
-          }}
+          // showCPR={row.triage_result === "red"}
+          // onCPR={() => {
+          //   setPatientId(row.id);
+          //   setCpr(true);
+          //   setVisitUUID(row.visit_uuid);
+          // }}
           onVisitClosed={refetch} // Pass refetch function
         />
       ),
@@ -225,12 +225,12 @@ export const ClientsAwaitingDisposition = () => {
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
       />
-      <CPRDialogForm
+      {/* <CPRDialogForm
         patientuuid={patientId}
         visituuid={visitUUID}
         open={cpr}
         onClose={() => setCpr(false)}
-      />
+      /> */}
     </>
   );
 };
@@ -318,13 +318,14 @@ const DispositionActions = ({
         >
           Surgical Notes
         </MenuItem>
-        {gender === "Female" && (
+        {patient.gender?.toLowerCase() === "female" && (
           <MenuItem
             onClick={() => navigateTo(`/patient/${patient.id}/gyneacology`)}
           >
             Gyneacology Ward Admission
           </MenuItem>
         )}
+
       </Menu>
     </Box>
   );
