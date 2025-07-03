@@ -18,7 +18,7 @@ interface Props {
   test?: string;
   fullName?: string;
   gender?: string;
-  description?:string
+  description?: string;
 }
 export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   value,
@@ -289,7 +289,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
   test,
   fullName,
   gender,
-  description
+  description,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -361,7 +361,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
         display: "flex",
         flexDirection: "column",
         // border: "1px solid black",
-        paddingLeft: "1ch", // Increased padding to move content right
+        paddingLeft: "5ch", // Increased padding to move content right
         // marginLeft: "8ch", // This will push the entire content to the right
       }}
     >
