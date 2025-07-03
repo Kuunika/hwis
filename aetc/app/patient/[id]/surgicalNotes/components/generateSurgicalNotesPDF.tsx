@@ -194,11 +194,16 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     } else if (conceptName === "Additional Notes") {
                         newClerkInfo.additionalNotes = obs.value || obs.value_text || "";
                     } else if (conceptName === "Presenting Complaints") {
-                        const condition = obs.value || obs.value_text || "";
-                        if (condition) {
-                            newPresentingInfo.complaints.push(condition);
+                        if (obs.children && obs.children.length > 0) {
+                            obs.children.forEach(child => {
+                                const childValue = child.value || child.value_text || "";
+                                if (childValue) {
+                                    newPresentingInfo.complaints.push(childValue);
+                                }
+                            });
                         }
-                    } else if (conceptName === "Presenting history") {
+                    }
+                    else if (conceptName === "Presenting history") {
                         newPresentingInfo.history = obs.value || obs.value_text || "";
                     } else if (conceptName === "Surgical Procedure") {
                         newPresentingInfo.surgicalHistory = obs.value || obs.value_text || "";
