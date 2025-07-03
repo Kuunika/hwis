@@ -43,7 +43,7 @@ export const ActivePatientProvider = ({
   const { data: patient } = getOnePatient(params?.id as string);
   const activeVisit = patient?.active_visit;
 
-  console.log({ patient });
+  console.log({ hasActiveVisit });
 
   const recentClosedVisit =
     patientVisits && patientVisits.length > 0
