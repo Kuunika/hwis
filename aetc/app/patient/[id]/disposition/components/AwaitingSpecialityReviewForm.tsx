@@ -55,6 +55,8 @@ export default function AwaitingSpecialityReviewForm({ openPatientSummary }: { o
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { init, ServerTime } = useServerTime();
+    const { navigateTo } = useNavigation();
+
 
 
     useEffect(() => {
@@ -84,7 +86,7 @@ export default function AwaitingSpecialityReviewForm({ openPatientSummary }: { o
         ];
 
         const payload = {
-            encounterType: encounters.DISPOSITION,
+            encounterType: encounters.AWAITING_SPECIALTY,
             visit: activeVisit?.uuid,
             patient: params.id,
             encounterDatetime: currentDateTime,
@@ -98,8 +100,8 @@ export default function AwaitingSpecialityReviewForm({ openPatientSummary }: { o
             // if (activeVisit?.uuid) {
             //     closeVisit(activeVisit.uuid);
             // }
-            // navigateTo("/dispositions");
-            openPatientSummary()
+            navigateTo("/awaiting-specialty");
+            // openPatientSummary()
 
 
         } catch (error) {
