@@ -4,7 +4,7 @@ import {
   NotificationContainer,
 } from "@/components";
 import { NO, YES, concepts, encounters } from "@/constants";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import {
   FieldsContainer,
   FormFieldContainerLayout,
@@ -273,7 +273,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const { gender } = getActivePatientDetails();
   const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
     Array<any>
@@ -298,7 +298,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
-  const obsDatetime = ServerTime.getServerTimeString();
+    const obsDatetime = ServerTime.getServerTimeString();
 
     const obs = [
       {
