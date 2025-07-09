@@ -5,10 +5,17 @@ import { getPatientsEncounters } from "./encounter";
 import { getActivePatientDetails } from "./getActivePatientDetails";
 import { getAllObservations } from "./obs";
 import { getShortDate } from "@/helpers/dateTime";
-export const getObsGraphData = (conceptName = "") => {
-  const { patientId }: { patientId: any } = getActivePatientDetails();
-  const { data: obsData }: any = getAllObservations(patientId, conceptName);
+import { useVisitDates } from "@/contexts/visitDatesContext";
 
+export const getObsGraphData = (conceptName = "") => {
+  const { selectedVisit } = useVisitDates();
+  const { patientId }: { patientId: any } = getActivePatientDetails();
+
+  const { data: obsData }: any = getAllObservations(
+    patientId,
+    conceptName,
+    selectedVisit?.id
+  );
   const values = obsData?.data?.map((item: any) => Number(item.value)) ?? [];
   const dateTimes =
     obsData?.data?.map((item: any) => getShortDate(item.obs_datetime)) ?? [];
