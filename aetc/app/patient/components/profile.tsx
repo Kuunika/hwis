@@ -2,7 +2,7 @@
 import { MainGrid } from "@/components";
 import { PersonalDetailsCard } from ".";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { VitalsPanel } from "./panels/vitalsDetails";
 
 import { TabsContainer } from "./tabsContainer";
@@ -14,12 +14,20 @@ import { getActivePatientDetails } from "@/hooks";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
 
 export const DesktopView = () => {
-  const { hasActiveVisit, recentVisitCloseDateTime } =
+  const { hasActiveVisit, recentVisitCloseDateTime, isLoading, isSuccess } =
     getActivePatientDetails();
+  const [load, setLoad] = useState(false);
+
+  // temporary fix to ensure the component loads after the context is ready
+  useEffect(() => {
+    setTimeout(() => {
+      setLoad(true);
+    }, 100);
+  }, []);
 
   return (
     <VisitDatesProvider>
-      {!hasActiveVisit && (
+      {load && hasActiveVisit === false && (
         <Box
           sx={{
             width: "100%",

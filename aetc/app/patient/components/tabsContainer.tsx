@@ -85,7 +85,7 @@ export const TabsContainer = () => {
             }}
           />
           <Tab
-            label="Visit History"
+            label="Clinical Notes"
             sx={{
               flexGrow: 1,
               textTransform: "none",
@@ -117,7 +117,7 @@ export const TabsContainer = () => {
             }}
           />
           <Tab
-            label="Clinical Notes"
+            label="Medications"
             sx={{
               flexGrow: 1,
               textTransform: "none",
@@ -125,15 +125,10 @@ export const TabsContainer = () => {
               background: value === 3 ? "#DDEEDD" : "#FFFFFF",
               fontWeight: value === 3 ? "bold" : "normal",
               borderBottom: "none",
-              marginRight: "2px",
-              borderRight: "none",
-              "&:last-child": {
-                borderRight: "1px solid #ccc",
-              },
             }}
           />
           <Tab
-            label="Presenting Complaint"
+            label="Results"
             sx={{
               flexGrow: 1,
               textTransform: "none",
@@ -149,7 +144,7 @@ export const TabsContainer = () => {
             }}
           />
           <Tab
-            label="Results"
+            label="Visit History"
             sx={{
               flexGrow: 1,
               textTransform: "none",
@@ -164,39 +159,44 @@ export const TabsContainer = () => {
               },
             }}
           />
-          <Tab
-            label="Medications"
+          {/* <Tab
+            label="Presenting Complaint"
             sx={{
               flexGrow: 1,
               textTransform: "none",
               padding: "12px",
-              background: value === 6 ? "#DDEEDD" : "#FFFFFF",
-              fontWeight: value === 6 ? "bold" : "normal",
+              background: value === 4 ? "#DDEEDD" : "#FFFFFF",
+              fontWeight: value === 4 ? "bold" : "normal",
               borderBottom: "none",
+              marginRight: "2px",
+              borderRight: "none",
+              "&:last-child": {
+                borderRight: "1px solid #ccc",
+              },
             }}
-          />
+          /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <PatientChart />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <VisitHistory />
+        <ClinicalNotes />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <Investigations />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <ClinicalNotes />
+        <Medications />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={4}>
+      {/* <CustomTabPanel value={value} index={4}>
         <PresentingComplaint />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={5}>
+      </CustomTabPanel> */}
+      <CustomTabPanel value={value} index={4}>
         <Results />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={6}>
-        <Medications />
+      <CustomTabPanel value={value} index={5}>
+        <VisitHistory />
       </CustomTabPanel>
     </Box>
   );
