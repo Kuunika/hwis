@@ -255,6 +255,8 @@ export const DisplayRelationship = ({
     isError: guardianRelationshipError,
   } = addRelationship();
 
+  const [editing, setEditing] = useState(true);
+
   useEffect(() => {
     if (guardianCreated && guardianData) {
       createGuardianRelationship({
@@ -269,6 +271,7 @@ export const DisplayRelationship = ({
     if (guardianRelationshipCreated) {
       refetch();
       setGuardianDialog(false);
+      setEditing(true);
     }
   }, [guardianRelationshipCreated]);
 
@@ -339,6 +342,7 @@ export const DisplayRelationship = ({
 
     refetch();
     setRelationshipDialog(false);
+    setEditing(true);
   };
 
   return (
@@ -349,19 +353,25 @@ export const DisplayRelationship = ({
       }}
     >
       <EditRelationship
-        onSubmit={editRelationship}
+        onSubmit={editing ? editRelationship : createRelationship}
         initialValues={initialValues}
         open={relationshipDialog}
-        onClose={() => setRelationshipDialog(false)}
+        onClose={() => {
+          setRelationshipDialog(false);
+          setEditing(true);
+        }}
       />
 
       {/* add guardian */}
       <EditRelationship
-        onSubmit={editRelationship}
+        onSubmit={editing ? editRelationship : createRelationship}
         isGuardian={true}
         initialValues={{ relationship: concepts.GUARDIAN }}
         open={guardianDialog}
-        onClose={() => setGuardianDialog(false)}
+        onClose={() => {
+          setGuardianDialog(false);
+          setEditing(true);
+        }}
       />
       {/* end add guardian */}
 
@@ -401,7 +411,10 @@ export const DisplayRelationship = ({
             <MainButton
               sx={{ alignSelf: "flex-start", mr: "1px" }}
               title="Add Next Of Kin"
-              onClick={() => setRelationshipDialog(true)}
+              onClick={() => {
+                setEditing(false);
+                setRelationshipDialog(true);
+              }}
             />
           )}
           {(mappedRelationships?.length == 1 ||
@@ -410,7 +423,10 @@ export const DisplayRelationship = ({
               disabled={disabled}
               sx={{ alignSelf: "flex-start" }}
               title="Add Guardian"
-              onClick={() => setGuardianDialog(true)}
+              onClick={() => {
+                setEditing(false);
+                setGuardianDialog(true);
+              }}
             />
           )}
         </>
