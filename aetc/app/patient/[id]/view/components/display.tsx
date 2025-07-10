@@ -256,6 +256,7 @@ export const DisplayRelationship = ({
   } = addRelationship();
 
   const [editing, setEditing] = useState(true);
+  const [editingGuardian, setEditingGuardian] = useState(false);
 
   useEffect(() => {
     if (guardianCreated && guardianData) {
@@ -272,6 +273,7 @@ export const DisplayRelationship = ({
       refetch();
       setGuardianDialog(false);
       setEditing(true);
+      setEditingGuardian(false);
     }
   }, [guardianRelationshipCreated]);
 
@@ -294,8 +296,6 @@ export const DisplayRelationship = ({
       </WrapperBox>
     );
   }
-
-  console.log({ relationships });
 
   const mappedRelationships: any = relationships?.map((relationship) => {
     const relationshipId = relationship.relationship;
@@ -343,6 +343,7 @@ export const DisplayRelationship = ({
     refetch();
     setRelationshipDialog(false);
     setEditing(true);
+    setEditingGuardian(false);
   };
 
   return (
@@ -354,11 +355,16 @@ export const DisplayRelationship = ({
     >
       <EditRelationship
         onSubmit={editing ? editRelationship : createRelationship}
-        initialValues={initialValues}
+        initialValues={{
+          ...initialValues,
+          ...(editingGuardian ? { relationship: concepts.GUARDIAN } : {}),
+        }}
         open={relationshipDialog}
+        isGuardian={editingGuardian}
         onClose={() => {
           setRelationshipDialog(false);
           setEditing(true);
+          setEditingGuardian(false);
         }}
       />
 
@@ -371,6 +377,7 @@ export const DisplayRelationship = ({
         onClose={() => {
           setGuardianDialog(false);
           setEditing(true);
+          setEditingGuardian(false);
         }}
       />
       {/* end add guardian */}
@@ -396,6 +403,9 @@ export const DisplayRelationship = ({
               title="Edit"
               onClick={() => {
                 setRelationshipDialog(true);
+                if (relationship.relationship?.toLowerCase() == "guardian") {
+                  setEditingGuardian(true);
+                }
                 setInitialValues({
                   ...relationship,
                   relationship: relationship.relationshipUUID,
