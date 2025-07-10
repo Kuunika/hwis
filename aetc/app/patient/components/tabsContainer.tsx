@@ -9,6 +9,7 @@ import {
   VisitHistory,
   PresentingComplaint,
 } from "./panels";
+import { DiagnosisTabDisplay } from "./panels/diagnosis";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -144,13 +145,45 @@ export const TabsContainer = () => {
             }}
           />
           <Tab
-            label="Visit History"
+            label="Diagnosis"
             sx={{
               flexGrow: 1,
               textTransform: "none",
               padding: "12px",
               background: value === 5 ? "#DDEEDD" : "#FFFFFF",
               fontWeight: value === 5 ? "bold" : "normal",
+              borderBottom: "none",
+              marginRight: "2px",
+              borderRight: "none",
+              "&:last-child": {
+                borderRight: "1px solid #ccc",
+              },
+            }}
+          />
+          <Tab
+            label="Dispensation"
+            sx={{
+              flexGrow: 1,
+              textTransform: "none",
+              padding: "12px",
+              background: value === 6 ? "#DDEEDD" : "#FFFFFF",
+              fontWeight: value === 6 ? "bold" : "normal",
+              borderBottom: "none",
+              marginRight: "2px",
+              borderRight: "none",
+              "&:last-child": {
+                borderRight: "1px solid #ccc",
+              },
+            }}
+          />
+          <Tab
+            label="Visit History"
+            sx={{
+              flexGrow: 1,
+              textTransform: "none",
+              padding: "12px",
+              background: value === 7 ? "#DDEEDD" : "#FFFFFF",
+              fontWeight: value === 7 ? "bold" : "normal",
               borderBottom: "none",
               marginRight: "2px",
               borderRight: "none",
@@ -196,6 +229,12 @@ export const TabsContainer = () => {
         <Results />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
+        <DiagnosisTabDisplay />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={6}>
+        <>dispendation</>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={7}>
         <VisitHistory />
       </CustomTabPanel>
     </Box>
