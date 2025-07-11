@@ -113,7 +113,8 @@ export const getShortDate = (date: string | Date | undefined) => {
 export const getShortDateTime = (date: string | Date | undefined) => {
   if (!date) return "";
 
-  return dayjs(date).format("DD-MM-YY HH:MM");
+  return  dayjs(date).format("DD-MM-YY HH:mm");
+
 };
 export function isToday(dateString: string) {
   const inputDate = new Date(dateString);
