@@ -109,6 +109,12 @@ export const getShortDate = (date: string | Date | undefined) => {
 
   return dayjs(date).format("DD-MM-YY");
 };
+
+export const getShortDateTime = (date: string | Date | undefined) => {
+  if (!date) return "";
+
+  return dayjs(date).format("DD-MM-YY HH:MM");
+};
 export function isToday(dateString: string) {
   const inputDate = new Date(dateString);
   const today = new Date();

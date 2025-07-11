@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getPatientsEncounters } from "./encounter";
 import { getActivePatientDetails } from "./getActivePatientDetails";
 import { getAllObservations } from "./obs";
-import { getShortDate } from "@/helpers/dateTime";
+import { getShortDate, getShortDateTime } from "@/helpers/dateTime";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 
 export const getObsGraphData = (conceptName = "") => {
@@ -18,7 +18,8 @@ export const getObsGraphData = (conceptName = "") => {
   );
   const values = obsData?.data?.map((item: any) => Number(item.value)) ?? [];
   const dateTimes =
-    obsData?.data?.map((item: any) => getShortDate(item.obs_datetime)) ?? [];
+    obsData?.data?.map((item: any) => getShortDateTime(item.obs_datetime)) ??
+    [];
 
   return {
     values,
