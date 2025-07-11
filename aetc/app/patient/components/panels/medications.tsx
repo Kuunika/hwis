@@ -17,6 +17,7 @@ export const Medications = () => {
     params.id as string,
     `encounter_type=${encounters.DISPENSING}&visit=${selectedVisit?.uuid}`
   );
+
   const [rows, setRows] = useState<
     {
       route: any;
@@ -32,7 +33,9 @@ export const Medications = () => {
       console.log(patientEncounters[0].obs);
       const dataRows = formatDispensedMedicationObs(patientEncounters[0].obs);
       setRows(dataRows);
+      return;
     }
+    setRows([]);
   }, [patientEncounters]);
 
   return (

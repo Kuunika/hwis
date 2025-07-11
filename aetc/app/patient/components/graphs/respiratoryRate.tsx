@@ -3,8 +3,6 @@ import { LineChart } from "./lineChart";
 
 export function RespiratoryRate() {
   const { values, dateTimes } = getObsGraphData("Respiratory Rate");
-
-  console.log({ values, dateTimes });
   return (
     <LineChart
       chartConfig={{
