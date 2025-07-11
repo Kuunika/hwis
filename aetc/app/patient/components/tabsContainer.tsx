@@ -160,7 +160,7 @@ export const TabsContainer = () => {
               },
             }}
           />
-          <Tab
+          {/* <Tab
             label="Dispensation"
             sx={{
               flexGrow: 1,
@@ -175,15 +175,15 @@ export const TabsContainer = () => {
                 borderRight: "1px solid #ccc",
               },
             }}
-          />
+          /> */}
           <Tab
             label="Visit History"
             sx={{
               flexGrow: 1,
               textTransform: "none",
               padding: "12px",
-              background: value === 7 ? "#DDEEDD" : "#FFFFFF",
-              fontWeight: value === 7 ? "bold" : "normal",
+              background: value === 6 ? "#DDEEDD" : "#FFFFFF",
+              fontWeight: value === 6 ? "bold" : "normal",
               borderBottom: "none",
               marginRight: "2px",
               borderRight: "none",
@@ -231,10 +231,10 @@ export const TabsContainer = () => {
       <CustomTabPanel value={value} index={5}>
         <DiagnosisTabDisplay />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={6}>
+      {/* <CustomTabPanel value={value} index={6}>
         <>dispendation</>
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={7}>
+      </CustomTabPanel> */}
+      <CustomTabPanel value={value} index={6}>
         <VisitHistory />
       </CustomTabPanel>
     </Box>
