@@ -71,18 +71,20 @@ export default function AwaitingSpecialityReviewForm({ openPatientSummary }: { o
 
     const handleSubmit = async (values: any) => {
         const currentDateTime = ServerTime.getServerTimeString();
-        const obs = [
-            {
-                concept: concepts.AWAITING_SPECIALITY_REVIEW,
-                value: concepts.AWAITING_SPECIALITY_REVIEW,
-                obsDatetime: currentDateTime,
-                groupMembers: [
-                    { concept: concepts.SPECIALITY_DEPARTMENT, value: values.specialtyDepartment, obsDatetime: currentDateTime },
-                    { concept: concepts.REASON_FOR_REQUEST, value: values.reasonForReview, obsDatetime: currentDateTime },
-                    { concept: concepts.DATE, value: values.reviewDate, obsDatetime: currentDateTime },
 
-                ],
+        const obs = [
+            // This is the obs group (optional, keep if you need it for completeness)
+            {
+                concept: concepts.SPECIALITY_DEPARTMENT,
+                value: values.specialtyDepartment,  // This could be value_coded (if coded), or value_text
+                obsDatetime: currentDateTime,
             },
+
+            { concept: concepts.REASON_FOR_REQUEST, value: values.reasonForReview, obsDatetime: currentDateTime },
+            { concept: concepts.DATE, value: values.reviewDate, obsDatetime: currentDateTime },
+
+
+
         ];
 
         const payload = {

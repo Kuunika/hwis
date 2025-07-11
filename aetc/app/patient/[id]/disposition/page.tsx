@@ -42,7 +42,7 @@ const dispositionOptions = [
   },
   // { id: concepts.SHORT_STAY, label: "Short stay" },
   {
-    id: concepts.TRANSFER_TO_ANOTHER_FACILITY,
+    id: concepts.TRANSFER_OUT,
     label: "Transfer Out",
   },
 
@@ -71,7 +71,7 @@ function DispositionFeature() {
         return <AdmissionForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.SHORT_STAY:
         return <ShortStayForm openPatientSummary={openPatientSummaryDialog} />;
-      case concepts.TRANSFER_TO_ANOTHER_FACILITY:
+      case concepts.TRANSFER_OUT:
         return <TransferForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.DEATH:
         return <DeathForm openPatientSummary={openPatientSummaryDialog} />;
