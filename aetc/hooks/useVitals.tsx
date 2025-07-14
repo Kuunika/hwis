@@ -60,9 +60,9 @@ export const useVitals = () => {
   );
 
   const getLatestValue = (obsData: any) => {
-    if (!obsData?.data?.length) return null;
+    if (!obsData?.length) return null;
     return (
-      obsData.data.reduce((latest: any, current: any) =>
+      obsData.reduce((latest: any, current: any) =>
         new Date(current.obs_datetime) > new Date(latest.obs_datetime)
           ? current
           : latest

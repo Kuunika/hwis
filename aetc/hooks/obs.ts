@@ -37,6 +37,7 @@ export const getAllObservations = (
     const params = new URLSearchParams();
     params.append("person", patientId);
     params.append("conceptName", conceptName);
+    params.append("paginate", "false");
     if (visitId) {
       params.append("visit_id", visitId);
     }
