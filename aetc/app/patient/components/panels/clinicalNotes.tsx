@@ -338,10 +338,10 @@ export const ClinicalNotes = () => {
         ...getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
       ],
       removeObs: [
-        "Image Part Name",
-        "Abnormalities",
-        "Clinician notes",
-        "Other",
+        // "Image Part Name",
+        // "Abnormalities",
+        // "Clinician notes",
+        // "Other",
       ], // No specific headings to remove
     },
     panel10: {

@@ -423,6 +423,12 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import {HeadAndNeck} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/headAndNeck";
+import {ChestAssessment} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/chestAssessment";
+import {AbdomenAndPelvisAssessment} from "@/app/patient/components/clinicalNotes/abdomenAndPelvisAssessment";
+import {AbdomenAndPelvis} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/abdomenAndPelvis";
+import {ExtremitiesAssessment} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/extremities";
+import {NeurologicalAssessment} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/neurogical";
 
 const theme = createTheme({
   palette: {
@@ -1153,21 +1159,63 @@ export const PrintClinicalNotes = (props: any) => {
 
           {/* Second Row */}
           {hasSecondRowContent && (
-            <Grid container>
-              {hasSecondaryContent ? (
-                <Section
-                  title="Secondary Survey"
-                  panelData={panelData.secondary}
-                  borderRight={hasPlanContent}
-                />
-              ) : null}
+              <Grid container spacing={2} sx={{ p: 2 }}>
+                {/* Left Column - Secondary Survey Components */}
+                <Grid item xs={12} md={6}>
+                  <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      sx={{ textDecoration: "underline" }}
+                      gutterBottom
+                  >
+                    Secondary Survey
+                  </Typography>
 
-              {hasPlanContent ? (
-                <Section title="Plan" panelData={panelData.plan} />
-              ) : null}
-            </Grid>
+                    {hasSecondaryContent && (
+                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                          <HeadAndNeck data={panelData.secondary} />
+                        </Paper>
+                    )}
+                   {hasSecondaryContent && (
+                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                          <AbdomenAndPelvis data={panelData.secondary} />
+                        </Paper>
+                    )}
+
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                    {hasSecondaryContent && (
+                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                          <ChestAssessment data={panelData.secondary} />
+                        </Paper>
+                    )}
+
+                    {hasSecondaryContent && (
+                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                          <ExtremitiesAssessment data={panelData.secondary} />
+                        </Paper>
+                    )}
+                </Grid>
+                <Grid item xs={12} md={6}>
+
+                  {hasSecondaryContent && (
+                      <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                        <NeurologicalAssessment data={panelData.secondary} />
+                      </Paper>
+                  )}
+                </Grid>
+
+                {/* Full Width Plan Section */}
+                {hasPlanContent && (
+                    <Grid item xs={12} sx={{ mt: 2 }}>
+                      <Paper elevation={1} sx={{ p: 2 }}>
+                        <Section title="Plan" panelData={panelData.plan} />
+                      </Paper>
+                    </Grid>
+                )}
+              </Grid>
           )}
-
           {/* Add divider between rows only if both have content */}
           {hasSecondRowContent && hasThirdRowContent && <Divider />}
 
