@@ -22,7 +22,7 @@ export const DesktopView = () => {
   useEffect(() => {
     setTimeout(() => {
       setLoad(true);
-    }, 100);
+    }, 1000);
   }, []);
 
   return (

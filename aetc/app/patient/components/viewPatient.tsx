@@ -71,7 +71,6 @@ export const ViewPatient = ({ patient, disabled }: IProps) => {
   }, [updatedPatient, isSuccess]);
 
   const mapPatientDemographics = (patientPerson: Person) => {
-    console.log("patched patient", { patchPatient });
     if (!patientPerson) return;
     setDemographics({
       firstName: patientPerson?.given_name,
