@@ -239,13 +239,11 @@ const schema = Yup.object().shape({
   [form.bowelSounds.name]: Yup.string()
     .label(form.bowelSounds.label)
     .required(),
-  [form.general.name]: Yup.array().label(form.general.label).required(),
+  [form.general.name]: Yup.array().label(form.general.label),
   [form.prostate.name]: Yup.array().label(form.prostate.label),
-  [form.mass.name]: Yup.string().label(form.mass.label).required(),
+  [form.mass.name]: Yup.string().label(form.mass.label),
   [form.massDescription.name]: Yup.string().label(form.massDescription.label),
-  [form.sphincterTone.name]: Yup.string()
-    .required()
-    .label(form.sphincterTone.label),
+  [form.sphincterTone.name]: Yup.string().label(form.sphincterTone.label),
   [form.periymen.name]: Yup.array().label(form.periymen.label),
   [form.scrotum.name]: Yup.string().label(form.scrotum.label),
   [form.vagina.name]: Yup.string().label(form.vagina.label),
@@ -482,12 +480,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading || creatingEncounter}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if circulation is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}

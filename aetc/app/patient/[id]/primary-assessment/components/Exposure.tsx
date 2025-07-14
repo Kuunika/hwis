@@ -56,7 +56,7 @@ const schema = yup.object({
 const initialValues = getInitialValues(form);
 
 export const Exposure = ({ onSubmit }: Props) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const { params } = useParameters();
 
   const { data: patient, isLoading: patientLoading } = getOnePatient(
@@ -104,12 +104,12 @@ export const Exposure = ({ onSubmit }: Props) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if exposure is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}

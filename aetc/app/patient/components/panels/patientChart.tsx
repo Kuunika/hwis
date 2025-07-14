@@ -37,12 +37,6 @@ import {
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 export const PatientChart = () => {
-  const { navigateTo } = useNavigation();
-  const { params } = useParameters();
-  const [labRequests, setLabRequests] = useState<LabRequest[]>([]);
-  const { isOnList } = checkPatientIfOnWaitingAssessment(params?.id as string);
-  const [isLoading, setIsLoading] = useState(true);
-
   const graph1Options = ["Respiratory Rate", " Heart Rate", "Glucose"];
   const graph2Options = ["BP", "Temperature", " O₂ Sat"];
 

@@ -124,11 +124,7 @@ export default function TriageWorkFlow() {
     { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
-  const {
-    data: patientVisits,
-    isLoading,
-    isSuccess,
-  } = getPatientVisitTypes(params?.id as string);
+  const { data: patientVisits } = getPatientVisitTypes(params?.id as string);
 
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
@@ -172,6 +168,8 @@ export default function TriageWorkFlow() {
         obs: getObservations(formData.vitals, dateTime),
       });
     }
+
+    return;
   }, [presentingCreated]);
 
   useEffect(() => {
@@ -348,9 +346,15 @@ export default function TriageWorkFlow() {
   };
 
   const handleVitalsSubmit = (values: any) => {
-    values[concepts.GLUCOSE] = `${values[concepts.GLUCOSE]} ${
-      values[concepts.ADDITIONAL_NOTES]
-    }`;
+    if (
+      values &&
+      values[concepts.GLUCOSE] !== undefined &&
+      values[concepts.ADDITIONAL_NOTES] !== undefined
+    ) {
+      values[concepts.GLUCOSE] =
+        `${values[concepts.GLUCOSE]} ${values[concepts.ADDITIONAL_NOTES]}`;
+    }
+
     formData["vitals"] = values;
 
     setActiveStep(2);
@@ -386,7 +390,7 @@ export default function TriageWorkFlow() {
     triggerSubmission();
     setShowModal(false);
   };
-  const dateTime = ServerTime.getServerTimeString();
+
 
   const triggerSubmission = () => {
     setLoading(true);
@@ -569,7 +573,7 @@ export default function TriageWorkFlow() {
               return prev == "" ? current.label : prev + "," + current.label;
             }, "")}
             triageCategory={triageResult}
-            date={getHumanReadableDateTime(dateTime)}
+            date={getHumanReadableDateTime(ServerTime.getServerTimeString())}
             triagedBy={presentingComplaintsResponse?.created_by as string}
             referredFrom={referralHealthFacility}
             vitals={[

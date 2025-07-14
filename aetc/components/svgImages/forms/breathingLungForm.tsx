@@ -62,6 +62,7 @@ export const BreathingLungForm = (props: Props) => {
       />
       <SearchComboBox
         getValue={(values) => {
+          console.log({ objects: values });
           if (values)
             setShowInputTextDisplay(
               Boolean(values.find((v: any) => v.id == concepts.OTHER))
@@ -70,11 +71,13 @@ export const BreathingLungForm = (props: Props) => {
         name={form.description.name}
         label={form.description.label}
         options={options}
-        coded
       />
+      <br />
       {showInputTextDisplay && (
         <TextInputField
           sx={{ width: "100%" }}
+          multiline
+          rows={3}
           id={form.specify.name}
           name={form.specify.name}
           label={form.specify.label}

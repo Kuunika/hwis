@@ -179,7 +179,10 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
             }}
           >
             <MenuItem
-              onClick={handleClose}
+              onClick={() => {
+                handleClose();
+                navigateTo(`/patient/${params.id}/view`);
+              }}
               style={{ borderBottom: "1px solid #ccc", padding: "10px" }}
             >
               Update demographics

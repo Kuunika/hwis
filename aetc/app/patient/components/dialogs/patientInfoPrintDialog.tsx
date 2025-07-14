@@ -34,6 +34,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
     followUpDetails: "",
     followUpPlan: "",
     clinic: "",
+    homeCareInstructions: "",
   });
   // const [prescribedMedicationRows, setPrescribedMedicationRows] = useState<Array<any>>([]);
 
@@ -101,6 +102,10 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
         dischargedOb?.children,
         concepts.SPECIALIST_CLINIC
       );
+      const homeCareInstructions = getObservationValue(
+        dischargedOb?.children,
+        concepts.HOME_CARE_INSTRUCTIONS
+      );
 
       (async () => {
         const clinicConcept = await getConceptFromCacheOrFetch(clinic);
@@ -111,6 +116,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
           followUpDetails,
           followUpPlan,
           clinic: clinicConcept?.data[0]?.short_name,
+          homeCareInstructions,
         });
       })();
     }
@@ -124,6 +130,8 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
       dischargeNotes: notes.dischargeNotes,
       dischargePlan: notes.dischargePlan,
       followUpPlan: `${notes.followUpDetails} | ${notes.clinic}`,
+      homeCareInstructions: notes.homeCareInstructions,
+
       // prescribedMedications: prescribedMedicationRows, // ✅ include this
     });
 
@@ -134,7 +142,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   return (
     <GenericDialog
-      title="Patient Summary-QUECH AETC"
+      title="Patient Summary-QECH AETC"
       onClose={() => {}}
       open={open}
     >
@@ -232,6 +240,15 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
             </Box>
           </>
         )}
+        {Boolean(notes.homeCareInstructions) && (
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Home care instructions
+            </Typography>
+            <Typography>{notes.homeCareInstructions}</Typography>
+          </Box>
+        )}
+
         {/* <Box>
           <Typography variant="h6" gutterBottom>
             Prescribed Medication
