@@ -20,12 +20,14 @@ import { closeVisit } from "@/services/visit";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 import Tooltip from "@mui/material/Tooltip";
+import { useRouter } from "next/navigation";
 import {
     FaPlay,
     FaSignOutAlt,
     FaHeartbeat,
     FaUser,
     FaFileAlt,
+    FaRandom,
 } from "react-icons/fa";
 import { getActivePatientDetails } from "@/hooks";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -51,10 +53,26 @@ export const AwaitingSpecialtyList = () => {
     } = fetchPatientsTablePaginate("awaiting_speciality");
     const [inputText, setInputText] = useState("");
     const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+    const router = useRouter();
+
 
     useEffect(() => {
         setSearchText(debouncedSearch);
     }, [debouncedSearch]);
+
+    useEffect(() => {
+        refetch(); // <-- Forces the table to reload every time the component mounts
+    }, []);
+
+    useEffect(() => {
+        const handleRouteChange = () => {
+            refetch();
+        };
+
+        // Listen for navigation events
+        window.addEventListener("focus", handleRouteChange);
+        return () => window.removeEventListener("focus", handleRouteChange);
+    }, []);
 
     // Handle visit closure success
     useEffect(() => {
@@ -290,7 +308,7 @@ const DispositionActions = ({
                     aria-label="Dispose"
                     sx={{ color: "grey" }}
                 >
-                    <FaSignOutAlt />
+                    <FaRandom />
                 </IconButton>
             </Tooltip>
             <Tooltip title="Template Forms" arrow>
