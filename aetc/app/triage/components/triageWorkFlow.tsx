@@ -390,7 +390,7 @@ export default function TriageWorkFlow() {
     triggerSubmission();
     setShowModal(false);
   };
-  const dateTime = ServerTime.getServerTimeString();
+
 
   const triggerSubmission = () => {
     setLoading(true);
@@ -573,7 +573,7 @@ export default function TriageWorkFlow() {
               return prev == "" ? current.label : prev + "," + current.label;
             }, "")}
             triageCategory={triageResult}
-            date={getHumanReadableDateTime(dateTime)}
+            date={getHumanReadableDateTime(ServerTime.getServerTimeString())}
             triagedBy={presentingComplaintsResponse?.created_by as string}
             referredFrom={referralHealthFacility}
             vitals={[
