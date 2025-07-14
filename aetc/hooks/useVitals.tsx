@@ -21,7 +21,8 @@ export const useVitals = () => {
   const [activePage, setActivePage] = useState<number>(0);
   const { data: heartRateData } = getAllObservations(
     patientId,
-    concepts.HEART_RATE
+    concepts.HEART_RATE,
+    selectedVisit?.id
   );
   const { data: respiratoryRateData } = getAllObservations(
     patientId,
