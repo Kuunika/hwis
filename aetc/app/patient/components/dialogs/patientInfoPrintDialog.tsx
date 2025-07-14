@@ -142,7 +142,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   return (
     <GenericDialog
-      title="Patient Summary-QUECH AETC"
+      title="Patient Summary-QECH AETC"
       onClose={() => {}}
       open={open}
     >

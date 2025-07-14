@@ -233,7 +233,11 @@ export const ClinicalNotes = () => {
   };
 
   const getObsByConceptName = (obsData: any) => {
-    const { data: obs }: any = getAllObservations(patientId, obsData);
+    const { data: obs }: any = getAllObservations(
+      patientId,
+      obsData,
+      selectedVisit?.id
+    );
     return obs?.data || [];
   };
 

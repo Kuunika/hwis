@@ -203,7 +203,7 @@ export function generatePatientSummaryZPL({
       // Add header only to first label
       if (labelIndex === 0) {
         zpl += `
-^FO${MARGIN_X},${TOP_OFFSET}^FDPatient Summary-QUECH AETC^FS
+^FO${MARGIN_X},${TOP_OFFSET}^FDPatient Summary-QECH AETC^FS
 ^FO${MARGIN_X},${TOP_OFFSET + 40}^GB${MAX_LINE_WIDTH},3,3^FS`;
         yPosition = TOP_OFFSET + HEADER_HEIGHT;
       } else {

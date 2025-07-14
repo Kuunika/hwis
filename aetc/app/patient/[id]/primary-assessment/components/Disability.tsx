@@ -242,12 +242,12 @@ export const Disability = ({ onSubmit }: Props) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if disability is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}
@@ -353,7 +353,6 @@ export const Disability = ({ onSubmit }: Props) => {
                 label={form.postureInfo.label}
                 id={form.postureInfo.name}
               />
-
             </FieldsContainer>
             <FieldsContainer mr="1ch">
               <SearchComboBox
@@ -371,7 +370,6 @@ export const Disability = ({ onSubmit }: Props) => {
                 unitOfMeasure={formValues[form.units.name] || "mmol/l"}
               />
             </FieldsContainer>
-
 
             <FieldsContainer>
               <RadioGroupInput

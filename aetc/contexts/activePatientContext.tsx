@@ -17,7 +17,7 @@ interface PatientContextProps {
   isSuccess: boolean;
   gender?: string;
   patient?: any;
-  hasActiveVisit: boolean;
+  hasActiveVisit: boolean | null;
   recentVisitCloseDateTime?: string;
   closedVisitId?: string;
   openClosedVisit: () => void;
@@ -32,7 +32,7 @@ export const ActivePatientProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [hasActiveVisit, setHasActiveVisit] = useState(true);
+  const [hasActiveVisit, setHasActiveVisit] = useState<boolean | null>(null);
   const { params } = useParameters();
   const {
     data: patientVisits,
@@ -42,8 +42,6 @@ export const ActivePatientProvider = ({
 
   const { data: patient } = getOnePatient(params?.id as string);
   const activeVisit = patient?.active_visit;
-
-  console.log({ patient });
 
   const recentClosedVisit =
     patientVisits && patientVisits.length > 0
