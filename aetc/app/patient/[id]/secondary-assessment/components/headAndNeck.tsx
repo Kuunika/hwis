@@ -46,7 +46,7 @@ const initialValues = {
   rashDescription: "",
 };
 export const HeadAndNeck = ({ onSubmit }: Props) => {
-   const {ServerTime}=useServerTime();
+  const { ServerTime } = useServerTime();
   const [headNeckImageEncounter, setHeadNeckImageEncounter] = useState<
     Array<any>
   >([]);
@@ -187,7 +187,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
         onSubmit={handleSubmitForm}
         submitButtonText="Next"
       >
-        <FormControlLabel
+        {/* <FormControlLabel
           label="Tick if the Head and Neck is normal and there are no abnormalities"
           control={
             <Checkbox
@@ -197,7 +197,7 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
               }}
             />
           }
-        />
+        /> */}
         <br />
         {!isChecked && <ComponentSlider slides={slides} />}
       </FormikInit>

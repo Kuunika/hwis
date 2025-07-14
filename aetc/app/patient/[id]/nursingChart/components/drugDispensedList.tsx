@@ -4,7 +4,7 @@ import { getHumanReadableDateTime } from "@/helpers/dateTime";
 import { Encounter, Obs } from "@/interfaces";
 
 export const formatDispensedMedicationObs = (obs: Obs[]) => {
-  return obs.map((ob) => {
+  return obs?.map((ob) => {
     return {
       route: ob.children.find(
         (b) =>
