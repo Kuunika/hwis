@@ -93,7 +93,11 @@ useEffect(() => {
   
   return (
     <div key={obs.obs_id} style={{ marginLeft: indent }}>
-      <Typography>
+      <Typography sx={{
+                color: "#777",
+                fontWeight: 400,
+                lineHeight: 1.5,
+              }}>
         {hasChildren ? (
           <b>{obs.names?.[0]?.name === 'Description' ? "" : `${obs.names?.[0]?.name} `}</b>
         ) : (
