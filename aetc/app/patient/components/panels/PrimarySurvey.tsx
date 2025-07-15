@@ -574,6 +574,12 @@
 // };
 
 
+
+
+
+
+
+
 import React from "react";
 import { Typography, Grid, Box } from "@mui/material";
 import { concepts } from "@/constants";
@@ -597,6 +603,14 @@ export const PrimarySurvey = ({ panelData, renderTimestamp }: PrimarySurveyProps
     concepts.NECK_HAEMATOMA,
     concepts.TONGUE_FALLING_BACK,
     concepts.OTHER
+  ];
+  const airwayIntervationFields =[
+    concepts.SUCTIONING_AIRWAY,
+    concepts.JAW_THRUST_MANOEUVRE,
+    concepts.HEAD_TILT_CHIN_LIFT,
+    concepts.OROPHARYNGEAL_AIRWAY,
+    concepts.LARYNGEAL_MASK_AIRWAY_INSERTION,
+    concepts.ENDOTRACHEAL_TUBE_INSERTION,
   ];
 
   const airwayInterventionTerms = [
