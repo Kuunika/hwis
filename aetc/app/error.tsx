@@ -41,8 +41,7 @@ export default function GlobalError({
               Something went wrong
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              We’re experiencing a system issue. Our technical team has been
-              notified. Please try again, or contact support if the problem
+              Please try again, or contact support if the problem
               persists.
             </Typography>
 
@@ -62,3 +61,4 @@ export default function GlobalError({
     </html>
   );
 }
+
