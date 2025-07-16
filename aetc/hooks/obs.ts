@@ -28,18 +28,28 @@ export const addObsChildren = () => {
   });
 };
 
-export const getAllObservations = (patientId: any, conceptName: any) => {
+export const getAllObservations = (
+  patientId: any,
+  conceptName: any,
+  visitId?: any
+) => {
   const getAll = async () => {
-    const response = await getObservation(
-      `person=${patientId}&conceptName=${conceptName}`
-    );
+    const params = new URLSearchParams();
+    params.append("person", patientId);
+    params.append("conceptName", conceptName);
+    params.append("paginate", "false");
+    if (visitId) {
+      params.append("visit_id", visitId);
+    }
+
+    const response = await getObservation(params.toString());
     return response.data;
   };
 
   return useQuery({
-    queryKey: ["observations", patientId, conceptName],
+    queryKey: ["observations", patientId, conceptName, visitId],
     queryFn: getAll,
-    enabled: !!patientId && !!conceptName, // only run if both are present
+    enabled: !!patientId && !!conceptName,
     refetchOnReconnect: false,
     refetchOnMount: true,
     refetchOnWindowFocus: true,

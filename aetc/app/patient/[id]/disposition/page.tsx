@@ -29,15 +29,10 @@ import { PatientInfoPrintDialog } from "../../components/dialogs";
 import { useNavigation } from "@/hooks";
 const dispositionOptions = [
   { id: concepts.DISCHARGE_HOME, label: "Discharge home" },
+  { id: concepts.ADMISSION, label: "Admission" },
   {
     id: concepts.AWAITING_SPECIALITY_REVIEW,
     label: "Awaiting specialty review",
-  },
-  { id: concepts.ADMISSION, label: "Admission" },
-  // { id: concepts.SHORT_STAY, label: "Short stay" },
-  {
-    id: concepts.TRANSFER_TO_ANOTHER_FACILITY,
-    label: "Transfer Out",
   },
   { id: concepts.DEATH, label: "Death" },
   { id: concepts.ABSCONDED, label: "Absconded" },
@@ -45,6 +40,12 @@ const dispositionOptions = [
     id: concepts.REFUSED_HOSPITAL_TREATMENT,
     label: "Refused hospital treatment",
   },
+  // { id: concepts.SHORT_STAY, label: "Short stay" },
+  {
+    id: concepts.TRANSFER_OUT,
+    label: "Transfer Out",
+  },
+
 ];
 
 function DispositionFeature() {
@@ -70,7 +71,7 @@ function DispositionFeature() {
         return <AdmissionForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.SHORT_STAY:
         return <ShortStayForm openPatientSummary={openPatientSummaryDialog} />;
-      case concepts.TRANSFER_TO_ANOTHER_FACILITY:
+      case concepts.TRANSFER_OUT:
         return <TransferForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.DEATH:
         return <DeathForm openPatientSummary={openPatientSummaryDialog} />;

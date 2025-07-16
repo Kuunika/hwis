@@ -182,6 +182,7 @@ export const encounters = {
   DISPOSED_PRESCRIPTIONS: "a9ebe09e-0296-40d1-a9fa-3efcce85ea9e ",
   // GYNEACOLOGY_WARD: "59514a38-a019-4833-b180-480d1bbf2dfe",
   GYNEACOLOGY_WARD: "7819932d-eea1-43d2-a543-35cb93f2da49",
+  AWAITING_SPECIALTY: "4a10d674-9072-4385-b2e9-583d0524abe1",
 
 };
 
@@ -213,7 +214,8 @@ export const concepts = {
   THEATRE: "Theatre",
   OTHER_INTERVENTION_SUITE: "Other Intervention Suite",
   SHORT_STAY: "Short stay",
-  TRANSFER_TO_ANOTHER_FACILITY: "Transfer To Another Facility",
+  // TRANSFER_TO_ANOTHER_FACILITY: "Transfer To Another Facility",
+  TRANSFER_OUT: "Transfer Out",
   DEATH: "Death",
   ABSCONDED: "Absconded",
   REFUSED_HOSPITAL_TREATMENT: "Refused Hospital Treatment",

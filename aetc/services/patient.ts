@@ -4,12 +4,13 @@ import {
   DDEScore,
   DDESearch,
   DeathReport,
+  Patient,
   PatientUpdateResponse,
   Person,
   Relationship,
   RelationshipType,
 } from "@/interfaces";
-import { create, edit, get, getAll, getOne } from "./httpService";
+import { create, edit, get, getAll, getOne, remove  } from "./httpService";
 
 const endPoint = "/people";
 
@@ -114,6 +115,8 @@ export const getDeathReports = () => get<DeathReport[]>("/death_reports");
 
 export const updateDeathReport = (id: string | number, data: any) =>
   edit<DeathReport>(id, data, "/death_reports");
+
+export const voidPatient = (id: string, void_reason:string) => remove<Patient>(`patients/${id}`, {  id, void_reason });
 
 // export const updateDeathReport = (id: string, data: any) =>
 //   edit<DeathReport>(id, data, "/death_reports");

@@ -488,6 +488,8 @@ const ViewPatientDialog = ({
     const uuid = patient?.uuid;
     const initialUuid = params?.id;
 
+    console.log({ referralData });
+
     const mergedResponse = await mergePatients({
       primary: {
         patient_id: uuid,
@@ -560,8 +562,8 @@ const ViewPatientDialog = ({
   }, [existingPatientEncounters]);
 
   const handleReferralSubmit = async (values: any) => {
+    await setReferralData(values);
     await triggerMerge();
-
     setOpenReferralDialog(false);
   };
 

@@ -29,7 +29,7 @@ function DispositionPage() {
           <br />
           <br />
           <RegistrationMainHeader>
-            Disposition/Specialty{" "}
+            Disposition List{" "}
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
             This is a list of all patients who have completed assessments and
