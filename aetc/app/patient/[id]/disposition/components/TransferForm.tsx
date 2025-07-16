@@ -49,22 +49,21 @@ export default function TransferForm({
 
     const obs = [
       {
-        concept: concepts.TRANSFER_TO_ANOTHER_FACILITY,
-        value: concepts.TRANSFER_TO_ANOTHER_FACILITY,
+        concept: concepts.TRANSFER_OUT,
+        value: concepts.TRANSFER_OUT,
         obsDatetime: currentDateTime,
-        groupMembers: [
-          {
-            concept: concepts.FACILITY_NAME,
-            value: values.facilityName,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.REASON_FOR_TRANSFER,
-            value: values.reason,
-            obsDatetime: currentDateTime,
-          },
-        ],
       },
+      {
+        concept: concepts.FACILITY_NAME,
+        value: values.facilityName,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.REASON_FOR_TRANSFER,
+        value: values.reason,
+        obsDatetime: currentDateTime,
+      },
+      // { concept: concepts.TRANSFER_NOTES, value: values.transferNotes, obsDatetime: currentDateTime },
     ];
 
     const payload = {
@@ -77,9 +76,16 @@ export default function TransferForm({
 
     try {
       await submitEncounter(payload);
+      // toast.success("Transfer information submitted successfully!");
+      // Close the visit after successfully submitting the encounter
+      // if (activeVisit?.uuid) {
+      //     closeVisit(activeVisit.uuid);
+      // }
+      // navigateTo("/dispositions");
       openPatientSummary();
     } catch (error) {
       console.error("Error submitting Transfer information: ", error);
+      // toast.error("Failed to submit Transfer information.");
     }
   };
 

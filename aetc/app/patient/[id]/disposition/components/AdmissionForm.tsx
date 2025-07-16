@@ -39,7 +39,6 @@ export default function AdmissionForm({
   }, [patientVisits]);
 
   const handleSubmit = async (values: any) => {
-    console.log({ values });
     const currentDateTime = ServerTime.getServerTimeString();
 
     const obs = [
@@ -47,31 +46,28 @@ export default function AdmissionForm({
         concept: concepts.ADMISSION,
         value: concepts.ADMISSION,
         obsDatetime: currentDateTime,
-        groupMembers: [
-          {
-            concept: concepts.WARD,
-            value: values.wardName,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.BED_NUMBER,
-            value: values.bedNumber,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.REASON_FOR_ADMISSION,
-            value: values.reasonForAdmission,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.SPECIALITY_DEPARTMENT,
-            value: values.specialtyInvolved,
-            obsDatetime: currentDateTime,
-          },
-        ],
+      },
+      {
+        concept: concepts.WARD,
+        value: values.wardName,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.BED_NUMBER,
+        value: values.bedNumber,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.REASON_FOR_ADMISSION,
+        value: values.reasonForAdmission,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.SPECIALITY_DEPARTMENT,
+        value: values.specialtyInvolved,
+        obsDatetime: currentDateTime,
       },
     ];
-
     const payload = {
       encounterType: encounters.DISPOSITION,
       visit: activeVisit?.uuid,
@@ -82,6 +78,7 @@ export default function AdmissionForm({
 
     try {
       await submitEncounter(payload);
+
       openPatientSummary();
     } catch (error) {
       console.error("Error submitting Admission information: ", error);

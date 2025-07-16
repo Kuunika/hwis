@@ -93,43 +93,41 @@ export default function DeathForm({
         concept: concepts.DEATH,
         value: concepts.DEATH,
         obsDatetime: currentDateTime,
-        groupMembers: [
-          {
-            concept: concepts.CAUSE_OF_DEATH,
-            value: values.causeOfDeath,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.FAMILY_INFORMED,
-            value: values.familyInformed,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.RELATIONSHIP_TO_DECEASED,
-            value: values.relationshipToDeceased,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.MORTUARY,
-            value: values.mortuary,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.LAST_OFFICE_CONDUCTED,
-            value: values.lastOfficeConducted,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.NAME_OF_HEALTH_WORKER_WHO_CONDUCTED_LAST_OFFICE,
-            value: values.healthWorkerName,
-            obsDatetime: currentDateTime,
-          },
-          {
-            concept: concepts.DATE_OF_LAST_OFFICE,
-            value: values.lastOfficeDate,
-            obsDatetime: currentDateTime,
-          },
-        ],
+      },
+      {
+        concept: concepts.CAUSE_OF_DEATH,
+        value: values.causeOfDeath,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.FAMILY_INFORMED,
+        value: values.familyInformed,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.RELATIONSHIP_TO_DECEASED,
+        value: values.relationshipToDeceased,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.MORTUARY,
+        value: values.mortuary,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.LAST_OFFICE_CONDUCTED,
+        value: values.lastOfficeConducted,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.NAME_OF_HEALTH_WORKER_WHO_CONDUCTED_LAST_OFFICE,
+        value: values.healthWorkerName,
+        obsDatetime: currentDateTime,
+      },
+      {
+        concept: concepts.DATE_OF_LAST_OFFICE,
+        value: values.lastOfficeDate,
+        obsDatetime: currentDateTime,
       },
     ];
 
@@ -143,9 +141,17 @@ export default function DeathForm({
 
     try {
       await submitEncounter(payload);
+      // toast.success("Death Form information submitted successfully!");
+      // Close the visit after successfully submitting the encounter
+      // if (activeVisit?.uuid) {
+      //     closeVisit(activeVisit.uuid);
+      // }
+      // Redirect to assessments page
+      // navigateTo("/dispositions");
       openPatientSummary();
     } catch (error) {
       console.error("Error submitting Death form information: ", error);
+      // toast.error("Failed to submit Death Form information.");
     }
   };
 
