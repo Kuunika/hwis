@@ -16,10 +16,10 @@ export const getObsGraphData = (conceptName = "") => {
     conceptName,
     selectedVisit?.id
   );
-  const values = obsData?.data?.map((item: any) => Number(item.value)) ?? [];
+  const values = obsData?.map((item: any) => Number(item.value)) ?? [];
 
   const dateTimes =
-    obsData?.data?.map((item: any) => getShortDateTime(item.obs_datetime)) ??
+    obsData?.map((item: any) => getShortDateTime(item.obs_datetime)) ??
     [];
 
   return {
