@@ -30,6 +30,9 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
+import { BedsideTestForm } from "../../[id]/consultation/components";
+import { LabRequestForm } from "../../[id]/consultation/components/labRequestForm";
+import { Radiology } from "../../[id]/consultation/components/Radiology";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -43,10 +46,33 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export const Investigations = () => {
   const sections = [
     {
-      id: "labOrders",
-      title: "Lab Orders",
-      content: <LabOrderTable />,
-    },
+         id: "bedside",
+         title: "Bedside",
+         content: (
+           <BedsideTestForm
+           />
+         ),
+       },
+       {
+         id: "labForm",
+         title: "Lab orders",
+         content: (
+           <>
+             <LabRequestForm onClose={() => {}} addRequest={() => {}} />
+             <LabOrderTable />
+           </>
+         ),
+       },
+       {
+         id: "radiology",
+         title: "Radiology (Coming Soon)",
+         content: (
+           <>
+             <Radiology />
+           </>
+         ),
+       },
+   
     {
       id: "labResults",
       title: "Lab Results",
@@ -95,13 +121,6 @@ export default function CustomizedDialogs() {
   return (
     <>
       <React.Fragment>
-        <Button
-          disabled={!hasActiveVisit}
-          variant="outlined"
-          onClick={handleClickOpen}
-        >
-          Add Investigation
-        </Button>
         <BootstrapDialog
           onClose={handleClose}
           aria-labelledby="customized-dialog-title"
