@@ -205,7 +205,7 @@ const DischargeForm = ({
 }) => {
   const { data: facilities } = getFacilities();
   // Service Areas state
-  const { serviceAreaOptions, serviceAreas } = getServiceAreas();
+  const { serviceAreaOptions } = getServiceAreas();
 
   const [showOther, setShowOther] = useState(false);
 
