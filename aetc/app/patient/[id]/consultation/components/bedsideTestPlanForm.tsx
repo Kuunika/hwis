@@ -5,7 +5,6 @@ import {
   TextInputField,
 } from "@/components";
 import { concepts, encounters } from "@/constants";
-import { getInitialValues } from "@/helpers";
 import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
 import { Bounce, toast } from "react-toastify";
@@ -13,8 +12,7 @@ import {
   addEncounter,
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
-import React, { use, useEffect } from "react";
-import * as yup from "yup";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -26,298 +24,207 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+
 // Define type for section keys
 type SectionKey =
-  | "arterialBloodGas"
-  | "metabolicValues"
-  | "acidBaseStatus"
+  | "arterialVenousBloodGasMain" // New top-level section
+  | "bloodGasValues"
   | "oximetryValues"
   | "electrolyteValues"
+  | "metabolicValues"
   | "temperatureCorrectedValues"
-  | "pregnancyTest"
-  | "dipstick"
-  | "additionalTests";
+  | "acidBaseStatus";
 
 // Define types for form field
 interface FormField {
-  name: string;
+  name: string; // This will now be the same as label and the concept name
   label: string;
-  // Add other properties as needed
 }
 
 // Define types for section state
 interface SectionState {
   open: boolean;
-  selectedFields: Record<string, boolean>;
+  selectedFields: Record<string, boolean>; // Keys will be the labels (which are now also the names)
 }
 
+// This object centralizes the definition of concept names (which are also their labels).
+// This ensures consistency and avoids hardcoding strings directly in formConfig.
+const bloodGasConcepts = {
+  PH: "pH",
+  PCO2: "pCO₂ (mmHg)",
+  PO2: "pO₂ (mmHg)",
+  CTHB: "c_tHb (g/dL)",
+  SO2: "sO₂ (%)",
+  FO2HB: "FO₂Hb (%)",
+  FHHB: "FHHb (%)",
+  FMETHB: "FmetHb (%)",
+  CK: "cK⁺ (mmol/L)",
+  CNA: "cNa⁺ (mmol/L)",
+  CA2: "cCa²⁺ (mmol/L)",
+  CCL: "cCl⁻ (mmol/L)",
+  GLU: "cGlu (mmol/L)",
+  LAC: "cLac (mmol/L)",
+  CTBIL: "ctBil (µmol/L)",
+  PH_T: "pH (T)",
+  PCO2_T: "pCO₂ (T) mmHg",
+  PO2_T: "pO₂ (T) mmHg",
+  P50E: "P50e",
+  BASE_EXCESS: "cBaseExcess (Ecf)c",
+  HCO3: "cHCO₃⁻ (P,st)c",
+  ANION_GAP: "Amion Gap",
+  MOSM: "cmOSm",
+};
+
+// formConfig now uses the centralized bloodGasConcepts for both name and label
 const formConfig = {
-  mrdt: {
-    name: concepts.MRDT,
-    label: "MRDT",
-    coded: true,
+  PH: { name: bloodGasConcepts.PH, label: bloodGasConcepts.PH },
+  PCO2: { name: bloodGasConcepts.PCO2, label: bloodGasConcepts.PCO2 },
+  PO2: { name: bloodGasConcepts.PO2, label: bloodGasConcepts.PO2 },
+  CTHB: { name: bloodGasConcepts.CTHB, label: bloodGasConcepts.CTHB },
+  SO2E: { name: bloodGasConcepts.SO2, label: bloodGasConcepts.SO2 },
+  FO2HBE: { name: bloodGasConcepts.FO2HB, label: bloodGasConcepts.FO2HB },
+  FHHBE: { name: bloodGasConcepts.FHHB, label: bloodGasConcepts.FHHB },
+  FMETHB: { name: bloodGasConcepts.FMETHB, label: bloodGasConcepts.FMETHB },
+  CK: { name: bloodGasConcepts.CK, label: bloodGasConcepts.CK },
+  CNA: { name: bloodGasConcepts.CNA, label: bloodGasConcepts.CNA },
+  CA2: { name: bloodGasConcepts.CA2, label: bloodGasConcepts.CA2 },
+  CCL: { name: bloodGasConcepts.CCL, label: bloodGasConcepts.CCL },
+  glucose: { name: bloodGasConcepts.GLU, label: bloodGasConcepts.GLU },
+  LACTATE: { name: bloodGasConcepts.LAC, label: bloodGasConcepts.LAC },
+  CTBIL: { name: bloodGasConcepts.CTBIL, label: bloodGasConcepts.CTBIL },
+  PH_T: { name: bloodGasConcepts.PH_T, label: bloodGasConcepts.PH_T },
+  PCO2_T: { name: bloodGasConcepts.PCO2_T, label: bloodGasConcepts.PCO2_T },
+  PO2_T: { name: bloodGasConcepts.PO2_T, label: bloodGasConcepts.PO2_T },
+  P50E: { name: bloodGasConcepts.P50E, label: bloodGasConcepts.P50E },
+  BASE_EXCESS: { name: bloodGasConcepts.BASE_EXCESS, label: bloodGasConcepts.BASE_EXCESS },
+  HCO3: { name: bloodGasConcepts.HCO3, label: bloodGasConcepts.HCO3 },
+  ANION_GAPC: { name: bloodGasConcepts.ANION_GAP, label: bloodGasConcepts.ANION_GAP },
+  MOSMC: { name: bloodGasConcepts.MOSM, label: bloodGasConcepts.MOSM },
+};
+
+// Define the structure of the form sections, including parent-child relationships
+const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormField[]; subSections?: SectionKey[] } } = {
+  arterialVenousBloodGasMain: {
+    title: "Arterial/Venous Blood Gas",
+    subSections: [
+      "bloodGasValues",
+      "oximetryValues",
+      "electrolyteValues",
+      "metabolicValues",
+      "temperatureCorrectedValues",
+      "acidBaseStatus",
+    ],
   },
-  positive: {
-    name: concepts.POSITIVE,
-    label: "Positive",
+  bloodGasValues: {
+    title: "Blood Gas Values",
+    fields: [formConfig.PH, formConfig.PCO2, formConfig.PO2],
   },
-  negative: {
-    name: concepts.NEGATIVE,
-    label: "Negative",
+  oximetryValues: {
+    title: "Oximetry Values",
+    fields: [formConfig.CTHB, formConfig.SO2E, formConfig.FO2HBE, formConfig.FHHBE, formConfig.FMETHB],
   },
-  indeterminate: {
-    name: concepts.INDETERMINATE,
-    label: "Indeterminate",
+  electrolyteValues: {
+    title: "Electrolyte Values",
+    fields: [formConfig.CK, formConfig.CNA, formConfig.CA2, formConfig.CCL],
   },
-  PH: {
-    name: concepts.PH,
-    label: "pH",
+  metabolicValues: {
+    title: "Metabolic Values",
+    fields: [formConfig.glucose, formConfig.LACTATE, formConfig.CTBIL],
   },
-  PCO2: {
-    name: concepts.PCO2,
-    label: "pCO2",
+  temperatureCorrectedValues: {
+    title: "Temperature Corrected Values",
+    fields: [formConfig.PH_T, formConfig.PCO2_T, formConfig.PO2_T, formConfig.P50E],
   },
-  PO2: {
-    name: concepts.PO2,
-    label: "pO2",
-  },
-  BASE_EXCESS: {
-    name: concepts.BASE_EXCESS,
-    label: "Base Excess",
-  },
-  LACTATE: {
-    name: concepts.LACTATE,
-    label: "Lactate",
-  },
-  glucose: {
-    name: concepts.GLUCOSE,
-    label: "Glucose",
-  },
-  HCO3: {
-    name: concepts.HCO3,
-    label: "HCO-3",
-  },
-  ANION_GAPC: {
-    name: concepts.ANION_GAPC,
-    label: "Anion gapc",
-  },
-  MOSMC: {
-    name: concepts.MOSMC,
-    label: "mOsmc",
-  },
-  SO2E: {
-    name: concepts.SO2E,
-    label: "sO2e",
-  },
-  FO2HBE: {
-    name: concepts.FO2HBE,
-    label: "FO2Hbe",
-  },
-  FHHBE: {
-    name: concepts.FHHBE,
-    label: "FHHBe",
-  },
-  CK: {
-    name: concepts.CK,
-    label: "cK",
-  },
-  CNA: {
-    name: concepts.CNA,
-    label: "cNa",
-  },
-  CA2: {
-    name: concepts.CA2,
-    label: "Ca2+",
-  },
-  CCL: {
-    name: concepts.CCL,
-    label: "cCl-",
-  },
-  P50E: {
-    name: concepts.P50E,
-    label: "p50e",
-  },
-  pregnancyTest: {
-    name: concepts.PREGNANCY_TEST,
-    label: "Pregnancy Test",
-    coded: true,
-  },
-  hiv: {
-    name: concepts.HIV,
-    label: "HIV",
-    coded: true,
-  },
-  vdrl: {
-    name: concepts.VDRL,
-    label: "VDRL",
-    coded: true,
-  },
-  urobilinogen: {
-    name: concepts.UROBILINOGEN,
-    label: "Urobilinogen",
-  },
-  leukocytes: {
-    name: concepts.LEUKOCYTES,
-    label: "Leukocytes",
-  },
-  bilirubin: {
-    name: concepts.BILIRUBIN,
-    label: "Bilirubin",
-  },
-  specificGravity: {
-    name: concepts.SPECIFIC_GRAVITY,
-    label: "Specific Gravity",
-  },
-  nitrite: {
-    name: concepts.NITRITE,
-    label: "Nitrite",
-  },
-  ketones: {
-    name: concepts.KETONES,
-    label: "Ketones",
-  },
-  blood: {
-    name: concepts.BLOOD,
-    label: "Blood",
-  },
-  protein: {
-    name: concepts.PROTEIN,
-    label: "Protein",
-  },
-  pocus: {
-    name: concepts.POINT_OF_CARE_ULTRASOUND,
-    label: "Point of care ultrasound",
-  },
-  ecg: {
-    name: concepts.ECG,
-    label: "ECG",
-  },
-  pefr: {
-    name: concepts.PEFR,
-    label: "PEFR",
-  },
-  other: {
-    name: concepts.OTHER,
-    label: "Other",
+  acidBaseStatus: {
+    title: "Acid Base Status",
+    fields: [formConfig.BASE_EXCESS, formConfig.HCO3, formConfig.ANION_GAPC, formConfig.MOSMC],
   },
 };
 
-const testStatusOptions = [
-  { value: concepts.POSITIVE, label: "Positive" },
-  { value: concepts.NEGATIVE, label: "Negative" },
-  { value: concepts.INDETERMINATE, label: "Indeterminate" },
-];
-const formValues = getInitialValues(formConfig);
-
 export const BedsideTestPlanForm = () => {
   const { activeVisit, patientId, gender } = getActivePatientDetails();
-
   const { mutate, isPending, isSuccess } = fetchConceptAndCreateEncounter();
-  const createObservationsObject = (dateTime: any): any[] => {
-    const observations: any[] = [];
 
-    // Helper function to add section data if it has selected fields
-    const addSectionIfHasValues = (
-      sectionKey: SectionKey,
-      sectionTitle: string,
-      fields: FormField[]
-    ) => {
-      // Filter only selected fields in this section
-      const selectedFields = fields.filter(
-        (field) => sections[sectionKey].selectedFields[field.name]
-      );
-
-      // Only add section if it has selected fields
-      if (selectedFields.length > 0) {
-        observations.push({
-          concept: concepts.BEDSIDE_INVESTIGATIONS,
-          obsDatetime: dateTime,
-          value: sectionTitle,
-          groupMembers: selectedFields.map((field) => ({
-            concept: field.name,
-            obsDatetime: dateTime,
-            value: true, // Or any other value you want to assign
-          })),
+  // Initialize state for all sections (leaf sections will have selectedFields)
+  const initializeSectionState = useCallback((): Record<SectionKey, SectionState> => {
+    const initialState: Record<SectionKey, SectionState> = {} as Record<SectionKey, SectionState>;
+    (Object.keys(sectionDefinitions) as SectionKey[]).forEach((key) => {
+      const sectionDef = sectionDefinitions[key];
+      initialState[key] = {
+        open: false,
+        selectedFields: {},
+      };
+      if (sectionDef.fields) {
+        sectionDef.fields.forEach((field) => {
+          initialState[key].selectedFields[field.name] = false; // Use field.name (which is now the label) as the key
         });
+      }
+    });
+    return initialState;
+  }, []);
+
+  const [sections, setSections] = useState<Record<SectionKey, SectionState>>(initializeSectionState);
+
+  // Helper to reset all form states
+  const resetAllFormStates = useCallback(() => {
+    setSections(initializeSectionState()); // Re-initialize all sections
+  }, [initializeSectionState]);
+
+  // Handle form submission
+  const createObservationsObject = useCallback(() => {
+    const observations: any[] = [];
+    const dateTime = getDateTime();
+
+    // Helper to add observations for a given section's selected fields
+    const addSectionObservations = (sectionKey: SectionKey) => {
+      const sectionDef = sectionDefinitions[sectionKey];
+      const sectionState = sections[sectionKey];
+
+      if (sectionDef.fields) { // Only process leaf sections with fields
+        const selectedFields = sectionDef.fields.filter(
+          (field) => sectionState.selectedFields[field.name] // Use field.name (which is now the label)
+        );
+
+        if (selectedFields.length > 0) {
+          observations.push({
+            concept: concepts.BEDSIDE_INVESTIGATIONS, // Group under a general concept
+            obsDatetime: dateTime,
+            value: sectionDef.title, // Use section title as value for grouping
+            groupMembers: selectedFields.map((field) => ({
+              concept: field.name, // Use field.name (which is now the label) as the concept
+              obsDatetime: dateTime,
+              value: true, // Indicates the test was selected/planned
+            })),
+          });
+        }
       }
     };
 
-    // Add all sections with their corresponding titles
-    addSectionIfHasValues(
-      "arterialBloodGas",
-      "Arterial Blood Gas",
-      fieldsBySection.arterialBloodGas
-    );
-    addSectionIfHasValues(
-      "metabolicValues",
-      "Metabolic Values",
-      fieldsBySection.metabolicValues
-    );
-    addSectionIfHasValues(
-      "acidBaseStatus",
-      "Acid base status",
-      fieldsBySection.acidBaseStatus
-    );
-    addSectionIfHasValues(
-      "oximetryValues",
-      "Oximetry Values",
-      fieldsBySection.oximetryValues
-    );
-    addSectionIfHasValues(
-      "electrolyteValues",
-      "Electrolyte Values",
-      fieldsBySection.electrolyteValues
-    );
-    addSectionIfHasValues(
-      "temperatureCorrectedValues",
-      "Temperature Corrected Values",
-      fieldsBySection.temperatureCorrectedValues
-    );
-    addSectionIfHasValues("dipstick", "Dipstick", fieldsBySection.dipstick);
-    addSectionIfHasValues(
-      "additionalTests",
-      "Additional Tests",
-      fieldsBySection.additionalTests
-    );
-
-    // Add individual checkboxes if they're checked
-    if (mrdtChecked) {
-      observations.push({
-        concept: formConfig.mrdt.name,
-        obsDatetime: dateTime,
-        value: true,
-      });
-    }
-
-    if (hivChecked) {
-      observations.push({
-        concept: formConfig.hiv.name,
-        obsDatetime: dateTime,
-        value: true,
-      });
-    }
-
-    if (vdrlChecked) {
-      observations.push({
-        concept: formConfig.vdrl.name,
-        obsDatetime: dateTime,
-        value: true,
-      });
-    }
-
-    // Special handling for pregnancy test if gender is Female
-    if (gender === "Female") {
-      if (pregnancyTestChecked) {
-        observations.push({
-          concept: formConfig.pregnancyTest.name,
-          obsDatetime: dateTime,
-          value: true,
-        });
-      }
-    }
+    // Iterate through all leaf sections and add their selected fields
+    sectionDefinitions.arterialVenousBloodGasMain.subSections?.forEach((key) => {
+      addSectionObservations(key);
+    });
 
     return observations;
-  };
+  }, [sections]);
+
+
+  const handleSubmit = useCallback((event: React.FormEvent | string): void => {
+    if (typeof event !== 'string' && event) {
+      event.preventDefault();
+    }
+
+    const obs = createObservationsObject();
+
+    mutate({
+      encounterType: encounters.BEDSIDE_INVESTIGATION_PLAN,
+      visit: activeVisit,
+      patient: patientId,
+      encounterDatetime: getDateTime(),
+      obs,
+    });
+    resetAllFormStates();
+  }, [createObservationsObject, mutate, activeVisit, patientId, resetAllFormStates]);
 
   useEffect(() => {
     if (!isSuccess) return;
@@ -334,222 +241,161 @@ export const BedsideTestPlanForm = () => {
     });
   }, [isSuccess]);
 
-  const handleSubmit = (event: any): void => {
-    if (event) {
-      event.preventDefault();
-    }
-
-    const dateTime = getDateTime();
-    const obs = createObservationsObject(dateTime);
-
-    mutate({
-      encounterType: encounters.BEDSIDE_INVESTIGATION_PLAN,
-      visit: activeVisit,
-      patient: patientId,
-      encounterDatetime: dateTime,
-      obs,
-    });
-    resetAllFormStates();
-  };
-
-  const resetAllFormStates = (): void => {
-    // Reset individual checkboxes
-    setMRDTChecked(false);
-    setHivChecked(false);
-    setVdrlChecked(false);
-    setPregnancyTestChecked(false);
-
-    // Reset all section states to initial values
-    setSections((prev) => {
-      const resetState = {} as Record<SectionKey, SectionState>;
-
-      // For each section, reset to initial state with all checkboxes unchecked
-      (Object.keys(fieldsBySection) as SectionKey[]).forEach((section) => {
-        resetState[section] = initializeSectionState(fieldsBySection[section]);
-      });
-
-      return resetState;
-    });
-
-    // Optionally, you could also close all sections
-    // Or keep them open, depending on your UX preference
-  };
-  const initializeSectionState = (fields: FormField[]): SectionState => {
-    const selectedFields: Record<string, boolean> = {};
-    fields.forEach((field) => {
-      selectedFields[field.name] = false;
-    });
-    return { open: false, selectedFields };
-  };
-
-  // Group fields by section for easier initialization
-  const fieldsBySection: Record<SectionKey, FormField[]> = {
-    arterialBloodGas: [
-      formConfig.PH,
-      formConfig.PCO2,
-      formConfig.PO2,
-      formConfig.BASE_EXCESS,
-    ],
-    metabolicValues: [formConfig.LACTATE, formConfig.glucose],
-    acidBaseStatus: [formConfig.HCO3, formConfig.ANION_GAPC, formConfig.MOSMC],
-    oximetryValues: [formConfig.SO2E, formConfig.FO2HBE, formConfig.FHHBE],
-    electrolyteValues: [
-      formConfig.CK,
-      formConfig.CNA,
-      formConfig.CA2,
-      formConfig.CCL,
-    ],
-    temperatureCorrectedValues: [
-      formConfig.PH,
-      formConfig.PCO2,
-      formConfig.PO2,
-      formConfig.P50E,
-    ],
-    pregnancyTest: [formConfig.pregnancyTest],
-    dipstick: [
-      formConfig.urobilinogen,
-      formConfig.PH,
-      formConfig.leukocytes,
-      formConfig.glucose,
-      formConfig.specificGravity,
-      formConfig.protein,
-      formConfig.nitrite,
-      formConfig.ketones,
-      formConfig.bilirubin,
-      formConfig.blood,
-    ],
-    additionalTests: [
-      formConfig.pocus,
-      formConfig.ecg,
-      formConfig.pefr,
-      formConfig.other,
-    ],
-  };
-
-  // Initialize state
-  const initialSections: Record<SectionKey, SectionState> = {} as Record<
-    SectionKey,
-    SectionState
-  >;
-  (Object.keys(fieldsBySection) as SectionKey[]).forEach((section) => {
-    initialSections[section] = initializeSectionState(fieldsBySection[section]);
-  });
-
-  // Add separate state for HIV and VDRL checkboxes as main checkboxes
-  const [hivChecked, setHivChecked] = React.useState(false);
-  const [mrdtChecked, setMRDTChecked] = React.useState(false);
-  const [vdrlChecked, setVdrlChecked] = React.useState(false);
-  const [pregnancyTestChecked, setPregnancyTestChecked] = React.useState(false);
-  const [sections, setSections] =
-    React.useState<Record<SectionKey, SectionState>>(initialSections);
-  // const [gender, setGender] = React.useState<string>(""); // For gender-specific fields
-
   // Toggle section open/closed
-  const toggleSection = (section: SectionKey): void => {
+  const toggleSection = useCallback((sectionKey: SectionKey): void => {
     setSections((prev) => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        open: !prev[section].open,
+      [sectionKey]: {
+        ...prev[sectionKey],
+        open: !prev[sectionKey].open,
       },
     }));
-  };
+  }, []);
 
-  // Toggle all fields in a section
-  const toggleAllFields = (section: SectionKey): void => {
-    const currentSection = sections[section];
-    const fieldsInSection = fieldsBySection[section];
-
-    // Check if all fields are selected
-    const allSelected = fieldsInSection.every(
-      (field) => currentSection.selectedFields[field.name]
-    );
-
-    // Toggle to opposite state (all selected -> none selected, or some/none selected -> all selected)
-    const newSelectedState = !allSelected;
-
-    const updatedSelectedFields = { ...currentSection.selectedFields };
-    fieldsInSection.forEach((field) => {
-      updatedSelectedFields[field.name] = newSelectedState;
-    });
-
-    // Update state
+  // Toggle a single field within a leaf section
+  const toggleField = useCallback((sectionKey: SectionKey, fieldName: string): void => {
     setSections((prev) => ({
       ...prev,
-      [section]: {
-        ...prev[section],
+      [sectionKey]: {
+        ...prev[sectionKey],
+        selectedFields: {
+          ...prev[sectionKey].selectedFields,
+          [fieldName]: !prev[sectionKey].selectedFields[fieldName],
+        },
+      },
+    }));
+  }, []);
+
+  // Check if all fields in a leaf section are selected
+  const areAllFieldsSelected = useCallback((sectionKey: SectionKey): boolean => {
+    const sectionDef = sectionDefinitions[sectionKey];
+    const sectionState = sections[sectionKey];
+    if (!sectionDef.fields || sectionDef.fields.length === 0) return false; // Not applicable for parent sections or sections without fields
+    return sectionDef.fields.every((field) => sectionState.selectedFields[field.name]); // Use field.name
+  }, [sections]);
+
+  // Check if some but not all fields in a leaf section are selected
+  const areSomeFieldsSelected = useCallback((sectionKey: SectionKey): boolean => {
+    const sectionDef = sectionDefinitions[sectionKey];
+    const sectionState = sections[sectionKey];
+    if (!sectionDef.fields || sectionDef.fields.length === 0) return false; // Not applicable for parent sections or sections without fields
+    const selectedCount = sectionDef.fields.filter(
+      (field) => sectionState.selectedFields[field.name] // Use field.name
+    ).length;
+    return selectedCount > 0 && selectedCount < sectionDef.fields.length;
+  }, [sections]);
+
+  // Toggle all fields in a leaf section
+  const toggleAllFieldsInLeafSection = useCallback((sectionKey: SectionKey): void => {
+    const sectionDef = sectionDefinitions[sectionKey];
+    if (!sectionDef.fields) return; // Only for leaf sections
+
+    const currentSectionState = sections[sectionKey];
+    const allSelected = areAllFieldsSelected(sectionKey);
+    const newSelectedState = !allSelected;
+
+    const updatedSelectedFields = { ...currentSectionState.selectedFields };
+    sectionDef.fields.forEach((field) => {
+      updatedSelectedFields[field.name] = newSelectedState; // Use field.name
+    });
+
+    setSections((prev) => ({
+      ...prev,
+      [sectionKey]: {
+        ...prev[sectionKey],
         selectedFields: updatedSelectedFields,
         open: true, // Always open when toggling all
       },
     }));
-  };
+  }, [sections, areAllFieldsSelected]);
 
-  // Toggle a single field
-  const toggleField = (section: SectionKey, fieldName: string): void => {
-    setSections((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        selectedFields: {
-          ...prev[section].selectedFields,
-          [fieldName]: !prev[section].selectedFields[fieldName],
-        },
-      },
-    }));
-  };
+  // Check if all fields in all child sections of a parent section are selected
+  const areAllChildSectionsFieldsSelected = useCallback((parentSectionKey: SectionKey): boolean => {
+    const parentDef = sectionDefinitions[parentSectionKey];
+    if (!parentDef.subSections) return false;
 
-  // Check if all fields in a section are selected
-  const areAllFieldsSelected = (section: SectionKey): boolean => {
-    const sectionState = sections[section];
-    const fields = fieldsBySection[section];
-    return fields.every((field) => sectionState.selectedFields[field.name]);
-  };
+    return parentDef.subSections.every(subSectionKey => {
+      const subSectionDef = sectionDefinitions[subSectionKey];
+      if (!subSectionDef.fields || subSectionDef.fields.length === 0) return true; // If sub-section has no fields, consider it "selected"
+      return areAllFieldsSelected(subSectionKey);
+    });
+  }, [areAllFieldsSelected]);
 
-  // Check if some but not all fields are selected
-  const areSomeFieldsSelected = (section: SectionKey): boolean => {
-    const sectionState = sections[section];
-    const fields = fieldsBySection[section];
-    const selectedCount = fields.filter(
-      (field) => sectionState.selectedFields[field.name]
-    ).length;
-    return selectedCount > 0 && selectedCount < fields.length;
-  };
+  // Check if some fields in child sections of a parent section are selected
+  const areSomeChildSectionsFieldsSelected = useCallback((parentSectionKey: SectionKey): boolean => {
+    const parentDef = sectionDefinitions[parentSectionKey];
+    if (!parentDef.subSections) return false;
 
-  // Props for the CheckboxGroup component
-  interface CheckboxGroupProps {
-    title: string;
-    section: SectionKey;
-    conditionalRender?: boolean;
-  }
+    let selectedCount = 0;
+    let totalCount = 0;
 
-  // Checkbox Group Component
-  const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
-    title,
-    section,
-    conditionalRender = true,
-  }) => {
-    if (!conditionalRender) return null;
+    parentDef.subSections.forEach(subSectionKey => {
+      const subSectionDef = sectionDefinitions[subSectionKey];
+      if (subSectionDef.fields) {
+        totalCount += subSectionDef.fields.length;
+        selectedCount += subSectionDef.fields.filter(
+          field => sections[subSectionKey].selectedFields[field.name] // Use field.name
+        ).length;
+      }
+    });
+    return selectedCount > 0 && selectedCount < totalCount;
+  }, [sections]);
 
-    const sectionState = sections[section];
-    const allSelected = areAllFieldsSelected(section);
-    const someSelected = areSomeFieldsSelected(section);
-    const fields = fieldsBySection[section];
+  // Toggle all fields in all child sections of a parent section
+  const toggleAllChildSectionsFields = useCallback((parentSectionKey: SectionKey): void => {
+    const parentDef = sectionDefinitions[parentSectionKey];
+    if (!parentDef.subSections) return;
+
+    const allChildrenSelected = areAllChildSectionsFieldsSelected(parentSectionKey);
+    const newSelectedState = !allChildrenSelected;
+
+    setSections(prevSections => {
+      const updatedSections = { ...prevSections };
+      parentDef.subSections?.forEach(subSectionKey => {
+        const subSectionDef = sectionDefinitions[subSectionKey];
+        if (subSectionDef.fields) {
+          const updatedSelectedFields = { ...updatedSections[subSectionKey].selectedFields };
+          subSectionDef.fields.forEach(field => {
+            updatedSelectedFields[field.name] = newSelectedState; // Use field.name
+          });
+          updatedSections[subSectionKey] = {
+            ...updatedSections[subSectionKey],
+            selectedFields: updatedSelectedFields,
+            open: true, // Always open child sections when parent is toggled
+          };
+        }
+      });
+      // Also open the parent section itself
+      updatedSections[parentSectionKey] = {
+        ...updatedSections[parentSectionKey],
+        open: true,
+      };
+      return updatedSections;
+    });
+  }, [areAllChildSectionsFieldsSelected]);
+
+  // Component for rendering a leaf checkbox group
+  const CheckboxGroup: React.FC<{ sectionKey: SectionKey }> = ({ sectionKey }) => {
+    const sectionDef = sectionDefinitions[sectionKey];
+    const sectionState = sections[sectionKey];
+    const allSelected = areAllFieldsSelected(sectionKey);
+    const someSelected = areSomeFieldsSelected(sectionKey);
 
     return (
-      <Box sx={{ mb: 1 }}>
+      <Box sx={{ mb: 1, ml: 2 }}> {/* Indent leaf sections */}
         <FormControlLabel
           control={
             <Checkbox
               checked={allSelected}
               indeterminate={someSelected && !allSelected}
-              onChange={() => toggleAllFields(section)}
+              onChange={() => toggleAllFieldsInLeafSection(sectionKey)}
               sx={{ color: "GrayText" }}
             />
           }
           label={
             <Typography
               color="GrayText"
-              onClick={() => toggleSection(section)}
+              onClick={() => toggleSection(sectionKey)}
               sx={{
                 fontSize: 16,
                 cursor: "pointer",
@@ -557,7 +403,7 @@ export const BedsideTestPlanForm = () => {
                 alignItems: "center",
               }}
             >
-              {title}
+              {sectionDef.title}
               {sectionState.open ? (
                 <ExpandLess sx={{ ml: 1, fontSize: 20 }} />
               ) : (
@@ -569,173 +415,88 @@ export const BedsideTestPlanForm = () => {
 
         <Collapse in={sectionState.open}>
           <Box sx={{ pl: 4, mt: 1 }}>
-            {fields.map((field) => {
-              return (
-                <FormControlLabel
-                  key={field.name}
-                  control={
-                    <Checkbox
-                      checked={sectionState.selectedFields[field.name]}
-                      onChange={() => toggleField(section, field.name)}
-                      name={field.name}
-                      id={field.name}
-                    />
-                  }
-                  label={field.label}
-                />
-              );
-            })}
+            {sectionDef.fields?.map((field) => (
+              <FormControlLabel
+                key={field.name}
+                control={
+                  <Checkbox
+                    checked={sectionState.selectedFields[field.name]} // Use field.name
+                    onChange={() => toggleField(sectionKey, field.name)} // Use field.name
+                    name={field.name}
+                    id={field.name}
+                  />
+                }
+                label={field.label}
+              />
+            ))}
           </Box>
         </Collapse>
       </Box>
     );
   };
 
-  // For test status options (former radio buttons for pregnancy test)
-  const TestStatusOption: React.FC<{
-    section: SectionKey;
-    field: FormField;
-    optionValue: string;
-    label: string;
-  }> = ({ section, field, optionValue, label }) => {
-    // Create a unique identifier for this specific option
-    const optionId = `${field.name}-${optionValue}`;
+  // Component for rendering a parent checkbox group (e.g., Arterial/Venous Blood Gas)
+  const ParentCheckboxGroup: React.FC<{ sectionKey: SectionKey }> = ({ sectionKey }) => {
+    const sectionDef = sectionDefinitions[sectionKey];
+    const sectionState = sections[sectionKey]; // Parent section's open state
+    const allChildrenSelected = areAllChildSectionsFieldsSelected(sectionKey);
+    const someChildrenSelected = areSomeChildSectionsFieldsSelected(sectionKey);
 
     return (
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={sections[section].selectedFields[optionId] || false}
-            onChange={() => toggleField(section, optionId)}
-            name={optionId}
-            id={optionId}
-          />
-        }
-        label={label}
-      />
+      <Box sx={{ mb: 1 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={allChildrenSelected}
+              indeterminate={someChildrenSelected && !allChildrenSelected}
+              onChange={() => toggleAllChildSectionsFields(sectionKey)}
+              sx={{ color: "GrayText" }}
+            />
+          }
+          label={
+            <Typography
+              color="GrayText"
+              onClick={() => toggleSection(sectionKey)}
+              sx={{
+                fontSize: 16,
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+              }}
+            >
+              {sectionDef.title}
+              {sectionState.open ? (
+                <ExpandLess sx={{ ml: 1, fontSize: 20 }} />
+              ) : (
+                <ExpandMore sx={{ ml: 1, fontSize: 20 }} />
+              )}
+            </Typography>
+          }
+        />
+        <Collapse in={sectionState.open}>
+          <Box sx={{ pl: 4, mt: 1 }}>
+            {sectionDef.subSections?.map((subSectionKey) => (
+              <CheckboxGroup key={subSectionKey} sectionKey={subSectionKey} />
+            ))}
+          </Box>
+        </Collapse>
+      </Box>
     );
   };
 
-  // Additional component for pregnancy test field that had radio options
   return (
     <>
       <ContainerLoaderOverlay loading={isPending}>
         <FormGroup>
-          <Box sx={{ mb: 1 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={mrdtChecked}
-                  onChange={() => setMRDTChecked(!mrdtChecked)}
-                  sx={{ color: "GrayText" }}
-                  name={formConfig.mrdt.name}
-                  id={formConfig.mrdt.name}
-                />
-              }
-              label={
-                <Typography sx={{ fontSize: 16 }} color="GrayText">
-                  {formConfig.mrdt.label}
-                </Typography>
-              }
-            />
-          </Box>
-          <CheckboxGroup
-            title="Arterial Blood Gas"
-            section="arterialBloodGas"
-          />
-
-          <CheckboxGroup title="Metabolic Values" section="metabolicValues" />
-
-          <CheckboxGroup title="Acid Base Status" section="acidBaseStatus" />
-
-          <CheckboxGroup title="Oximetry Values" section="oximetryValues" />
-
-          <CheckboxGroup
-            title="Electrolyte Values"
-            section="electrolyteValues"
-          />
-
-          <CheckboxGroup
-            title="Temperature Corrected Values"
-            section="temperatureCorrectedValues"
-          />
-
-          {/* HIV as a main checkbox */}
-          <Box sx={{ mb: 1 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={hivChecked}
-                  onChange={() => setHivChecked(!hivChecked)}
-                  sx={{ color: "GrayText" }}
-                  name={formConfig.hiv.name}
-                  id={formConfig.hiv.name}
-                />
-              }
-              label={
-                <Typography sx={{ fontSize: 16 }} color="GrayText">
-                  {formConfig.hiv.label}
-                </Typography>
-              }
-            />
-          </Box>
-
-          {/* VDRL as a main checkbox */}
-          <Box sx={{ mb: 1 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={vdrlChecked}
-                  onChange={() => setVdrlChecked(!vdrlChecked)}
-                  sx={{ color: "GrayText", fontSize: 16 }}
-                  name={formConfig.vdrl.name}
-                  id={formConfig.vdrl.name}
-                />
-              }
-              label={
-                <Typography sx={{ fontSize: 16 }} color="GrayText">
-                  {formConfig.vdrl.label}
-                </Typography>
-              }
-            />
-          </Box>
-
-          {/* Pregnancy Test as a main checkbox with options */}
-          {gender === "Female" && (
-            <Box sx={{ mb: 1 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={pregnancyTestChecked}
-                    onChange={() =>
-                      setPregnancyTestChecked(!pregnancyTestChecked)
-                    }
-                    sx={{ color: "GrayText", fontSize: 16 }}
-                    name={formConfig.pregnancyTest.name}
-                    id={formConfig.pregnancyTest.name}
-                  />
-                }
-                label={
-                  <Typography sx={{ fontSize: 16 }} color="GrayText">
-                    {formConfig.pregnancyTest.label}
-                  </Typography>
-                }
-              />
-            </Box>
-          )}
-
-          <CheckboxGroup title="Dipstick" section="dipstick" />
-
-          <CheckboxGroup title="Additional Tests" section="additionalTests" />
+          {/* New Top-Level Arterial/Venous Blood Gas Group */}
+          <ParentCheckboxGroup sectionKey="arterialVenousBloodGasMain" />
         </FormGroup>
         <Box sx={{ mb: 1 }}>
           <Button
             type="submit"
             variant="contained"
             color="primary"
-            onClick={() => {
-              handleSubmit("");
-            }}
+            onClick={handleSubmit}
           >
             Submit
           </Button>
