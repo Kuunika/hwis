@@ -30,6 +30,7 @@ import { Panel } from "../../../../patient/components/panels";
 import { AccordionWithMedication } from "./AccordionWithMedication";
 import { getConceptSet } from "@/hooks/getConceptSet";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { getServiceAreas } from "@/hooks/getServiceAreas";
 
 const followUpOptions = [
   { id: concepts.HEALTH_CENTER, label: "Health Center" },
@@ -204,29 +205,20 @@ const DischargeForm = ({
 }) => {
   const { data: facilities } = getFacilities();
   // Service Areas state
-  const { data: serviceAreas, isLoading: serviceAreaLoading } =
-    getConceptSet("Service areas");
-  const [serviceAreaOptions, setServiceAreaOptions] = useState<
-    { label: string; id: string }[]
-  >([]);
+  const { serviceAreaOptions, serviceAreas } = getServiceAreas();
+
   const [showOther, setShowOther] = useState(false);
 
   // Create dynamic validation schema including otherServiceArea validation
   useEffect(() => {
-    if (serviceAreas) {
-      const options = serviceAreas.map((serviceArea: any) => ({
-        label: serviceArea.name,
-        id: serviceArea.uuid,
-      }));
-      setServiceAreaOptions(options);
-
+    if (serviceAreaOptions) {
       // Find the "Other" option if it exists
-      const otherOption = options.find(
+      const otherOption = serviceAreaOptions.find(
         (option: { id: string; label: string }) => option.label === "Other"
       );
       setOtherId(otherOption ? otherOption.id : null);
     }
-  }, [serviceAreas]);
+  }, [serviceAreaOptions]);
 
   const getValidationSchema = () => {
     const schema = validationSchema.clone();
