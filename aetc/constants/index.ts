@@ -1435,41 +1435,43 @@ export const concepts = {
   GRAVIDITY: "Gravidity",
   NUMBER_OF_LIVING_CHILDREN: "Number of living children",
   MENARCHE: "Menarche",
-  MENSTRUAL_CYCLE: "Menstrual cycle", // not found
-  DURATION: "Duration",
-  PREV_ABORTION: "Prev Abortion", // not found
-  PREV_ECTOPIC: "Prev Ectopic", // not found
-  CONSISTENCY: "Consistency", // data type coded
+  MENSTRUAL_CYCLE: "Menstrual cycle",
+  DURATION: "Duration", //Not found
+  PREV_ABORTION: "Prev Abortion",
+  PREV_ECTOPIC: "Prev Ectopic",
+  CONSISTENCY: "Consistency",
   COLOR: "Color",
-  ODOUR: "Odour", // not found
+  ODOUR: "Odour",
   AMOUNT: "Amount", // not found
-  PREVIOUS_CONTRACEPTIVE: "Previous Contraceptive", // not found
+  PREVIOUS_CONTRACEPTIVE: "Previous Contraceptive",
+  CONTRACEPTIVE_USE: "Contraceptive use", //concept data type : boolean
   SIDE_EFFECTS: "Side effects",
-  CANCER_SCREENING: "Cancer Screening", // not found
-  DATE_OF_SCREENING: "Date of screening", // not found
-  RESULT: "Results", //UPDATED "Result" TO "Results"
-  HISTORY_OF_STIS: "History of STIs", // not found
+  CANCER_SCREENING: "Cancer Screening",
+  DATE_OF_SCREENING: "Date of screening",
+  RESULT: "Results", //UPDATED "Result" TO "Results"// NOT FOUND
+  HISTORY_OF_STIS: "History of STIs",
   MENTAL_ILLNESS: "Mental Illness",
   BLOOD_TRANSFUSION: "Blood Transfusion",
-  DRUG_ALLERGIES: "Drug Allergies", // not found
+  DRUG_ALLERGIES: "Drug Allergies",
   STABLE: "Stable",
   SICK: "Sick", // not found
   CRITICAL: "Critical",
   MILD: "Mild",
   MODERATE: "Moderate",
   SEVERE: "Severe",
-  STATS: "Stats", // not found
+  STATS: "Stats",
   RBS: "Random Blood Glucose (RBS)", //UPDATED RBS TO "Random Blood Glucose (RBS)"
-  WEIGHT: "Weight",
+  WEIGHT: "Weight", //not Found // Use Normal Weight data type: Numeric
   HEIGHT: "Height", // not found/ Height (cm)  data type: Numeric
   ABDOMEN: "Abdomen",
-  VAGINAL_INSPECTION: "Vaginal Inspection", // not found
+  VAGINAL_INSPECTION: "Vaginal Inspection",
   EXTREMITIES: "Extremities",
   IMPRESSION: "Impression",
-  IMMEDIATE_INTERVENTION: "Immediate Intervention", // concept not found
+  IMMEDIATE_INTERVENTION: "Immediate Intervention",
   EDD: "EDD", // not found
-  CURRENTLY_ON_CONTRACEPTIVE: "Currently on Contraceptive", // not found
+  CURRENTLY_ON_CONTRACEPTIVE: "Currently on Contraceptive",
   DIGITAL_RECTAL_EXAMINATION_REQUIRED: "Digital Rectal Examination Required", // not found
+  GENERAL_EXAMINATION_PLAN: "Treatment plan other remarks",
 
 
 

@@ -57,7 +57,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
         //edd remaining
         gestationalAge: "",
         gravidity: "",
-        //parity
+        parity: "",
         numberOfLivingChildren: "",
         menarche: "",
         menstralCycle: "",
@@ -83,7 +83,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
         stats: "",
         rbs: "",
         weight: "",
-        //height
+        height: "",
         chestExamination: "",
         abdomenExamination: "",
         vaginalExamination: "",
@@ -117,7 +117,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 //edd remaining
                 gestationalAge: "",
                 gravidity: "",
-                //parity
+                parity: "",
                 numberOfLivingChildren: "",
                 menarche: "",
                 menstralCycle: "",
@@ -143,6 +143,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 stats: "",
                 rbs: "",
                 weight: "",
+                height: "",
                 chestExamination: "",
                 abdomenExamination: "",
                 vaginalExamination: "",
@@ -181,7 +182,12 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                     newComplaintsInfo.gestationalAge = obs.value || obs.value_text || "";
                 } else if (conceptName === "Gravidity") {
                     newComplaintsInfo.gravidity = obs.value || obs.value_text || "";
-                } else if (conceptName === "Number of living children") {
+                }
+                else if (conceptName === "Parity") {
+                    newComplaintsInfo.parity = obs.value || obs.value_text || "";
+                }
+
+                else if (conceptName === "Number of living children") {
                     newComplaintsInfo.numberOfLivingChildren = obs.value || obs.value_text || "";
                 } else if (conceptName === "Menarche") {
                     newComplaintsInfo.menarche = obs.value || obs.value_text || "";
@@ -236,7 +242,11 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                     newComplaintsInfo.rbs = obs.value || obs.value_text || "";
                 } else if (conceptName === "Weight") {
                     newComplaintsInfo.weight = obs.value || obs.value_text || "";
-                } else if (conceptName === "Chest examination") {
+                }
+                else if (conceptName === "Height") {
+                    newComplaintsInfo.height = obs.value || obs.value_text || "";
+                }
+                else if (conceptName === "Chest examination") {
                     newComplaintsInfo.chestExamination = obs.value || obs.value_text || "";
                 } else if (conceptName === "Abdominal examination") {
                     newComplaintsInfo.abdomenExamination = obs.value || obs.value_text || "";
@@ -281,8 +291,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
         });
 
         const obs = [
-            // createObs(concepts.CONDITION, values.condition),
-            // createObs(concepts.PALLOR, values.pallor),
+            createObs(concepts.CONDITION, values.condition),
+            createObs(concepts.PALLOR, values.pallor),
             createObs(concepts.TEMPERATURE, values.temperature),
             createObs(concepts.PULSE_RATE, values.pulse),
             createObs(concepts.RESPIRATORY_RATE, values.respiratoryRate),
@@ -291,15 +301,16 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
             createObs(concepts.RBS, values.rbs),
             createObs(concepts.WEIGHT, values.weight),
 
-            // createObs(concepts.HEIGHT, values.height),
+
+            createObs(concepts.RAISED_HEIGHT, values.height),
             createObs(concepts.CHEST_EXAMINATION, values.chest),
             createObs(concepts.ABDOMINAL_EXAMINATION, values.abdomen),
-            // createObs(concepts.VAGINAL_INSPECTION, values.vaginalInspection),
+            createObs(concepts.VAGINAL_INSPECTION, values.vaginalInspection),
             createObs(concepts.VAGINAL_EXAMINATION, values.vaginalExamination),
             createObs(concepts.EXTREMITIES, values.extremities),
             createObs(concepts.IMPRESSION, values.impression),
-            // createObs(concepts.PLAN, values.plan),
-            // createObs(concepts.IMMEDIATE_INTERVENTION, values.immediateIntervention),
+            createObs(concepts.GENERAL_EXAMINATION_PLAN, values.plan),
+            createObs(concepts.IMMEDIATE_INTERVENTION, values.immediateIntervention),
         ].filter((item) => item.value && item.value !== "");
 
         const payload = {
@@ -429,7 +440,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                             <TextInputField name="pulse" label="Pulse" type="text" id={""} />
                             <TextInputField name="respiratoryRate" label="Respiratory Rate" type="text" id={""} />
                             <TextInputField name="bloodPressure" label="Blood Pressure" type="text" id={""} />
-                            <TextInputField name="stats" label="Stats" type="text" id={""} />
+                            <TextInputField name="stats" label="Sats" type="text" id={""} />
                             <TextInputField name="rbs" label="RBS" type="text" id={""} />
                             <TextInputField name="weight" label="Weight" type="text" id={""} />
                             <TextInputField name="height" label="Height" type="text" id={""} />
