@@ -140,8 +140,6 @@ export default function TriageWorkFlow() {
       .find((d) => d.visit_id == activeVisit?.visit_id);
   };
 
-  //getDateTime();
-
   useEffect(() => {
     setReferral(getEncounterActiveVisit(encounters.REFERRAL));
     setInitialRegistration(
@@ -346,16 +344,17 @@ export default function TriageWorkFlow() {
   };
 
   const handleVitalsSubmit = (values: any) => {
+    const cloneValues = { ...values };
     if (
-      values &&
-      values[concepts.GLUCOSE] !== undefined &&
-      values[concepts.ADDITIONAL_NOTES] !== undefined
+      cloneValues &&
+      cloneValues[concepts.GLUCOSE] !== undefined &&
+      cloneValues[concepts.ADDITIONAL_NOTES] !== undefined
     ) {
-      values[concepts.GLUCOSE] =
-        `${values[concepts.GLUCOSE]} ${values[concepts.ADDITIONAL_NOTES]}`;
+      cloneValues[concepts.GLUCOSE] =
+        `${cloneValues[concepts.GLUCOSE]} ${cloneValues[concepts.ADDITIONAL_NOTES]}`;
     }
 
-    formData["vitals"] = values;
+    formData["vitals"] = cloneValues;
 
     setActiveStep(2);
     setSubmittedSteps((steps) => [...steps, 1]);
@@ -390,7 +389,6 @@ export default function TriageWorkFlow() {
     triggerSubmission();
     setShowModal(false);
   };
-
 
   const triggerSubmission = () => {
     setLoading(true);

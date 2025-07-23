@@ -118,7 +118,8 @@ export const ClientsWaitingForTestResults = () => {
       renderCell: (cell: any) => {
         return (
           <>
-            <Tooltip title="Profile" arrow>
+
+            <Tooltip title="patient profile" arrow>
               <IconButton
                 onClick={() => navigateTo(`/patient/${cell.id}/profile`)}
                 aria-label="Profile"
@@ -172,7 +173,7 @@ export const ClientsWaitingForTestResults = () => {
             size="small"
             sx={{ fontSize: "12px", width: "30%", mr: "1px", mb: "1px" }}
             title={"start"}
-            onClick={() => navigateTo(`/triage/${row.id}/start`)}
+            onClick={() => navigateTo(`/patient/${row.id}/profile`)}
           />
           <AbscondButton
             sx={{ width: "30%" }}

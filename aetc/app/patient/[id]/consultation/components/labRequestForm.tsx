@@ -338,9 +338,6 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
     const order = {
       orders: orders,
     };
-
-    console.log("Order to be submitted:", order);
-
     // Uncomment to actually submit the order
     mutate(order);
     refetchLabOrdersPlan();
@@ -348,6 +345,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   };
   const filterTests = (tests: any, encounters: any) => {
     const matchMap = new Map();
+
     encounters.forEach((encounter: any) => {
       encounter.obs.forEach((observation: any) => {
         if (observation.value_coded !== null) {
@@ -366,7 +364,11 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   // Parse lab orders plan
   let flattenedLabOrdersPlan: LabOrderTest[] = [];
 
+
+
+
   if (labOrdersPlan && labOrdersPlan?.length > 0) {
+    
     flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) => {
       return obs.children.map((test: any) => {
         let descriptionConcept;
@@ -375,6 +377,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
             child.names.find((name: any) => name.name == concepts.DESCRIPTION)
           );
         }
+        
         return {
           test: test.names[0].name,
           testConceptId: test.concept_id,
@@ -393,7 +396,9 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
         flattenedLabOrdersPlan,
         labOrdersObs
       );
+
   }
+
   // Group tests by specimen type
   const groupedTests: GroupedTests = flattenedLabOrdersPlan.reduce(
     (groups: GroupedTests, item: LabOrderTest) => {

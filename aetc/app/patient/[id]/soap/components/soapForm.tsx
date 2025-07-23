@@ -139,7 +139,7 @@ const form = {
     label: "Respiratory Rate",
   },
   spo: {
-    name: concepts.SPO2,
+    name: concepts.BLOOD_OXYGEN_SATURATION,
     label: "SPO2",
   },
   temperature: {

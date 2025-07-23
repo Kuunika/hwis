@@ -53,7 +53,7 @@ export const ObservationFormConfig = {
     label: "Temperature (Temp)",
   },
   randomBloodGlucose: {
-    name: concepts.BLOOD_GLUCOSE,
+    name: concepts.GLUCOSE,
     label: "Random Blood Glucose (RBG)",
   },
   urineDipstickKetones: {
@@ -130,7 +130,16 @@ export const ObservationsForm = ({ onSubmit, onSkip, submitting }: Prop) => {
   const handleSubmit = (values: any) => {
     const triageScore = caseType;
     formValues[ObservationFormConfig.triageScore.name] = triageScore;
-    onSubmit(formValues);
+
+    const copiedValues = {
+      ...formValues,
+    };
+
+    if (Boolean(formValues[ObservationFormConfig.randomBloodGlucose.name])) {
+      copiedValues[ObservationFormConfig.randomBloodGlucose.name] =
+        `${formValues[ObservationFormConfig.randomBloodGlucose.name]} ${formValues[ObservationFormConfig.units.name]}`;
+    }
+    onSubmit(copiedValues);
   };
 
   const avpuLists = [

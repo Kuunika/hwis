@@ -18,12 +18,18 @@ export const DesktopView = () => {
     getActivePatientDetails();
   const [load, setLoad] = useState(false);
 
+  // const patient=undefined;
+
+  // patient.id;
+
   // temporary fix to ensure the component loads after the context is ready
   useEffect(() => {
     setTimeout(() => {
       setLoad(true);
     }, 1000);
   }, []);
+
+
 
   return (
     <VisitDatesProvider>
