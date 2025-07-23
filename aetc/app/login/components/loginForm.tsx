@@ -18,8 +18,8 @@ import { AuthContext, AuthContextType } from "@/contexts";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 const schema = yup.object({
-  username: yup.string().label("Username"),
-  password: yup.string().label("Password"),
+  username: yup.string().label("Username").required(),
+  password: yup.string().label("Password").required(),
 });
 
 type props = {
@@ -64,7 +64,9 @@ export const LoginForm = () => {
           <FormikInit
             initialValues={{ username: "", password: "" }}
             validationSchema={schema}
-            onSubmit={async (data: any) => mutate(data)}
+            onSubmit={async (data: any) => {
+              mutate(data);
+            }}
             submitButtonText="Login"
             submitButton={false}
           >

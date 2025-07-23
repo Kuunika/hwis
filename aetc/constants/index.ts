@@ -347,7 +347,7 @@ export const concepts = {
   MOTOR_RESPONSE: "Motor Response",
   EYE_OPENING_RESPONSE: "Eye Opening Response",
   VERBAL_RESPONSE: "Verbal Response",
-  GLUCOSE: "Glucose",
+  GLUCOSE: "Blood glucose",
   MEDICAL_RECORD_OBSERVATIONS: "Medical record observations",
   AVPU: "Avpu",
   PULSE_OXIMETRY: "Pulse Oximetry",
