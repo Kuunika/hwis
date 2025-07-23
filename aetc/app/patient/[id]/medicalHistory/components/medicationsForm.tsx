@@ -31,7 +31,7 @@ type Medication = {
   medication_date_of_last_prescription: string;
   medication_self_medicated: string;
 };
-
+const now = new Date();
 const medicationTemplate: Medication = {
   name: "",
   formulation: "",
@@ -40,8 +40,8 @@ const medicationTemplate: Medication = {
   medication_frequency: "",
   medication_duration: 0,
   medication_duration_unit: "",
-  medication_date_last_taken: "",
-  medication_date_of_last_prescription: "",
+  medication_date_last_taken: now.toISOString().split("T")[0], // Default to today
+  medication_date_of_last_prescription: now.toISOString().split("T")[0], // Default to today
   medication_self_medicated: "",
 };
 
