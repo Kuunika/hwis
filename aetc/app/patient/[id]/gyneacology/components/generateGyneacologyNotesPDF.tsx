@@ -454,18 +454,42 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                         {complaintsInfo.pallor && (
                                             <p><strong>Pallor: </strong>{complaintsInfo.pallor}</p>
                                         )}
-                                        {complaintsInfo.chestExamination && (
-                                            <p><strong>Chest Examination: </strong>{complaintsInfo.chestExamination}</p>
-                                        )}
-                                        {complaintsInfo.abdomenExamination && (
-                                            <p><strong>Abdominal Examination: </strong>{complaintsInfo.abdomenExamination}</p>
-                                        )}
-                                        {complaintsInfo.vaginalInspection && (
-                                            <p><strong>Vaginal Inspection: </strong>{complaintsInfo.vaginalInspection}</p>
-                                        )}
-                                        {complaintsInfo.vaginalExamination && (
-                                            <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
-                                        )}
+                                        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                                            <tbody>
+                                                <tr>
+                                                    {complaintsInfo.chestExamination && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                            <p><strong>Chest Examination: </strong>{complaintsInfo.chestExamination}</p>
+                                                        </td>
+
+                                                    )}
+
+                                                    {complaintsInfo.abdomenExamination && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                            <p><strong>Abdominal Examination: </strong>{complaintsInfo.abdomenExamination}</p>
+                                                        </td>
+
+                                                    )}
+                                                </tr>
+                                                <tr>
+                                                    {complaintsInfo.vaginalInspection && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+
+                                                            <p><strong>Vaginal Inspection: </strong>{complaintsInfo.vaginalInspection}</p>
+                                                        </td>
+                                                    )}
+                                                    {complaintsInfo.vaginalExamination && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+
+                                                            <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
+                                                        </td>
+
+                                                    )}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
                                         {complaintsInfo.extremities && (
                                             <p><strong>Extremities: </strong>{complaintsInfo.extremities}</p>
                                         )}

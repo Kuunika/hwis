@@ -51,7 +51,7 @@ const initialValues = {
 
 export default function AwaitingSpecialityReviewForm({ openPatientSummary }: { openPatientSummary: () => void }) {
     const { params } = useParameters();
-    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const { mutateAsync: submitEncounter, } = fetchConceptAndCreateEncounter();
     const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { init, ServerTime } = useServerTime();
