@@ -10,35 +10,33 @@ import { DifferentialDiagnosis } from "./differentialDiagnosis";
 import { encounters } from "@/constants";
 import { Investigations } from "./investigations";
 
-
 export const MedicalInPatientFlow = () => {
   const { navigateBack } = useNavigation();
-  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(encounters.MEDICAL_IN_PATIENT, () => {
-    // navigateBack()
-  })
+  const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
+    encounters.MEDICAL_IN_PATIENT,
+    () => {
+      // navigateBack()
+    }
+  );
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [obs, setObs] = useState<any[]>([])
+  const [obs, setObs] = useState<any[]>([]);
 
   const steps = [
     {
       id: 1,
       label: "Presenting Complaints",
-
     },
     {
       id: 11,
       label: "Drug History",
-
     },
     {
       id: 2,
       label: "Past medical history",
-
     },
     {
       id: 23,
       label: "Review of Systems",
-
     },
     {
       id: 21,
@@ -52,36 +50,35 @@ export const MedicalInPatientFlow = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      setActiveStep(5)
+      setActiveStep(5);
     }
   }, [isSuccess]);
 
-
   const handlePresentingComplaints = (values: any) => {
-    setObs(values)
-    setActiveStep(1)
-  }
+    setObs(values);
+    setActiveStep(1);
+  };
   const handleDrug = (values: any) => {
-    setObs((obs) => ([...obs, ...values]))
-    setActiveStep(2)
-  }
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(2);
+  };
   const handlePastMedical = (values: any) => {
-    setObs((obs) => ([...obs, ...values]))
-    setActiveStep(3)
-  }
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(3);
+  };
   const handleReview = (values: any) => {
-    setObs((obs) => ([...obs, ...values]))
+    setObs((obs) => [...obs, ...values]);
     setActiveStep(4);
-  }
+  };
 
   const handleDifferentialSubmit = (values: any) => {
-    handleSubmit([...obs, ...values])
-  }
-
+    console.log({ obs });
+    handleSubmit([...obs, ...values]);
+  };
 
   const handleInvestigationSubmit = () => {
-  //  navigateBack();
-  }
+    //  navigateBack();
+  };
 
   return (
     <>
@@ -96,7 +93,10 @@ export const MedicalInPatientFlow = () => {
         <DrugList onSubmit={handleDrug} />
         <PastMedicalHistory onSubmit={handlePastMedical} />
         <ReviewOfSystems onSubmit={handleReview} />
-        <DifferentialDiagnosis loading={isLoading} onSubmit={handleDifferentialSubmit} />
+        <DifferentialDiagnosis
+          loading={isLoading}
+          onSubmit={handleDifferentialSubmit}
+        />
         <Investigations onClose={handleInvestigationSubmit} />
       </NewStepperContainer>
     </>
