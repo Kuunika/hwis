@@ -25,15 +25,22 @@ import {
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
+// --- START: MODIFICATIONS ---
+
 // Define type for section keys
 type SectionKey =
-  | "arterialVenousBloodGasMain" // New top-level section
+  | "arterialVenousBloodGasMain"
   | "bloodGasValues"
   | "oximetryValues"
   | "electrolyteValues"
   | "metabolicValues"
   | "temperatureCorrectedValues"
-  | "acidBaseStatus";
+  | "acidBaseStatus"
+  | "dipstick" // Added missing section
+  | "additionalTests" // Added missing section
+  | "pregnancyTest"; // Added for consistent handling as a group if needed
+
+// --- END: MODIFICATIONS ---
 
 // Define types for form field
 interface FormField {
@@ -76,7 +83,10 @@ const bloodGasConcepts = {
 };
 
 // formConfig now uses the centralized bloodGasConcepts for both name and label
+// --- START: MODIFICATIONS ---
+// Added MRDT, HIV, VDRL, Dipstick concepts, and Additional Test concepts
 const formConfig = {
+  // Blood Gas Concepts
   PH: { name: bloodGasConcepts.PH, label: bloodGasConcepts.PH },
   PCO2: { name: bloodGasConcepts.PCO2, label: bloodGasConcepts.PCO2 },
   PO2: { name: bloodGasConcepts.PO2, label: bloodGasConcepts.PO2 },
@@ -100,9 +110,82 @@ const formConfig = {
   HCO3: { name: bloodGasConcepts.HCO3, label: bloodGasConcepts.HCO3 },
   ANION_GAPC: { name: bloodGasConcepts.ANION_GAP, label: bloodGasConcepts.ANION_GAP },
   MOSMC: { name: bloodGasConcepts.MOSM, label: bloodGasConcepts.MOSM },
+
+  // Added Missing Tests
+  mrdt: {
+    name: concepts.MRDT, // Assuming concepts.MRDT is defined in "@/constants"
+    label: "MRDT",
+    coded: true,
+  },
+  hiv: {
+    name: concepts.HIV, // Assuming concepts.HIV is defined in "@/constants"
+    label: "HIV",
+    coded: true,
+  },
+  vdrl: {
+    name: concepts.VDRL, // Assuming concepts.VDRL is defined in "@/constants"
+    label: "VDRL",
+    coded: true,
+  },
+  pregnancyTest: {
+    name: concepts.PREGNANCY_TEST, // Assuming concepts.PREGNANCY_TEST is defined in "@/constants"
+    label: "Pregnancy Test",
+    coded: true,
+  },
+  urobilinogen: {
+    name: concepts.UROBILINOGEN, // Assuming concepts.UROBILINOGEN is defined
+    label: "Urobilinogen",
+  },
+  leukocytes: {
+    name: concepts.LEUKOCYTES, // Assuming concepts.LEUKOCYTES is defined
+    label: "Leukocytes",
+  },
+  bilirubin: {
+    name: concepts.BILIRUBIN, // Assuming concepts.BILIRUBIN is defined
+    label: "Bilirubin",
+  },
+  specificGravity: {
+    name: concepts.SPECIFIC_GRAVITY, // Assuming concepts.SPECIFIC_GRAVITY is defined
+    label: "Specific Gravity",
+  },
+  nitrite: {
+    name: concepts.NITRITE, // Assuming concepts.NITRITE is defined
+    label: "Nitrite",
+  },
+  ketones: {
+    name: concepts.KETONES, // Assuming concepts.KETONES is defined
+    label: "Ketones",
+  },
+  blood: {
+    name: concepts.BLOOD, // Assuming concepts.BLOOD is defined
+    label: "Blood",
+  },
+  protein: {
+    name: concepts.PROTEIN, // Assuming concepts.PROTEIN is defined
+    label: "Protein",
+  },
+  pocus: {
+    name: concepts.POINT_OF_CARE_ULTRASOUND, // Assuming concepts.POINT_OF_CARE_ULTRASOUND is defined
+    label: "Point of care ultrasound",
+  },
+  ecg: {
+    name: concepts.ECG, // Assuming concepts.ECG is defined
+    label: "ECG",
+  },
+  pefr: {
+    name: concepts.PEFR, // Assuming concepts.PEFR is defined
+    label: "PEFR",
+  },
+  other: {
+    name: concepts.OTHER, // Assuming concepts.OTHER is defined
+    label: "Other",
+  },
 };
+// --- END: MODIFICATIONS ---
 
 // Define the structure of the form sections, including parent-child relationships
+// --- START: MODIFICATIONS ---
+// Added Dipstick, Additional Tests, and Pregnancy Test sections
 const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormField[]; subSections?: SectionKey[] } } = {
   arterialVenousBloodGasMain: {
     title: "Arterial/Venous Blood Gas",
@@ -139,11 +222,47 @@ const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormF
     title: "Acid Base Status",
     fields: [formConfig.BASE_EXCESS, formConfig.HCO3, formConfig.ANION_GAPC, formConfig.MOSMC],
   },
+  dipstick: {
+    title: "Dipstick",
+    fields: [
+      formConfig.urobilinogen,
+      formConfig.PH, // pH is common, so it's here as well
+      formConfig.leukocytes,
+      formConfig.glucose, // Glucose is common, so it's here as well
+      formConfig.specificGravity,
+      formConfig.protein,
+      formConfig.nitrite,
+      formConfig.ketones,
+      formConfig.bilirubin,
+      formConfig.blood,
+    ],
+  },
+  additionalTests: {
+    title: "Additional Tests",
+    fields: [
+      formConfig.pocus,
+      formConfig.ecg,
+      formConfig.pefr,
+      formConfig.other,
+    ],
+  },
+  pregnancyTest: { // Defined as a section for consistent handling with CheckboxGroup, but it only has one field.
+    title: "Pregnancy Test",
+    fields: [formConfig.pregnancyTest],
+  },
 };
+// --- END: MODIFICATIONS ---
 
 export const BedsideTestPlanForm = () => {
   const { activeVisit, patientId, gender } = getActivePatientDetails();
   const { mutate, isPending, isSuccess } = fetchConceptAndCreateEncounter();
+
+  // --- START: MODIFICATIONS ---
+  // Added separate state for MRDT, HIV, VDRL as they are standalone checkboxes
+  const [mrdtChecked, setMRDTChecked] = useState(false);
+  const [hivChecked, setHivChecked] = useState(false);
+  const [vdrlChecked, setVdrlChecked] = useState(false);
+  // --- END: MODIFICATIONS ---
 
   // Initialize state for all sections (leaf sections will have selectedFields)
   const initializeSectionState = useCallback((): Record<SectionKey, SectionState> => {
@@ -168,6 +287,12 @@ export const BedsideTestPlanForm = () => {
   // Helper to reset all form states
   const resetAllFormStates = useCallback(() => {
     setSections(initializeSectionState()); // Re-initialize all sections
+    // --- START: MODIFICATIONS ---
+    // Reset individual checkboxes
+    setMRDTChecked(false);
+    setHivChecked(false);
+    setVdrlChecked(false);
+    // --- END: MODIFICATIONS ---
   }, [initializeSectionState]);
 
   // Handle form submission
@@ -186,28 +311,72 @@ export const BedsideTestPlanForm = () => {
         );
 
         if (selectedFields.length > 0) {
-          observations.push({
-            concept: concepts.BEDSIDE_INVESTIGATIONS, // Group under a general concept
-            obsDatetime: dateTime,
-            value: sectionDef.title, // Use section title as value for grouping
-            groupMembers: selectedFields.map((field) => ({
-              concept: field.name, // Use field.name (which is now the label) as the concept
+          // For single-field sections like Pregnancy Test, we can push the field directly.
+          // For other sections, we group them under BEDSIDE_INVESTIGATIONS.
+          if (sectionKey === "pregnancyTest") {
+            observations.push({
+              concept: formConfig.pregnancyTest.name,
               obsDatetime: dateTime,
               value: true, // Indicates the test was selected/planned
-            })),
-          });
+            });
+          } else {
+            observations.push({
+              concept: concepts.BEDSIDE_INVESTIGATIONS, // Group under a general concept
+              obsDatetime: dateTime,
+              value: sectionDef.title, // Use section title as value for grouping
+              groupMembers: selectedFields.map((field) => ({
+                concept: field.name, // Use field.name (which is now the label) as the concept
+                obsDatetime: dateTime,
+                value: true, // Indicates the test was selected/planned
+              })),
+            });
+          }
         }
       }
     };
 
-    // Iterate through all leaf sections and add their selected fields
+    // Iterate through all sections that have fields (leaf sections and the pregnancy test section)
+    // --- START: MODIFICATIONS ---
+    // Added calls for new sections
     sectionDefinitions.arterialVenousBloodGasMain.subSections?.forEach((key) => {
       addSectionObservations(key);
     });
 
-    return observations;
-  }, [sections]);
+    addSectionObservations("dipstick");
+    addSectionObservations("additionalTests");
 
+    if (gender === "Female") {
+      addSectionObservations("pregnancyTest");
+    }
+
+    // Add individual checkboxes if they're checked
+    if (mrdtChecked) {
+      observations.push({
+        concept: formConfig.mrdt.name,
+        obsDatetime: dateTime,
+        value: true,
+      });
+    }
+
+    if (hivChecked) {
+      observations.push({
+        concept: formConfig.hiv.name,
+        obsDatetime: dateTime,
+        value: true,
+      });
+    }
+
+    if (vdrlChecked) {
+      observations.push({
+        concept: formConfig.vdrl.name,
+        obsDatetime: dateTime,
+        value: true,
+      });
+    }
+    // --- END: MODIFICATIONS ---
+
+    return observations;
+  }, [sections, mrdtChecked, hivChecked, vdrlChecked, gender]); // Added dependencies
 
   const handleSubmit = useCallback((event: React.FormEvent | string): void => {
     if (typeof event !== 'string' && event) {
@@ -215,6 +384,7 @@ export const BedsideTestPlanForm = () => {
     }
 
     const obs = createObservationsObject();
+    console.log("🚀 ~ handleSubmit ~ obs:", obs); // Log observations for debugging
 
     mutate({
       encounterType: encounters.BEDSIDE_INVESTIGATION_PLAN,
@@ -381,8 +551,13 @@ export const BedsideTestPlanForm = () => {
     const allSelected = areAllFieldsSelected(sectionKey);
     const someSelected = areSomeFieldsSelected(sectionKey);
 
+    // If the section has no fields, it probably shouldn't render as a checkbox group
+    if (!sectionDef.fields || sectionDef.fields.length === 0) {
+      return null;
+    }
+
     return (
-      <Box sx={{ mb: 1, ml: 2 }}> {/* Indent leaf sections */}
+      <Box sx={{ mb: 1 }}> {/* Indent leaf sections */}
         <FormControlLabel
           control={
             <Checkbox
@@ -490,6 +665,79 @@ export const BedsideTestPlanForm = () => {
         <FormGroup>
           {/* New Top-Level Arterial/Venous Blood Gas Group */}
           <ParentCheckboxGroup sectionKey="arterialVenousBloodGasMain" />
+
+          {/* --- START: MODIFICATIONS --- */}
+          {/* Re-added MRDT as a main checkbox */}
+          <Box sx={{ mb: 1 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={mrdtChecked}
+                  onChange={() => setMRDTChecked(!mrdtChecked)}
+                  sx={{ color: "GrayText" }}
+                  name={formConfig.mrdt.name}
+                  id={formConfig.mrdt.name}
+                />
+              }
+              label={
+                <Typography sx={{ fontSize: 16 }} color="GrayText">
+                  {formConfig.mrdt.label}
+                </Typography>
+              }
+            />
+          </Box>
+
+          {/* Re-added HIV as a main checkbox */}
+          <Box sx={{ mb: 1 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={hivChecked}
+                  onChange={() => setHivChecked(!hivChecked)}
+                  sx={{ color: "GrayText" }}
+                  name={formConfig.hiv.name}
+                  id={formConfig.hiv.name}
+                />
+              }
+              label={
+                <Typography sx={{ fontSize: 16 }} color="GrayText">
+                  {formConfig.hiv.label}
+                </Typography>
+              }
+            />
+          </Box>
+
+          {/* Re-added VDRL as a main checkbox */}
+          <Box sx={{ mb: 1 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={vdrlChecked}
+                  onChange={() => setVdrlChecked(!vdrlChecked)}
+                  sx={{ color: "GrayText", fontSize: 16 }}
+                  name={formConfig.vdrl.name}
+                  id={formConfig.vdrl.name}
+                />
+              }
+              label={
+                <Typography sx={{ fontSize: 16 }} color="GrayText">
+                  {formConfig.vdrl.label}
+                </Typography>
+              }
+            />
+          </Box>
+
+          {/* Re-added Pregnancy Test as a CheckboxGroup, conditional on gender */}
+          {gender === "Female" && (
+            <CheckboxGroup sectionKey="pregnancyTest" />
+          )}
+
+          {/* Re-added Dipstick as a CheckboxGroup */}
+          <CheckboxGroup sectionKey="dipstick" />
+
+          {/* Re-added Additional Tests as a CheckboxGroup */}
+          <CheckboxGroup sectionKey="additionalTests" />
+          {/* --- END: MODIFICATIONS --- */}
         </FormGroup>
         <Box sx={{ mb: 1 }}>
           <Button
