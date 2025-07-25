@@ -63,7 +63,6 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
   const handleSubmit = (values: any) => {
     const dateTime = getDateTime();
     const transformedData = transformLabValues(values, formStructure, dateTime);
-    console.log("🚀 ~ handleSubmit ~ transformedData:", transformedData);
 
     if (transformedData.length > 0) {
       mutate({
@@ -82,7 +81,6 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
     console.log({ values })
     const dateTime = getDateTime();
     const transformedData = transformLabValues(values, formStructure, dateTime);
-    console.log("🚀 ~ handleSubmit ~ transformedData:", transformedData);
 
     if (transformedData.length > 0) {
       mutate({
