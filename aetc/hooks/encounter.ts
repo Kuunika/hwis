@@ -139,7 +139,7 @@ export const getConceptFromCacheOrFetch = async (conceptName: string) => {
   } else {
     concept = await getConcept(conceptName);
     queryClient.setQueryData(["concepts", conceptName], concept);
-    queryClient.setQueryData([concept.data[0].uuid], conceptName);
+    queryClient.setQueryData([concept?.data[0]?.uuid], conceptName);
   }
   return concept;
 };
@@ -169,12 +169,12 @@ const fetchConcepts = async (
 
     if (!cachedConcept) {
       queryClient.setQueryData(["concepts", option.key], conceptData);
-      queryClient.setQueryData([conceptData.data[0]?.uuid], option.key);
+      queryClient.setQueryData([conceptData?.data[0]?.uuid], option.key);
     }
 
     if (conceptData.data.length) {
       mappedOptions.push({
-        [useValueKey ? "value" : "id"]: conceptData.data[0]?.uuid,
+        [useValueKey ? "value" : "id"]: conceptData?.data[0]?.uuid,
         label: option.label,
       });
     }
