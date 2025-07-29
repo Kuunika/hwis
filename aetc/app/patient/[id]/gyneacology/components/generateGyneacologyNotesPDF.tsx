@@ -504,7 +504,7 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                         )}
                                         <hr />
                                         {complaintsInfo.admittingOfficer && (
-                                            <p><strong>Admitting Officer:: </strong>{complaintsInfo.admittingOfficer}</p>
+                                            <p><strong>Admitting Officer: </strong>{complaintsInfo.admittingOfficer}</p>
                                         )}
 
                                         {/* <div style={{ marginTop: "20px", fontWeight: "bold" }}>
