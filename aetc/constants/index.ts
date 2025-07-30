@@ -183,7 +183,6 @@ export const encounters = {
   // GYNEACOLOGY_WARD: "59514a38-a019-4833-b180-480d1bbf2dfe",
   GYNEACOLOGY_WARD: "7819932d-eea1-43d2-a543-35cb93f2da49",
   AWAITING_SPECIALTY: "4a10d674-9072-4385-b2e9-583d0524abe1",
-
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -656,7 +655,7 @@ export const concepts = {
   NECK_SWELLING: "Neck Swelling",
   NECK_HAEMATOMA: "Neck Haematoma",
   TONGUE_FALLING_BACK: "Tongue Falling Back",
-  SUCTIONING_AIRWAY: "Suctioning Airway",
+  SUCTIONING_DONE: "Suctioning Done",
   JAW_THRUST_MANOEUVER: "Jaw Thrust Manoeuver",
   HEAD_TILT_CHIN_LIFT: "Head Tilt Chin Lift",
   OROPHARYNGEAL: "Oropharyngeal",
@@ -1473,12 +1472,8 @@ export const concepts = {
   DIGITAL_RECTAL_EXAMINATION_REQUIRED: "Digital Rectal Examination Required", // not found
   GENERAL_EXAMINATION_PLAN: "Treatment plan other remarks",
 
-
-
-
   GYNAE_BENCH: "Gynae Bench",
   SURGICAL_BENCH: "Surgical bench",
-
 };
 
 export const conceptNames = {
@@ -1760,7 +1755,8 @@ export const roles = {
   INITIAL_REGISTRATION_CLERK: process.env
     .NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE as string,
   DATA_MANAGER: process.env.NEXT_PUBLIC_DATA_MANAGER as string,
-  STUDENT_CLINICIAN: process.env.NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE as string,
+  STUDENT_CLINICIAN: process.env
+    .NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE as string,
 };
 
 // username: registration, clinician, nurse
