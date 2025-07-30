@@ -151,6 +151,8 @@ export const encounters = {
   MEDICAL_HISTORY: "ba05f13e-8d80-11d8-abbb-0024217bb78e",
   OBSTETRIC_HISTORY: "ba063da6-8d80-11d8-abbb-0024217bb78e",
   PRESCRIPTIONS: "88564b30-abaf-4744-8ea6-6e1c15465d9e",
+  SOAPIER_PRESCRIPTION: "6e18d0c8-98b2-40fd-b116-25af7eef111d",
+  SOAPIER_DISPENSING: "7def6325-4496-491a-a716-a9fca6e3c6df",
   ALLERGIES: "477f8110-ae4b-4caa-b608-c05b0f967b9e",
   DIAGNOSIS: "ba05fbfc-8d80-11d8-abbb-0024217bb78e",
   SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
