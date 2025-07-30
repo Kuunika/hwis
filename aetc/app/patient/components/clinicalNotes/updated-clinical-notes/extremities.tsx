@@ -26,149 +26,114 @@ export const ExtremitiesAssessment: React.FC<{ data: Observation[] }> = ({ data 
         if (!panelData?.[0]?.created_by) return null;
 
         return (
-            <Typography
-                sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}
-            >
-                ~ {panelData[0].created_by} -{" "}
-                {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
+            <Typography sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}>
+                ~ {panelData[0].created_by} - {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
             </Typography>
         );
     };
 
-    // Helper function to render findings with proper nesting
-    const renderFinding = (finding: Observation, parent?: Observation) => {
-        // Skip image part name observations
-        if (finding.names?.[0]?.name === "Image Part Name") return null;
+    // Helper function to find observation
+    const findObs = (name: string) => data.find(item =>
+        item?.names?.some(n => n.name === name)
+    );
 
-        // Skip if this is a detail that should be handled by its parent
-        if (parent && [
-            "Laceration length",
-            "Laceration depth",
-            "Laceration other",
-            "Mass description",
-            "Fracture description",
-            "Description"
-        ].includes(finding.names?.[0]?.name)) {
-            return null;
-        }
+    // Helper function to find all matching observations
+    const findAllObs = (name: string) => data.filter(item =>
+        item?.names?.some(n => n.name === name)
+    );
+
+    // Helper function to find limb assessments
+    const findLimbAssessment = (value: string) => data.find(item =>
+        item?.value === value
+    );
+
+    // Extract general observations
+    const edema = findObs("Edema") || findObs("Oedema");
+    const edemaDetails = findObs("Oedema details");
+    const coldClammy = findObs("Cold clammy");
+    const upperLimbAbnormalities = findObs("Abnormalities upper limb");
+    const lowerLimbAbnormalities = findObs("Abnormalities lower limb");
+
+    // Extract limb assessments
+    const upperLimbAnterior = findLimbAssessment("upper limb anterior");
+    const upperLimbPosterior = findLimbAssessment("upper limb posterior");
+    const lowerLimbAnterior = findLimbAssessment("lower limb anterior");
+    const lowerLimbPosterior = findLimbAssessment("lower limb posterior");
+
+    // Check if there's any data to display
+    const hasData = [
+        edema, edemaDetails, coldClammy,
+        upperLimbAbnormalities, lowerLimbAbnormalities,
+        upperLimbAnterior, upperLimbPosterior,
+        lowerLimbAnterior, lowerLimbPosterior
+    ].some(item => item !== undefined);
+
+    if (!hasData) return null;
+
+    // Render a finding with proper indentation and bullet points
+    const renderFinding = (finding: Observation, level = 0) => {
+        if (!finding || finding.names?.[0]?.name === "Image Part Name") return null;
+
+        const isNegativeFinding = finding.value === "No" && !finding.children;
+        if (isNegativeFinding) return null;
 
         return (
-            <Box key={finding.obs_id} sx={{ mb: 0.5 }}>
+            <Box key={finding.obs_id} sx={{ ml: level * 2, mb: 0.5 }}>
                 <Typography variant="body2">
-                    - {finding.names?.[0]?.name}: {finding.value}
+                    - {finding.names[0]?.name}: {finding.value}
                 </Typography>
-
-                {/* Render nested details if they exist */}
-                {finding.children && (
-                    <Box sx={{ ml: 3 }}>
-                        {finding.children.map(child => {
-                            // Only show relevant details based on parent
-                            if (
-                                (finding.names?.[0]?.name === "Laceration" && finding.value === "Yes" && [
-                                    "Laceration length",
-                                    "Laceration depth",
-                                    "Laceration other"
-                                ].includes(child.names?.[0]?.name)) ||
-                                (finding.names?.[0]?.name === "Mass" && finding.value === "Yes" &&
-                                    child.names?.[0]?.name === "Mass description") ||
-                                (finding.names?.[0]?.name === "Fracture" && finding.value === "Yes" &&
-                                    child.names?.[0]?.name === "Fracture description") ||
-                                (finding.names?.[0]?.name === "Skin rash" && finding.value === "Yes" &&
-                                    child.names?.[0]?.name === "Description")
-                            ) {
-                                return (
-                                    <Typography key={child.obs_id} variant="body2">
-                                        • {child.names?.[0]?.name}: {child.value}
-                                    </Typography>
-                                );
-                            }
-                            return null;
-                        })}
-                    </Box>
-                )}
+                {finding.children && renderFindings(finding.children, level + 1)}
             </Box>
         );
     };
 
-    // Helper function to render limb findings
-    const renderLimbFindings = (limbData: Observation | undefined) => {
-        if (!limbData || !limbData.children) return null;
+    // Render multiple findings with proper nesting
+    const renderFindings = (findings: Observation[], level = 0) => {
+        if (!findings || findings.length === 0) return null;
 
-        return limbData.children.map((region, idx) => (
-            <Box key={`region-${idx}`} sx={{ mb: 2 }}>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {region.value}
-                </Typography>
-                {region.children && (
-                    <Box sx={{ ml: 2 }}>
-                        {region.children
-                            .filter(finding => {
-                                // Filter out image part names and "No" responses
-                                const name = finding.names?.[0]?.name;
-                                return name !== "Image Part Name" &&
-                                    !(finding.value === "No" && !finding.children);
-                            })
-                            .map(finding => renderFinding(finding))}
-                    </Box>
-                )}
+        return (
+            <Box sx={{ ml: level * 2 }}>
+                {findings.map(finding => renderFinding(finding, level))}
             </Box>
-        ));
+        );
     };
 
-    // Extract general observations
-    const edema = data.find(item =>
-        item?.names?.some(name => ["Edema", "Oedema"].includes(name.name))
-    );
+    // Render a limb assessment section
+    const renderLimbAssessment = (title: string, assessment: Observation | undefined) => {
+        if (!assessment || !assessment.children) return null;
 
-    const edemaDetails = data.find(item =>
-        item?.names?.[0]?.name === "Oedema details"
-    );
+        return (
+            <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    - {title}
+                </Typography>
+                <Box sx={{ ml: 3 }}>
+                    {assessment.children.map((region, idx) => (
+                        <Box key={`region-${idx}`} sx={{ mb: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                - {region.value}
+                            </Typography>
+                            {region.children && renderFindings(region.children, 1)}
+                        </Box>
+                    ))}
+                </Box>
+            </Box>
+        );
+    };
 
-    const coldClammy = data.find(item =>
-        item?.names?.[0]?.name === "Cold clammy"
-    );
+    // Render a general observation section
+    const renderGeneralObservation = (title: string, observation: Observation | undefined) => {
+        if (!observation) return null;
 
-    const upperLimbAbnormalities = data.find(item =>
-        item?.names?.[0]?.name === "Abnormalities upper limb"
-    );
-
-    const lowerLimbAbnormalities = data.find(item =>
-        item?.names?.[0]?.name === "Abnormalities lower limb"
-    );
-
-    // Extract limb assessments
-    const upperLimbAnterior = data.find(item =>
-        item?.value === "upper limb anterior"
-    );
-
-    const upperLimbPosterior = data.find(item =>
-        item?.value === "upper limb posterior"
-    );
-
-    const lowerLimbAnterior = data.find(item =>
-        item?.value === "lower limb anterior"
-    );
-
-    const lowerLimbPosterior = data.find(item =>
-        item?.value === "lower limb posterior"
-    );
-
-    // Check if there's any extremities assessment data to display
-    const hasExtremitiesData = [
-        edema,
-        edemaDetails,
-        coldClammy,
-        upperLimbAbnormalities,
-        lowerLimbAbnormalities,
-        upperLimbAnterior,
-        upperLimbPosterior,
-        lowerLimbAnterior,
-        lowerLimbPosterior
-    ].some(item => item !== undefined);
-
-    if (!hasExtremitiesData) {
-        return null;
-    }
+        return (
+            <Box sx={{ mb: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    - {title}: {observation.value}
+                </Typography>
+                {observation.children && renderFindings(observation.children, 1)}
+            </Box>
+        );
+    };
 
     return (
         <Box sx={{ p: 2, border: "1px solid #e0e0e0", borderRadius: 1, mb: 2 }}>
@@ -178,75 +143,24 @@ export const ExtremitiesAssessment: React.FC<{ data: Observation[] }> = ({ data 
 
             <Box sx={{ pl: 2 }}>
                 {/* General Findings */}
-                {edema && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        <strong>Edema:</strong> {edema.value}
-                    </Typography>
-                )}
-
+                {renderGeneralObservation("Edema", edema)}
                 {edemaDetails && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        <strong>Edema Details:</strong> {edemaDetails.value}
-                    </Typography>
-                )}
-
-                {coldClammy && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        <strong>Cold/Clammy:</strong> {coldClammy.value}
-                    </Typography>
-                )}
-
-                {upperLimbAbnormalities && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        <strong>Upper Limb Abnormalities:</strong> {upperLimbAbnormalities.value}
-                    </Typography>
-                )}
-
-                {lowerLimbAbnormalities && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        <strong>Lower Limb Abnormalities:</strong> {lowerLimbAbnormalities.value}
-                    </Typography>
-                )}
-
-                {/* Upper Limb Anterior */}
-                {upperLimbAnterior && (
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                            Upper Limb Anterior
+                    <Box sx={{ ml: 3, mb: 1 }}>
+                        <Typography variant="body2">
+                            - Details: {edemaDetails.value}
                         </Typography>
-                        {renderLimbFindings(upperLimbAnterior)}
                     </Box>
                 )}
 
-                {/* Upper Limb Posterior */}
-                {upperLimbPosterior && (
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                            Upper Limb Posterior
-                        </Typography>
-                        {renderLimbFindings(upperLimbPosterior)}
-                    </Box>
-                )}
+                {renderGeneralObservation("Cold/Clammy", coldClammy)}
+                {renderGeneralObservation("Upper Limb Abnormalities", upperLimbAbnormalities)}
+                {renderGeneralObservation("Lower Limb Abnormalities", lowerLimbAbnormalities)}
 
-                {/* Lower Limb Anterior */}
-                {lowerLimbAnterior && (
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                            Lower Limb Anterior
-                        </Typography>
-                        {renderLimbFindings(lowerLimbAnterior)}
-                    </Box>
-                )}
-
-                {/* Lower Limb Posterior */}
-                {lowerLimbPosterior && (
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                            Lower Limb Posterior
-                        </Typography>
-                        {renderLimbFindings(lowerLimbPosterior)}
-                    </Box>
-                )}
+                {/* Limb Assessments */}
+                {renderLimbAssessment("Upper Limb Anterior", upperLimbAnterior)}
+                {renderLimbAssessment("Upper Limb Posterior", upperLimbPosterior)}
+                {renderLimbAssessment("Lower Limb Anterior", lowerLimbAnterior)}
+                {renderLimbAssessment("Lower Limb Posterior", lowerLimbPosterior)}
             </Box>
 
             {renderTimestamp(data)}

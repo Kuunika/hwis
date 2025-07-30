@@ -426,6 +426,7 @@ import {AbdomenAndPelvisAssessment} from "@/app/patient/components/clinicalNotes
 import {AbdomenAndPelvis} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/abdomenAndPelvis";
 import {ExtremitiesAssessment} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/extremities";
 import {NeurologicalAssessment} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/neurogical";
+import {GeneralInformation} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/generalInformation";
 
 const theme = createTheme({
   palette: {
@@ -1139,6 +1140,8 @@ export const PrintClinicalNotes = (props: any) => {
   const hasSecondaryContent: any = hasContent(panelData.secondary);
   const hasPlanContent = hasContent(panelData.plan);
   const hasSecondRowContent = hasSecondaryContent || hasPlanContent;
+  console.log("panelData.secondary", panelData.secondary);
+
 
   // Check if we have any content for the third row
   const hasSoapierContent = hasContent(panelData.soapier);
@@ -1246,8 +1249,7 @@ export const PrintClinicalNotes = (props: any) => {
           {/* Second Row */}
           {hasSecondRowContent && (
               <Grid container spacing={2} sx={{ p: 2 }}>
-                {/* Left Column - Secondary Survey Components */}
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                   <Typography
                       variant="subtitle1"
                       fontWeight="bold"
@@ -1257,38 +1259,49 @@ export const PrintClinicalNotes = (props: any) => {
                     Secondary Survey
                   </Typography>
 
+                  {hasSecondaryContent && (
+                      <Box sx={{ p: 2, flex: 1 }}>
+                        <GeneralInformation data={panelData.secondary} />
+                      </Box>
+
+                  )}
+
+                </Grid>
+                {/* Left Column - Secondary Survey Components */}
+                <Grid item xs={12} md={6}>
+
                     {hasSecondaryContent && (
-                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                        <Box  sx={{ p: 2, flex: 1 }}>
                           <HeadAndNeck data={panelData.secondary} />
-                        </Paper>
+                        </Box>
                     )}
                    {hasSecondaryContent && (
-                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                        <Box sx={{ p: 2, flex: 1 }}>
                           <AbdomenAndPelvis data={panelData.secondary} />
-                        </Paper>
+                        </Box>
                     )}
 
                 </Grid>
 
                 <Grid item xs={12} md={6}>
                     {hasSecondaryContent && (
-                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                        <Box  sx={{ p: 2, flex: 1 }}>
                           <ChestAssessment data={panelData.secondary} />
-                        </Paper>
+                        </Box>
                     )}
 
                     {hasSecondaryContent && (
-                        <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                        <Box sx={{ p: 2, flex: 1 }}>
                           <ExtremitiesAssessment data={panelData.secondary} />
-                        </Paper>
+                        </Box>
                     )}
                 </Grid>
                 <Grid item xs={12} md={6}>
 
                   {hasSecondaryContent && (
-                      <Paper elevation={1} sx={{ p: 2, flex: 1 }}>
+                      <Box sx={{ p: 2, flex: 1 }}>
                         <NeurologicalAssessment data={panelData.secondary} />
-                      </Paper>
+                      </Box>
                   )}
                 </Grid>
 

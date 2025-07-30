@@ -26,116 +26,70 @@ export const AbdomenAndPelvis: React.FC<{ data: Observation[] }> = ({ data }) =>
         if (!panelData?.[0]?.created_by) return null;
 
         return (
-            <Typography
-                sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}
-            >
-                ~ {panelData[0].created_by} -{" "}
-                {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
+            <Typography sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}>
+                ~ {panelData[0].created_by} - {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
             </Typography>
         );
     };
 
-    // Extract specific observations
-    const isNormal = data.find(item =>
-        item?.names?.[0]?.name === "Is Normal"
-    );
+    // Helper function to find observation
+    const findObs = (name: string) => data.find(item => item?.names?.[0]?.name === name);
 
-    const abdominalDistention = data.find(item =>
-        item?.names?.[0]?.name === "Abdominal distention"
-    );
+    // Find all relevant observations
+    const isNormal = findObs("Is Normal");
+    const abdominalDistention = findObs("Abdominal distention");
+    const shiftingDullness = findObs("Shifting dullness");
+    const fluidThrill = findObs("Fluid thrill");
+    const bowelSounds = findObs("Bowel sounds");
+    const bruit = findObs("Bruit");
+    const mass = findObs("Mass");
+    const massDescription = findObs("Description");
+    const sphincterTone = findObs("Sphincter tone");
+    const clitorisAppearance = findObs("Unusual size appearance of clitoris");
+    const pelvicExam = findObs("Pelvic examination");
+    const vaginalExamNotes = findObs("Digital vaginal examination notes");
+    const tenderness = findObs("Tenderness");
+    const additionalNotes = findObs("Additional Notes");
 
-    const shiftingDullness = data.find(item =>
-        item?.names?.[0]?.name === "Shifting dullness"
-    );
-
-    const fluidThrill = data.find(item =>
-        item?.names?.[0]?.name === "Fluid thrill"
-    );
-
-    const bowelSounds = data.find(item =>
-        item?.names?.[0]?.name === "Bowel sounds"
-    );
-
-    const bruit = data.find(item =>
-        item?.names?.[0]?.name === "Bruit"
-    );
-
-    const mass = data.find(item =>
-        item?.names?.[0]?.name === "Mass"
-    );
-
-    const massDescription = data.find(item =>
-        item?.names?.[0]?.name === "Description"
-    );
-
-    const sphincterTone = data.find(item =>
-        item?.names?.[0]?.name === "Sphincter tone"
-    );
-
-    const clitorisAppearance = data.find(item =>
-        item?.names?.[0]?.name === "Unusual size appearance of clitoris"
-    );
-
-    const pelvicExam = data.find(item =>
-        item?.names?.[0]?.name === "Pelvic examination"
-    );
-
-    const vaginalExamNotes = data.find(item =>
-        item?.names?.[0]?.name === "Digital vaginal examination notes"
-    );
-
-    const tenderness = data.find(item =>
-        item?.names?.[0]?.name === "Tenderness"
-    );
-
-    const additionalNotes = data.find(item =>
-        item?.names?.[0]?.name === "Additional Notes"
-    );
-
-    // Check if there's any abdomen and pelvis assessment data to display
-    const hasAbdomenData = [
-        isNormal,
-        abdominalDistention,
-        shiftingDullness,
-        fluidThrill,
-        bowelSounds,
-        bruit,
-        mass,
-        massDescription,
-        sphincterTone,
-        clitorisAppearance,
-        pelvicExam,
-        vaginalExamNotes,
-        tenderness,
-        additionalNotes
+    // Check if there's any data to display
+    const hasData = [
+        isNormal, abdominalDistention, shiftingDullness, fluidThrill,
+        bowelSounds, bruit, mass, massDescription, sphincterTone,
+        clitorisAppearance, pelvicExam, vaginalExamNotes, tenderness, additionalNotes
     ].some(item => item !== undefined);
 
-    if (!hasAbdomenData) {
-        return null;
-    }
+    if (!hasData) return null;
 
-    // Helper function to render findings with grouped values
-    const renderFindings = (findings: Observation[]) => {
-        if (!findings || findings.length === 0) return null;
+    // Render a standard observation with bullet point
+    const renderObservation = (obs: Observation | undefined, label: string, indent = 0) => {
+        if (!obs) return null;
 
-        // Group findings by their type (name)
-        const groupedFindings: Record<string, string[]> = {};
+        return (
+            <Box sx={{ ml: indent * 2 }}>
+                <Typography variant="body2">
+                    - {label}: {obs.value}
+                </Typography>
+            </Box>
+        );
+    };
 
-        findings.forEach(finding => {
-            const findingName = finding.names[0]?.name;
-            if (findingName) {
-                if (!groupedFindings[findingName]) {
-                    groupedFindings[findingName] = [];
-                }
-                groupedFindings[findingName].push(finding.value);
-            }
-        });
+    // Render a section with title and observations
+    const renderSection = (title: string, observations: (Observation | undefined)[], indent = 0) => {
+        const hasObservations = observations.some(obs => obs !== undefined);
+        if (!hasObservations) return null;
 
-        return Object.entries(groupedFindings).map(([name, values]) => (
-            <Typography key={name} variant="body2" sx={{ ml: 2 }}>
-                - {name}: {values.join(", ")}
-            </Typography>
-        ));
+        return (
+            <Box sx={{ mb: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold', ml: indent * 2 }}>
+                    - {title}
+                </Typography>
+                <Box sx={{ ml: (indent + 1) * 2 }}>
+                    {observations.map((obs, index) =>
+                        obs && renderObservation(obs, obs.names[0].name, 0)
+                    )}
+                </Box>
+            </Box>
+        );
     };
 
     return (
@@ -145,102 +99,50 @@ export const AbdomenAndPelvis: React.FC<{ data: Observation[] }> = ({ data }) =>
             </Typography>
 
             <Box sx={{ pl: 2 }}>
-                {/* Is Normal */}
-                {isNormal && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Abnormalities available?: {isNormal.value}
-                    </Typography>
+                {/* General Assessment */}
+                {renderObservation(isNormal, "Abnormalities present")}
+
+                {/* Abdominal Findings */}
+                {renderSection("Abdominal Findings", [
+                    abdominalDistention,
+                    shiftingDullness,
+                    fluidThrill,
+                    bowelSounds,
+                    bruit
+                ])}
+
+                {/* Mass Details */}
+                {(mass || massDescription) && (
+                    <Box sx={{ mb: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                            - Mass
+                        </Typography>
+                        <Box sx={{ ml: 3 }}>
+                            {renderObservation(mass, "Present")}
+                            {renderObservation(massDescription, "Description")}
+                        </Box>
+                    </Box>
                 )}
 
-                {/* Abdominal Distention */}
-                {abdominalDistention && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Abdominal Distention: {abdominalDistention.value}
-                    </Typography>
-                )}
-
-                {/* Shifting Dullness */}
-                {shiftingDullness && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Shifting Dullness: {shiftingDullness.value}
-                    </Typography>
-                )}
-
-                {/* Fluid Thrill */}
-                {fluidThrill && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Fluid Thrill: {fluidThrill.value}
-                    </Typography>
-                )}
-
-                {/* Bowel Sounds */}
-                {bowelSounds && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Bowel Sounds: {bowelSounds.value}
-                    </Typography>
-                )}
-
-                {/* Bruit */}
-                {bruit && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Bruit: {bruit.value}
-                    </Typography>
-                )}
-
-                {/* Mass */}
-                {mass && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Mass: {mass.value}
-                    </Typography>
-                )}
-
-                {/* Mass Description */}
-                {massDescription && (
-                    <Typography variant="body2" sx={{ mb: 0.5, ml: 2}}>
-                        - Mass Description: {massDescription.value}
-                    </Typography>
-                )}
-
-                {/* Sphincter Tone */}
-                {sphincterTone && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Sphincter Tone: {sphincterTone.value}
-                    </Typography>
-                )}
-
-                {/* Clitoris Appearance */}
-                {clitorisAppearance && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Clitoris Appearance: {clitorisAppearance.value}
-                    </Typography>
-                )}
-
-                {/* Pelvic Exam */}
-                {pelvicExam && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Pelvic Exam: {pelvicExam.value}
-                    </Typography>
-                )}
-
-                {/* Vaginal Exam Notes */}
-                {vaginalExamNotes && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Vaginal Exam Notes: {vaginalExamNotes.value}
-                    </Typography>
-                )}
-
-                {/* Tenderness */}
-                {tenderness && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Tenderness: {tenderness.value}
-                    </Typography>
-                )}
+                {/* Pelvic Findings */}
+                {renderSection("Pelvic Findings", [
+                    sphincterTone,
+                    clitorisAppearance,
+                    pelvicExam,
+                    vaginalExamNotes,
+                    tenderness
+                ])}
 
                 {/* Additional Notes */}
                 {additionalNotes && (
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                        Notes: {additionalNotes.value}
-                    </Typography>
+                    <Box sx={{ mb: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                            - Additional Notes
+                        </Typography>
+                        <Box sx={{ ml: 3 }}>
+                            <Typography variant="body2">{additionalNotes.value}</Typography>
+                        </Box>
+                    </Box>
                 )}
             </Box>
 
