@@ -29,8 +29,6 @@ export const DesktopView = () => {
     }, 1000);
   }, []);
 
-
-
   return (
     <VisitDatesProvider>
       {load && hasActiveVisit === false && (

@@ -378,28 +378,18 @@ export const SoapForm = () => {
     setMedicationOptionsValues(filteredOptions);
   }, [medicationOptions]);
   const handleSubmitForm = (values: any) => {
-    submitMedications();
-    submitProcedureSupportiveCares(values);
-    handleSubmit(getObservations(values, getDateTime()));
-  };
-  const submitMedications = () => {
-    const requiredFields = [
-      "name",
-      "formulation",
-      "medication_dose",
-      "medication_route",
-      "medication_dose_unit",
-      "medication_frequency",
-      "medication_duration",
-      "medication_duration_unit",
-    ];
+    const { procedures, supportiveCare,medications,otherProcedureSpecify, otherSupportiveCareSpecify, ...mainData } = values;
 
-    const medications = formValues.medications.filter((med: any) =>
-      requiredFields.every(
-        (field) =>
-          med[field] !== null && med[field] !== undefined && med[field] !== ""
-      )
-    );
+
+    submitMedications(medications);
+    submitProcedureSupportiveCares({
+      procedures,
+      supportiveCare,
+      otherProcedureSpecify, otherSupportiveCareSpecify
+    });
+    handleSubmit(getObservations(mainData, getDateTime()));
+  };
+  const submitMedications = (medications: any) => {
 
     if (medications.length === 0) return;
     submitDispensedDrugs(medications);
@@ -452,7 +442,7 @@ export const SoapForm = () => {
     });
 
     mutate({
-      encounterType: encounters.PRESCRIPTIONS,
+      encounterType: encounters.SOAPIER_PRESCRIPTION,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
@@ -487,7 +477,7 @@ export const SoapForm = () => {
       };
     });
     const payload = {
-      encounterType: encounters.DISPENSING,
+      encounterType: encounters.SOAPIER_DISPENSING,
       visit: activeVisit,
       patient: patientId,
       encounterDatetime: obsDateTime,
@@ -504,7 +494,7 @@ export const SoapForm = () => {
         concept: concepts.PROCEDURES,
         value: concepts.PROCEDURES,
         obsDatetime: currentDateTime,
-        group_members: (values.procedures || [])
+        groupMembers: (values.procedures || [])
           .filter((procedure: any) => procedure.value === true)
           .map((procedure: any) => ({
             concept: procedure.key,
@@ -519,14 +509,14 @@ export const SoapForm = () => {
         concept: concepts.SUPPORTIVE_CARE,
         value: concepts.SUPPORTIVE_CARE,
         obsDatetime: currentDateTime,
-        group_members: (values.supportiveCare || [])
+        groupMembers: (values.supportiveCare || [])
           .filter((care: any) => care.value === true)
           .map((care: any) => ({
             concept: care.key,
             value:
               care.key === concepts.OTHER
                 ? values.otherSupportiveCareSpecify
-                : null,
+                : care.key,
             obsDatetime: currentDateTime,
           })),
       },
