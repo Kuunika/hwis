@@ -1,6 +1,7 @@
 import { GenericDialog } from "@/components";
 import { SelectPrinter } from "@/components/selectPrinter";
 import { concepts, encounters } from "@/constants";
+import { useVisitDates } from "@/contexts/visitDatesContext";
 import { getObservationValue } from "@/helpers/emr";
 import { generatePatientSummaryZPL } from "@/helpers/zpl";
 
@@ -28,6 +29,8 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   const [presentingComplaints, setPresentingComplaints] = useState<Obs[]>([]);
   const [patientLabOrders, setPatientLabOrders] = useState<Array<any>>([]);
   const [printer, setPrinter] = useState("");
+    const { selectedVisit } = useVisitDates();
+
   const [notes, setNotes] = useState<any>({
     dischargeNotes: "",
     dischargePlan: "",
@@ -56,14 +59,16 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   useEffect(() => {
     if (data) {
-      const finalDiagnosis = data[0]?.obs?.filter((ob) =>
+      const finalDiagnosis = data?.filter(d=>d.visit_id==selectedVisit.id)[0]?.obs?.filter((ob) =>
         ob.names.find((n) => n.name === concepts.FINAL_DIAGNOSIS)
       );
       setDiagnosis(finalDiagnosis);
     }
-  }, [data]);
+  }, [data, selectedVisit]);
 
   useEffect(() => {
+
+    console.log({ordersData});
     if (ordersData) {
       setPatientLabOrders(ordersData);
     }
@@ -71,17 +76,22 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   useEffect(() => {
     if (presentingComplaintsData) {
-      setPresentingComplaints(presentingComplaintsData[0]?.obs);
+      setPresentingComplaints(
+        presentingComplaintsData.filter(
+          (d) => d.visit_id == selectedVisit.id
+        )[0]?.obs
+      );
     }
-  }, [presentingComplaintsData]);
+  }, [presentingComplaintsData, selectedVisit]);
 
-  console.log({ disposition });
 
   useEffect(() => {
     if (disposition) {
-      const dischargedOb = disposition[0]?.obs.find((d: Obs) =>
-        d.names.find((n) => n.name == concepts.DISCHARGE_HOME)
-      );
+      const dischargedOb = disposition
+        .filter((d) => d.visit_id == selectedVisit.id)[0]
+        ?.obs.find((d: Obs) =>
+          d.names.find((n) => n.name == concepts.DISCHARGE_HOME)
+        );
       const dischargeNotes = getObservationValue(
         dischargedOb?.children,
         concepts.DISCHARGE_NOTES
@@ -120,7 +130,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
         });
       })();
     }
-  }, [disposition]);
+  }, [disposition, selectedVisit]);
 
   const handleOnPrint = async () => {
     const zpl = generatePatientSummaryZPL({

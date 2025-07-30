@@ -52,10 +52,11 @@ export function PrescreeningForm({ onSubmit }: props) {
     label: option.label,
   }));
 
-  let departments =
-    formValues[form.referred.name] == YES
-      ? [{ id: "OPD 2", label: "OPD 2" }, ...formattedOptions]
-      : formattedOptions;
+let departments =
+  formValues[form.referred.name] == YES
+    ? formattedOptions
+    : formattedOptions.filter((option) => option.id !== "OPD 2");
+
 
   return (
     <FormikInit
