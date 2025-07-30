@@ -5,7 +5,7 @@ import {
   TextInputField,
 } from "@/components";
 import { concepts, encounters } from "@/constants";
-import { getDateTime } from "@/helpers/dateTime";
+import { getDateTime, ServerTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
 import { Bounce, toast } from "react-toastify";
 import {
@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 // --- START: MODIFICATIONS ---
 
@@ -297,6 +298,7 @@ export const BedsideTestPlanForm = () => {
 
   // Handle form submission
   const createObservationsObject = useCallback(() => {
+    const { ServerTime } = useServerTime();
     const observations: any[] = [];
     const dateTime = getDateTime();
 
@@ -390,7 +392,7 @@ export const BedsideTestPlanForm = () => {
       encounterType: encounters.BEDSIDE_INVESTIGATION_PLAN,
       visit: activeVisit,
       patient: patientId,
-      encounterDatetime: getDateTime(),
+      encounterDatetime: ServerTime.getServerTimeString(),
       obs,
     });
     resetAllFormStates();
