@@ -8,6 +8,7 @@ import {
     FormFieldContainerLayout,
     RadioGroupInput,
     PatientInfoTab,
+    FieldsContainer, // Add this import
 } from "@/components";
 import { getDateTime } from "@/helpers/dateTime";
 import * as Yup from "yup";
@@ -296,6 +297,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
             createObs(concepts.TEMPERATURE, values.temperature),
             createObs(concepts.PULSE_RATE, values.pulse),
             createObs(concepts.RESPIRATORY_RATE, values.respiratoryRate),
+            createObs(concepts.SYSTOLIC_BLOOD_PRESSURE, values.systolic), // Updated
+            createObs(concepts.DIASTOLIC_BLOOD_PRESSURE, values.diastolic), // Updated
             createObs(concepts.BLOOD_PRESSURE_MEASURED, values.bloodPressure),
             createObs(concepts.STATS, values.stats),
             createObs(concepts.RBS, values.rbs),
@@ -342,6 +345,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 temperature: "",
                 pulse: "",
                 respiratoryRate: "",
+                systolic: "", // Add this
+                diastolic: "", // Add this
                 bloodPressure: "",
                 stats: "",
                 rbs: "",
@@ -409,7 +414,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                         <p><strong>Pulse: </strong>{complaintsInfo.pulse}</p>
                         <p><strong>Respiratory: </strong>{complaintsInfo.respiratory}</p>
                         <p><strong>Blood Pressure: </strong>{complaintsInfo.bloodPressure}</p>
-                        <p><strong>Stats: </strong>{complaintsInfo.stats}</p>
+                        <p><strong>O2sats: </strong>{complaintsInfo.stats}</p>
                         <p><strong>RBS: </strong>{complaintsInfo.rbs}</p>
                         <p><strong>Weight: </strong>{complaintsInfo.weight}</p>
 
@@ -435,15 +440,109 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                             <RadioGroupInput name="pallor" options={yesNoOptions} label={""} />
                         </FormFieldContainerLayout>
 
+
                         <FormFieldContainerLayout title="Vitals">
-                            <TextInputField name="temperature" label="Temperature" type="text" id={""} />
-                            <TextInputField name="pulse" label="Pulse" type="text" id={""} />
-                            <TextInputField name="respiratoryRate" label="Respiratory Rate" type="text" id={""} />
-                            <TextInputField name="bloodPressure" label="Blood Pressure" type="text" id={""} />
-                            <TextInputField name="stats" label="Sats" type="text" id={""} />
-                            <TextInputField name="rbs" label="RBS" type="text" id={""} />
-                            <TextInputField name="weight" label="Weight" type="text" id={""} />
-                            <TextInputField name="height" label="Height" type="text" id={""} />
+                            {/* O2Sat and Pulse */}
+                            <FormFieldContainerLayout title="O2Sat and Pulse">
+                                <FieldsContainer mr="1ch">
+                                    <TextInputField
+                                        name="stats"
+                                        label="O2 Saturation"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="%"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                    <TextInputField
+                                        name="pulse"
+                                        label="Pulse Rate"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="bpm"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                </FieldsContainer>
+                            </FormFieldContainerLayout>
+
+                            {/* Blood Pressure */}
+                            <FormFieldContainerLayout title="Blood Pressure">
+                                <FieldsContainer mr="1ch">
+                                    <TextInputField
+                                        name="systolic"
+                                        label="Systolic"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="mmHg"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                    <TextInputField
+                                        name="diastolic"
+                                        label="Diastolic"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="mmHg"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                </FieldsContainer>
+                            </FormFieldContainerLayout>
+
+                            {/* Respiratory and Temperature */}
+                            <FormFieldContainerLayout title="Respiratory and Temperature">
+                                <FieldsContainer mr="1ch">
+                                    <TextInputField
+                                        name="respiratoryRate"
+                                        label="Respiratory Rate"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="bs/m"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                    <TextInputField
+                                        name="temperature"
+                                        label="Temperature"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="°C"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                </FieldsContainer>
+                            </FormFieldContainerLayout>
+
+                            {/* RBS */}
+                            <FormFieldContainerLayout title="Blood Glucose">
+                                <FieldsContainer mr="1ch">
+                                    <TextInputField
+                                        name="rbs"
+                                        label="Random Blood Sugar (RBS)"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="mmol/L"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                </FieldsContainer>
+                            </FormFieldContainerLayout>
+
+                            {/* Weight and Height */}
+                            <FormFieldContainerLayout title="Weight and Height">
+                                <FieldsContainer mr="1ch">
+                                    <TextInputField
+                                        name="weight"
+                                        label="Weight"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="kg"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                    <TextInputField
+                                        name="height"
+                                        label="Height"
+                                        type="text"
+                                        id=""
+                                        unitOfMeasure="cm"
+                                        sx={{ width: "100%", m: 0 }}
+                                    />
+                                </FieldsContainer>
+                            </FormFieldContainerLayout>
                         </FormFieldContainerLayout>
 
                         <FormFieldContainerLayout title="Other Examinations">

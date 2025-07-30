@@ -60,6 +60,8 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
             pulse: "",
             respiratory: "",
             bloodPressure: "",
+            systolic: "", // Add this
+            diastolic: "", // Add this        
             stats: "",
             rbs: "",
             weight: "",
@@ -141,6 +143,8 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                     temperature: "",
                     pulse: "",
                     respiratory: "",
+                    systolic: "", // Add this
+                    diastolic: "", // Add this                
                     bloodPressure: "",
                     stats: "",
                     rbs: "",
@@ -253,7 +257,16 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                         newComplaintsInfo.respiratory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Blood Pressure Measured") {
                         newComplaintsInfo.bloodPressure = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Stats") {
+                    }
+
+                    else if (conceptName === "Systolic blood pressure") {
+                        newComplaintsInfo.systolic = obs.value || obs.value_text || "";
+                    }
+
+                    else if (conceptName === "Diastolic blood pressure") {
+                        newComplaintsInfo.diastolic = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Stats") {
                         newComplaintsInfo.stats = obs.value || obs.value_text || "";
                     } else if (conceptName === "Random Blood Glucose (RBS)") {
                         newComplaintsInfo.rbs = obs.value || obs.value_text || "";
@@ -358,7 +371,7 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                             {complaintsInfo.numberOfLivingChildren && <p><strong>Number of Living Children: </strong>{complaintsInfo.numberOfLivingChildren}</p>}
                                             {complaintsInfo.menarche && <p><strong>Menarche: </strong>{complaintsInfo.menarche}</p>}
                                             {complaintsInfo.menstralCycle && <p><strong>Menstrual Cycle: </strong>{complaintsInfo.menstralCycle}</p>}
-                                            {complaintsInfo.duration && <p><strong>Duration: </strong>{complaintsInfo.duration}</p>}
+                                            {complaintsInfo.duration && <p><strong>Duration in Days: </strong>{complaintsInfo.duration}</p>}
                                             {complaintsInfo.prevAbortion && <p><strong>Prev Abortion: </strong>{complaintsInfo.prevAbortion}</p>}
                                             {complaintsInfo.prevEctopic && <p><strong>Prev Ectopic: </strong>{complaintsInfo.prevEctopic}</p>}
                                             {complaintsInfo.abnormalVaginalDischarge && <p><strong>Abnormal Vaginal Discharge: </strong>{complaintsInfo.abnormalVaginalDischarge}</p>}
@@ -407,7 +420,9 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                 complaintsInfo.temperature,
                                 complaintsInfo.pulse,
                                 complaintsInfo.respiratory,
-                                complaintsInfo.bloodPressure,
+                                // complaintsInfo.bloodPressure,
+                                complaintsInfo.systolic,
+                                complaintsInfo.diastolic,
                                 complaintsInfo.stats,
                                 complaintsInfo.rbs,
                                 complaintsInfo.weight,
@@ -417,14 +432,68 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                     <>
                                         <h2>Vital Signs</h2>
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
-                                            {complaintsInfo.temperature && <p><strong>Temperature: </strong>{complaintsInfo.temperature}</p>}
-                                            {complaintsInfo.pulse && <p><strong>Pulse: </strong>{complaintsInfo.pulse}</p>}
-                                            {complaintsInfo.respiratory && <p><strong>Respiratory: </strong>{complaintsInfo.respiratory}</p>}
-                                            {complaintsInfo.bloodPressure && <p><strong>Blood Pressure: </strong>{complaintsInfo.bloodPressure}</p>}
-                                            {complaintsInfo.stats && <p><strong>Stats: </strong>{complaintsInfo.stats}</p>}
-                                            {complaintsInfo.rbs && <p><strong>RBS: </strong>{complaintsInfo.rbs}</p>}
-                                            {complaintsInfo.weight && <p><strong>Weight: </strong>{complaintsInfo.weight}</p>}
-                                            {complaintsInfo.height && <p><strong>Height: </strong>{complaintsInfo.height}</p>}
+                                            {complaintsInfo.temperature && (
+                                                <p>
+                                                    <strong>Temperature: </strong>
+                                                    {complaintsInfo.temperature} °C
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.pulse && (
+                                                <p>
+                                                    <strong>Pulse: </strong>
+                                                    {complaintsInfo.pulse} bpm
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.respiratory && (
+                                                <p>
+                                                    <strong>Respiratory Rate: </strong>
+                                                    {complaintsInfo.respiratory} breaths/min
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.systolic && (
+                                                <p>
+                                                    <strong>Systolic Blood Pressure: </strong>
+                                                    {complaintsInfo.systolic} mmHg
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.diastolic && (
+                                                <p>
+                                                    <strong>Diastolic Blood Pressure: </strong>
+                                                    {complaintsInfo.diastolic} mmHg
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.stats && (
+                                                <p>
+                                                    <strong>O<sub>2</sub> Saturation: </strong>
+                                                    {complaintsInfo.stats} %
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.rbs && (
+                                                <p>
+                                                    <strong>RBS: </strong>
+                                                    {complaintsInfo.rbs} mmol/L
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.weight && (
+                                                <p>
+                                                    <strong>Weight: </strong>
+                                                    {complaintsInfo.weight} kg
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.height && (
+                                                <p>
+                                                    <strong>Height: </strong>
+                                                    {complaintsInfo.height} cm
+                                                </p>
+                                            )}
                                         </div>
                                         <hr />
                                     </>
