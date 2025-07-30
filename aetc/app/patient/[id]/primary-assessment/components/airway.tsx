@@ -111,7 +111,7 @@ const airwayThreatenedReasons = [
 ];
 
 const airwayInterventionsList = [
-  { id: concepts.SUCTIONING_AIRWAY, label: "Suctioning Airway" },
+  { id: concepts.SUCTIONING_DONE, label: "Suctioning Done" },
   { id: concepts.JAW_THRUST_MANOEUVER, label: "Jaw thrust manoeuver" },
   { id: concepts.HEAD_TILT_CHIN_LIFT, label: "Head tilt/chin lift" },
   {
