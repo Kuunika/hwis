@@ -242,6 +242,8 @@ export const AwaitingSpecialtyList = () => {
                 paginationModel={paginationModel}
                 loading={loading}
                 formatForMobileView={formatForMobileView ? formatForMobileView : []}
+                onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
+
             />
             <CPRDialogForm
                 patientuuid={patientId}

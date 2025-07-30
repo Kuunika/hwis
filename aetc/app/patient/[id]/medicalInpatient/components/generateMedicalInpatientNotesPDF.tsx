@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { useReactToPrint } from "react-to-print";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
+import { LabOrderPlanTable } from "@/app/patient/components/panels/labOrderPlanTable";
 import { PatientInfoTab } from "@/components";
 import { encounters } from "@/constants";
 import { useParameters } from "@/hooks";
@@ -80,6 +81,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             sensation: "",
             coordination: "",
             summary: "",
+            differentialDiagnosis: "",
             admittingOfficer: "", // Default value
 
 
@@ -169,6 +171,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     sensation: "",
                     coordination: "",
                     summary: "",
+                    differentialDiagnosis: "",
                     admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
 
 
@@ -275,6 +278,10 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Summary") {
                         inpatientInfo.summary = obs.value || obs.value_text || "";
                     }
+                    else if (conceptName === "Attempted/ Differential Diagnosis") {
+                        inpatientInfo.differentialDiagnosis = obs.value || obs.value_text || "";
+                    }
+
                 });
                 setMedicalInpatientInfo(inpatientInfo);
             }
@@ -416,6 +423,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.sensation ||
                                 medicalInpatientInfo.coordination ||
                                 medicalInpatientInfo.summary ||
+                                medicalInpatientInfo.differentialDiagnosis ||
                                 medicalInpatientInfo.admittingOfficer
 
                             )
@@ -742,24 +750,6 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
                                             </tbody>
                                         </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                         {medicalInpatientInfo.summary && (
                                             <p>
                                                 <strong>Summary: </strong>
@@ -768,12 +758,29 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         )}
                                         <hr />
 
+                                        {medicalInpatientInfo.differentialDiagnosis && (
+
+                                            <p>
+                                                <strong>Differential Diagnosis: </strong>
+                                                {medicalInpatientInfo.differentialDiagnosis}
+                                            </p>
+                                        )}
+
+                                        <hr />
+                                        <h3>Investigation Plan</h3>
+                                        <LabOrderPlanTable />
+                                        <hr />
+
+
+
+
                                         {medicalInpatientInfo.admittingOfficer && (
                                             <p>
                                                 <strong>Admitting Officer: </strong>
                                                 {medicalInpatientInfo.admittingOfficer}
                                             </p>
                                         )}
+
                                     </>
                                 )}
                         </div>
