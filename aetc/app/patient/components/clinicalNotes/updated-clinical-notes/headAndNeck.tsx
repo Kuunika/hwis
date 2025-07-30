@@ -43,17 +43,14 @@ export const HeadAndNeck: React.FC<SecondarySurveyProps> = ({ data }) => {
     );
 
     const getDescriptionForAbnormality = (abnormality: Observation, items: Observation[]) => {
-        // Find the description that was created right after this abnormality
         const abnormalityIndex = items.findIndex(item => item.obs_id === abnormality.obs_id);
         if (abnormalityIndex === -1) return null;
 
-        // Look at the next items to find the first description
         for (let i = abnormalityIndex + 1; i < items.length; i++) {
             const item = items[i];
             if (item.names[0].name === "Description") {
                 return item.value;
             }
-            // If we hit another abnormality, stop looking
             if (item.names[0].name === "Abnormalities") {
                 break;
             }
@@ -65,6 +62,8 @@ export const HeadAndNeck: React.FC<SecondarySurveyProps> = ({ data }) => {
         const description = getDescriptionForAbnormality(abnormality, items);
         const isLaceration = abnormality.value.toLowerCase().includes("laceration");
         const isOther = abnormality.value.toLowerCase().includes("other");
+        const isBruise = abnormality.value.toLowerCase().includes("bruise");
+        const isEyelid = abnormality.value.toLowerCase().includes("eyelid");
 
         if (isLaceration) {
             const length = items.find(item => item?.names?.[0]?.name === "Laceration length");
@@ -76,17 +75,17 @@ export const HeadAndNeck: React.FC<SecondarySurveyProps> = ({ data }) => {
                     <Typography variant="body2">- {abnormality.value}</Typography>
                     {length && (
                         <Typography variant="body2" sx={{ ml: 3 }}>
-                            - Length: {length.value} cm
+                            - Length: {length.value}
                         </Typography>
                     )}
                     {depth && (
                         <Typography variant="body2" sx={{ ml: 3 }}>
-                            - Depth: {depth.value} cm
+                            - Depth: {depth.value}
                         </Typography>
                     )}
                     {descriptor && (
                         <Typography variant="body2" sx={{ ml: 3 }}>
-                            - Notes: {descriptor.value}
+                            - Description: {descriptor.value}
                         </Typography>
                     )}
                 </Box>
@@ -112,6 +111,19 @@ export const HeadAndNeck: React.FC<SecondarySurveyProps> = ({ data }) => {
             );
         }
 
+        if (isBruise || isEyelid) {
+            return (
+                <Box sx={{ ml: 3 }}>
+                    <Typography variant="body2">- {abnormality.value}</Typography>
+                    {description && (
+                        <Typography variant="body2" sx={{ ml: 3 }}>
+                            - Description: {description}
+                        </Typography>
+                    )}
+                </Box>
+            );
+        }
+
         return (
             <Box sx={{ ml: 3 }}>
                 <Typography variant="body2">- {abnormality.value}</Typography>
@@ -125,18 +137,13 @@ export const HeadAndNeck: React.FC<SecondarySurveyProps> = ({ data }) => {
     };
 
     const renderRegion = (regionName: string, items: Observation[]) => {
-        // Get all abnormalities
         const abnormalities = items.filter(item => item?.names?.[0]?.name === "Abnormalities");
-
-        // Get other special fields
-        const pupilSize = items.find(item =>
-            item?.names?.[0]?.name === "Pupil size" ||
-            item?.names?.[0]?.name === "Pupil size"
-        );
+        const pupilSize = items.find(item => item?.names?.[0]?.name === "Pupil size");
         const fundoscopy = items.find(item => item?.names?.[0]?.name === "Fundoscopy");
-        const otherSpecs = items.filter(item =>
-            (item?.names?.[0]?.name === "Specify" ||
-                item?.names?.[0]?.name === "Other")
+        const fundoscopyFindings = items.find(item =>
+            item?.names?.[0]?.name === "Fundoscopy findings" ||
+            (item?.names?.[0]?.name === "Description" &&
+                abnormalities.some(ab => ab.obs_id < item.obs_id))
         );
 
         return (
@@ -145,36 +152,33 @@ export const HeadAndNeck: React.FC<SecondarySurveyProps> = ({ data }) => {
                     - {regionName}
                 </Typography>
 
-                {/* Render abnormalities */}
-                {abnormalities.map(abnormality => (
-                    <React.Fragment key={`ab-${abnormality.obs_id}`}>
-                        {renderAbnormalityDetails(abnormality, items)}
-                    </React.Fragment>
-                ))}
-
-                {/* Pupil size */}
                 {pupilSize && (
                     <Box sx={{ ml: 3 }}>
                         <Typography variant="body2">- Pupil Size: {pupilSize.value} mm</Typography>
                     </Box>
                 )}
 
-                {/* Fundoscopy */}
-                {fundoscopy && fundoscopy.value === "Yes" && (
+                {abnormalities.length > 0 && (
                     <Box sx={{ ml: 3 }}>
-                        <Typography variant="body2">- Fundoscopy Findings: Present</Typography>
+                        <Typography variant="body2">- Abnormalities:</Typography>
+                        <Box sx={{ ml: 3 }}>
+                            {abnormalities.map(abnormality => (
+                                <React.Fragment key={`ab-${abnormality.obs_id}`}>
+                                    {renderAbnormalityDetails(abnormality, items)}
+                                </React.Fragment>
+                            ))}
+                        </Box>
                     </Box>
                 )}
 
-                {/* Other specifications */}
-                {otherSpecs.length > 0 && (
+                {fundoscopy && (
                     <Box sx={{ ml: 3 }}>
-                        <Typography variant="body2">- Other Findings:</Typography>
-                        {otherSpecs.map(specify => (
-                            <Typography key={`spec-${specify.obs_id}`} variant="body2" sx={{ ml: 3 }}>
-                                - {specify.value}
-                            </Typography>
-                        ))}
+                        <Typography variant="body2">- Fundoscopy Done: {fundoscopy.value === "Yes" ? "Yes" : "No"}</Typography>
+                        {/*{fundoscopy.value === "Yes" && fundoscopyFindings && (*/}
+                        {/*    <Typography variant="body2" sx={{ ml: 3 }}>*/}
+                        {/*        - Findings: {fundoscopyFindings.value}*/}
+                        {/*    </Typography>*/}
+                        {/*)}*/}
                     </Box>
                 )}
             </Box>
