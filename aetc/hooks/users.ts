@@ -1,4 +1,4 @@
-import { createUser, getUsers, searchUser, updateUser } from "@/services/users";
+import { createUser, getUsers, searchUser, updatePassword, updateUser } from "@/services/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 
@@ -61,6 +61,7 @@ export const checkUsername = (username: string) => {
 
 export const  editUser = ()=>{
     const edit=(data: any)=>{
+        console.log({data})
     const updatedUserData = {
         username: data.userName,
         roles: data.role.map((r: { label: any; }) => ({
@@ -78,3 +79,31 @@ export const  editUser = ()=>{
     });
     
 };
+export const  changePassword = ()=>{
+    const edit=(data: any)=>{
+        console.log({data})
+    const updatedUserData = {
+   
+    "user": {
+        "current_password": data.password,
+        "password": data.newPassword
+    }
+      };
+
+      return updatePassword(data.userId, updatedUserData)
+      .then((response) => response.data)
+    };
+
+    return useMutation({
+        mutationFn: edit,
+    });
+    
+};
+
+
+//  {
+//     "user": {
+//         "current_password": "admin@dhd",
+//         "password": "admin@DHD"
+//     }
+// }

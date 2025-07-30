@@ -5,6 +5,7 @@ import { editUser } from "@/hooks/users";
 import { getUserById } from "@/services/users";
 import { useState, useEffect } from "react";
 import { EditUserForm } from "./editUserForm";
+import { Password } from "@mui/icons-material";
 
 export const EditUser = () => {
   const { mutate, isPending, isSuccess } = editUser();
@@ -52,9 +53,12 @@ export const EditUser = () => {
     const updatedValues = {
       ...values,
       userId,
+      Password,
     };
 
     mutate(updatedValues);
+
+    mutate({ password: "", userId: "" }); //1c3db49d-440a-11e6-a65c-00e04c680037
   };
 
   return (

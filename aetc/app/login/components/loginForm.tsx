@@ -16,6 +16,7 @@ import { useContext, useEffect } from "react";
 import { OverlayLoader } from "@/components/backdrop";
 import { AuthContext, AuthContextType } from "@/contexts";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import Link from "next/link";
 
 const schema = yup.object({
   username: yup.string().label("Username"),
@@ -90,6 +91,7 @@ export const LoginForm = () => {
                 </MainTypography>
               )}
               <MainButton type="submit" title={"Login"} onClick={() => {}} />
+              <Link href="../loginForgotPassword">forget password</Link>
             </WrapperBox>
           </FormikInit>
         </WrapperBox>

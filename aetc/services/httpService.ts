@@ -1,5 +1,5 @@
 import { IApiService } from "@/interfaces";
-import { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { setCookie, getCookie } from "cookies-next";
 import { emrApiClient } from "./apiClients";
 import { getTime } from "@/helpers/dateTime";
@@ -11,6 +11,7 @@ export async function getAll<T>(
 ) {
   return apiClient.get<T>(`${endPoint}${query ? "?" + query : ""}`);
 }
+
 export async function getOne<T>(
   id: number | string,
   endPoint: string,
@@ -19,6 +20,7 @@ export async function getOne<T>(
 ) {
   return apiClient.get<T>(`${endPoint}/${id}${query ? "?" + query : ""}`);
 }
+
 export async function get<T>(
   endPoint: string,
 
@@ -35,14 +37,16 @@ export async function create<T>(
   return apiClient.post<T>(endPoint, data);
 }
 
+
 export async function edit<T>(
   id: string | number,
   data: Partial<T>,
   endPoint: string,
   apiClient: AxiosInstance = emrApiClient()
 ) {
-  return apiClient.put(`${endPoint}/${id}`, data);
+  return apiClient.put(`${endPoint}/${id}`,   );
 }
+
 //remove function to delete diagnosis
 export async function remove<T>(
   endPoint: string,
@@ -81,3 +85,24 @@ export async function login(
     throw new Error(error.response.message);
   }
 }
+
+
+// PATCH
+// axios.patch('http://13.247.38.249:3004/api/v1/users/1c3db49d-440a-11e6-a65c-00e04c680037/update_password', {
+//   oldPassword: 'current_password',
+//   newPassword: 'new_password'
+// })
+//   .then(response => console.log(response.data))
+//   .catch(error => console.error(error));
+
+export async function   update<T>(
+    id: string | number, 
+    endPoint: string,
+    data: Partial<T>,
+    apiClient:AxiosInstance= emrApiClient()
+)
+{
+  return apiClient.put(`${endPoint}/${id}`,data);//patch
+}
+  
+
