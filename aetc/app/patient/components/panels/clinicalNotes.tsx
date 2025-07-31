@@ -915,7 +915,7 @@ export const ClinicalNotes = () => {
           </div>
         )}
 
-      {filterSurgicalState && (
+      {filterSurgicalState && 
         <GenerateSurgicalNotesPDF
           ref={pdfRef}
           onPrintComplete={handleSurgicalPrintComplete}
