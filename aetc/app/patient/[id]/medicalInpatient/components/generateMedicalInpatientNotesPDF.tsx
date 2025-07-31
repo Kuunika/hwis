@@ -446,31 +446,31 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                             {medicalInpatientInfo.systolicBloodpressure && (
                                                 <p>
                                                     <strong>Systolic: </strong>
-                                                    {medicalInpatientInfo.systolicBloodpressure}
+                                                    {medicalInpatientInfo.systolicBloodpressure} mmHg
                                                 </p>
                                             )}
                                             {medicalInpatientInfo.diastolicBloodPressure && (
                                                 <p>
                                                     <strong>Diastolic: </strong>
-                                                    {medicalInpatientInfo.diastolicBloodPressure}
+                                                    {medicalInpatientInfo.diastolicBloodPressure} mmHg
                                                 </p>
                                             )}
                                             {medicalInpatientInfo.pulseRate && (
                                                 <p>
                                                     <strong>Pulse Rate: </strong>
-                                                    {medicalInpatientInfo.pulseRate}
+                                                    {medicalInpatientInfo.pulseRate} bpm
                                                 </p>
                                             )}
                                             {medicalInpatientInfo.respiratoryRate && (
                                                 <p>
                                                     <strong>Respiratory Rate: </strong>
-                                                    {medicalInpatientInfo.respiratoryRate}
+                                                    {medicalInpatientInfo.respiratoryRate} breaths/min
                                                 </p>
                                             )}
                                             {medicalInpatientInfo.temperature && (
                                                 <p>
                                                     <strong>Temperature: </strong>
-                                                    {medicalInpatientInfo.temperature}
+                                                    {medicalInpatientInfo.temperature} °C
                                                 </p>
                                             )}
                                         </div>
@@ -558,7 +558,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         )}
                                         {medicalInpatientInfo.edema && (
                                             <p>
-                                                <strong>Edema: </strong>
+                                                <strong>Oedema: </strong>
                                                 {medicalInpatientInfo.edema}
                                             </p>
                                         )}
