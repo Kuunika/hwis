@@ -57,8 +57,6 @@ export const removeObservation = () => {
 
 export const fetchConceptAndCreateEncounter = () => {
   const addData = async (encounter: any) => {
-
-    console.log({encounter});
     const filteredEncounter = {
       ...encounter,
       obs: encounter?.obs?.filter((ob: any) => Boolean(ob.value)),
@@ -72,7 +70,6 @@ export const fetchConceptAndCreateEncounter = () => {
   return useMutation({
     mutationFn: addData,
     onSuccess: (data) => {
-      console.log({ data });
       queryClient.invalidateQueries({
         queryKey: ["encounters", data.person_uuid],
       });
