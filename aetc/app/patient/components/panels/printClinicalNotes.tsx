@@ -1013,6 +1013,8 @@ export const PrintClinicalNotes = (props: any) => {
 
   // Check if panel data has content
   const hasContent = (panelData: any) => {
+    if (React.isValidElement(panelData)) return true;
+
     if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
       return false;
 
@@ -1046,8 +1048,14 @@ export const PrintClinicalNotes = (props: any) => {
         >
           {title}
         </Typography>
-        {renderGroupedItems(flatData)}
-        {renderTimestamp(panelData)}
+        {React.isValidElement(panelData) ? (
+          panelData
+        ) : (
+          <>
+            {renderGroupedItems(flatData)}
+            {renderTimestamp(panelData)}
+          </>
+        )}
       </Grid>
     );
   };
@@ -1111,6 +1119,7 @@ export const PrintClinicalNotes = (props: any) => {
 
   // Check if triage and vital sections have content
   const hasTriageContent = hasContent(panelData.triage);
+
   const hasVitalContent = hasContent(panelData.vital);
   const hasPrimaryContent =
     panelData.primary &&
@@ -1190,11 +1199,13 @@ export const PrintClinicalNotes = (props: any) => {
                       >
                         Triage Information
                       </Typography>
-                      {renderGroupedItems(
-                        Array.isArray(panelData.triage)
-                          ? panelData.triage.flat()
-                          : []
-                      )}
+                      {React.isValidElement(panelData.triage)
+                        ? panelData.triage
+                        : renderGroupedItems(
+                            Array.isArray(panelData.triage)
+                              ? panelData.triage.flat()
+                              : []
+                          )}
                       {renderTimestamp(panelData.triage)}
                     </Box>
                   )}

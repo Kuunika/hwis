@@ -42,8 +42,7 @@ import {
   GenerateMedicalInpatientlNotesPDF,
   MedicalInpatientNotesPDFRef,
 } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
-import { SurgicalNotesContent } from "../../[id]/surgicalNotes/components/SurgicalNotesContent";
-import { get } from "http";
+
 import {
   FamilyMedicalHistoryNotes,
   MealNotes,
@@ -56,10 +55,12 @@ import {
   SurgicalNotes,
 } from "./sampleHistory";
 import { useVisitDates } from "@/contexts/visitDatesContext";
+import { DisplayInformation } from "./displayInformation";
+import { formatPresentingComplaints,formatVitals } from "./formatters";
 
 type PanelData = {
   title: string;
-  data: any[];
+  data: any;
   useValue?: boolean;
   removeObs?: string[]; // Add removeObs property to PanelData type
 };
@@ -288,10 +289,23 @@ export const ClinicalNotes = () => {
     },
     panel1: {
       title: "Triage",
-      data: [
-        ...getEncountersByType(encounters.TRIAGE_RESULT),
-        ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
-      ],
+      // data: <Button title="TEST" variant="contained"  />,
+      data: (
+        <DisplayInformation
+          title=""
+          data={[
+            formatPresentingComplaints(
+              getEncountersByType(encounters.PRESENTING_COMPLAINTS)),
+              ...formatVitals(
+                getEncountersByType(encounters.VITALS)
+              )
+          ]}
+        />
+      ),
+      // data: [
+      //   ...getEncountersByType(encounters.TRIAGE_RESULT),
+      //   ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
+      // ],
       removeObs: [], // No specific headings to remove
     },
     panel2: {
