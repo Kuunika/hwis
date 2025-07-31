@@ -907,15 +907,28 @@ export const ClinicalNotes = () => {
 
               <DisplayInformation
                 title=""
-                data={formatPrimarySurvey({})}
+                data={formatPrimarySurvey({
+                  airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+                  breathingObs: getEncountersByType(
+                    encounters.BREATHING_ASSESSMENT
+                  ),
+                  circulationObs: getEncountersByType(
+                    encounters.CIRCULATION_ASSESSMENT
+                  ),
+                  disabilityObs: getEncountersByType(
+                    encounters.PRIMARY_DISABILITY_ASSESSMENT
+                  ),
+                  exposureObs: getEncountersByType(
+                    encounters.EXPOSURE_ASSESSMENT
+                  ),
+                })}
               />
-
             </>
             {/* <PrintClinicalNotes data={encounterData} /> */}
           </div>
         )}
 
-      {filterSurgicalState && 
+      {filterSurgicalState && (
         <GenerateSurgicalNotesPDF
           ref={pdfRef}
           onPrintComplete={handleSurgicalPrintComplete}

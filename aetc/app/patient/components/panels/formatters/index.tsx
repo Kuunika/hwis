@@ -41,7 +41,7 @@ export const formatVitals = (data: Obs[]): ClinicalNotesDataType[] => {
 
 export const formatPrimarySurvey = (data: {
   airwayObs: Obs[];
-  breathing: Obs[];
+  breathingObs: Obs[];
   circulationObs: Obs[];
   disabilityObs: Obs[];
   exposureObs: Obs[];
