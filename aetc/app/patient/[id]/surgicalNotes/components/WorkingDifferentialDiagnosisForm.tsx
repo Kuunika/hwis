@@ -80,7 +80,7 @@ export const WorkingDifferentialDiagnosisForm = ({ onSubmit, onSkip }: Prop) => 
                     <MinimalTable
                         columns={[
                             { label: "Code", field: "code" },
-                            { label: "Diagnosis", field: "selectedText" },
+                            { label: "Diagnosis", field: "diagnosis" },
                         ]}
                         data={selectedDiagnosis}
                     />
