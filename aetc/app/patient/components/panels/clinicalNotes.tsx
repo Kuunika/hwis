@@ -56,7 +56,7 @@ import {
 } from "./sampleHistory";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { DisplayInformation } from "./displayInformation";
-import { formatPresentingComplaints,formatVitals } from "./formatters";
+import { formatPresentingComplaints,formatPrimarySurvey,formatVitals } from "./formatters";
 
 type PanelData = {
   title: string;
@@ -894,7 +894,24 @@ export const ClinicalNotes = () => {
                 </div>
               </div>
             </div>
-            <PrintClinicalNotes data={encounterData} />
+            <>
+              {/* <DisplayInformation
+                title=""
+                data={[
+                  formatPresentingComplaints(
+                    getEncountersByType(encounters.PRESENTING_COMPLAINTS)
+                  ),
+                  ...formatVitals(getEncountersByType(encounters.VITALS)),
+                ]}
+              /> */}
+
+              <DisplayInformation
+                title=""
+                data={formatPrimarySurvey({})}
+              />
+
+            </>
+            {/* <PrintClinicalNotes data={encounterData} /> */}
           </div>
         )}
 

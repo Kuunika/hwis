@@ -14,8 +14,7 @@ export const formatPresentingComplaints = (
 };
 
 export const formatVitals = (data: Obs[]): ClinicalNotesDataType[] => {
-
-    const items = (
+  const items = (
     Object.keys(VitalFormConfig) as Array<keyof typeof VitalFormConfig>
   ).map((key) => {
     const vital = VitalFormConfig[key];
@@ -23,16 +22,29 @@ export const formatVitals = (data: Obs[]): ClinicalNotesDataType[] => {
     return { item: { [vital.label]: value || "N/A" } };
   });
 
-
   return [
     { heading: "Vitals", children: items },
     {
       heading: "Triage Result",
-      children: [{ item: getObservationValue(data, concepts.TRIAGE_RESULT) || "N/A" }]
+      children: [
+        { item: getObservationValue(data, concepts.TRIAGE_RESULT) || "N/A" },
+      ],
     },
     {
       heading: "Patient Care Area",
-      children: [{ item: getObservationValue(data, concepts.CARE_AREA) || "N/A" }]
-    }
+      children: [
+        { item: getObservationValue(data, concepts.CARE_AREA) || "N/A" },
+      ],
+    },
   ];
+};
+
+export const formatPrimarySurvey = (data: {
+  airwayObs: Obs[];
+  breathing: Obs[];
+  circulationObs: Obs[];
+  disabilityObs: Obs[];
+  exposureObs: Obs[];
+}): ClinicalNotesDataType[] => {
+  return [];
 };

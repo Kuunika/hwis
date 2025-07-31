@@ -1121,10 +1121,10 @@ export const PrintClinicalNotes = (props: any) => {
   const hasTriageContent = hasContent(panelData.triage);
 
   const hasVitalContent = hasContent(panelData.vital);
-  const hasPrimaryContent =
-    panelData.primary &&
-    Array.isArray(panelData.primary) &&
-    panelData.primary.length > 0;
+  const hasPrimaryContent = Boolean(panelData.primary)
+    // &&
+    // Array.isArray(panelData.primary) &&
+    // panelData.primary.length > 0;
   const hasClinicalNotesContent =
     panelData.clinicalNotes &&
     Array.isArray(panelData.clinicalNotes) &&
@@ -1239,7 +1239,7 @@ export const PrintClinicalNotes = (props: any) => {
                   )}
 
                   {/* Primary Survey - Now using structured format */}
-                  {hasPrimaryContent && renderPrimarySurvey(panelData.primary)}
+                  {/* {hasPrimaryContent && renderPrimarySurvey(panelData.primary)} */}
                 </Grid>
               )}
             </Grid>
