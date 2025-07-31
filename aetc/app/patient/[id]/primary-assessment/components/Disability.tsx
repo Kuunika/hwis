@@ -20,7 +20,6 @@ import {
 } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 type Props = {
@@ -57,19 +56,19 @@ const form = {
     label: "Is the patient having Seizures",
   },
   leftPupilSize: {
-    name: "Left Pupil Size",
+    name: concepts.LEFT_PUPIL_SIZE,
     label: "Left Pupil Size",
   },
   rightPupilSize: {
-    name: "Right Pupil Size",
+    name: concepts.RIGHT_PUPIL_SIZE,
     label: "Right Pupil Size",
   },
   leftPupilReaction: {
-    name: "Left Pupil Reaction",
+    name: concepts.LEFT_PUPIL_REACTION,
     label: "Left Pupil Reaction",
   },
   rightPupilReaction: {
-    name: "Right Pupil Reaction",
+    name: concepts.RIGHT_PUPIL_REACTION,
     label: "Right Pupil Reaction",
   },
   // Add units field
@@ -198,11 +197,16 @@ export const Disability = ({ onSubmit }: Props) => {
             value: values[form.leftPupilSize.name],
             obsDateTime: obsDateTime,
           },
-          {
-            concept: concepts.PUPIL_REACTION,
-            value: values[form.leftPupilReaction.name],
-            obsDateTime: obsDateTime,
-          },
+          ...(Boolean(values[form.leftPupilReaction.name])
+            ? [
+                {
+                  concept: concepts.PUPIL_REACTION,
+                  value: values[form.leftPupilReaction.name],
+                  obsDateTime: obsDateTime,
+                },
+              ]
+            : []),
+          ,
         ],
       },
       {
@@ -215,11 +219,15 @@ export const Disability = ({ onSubmit }: Props) => {
             value: values[form.rightPupilSize.name],
             obsDateTime: obsDateTime,
           },
-          {
-            concept: concepts.PUPIL_REACTION,
-            value: values[form.rightPupilReaction.name],
-            obsDateTime: obsDateTime,
-          },
+          ...(Boolean(values[form.leftPupilReaction.name])
+            ? [
+                {
+                  concept: concepts.PUPIL_REACTION,
+                  value: values[form.rightPupilReaction.name],
+                  obsDateTime: obsDateTime,
+                },
+              ]
+            : []),
         ],
       },
     ];

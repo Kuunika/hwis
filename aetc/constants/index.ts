@@ -1485,6 +1485,10 @@ export const concepts = {
 
   GYNAE_BENCH: "Gynae Bench",
   SURGICAL_BENCH: "Surgical bench",
+  LEFT_PUPIL_SIZE: "Left pupil size",
+  RIGHT_PUPIL_SIZE: "Right pupil size",
+  LEFT_PUPIL_REACTION: "Left pupil reaction",
+  RIGHT_PUPIL_REACTION: "Right pupil reaction",
 };
 
 export const conceptNames = {
