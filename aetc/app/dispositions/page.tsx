@@ -45,4 +45,4 @@ function DispositionPage() {
   );
 }
 
-export default AuthGuard(DispositionPage, [roles.ADMIN, roles.CLINICIAN]);
+export default AuthGuard(DispositionPage, [roles.ADMIN, roles.CLINICIAN, roles.NURSE]);
