@@ -91,7 +91,6 @@ export const LoginForm = () => {
                 </MainTypography>
               )}
               <MainButton type="submit" title={"Login"} onClick={() => {}} />
-              <Link href="../loginForgotPassword">forget password</Link>
             </WrapperBox>
           </FormikInit>
         </WrapperBox>

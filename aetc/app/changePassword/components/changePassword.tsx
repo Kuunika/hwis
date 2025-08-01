@@ -13,24 +13,23 @@ import { Password } from "@mui/icons-material";
 import { changePassword } from "@/hooks/users";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { OverlayLoader } from "@/components/backdrop";
-import { CircularProgress } from "@mui/material";
 
 const schema = yup.object({
-  CurrentPassword: yup.string().label("Current password").required().min(4),
-  NewPassword: yup.string().label("New password").required().min(4), //.matches(/[!@#$%&*?~]/, "must include atleast one special character")
-  ConfirmPassword: yup
+  currentPassword: yup.string().label("Current password").required().min(4),
+  newPassword: yup.string().label("New password").required().min(4), //.matches(/[!@#$%&*?~]/, "must include atleast one special character")
+  confirmPassword: yup
     .string()
     .label("Confirm password")
     .required()
     .min(4)
-    .oneOf([yup.ref("NewPassword")], "Password not matching "),
+    .oneOf([yup.ref("newPassword")], "Password not matching "),
 });
 
 const ChangePassword = () => {
   const { mutateAsync, isPending, isSuccess, error } = changePassword();
 
   const [successMessage, setSuccessMessage] = useState("");
-  console.log(isPending);
+
   return (
     <ContainerLoaderOverlay loading={false}>
       <WrapperBox
@@ -54,9 +53,9 @@ const ChangePassword = () => {
 
         <FormikInit
           initialValues={{
-            CurrentPassword: "",
-            NewPassword: "",
-            ConfirmPassword: "",
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
           }}
           validationSchema={schema}
           submitButton={false}
@@ -64,7 +63,6 @@ const ChangePassword = () => {
             const accessToken = localStorage.getItem("accessToken");
             const userName = localStorage.getItem("userName");
             const userRole = localStorage.getItem("roles");
-            console.log("User Roles:", userRole);
 
             if (accessToken) {
               const decodeToken: {
@@ -74,34 +72,24 @@ const ChangePassword = () => {
 
               try {
                 const response = await mutateAsync({
-                  password: data.CurrentPassword,
-                  newPassword: data.NewPassword,
+                  password: data.currentPassword,
+                  newPassword: data.newPassword,
                   userId: decodeToken?.user_id,
                   userName: userName,
                 });
 
-                console.log("Success response:", response);
-
                 if (response?.status === 422) {
-                  console.log(
-                    "Validation error:",
-                    response?.response?.data?.error
-                  );
-
                   const errorMessage =
                     response?.response?.data?.error ||
                     "Current password incorrect";
-                  setFieldError("CurrentPassword", errorMessage);
+                  setFieldError("currentPassword", errorMessage);
                 } else if (response?.message) {
                   setSuccessMessage(response.message);
                 }
               } catch (error: any) {
-                console.log("Error message:", error?.response?.data);
-
                 const apiError =
                   error?.response?.data?.error || "Current password incorrect";
-                setFieldError("CurrentPassword", apiError);
-                console.log(apiError);
+                setFieldError("currentPassword", apiError);
               }
             }
           }}
@@ -109,25 +97,24 @@ const ChangePassword = () => {
           <WrapperBox sx={{ display: "flex", flexDirection: "column" }}>
             <h1>CHANGE PASSWORD </h1>
             <TextInputField
-              id="CurrentPassword"
-              name="CurrentPassword"
+              id="currentPassword"
+              name="currentPassword"
               label="Current password"
               type="password"
             />
             <TextInputField
-              id="NewPassword"
-              name="NewPassword"
+              id="newPassword"
+              name="newPassword"
               label="New password"
               type="password"
             />
             <TextInputField
-              id="ConfirmPassword"
-              name="ConfirmPassword"
+              id="confirmPassword"
+              name="confirmPassword"
               label="Confirm password"
               type="password"
             />
             <MainButton type="submit" title={"Change"} onClick={() => {}} />
-            
           </WrapperBox>
         </FormikInit>
       </WrapperBox>

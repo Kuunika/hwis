@@ -44,7 +44,7 @@ export async function edit<T>(
   endPoint: string,
   apiClient: AxiosInstance = emrApiClient()
 ) {
-  return apiClient.put(`${endPoint}/${id}`,   );
+  return apiClient.put(`${endPoint}/${id}`, data );
 }
 
 //remove function to delete diagnosis
@@ -86,15 +86,6 @@ export async function login(
   }
 }
 
-
-// PATCH
-// axios.patch('http://13.247.38.249:3004/api/v1/users/1c3db49d-440a-11e6-a65c-00e04c680037/update_password', {
-//   oldPassword: 'current_password',
-//   newPassword: 'new_password'
-// })
-//   .then(response => console.log(response.data))
-//   .catch(error => console.error(error));
-
 export async function   update<T>(
     id: string | number, 
     endPoint: string,
@@ -102,7 +93,7 @@ export async function   update<T>(
     apiClient:AxiosInstance= emrApiClient()
 )
 {
-  return apiClient.put(`${endPoint}/${id}`,data);//patch
+  return apiClient.put(`${endPoint}/${id}`,data);
 }
   
 

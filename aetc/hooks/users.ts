@@ -61,7 +61,6 @@ export const checkUsername = (username: string) => {
 
 export const  editUser = ()=>{
     const edit=(data: any)=>{
-        console.log({data})
     const updatedUserData = {
         username: data.userName,
         roles: data.role.map((r: { label: any; }) => ({
@@ -81,7 +80,6 @@ export const  editUser = ()=>{
 };
 export const  changePassword = ()=>{
     const edit=(data: any)=>{
-        console.log({data})
     const updatedUserData = {
    
     "user": {
@@ -99,11 +97,3 @@ export const  changePassword = ()=>{
     });
     
 };
-
-
-//  {
-//     "user": {
-//         "current_password": "admin@dhd",
-//         "password": "admin@DHD"
-//     }
-// }
