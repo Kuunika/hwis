@@ -29,7 +29,7 @@ export const ContainerLoaderOverlay: React.FC<LoaderOverlayProps> = ({
             zIndex: 1,
           }}
         >
-          
+          <CircularProgress /><CircularProgress />
         </Box>
       )}
       <Box

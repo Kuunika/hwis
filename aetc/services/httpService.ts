@@ -1,5 +1,5 @@
 import { IApiService } from "@/interfaces";
-import axios, { AxiosInstance } from "axios";
+import  { AxiosInstance } from "axios";
 import { setCookie, getCookie } from "cookies-next";
 import { emrApiClient } from "./apiClients";
 import { getTime } from "@/helpers/dateTime";
