@@ -58,7 +58,6 @@ export const EditUser = () => {
 
     mutate(updatedValues);
 
-    mutate({ password: "", userId: "" }); //1c3db49d-440a-11e6-a65c-00e04c680037
   };
 
   return (
