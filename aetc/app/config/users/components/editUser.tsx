@@ -53,11 +53,9 @@ export const EditUser = () => {
     const updatedValues = {
       ...values,
       userId,
-      Password,
     };
 
     mutate(updatedValues);
-
   };
 
   return (
