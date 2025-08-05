@@ -75,6 +75,11 @@ export const formatPrimarySurvey = (data: {
   ];
 };
 
+export const formatSoapierNotes = (data:any)=>{
+
+  console.log({data});
+}
+
 
 const buildNotesObject = (formConfig:any, obs:Obs[])=>{
     return (

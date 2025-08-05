@@ -895,7 +895,7 @@ export const ClinicalNotes = () => {
               </div>
             </div>
             <>
-              {/* <DisplayInformation
+              <DisplayInformation
                 title=""
                 data={[
                   formatPresentingComplaints(
@@ -903,7 +903,7 @@ export const ClinicalNotes = () => {
                   ),
                   ...formatVitals(getEncountersByType(encounters.VITALS)),
                 ]}
-              /> */}
+              />
 
               <DisplayInformation
                 title=""
