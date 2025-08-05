@@ -326,7 +326,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: (values: any) => void 
   const { gender } = getActivePatientDetails();
   const [percussionImageEnc, setPercussionImageEnc] = useState([]);
   const [abdomenImageEnc, setAbdomenImageEnc] = useState([]);
-    const { ServerTime } = useServerTime();
+  const { ServerTime } = useServerTime();
 
   const [percussionPosteriorImageEnc, setPercussionPosteriorImagesEnc] = useState([]);
 
@@ -369,7 +369,7 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: (values: any) => void 
     ]
 
 
-    onSubmit([...getObservations(formValues, obsDatetime),...obs])
+    onSubmit([...getObservations(formValues, obsDatetime), ...obs])
 
   }
 
@@ -394,15 +394,21 @@ export const ReviewOfSystems = ({ onSubmit }: { onSubmit: (values: any) => void 
       <FormFieldContainerLayout title="Vitals">
         <FormFieldContainerMultiple>
           <TextInputField
-            name={form.diastolic.name}
-            label={form.diastolic.label}
-            id={form.diastolic.name}
-          />
-          <TextInputField
             name={form.systolic.name}
             label={form.systolic.label}
             id={form.systolic.name}
+            unitOfMeasure="mmHg"
+
+
           />
+          <TextInputField
+            name={form.diastolic.name}
+            label={form.diastolic.label}
+            id={form.diastolic.name}
+            unitOfMeasure="mmHg"
+
+          />
+
         </FormFieldContainerMultiple>
         <FormFieldContainerMultiple>
           <TextInputField

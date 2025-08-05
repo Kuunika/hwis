@@ -28,6 +28,8 @@ import { useServerTime } from "@/contexts/serverTimeContext";
 
 // --- START: MODIFICATIONS ---
 
+// --- START: MODIFICATIONS ---
+
 // Define type for section keys
 type SectionKey =
   | "arterialVenousBloodGasMain"
@@ -257,6 +259,7 @@ const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormF
 export const BedsideTestPlanForm = () => {
   const { activeVisit, patientId, gender } = getActivePatientDetails();
   const { mutate, isPending, isSuccess } = fetchConceptAndCreateEncounter();
+   const { ServerTime } = useServerTime();
 
   // --- START: MODIFICATIONS ---
   // Added separate state for MRDT, HIV, VDRL as they are standalone checkboxes
@@ -298,9 +301,7 @@ export const BedsideTestPlanForm = () => {
 
   // Handle form submission
   const createObservationsObject = useCallback(() => {
-    const { ServerTime } = useServerTime();
     const observations: any[] = [];
-    const dateTime = getDateTime();
 
     // Helper to add observations for a given section's selected fields
     const addSectionObservations = (sectionKey: SectionKey) => {
@@ -318,17 +319,17 @@ export const BedsideTestPlanForm = () => {
           if (sectionKey === "pregnancyTest") {
             observations.push({
               concept: formConfig.pregnancyTest.name,
-              obsDatetime: dateTime,
+              obsDatetime:  ServerTime.getServerTimeString(),
               value: true, // Indicates the test was selected/planned
             });
           } else {
             observations.push({
               concept: concepts.BEDSIDE_INVESTIGATIONS, // Group under a general concept
-              obsDatetime: dateTime,
+              obsDatetime:  ServerTime.getServerTimeString(),
               value: sectionDef.title, // Use section title as value for grouping
               groupMembers: selectedFields.map((field) => ({
                 concept: field.name, // Use field.name (which is now the label) as the concept
-                obsDatetime: dateTime,
+                obsDatetime:  ServerTime.getServerTimeString(),
                 value: true, // Indicates the test was selected/planned
               })),
             });
@@ -355,7 +356,7 @@ export const BedsideTestPlanForm = () => {
     if (mrdtChecked) {
       observations.push({
         concept: formConfig.mrdt.name,
-        obsDatetime: dateTime,
+        obsDatetime:  ServerTime.getServerTimeString(),
         value: true,
       });
     }
@@ -363,7 +364,7 @@ export const BedsideTestPlanForm = () => {
     if (hivChecked) {
       observations.push({
         concept: formConfig.hiv.name,
-        obsDatetime: dateTime,
+        obsDatetime:  ServerTime.getServerTimeString(),
         value: true,
       });
     }
@@ -371,7 +372,7 @@ export const BedsideTestPlanForm = () => {
     if (vdrlChecked) {
       observations.push({
         concept: formConfig.vdrl.name,
-        obsDatetime: dateTime,
+        obsDatetime:  ServerTime.getServerTimeString(),
         value: true,
       });
     }

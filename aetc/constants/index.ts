@@ -151,6 +151,8 @@ export const encounters = {
   MEDICAL_HISTORY: "ba05f13e-8d80-11d8-abbb-0024217bb78e",
   OBSTETRIC_HISTORY: "ba063da6-8d80-11d8-abbb-0024217bb78e",
   PRESCRIPTIONS: "88564b30-abaf-4744-8ea6-6e1c15465d9e",
+  SOAPIER_PRESCRIPTION: "6e18d0c8-98b2-40fd-b116-25af7eef111d",
+  SOAPIER_DISPENSING: "7def6325-4496-491a-a716-a9fca6e3c6df",
   ALLERGIES: "477f8110-ae4b-4caa-b608-c05b0f967b9e",
   DIAGNOSIS: "ba05fbfc-8d80-11d8-abbb-0024217bb78e",
   SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
@@ -262,6 +264,15 @@ export const concepts = {
   FIVE_B_ORTHOPAEDIC_WARD: "Five B Orthopaedic Ward",
   FIVE_B_NEUROSURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
     "Five B Neurosurgical Ward General Ward High Dependency Unit",
+  ONE_A_LABOUR_WARD: "1A Labour ward",
+  MAIN_LABOUR_WARD: "Main Labour ward",
+  ANTENATAL_WARD: "Antenatal ward",
+  POST_NATAL_WARD: "Post natal ward",
+  GYNAECOLOGY_WARD_MAIN: "Gynaecology ward- Main",
+  THREE_B_MALE_MEDICAL: "3B Male medical",
+  THREE_C_COMBINED_MALE_AND_FEMALE_MEDICAL: "3C Combined male and female medical",
+  SIX_A_ORTHOPAEDIC_MALE: "6A Orthopaedic male",
+
   INTENSIVE_CARE_UNIT_ICU: "Intensive Care Unit Icu",
   ENT: "Ent",
   BED_NUMBER: "Bed Number",
@@ -1474,6 +1485,10 @@ export const concepts = {
 
   GYNAE_BENCH: "Gynae Bench",
   SURGICAL_BENCH: "Surgical bench",
+  LEFT_PUPIL_SIZE: "Left pupil size",
+  RIGHT_PUPIL_SIZE: "Right pupil size",
+  LEFT_PUPIL_REACTION: "Left pupil reaction",
+  RIGHT_PUPIL_REACTION: "Right pupil reaction",
 };
 
 export const conceptNames = {

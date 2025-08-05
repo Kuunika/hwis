@@ -716,7 +716,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.lacerationNotes.label}
+                          name={form.lacerationNotes.name}
                           label={form.lacerationNotes.label}
                           id={form.lacerationNotes.name}
                         />
@@ -736,7 +736,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.hematomasNotes.label}
+                          name={form.hematomasNotes.name}
                           label={form.hematomasNotes.label}
                           id={form.hematomasNotes.name}
                         />
@@ -756,7 +756,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.inflammationNotes.label}
+                          name={form.inflammationNotes.name}
                           label={form.inflammationNotes.label}
                           id={form.inflammationNotes.name}
                         />
@@ -776,7 +776,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.urethralMeatusNotes.label}
+                          name={form.urethralMeatusNotes.name}
                           label={form.urethralMeatusNotes.label}
                           id={form.urethralMeatusNotes.name}
                         />
