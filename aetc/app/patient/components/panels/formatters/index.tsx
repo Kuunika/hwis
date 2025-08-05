@@ -6,7 +6,7 @@ import {
   getObservationValue,
 } from "@/helpers/emr";
 import { concepts } from "@/constants";
-import { airwayFormConfig, breathingFormConfig, circulationFormConfig } from "@/app/patient/[id]/primary-assessment/components";
+import { airwayFormConfig, breathingFormConfig, circulationFormConfig, disabilityFormConfig, exposureFormConfig } from "@/app/patient/[id]/primary-assessment/components";
 
 
 export const formatPresentingComplaints = (
@@ -63,6 +63,14 @@ export const formatPrimarySurvey = (data: {
     {
       heading: "Circulation",
       children: buildNotesObject(circulationFormConfig, data.circulationObs),
+    },
+    {
+      heading: "Disability",
+      children: buildNotesObject(disabilityFormConfig, data.disabilityObs),
+    },
+    {
+      heading: "Exposure",
+      children: buildNotesObject(exposureFormConfig, data.exposureObs),
     },
   ];
 };
