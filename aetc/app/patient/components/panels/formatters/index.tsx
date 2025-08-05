@@ -3,13 +3,11 @@ import { ClinicalNotesDataType } from "../displayInformation";
 import { VitalFormConfig } from "@/app/vitals/components/vitalsForm";
 import {
   filterObservations,
-  getObservation,
   getObservationValue,
 } from "@/helpers/emr";
 import { concepts } from "@/constants";
-import { airwayFormConfig } from "@/app/patient/[id]/primary-assessment/components";
-import { getObservations } from "@/helpers";
-import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
+import { airwayFormConfig, breathingFormConfig, circulationFormConfig } from "@/app/patient/[id]/primary-assessment/components";
+
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -53,30 +51,51 @@ export const formatPrimarySurvey = (data: {
   disabilityObs: Obs[];
   exposureObs: Obs[];
 }): ClinicalNotesDataType[] => {
-  const items = (
-    Object.keys(airwayFormConfig) as Array<keyof typeof airwayFormConfig>
-  )
-    .filter((key) => {
-      const config = airwayFormConfig[key];
-      return !config.child;
-    })
-    .map((key) => {
-      const config = airwayFormConfig[key];
-      const value = getObservationValue(data.airwayObs, config.name);
-      const displayValue = config.options?.[value] ?? value;
-      const topParentType= config?.type || "N/A";
-      
-      const children = buildChildren(data.airwayObs, config.children);
-      
-      const result: any = { item: topParentType=='string' ?displayValue: { [config.label]: displayValue || "N/A" } };
-      if (children && children.length > 0) {
-        result.children = children;
-      }
-      return result;
-    })
-
-  return [{ heading: "Airway", children: items }];
+  return [
+    {
+      heading: "Airway",
+      children: buildNotesObject(airwayFormConfig, data.airwayObs),
+    },
+    {
+      heading: "Breathing",
+      children: buildNotesObject(breathingFormConfig, data.breathingObs),
+    },
+    {
+      heading: "Circulation",
+      children: buildNotesObject(circulationFormConfig, data.circulationObs),
+    },
+  ];
 };
+
+
+const buildNotesObject = (formConfig:any, obs:Obs[])=>{
+    return (
+      Object.keys(formConfig) as Array<keyof typeof formConfig>
+    )
+      .filter((key) => {
+        const config = formConfig[key];
+        return !config.child;
+      })
+      .map((key) => {
+
+        const config = formConfig[key];
+        const value = getObservationValue(obs, config.name);
+        const displayValue = config.options?.[value] ?? value;
+        const topParentType = config?.type || "N/A";
+        const children = buildChildren(obs, config.children);
+
+        const result: any = {
+          item:
+            topParentType == "string"
+              ? displayValue
+              : { [config.label]: displayValue || "N/A" },
+        };
+        if (children && children.length > 0) {
+          result.children = children;
+        }
+        return result;
+      });
+}
 
 
 const buildChildren = (obs: Obs[], children:any)=>{
@@ -85,8 +104,14 @@ const buildChildren = (obs: Obs[], children:any)=>{
         children?.flatMap((child: any) => {
           const innerObs = filterObservations(obs, child.concept);
           let transformedObs;
+
+             if (child?.multiple) {
+               console.log(child.concept,{ innerObs });
+             }
+          
           if (child?.type == "string") {
             const obValue = getObservationValue(obs, child?.concept);
+
             const childValue = child?.multiple ? innerObs?.map(innerOb=>{
               return {item:child?.options ? child.options[innerOb.value] : innerOb.value}
             }) : child?.options ? child.options[obValue] : obValue;
@@ -94,18 +119,44 @@ const buildChildren = (obs: Obs[], children:any)=>{
             transformedObs = {
               item: child.label,
               children: child?.children ? buildChildren(obs, child?.children): childValue
-            
             };
           } else {
-            transformedObs = obs?.map((ob) => {
-              return {
-                item: { [child?.label]: ob.value || "N/A" },
-                children: buildChildren(obs, child?.children),
-              };
-            });
-          }
+             const obValue = getObservationValue(obs, child?.concept);
 
-       
+             const childValue = child?.multiple
+               ? innerObs?.map((innerOb) => {
+                   return {
+                     item: child?.options
+                       ? child.options[innerOb.value]
+                       : innerOb.value,
+                   };
+                 })
+               : {[child.label]:obValue};
+
+              //  console.log({childValue});
+               
+               
+              //  child?.options
+              //    ? child.options[obValue]
+              //    : obValue;
+
+                   transformedObs = {
+                     item: childValue,
+                     children: child?.children
+                       ? buildChildren(obs, child?.children)
+                       : childValue,
+                   };
+
+                 
+
+
+            // transformedObs = obs?.map((ob) => {
+            //   return {
+            //     item: { [child?.label]: ob.value || "N/A" },
+            //     children: child?.children ? buildChildren(obs, child?.children) : childValue,
+            //   };
+            // });
+          }       
           return transformedObs;
         });
 }

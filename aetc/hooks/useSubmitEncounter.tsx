@@ -22,8 +22,6 @@ export const useSubmitEncounter = (
 
   const handleSubmit = async (obs: Array<any>) => {
     const dateTime = ServerTime.getServerTimeString();
-
-
     await mutate({
       encounterType,
       patient: patientuuid ? patientuuid : params.id,
