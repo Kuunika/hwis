@@ -179,7 +179,18 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 medicalInpatientEncounter.obs.forEach(obs => {
                     const conceptName = obs.names && obs.names.length > 0 ? obs.names[0].name : null;
                     if (conceptName === "Presenting Complaints") {
-                        inpatientInfo.presentingComplaint = obs.value || obs.value_text || "";
+                        // Collect all presenting complaints from child observations
+                        const presentingValues = obs.children
+                            ?.filter(
+                                (child) =>
+                                    child.names &&
+                                    child.names.length > 0 &&
+                                    child.names[0].name === "Presenting Complaints"
+                            )
+                            .map((child) => child.value || child.value_text)
+                            .filter(Boolean);
+
+                        inpatientInfo.presentingComplaint = presentingValues?.join(", ") || "";
                     } else if (conceptName === "Presenting history") {
                         inpatientInfo.presentingHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Medication") {
@@ -197,7 +208,17 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Allergic reaction") {
                         inpatientInfo.allergicReaction = obs.value || obs.value_text || "";
                     } else if (conceptName === "Intoxication") {
-                        inpatientInfo.intoxication = obs.value || obs.value_text || "";
+                        const intoxicationValues = obs.children
+                            ?.filter(
+                                (child) =>
+                                    child.names &&
+                                    child.names.length > 0 &&
+                                    child.names[0].name === "Intoxication"
+                            )
+                            .map((child) => child.value || child.value_text)
+                            .filter(Boolean);
+
+                        inpatientInfo.intoxication = intoxicationValues?.join(", ") || "";
                     } else if (conceptName === "General") {
                         inpatientInfo.general = obs.value || obs.value_text || "";
                     } else if (conceptName === "Systolic blood pressure") {
@@ -279,7 +300,17 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.summary = obs.value || obs.value_text || "";
                     }
                     else if (conceptName === "Attempted/ Differential Diagnosis") {
-                        inpatientInfo.differentialDiagnosis = obs.value || obs.value_text || "";
+                        const diffDiagnosisValues = obs.children
+                            ?.filter(
+                                (child) =>
+                                    child.names &&
+                                    child.names.length > 0 &&
+                                    child.names[0].name === "Attempted/ Differential Diagnosis"
+                            )
+                            .map((child) => child.value || child.value_text)
+                            .filter(Boolean);
+
+                        inpatientInfo.differentialDiagnosis = diffDiagnosisValues?.join(", ") || "";
                     }
 
                 });
