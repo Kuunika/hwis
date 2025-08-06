@@ -31,7 +31,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
         const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
 
         const [medicalInpatientInfo, setMedicalInpatientInfo] = useState({
-            presentingComplaint: "",
+            presentingComplaint: [] as string[],
             presentingHistory: "",
             medication: "",
             hivProgram: "",
@@ -41,7 +41,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             familyHistory: "",
             // drugGiven: "",
             allergicReaction: "",
-            intoxication: "",
+            intoxication: [] as string[],
             general: "",
             systolicBloodpressure: "",
             diastolicBloodPressure: "",
@@ -81,7 +81,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             sensation: "",
             coordination: "",
             summary: "",
-            differentialDiagnosis: "",
+            differentialDiagnosis: [] as string[],
             admittingOfficer: "", // Default value
 
 
@@ -121,7 +121,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 const admittingOfficer = medicalInpatientEncounter.created_by || "";
 
                 const inpatientInfo = {
-                    presentingComplaint: "",
+                    presentingComplaint: [] as string[],
                     presentingHistory: "",
                     medication: "",
                     hivProgram: "",
@@ -131,7 +131,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     familyHistory: "",
                     // drugGiven: "",
                     allergicReaction: "",
-                    intoxication: "",
+                    intoxication: [] as string[],
                     general: "",
                     systolicBloodpressure: "",
                     diastolicBloodPressure: "",
@@ -171,7 +171,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     sensation: "",
                     coordination: "",
                     summary: "",
-                    differentialDiagnosis: "",
+                    differentialDiagnosis: [] as string[],
                     admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
 
 
@@ -190,7 +190,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                             .map((child) => child.value || child.value_text)
                             .filter(Boolean);
 
-                        inpatientInfo.presentingComplaint = presentingValues?.join(", ") || "";
+                        inpatientInfo.presentingComplaint = presentingValues || "";
                     } else if (conceptName === "Presenting history") {
                         inpatientInfo.presentingHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Medication") {
@@ -218,7 +218,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                             .map((child) => child.value || child.value_text)
                             .filter(Boolean);
 
-                        inpatientInfo.intoxication = intoxicationValues?.join(", ") || "";
+                        inpatientInfo.intoxication = intoxicationValues || "";
                     } else if (conceptName === "General") {
                         inpatientInfo.general = obs.value || obs.value_text || "";
                     } else if (conceptName === "Systolic blood pressure") {
@@ -310,7 +310,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                             .map((child) => child.value || child.value_text)
                             .filter(Boolean);
 
-                        inpatientInfo.differentialDiagnosis = diffDiagnosisValues?.join(", ") || "";
+                        inpatientInfo.differentialDiagnosis = diffDiagnosisValues || "";
                     }
 
                 });
@@ -338,7 +338,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                     <h2>Complaints</h2>
                                     <p>
                                         <strong>Presenting Complaints: </strong>
-                                        {medicalInpatientInfo.presentingComplaint}
+                                        {medicalInpatientInfo.presentingComplaint.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                     </p>
                                 </>
                             )}
@@ -408,7 +408,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         {medicalInpatientInfo.intoxication && (
                                             <p>
                                                 <strong>Intoxication: </strong>
-                                                {medicalInpatientInfo.intoxication}
+                                                {medicalInpatientInfo.intoxication.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                             </p>
                                         )}
                                     </>
@@ -793,7 +793,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
                                             <p>
                                                 <strong>Differential Diagnosis: </strong>
-                                                {medicalInpatientInfo.differentialDiagnosis}
+                                                {medicalInpatientInfo.differentialDiagnosis.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                             </p>
                                         )}
 
