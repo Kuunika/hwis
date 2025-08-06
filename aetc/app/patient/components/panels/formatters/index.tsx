@@ -1,13 +1,17 @@
 import { Obs } from "@/interfaces";
 import { ClinicalNotesDataType } from "../displayInformation";
 import { VitalFormConfig } from "@/app/vitals/components/vitalsForm";
-import {
-  filterObservations,
-  getObservationValue,
-} from "@/helpers/emr";
+import { filterObservations, getObservationValue } from "@/helpers/emr";
 import { concepts } from "@/constants";
-import { airwayFormConfig, breathingFormConfig, circulationFormConfig, disabilityFormConfig, exposureFormConfig } from "@/app/patient/[id]/primary-assessment/components";
-
+import {
+  airwayFormConfig,
+  breathingFormConfig,
+  circulationFormConfig,
+  disabilityFormConfig,
+  exposureFormConfig,
+} from "@/app/patient/[id]/primary-assessment/components";
+import { soapierFormConfig } from "@/app/patient/[id]/soap/components/soapForm";
+import { getObservations } from "@/helpers";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -75,108 +79,158 @@ export const formatPrimarySurvey = (data: {
   ];
 };
 
-export const formatSoapierNotes = (data:any)=>{
+export const formatSoapierNotes = (data: any) => {
+  return [
+    {
+      heading: "Soapier Notes",
+      children: buildNotesObject(soapierFormConfig, data),
+    },
+  ];
+};
+export const formatDiagnosisNotes = (data: any) => {
 
-  console.log({data});
-}
+console.log({data});
 
+  const diagnosisNotesConfig = {
+    diagnosis: {
+      name: concepts.DIFFERENTIAL_DIAGNOSIS,
+      label: "Diagnosis",
+      type: "title",
+      children:[
+        {
+          concept: concepts.DIFFERENTIAL_DIAGNOSIS,
+          label: "Differential",
+          type: "string",
+          multiple:true
+        },
+        {
+          concept: concepts.FINAL_DIAGNOSIS,
+          label: "Final",
+          type: "string",
+          multiple:true
+        },
+      ]
+    },
+  };
 
-const buildNotesObject = (formConfig:any, obs:Obs[])=>{
-    return (
-      Object.keys(formConfig) as Array<keyof typeof formConfig>
-    )
-      .filter((key) => {
-        const config = formConfig[key];
-        return !config.child;
-      })
-      .map((key) => {
+  return [
+    {
+      heading: "Soapier Notes",
+      children: buildNotesObject(diagnosisNotesConfig, data),
+    },
+  ];
+};
 
-        const config = formConfig[key];
-        const value = getObservationValue(obs, config.name);
-        const displayValue = config.options?.[value] ?? value;
-        const topParentType = config?.type || "N/A";
-        const children = buildChildren(obs, config.children);
+const buildNotesObject = (formConfig: any, obs: Obs[]) => {
+  return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
+    .filter((key) => {
+      const config = formConfig[key];
+      return !config.child;
+    })
+    .map((key) => {
+      const config = formConfig[key];
+      const value = getObservationValue(obs, config.name);
+      const displayValue = config.options?.[value] ?? value;
+      const topParentType = config?.type || "N/A";
+      let children = buildChildren(obs, config.children) ?? [];
 
-        const result: any = {
-          item:
-            topParentType == "string"
-              ? displayValue
-              : { [config.label]: displayValue || "N/A" },
-        };
-        if (children && children.length > 0) {
-          result.children = children;
+      if (config.hasGroupMembers) {
+        const parentObs: any = filterObservations(obs, config.name);
+        if (parentObs?.length > 0) {
+          children = [
+            ...children,
+            ...parentObs[0].children.map((child: any) => ({
+              item: child.value,
+            })),
+          ];
         }
-        return result;
-      });
-}
+      }
 
+      const result: any = {
+        item:
+          topParentType == "string"
+            ? displayValue
+            : topParentType == "title"
+              ? config.label
+              : { [config.label]: displayValue || "N/A" },
+      };
+      if (children && children.length > 0) {
+        result.children = children;
+      }
+      return result;
+    });
+};
 
-const buildChildren = (obs: Obs[], children:any)=>{
-  if(!children) return;
-    return obs.length > 0 &&
-        children?.flatMap((child: any) => {
-          const innerObs = filterObservations(obs, child.concept);
-          let transformedObs;
+const buildChildren = (obs: Obs[], children: any) => {
+  if (!children) return;
+  return (
+    obs.length > 0 &&
+    children?.flatMap((child: any) => {
+      const innerObs = filterObservations(obs, child.concept);
+      let transformedObs;
 
-             if (child?.multiple) {
-               console.log(child.concept,{ innerObs });
-             }
-          
-          if (child?.type == "string") {
-            const obValue = getObservationValue(obs, child?.concept);
+      if (child?.multiple) {
+        console.log(child.concept, { innerObs });
+      }
 
-            const childValue = child?.multiple ? innerObs?.map(innerOb=>{
-              return {item:child?.options ? child.options[innerOb.value] : innerOb.value}
-            }) : child?.options ? child.options[obValue] : obValue;
+      if (child?.type == "string") {
+        const obValue = getObservationValue(obs, child?.concept);
 
-            transformedObs = {
-              item: child.label,
-              children: child?.children ? buildChildren(obs, child?.children): childValue
-            };
-          } else {
-             const obValue = getObservationValue(obs, child?.concept);
+        const childValue = child?.multiple
+          ? innerObs?.map((innerOb) => {
+              return {
+                item: child?.options
+                  ? child.options[innerOb.value]
+                  : innerOb.value,
+              };
+            })
+          : child?.options
+            ? child.options[obValue]
+            : obValue;
 
-             const childValue = child?.multiple
-               ? innerObs?.map((innerOb) => {
-                   return {
-                     item: child?.options
-                       ? child.options[innerOb.value]
-                       : innerOb.value,
-                   };
-                 })
-               : {[child.label]:obValue};
+        transformedObs = {
+          item: child.label,
+          children: child?.children
+            ? buildChildren(obs, child?.children)
+            : childValue,
+        };
+      } else {
+        const obValue = getObservationValue(obs, child?.concept);
 
-              //  console.log({childValue});
-               
-               
-              //  child?.options
-              //    ? child.options[obValue]
-              //    : obValue;
+        const childValue = child?.multiple
+          ? innerObs?.map((innerOb) => {
+              return {
+                item: child?.options
+                  ? child.options[innerOb.value]
+                  : innerOb.value,
+              };
+            })
+          : { [child.label]: obValue };
 
-                   transformedObs = {
-                     item: childValue,
-                     children: child?.children
-                       ? buildChildren(obs, child?.children)
-                       : childValue,
-                   };
+        //  console.log({childValue});
 
-                 
+        //  child?.options
+        //    ? child.options[obValue]
+        //    : obValue;
 
+        transformedObs = {
+          item: childValue,
+          children: child?.children
+            ? buildChildren(obs, child?.children)
+            : childValue,
+        };
 
-            // transformedObs = obs?.map((ob) => {
-            //   return {
-            //     item: { [child?.label]: ob.value || "N/A" },
-            //     children: child?.children ? buildChildren(obs, child?.children) : childValue,
-            //   };
-            // });
-          }       
-          return transformedObs;
-        });
-}
-
-
-
-
+        // transformedObs = obs?.map((ob) => {
+        //   return {
+        //     item: { [child?.label]: ob.value || "N/A" },
+        //     children: child?.children ? buildChildren(obs, child?.children) : childValue,
+        //   };
+        // });
+      }
+      return transformedObs;
+    })
+  );
+};
 
 // export const formatPrimarySurvey = (data: {
 //   airwayObs: Obs[];

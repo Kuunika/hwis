@@ -56,7 +56,7 @@ import {
 } from "./sampleHistory";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { DisplayInformation } from "./displayInformation";
-import { formatPresentingComplaints,formatPrimarySurvey,formatVitals } from "./formatters";
+import { formatDiagnosisNotes, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals } from "./formatters";
 
 type PanelData = {
   title: string;
@@ -895,7 +895,7 @@ export const ClinicalNotes = () => {
               </div>
             </div>
             <>
-              <DisplayInformation
+              {/* <DisplayInformation
                 title=""
                 data={[
                   formatPresentingComplaints(
@@ -903,9 +903,9 @@ export const ClinicalNotes = () => {
                   ),
                   ...formatVitals(getEncountersByType(encounters.VITALS)),
                 ]}
-              />
+              /> */}
 
-              <DisplayInformation
+              {/* <DisplayInformation
                 title=""
                 data={formatPrimarySurvey({
                   airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
@@ -922,6 +922,20 @@ export const ClinicalNotes = () => {
                     encounters.EXPOSURE_ASSESSMENT
                   ),
                 })}
+              /> */}
+
+              {/* <DisplayInformation
+                title=""
+                data={formatSoapierNotes(
+                  getEncountersByType(encounters.NURSING_CARE_NOTES),
+                )}
+              /> */}
+              <DisplayInformation
+                title=""
+                data={formatDiagnosisNotes([
+                  ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+                  ...getEncountersByType(encounters.DIAGNOSIS),
+                ])}
               />
             </>
             {/* <PrintClinicalNotes data={encounterData} /> */}
