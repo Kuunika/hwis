@@ -23,11 +23,14 @@ type PlanData = {
 
 interface Props {
   data: PlanData[];
+  title?: string;
 }
 
-const ResultsTableWithRowSpan: React.FC<Props> = ({ data }) => {
+const ResultsTableWithRowSpan: React.FC<Props> = ({ data, title }) => {
   return (
     <TableContainer component={Paper}>
+        <h3>{title}</h3>
+        <br />
       <Table size="small">
         <TableHead>
           <TableRow>

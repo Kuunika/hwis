@@ -267,11 +267,19 @@ export const ClinicalNotes = () => {
     },
     panel13: {
       title: "SOAPIER Notes",
-      data: [
-        ...getEncountersByType(encounters.NURSING_CARE_NOTES),
-        ...getEncountersByType(encounters.PRESCRIPTIONS),
-        ...getEncountersByType(encounters.DISPENSING),
-      ],
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatSoapierNotes(
+            getEncountersByType(encounters.NURSING_CARE_NOTES)
+          )}
+        />
+      ),
+      // data: [
+      //   ...getEncountersByType(encounters.NURSING_CARE_NOTES),
+      //   ...getEncountersByType(encounters.PRESCRIPTIONS),
+      //   ...getEncountersByType(encounters.DISPENSING),
+      // ],
       removeObs: ["nursing chart", "medication chart"], // Example headings to remove
     },
     panel18: {
@@ -297,10 +305,9 @@ export const ClinicalNotes = () => {
           title=""
           data={[
             formatPresentingComplaints(
-              getEncountersByType(encounters.PRESENTING_COMPLAINTS)),
-              ...formatVitals(
-                getEncountersByType(encounters.VITALS)
-              )
+              getEncountersByType(encounters.PRESENTING_COMPLAINTS)
+            ),
+            ...formatVitals(getEncountersByType(encounters.VITALS)),
           ]}
         />
       ),
@@ -332,10 +339,16 @@ export const ClinicalNotes = () => {
     },
     panel7: {
       title: "Plan",
-      data: [
-        ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
-        ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
-      ],
+      data:  <ResultsTable
+          title="Beside Tests"
+          data={formatInvestigationPlans([
+            ...getEncountersByType(encounters.BED_SIDE_TEST),
+          ])}
+        />,
+      //  [
+      //   ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
+      //   ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
+      // ],
       removeObs: [], // No specific headings to remove
     },
     panel8: {
@@ -368,23 +381,52 @@ export const ClinicalNotes = () => {
     },
     panel10: {
       title: "Diagnosis",
-      data: [
-        ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
-        ...getEncountersByType(encounters.DIAGNOSIS),
-      ],
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatDiagnosisNotes([
+            ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+            ...getEncountersByType(encounters.DIAGNOSIS),
+          ])}
+        />
+      ),
+      // [
+      //   ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+      //   ...getEncountersByType(encounters.DIAGNOSIS),
+      // ],
       removeObs: [], // No specific headings to remove
     },
     panel11: {
       title: "Laboratory or Radiology finding",
-      data: [
+      data:  [
         ...getEncountersByType(encounters.BED_SIDE_TEST),
-        ...getEncountersByType(encounters.LAB),
-      ],
+       ...getEncountersByType(encounters.LAB),
+       ],
       removeObs: [], // No specific headings to remove
     },
     panel12: {
       title: "Outcome/Disposition",
       data: getEncountersByType(encounters.DISPOSITION),
+      removeObs: [], // No specific headings to remove
+    },
+    panel20: {
+      title: "Primary Survey",
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatPrimarySurvey({
+            airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+            breathingObs: getEncountersByType(encounters.BREATHING_ASSESSMENT),
+            circulationObs: getEncountersByType(
+              encounters.CIRCULATION_ASSESSMENT
+            ),
+            disabilityObs: getEncountersByType(
+              encounters.PRIMARY_DISABILITY_ASSESSMENT
+            ),
+            exposureObs: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+          })}
+        />
+      ),
       removeObs: [], // No specific headings to remove
     },
     panel15: {
@@ -896,56 +938,7 @@ export const ClinicalNotes = () => {
                 </div>
               </div>
             </div>
-            <>
-              {/* <DisplayInformation
-                title=""
-                data={[
-                  formatPresentingComplaints(
-                    getEncountersByType(encounters.PRESENTING_COMPLAINTS)
-                  ),
-                  ...formatVitals(getEncountersByType(encounters.VITALS)),
-                ]}
-              /> */}
-
-              {/* <DisplayInformation
-                title=""
-                data={formatPrimarySurvey({
-                  airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
-                  breathingObs: getEncountersByType(
-                    encounters.BREATHING_ASSESSMENT
-                  ),
-                  circulationObs: getEncountersByType(
-                    encounters.CIRCULATION_ASSESSMENT
-                  ),
-                  disabilityObs: getEncountersByType(
-                    encounters.PRIMARY_DISABILITY_ASSESSMENT
-                  ),
-                  exposureObs: getEncountersByType(
-                    encounters.EXPOSURE_ASSESSMENT
-                  ),
-                })}
-              /> */}
-
-              {/* <DisplayInformation
-                title=""
-                data={formatSoapierNotes(
-                  getEncountersByType(encounters.NURSING_CARE_NOTES),
-                )}
-              /> */}
-              <DisplayInformation
-                title=""
-                data={formatDiagnosisNotes([
-                  ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
-                  ...getEncountersByType(encounters.DIAGNOSIS),
-                ])}
-              />
-              <ResultsTable
-                data={formatInvestigationPlans([
-                  ...getEncountersByType(encounters.BED_SIDE_TEST),
-                ])}
-              />
-            </>
-            {/* <PrintClinicalNotes data={encounterData} /> */}
+            <PrintClinicalNotes data={encounterData} />
           </div>
         )}
 
