@@ -10,6 +10,7 @@ import { useNavigation } from "@/hooks";
 import { OverlayLoader } from "@/components/backdrop";
 import CssBaseline from "@mui/material/CssBaseline";
 import { PrinterDialog } from "@/components/printerDialog";
+import { ErrorBoundary } from "./components/errorBoundary";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -71,18 +72,20 @@ export default function RootLayout({
         className={inter.className}
         suppressHydrationWarning={true}
       >
-        <ReactQueryProvider>
-          <ContextProviders>
-            <ProviderTheme>
-              <CssBaseline />
-              <NavBar />
-              {children}
-              <PrinterDialog />
-              <OverlayLoader open={false} />
-              <ToastContainer limit={1} />
-            </ProviderTheme>
-          </ContextProviders>
-        </ReactQueryProvider>
+        <ErrorBoundary>
+          <ReactQueryProvider>
+            <ContextProviders>
+              <ProviderTheme>
+                <CssBaseline />
+                <NavBar />
+                {children}
+                <PrinterDialog />
+                <OverlayLoader open={false} />
+                <ToastContainer limit={1} />
+              </ProviderTheme>
+            </ContextProviders>
+          </ReactQueryProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

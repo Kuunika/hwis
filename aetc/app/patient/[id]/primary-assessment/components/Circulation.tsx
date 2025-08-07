@@ -44,10 +44,19 @@ const form = {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
     label: "Does the patient have a pulse",
   },
-  pulseRate: {
-    name: concepts.PULSE_RATE_WEAK,
-    label: "Pulse rate",
+
+  pulseStrength: {
+    name: concepts.PULSE_RATE_WEAK, // You'll need to add this concept
+    label: "Pulse strength",
   },
+  pulseRhythm: {
+    name: concepts.REGULAR_RHYTHM, // You'll need to add this concept
+    label: "Pulse rhythm",
+  },
+  // pulseRate: {
+  //   name: concepts.PULSE_RATE_WEAK,
+  //   label: "Pulse rate",
+  // },
   bloodPressureSystolic: {
     name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Systolic",
@@ -161,7 +170,10 @@ const schema = yup.object({
     .label(form.bleedingInfo.label),
   [form.pulseInfo.name]: yup.string().label(form.pulseInfo.label),
 
-  [form.pulseRate.name]: yup.string().label(form.pulseRate.label),
+  [form.pulseStrength.name]: yup.string().label(form.pulseStrength.label),
+  [form.pulseRhythm.name]: yup.string().label(form.pulseRhythm.label),
+
+  // [form.pulseRate.name]: yup.string().label(form.pulseRate.label),
   [form.bleedingActionDone.name]: yup
     .string()
     .label(form.bleedingActionDone.label),
@@ -260,11 +272,22 @@ const mucousAbnormal = [
   { label: "Cyanosis", id: concepts.CYANOSIS },
   { label: "Jaundice", id: concepts.JAUNDICE },
 ];
-const pulseRates = [
+
+const pulseStrengthOptions = [
   { label: "Weak", value: concepts.WEAK },
-  { label: "Strong, Regular", value: concepts.STRONG_REGULAR },
+  { label: "Strong", value: concepts.STRONG_REGULAR },
+];
+
+const pulseRhythmOptions = [
+  { label: "Regular", value: concepts.REGULAR_RHYTHM },
   { label: "Irregular", value: concepts.IRREGULAR },
 ];
+
+// const pulseRates = [
+//   { label: "Weak", value: concepts.WEAK },
+//   { label: "Strong, Regular", value: concepts.STRONG_REGULAR },
+//   { label: "Irregular", value: concepts.IRREGULAR },
+// ];
 
 const capillaryRefillTimes = [
   { label: "Less than 3 seconds", value: concepts.LESS_THAN_3_SECONDS },
@@ -312,7 +335,7 @@ const centralLineCannulationSites = [
   },
 ];
 export const Circulation = ({ onSubmit }: Prop) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const { gender } = getActivePatientDetails();
   const [formValues, setFormValues] = useState<any>({});
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
@@ -330,7 +353,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = ServerTime.getServerTimeString()
+    const obsDatetime = ServerTime.getServerTimeString();
 
     const obs = [
       {
@@ -403,12 +426,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
   };
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if circulation is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}
@@ -471,10 +494,21 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   sx={{ width: "100%" }}
                 />
                 <FieldsContainer>
-                  <RadioGroupInput
+                  {/* <RadioGroupInput
                     name={form.pulseRate.name}
                     label={form.pulseRate.label}
                     options={pulseRates}
+                  /> */}
+
+                  <RadioGroupInput
+                    name={form.pulseStrength.name}
+                    label={form.pulseStrength.label}
+                    options={pulseStrengthOptions}
+                  />
+                  <RadioGroupInput
+                    name={form.pulseRhythm.name}
+                    label={form.pulseRhythm.label}
+                    options={pulseRhythmOptions}
                   />
                   <RadioGroupInput
                     name={form.capillaryInfo.name}

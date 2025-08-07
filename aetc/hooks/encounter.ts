@@ -14,7 +14,7 @@ export const addEncounter = () => {
   const addData = (encounter: any) => {
     const filteredEncounter = {
       ...encounter,
-      obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
+      obs: encounter?.obs?.filter((ob: any) => Boolean(ob.value)),
     };
 
     return createEncounter(filteredEncounter).then((response) => response.data);
@@ -59,7 +59,7 @@ export const fetchConceptAndCreateEncounter = () => {
   const addData = async (encounter: any) => {
     const filteredEncounter = {
       ...encounter,
-      obs: encounter.obs.filter((ob: any) => Boolean(ob.value)),
+      obs: encounter?.obs?.filter((ob: any) => Boolean(ob.value)),
     };
 
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
@@ -70,7 +70,6 @@ export const fetchConceptAndCreateEncounter = () => {
   return useMutation({
     mutationFn: addData,
     onSuccess: (data) => {
-      console.log({ data });
       queryClient.invalidateQueries({
         queryKey: ["encounters", data.person_uuid],
       });
@@ -137,7 +136,7 @@ export const getConceptFromCacheOrFetch = async (conceptName: string) => {
   } else {
     concept = await getConcept(conceptName);
     queryClient.setQueryData(["concepts", conceptName], concept);
-    queryClient.setQueryData([concept.data[0].uuid], conceptName);
+    queryClient.setQueryData([concept?.data[0]?.uuid], conceptName);
   }
   return concept;
 };
@@ -167,12 +166,12 @@ const fetchConcepts = async (
 
     if (!cachedConcept) {
       queryClient.setQueryData(["concepts", option.key], conceptData);
-      queryClient.setQueryData([conceptData.data[0]?.uuid], option.key);
+      queryClient.setQueryData([conceptData?.data[0]?.uuid], option.key);
     }
 
     if (conceptData.data.length) {
       mappedOptions.push({
-        [useValueKey ? "value" : "id"]: conceptData.data[0]?.uuid,
+        [useValueKey ? "value" : "id"]: conceptData?.data[0]?.uuid,
         label: option.label,
       });
     }

@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { FormDatePicker, MainButton, SearchComboBox, TextInputField, WrapperBox, FormFieldContainer, FormValuesListener, FormikInit, MainTypography } from "@/components";
+import {
+  FormDatePicker,
+  MainButton,
+  SearchComboBox,
+  TextInputField,
+  WrapperBox,
+  FormFieldContainer,
+  FormValuesListener,
+  FormikInit,
+  MainTypography,
+} from "@/components";
 import * as yup from "yup";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { TableCell } from "@mui/material";
@@ -52,12 +62,12 @@ const admissionTemplate: Admission = {
   diagnosis: "",
   interventions: "",
   discharge_instructions: "",
-  follow_up_plans: ""
+  follow_up_plans: "",
 };
 
 const initialValues = {
   admissions: [admissionTemplate],
-  none: false
+  none: false,
 };
 
 const admissionsFormConfig = {
@@ -91,7 +101,6 @@ const admissionsFormConfig = {
   }),
 };
 
-
 const ErrorMessage = ({ name }: { name: string }) => (
   <Field
     name={name}
@@ -104,7 +113,6 @@ const ErrorMessage = ({ name }: { name: string }) => (
 );
 
 const admissionsSchema = yup.object().shape({
-
   date: yup
     .date()
     .nullable()
@@ -141,21 +149,22 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   const { params } = useParameters();
   const [formValues, setFormValues] = useState<any>({});
   const [hospitalOptions, setHospitalOptions] = useState<[]>();
-  const { data: facilitiesData, isLoading } = getFacilities();
-  const { data: patientHistory, isLoading: historyLoading } = getPatientsEncounters(params?.id as string);
+  const { data: facilitiesData } = getFacilities();
+  const { data: patientHistory, isLoading: historyLoading } =
+    getPatientsEncounters(params?.id as string);
   const [observations, setObservations] = useState<ProcessedObservation[]>([]);
   const [showAll, setShowAll] = useState(false);
-  const displayedObservations = showAll ? observations : observations.slice(0, 3);
+  const displayedObservations = showAll
+    ? observations
+    : observations.slice(0, 3);
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<string[]>([]);
 
   const admissionsEncounters = patientHistory?.filter(
     (item) => item.encounter_type?.name === "PATIENT ADMISSIONS"
   );
 
-
-
   const handleSubmit = async () => {
-    console.log(formValues)
+    console.log(formValues);
     if (formValues.none) {
       onSkip();
       return;
@@ -164,13 +173,12 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   };
 
   useEffect(() => {
-
-    const hospitalOptions = facilitiesData.map((facility: any) => ({
+    const hospitalOptions: any = facilitiesData.map((facility: any) => ({
       id: facility.facility_code,
-      label: facility.facility_name
+      label: facility.facility_name,
     }));
 
-    setHospitalOptions(hospitalOptions)
+    setHospitalOptions(hospitalOptions);
 
     if (!historyLoading) {
       const observations: ProcessedObservation[] = [];
@@ -184,51 +192,63 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
             value,
             children: observation.children
               ? observation.children.map((child) => ({
-                obs_id: child.obs_id,
-                name: child.names?.[0]?.name,
-                value_text: child.value_text,
-                children: [],
-              }))
+                  obs_id: child.obs_id,
+                  name: child.names?.[0]?.name,
+                  value_text: child.value_text,
+                  children: [],
+                }))
               : [],
           };
 
-
           observations.push(obsData);
-
         });
 
-        observations.sort((a, b) => new Date(b.value).getTime() - new Date(a.value).getTime());
-        setObservations(observations)
+        observations.sort(
+          (a, b) => new Date(b.value).getTime() - new Date(a.value).getTime()
+        );
+        setObservations(observations);
       });
     }
-
   }, [patientHistory]);
 
   const handleICD11Selection = (selectedEntity: any, index: number) => {
     const updatedSelections = { ...selectedDiagnosis };
     const updatedValues = { ...formValues };
 
-    updatedSelections[index] = selectedEntity.diagnosis + " - " + selectedEntity.code;
+    updatedSelections[index] =
+      selectedEntity.diagnosis + " - " + selectedEntity.code;
     setSelectedDiagnosis(updatedSelections);
 
-    formValues.admissions[index]["diagnosis"] = selectedEntity.code + "," + selectedEntity.diagnosis;
+    formValues.admissions[index]["diagnosis"] =
+      selectedEntity.code + "," + selectedEntity.diagnosis;
     setFormValues(updatedValues);
   };
-
 
   const handleClear = (index: number) => {
     const updatedSelections = { ...selectedDiagnosis };
     updatedSelections[index] = "";
 
     setSelectedDiagnosis(updatedSelections);
-
   };
 
   return (
-    <div style={{ marginLeft: "100px", marginTop: "20px", borderTop: "1px solid rgba(0, 0, 0, 0.1)", paddingTop: "20px", paddingBottom: "20px" }}>
-
-      <div style={{ background: 'white', padding: '20px', borderRadius: '5px', marginBottom: '20px' }}>
-
+    <div
+      style={{
+        marginLeft: "100px",
+        marginTop: "20px",
+        borderTop: "1px solid rgba(0, 0, 0, 0.1)",
+        paddingTop: "20px",
+        paddingBottom: "20px",
+      }}
+    >
+      <div
+        style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "5px",
+          marginBottom: "20px",
+        }}
+      >
         <MainTypography
           variant="h5"
           fontWeight={"700"}
@@ -241,36 +261,59 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
         >
           Previous admissions
         </MainTypography>
-        <div>{displayedObservations.length === 0 ? (<p>No admission history available</p>) : (<>
-          {displayedObservations.map(item => (
-            <div key={item.obs_id} style={{ marginBottom: "20px", color: "rgba(0, 0, 0, 0.6)" }}>
-              <h4>{item.value}</h4>
+        <div>
+          {displayedObservations.length === 0 ? (
+            <p>No admission history available</p>
+          ) : (
+            <>
+              {displayedObservations.map((item) => (
+                <div
+                  key={item.obs_id}
+                  style={{ marginBottom: "20px", color: "rgba(0, 0, 0, 0.6)" }}
+                >
+                  <h4>{item.value}</h4>
 
-              {item.children && item.children.length > 0 && (
-                <ul>
-                  {item.children.map(child => (
-                    <li key={child.obs_id}>
-                      {child.name}: {child.value_text}
-                    </li>
-                  ))}
-                </ul>
+                  {item.children && item.children.length > 0 && (
+                    <ul>
+                      {item.children.map((child) => (
+                        <li key={child.obs_id}>
+                          {child.name}: {child.value_text}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+              {!showAll && observations.length > 3 && (
+                <button
+                  onClick={() => setShowAll(true)}
+                  style={{
+                    color: "rgba(0, 0, 0, 0.6)",
+                    cursor: "pointer",
+                    border: "none",
+                    background: "none",
+                    padding: 0,
+                  }}
+                >
+                  View More ...
+                </button>
               )}
-            </div>
-          ))}
-          {!showAll && observations.length > 3 && (
-            <button
-              onClick={() => setShowAll(true)}
-              style={{ color: 'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
-            >
-              View More ...
-            </button>
+              {showAll && (
+                <button
+                  onClick={() => setShowAll(false)}
+                  style={{
+                    color: "rgba(0, 0, 0, 0.6)",
+                    cursor: "pointer",
+                    border: "none",
+                    background: "none",
+                    padding: 0,
+                  }}
+                >
+                  View Less
+                </button>
+              )}
+            </>
           )}
-          {showAll && (<button
-            onClick={() => setShowAll(false)}
-            style={{ color: 'rgba(0, 0, 0, 0.6)', cursor: "pointer", border: "none", background: "none", padding: 0 }}
-          >
-            View Less
-          </button>)}</>)}
         </div>
       </div>
       <FormikInit
@@ -290,12 +333,14 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
             </div>
             <FormValuesListener getValues={setFormValues} />
 
-            <WrapperBox sx={{ mb: '2ch' }}>
+            <WrapperBox sx={{ mb: "2ch" }}>
               <FieldArray name="admissions">
-                {({ }) => (
+                {({}) => (
                   <DynamicFormList
                     items={values.admissions}
-                    setItems={(newItems) => setFieldValue("admissions", newItems)}
+                    setItems={(newItems) =>
+                      setFieldValue("admissions", newItems)
+                    }
                     newItem={admissionTemplate}
                     renderFields={(item, index) => (
                       <>
@@ -303,13 +348,20 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                           <div>
                             <FormDatePicker
                               disabled={formValues.none}
-                              name={admissionsFormConfig.admission_date(index).name}
-                              label={admissionsFormConfig.admission_date(index).label}
+                              name={
+                                admissionsFormConfig.admission_date(index).name
+                              }
+                              label={
+                                admissionsFormConfig.admission_date(index).label
+                              }
                               sx={{ background: "white", width: "220px" }}
                             />
                             <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
-                                name={admissionsFormConfig.admission_date(index).name}
+                                name={
+                                  admissionsFormConfig.admission_date(index)
+                                    .name
+                                }
                               />
                             </MainTypography>
                           </div>
@@ -317,14 +369,18 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                             <SearchComboBox
                               disabled={formValues.none}
                               name={admissionsFormConfig.hospitals(index).name}
-                              label={admissionsFormConfig.hospitals(index).label}
+                              label={
+                                admissionsFormConfig.hospitals(index).label
+                              }
                               options={hospitalOptions ? hospitalOptions : []}
                               multiple={false}
                               sx={{ width: "320px" }}
                             />
                             <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
-                                name={admissionsFormConfig.hospitals(index).name}
+                                name={
+                                  admissionsFormConfig.hospitals(index).name
+                                }
                               />
                             </MainTypography>
                           </div>
@@ -345,19 +401,20 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                               />
                             </MainTypography>
                           </div>
-                          {selectedDiagnosis[index] !== "" && selectedDiagnosis[index] ? (
+                          {selectedDiagnosis[index] !== "" &&
+                          selectedDiagnosis[index] ? (
                             <div
                               style={{
                                 backgroundColor: "white",
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                padding: '12px',
-                                gap: '1rem',
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "12px",
+                                gap: "1rem",
                                 borderRadius: "5px",
-                                border: '1px solid #e0e0e0',
-                                minHeight: '48px'
+                                border: "1px solid #e0e0e0",
+                                minHeight: "48px",
                               }}
                             >
                               <label style={{ fontWeight: "bold" }}>
@@ -371,33 +428,46 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                             </div>
                           ) : (
                             <>
-                            <OfflineICD11Selection
-                              label="Diagnosis"
-                              initialValue=""
-                              onSelection={(entity: any) => handleICD11Selection(entity, index)}
-                              placeholder="Start typing to search diagnoses..."
-                            />
-                            <MainTypography color="red" variant="subtitle2">
-                            <ErrorMessage name={admissionsFormConfig.diagnosis(index).name} />
-                          </MainTypography>
-                          </>
-                            )}
-
+                              <OfflineICD11Selection
+                                label="Diagnosis"
+                                initialValue=""
+                                onSelection={(entity: any) =>
+                                  handleICD11Selection(entity, index)
+                                }
+                                placeholder="Start typing to search diagnoses..."
+                              />
+                              <MainTypography color="red" variant="subtitle2">
+                                <ErrorMessage
+                                  name={
+                                    admissionsFormConfig.diagnosis(index).name
+                                  }
+                                />
+                              </MainTypography>
+                            </>
+                          )}
                         </FormFieldContainer>
                         <div style={{ width: "100%" }}>
                           <div>
                             <TextInputField
                               disabled={formValues.none}
-                              id={admissionsFormConfig.interventions(index).name}
-                              name={admissionsFormConfig.interventions(index).name}
-                              label={admissionsFormConfig.interventions(index).label}
+                              id={
+                                admissionsFormConfig.interventions(index).name
+                              }
+                              name={
+                                admissionsFormConfig.interventions(index).name
+                              }
+                              label={
+                                admissionsFormConfig.interventions(index).label
+                              }
                               multiline
                               sx={{ width: "100%" }}
                               rows={4}
                             />
                             <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
-                                name={admissionsFormConfig.interventions(index).name}
+                                name={
+                                  admissionsFormConfig.interventions(index).name
+                                }
                               />
                             </MainTypography>
                           </div>
@@ -405,16 +475,32 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                           <div>
                             <TextInputField
                               disabled={formValues.none}
-                              id={admissionsFormConfig.discharge_instructions(index).name}
-                              name={admissionsFormConfig.discharge_instructions(index).name}
-                              label={admissionsFormConfig.discharge_instructions(index).label}
+                              id={
+                                admissionsFormConfig.discharge_instructions(
+                                  index
+                                ).name
+                              }
+                              name={
+                                admissionsFormConfig.discharge_instructions(
+                                  index
+                                ).name
+                              }
+                              label={
+                                admissionsFormConfig.discharge_instructions(
+                                  index
+                                ).label
+                              }
                               multiline
                               sx={{ width: "100%" }}
                               rows={4}
                             />
                             <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
-                                name={admissionsFormConfig.discharge_instructions(index).name}
+                                name={
+                                  admissionsFormConfig.discharge_instructions(
+                                    index
+                                  ).name
+                                }
                               />
                             </MainTypography>
                           </div>
@@ -422,16 +508,26 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
                           <div>
                             <TextInputField
                               disabled={formValues.none}
-                              id={admissionsFormConfig.follow_up_plans(index).name}
-                              name={admissionsFormConfig.follow_up_plans(index).name}
-                              label={admissionsFormConfig.follow_up_plans(index).label}
+                              id={
+                                admissionsFormConfig.follow_up_plans(index).name
+                              }
+                              name={
+                                admissionsFormConfig.follow_up_plans(index).name
+                              }
+                              label={
+                                admissionsFormConfig.follow_up_plans(index)
+                                  .label
+                              }
                               multiline
                               sx={{ width: "100%" }}
                               rows={4}
                             />
                             <MainTypography color="red" variant="subtitle2">
                               <ErrorMessage
-                                name={admissionsFormConfig.follow_up_plans(index).name}
+                                name={
+                                  admissionsFormConfig.follow_up_plans(index)
+                                    .name
+                                }
                               />
                             </MainTypography>
                           </div>
@@ -443,12 +539,24 @@ export const AdmissionsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
               </FieldArray>
             </WrapperBox>
 
-            <MainButton variant="secondary" title="Previous" type="button" onClick={onPrevious} sx={{ flex: 1, marginRight: '8px' }} />
-            <MainButton onClick={() => { }} variant="primary" title="Next" type="submit" sx={{ flex: 1 }} />
+            <MainButton
+              variant="secondary"
+              title="Previous"
+              type="button"
+              onClick={onPrevious}
+              sx={{ flex: 1, marginRight: "8px" }}
+            />
+            <MainButton
+              onClick={() => {}}
+              variant="primary"
+              title="Next"
+              type="submit"
+              sx={{ flex: 1 }}
+            />
           </>
         )}
       </FormikInit>
     </div>
   );
-}
+};
 export default AdmissionsForm;

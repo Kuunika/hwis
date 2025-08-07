@@ -41,7 +41,7 @@ export const ReferralForm: FC<Props> = ({
   setContext,
   onSkip,
 }) => {
-  const { data, isLoading } = getFacilities();
+  const { data } = getFacilities();
   const { params } = useParameters();
   const { data: encounterList, isLoading: loadingEncounters } =
     getPatientsEncounters(params?.id as string);
@@ -105,7 +105,6 @@ export const ReferralForm: FC<Props> = ({
                         [concepts.REFERRED_FROM]: "N/A",
                         [concepts.DIAGNOSIS]: "",
                         [concepts.OTHER]: "",
-                      
                       });
                       if (onSkip) onSkip();
                     }}
@@ -114,25 +113,22 @@ export const ReferralForm: FC<Props> = ({
                   </Button>
                 </Box>
               )}
-              {isLoading ? (
-                <>loading facilities...</>
-              ) : (
-                <SearchComboBox
-                  label="Referral Medical Facility"
-                  name={concepts.REFERRED_FROM}
-                  multiple={false}
-                  getValue={setSelectedValue}
-                  disabled={isAvailable == "no" || referred == "No"}
-                  options={
-                    data
-                      ? data.map((d: any) => ({
-                          id: d.facility_name,
-                          label: d.facility_name,
-                        }))
-                      : []
-                  }
-                />
-              )}
+
+              <SearchComboBox
+                label="Referral Medical Facility"
+                name={concepts.REFERRED_FROM}
+                multiple={false}
+                getValue={setSelectedValue}
+                disabled={isAvailable == "no" || referred == "No"}
+                options={
+                  data
+                    ? data.map((d: any) => ({
+                        id: d.facility_name,
+                        label: d.facility_name,
+                      }))
+                    : []
+                }
+              />
               {selectedValue == "" && (
                 <RadioGroupInput
                   disabled={referred == "No"}
@@ -176,21 +172,22 @@ export const ReferralForm: FC<Props> = ({
                 name={concepts.DIAGNOSIS}
               />
 
-              { Array.isArray(values[concepts.DIAGNOSIS]) && values[concepts.DIAGNOSIS]?.find(
-                (d: any) => d?.id == concepts.OTHER
-              ) && (
-                <>
-                <br />
-                <TextInputField
-                  multiline={true}
-                  rows={5}
-                  sx={{ width: "100%" }}
-                  name={concepts.OTHER}
-                  label="Other Diagnosis"
-                  id={concepts.OTHER}
-                  />
+              {Array.isArray(values[concepts.DIAGNOSIS]) &&
+                values[concepts.DIAGNOSIS]?.find(
+                  (d: any) => d?.id == concepts.OTHER
+                ) && (
+                  <>
+                    <br />
+                    <TextInputField
+                      multiline={true}
+                      rows={5}
+                      sx={{ width: "100%" }}
+                      name={concepts.OTHER}
+                      label="Other Diagnosis"
+                      id={concepts.OTHER}
+                    />
                   </>
-              )}
+                )}
             </RegistrationCard>
           </>
         )}

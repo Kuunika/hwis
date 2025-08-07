@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { useReactToPrint } from "react-to-print";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
+import { LabOrderPlanTable } from "@/app/patient/components/panels/labOrderPlanTable";
 import { PatientInfoTab } from "@/components";
 import { encounters } from "@/constants";
 import { useParameters } from "@/hooks";
@@ -53,6 +54,37 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             oralCandidiasis: "",
             jvpRaised: "",
             lymphadenopathy: "",
+            // ✅ New Fields
+            symmetricalExpansion: "",
+            apexBeat: "",
+            thrillHeaves: "",
+            auscultation: "",
+            auscultationLung: "",
+            edema: "",
+            skinRash: "",
+            herpesZosterScar: "",
+            nuchalRigidity: "",
+            motorResponse: "",
+            verbalResponse: "",
+            eyeOpeningResponse: "",
+            pupil: "",
+            visualFieldAcuity: "",
+            eyeMovementsNystagmus: "",
+            eyeMovementsSensation: "",
+            hearing: "",
+            tongueMovementTastes: "",
+            coughGagReflex: "",
+            power: "",
+            tone: "",
+            reflexes: "",
+            plantars: "",
+            sensation: "",
+            coordination: "",
+            summary: "",
+            differentialDiagnosis: "",
+            admittingOfficer: "", // Default value
+
+
         });
 
         // Ref for printing
@@ -86,6 +118,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 )[0];
 
             if (medicalInpatientEncounter && medicalInpatientEncounter.obs) {
+                const admittingOfficer = medicalInpatientEncounter.created_by || "";
+
                 const inpatientInfo = {
                     presentingComplaint: "",
                     presentingHistory: "",
@@ -110,6 +144,36 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     oralCandidiasis: "",
                     jvpRaised: "",
                     lymphadenopathy: "",
+                    // ✅ New Fields
+                    symmetricalExpansion: "",
+                    apexBeat: "",
+                    thrillHeaves: "",
+                    auscultation: "",
+                    auscultationLung: "",
+                    edema: "",
+                    skinRash: "",
+                    herpesZosterScar: "",
+                    nuchalRigidity: "",
+                    motorResponse: "",
+                    verbalResponse: "",
+                    eyeOpeningResponse: "",
+                    pupil: "",
+                    visualFieldAcuity: "",
+                    eyeMovementsNystagmus: "",
+                    eyeMovementsSensation: "",
+                    hearing: "",
+                    tongueMovementTastes: "",
+                    coughGagReflex: "",
+                    power: "",
+                    tone: "",
+                    reflexes: "",
+                    plantars: "",
+                    sensation: "",
+                    coordination: "",
+                    summary: "",
+                    differentialDiagnosis: "",
+                    admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
+
 
                 };
                 medicalInpatientEncounter.obs.forEach(obs => {
@@ -159,6 +223,65 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Lymphadenopathy") {
                         inpatientInfo.lymphadenopathy = obs.value || obs.value_text || "";
                     }
+                    // ✅ New Fields
+                    else if (conceptName === "symmetrical expansion") {
+                        inpatientInfo.symmetricalExpansion = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Apex beat") {
+                        inpatientInfo.apexBeat = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Tthrill heaves") {
+                        inpatientInfo.thrillHeaves = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Auscultation") {
+                        inpatientInfo.auscultation = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Auscultation Lung") {
+                        inpatientInfo.auscultationLung = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Edema") {
+                        inpatientInfo.edema = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Skin rash") {
+                        inpatientInfo.skinRash = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Herpes Zoster Scar") {
+                        inpatientInfo.herpesZosterScar = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Nuchal rigidity") {
+                        inpatientInfo.nuchalRigidity = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Motor response") {
+                        inpatientInfo.motorResponse = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Verbal response") {
+                        inpatientInfo.verbalResponse = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Eye Opening response") {
+                        inpatientInfo.eyeOpeningResponse = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Pupil") {
+                        inpatientInfo.pupil = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Visual Field Acuity") {
+                        inpatientInfo.visualFieldAcuity = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Eye Movements/Nystagmus") {
+                        inpatientInfo.eyeMovementsNystagmus = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Eye Movements/Sensation") {
+                        inpatientInfo.eyeMovementsSensation = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Hearing") {
+                        inpatientInfo.hearing = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Tongue Movement/Tastes") {
+                        inpatientInfo.tongueMovementTastes = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Cough Gag Reflex") {
+                        inpatientInfo.coughGagReflex = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Power") {
+                        inpatientInfo.power = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Tone") {
+                        inpatientInfo.tone = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Reflexes") {
+                        inpatientInfo.reflexes = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Plantars") {
+                        inpatientInfo.plantars = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Sensation") {
+                        inpatientInfo.sensation = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Coordination") {
+                        inpatientInfo.coordination = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Summary") {
+                        inpatientInfo.summary = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Attempted/ Differential Diagnosis") {
+                        inpatientInfo.differentialDiagnosis = obs.value || obs.value_text || "";
+                    }
+
                 });
                 setMedicalInpatientInfo(inpatientInfo);
             }
@@ -169,41 +292,499 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             <div ref={contentRef} className="printable-content">
                 <div className={showPreview ? "print-preview" : "print-only"}>
                     <PatientInfoTab />
-                    <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Medical Inpatient</h1>
+                    <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+                        Medical Inpatient
+                    </h1>
 
-                    {/* Display all collected data in a structured format */}
-                    <div className="patient-examination-data">
-                        <h2>Complaints</h2>
-                        <p><strong>Presenting Complaints: </strong>{medicalInpatientInfo.presentingComplaint}</p>
-                        <p><strong>History of Presenting Complaints: </strong>{medicalInpatientInfo.presentingHistory}</p>
+                    {Object.values(medicalInpatientInfo).every((val) => !val) ? (
+                        <p style={{ fontStyle: "italic", color: "gray" }}>
+                            Medical Inpatient not recorded.
+                        </p>
+                    ) : (
+                        <div className="patient-examination-data">
+                            {medicalInpatientInfo.presentingComplaint && (
+                                <>
+                                    <h2>Complaints</h2>
+                                    <p>
+                                        <strong>Presenting Complaints: </strong>
+                                        {medicalInpatientInfo.presentingComplaint}
+                                    </p>
+                                </>
+                            )}
 
-                        <h2>Medical History</h2>
-                        <p><strong>Drug: </strong>{medicalInpatientInfo.medication}</p>
+                            {medicalInpatientInfo.presentingHistory && (
+                                <p>
+                                    <strong>History of Presenting Complaints: </strong>
+                                    {medicalInpatientInfo.presentingHistory}
+                                </p>
 
-                        <h2>Past Medical History</h2>
-                        <p><strong>HIV Status: </strong>{medicalInpatientInfo.hivProgram}</p>
-                        <p><strong>Other: </strong>{medicalInpatientInfo.other}</p>
-                        <p><strong>Surgical History: </strong>{medicalInpatientInfo.surgicalHistory}</p>
-                        <p><strong>Social History: </strong>{medicalInpatientInfo.socialHistory}</p>
-                        <p><strong>Family History: </strong>{medicalInpatientInfo.familyHistory}</p>
-                        <p><strong>Allergy: </strong>{medicalInpatientInfo.allergicReaction}</p>
-                        <p><strong>Intoxication: </strong>{medicalInpatientInfo.intoxication}</p>
-
-                        <h2>Review of Systems</h2>
-                        <p><strong>General Impression: </strong>{medicalInpatientInfo.general}</p>
-                        <p><strong>Systolic: </strong>{medicalInpatientInfo.systolicBloodpressure}</p>
-                        <p><strong>Diastolic: </strong>{medicalInpatientInfo.diastolicBloodPressure}</p>
-                        <p><strong>Pulse Rate: </strong>{medicalInpatientInfo.pulseRate}</p>
-                        <p><strong>Respiratory Rate: </strong>{medicalInpatientInfo.respiratoryRate}</p>
-                        <p><strong>Temperature: </strong>{medicalInpatientInfo.temperature}</p>
-                        <p><strong>Pupils Symmetrical: </strong>{medicalInpatientInfo.pupilsSymmetrical}</p>
-                        <p><strong>Conjunctiva: </strong>{medicalInpatientInfo.conjunctiva}</p>
-                        <p><strong>Oral KS: </strong>{medicalInpatientInfo.oralKS}</p>
-                        <p><strong>JVP raised: </strong>{medicalInpatientInfo.jvpRaised}</p>
-                        <p><strong>Lymphadenopathy: </strong>{medicalInpatientInfo.lymphadenopathy}</p>
+                            )}
+                            <hr />
 
 
-                    </div>
+                            {(medicalInpatientInfo.medication ||
+                                medicalInpatientInfo.hivProgram ||
+                                medicalInpatientInfo.other ||
+                                medicalInpatientInfo.surgicalHistory ||
+                                medicalInpatientInfo.socialHistory ||
+                                medicalInpatientInfo.familyHistory ||
+                                medicalInpatientInfo.allergicReaction ||
+                                medicalInpatientInfo.intoxication) && (
+                                    <>
+                                        <h2>Medical History</h2>
+                                        {medicalInpatientInfo.medication && (
+                                            <p>
+                                                <strong>Drug: </strong>
+                                                {medicalInpatientInfo.medication}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.hivProgram && (
+                                            <p>
+                                                <strong>HIV Status: </strong>
+                                                {medicalInpatientInfo.hivProgram}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.other && (
+                                            <p>
+                                                <strong>Other: </strong>
+                                                {medicalInpatientInfo.other}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.surgicalHistory && (
+                                            <p>
+                                                <strong>Surgical History: </strong>
+                                                {medicalInpatientInfo.surgicalHistory}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.socialHistory && (
+                                            <p>
+                                                <strong>Social History: </strong>
+                                                {medicalInpatientInfo.socialHistory}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.familyHistory && (
+                                            <p>
+                                                <strong>Family History: </strong>
+                                                {medicalInpatientInfo.familyHistory}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.allergicReaction && (
+                                            <p>
+                                                <strong>Allergy: </strong>
+                                                {medicalInpatientInfo.allergicReaction}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.intoxication && (
+                                            <p>
+                                                <strong>Intoxication: </strong>
+                                                {medicalInpatientInfo.intoxication}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                            <hr />
+
+
+                            {(medicalInpatientInfo.general ||
+                                medicalInpatientInfo.systolicBloodpressure ||
+                                medicalInpatientInfo.diastolicBloodPressure ||
+                                medicalInpatientInfo.pulseRate ||
+                                medicalInpatientInfo.respiratoryRate ||
+                                medicalInpatientInfo.temperature ||
+                                medicalInpatientInfo.pupilsSymmetrical ||
+                                medicalInpatientInfo.conjunctiva ||
+                                medicalInpatientInfo.oralKS ||
+                                medicalInpatientInfo.oralCandidiasis ||
+                                medicalInpatientInfo.jvpRaised ||
+                                medicalInpatientInfo.lymphadenopathy ||
+                                medicalInpatientInfo.symmetricalExpansion ||
+                                medicalInpatientInfo.apexBeat ||
+                                medicalInpatientInfo.thrillHeaves ||
+                                medicalInpatientInfo.auscultation ||
+                                medicalInpatientInfo.auscultationLung ||
+                                medicalInpatientInfo.edema ||
+                                medicalInpatientInfo.skinRash ||
+                                medicalInpatientInfo.herpesZosterScar ||
+                                medicalInpatientInfo.nuchalRigidity ||
+                                medicalInpatientInfo.motorResponse ||
+                                medicalInpatientInfo.verbalResponse ||
+                                medicalInpatientInfo.eyeOpeningResponse ||
+                                medicalInpatientInfo.pupil ||
+                                medicalInpatientInfo.visualFieldAcuity ||
+                                medicalInpatientInfo.eyeMovementsNystagmus ||
+                                medicalInpatientInfo.eyeMovementsSensation ||
+                                medicalInpatientInfo.hearing ||
+                                medicalInpatientInfo.tongueMovementTastes ||
+                                medicalInpatientInfo.coughGagReflex ||
+                                medicalInpatientInfo.power ||
+                                medicalInpatientInfo.tone ||
+                                medicalInpatientInfo.reflexes ||
+                                medicalInpatientInfo.plantars ||
+                                medicalInpatientInfo.sensation ||
+                                medicalInpatientInfo.coordination ||
+                                medicalInpatientInfo.summary ||
+                                medicalInpatientInfo.differentialDiagnosis ||
+                                medicalInpatientInfo.admittingOfficer
+
+                            )
+                                && (
+                                    <>
+                                        <h2>Review of Systems</h2>
+                                        {medicalInpatientInfo.general && (
+                                            <p>
+                                                <strong>General Impression: </strong>
+                                                {medicalInpatientInfo.general}
+                                            </p>
+                                        )}
+
+
+                                        <h3>Vital Signs</h3>
+
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
+
+
+                                            {medicalInpatientInfo.systolicBloodpressure && (
+                                                <p>
+                                                    <strong>Systolic: </strong>
+                                                    {medicalInpatientInfo.systolicBloodpressure} mmHg
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.diastolicBloodPressure && (
+                                                <p>
+                                                    <strong>Diastolic: </strong>
+                                                    {medicalInpatientInfo.diastolicBloodPressure} mmHg
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.pulseRate && (
+                                                <p>
+                                                    <strong>Pulse Rate: </strong>
+                                                    {medicalInpatientInfo.pulseRate} bpm
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.respiratoryRate && (
+                                                <p>
+                                                    <strong>Respiratory Rate: </strong>
+                                                    {medicalInpatientInfo.respiratoryRate} breaths/min
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.temperature && (
+                                                <p>
+                                                    <strong>Temperature: </strong>
+                                                    {medicalInpatientInfo.temperature} °C
+                                                </p>
+                                            )}
+                                        </div>
+
+
+                                        <h3>Head and Neck</h3>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
+
+
+
+
+                                            {medicalInpatientInfo.pupilsSymmetrical && (
+                                                <p>
+                                                    <strong>Pupils Symmetrical: </strong>
+                                                    {medicalInpatientInfo.pupilsSymmetrical}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.conjunctiva && (
+                                                <p>
+                                                    <strong>Conjunctiva: </strong>
+                                                    {medicalInpatientInfo.conjunctiva}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.oralKS && (
+                                                <p>
+                                                    <strong>Oral KS: </strong>
+                                                    {medicalInpatientInfo.oralKS}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.oralCandidiasis && (
+                                                <p>
+                                                    <strong>Oral Candidiasis: </strong>
+                                                    {medicalInpatientInfo.oralCandidiasis}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.jvpRaised && (
+                                                <p>
+                                                    <strong>JVP raised: </strong>
+                                                    {medicalInpatientInfo.jvpRaised}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.lymphadenopathy && (
+                                                <p>
+                                                    <strong>Lymphadenopathy: </strong>
+                                                    {medicalInpatientInfo.lymphadenopathy}
+                                                </p>
+                                            )}
+
+                                        </div>
+                                        <h3>Chest and Lungs</h3>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
+
+                                            {medicalInpatientInfo.symmetricalExpansion && (
+                                                <p>
+                                                    <strong>Symmetrical Expansion: </strong>
+                                                    {medicalInpatientInfo.symmetricalExpansion}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.apexBeat && (
+                                                <p>
+                                                    <strong>Apex Beat: </strong>
+                                                    {medicalInpatientInfo.apexBeat}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.thrillHeaves && (
+                                                <p>
+                                                    <strong>Thrill Heaves: </strong>
+                                                    {medicalInpatientInfo.thrillHeaves}
+                                                </p>
+                                            )}
+                                        </div>
+
+
+                                        {medicalInpatientInfo.auscultation && (
+                                            <p>
+                                                <strong>Auscultation: </strong>
+                                                {medicalInpatientInfo.auscultation}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.auscultationLung && (
+                                            <p>
+                                                <strong>Auscultation Lung: </strong>
+                                                {medicalInpatientInfo.auscultationLung}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.edema && (
+                                            <p>
+                                                <strong>Oedema: </strong>
+                                                {medicalInpatientInfo.edema}
+                                            </p>
+                                        )}
+
+                                        <h3>Skin</h3>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
+
+                                            {medicalInpatientInfo.skinRash && (
+                                                <p>
+                                                    <strong>Skin Rash: </strong>
+                                                    {medicalInpatientInfo.skinRash}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.herpesZosterScar && (
+                                                <p>
+                                                    <strong>Herpes Zoster Scar: </strong>
+                                                    {medicalInpatientInfo.herpesZosterScar}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <h3>Neurological Examination</h3>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
+
+
+                                            {medicalInpatientInfo.nuchalRigidity && (
+                                                <p>
+                                                    <strong>Nuchal Rigidity: </strong>
+                                                    {medicalInpatientInfo.nuchalRigidity}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.motorResponse && (
+                                                <p>
+                                                    <strong>Motor Response: </strong>
+                                                    {medicalInpatientInfo.motorResponse}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.verbalResponse && (
+                                                <p>
+                                                    <strong>Verbal Response: </strong>
+                                                    {medicalInpatientInfo.verbalResponse}
+                                                </p>
+                                            )}
+                                            {medicalInpatientInfo.eyeOpeningResponse && (
+                                                <p>
+                                                    <strong>Eye Opening Response: </strong>
+                                                    {medicalInpatientInfo.eyeOpeningResponse}
+                                                </p>
+                                            )}
+
+                                        </div>
+                                        <br />
+                                        <h3>Cranial and Peripheral Nerves</h3>
+
+                                        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+
+                                                        {medicalInpatientInfo.pupil && (
+                                                            <p>
+                                                                <strong>Pupil: </strong>
+                                                                {medicalInpatientInfo.pupil}
+                                                            </p>
+                                                        )}
+                                                    </td>
+
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.visualFieldAcuity && (
+                                                            <p>
+                                                                <strong>Visual Field Acuity: </strong>
+                                                                {medicalInpatientInfo.visualFieldAcuity}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.eyeMovementsNystagmus && (
+                                                            <p>
+                                                                <strong>Eye Movements Nystagmus: </strong>
+                                                                {medicalInpatientInfo.eyeMovementsNystagmus}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.eyeMovementsSensation && (
+                                                            <p>
+                                                                <strong>Eye Movements Sensation: </strong>
+                                                                {medicalInpatientInfo.eyeMovementsSensation}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.hearing && (
+                                                            <p>
+                                                                <strong>Hearing: </strong>
+                                                                {medicalInpatientInfo.hearing}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.tongueMovementTastes && (
+                                                            <p>
+                                                                <strong>Tongue Movement Tastes: </strong>
+                                                                {medicalInpatientInfo.tongueMovementTastes}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.coughGagReflex && (
+                                                            <p>
+                                                                <strong>Cough Gag Reflex: </strong>
+                                                                {medicalInpatientInfo.coughGagReflex}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.power && (
+                                                            <p>
+                                                                <strong>Power: </strong>
+                                                                {medicalInpatientInfo.power}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.tone && (
+                                                            <p>
+                                                                <strong>Tone: </strong>
+                                                                {medicalInpatientInfo.tone}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.reflexes && (
+                                                            <p>
+                                                                <strong>Reflexes: </strong>
+                                                                {medicalInpatientInfo.reflexes}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.plantars && (
+                                                            <p>
+                                                                <strong>Plantars: </strong>
+                                                                {medicalInpatientInfo.plantars}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.sensation && (
+                                                            <p>
+                                                                <strong>Sensation: </strong>
+                                                                {medicalInpatientInfo.sensation}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.coordination && (
+                                                            <p>
+                                                                <strong>Coordination: </strong>
+                                                                {medicalInpatientInfo.coordination}
+                                                            </p>
+                                                        )}
+                                                    </td>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                        {medicalInpatientInfo.summary && (
+                                            <p>
+                                                <strong>Summary: </strong>
+                                                {medicalInpatientInfo.summary}
+                                            </p>
+                                        )}
+                                        <hr />
+
+                                        {medicalInpatientInfo.differentialDiagnosis && (
+
+                                            <p>
+                                                <strong>Differential Diagnosis: </strong>
+                                                {medicalInpatientInfo.differentialDiagnosis}
+                                            </p>
+                                        )}
+
+                                        <hr />
+                                        <h3>Investigation Plan</h3>
+                                        <LabOrderPlanTable />
+                                        <hr />
+
+
+
+
+                                        {medicalInpatientInfo.admittingOfficer && (
+                                            <p>
+                                                <strong>Admitting Officer: </strong>
+                                                {medicalInpatientInfo.admittingOfficer}
+                                            </p>
+                                        )}
+
+                                    </>
+                                )}
+                        </div>
+                    )}
 
                 </div>
                 {/* CSS for Print Handling */}

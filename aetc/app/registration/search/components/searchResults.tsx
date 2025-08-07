@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  BaseTable,
   MainButton,
   MainPaper,
   MainTypography,
@@ -10,7 +9,7 @@ import {
 import plus from "../../../../icons/plus.svg";
 import Image from "next/image";
 import { PatientNationalIdCheck } from "../../components";
-import { useNavigation, useParameters } from "@/hooks";
+import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import { FaUser, FaBarcode } from "react-icons/fa6";
 
 import {
@@ -19,14 +18,14 @@ import {
 } from "@/contexts";
 import { DDESearch, Encounter, Person } from "@/interfaces";
 import { GenericDialog } from "@/components";
-import {
-  getPatientRelationships,
-  getPatientsWaitingForRegistrations,
-  merge,
-} from "@/hooks/patientReg";
+import { getPatientRelationships, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ViewPatient } from "@/app/patient/components/viewPatient";
-import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+  getPatientsEncounters,
+} from "@/hooks/encounter";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
@@ -251,12 +250,11 @@ export const ResultBox = ({
               </Typography>
             }
             variant="primary"
-            patient={person}
+            uuid={person?.uuid}
           />
         )}
         {type == "Local" && genericSearch && (
           <>
-            {console.log({ person })}
             <Button
               onClick={() => navigateTo(`/patient/${person.uuid}/profile`)}
               sx={{ mb: "1ch" }}
@@ -407,38 +405,35 @@ const ViewPatientDialog = ({
   const [transactionSuccess, setTransactionSuccess] = useState(false);
 
   const {
-    mutate: createSocialHistoryEncounter,
+    mutateAsync: createSocialHistoryEncounter,
     isPending: creatingSocialHistoryEncounter,
     isSuccess: socialHistoryEncounterCreated,
     isError: socialHistoryEncounterErrored,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
-    mutate: createFinancingEncounter,
+    mutateAsync: createFinancingEncounter,
     isPending: creatingFinancingEncounter,
     isSuccess: financingEncounterCreated,
     isError: financingEncounterErrored,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
-    mutate: createReferralEncounter,
+    mutateAsync: createReferralEncounter,
     isPending: creatingReferralEncounter,
     isSuccess: referralCreated,
     isError: referralErrored,
-  } = addEncounter();
-
-  const { data: patientsWaitingForRegistration } =
-    getPatientsWaitingForRegistrations();
+  } = fetchConceptAndCreateEncounter();
 
   const {
-    mutate: mergePatients,
+    mutateAsync: mergePatients,
     isPending: merging,
     isSuccess: merged,
     isError,
     data: mergedResponse,
   } = merge();
   const {
-    mutate: ddeMergePatients,
+    mutateAsync: ddeMergePatients,
     isPending: ddeMerging,
     isSuccess: ddeMerged,
     isError: ddeMergeError,
@@ -458,12 +453,8 @@ const ViewPatientDialog = ({
   });
 
   useEffect(() => {
-    const initialPatient = patientsWaitingForRegistration?.find(
-      (p) => p.uuid == params?.id
-    );
-
-    if (initialPatient) setInitialPatient(initialPatient);
-  }, [patientsWaitingForRegistration]);
+    setInitialPatient(patient);
+  }, [patient]);
 
   useEffect(() => {
     if (ddeMerged) {
@@ -480,17 +471,39 @@ const ViewPatientDialog = ({
     //TODO: remove the hard coded concept
     const referred = getObservationValue(
       referralEncounter?.obs,
-      "618c7457-9442-43c4-93a0-80686b3bca5f"
+      concepts.IS_PATIENT_REFERRED
     );
 
     setIsReferred(referred);
   }, [patientEncounters]);
 
-  // create social history
+  // close patient visit
   useEffect(() => {
-    createSocialHistoryEncounter({
+    if (referralCreated) {
+      setTransactionSuccess(true);
+    }
+  }, [referralCreated]);
+
+  const triggerMerge = async () => {
+    const uuid = patient?.uuid;
+    const initialUuid = params?.id;
+
+    console.log({ referralData });
+
+    const mergedResponse = await mergePatients({
+      primary: {
+        patient_id: uuid,
+      },
+      secondary: [
+        {
+          patient_id: initialUuid,
+        },
+      ],
+    });
+
+    await createSocialHistoryEncounter({
       encounterType: encounters.SOCIAL_HISTORY,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: mergedResponse?.active_visit?.uuid,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: socialHistory?.obs?.map((ob: any) => ({
@@ -499,28 +512,10 @@ const ViewPatientDialog = ({
         obsDatetime: getDateTime(),
       })),
     });
-  }, [merged]);
 
-  // create financing
-  useEffect(() => {
-    createFinancingEncounter({
-      encounterType: encounters.FINANCING,
-      visit: mergedResponse?.active_visit.uuid,
-      patient: mergedResponse?.uuid,
-      encounterDatetime: getDateTime(),
-      obs: financing?.obs?.map((ob) => ({
-        concept: ob.names[0].uuid,
-        value: ob.value,
-        obsDatetime: getDateTime(),
-      })),
-    });
-  }, [socialHistoryEncounterCreated]);
-
-  // create referral
-  useEffect(() => {
-    createReferralEncounter({
+    await createReferralEncounter({
       encounterType: encounters.REFERRAL,
-      visit: mergedResponse?.active_visit.uuid,
+      visit: mergedResponse?.active_visit?.uuid,
       patient: mergedResponse?.uuid,
       encounterDatetime: getDateTime(),
       obs: [
@@ -531,35 +526,22 @@ const ViewPatientDialog = ({
         },
       ],
     });
-  }, [financingEncounterCreated]);
 
-  // close patient visit
-  useEffect(() => {
-    // const patient = initialPatients?.find(p => p.uuid == params?.id);
-    if (referralCreated) {
-      // closeVisit(patient.visit_uuid);
-      setTransactionSuccess(true);
-    }
-  }, [referralCreated]);
-
-  const triggerMerge = () => {
-    const uuid = patient?.uuid;
-    const initialUuid = initialPatient?.uuid;
-
-    mergePatients({
-      primary: {
-        patient_id: uuid,
-      },
-      secondary: [
-        {
-          patient_id: initialUuid,
-        },
-      ],
+    await createFinancingEncounter({
+      encounterType: encounters.FINANCING,
+      visit: mergedResponse?.active_visit?.uuid,
+      patient: mergedResponse?.uuid,
+      encounterDatetime: getDateTime(),
+      obs: financing?.obs?.map((ob) => ({
+        concept: ob.names[0].uuid,
+        value: ob.value,
+        obsDatetime: getDateTime(),
+      })),
     });
   };
 
   const handleContinue = () => {
-    if (isReferred == "Yes") {
+    if (isReferred == concepts.YES) {
       setOpenReferralDialog(true);
       return;
     }
@@ -579,9 +561,9 @@ const ViewPatientDialog = ({
     if (financing) setFinancing(financing);
   }, [existingPatientEncounters]);
 
-  const handleReferralSubmit = (values: any) => {
-    setReferralData(values);
-    triggerMerge();
+  const handleReferralSubmit = async (values: any) => {
+    await setReferralData(values);
+    await triggerMerge();
     setOpenReferralDialog(false);
   };
 

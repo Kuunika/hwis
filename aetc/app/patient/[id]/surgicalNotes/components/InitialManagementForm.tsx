@@ -513,11 +513,12 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             console.log("Initial Management submitted successfully!");
             onSubmit(values); // This triggers navigation to the next step
             // reactToPrintFn(); // Trigger printing after submission
-            if (pdfRef.current) {
-                pdfRef.current.generatePDF();
-            }
 
-            navigateTo(`/dispositions`);
+            // if (pdfRef.current) {
+            //     pdfRef.current.generatePDF();
+            // }
+
+            navigateTo(`/patient/${params.id}/profile`);
         } catch (error) {
             console.error("Error submitting Initial Management:", error);
         }
@@ -535,7 +536,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
                 signature: clerkInfo.signature,
             }}
             validationSchema={validationSchema}
-            submitButtonText="Submit and Print to PDF"
+            // submitButtonText="Submit and Print to PDF"
             onSubmit={handleSubmit}
             enableReinitialize // Allows the form to update with new clerkInfo
         >

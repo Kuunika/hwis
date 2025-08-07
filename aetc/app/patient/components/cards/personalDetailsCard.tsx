@@ -1,3 +1,4 @@
+"use client";
 import {
   MainButton,
   MainPaper,
@@ -6,7 +7,7 @@ import {
 } from "@/components";
 import { Chip, Paper, Typography } from "@mui/material";
 import { getOnePatient } from "@/hooks/patientReg";
-import { useNavigation, useParameters } from "@/hooks";
+import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import {
   calculateAge,
   getHumanReadableDate,
@@ -17,8 +18,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useEffect } from "react";
 import { PatientInfoPrintDialog } from "../dialogs";
+import { confirmationDialog } from "@/helpers";
+import { reOpenRecentClosedVisit } from "@/hooks/visit";
+import { getRoles } from "@/helpers/localstorage";
+import { roles } from "@/constants";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   const { params } = useParameters();
@@ -30,9 +35,14 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
     setAnchorEl(event.currentTarget);
   };
   const [openPatientSummary, setOpenPatientSummary] = useState(false);
+  const { hasActiveVisit, closedVisitId, openClosedVisit } =
+    getActivePatientDetails();
+  const { mutateAsync } = reOpenRecentClosedVisit(params.id as string);
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   function getNationalIdIdentifiers(data: any) {
     // Filter the data to only include objects where identifier_type.name is "National id"
     const nationalIdObjects = data.filter(
@@ -47,11 +57,26 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
 
     return nationalIdValues[nationalIdValues.length - 1];
   }
-  // const patient = patients?.find((p) => p.uuid == params.id);
 
   if (isLoading) {
     return <ProfilePanelSkeletonLoader />;
   }
+
+  const handleCloseVisitMenu = () => {
+    handleClose();
+    confirmationDialog({
+      title: "Visit reactivation",
+      text: "Are you sure you want to reactive the most recent closed visit for this patient?",
+      icon: "warning",
+      confirmButtonText: "Yes",
+      onConfirm: async () => {
+        const response = await mutateAsync(closedVisitId as string);
+        if (response) {
+          openClosedVisit();
+        }
+      },
+    });
+  };
 
   return (
     <>
@@ -154,7 +179,10 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
             }}
           >
             <MenuItem
-              onClick={handleClose}
+              onClick={() => {
+                handleClose();
+                navigateTo(`/patient/${params.id}/view`);
+              }}
               style={{ borderBottom: "1px solid #ccc", padding: "10px" }}
             >
               Update demographics
@@ -177,6 +205,18 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
             >
               Print patient identifier
             </MenuItem>
+            {!hasActiveVisit &&
+              getRoles().some((role) =>
+                [roles.ADMIN, roles.CLINICIAN].includes(role)
+              ) && (
+                <MenuItem
+                  onClick={handleCloseVisitMenu}
+                  style={{ borderBottom: "1px solid #ccc", padding: "10px" }}
+                >
+                  Reactivate Most Recent Visit
+                </MenuItem>
+              )}
+
             <MenuItem
               onClick={() => {
                 handleClose();
@@ -251,6 +291,7 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
           />
         </div>
       </Paper>
+
       <PatientInfoPrintDialog
         onClose={() => setOpenPatientSummary(false)}
         open={openPatientSummary}

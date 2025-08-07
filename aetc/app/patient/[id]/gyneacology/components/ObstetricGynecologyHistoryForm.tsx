@@ -60,11 +60,21 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
         const currentDateTime = ServerTime.getServerTimeString();
         const dateTime = ServerTime.getServerTimeString();
 
+        // Find the label for menstrual cycle based on selected value
+        const selectedMenstrualCycle = menstrualCycleOptions.find(
+            (option) => option.value === values.menstrualCycle
+        )?.label || "";
+
 
         const obs = [
             {
                 concept: concepts.LNMP,
                 value: values.lnmp,
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.EDD,
+                value: values.edd,
                 obsDatetime: currentDateTime,
             },
             {
@@ -77,11 +87,11 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.gravidity,
                 obsDatetime: currentDateTime,
             },
-            // {
-            //     concept: concepts.PARITY,
-            //     value: values.parity,
-            //     obsDatetime: currentDateTime,
-            // },
+            {
+                concept: concepts.PARITY,
+                value: values.parity,
+                obsDatetime: currentDateTime,
+            },
             {
                 concept: concepts.NUMBER_OF_LIVING_CHILDREN,
                 value: values.numberOfLivingChildren,
@@ -94,7 +104,7 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
             },
             {
                 concept: concepts.MENSTRUAL_CYCLE,
-                value: values.menstrualCycle,
+                value: selectedMenstrualCycle, // ✅ Use the label instead of concept name
                 obsDatetime: currentDateTime,
             },
             {
@@ -142,11 +152,11 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                 value: values.previousContraceptiveUse,
                 obsDatetime: currentDateTime,
             },
-            // {
-            //     concept: concepts.CURRENTLY_ON_CONTRACEPTIVE,
-            //     value: values.currentlyOnContraceptive,
-            //     obsDatetime: currentDateTime,
-            // },
+            {
+                concept: concepts.CURRENTLY_ON_CONTRACEPTIVE,
+                value: values.currentlyOnContraceptive,
+                obsDatetime: currentDateTime,
+            },
             {
                 concept: concepts.SIDE_EFFECTS, //not sendinfg
                 value: values.anySideEffects,
@@ -229,7 +239,7 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             <RadioGroupInput name="menstrualCycle" options={menstrualCycleOptions} label="" />
                         </FormFieldContainerLayout>
 
-                        <TextInputField name="duration" label="Duration" type="text" id="" />
+                        <TextInputField name="duration" label="Duration in Days" placeholder="Add Days" type="text" id="" />
                         <TextInputField name="prevAbortions" label="Previous Abortions" type="text" id="" />
                         <TextInputField name="prevEctopic" label="Previous Ectopic" type="text" id="" />
 

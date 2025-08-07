@@ -1,7 +1,6 @@
 import { getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
-import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientsWaitingForRegistrations } from "@/hooks/patientReg";
+
 import {
   BaseTable,
   CalculateWaitingTime,
@@ -25,6 +24,7 @@ import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
+import { deletePatient } from "@/hooks/patientReg";
 
 export const WaitingRegistrationList = () => {
   const [deleted, setDeleted] = useState("");
@@ -41,6 +41,7 @@ export const WaitingRegistrationList = () => {
   } = fetchPatientsTablePaginate("registration");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+  const { mutate } = deletePatient();
 
   useEffect(() => {
     setSearchText(debouncedSearch);
@@ -118,7 +119,13 @@ export const WaitingRegistrationList = () => {
               </IconButton>
             </Tooltip>
             <AbscondButton
-              onDelete={() => setDeleted(cell.id)}
+              onDelete={() => {
+                setDeleted(cell.id);
+                mutate({
+                  id: cell.row.patient_id,
+                  void_reason: "Absconded",
+                });
+              }}
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />

@@ -21,6 +21,7 @@ import {
   potentialDuplicates,
   updateDeathReport,
   updatePatient,
+  voidPatient,
 } from "@/services/patient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getConcept } from "./encounter";
@@ -416,5 +417,17 @@ export const useUpdateDeathReport = () => {
 
   return useMutation({
     mutationFn: updateData,
+  });
+};
+
+export const deletePatient = () => {
+  const addData = (patientData: any) => {
+    return voidPatient(patientData.id, patientData.void_reason).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: addData,
   });
 };

@@ -1,32 +1,159 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+
+import * as Yup from "yup";
+
+import { getActivePatientDetails } from "@/hooks";
 import {
     MainGrid,
-    MainPaper,
     FormikInit,
     TextInputField,
     SearchComboBox,
 } from "@/components";
-import { concepts, encounters } from "@/constants";
-import { useParameters } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
-import {
-    addEncounter,
-    fetchConceptAndCreateEncounter,
-} from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
-import * as Yup from "yup";
-
-import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
-import { Visit } from "@/interfaces";
-import { closeCurrentVisit } from "@/hooks/visit";
-import { useNavigation } from "@/hooks"; // Import navigation hook
-import { AccordionWithMedication } from "./AccordionWithMedication"; // Import the new component
+import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { useParameters } from "@/hooks";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { Visit } from "@/interfaces";
+import { concepts, encounters } from "@/constants";
+import { AccordionWithMedication } from "./AccordionWithMedication";
+import { AccordionComponent } from "@/components/accordion";
 
+export default function AdmissionForm({
+    openPatientSummary,
+}: {
+    openPatientSummary: () => void;
+}) {
+    const { params } = useParameters();
+    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+    const { ServerTime } = useServerTime();
+    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+
+    useEffect(() => {
+        if (patientVisits) {
+            const active = patientVisits.find((visit) => !visit.date_stopped);
+            if (active) setActiveVisit(active as unknown as Visit);
+        }
+    }, [patientVisits]);
+
+    const handleSubmit = async (values: any) => {
+        const currentDateTime = ServerTime.getServerTimeString();
+
+        const obs = [
+            {
+                concept: concepts.ADMISSION,
+                value: concepts.ADMISSION,
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.WARD,
+                value: values.wardName,
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.BED_NUMBER,
+                value: values.bedNumber,
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.REASON_FOR_ADMISSION,
+                value: values.reasonForAdmission,
+                obsDatetime: currentDateTime,
+            },
+            {
+                concept: concepts.SPECIALITY_DEPARTMENT,
+                value: values.specialtyInvolved,
+                obsDatetime: currentDateTime,
+            },
+        ];
+        const payload = {
+            encounterType: encounters.DISPOSITION,
+            visit: activeVisit?.uuid,
+            patient: params.id,
+            encounterDatetime: currentDateTime,
+            obs,
+        };
+
+        try {
+            await submitEncounter(payload);
+
+            openPatientSummary();
+        } catch (error) {
+            console.error("Error submitting Admission information: ", error);
+        }
+    };
+
+    const sections = [
+        {
+            id: "admission",
+            title: <h2>Admission</h2>,
+            content: <AdmissionFormContent onSubmit={handleSubmit} />,
+        },
+        {
+            id: "medications",
+            title: <h2>Prescribe Medications</h2>,
+            content: <AccordionWithMedication />,
+        },
+    ];
+
+    return (
+        <MainGrid container spacing={2}>
+            <MainGrid item xs={12}>
+                <AccordionComponent sections={sections} />
+            </MainGrid>
+        </MainGrid>
+    );
+}
+
+const initialValues = {
+    wardName: "",
+    bedNumber: "",
+    reasonForAdmission: "",
+    specialtyInvolved: "",
+};
+
+const validationSchema = Yup.object({
+    wardName: Yup.string().required("Ward Name is required"),
+    reasonForAdmission: Yup.string().required("Reason for Admission is required"),
+    specialtyInvolved: Yup.string().required("Specialty Involved is required"),
+});
 
 const wardOptions = [
+    {
+        id: concepts.ONE_A_LABOUR_WARD,
+        label: "1A Labour ward",
+    },
+    {
+        id: concepts.MAIN_LABOUR_WARD,
+        label: "Main Labour ward",
+    },
+    {
+        id: concepts.ANTENATAL_WARD,
+        label: "Antenatal ward",
+    },
+    {
+        id: concepts.POST_NATAL_WARD,
+        label: "Post natal ward",
+    },
+    {
+        id: concepts.GYNAECOLOGY_WARD_MAIN,
+        label: "Gynaecology ward- Main",
+    },
+    {
+        id: concepts.THREE_B_MALE_MEDICAL,
+        label: "3B Male medical",
+    },
+    {
+        id: concepts.THREE_C_COMBINED_MALE_AND_FEMALE_MEDICAL,
+        label: "3C Combined male and female medical",
+    },
+    {
+        id: concepts.SIX_A_ORTHOPAEDIC_MALE,
+        label: "6A Orthopaedic male",
+    },
+
     {
         id: concepts.TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT,
         label: "2A Oncology Ward (General ward/High Dependency Unit)",
@@ -102,152 +229,81 @@ const specialtyOptions = [
     { id: concepts.ONCOLOGY, label: "Oncology" },
 ];
 
-const validationSchema = Yup.object({
-    wardName: Yup.string().required("Ward Name is required"),
-    // bedNumber: Yup.string().required("Bed Number is required"),
-    reasonForAdmission: Yup.string().required("Reason for Admission is required"),
-    specialtyInvolved: Yup.string().required("Specialty Involved is required"),
-});
-
-const initialValues = {
-    wardName: "",
-    bedNumber: "",
-    reasonForAdmission: "",
-    specialtyInvolved: "",
-};
-
-export default function AdmissionForm({openPatientSummary}:{openPatientSummary:()=>void}) {
-    const { params } = useParameters();
-    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
-    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
-    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
-    const { navigateTo } = useNavigation(); // Initialize navigation
-    const { init, ServerTime } = useServerTime();
+function AdmissionFormContent({
+    onSubmit,
+}: {
+    onSubmit: (values: typeof initialValues) => void;
+}) {
+    const { gender } = getActivePatientDetails();
+    const [filteredWardOptions, setFilteredWardOptions] = useState(wardOptions);
 
     useEffect(() => {
-        // Finds the active visit for the patient from their visit history
-        if (patientVisits) {
-            const active = patientVisits.find((visit) => !visit.date_stopped);
-            if (active) {
-                setActiveVisit(active as unknown as Visit);
-            }
-        }
-    }, [patientVisits]);
-
-    const handleSubmit = async (values: any) => {
-        const currentDateTime = ServerTime.getServerTimeString();
-
-        const obs = [
-            {
-                concept: concepts.ADMISSION,
-                value: concepts.ADMISSION,
-                obsDatetime: currentDateTime,
-                groupMembers: [
-                    {
-                        concept: concepts.WARD,
-                        value: values.wardName,
-                        obsDatetime: currentDateTime,
-                    },
-                    {
-                        concept: concepts.BED_NUMBER,
-                        value: values.bedNumber,
-                        obsDatetime: currentDateTime,
-                    },
-                    {
-                        concept: concepts.REASON_FOR_ADMISSION,
-                        value: values.reasonForAdmission,
-                        obsDatetime: currentDateTime,
-                    },
-                    {
-                        concept: concepts.SPECIALITY_DEPARTMENT,
-                        value: values.specialtyInvolved,
-                        obsDatetime: currentDateTime,
-                    },
-                ],
-            },
+        const femaleOnlyLabels = [
+            "6A Female Orthopaedic Ward",
+            "4A Female Medical Ward (General ward/High Dependency Unit)",
+            "Gynecology Ward (General ward/High Dependency Unit)",
+            "Labour Ward (General ward/High Dependency Unit)",
+            "3B Female Medical Ward (General ward/High Dependency Unit)",
+            "5B Female Surgical Ward (General ward/High Dependency Unit)",
         ];
-        const payload = {
-            encounterType: encounters.DISPOSITION,
-            visit: activeVisit?.uuid,
-            patient: params.id,
-            encounterDatetime: currentDateTime,
-            obs,
-        };
 
-        try {
-            await submitEncounter(payload);
-            // toast.success("Admission information submitted successfully!");
-            // Close the visit after successfully submitting the encounter
-            //   if (activeVisit?.uuid) {
-            //       closeVisit(activeVisit.uuid);
-            //   }
-            // navigateTo("/dispositions");
-            openPatientSummary()
-        } catch (error) {
-            console.error("Error submitting Admission information: ", error);
-            // toast.error("Failed to submit Admission information.");
+        if (gender === "Male") {
+            setFilteredWardOptions(
+                wardOptions.filter((ward) => !femaleOnlyLabels.includes(ward.label))
+            );
+        } else {
+            setFilteredWardOptions(wardOptions);
         }
-    };
+    }, [gender]);
+
     return (
-        <MainGrid container spacing={2}>
-            <MainGrid item xs={12} lg={8}>
-                <AccordionWithMedication />
-                <MainPaper sx={{ p: 3 }}>
-                    <h2>Admission Form</h2>
-                    <FormikInit
-                        initialValues={initialValues}
-                        validationSchema={validationSchema}
-                        onSubmit={handleSubmit}
-                        submitButtonText="Submit"
-                    >
-                        <MainGrid container spacing={2}>
-                            {/* Ward Name */}
-                            <MainGrid item xs={12} lg={6}>
-                                <SearchComboBox
-                                    name="wardName"
-                                    label="Ward Name"
-                                    options={wardOptions}
-                                    multiple={false}
-                                />
-                            </MainGrid>
+        <FormikInit
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+            submitButtonText="Submit"
+        >
+            <MainGrid container spacing={2}>
+                <MainGrid item xs={12} lg={6}>
+                    <SearchComboBox
+                        name="wardName"
+                        label="Ward Name"
+                        options={filteredWardOptions}
+                        multiple={false}
+                    />
+                </MainGrid>
 
-                            {/* Bed Number */}
-                            <MainGrid item xs={12} lg={6}>
-                                <TextInputField
-                                    id="bedNumber"
-                                    name="bedNumber"
-                                    label="Bed Number"
-                                    placeholder="Enter Bed Number"
-                                    sx={{ width: "100%" }}
-                                />
-                            </MainGrid>
+                <MainGrid item xs={12} lg={6}>
+                    <TextInputField
+                        id="bedNumber"
+                        name="bedNumber"
+                        label="Bed Number"
+                        placeholder="Enter Bed Number"
+                        sx={{ width: "100%" }}
+                    />
+                </MainGrid>
 
-                            {/* Reason for Admission */}
-                            <MainGrid item xs={12}>
-                                <TextInputField
-                                    id="reasonForAdmission"
-                                    name="reasonForAdmission"
-                                    label="Reason for Admission"
-                                    placeholder="Provide reason for admission"
-                                    rows={4}
-                                    multiline={true}
-                                    sx={{ width: "100%" }}
-                                />
-                            </MainGrid>
-                            {/* Specialty Involved */}
-                            <MainGrid item xs={12}>
-                                <SearchComboBox
-                                    name="specialtyInvolved"
-                                    label="Specialty Involved"
-                                    options={specialtyOptions}
-                                    multiple={false}
-                                />
-                            </MainGrid>
-                        </MainGrid>
-                    </FormikInit>
-                </MainPaper>
+                <MainGrid item xs={12}>
+                    <TextInputField
+                        id="reasonForAdmission"
+                        name="reasonForAdmission"
+                        label="Reason for Admission"
+                        placeholder="Provide reason for admission"
+                        rows={4}
+                        multiline
+                        sx={{ width: "100%" }}
+                    />
+                </MainGrid>
+
+                <MainGrid item xs={12}>
+                    <SearchComboBox
+                        name="specialtyInvolved"
+                        label="Specialty Involved"
+                        options={specialtyOptions}
+                        multiple={false}
+                    />
+                </MainGrid>
             </MainGrid>
-        </MainGrid>
+        </FormikInit>
     );
 }

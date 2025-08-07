@@ -111,7 +111,7 @@ const airwayThreatenedReasons = [
 ];
 
 const airwayInterventionsList = [
-  { id: concepts.SUCTIONING_AIRWAY, label: "Suctioning Airway" },
+  { id: concepts.SUCTIONING_DONE, label: "Suctioning Done" },
   { id: concepts.JAW_THRUST_MANOEUVER, label: "Jaw thrust manoeuver" },
   { id: concepts.HEAD_TILT_CHIN_LIFT, label: "Head tilt/chin lift" },
   {
@@ -145,7 +145,7 @@ const radioOptions = [
 ];
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const [formValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.AIRWAY_ASSESSMENT,
@@ -161,7 +161,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     const interventions = formValues[form.intervention.name];
     let interventionsObs: any = [];
 
-    const obsDatetime = ServerTime.getServerTimeString()
+    const obsDatetime = ServerTime.getServerTimeString();
 
     if (Array.isArray(interventions)) {
       interventionsObs = interventions.map((intervention) => {
@@ -198,12 +198,12 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if airway is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}

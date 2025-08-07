@@ -54,7 +54,6 @@ export const EditUser = () => {
       ...values,
       userId,
     };
-
     mutate(updatedValues);
   };
 

@@ -8,8 +8,10 @@ type Category =
   | "assessment"
   | "triage"
   | "disposition"
+  | "awaiting_speciality"
   | "screening"
-  | "registration";
+  | "registration"
+  | "investigations";
 
 interface PaginationModel {
   page: number;
@@ -52,7 +54,13 @@ export const fetchPatientsTablePaginate = (category: Category) => {
     } finally {
       setLoading(false);
     }
-  }, [category, paginationModel.pageSize, searchText, paginationModel.page, onSwitch]);
+  }, [
+    category,
+    paginationModel.pageSize,
+    searchText,
+    paginationModel.page,
+    onSwitch,
+  ]);
 
   useEffect(() => {
     fetchData();

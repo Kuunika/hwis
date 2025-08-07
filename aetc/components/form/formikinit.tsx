@@ -8,8 +8,8 @@ import { MainButton } from "../buttons";
 type Prop = {
   onSubmit: (values: any, actions: any) => void;
   children:
-    | ReactNode
-    | ((props: { values: any; setFieldValue: any }) => ReactNode);
+  | ReactNode
+  | ((props: { values: any; setFieldValue: any, submitCount: any }) => ReactNode);
   validationSchema: any;
   initialValues: any;
   width?: string;
@@ -35,7 +35,7 @@ export const FormikInit: FC<Prop> = ({
   submitVariant = "primary",
   loading,
   enableReinitialize = false,
-  getFormValues = (values) => {},
+  getFormValues = (values) => { },
   ref,
 }) => {
   return (
@@ -46,11 +46,11 @@ export const FormikInit: FC<Prop> = ({
       enableReinitialize={enableReinitialize}
       innerRef={ref}
     >
-      {({ values, setFieldValue }) => (
+      {({ values, setFieldValue, errors, submitCount }) => (
         <Form>
           <ListenToValueChanges getFormValues={getFormValues} values={values} />
           {typeof children === "function"
-            ? children({ values, setFieldValue })
+            ? children({ values, setFieldValue, submitCount })
             : children}
           {submitButton && (
             <MainButton
@@ -64,7 +64,7 @@ export const FormikInit: FC<Prop> = ({
                   submitButtonText
                 )
               }
-              onClick={() => {}}
+              onClick={() => { }}
             />
           )}
         </Form>

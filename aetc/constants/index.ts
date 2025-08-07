@@ -151,6 +151,8 @@ export const encounters = {
   MEDICAL_HISTORY: "ba05f13e-8d80-11d8-abbb-0024217bb78e",
   OBSTETRIC_HISTORY: "ba063da6-8d80-11d8-abbb-0024217bb78e",
   PRESCRIPTIONS: "88564b30-abaf-4744-8ea6-6e1c15465d9e",
+  SOAPIER_PRESCRIPTION: "6e18d0c8-98b2-40fd-b116-25af7eef111d",
+  SOAPIER_DISPENSING: "7def6325-4496-491a-a716-a9fca6e3c6df",
   ALLERGIES: "477f8110-ae4b-4caa-b608-c05b0f967b9e",
   DIAGNOSIS: "ba05fbfc-8d80-11d8-abbb-0024217bb78e",
   SURGICAL_HISTORY: "ba063e50-8d80-11d8-abbb-0024217bb78e", //Encounter exists for for ante-natal clinic but not for adults
@@ -182,7 +184,7 @@ export const encounters = {
   DISPOSED_PRESCRIPTIONS: "a9ebe09e-0296-40d1-a9fa-3efcce85ea9e ",
   // GYNEACOLOGY_WARD: "59514a38-a019-4833-b180-480d1bbf2dfe",
   GYNEACOLOGY_WARD: "7819932d-eea1-43d2-a543-35cb93f2da49",
-
+  AWAITING_SPECIALTY: "4a10d674-9072-4385-b2e9-583d0524abe1",
 };
 
 export const AETC_VISIT_TYPE = "9f825d6a-50e6-44e1-a1a4-5cd343963ecc";
@@ -213,7 +215,8 @@ export const concepts = {
   THEATRE: "Theatre",
   OTHER_INTERVENTION_SUITE: "Other Intervention Suite",
   SHORT_STAY: "Short stay",
-  TRANSFER_TO_ANOTHER_FACILITY: "Transfer To Another Facility",
+  // TRANSFER_TO_ANOTHER_FACILITY: "Transfer To Another Facility",
+  TRANSFER_OUT: "Transfer Out",
   DEATH: "Death",
   ABSCONDED: "Absconded",
   REFUSED_HOSPITAL_TREATMENT: "Refused Hospital Treatment",
@@ -261,6 +264,15 @@ export const concepts = {
   FIVE_B_ORTHOPAEDIC_WARD: "Five B Orthopaedic Ward",
   FIVE_B_NEUROSURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
     "Five B Neurosurgical Ward General Ward High Dependency Unit",
+  ONE_A_LABOUR_WARD: "1A Labour ward",
+  MAIN_LABOUR_WARD: "Main Labour ward",
+  ANTENATAL_WARD: "Antenatal ward",
+  POST_NATAL_WARD: "Post natal ward",
+  GYNAECOLOGY_WARD_MAIN: "Gynaecology ward- Main",
+  THREE_B_MALE_MEDICAL: "3B Male medical",
+  THREE_C_COMBINED_MALE_AND_FEMALE_MEDICAL: "3C Combined male and female medical",
+  SIX_A_ORTHOPAEDIC_MALE: "6A Orthopaedic male",
+
   INTENSIVE_CARE_UNIT_ICU: "Intensive Care Unit Icu",
   ENT: "Ent",
   BED_NUMBER: "Bed Number",
@@ -345,7 +357,7 @@ export const concepts = {
   MOTOR_RESPONSE: "Motor Response",
   EYE_OPENING_RESPONSE: "Eye Opening Response",
   VERBAL_RESPONSE: "Verbal Response",
-  GLUCOSE: "Glucose",
+  GLUCOSE: "Blood glucose",
   MEDICAL_RECORD_OBSERVATIONS: "Medical record observations",
   AVPU: "Avpu",
   PULSE_OXIMETRY: "Pulse Oximetry",
@@ -654,7 +666,7 @@ export const concepts = {
   NECK_SWELLING: "Neck Swelling",
   NECK_HAEMATOMA: "Neck Haematoma",
   TONGUE_FALLING_BACK: "Tongue Falling Back",
-  SUCTIONING_AIRWAY: "Suctioning Airway",
+  SUCTIONING_DONE: "Suctioning Done",
   JAW_THRUST_MANOEUVER: "Jaw Thrust Manoeuver",
   HEAD_TILT_CHIN_LIFT: "Head Tilt Chin Lift",
   OROPHARYNGEAL: "Oropharyngeal",
@@ -683,6 +695,7 @@ export const concepts = {
   WEAK: "Weak",
   STRONG_REGULAR: "Strong Regular",
   IRREGULAR: "Irregular",
+  REGULAR_RHYTHM: "Regular rhythm",
   LESS_THAN_3_SECONDS: "Less Than 3 Seconds",
   THREE_SECONDS: "Three Seconds",
   MORE_THAN_THREE_SECONDS: "More Than Three Seconds",
@@ -1432,47 +1445,50 @@ export const concepts = {
   GRAVIDITY: "Gravidity",
   NUMBER_OF_LIVING_CHILDREN: "Number of living children",
   MENARCHE: "Menarche",
-  MENSTRUAL_CYCLE: "Menstrual cycle", // not found
-  DURATION: "Duration",
-  PREV_ABORTION: "Prev Abortion", // not found
-  PREV_ECTOPIC: "Prev Ectopic", // not found
-  CONSISTENCY: "Consistency", // data type coded
+  MENSTRUAL_CYCLE: "Menstrual cycle",
+  DURATION: "Duration", //Not found
+  PREV_ABORTION: "Prev Abortion",
+  PREV_ECTOPIC: "Prev Ectopic",
+  CONSISTENCY: "Consistency",
   COLOR: "Color",
-  ODOUR: "Odour", // not found
+  ODOUR: "Odour",
   AMOUNT: "Amount", // not found
-  PREVIOUS_CONTRACEPTIVE: "Previous Contraceptive", // not found
+  PREVIOUS_CONTRACEPTIVE: "Previous Contraceptive",
+  CONTRACEPTIVE_USE: "Contraceptive use", //concept data type : boolean
   SIDE_EFFECTS: "Side effects",
-  CANCER_SCREENING: "Cancer Screening", // not found
-  DATE_OF_SCREENING: "Date of screening", // not found
-  RESULT: "Results", //UPDATED "Result" TO "Results"
-  HISTORY_OF_STIS: "History of STIs", // not found
+  CANCER_SCREENING: "Cancer Screening",
+  DATE_OF_SCREENING: "Date of screening",
+  RESULT: "Results", //UPDATED "Result" TO "Results"// NOT FOUND
+  HISTORY_OF_STIS: "History of STIs",
   MENTAL_ILLNESS: "Mental Illness",
   BLOOD_TRANSFUSION: "Blood Transfusion",
-  DRUG_ALLERGIES: "Drug Allergies", // not found
+  DRUG_ALLERGIES: "Drug Allergies",
   STABLE: "Stable",
   SICK: "Sick", // not found
   CRITICAL: "Critical",
   MILD: "Mild",
   MODERATE: "Moderate",
   SEVERE: "Severe",
-  STATS: "Stats", // not found
+  STATS: "Stats",
   RBS: "Random Blood Glucose (RBS)", //UPDATED RBS TO "Random Blood Glucose (RBS)"
-  WEIGHT: "Weight",
+  WEIGHT: "Weight", //not Found // Use Normal Weight data type: Numeric
   HEIGHT: "Height", // not found/ Height (cm)  data type: Numeric
   ABDOMEN: "Abdomen",
-  VAGINAL_INSPECTION: "Vaginal Inspection", // not found
+  VAGINAL_INSPECTION: "Vaginal Inspection",
   EXTREMITIES: "Extremities",
   IMPRESSION: "Impression",
-  IMMEDIATE_INTERVENTION: "Immediate Intervention", // concept not found
+  IMMEDIATE_INTERVENTION: "Immediate Intervention",
   EDD: "EDD", // not found
-  CURRENTLY_ON_CONTRACEPTIVE: "Currently on Contraceptive", // not found
-
-
-
+  CURRENTLY_ON_CONTRACEPTIVE: "Currently on Contraceptive",
+  DIGITAL_RECTAL_EXAMINATION_REQUIRED: "Digital Rectal Examination Required", // not found
+  GENERAL_EXAMINATION_PLAN: "Treatment plan other remarks",
 
   GYNAE_BENCH: "Gynae Bench",
   SURGICAL_BENCH: "Surgical bench",
-
+  LEFT_PUPIL_SIZE: "Left pupil size",
+  RIGHT_PUPIL_SIZE: "Right pupil size",
+  LEFT_PUPIL_REACTION: "Left pupil reaction",
+  RIGHT_PUPIL_REACTION: "Right pupil reaction",
 };
 
 export const conceptNames = {
@@ -1754,7 +1770,8 @@ export const roles = {
   INITIAL_REGISTRATION_CLERK: process.env
     .NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE as string,
   DATA_MANAGER: process.env.NEXT_PUBLIC_DATA_MANAGER as string,
-  STUDENT_CLINICIAN: process.env.NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE as string,
+  STUDENT_CLINICIAN: process.env
+    .NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE as string,
 };
 
 // username: registration, clinician, nurse

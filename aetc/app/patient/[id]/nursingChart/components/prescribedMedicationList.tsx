@@ -3,6 +3,7 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { MinimalTable } from "@/components/tables/minimalTable";
 import { conceptNames, concepts, encounters } from "@/constants";
 import { usePrinterDialog } from "@/contexts/printer";
+import { useVisitDates } from "@/contexts/visitDatesContext";
 import { generateMedicationLabelZPL } from "@/helpers/zpl";
 import { getActivePatientDetails } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
@@ -21,9 +22,10 @@ export const PrescribedMedicationList = ({
 }) => {
   const { patientId, activeVisitId } = getActivePatientDetails();
   const { setZpl, setOpen } = usePrinterDialog();
+  const { selectedVisit } = useVisitDates();
   const { data, isPending: fetchingEncounters } = getPatientsEncounters(
     patientId as string,
-    `encounter_type=${encounterType}`
+    `encounter_type=${encounterType}&visit=${selectedVisit?.uuid}`
   );
   const [rows, setRows] = useState<Array<any>>([]);
 
@@ -35,11 +37,15 @@ export const PrescribedMedicationList = ({
   };
 
   useEffect(() => {
+    console.log({ data });
     const prescriptionEncounter = data?.filter((d) => {
-      return d.visit_id == activeVisitId;
+      return d.visit_id == Number(activeVisitId);
     });
 
-    if (!prescriptionEncounter || prescriptionEncounter.length == 0) return;
+    if (!prescriptionEncounter || prescriptionEncounter.length == 0) {
+      setRows([]);
+      return;
+    }
 
     const formattedRows = prescriptionEncounter[0]?.obs
       .filter((ob) => ob?.names && ob?.names[0].name == concepts.DRUG_GIVEN)
@@ -62,17 +68,6 @@ export const PrescribedMedicationList = ({
           durationUnit;
 
         const medicationUUID = childObs.value_coded_uuid;
-        console.log({
-          medicationName: childObs.value,
-          durationUnit,
-          dose,
-          doseUnits,
-          frequency,
-          duration,
-          formulation,
-          description,
-          prescribedBy: childObs.created_by,
-        });
 
         return {
           medicationName: childObs.value,

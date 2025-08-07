@@ -55,6 +55,7 @@ import {
   ReviewOfSystemsNotes,
   SurgicalNotes,
 } from "./sampleHistory";
+import { useVisitDates } from "@/contexts/visitDatesContext";
 
 type PanelData = {
   title: string;
@@ -160,12 +161,13 @@ const filterObservationsByName = (observations: any, filterNames = []) => {
 };
 
 export const ClinicalNotes = () => {
+  const { selectedVisit } = useVisitDates();
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
   const [filterSurgicalState, setFilterSurgicalState] = useState(false); // New state for surgical notes
   const [filterGyneacologyState, setFilterGyneacologyState] = useState(false); // New state for gyneacology notes
   const [filterMedicalInpatientState, setFilterMedicalInpatientState] =
-    useState(false); // New state for Medical inpatient notes
+    useState(false);
   const [expanded, setExpanded] = useState<string | false>(false); // Changed to false initially
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
@@ -201,7 +203,7 @@ export const ClinicalNotes = () => {
       isLoading: historyLoading,
     }: { data: any; isLoading: any } = getPatientsEncounters(
       patientId,
-      `encounter_type=${encounterTypeUuid}`
+      `encounter_type=${encounterTypeUuid}&visit=${selectedVisit?.uuid}`
     );
     if (!patientHistory) return [];
     return patientHistory[0]?.obs || [];
@@ -231,7 +233,11 @@ export const ClinicalNotes = () => {
   };
 
   const getObsByConceptName = (obsData: any) => {
-    const { data: obs }: any = getAllObservations(patientId, obsData);
+    const { data: obs }: any = getAllObservations(
+      patientId,
+      obsData,
+      selectedVisit?.id
+    );
     return obs?.data || [];
   };
 

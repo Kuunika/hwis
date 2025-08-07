@@ -11,6 +11,7 @@ import * as yup from "yup";
 import { NotificationContainer } from "@/components";
 import { getInitialValues } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
+import { getServiceAreas } from "@/hooks/getServiceAreas";
 
 type props = {
   onSubmit: (values: any) => void;
@@ -37,45 +38,8 @@ const schema = yup.object({
   [form.Referred.name]: yup.string().label(form.Referred.label),
 });
 
-const referrences = [
-  { "id": "OPD 1", "label": "OPD 1" },
-  { "id": "STI clinic/Room 4", "label": "STI clinic/Room 4" },
-  { "id": "Dermatology/LEPRA", "label": "Dermatology/LEPRA" },
-  { "id": "Paediatric A&E", "label": "Paediatric A&E" },
-  { "id": "Local health centre", "label": "Local health centre" },
-  { "id": "Physiotherapy", "label": "Physiotherapy" },
-  { "id": "Diabetic clinic", "label": "Diabetic clinic" },
-  { "id": "KS clinic", "label": "KS clinic" },
-  { "id": "Neurology clinic", "label": "Neurology clinic" },
-  { "id": "General medical clinic", "label": "General medical clinic" },
-  { "id": "Haematology clinic", "label": "Haematology clinic" },
-  { "id": "Palliative clinic", "label": "Palliative clinic" },
-  { "id": "Chest clinic", "label": "Chest clinic" },
-  { "id": "Hypertensive clinic", "label": "Hypertensive clinic" },
-  { "id": "Epileptic clinic", "label": "Epileptic clinic" },
-  { "id": "Renal clinic", "label": "Renal clinic" },
-  { "id": "Umodzi/ light house", "label": "Umodzi/ light house" },
-  { "id": "Psychiatry (Room 6)", "label": "Psychiatry (Room 6)" },
-  { "id": "Ophthalmology (Eye)", "label": "Ophthalmology (Eye)" },
-  { "id": "male general surgical", "label": "male general surgical" },
-  { "id": "female general surgical", "label": "female general surgical" },
-  { "id": "Plastic surgery", "label": "Plastic surgery" },
-  { "id": "Breast clinic", "label": "Breast clinic" },
-  { "id": "Orthopaedic specialist clinic", "label": "Orthopaedic specialist clinic" },
-  { "id": "Orthopaedic OPD/Room 8", "label": "Orthopaedic OPD/Room 8" },
-  { "id": "Oncology OPD (4B)", "label": "Oncology OPD (4B)" },
-  { "id": "Oncology Ward(2A)", "label": "Oncology Ward(2A)" },
-  { "id": "Gynae Oncology OPD (4C)", "label": "Gynae Oncology OPD (4C)" },
-  { "id": "Ear Nose and Throat (ENT)", "label": "Ear Nose and Throat (ENT)" },
-  { "id": "Dental", "label": "Dental" },
-  { "id": "General gynecology", "label": "General gynecology" },
-  { "id": "Gynecology oncology", "label": "Gynecology oncology" },
-  { "id": "High risk antenatal", "label": "High risk antenatal" },
-  { "id": "Family planning", "label": "Family planning" },
-  { "id": "VIA", "label": "VIA" }
-]
-
 export function PrescreeningForm({ onSubmit }: props) {
+  const { serviceAreaOptions } = getServiceAreas();
   const [formValues, setFormValues] = useState<any>({});
 
   const yesno = [
@@ -83,7 +47,16 @@ export function PrescreeningForm({ onSubmit }: props) {
     { label: "No", value: NO },
   ];
 
-  let departments = formValues[form.referred.name] == YES ? [{ id: "OPD 2", label: "OPD 2" }, ...referrences,] : referrences
+  const formattedOptions = serviceAreaOptions.map((option: any) => ({
+    id: option.label,
+    label: option.label,
+  }));
+
+let departments =
+  formValues[form.referred.name] == YES
+    ? formattedOptions
+    : formattedOptions.filter((option) => option.id !== "OPD 2");
+
 
   return (
     <FormikInit
@@ -119,17 +92,10 @@ export function PrescreeningForm({ onSubmit }: props) {
           />
         </>
       )}
-      {(formValues[form.urgent.name] == YES || formValues[form.urgent.name] == concepts.ELECTIVE) && (
+      {(formValues[form.urgent.name] == YES ||
+        formValues[form.urgent.name] == concepts.ELECTIVE) && (
         <NotificationContainer message="Proceed with registration" />
       )}
     </FormikInit>
   );
 }
-
-
-
-
-
-
-
-

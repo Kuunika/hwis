@@ -27,7 +27,7 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { encounters } from "@/constants";
+import { concepts, encounters } from "@/constants";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { useFormikContext } from "formik";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
@@ -40,6 +40,7 @@ interface LabOrderTest {
   date: string;
   specimen: string;
   id: number;
+  comment_to_fulfiller?: string; // Optional field for comments
 }
 
 interface GroupedTests {
@@ -264,6 +265,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   }, [orderCreated]);
   const handleLabSend = async (values: FormValues) => {
     const selectedLabOrderIds = values.selectedLabOrderIds || [];
+
     const selectedOrderTests = flattenedLabOrdersPlan
       .filter((test) => selectedLabOrderIds.includes(test.id))
       .map((test) => ({
@@ -271,6 +273,9 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
         testId: test.id,
         specimenType: test.specimen,
         date: test.date,
+        ...(test?.comment_to_fulfiller
+          ? { comment_to_fulfiller: test.comment_to_fulfiller }
+          : {}),
       }));
 
     // Group tests by both specimen type AND date
@@ -316,6 +321,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
           target_lab: "Blantyre Dream Project Clinic",
           date: testDate, // Use the test date instead of getDateTime()
           requesting_clinician: localStorage.getItem("userName"),
+          comment_to_fulfiller: testsArray[0].comment_to_fulfiller || "",
           specimen: {
             concept: specimenConcept,
             specimenType: specimenType,
@@ -332,9 +338,6 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
     const order = {
       orders: orders,
     };
-
-    console.log("Order to be submitted:", order);
-
     // Uncomment to actually submit the order
     mutate(order);
     refetchLabOrdersPlan();
@@ -342,6 +345,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   };
   const filterTests = (tests: any, encounters: any) => {
     const matchMap = new Map();
+
     encounters.forEach((encounter: any) => {
       encounter.obs.forEach((observation: any) => {
         if (observation.value_coded !== null) {
@@ -359,22 +363,42 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   };
   // Parse lab orders plan
   let flattenedLabOrdersPlan: LabOrderTest[] = [];
+
+
+
+
   if (labOrdersPlan && labOrdersPlan?.length > 0) {
-    flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) =>
-      obs.children.map((test: any) => ({
-        test: test.names[0].name,
-        testConceptId: test.concept_id,
-        date: obs.obs_datetime,
-        specimen: obs.names[0].name,
-        id: test.obs_id,
-      }))
-    );
+    
+    flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) => {
+      return obs.children.map((test: any) => {
+        let descriptionConcept;
+        if (test.children && test.children.length > 0) {
+          descriptionConcept = test.children.find((child: any) =>
+            child.names.find((name: any) => name.name == concepts.DESCRIPTION)
+          );
+        }
+        
+        return {
+          test: test.names[0].name,
+          testConceptId: test.concept_id,
+          date: obs.obs_datetime,
+          specimen: obs.names[0].name,
+          id: test.obs_id,
+          ...(descriptionConcept
+            ? { comment_to_fulfiller: descriptionConcept?.value }
+            : {}),
+        };
+      });
+    });
+
     if (labOrdersObs && labOrdersObs?.length > 0)
       flattenedLabOrdersPlan = filterTests(
         flattenedLabOrdersPlan,
         labOrdersObs
       );
+
   }
+
   // Group tests by specimen type
   const groupedTests: GroupedTests = flattenedLabOrdersPlan.reduce(
     (groups: GroupedTests, item: LabOrderTest) => {

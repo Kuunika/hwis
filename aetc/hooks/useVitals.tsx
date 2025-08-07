@@ -8,6 +8,7 @@ import { getObsGraphData } from "./useVitalsGraphData";
 import { getAllObservations } from "./obs";
 
 export const useVitals = () => {
+  const { selectedVisit } = useVisitDates();
   const { patientId } = getActivePatientDetails();
   const { visitDate } = useVisitDates();
   const { data, isLoading } = getPatientsEncounters(
@@ -20,35 +21,49 @@ export const useVitals = () => {
   const [activePage, setActivePage] = useState<number>(0);
   const { data: heartRateData } = getAllObservations(
     patientId,
-    concepts.HEART_RATE
+    concepts.HEART_RATE,
+    selectedVisit?.id
   );
   const { data: respiratoryRateData } = getAllObservations(
     patientId,
-    concepts.RESPIRATORY_RATE
+    concepts.RESPIRATORY_RATE,
+    selectedVisit?.id
   );
   const { data: saturationData } = getAllObservations(
     patientId,
-    concepts.BLOOD_OXYGEN_SATURATION
+    concepts.BLOOD_OXYGEN_SATURATION,
+    selectedVisit?.id
   );
   const { data: temperatureData } = getAllObservations(
     patientId,
-    concepts.TEMPERATURE
+    concepts.TEMPERATURE,
+    selectedVisit?.id
   );
-  const { data: glucoseData } = getAllObservations(patientId, concepts.GLUCOSE);
-  const { data: avpuData } = getAllObservations(patientId, concepts.AVPU);
+  const { data: glucoseData } = getAllObservations(
+    patientId,
+    concepts.GLUCOSE,
+    selectedVisit?.id
+  );
+  const { data: avpuData } = getAllObservations(
+    patientId,
+    concepts.AVPU,
+    selectedVisit?.id
+  );
   const { data: systolicData } = getAllObservations(
     patientId,
-    concepts.SYSTOLIC_BLOOD_PRESSURE
+    concepts.SYSTOLIC_BLOOD_PRESSURE,
+    selectedVisit?.id
   );
   const { data: diastolicData } = getAllObservations(
     patientId,
-    concepts.DIASTOLIC_BLOOD_PRESSURE
+    concepts.DIASTOLIC_BLOOD_PRESSURE,
+    selectedVisit?.id
   );
 
   const getLatestValue = (obsData: any) => {
-    if (!obsData?.data?.length) return null;
+    if (!obsData?.length) return null;
     return (
-      obsData.data.reduce((latest: any, current: any) =>
+      obsData.reduce((latest: any, current: any) =>
         new Date(current.obs_datetime) > new Date(latest.obs_datetime)
           ? current
           : latest

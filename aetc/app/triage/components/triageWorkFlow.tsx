@@ -124,11 +124,7 @@ export default function TriageWorkFlow() {
     { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
-  const {
-    data: patientVisits,
-    isLoading,
-    isSuccess,
-  } = getPatientVisitTypes(params?.id as string);
+  const { data: patientVisits } = getPatientVisitTypes(params?.id as string);
 
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
@@ -143,8 +139,6 @@ export default function TriageWorkFlow() {
       ?.filter((d) => d?.encounter_type.uuid == encounterType)
       .find((d) => d.visit_id == activeVisit?.visit_id);
   };
-
-  //getDateTime();
 
   useEffect(() => {
     setReferral(getEncounterActiveVisit(encounters.REFERRAL));
@@ -172,6 +166,8 @@ export default function TriageWorkFlow() {
         obs: getObservations(formData.vitals, dateTime),
       });
     }
+
+    return;
   }, [presentingCreated]);
 
   useEffect(() => {
@@ -245,10 +241,20 @@ export default function TriageWorkFlow() {
         triageResult === "red"
           ? null
           : Object.entries(formData?.serviceArea ?? {}).find(
-              ([key]) => key !== concepts.PATIENT_REFERRED_TO
+              ([key]) => key !== concepts.OTHER_AETC_SERVICE_AREA
             )?.[1];
 
       const dateTime = ServerTime.getServerTimeString();
+
+      // console.log({
+      //   concept: concepts.CARE_AREA,
+      //   value:
+      //     triageResult === "green" || triageResult === "yellow"
+      //       ? formData.serviceArea || ""
+      //       : "",
+      //   obsDatetime: dateTime,
+      // });
+
       createTriageResult({
         encounterType: encounters.TRIAGE_RESULT,
         visit: activeVisit?.uuid,
@@ -261,10 +267,10 @@ export default function TriageWorkFlow() {
             obsDatetime: dateTime,
           },
           {
-            concept: concepts.PATIENT_REFERRED_TO,
+            concept: concepts.CARE_AREA,
             value:
               triageResult === "green" || triageResult === "yellow"
-                ? formData.serviceArea?.[concepts.PATIENT_REFERRED_TO] || ""
+                ? formData?.serviceArea?.[concepts.CARE_AREA] || ""
                 : "",
             obsDatetime: dateTime,
           },
@@ -276,13 +282,14 @@ export default function TriageWorkFlow() {
         ],
       });
     }
+
     if (triageResult == "green") {
-      const referredTo = formData.serviceArea?.[concepts.PATIENT_REFERRED_TO];
+      const referredTo = formData?.serviceArea?.[concepts.CARE_AREA];
 
       if (
-        referredTo.toLowerCase() == concepts.GYNAE_BENCH.toLowerCase() ||
-        referredTo.toLowerCase() == concepts.MEDICAL_BENCH.toLowerCase() ||
-        referredTo.toLowerCase() == concepts.SURGICAL_BENCH.toLowerCase()
+        referredTo?.toLowerCase() == concepts?.GYNAE_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.MEDICAL_BENCH.toLowerCase() ||
+        referredTo?.toLowerCase() == concepts?.SURGICAL_BENCH.toLowerCase()
       ) {
         return;
       }
@@ -337,10 +344,17 @@ export default function TriageWorkFlow() {
   };
 
   const handleVitalsSubmit = (values: any) => {
-    values[concepts.GLUCOSE] = `${values[concepts.GLUCOSE]} ${
-      values[concepts.ADDITIONAL_NOTES]
-    }`;
-    formData["vitals"] = values;
+    const cloneValues = { ...values };
+    if (
+      cloneValues &&
+      cloneValues[concepts.GLUCOSE] !== undefined &&
+      cloneValues[concepts.ADDITIONAL_NOTES] !== undefined
+    ) {
+      cloneValues[concepts.GLUCOSE] =
+        `${cloneValues[concepts.GLUCOSE]} ${cloneValues[concepts.ADDITIONAL_NOTES]}`;
+    }
+
+    formData["vitals"] = cloneValues;
 
     setActiveStep(2);
     setSubmittedSteps((steps) => [...steps, 1]);
@@ -375,7 +389,6 @@ export default function TriageWorkFlow() {
     triggerSubmission();
     setShowModal(false);
   };
-  const dateTime = ServerTime.getServerTimeString();
 
   const triggerSubmission = () => {
     setLoading(true);
@@ -558,7 +571,7 @@ export default function TriageWorkFlow() {
               return prev == "" ? current.label : prev + "," + current.label;
             }, "")}
             triageCategory={triageResult}
-            date={getHumanReadableDateTime(dateTime)}
+            date={getHumanReadableDateTime(ServerTime.getServerTimeString())}
             triagedBy={presentingComplaintsResponse?.created_by as string}
             referredFrom={referralHealthFacility}
             vitals={[

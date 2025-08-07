@@ -203,13 +203,16 @@ export const PhysicalExaminationForm = ({ onSubmit, onSkip }: Prop) => {
                         <FormFieldContainerLayout title="Vitals">
 
                             <TextInputField sx={{ width: "100%" }}
-                                name="temperature" label="Temperature" type="text" id={""} />
+                                name="temperature" label="Temperature" type="text" id={""} unitOfMeasure="°C"
+                            />
                             <TextInputField sx={{ width: "100%" }}
-                                name="pulse" label="Pulse" type="text" id={""} />
+                                name="pulse" label="Pulse" type="text" id={""} unitOfMeasure="bpm" />
                             <TextInputField sx={{ width: "100%" }}
-                                name="bloodPressure" label="Blood Pressure (BP)" type="text" id={""} />
+                                name="bloodPressure" label="Blood Pressure (BP)" type="text" id={""} unitOfMeasure="mmHg"
+                            />
                             <TextInputField sx={{ width: "100%" }}
-                                name="respiratoryRate" label="Respiratory Rate" type="text" id={""} />
+                                name="respiratoryRate" label="Respiratory Rate" type="text" id={""} unitOfMeasure="bs/m"
+                            />
                         </FormFieldContainerLayout>
 
                         {/* Eyes */}
