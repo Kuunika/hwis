@@ -89,8 +89,6 @@ export const formatSoapierNotes = (data: any) => {
 };
 export const formatDiagnosisNotes = (data: any) => {
 
-console.log({data});
-
   const diagnosisNotesConfig = {
     diagnosis: {
       name: concepts.DIFFERENTIAL_DIAGNOSIS,
@@ -115,11 +113,31 @@ console.log({data});
 
   return [
     {
-      heading: "Soapier Notes",
+      heading: "Diagnosis Notes",
       children: buildNotesObject(diagnosisNotesConfig, data),
     },
   ];
 };
+
+export const formatInvestigationPlans = (data: Obs[]) => {
+
+  console.log({data});
+
+ return data.map(ob=>{
+    const plan = ob.value;
+    const result= ob.children.map((child: Obs) => {
+      return {
+        test: child.names[0].name,
+        result: child.value,
+      }
+      });
+
+    return { plan, result };
+
+  })
+
+
+}
 
 const buildNotesObject = (formConfig: any, obs: Obs[]) => {
   return (Object.keys(formConfig) as Array<keyof typeof formConfig>)

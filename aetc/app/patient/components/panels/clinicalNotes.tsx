@@ -56,7 +56,9 @@ import {
 } from "./sampleHistory";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { DisplayInformation } from "./displayInformation";
-import { formatDiagnosisNotes, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals } from "./formatters";
+import  { formatDiagnosisNotes, formatInvestigationPlans, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals } from "./formatters";
+import GroupedResultsTable from "./tabularDisplayInformation";
+import ResultsTable from "./tabularDisplayInformation";
 
 type PanelData = {
   title: string;
@@ -935,6 +937,11 @@ export const ClinicalNotes = () => {
                 data={formatDiagnosisNotes([
                   ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
                   ...getEncountersByType(encounters.DIAGNOSIS),
+                ])}
+              />
+              <ResultsTable
+                data={formatInvestigationPlans([
+                  ...getEncountersByType(encounters.BED_SIDE_TEST),
                 ])}
               />
             </>
