@@ -2,12 +2,10 @@ import React from "react";
 import {
   Paper,
   Typography,
-  Grid,
   Box,
   List,
   ListItem,
   ListItemText,
-  Divider,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
@@ -29,7 +27,7 @@ export const PrintClinicalNotes = (props: any) => {
 
     return (
       <Typography
-        sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px" }}
+        sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}
       >
         ~ {panelData[0].created_by} -{" "}
         {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
@@ -74,7 +72,6 @@ export const PrintClinicalNotes = (props: any) => {
         {/* Airway Status */}
         {airwayStatus && (
           <Typography variant="body2" sx={{ mb: 0.5 }}>
-            {/* Airway: {airwayStatus} */}
             Airway is{" "}
             {airwayStatus.toLowerCase() === "yes"
               ? "Patent"
@@ -292,134 +289,107 @@ export const PrintClinicalNotes = (props: any) => {
           Primary Survey
         </Typography>
 
-        <Grid container spacing={2}>
-          {/* Column 1: A & B */}
-          <Grid item xs={12} md={4}>
-            {/* A – Airway */}
-            {fields.airway.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
-                >
-                  A – Airway with C-Spine Protection
-                </Typography>
-                {renderAirwaySection(fields.airway)}
-              </>
-            )}
+        {/* A – Airway */}
+        {fields.airway.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
+            >
+              A – Airway with C-Spine Protection
+            </Typography>
+            {renderAirwaySection(fields.airway)}
+          </>
+        )}
 
-            {/* B – Breathing */}
-            {fields.breathing.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
-                >
-                  B – Breathing
-                </Typography>
-                {fields.breathing.map((field: any, index: number) => {
-                  const name = field.name?.toLowerCase();
-                  const value = field.value;
+        {/* B – Breathing */}
+        {fields.breathing.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              B – Breathing
+            </Typography>
+            {fields.breathing.map((field: any, index: number) => {
+              const name = field.name?.toLowerCase();
+              const value = field.value;
 
-                  if (name.includes("abnormal")) {
-                    return (
-                      <Typography
-                        key={index}
-                        variant="body2"
-                        sx={{ ml: 1, mb: 0.5 }}
-                      >
-                        {value?.toLowerCase() === "no"
-                          ? "Breathing is Patent"
-                          : value?.toLowerCase() === "yes"
-                            ? "Breathing is Not Patent"
-                            : "Breathing status unknown"}
-                      </Typography>
-                    );
-                  }
-
-                  return (
-                    <Typography
-                      key={index}
-                      variant="body2"
-                      sx={{ ml: 1, mb: 0.5 }}
-                    >
-                      {field.name}: {field.value}
-                    </Typography>
-                  );
-                })}
-              </>
-            )}
-          </Grid>
-
-          {/* Column 2: C & D */}
-          <Grid item xs={12} md={4}>
-            {/* C – Circulation */}
-            {fields.circulation.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
-                >
-                  C – Circulation
-                </Typography>
-                {fields.circulation.map((field: any, index: number) => (
+              if (name.includes("abnormal")) {
+                return (
                   <Typography
                     key={index}
                     variant="body2"
                     sx={{ ml: 1, mb: 0.5 }}
                   >
-                    {field.name}: {field.value}
+                    {value?.toLowerCase() === "no"
+                      ? "Breathing is Patent"
+                      : value?.toLowerCase() === "yes"
+                        ? "Breathing is Not Patent"
+                        : "Breathing status unknown"}
                   </Typography>
-                ))}
-              </>
-            )}
+                );
+              }
 
-            {/* D – Disability */}
-            {fields.disability.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
-                >
-                  D – Disability
+              return (
+                <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                  {field.name}: {field.value}
                 </Typography>
-                {fields.disability.map((field: any, index: number) => (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    sx={{ ml: 1, mb: 0.5 }}
-                  >
-                    {field.name}: {field.value}
-                  </Typography>
-                ))}
-              </>
-            )}
-          </Grid>
+              );
+            })}
+          </>
+        )}
 
-          {/* Column 3: E only */}
-          <Grid item xs={12} md={4}>
-            {/* E – Exposure/Environment */}
-            {fields.exposure.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
-                >
-                  E – Exposure/Environment
-                </Typography>
-                {fields.exposure.map((field: any, index: number) => (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    sx={{ ml: 1, mb: 0.5 }}
-                  >
-                    {field.name}: {field.value}
-                  </Typography>
-                ))}
-              </>
-            )}
-          </Grid>
-        </Grid>
+        {/* C – Circulation */}
+        {fields.circulation.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              C – Circulation
+            </Typography>
+            {fields.circulation.map((field: any, index: number) => (
+              <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                {field.name}: {field.value}
+              </Typography>
+            ))}
+          </>
+        )}
+
+        {/* D – Disability */}
+        {fields.disability.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              D – Disability
+            </Typography>
+            {fields.disability.map((field: any, index: number) => (
+              <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                {field.name}: {field.value}
+              </Typography>
+            ))}
+          </>
+        )}
+
+        {/* E – Exposure/Environment */}
+        {fields.exposure.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              E – Exposure/Environment
+            </Typography>
+            {fields.exposure.map((field: any, index: number) => (
+              <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                {field.name}: {field.value}
+              </Typography>
+            ))}
+          </>
+        )}
 
         {renderTimestamp(panelData)}
       </Box>
@@ -528,43 +498,39 @@ export const PrintClinicalNotes = (props: any) => {
     return renderedContent !== null;
   };
 
-  // Section component to reduce repetition
-  const Section = ({ title = "", panelData = [], borderRight = false }) => {
-    if (!hasContent(panelData)) return null;
-
-    const flatData = Array.isArray(panelData) ? panelData.flat() : [];
-
-    return (
-      <Grid
-        item
-        xs={6}
-        sx={{
-          p: 2,
-          ...(borderRight && { borderRight: "1px solid rgba(0, 0, 0, 0.12)" }),
-        }}
+  // Create individual card components for masonry
+  const MasonryCard = ({
+    title,
+    children,
+    minHeight = "auto",
+  }: {
+    title: string;
+    children: React.ReactNode;
+    minHeight?: string;
+  }) => (
+    <Paper
+      elevation={1}
+      sx={{
+        p: 2,
+        mb: 2,
+        borderRadius: 2,
+        minHeight,
+        breakInside: "avoid",
+      }}
+    >
+      <Typography
+        variant="subtitle1"
+        fontWeight="bold"
+        sx={{ textDecoration: "underline", mb: 1 }}
       >
-        <Typography
-          variant="subtitle1"
-          fontWeight="bold"
-          sx={{ textDecoration: "underline" }}
-          gutterBottom
-        >
-          {title}
-        </Typography>
-        {React.isValidElement(panelData) ? (
-          panelData
-        ) : (
-          <>
-            {renderGroupedItems(flatData)}
-            {renderTimestamp(panelData)}
-          </>
-        )}
-      </Grid>
-    );
-  };
+        {title}
+      </Typography>
+      {children}
+    </Paper>
+  );
 
-  // Clinical Notes section is unique, handle separately
-  const renderClinicalNotes = (panelData: any) => {
+  // Clinical Notes card
+  const renderClinicalNotesCard = (panelData: any) => {
     if (
       !panelData ||
       !Array.isArray(panelData) ||
@@ -575,23 +541,7 @@ export const PrintClinicalNotes = (props: any) => {
     }
 
     return (
-      <Grid
-        item
-        xs={6}
-        sx={{
-          p: 1,
-          borderRight: "1px solid rgba(0, 0, 0, 0.12)",
-          minHeight: "100px",
-        }}
-      >
-        <Typography
-          variant="subtitle1"
-          fontWeight="bold"
-          sx={{ textDecoration: "underline" }}
-          gutterBottom
-        >
-          Clinical Notes
-        </Typography>
+      <MasonryCard title="Clinical Notes" minHeight="100px">
         <List dense disablePadding>
           {panelData.map((item, index) =>
             item && item.value ? (
@@ -604,7 +554,40 @@ export const PrintClinicalNotes = (props: any) => {
             ) : null
           )}
         </List>
-      </Grid>
+      </MasonryCard>
+    );
+  };
+
+  // Generic card for other sections
+  const renderGenericCard = (title: string, panelData: any) => {
+    if (!hasContent(panelData)) return null;
+
+    const flatData = Array.isArray(panelData) ? panelData.flat() : [];
+
+    return (
+      <MasonryCard title={title}>
+        {React.isValidElement(panelData) ? (
+          panelData
+        ) : (
+          <>
+            {renderGroupedItems(flatData)}
+            {renderTimestamp(panelData)}
+          </>
+        )}
+      </MasonryCard>
+    );
+  };
+
+  // Primary Survey card with special rendering
+  const renderPrimarySurveyCard = (panelData: any) => {
+    if (!panelData || !Array.isArray(panelData) || panelData.length === 0) {
+      return null;
+    }
+
+    return (
+      <MasonryCard title="Primary Survey" minHeight="200px">
+        {renderPrimarySurvey(panelData)}
+      </MasonryCard>
     );
   };
 
@@ -620,41 +603,32 @@ export const PrintClinicalNotes = (props: any) => {
     diagnosis: data?.panel10?.data || [],
   };
 
-  // Check if triage and vital sections have content
-  const hasTriageContent = hasContent(panelData.triage);
-  const hasVitalContent = hasContent(panelData.vital);
-  const hasPrimaryContent = Boolean(panelData.primary)
-    // &&
-    // Array.isArray(panelData.primary) &&
-    // panelData.primary.length > 0;
-  const hasClinicalNotesContent =
-    panelData.clinicalNotes &&
-    Array.isArray(panelData.clinicalNotes) &&
-    panelData.clinicalNotes.length > 0 &&
-    panelData.clinicalNotes.some((item) => item && item.value);
-
-  // Check if we have any content for the first row
-  const hasFirstRowContent =
-    hasClinicalNotesContent ||
-    hasTriageContent ||
-    hasVitalContent ||
-    hasPrimaryContent;
-
-  // Check if we have any content for the second row
-  const hasSecondaryContent: any = hasContent(panelData.secondary);
-  const hasPlanContent = hasContent(panelData.plan);
-  const hasSecondRowContent = hasSecondaryContent || hasPlanContent;
-
-  // Check if we have any content for the third row
-  const hasSoapierContent = hasContent(panelData.soapier);
-  const hasDiagnosisContent = hasContent(panelData.diagnosis);
-  const hasThirdRowContent = hasSoapierContent || hasDiagnosisContent;
+  // Create array of all cards that have content
+  const cards = [
+    hasContent(panelData.clinicalNotes) &&
+      renderClinicalNotesCard(panelData.clinicalNotes),
+    hasContent(panelData.triage) &&
+      renderGenericCard("Triage Information", panelData.triage),
+    hasContent(panelData.vital) &&
+      renderGenericCard("Vital Information", panelData.vital),
+    panelData.primary &&
+      Array.isArray(panelData.primary) &&
+      panelData.primary.length > 0 &&
+      renderPrimarySurveyCard(panelData.primary),
+    hasContent(panelData.secondary) &&
+      renderGenericCard("Secondary Survey", panelData.secondary),
+    hasContent(panelData.plan) && renderGenericCard("Plan", panelData.plan),
+    hasContent(panelData.soapier) &&
+      renderGenericCard("SOAPIER", panelData.soapier),
+    hasContent(panelData.diagnosis) &&
+      renderGenericCard("Diagnosis", panelData.diagnosis),
+  ].filter(Boolean);
 
   // If no content at all, return a message
-  if (!hasFirstRowContent && !hasSecondRowContent && !hasThirdRowContent) {
+  if (cards.length === 0) {
     return (
       <ThemeProvider theme={theme}>
-        <Box sx={{ maxWidth: 1000, mx: "auto", my: 2 }}>
+        <Box sx={{ maxWidth: 1200, mx: "auto", my: 2 }}>
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h6" align="center">
               No clinical data available
@@ -667,151 +641,19 @@ export const PrintClinicalNotes = (props: any) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ maxWidth: 1000, mx: "auto", my: 2 }}>
-        <Paper elevation={3}>
-          {/* First Row - Clinical Notes and Right Column (Triage, Vital, Primary) */}
-          {hasFirstRowContent && (
-            <Grid container>
-              {hasClinicalNotesContent &&
-                renderClinicalNotes(panelData.clinicalNotes)}
-
-              {/* Right Column Container - Only render if any section has content */}
-              {(hasTriageContent || hasVitalContent || hasPrimaryContent) && (
-                <Grid
-                  item
-                  xs={hasClinicalNotesContent ? 6 : 12}
-                  sx={{ display: "flex", flexDirection: "column" }}
-                >
-                  {/* Triage Information */}
-                  {hasTriageContent && (
-                    <Box
-                      sx={{
-                        p: 2,
-                        borderBottom:
-                          hasVitalContent || hasPrimaryContent
-                            ? "1px solid rgba(0, 0, 0, 0.12)"
-                            : "none",
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        sx={{ textDecoration: "underline" }}
-                        gutterBottom
-                      >
-                        Triage Information
-                      </Typography>
-                      {React.isValidElement(panelData.triage)
-                        ? panelData.triage
-                        : renderGroupedItems(
-                            Array.isArray(panelData.triage)
-                              ? panelData.triage.flat()
-                              : []
-                          )}
-                      {renderTimestamp(panelData.triage)}
-                    </Box>
-                  )}
-
-                  {/* Vital Information */}
-                  {/* {hasVitalContent && (
-                    <Box
-                      sx={{
-                        p: 2,
-                        borderBottom: hasPrimaryContent
-                          ? "1px solid rgba(0, 0, 0, 0.12)"
-                          : "none",
-                        minHeight: "80px",
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        sx={{ textDecoration: "underline" }}
-                        gutterBottom
-                      >
-                        Vital Information
-                      </Typography>
-                      {renderGroupedItems(
-                        Array.isArray(panelData.vital)
-                          ? panelData.vital.flat()
-                          : []
-                      )}
-                      {renderTimestamp(panelData.vital)}
-                    </Box>
-                  )} */}
-                  {hasPrimaryContent && (
-                    <Box
-                      sx={{
-                        p: 2,
-                        borderBottom: hasPrimaryContent
-                          ? "1px solid rgba(0, 0, 0, 0.12)"
-                          : "none",
-                        minHeight: "80px",
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        sx={{ textDecoration: "underline" }}
-                        gutterBottom
-                      >
-                        Primary Survey
-                      </Typography>
-                      {React.isValidElement(panelData.primary)
-                        ? panelData.primary
-                        : renderGroupedItems(
-                            Array.isArray(panelData.primary)
-                              ? panelData.primary.flat()
-                              : []
-                          )}
-                      {renderTimestamp(panelData.primary)}
-                    </Box>
-                  )}
-                </Grid>
-              )}
-            </Grid>
-          )}
-
-          {/* Add divider between rows only if both have content */}
-          {hasFirstRowContent && hasSecondRowContent && <Divider />}
-
-          {/* Second Row */}
-          {hasSecondRowContent && (
-            <Grid container>
-              {hasSecondaryContent ? (
-                <Section
-                  title="Secondary Survey"
-                  panelData={panelData.secondary}
-                  borderRight={hasPlanContent}
-                />
-              ) : null}
-
-              {hasPlanContent ? (
-                <Section title="Plan" panelData={panelData.plan} />
-              ) : null}
-            </Grid>
-          )}
-
-          {/* Add divider between rows only if both have content */}
-          {hasSecondRowContent && hasThirdRowContent && <Divider />}
-
-          {/* Third Row */}
-          {hasThirdRowContent && (
-            <Grid container>
-              {hasSoapierContent ? (
-                <Section
-                  title="SOAPIER"
-                  panelData={panelData.soapier}
-                  borderRight={hasDiagnosisContent}
-                />
-              ) : null}
-
-              {hasDiagnosisContent ? (
-                <Section title="Diagnosis" panelData={panelData.diagnosis} />
-              ) : null}
-            </Grid>
-          )}
-        </Paper>
+      <Box sx={{ maxWidth: 1200, mx: "auto", my: 2, p: 2 }}>
+        {/* Masonry Container using CSS columns */}
+        <Box
+          sx={{
+            columnCount: 2,
+            columnGap: "16px",
+            "@media (max-width: 900px)": {
+              columnCount: 1,
+            },
+          }}
+        >
+          {cards}
+        </Box>
       </Box>
     </ThemeProvider>
   );
