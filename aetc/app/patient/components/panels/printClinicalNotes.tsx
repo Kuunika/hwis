@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Paper,
   Typography,
@@ -6,6 +6,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Divider,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
@@ -18,8 +19,16 @@ const theme = createTheme({
 });
 
 export const PrintClinicalNotes = (props: any) => {
+  // Check if this is being rendered for PDF (you can pass a prop or detect print media)
+  const isPdfMode = props.isPdfMode || false;
+  const [isMounted, setIsMounted] = useState(false);
+
   // Make sure we have data object
   const data = props?.data || props;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Function to render timestamp and author
   const renderTimestamp = (panelData: any) => {
@@ -27,7 +36,7 @@ export const PrintClinicalNotes = (props: any) => {
 
     return (
       <Typography
-        sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}
+        sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px" }}
       >
         ~ {panelData[0].created_by} -{" "}
         {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
@@ -509,19 +518,43 @@ export const PrintClinicalNotes = (props: any) => {
     minHeight?: string;
   }) => (
     <Paper
-      elevation={1}
+      elevation={isPdfMode ? 0 : 2}
       sx={{
         p: 2,
         mb: 2,
-        borderRadius: 2,
+        borderRadius: isPdfMode ? 0 : 2,
         minHeight,
-        breakInside: "avoid",
+        border: isPdfMode ? "1px solid #ddd" : "none",
+        boxShadow: isPdfMode ? "none" : undefined,
+        width: "100%", // Ensure full width
+        boxSizing: "border-box",
+
+        // Print-specific styles for useReactToPrint
+        "@media print": {
+          boxShadow: "none !important",
+          border: "1px solid #000 !important",
+          borderRadius: "0 !important",
+          breakInside: "avoid",
+          pageBreakInside: "avoid",
+          marginBottom: "16px !important",
+          position: "static !important",
+          width: "100% !important",
+          left: "unset !important",
+          top: "unset !important",
+        },
       }}
     >
       <Typography
         variant="subtitle1"
         fontWeight="bold"
-        sx={{ textDecoration: "underline", mb: 1 }}
+        sx={{
+          textDecoration: "underline",
+          mb: 1,
+          "@media print": {
+            fontSize: "14px !important",
+            fontWeight: "bold !important",
+          },
+        }}
       >
         {title}
       </Typography>
@@ -624,6 +657,29 @@ export const PrintClinicalNotes = (props: any) => {
       renderGenericCard("Diagnosis", panelData.diagnosis),
   ].filter(Boolean);
 
+  // Split cards into two columns manually
+  const leftColumn = cards.filter((_, index) => index % 2 === 0);
+  const rightColumn = cards.filter((_, index) => index % 2 === 1);
+
+  // PDF-friendly layout
+  if (isPdfMode) {
+    return (
+      <ThemeProvider theme={theme}>
+        <Box sx={{ maxWidth: 1000, mx: "auto", my: 2 }}>
+          <Paper elevation={3}>
+            {/* Render cards in a simple vertical layout for PDF */}
+            {cards.map((card, index) => (
+              <Box key={index}>
+                {card}
+                {index < cards.length - 1 && <Divider sx={{ my: 2 }} />}
+              </Box>
+            ))}
+          </Paper>
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
   // If no content at all, return a message
   if (cards.length === 0) {
     return (
@@ -642,17 +698,40 @@ export const PrintClinicalNotes = (props: any) => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ maxWidth: 1200, mx: "auto", my: 2, p: 2 }}>
-        {/* Masonry Container using CSS columns */}
+        {/* Simple 2-column layout using CSS Grid */}
         <Box
           sx={{
-            columnCount: 2,
-            columnGap: "16px",
-            "@media (max-width: 900px)": {
-              columnCount: 1,
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 2,
+            alignItems: "start",
+
+            // Mobile responsive
+            "@media (max-width: 600px)": {
+              gridTemplateColumns: "1fr",
+            },
+
+            // Print styles for useReactToPrint
+            "@media print": {
+              display: "block !important",
+              gridTemplateColumns: "unset !important",
+              gap: "0 !important",
+
+              "& > *": {
+                marginBottom: "16px !important",
+              },
             },
           }}
         >
-          {cards}
+          {/* Left Column */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {leftColumn}
+          </Box>
+
+          {/* Right Column */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {rightColumn}
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>
