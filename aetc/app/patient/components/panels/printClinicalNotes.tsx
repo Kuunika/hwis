@@ -532,7 +532,6 @@ export const PrintClinicalNotes = (props: any) => {
         // Print-specific styles for useReactToPrint
         "@media print": {
           boxShadow: "none !important",
-          border: "1px solid #000 !important",
           borderRadius: "0 !important",
           breakInside: "avoid",
           pageBreakInside: "avoid",
@@ -636,6 +635,7 @@ export const PrintClinicalNotes = (props: any) => {
     diagnosis: data?.panel10?.data || [],
   };
 
+
   // Create array of all cards that have content
   const cards = [
     hasContent(panelData.clinicalNotes) &&
@@ -644,12 +644,10 @@ export const PrintClinicalNotes = (props: any) => {
       renderGenericCard("Triage Information", panelData.triage),
     hasContent(panelData.vital) &&
       renderGenericCard("Vital Information", panelData.vital),
-    panelData.primary &&
-      Array.isArray(panelData.primary) &&
-      panelData.primary.length > 0 &&
-      renderPrimarySurveyCard(panelData.primary),
-    hasContent(panelData.secondary) &&
+      hasContent(panelData.secondary) &&
       renderGenericCard("Secondary Survey", panelData.secondary),
+      panelData.primary && renderGenericCard("Primary Survey", panelData.primary),
+        renderPrimarySurveyCard(panelData.primary),
     hasContent(panelData.plan) && renderGenericCard("Plan", panelData.plan),
     hasContent(panelData.soapier) &&
       renderGenericCard("SOAPIER", panelData.soapier),
@@ -713,16 +711,17 @@ export const PrintClinicalNotes = (props: any) => {
 
             // Print styles for useReactToPrint
             "@media print": {
-              display: "block !important",
-              gridTemplateColumns: "unset !important",
-              gap: "0 !important",
+              // display: "block !important",
+              // gridTemplateColumns: "unset !important",
+              // gap: "0 !important",
 
               "& > *": {
-                marginBottom: "16px !important",
+                // marginBottom: "16px !important",
               },
             },
           }}
         >
+          {/* {cards} */}
           {/* Left Column */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {leftColumn}

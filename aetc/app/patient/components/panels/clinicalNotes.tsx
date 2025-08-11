@@ -351,17 +351,17 @@ export const ClinicalNotes = () => {
       // ],
       removeObs: [], // No specific headings to remove
     },
-    panel8: {
-      title: "Primary Survey",
-      data: [
-        ...getEncountersByType(encounters.AIRWAY_ASSESSMENT),
-        ...getEncountersByType(encounters.BREATHING_ASSESSMENT),
-        ...getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
-        ...getEncountersByType(encounters.PRIMARY_DISABILITY_ASSESSMENT),
-        ...getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
-      ],
-      removeObs: ["Image Part Name"], // No specific headings to remove
-    },
+    // panel8: {
+    //   title: "Primary Survey",
+    //   data: [
+    //     ...getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+    //     ...getEncountersByType(encounters.BREATHING_ASSESSMENT),
+    //     ...getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+    //     ...getEncountersByType(encounters.PRIMARY_DISABILITY_ASSESSMENT),
+    //     ...getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+    //   ],
+    //   removeObs: ["Image Part Name"], // No specific headings to remove
+    // },
     panel9: {
       title: "Secondary Survey",
       data: [
@@ -912,6 +912,7 @@ export const ClinicalNotes = () => {
           onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
+
       {!filterSurgicalState &&
         !filterGyneacologyState &&
         !filterMedicalInpatientState && (
