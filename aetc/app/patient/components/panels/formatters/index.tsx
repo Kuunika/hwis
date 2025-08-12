@@ -121,8 +121,6 @@ export const formatDiagnosisNotes = (data: any) => {
 
 export const formatInvestigationPlans = (data: Obs[]) => {
 
-  console.log({data});
-
  return data.map(ob=>{
     const plan = ob.value;
     const result= ob.children.map((child: Obs) => {
@@ -225,25 +223,12 @@ const buildChildren = (obs: Obs[], children: any) => {
             })
           : { [child.label]: obValue };
 
-        //  console.log({childValue});
-
-        //  child?.options
-        //    ? child.options[obValue]
-        //    : obValue;
-
         transformedObs = {
           item: childValue,
           children: child?.children
             ? buildChildren(obs, child?.children)
             : childValue,
         };
-
-        // transformedObs = obs?.map((ob) => {
-        //   return {
-        //     item: { [child?.label]: ob.value || "N/A" },
-        //     children: child?.children ? buildChildren(obs, child?.children) : childValue,
-        //   };
-        // });
       }
       return transformedObs;
     })

@@ -97,6 +97,7 @@ const form = {
       {
         concept: concepts.CHEST_WALL_ABNORMALITY,
         label: "Chest Wall Abnormality",
+        hasImages: true,        
       },
       {
         concept: concepts.CHEST_EXPANSION,
@@ -395,8 +396,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime,
-  
-      
         groupMembers: flattenImagesObs(percussionImage),
       },
       {
