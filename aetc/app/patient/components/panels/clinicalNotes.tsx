@@ -376,12 +376,12 @@ export const ClinicalNotes = () => {
           <DisplayInformation
               title=""
               data={formatSecondarySurvey({
-                ...getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
-                ...getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
-                ...getEncountersByType(encounters.CHEST_ASSESSMENT),
-                ...getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
-                ...getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
-                ...getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
+                generalInformationObs: getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
+                headAndNeckObs: getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
+                chestObs: getEncountersByType(encounters.CHEST_ASSESSMENT),
+                abdomenAndPelvisObs: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
+                extremitiesObs: getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
+                neurologicalObs: getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
               })}
           />
       ),

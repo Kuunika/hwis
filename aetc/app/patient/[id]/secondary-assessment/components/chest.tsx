@@ -42,6 +42,14 @@ const form = {
   chestWallAbnormality: {
     name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
+    children:[
+      {
+        multiple: true,
+        name: concepts.ABNORMALITIES,
+        label: "Abnormalities",
+        type: "string",
+      }
+    ]
   },
   chestWallAbnormalities: {
     name: concepts.ABNORMALITIES,
