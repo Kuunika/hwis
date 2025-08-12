@@ -60,6 +60,8 @@ const form = {
     coded: true,
   },
 };
+export const extremitiesFormConfig: any = form;
+
 
 type Prop = {
   onSubmit: () => void;

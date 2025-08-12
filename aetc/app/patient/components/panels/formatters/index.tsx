@@ -12,6 +12,12 @@ import {
 } from "@/app/patient/[id]/primary-assessment/components";
 import { soapierFormConfig } from "@/app/patient/[id]/soap/components/soapForm";
 import { getObservations } from "@/helpers";
+import {
+  abdomenAndPelvisFormConfig,
+  chestFormConfig, extremitiesFormConfig,
+  generalInformationFormConfig,
+  headAndNeckFormConfig, neurologicalFormConfig
+} from "@/app/patient/[id]/secondary-assessment/components";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -79,6 +85,43 @@ export const formatPrimarySurvey = (data: {
   ];
 };
 
+export const formatSecondarySurvey = (data: {
+  generalInformationObs: Obs[];
+  headAndNeckObs: Obs[];
+  chestObs: Obs[];
+  abdomenAndPelvisObs: Obs[];
+  extremitiesObs: Obs[];
+  neurologicalObs: Obs[];
+}): ClinicalNotesDataType[] => {
+  return [
+    {
+      heading: "General Information",
+      children: buildNotesObject(generalInformationFormConfig, data.generalInformationObs),
+    },
+    {
+      heading: "Head and Neck",
+      children: buildNotesObject(headAndNeckFormConfig, data.headAndNeckObs),
+    },
+    {
+      heading: "Chest",
+      children: buildNotesObject(chestFormConfig, data.chestObs),
+    },
+    {
+      heading: "Abdomen and Pelvis",
+      children: buildNotesObject(abdomenAndPelvisFormConfig, data.abdomenAndPelvisObs),
+    },
+    {
+      heading: "Extremities",
+      children: buildNotesObject(extremitiesFormConfig, data.extremitiesObs),
+    },
+    {
+      heading: "Neurological",
+      children: buildNotesObject(neurologicalFormConfig, data.neurologicalObs),
+    },
+  ];
+};
+
+
 export const formatSoapierNotes = (data: any) => {
   return [
     {
@@ -120,8 +163,6 @@ export const formatDiagnosisNotes = (data: any) => {
 };
 
 export const formatInvestigationPlans = (data: Obs[]) => {
-
-  console.log({data});
 
  return data.map(ob=>{
     const plan = ob.value;
@@ -225,25 +266,12 @@ const buildChildren = (obs: Obs[], children: any) => {
             })
           : { [child.label]: obValue };
 
-        //  console.log({childValue});
-
-        //  child?.options
-        //    ? child.options[obValue]
-        //    : obValue;
-
         transformedObs = {
           item: childValue,
           children: child?.children
             ? buildChildren(obs, child?.children)
             : childValue,
         };
-
-        // transformedObs = obs?.map((ob) => {
-        //   return {
-        //     item: { [child?.label]: ob.value || "N/A" },
-        //     children: child?.children ? buildChildren(obs, child?.children) : childValue,
-        //   };
-        // });
       }
       return transformedObs;
     })

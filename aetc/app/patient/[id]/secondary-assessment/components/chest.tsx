@@ -136,6 +136,8 @@ const form = {
     label: "specify",
   },
 };
+export const chestFormConfig: any = form;
+
 
 type Prop = {
   onSubmit: () => void;

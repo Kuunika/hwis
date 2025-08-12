@@ -236,6 +236,10 @@ const form = {
     name: concepts.PLAN,
     label: "Plan",
   },
+  implementation: {
+    name: concepts.IMPLEMENTATION,
+    label: "Implementation",
+  },
   evaluation: {
     name: concepts.EVALUATION,
     label: "Evaluation",
@@ -244,10 +248,7 @@ const form = {
     name: concepts.REPLAN,
     label: "Replan",
   },
-  implementation: {
-    name: concepts.IMPLEMENTATION,
-    label: "Implementation",
-  },
+
   // medications: [medicationTemplate] as any,
   // procedures: [],
   // supportiveCare: [],

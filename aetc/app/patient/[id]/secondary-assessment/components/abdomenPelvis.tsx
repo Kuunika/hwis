@@ -217,6 +217,8 @@ const form = {
     label: "Does the condition necessitate digital rectal examination?",
   },
 };
+export const abdomenAndPelvisFormConfig: any = form;
+
 
 type Prop = {
   onSubmit: () => void;

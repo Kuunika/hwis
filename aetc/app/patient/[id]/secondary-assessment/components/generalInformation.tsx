@@ -17,6 +17,7 @@ const form = {
     label: "General Information",
   },
 };
+export const generalInformationFormConfig: any = form;
 
 const schema = yup.object({
   [form.generalInformation.name]: yup

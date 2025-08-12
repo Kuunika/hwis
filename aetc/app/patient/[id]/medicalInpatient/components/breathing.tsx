@@ -17,13 +17,6 @@ import {
 import * as Yup from "yup";
 
 import {
-  LungImage,
-  LungBackImage,
-  LungRightSideImage,
-  LungLeftSideImage,
-  ChestLung,
-} from "@/components/svgImages";
-import {
   flattenImagesObs,
   getInitialValues,
   getObservations,

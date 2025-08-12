@@ -11,9 +11,9 @@ interface Observation {
     obs_id: number;
     names: Name[];
     value: string;
+    children?: Observation[];
     created_by?: string;
     obs_datetime?: string;
-    children?: Observation[];
 }
 
 interface ChestAssessmentProps {
@@ -21,10 +21,24 @@ interface ChestAssessmentProps {
 }
 
 export const ChestAssessment: React.FC<ChestAssessmentProps> = ({ data }) => {
-    if (!data || data.length === 0) return null;
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        return null;
+    }
 
-    // List of chest assessment relevant observation names
-    const chestRelevantNames = [
+    const renderTimestamp = () => {
+        const firstItemWithTimestamp = data.find(item => item.created_by);
+        if (!firstItemWithTimestamp?.created_by) return null;
+
+        return (
+            <Typography sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}>
+                ~ {firstItemWithTimestamp.created_by} -{" "}
+                {getHumanReadableDateTime(firstItemWithTimestamp.obs_datetime || new Date())}
+            </Typography>
+        );
+    };
+
+    // List of relevant chest assessment concepts
+    const chestConcepts = [
         "Respiratory rate",
         "Apex beat",
         "Positioning",
@@ -36,81 +50,35 @@ export const ChestAssessment: React.FC<ChestAssessmentProps> = ({ data }) => {
         "Auscultation Lung",
         "Percussion",
         "Localised chest wall abnormality",
-        "Global Chest Wall Abnormality",
-        "Chest Assessment Image",
+        "Global Chest Wall Abnormality"
     ];
 
-    // Filter observations to only relevant chest assessment names
-    const filteredData = data.filter(
-        (obs) => chestRelevantNames.includes(obs.names?.[0]?.name)
+    // Filter observations to only include chest assessment relevant ones
+    const chestObservations = data.filter(obs =>
+        obs.names?.[0] && chestConcepts.includes(obs.names[0].name)
     );
 
-    if (filteredData.length === 0) return null;
+    if (chestObservations.length === 0) return null;
 
-    // Helper to find first observation by name
-    const findObs = (name: string) =>
-        filteredData.find((item) => item.names[0].name === name);
+    // Helper function to find observations by concept name
+    const findObservations = (conceptName: string) =>
+        chestObservations.filter(obs => obs.names[0].name === conceptName);
 
-    // Helper to find all observations by name
-    const findAllObs = (name: string) =>
-        filteredData.filter((item) => item.names[0].name === name);
-
-    // Render timestamp from first observation's created_by and obs_datetime
-    const renderTimestamp = () => {
-        const first = filteredData[0];
-        if (!first?.created_by) return null;
-
-        return (
-            <Typography sx={{ color: "#7f8c8d", fontSize: 14, letterSpacing: 0.2, mt: 1 }}>
-                ~ {first.created_by} - {getHumanReadableDateTime(first.obs_datetime || new Date())}
-            </Typography>
-        );
-    };
-
-    // Render findings with proper indentation
-    const renderFindings = (findings: Observation[], level = 0) => {
-        if (!findings || findings.length === 0) return null;
-
-        return findings.map((finding) => (
-            <Box key={finding.obs_id} sx={{ ml: level * 2 }}>
-                <Typography variant="body2">
-                    - {finding.names[0]?.name || 'Finding'}: {finding.value}
-                </Typography>
-                {finding.children && renderFindings(finding.children, level + 1)}
-            </Box>
-        ));
-    };
-
-    // Render assessment section with title and items
-    const renderAssessmentSection = (title: string, observation: Observation | undefined) => {
-        if (!observation) return null;
+    // Render a simple observation value
+    const renderSimpleObservation = (conceptName: string) => {
+        const observations = findObservations(conceptName);
+        if (observations.length === 0) return null;
 
         return (
             <Box sx={{ mb: 1 }}>
                 <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    - {title}
+                    - {conceptName}:
                 </Typography>
                 <Box sx={{ ml: 3 }}>
-                    <Typography variant="body2">{observation.value}</Typography>
-                    {observation.children && renderFindings(observation.children, 1)}
-                </Box>
-            </Box>
-        );
-    };
-
-    // Render multi-note section
-    const renderMultiNoteSection = (title: string, notes: Observation[]) => {
-        if (notes.length === 0) return null;
-
-        return (
-            <Box sx={{ mb: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    - {title}
-                </Typography>
-                <Box sx={{ ml: 3 }}>
-                    {notes.map((note) => (
-                        <Typography key={note.obs_id} variant="body2">
-                            - {note.value}
+                    {observations.map(obs => (
+                        <Typography key={obs.obs_id} variant="body2">
+                            {obs.value}
+                            {obs.children && renderChildObservations(obs.children)}
                         </Typography>
                     ))}
                 </Box>
@@ -118,37 +86,94 @@ export const ChestAssessment: React.FC<ChestAssessmentProps> = ({ data }) => {
         );
     };
 
-    // Render complex assessment section (like auscultation findings)
-    const renderComplexAssessment = (
-        title: string,
-        observation: Observation | undefined,
-        childKey: string
-    ) => {
-        if (!observation || !observation.children) return null;
+    // Render child observations with proper indentation
+    const renderChildObservations = (children: Observation[], level = 1) => {
+        return children.map(child => (
+            <Box key={child.obs_id} sx={{ ml: level * 2 }}>
+                <Typography variant="body2">
+                    - {child.names[0]?.name || 'Finding'}: {child.value}
+                </Typography>
+                {child.children && renderChildObservations(child.children, level + 1)}
+            </Box>
+        ));
+    };
+
+    // Render auscultation findings with sites and zones
+    const renderAuscultationFindings = () => {
+        const auscultations = findObservations("Auscultation Lung");
+        if (auscultations.length === 0) return null;
 
         return (
-            <Box sx={{ mb: 1 }}>
+            <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    - {title}
+                    - Auscultation Findings:
                 </Typography>
                 <Box sx={{ ml: 3 }}>
-                    {observation.children.map((site) => (
-                        <Box key={`${childKey}-${site.obs_id}`} sx={{ mb: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                - {site.value}
-                            </Typography>
-                            {site.children && (
-                                <Box sx={{ ml: 3 }}>
-                                    {site.children.map((zone) => (
-                                        <Box key={`zone-${zone.obs_id}`} sx={{ mb: 1 }}>
-                                            <Typography variant="body2">- {zone.value}</Typography>
-                                            {zone.children && renderFindings(zone.children, 2)}
-                                        </Box>
-                                    ))}
-                                </Box>
-                            )}
-                        </Box>
+                    {auscultations.map(auscultation => (
+                        auscultation.children?.map(site => (
+                            <Box key={site.obs_id} sx={{ mb: 1 }}>
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                    - {site.value}
+                                </Typography>
+                                {site.children && (
+                                    <Box sx={{ ml: 3 }}>
+                                        {site.children.map(zone => (
+                                            <Box key={zone.obs_id} sx={{ mb: 1 }}>
+                                                <Typography variant="body2">- {zone.value}</Typography>
+                                                {zone.children && renderChildObservations(zone.children, 2)}
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            </Box>
+                        ))
                     ))}
+                </Box>
+            </Box>
+        );
+    };
+
+    // Render chest wall abnormalities
+    const renderChestWallAbnormalities = () => {
+        const localAbnormalities = findObservations("Localised chest wall abnormality");
+        const globalAbnormalities = findObservations("Global Chest Wall Abnormality");
+
+        return (
+            <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    - Chest Wall Abnormalities:
+                </Typography>
+                <Box sx={{ ml: 3 }}>
+                    {localAbnormalities.length > 0 && (
+                        <Box sx={{ mb: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                - Localized:
+                            </Typography>
+                            <Box sx={{ ml: 3 }}>
+                                {localAbnormalities.map(abnormality => (
+                                    <Box key={abnormality.obs_id}>
+                                        <Typography variant="body2">{abnormality.value}</Typography>
+                                        {abnormality.children && renderChildObservations(abnormality.children)}
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+                    )}
+                    {globalAbnormalities.length > 0 && (
+                        <Box sx={{ mb: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                - Global:
+                            </Typography>
+                            <Box sx={{ ml: 3 }}>
+                                {globalAbnormalities.map(abnormality => (
+                                    <Box key={abnormality.obs_id}>
+                                        <Typography variant="body2">{abnormality.value}</Typography>
+                                        {abnormality.children && renderChildObservations(abnormality.children)}
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+                    )}
                 </Box>
             </Box>
         );
@@ -161,36 +186,17 @@ export const ChestAssessment: React.FC<ChestAssessmentProps> = ({ data }) => {
             </Typography>
 
             <Box sx={{ pl: 2 }}>
-                {renderAssessmentSection("Respiratory Rate", findObs("Respiratory rate"))}
-                {renderAssessmentSection("Apex Beat", findObs("Apex beat"))}
-                {renderAssessmentSection("Positioning", findObs("Positioning"))}
-                {renderAssessmentSection("Trill", findObs("Trill"))}
-                {renderAssessmentSection("Heart Sounds", findObs("Heart sounds"))}
-
-                {renderMultiNoteSection("Additional Notes", findAllObs("Additional Notes"))}
-
-                {renderAssessmentSection("Chest Expansion", findObs("Chest Expansion"))}
-                {renderAssessmentSection("Tactile Fremitus", findObs("Tactile fremitus"))}
-
-                {renderComplexAssessment(
-                    "Auscultation Findings",
-                    findObs("Auscultation Lung"),
-                    "auscultation"
-                )}
-
-                {renderAssessmentSection("Percussion", findObs("Percussion"))}
-
-                {renderComplexAssessment(
-                    "Localized Chest Wall Abnormality",
-                    findObs("Localised chest wall abnormality"),
-                    "local-abnormality"
-                )}
-
-                {renderComplexAssessment(
-                    "Global Chest Wall Abnormality",
-                    findObs("Global Chest Wall Abnormality"),
-                    "global-abnormality"
-                )}
+                {renderSimpleObservation("Respiratory rate")}
+                {renderSimpleObservation("Apex beat")}
+                {renderSimpleObservation("Positioning")}
+                {renderSimpleObservation("Trill")}
+                {renderSimpleObservation("Heart sounds")}
+                {renderSimpleObservation("Additional Notes")}
+                {renderSimpleObservation("Chest Expansion")}
+                {renderSimpleObservation("Tactile fremitus")}
+                {renderSimpleObservation("Percussion")}
+                {renderAuscultationFindings()}
+                {renderChestWallAbnormalities()}
             </Box>
 
             {renderTimestamp()}

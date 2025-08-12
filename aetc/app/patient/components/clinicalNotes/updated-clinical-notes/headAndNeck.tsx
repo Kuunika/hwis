@@ -173,7 +173,7 @@ export const HeadAndNeck: React.FC<SecondarySurveyProps> = ({ data }) => {
 
                 {fundoscopy && (
                     <Box sx={{ ml: 3 }}>
-                        <Typography variant="body2">- Fundoscopy Done: {fundoscopy.value === "Yes" ? "Yes" : "No"}</Typography>
+                        <Typography variant="body2">- Fundoscopy done: {fundoscopy.value === "Yes" ? "Yes" : "No"}</Typography>
                         {/*{fundoscopy.value === "Yes" && fundoscopyFindings && (*/}
                         {/*    <Typography variant="body2" sx={{ ml: 3 }}>*/}
                         {/*        - Findings: {fundoscopyFindings.value}*/}

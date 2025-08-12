@@ -19,6 +19,8 @@ const form = {
     label: "Notes",
   },
 };
+export const neurologicalFormConfig: any = form;
+
 
 const schema = yup.object({
   [form.generalInformation.name]: yup

@@ -33,6 +33,8 @@ const form = {
     label: "General Information",
   },
 };
+export const headAndNeckFormConfig: any = form;
+
 
 const schema = yup.object({
   [form.generalInformation.name]: yup

@@ -44,7 +44,6 @@ const RenderChildren: React.FC<{
     <div style={{ paddingLeft: `${level * 16}px` }}>
       {normalizedChildren.map((child, index) => {
         const itemText = renderItem(child?.item);
-
         return (
           <div key={index} style={{ marginBottom: "4px" }}>
             {itemText && <div>- {itemText}</div>}
