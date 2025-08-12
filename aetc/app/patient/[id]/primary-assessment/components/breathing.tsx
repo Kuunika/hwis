@@ -34,98 +34,182 @@ import { LungLeftFemaleImage } from "@/components/svgImages/LungLeftFemale";
 import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
-import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   isPatientBreathing: {
     name: concepts.IS_BREATHING_ABNORMAL,
     label: "Is Patient Breathing",
-    coded: true,
+    type: "string",
+    options: {
+      [YES]: "breathing",
+      [NO]: "not breathing",
+    },
+    children: [
+      {
+        concept: concepts.START_TIME,
+        label: "Start Time",
+      },
+      {
+        concept: concepts.END_TIME,
+        label: "End Time",
+      },
+      {
+        multiple:true,
+        type:"string",
+        concept: concepts.DEVICE_USED_FOR_INTERVENTION,
+        label: "Device used for intervention",
+      },
+      {
+        concept: concepts.RESPIRATORY_RATE,
+        label: "Respiratory Rate",
+      },
+      {
+        concept: concepts.OXYGEN_SATURATION,
+        label: "Oxygen Saturation",
+      },
+      {
+        concept: concepts.PATIENT_NEED_OXYGEN,
+        label: "Patient Need Oxygen",
+        children: [
+          {
+            concept: concepts.OXYGEN_SOURCE,
+            label: "Oxygen Source",
+          },
+        ],
+      },
+      {
+        concept: concepts.OXYGEN_GIVEN,
+        label: "Oxygen Given",
+      },
+      {
+        concept: concepts.DEVICE_USED,
+        label: "Device Used",
+      },
+      {
+        concept: concepts.IS_TRACHEA_CENTRAL,
+        label: "Is Trachea Central",
+      },
+      {
+        concept: concepts.SIDE_DEVIATED,
+        label: "Which side is it deviated to",
+      },
+      {
+        concept: concepts.CHEST_WALL_ABNORMALITY,
+        label: "Chest Wall Abnormality",
+      },
+      {
+        concept: concepts.CHEST_EXPANSION,
+        label: "Chest Expansion",
+      },
+      {
+        concept: concepts.ADDITIONAL_NOTES,
+        label: "Additional Notes",
+      },
+      {
+        concept: concepts.DESCRIPTION,
+        label: "Description of Abnormality",
+      },
+      {
+        concept: concepts.PERCUSSION,
+        label: "Percussion",
+      },
+      {
+        concept: concepts.BREATHING_SOUNDS,
+        label: "Breath Sounds",
+      },
+    ],
   },
   startTimeIntervention: {
+    child: true,
     name: concepts.START_TIME,
     label: "Start Time",
   },
   finishTimeIntervention: {
+    child: true,
     name: concepts.END_TIME,
     label: "End Time",
   },
   deviceForIntervention: {
+    child: true,
+    multiple:true,
     name: concepts.DEVICE_USED_FOR_INTERVENTION,
     label: "Device used for intervention",
-    coded: true,
   },
   respiratoryRate: {
+    child: true,
     name: concepts.RESPIRATORY_RATE,
     label: "Respiratory Rate",
   },
   oxygenSaturation: {
+    child: true,
     name: concepts.OXYGEN_SATURATION,
     label: "Oxygen Saturation",
   },
   oxygenNeeded: {
+    child: true,
     name: concepts.PATIENT_NEED_OXYGEN,
     label: "Patient Need Oxygen",
-    coded: true,
   },
   oxygenGiven: {
+    child: true,
     name: concepts.OXYGEN_GIVEN,
     label: "Oxygen Given",
   },
   oxygenSource: {
+    child: true,
     name: concepts.OXYGEN_SOURCE,
     label: "Oxygen Source",
-    coded: true,
   },
   deviceUsed: {
+    child: true,
     name: concepts.DEVICE_USED,
     label: "Device Used",
-    coded: true,
   },
   isTracheaCentral: {
+    child: true,
     name: concepts.IS_TRACHEA_CENTRAL,
     label: "Is Trachea Central",
-    coded: true,
   },
   deviationSide: {
+    child: true,
     name: concepts.SIDE_DEVIATED,
     label: "Which side is it deviated to",
-    coded: true,
   },
   chestWallAbnormality: {
+    child: true,
     name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
-    coded: true,
   },
   chestExpansion: {
+    child: true,
     name: concepts.CHEST_EXPANSION,
     label: "Chest Expansion",
-    coded: true,
   },
   additionalNotes: {
+    child: true,
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
   descriptionAbnormality: {
+    child: true,
     name: concepts.DESCRIPTION,
     label: "Description of Abnormality",
   },
-  // otherAbnormality: {
-  //   name: "otherAbnormality",
-  //   label: "Other Abnormality",
-  // },
   percussion: {
+    child: true,
     name: concepts.PERCUSSION,
     label: "Percussion",
-    coded: true,
   },
   breathSounds: {
+    child: true,
     name: concepts.BREATHING_SOUNDS,
     label: "Breath Sounds",
-    coded: true,
   },
 };
+
+
+export const breathingFormConfig = form;
 
 const schema = Yup.object().shape({
   [form.isPatientBreathing.name]: Yup.string()
@@ -305,20 +389,21 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         concept: form.chestWallAbnormality.name,
         value: formValues[form.chestWallAbnormality.name],
         obsDatetime,
-        coded: true,
         groupMembers: flattenImagesObs(chestAbnormalitiesImage),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime,
-        coded: true,
+  
+      
         groupMembers: flattenImagesObs(percussionImage),
       },
       {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
-        coded: true,
+  
+      
         obsDatetime,
         groupMembers: flattenImagesObs(chestExpansionImagesEnc),
       },
@@ -363,7 +448,6 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
           concept: form.deviceForIntervention.name,
           value: device.id,
           obsDatetime,
-          coded: true,
         };
       });
     }
@@ -372,6 +456,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.percussion.name];
     delete formValues[form.deviceUsed.name];
     delete formValues[form.chestExpansion.name];
+    delete formValues[form.deviceForIntervention.name];
 
     await handleSubmit([
       ...mapSubmissionToCodedArray(form, formValues, obsDatetime),

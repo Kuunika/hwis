@@ -36,6 +36,7 @@ import useFetchMedications from "@/hooks/useFetchMedications";
 import { concepts, durationOptions, encounters } from "@/constants";
 import * as yup from "yup";
 import { PrescribedMedication } from "@/app/patient/[id]/nursingChart/components/prescribedMedications";
+import { child } from "winston";
 
 type Medication = {
   name: string;
@@ -122,43 +123,108 @@ const form = {
     name: concepts.MEDICAL_RECORD_OBSERVATIONS,
     label: "General observation",
   },
+
+  vitals: {
+    name: "vitals",
+    label: "Vitals",
+    type: "title",
+    children: [
+      {
+        concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
+        label: "Systolic",
+      },
+      {
+        concept: concepts.DIASTOLIC_BLOOD_PRESSURE,
+        label: "Diastolic",
+      },
+      {
+        concept: concepts.PULSE_RATE,
+        label: "Pulse Rate",
+      },
+      {
+        concept: concepts.RESPIRATORY_RATE,
+        label: "Respiratory Rate",
+      },
+      {
+        concept: concepts.BLOOD_OXYGEN_SATURATION,
+        label: "SPO2",
+      },
+      {
+        concept: concepts.TEMPERATURE,
+        label: "Temperature",
+      },
+    ],
+  },
+  bedsideInvestigations: {
+    name: "bedside",
+    label: "Bed side investigations",
+    type: "title",
+    children: [
+      {
+        concept: concepts.MRDT,
+        label: "MRDT",
+      },
+      {
+        concept: concepts.BLOOD_GLUCOSE,
+        label: "HB",
+      },
+      {
+        concept: concepts.INVESTIGATIONS_PT,
+        label: "PT",
+      },
+      {
+        concept: concepts.URINE_DIPSTICK_KETONES,
+        label: "Urine Dipstick",
+      },
+    ],
+  },
   systolic: {
+    child: true,
     name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Systolic",
   },
   diastolic: {
+    child: true,
     name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Diastolic",
   },
   pulseRate: {
+    child: true,
     name: concepts.PULSE_RATE,
     label: "Pulse Rate",
   },
   respiratoryRate: {
+    child: true,
     name: concepts.RESPIRATORY_RATE,
     label: "Respiratory Rate",
   },
   spo: {
+    child: true,
     name: concepts.BLOOD_OXYGEN_SATURATION,
     label: "SPO2",
   },
   temperature: {
+    child: true,
     name: concepts.TEMPERATURE,
     label: "Temperature",
   },
   MRDT: {
+    child: true,
     name: concepts.MRDT,
     label: "MRDT",
   },
   HB: {
+    child: true,
     name: concepts.BLOOD_GLUCOSE,
     label: "HB",
   },
   PT: {
+    child: true,
     name: concepts.INVESTIGATIONS_PT,
     label: "PT",
   },
   urineDipstick: {
+    child: true,
     name: concepts.URINE_DIPSTICK_KETONES,
     label: "Urine Dipstick",
   },
@@ -182,12 +248,30 @@ const form = {
     name: concepts.IMPLEMENTATION,
     label: "Implementation",
   },
-  medications: [medicationTemplate] as any,
-  procedures: [],
-  supportiveCare: [],
-  otherProcedureSpecify: "",
-  otherSupportiveCareSpecify: "",
+  // medications: [medicationTemplate] as any,
+  // procedures: [],
+  // supportiveCare: [],
+  // otherProcedureSpecify: "",
+  // otherSupportiveCareSpecify: "",
+  proceduresConfig: {
+    name: concepts.PROCEDURES,
+    label: "Procedures",
+    multiple: true,
+    type: "string",
+    hasGroupMembers: true,
+  },
+  supportiveCareConfig: {
+    name: concepts.SUPPORTIVE_CARE,
+    label: "supportive Care",
+    multiple: true,
+    type: "string",
+    hasGroupMembers: true,
+  },
 };
+
+export const soapierFormConfig = form;
+
+
 const proceduresConfig = [
   { value: concepts.INTRAVENOUS_CANNULATION, label: "Intravenous Cannulation" },
   {

@@ -42,8 +42,7 @@ import {
   GenerateMedicalInpatientlNotesPDF,
   MedicalInpatientNotesPDFRef,
 } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
-import { SurgicalNotesContent } from "../../[id]/surgicalNotes/components/SurgicalNotesContent";
-import { get } from "http";
+
 import {
   FamilyMedicalHistoryNotes,
   MealNotes,
@@ -56,10 +55,14 @@ import {
   SurgicalNotes,
 } from "./sampleHistory";
 import { useVisitDates } from "@/contexts/visitDatesContext";
+import { DisplayInformation } from "./displayInformation";
+import  { formatDiagnosisNotes, formatInvestigationPlans, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals } from "./formatters";
+import GroupedResultsTable from "./tabularDisplayInformation";
+import ResultsTable from "./tabularDisplayInformation";
 
 type PanelData = {
   title: string;
-  data: any[];
+  data: any;
   useValue?: boolean;
   removeObs?: string[]; // Add removeObs property to PanelData type
 };
@@ -288,10 +291,23 @@ export const ClinicalNotes = () => {
     },
     panel1: {
       title: "Triage",
-      data: [
-        ...getEncountersByType(encounters.TRIAGE_RESULT),
-        ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
-      ],
+      // data: <Button title="TEST" variant="contained"  />,
+      data: (
+        <DisplayInformation
+          title=""
+          data={[
+            formatPresentingComplaints(
+              getEncountersByType(encounters.PRESENTING_COMPLAINTS)),
+              ...formatVitals(
+                getEncountersByType(encounters.VITALS)
+              )
+          ]}
+        />
+      ),
+      // data: [
+      //   ...getEncountersByType(encounters.TRIAGE_RESULT),
+      //   ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
+      // ],
       removeObs: [], // No specific headings to remove
     },
     panel2: {
@@ -880,7 +896,56 @@ export const ClinicalNotes = () => {
                 </div>
               </div>
             </div>
-            <PrintClinicalNotes data={encounterData} />
+            <>
+              {/* <DisplayInformation
+                title=""
+                data={[
+                  formatPresentingComplaints(
+                    getEncountersByType(encounters.PRESENTING_COMPLAINTS)
+                  ),
+                  ...formatVitals(getEncountersByType(encounters.VITALS)),
+                ]}
+              /> */}
+
+              {/* <DisplayInformation
+                title=""
+                data={formatPrimarySurvey({
+                  airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+                  breathingObs: getEncountersByType(
+                    encounters.BREATHING_ASSESSMENT
+                  ),
+                  circulationObs: getEncountersByType(
+                    encounters.CIRCULATION_ASSESSMENT
+                  ),
+                  disabilityObs: getEncountersByType(
+                    encounters.PRIMARY_DISABILITY_ASSESSMENT
+                  ),
+                  exposureObs: getEncountersByType(
+                    encounters.EXPOSURE_ASSESSMENT
+                  ),
+                })}
+              /> */}
+
+              {/* <DisplayInformation
+                title=""
+                data={formatSoapierNotes(
+                  getEncountersByType(encounters.NURSING_CARE_NOTES),
+                )}
+              /> */}
+              <DisplayInformation
+                title=""
+                data={formatDiagnosisNotes([
+                  ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+                  ...getEncountersByType(encounters.DIAGNOSIS),
+                ])}
+              />
+              <ResultsTable
+                data={formatInvestigationPlans([
+                  ...getEncountersByType(encounters.BED_SIDE_TEST),
+                ])}
+              />
+            </>
+            {/* <PrintClinicalNotes data={encounterData} /> */}
           </div>
         )}
 

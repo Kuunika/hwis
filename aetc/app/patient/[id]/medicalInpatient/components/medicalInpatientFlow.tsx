@@ -72,7 +72,7 @@ export const MedicalInPatientFlow = () => {
   };
 
   const handleDifferentialSubmit = (values: any) => {
-    console.log({ obs });
+
     handleSubmit([...obs, ...values]);
   };
 
