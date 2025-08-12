@@ -1,5 +1,5 @@
 import { User } from "@/interfaces";
-import { create, getAll, getOne, edit } from "./httpService";
+import { create, getAll, getOne, edit, update } from "./httpService";
 
 const endPoint = "/users";
 
@@ -11,3 +11,5 @@ export const searchUser = (username: string) => getAll<User[]>(endPoint + "?pagi
 export const getUserById = (userId: string) => getOne<User>(userId, endPoint);
 
 export const updateUser = (userId: string, userData: any) =>  edit(userId, userData, endPoint);
+
+export const updatePassword = (userId: string, userData: any) =>  update(userId, endPoint, userData);//added

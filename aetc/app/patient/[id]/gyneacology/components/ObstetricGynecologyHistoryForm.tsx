@@ -239,7 +239,7 @@ export const ObstetricGynecologyHistoryForm = ({ onSubmit, onSkip }: Prop) => {
                             <RadioGroupInput name="menstrualCycle" options={menstrualCycleOptions} label="" />
                         </FormFieldContainerLayout>
 
-                        <TextInputField name="duration" label="Duration" type="text" id="" />
+                        <TextInputField name="duration" label="Duration in Days" placeholder="Add Days" type="text" id="" />
                         <TextInputField name="prevAbortions" label="Previous Abortions" type="text" id="" />
                         <TextInputField name="prevEctopic" label="Previous Ectopic" type="text" id="" />
 
