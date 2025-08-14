@@ -18,6 +18,7 @@ import {
   generalInformationFormConfig,
   headAndNeckFormConfig, neurologicalFormConfig
 } from "@/app/patient/[id]/secondary-assessment/components";
+import {allergiesFormConfig, lastMealFormConfig} from "@/app/patient/[id]/medicalHistory/components";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -117,6 +118,41 @@ export const formatSecondarySurvey = (data: {
     {
       heading: "Neurological",
       children: buildNotesObject(neurologicalFormConfig, data.neurologicalObs),
+    },
+  ];
+};
+export const formatSampleHistory = (data: {
+  presentingComplaintsObs: Obs[];
+  allergiesObs: Obs[];
+  medicationsObs: Obs[];
+  existingConditionsObs: Obs[];
+  lastMealObs: Obs[];
+  eventsObs: Obs[];
+}): ClinicalNotesDataType[] => {
+  return [
+    {
+      heading: "Presenting Complaints",
+      children: buildNotesObject(generalInformationFormConfig, data.presentingComplaintsObs),
+    },
+    {
+      heading: "Allergies",
+      children: buildNotesObject(allergiesFormConfig, data.allergiesObs),
+    },
+    {
+      heading: "Medications",
+      children: buildNotesObject(chestFormConfig, data.medicationsObs),
+    },
+    {
+      heading: "Existing Conditions",
+      children: buildNotesObject(abdomenAndPelvisFormConfig, data.existingConditionsObs),
+    },
+    {
+      heading: "Last Meal",
+      children: buildNotesObject(lastMealFormConfig, data.lastMealObs),
+    },
+    {
+      heading: "Events",
+      children: buildNotesObject(neurologicalFormConfig, data.eventsObs),
     },
   ];
 };

@@ -60,7 +60,7 @@ import {
   formatDiagnosisNotes,
   formatInvestigationPlans,
   formatPresentingComplaints,
-  formatPrimarySurvey,
+  formatPrimarySurvey, formatSampleHistory,
   formatSecondarySurvey,
   formatSoapierNotes,
   formatVitals
@@ -444,30 +444,51 @@ export const ClinicalNotes = () => {
     },
     panel15: {
       title: "Sample History",
-      data: [
-        <PresentingComplaintsNotes
-          obs={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
-        />,
-        <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
-        <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
-        <PriorConditionsNotes
-          obs={getEncountersByType(encounters.DIAGNOSIS)}
-        />,
-        <SurgicalNotes
-          obs={getEncountersByType(encounters.SURGICAL_HISTORY)}
-        />,
-        <PatientAdmissionNotes
-          obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
-        />,
-        <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
-        <FamilyMedicalHistoryNotes
-          obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
-        />,
-        <ReviewOfSystemsNotes
-          obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
-        />,
-        ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
-      ],
+      data: (
+          <DisplayInformation
+              title=""
+              data={formatSampleHistory({
+                presentingComplaintsObs: getEncountersByType(
+                  encounters.PRESENTING_COMPLAINTS
+                ),
+                allergiesObs: getEncountersByType(encounters.ALLERGIES),
+                medicationsObs: getEncountersByType(encounters.PRESCRIPTIONS),
+
+
+                lastMealObs: getEncountersByType(encounters.SUMMARY_ASSESSMENT),
+                existingConditionsObs: getEncountersByType(
+                  encounters.FAMILY_MEDICAL_HISTORY
+                ),
+                eventsObs: getEncountersByType(
+                  encounters.REVIEW_OF_SYSTEMS
+                ),
+              })}
+          />
+      ),
+      // data: [
+      //   <PresentingComplaintsNotes
+      //     obs={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+      //   />,
+      //   <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
+      //   <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
+      //   <PriorConditionsNotes
+      //     obs={getEncountersByType(encounters.DIAGNOSIS)}
+      //   />,
+      //   <SurgicalNotes
+      //     obs={getEncountersByType(encounters.SURGICAL_HISTORY)}
+      //   />,
+      //   <PatientAdmissionNotes
+      //     obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+      //   />,
+      //   <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
+      //   <FamilyMedicalHistoryNotes
+      //     obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+      //   />,
+      //   <ReviewOfSystemsNotes
+      //     obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
+      //   />,
+      //   ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
+      // ],
       removeObs: [],
     },
   };

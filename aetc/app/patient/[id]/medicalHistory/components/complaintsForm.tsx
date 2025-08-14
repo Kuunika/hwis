@@ -53,7 +53,7 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
     })();
   }, []);
 
-  const complaintsFormConfig = {
+ const complaintsFormConfig = {
     complaints_name: (index: number) => ({
       name: `complaints[${index}].complaint`,
       label: "Symptom",
@@ -83,9 +83,9 @@ export const ComplaintsForm = ({ onSubmit }: Prop) => {
       })
     ),
   });
-  
+
   const handleSubmit = () => {
-    
+
     onSubmit(formValues);
   };
 

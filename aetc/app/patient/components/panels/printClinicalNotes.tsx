@@ -630,6 +630,7 @@ export const PrintClinicalNotes = (props: any) => {
     vital: data?.panel3?.data || [],
     primary: data?.panel20?.data || [],
     secondary: data?.panel9?.data || [],
+    sample: data?.panel15?.data || [],
     plan: data?.panel7?.data || [],
     soapier: data?.panel13?.data || [],
     diagnosis: data?.panel10?.data || [],
@@ -648,6 +649,7 @@ export const PrintClinicalNotes = (props: any) => {
       renderGenericCard("Secondary Survey", panelData.secondary),
       panelData.primary && renderGenericCard("Primary Survey", panelData.primary),
         renderPrimarySurveyCard(panelData.primary),
+      hasContent(panelData.sample) && renderGenericCard("Sample History", panelData.sample),
     hasContent(panelData.plan) && renderGenericCard("Plan", panelData.plan),
     hasContent(panelData.soapier) &&
       renderGenericCard("SOAPIER", panelData.soapier),
