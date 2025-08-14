@@ -21,7 +21,8 @@ import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
-const form = {
+const form =
+{
   isAirwayPatent: {
     name: concepts.AIRWAY_PATENT,
     label: "Is Airway Patent",

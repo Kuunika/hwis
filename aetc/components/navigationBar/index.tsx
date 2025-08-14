@@ -472,7 +472,14 @@ export function NavigationBar({
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            handleClose();
+                            navigateTo("/profile");
+                          }}
+                        >
+                          Profile
+                        </MenuItem>
                         <MenuItem
                           onClick={() => {
                             handleClose();
