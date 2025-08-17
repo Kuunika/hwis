@@ -5,8 +5,10 @@ import { NewStepperContainer } from "@/components";
 import { PastMedicalHistory, PresentingComplaints } from ".";
 import { useNavigation, useSubmitEncounter } from "@/hooks";
 import { DrugList } from "./drugList";
-import { ReviewOfSystems } from "./reviewOfSystems";
+import { PhysicalExamination } from "./physicalExamination";
 import { DifferentialDiagnosis } from "./differentialDiagnosis";
+import { ReviewOfSystems } from "./reviewOfSystems"; // <-- import your new form
+
 import { encounters } from "@/constants";
 import { Investigations } from "./investigations";
 
@@ -36,12 +38,14 @@ export const MedicalInPatientFlow = () => {
     },
     {
       id: 23,
-      label: "Review of Systems",
+      label: "Physical Examination",
     },
     {
       id: 21,
       label: "Differential Diagnosis",
     },
+    { id: 25, label: "Review of Systems" }, // <-- added here
+
     {
       id: 24,
       label: "Investigation Plan",
@@ -75,6 +79,12 @@ export const MedicalInPatientFlow = () => {
     console.log({ obs });
     handleSubmit([...obs, ...values]);
   };
+  const handleReviewOfSystems = (values: any) => {
+    console.log({ obs });
+    // handleSubmit([...obs, ...values]); // submitting here before investigations
+    // If you want investigations after review, remove handleSubmit here
+    setActiveStep(6);
+  };
 
   const handleInvestigationSubmit = () => {
     //  navigateBack();
@@ -92,10 +102,14 @@ export const MedicalInPatientFlow = () => {
         <PresentingComplaints onSubmit={handlePresentingComplaints} />
         <DrugList onSubmit={handleDrug} />
         <PastMedicalHistory onSubmit={handlePastMedical} />
-        <ReviewOfSystems onSubmit={handleReview} />
+        <PhysicalExamination onSubmit={handleReview} />
         <DifferentialDiagnosis
           loading={isLoading}
           onSubmit={handleDifferentialSubmit}
+        />
+        <ReviewOfSystems
+          onSubmit={handleReviewOfSystems}
+          onSkip={() => setActiveStep(5)} // Allow skipping to Differential Diagnosis
         />
         <Investigations onClose={handleInvestigationSubmit} />
       </NewStepperContainer>
