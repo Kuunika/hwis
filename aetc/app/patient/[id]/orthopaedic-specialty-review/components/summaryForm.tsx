@@ -26,7 +26,6 @@ export const SummaryForm = () => {
         groupMembers: getObservations(values, obsDateTime),
       },
     ];
-    console.log({ obs });
     handleSubmit(obs);
   };
 

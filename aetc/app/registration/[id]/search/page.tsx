@@ -31,7 +31,6 @@ function RegistrationSearch() {
   }, []);
 
   useEffect(() => {
-    console.log({ patient });
     if (patient) {
       setInitialRegisteredPatient(patient);
     }

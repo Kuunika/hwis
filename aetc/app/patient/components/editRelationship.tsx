@@ -53,7 +53,6 @@ export const EditRelationshipForm = ({
   setContext?: (context: any) => void;
   submitButton?: boolean;
 }) => {
-  console.log({ initialValues });
   return (
     <FormikInit
       submitButton={submitButton}

@@ -185,8 +185,37 @@ const buildChildren = (obs: Obs[], children: any) => {
       const innerObs = filterObservations(obs, child.concept);
       let transformedObs;
 
-      if (child?.multiple) {
-        console.log(child.concept, { innerObs });
+      if (child?.image) {
+        const parentOb = filterObservations(obs, child?.parentConcept);
+        if (parentOb && parentOb.length > 0) {
+          const childItems =parentOb[0].children.map((ob: Obs)=>{
+            return {
+              item: ob.value,
+              children: ob.children.map((childOb:Obs)=>{
+                let children: any=[];
+                if(childOb?.children){
+                  children =childOb?.children.map((cOb: Obs)=>{
+                      return {
+                        item: {
+                          [`${cOb.names[0].name}`]: cOb.value,
+                        },
+                      };
+                  })
+                }  
+                return {
+                  item:
+                    children.length == 0
+                      ? { [`${childOb.names[0].name}`]: childOb.value }
+                      : childOb.value,
+                  children,
+                };
+              })
+            }
+          });
+          return childItems;
+        }
+       
+        // console.log(child.concept, children, child.parentConcept);
       }
 
       if (child?.type == "string") {

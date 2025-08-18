@@ -35,6 +35,7 @@ import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 import { useServerTime } from "@/contexts/serverTimeContext";
+import { group } from "console";
 
 const form = {
   isPatientBreathing: {
@@ -55,8 +56,8 @@ const form = {
         label: "End Time",
       },
       {
-        multiple:true,
-        type:"string",
+        multiple: true,
+        type: "string",
         concept: concepts.DEVICE_USED_FOR_INTERVENTION,
         label: "Device used for intervention",
       },
@@ -97,7 +98,14 @@ const form = {
       {
         concept: concepts.CHEST_WALL_ABNORMALITY,
         label: "Chest Wall Abnormality",
-        hasImages: true,        
+        children: [
+          {
+            concept: concepts.IMAGE_PART_NAME,
+            label: "Chest Wall Abnormality Image",
+            image: true,
+            parentConcept: concepts.CHEST_WALL_ABNORMALITY,
+          },
+        ],
       },
       {
         concept: concepts.CHEST_EXPANSION,
@@ -114,10 +122,26 @@ const form = {
       {
         concept: concepts.PERCUSSION,
         label: "Percussion",
+        children: [
+          {
+            concept: concepts.IMAGE_PART_NAME,
+            label: "Percussion Image",
+            image: true,
+            parentConcept: concepts.PERCUSSION,
+          },
+        ],
       },
       {
         concept: concepts.BREATHING_SOUNDS,
         label: "Breath Sounds",
+        children: [
+          {
+            concept: concepts.IMAGE_PART_NAME,
+            label: "Breath Sounds Image",
+            image: true,
+            parentConcept: concepts.BREATHING_SOUNDS,
+          },
+        ],
       },
     ],
   },
@@ -133,7 +157,7 @@ const form = {
   },
   deviceForIntervention: {
     child: true,
-    multiple:true,
+    multiple: true,
     name: concepts.DEVICE_USED_FOR_INTERVENTION,
     label: "Device used for intervention",
   },
@@ -401,34 +425,39 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
-  
-      
         obsDatetime,
         groupMembers: flattenImagesObs(chestExpansionImagesEnc),
       },
       {
-        concept: concepts.SITE,
-        value: "Lung Lateral Left",
+        concept: form.breathSounds.name,
+        value: formValues[form.breathSounds.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(lungLeft),
-      },
-      {
-        concept: concepts.SITE,
-        value: "Lung Lateral Right",
-        obsDatetime,
-        groupMembers: flattenImagesObs(lungRight),
-      },
-      {
-        concept: concepts.SITE,
-        value: "Lung Anterior",
-        obsDatetime,
-        groupMembers: flattenImagesObs(lungFront),
-      },
-      {
-        concept: concepts.SITE,
-        value: "Lung Posterior",
-        obsDatetime,
-        groupMembers: flattenImagesObs(lungBack),
+        groupMembers: [
+          {
+            concept: concepts.SITE,
+            value: "Lung Lateral Left",
+            obsDatetime,
+            groupMembers: flattenImagesObs(lungLeft),
+          },
+          {
+            concept: concepts.SITE,
+            value: "Lung Lateral Right",
+            obsDatetime,
+            groupMembers: flattenImagesObs(lungRight),
+          },
+          {
+            concept: concepts.SITE,
+            value: "Lung Anterior",
+            obsDatetime,
+            groupMembers: flattenImagesObs(lungFront),
+          },
+          {
+            concept: concepts.SITE,
+            value: "Lung Posterior",
+            obsDatetime,
+            groupMembers: flattenImagesObs(lungBack),
+          },
+        ],
       },
       // {
       //   concept: concepts.SITE,
@@ -437,6 +466,15 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       //   groupMembers: flattenImagesObs(lungFront),
       // },
     ];
+
+    // console.log({
+    //   concept: form.chestWallAbnormality.name,
+    //   value: formValues[form.chestWallAbnormality.name],
+    //   obsDatetime,
+    //   groupMembers: flattenImagesObs(chestAbnormalitiesImage),
+    // });
+
+    // return;
 
     const devices = formValues[form.deviceForIntervention.name];
     let devicesObs: any = [];
@@ -456,6 +494,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.deviceUsed.name];
     delete formValues[form.chestExpansion.name];
     delete formValues[form.deviceForIntervention.name];
+    delete formValues[form.breathSounds.name];
 
     await handleSubmit([
       ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
