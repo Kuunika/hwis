@@ -67,8 +67,6 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
   }, [data, selectedVisit]);
 
   useEffect(() => {
-
-    console.log({ordersData});
     if (ordersData) {
       setPatientLabOrders(ordersData);
     }

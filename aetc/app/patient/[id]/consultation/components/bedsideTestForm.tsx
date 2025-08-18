@@ -78,7 +78,6 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
 
 
   const handleSubmitAnyway = (values: any) => {
-    console.log({ values })
     const dateTime = getDateTime();
     const transformedData = transformLabValues(values, formStructure, dateTime);
 
