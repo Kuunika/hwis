@@ -114,6 +114,14 @@ const form = {
       {
         name: concepts.IS_FEMUR_TIBIA_NORMAL,
         label: "is the femur and tibia normal",
+        children: [
+          {
+            concept: concepts.IMAGE_PART_NAME,
+            label: "Leg Image",
+            image: true,
+            parentConcept: concepts.IS_FEMUR_TIBIA_NORMAL,
+          },
+        ],
       },
     ],
   },
@@ -144,6 +152,14 @@ const form = {
   abnormalitiesInfo: {
     name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
     label: "Is there any other abnormalities?",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Abdomen Image",
+        image: true,
+        parentConcept: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
+      }]
+    
   },
   abdnomenDistention: {
     name: concepts.HEADACHE,
