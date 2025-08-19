@@ -22,7 +22,7 @@ type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
-const proceduresConfig = [
+export const proceduresConfig = [
     { value: concepts.MINOR_SURGERY, label: "Minor Surgery" },
     { value: concepts.SUTURING, label: "Suturing" },
     { value: concepts.JOINT_REDUCTION, label: "Joint Reduction" },
@@ -47,7 +47,7 @@ const proceduresConfig = [
     { value: concepts.OTHER, label: "Other (Specify)" },
 ];
 
-const supportiveCareConfig = [
+export const supportiveCareConfig = [
     { value: concepts.WOUND_DRESSING, label: "Wound Dressing" },
     { value: concepts.PATIENT_EDUCATION, label: "Patient Education" },
     { value: concepts.COUNSELLING, label: "Counselling" },
@@ -59,6 +59,16 @@ const supportiveCareConfig = [
     { value: concepts.ORAL_CARE, label: "Oral Care" },
     { value: concepts.OTHER, label: "Other (Specify)" },
 ];
+// export const NonPharmacologicalFormConfig = [
+//     { group: "Procedures", options: proceduresConfig },
+//     { group: "Supportive Care", options: supportiveCareConfig }
+// ];
+
+// export const NonPharmacologicalFormConfig = [
+//     ...proceduresConfig,
+//     ...supportiveCareConfig
+// ];
+
 
 const schema = yup.object().shape({
     procedures: yup

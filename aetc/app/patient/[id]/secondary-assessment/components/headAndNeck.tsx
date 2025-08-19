@@ -29,8 +29,10 @@ type Props = {
 };
 const form = {
   generalInformation: {
-    name: "Notes",
+      name: "Notes",
     label: "Notes",
+      image: true,
+
   },
 };
 export const headAndNeckFormConfig: any = form;

@@ -19,6 +19,7 @@ import {
   headAndNeckFormConfig, neurologicalFormConfig
 } from "@/app/patient/[id]/secondary-assessment/components";
 import {allergiesFormConfig, lastMealFormConfig} from "@/app/patient/[id]/medicalHistory/components";
+import {careAreaConfig} from "@/app/patient/[id]/patient-management-plan/components/forms/patientCareAreaForm";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -215,6 +216,30 @@ export const formatInvestigationPlans = (data: Obs[]) => {
 
 
 }
+// export const formatManagementPlan = (data: {
+//     nonPharmaObs: Obs[];
+//     careAreaObs: Obs[];
+// }): ClinicalNotesDataType[] => {
+//     return [
+//         {
+//             heading: "Non Pharmacological",
+//             children: buildNotesObject(NonPharmacologicalFormConfig, data.nonPharmaObs),
+//         },
+//         {
+//             heading: "Patient Care Area",
+//             children: buildNotesObject(careAreaConfig, data.careAreaObs),
+//         },
+//     ];
+// };
+export const formatManagementPlan  = (
+    data: Obs[]
+): ClinicalNotesDataType => {
+    const items = data?.map((item) => {
+        return { item: item?.value };
+    });
+    return {
+        heading: "Non Pharmacological", children: items };
+};
 
 const buildNotesObject = (formConfig: any, obs: Obs[]) => {
   return (Object.keys(formConfig) as Array<keyof typeof formConfig>)

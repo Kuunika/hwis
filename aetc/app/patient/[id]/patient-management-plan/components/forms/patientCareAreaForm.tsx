@@ -50,6 +50,7 @@ const careAreaFormConfig: Record<
 
   // other: { name: concepts.OTHER, label: "Other (Specify)" },
 };
+export const careAreaConfig=careAreaFormConfig;
 
 const radioOptions = Object.keys(careAreaFormConfig).map((key) => ({
   value: key as keyof typeof careAreaFormConfig,

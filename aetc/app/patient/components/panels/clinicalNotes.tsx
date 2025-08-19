@@ -57,13 +57,13 @@ import {
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { DisplayInformation } from "./displayInformation";
 import {
-  formatDiagnosisNotes,
-  formatInvestigationPlans,
-  formatPresentingComplaints,
-  formatPrimarySurvey, formatSampleHistory,
-  formatSecondarySurvey,
-  formatSoapierNotes,
-  formatVitals
+    formatDiagnosisNotes,
+    formatInvestigationPlans, formatManagementPlan,
+    formatPresentingComplaints,
+    formatPrimarySurvey, formatSampleHistory,
+    formatSecondarySurvey,
+    formatSoapierNotes,
+    formatVitals
 } from "./formatters";
 import GroupedResultsTable from "./tabularDisplayInformation";
 import ResultsTable from "./tabularDisplayInformation";
@@ -491,6 +491,25 @@ export const ClinicalNotes = () => {
       // ],
       removeObs: [],
     },
+      panel21: {
+          title: "Management Plan",
+          data: (
+              <DisplayInformation
+                  title=""
+                  // data={[formatManagementPlan({
+                  //     ...getEncountersByType(encounters.NON_PHARMACOLOGICAL),
+                  //       ...getEncountersByType(encounters.PATIENT_CARE_AREA),
+                  //
+                  // })]}
+                  data={[
+                      formatManagementPlan(
+                          getEncountersByType(encounters.NON_PHARMACOLOGICAL)
+                      )
+                  ]}
+              />
+          ),
+          removeObs: [], // No specific headings to remove
+      },
   };
 
   // Process encounter data based on filters and removeObs arrays
