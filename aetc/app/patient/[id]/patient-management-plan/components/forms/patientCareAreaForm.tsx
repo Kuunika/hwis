@@ -39,10 +39,10 @@ const careAreaFormConfig: Record<
   | "priority",
   { name: string; label: string }
 > = {
-  gynaecological: { name: concepts.GYNO, label: "Gynaecological Bench" },
-  surgical: { name: concepts.SURGICAL, label: "Surgical" },
+  gynaecological: { name: concepts.GYNAE_BENCH, label: "Gynae Bench" },
+  surgical: { name: concepts.SURGICAL_BENCH, label: "Surgical bench" },
   medicalBench: { name: concepts.MEDICAL_BENCH, label: "Medical Bench" },
-  shortStay: { name: concepts.SHORT_STAY_AREA, label: "Short Stay" },
+  shortStay: { name: concepts.SHORT_STAY, label: "Short Stay" },
   isolation: { name: concepts.ISOLATION, label: "Isolation" },
   trauma: { name: concepts.TRAUMA, label: "Trauma" },
   resuscitation: { name: concepts.RESUSCITATION, label: "Resuscitation" },
