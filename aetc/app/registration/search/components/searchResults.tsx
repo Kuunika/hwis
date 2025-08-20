@@ -488,8 +488,6 @@ const ViewPatientDialog = ({
     const uuid = patient?.uuid;
     const initialUuid = params?.id;
 
-    console.log({ referralData });
-
     const mergedResponse = await mergePatients({
       primary: {
         patient_id: uuid,
