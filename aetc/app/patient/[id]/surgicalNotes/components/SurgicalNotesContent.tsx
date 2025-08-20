@@ -574,7 +574,7 @@ export const SurgicalNotesContent: React.FC<Props> = ({
             {/* Medications Section - Always show as it contains dynamic components */}
             <hr />
             <h2>Medications</h2>
-            <PrescribedMedicationList setRow={setRow} />
+            <PrescribedMedicationList setRow={setRow} showPrintButton={false} />
 
             {/* Clerking Details */}
             {hasClerkInfo() && (
