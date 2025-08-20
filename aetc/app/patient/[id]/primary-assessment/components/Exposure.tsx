@@ -33,6 +33,12 @@ const form = {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
+  image:{
+    name: concepts.IMAGE_PART_NAME,
+    label: "Image",
+    image: true,
+  }
+
   // abnormalities: {
   //   name: concepts.ABNORMALITIES,
   //   label: "Other Abnormalities",

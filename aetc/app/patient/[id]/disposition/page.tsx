@@ -92,19 +92,6 @@ function DispositionFeature() {
         <PatientInfoPrintDialog onClose={() => navigateTo("/dispositions")} open={openPatientSummary} />
         {/* Main Content */}
         <MainGrid item xs={12} lg={9}>
-          {/* <div style={{ display: "flex", alignItems: "center" }}>
-                        <MainTypography
-                            sx={{ width: "24px", height: "24px", fontSize: "20px", fontWeight: 400 }}
-                        >
-                            <FaAngleLeft />
-                        </MainTypography>
-                        <MainTypography
-                            sx={{ fontSize: "14px", fontWeight: 400, lineHeight: "21px", pl: "1ch" }}
-                            onClick={() => window.history.back()}
-                        >
-                            Back
-                        </MainTypography>
-                    </div> */}
           <MainPaper elevation={0} sx={{ p: "1ch" }}>
             <h2>Disposition</h2>
             {/* Dropdown */}

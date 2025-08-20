@@ -247,7 +247,7 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
       const config = formConfig[key];
       return !config.child;
     })
-    .map((key) => {
+    .flatMap((key) => {
       const config = formConfig[key];
       const value = getObservationValue(obs, config.name);
       const displayValue = config.options?.[value] ?? value;
@@ -266,6 +266,31 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
         }
       }
 
+      if (config?.image) {
+        const parentObs: any = filterObservations(obs, config.name);
+        console.log({parentObs});
+
+
+       const imagesObs = parentObs.map((ob: Obs) => {
+          return {
+            item: ob.value,
+            children: handleImagesObsRestructure(ob.children),
+          };
+        })
+
+        console.log({imagesObs});
+        return imagesObs;
+    
+        // if (parentObs?.length > 0) {
+        //   children = [
+        //     ...children,
+        //     ...handleImagesObsRestructure(parentObs[0].children),
+        //   ];
+        // }
+
+
+      }
+
       const result: any = {
         item:
           topParentType == "string"
@@ -277,6 +302,8 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
       if (children && children.length > 0) {
         result.children = children;
       }
+
+      console.log(result);
       return result;
     });
 };
@@ -292,34 +319,8 @@ const buildChildren = (obs: Obs[], children: any) => {
       if (child?.image) {
         const parentOb = filterObservations(obs, child?.parentConcept);
         if (parentOb && parentOb.length > 0) {
-          const childItems =parentOb[0].children.map((ob: Obs)=>{
-            return {
-              item: ob.value,
-              children: ob.children.map((childOb:Obs)=>{
-                let children: any=[];
-                if(childOb?.children){
-                  children =childOb?.children.map((cOb: Obs)=>{
-                      return {
-                        item: {
-                          [`${cOb.names[0].name}`]: cOb.value,
-                        },
-                      };
-                  })
-                }  
-                return {
-                  item:
-                    children.length == 0
-                      ? { [`${childOb.names[0].name}`]: childOb.value }
-                      : childOb.value,
-                  children,
-                };
-              })
-            }
-          });
-          return childItems;
+          return handleImagesObsRestructure(parentOb[0].children);
         }
-       
-        // console.log(child.concept, children, child.parentConcept);
       }
 
       if (child?.type == "string") {
@@ -367,6 +368,33 @@ const buildChildren = (obs: Obs[], children: any) => {
     })
   );
 };
+
+const handleImagesObsRestructure =(children: Obs[])=>{
+ return children.map((ob: Obs) => {
+    return {
+      item: ob.value,
+      children: ob.children.map((childOb: Obs) => {
+        let children: any = [];
+        if (childOb?.children) {
+          children = childOb?.children.map((cOb: Obs) => {
+            return {
+              item: {
+                [`${cOb.names[0].name}`]: cOb.value,
+              },
+            };
+          });
+        }
+        return {
+          item:
+            children.length == 0
+              ? { [`${childOb.names[0].name}`]: childOb.value }
+              : childOb.value,
+          children,
+        };
+      }),
+    };
+  });
+} 
 
 // export const formatPrimarySurvey = (data: {
 //   airwayObs: Obs[];
