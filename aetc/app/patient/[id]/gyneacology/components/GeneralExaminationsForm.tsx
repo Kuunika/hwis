@@ -90,9 +90,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
         vaginalExamination: "",
         extremities: "",
         impression: "",
-
-
     });
+
     // Ref for printing
     const contentRef = useRef<HTMLDivElement>(null);
 
@@ -150,7 +149,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 vaginalExamination: "",
                 extremities: "",
                 impression: "",
-
             };
 
             const medicalHistoryConceptNames = [
@@ -187,7 +185,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 else if (conceptName === "Parity") {
                     newComplaintsInfo.parity = obs.value || obs.value_text || "";
                 }
-
                 else if (conceptName === "Number of living children") {
                     newComplaintsInfo.numberOfLivingChildren = obs.value || obs.value_text || "";
                 } else if (conceptName === "Menarche") {
@@ -228,7 +225,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                     if (condition) {
                         newComplaintsInfo.habits.push(condition);
                     }
-
                 } else if (conceptName === "Temperature") {
                     newComplaintsInfo.temperature = obs.value || obs.value_text || "";
                 } else if (conceptName === "Pulse Rate") {
@@ -263,8 +259,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
         }
     }, [encountersData]);
 
-
-
     useEffect(() => {
         if (patientVisits) {
             const active = patientVisits.find((visit) => !visit.date_stopped);
@@ -272,8 +266,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 setActiveVisit(active as unknown as Visit);
             }
         }
-
-
     }, [patientVisits]);
 
     const handleSubmit = async (values: any) => {
@@ -303,8 +295,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
             createObs(concepts.STATS, values.stats),
             createObs(concepts.RBS, values.rbs),
             createObs(concepts.WEIGHT, values.weight),
-
-
             createObs(concepts.RAISED_HEIGHT, values.height),
             createObs(concepts.CHEST_EXAMINATION, values.chest),
             createObs(concepts.ABDOMINAL_EXAMINATION, values.abdomen),
@@ -327,7 +317,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
         try {
             await submitEncounter(payload);
             onSubmit(values);
-            // reactToPrintFn(); // Trigger printing after submission
             navigateTo(`/patient/${params.id}/profile`);
         } catch (error) {
             console.error("Error submitting General Examination:", error);
@@ -345,8 +334,8 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 temperature: "",
                 pulse: "",
                 respiratoryRate: "",
-                systolic: "", // Add this
-                diastolic: "", // Add this
+                systolic: "",
+                diastolic: "",
                 bloodPressure: "",
                 stats: "",
                 rbs: "",
@@ -360,7 +349,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                 impression: "",
                 plan: "",
                 immediateIntervention: "",
-
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -396,7 +384,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                         <p><strong>Cancer Screening: </strong>{complaintsInfo.cancerScreening}</p>
                         <p><strong>History of STIs: </strong>{complaintsInfo.historyOfStis}</p>
 
-
                         <h2>Medical History</h2>
                         <p><strong> Condition: </strong>{complaintsInfo.medicalHistory.length > 0 ?
                             complaintsInfo.medicalHistory.join(",") : "None"}</p>
@@ -424,7 +411,6 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                         <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
                         <p><strong>Extremities: </strong>{complaintsInfo.extremities}</p>
                         <p><strong>Impression: </strong>{complaintsInfo.impression}</p>
-
                     </div>
                 </div>
             </div>
@@ -440,18 +426,17 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                             <RadioGroupInput name="pallor" options={yesNoOptions} label={""} />
                         </FormFieldContainerLayout>
 
-
                         <FormFieldContainerLayout title="Vitals">
                             {/* O2Sat and Pulse */}
                             <FormFieldContainerLayout title="O2Sat and Pulse">
-                                <FieldsContainer mr="1ch">
+                                <div className="responsive-fields-container">
                                     <TextInputField
                                         name="stats"
                                         label="O2 Saturation"
                                         type="text"
                                         id=""
                                         unitOfMeasure="%"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
                                     <TextInputField
                                         name="pulse"
@@ -459,21 +444,21 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                                         type="text"
                                         id=""
                                         unitOfMeasure="bpm"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
-                                </FieldsContainer>
+                                </div>
                             </FormFieldContainerLayout>
 
-                            {/* Blood Pressure */}
+                            {/* Blood Pressure - Responsive Stack */}
                             <FormFieldContainerLayout title="Blood Pressure">
-                                <FieldsContainer mr="1ch">
+                                <div className="responsive-fields-container">
                                     <TextInputField
                                         name="systolic"
                                         label="Systolic"
                                         type="text"
                                         id=""
                                         unitOfMeasure="mmHg"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
                                     <TextInputField
                                         name="diastolic"
@@ -481,21 +466,21 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                                         type="text"
                                         id=""
                                         unitOfMeasure="mmHg"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
-                                </FieldsContainer>
+                                </div>
                             </FormFieldContainerLayout>
 
                             {/* Respiratory and Temperature */}
                             <FormFieldContainerLayout title="Respiratory and Temperature">
-                                <FieldsContainer mr="1ch">
+                                <div className="responsive-fields-container">
                                     <TextInputField
                                         name="respiratoryRate"
                                         label="Respiratory Rate"
                                         type="text"
                                         id=""
                                         unitOfMeasure="bs/m"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
                                     <TextInputField
                                         name="temperature"
@@ -503,35 +488,35 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                                         type="text"
                                         id=""
                                         unitOfMeasure="°C"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
-                                </FieldsContainer>
+                                </div>
                             </FormFieldContainerLayout>
 
                             {/* RBS */}
                             <FormFieldContainerLayout title="Blood Glucose">
-                                <FieldsContainer mr="1ch">
+                                <div className="responsive-fields-container">
                                     <TextInputField
                                         name="rbs"
                                         label="Random Blood Sugar (RBS)"
                                         type="text"
                                         id=""
                                         unitOfMeasure="mmol/L"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "200px" }}
                                     />
-                                </FieldsContainer>
+                                </div>
                             </FormFieldContainerLayout>
 
                             {/* Weight and Height */}
                             <FormFieldContainerLayout title="Weight and Height">
-                                <FieldsContainer mr="1ch">
+                                <div className="responsive-fields-container">
                                     <TextInputField
                                         name="weight"
                                         label="Weight"
                                         type="text"
                                         id=""
                                         unitOfMeasure="kg"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
                                     <TextInputField
                                         name="height"
@@ -539,9 +524,9 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                                         type="text"
                                         id=""
                                         unitOfMeasure="cm"
-                                        sx={{ width: "100%", m: 0 }}
+                                        sx={{ width: "100%", m: 0, minWidth: "180px" }}
                                     />
-                                </FieldsContainer>
+                                </div>
                             </FormFieldContainerLayout>
                         </FormFieldContainerLayout>
 
@@ -575,11 +560,41 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                     </FormFieldContainerLayout>
                 </WrapperBox>
             </FormFieldContainer>
-            {/* CSS for Print Handling */}
+
+            {/* CSS for Print Handling and Responsive Layout */}
             <style jsx>{`
+                /* Responsive fields container */
+                .responsive-fields-container {
+                    display: flex;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                    margin-right: 1ch;
+                }
+
+                /* On small screens, stack fields vertically */
+                @media (max-width: 768px) {
+                    .responsive-fields-container {
+                        flex-direction: column;
+                        gap: 1rem;
+                    }
+                }
+
+                /* Ensure input fields have adequate touch targets on mobile */
+                @media (max-width: 480px) {
+                    .responsive-fields-container {
+                        gap: 1.5rem;
+                    }
+                    
+                    /* Increase minimum height for better touch experience */
+                    .responsive-fields-container input {
+                        min-height: 48px !important;
+                        padding: 12px !important;
+                    }
+                }
+
                 @media print {
                     .print-only {
-                        display: block !important; /* Ensure visibility in print */
+                        display: block !important;
                     }
                     .patient-examination-data {
                         margin: 20px 0;
@@ -593,7 +608,7 @@ export const GeneralExaminationsForm = ({ onSubmit, onSkip }: Prop) => {
                     }
                 }
                 .print-only {
-                    display: none; /* Hide on screen */
+                    display: none;
                 }
             `}</style>
         </FormikInit>
