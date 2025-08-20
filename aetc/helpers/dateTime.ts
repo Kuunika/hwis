@@ -7,11 +7,11 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const getDateTime = () => {
-  let date = new Date();
+  if (!ServerTime.isInitialized()) {
+    return "";
+  }
 
-  date.setUTCHours(date.getUTCHours() + 2); // Add 2 hours for CAT (UTC+2)
-
-  return date.toISOString();
+  return ServerTime.getServerTimeString();
 };
 
 export const calculateAge = (birthdate: string | Date | undefined) => {
