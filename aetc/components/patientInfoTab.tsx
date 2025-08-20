@@ -28,7 +28,7 @@ export const PatientInfoTab = () => {
         label="Full Name"
         value={`${patient?.given_name} ${patient?.family_name}`}
       />
-      <LabelValue label="ID" value="123J-01923-NOJSX" />
+      <LabelValue label="ID" value={patient?.identifiers[0]?.identifier ?? ""} />
       <LabelValue
         label="Age"
         value={`${calculateAge(patient?.birthdate)}yr (${patient?.birthdate})`}
