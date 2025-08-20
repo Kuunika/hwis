@@ -15,6 +15,7 @@ const form = {
   generalInformation: {
     name: concepts.ADDITIONAL_NOTES,
     label: "General Information",
+      type: "string",
   },
 };
 export const generalInformationFormConfig: any = form;

@@ -31,9 +31,14 @@ const form = {
   generalInformation: {
       name: "Notes",
     label: "Notes",
-      image: true,
+      type: "string",
 
   },
+    image:{
+        name: concepts.IMAGE_PART_NAME,
+        label: "Image",
+        image: true,
+    }
 };
 export const headAndNeckFormConfig: any = form;
 

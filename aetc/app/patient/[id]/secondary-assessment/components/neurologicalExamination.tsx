@@ -17,6 +17,7 @@ const form = {
   generalInformation: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Notes",
+      type: "string",
   },
 };
 export const neurologicalFormConfig: any = form;
