@@ -242,132 +242,122 @@ export const formatManagementPlan  = (
 };
 
 const buildNotesObject = (formConfig: any, obs: Obs[]) => {
-  return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
-    .filter((key) => {
-      const config = formConfig[key];
-      return !config.child;
-    })
-    .flatMap((key) => {
-      const config = formConfig[key];
-      const value = getObservationValue(obs, config.name);
-      const displayValue = config.options?.[value] ?? value;
-      const topParentType = config?.type || "N/A";
-      let children = buildChildren(obs, config.children) ?? [];
-
-      if (config.hasGroupMembers) {
-        const parentObs: any = filterObservations(obs, config.name);
-        if (parentObs?.length > 0) {
-          children = [
-            ...children,
-            ...parentObs[0].children.map((child: any) => ({
-              item: child.value,
-            })),
-          ];
-        }
-      }
-
-      if (config?.image) {
-        const parentObs: any = filterObservations(obs, config.name);
-        console.log({parentObs});
-
-
-       const imagesObs = parentObs.map((ob: Obs) => {
-          return {
-            item: ob.value,
-            children: handleImagesObsRestructure(ob.children),
-          };
+    return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
+        .filter((key) => {
+            const config = formConfig[key];
+            return !config.child;
         })
+        .flatMap((key) => {
+            const config = formConfig[key];
+            const value = getObservationValue(obs, config.name);
 
-        console.log({imagesObs});
-        return imagesObs;
-    
-        // if (parentObs?.length > 0) {
-        //   children = [
-        //     ...children,
-        //     ...handleImagesObsRestructure(parentObs[0].children),
-        //   ];
-        // }
+            // Skip if there is no value and no children
+            if (!value && !config.hasGroupMembers && !config.children && !config.image) {
+                return [];
+            }
 
+            const displayValue = config.options?.[value] ?? value;
+            const topParentType = config?.type || "N/A";
+            let children = buildChildren(obs, config.children) ?? [];
 
-      }
+            if (config.hasGroupMembers) {
+                const parentObs: any = filterObservations(obs, config.name);
+                if (parentObs?.length > 0) {
+                    children = [
+                        ...children,
+                        ...parentObs[0].children.map((child: any) => ({
+                            item: child.value,
+                        })),
+                    ];
+                }
+            }
 
-      const result: any = {
-        item:
-          topParentType == "string"
-            ? displayValue
-            : topParentType == "title"
-              ? config.label
-              : { [config.label]: displayValue || "N/A" },
-      };
-      if (children && children.length > 0) {
-        result.children = children;
-      }
+            if (config?.image) {
+                const parentObs: any = filterObservations(obs, config.name);
+                if (!parentObs?.length) return [];
+                return parentObs.map((ob: Obs) => ({
+                    item: ob.value,
+                    children: handleImagesObsRestructure(ob.children),
+                }));
+            }
 
-      console.log(result);
-      return result;
-    });
+            if (!displayValue && children.length === 0) {
+                return [];
+            }
+
+            const result: any = {
+                item:
+                    topParentType === "string"
+                        ? displayValue
+                        : topParentType === "title"
+                            ? config.label
+                            : { [config.label]: displayValue },
+            };
+
+            if (children.length > 0) {
+                result.children = children;
+            }
+
+            return result;
+        });
 };
+
 
 const buildChildren = (obs: Obs[], children: any) => {
-  if (!children) return;
-  return (
-    obs.length > 0 &&
-    children?.flatMap((child: any) => {
-      const innerObs = filterObservations(obs, child.concept);
-      let transformedObs;
+    if (!children) return;
+    return (
+        obs.length > 0 &&
+        children?.flatMap((child: any) => {
+            const innerObs = filterObservations(obs, child.concept);
 
-      if (child?.image) {
-        const parentOb = filterObservations(obs, child?.parentConcept);
-        if (parentOb && parentOb.length > 0) {
-          return handleImagesObsRestructure(parentOb[0].children);
-        }
-      }
+            if (!innerObs || innerObs.length === 0) return [];
 
-      if (child?.type == "string") {
-        const obValue = getObservationValue(obs, child?.concept);
+            let transformedObs;
 
-        const childValue = child?.multiple
-          ? innerObs?.map((innerOb) => {
-              return {
-                item: child?.options
-                  ? child.options[innerOb.value]
-                  : innerOb.value,
-              };
-            })
-          : child?.options
-            ? child.options[obValue]
-            : obValue;
+            if (child?.image) {
+                const parentOb = filterObservations(obs, child?.parentConcept);
+                if (!parentOb?.length) return [];
+                return handleImagesObsRestructure(parentOb[0].children);
+            }
 
-        transformedObs = {
-          item: child.label,
-          children: child?.children
-            ? buildChildren(obs, child?.children)
-            : childValue,
-        };
-      } else {
-        const obValue = getObservationValue(obs, child?.concept);
+            const obValue = getObservationValue(obs, child?.concept);
+            if (!obValue && (!child.multiple || innerObs.length === 0)) return [];
 
-        const childValue = child?.multiple
-          ? innerObs?.map((innerOb) => {
-              return {
-                item: child?.options
-                  ? child.options[innerOb.value]
-                  : innerOb.value,
-              };
-            })
-          : { [child.label]: obValue };
+            if (child?.type === "string") {
+                const childValue = child?.multiple
+                    ? innerObs.map((innerOb) => ({
+                        item: child?.options ? child.options[innerOb.value] : innerOb.value,
+                    }))
+                    : child?.options
+                        ? child.options[obValue]
+                        : obValue;
 
-        transformedObs = {
-          item: childValue,
-          children: child?.children
-            ? buildChildren(obs, child?.children)
-            : childValue,
-        };
-      }
-      return transformedObs;
-    })
-  );
+                transformedObs = {
+                    item: child.label,
+                    children: child?.children
+                        ? buildChildren(obs, child?.children)
+                        : childValue,
+                };
+            } else {
+                const childValue = child?.multiple
+                    ? innerObs.map((innerOb) => ({
+                        item: child?.options ? child.options[innerOb.value] : innerOb.value,
+                    }))
+                    : { [child.label]: obValue };
+
+                transformedObs = {
+                    item: childValue,
+                    children: child?.children
+                        ? buildChildren(obs, child?.children)
+                        : childValue,
+                };
+            }
+
+            return transformedObs;
+        })
+    );
 };
+
 
 const handleImagesObsRestructure =(children: Obs[])=>{
  return children.map((ob: Obs) => {
