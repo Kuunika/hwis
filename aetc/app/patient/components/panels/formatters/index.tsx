@@ -11,7 +11,6 @@ import {
   exposureFormConfig,
 } from "@/app/patient/[id]/primary-assessment/components";
 import { soapierFormConfig } from "@/app/patient/[id]/soap/components/soapForm";
-import { getObservations } from "@/helpers";
 import {
   abdomenAndPelvisFormConfig,
   chestFormConfig, extremitiesFormConfig,
@@ -19,7 +18,6 @@ import {
   headAndNeckFormConfig, neurologicalFormConfig
 } from "@/app/patient/[id]/secondary-assessment/components";
 import {allergiesFormConfig, lastMealFormConfig} from "@/app/patient/[id]/medicalHistory/components";
-import {careAreaConfig} from "@/app/patient/[id]/patient-management-plan/components/forms/patientCareAreaForm";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -359,32 +357,41 @@ const buildChildren = (obs: Obs[], children: any) => {
 };
 
 
-const handleImagesObsRestructure =(children: Obs[])=>{
- return children.map((ob: Obs) => {
-    return {
-      item: ob.value,
-      children: ob.children.map((childOb: Obs) => {
-        let children: any = [];
-        if (childOb?.children) {
-          children = childOb?.children.map((cOb: Obs) => {
+const handleImagesObsRestructure = (children: Obs[]) => {
+    return children
+        .filter((ob: Obs) => ob.value || (ob.children && ob.children.length > 0))
+        .map((ob: Obs) => {
+            const childItems = ob.children
+                ?.filter((childOb: Obs) => childOb.value || (childOb.children && childOb.children.length > 0)) // skip empty
+                .map((childOb: Obs) => {
+                    let nestedChildren: any[] = [];
+
+                    if (childOb?.children && childOb.children.length > 0) {
+                        nestedChildren = childOb.children
+                            .filter((cOb: Obs) => cOb.value)
+                            .map((cOb: Obs) => ({
+                                item: {
+                                    [cOb.names?.[0]?.name || "Unnamed"]: cOb.value,
+                                },
+                            }));
+                    }
+
+                    return {
+                        item:
+                            nestedChildren.length === 0
+                                ? { [childOb.names?.[0]?.name || "Unnamed"]: childOb.value }
+                                : childOb.value,
+                        children: nestedChildren.length > 0 ? nestedChildren : undefined,
+                    };
+                }) ?? [];
+
             return {
-              item: {
-                [`${cOb.names[0].name}`]: cOb.value,
-              },
+                item: ob.value,
+                children: childItems.length > 0 ? childItems : undefined,
             };
-          });
-        }
-        return {
-          item:
-            children.length == 0
-              ? { [`${childOb.names[0].name}`]: childOb.value }
-              : childOb.value,
-          children,
-        };
-      }),
-    };
-  });
-} 
+        });
+};
+
 
 // export const formatPrimarySurvey = (data: {
 //   airwayObs: Obs[];

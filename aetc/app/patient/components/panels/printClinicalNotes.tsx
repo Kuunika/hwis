@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import {PresentingComplaints} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
+import {GenericNotes, NotesConfig} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
 
 const theme = createTheme({
   palette: {
@@ -493,6 +495,7 @@ export const PrintClinicalNotes = (props: any) => {
     );
   };
 
+
   // Check if panel data has content
   const hasContent = (panelData: any) => {
     if (React.isValidElement(panelData)) return true;
@@ -573,7 +576,7 @@ export const PrintClinicalNotes = (props: any) => {
     }
 
     return (
-      <MasonryCard title="Clinical Notes" minHeight="100px">
+      <MasonryCard title="Continuation Notes" minHeight="100px">
         <List dense disablePadding>
           {panelData.map((item, index) =>
             item && item.value ? (
@@ -586,11 +589,34 @@ export const PrintClinicalNotes = (props: any) => {
             ) : null
           )}
         </List>
+          <PresentingComplaints data={panelData}/>
+
       </MasonryCard>
     );
   };
+    const renderSampleHistoryCard = (panelData: any) => {
+        if (!panelData) return null;
 
-  // Generic card for other sections
+        return (
+            <MasonryCard title="Sample History" minHeight="200px">
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    {/* Presenting Complaints */}
+                    <PresentingComplaints data={panelData.presentingComplaints} />
+
+                    {/* Review of Systems */}
+                    {/*<ReviewOfSystemsNotes obs={panelData.reviewOfSystems} />*/}
+
+                    {renderTimestamp([
+                        ...panelData.presentingComplaints,
+                        // ...panelData.reviewOfSystems,
+                    ])}
+                </Box>
+            </MasonryCard>
+        );
+    };
+
+
+    // Generic card for other sections
   const renderGenericCard = (title: string, panelData: any) => {
     if (!hasContent(panelData)) return null;
 
@@ -650,7 +676,7 @@ export const PrintClinicalNotes = (props: any) => {
       renderGenericCard("Secondary Survey", panelData.secondary),
       panelData.primary && renderGenericCard("Primary Survey", panelData.primary),
         renderPrimarySurveyCard(panelData.primary),
-      hasContent(panelData.sample) && renderGenericCard("Sample History", panelData.sample),
+      hasContent(panelData.sample) && renderSampleHistoryCard(panelData.sample),
     hasContent(panelData.plan) && renderGenericCard("Plan", panelData.plan),
     hasContent(panelData.soapier) &&
       renderGenericCard("SOAPIER", panelData.soapier),
@@ -658,6 +684,7 @@ export const PrintClinicalNotes = (props: any) => {
       renderGenericCard("Diagnosis", panelData.diagnosis),
       hasContent(panelData.managementPlan) &&
       renderGenericCard("Management Plan", panelData.managementPlan),
+
   ].filter(Boolean);
 
   // Split cards into two columns manually
@@ -674,6 +701,7 @@ export const PrintClinicalNotes = (props: any) => {
             {cards.map((card, index) => (
               <Box key={index}>
                 {card}
+
                 {index < cards.length - 1 && <Divider sx={{ my: 2 }} />}
               </Box>
             ))}
@@ -701,6 +729,7 @@ export const PrintClinicalNotes = (props: any) => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ maxWidth: 1200, mx: "auto", my: 2, p: 2 }}>
+
         {/* Simple 2-column layout using CSS Grid */}
         <Box
           sx={{
@@ -736,8 +765,10 @@ export const PrintClinicalNotes = (props: any) => {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {rightColumn}
           </Box>
+
         </Box>
       </Box>
     </ThemeProvider>
+
   );
 };

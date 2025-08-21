@@ -67,6 +67,7 @@ import {
 } from "./formatters";
 import GroupedResultsTable from "./tabularDisplayInformation";
 import ResultsTable from "./tabularDisplayInformation";
+import {PresentingComplaints} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
 
 type PanelData = {
   title: string;
@@ -269,7 +270,7 @@ export const ClinicalNotes = () => {
   // Generate base encounter data with all possible panels and their removeObs arrays
   const baseEncounterData: Record<string, PanelData> = {
     panel14: {
-      title: "Clinical Notes",
+      title: "Continuation Notes",
       data: getEncountersByType(encounters.CLINICAL_NOTES),
       removeObs: ["image part", "image part 2"], // Example headings to remove
     },
@@ -442,55 +443,16 @@ export const ClinicalNotes = () => {
       ),
       removeObs: [], // No specific headings to remove
     },
-    panel15: {
-      title: "Sample History",
-      data: (
-          <DisplayInformation
-              title=""
-              data={formatSampleHistory({
-                presentingComplaintsObs: getEncountersByType(
-                  encounters.PRESENTING_COMPLAINTS
-                ),
-                allergiesObs: getEncountersByType(encounters.ALLERGIES),
-                medicationsObs: getEncountersByType(encounters.PRESCRIPTIONS),
+      panel15: {
+          title: "Sample History",
+          data: {
+              presentingComplaints: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
 
+              reviewOfSystems: getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
+          },
+          removeObs: [],
+      },
 
-                lastMealObs: getEncountersByType(encounters.SUMMARY_ASSESSMENT),
-                existingConditionsObs: getEncountersByType(
-                  encounters.FAMILY_MEDICAL_HISTORY
-                ),
-                eventsObs: getEncountersByType(
-                  encounters.REVIEW_OF_SYSTEMS
-                ),
-              })}
-          />
-      ),
-      // data: [
-      //   <PresentingComplaintsNotes
-      //     obs={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
-      //   />,
-      //   <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
-      //   <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
-      //   <PriorConditionsNotes
-      //     obs={getEncountersByType(encounters.DIAGNOSIS)}
-      //   />,
-      //   <SurgicalNotes
-      //     obs={getEncountersByType(encounters.SURGICAL_HISTORY)}
-      //   />,
-      //   <PatientAdmissionNotes
-      //     obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
-      //   />,
-      //   <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
-      //   <FamilyMedicalHistoryNotes
-      //     obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
-      //   />,
-      //   <ReviewOfSystemsNotes
-      //     obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
-      //   />,
-      //   ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
-      // ],
-      removeObs: [],
-    },
       panel21: {
           title: "Management Plan",
           data: (
