@@ -68,6 +68,7 @@ import {
 import GroupedResultsTable from "./tabularDisplayInformation";
 import ResultsTable from "./tabularDisplayInformation";
 import {PresentingComplaints} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
+import {GenericNotes, NotesConfig} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
 
 type PanelData = {
   title: string;
@@ -445,11 +446,64 @@ export const ClinicalNotes = () => {
     },
       panel15: {
           title: "Sample History",
-          data: {
-              presentingComplaints: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
+          data: (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  {/* Presenting Complaints */}
+                  <GenericNotes
+                      data={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+                      title="Presenting Complaints"
+                      config={NotesConfig.PRESENTING_COMPLAINTS}
+                  />
 
-              reviewOfSystems: getEncountersByType(encounters.REVIEW_OF_SYSTEMS),
-          },
+                  {/* Allergies */}
+                  <GenericNotes
+                      data={getEncountersByType(encounters.ALLERGIES)}
+                      title="Allergies"
+                      config={NotesConfig.ALLERGIES}
+                  />
+
+                  {/* Medications */}
+                  <GenericNotes
+                      data={getEncountersByType(encounters.PRESCRIPTIONS)}
+                      title="Medications"
+                      config={NotesConfig.MEDICATIONS}
+                  />
+
+                  {/* Diagnosis */}
+                  <GenericNotes
+                      data={getEncountersByType(encounters.DIAGNOSIS)}
+                      title="Prior/existing conditions"
+                      config={NotesConfig.DIAGNOSIS}
+                  />
+
+                  {/* Surgical History */}
+                  <GenericNotes
+                      data={getEncountersByType(encounters.SURGICAL_HISTORY)}
+                      title="Surgical History"
+                      config={NotesConfig.SURGICAL_HISTORY}
+                  />
+
+                  {/* Previous Admissions */}
+                  <GenericNotes
+                      data={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+                      title="Previous Admissions"
+                      config={NotesConfig.ADMISSIONS}
+                  />
+
+                  <GenericNotes
+                      data={getEncountersByType(encounters.SUMMARY_ASSESSMENT)}
+                      title="Last Meal"
+                      config={NotesConfig.LAST_MEAL}
+                  />
+
+                  {/* Family Medical History */}
+                  <GenericNotes
+                      data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+                      title="Family Medical History"
+                      config={NotesConfig.FAMILY_HISTORY}
+                  />
+              </Box>
+          ),
           removeObs: [],
       },
 

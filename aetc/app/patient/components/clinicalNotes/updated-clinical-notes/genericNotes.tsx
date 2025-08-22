@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import {config} from "winston";
 
 interface Name {
     name: string;
@@ -59,6 +60,7 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
     };
 
     const extractNotesData = () => {
+        // Extract notes based on the root concept and configured fields
         const notes: {
             [key: string]: any;
             timestamp: string;
@@ -111,8 +113,8 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
     const defaultItemRenderer = (item: any) => (
         <>
             {item.rootValue && (
-                <Typography variant="body2" sx={{ fontWeight: 'medium', mb: 1 }}>
-                    {item.rootValue}
+                <Typography variant="body2" sx={{ fontWeight: 'large', mb: 0 }}>
+                    -{item.rootValue}
                 </Typography>
             )}
             <Box sx={{ ml: 2 }}>
@@ -123,7 +125,7 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
                             variant="body2"
                             sx={field.style}
                         >
-                            {field.displayName}: {item[field.conceptName]}
+                            -{field.displayName}: {item[field.conceptName]}
                         </Typography>
                     )
                 ))}
@@ -134,20 +136,17 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
     const renderItem = config.itemRenderer || defaultItemRenderer;
 
     return (
-        <Box sx={{ p: 2, border: "1px solid #e0e0e0", borderRadius: 1, mb: 2 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Box sx={{ p: 2, border: "1px solid #e0e0e0", borderRadius: 1, mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 0 }}>
                 {title}
             </Typography>
 
             <Box sx={{ pl: 2 }}>
                 {Object.entries(groupedData).map(([date, dateNotes]) => (
-                    <Box key={date} sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#555', mb: 1 }}>
-                            {getHumanReadableDateTime(dateNotes[0].timestamp)}
-                        </Typography>
+                    <Box key={date} sx={{ mb: 1 }}>
                         {dateNotes.map((note, index) => (
                             <Box key={index} sx={{ ml: 2, mt: 1, mb: 1.5 }}>
-                                {renderItem(note)}
+                               {renderItem(note)}
                             </Box>
                         ))}
                     </Box>
@@ -173,7 +172,6 @@ export const NotesConfig = {
             {
                 conceptName: "Description",
                 displayName: "Notes",
-                style: { fontStyle: 'italic', color: '#7f8c8d' }
             }
         ]
     },
@@ -188,7 +186,7 @@ export const NotesConfig = {
             { conceptName: "Medication Frequency", displayName: "Frequency" },
             { conceptName: "Medication Duration", displayName: "Duration" },
             { conceptName: "Medication Duration Unit", displayName: "Duration Unit" },
-            { conceptName: "Description", displayName: "Notes", style: { fontStyle: 'italic' } }
+            { conceptName: "Description", displayName: "Notes",}
         ]
     },
 
@@ -208,7 +206,6 @@ export const NotesConfig = {
             {
                 conceptName: "Additional Diagnosis Details",
                 displayName: "Details",
-                style: { fontStyle: 'italic', color: '#7f8c8d' }
             }
         ]
     },
@@ -222,7 +219,6 @@ export const NotesConfig = {
             {
                 conceptName: "Complications",
                 displayName: "Complications",
-                style: { fontStyle: 'italic', color: '#7f8c8d' }
             }
         ]
     },
@@ -245,7 +241,7 @@ export const NotesConfig = {
             {
                 conceptName: "Discharge Instructions",
                 displayName: "Discharge Instructions",
-                style: { fontStyle: 'italic' }
+
             },
             { conceptName: "Follow Up", displayName: "Follow-up" }
         ]
@@ -258,7 +254,6 @@ export const NotesConfig = {
             {
                 conceptName: "Description of last meal",
                 displayName: "Meal Description",
-                style: { fontStyle: 'italic' }
             }
         ]
     },
@@ -278,6 +273,14 @@ export const NotesConfig = {
             {
                 conceptName: "Duration Of Symptoms Weeks",
                 displayName: "Duration (weeks)"
+            },
+            {
+                conceptName: "Duration Of Symptoms Months",
+                displayName: "Duration (months)"
+            },
+            {
+                conceptName: "Duration Of Symptoms Years",
+                displayName: "Duration (years)"
             }
         ]
     },
@@ -294,7 +297,6 @@ export const NotesConfig = {
             {
                 conceptName: "Relationship To Patient",
                 displayName: "Relationship",
-                style: { color: '#7f8c8d' }
             }
         ],
         itemRenderer: (item: any) => (
@@ -316,5 +318,5 @@ export const NotesConfig = {
                 </Box>
             </>
         )
-    }
+    },
 };

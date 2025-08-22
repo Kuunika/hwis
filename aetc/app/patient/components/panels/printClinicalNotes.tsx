@@ -496,19 +496,30 @@ export const PrintClinicalNotes = (props: any) => {
   };
 
 
-  // Check if panel data has content
-  const hasContent = (panelData: any) => {
-    if (React.isValidElement(panelData)) return true;
+    // Check if panel data has content
+    const hasContent = (panelData: any) => {
+        if (React.isValidElement(panelData)) return true;
 
-    if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
-      return false;
+        // Handle the new sample history object structure
+        if (panelData && typeof panelData === 'object' && !Array.isArray(panelData)) {
+            // Check if any of the sample history properties have data
+            const hasSampleHistoryData = Object.values(panelData).some(
+                (value: any) =>
+                    Array.isArray(value) && value.length > 0 ||
+                    React.isValidElement(value)
+            );
+            return hasSampleHistoryData;
+        }
 
-    // Check if there's any valid data to display
-    const flatData = Array.isArray(panelData) ? panelData.flat() : [];
-    const renderedContent = renderGroupedItems(flatData);
+        if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
+            return false;
 
-    return renderedContent !== null;
-  };
+        // Check if there's any valid data to display
+        const flatData = Array.isArray(panelData) ? panelData.flat() : [];
+        const renderedContent = renderGroupedItems(flatData);
+
+        return renderedContent !== null;
+    };
 
   // Create individual card components for masonry
   const MasonryCard = ({
@@ -597,22 +608,15 @@ export const PrintClinicalNotes = (props: any) => {
     const renderSampleHistoryCard = (panelData: any) => {
         if (!panelData) return null;
 
-        return (
-            <MasonryCard title="Sample History" minHeight="200px">
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    {/* Presenting Complaints */}
-                    <PresentingComplaints data={panelData.presentingComplaints} />
+        // If panelData is a React element (JSX), just render it directly
+        if (React.isValidElement(panelData)) {
+            return (
+                <MasonryCard title="Sample History" minHeight="400px">
+                    {panelData}
+                </MasonryCard>
+            );
+        }
 
-                    {/* Review of Systems */}
-                    {/*<ReviewOfSystemsNotes obs={panelData.reviewOfSystems} />*/}
-
-                    {renderTimestamp([
-                        ...panelData.presentingComplaints,
-                        // ...panelData.reviewOfSystems,
-                    ])}
-                </Box>
-            </MasonryCard>
-        );
     };
 
 
