@@ -15,10 +15,12 @@ export const PrescribedMedicationList = ({
   setRow,
   encounterType = encounters.PRESCRIPTIONS,
   medicationLabelTitle,
+  showPrintButton = true,
 }: {
   encounterType?: string;
   setRow?: (row: any) => void;
   medicationLabelTitle?: string;
+  showPrintButton?: boolean;
 }) => {
   const { patientId, activeVisitId } = getActivePatientDetails();
   const { setZpl, setOpen } = usePrinterDialog();
@@ -94,10 +96,14 @@ export const PrescribedMedicationList = ({
 
   return (
     <ContainerLoaderOverlay loading={fetchingEncounters}>
-      <Button onClick={handleMedicationPrint} variant="contained">
-        Print Medications
-      </Button>
-      <br />
+      {showPrintButton && (
+        <>
+          <Button onClick={handleMedicationPrint} variant="contained">
+            Print Medications
+          </Button>
+          <br />
+        </>
+      )}
       <MinimalTable
         getSelectedRow={setRow}
         columns={[

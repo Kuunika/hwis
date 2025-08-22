@@ -13,6 +13,13 @@ import {
 import { soapierFormConfig } from "@/app/patient/[id]/soap/components/soapForm";
 import { getObservations } from "@/helpers";
 import { nonPharmacologicalFormConfig } from "@/app/patient/[id]/patient-management-plan/components/forms/nonPharmacologicalForm";
+import {
+  abdomenAndPelvisFormConfig,
+  chestFormConfig, extremitiesFormConfig,
+  generalInformationFormConfig,
+  headAndNeckFormConfig, neurologicalFormConfig
+} from "@/app/patient/[id]/secondary-assessment/components";
+import {allergiesFormConfig, lastMealFormConfig} from "@/app/patient/[id]/medicalHistory/components";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -91,6 +98,78 @@ export const formatPatientManagamentPlan = (data: {
   ];
 };
 
+export const formatSecondarySurvey = (data: {
+  generalInformationObs: Obs[];
+  headAndNeckObs: Obs[];
+  chestObs: Obs[];
+  abdomenAndPelvisObs: Obs[];
+  extremitiesObs: Obs[];
+  neurologicalObs: Obs[];
+}): ClinicalNotesDataType[] => {
+  return [
+    {
+      heading: "General Information",
+      children: buildNotesObject(generalInformationFormConfig, data.generalInformationObs),
+    },
+    {
+      heading: "Head and Neck",
+      children: buildNotesObject(headAndNeckFormConfig, data.headAndNeckObs),
+    },
+    {
+      heading: "Chest",
+      children: buildNotesObject(chestFormConfig, data.chestObs),
+    },
+    {
+      heading: "Abdomen and Pelvis",
+      children: buildNotesObject(abdomenAndPelvisFormConfig, data.abdomenAndPelvisObs),
+    },
+    {
+      heading: "Extremities",
+      children: buildNotesObject(extremitiesFormConfig, data.extremitiesObs),
+    },
+    {
+      heading: "Neurological",
+      children: buildNotesObject(neurologicalFormConfig, data.neurologicalObs),
+    },
+  ];
+};
+export const formatSampleHistory = (data: {
+  presentingComplaintsObs: Obs[];
+  allergiesObs: Obs[];
+  medicationsObs: Obs[];
+  existingConditionsObs: Obs[];
+  lastMealObs: Obs[];
+  eventsObs: Obs[];
+}): ClinicalNotesDataType[] => {
+  return [
+    {
+      heading: "Presenting Complaints",
+      children: buildNotesObject(generalInformationFormConfig, data.presentingComplaintsObs),
+    },
+    {
+      heading: "Allergies",
+      children: buildNotesObject(allergiesFormConfig, data.allergiesObs),
+    },
+    {
+      heading: "Medications",
+      children: buildNotesObject(chestFormConfig, data.medicationsObs),
+    },
+    {
+      heading: "Existing Conditions",
+      children: buildNotesObject(abdomenAndPelvisFormConfig, data.existingConditionsObs),
+    },
+    {
+      heading: "Last Meal",
+      children: buildNotesObject(lastMealFormConfig, data.lastMealObs),
+    },
+    {
+      heading: "Events",
+      children: buildNotesObject(neurologicalFormConfig, data.eventsObs),
+    },
+  ];
+};
+
+
 export const formatSoapierNotes = (data: any) => {
   return [
     {
@@ -148,6 +227,120 @@ export const formatInvestigationPlans = (data: Obs[]) => {
 
 
 }
+// export const formatManagementPlan = (data: {
+//     nonPharmaObs: Obs[];
+//     careAreaObs: Obs[];
+// }): ClinicalNotesDataType[] => {
+//     return [
+//         {
+//             heading: "Non Pharmacological",
+//             children: buildNotesObject(NonPharmacologicalFormConfig, data.nonPharmaObs),
+//         },
+//         {
+//             heading: "Patient Care Area",
+//             children: buildNotesObject(careAreaConfig, data.careAreaObs),
+//         },
+//     ];
+// };
+export const formatManagementPlan  = (
+    data: Obs[]
+): ClinicalNotesDataType => {
+    const items = data?.map((item) => {
+        return { item: item?.value };
+    });
+    return {
+        heading: "Non Pharmacological", children: items };
+};
+const handleImagesObsRestructure = (children: Obs[]) => {
+    return children
+        .filter((ob: Obs) => ob.value || (ob.children && ob.children.length > 0))
+        .map((ob: Obs) => {
+            const childItems = ob.children
+                ?.filter((childOb: Obs) => childOb.value || (childOb.children && childOb.children.length > 0)) // skip empty
+                .map((childOb: Obs) => {
+                    let nestedChildren: any[] = [];
+
+                    if (childOb?.children && childOb.children.length > 0) {
+                        nestedChildren = childOb.children
+                            .filter((cOb: Obs) => cOb.value)
+                            .map((cOb: Obs) => ({
+                                item: {
+                                    [cOb.names?.[0]?.name || "Unnamed"]: cOb.value,
+                                },
+                            }));
+                    }
+
+                    return {
+                        item:
+                            nestedChildren.length === 0
+                                ? { [childOb.names?.[0]?.name || "Unnamed"]: childOb.value }
+                                : childOb.value,
+                        children: nestedChildren.length > 0 ? nestedChildren : undefined,
+                    };
+                }) ?? [];
+
+            return {
+                item: ob.value,
+                children: childItems.length > 0 ? childItems : undefined,
+            };
+        });
+};
+
+
+const buildChildren = (obs: Obs[], children: any) => {
+    if (!children) return;
+    return (
+        obs.length > 0 &&
+        children?.flatMap((child: any) => {
+            const innerObs = filterObservations(obs, child.concept);
+
+            if (!innerObs || innerObs.length === 0) return [];
+
+            let transformedObs;
+
+            if (child?.image) {
+                const parentOb = filterObservations(obs, child?.parentConcept);
+                if (!parentOb?.length) return [];
+                return handleImagesObsRestructure(parentOb[0].children);
+            }
+
+            const obValue = getObservationValue(obs, child?.concept);
+            if (!obValue && (!child.multiple || innerObs.length === 0)) return [];
+
+            if (child?.type === "string") {
+                const childValue = child?.multiple
+                    ? innerObs.map((innerOb) => ({
+                        item: child?.options ? child.options[innerOb.value] : innerOb.value,
+                    }))
+                    : child?.options
+                        ? child.options[obValue]
+                        : obValue;
+
+                transformedObs = {
+                    item: child.label,
+                    children: child?.children
+                        ? buildChildren(obs, child?.children)
+                        : childValue,
+                };
+            } else {
+                const childValue = child?.multiple
+                    ? innerObs.map((innerOb) => ({
+                        item: child?.options ? child.options[innerOb.value] : innerOb.value,
+                    }))
+                    : { [child.label]: obValue };
+
+                transformedObs = {
+                    item: childValue,
+                    children: child?.children
+                        ? buildChildren(obs, child?.children)
+                        : childValue,
+                };
+            }
+
+            return transformedObs;
+        })
+    );
+};
 
 const buildNotesObject = (formConfig: any, obs: Obs[]) => {
   return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
@@ -165,7 +358,7 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
       if (config.hasGroupMembers) {
         const parentObs: any = filterObservations(obs, config.name);
 
-        console.log({parentObs});
+        console.log({ parentObs });
         if (parentObs?.length > 0) {
           children = [
             ...children,
@@ -178,27 +371,15 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
 
       if (config?.image) {
         const parentObs: any = filterObservations(obs, config.name);
-        console.log({parentObs});
+        console.log({ parentObs });
 
-
-       const imagesObs = parentObs.map((ob: Obs) => {
+        const imagesObs = parentObs.map((ob: Obs) => {
           return {
             item: ob.value,
             children: handleImagesObsRestructure(ob.children),
           };
-        })
-
-        console.log({imagesObs});
+        });
         return imagesObs;
-    
-        // if (parentObs?.length > 0) {
-        //   children = [
-        //     ...children,
-        //     ...handleImagesObsRestructure(parentObs[0].children),
-        //   ];
-        // }
-
-
       }
 
       const result: any = {
@@ -218,93 +399,7 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
     });
 };
 
-const buildChildren = (obs: Obs[], children: any) => {
-  if (!children) return;
-  return (
-    obs.length > 0 &&
-    children?.flatMap((child: any) => {
-      const innerObs = filterObservations(obs, child.concept);
-      let transformedObs;
 
-      if (child?.image) {
-        const parentOb = filterObservations(obs, child?.parentConcept);
-        if (parentOb && parentOb.length > 0) {
-          return handleImagesObsRestructure(parentOb[0].children);
-        }
-      }
-
-      if (child?.type == "string") {
-        const obValue = getObservationValue(obs, child?.concept);
-
-        const childValue = child?.multiple
-          ? innerObs?.map((innerOb) => {
-              return {
-                item: child?.options
-                  ? child.options[innerOb.value]
-                  : innerOb.value,
-              };
-            })
-          : child?.options
-            ? child.options[obValue]
-            : obValue;
-
-        transformedObs = {
-          item: child.label,
-          children: child?.children
-            ? buildChildren(obs, child?.children)
-            : childValue,
-        };
-      } else {
-        const obValue = getObservationValue(obs, child?.concept);
-
-        const childValue = child?.multiple
-          ? innerObs?.map((innerOb) => {
-              return {
-                item: child?.options
-                  ? child.options[innerOb.value]
-                  : innerOb.value,
-              };
-            })
-          : { [child.label]: obValue };
-
-        transformedObs = {
-          item: childValue,
-          children: child?.children
-            ? buildChildren(obs, child?.children)
-            : childValue,
-        };
-      }
-      return transformedObs;
-    })
-  );
-};
-
-const handleImagesObsRestructure =(children: Obs[])=>{
- return children.map((ob: Obs) => {
-    return {
-      item: ob.value,
-      children: ob.children.map((childOb: Obs) => {
-        let children: any = [];
-        if (childOb?.children) {
-          children = childOb?.children.map((cOb: Obs) => {
-            return {
-              item: {
-                [`${cOb.names[0].name}`]: cOb.value,
-              },
-            };
-          });
-        }
-        return {
-          item:
-            children.length == 0
-              ? { [`${childOb.names[0].name}`]: childOb.value }
-              : childOb.value,
-          children,
-        };
-      }),
-    };
-  });
-} 
 
 // export const formatPrimarySurvey = (data: {
 //   airwayObs: Obs[];

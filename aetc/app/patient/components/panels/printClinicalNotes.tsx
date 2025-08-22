@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import {PresentingComplaints} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
+import {GenericNotes, NotesConfig} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
 
 const theme = createTheme({
   palette: {
@@ -493,19 +495,31 @@ export const PrintClinicalNotes = (props: any) => {
     );
   };
 
-  // Check if panel data has content
-  const hasContent = (panelData: any) => {
-    if (React.isValidElement(panelData)) return true;
 
-    if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
-      return false;
+    // Check if panel data has content
+    const hasContent = (panelData: any) => {
+        if (React.isValidElement(panelData)) return true;
 
-    // Check if there's any valid data to display
-    const flatData = Array.isArray(panelData) ? panelData.flat() : [];
-    const renderedContent = renderGroupedItems(flatData);
+        // Handle the new sample history object structure
+        if (panelData && typeof panelData === 'object' && !Array.isArray(panelData)) {
+            // Check if any of the sample history properties have data
+            const hasSampleHistoryData = Object.values(panelData).some(
+                (value: any) =>
+                    Array.isArray(value) && value.length > 0 ||
+                    React.isValidElement(value)
+            );
+            return hasSampleHistoryData;
+        }
 
-    return renderedContent !== null;
-  };
+        if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
+            return false;
+
+        // Check if there's any valid data to display
+        const flatData = Array.isArray(panelData) ? panelData.flat() : [];
+        const renderedContent = renderGroupedItems(flatData);
+
+        return renderedContent !== null;
+    };
 
   // Create individual card components for masonry
   const MasonryCard = ({
@@ -573,7 +587,7 @@ export const PrintClinicalNotes = (props: any) => {
     }
 
     return (
-      <MasonryCard title="Clinical Notes" minHeight="100px">
+      <MasonryCard title="Continuation Notes" minHeight="100px">
         <List dense disablePadding>
           {panelData.map((item, index) =>
             item && item.value ? (
@@ -586,11 +600,27 @@ export const PrintClinicalNotes = (props: any) => {
             ) : null
           )}
         </List>
+          <PresentingComplaints data={panelData}/>
+
       </MasonryCard>
     );
   };
+    const renderSampleHistoryCard = (panelData: any) => {
+        if (!panelData) return null;
 
-  // Generic card for other sections
+        // If panelData is a React element (JSX), just render it directly
+        if (React.isValidElement(panelData)) {
+            return (
+                <MasonryCard title="Sample History" minHeight="400px">
+                    {panelData}
+                </MasonryCard>
+            );
+        }
+
+    };
+
+
+    // Generic card for other sections
   const renderGenericCard = (title: string, panelData: any) => {
     if (!hasContent(panelData)) return null;
 
@@ -630,6 +660,7 @@ export const PrintClinicalNotes = (props: any) => {
     vital: data?.panel3?.data || [],
     primary: data?.panel20?.data || [],
     secondary: data?.panel9?.data || [],
+    sample: data?.panel15?.data || [],
     plan: data?.panel7?.data || [],
     soapier: data?.panel13?.data || [],
     diagnosis: data?.panel10?.data || [],
@@ -649,13 +680,14 @@ export const PrintClinicalNotes = (props: any) => {
       renderGenericCard("Secondary Survey", panelData.secondary),
       panelData.primary && renderGenericCard("Primary Survey", panelData.primary),
         renderPrimarySurveyCard(panelData.primary),
+      hasContent(panelData.sample) && renderSampleHistoryCard(panelData.sample),
     hasContent(panelData.plan) && renderGenericCard("Plan", panelData.plan),
     hasContent(panelData.soapier) &&
       renderGenericCard("SOAPIER", panelData.soapier),
     hasContent(panelData.diagnosis) &&
       renderGenericCard("Diagnosis", panelData.diagnosis),
       renderGenericCard("Patient Management Plan", panelData.patientManagementPlan),
-  ].filter(Boolean);
+].filter(Boolean);
 
   // Split cards into two columns manually
   const leftColumn = cards.filter((_, index) => index % 2 === 0);
@@ -671,6 +703,7 @@ export const PrintClinicalNotes = (props: any) => {
             {cards.map((card, index) => (
               <Box key={index}>
                 {card}
+
                 {index < cards.length - 1 && <Divider sx={{ my: 2 }} />}
               </Box>
             ))}
@@ -698,6 +731,7 @@ export const PrintClinicalNotes = (props: any) => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ maxWidth: 1200, mx: "auto", my: 2, p: 2 }}>
+
         {/* Simple 2-column layout using CSS Grid */}
         <Box
           sx={{
@@ -733,8 +767,10 @@ export const PrintClinicalNotes = (props: any) => {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {rightColumn}
           </Box>
+
         </Box>
       </Box>
     </ThemeProvider>
+
   );
 };

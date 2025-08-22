@@ -272,6 +272,8 @@ export const concepts = {
   THREE_B_MALE_MEDICAL: "3B Male medical",
   THREE_C_COMBINED_MALE_AND_FEMALE_MEDICAL: "3C Combined male and female medical",
   SIX_A_ORTHOPAEDIC_MALE: "6A Orthopaedic male",
+  THREE_B_HDU: "3B High Dependency Unit",
+  MSF_WARD_GYNAECOLOGY: "MSF ward - Gynaecology",
 
   INTENSIVE_CARE_UNIT_ICU: "Intensive Care Unit Icu",
   ENT: "Ent",
