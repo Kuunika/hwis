@@ -13,7 +13,20 @@ import {
 } from "../../../components";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, IconButton } from "@mui/material";
+import {
+    Box,
+    IconButton,
+    FormControl,
+    InputLabel,
+    Select,
+    SelectChangeEvent,
+    Chip,
+    OutlinedInput,
+    Paper,
+    Typography,
+    Button,
+    Collapse
+} from "@mui/material";
 import { calculateAge } from "@/helpers/dateTime";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { closeVisit } from "@/services/visit";
@@ -28,15 +41,37 @@ import {
     FaUser,
     FaFileAlt,
     FaRandom,
+    FaFilter,
+    FaTimes,
+    FaChevronDown,
+    FaChevronUp
 } from "react-icons/fa";
 import { getActivePatientDetails } from "@/hooks";
 import { useDebounce } from "@/hooks/useDebounce";
+
+interface FilterState {
+    specialty: string[];
+    patientCareArea: string[];
+    recordedBy: string[];
+}
 
 export const AwaitingSpecialtyList = () => {
     const [cpr, setCpr] = useState(false);
     const [patientId, setPatientId] = useState("");
     const [visitUUID, setVisitUUID] = useState("");
     const [deleted, setDeleted] = useState("");
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState<FilterState>({
+        specialty: [],
+        patientCareArea: [],
+        recordedBy: []
+    });
+    const [availableFilters, setAvailableFilters] = useState({
+        specialties: [] as string[],
+        patientCareAreas: [] as string[],
+        recordedByOptions: [] as string[]
+    });
+
     const { navigateTo } = useNavigation();
     const { gender } = getActivePatientDetails();
 
@@ -49,19 +84,80 @@ export const AwaitingSpecialtyList = () => {
         setPaginationModel,
         loading,
         totalPages,
-        refetch, // Add refetch function from your hook
+        refetch,
     } = fetchPatientsTablePaginate("awaiting_speciality");
+
     const [inputText, setInputText] = useState("");
-    const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+    const debouncedSearch = useDebounce(inputText, 500);
     const router = useRouter();
 
+    // Extract unique filter options from data
+    useEffect(() => {
+        if (data && data.length > 0) {
+            // Method 1: Using Array.from() instead of spread operator
+            const specialties = Array.from(new Set(data.map((item: any) => item.department).filter(Boolean)));
+            const patientCareAreas = Array.from(new Set(data.map((item: any) => item.patient_care_area).filter(Boolean)));
+            const recordedByOptions = Array.from(new Set(data.map((item: any) => item.last_encounter_creator).filter(Boolean)));
+
+            setAvailableFilters({
+                specialties: specialties.sort(),
+                patientCareAreas: patientCareAreas.sort(),
+                recordedByOptions: recordedByOptions.sort()
+            });
+        }
+    }, [data]);
+
+    // Filter the data based on active filters
+    const filteredData = React.useMemo(() => {
+        if (!data) return [];
+
+        return data.filter((item: any) => {
+            const matchesSpecialty = filters.specialty.length === 0 ||
+                filters.specialty.includes(item.department);
+
+            const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
+                filters.patientCareArea.includes(item.patient_care_area);
+
+            const matchesRecordedBy = filters.recordedBy.length === 0 ||
+                filters.recordedBy.includes(item.last_encounter_creator);
+
+            return matchesSpecialty && matchesPatientCareArea && matchesRecordedBy;
+        });
+    }, [data, filters]);
+
+    const handleFilterChange = (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
+        const value = event.target.value;
+        setFilters(prev => ({
+            ...prev,
+            [filterType]: typeof value === 'string' ? value.split(',') : value
+        }));
+    };
+
+    const clearFilter = (filterType: keyof FilterState, valueToRemove: string) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterType]: prev[filterType].filter(item => item !== valueToRemove)
+        }));
+    };
+
+    const clearAllFilters = () => {
+        setFilters({
+            specialty: [],
+            patientCareArea: [],
+            recordedBy: []
+        });
+    };
+
+    const hasActiveFilters = filters.specialty.length > 0 ||
+        filters.patientCareArea.length > 0 ||
+        filters.recordedBy.length > 0;
 
     useEffect(() => {
         setSearchText(debouncedSearch);
     }, [debouncedSearch]);
 
     useEffect(() => {
-        refetch(); // <-- Forces the table to reload every time the component mounts
+        refetch();
     }, []);
 
     useEffect(() => {
@@ -69,17 +165,13 @@ export const AwaitingSpecialtyList = () => {
             refetch();
         };
 
-        // Listen for navigation events
         window.addEventListener("focus", handleRouteChange);
         return () => window.removeEventListener("focus", handleRouteChange);
     }, []);
 
-    // Handle visit closure success
     useEffect(() => {
         if (visitClosed) {
-            // Refresh the data after successful visit closure
             refetch();
-            // Optional: Show success message
             console.log("Visit closed successfully, refreshing data...");
         }
     }, [visitClosed, refetch]);
@@ -139,17 +231,11 @@ export const AwaitingSpecialtyList = () => {
             flex: 1,
             headerName: "Patient Care Area",
         },
-        // {
-        //     field: "disposition_type",
-        //     headerName: "Disposition Type",
-        //     flex: 1,
-        // },
         {
             field: "department",
             headerName: "Specialty",
             flex: 1,
         },
-
         {
             field: "action",
             headerName: "Actions",
@@ -158,7 +244,7 @@ export const AwaitingSpecialtyList = () => {
                 <Box display="flex" gap={1}>
                     <DispositionActions
                         patient={cell.row}
-                        onVisitClosed={refetch} // Pass refetch function
+                        onVisitClosed={refetch}
                     />
                     {cell.row.triage_result == "red" && (
                         <Tooltip title="Initiate CPR" arrow>
@@ -180,7 +266,7 @@ export const AwaitingSpecialtyList = () => {
         },
     ];
 
-    const formatForMobileView = data?.map((row: any) => {
+    const formatForMobileView = filteredData?.map((row: any) => {
         return {
             id: row.id,
             visitNumber: row.aetc_visit_number,
@@ -189,7 +275,6 @@ export const AwaitingSpecialtyList = () => {
             gender: row.gender,
             arrivalTime: row.patient_arrival_time,
             arrivalDateTime: row.arrival_time,
-            // dispositionType: row.disposition_type,
             actor: (
                 <DisplayEncounterCreator
                     encounterType={encounters.AWAITING_SPECIALTY}
@@ -214,7 +299,7 @@ export const AwaitingSpecialtyList = () => {
                         setCpr(true);
                         setVisitUUID(row.visit_uuid);
                     }}
-                    onVisitClosed={refetch} // Pass refetch function
+                    onVisitClosed={refetch}
                 />
             ),
             age: `${calculateAge(row.birthdate)}yrs`,
@@ -224,12 +309,189 @@ export const AwaitingSpecialtyList = () => {
 
     return (
         <>
+            {/* Filter Section */}
+            <Paper sx={{ p: 2, mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FaFilter />
+                        <Typography variant="h6">Filters</Typography>
+                        {hasActiveFilters && (
+                            <Chip
+                                label={`${filters.specialty.length + filters.patientCareArea.length + filters.recordedBy.length} active`}
+                                size="small"
+                                color="primary"
+                            />
+                        )}
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        {hasActiveFilters && (
+                            <Button
+                                startIcon={<FaTimes />}
+                                onClick={clearAllFilters}
+                                size="small"
+                                variant="outlined"
+                                color="secondary"
+                            >
+                                Clear All
+                            </Button>
+                        )}
+                        <Button
+                            startIcon={showFilters ? <FaChevronUp /> : <FaChevronDown />}
+                            onClick={() => setShowFilters(!showFilters)}
+                            size="small"
+                            variant="outlined"
+                        >
+                            {showFilters ? 'Hide' : 'Show'} Filters
+                        </Button>
+                    </Box>
+                </Box>
+
+                <Collapse in={showFilters}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+                        {/* Specialty Filter */}
+                        <FormControl sx={{ minWidth: 200 }}>
+                            <InputLabel>Specialty</InputLabel>
+                            <Select
+                                multiple
+                                value={filters.specialty}
+                                onChange={handleFilterChange('specialty')}
+                                input={<OutlinedInput label="Specialty" />}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Chip
+                                                key={value}
+                                                label={value}
+                                                size="small"
+                                                onDelete={() => clearFilter('specialty', value)}
+                                                onMouseDown={(event) => {
+                                                    event.stopPropagation();
+                                                }}
+                                            />
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {availableFilters.specialties.map((specialty) => (
+                                    <MenuItem key={specialty} value={specialty}>
+                                        {specialty}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        {/* Patient Care Area Filter */}
+                        <FormControl sx={{ minWidth: 200 }}>
+                            <InputLabel>Patient Care Area</InputLabel>
+                            <Select
+                                multiple
+                                value={filters.patientCareArea}
+                                onChange={handleFilterChange('patientCareArea')}
+                                input={<OutlinedInput label="Patient Care Area" />}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Chip
+                                                key={value}
+                                                label={value}
+                                                size="small"
+                                                onDelete={() => clearFilter('patientCareArea', value)}
+                                                onMouseDown={(event) => {
+                                                    event.stopPropagation();
+                                                }}
+                                            />
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {availableFilters.patientCareAreas.map((area) => (
+                                    <MenuItem key={area} value={area}>
+                                        {area}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        {/* Recorded By Filter */}
+                        <FormControl sx={{ minWidth: 200 }}>
+                            <InputLabel>Recorded By</InputLabel>
+                            <Select
+                                multiple
+                                value={filters.recordedBy}
+                                onChange={handleFilterChange('recordedBy')}
+                                input={<OutlinedInput label="Recorded By" />}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Chip
+                                                key={value}
+                                                label={value}
+                                                size="small"
+                                                onDelete={() => clearFilter('recordedBy', value)}
+                                                onMouseDown={(event) => {
+                                                    event.stopPropagation();
+                                                }}
+                                            />
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {availableFilters.recordedByOptions.map((person) => (
+                                    <MenuItem key={person} value={person}>
+                                        {person}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
+                </Collapse>
+
+                {/* Active Filters Display */}
+                {hasActiveFilters && (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        <Typography variant="body2" sx={{ mr: 1, alignSelf: 'center' }}>
+                            Active filters:
+                        </Typography>
+                        {filters.specialty.map((filter) => (
+                            <Chip
+                                key={`specialty-${filter}`}
+                                label={`Specialty: ${filter}`}
+                                onDelete={() => clearFilter('specialty', filter)}
+                                size="small"
+                                color="primary"
+                                variant="outlined"
+                            />
+                        ))}
+                        {filters.patientCareArea.map((filter) => (
+                            <Chip
+                                key={`area-${filter}`}
+                                label={`Care Area: ${filter}`}
+                                onDelete={() => clearFilter('patientCareArea', filter)}
+                                size="small"
+                                color="primary"
+                                variant="outlined"
+                            />
+                        ))}
+                        {filters.recordedBy.map((filter) => (
+                            <Chip
+                                key={`recorded-${filter}`}
+                                label={`Recorded By: ${filter}`}
+                                onDelete={() => clearFilter('recordedBy', filter)}
+                                size="small"
+                                color="primary"
+                                variant="outlined"
+                            />
+                        ))}
+                    </Box>
+                )}
+            </Paper>
+
             <PatientTableListServer
                 columns={columns}
                 data={
-                    data?.length
+                    filteredData?.length
                         ? {
-                            data: data.map((row: any) => ({ id: row.uuid, ...row })),
+                            data: filteredData.map((row: any) => ({ id: row.uuid, ...row })),
                             page: paginationModel.page,
                             per_page: paginationModel.pageSize,
                             total_pages: totalPages,
@@ -243,7 +505,6 @@ export const AwaitingSpecialtyList = () => {
                 loading={loading}
                 formatForMobileView={formatForMobileView ? formatForMobileView : []}
                 onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
-
             />
             <CPRDialogForm
                 patientuuid={patientId}
@@ -272,7 +533,6 @@ const DispositionActions = ({
 
     useEffect(() => {
         if (visitClosed) {
-            // Call the refresh function passed from parent
             onVisitClosed();
         }
     }, [visitClosed, onVisitClosed]);
@@ -345,7 +605,6 @@ const DispositionActions = ({
                         Gyneacology Ward Admission
                     </MenuItem>
                 )}
-
             </Menu>
         </Box>
     );
@@ -378,7 +637,6 @@ const CardAction = ({
 
     useEffect(() => {
         if (visitClosed) {
-            // Call the refresh function passed from parent
             onVisitClosed();
         }
     }, [visitClosed, onVisitClosed]);

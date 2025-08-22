@@ -146,6 +146,14 @@ const wardOptions = [
         label: "3B Male medical",
     },
     {
+        id: concepts.THREE_B_HDU,
+        label: "3B High Dependency Unit",
+    },
+    {
+        id: concepts.MSF_WARD_GYNAECOLOGY,
+        label: "MSF ward - Gynaecology",
+    },
+    {
         id: concepts.THREE_C_COMBINED_MALE_AND_FEMALE_MEDICAL,
         label: "3C Combined male and female medical",
     },

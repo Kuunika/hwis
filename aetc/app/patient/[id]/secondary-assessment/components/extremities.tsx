@@ -38,11 +38,19 @@ const form = {
     name: concepts.OEDEMA,
     label: "Oedema",
     coded: true,
+      children: [
+          {
+              concept: concepts.OEDEMA_DETAILS,
+              label: "Oedema details",
+              // type: "string",
+          },
+      ],
   },
   oedamaDetails: {
     name: concepts.OEDEMA_DETAILS,
     label: "Oedema Details",
     coded: true,
+      child: true
   },
   coldClammy: {
     name: concepts.COLD_CLAMMY,
@@ -53,13 +61,32 @@ const form = {
     name: concepts.ABNORMALITIES_UPPER_LIMB,
     label: "Are there other abnormalities  in the upper limbs",
     coded: true,
+        children: [
+            {
+                concept: concepts.IMAGE_PART_NAME,
+                label: "Image",
+                image: true,
+                parentConcept: concepts.ABNORMALITIES_UPPER_LIMB,
+
+            },
+        ],
   },
   abnormalitiesLowerLimb: {
     name: concepts.ABNORMALITIES_LOWER_LIMB,
     label: "Are there other abnormalities  in the lower limbs",
     coded: true,
+        children: [
+            {
+                concept: concepts.IMAGE_PART_NAME,
+                label: "Image",
+                image: true,
+                parentConcept: concepts.ABNORMALITIES_LOWER_LIMB,
+            },
+        ],
   },
 };
+export const extremitiesFormConfig: any = form;
+
 
 type Prop = {
   onSubmit: () => void;

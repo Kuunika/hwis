@@ -17,8 +17,11 @@ const form = {
   generalInformation: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Notes",
+      type: "string",
   },
 };
+export const neurologicalFormConfig: any = form;
+
 
 const schema = yup.object({
   [form.generalInformation.name]: yup

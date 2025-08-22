@@ -679,7 +679,7 @@ export const InitialManagementForm = ({ onSubmit, onSkip }: Prop) => {
             <FormFieldContainer direction="column">
                 <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
                     {/* Prescribed Medication Section */}
-                    <PrescribedMedicationList setRow={setRow} />
+                    <PrescribedMedicationList setRow={setRow} showPrintButton={false} />
 
                     {/* Additional Information Section */}
                     <FormFieldContainerLayout title="Additional Information">

@@ -34,7 +34,7 @@ type Allergy = {
   label: string;
 };
 
-const allergiesFormConfig = {
+export const allergiesFormConfig = {
   allergy: {
     name: concepts.ALLERGY,
     label: "Allergies",

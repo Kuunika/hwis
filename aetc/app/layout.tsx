@@ -8,14 +8,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigation } from "@/hooks";
 import { OverlayLoader } from "@/components/backdrop";
-import CssBaseline from '@mui/material/CssBaseline';
+import CssBaseline from "@mui/material/CssBaseline";
 import { PrinterDialog } from "@/components/printerDialog";
 import { ErrorBoundary } from "./components/errorBoundary";
 
-
 const inter = Inter({ subsets: ["latin"] });
-
-
 
 const APP_NAME = "Mahis";
 const APP_DEFAULT_TITLE = "Malawi Healthcare information System";
@@ -67,7 +64,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html lang="en">
       <head></head>
