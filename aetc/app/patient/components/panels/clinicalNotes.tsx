@@ -56,9 +56,12 @@ import {
 } from "./sampleHistory";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { DisplayInformation } from "./displayInformation";
-import  { formatDiagnosisNotes, formatInvestigationPlans, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals } from "./formatters";
+import  { formatDiagnosisNotes, formatInvestigationPlans, formatPatientManagamentPlan, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals } from "./formatters";
 import GroupedResultsTable from "./tabularDisplayInformation";
 import ResultsTable from "./tabularDisplayInformation";
+import { MultiColumnNotes } from "./multiColumnDisplay";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import {  DownloadClinicalNotesPDF } from "./pdfClinicalNotes";
 
 type PanelData = {
   title: string;
@@ -186,6 +189,15 @@ export const ClinicalNotes = () => {
   const pdfRef = useRef<SurgicalNotesPDFRef>(null);
   const gyneacologyRef = useRef<GyneacologyNotesPDFRef>(null);
   const medicalInpatientRef = useRef<MedicalInpatientNotesPDFRef>(null);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    // Refresh clinical notes when component mounts
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
 
   // Refresh encounter data when component mounts or filters change
   useEffect(() => {
@@ -199,6 +211,7 @@ export const ClinicalNotes = () => {
     filterGyneacologyState,
     filterMedicalInpatientState,
   ]); // Added filterSurgicalState to dependencies
+
 
   const getEncountersByType = (encounterTypeUuid: any) => {
     const {
@@ -339,12 +352,14 @@ export const ClinicalNotes = () => {
     },
     panel7: {
       title: "Plan",
-      data:  <ResultsTable
+      data: (
+        <ResultsTable
           title="Beside Tests"
           data={formatInvestigationPlans([
             ...getEncountersByType(encounters.BED_SIDE_TEST),
           ])}
-        />,
+        />
+      ),
       //  [
       //   ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
       //   ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
@@ -398,10 +413,10 @@ export const ClinicalNotes = () => {
     },
     panel11: {
       title: "Laboratory or Radiology finding",
-      data:  [
+      data: [
         ...getEncountersByType(encounters.BED_SIDE_TEST),
-       ...getEncountersByType(encounters.LAB),
-       ],
+        ...getEncountersByType(encounters.LAB),
+      ],
       removeObs: [], // No specific headings to remove
     },
     panel12: {
@@ -424,6 +439,20 @@ export const ClinicalNotes = () => {
               encounters.PRIMARY_DISABILITY_ASSESSMENT
             ),
             exposureObs: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+          })}
+        />
+      ),
+      removeObs: [], // No specific headings to remove
+    },
+    panel51: {
+      title: "Patient Management Plan",
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatPatientManagamentPlan({
+            nonPharmalogical: getEncountersByType(
+              encounters.NON_PHARMACOLOGICAL
+            ),
           })}
         />
       ),
@@ -890,6 +919,60 @@ export const ClinicalNotes = () => {
     );
   };
 
+  const notesData = [
+    {
+      title: "Triage Information",
+      content: [
+        formatPresentingComplaints(
+          getEncountersByType(encounters.PRESENTING_COMPLAINTS)
+        ),
+        ...formatVitals(getEncountersByType(encounters.VITALS)),
+      ],
+    },
+    {
+      title: "Soapier Notes",
+      content: formatSoapierNotes(
+        getEncountersByType(encounters.NURSING_CARE_NOTES)
+      ),
+    },
+    {
+      title: "Primary Survey",
+      content: formatPrimarySurvey({
+        airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+        breathingObs: getEncountersByType(encounters.BREATHING_ASSESSMENT),
+        circulationObs: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+        disabilityObs: getEncountersByType(
+          encounters.PRIMARY_DISABILITY_ASSESSMENT
+        ),
+        exposureObs: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+      }),
+    },
+    {
+      title: "Patient Management Plan",
+      content: formatPatientManagamentPlan({
+        nonPharmalogical: getEncountersByType(encounters.NON_PHARMACOLOGICAL),
+      }),
+    },
+    {
+      title: "Diagnosis",
+      content: formatDiagnosisNotes([
+        ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+        ...getEncountersByType(encounters.DIAGNOSIS),
+      ]),
+    },
+    {
+      title: " Laboratory or Radiology Findings",
+      content: (
+        <ResultsTable
+          title="Beside Tests"
+          data={formatInvestigationPlans([
+            ...getEncountersByType(encounters.BED_SIDE_TEST),
+          ])}
+        />
+      ),
+    },
+  ];
+
   return (
     <Panel title="">
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
@@ -939,7 +1022,16 @@ export const ClinicalNotes = () => {
                 </div>
               </div>
             </div>
-            <PrintClinicalNotes data={encounterData} />
+           {/* <DownloadClinicalNotesPDF
+              data={notesData}
+            /> */}
+
+            <MultiColumnNotes
+              columns={2}
+              data={notesData}
+            />
+
+            {/* <PrintClinicalNotes data={encounterData} /> */}
           </div>
         )}
 

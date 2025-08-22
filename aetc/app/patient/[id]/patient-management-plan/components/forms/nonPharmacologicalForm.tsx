@@ -22,6 +22,33 @@ type Prop = {
     onSubmit: (values: any) => void;
     onSkip: () => void;
 };
+
+export const nonPharmacologicalFormConfig = {
+  procedures: {
+    name: concepts.PROCEDURES,
+    label: "Procedures",
+    type: "string",
+    hasGroupMembers: true,
+    children: [
+      {
+        concept: concepts.OTHER,
+        label: "Other (Specify)",
+      },
+    ],
+  },
+supportiveCare: {
+    name: concepts.SUPPORTIVE_CARE,
+    label: "Supportive Care",
+    type: "string",
+    hasGroupMembers: true,
+    children: [
+      {
+        concept: concepts.OTHER,
+        label: "Other (Specify)",
+      },
+    ],
+  },
+};
 const proceduresConfig = [
     { value: concepts.MINOR_SURGERY, label: "Minor Surgery" },
     { value: concepts.SUTURING, label: "Suturing" },
@@ -154,7 +181,7 @@ export const NonPharmacologicalForm = ({ onSubmit, onSkip }: Prop) => {
                     .filter((care: any) => care.value === true)
                     .map((care: any) => ({
                         concept: care.key,
-                        value: care.key === concepts.OTHER ? values.otherSupportiveCareSpecify : null,
+                        value: care.key === concepts.OTHER ? values.otherSupportiveCareSpecify : care.key,
                         obsDatetime: currentDateTime,
                     })),
             },

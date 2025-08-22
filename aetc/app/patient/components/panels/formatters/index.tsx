@@ -12,6 +12,7 @@ import {
 } from "@/app/patient/[id]/primary-assessment/components";
 import { soapierFormConfig } from "@/app/patient/[id]/soap/components/soapForm";
 import { getObservations } from "@/helpers";
+import { nonPharmacologicalFormConfig } from "@/app/patient/[id]/patient-management-plan/components/forms/nonPharmacologicalForm";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -76,6 +77,17 @@ export const formatPrimarySurvey = (data: {
       heading: "Exposure",
       children: buildNotesObject(exposureFormConfig, data.exposureObs),
     },
+  ];
+};
+
+export const formatPatientManagamentPlan = (data: {
+  nonPharmalogical: Obs[];
+}): ClinicalNotesDataType[] => {
+  return [
+    {
+      heading: "Non-Pharmacological",
+      children: buildNotesObject(nonPharmacologicalFormConfig, data.nonPharmalogical),
+    }  
   ];
 };
 
@@ -152,6 +164,8 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
 
       if (config.hasGroupMembers) {
         const parentObs: any = filterObservations(obs, config.name);
+
+        console.log({parentObs});
         if (parentObs?.length > 0) {
           children = [
             ...children,

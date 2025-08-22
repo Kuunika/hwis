@@ -633,6 +633,7 @@ export const PrintClinicalNotes = (props: any) => {
     plan: data?.panel7?.data || [],
     soapier: data?.panel13?.data || [],
     diagnosis: data?.panel10?.data || [],
+    patientManagementPlan: data?.panel51?.data || [],
   };
 
 
@@ -653,6 +654,7 @@ export const PrintClinicalNotes = (props: any) => {
       renderGenericCard("SOAPIER", panelData.soapier),
     hasContent(panelData.diagnosis) &&
       renderGenericCard("Diagnosis", panelData.diagnosis),
+      renderGenericCard("Patient Management Plan", panelData.patientManagementPlan),
   ].filter(Boolean);
 
   // Split cards into two columns manually
