@@ -18,6 +18,7 @@ import * as yup from "yup";
 
 interface GeneralDetailsFormProps {
   onSubmit: (values: any) => void;
+  initialValues?: Record<string, any>;
 }
 
 const form = {
@@ -49,13 +50,14 @@ const schema = yup.object().shape({
   [form.previousEctopic.name]: yup.string().required("Required"),
   [form.previousMiscarriages.name]: yup.string().required("Required"),
   [form.previousMolar.name]: yup.string().required("Required"),
+  FormDatePicker:yup.date().required("fill in the data please"),
 });
 
 // Initial form values
-const initialValues = Object.keys(form).reduce((acc, key) => {
+const defaultInitialValues = Object.keys(form).reduce((acc, key) => {
   acc[key] = "";
   return acc;
-}, {} as any);
+}, {} as Record<string, any>);
 
 // HIV Status & VDRL options
 const hivStatusOptions = [
@@ -71,35 +73,35 @@ const vdrlOptions = [
   { label: "UN", value: "UN" },
 ];
 
-// const GeneralDetailsForm = ({
-//   onSubmit,
-// }: {
-//   onSubmit: (values: any) => void;
-// })
+
 
 const GeneralDetailsForm: React.FC<GeneralDetailsFormProps> = ({
-  onSubmit,
+  onSubmit, initialValues:prefill,
 }) => {
   const [formValues, setFormValues] = useState();
 
-  const handleFromSubmission = () => {};
+  const handleFromSubmission = (values:any) => { 
+   console.log("General Details Submitted:", values);
+    onSubmit(values)
+
+  };
+
   return (
     <WrapperBox
       sx={{
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "start",
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "start",
         borderRadius: "1ch",
         marginTop: "20px",
-        rowGap:20,
-        position: "relative", //added
+        position: "relative", 
       }}
     >
       <FormikInit
         onSubmit={handleFromSubmission}
         validationSchema={schema}
-        initialValues={initialValues}
+        initialValues={{...defaultInitialValues, ...(prefill || {})}}
         submitButtonText="Next"
       >
         <FormValuesListener getValues={setFormValues} />
@@ -111,7 +113,7 @@ const GeneralDetailsForm: React.FC<GeneralDetailsFormProps> = ({
               label={form.lmp.label}
               id={""}
             /> */}
-            <FormDatePicker name={form.lmp.name} label={form.lmp.label} />
+            <FormDatePicker name={form.lmp.name} label={form.lmp.label}  />
             <FormDatePicker name={form.ga.name} label={form.ga.label} />
 
             {/* <TextInputField name={form.ga.name} label={form.ga.label} id={""} /> */}
@@ -131,24 +133,24 @@ const GeneralDetailsForm: React.FC<GeneralDetailsFormProps> = ({
           </FieldsContainer>
           <FieldsContainer sx={{ alignItems: "flex" }}>
             <TextInputField
-              id=""
+              id="location"
               name={form.location.name}
               label={form.location.label}
             />
             <TextInputField
-              id=""
+              id="gravida"
               name={form.gravida.name}
               label={form.gravida.label}
             />
           </FieldsContainer>
           <FieldsContainer sx={{ alignItems: "flex" }}>
             <TextInputField
-              id=""
+              id="para"
               name={form.para.name}
               label={form.para.label}
             />
             <TextInputField
-              id=""
+              id="previousEctopic"
               name={form.previousEctopic.name}
               label={form.previousEctopic.label}
             />
@@ -156,13 +158,13 @@ const GeneralDetailsForm: React.FC<GeneralDetailsFormProps> = ({
 
           <FieldsContainer sx={{ alignItems: "flex" }}>
             <TextInputField
-              id=""
+              id="previousMiscarriages"
               name={form.previousMiscarriages.name}
               label={form.previousMiscarriages.label}
             />
 
             <TextInputField
-              id=""
+              id="previousMolar"
               name={form.previousMolar.name}
               label={form.previousMolar.label}
             />

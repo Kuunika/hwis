@@ -8,14 +8,23 @@ import {
   WrapperBox,
   FormikInit,
   FormValuesListener,
+  MainButton,
 } from "@/components";
 import * as yup from "yup";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import DiagnosisForm from "../../consultation/components/diagnosisForm";
 import { concepts } from "@/constants";
+import { Abdomen } from "@/assets";
+import { AbdomenFemale } from "@/assets/abdomenFemale";
 
-interface ExamForm {
+interface ExamFormProps {
   onSubmit: (values: any) => void;
+  initialValues?: Record<string, any>;
+}
+
+interface Circle {
+  points: { x: number; y: number }[];
+  id: number;
 }
 
 const yesNoOptions = [
@@ -24,6 +33,7 @@ const yesNoOptions = [
 ];
 
 const form = {
+  AbdomenImage:{name:"AbdomenImage", label:"Abdomen image" },
   bp: { name: "bp", label: "BP (mm/Hg)" },
   pr: { name: "pr", label: "PR (/min)" },
   temp: { name: "temp", label: "T (°C)" },
@@ -90,7 +100,7 @@ const schema = yup.object().shape({
   //[form.uss.name]: yup.string,
 });
 
-const initialValues = Object.keys(form).reduce(
+const defaultInitialValues = Object.keys(form).reduce(
   (acc, key) => {
     acc[key] = "";
     return acc;
@@ -98,12 +108,83 @@ const initialValues = Object.keys(form).reduce(
   {} as Record<string, string>
 );
 
-//const ExamForm = ({ onSubmit }: { onSubmit: (values: any) => void })
+const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, initialValues: prefill }) => {
+  const [formValues, setFormValues] = useState(defaultInitialValues);
+  
+  
 
-const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
-  const [formValues, setFormValues] = useState(initialValues);
+  const [showForm, setShowForm] = useState(false);
+  const [circles, setCircles] = useState<Circle[]>([]);
+  const drawing = useRef(false);
+  const points = useRef<{ x: number; y: number }[]>([]);
+  const idCounter = useRef(0);
+  const [currentCircle, setCurrentCircle] = useState<Circle | null>(null);
+  const [submittedData, setSubmittedData] = useState<string[]>([]);
 
-  const handleFromSubmission = () => {};
+      const handleMouseDown = () => {
+    drawing.current = true;
+    points.current = [];
+  };
+
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!drawing.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    points.current.push({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+
+  const handleMouseUp = () => {
+    drawing.current = false;
+
+    if (isCircle(points.current)) {
+      const newCircle = { points: [...points.current], id: idCounter.current++ };
+      setCurrentCircle(newCircle); // only hold it temporarily
+      setShowForm(true);
+      console.log("New circle coordinates:", newCircle.points);
+    }
+
+    points.current = [];
+  };
+
+    // Basic circle detection based on bounding box
+  const isCircle = (pts: { x: number; y: number }[]) => {
+    if (pts.length < 10) return false;
+
+    const xs = pts.map(p => p.x);
+    const ys = pts.map(p => p.y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+
+    const minSize = 30;
+    const aspectRatio = width / height;
+
+    return width > minSize && height > minSize && Math.abs(aspectRatio - 1) < 0.3;
+  };
+
+
+    const closeForm = () => {
+    setShowForm(false);
+    setCurrentCircle(null); // discard if not submitted
+  };
+
+  const renderPolyline = (pts: { x: number; y: number }[]): string => {
+    return pts.map(p => `${p.x},${p.y}`).join(" ");
+  };
+
+
+  const handleFromSubmission = (values: any) => {
+    console.log("Examination Details Submitted:", values);
+    onSubmit(values);
+  };
 
   return (
     <WrapperBox
@@ -118,7 +199,7 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
       }}
     >
       <FormikInit
-        initialValues={initialValues}
+        initialValues={{...defaultInitialValues, ...(prefill || {})}}
         validationSchema={schema}
         onSubmit={handleFromSubmission}
         submitButtonText="Submit"
@@ -129,29 +210,29 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
           <TextInputField
             name={form.bp.name}
             label={form.bp.label}
-            id=""
+            id="bp"
             type="number"
           />
           <TextInputField
             name={form.pr.name}
             label={form.pr.label}
-            id=""
+            id="pr"
             type="number"
           />
           <TextInputField
             name={form.temp.name}
             label={form.temp.label}
-            id=""
+            id="temp"
             type="number"
           />
           <TextInputField
             name={form.rr.name}
             label={form.rr.label}
-            id=""
+            id="rr"
             type="number"
           />
         </FieldsContainer>
-        <br/>
+        <br />
         {/* Conjunctiva Pallor & Dehydration */}
         <FieldsContainer sx={{ gap: 5, alignItems: "center" }}>
           <RadioGroupInput
@@ -165,21 +246,22 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
             options={yesNoOptions}
           />
         </FieldsContainer>
-        <br/>
+        <br />
         <FieldsContainer sx={{ gap: 5, alignItems: "center" }}>
           <TextInputField
             name={form.crt.name}
             label={form.crt.label}
-            id=""
+            id="crt"
             multiline
             rows={3}
             sx={{ m: 0, width: "100%" }}
           />
         </FieldsContainer>
-        <br/>
+        <br />
 
         {/* Vaginal & Digital Exam */}
         <p>Vaginal Examination</p>
+   <FieldsContainer sx={{ flexDirection: "column" }}>
         <FieldsContainer sx={{ flexDirection: "column" }}>
           <TextInputField
             name={form.vaginalSpeculum.name}
@@ -187,19 +269,151 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
             multiline
             rows={3}
             sx={{ m: 0, width: "100%" }}
-            id=""
+            id="vaginalSpeculum"
           />
-          <br/>
+          <br />
           <TextInputField
             name={form.digitalExam.name}
             label={form.digitalExam.label}
             multiline
             rows={3}
             sx={{ m: 0, width: "100%" }}
-            id=""
+            id="digitalExam"
           />
         </FieldsContainer>
-        <br/>
+        <FieldsContainer sx={{ flexDirection: "row" }}>
+            
+        {/*<Abdomen onClick={handleClick} />*/}
+        <Abdomen style={{ position: "relative" }} />
+        
+              {/* SVG overlay to show circles */}
+              <svg
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  pointerEvents: "none",
+                }}
+              >
+                {/* Completed circles */}
+                {circles.map(circle => (
+                  <polyline
+                    key={circle.id}
+                    points={renderPolyline(circle.points)}
+                    stroke="green"
+                    strokeWidth={3}
+                    fill="none"
+                  />
+                ))}
+        
+                {/* Circle being drawn */}
+                {drawing.current && (
+                  <polyline
+                    points={renderPolyline(points.current)}
+                    stroke="green"
+                    strokeWidth={2}
+                    fill="none"
+                  />
+                )}
+              </svg>
+        
+              {/* Invisible layer to capture drawing */}
+              <div
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+              />
+        
+              {/* Form */}
+              {showForm && currentCircle && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "20%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    background: "white",
+                    padding: "16px",
+                    borderRadius: "8px",
+                    boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                    zIndex: 10,
+                  }}
+                >
+                  <FormikInit
+                    onSubmit={values => {
+                      setSubmittedData(prev => [...prev, values.name]);
+                      setCircles(prev => [...prev, currentCircle]); // only add when submitted
+                      setCurrentCircle(null);
+                      setShowForm(false);
+                      console.log("Submitted:", values);
+                    }}
+                    validationSchema={schema}
+                    initialValues={{ name: "" }}
+                    submitButton={false}
+                  >
+                    <TextInputField id="name" name="name" label="Name" />
+                    <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                      <button
+                        type="submit"
+                        style={{
+                          padding: "8px 16px",
+                          backgroundColor: "green",
+                          border: "none",
+                          borderRadius: "4px",
+                          color: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Next
+                      </button>
+        
+                      <button
+                        type="button"
+                        onClick={closeForm}
+                        style={{
+                          padding: "8px 16px",
+                          backgroundColor: "red",
+                          border: "none",
+                          borderRadius: "4px",
+                          color: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </FormikInit>
+                </div>
+              )}
+        
+              {/* Display submitted data below */}
+              {submittedData.length > 0 && (
+                <div
+                  style={{
+                    marginTop: "16px",
+                    padding: "8px",
+                    background: "#f0f0f0",
+                    borderRadius: "4px",
+                  }}
+                >
+                  <h4>Submitted Data:</h4>
+                  <ul>
+                    {submittedData.map((name, index) => (
+                      <li key={index}>{name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+
+        </FieldsContainer>
+
+
+   </FieldsContainer>
+        <br />
 
         {/* Diagnosis & Differential Diagnosis */}
         <FieldsContainer sx={{ gap: 3, flexDirection: "column" }}>
@@ -220,7 +434,7 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
               /> */}
           <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />
         </FieldsContainer>
-        <br/>
+        <br />
 
         {/* Investigations */}
         <FieldsContainer sx={{ gap: 3, flexDirection: "column" }}>
@@ -240,31 +454,31 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
             label={form.haemoglobin.label}
             multiline
             rows={2}
-            id=""
+            id="haemoglobin"
           />
           <TextInputField
             name={form.bloodGroupRh.name}
             label={form.bloodGroupRh.label}
             multiline
             rows={2}
-            id=""
+            id="bloodGroupRh"
           />
           <TextInputField
             name={form.otherTests.name}
             label={form.otherTests.label}
             multiline
             rows={2}
-            id=""
+            id="otherTests"
           />
           <TextInputField
             name={form.uss.name}
             label={form.uss.label}
             multiline
             rows={2}
-            id=""
+            id="uss"
           />
         </FieldsContainer>
-        <br/>
+        <br />
 
         {/* FBC Table */}
         <p>FBC</p>
@@ -272,23 +486,23 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
           <TextInputField
             name={form.fbcWbc.name}
             label={form.fbcWbc.label}
-            id=""
+            id="fbcWbc"
             sx={{ width: "60px" }}
           />
           <TextInputField
             name={form.fbcHb.name}
             label={form.fbcHb.label}
-            id=""
+            id="fbcHb"
             sx={{ width: "60px" }}
           />
           <TextInputField
             name={form.fbcPlt.name}
             label={form.fbcPlt.label}
-            id=""
+            id="fbcPlt"
             sx={{ width: "60px" }}
           />
         </FieldsContainer>
-        <br/>
+        <br />
 
         {/* Final Diagnosis & Plan */}
         <FieldsContainer sx={{ gap: 3, flexDirection: "column" }}>
@@ -307,7 +521,7 @@ const ExamForm: React.FC<ExamForm> = ({ onSubmit }) => {
             sx={{ m: 0, width: "100%" }}
             multiline
             rows={4}
-            id=""
+            id="plan"
           />
         </FieldsContainer>
       </FormikInit>

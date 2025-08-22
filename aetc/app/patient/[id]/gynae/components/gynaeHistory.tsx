@@ -16,6 +16,12 @@ import { useState } from "react";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { DateCalendar, DateField } from "@mui/x-date-pickers";
 
+
+interface PregnancyAdditionalHistoryFormProps {
+  onSubmit: (values: any) => void;
+  initialValues?: Record<string, any>;
+
+}
 // Types
 type PregnancyAdditionalHistoryFormValues = {
   pidHistory: string;
@@ -68,10 +74,6 @@ const yesNoOptions = [
 
 const schema = Yup.object().shape({
   [form.pidHistory.name]: Yup.string().required("Required"),
-  //[form.specifySti.name]: Yup.string().when(form.pidHistory.name, {
-  // is: "Yes",
-  // then: Yup.string().required("Specify STI"),
-  // }),
   [form.previousPelvicSurgery.name]: Yup.string().required("Required"),
   [form.contraceptiveHistory.name]: Yup.string().required("Required"),
   [form.cervicalCancerDate.name]: Yup.string().required("Required"),
@@ -85,12 +87,9 @@ const schema = Yup.object().shape({
 });
 
 // Main component
-const PregnancyAdditionalHistoryForm = ({
-  onSubmit,
-}: {
-  onSubmit: (values: PregnancyAdditionalHistoryFormValues) => void;
-}) => {
-  const initialValues: PregnancyAdditionalHistoryFormValues = {
+const PregnancyAdditionalHistoryForm: React.FC<PregnancyAdditionalHistoryFormProps> = ({ onSubmit, initialValues: prefill, }) => {
+
+  const defaultInitialValues: PregnancyAdditionalHistoryFormValues = {
     pidHistory: "",
     specifySti: "",
     previousPelvicSurgery: "",
@@ -106,30 +105,30 @@ const PregnancyAdditionalHistoryForm = ({
   };
 
   const [formValues, setFormValues] =
-    useState<PregnancyAdditionalHistoryFormValues>(initialValues);
+    useState<PregnancyAdditionalHistoryFormValues>({...defaultInitialValues,...(prefill || {}),});
 
-  const handleFromSubmission = () => {};
+  const handleFromSubmission = (values: any) => {
+     console.log("Additional Gynae History Submitted:", values);
+    onSubmit(values);
+  };
 
   return (
-    // <WrapperBox
-    //   sx={{
-    //     display: "flex",
-    //     justifyContent: "end",
-    //     flexDirection: "column",
-    //     alignItems: "center",
-    //     borderRadius: "1ch",
-    //     marginTop: "20px",
-    //     position: "relative", //added
-    //   }}
-    // >
     <FormikInit
-      initialValues={initialValues}
+      initialValues={{...defaultInitialValues,...(prefill || {})}}
       validationSchema={schema}
       onSubmit={handleFromSubmission}
       submitButtonText="Next"
     >
-      <FormValuesListener getValues={setFormValues} />
-      <FieldsContainer sx={{ alignItems: "flex" }}>
+      <FormValuesListener
+        getValues={(values: any) => {
+          setFormValues(values);
+          console.log("the values", values);
+        }}
+      />
+      {/*setFormValues*/}
+      <FieldsContainer
+        sx={{ rowGap: 3, alignItems: "flex", flexDirection: "column" }}
+      >
         <RadioGroupInput
           name={form.pidHistory.name}
           label={form.pidHistory.label}
@@ -137,110 +136,101 @@ const PregnancyAdditionalHistoryForm = ({
         />
       </FieldsContainer>
 
-      {formValues.pidHistory === "Yes" && (
+      <FieldsContainer
+        sx={{ rowGap: 3, alignItems: "flex", flexDirection: "column" }}
+      >
+        {formValues.pidHistory === "Yes" && (
+          <TextInputField
+            multiline
+            rows={3}
+            sx={{ m: 0, width: "100%" }}
+            name={form.specifySti.name}
+            label={form.specifySti.label}
+            id={"specifySti"}
+          />
+        )}
         <TextInputField
           multiline
           rows={3}
           sx={{ m: 0, width: "100%" }}
-          name={form.specifySti.name}
-          label={form.specifySti.label}
-          id={""}
+          name={form.previousPelvicSurgery.name}
+          label={form.previousPelvicSurgery.label}
+          id={"previousPelvicSurgery"}
         />
-      )}
-      <br />
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.previousPelvicSurgery.name}
-        label={form.previousPelvicSurgery.label}
-        id={""}
-      />
-      <br />
-      <br />
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.contraceptiveHistory.name}
-        label={form.contraceptiveHistory.label}
-        id={""}
-      />
 
-      <br />
+        <TextInputField
+          multiline
+          rows={3}
+          sx={{ m: 0, width: "100%" }}
+          name={form.contraceptiveHistory.name}
+          label={form.contraceptiveHistory.label}
+          id={"contraceptiveHistory"}
+        />
 
-      <FormDatePicker
-        name={"cervicalCancerDate"}
-        label={"Date of Last Cervical Cancer Screening"}
-      />
+        <FormDatePicker
+          name={"cervicalCancerDate"}
+          label={"Date of Last Cervical Cancer Screening"}
+        />
+        <TextInputField
+          multiline
+          rows={3}
+          sx={{ m: 0, width: "100%" }}
+          name={form.cervicalCancerResult.name}
+          label={form.cervicalCancerResult.label}
+          id={"cervicalCancerResult"}
+        />
+        <TextInputField
+          multiline
+          rows={3}
+          sx={{ m: 0, width: "100%" }}
+          name={form.obstetricHistory.name}
+          label={form.obstetricHistory.label}
+          id={"obstetricHistory"}
+        />
+        <TextInputField
+          multiline
+          rows={3}
+          sx={{ m: 0, width: "100%" }}
+          name={form.medicalHistory.name}
+          label={form.medicalHistory.label}
+          id={"medicalHistory"}
+        />
+        <TextInputField
+          multiline
+          rows={3}
+          sx={{ m: 0, width: "100%" }}
+          name={form.surgicalHistory.name}
+          label={form.surgicalHistory.label}
+          id={"surgicalHistory"}
+        />
 
-      <br />
+        <TextInputField
+          multiline
+          rows={3}
+          sx={{ m: 0, width: "100%" }}
+          name={form.drugHistory.name}
+          label={form.drugHistory.label}
+          id={"drugHistory"}
+        />
 
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.cervicalCancerResult.name}
-        label={form.cervicalCancerResult.label}
-        id={""}
-      />
-
-      <br />
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.obstetricHistory.name}
-        label={form.obstetricHistory.label}
-        id={""}
-      />
-      <br />
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.medicalHistory.name}
-        label={form.medicalHistory.label}
-        id={""}
-      />
-      <br />
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.surgicalHistory.name}
-        label={form.surgicalHistory.label}
-        id={""}
-      />
-      <br />
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.drugHistory.name}
-        label={form.drugHistory.label}
-        id={""}
-      />
-      <br />
-      <TextInputField
-        multiline
-        rows={2}
-        sx={{ m: 0, width: "100%" }}
-        name={form.allergies.name}
-        label={form.allergies.label}
-        id={""}
-      />
-      <br />
-      <TextInputField
-        multiline
-        rows={3}
-        sx={{ m: 0, width: "100%" }}
-        name={form.familyHistory.name}
-        label={form.familyHistory.label}
-        id={""}
-      />
+        <TextInputField
+          multiline
+          rows={2}
+          sx={{ m: 0, width: "100%" }}
+          name={form.allergies.name}
+          label={form.allergies.label}
+          id={"allergies"}
+        />
+        <TextInputField
+          multiline
+          rows={3}
+          sx={{ m: 0, width: "100%" }}
+          name={form.familyHistory.name}
+          label={form.familyHistory.label}
+          id={"familyHistory"}
+        />
+      </FieldsContainer>
     </FormikInit>
-    //</WrapperBox>
   );
 };
 

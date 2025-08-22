@@ -18,6 +18,10 @@ const radioOptions = [
   { label: "No", value: "no" },
 ];
 
+interface PregnancyHistoryFormProps {
+  onSubmit: (values: any) => void;
+  initialValues?: Record<string, any>;
+}
 const form = {
   pvBleeding: { name: "pvBleeding", label: "PV Bleeding?" },
   pvBleedingFeatures: {
@@ -41,7 +45,7 @@ const form = {
   specifyAbortionHistory: {
     name: "specifyAbortionHistory",
     label: "If yes, briefly explain ",
-  }, 
+  },
 
   abdominalPain: { name: "abdominalPain", label: "Abdominal Pain?" },
   abdominalPainFeatures: {
@@ -94,228 +98,229 @@ const schema = Yup.object().shape({
   [form.otherSymptoms.name]: Yup.string().required("Required"),
 });
 
-const initialValues = Object.keys(form).reduce((acc, key) => {
+const defaultInitialValues = Object.keys(form).reduce((acc, key) => {
   acc[key] = "";
   return acc;
-}, {} as any);
+}, {} as Record<string,any>);
 
-const PregnancyHistoryForm = ({
-  onSubmit,
-}: {
-  onSubmit: (values: any) => void;
+const PregnancyHistoryForm: React.FC<PregnancyHistoryFormProps> = ({
+  onSubmit,initialValues: prefill,
 }) => {
-  type formValuesType = typeof initialValues; //added
-  const [formValues, setFormValues] = useState<formValuesType>({});
+  type formValuesType = typeof defaultInitialValues; //added
+  const [formValues, setFormValues] = useState<formValuesType>({ ...defaultInitialValues,...(prefill || {})});
 
-  const handleFromSubmission = () => {};
+  const handleFromSubmission = (values: any) => {
+    console.log("Pregnancy History Form submitted:", values);
+    onSubmit = values;
+  };
 
   return (
     <WrapperBox
       sx={{
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "start",
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "start",
         borderRadius: "1ch",
         marginTop: "20px",
         position: "relative", //added
       }}
     >
       <FormikInit
-        initialValues={initialValues}
+        initialValues={{...defaultInitialValues, ...(prefill || {})}}
         validationSchema={schema}
         onSubmit={handleFromSubmission}
         submitButtonText="Next"
       >
         <FormValuesListener getValues={setFormValues} />
-      
+
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.pvBleeding.name}
+            label={form.pvBleeding.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+
+        {formValues[form.pvBleeding.name] === "yes" && (
           <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.pvBleeding.name}
-              label={form.pvBleeding.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-
-          {formValues[form.pvBleeding.name] === "yes" && (
-            <FieldsContainer sx={{ alignItems: "flex-start" }}>
-              <TextInputField
-                multiline
-                rows={3}
-                sx={{ m: 0, width: "100%" }}
-                name={form.pvBleedingFeatures.name}
-                label={form.pvBleedingFeatures.label}
-                id={""}
-              />
-            </FieldsContainer>
-          )}
-
-          <br />
-          <FieldsContainer sx={{ gap: 10, alignItems: "flex-start" }}>
             <TextInputField
               multiline
               rows={3}
               sx={{ m: 0, width: "100%" }}
-              name={form.duration.name}
-              label={form.duration.label}
+              name={form.pvBleedingFeatures.name}
+              label={form.pvBleedingFeatures.label}
               id={""}
             />
           </FieldsContainer>
+        )}
 
-          <br />
+        <br />
+        <FieldsContainer sx={{ gap: 10, alignItems: "flex-start" }}>
+          <TextInputField
+            multiline
+            rows={3}
+            sx={{ m: 0, width: "100%" }}
+            name={form.duration.name}
+            label={form.duration.label}
+            id={""}
+          />
+        </FieldsContainer>
+
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.foulSmelling.name}
+            label={form.foulSmelling.label}
+            options={radioOptions}
+          />
+          <RadioGroupInput
+            name={form.shoulderTipPain.name}
+            label={form.shoulderTipPain.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.anaemiaSymptoms.name}
+            label={form.anaemiaSymptoms.label}
+            options={radioOptions}
+          />
+          <RadioGroupInput
+            name={form.collapseHistory.name}
+            label={form.collapseHistory.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.productsOfConception.name}
+            label={form.productsOfConception.label}
+            options={radioOptions}
+          />
+          <RadioGroupInput
+            name={form.inducedAbortionHistory.name}
+            label={form.inducedAbortionHistory.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+
+        {formValues[form.inducedAbortionHistory.name] === "yes" && (
+          <TextInputField
+            multiline
+            rows={3}
+            sx={{ m: 0, width: "100%" }}
+            name={form.specifyAbortionHistory.name}
+            label={form.specifyAbortionHistory.label}
+            id={""}
+          />
+        )}
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.abdominalPain.name}
+            label={form.abdominalPain.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+
+        {formValues[form.abdominalPain.name] === "yes" && (
           <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.foulSmelling.name}
-              label={form.foulSmelling.label}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.shoulderTipPain.name}
-              label={form.shoulderTipPain.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-
-          <br />
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.anaemiaSymptoms.name}
-              label={form.anaemiaSymptoms.label}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.collapseHistory.name}
-              label={form.collapseHistory.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-
-          <br />
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.productsOfConception.name}
-              label={form.productsOfConception.label}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.inducedAbortionHistory.name}
-              label={form.inducedAbortionHistory.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-
-          {formValues[form.inducedAbortionHistory.name] === "yes" && (
             <TextInputField
               multiline
               rows={3}
               sx={{ m: 0, width: "100%" }}
-              name={form.specifyAbortionHistory.name}
-              label={form.specifyAbortionHistory.label}
-              id={""}
-            />
-          )}
-          <br />
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.abdominalPain.name}
-              label={form.abdominalPain.label}
-              options={radioOptions}
+              name={form.abdominalPainFeatures.name}
+              label={form.abdominalPainFeatures.label}
+              id=""
             />
           </FieldsContainer>
+        )}
 
-          {formValues[form.abdominalPain.name] === "yes" && (
-            <FieldsContainer sx={{ alignItems: "flex-start" }}>
-              <TextInputField
-                multiline
-                rows={3}
-                sx={{ m: 0, width: "100%" }}
-                name={form.abdominalPainFeatures.name}
-                label={form.abdominalPainFeatures.label}
-                id=""
-              />
-            </FieldsContainer>
-          )}
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.distension.name}
+            label={form.distension.label}
+            options={radioOptions}
+          />
+          <RadioGroupInput
+            name={form.urinarySymptoms.name}
+            label={form.urinarySymptoms.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
 
-          <br />
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.distension.name}
-              label={form.distension.label}
-              options={radioOptions}
-            />
-            <RadioGroupInput
-              name={form.urinarySymptoms.name}
-              label={form.urinarySymptoms.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-
-          {formValues[form.urinarySymptoms.name] === "yes" && (
-            <FieldsContainer sx={{ alignItems: "flex-start" }}>
-              <TextInputField
-                multiline
-                rows={3}
-                sx={{ m: 0, width: "100%" }}
-                name={form.urinaryFeatures.name}
-                label={form.urinaryFeatures.label}
-                id={""}
-              />
-            </FieldsContainer>
-          )}
-          <br />
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.nauseaVomiting.name}
-              label={form.nauseaVomiting.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-
-          {formValues[form.nauseaVomiting.name] === "yes" && (
-            <FieldsContainer sx={{ alignItems: "flex-start" }}>
-              <TextInputField
-                multiline
-                rows={3}
-                sx={{ m: 0, width: "100%" }}
-                name={form.nauseaFeatures.name}
-                label={form.nauseaFeatures.label}
-                id={""}
-              />
-            </FieldsContainer>
-          )}
-
-          <br />
-          <FieldsContainer sx={{ alignItems: "flex-start" }}>
-            <RadioGroupInput
-              name={form.fevers.name}
-              label={form.fevers.label}
-              options={radioOptions}
-            />
-          </FieldsContainer>
-
-          {formValues[form.fevers.name] === "yes" && (
-            <FieldsContainer sx={{ alignItems: "flex-start" }}>
-              <TextInputField
-                multiline
-                rows={3}
-                sx={{ m: 0, width: "100%" }}
-                name={form.feverDuration.name}
-                label={form.feverDuration.label}
-                id={""}
-              />
-            </FieldsContainer>
-          )}
-          <br />
+        {formValues[form.urinarySymptoms.name] === "yes" && (
           <FieldsContainer sx={{ alignItems: "flex-start" }}>
             <TextInputField
-              name={form.otherSymptoms.name}
-              label={form.otherSymptoms.label}
               multiline
               rows={3}
-              id={""}
               sx={{ m: 0, width: "100%" }}
+              name={form.urinaryFeatures.name}
+              label={form.urinaryFeatures.label}
+              id={""}
             />
           </FieldsContainer>
+        )}
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.nauseaVomiting.name}
+            label={form.nauseaVomiting.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+
+        {formValues[form.nauseaVomiting.name] === "yes" && (
+          <FieldsContainer sx={{ alignItems: "flex-start" }}>
+            <TextInputField
+              multiline
+              rows={3}
+              sx={{ m: 0, width: "100%" }}
+              name={form.nauseaFeatures.name}
+              label={form.nauseaFeatures.label}
+              id={""}
+            />
+          </FieldsContainer>
+        )}
+
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <RadioGroupInput
+            name={form.fevers.name}
+            label={form.fevers.label}
+            options={radioOptions}
+          />
+        </FieldsContainer>
+
+        {formValues[form.fevers.name] === "yes" && (
+          <FieldsContainer sx={{ alignItems: "flex-start" }}>
+            <TextInputField
+              multiline
+              rows={3}
+              sx={{ m: 0, width: "100%" }}
+              name={form.feverDuration.name}
+              label={form.feverDuration.label}
+              id={""}
+            />
+          </FieldsContainer>
+        )}
+        <br />
+        <FieldsContainer sx={{ alignItems: "flex-start" }}>
+          <TextInputField
+            name={form.otherSymptoms.name}
+            label={form.otherSymptoms.label}
+            multiline
+            rows={3}
+            id={""}
+            sx={{ m: 0, width: "100%" }}
+          />
+        </FieldsContainer>
       </FormikInit>
     </WrapperBox>
   );

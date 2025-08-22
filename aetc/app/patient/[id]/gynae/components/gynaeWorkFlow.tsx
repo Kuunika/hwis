@@ -12,6 +12,8 @@ import { useNavigation, useParameters } from "@/hooks";
 
 export const GynaeWorkflow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
+  //persist all form values here
+  const [formData, setFormData] = useState<any>({});
   const { navigateBackToProfile, navigateTo } = useNavigation();
   const { params } = useParameters();
 
@@ -49,6 +51,20 @@ export const GynaeWorkflow = () => {
     navigateTo(`/patient/${params.id}/summary`);
   };
 
+
+//   const handleFormSubmission = (stepValues: any, nextStep?: number) => {
+//   setFormData((prev: any) => ({ ...prev, ...stepValues }));
+//   if (nextStep !== undefined) setActiveStep(nextStep);
+// };
+
+//   // Final step: redirect after persisting
+//   const handleFinalSubmission = (values: any) => {
+//     const updatedData = { ...formData, ...values };
+//     console.log(" Final Submission Data:", updatedData);
+
+//     navigateTo(`/patient/${params.id}/summary`);
+//   };
+
   return (
     <NewStepperContainer
       setActive={setActiveStep}
@@ -58,22 +74,36 @@ export const GynaeWorkflow = () => {
       onBack={() => navigateBackToProfile()}
       showSubmittedStatus
     >
-      <GeneralDetailsForm onSubmit={handleGeneralDetailsSubmit} />
+       <GeneralDetailsForm onSubmit={handleGeneralDetailsSubmit} />
       <PregnancyHistoryForm onSubmit={handleHistorySubmit} />
       <PregnancyAdditionalHistoryForm
         onSubmit={handleAdditionalHistorySubmit}
       />
       <ExamForm onSubmit={handleExaminationForm} />
+
+
       {/* {activeStep === 0 && (
-        <GeneralDetailsForm onSubmit={handleGeneralDetailsSubmit} />
+        <GeneralDetailsForm 
+        onSubmit={ ( values) => handleFormSubmission(values,1)}
+        initialValues={formData} />
       )}
       {activeStep === 1 && (
-        <PregnancyHistoryForm onSubmit={handleHistorySubmit} />
+        <PregnancyHistoryForm 
+        onSubmit={ ( values) => handleFormSubmission(values,2)}
+        initialValues={formData} />
       )}
       {activeStep === 2 && (
         <PregnancyAdditionalHistoryForm
-          onSubmit={handleAdditionalHistorySubmit}
+          onSubmit = { ( values) => handleFormSubmission(values,3)}
+          initialValues={formData}
         />
+      )}
+
+      {activeStep === 3 && (
+        <ExamForm
+          onSubmit={handleFinalSubmission}
+          initialValues={formData}
+        />  
       )} */}
     </NewStepperContainer>
   );
