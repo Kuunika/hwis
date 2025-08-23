@@ -49,7 +49,6 @@ import  { formatDiagnosisNotes, formatInvestigationPlans, formatPatientManagamen
 import GroupedResultsTable from "./tabularDisplayInformation";
 import ResultsTable from "./tabularDisplayInformation";
 import { MultiColumnNotes } from "./multiColumnDisplay";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import {  DownloadClinicalNotesPDF } from "./pdfClinicalNotes";
 
 

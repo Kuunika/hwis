@@ -111,51 +111,56 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
     }, {} as Record<string, typeof notesData>);
 
     const defaultItemRenderer = (item: any) => (
-        <>
+        <div style={{ marginBottom: "6px" }}>
             {item.rootValue && (
-                <Typography variant="body2" sx={{ fontWeight: 'large', mb: 0 }}>
-                    -{item.rootValue}
-                </Typography>
+                <div style={{ fontWeight: 100, marginBottom: "2px" }}>
+                    - {item.rootValue}
+                </div>
             )}
-            <Box sx={{ ml: 2 }}>
-                {config.fields.map((field, fieldIndex) => (
-                    item[field.conceptName] && (
-                        <Typography
-                            key={fieldIndex}
-                            variant="body2"
-                            sx={field.style}
-                        >
-                            -{field.displayName}: {item[field.conceptName]}
-                        </Typography>
-                    )
-                ))}
-            </Box>
-        </>
+            <div style={{ paddingLeft: "16px" }}>
+                {config.fields.map(
+                    (field, fieldIndex) =>
+                        item[field.conceptName] && (
+                            <div
+                                key={fieldIndex}
+                                style={{
+                                    marginBottom: "2px",
+                                    ...(field.style || {}),
+                                }}
+                            >
+                                - {field.displayName}: {item[field.conceptName]}
+                            </div>
+                        )
+                )}
+            </div>
+        </div>
     );
 
+// Make sure to set renderItem
     const renderItem = config.itemRenderer || defaultItemRenderer;
 
+// Main render
     return (
-        <Box sx={{ p: 2, border: "1px solid #e0e0e0", borderRadius: 1, mb: 1 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 0 }}>
-                {title}
-            </Typography>
+        <div style={{marginBottom: "12px", fontFamily: "Arial, sans-serif", lineHeight: 1.6,}}>
+            <h4 style={{ fontWeight: "bold", marginBottom: "4px" }}>{title}</h4>
 
-            <Box sx={{ pl: 2 }}>
+            <div style={{ marginLeft: "20px" }}>
                 {Object.entries(groupedData).map(([date, dateNotes]) => (
-                    <Box key={date} sx={{ mb: 1 }}>
+                    <div key={date} style={{ marginBottom: "2px" }}>
                         {dateNotes.map((note, index) => (
-                            <Box key={index} sx={{ ml: 2, mt: 1, mb: 1.5 }}>
-                               {renderItem(note)}
-                            </Box>
+                            <div key={index} style={{ marginLeft: "3px", marginTop: "2px" }}>
+                                {renderItem(note)}
+                            </div>
                         ))}
-                    </Box>
+                    </div>
                 ))}
-            </Box>
+            </div>
 
             {renderTimestamp(data)}
-        </Box>
+        </div>
     );
+
+
 };
 
 // Configuration presets for different clinical components
