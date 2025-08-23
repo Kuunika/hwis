@@ -343,61 +343,69 @@ const buildChildren = (obs: Obs[], children: any) => {
 };
 
 const buildNotesObject = (formConfig: any, obs: Obs[]) => {
-  return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
-    .filter((key) => {
-      const config = formConfig[key];
-      return !config.child;
-    })
-    .flatMap((key) => {
-      const config = formConfig[key];
-      const value = getObservationValue(obs, config.name);
-      const displayValue = config.options?.[value] ?? value;
-      const topParentType = config?.type || "N/A";
-      let children = buildChildren(obs, config.children) ?? [];
+    return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
+        .filter((key) => {
+            const config = formConfig[key];
+            return !config.child;
+        })
+        .flatMap((key) => {
+            const config = formConfig[key];
+            const value = getObservationValue(obs, config.name);
 
-      if (config.hasGroupMembers) {
-        const parentObs: any = filterObservations(obs, config.name);
+            if (!value && !config.hasGroupMembers && !config.image) {
+                return [];
+            }
 
-        console.log({ parentObs });
-        if (parentObs?.length > 0) {
-          children = [
-            ...children,
-            ...parentObs[0].children.map((child: any) => ({
-              item: child.value,
-            })),
-          ];
-        }
-      }
+            const displayValue = config.options?.[value] ?? value;
+            const topParentType = config?.type || "N/A";
+            let children = buildChildren(obs, config.children) ?? [];
 
-      if (config?.image) {
-        const parentObs: any = filterObservations(obs, config.name);
-        console.log({ parentObs });
+            if (config.hasGroupMembers) {
+                const parentObs: any = filterObservations(obs, config.name);
+                if (parentObs?.length > 0) {
+                    children = [
+                        ...children,
+                        ...parentObs[0].children
+                            .filter((child: any) => child.value) // only keep ones with values
+                            .map((child: any) => ({
+                                item: child.value,
+                            })),
+                    ];
+                }
 
-        const imagesObs = parentObs.map((ob: Obs) => {
-          return {
-            item: ob.value,
-            children: handleImagesObsRestructure(ob.children),
-          };
+                if (!value && children.length === 0) {
+                    return [];
+                }
+            }
+
+            if (config?.image) {
+                const parentObs: any = filterObservations(obs, config.name);
+                const imagesObs = parentObs
+                    .filter((ob: Obs) => ob.value || (ob.children?.length ?? 0) > 0)
+                    .map((ob: Obs) => ({
+                        item: ob.value,
+                        children: handleImagesObsRestructure(ob.children),
+                    }));
+                return imagesObs;
+            }
+
+            const result: any = {
+                item:
+                    topParentType === "string"
+                        ? displayValue
+                        : topParentType === "title"
+                            ? config.label
+                            : { [config.label]: displayValue },
+            };
+
+            if (children.length > 0) {
+                result.children = children;
+            }
+
+            return result;
         });
-        return imagesObs;
-      }
-
-      const result: any = {
-        item:
-          topParentType == "string"
-            ? displayValue
-            : topParentType == "title"
-              ? config.label
-              : { [config.label]: displayValue || "N/A" },
-      };
-      if (children && children.length > 0) {
-        result.children = children;
-      }
-
-      console.log(result);
-      return result;
-    });
 };
+
 
 
 
