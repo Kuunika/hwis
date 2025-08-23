@@ -288,16 +288,15 @@ const handleImagesObsRestructure = (children: Obs[]) => {
 
 
 const buildChildren = (obs: Obs[], children: any) => {
-    if (!children) return;
+    if (!children) return [];
     return (
         obs.length > 0 &&
-        children?.flatMap((child: any) => {
+        children.flatMap((child: any) => {
             const innerObs = filterObservations(obs, child.concept);
 
             if (!innerObs || innerObs.length === 0) return [];
 
-            let transformedObs;
-
+            // Handle image-type obs
             if (child?.image) {
                 const parentOb = filterObservations(obs, child?.parentConcept);
                 if (!parentOb?.length) return [];
@@ -305,16 +304,38 @@ const buildChildren = (obs: Obs[], children: any) => {
             }
 
             const obValue = getObservationValue(obs, child?.concept);
-            if (!obValue && (!child.multiple || innerObs.length === 0)) return [];
+
+            // If there's no usable value, skip this child
+            if (
+                (!obValue || obValue === "" || obValue === null) &&
+                (!child.multiple || innerObs.length === 0)
+            ) {
+                return [];
+            }
+
+            let transformedObs: any;
 
             if (child?.type === "string") {
                 const childValue = child?.multiple
-                    ? innerObs.map((innerOb) => ({
-                        item: child?.options ? child.options[innerOb.value] : innerOb.value,
-                    }))
+                    ? innerObs
+                        .map((innerOb) => {
+                            const val = child?.options
+                                ? child.options[innerOb.value]
+                                : innerOb.value;
+                            return val ? { item: val } : null;
+                        })
+                        .filter(Boolean) // filter out null/empty
                     : child?.options
                         ? child.options[obValue]
                         : obValue;
+
+                if (
+                    childValue === undefined ||
+                    childValue === null ||
+                    (Array.isArray(childValue) && childValue.length === 0)
+                ) {
+                    return [];
+                }
 
                 transformedObs = {
                     item: child.label,
@@ -324,10 +345,21 @@ const buildChildren = (obs: Obs[], children: any) => {
                 };
             } else {
                 const childValue = child?.multiple
-                    ? innerObs.map((innerOb) => ({
-                        item: child?.options ? child.options[innerOb.value] : innerOb.value,
-                    }))
-                    : { [child.label]: obValue };
+                    ? innerObs
+                        .map((innerOb) => {
+                            const val = child?.options
+                                ? child.options[innerOb.value]
+                                : innerOb.value;
+                            return val ? { item: val } : null;
+                        })
+                        .filter(Boolean)
+                    : obValue
+                        ? { [child.label]: obValue }
+                        : null;
+
+                if (!childValue || (Array.isArray(childValue) && childValue.length === 0)) {
+                    return [];
+                }
 
                 transformedObs = {
                     item: childValue,
@@ -341,6 +373,7 @@ const buildChildren = (obs: Obs[], children: any) => {
         })
     );
 };
+
 
 const buildNotesObject = (formConfig: any, obs: Obs[]) => {
     return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
