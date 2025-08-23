@@ -46,9 +46,15 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
         if (!panelData?.[0]?.created_by) return null;
 
         return (
-            <Typography sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px", mt: 1 }}>
+            <div style={{
+                color: "#7f8c8d",
+                fontSize: "14px",
+                letterSpacing: "0.2px",
+                marginTop: "8px",
+                fontStyle: 'italic'
+            }}>
                 ~ {panelData[0].created_by} - {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
-            </Typography>
+            </div>
         );
     };
 
@@ -60,23 +66,18 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
     };
 
     const extractNotesData = () => {
-        // Extract notes based on the root concept and configured fields
-        const notes: {
-            [key: string]: any;
-            timestamp: string;
-            created_by?: string;
-            rootValue?: string;
-        }[] = [];
+        const notes: any[] = [];
 
         data.forEach(obs => {
-            if (isRootConcept(obs) && obs.value && obs.children) {
+            if (isRootConcept(obs) && obs.value) {
                 const note: any = {
+                    ...obs, // Spread the entire observation
                     timestamp: obs.obs_datetime || "",
                     created_by: obs.created_by,
                     rootValue: obs.value
                 };
 
-                // Extract all configured fields
+                // Extract all configured fields from children
                 config.fields.forEach(field => {
                     const child = obs.children?.find(c =>
                         c.names[0]?.name === field.conceptName
@@ -108,12 +109,12 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
         }
         groups[key].push(note);
         return groups;
-    }, {} as Record<string, typeof notesData>);
+    }, {} as Record<string, any[]>); // Fix: Use any[] instead of typeof notesData
 
     const defaultItemRenderer = (item: any) => (
         <div style={{ marginBottom: "6px" }}>
             {item.rootValue && (
-                <div style={{ fontWeight: 100, marginBottom: "2px" }}>
+                <div style={{ fontWeight: "100", marginBottom: "2px" }}>
                     - {item.rootValue}
                 </div>
             )}
@@ -136,19 +137,17 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
         </div>
     );
 
-// Make sure to set renderItem
     const renderItem = config.itemRenderer || defaultItemRenderer;
 
-// Main render
     return (
-        <div style={{marginBottom: "12px", fontFamily: "Arial, sans-serif", lineHeight: 1.6,}}>
+        <div style={{marginBottom: "12px", fontFamily: "Arial, sans-serif", lineHeight: 1.6}}>
             <h4 style={{ fontWeight: "bold", marginBottom: "4px" }}>{title}</h4>
 
             <div style={{ marginLeft: "20px" }}>
                 {Object.entries(groupedData).map(([date, dateNotes]) => (
-                    <div key={date} style={{ marginBottom: "2px" }}>
-                        {dateNotes.map((note, index) => (
-                            <div key={index} style={{ marginLeft: "3px", marginTop: "2px" }}>
+                    <div key={date} style={{ marginBottom: "8px" }}>
+                        {(dateNotes as any[]).map((note, index) => ( // Fix: Cast dateNotes to any[]
+                            <div key={index} style={{ marginBottom: "6px" }}>
                                 {renderItem(note)}
                             </div>
                         ))}
@@ -159,8 +158,6 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
             {renderTimestamp(data)}
         </div>
     );
-
-
 };
 
 // Configuration presets for different clinical components
@@ -291,12 +288,16 @@ export const NotesConfig = {
     },
 
     // Family Medical History Configuration
+    // UPDATED Family Medical History Configuration
     FAMILY_HISTORY: {
         rootConcept: [
             "Family History Asthma",
             "Family History Diabetes Mellitus",
             "Family History Tuberculosis",
-            "Family History Other Condition"
+            "Family History Other Condition",
+            "Family History Hypertension",
+            "Family History Epilepsy",
+            "Family History Cancer"
         ],
         fields: [
             {
@@ -304,24 +305,41 @@ export const NotesConfig = {
                 displayName: "Relationship",
             }
         ],
-        itemRenderer: (item: any) => (
-            <>
-                <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                    {item.rootValue === "true" ?
-                        item.timestamp.includes("Family History") ?
-                            item.timestamp.replace("Family History ", "") :
-                            "Other Condition"
-                        : item.rootValue
-                    }
-                </Typography>
-                <Box sx={{ ml: 2 }}>
-                    {item["Relationship To Patient"] && (
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                            Relationship: {item["Relationship To Patient"]}
-                        </Typography>
+        itemRenderer: (item: any) => {
+            // Extract condition name from the observation names
+            const rawConditionName = item.names?.[0]?.name || "";
+            const conditionName = rawConditionName.replace("Family History ", "");
+
+            // Handle different value types
+            let conditionValue = item.value;
+            let displayCondition = "";
+            if (rawConditionName === "Family History Other Condition" ||
+                rawConditionName === "Family History Cancer") {
+                displayCondition = conditionValue !== "true" ? conditionValue : conditionName;
+            } else {
+                displayCondition = conditionValue === "true" ? "Yes" : conditionName;
+            }
+
+            let relationship = item["Relationship To Patient"];
+            if (!relationship && item.children) {
+                const relationshipChild = item.children.find((child: any) =>
+                    child.names?.[0]?.name === "Relationship To Patient"
+                );
+                relationship = relationshipChild?.value;
+            }
+
+            return (
+                <div style={{ marginBottom: "8px" }}>
+                    <div style={{ fontWeight: "100", marginBottom: "4px" }}>
+                        - {conditionName}: {displayCondition}
+                    </div>
+                    {relationship && (
+                        <div style={{ paddingLeft: "16px", marginBottom: "0px", lineHeight: 1.6  }}>
+                            - Relationship: {relationship}
+                        </div>
                     )}
-                </Box>
-            </>
-        )
-    },
-};
+                </div>
+            );
+        }
+    }
+    }
