@@ -49,7 +49,6 @@ import  { formatDiagnosisNotes, formatInvestigationPlans, formatPatientManagamen
 import GroupedResultsTable from "./tabularDisplayInformation";
 import ResultsTable from "./tabularDisplayInformation";
 import { MultiColumnNotes } from "./multiColumnDisplay";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import {  DownloadClinicalNotesPDF } from "./pdfClinicalNotes";
 
 
@@ -1029,21 +1028,21 @@ export const ClinicalNotes = () => {
           {/* Presenting Complaints */}
           <GenericNotes
             data={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
-            title="Presenting Complaints"
+            title="-Presenting Complaints"
             config={NotesConfig.PRESENTING_COMPLAINTS}
           />
 
           {/* Allergies */}
           <GenericNotes
             data={getEncountersByType(encounters.ALLERGIES)}
-            title="Allergies"
+            title="-Allergies"
             config={NotesConfig.ALLERGIES}
           />
 
           {/* Medications */}
           <GenericNotes
             data={getEncountersByType(encounters.PRESCRIPTIONS)}
-            title="Medications"
+            title="-Medications"
             config={NotesConfig.MEDICATIONS}
           />
 
@@ -1057,27 +1056,27 @@ export const ClinicalNotes = () => {
           {/* Surgical History */}
           <GenericNotes
             data={getEncountersByType(encounters.SURGICAL_HISTORY)}
-            title="Surgical History"
+            title="-Surgical History"
             config={NotesConfig.SURGICAL_HISTORY}
           />
 
           {/* Previous Admissions */}
           <GenericNotes
             data={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
-            title="Previous Admissions"
+            title="-Previous Admissions"
             config={NotesConfig.ADMISSIONS}
           />
 
           <GenericNotes
             data={getEncountersByType(encounters.SUMMARY_ASSESSMENT)}
-            title="Last Meal"
+            title="-Last Meal"
             config={NotesConfig.LAST_MEAL}
           />
 
           {/* Family Medical History */}
           <GenericNotes
             data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
-            title="Family Medical History"
+            title="-Family Medical History"
             config={NotesConfig.FAMILY_HISTORY}
           />
         </Box>
