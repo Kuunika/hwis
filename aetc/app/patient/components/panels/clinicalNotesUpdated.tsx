@@ -13,9 +13,18 @@ import { getDateTime } from "@/helpers/dateTime";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { GyneacologyNotesPDFRef } from "../../[id]/gyneacology/components/generateGyneacologyNotesPDF";
-import { MedicalInpatientNotesPDFRef } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
-import { SurgicalNotesPDFRef } from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
+import {
+  GenerateGyneacologyNotesPDF,
+  GyneacologyNotesPDFRef
+} from "../../[id]/gyneacology/components/generateGyneacologyNotesPDF";
+import {
+  GenerateMedicalInpatientlNotesPDF,
+  MedicalInpatientNotesPDFRef
+} from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
+import {
+  GenerateSurgicalNotesPDF,
+  SurgicalNotesPDFRef
+} from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
 
 export const ClinicalNotesUpdated = () => {
   const { params } = useParameters();
@@ -25,13 +34,11 @@ export const ClinicalNotesUpdated = () => {
   const [printoutTitle, setPrintoutTitle] = useState("All");
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
-  const [filterSurgicalState, setFilterSurgicalState] = useState(false); // New state for surgical notes
-  const [filterGyneacologyState, setFilterGyneacologyState] = useState(false); // New state for gyneacology notes
-  const [filterMedicalInpatientState, setFilterMedicalInpatientState] =
-    useState(false);
+  const [filterSurgicalState, setFilterSurgicalState] = useState(false);
+  const [filterGyneacologyState, setFilterGyneacologyState] = useState(false);
+  const [filterMedicalInpatientState, setFilterMedicalInpatientState] = useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
-
   const pdfRef = useRef<SurgicalNotesPDFRef>(null);
   const gyneacologyRef = useRef<GyneacologyNotesPDFRef>(null);
   const medicalInpatientRef = useRef<MedicalInpatientNotesPDFRef>(null);
@@ -46,7 +53,6 @@ export const ClinicalNotesUpdated = () => {
     contentRef: contentRef,
   });
 
-  // 2. REPLACE your current handlePrint function with this:
   const handlePrint = () => {
     // Check if surgical notes filter is active
     if (filterSurgicalState && pdfRef.current) {
@@ -72,15 +78,19 @@ export const ClinicalNotesUpdated = () => {
     if (!patientHistory) return [];
     return patientHistory[0]?.obs || [];
   };
+
   const addClinicalNote = (note: string) => {
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
   };
 
-const notesData = formatClinicalNotesData(getEncountersByType);
+  const handleSurgicalPrintComplete = () => {
+    console.log("PDF generated successfully!");
+  };
 
+  const notesData = formatClinicalNotesData(getEncountersByType);
 
-const filteredNotes= notesData.filter(notes=>{
+  const filteredNotes = notesData.filter(notes => {
     if (filterSoapierState) {
       return notes.title === "Soapier Notes";
     }
@@ -113,22 +123,20 @@ const filteredNotes= notesData.filter(notes=>{
           onAddNote={addClinicalNote}
           filterSoapierState={filterSoapierState}
           filterAETCState={filterAETCState}
-          filterSurgicalState={filterSurgicalState} // Pass surgical filter state
+          filterSurgicalState={filterSurgicalState}
           filterGyneacologyState={filterGyneacologyState}
           filterMedicalInpatientState={filterMedicalInpatientState}
           setFilterSoapierState={setFilterSoapierState}
           setFilterAETCState={setFilterAETCState}
-          setFilterSurgicalState={setFilterSurgicalState} // Pass surgical filter setter
+          setFilterSurgicalState={setFilterSurgicalState}
           setFilterGyneacologyState={setFilterGyneacologyState}
           setFilterMedicalInpatientState={setFilterMedicalInpatientState}
           onDownload={handlePrint}
           surgicalData={{
             title: "Surgical Notes",
-            data: [
-              ...getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM),
-            ],
+            data: [...getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM)],
             removeObs: [],
-          }} // ADD THIS LINE
+          }}
           gyneacologyData={{
             title: "Gyneacology",
             data: [...getEncountersByType(encounters.GYNEACOLOGY_WARD)],
@@ -142,31 +150,57 @@ const filteredNotes= notesData.filter(notes=>{
           onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
-      <div ref={contentRef}>
-        <div>
-          <PatientInfoTab />
-          <div style={{ paddingTop: "10px" }}>
-            <p
-              style={{
-                marginLeft: "10px",
-              }}
-            >
-              Report type: {printoutTitle}
-            </p>
-            <div
-              style={{
-                fontWeight: 700,
-                fontSize: "20px",
-                // marginTop: "10px",
-                textAlign: "center",
-              }}
-            >
-              Clinical Notes
+
+      {/* Conditional rendering based on filter states */}
+      {!filterSurgicalState && !filterGyneacologyState && !filterMedicalInpatientState && (
+        <div ref={contentRef}>
+          <div>
+            <PatientInfoTab />
+            <div style={{ paddingTop: "10px" }}>
+              <p style={{ marginLeft: "10px" }}>
+                Report type: {printoutTitle}
+              </p>
+              <div
+                style={{
+                  fontWeight: 700,
+                  fontSize: "20px",
+                  textAlign: "center",
+                }}
+              >
+                Clinical Notes
+              </div>
             </div>
           </div>
+          <MultiColumnNotes columns={2} data={filteredNotes} />
         </div>
-        <MultiColumnNotes columns={2} data={filteredNotes} />
-      </div>
+      )}
+
+      {/* Surgical Notes PDF Component */}
+      {filterSurgicalState && (
+        <GenerateSurgicalNotesPDF
+          ref={pdfRef}
+          onPrintComplete={handleSurgicalPrintComplete}
+          showPreview={true}
+        />
+      )}
+
+      {/* Gyneacology Notes PDF Component */}
+      {filterGyneacologyState && (
+        <GenerateGyneacologyNotesPDF
+          ref={gyneacologyRef}
+          onPrintComplete={handleSurgicalPrintComplete}
+          showPreview={true}
+        />
+      )}
+
+      {/* Medical Inpatient Notes PDF Component */}
+      {filterMedicalInpatientState && (
+        <GenerateMedicalInpatientlNotesPDF
+          ref={medicalInpatientRef}
+          onPrintComplete={handleSurgicalPrintComplete}
+          showPreview={true}
+        />
+      )}
     </Panel>
   );
 };
