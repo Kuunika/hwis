@@ -3,12 +3,17 @@ import { FaAngleLeft } from "react-icons/fa6";
 import { useNavigation } from "@/hooks";
 import { Typography, Box } from "@mui/material";
 
-export function BackButton() {
+type Prop = {
+  onClick?: () => void;
+  label?:string
+}
+
+export function BackButton({onClick, label}:Prop) {
   const { navigateBackToProfile } = useNavigation();
 
   return (
     <Box
-      onClick={navigateBackToProfile}
+      onClick={onClick? onClick: navigateBackToProfile}
       sx={{ display: "flex", alignItems: "center", mb: 2, cursor: "pointer" }}
     >
       <Box sx={{ width: "24px", height: "24px", fontSize: "20px" }}>
@@ -23,7 +28,7 @@ export function BackButton() {
           ml: 1,
         }}
       >
-        Back to Profile
+        {label ? label :`Back to Profile`}
       </Typography>
     </Box>
   );
