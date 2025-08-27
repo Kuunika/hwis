@@ -9,6 +9,7 @@ interface Child {
 export interface ClinicalNotesDataType {
   heading?: string | null;
   children?: Child | Child[] | null | undefined;
+  user?:string
 }
 
 interface Props {
