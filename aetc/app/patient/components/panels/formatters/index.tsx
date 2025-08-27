@@ -286,7 +286,6 @@ const handleImagesObsRestructure = (children: Obs[]) => {
         });
 };
 
-
 const buildChildren = (obs: Obs[], children: any) => {
     if (!children) return [];
     return (
