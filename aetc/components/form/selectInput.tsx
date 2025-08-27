@@ -1,0 +1,62 @@
+"use client";
+import { FC, useEffect } from "react";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import { useFormikField } from "./hooks/useFormikField";
+import { SxProps, Theme } from "@mui/material/styles";
+
+type ISelectItem = { name: string | number; value: string | number };
+
+type Prop = {
+  id: string;
+  name: string;
+  label: string;
+  width?: string;
+  selectItems: Array<ISelectItem>;
+  sx?: SxProps<Theme>;
+  getValue?: (value: any) => void;
+  size?: "small" | "medium";
+};
+export const SelectInputField: FC<Prop> = ({
+  name,
+  id,
+  label,
+  selectItems,
+  sx,
+  getValue,
+  size = "medium",
+  width = "100%",
+}) => {
+  const { value, handleChange, hasError } = useFormikField(name);
+
+  useEffect(() => {
+    getValue && getValue(value);
+  }, [value]);
+
+  return (
+    <Box sx={{ my: "2.3ch", width, ...sx }}>
+      <FormControl fullWidth>
+        <InputLabel sx={{backgroundColor:"white"}} id={id}>{label}</InputLabel>
+        <Select
+          size={size}
+          name={name}
+          labelId={id}
+          id={id}
+          value={value}
+          label={label}
+          onChange={handleChange}
+          error={hasError}
+        >
+          {selectItems.map(({ value, name }) => (
+            <MenuItem key={name} value={value}>
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
+  );
+};

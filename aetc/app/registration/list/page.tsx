@@ -1,0 +1,53 @@
+"use client";
+
+import { WaitingRegistrationList } from "../components";
+import { MainGrid } from "@/components";
+
+import {
+  RegistrationMainHeader,
+  RegistrationDescriptionText,
+  RegistrationCard,
+} from "../components/common";
+import { Navigation } from "@/app/components/navigation";
+import AuthGuard from "@/helpers/authguard";
+import { roles } from "@/constants";
+
+function List() {
+  return (
+    <>
+      <Navigation title="Patients waiting registration" link="/dashboard" />
+      <MainGrid container>
+        <MainGrid xs={0} lg={1} item></MainGrid>
+        <MainGrid
+          xs={12}
+          lg={10}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+          item
+        >
+          <br />
+          <br />
+          <RegistrationMainHeader>
+            Patients waiting for Registration
+          </RegistrationMainHeader>
+          <RegistrationDescriptionText>
+            This is a list of all patients that went through prescreening
+            successfully and waiting for registration.
+          </RegistrationDescriptionText>
+          <RegistrationCard sx={{ p: 0 }}>
+            <WaitingRegistrationList />
+          </RegistrationCard>
+        </MainGrid>
+        <MainGrid xs={0} lg={1} item></MainGrid>
+      </MainGrid>
+    </>
+  );
+}
+
+export default AuthGuard(List, [
+  roles.ADMIN,
+  roles.REGISTRATION_CLERK,
+  roles.CLINICIAN,
+]);
