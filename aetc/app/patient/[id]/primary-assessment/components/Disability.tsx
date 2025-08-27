@@ -78,6 +78,8 @@ const form = {
   },
 };
 
+export const disabilityFormConfig = form;
+
 const schema = yup.object({
   [form.eyeOpening.name]: yup.string().required().label(form.eyeOpening.label),
   [form.verbalResponse.name]: yup

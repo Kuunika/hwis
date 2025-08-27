@@ -1,417 +1,7 @@
-// import React from "react";
-// import {
-//   Paper,
-//   Typography,
-//   Grid,
-//   Box,
-//   List,
-//   ListItem,
-//   ListItemText,
-//   Divider,
-// } from "@mui/material";
-// import { createTheme, ThemeProvider } from "@mui/material/styles";
-// import { getHumanReadableDateTime } from "@/helpers/dateTime";
-
-// const theme = createTheme({
-//   palette: {
-//     primary: { main: "#2196f3" },
-//     secondary: { main: "#f50057" },
-//   },
-// });
-
-// export const PrintClinicalNotes = (props: any) => {
-//   console.log({ props });
-//   // Make sure we have data object
-//   const data = props?.data || props;
-
-//   // Function to render timestamp and author
-//   const renderTimestamp = (panelData: any) => {
-//     if (!panelData?.[0]?.created_by) return null;
-
-//     return (
-//       <Typography
-//         sx={{ color: "#7f8c8d", fontSize: "14px", letterSpacing: "0.2px" }}
-//       >
-//         ~ {panelData[0].created_by} -{" "}
-//         {getHumanReadableDateTime(panelData[0].obs_datetime || new Date())}
-//       </Typography>
-//     );
-//   };
-
-//   // Function to render grouped items by heading
-//   const renderGroupedItems = (panelData: any) => {
-//     if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
-//       return null;
-
-//     // Create a map to group items by heading
-//     const headingMap = new Map();
-
-//     // Process all items and consolidate similar headings
-//     panelData.forEach((item) => {
-//       if (!item) return;
-
-//       if (
-//         item.children &&
-//         Array.isArray(item.children) &&
-//         item.children.length > 0
-//       ) {
-//         // Get parent value as the heading
-//         const heading = item.value || "";
-//         if (!heading) return;
-
-//         // Collect all children values
-//         const childValues = item.children
-//           .map((child: any) => {
-//             if (
-//               !child ||
-//               !child.names ||
-//               !Array.isArray(child.names) ||
-//               child.names.length === 0
-//             )
-//               return "";
-//             return child.names[0]?.name || "";
-//           })
-//           .filter(Boolean);
-
-//         if (childValues.length > 0) {
-//           const existing = headingMap.get(heading) || [];
-//           headingMap.set(heading, [...existing, ...childValues]);
-//         }
-//       } else if (
-//         item.names &&
-//         Array.isArray(item.names) &&
-//         item.names.length > 0 &&
-//         item.names[0]?.name
-//       ) {
-//         // For regular items, use name as heading and value as the value
-//         const heading = item.names[0].name;
-//         const value = item.value || "";
-
-//         if (!heading || !value) return;
-
-//         const existing = headingMap.get(heading) || [];
-//         headingMap.set(heading, [...existing, value]);
-//       }
-//     });
-
-//     // Convert map to array of consolidated items
-//     const consolidatedItems = Array.from(headingMap.entries()).map(
-//       ([heading, values]) => ({
-//         label: heading,
-//         value: Array.isArray(values)
-//           ? Array.from(new Set(values)).join(", ")
-//           : values,
-//       })
-//     );
-
-//     if (consolidatedItems.length === 0) return null;
-
-//     return (
-//       <Box sx={{ p: 0.5 }}>
-//         <Typography
-//           variant="body2"
-//           sx={{ color: "#555", textAlign: "left", lineHeight: "1.8" }}
-//         >
-//           {consolidatedItems.map((item, index) => (
-//             <React.Fragment key={`item-${index}`}>
-//               <Box component="span" sx={{ fontWeight: "bold" }}>
-//                 {item.label}
-//               </Box>
-//               : {item.value}
-//               {index < consolidatedItems.length - 1 ? "; " : ""}
-//             </React.Fragment>
-//           ))}
-//         </Typography>
-//       </Box>
-//     );
-//   };
-
-//   // Check if panel data has content
-//   const hasContent = (panelData: any) => {
-//     if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
-//       return false;
-
-//     // Check if there's any valid data to display
-//     const flatData = Array.isArray(panelData) ? panelData.flat() : [];
-//     const renderedContent = renderGroupedItems(flatData);
-
-//     return renderedContent !== null;
-//   };
-
-//   // Section component to reduce repetition
-//   const Section = ({ title = "", panelData = [], borderRight = false }) => {
-//     if (!hasContent(panelData)) return null;
-
-//     const flatData = Array.isArray(panelData) ? panelData.flat() : [];
-
-//     return (
-//       <Grid
-//         item
-//         xs={6}
-//         sx={{
-//           p: 2,
-//           ...(borderRight && { borderRight: "1px solid rgba(0, 0, 0, 0.12)" }),
-//         }}
-//       >
-//         <Typography
-//           variant="subtitle1"
-//           fontWeight="bold"
-//           sx={{ textDecoration: "underline" }}
-//           gutterBottom
-//         >
-//           {title}
-//         </Typography>
-//         {renderGroupedItems(flatData)}
-//         {renderTimestamp(panelData)}
-//       </Grid>
-//     );
-//   };
-
-//   // Clinical Notes section is unique, handle separately
-//   const renderClinicalNotes = (panelData: any) => {
-//     if (
-//       !panelData ||
-//       !Array.isArray(panelData) ||
-//       panelData.length === 0 ||
-//       !panelData.some((item) => item && item.value)
-//     ) {
-//       return null;
-//     }
-
-//     return (
-//       <Grid
-//         item
-//         xs={6}
-//         sx={{
-//           p: 1,
-//           borderRight: "1px solid rgba(0, 0, 0, 0.12)",
-//           minHeight: "100px",
-//         }}
-//       >
-//         <Typography
-//           variant="subtitle1"
-//           fontWeight="bold"
-//           sx={{ textDecoration: "underline" }}
-//           gutterBottom
-//         >
-//           Clinical Notes
-//         </Typography>
-//         <List dense disablePadding>
-//           {panelData.map((item, index) =>
-//             item && item.value ? (
-//               <span key={`note-${index}-${item.obs_id || index}`}>
-//                 <ListItem>
-//                   <ListItemText primary={item.value || ""} />
-//                 </ListItem>
-//                 {index === 0 && renderTimestamp(panelData)}
-//               </span>
-//             ) : null
-//           )}
-//         </List>
-//       </Grid>
-//     );
-//   };
-
-//   // Extract commonly used data for cleaner code
-//   const panelData = {
-//     clinicalNotes: data?.panel14?.data || [],
-//     triage: data?.panel1?.data || [],
-//     vital: data?.panel3?.data || [],
-//     primary: data?.panel8?.data || [],
-//     secondary: data?.panel9?.data || [],
-//     plan: data?.panel7?.data || [],
-//     soapier: data?.panel13?.data || [],
-//     diagnosis: data?.panel10?.data || [],
-//   };
-
-//   // Check if triage and vital sections have content
-//   const hasTriageContent = hasContent(panelData.triage);
-//   const hasVitalContent = hasContent(panelData.vital);
-//   const hasPrimaryContent = hasContent(panelData.primary);
-//   const hasClinicalNotesContent =
-//     panelData.clinicalNotes &&
-//     Array.isArray(panelData.clinicalNotes) &&
-//     panelData.clinicalNotes.length > 0 &&
-//     panelData.clinicalNotes.some((item) => item && item.value);
-
-//   // Check if we have any content for the first row
-//   const hasFirstRowContent =
-//     hasClinicalNotesContent ||
-//     hasTriageContent ||
-//     hasVitalContent ||
-//     hasPrimaryContent;
-
-//   // Check if we have any content for the second row
-//   const hasSecondaryContent: any = hasContent(panelData.secondary);
-//   const hasPlanContent = hasContent(panelData.plan);
-//   const hasSecondRowContent = hasSecondaryContent || hasPlanContent;
-
-//   // Check if we have any content for the third row
-//   const hasSoapierContent = hasContent(panelData.soapier);
-//   const hasDiagnosisContent = hasContent(panelData.diagnosis);
-//   const hasThirdRowContent = hasSoapierContent || hasDiagnosisContent;
-
-//   // If no content at all, return a message
-//   if (!hasFirstRowContent && !hasSecondRowContent && !hasThirdRowContent) {
-//     return (
-//       <ThemeProvider theme={theme}>
-//         <Box sx={{ maxWidth: 1000, mx: "auto", my: 2 }}>
-//           <Paper elevation={3} sx={{ p: 3 }}>
-//             <Typography variant="h6" align="center">
-//               No clinical data available
-//             </Typography>
-//           </Paper>
-//         </Box>
-//       </ThemeProvider>
-//     );
-//   }
-
-//   return (
-//     <ThemeProvider theme={theme}>
-//       <Box sx={{ maxWidth: 1000, mx: "auto", my: 2 }}>
-//         <Paper elevation={3}>
-//           {/* First Row - Clinical Notes and Right Column (Triage, Vital, Primary) */}
-//           {hasFirstRowContent && (
-//             <Grid container>
-//               {hasClinicalNotesContent &&
-//                 renderClinicalNotes(panelData.clinicalNotes)}
-
-//               {/* Right Column Container - Only render if any section has content */}
-//               {(hasTriageContent || hasVitalContent || hasPrimaryContent) && (
-//                 <Grid
-//                   item
-//                   xs={hasClinicalNotesContent ? 6 : 12}
-//                   sx={{ display: "flex", flexDirection: "column" }}
-//                 >
-//                   {/* Triage Information */}
-//                   {hasTriageContent && (
-//                     <Box
-//                       sx={{
-//                         p: 2,
-//                         borderBottom:
-//                           hasVitalContent || hasPrimaryContent
-//                             ? "1px solid rgba(0, 0, 0, 0.12)"
-//                             : "none",
-//                       }}
-//                     >
-//                       <Typography
-//                         variant="subtitle1"
-//                         fontWeight="bold"
-//                         sx={{ textDecoration: "underline" }}
-//                         gutterBottom
-//                       >
-//                         Triage Information 1
-//                       </Typography>
-//                       {renderGroupedItems(
-//                         Array.isArray(panelData.triage)
-//                           ? panelData.triage.flat()
-//                           : []
-//                       )}
-//                       {renderTimestamp(panelData.triage)}
-//                     </Box>
-//                   )}
-
-//                   {/* Vital Information */}
-//                   {hasVitalContent && (
-//                     <Box
-//                       sx={{
-//                         p: 2,
-//                         borderBottom: hasPrimaryContent
-//                           ? "1px solid rgba(0, 0, 0, 0.12)"
-//                           : "none",
-//                         minHeight: "80px",
-//                       }}
-//                     >
-//                       <Typography
-//                         variant="subtitle1"
-//                         fontWeight="bold"
-//                         sx={{ textDecoration: "underline" }}
-//                         gutterBottom
-//                       >
-//                         Vital Information
-//                       </Typography>
-//                       {renderGroupedItems(
-//                         Array.isArray(panelData.vital)
-//                           ? panelData.vital.flat()
-//                           : []
-//                       )}
-//                       {renderTimestamp(panelData.vital)}
-//                     </Box>
-//                   )}
-
-//                   {/* Primary Survey */}
-//                   {hasPrimaryContent && (
-//                     <Box sx={{ p: 2, minHeight: "60px" }}>
-//                       <Typography
-//                         variant="subtitle1"
-//                         fontWeight="bold"
-//                         sx={{ textDecoration: "underline", marginBottom: 0 }}
-//                       >
-//                         Primary Survey 3
-//                       </Typography>
-//                       {renderGroupedItems(
-//                         Array.isArray(panelData.primary)
-//                           ? panelData.primary.flat()
-//                           : []
-//                       )}
-//                       {renderTimestamp(panelData.primary)}
-//                     </Box>
-//                   )}
-//                 </Grid>
-//               )}
-//             </Grid>
-//           )}
-
-//           {/* Add divider between rows only if both have content */}
-//           {hasFirstRowContent && hasSecondRowContent && <Divider />}
-
-//           {/* Second Row */}
-//           {hasSecondRowContent && (
-//             <Grid container>
-//               {hasSecondaryContent ? (
-//                 <Section
-//                   title="Secondary Survey"
-//                   panelData={panelData.secondary}
-//                   borderRight={hasPlanContent}
-//                 />
-//               ) : null}
-
-//               {hasPlanContent ? (
-//                 <Section title="Plan" panelData={panelData.plan} />
-//               ) : null}
-//             </Grid>
-//           )}
-
-//           {/* Add divider between rows only if both have content */}
-//           {hasSecondRowContent && hasThirdRowContent && <Divider />}
-
-//           {/* Third Row */}
-//           {hasThirdRowContent && (
-//             <Grid container>
-//               {hasSoapierContent ? (
-//                 <Section
-//                   title="SOAPIER"
-//                   panelData={panelData.soapier}
-//                   borderRight={hasDiagnosisContent}
-//                 />
-//               ) : null}
-
-//               {hasDiagnosisContent ? (
-//                 <Section title="Diagnosis" panelData={panelData.diagnosis} />
-//               ) : null}
-//             </Grid>
-//           )}
-//         </Paper>
-//       </Box>
-//     </ThemeProvider>
-//   );
-// };
-
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Paper,
   Typography,
-  Grid,
   Box,
   List,
   ListItem,
@@ -420,6 +10,8 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import {PresentingComplaints} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
+import {GenericNotes, NotesConfig} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
 
 const theme = createTheme({
   palette: {
@@ -429,8 +21,16 @@ const theme = createTheme({
 });
 
 export const PrintClinicalNotes = (props: any) => {
+  // Check if this is being rendered for PDF (you can pass a prop or detect print media)
+  const isPdfMode = props.isPdfMode || false;
+  const [isMounted, setIsMounted] = useState(false);
+
   // Make sure we have data object
   const data = props?.data || props;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Function to render timestamp and author
   const renderTimestamp = (panelData: any) => {
@@ -445,94 +45,6 @@ export const PrintClinicalNotes = (props: any) => {
       </Typography>
     );
   };
-
-  // Function to render airway section with clinical logic
-  // const renderAirwaySection = (airwayFields: any[]) => {
-  //   // Find specific airway-related fields
-  //   const airwayPatent = airwayFields.find(f => f.name.toLowerCase().includes('airway patent'))?.value;
-  //   const airwayReasons = airwayFields.filter(f =>
-  //     f.name.toLowerCase().includes('airway reason') ||
-  //     f.name.toLowerCase().includes('tongue') ||
-  //     f.name.toLowerCase().includes('swelling')
-  //   );
-  //   const airwayInterventions = airwayFields.filter(f =>
-  //     f.name.toLowerCase().includes('airway opening intervention') ||
-  //     f.name.toLowerCase().includes('suction') ||
-  //     f.name.toLowerCase().includes('jaw thrust') ||
-  //     f.name.toLowerCase().includes('head tilt')
-  //   );
-  //   const neckCollar = airwayFields.find(f => f.name.toLowerCase().includes('neck collar'))?.value;
-  //   const headBlocks = airwayFields.find(f => f.name.toLowerCase().includes('head blocks'))?.value;
-
-  //   return (
-  //     <Box sx={{ ml: 1 }}>
-  //       {/* Airway Status */}
-  //       {airwayPatent && (
-
-  //         <>
-  //           <Typography variant="body2" sx={{ mb: 0.5 }}>
-  //             {/* Airway: {airwayPatent === 'Yes' ? 'Patent' : airwayPatent === 'No' ? 'Not Patent' : airwayPatent} */}
-  //           </Typography>
-
-  //           {/* If airway is not patent or threatened, show reasons and interventions */}
-  //           {(airwayPatent.toLowerCase() === 'no' || airwayPatent.toLowerCase() === 'threatened') && (
-  //             <>
-  //               {airwayReasons.length > 0 && (
-  //                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-  //                   {airwayPatent.toLowerCase() === 'no'
-  //                     ? 'The airway was not patent due to:'
-  //                     : 'The airway was threatened due to:'}
-  //                   {airwayReasons.map(r => r.value).join(', ')}
-  //                 </Typography>
-  //               )}
-
-  //               {airwayInterventions.length > 0 && (
-  //                 <Typography variant="body2" sx={{ mb: 0.5 }}>
-  //                   Airway Opening Intervention: {airwayInterventions.map(i => i.value).join(', ')}
-  //                 </Typography>
-  //               )}
-  //             </>
-  //           )}
-  //         </>
-  //       )}
-
-  //       {/* C-Spine Protection */}
-  //       {(neckCollar === 'Yes' || headBlocks === 'Yes') ? (
-  //         <Typography variant="body2" sx={{ mb: 0.5 }}>
-  //           C-Spine: Manual in-line stabilization applied
-  //           {neckCollar === 'Yes' && headBlocks === 'Yes'
-  //             ? ' - Neck Collar Applied and Head Blocks Applied'
-  //             : neckCollar === 'Yes'
-  //             ? ' - Neck Collar Applied'
-  //             : ' - Head Blocks Applied'
-  //           }
-  //         </Typography>
-  //       ) : (neckCollar === 'No' && headBlocks === 'No') ? (
-  //         <Typography variant="body2" sx={{ mb: 0.5 }}>
-  //           No C-spine immobilization required
-  //         </Typography>
-  //       ) : null}
-
-  //       {/* Show any other airway-related fields that don't fit the main categories */}
-  //       {airwayFields.filter(f =>
-  //         !f.name.toLowerCase().includes('airway patent') &&
-  //         !f.name.toLowerCase().includes('airway reason') &&
-  //         !f.name.toLowerCase().includes('airway opening intervention') &&
-  //         !f.name.toLowerCase().includes('neck collar') &&
-  //         !f.name.toLowerCase().includes('head blocks') &&
-  //         !f.name.toLowerCase().includes('tongue') &&
-  //         !f.name.toLowerCase().includes('swelling') &&
-  //         !f.name.toLowerCase().includes('suction') &&
-  //         !f.name.toLowerCase().includes('jaw thrust') &&
-  //         !f.name.toLowerCase().includes('head tilt')
-  //       ).map((field: any, index: number) => (
-  //         <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
-  //           {field.name}: {field.value}
-  //         </Typography>
-  //       ))}
-  //     </Box>
-  //   );
-  // };
 
   const renderAirwaySection = (airwayFields: any[]) => {
     const airwayStatus = airwayFields.find((f) =>
@@ -571,7 +83,6 @@ export const PrintClinicalNotes = (props: any) => {
         {/* Airway Status */}
         {airwayStatus && (
           <Typography variant="body2" sx={{ mb: 0.5 }}>
-            {/* Airway: {airwayStatus} */}
             Airway is{" "}
             {airwayStatus.toLowerCase() === "yes"
               ? "Patent"
@@ -789,134 +300,107 @@ export const PrintClinicalNotes = (props: any) => {
           Primary Survey
         </Typography>
 
-        <Grid container spacing={2}>
-          {/* Column 1: A & B */}
-          <Grid item xs={12} md={4}>
-            {/* A – Airway */}
-            {fields.airway.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
-                >
-                  A – Airway with C-Spine Protection
-                </Typography>
-                {renderAirwaySection(fields.airway)}
-              </>
-            )}
+        {/* A – Airway */}
+        {fields.airway.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
+            >
+              A – Airway with C-Spine Protection
+            </Typography>
+            {renderAirwaySection(fields.airway)}
+          </>
+        )}
 
-            {/* B – Breathing */}
-            {fields.breathing.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
-                >
-                  B – Breathing
-                </Typography>
-                {fields.breathing.map((field: any, index: number) => {
-                  const name = field.name?.toLowerCase();
-                  const value = field.value;
+        {/* B – Breathing */}
+        {fields.breathing.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              B – Breathing
+            </Typography>
+            {fields.breathing.map((field: any, index: number) => {
+              const name = field.name?.toLowerCase();
+              const value = field.value;
 
-                  if (name.includes("abnormal")) {
-                    return (
-                      <Typography
-                        key={index}
-                        variant="body2"
-                        sx={{ ml: 1, mb: 0.5 }}
-                      >
-                        {value?.toLowerCase() === "no"
-                          ? "Breathing is Patent"
-                          : value?.toLowerCase() === "yes"
-                            ? "Breathing is Not Patent"
-                            : "Breathing status unknown"}
-                      </Typography>
-                    );
-                  }
-
-                  return (
-                    <Typography
-                      key={index}
-                      variant="body2"
-                      sx={{ ml: 1, mb: 0.5 }}
-                    >
-                      {field.name}: {field.value}
-                    </Typography>
-                  );
-                })}
-              </>
-            )}
-          </Grid>
-
-          {/* Column 2: C & D */}
-          <Grid item xs={12} md={4}>
-            {/* C – Circulation */}
-            {fields.circulation.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
-                >
-                  C – Circulation
-                </Typography>
-                {fields.circulation.map((field: any, index: number) => (
+              if (name.includes("abnormal")) {
+                return (
                   <Typography
                     key={index}
                     variant="body2"
                     sx={{ ml: 1, mb: 0.5 }}
                   >
-                    {field.name}: {field.value}
+                    {value?.toLowerCase() === "no"
+                      ? "Breathing is Patent"
+                      : value?.toLowerCase() === "yes"
+                        ? "Breathing is Not Patent"
+                        : "Breathing status unknown"}
                   </Typography>
-                ))}
-              </>
-            )}
+                );
+              }
 
-            {/* D – Disability */}
-            {fields.disability.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
-                >
-                  D – Disability
+              return (
+                <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                  {field.name}: {field.value}
                 </Typography>
-                {fields.disability.map((field: any, index: number) => (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    sx={{ ml: 1, mb: 0.5 }}
-                  >
-                    {field.name}: {field.value}
-                  </Typography>
-                ))}
-              </>
-            )}
-          </Grid>
+              );
+            })}
+          </>
+        )}
 
-          {/* Column 3: E only */}
-          <Grid item xs={12} md={4}>
-            {/* E – Exposure/Environment */}
-            {fields.exposure.length > 0 && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold", mt: 1, mb: 0.5 }}
-                >
-                  E – Exposure/Environment
-                </Typography>
-                {fields.exposure.map((field: any, index: number) => (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    sx={{ ml: 1, mb: 0.5 }}
-                  >
-                    {field.name}: {field.value}
-                  </Typography>
-                ))}
-              </>
-            )}
-          </Grid>
-        </Grid>
+        {/* C – Circulation */}
+        {fields.circulation.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              C – Circulation
+            </Typography>
+            {fields.circulation.map((field: any, index: number) => (
+              <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                {field.name}: {field.value}
+              </Typography>
+            ))}
+          </>
+        )}
+
+        {/* D – Disability */}
+        {fields.disability.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              D – Disability
+            </Typography>
+            {fields.disability.map((field: any, index: number) => (
+              <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                {field.name}: {field.value}
+              </Typography>
+            ))}
+          </>
+        )}
+
+        {/* E – Exposure/Environment */}
+        {fields.exposure.length > 0 && (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", mt: 2, mb: 0.5 }}
+            >
+              E – Exposure/Environment
+            </Typography>
+            {fields.exposure.map((field: any, index: number) => (
+              <Typography key={index} variant="body2" sx={{ ml: 1, mb: 0.5 }}>
+                {field.name}: {field.value}
+              </Typography>
+            ))}
+          </>
+        )}
 
         {renderTimestamp(panelData)}
       </Box>
@@ -1011,49 +495,88 @@ export const PrintClinicalNotes = (props: any) => {
     );
   };
 
-  // Check if panel data has content
-  const hasContent = (panelData: any) => {
-    if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
-      return false;
 
-    // Check if there's any valid data to display
-    const flatData = Array.isArray(panelData) ? panelData.flat() : [];
-    const renderedContent = renderGroupedItems(flatData);
+    // Check if panel data has content
+    const hasContent = (panelData: any) => {
+        if (React.isValidElement(panelData)) return true;
 
-    return renderedContent !== null;
-  };
+        // Handle the new sample history object structure
+        if (panelData && typeof panelData === 'object' && !Array.isArray(panelData)) {
+            // Check if any of the sample history properties have data
+            const hasSampleHistoryData = Object.values(panelData).some(
+                (value: any) =>
+                    Array.isArray(value) && value.length > 0 ||
+                    React.isValidElement(value)
+            );
+            return hasSampleHistoryData;
+        }
 
-  // Section component to reduce repetition
-  const Section = ({ title = "", panelData = [], borderRight = false }) => {
-    if (!hasContent(panelData)) return null;
+        if (!panelData || !Array.isArray(panelData) || panelData.length === 0)
+            return false;
 
-    const flatData = Array.isArray(panelData) ? panelData.flat() : [];
+        // Check if there's any valid data to display
+        const flatData = Array.isArray(panelData) ? panelData.flat() : [];
+        const renderedContent = renderGroupedItems(flatData);
 
-    return (
-      <Grid
-        item
-        xs={6}
+        return renderedContent !== null;
+    };
+
+  // Create individual card components for masonry
+  const MasonryCard = ({
+    title,
+    children,
+    minHeight = "auto",
+  }: {
+    title: string;
+    children: React.ReactNode;
+    minHeight?: string;
+  }) => (
+    <Paper
+      elevation={isPdfMode ? 0 : 2}
+      sx={{
+        p: 2,
+        mb: 2,
+        borderRadius: isPdfMode ? 0 : 2,
+        minHeight,
+        border: isPdfMode ? "1px solid #ddd" : "none",
+        boxShadow: isPdfMode ? "none" : undefined,
+        width: "100%", // Ensure full width
+        boxSizing: "border-box",
+
+        // Print-specific styles for useReactToPrint
+        "@media print": {
+          boxShadow: "none !important",
+          borderRadius: "0 !important",
+          breakInside: "avoid",
+          pageBreakInside: "avoid",
+          marginBottom: "16px !important",
+          position: "static !important",
+          width: "100% !important",
+          left: "unset !important",
+          top: "unset !important",
+        },
+      }}
+    >
+      <Typography
+        variant="subtitle1"
+        fontWeight="bold"
         sx={{
-          p: 2,
-          ...(borderRight && { borderRight: "1px solid rgba(0, 0, 0, 0.12)" }),
+          textDecoration: "underline",
+          mb: 1,
+          "@media print": {
+            fontSize: "14px !important",
+            fontWeight: "bold !important",
+          },
         }}
       >
-        <Typography
-          variant="subtitle1"
-          fontWeight="bold"
-          sx={{ textDecoration: "underline" }}
-          gutterBottom
-        >
-          {title}
-        </Typography>
-        {renderGroupedItems(flatData)}
-        {renderTimestamp(panelData)}
-      </Grid>
-    );
-  };
+        {title}
+      </Typography>
+      {children}
+    </Paper>
+  );
 
-  // Clinical Notes section is unique, handle separately
-  const renderClinicalNotes = (panelData: any) => {
+  // Clinical Notes card
+  const renderClinicalNotesCard = (panelData: any) => {
     if (
       !panelData ||
       !Array.isArray(panelData) ||
@@ -1064,23 +587,7 @@ export const PrintClinicalNotes = (props: any) => {
     }
 
     return (
-      <Grid
-        item
-        xs={6}
-        sx={{
-          p: 1,
-          borderRight: "1px solid rgba(0, 0, 0, 0.12)",
-          minHeight: "100px",
-        }}
-      >
-        <Typography
-          variant="subtitle1"
-          fontWeight="bold"
-          sx={{ textDecoration: "underline" }}
-          gutterBottom
-        >
-          Clinical Notes
-        </Typography>
+      <MasonryCard title="Continuation Notes" minHeight="100px">
         <List dense disablePadding>
           {panelData.map((item, index) =>
             item && item.value ? (
@@ -1093,7 +600,56 @@ export const PrintClinicalNotes = (props: any) => {
             ) : null
           )}
         </List>
-      </Grid>
+          <PresentingComplaints data={panelData}/>
+
+      </MasonryCard>
+    );
+  };
+    const renderSampleHistoryCard = (panelData: any) => {
+        if (!panelData) return null;
+
+        // If panelData is a React element (JSX), just render it directly
+        if (React.isValidElement(panelData)) {
+            return (
+                <MasonryCard title="Sample History" minHeight="400px">
+                    {panelData}
+                </MasonryCard>
+            );
+        }
+
+    };
+
+
+    // Generic card for other sections
+  const renderGenericCard = (title: string, panelData: any) => {
+    if (!hasContent(panelData)) return null;
+
+    const flatData = Array.isArray(panelData) ? panelData.flat() : [];
+
+    return (
+      <MasonryCard title={title}>
+        {React.isValidElement(panelData) ? (
+          panelData
+        ) : (
+          <>
+            {renderGroupedItems(flatData)}
+            {renderTimestamp(panelData)}
+          </>
+        )}
+      </MasonryCard>
+    );
+  };
+
+  // Primary Survey card with special rendering
+  const renderPrimarySurveyCard = (panelData: any) => {
+    if (!panelData || !Array.isArray(panelData) || panelData.length === 0) {
+      return null;
+    }
+
+    return (
+      <MasonryCard title="Primary Survey" minHeight="200px">
+        {renderPrimarySurvey(panelData)}
+      </MasonryCard>
     );
   };
 
@@ -1102,48 +658,66 @@ export const PrintClinicalNotes = (props: any) => {
     clinicalNotes: data?.panel14?.data || [],
     triage: data?.panel1?.data || [],
     vital: data?.panel3?.data || [],
-    primary: data?.panel8?.data || [],
+    primary: data?.panel20?.data || [],
     secondary: data?.panel9?.data || [],
+    sample: data?.panel15?.data || [],
     plan: data?.panel7?.data || [],
     soapier: data?.panel13?.data || [],
     diagnosis: data?.panel10?.data || [],
+    patientManagementPlan: data?.panel51?.data || [],
   };
 
-  // Check if triage and vital sections have content
-  const hasTriageContent = hasContent(panelData.triage);
-  const hasVitalContent = hasContent(panelData.vital);
-  const hasPrimaryContent =
-    panelData.primary &&
-    Array.isArray(panelData.primary) &&
-    panelData.primary.length > 0;
-  const hasClinicalNotesContent =
-    panelData.clinicalNotes &&
-    Array.isArray(panelData.clinicalNotes) &&
-    panelData.clinicalNotes.length > 0 &&
-    panelData.clinicalNotes.some((item) => item && item.value);
 
-  // Check if we have any content for the first row
-  const hasFirstRowContent =
-    hasClinicalNotesContent ||
-    hasTriageContent ||
-    hasVitalContent ||
-    hasPrimaryContent;
+  // Create array of all cards that have content
+  const cards = [
+    hasContent(panelData.clinicalNotes) &&
+      renderClinicalNotesCard(panelData.clinicalNotes),
+    hasContent(panelData.triage) &&
+      renderGenericCard("Triage Information", panelData.triage),
+    hasContent(panelData.vital) &&
+      renderGenericCard("Vital Information", panelData.vital),
+      hasContent(panelData.secondary) &&
+      renderGenericCard("Secondary Survey", panelData.secondary),
+      panelData.primary && renderGenericCard("Primary Survey", panelData.primary),
+        renderPrimarySurveyCard(panelData.primary),
+      hasContent(panelData.sample) && renderSampleHistoryCard(panelData.sample),
+    hasContent(panelData.plan) && renderGenericCard("Plan", panelData.plan),
+    hasContent(panelData.soapier) &&
+      renderGenericCard("SOAPIER", panelData.soapier),
+    hasContent(panelData.diagnosis) &&
+      renderGenericCard("Diagnosis", panelData.diagnosis),
+      renderGenericCard("Patient Management Plan", panelData.patientManagementPlan),
+].filter(Boolean);
 
-  // Check if we have any content for the second row
-  const hasSecondaryContent: any = hasContent(panelData.secondary);
-  const hasPlanContent = hasContent(panelData.plan);
-  const hasSecondRowContent = hasSecondaryContent || hasPlanContent;
+  // Split cards into two columns manually
+  const leftColumn = cards.filter((_, index) => index % 2 === 0);
+  const rightColumn = cards.filter((_, index) => index % 2 === 1);
 
-  // Check if we have any content for the third row
-  const hasSoapierContent = hasContent(panelData.soapier);
-  const hasDiagnosisContent = hasContent(panelData.diagnosis);
-  const hasThirdRowContent = hasSoapierContent || hasDiagnosisContent;
-
-  // If no content at all, return a message
-  if (!hasFirstRowContent && !hasSecondRowContent && !hasThirdRowContent) {
+  // PDF-friendly layout
+  if (isPdfMode) {
     return (
       <ThemeProvider theme={theme}>
         <Box sx={{ maxWidth: 1000, mx: "auto", my: 2 }}>
+          <Paper elevation={3}>
+            {/* Render cards in a simple vertical layout for PDF */}
+            {cards.map((card, index) => (
+              <Box key={index}>
+                {card}
+
+                {index < cards.length - 1 && <Divider sx={{ my: 2 }} />}
+              </Box>
+            ))}
+          </Paper>
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
+  // If no content at all, return a message
+  if (cards.length === 0) {
+    return (
+      <ThemeProvider theme={theme}>
+        <Box sx={{ maxWidth: 1200, mx: "auto", my: 2 }}>
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h6" align="center">
               No clinical data available
@@ -1156,125 +730,47 @@ export const PrintClinicalNotes = (props: any) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ maxWidth: 1000, mx: "auto", my: 2 }}>
-        <Paper elevation={3}>
-          {/* First Row - Clinical Notes and Right Column (Triage, Vital, Primary) */}
-          {hasFirstRowContent && (
-            <Grid container>
-              {hasClinicalNotesContent &&
-                renderClinicalNotes(panelData.clinicalNotes)}
+      <Box sx={{ maxWidth: 1200, mx: "auto", my: 2, p: 2 }}>
 
-              {/* Right Column Container - Only render if any section has content */}
-              {(hasTriageContent || hasVitalContent || hasPrimaryContent) && (
-                <Grid
-                  item
-                  xs={hasClinicalNotesContent ? 6 : 12}
-                  sx={{ display: "flex", flexDirection: "column" }}
-                >
-                  {/* Triage Information */}
-                  {hasTriageContent && (
-                    <Box
-                      sx={{
-                        p: 2,
-                        borderBottom:
-                          hasVitalContent || hasPrimaryContent
-                            ? "1px solid rgba(0, 0, 0, 0.12)"
-                            : "none",
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        sx={{ textDecoration: "underline" }}
-                        gutterBottom
-                      >
-                        Triage Information
-                      </Typography>
-                      {renderGroupedItems(
-                        Array.isArray(panelData.triage)
-                          ? panelData.triage.flat()
-                          : []
-                      )}
-                      {renderTimestamp(panelData.triage)}
-                    </Box>
-                  )}
+        {/* Simple 2-column layout using CSS Grid */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 2,
+            alignItems: "start",
 
-                  {/* Vital Information */}
-                  {hasVitalContent && (
-                    <Box
-                      sx={{
-                        p: 2,
-                        borderBottom: hasPrimaryContent
-                          ? "1px solid rgba(0, 0, 0, 0.12)"
-                          : "none",
-                        minHeight: "80px",
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        sx={{ textDecoration: "underline" }}
-                        gutterBottom
-                      >
-                        Vital Information
-                      </Typography>
-                      {renderGroupedItems(
-                        Array.isArray(panelData.vital)
-                          ? panelData.vital.flat()
-                          : []
-                      )}
-                      {renderTimestamp(panelData.vital)}
-                    </Box>
-                  )}
+            // Mobile responsive
+            "@media (max-width: 600px)": {
+              gridTemplateColumns: "1fr",
+            },
 
-                  {/* Primary Survey - Now using structured format */}
-                  {hasPrimaryContent && renderPrimarySurvey(panelData.primary)}
-                </Grid>
-              )}
-            </Grid>
-          )}
+            // Print styles for useReactToPrint
+            "@media print": {
+              // display: "block !important",
+              // gridTemplateColumns: "unset !important",
+              // gap: "0 !important",
 
-          {/* Add divider between rows only if both have content */}
-          {hasFirstRowContent && hasSecondRowContent && <Divider />}
+              "& > *": {
+                // marginBottom: "16px !important",
+              },
+            },
+          }}
+        >
+          {/* {cards} */}
+          {/* Left Column */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {leftColumn}
+          </Box>
 
-          {/* Second Row */}
-          {hasSecondRowContent && (
-            <Grid container>
-              {hasSecondaryContent ? (
-                <Section
-                  title="Secondary Survey"
-                  panelData={panelData.secondary}
-                  borderRight={hasPlanContent}
-                />
-              ) : null}
+          {/* Right Column */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {rightColumn}
+          </Box>
 
-              {hasPlanContent ? (
-                <Section title="Plan" panelData={panelData.plan} />
-              ) : null}
-            </Grid>
-          )}
-
-          {/* Add divider between rows only if both have content */}
-          {hasSecondRowContent && hasThirdRowContent && <Divider />}
-
-          {/* Third Row */}
-          {hasThirdRowContent && (
-            <Grid container>
-              {hasSoapierContent ? (
-                <Section
-                  title="SOAPIER"
-                  panelData={panelData.soapier}
-                  borderRight={hasDiagnosisContent}
-                />
-              ) : null}
-
-              {hasDiagnosisContent ? (
-                <Section title="Diagnosis" panelData={panelData.diagnosis} />
-              ) : null}
-            </Grid>
-          )}
-        </Paper>
+        </Box>
       </Box>
     </ThemeProvider>
+
   );
 };

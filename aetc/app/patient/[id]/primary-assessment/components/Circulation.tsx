@@ -39,17 +39,145 @@ const form = {
   bleedingInfo: {
     name: concepts.IS_PATIENT_ACTIVELY_BLEEDING,
     label: "Is the patient actively bleeding",
+    children: [
+      {
+        concept: concepts.ACTION_DONE,
+        label: "Action Done",
+      },
+    ],
   },
   pulseInfo: {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
     label: "Does the patient have a pulse",
+    children: [
+      {
+        concept: concepts.PULSE_RATE,
+        label: "Pulse rate",
+      },
+      {
+        concept: concepts.PULSE_RATE_WEAK, // You'll need to add this concept
+        label: "Pulse strength",
+      },
+      {
+        concept: concepts.REGULAR_RHYTHM, // You'll need to add this concept
+        label: "Pulse rhythm",
+      },
+      {
+        concept: concepts.CAPILLARY_REFILL_TIME,
+        label: "Capillary refill time",
+      },
+    ],
+  },
+  mucousMembranesInfo: {
+    name: concepts.MUCOUS_MEMBRANES,
+    label: "Mucous membranes",
+    children: [
+      {
+        type: "string",
+        multiple: true,
+        concept: concepts.MUCOUS_ABNORMAL,
+        label: "Mucous Abnormal",
+      },
+    ],
+  },
+  bloodPressureMeasured: {
+    name: concepts.BLOOD_PRESSURE_MEASURED,
+    label: "Blood pressure measured",
+    children: [
+      {
+        concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
+        label: "Blood Pressure Systolic",
+      },
+      {
+        concept: concepts.DIASTOLIC_BLOOD_PRESSURE,
+        label: "Blood Pressure Diastolic",
+      },
+      {
+        name: concepts.REASON_NOT_RECORDED,
+        label: "Reason BP Is unrecordable",
+      },
+      {
+        name: concepts.DESCRIPTION,
+        label: "Reason Not Done",
+      },
+    ],
+  },
+  traumatizedInfo: {
+    name: concepts.IS_PATIENT_TRAUMATIZED,
+    label: "Is the patient injured",
+
+    children: [
+      {
+        name: concepts.IS_PELVIS_STABLE,
+        label: "Is the pelvis unstable",
+      },
+      {
+        name: concepts.IS_FEMUR_TIBIA_NORMAL,
+        label: "is the femur and tibia normal",
+        children: [
+          {
+            concept: concepts.IMAGE_PART_NAME,
+            label: "Leg Image",
+            image: true,
+            parentConcept: concepts.IS_FEMUR_TIBIA_NORMAL,
+          },
+        ],
+      },
+    ],
+  },
+  intravenousAccess: {
+    name: concepts.PATIENT_INTRAVENOUS,
+    label: "Does the patient need intravenous access",
+    children: [
+      {
+        multiple: true,
+        type: "string",
+        concept: concepts.SIZE_OF_CATHETER,
+        label: "Size of intravenous catheter",
+      },
+      {
+        multiple: true,
+        type: "string",
+        concept: concepts.CANNULATION_SITE,
+        label: "Cannulation Site",
+      },
+      {
+        multiple: true,
+        type: "string",
+        concept: concepts.DIAGRAM_CANNULATION_SITE,
+        label: "Cannulation Site",
+      },
+    ],
+  },
+  abnormalitiesInfo: {
+    name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
+    label: "Is there any other abnormalities?",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Abdomen Image",
+        image: true,
+        parentConcept: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
+      }]
+    
+  },
+  abdnomenDistention: {
+    name: concepts.HEADACHE,
+    label: "Is there abdominal distention?",
+  },
+
+  assessPeripheries: {
+    name: concepts.ASSESS_PERIPHERIES,
+    label: "Assess peripheries",
   },
 
   pulseStrength: {
+    child: true,
     name: concepts.PULSE_RATE_WEAK, // You'll need to add this concept
     label: "Pulse strength",
   },
   pulseRhythm: {
+    child: true,
     name: concepts.REGULAR_RHYTHM, // You'll need to add this concept
     label: "Pulse rhythm",
   },
@@ -58,53 +186,38 @@ const form = {
   //   label: "Pulse rate",
   // },
   bloodPressureSystolic: {
+    child: true,
     name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Systolic",
   },
   bloodPressureDiastolic: {
+    child: true,
     name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Diastolic",
   },
-  intravenousAccess: {
-    name: concepts.PATIENT_INTRAVENOUS,
-    label: "Does the patient need intravenous access",
-  },
-  traumatizedInfo: {
-    name: concepts.IS_PATIENT_TRAUMATIZED,
-    label: "Is the patient injured",
-  },
-
-  abnormalitiesInfo: {
-    name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
-    label: "Is there any other abnormalities?",
-  },
   capillaryInfo: {
+    child: true,
     name: concepts.CAPILLARY_REFILL_TIME,
     label: "Capillary refill time",
   },
   pelvisInfo: {
+    child: true,
     name: concepts.IS_PELVIS_STABLE,
     label: "Is the pelvis unstable?",
   },
-  abdnomenDistention: {
-    name: concepts.HEADACHE,
-    label: "Is there abdominal distention?",
-  },
-
-  mucousMembranesInfo: {
-    name: concepts.MUCOUS_MEMBRANES,
-    label: "Mucous membranes",
-  },
 
   catheterInfo: {
+    child: true,
     name: concepts.SIZE_OF_CATHETER,
     label: "Size of intravenous catheter",
   },
   femurAndTibiaNormalInfo: {
+    child: true,
     name: concepts.IS_FEMUR_TIBIA_NORMAL,
     label: "is the femur and tibia normal?",
   },
   bleedingActionDone: {
+    child: true,
     name: concepts.ACTION_DONE,
     label: "Action done",
   },
@@ -121,19 +234,13 @@ const form = {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
-  assessPeripheries: {
-    name: concepts.ASSESS_PERIPHERIES,
-    label: "Assess peripheries",
-  },
-  bloodPressureMeasured: {
-    name: concepts.BLOOD_PRESSURE_MEASURED,
-    label: "Blood pressure measured",
-  },
   reasonNotRecorded: {
+    child: true,
     name: concepts.REASON_NOT_RECORDED,
     label: "Reason BP Is unrecordable",
   },
   reasonNotDone: {
+    child: true,
     name: concepts.DESCRIPTION,
     label: "Reason Not Done",
   },
@@ -146,6 +253,7 @@ const form = {
     label: "Specify",
   },
   siteOfCannulation: {
+    child: true,
     name: concepts.CANNULATION_SITE,
     label: "Cannulation Site",
   },
@@ -154,6 +262,7 @@ const form = {
     label: "Cannulation Site",
   },
   pulse: {
+    child: true,
     name: concepts.PULSE_RATE,
     label: "Pulse rate",
   },
@@ -162,6 +271,7 @@ const form = {
     label: "Cannulation Site (Central Line)",
   },
 };
+export const circulationFormConfig = form;
 
 const schema = yup.object({
   [form.bleedingInfo.name]: yup
