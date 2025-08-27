@@ -10,6 +10,7 @@ import {
   formatPatientManagamentPlan,
   formatDiagnosisNotes,
   formatInvestigationPlans,
+  formatDisposition,
 } from ".";
 import {
   NotesConfig,
@@ -24,7 +25,11 @@ export const formatClinicalNotesData = (
   return [
     {
       title: "Continuation Notes",
-      content: <ContinuationNotes obs={getEncountersByType(encounters.CLINICAL_NOTES)} />,
+      content: (
+        <ContinuationNotes
+          obs={getEncountersByType(encounters.CLINICAL_NOTES)}
+        />
+      ),
     },
     {
       title: "Triage Information",
@@ -150,6 +155,13 @@ export const formatClinicalNotesData = (
             />
           ))}
         </Box>
+      ),
+    },
+    {
+      title: "Disposition Notes",
+      content: formatDisposition(
+       [ ...getEncountersByType(encounters.DISPOSITION)
+        ,...getEncountersByType(encounters.AWAITING_SPECIALTY)]
       ),
     },
   ];

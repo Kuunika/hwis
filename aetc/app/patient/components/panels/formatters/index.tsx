@@ -20,6 +20,7 @@ import {
   headAndNeckFormConfig, neurologicalFormConfig
 } from "@/app/patient/[id]/secondary-assessment/components";
 import {allergiesFormConfig, lastMealFormConfig} from "@/app/patient/[id]/medicalHistory/components";
+import { dispositionFormConfig } from "@/app/patient/[id]/disposition/components/DischargeHomeForm";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -285,6 +286,14 @@ const handleImagesObsRestructure = (children: Obs[]) => {
             };
         });
 };
+export const formatDisposition = (data: any) => {
+  return [
+    {
+      heading: "Disposition",
+      children: buildNotesObject(dispositionFormConfig, data),
+    },
+  ];
+};
 
 const buildChildren = (obs: Obs[], children: any) => {
     if (!children) return [];
@@ -390,7 +399,17 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
 
             const displayValue = config.options?.[value] ?? value;
             const topParentType = config?.type || "N/A";
-            let children = buildChildren(obs, config.children) ?? [];
+
+            let groupMemberChildren = [];
+
+            if (config.groupMembersWithLabel)
+            {
+               const parentObs: any = filterObservations(obs, config.name);
+               if(parentObs?.length > 0) {
+                groupMemberChildren = parentObs[0].children
+               }
+            }
+            let children = buildChildren([...obs, ...groupMemberChildren], config.children) ?? [];
 
             if (config.hasGroupMembers) {
                 const parentObs: any = filterObservations(obs, config.name);

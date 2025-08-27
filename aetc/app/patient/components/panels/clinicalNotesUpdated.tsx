@@ -96,6 +96,7 @@ export const ClinicalNotesUpdated = () => {
     }
     if (filterAETCState) {
       return (
+        notes.title === "Continuation Notes" ||
         notes.title === "Triage Information" ||
         notes.title === "Primary Survey" ||
         notes.title === "Secondary Survey" ||

@@ -32,20 +32,262 @@ import { getConceptSet } from "@/hooks/getConceptSet";
 import { useServerTime } from "@/contexts/serverTimeContext";
 import { getServiceAreas } from "@/hooks/getServiceAreas";
 
-const followUpOptions = [
-  { id: concepts.HEALTH_CENTER, label: "Health Center" },
-  { id: concepts.SPECIALIST_CLINIC, label: "Specialist Clinic" },
-  { id: concepts.DISTRICT_HOSPITAL, label: "District Hospital" },
-];
+export const dispositionFormConfig = {
+  dischargeHome: {
+    name: concepts.DISCHARGE_HOME,
+    label: "Discharge home",
+    groupMembersWithLabel: true,
+    type: "string",
+    children: [
+      { concept: concepts.DISCHARGE_PLAN, label: "Discharge Plan" },
+      {
+        concept: concepts.FOLLOWUP_PLAN,
+        label: "Follow-Up Plan",
+        children: [
+          { concept: concepts.FOLLOWUP_DETAILS, label: "Follow-Up Facility" },
+          {
+            concept: concepts.SPECIALIST_CLINIC,
+            label: "Clinics",
+          },
+        ],
+      },
+      {
+        concept: concepts.HOME_CARE_INSTRUCTIONS,
+        label: "Home Care Instructions",
+      },
+      { concept: concepts.DISCHARGE_NOTES, label: "Discharge Notes" },
+
+      // { concept: concepts.OTHER_SERVICE_AREA,
+      //   label:"Other Service Area"
+      // }
+    ],
+  },
+  deathOutcome: {
+    name: concepts.DEATH,
+    label: "Death",
+    groupMembersWithLabel: true,
+    type: "string",
+    children: [
+      {
+        concept: concepts.CAUSE_OF_DEATH,
+        label: "Cause of Death",
+      },
+      {
+        concept: concepts.FAMILY_INFORMED,
+        label: "Family Informed",
+      },
+      {
+        concept: concepts.RELATIONSHIP_TO_DECEASED,
+        label: "Relationship to Deceased",
+      },
+      {
+        concept: concepts.MORTUARY,
+        label: "Mortuary",
+      },
+      {
+        concept: concepts.LAST_OFFICE_CONDUCTED,
+        label: "Last Office Conducted",
+      },
+      {
+        concept: concepts.NAME_OF_HEALTH_WORKER_WHO_CONDUCTED_LAST_OFFICE,
+        label: "Name of Health Worker Who Conducted Last Office",
+      },
+      {
+        concept: concepts.DATE_OF_LAST_OFFICE,
+        label: "Date of Last Office",
+      },
+    ],
+  },
+  absconded: {
+    name: concepts.ABSCONDED,
+    label: "Absconded",
+    groupMembersWithLabel: true,
+    type: "string",
+    children: [
+      {
+        concept: concepts.LAST_SEEN_LOCATION,
+        label: "Last Seen Location",
+      },
+      {
+        concept: concepts.DATE_OF_ABSCONDING,
+        label: "Date of Absconding",
+      },
+      {
+        concept: concepts.TIME_OF_ABSCONDING,
+        label: "Time of Absconding",
+      },
+    ],
+  },
+  admission: {
+    name: concepts.ADMISSION,
+    groupMembersWithLabel: true,
+    label: "Admission",
+    type: "string",
+    children: [
+      {
+        concept: concepts.WARD,
+        label: "Ward",
+      },
+      {
+        concept: concepts.BED_NUMBER,
+        label: "Bed number",
+      },
+      {
+        concept: concepts.REASON_FOR_ADMISSION,
+        label: "reason for admission",
+      },
+      {
+        concept: concepts.SPECIALITY_DEPARTMENT,
+        label: "Speciality Department",
+      },
+    ],
+  },
+  awaitingSpeciaty: {
+    name: concepts.AWAITING_SPECIALITY_REVIEW,
+    label: "Awaiting specialty review",
+    groupMembersWithLabel: true,
+    type: "string",
+    children: [
+      {
+        concept: concepts.SPECIALITY_DEPARTMENT,
+        label: "Speciality Department",
+      },
+      {
+        concept: concepts.REASON_FOR_REQUEST,
+        label: "Reason for Request",
+      },
+      {
+        concept: concepts.DATE,
+        label: "Date",
+      },
+    ],
+  },
+  refusedTreatment: {
+    name: concepts.REFUSED_HOSPITAL_TREATMENT,
+    label: "Refused Hospital Treatment",
+    type: "string",
+    groupMembersWithLabel: true,
+    children: [
+      {
+        concept: concepts.REASON_FOR_REFUSAL,
+        label: "Reason for refusal",
+      },
+      {
+        concept: concepts.PLANS_TO_RETURN_FOR_TREATMENT,
+        label: "Plans to return for treatment",
+      },
+      {
+        concept: concepts.DATE_OF_REFUSAL,
+
+        label: "Date of refusal",
+      },
+      {
+        concept: concepts.WITNESS_NAME,
+        label: "Witness name",
+      },
+    ],
+  },
+  transferOut: {
+    name: concepts.TRANSFER_OUT,
+    label: " Transfer Out",
+    groupMembersWithLabel: true,
+    children: [
+      { concept: concepts.FACILITY_NAME, label: "Facility Name" },
+      { concept: concepts.REASON_FOR_TRANSFER, label: "Reason for Transfer" },
+      // { concept: concepts.TRANSFER_NOTES, label: "Transfer Notes" },
+    ],
+  },
+};
+
+export const mapDischargeHomeToPayload = (values: any, ServerTime: any) => {
+  const currentDateTime = ServerTime.getServerTimeString();
+
+  return {
+    encounterType: encounters.DISPOSITION,
+    encounterDatetime: currentDateTime,
+    obs: {
+      concept: concepts.DISCHARGE_HOME,
+      value: concepts.DISCHARGE_HOME,
+      obsDatetime: currentDateTime,
+      groupMembers: [
+        {
+          concept: concepts.DISCHARGE_PLAN,
+          value: values.dischargePlan,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.FOLLOWUP_PLAN,
+          value: values.followUpPlan,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.HOME_CARE_INSTRUCTIONS,
+          value: values.homeCareInstructions,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.FOLLOWUP_DETAILS,
+          value: values.followUpDetails,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.DISCHARGE_NOTES,
+          value: values.dischargeNotes,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.SPECIALIST_CLINIC,
+          value: values.specialistClinic || "",
+          obsDatetime: currentDateTime,
+        },
+      ],
+    },
+  };
+};
+
+export const mapDeathToPayload = (values: any, ServerTime: any) => {
+  const currentDateTime = ServerTime.getServerTimeString();
+
+  return {
+    encounterType: encounters.DISPOSITION,
+    encounterDatetime: currentDateTime,
+    obs: {
+      concept: concepts.DEATH,
+      value: concepts.DEATH,
+      obsDatetime: currentDateTime,
+      groupMembers: [
+        {
+          concept: concepts.CAUSE_OF_DEATH,
+          value: values.causeOfDeath,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.MORTUARY,
+          value: values.mortuary,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.LAST_OFFICE_CONDUCTED,
+          value: values.lastOfficeConducted,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.NAME_OF_HEALTH_WORKER_WHO_CONDUCTED_LAST_OFFICE,
+          value: values.healthWorkerName,
+          obsDatetime: currentDateTime,
+        },
+        {
+          concept: concepts.DATE_OF_LAST_OFFICE,
+          value: values.lastOfficeDate,
+          obsDatetime: currentDateTime,
+        },
+      ],
+    },
+  };
+};
 
 // Define validationSchema outside the component
 const validationSchema = Yup.object({
-  // dischargePlan: Yup.string().required("Discharge Plan is required"),
-  // followUpPlan: Yup.string().required("Follow-Up Plan is required"),
-  // homeCareInstructions: Yup.string().required(
-  //     "Home Care Instructions are required"
-  // ),
-  // dischargeNotes: Yup.string().required("Discharge Notes are required"),
   specialistClinic: Yup.string().when("followUpPlan", {
     is: (followUpPlan: string) => followUpPlan === concepts.YES,
     then: (schema) => schema,
