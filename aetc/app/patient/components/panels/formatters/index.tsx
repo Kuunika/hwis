@@ -11,7 +11,6 @@ import {
   exposureFormConfig,
 } from "@/app/patient/[id]/primary-assessment/components";
 import { soapierFormConfig } from "@/app/patient/[id]/soap/components/soapForm";
-import { getObservations } from "@/helpers";
 import { nonPharmacologicalFormConfig } from "@/app/patient/[id]/patient-management-plan/components/forms/nonPharmacologicalForm";
 import {
   abdomenAndPelvisFormConfig,
@@ -20,6 +19,8 @@ import {
   headAndNeckFormConfig, neurologicalFormConfig
 } from "@/app/patient/[id]/secondary-assessment/components";
 import {allergiesFormConfig, lastMealFormConfig} from "@/app/patient/[id]/medicalHistory/components";
+import { dispositionFormConfig } from "@/app/patient/[id]/disposition/components/DischargeHomeForm";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
 
 export const formatPresentingComplaints = (
   data: Obs[]
@@ -27,7 +28,11 @@ export const formatPresentingComplaints = (
   const items = data?.map((item) => {
     return { item: item?.value };
   });
-  return { heading: "Presenting Complaints", children: items };
+  return {
+    heading: "Presenting Complaints",
+    children: items,
+    user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+  };
 };
 
 export const formatVitals = (data: Obs[]): ClinicalNotesDataType[] => {
@@ -40,18 +45,24 @@ export const formatVitals = (data: Obs[]): ClinicalNotesDataType[] => {
   });
 
   return [
-    { heading: "Vitals", children: items },
+    {
+      heading: "Vitals",
+      children: items,
+      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+    },
     {
       heading: "Triage Result",
       children: [
         { item: getObservationValue(data, concepts.TRIAGE_RESULT) || "N/A" },
       ],
+      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
     },
     {
       heading: "Patient Care Area",
       children: [
         { item: getObservationValue(data, concepts.CARE_AREA) || "N/A" },
       ],
+      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
     },
   ];
 };
@@ -63,26 +74,32 @@ export const formatPrimarySurvey = (data: {
   disabilityObs: Obs[];
   exposureObs: Obs[];
 }): ClinicalNotesDataType[] => {
+
   return [
     {
       heading: "Airway",
       children: buildNotesObject(airwayFormConfig, data.airwayObs),
+      user: `${data.airwayObs[0]?.created_by} ${getHumanReadableDateTime(data.airwayObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Breathing",
       children: buildNotesObject(breathingFormConfig, data.breathingObs),
+      user: `${data.breathingObs[0]?.created_by} ${getHumanReadableDateTime(data.breathingObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Circulation",
       children: buildNotesObject(circulationFormConfig, data.circulationObs),
+      user: `${data.circulationObs[0]?.created_by} ${getHumanReadableDateTime(data.circulationObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Disability",
       children: buildNotesObject(disabilityFormConfig, data.disabilityObs),
+      user: `${data.disabilityObs[0]?.created_by} ${getHumanReadableDateTime(data.disabilityObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Exposure",
       children: buildNotesObject(exposureFormConfig, data.exposureObs),
+      user: `${data.exposureObs[0]?.created_by} ${getHumanReadableDateTime(data.exposureObs[0]?.obs_datetime)}`,
     },
   ];
 };
@@ -93,8 +110,12 @@ export const formatPatientManagamentPlan = (data: {
   return [
     {
       heading: "Non-Pharmacological",
-      children: buildNotesObject(nonPharmacologicalFormConfig, data.nonPharmalogical),
-    }  
+      children: buildNotesObject(
+        nonPharmacologicalFormConfig,
+        data.nonPharmalogical
+      ),
+      user: `${data.nonPharmalogical[0]?.created_by} ${getHumanReadableDateTime(data.nonPharmalogical[0]?.obs_datetime)}`,
+    },
   ];
 };
 
@@ -109,27 +130,39 @@ export const formatSecondarySurvey = (data: {
   return [
     {
       heading: "General Information",
-      children: buildNotesObject(generalInformationFormConfig, data.generalInformationObs),
+      children: buildNotesObject(
+        generalInformationFormConfig,
+        data.generalInformationObs
+      ),
+      user: `${data.generalInformationObs[0]?.created_by} ${getHumanReadableDateTime(data.generalInformationObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Head and Neck",
       children: buildNotesObject(headAndNeckFormConfig, data.headAndNeckObs),
+      user: `${data.headAndNeckObs[0]?.created_by} ${getHumanReadableDateTime(data.headAndNeckObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Chest",
       children: buildNotesObject(chestFormConfig, data.chestObs),
+      user: `${data.chestObs[0]?.created_by} ${getHumanReadableDateTime(data.chestObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Abdomen and Pelvis",
-      children: buildNotesObject(abdomenAndPelvisFormConfig, data.abdomenAndPelvisObs),
+      children: buildNotesObject(
+        abdomenAndPelvisFormConfig,
+        data.abdomenAndPelvisObs
+      ),
+      user: `${data.abdomenAndPelvisObs[0]?.created_by} ${getHumanReadableDateTime(data.abdomenAndPelvisObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Extremities",
       children: buildNotesObject(extremitiesFormConfig, data.extremitiesObs),
+      user: `${data.extremitiesObs[0]?.created_by} ${getHumanReadableDateTime(data.extremitiesObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Neurological",
       children: buildNotesObject(neurologicalFormConfig, data.neurologicalObs),
+      user: `${data.neurologicalObs[0]?.created_by} ${getHumanReadableDateTime(data.neurologicalObs[0]?.obs_datetime)}`,
     },
   ];
 };
@@ -144,41 +177,54 @@ export const formatSampleHistory = (data: {
   return [
     {
       heading: "Presenting Complaints",
-      children: buildNotesObject(generalInformationFormConfig, data.presentingComplaintsObs),
+      children: buildNotesObject(
+        generalInformationFormConfig,
+        data.presentingComplaintsObs
+      ),
+      user: `${data.presentingComplaintsObs[0]?.created_by} ${getHumanReadableDateTime(data.presentingComplaintsObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Allergies",
       children: buildNotesObject(allergiesFormConfig, data.allergiesObs),
+      user: `${data.allergiesObs[0]?.created_by} ${getHumanReadableDateTime(data.allergiesObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Medications",
       children: buildNotesObject(chestFormConfig, data.medicationsObs),
+      user: `${data.medicationsObs[0]?.created_by} ${getHumanReadableDateTime(data.medicationsObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Existing Conditions",
-      children: buildNotesObject(abdomenAndPelvisFormConfig, data.existingConditionsObs),
+      children: buildNotesObject(
+        abdomenAndPelvisFormConfig,
+        data.existingConditionsObs
+      ),
+      user: `${data.existingConditionsObs[0]?.created_by} ${getHumanReadableDateTime(data.existingConditionsObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Last Meal",
       children: buildNotesObject(lastMealFormConfig, data.lastMealObs),
+      user: `${data.lastMealObs[0]?.created_by} ${getHumanReadableDateTime(data.lastMealObs[0]?.obs_datetime)}`,
     },
     {
       heading: "Events",
       children: buildNotesObject(neurologicalFormConfig, data.eventsObs),
+      user: `${data.eventsObs[0]?.created_by} ${getHumanReadableDateTime(data.eventsObs[0]?.obs_datetime)}`,
     },
   ];
 };
 
 
-export const formatSoapierNotes = (data: any) => {
+export const formatSoapierNotes = (data: Obs[]) => {
   return [
     {
       heading: "Soapier Notes",
       children: buildNotesObject(soapierFormConfig, data),
+      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
     },
   ];
 };
-export const formatDiagnosisNotes = (data: any) => {
+export const formatDiagnosisNotes = (data: Obs[]) => {
 
   const diagnosisNotesConfig = {
     diagnosis: {
@@ -206,6 +252,7 @@ export const formatDiagnosisNotes = (data: any) => {
     {
       heading: "Diagnosis Notes",
       children: buildNotesObject(diagnosisNotesConfig, data),
+      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
     },
   ];
 };
@@ -227,21 +274,6 @@ export const formatInvestigationPlans = (data: Obs[]) => {
 
 
 }
-// export const formatManagementPlan = (data: {
-//     nonPharmaObs: Obs[];
-//     careAreaObs: Obs[];
-// }): ClinicalNotesDataType[] => {
-//     return [
-//         {
-//             heading: "Non Pharmacological",
-//             children: buildNotesObject(NonPharmacologicalFormConfig, data.nonPharmaObs),
-//         },
-//         {
-//             heading: "Patient Care Area",
-//             children: buildNotesObject(careAreaConfig, data.careAreaObs),
-//         },
-//     ];
-// };
 export const formatManagementPlan  = (
     data: Obs[]
 ): ClinicalNotesDataType => {
@@ -285,7 +317,15 @@ const handleImagesObsRestructure = (children: Obs[]) => {
             };
         });
 };
-
+export const formatDisposition = (data: Obs[]) => {
+  return [
+    {
+      heading: "Disposition",
+      children: buildNotesObject(dispositionFormConfig, data),
+      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+    },
+  ];
+};
 
 const buildChildren = (obs: Obs[], children: any) => {
     if (!children) return [];
@@ -391,14 +431,24 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
 
             const displayValue = config.options?.[value] ?? value;
             const topParentType = config?.type || "N/A";
-            let children = buildChildren(obs, config.children) ?? [];
+
+            let groupMemberChildren = [];
+
+            if (config.groupMembersWithLabel)
+            {
+               const parentObs: any = filterObservations(obs, config.name);
+               if(parentObs?.length > 0) {
+                groupMemberChildren = parentObs[0]?.children
+               }
+            }
+            let children = buildChildren([...obs, ...groupMemberChildren], config.children) ?? [];
 
             if (config.hasGroupMembers) {
                 const parentObs: any = filterObservations(obs, config.name);
                 if (parentObs?.length > 0) {
                     children = [
                         ...children,
-                        ...parentObs[0].children
+                        ...parentObs[0]?.children
                             .filter((child: any) => child.value) // only keep ones with values
                             .map((child: any) => ({
                                 item: child.value,
@@ -438,70 +488,3 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
             return result;
         });
 };
-
-
-
-
-// export const formatPrimarySurvey = (data: {
-//   airwayObs: Obs[];
-//   breathingObs: Obs[];
-//   circulationObs: Obs[];
-//   disabilityObs: Obs[];
-//   exposureObs: Obs[];
-// }): ClinicalNotesDataType[] => {
-//   const formatConfig = (
-//     key: keyof typeof airwayFormConfig,
-//     config = airwayFormConfig[key]
-//   ): any => {
-//     const value = getObservationValue(data.airwayObs, config.name);
-//     const displayValue = config.options?.[value] ?? value ?? "N/A";
-
-//     const result: any = {
-//       item: { [config.label]: displayValue },
-//     };
-
-//     // Recursively format children
-//     const directChildren = config.children ?? [];
-//     const nestedChildren = Object.entries(airwayFormConfig)
-//       .filter(([_, v]) => v.child && v.name && v.name === config.name)
-//       .map(([k]) => k as keyof typeof airwayFormConfig);
-
-//     const allChildren = [
-//       ...directChildren
-//         .map((child: any) => {
-//           const obs = filterObservations(data.airwayObs, child.concept);
-//           if (child?.type === "string") {
-//             return {
-//               item: child.label,
-//               children: obs?.map((ob) => ({
-//                 item: ob?.value ?? "N/A",
-//               })),
-//             };
-//           } else {
-//             return obs?.map((ob) => ({
-//               item: { [child.label]: ob?.value ?? "N/A" },
-//             }));
-//           }
-//         })
-//         .flat(),
-
-//       ...nestedChildren.map((childKey) =>
-//         formatConfig(childKey, airwayFormConfig[childKey])
-//       ),
-//     ].filter(Boolean);
-
-//     if (allChildren.length > 0) {
-//       result.children = allChildren;
-//     }
-
-//     return result;
-//   };
-
-//   const topLevelKeys = Object.keys(airwayFormConfig).filter(
-//     (key) => !airwayFormConfig[key as keyof typeof airwayFormConfig].child
-//   ) as Array<keyof typeof airwayFormConfig>;
-
-//   const items = topLevelKeys.map((key) => formatConfig(key));
-
-//   return [{ heading: "Airway", children: items }];
-// };

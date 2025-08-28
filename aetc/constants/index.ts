@@ -243,27 +243,27 @@ export const concepts = {
   ONCOLOGY: "Oncology",
   WARD: "Ward",
   TWO_A_ONCOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
-    "Two A Oncology Ward General Ward High Dependency Unit",
-  TWO_B_RENAL_AND_DERMATOLOGY_WARD: "Two B Renal And Dermatology Ward",
-  SIX_A_FEMALE_ORTHOPAEDIC_WARD: "Six A Female Orthopaedic Ward",
+    "2A Oncology Ward General Ward High Dependency Unit",
+  TWO_B_RENAL_AND_DERMATOLOGY_WARD: "2B Renal And Dermatology Ward",
+  SIX_A_FEMALE_ORTHOPAEDIC_WARD: "6A Female Orthopaedic Ward",
   FOUR_A_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
-    "Four A Female Medical Ward General Ward High Dependency Unit",
+    "4A Female Medical Ward General Ward High Dependency Unit",
   GYNECOLOGY_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
     "Gynecology Ward General Ward High Dependency Unit",
   LABOUR_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
     "Labour Ward General Ward High Dependency Unit",
   THREE_B_FEMALE_MEDICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
-    "Three B Female Medical Ward General Ward High Dependency Unit",
-  THREE_A_TB_WARD: "Three A Tb Ward",
+    "3B Female Medical Ward General Ward High Dependency Unit",
+  THREE_A_TB_WARD: "3A Tb Ward",
   THREE_A_HDRU_HIGH_DEPENDENCY_RESPIRATORY_UNIT:
-    "Three A Hdru High Dependency Respiratory Unit",
+    "3A Hdru High Dependency Respiratory Unit",
   FIVE_A_MALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
-    "Five A Male Surgical Ward General Ward High Dependency Unit",
+    "5A Male Surgical Ward General Ward High Dependency Unit",
   FIVE_B_FEMALE_SURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
-    "Five B Female Surgical Ward General Ward High Dependency Unit",
-  FIVE_B_ORTHOPAEDIC_WARD: "Five B Orthopaedic Ward",
+    "5B Female Surgical Ward General Ward High Dependency Unit",
+  FIVE_B_ORTHOPAEDIC_WARD: "5B Orthopaedic Ward",
   FIVE_B_NEUROSURGICAL_WARD_GENERAL_WARD_HIGH_DEPENDENCY_UNIT:
-    "Five B Neurosurgical Ward General Ward High Dependency Unit",
+    "5B Neurosurgical Ward General Ward High Dependency Unit",
   ONE_A_LABOUR_WARD: "1A Labour ward",
   MAIN_LABOUR_WARD: "Main Labour ward",
   ANTENATAL_WARD: "Antenatal ward",

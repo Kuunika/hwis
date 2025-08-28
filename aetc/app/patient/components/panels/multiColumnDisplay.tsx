@@ -9,6 +9,7 @@ interface Child {
 export interface ClinicalNotesDataType {
   heading?: string | null;
   children?: Child | Child[] | null | undefined;
+  user?: string;
 }
 
 // Recursive children renderer
@@ -69,22 +70,24 @@ export const MultiColumnNotes: React.FC<MultiColumnNotesProps> = ({
           display: "grid",
           gridTemplateColumns: `repeat(${columns}, 1fr)`,
           gap: "1rem",
-          border: "1px solid #ddd",
         }}
       >
         {Array.from({ length: columns }).map((_, colIdx) => (
-          <div
-            key={colIdx}
-            style={{
-              padding: "0 1rem",
-              borderLeft: colIdx > 0 ? "1px solid #ddd" : "none",
-            }}
-          >
+          <div key={colIdx}>
             {data
               .filter((_, idx) => idx % columns === colIdx)
               .map((sectionGroup, idx) => (
-                <div key={idx} style={{ marginBottom: "2rem" }}>
-                  {/* Section title inside the column */}
+                <div
+                  key={idx}
+                  style={{
+                    marginBottom: "2rem",
+                    background: "#fff",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                    padding: "1rem",
+                  }}
+                >
+                  {/* Section title inside the card */}
                   <h4 style={{ marginBottom: "0.5rem" }}>
                     <strong>{sectionGroup.title}</strong>
                   </h4>
@@ -94,11 +97,32 @@ export const MultiColumnNotes: React.FC<MultiColumnNotesProps> = ({
                     <>
                       {Array.isArray(sectionGroup.content) ? (
                         sectionGroup.content.map((section, sIdx) => (
-                          <div key={sIdx} style={{ marginBottom: "1rem" }}>
+                          <div
+                            key={sIdx}
+                            style={{
+                              marginBottom: "1rem",
+                              padding: "0.75rem",
+                              background: "#f9f9f9",
+                              borderRadius: "6px",
+                            }}
+                          >
                             <strong>
                               - {section?.heading || "Untitled Section"}
                             </strong>
                             <RenderChildren children={section?.children} />
+                            {section.user && (
+                              <div
+                                style={{
+                                  color: "#7f8c8d",
+                                  fontSize: "14px",
+                                  letterSpacing: "0.2px",
+                                  marginTop: "8px",
+                                  fontStyle: "italic",
+                                }}
+                              >
+                                ~ {section.user}
+                              </div>
+                            )}
                           </div>
                         ))
                       ) : (

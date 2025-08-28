@@ -16,14 +16,14 @@ import { Obs } from "@/interfaces";
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-// import { PrescribedMedicationList } from "../../[id]/disposition/components/prescribedMedicationList";
 
 type Prop = {
   onClose: () => void;
   open: boolean;
+  initialNotes?: any
 };
 
-export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
+export const PatientInfoPrintDialog = ({ onClose, open, initialNotes }: Prop) => {
   const { params } = useParameters();
   const [diagnosis, setDiagnosis] = useState<Obs[]>([]);
   const [presentingComplaints, setPresentingComplaints] = useState<Obs[]>([]);
@@ -39,7 +39,6 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
     clinic: "",
     homeCareInstructions: "",
   });
-  // const [prescribedMedicationRows, setPrescribedMedicationRows] = useState<Array<any>>([]);
 
   const { data: presentingComplaintsData } = getPatientsEncounters(
     params?.id as string,
@@ -84,6 +83,10 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
 
   useEffect(() => {
+    if (initialNotes) {
+      setNotes(initialNotes);
+      return
+    }
     if (disposition) {
       const dischargedOb = disposition
         .filter((d) => d.visit_id == selectedVisit.id)[0]
@@ -117,7 +120,6 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
       (async () => {
         const clinicConcept = await getConceptFromCacheOrFetch(clinic);
-
         setNotes({
           dischargeNotes,
           dischargePlan,

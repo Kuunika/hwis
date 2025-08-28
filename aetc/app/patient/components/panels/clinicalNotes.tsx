@@ -46,11 +46,8 @@ import {
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { DisplayInformation } from "./displayInformation";
 import  { formatDiagnosisNotes, formatInvestigationPlans, formatPatientManagamentPlan, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals, formatSecondarySurvey } from "./formatters";
-import GroupedResultsTable from "./tabularDisplayInformation";
 import ResultsTable from "./tabularDisplayInformation";
 import { MultiColumnNotes } from "./multiColumnDisplay";
-import {  DownloadClinicalNotesPDF } from "./pdfClinicalNotes";
-
 
 import {PresentingComplaints} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
 import {GenericNotes, NotesConfig} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
@@ -1137,12 +1134,12 @@ export const ClinicalNotes = () => {
               data={notesData}
             /> */}
 
-            <MultiColumnNotes
+           {  /*<MultiColumnNotes
               columns={2}
               data={notesData}
             />
-
-            {/* <PrintClinicalNotes data={encounterData} /> */}
+*/}
+            <PrintClinicalNotes data={encounterData} />
           </div>
         )}
 

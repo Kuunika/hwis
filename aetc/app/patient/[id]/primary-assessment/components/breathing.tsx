@@ -35,7 +35,7 @@ import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 import { useServerTime } from "@/contexts/serverTimeContext";
-import { group } from "console";
+
 
 const form = {
   isPatientBreathing: {
