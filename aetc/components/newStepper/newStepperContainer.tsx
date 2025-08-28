@@ -71,6 +71,7 @@ interface IProps {
   onBack?: () => void;
   showSubmittedStatus?: boolean;
   allowPanelActiveOnClick?: boolean;
+  backButtonProfileText?:string
 }
 
 export function NewStepperContainer({
@@ -82,6 +83,7 @@ export function NewStepperContainer({
   onBack,
   showSubmittedStatus = false,
   allowPanelActiveOnClick = true,
+  backButtonProfileText = "Back to Profile",
 }: IProps) {
   const { patientId, activeVisitId } = getActivePatientDetails();
   const { data, isLoading, isRefetching } = getPatientsEncounters(
@@ -196,7 +198,7 @@ export function NewStepperContainer({
                 textAlign: "left",
               }}
             >
-              Back to Profile
+              {backButtonProfileText}
             </MainTypography>
           </WrapperBox>
 

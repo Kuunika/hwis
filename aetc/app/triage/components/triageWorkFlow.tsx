@@ -504,6 +504,7 @@ export default function TriageWorkFlow() {
           active={activeStep}
           onBack={() => navigateBack()}
           allowPanelActiveOnClick={false}
+          backButtonProfileText="Back to triage list"
         >
           <PresentingComplaintsForm
             getFormValues={setPresentingComplaints}
