@@ -28,7 +28,6 @@ export const PatientInfoTab = () => {
         label="Full Name"
         value={`${patient?.given_name} ${patient?.family_name}`}
       />
-      <LabelValue label="ID" value={`${patient?.identifiers[0]?.identifier}`} />
       <LabelValue label="ID" value={patient?.identifiers[0]?.identifier ?? ""} />
       <LabelValue
         label="Age"

@@ -70,6 +70,7 @@ interface IProps {
   setActive?: (value: any) => void;
   onBack?: () => void;
   showSubmittedStatus?: boolean;
+  allowPanelActiveOnClick?: boolean;
 }
 
 export function NewStepperContainer({
@@ -80,11 +81,13 @@ export function NewStepperContainer({
   setActive,
   onBack,
   showSubmittedStatus = false,
+  allowPanelActiveOnClick = true,
 }: IProps) {
   const { patientId, activeVisitId } = getActivePatientDetails();
   const { data, isLoading, isRefetching } = getPatientsEncounters(
     patientId as string
   );
+  const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set());
 
   const filteredChildren = children.filter((item) => item !== false);
 
@@ -139,6 +142,10 @@ export function NewStepperContainer({
       setEncounterTimes(updatedTimes);
     }
   }, [data, steps, showSubmittedStatus]);
+
+  useEffect(() => {
+    setVisitedSteps((prev) => new Set(prev).add(active));
+  }, [active]);
 
   return (
     <MainGrid container spacing={5}>
@@ -207,7 +214,11 @@ export function NewStepperContainer({
                   borderBottom: "solid 0.2ch #B3B3B3",
                 },
               }}
-              onChange={() => setActive && setActive(key)}
+              onChange={() => {
+                (allowPanelActiveOnClick || visitedSteps.has(key)) &&
+                  setActive &&
+                  setActive(key);
+              }}
               expanded={key === active}
               key={key}
             >
