@@ -97,8 +97,6 @@ function DispositionFeature() {
     }
   };
 
-  console.log({initialNotes});
-
   return (
     <>
       <PatientInfoTab />

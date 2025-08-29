@@ -224,14 +224,14 @@ const TopBarComponents = ({
         }}
       />
 
-      {handleSwitchChange && showSwitch && (
+      {/* {handleSwitchChange && showSwitch && (
         <FormControlLabel
           control={
             <Switch onChange={handleSwitchChange} name="" size="medium" />
           }
           label="Show only patients registered today"
         />
-      )}
+      )} */}
     </Box>
   );
 };
