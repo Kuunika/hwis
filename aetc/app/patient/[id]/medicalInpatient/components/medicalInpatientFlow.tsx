@@ -2,12 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { NewStepperContainer } from "@/components";
-import { PastMedicalHistory, PresentingComplaints } from ".";
+// import { 
+//   PastMedicalHistory, 
+//   PresentingComplaints,
+//   PastSurgicalHistory,
+//   AllergyHistory,
+//   IntoxicationHistory,
+//   SocialHistory,
+//   FamilyHistory
+// } from ".";
+import { PresentingComplaints } from "./presentingComplaints";
+import { PastMedicalHistory } from "./pastMedicalHistory";
+import { PastSurgicalHistory } from "./pastSurgicalHistory";
+import { AllergyHistory } from "./allergyHistory";
+import { IntoxicationHistory } from "./intoxicationHistory";
+import { SocialHistory } from "./socialHistory";
+import { FamilyHistory } from "./familyHistory";
 import { useNavigation, useSubmitEncounter } from "@/hooks";
 import { DrugList } from "./drugList";
 import { PhysicalExamination } from "./physicalExamination";
 import { DifferentialDiagnosis } from "./differentialDiagnosis";
-import { ReviewOfSystems } from "./reviewOfSystems"; // <-- import your new form
+import { ReviewOfSystems } from "./reviewOfSystems";
 
 import { encounters } from "@/constants";
 import { Investigations } from "./investigations";
@@ -34,7 +49,27 @@ export const MedicalInPatientFlow = () => {
     },
     {
       id: 2,
-      label: "Past medical history",
+      label: "Past Medical History",
+    },
+    {
+      id: 3,
+      label: "Past Surgical History",
+    },
+    {
+      id: 4,
+      label: "Allergy",
+    },
+    {
+      id: 5,
+      label: "Intoxication",
+    },
+    {
+      id: 6,
+      label: "Social History",
+    },
+    {
+      id: 7,
+      label: "Family History",
     },
     {
       id: 23,
@@ -44,17 +79,19 @@ export const MedicalInPatientFlow = () => {
       id: 21,
       label: "Differential Diagnosis",
     },
-    { id: 25, label: "Review of Systems" }, // <-- added here
-
+    {
+      id: 25,
+      label: "Review of Systems"
+    },
     {
       id: 24,
-      label: "Investigation Plan",
+      label: "Investigation",
     },
   ];
 
   useEffect(() => {
     if (isSuccess) {
-      setActiveStep(5);
+      setActiveStep(11);
     }
   }, [isSuccess]);
 
@@ -62,28 +99,55 @@ export const MedicalInPatientFlow = () => {
     setObs(values);
     setActiveStep(1);
   };
+
   const handleDrug = (values: any) => {
     setObs((obs) => [...obs, ...values]);
     setActiveStep(2);
   };
+
   const handlePastMedical = (values: any) => {
     setObs((obs) => [...obs, ...values]);
     setActiveStep(3);
   };
-  const handleReview = (values: any) => {
+
+  const handlePastSurgical = (values: any) => {
     setObs((obs) => [...obs, ...values]);
     setActiveStep(4);
   };
 
-  const handleDifferentialSubmit = (values: any) => {
-    console.log({ obs });
-    handleSubmit([...obs, ...values]);
+  const handleAllergy = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(5);
   };
+
+  const handleIntoxication = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(6);
+  };
+
+  const handleSocialHistory = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(7);
+  };
+
+  const handleFamilyHistory = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(8);
+  };
+
+  const handlePhysicalExam = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(9);
+  };
+
+  const handleDifferentialSubmit = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(10);
+  };
+
   const handleReviewOfSystems = (values: any) => {
     console.log({ obs });
-    // handleSubmit([...obs, ...values]); // submitting here before investigations
-    // If you want investigations after review, remove handleSubmit here
-    setActiveStep(6);
+    handleSubmit([...obs, ...values]);
   };
 
   const handleInvestigationSubmit = () => {
@@ -94,7 +158,7 @@ export const MedicalInPatientFlow = () => {
     <>
       <NewStepperContainer
         setActive={setActiveStep}
-        title="Medical In Patient"
+        title="Medical Inpatient Admission Sheet"
         steps={steps}
         active={activeStep}
         onBack={() => navigateBack()}
@@ -102,14 +166,19 @@ export const MedicalInPatientFlow = () => {
         <PresentingComplaints onSubmit={handlePresentingComplaints} />
         <DrugList onSubmit={handleDrug} />
         <PastMedicalHistory onSubmit={handlePastMedical} />
-        <PhysicalExamination onSubmit={handleReview} />
+        <PastSurgicalHistory onSubmit={handlePastSurgical} />
+        <AllergyHistory onSubmit={handleAllergy} />
+        <IntoxicationHistory onSubmit={handleIntoxication} />
+        <SocialHistory onSubmit={handleSocialHistory} />
+        <FamilyHistory onSubmit={handleFamilyHistory} />
+        <PhysicalExamination onSubmit={handlePhysicalExam} />
         <DifferentialDiagnosis
           loading={isLoading}
           onSubmit={handleDifferentialSubmit}
         />
         <ReviewOfSystems
           onSubmit={handleReviewOfSystems}
-          onSkip={() => setActiveStep(5)} // Allow skipping to Differential Diagnosis
+          onSkip={() => setActiveStep(11)}
         />
         <Investigations onClose={handleInvestigationSubmit} />
       </NewStepperContainer>

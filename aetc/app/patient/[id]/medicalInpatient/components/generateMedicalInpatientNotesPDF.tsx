@@ -449,13 +449,12 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 <div className={showPreview ? "print-preview" : "print-only"}>
                     <PatientInfoTab />
                     <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-                        Medical Inpatient
-                    </h1>
+                        Medical Inpatient Admission Sheet                    </h1>
 
                     {Object.values(medicalInpatientInfo).every((val) => (typeof val === "string" ? !val.trim() : val.length === 0)
                     ) ? (
                         <p style={{ fontStyle: "italic", color: "gray" }}>
-                            Medical Inpatient not recorded.
+                            Medical Inpatient Admission Sheet not recorded.
                         </p>
                     ) : (
                         <div className="patient-examination-data">
