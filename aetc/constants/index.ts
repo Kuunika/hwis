@@ -1074,6 +1074,8 @@ export const concepts = {
   SIX_TIMES_A_DAY: "Six Times A Day",
   ONCE_A_WEEK: "Once A Week",
   ONCE_A_MONTH: "Once A Month",
+  MORNING:"Morning",
+  EVENING:"Evening",
   MEDICATION_DOSE: "Medication Dose",
   DOSE_IN_MILLIGRAMS: "Dose In Milligrams",
   MEDICATION_DATE_LAST_TAKEN: "Medication Date Last Taken",

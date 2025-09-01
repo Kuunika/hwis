@@ -98,6 +98,8 @@ const frequencyOptions = [
     { id: concepts.SIX_TIMES_A_DAY, label: "4 Hourly (OD) - Six times a day " },
     { id: concepts.ONCE_A_WEEK, label: "Once a week" },
     { id: concepts.ONCE_A_MONTH, label: "Once a month" },
+    { id: concepts.MORNING, label: "Morning" },
+    { id: concepts.EVENING, label: "Evening" },
     { id: concepts.OTHER, label: "Other" },
 ];
 
