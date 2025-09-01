@@ -26,9 +26,15 @@ import { ReviewOfSystems } from "./reviewOfSystems";
 
 import { encounters } from "@/constants";
 import { Investigations } from "./investigations";
+import { useParameters } from "@/hooks";
+
 
 export const MedicalInPatientFlow = () => {
   const { navigateBack } = useNavigation();
+  const { navigateTo } = useNavigation();
+  const { params } = useParameters();
+
+
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
     encounters.MEDICAL_IN_PATIENT,
     () => {
@@ -145,13 +151,19 @@ export const MedicalInPatientFlow = () => {
     setActiveStep(10);
   };
 
+  // Modified to just collect Review of Systems data
   const handleReviewOfSystems = (values: any) => {
-    console.log({ obs });
-    handleSubmit([...obs, ...values]);
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(11);
   };
 
-  const handleInvestigationSubmit = () => {
-    //  navigateBack();
+  // Final submission happens here after collecting Additional Notes
+  const handleInvestigationSubmit = (values: any) => {
+    const allObservations = [...obs, ...values];
+    console.log("Submitting all observations including additional notes:", { allObservations });
+    handleSubmit(allObservations);
+    navigateTo(`/patient/${params.id}/profile`);
+
   };
 
   return (

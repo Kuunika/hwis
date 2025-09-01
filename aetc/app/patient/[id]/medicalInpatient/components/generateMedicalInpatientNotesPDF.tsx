@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } f
 import { useReactToPrint } from "react-to-print";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { LabOrderPlanTable } from "@/app/patient/components/panels/labOrderPlanTable";
+import { BedsideResults } from "@/app/patient/components/panels/bedsideResults";
 import { PatientInfoTab } from "@/components";
 import { encounters } from "@/constants";
 import { useParameters } from "@/hooks";
@@ -91,7 +92,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             musculoskeletal: [] as string[],
             neurologic: [] as string[],
             psychiatric: [] as string[],
+            integumentary: [] as string[],
             differentialDiagnosis: [] as string[],
+            additionalNotes: "",
             admittingOfficer: "", // Default value
 
 
@@ -191,7 +194,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     musculoskeletal: [] as string[],
                     neurologic: [] as string[],
                     psychiatric: [] as string[],
+                    integumentary: [] as string[],
                     differentialDiagnosis: [] as string[],
+                    additionalNotes: "",
                     admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
 
 
@@ -201,7 +206,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     if (conceptName === "Presenting Complaints") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
-                                const childValue = child.value || child.value_text || "";
+                                const childValue = child.names[0].name || "";
                                 let duration = "";
 
                                 // Check if this child has duration information
@@ -330,6 +335,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.coordination = obs.value || obs.value_text || "";
                     } else if (conceptName === "Summary") {
                         inpatientInfo.summary = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Additional Notes") {
+                        inpatientInfo.additionalNotes = obs.value || obs.value_text || "";
                     }
                     // Review of Systems mapping
                     else if (conceptName === "Review of systems, general") {
@@ -419,6 +426,15 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
                                 if (childName) {
                                     inpatientInfo.psychiatric.push(childName);
+                                }
+                            });
+                        }
+                    } else if (conceptName === "Skin Infection") {
+                        if (obs.children && obs.children.length > 0) {
+                            obs.children.forEach(child => {
+                                const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
+                                if (childName) {
+                                    inpatientInfo.integumentary.push(childName);
                                 }
                             });
                         }
@@ -550,7 +566,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.genitourinary ||
                                 medicalInpatientInfo.musculoskeletal ||
                                 medicalInpatientInfo.neurologic ||
-                                medicalInpatientInfo.psychiatric
+                                medicalInpatientInfo.psychiatric ||
+                                medicalInpatientInfo.integumentary
 
                             ).length > 0 && (
                                     <>
@@ -572,7 +589,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.ent.length > 0 && (
                                                             <>
-                                                                <strong>ENT: </strong>
+                                                                <strong>HEENT: </strong>
                                                                 {/* {medicalInpatientInfo.ent} */}
                                                                 {medicalInpatientInfo.ent.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -662,6 +679,18 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                             </>
                                                         )} </td>
                                                 </tr>
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.integumentary.length > 0 && (
+                                                            <>
+                                                                <strong>Integumentary: </strong>
+                                                                {/* {medicalInpatientInfo.integumentary} */}
+                                                                {medicalInpatientInfo.integumentary.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
+
+                                                            </>
+                                                        )} </td>
+
+                                                </tr>
                                             </tbody>
                                         </table>
                                         <hr />
@@ -711,6 +740,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.coordination ||
                                 medicalInpatientInfo.summary ||
                                 medicalInpatientInfo.differentialDiagnosis ||
+                                medicalInpatientInfo.additionalNotes ||
                                 medicalInpatientInfo.admittingOfficer
 
                             )
@@ -1045,7 +1075,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         )}
                                         <hr />
 
-                                        {medicalInpatientInfo.differentialDiagnosis && (
+                                        {medicalInpatientInfo.differentialDiagnosis.length > 0 && (
 
                                             <p>
                                                 <strong>Differential Diagnosis: </strong>
@@ -1054,8 +1084,21 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         )}
 
                                         <hr />
-                                        <h3>Investigation Plan</h3>
+                                        <h2>Investigation</h2>
+                                        <h3>
+                                            Bedside Results
+                                        </h3>
+                                        <BedsideResults data={[]} />
+
+                                        <h3>Lab results</h3>
                                         <LabOrderPlanTable />
+                                        {medicalInpatientInfo.additionalNotes && (
+                                            <p>
+                                                <strong>Additional Notes: </strong>
+                                                {medicalInpatientInfo.additionalNotes}
+                                            </p>
+                                        )}
+
                                         <hr />
 
 

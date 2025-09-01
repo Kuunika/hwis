@@ -208,30 +208,32 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
     }
 
     console.log("Final obs structure:", obs);
+    onSubmit(obs);
+
 
     // Only submit if we have observations
-    if (obs.length === 0) {
-      console.warn("No systems selected, moving to next step anyway");
-      onSubmit(values);
-      return;
-    }
+    // if (obs.length === 0) {
+    //   console.warn("No systems selected, moving to next step anyway");
+    //   onSubmit(values);
+    //   return;
+    // }
 
-    // Create and submit the encounter
-    const payload = {
-      encounterType: encounters.MEDICAL_IN_PATIENT,
-      patient: params.id,
-      encounterDatetime: currentDateTime,
-      visit: activeVisit.uuid,
-      obs,
-    };
+    // // Create and submit the encounter
+    // const payload = {
+    //   encounterType: encounters.MEDICAL_IN_PATIENT,
+    //   patient: params.id,
+    //   encounterDatetime: currentDateTime,
+    //   visit: activeVisit.uuid,
+    //   obs,
+    // };
 
-    try {
-      console.log("Submitting payload:", payload);
-      await submitEncounter(payload);
-      onSubmit(values);
-    } catch (error) {
-      console.error("Error submitting Review of Systems:", error);
-    }
+    // try {
+    //   console.log("Submitting payload:", payload);
+    //   await submitEncounter(payload);
+    //   onSubmit(values);
+    // } catch (error) {
+    //   console.error("Error submitting Review of Systems:", error);
+    // }
   };
 
   return (

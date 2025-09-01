@@ -23,13 +23,15 @@ const initialValues = getInitialValues(form);
 
 const schema = Yup.object().shape({});
 
-export const Investigations = ({ onClose }: { onClose: () => void }) => {
+export const Investigations = ({ onClose }: { onClose: (values: any) => void }) => {
     const { ServerTime } = useServerTime();
 
     const handleSubmit = (values: any) => {
         const obsDatetime = ServerTime.getServerTimeString();
         const obs = getObservations(values, obsDatetime);
-        onClose();
+
+        // Pass the additional notes observations back to the workflow for final submission
+        onClose(obs);
     };
 
     return (
